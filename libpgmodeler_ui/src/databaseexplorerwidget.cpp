@@ -962,7 +962,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		root->setText(0, connection.getConnectionId(true));
 		root->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("server")));
 		root->setData(DatabaseImportForm::ObjectId, Qt::UserRole, -1);
-		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, ObjectType::ObjBaseObject);
+		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, ~ObjectType::ObjBaseObject);
 		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
@@ -1066,7 +1066,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		{
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt()!=ObjectType::ObjView);
+									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != ~ObjectType::ObjView);
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());
@@ -1201,7 +1201,7 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 
 	try
 	{
-		if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt()) > 0)
+		if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 		{
 			ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 			QString msg;
@@ -1325,7 +1325,7 @@ void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 {
 	try
 	{
-		if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt()) > 0)
+		if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 		{
 			QString obj_name, sch_name;
 			obj_name=item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString();
@@ -1346,7 +1346,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 	{
 		QTreeWidgetItem *root=nullptr, *parent=nullptr, *aux_item=nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
-		unsigned obj_id=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt());
+		unsigned obj_id=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 		QString sch_name, tab_name;
 		vector<QTreeWidgetItem *> gen_items;
 
@@ -1668,7 +1668,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
 {
-	if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt()) > 0)
+	if(item && item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt() > 0)
 	{
 		ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 

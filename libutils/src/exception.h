@@ -36,7 +36,7 @@
 using namespace std;
 
 //! \brief This enum defines the global error codes used throughout the application
-enum class ErrorCode {
+enum class ErrorCode: unsigned {
 	Custom,
 	AsgPseudoTypeColumn,
 	AsgInvalidPrecision,

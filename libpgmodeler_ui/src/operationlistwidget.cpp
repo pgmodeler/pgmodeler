@@ -93,7 +93,7 @@ void OperationListWidget::updateOperationList(void)
 
 			item=new QTreeWidgetItem;
 			str_aux=QString(BaseObject::getSchemaName(obj_type));
-			item->setData(0, Qt::UserRole, QVariant(obj_type));
+			item->setData(0, Qt::UserRole, QVariant(~obj_type));
 
 			if(obj_type==ObjectType::ObjBaseRelationship)
 				str_aux+=QString("tv");

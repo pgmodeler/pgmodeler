@@ -388,12 +388,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==ObjectType::ObjTable)
+		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::ObjTable)
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()==ObjectType::ObjTable)
+		if(table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::ObjTable)
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -407,10 +407,10 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == ObjectType::ObjTable &&
+												 table_cmb->currentData().toUInt() == ~ObjectType::ObjTable &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ObjectType::ObjTable &&
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ~ObjectType::ObjTable &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
@@ -476,7 +476,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == ObjectType::ObjTable  &&
+											 table_cmb->currentData().toUInt() == ~ObjectType::ObjTable  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -690,7 +690,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 			for(; idx < count; idx++)
 			{
 				combo->setItemIcon(idx, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
-				combo->setItemData(idx, obj_type);
+				combo->setItemData(idx, ~obj_type);
 			}
 
 			idx=count;
@@ -1259,7 +1259,7 @@ void DataManipulationForm::saveChanges(void)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	int row=0;
 	Connection conn=Connection(tmpl_conn_params);

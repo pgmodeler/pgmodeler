@@ -375,7 +375,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 		throw Exception(trUtf8("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
 						.arg(GlobalAttributes::MaxObjectCount)
 						.arg(BaseObject::getTypeName(obj_type)),
-						ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 #endif
 
@@ -3070,7 +3070,7 @@ void DatabaseModel::loadModel(const QString &filename)
 														trUtf8("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
-														obj_type);
+														~obj_type);
 								}
 
 								xmlparser.restorePosition();
@@ -3114,7 +3114,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ObjectType::ObjRelationship);
+				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::ObjRelationship);
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
@@ -3122,13 +3122,13 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			this->setInvalidated(false);
 
-			emit s_objectLoaded(100, trUtf8("Validating relationships..."), ObjectType::ObjRelationship);
+			emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::ObjRelationship);
 			this->setObjectsModified({ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship});
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			if(found_inh_rel)
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ObjectType::ObjRelationship);
+				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::ObjRelationship);
 				validateRelationships();
 				updateTablesFKRelationships();
 			}
@@ -4380,7 +4380,7 @@ Operator *DatabaseModel::createOperator(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[ObjectType::ObjOperator])
+					if(elem==objs_schemas[~ObjectType::ObjOperator])
 					{
 						xmlparser.getElementAttributes(attribs);
 						oper_aux=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::ObjOperator);
@@ -4472,7 +4472,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[ObjectType::ObjOpFamily])
+					if(elem==objs_schemas[~ObjectType::ObjOpFamily])
 					{
 						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::ObjOpFamily);
@@ -4686,14 +4686,14 @@ Table *DatabaseModel::createTable(void)
 					xmlparser.savePosition();
 					object=nullptr;
 
-					if(elem==BaseObject::objs_schemas[ObjectType::ObjColumn])
+					if(elem==BaseObject::objs_schemas[~ObjectType::ObjColumn])
 						object=createColumn();
-					else if(elem==BaseObject::objs_schemas[ObjectType::ObjConstraint])
+					else if(elem==BaseObject::objs_schemas[~ObjectType::ObjConstraint])
 						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[ObjectType::ObjTag])
+					else if(elem==BaseObject::objs_schemas[~ObjectType::ObjTag])
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						tag=getObject(aux_attribs[ParsersAttributes::NAME] ,ObjectType::ObjTag);
+						tag=getObject(aux_attribs[ParsersAttributes::NAME], ObjectType::ObjTag);
 
 						if(!tag)
 						{
@@ -6913,7 +6913,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 									msg.arg(def_type_str)
 									.arg(object->getName())
 									.arg(object->getTypeName()),
-									object->getObjectType());
+									~object->getObjectType());
 			}
 		}
 
@@ -9608,7 +9608,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving object `%1' (%2)")
-														.arg(object->getName()).arg(object->getTypeName()), obj_type);
+														.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
 
 				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
 				continue;
@@ -9774,7 +9774,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
-														.arg(object->getSignature()).arg(object->getTypeName()), obj_type);
+														.arg(object->getSignature()).arg(object->getTypeName()), ~obj_type);
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=schparser.convertCharsToXMLEntities(
@@ -9797,10 +9797,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 																						 ParsersAttributes::METADATA + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), ObjectType::ObjBaseObject);
+			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), ~ObjectType::ObjBaseObject);
 		}
 		else
-			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), ObjectType::ObjBaseObject);
+			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), ~ObjectType::ObjBaseObject);
 
 		output.close();
 	}
@@ -9883,13 +9883,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(getObjectIndex(new_object->getName(), obj_type) < 0)
 						{
 							emit s_objectLoaded(progress, trUtf8("Creating object `%1' (%2)")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), obj_type);
+																	.arg(new_object->getName()).arg(new_object->getTypeName()), ~obj_type);
 							addObject(new_object);
 						}
 						else
 						{
 							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) already exists. Ignoring.")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), ObjectType::ObjBaseObject);
+																	.arg(new_object->getName()).arg(new_object->getTypeName()), ~ObjectType::ObjBaseObject);
 							delete(new_object);
 						}
 
@@ -9955,7 +9955,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(object)
 						{
 							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
-																	.arg(object->getName()).arg(object->getTypeName()), obj_type);
+																	.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
 
 							if(!object->isSystemObject() &&
 								 ((!attribs[ParsersAttributes::PROTECTED].isEmpty() && load_objs_prot) ||
@@ -10084,7 +10084,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						else if(!object)
 						{
 							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
-																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), ObjectType::ObjBaseObject);
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), ~ObjectType::ObjBaseObject);
 						}
 
 						xmlparser.restorePosition();
@@ -10095,7 +10095,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), ObjectType::ObjBaseObject);
+		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), ~ObjectType::ObjBaseObject);
 		setObjectsModified();
 	}
 	catch(Exception &e)

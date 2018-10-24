@@ -31,7 +31,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	QString gen_purpose=trUtf8("General purpose");
 	map<QString, ObjectType> types_map;
 	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::ObjRelationship, ObjectType::ObjTag, ObjectType::ObjTextbox,
-															   ObjectType::ObjPermission, ObjectType::ObjBaseRelationship });
+																														 ObjectType::ObjPermission, ObjectType::ObjBaseRelationship });
 
 	setupUi(this);
 
@@ -42,14 +42,14 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	for(auto &itr : types_map)
 	{
 		ico.load(PgModelerUiNs::getIconPath(itr.second));
-		applies_to_cmb->addItem(ico, itr.first, itr.second);
-		filter_cmb->addItem(ico, itr.first, itr.second);
+		applies_to_cmb->addItem(ico, itr.first, ~itr.second);
+		filter_cmb->addItem(ico, itr.first, ~itr.second);
 	}
 
-	applies_to_cmb->insertItem(0, gen_purpose, ObjectType::ObjBaseObject);
+	applies_to_cmb->insertItem(0, gen_purpose, ~ObjectType::ObjBaseObject);
 	applies_to_cmb->setCurrentIndex(0);
 
-	filter_cmb->insertItem(0, gen_purpose, ObjectType::ObjBaseObject);
+	filter_cmb->insertItem(0, gen_purpose, ~ObjectType::ObjBaseObject);
 	filter_cmb->insertItem(0, trUtf8("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 

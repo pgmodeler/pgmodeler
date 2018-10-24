@@ -478,7 +478,7 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 
 			//By default all object types are checked
 			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, QVariant(types[type_id]));
+			item->setData(Qt::UserRole, QVariant(~types[type_id]));
 			list_wgt->insertItem(type_id, item);
 		}
 	}

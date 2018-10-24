@@ -109,7 +109,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
+		return(QApplication::translate("BaseObject",obj_type_names[~obj_type].toStdString().c_str(),"", -1));
 	else
 		return(QString());
 }
@@ -137,12 +137,12 @@ ObjectType BaseObject::getObjectType(const QString &type_name)
 
 QString BaseObject::getSchemaName(ObjectType obj_type)
 {
-	return(objs_schemas[obj_type]);
+	return(objs_schemas[~obj_type]);
 }
 
 QString BaseObject::getSQLName(ObjectType obj_type)
 {
-	return(objs_sql[obj_type]);
+	return(objs_sql[~obj_type]);
 }
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
@@ -684,7 +684,7 @@ void BaseObject::setBasicAttributes(bool format_name)
 		attributes[ParsersAttributes::SIGNATURE]=this->getSignature(format_name);
 
 	if(attributes[ParsersAttributes::SQL_OBJECT].isEmpty())
-		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
+		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[~this->obj_type];
 }
 
 QString BaseObject::__getCodeDefinition(unsigned def_type)
@@ -821,7 +821,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		try
 		{
-			code_def+=schparser.getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
+			code_def+=schparser.getCodeDefinition(objs_schemas[~obj_type], attributes, def_type);
 
 			//Internally disabling the SQL definition
 			if(sql_disabled && def_type==SchemaParser::SqlDefinition)

@@ -367,7 +367,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
 							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
-							ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 #endif
 

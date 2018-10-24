@@ -858,7 +858,7 @@ void MainWindow::addModel(const QString &filename)
 #warning "DEMO VERSION: database model creation limit."
 	if(models_tbw->count()==1)
 		throw Exception(trUtf8("The demonstration version can create only `one' instance of database model!"),
-						ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #endif
 
 	try
@@ -1344,7 +1344,7 @@ void MainWindow::saveModel(ModelWidget *model)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! The model saving feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	try
 	{
@@ -1891,7 +1891,7 @@ void MainWindow::showDemoVersionWarning(void)
 						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
-						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+						Messagebox::AlertIcon, Messagebox::OkButton);
 #endif
 }
 
@@ -1900,7 +1900,7 @@ void MainWindow::executePendingOperation(bool valid_error)
 	if(!valid_error && pending_op!=NoPendingOp)
 	{
 		static const QString op_names[]={ QString(), QT_TR_NOOP("save"), QT_TR_NOOP("save"),
-										  QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
+																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
 		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,
 											trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
