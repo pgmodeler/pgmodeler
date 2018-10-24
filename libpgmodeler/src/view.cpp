@@ -708,7 +708,7 @@ void View::addObject(BaseObject *obj, int obj_idx)
 			//Raises an error if already exists a object with the same name and type
 			if(getObjectIndex(obj->getName(), tab_obj->getObjectType()) >= 0)
 			{
-				throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+				throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 								.arg(obj->getName(true))
 								.arg(obj->getTypeName())
 								.arg(this->getName(true))

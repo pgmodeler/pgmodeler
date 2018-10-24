@@ -550,7 +550,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			this->invalidated=true;
 		}
 		else
-			throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+			throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 							.arg(tab_obj->getName(true))
 							.arg(tab_obj->getTypeName())
 							.arg(this->getName(true))

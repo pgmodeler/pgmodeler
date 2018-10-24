@@ -418,7 +418,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	{
 		QString str_aux;
 
-		str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
+		str_aux=Exception::getErrorMessage(AsgDuplicatedObject)
 				.arg(object->getName(obj_type != ObjExtension))
 				.arg(object->getTypeName())
 				.arg(this->getName(true))
@@ -492,7 +492,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 				if(!dynamic_cast<TableObject *>(refs[0]))
 				{
 					err_code=RemDirectReference;
-					throw Exception(QString(Exception::getErrorMessage(err_code))
+					throw Exception(Exception::getErrorMessage(err_code)
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
 									.arg(refs[0]->getName(true))
@@ -504,7 +504,7 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx, bool check_r
 					BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
 
 					err_code=RemInderectReference;
-					throw Exception(QString(Exception::getErrorMessage(err_code))
+					throw Exception(Exception::getErrorMessage(err_code)
 									.arg(object->getName(true))
 									.arg(object->getTypeName())
 									.arg(refs[0]->getName(true))
@@ -2477,7 +2477,7 @@ void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 		//Raises an error if found a type with the same name as the domain
 		if(found)
 		{
-			str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
+			str_aux=Exception::getErrorMessage(AsgDuplicatedObject)
 					.arg(domain->getName(true))
 					.arg(domain->getTypeName())
 					.arg(this->getName(true))
@@ -2643,7 +2643,7 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 
 		if(found)
 		{
-			str_aux=QString(Exception::getErrorMessage(AsgDuplicatedObject))
+			str_aux=Exception::getErrorMessage(AsgDuplicatedObject)
 					.arg(type->getName(true))
 					.arg(type->getTypeName())
 					.arg(this->getName(true))
@@ -3143,7 +3143,7 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			if(e.getErrorType()>=InvalidSyntax)
 			{
-				str_aux=QString(Exception::getErrorMessage(InvModelFileNotLoaded)).arg(filename);
+				str_aux=Exception::getErrorMessage(InvModelFileNotLoaded).arg(filename);
 				throw Exception(str_aux,InvModelFileNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 			}
 			else
@@ -3893,7 +3893,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(tpattrib.getName())
 											.arg(tpattrib.getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
@@ -4085,7 +4085,7 @@ Type *DatabaseModel::createType(void)
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
@@ -4103,7 +4103,7 @@ Type *DatabaseModel::createType(void)
 						//Raises an error if the operator class doesn't exists
 						if(!op_class)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
@@ -4823,7 +4823,7 @@ Column *DatabaseModel::createColumn(void)
 			seq=getObject(attribs[ParsersAttributes::SEQUENCE], ObjSequence);
 
 			if(!seq)
-				throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 								.arg(attribs[ParsersAttributes::NAME])
 					.arg(BaseObject::getTypeName(ObjColumn))
 					.arg(attribs[ParsersAttributes::SEQUENCE])
@@ -4905,7 +4905,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			//Raises an error if the parent table doesn't exists
 			if(!table)
 			{
-				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 						.arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(ObjConstraint))
 						.arg(attribs[ParsersAttributes::TABLE])
@@ -4968,7 +4968,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			//Raises an error if the referenced table doesn't exists
 			if(!ref_table)
 			{
-				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 						.arg(constr->getName())
 						.arg(constr->getTypeName())
 						.arg(attribs[ParsersAttributes::REF_TABLE])
@@ -5119,7 +5119,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
@@ -5128,7 +5128,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(PartKeyObjectInexistsModel)
 											.arg(parent_obj->getName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(ObjOpClass)),
@@ -5147,7 +5147,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					//Raises an error if the operator doesn't exists
 					if(!oper)
 					{
-						throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+						throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 										.arg(tab_obj->getName())
 										.arg(tab_obj->getTypeName())
 										.arg(attribs[ParsersAttributes::SIGNATURE])
@@ -5167,7 +5167,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 															.arg(tab_obj->getName())
 															.arg(tab_obj->getTypeName())
 															.arg(attribs[ParsersAttributes::NAME])
@@ -5176,7 +5176,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(PartKeyObjectInexistsModel)
 															.arg(parent_obj->getName())
 															.arg(attribs[ParsersAttributes::NAME])
 															.arg(BaseObject::getTypeName(ObjCollation)),
@@ -5207,7 +5207,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					{
 						if(!is_part_key)
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
 											.arg(attribs[ParsersAttributes::NAME])
@@ -5216,7 +5216,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						}
 						else
 						{
-							throw Exception(QString(Exception::getErrorMessage(PartKeyObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(PartKeyObjectInexistsModel)
 											.arg(parent_obj->getName())
 											.arg(attribs[ParsersAttributes::NAME])
 									.arg(BaseObject::getTypeName(ObjColumn)),
@@ -5301,7 +5301,7 @@ Index *DatabaseModel::createIndex(void)
 		//Raises an error if the parent table doesn't exists
 		if(!table)
 		{
-			str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+			str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 					.arg(attribs[ParsersAttributes::NAME])
 					.arg(BaseObject::getTypeName(ObjIndex))
 					.arg(attribs[ParsersAttributes::TABLE])
@@ -5380,7 +5380,7 @@ Rule *DatabaseModel::createRule(void)
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjView));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+			throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 							.arg(attribs[ParsersAttributes::NAME])
 				.arg(BaseObject::getTypeName(ObjRule))
 				.arg(attribs[ParsersAttributes::TABLE])
@@ -5459,7 +5459,7 @@ Trigger *DatabaseModel::createTrigger(void)
 			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjView));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+			throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 							.arg(attribs[ParsersAttributes::NAME])
 				.arg(BaseObject::getTypeName(ObjTrigger))
 				.arg(attribs[ParsersAttributes::TABLE])
@@ -5543,7 +5543,7 @@ Trigger *DatabaseModel::createTrigger(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 						{
-							str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 									.arg(trigger->getName())
 									.arg(trigger->getTypeName())
 									.arg(attribs[ParsersAttributes::SIGNATURE])
@@ -5613,7 +5613,7 @@ Policy *DatabaseModel::createPolicy(void)
 		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjTable));
 
 		if(!table)
-			throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+			throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(attribs[ParsersAttributes::NAME])
 											.arg(BaseObject::getTypeName(ObjPolicy))
 											.arg(attribs[ParsersAttributes::TABLE])
@@ -5718,7 +5718,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 						{
-							throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+							throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(event_trig->getName())
 											.arg(event_trig->getTypeName())
 											.arg(attribs[ParsersAttributes::SIGNATURE])
@@ -5822,7 +5822,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 			//Raises an error if the column parent table doesn't exists
 			if(!table)
 			{
-				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 						.arg(sequence->getName())
 						.arg(BaseObject::getTypeName(ObjSequence))
 						.arg(tab_name)
@@ -5903,7 +5903,7 @@ View *DatabaseModel::createView(void)
 							//Raises an error if the table doesn't exists
 							if(!table)
 							{
-								str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+								str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 										.arg(view->getName())
 										.arg(BaseObject::getTypeName(ObjView))
 										.arg(attribs[ParsersAttributes::TABLE])
@@ -5922,7 +5922,7 @@ View *DatabaseModel::createView(void)
 								//Raises an error if the view references an inexistant column
 								if(!column)
 								{
-									str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+									str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(ObjView))
 											.arg(attribs[ParsersAttributes::TABLE] + QString(".") +
@@ -6071,7 +6071,7 @@ Collation *DatabaseModel::createCollation(void)
 			//Raises an error if the copy collation doesn't exists
 			if(!copy_coll)
 			{
-				throw Exception(QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				throw Exception(Exception::getErrorMessage(RefObjectInexistsModel)
 								.arg(collation->getName())
 								.arg(BaseObject::getTypeName(ObjCollation))
 								.arg(attribs[ParsersAttributes::COLLATION])
@@ -6245,7 +6245,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			//Raises an error if some table doesn't exists
 			if(!tables[i])
 			{
-				str_aux=QString(Exception::getErrorMessage(RefObjectInexistsModel))
+				str_aux=Exception::getErrorMessage(RefObjectInexistsModel)
 						.arg(attribs[ParsersAttributes::NAME])
 						.arg(BaseObject::getTypeName(obj_rel_type))
 						.arg(attribs[tab_attribs[i]])

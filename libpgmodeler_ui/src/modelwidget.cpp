@@ -2178,7 +2178,7 @@ void ModelWidget::protectObject(void)
 
 					if(tab_obj->isAddedByRelationship())
 					{
-						throw Exception(QString(Exception::getErrorMessage(OprRelationshipAddedObject))
+						throw Exception(Exception::getErrorMessage(OprRelationshipAddedObject)
 										.arg(object->getName()).arg(object->getTypeName()),
 										OprRelationshipAddedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
@@ -2908,7 +2908,7 @@ void ModelWidget::removeObjects(bool cascade)
 					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
 					{
-						throw Exception(QString(Exception::getErrorMessage(RemProtectedObject))
+						throw Exception(Exception::getErrorMessage(RemProtectedObject)
 										.arg(object->getName(true))
 										.arg(object->getTypeName()),
 										RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);

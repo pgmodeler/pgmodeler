@@ -126,18 +126,18 @@ void Trigger::setCondition(const QString &cond)
 void Trigger::addColumn(Column *column)
 {
 	if(!column)
-		throw Exception(QString(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
 						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!column->getParentTable())
-		throw Exception(QString(Exception::getErrorMessage(ErrorCode::AsgColumnNoParent))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgColumnNoParent)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
 						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(this->getParentTable() &&
 			column->getParentTable() != this->getParentTable())
-		throw Exception(QString(Exception::getErrorMessage(ErrorCode::AsgInvalidColumnTrigger))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidColumnTrigger)
 						.arg(column->getName(true))
 						.arg(this->getName(true)),
 						ErrorCode::AsgInvalidColumnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);

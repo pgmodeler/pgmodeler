@@ -119,7 +119,7 @@ void ObjectRenameWidget::applyRenaming(void)
 				//Raises a error if another object is found
 				if(aux_obj && aux_obj!=object)
 				{
-					throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+					throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 									.arg(fmt_name)
 									.arg(object->getTypeName())
 									.arg(parent_obj->getName(true))

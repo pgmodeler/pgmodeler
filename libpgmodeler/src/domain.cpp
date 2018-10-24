@@ -39,7 +39,7 @@ void Domain::addCheckConstraint(const QString &name, const QString &expr)
 
 	if(chk_constrs.count(name))
 	{
-		throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+		throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 						.arg(name)
 						.arg(BaseObject::getTypeName(ObjConstraint))
 						.arg(this->getName(true))

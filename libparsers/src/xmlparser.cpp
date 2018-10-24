@@ -75,7 +75,7 @@ void XMLParser::loadXMLFile(const QString &filename)
 			//Case the file opening was not sucessful
 			if(!input.isOpen())
 			{
-				throw Exception(QString(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)).arg(filename),
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename),
 								ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
@@ -193,7 +193,7 @@ void XMLParser::readBuffer(void)
 			if(xml_doc) restartParser();
 
 			//Raise an exception with the error massege from the parser xml
-			throw Exception(QString(Exception::getErrorMessage(ErrorCode::LibXMLError))
+			throw Exception(Exception::getErrorMessage(ErrorCode::LibXMLError)
 							.arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
 							ErrorCode::LibXMLError,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}

@@ -47,7 +47,7 @@ ResultSet::ResultSet(PGresult *sql_result)
 
 			//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
-			str_aux=QString(Exception::getErrorMessage(DBMSFatalError))
+			str_aux=Exception::getErrorMessage(DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
 			throw Exception(str_aux,DBMSFatalError, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		break;

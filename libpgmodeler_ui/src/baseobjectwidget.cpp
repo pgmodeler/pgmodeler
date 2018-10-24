@@ -748,7 +748,7 @@ void BaseObjectWidget::applyConfiguration(void)
 				//Raises an error if another object is found with the same name as the editing object
 				if(!new_obj && aux_obj && aux_obj!=object)
 				{
-					throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+					throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 									.arg(obj_name)
 									.arg(BaseObject::getTypeName(obj_type))
 									.arg(parent_obj->getName(true))

@@ -376,7 +376,7 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 			//Raises an error if already exists a object with the same name and type
 			if(getObject(obj->getName(),obj_type,idx))
 			{
-				throw Exception(QString(Exception::getErrorMessage(AsgDuplicatedObject))
+				throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 								.arg(obj->getName(true))
 								.arg(obj->getTypeName())
 								.arg(this->getName(true))
