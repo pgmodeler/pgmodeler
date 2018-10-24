@@ -18,12 +18,12 @@
 
 #include "sequence.h"
 
-const QString Sequence::MAX_POSITIVE_VALUE=QString("+2147483647");
-const QString Sequence::MAX_NEGATIVE_VALUE=QString("-2147483648");
-const QString Sequence::MAX_SMALL_POSITIVE_VALUE=QString("+32767");
-const QString Sequence::MAX_SMALL_NEGATIVE_VALUE=QString("-32768");
-const QString Sequence::MAX_BIG_POSITIVE_VALUE=QString("+9223372036854775807");
-const QString Sequence::MAX_BIG_NEGATIVE_VALUE=QString("-9223372036854775808");
+const QString Sequence::MaxPositiveValue=QString("+2147483647");
+const QString Sequence::MaxNegativeValue=QString("-2147483648");
+const QString Sequence::MaxSmallPositiveValue=QString("+32767");
+const QString Sequence::MaxSmallNegativeValue=QString("-32768");
+const QString Sequence::MaxBigPositiveValue=QString("+9223372036854775807");
+const QString Sequence::MaxBigNegativeValue=QString("-9223372036854775808");
 
 Sequence::Sequence(void)
 {
@@ -72,7 +72,7 @@ bool Sequence::isValidValue(const QString &value)
 
 	/* To be valid the value can be start with + or -, have only numbers and
 		it's length must not exceed the MAX_POSITIVE_VALUE length */
-	if(value.size() > MAX_BIG_POSITIVE_VALUE.size())
+	if(value.size() > MaxBigPositiveValue.size())
 		return(false);
 	else
 	{
@@ -185,19 +185,19 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 	if(serial_type==QString("smallserial") ||
 		 serial_type.isEquivalentTo(QString("smallint")))
 	{
-		min=MAX_SMALL_NEGATIVE_VALUE;
-		max=MAX_SMALL_POSITIVE_VALUE;
+		min=MaxSmallNegativeValue;
+		max=MaxSmallPositiveValue;
 	}
 	else if(serial_type==QString("bigserial") ||
 					serial_type.isEquivalentTo(QString("bigint")))
 	{
-		min=MAX_BIG_NEGATIVE_VALUE;
-		max=MAX_BIG_POSITIVE_VALUE;
+		min=MaxBigNegativeValue;
+		max=MaxBigPositiveValue;
 	}
 	else
 	{
-		min=MAX_NEGATIVE_VALUE;
-		max=MAX_POSITIVE_VALUE;
+		min=MaxNegativeValue;
+		max=MaxPositiveValue;
 	}
 
 	setValues(min, max, QString("1"), QString("1"), QString("1"));

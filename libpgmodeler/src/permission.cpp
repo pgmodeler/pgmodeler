@@ -25,7 +25,7 @@ Permission::Permission(BaseObject *obj)
 	unsigned priv_id;
 
 	//Initializes all the privileges as unchecked
-	for(priv_id=PRIV_SELECT; priv_id<=PRIV_USAGE; priv_id++)
+	for(priv_id=PrivSelect; priv_id<=PrivUsage; priv_id++)
 		privileges[priv_id]=grant_option[priv_id]=false;
 
 	//Raises an error if the object associated to the permission is no allocated
@@ -63,7 +63,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 
 
 	//Validating privilege
-	if(result && priv_id <= PRIV_USAGE)
+	if(result && priv_id <= PrivUsage)
 	{
 
 		/* Some privileges are valid only for certain types
@@ -85,29 +85,29 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 		result=result &&
 
 			   (((obj_type==ObjTable || obj_type==ObjView) &&
-				 (priv_id==PRIV_SELECT || priv_id==PRIV_INSERT ||
-				  priv_id==PRIV_UPDATE || priv_id==PRIV_DELETE ||
-				  priv_id==PRIV_REFERENCES ||	priv_id==PRIV_TRIGGER)) ||
+				 (priv_id==PrivSelect || priv_id==PrivInsert ||
+				  priv_id==PrivUpdate || priv_id==PrivDelete ||
+				  priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
 
-				((obj_type==ObjTable || obj_type==ObjView) && priv_id==PRIV_TRUNCATE) ||
+				((obj_type==ObjTable || obj_type==ObjView) && priv_id==PrivTruncate) ||
 
 				(obj_type==ObjColumn &&
-				 (priv_id==PRIV_SELECT ||priv_id==PRIV_INSERT ||
-				  priv_id==PRIV_UPDATE || priv_id==PRIV_REFERENCES)) ||
+				 (priv_id==PrivSelect ||priv_id==PrivInsert ||
+				  priv_id==PrivUpdate || priv_id==PrivReferences)) ||
 
 				(obj_type==ObjSequence &&
-				 (priv_id==PRIV_USAGE || priv_id==PRIV_SELECT ||	priv_id==PRIV_UPDATE)) ||
+				 (priv_id==PrivUsage || priv_id==PrivSelect ||	priv_id==PrivUpdate)) ||
 
 				(obj_type==ObjDatabase &&
-				 (priv_id==PRIV_CREATE || priv_id==PRIV_CONNECT ||	priv_id==PRIV_TEMPORARY)) ||
+				 (priv_id==PrivCreate || priv_id==PrivConnect ||	priv_id==PrivTemporary)) ||
 
-				((obj_type==ObjFunction || obj_type==ObjAggregate) && priv_id==PRIV_EXECUTE) ||
+				((obj_type==ObjFunction || obj_type==ObjAggregate) && priv_id==PrivExecute) ||
 
-				((obj_type==ObjLanguage || obj_type==ObjType || obj_type==ObjDomain) && priv_id==PRIV_USAGE) ||
+				((obj_type==ObjLanguage || obj_type==ObjType || obj_type==ObjDomain) && priv_id==PrivUsage) ||
 
-				(obj_type==ObjSchema && (priv_id==PRIV_USAGE || priv_id==PRIV_CREATE)) ||
+				(obj_type==ObjSchema && (priv_id==PrivUsage || priv_id==PrivCreate)) ||
 
-				(obj_type==ObjTablespace && priv_id==PRIV_CREATE));
+				(obj_type==ObjTablespace && priv_id==PrivCreate));
 	}
 
 	return(result);
@@ -139,7 +139,7 @@ void Permission::addRole(Role *role)
 void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 {
 	//Caso o tipo de privilégio sejá inválido dispara uma exceção
-	if(priv_id > PRIV_USAGE)
+	if(priv_id > PrivUsage)
 		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!acceptsPermission(object->getObjectType(), priv_id))
@@ -245,7 +245,7 @@ BaseObject *Permission::getObject(void)
 bool Permission::getPrivilege(unsigned priv_id)
 {
 	//Raises an error if the privilege is invalid
-	if(priv_id > PRIV_USAGE)
+	if(priv_id > PrivUsage)
 		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(privileges[priv_id]);
@@ -254,7 +254,7 @@ bool Permission::getPrivilege(unsigned priv_id)
 bool Permission::getGrantOption(unsigned priv_id)
 {
 	//Raises an error if the privilege is invalid
-	if(priv_id > PRIV_USAGE)
+	if(priv_id > PrivUsage)
 		throw Exception(RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(grant_option[priv_id]);

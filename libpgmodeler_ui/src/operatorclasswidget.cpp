@@ -102,17 +102,17 @@ void OperatorClassWidget::selectElementType(int elem_type)
 {
 	unsigned sel_idx=static_cast<unsigned>(elem_type);
 
-	function_lbl->setVisible(sel_idx==OperatorClassElement::FUNCTION_ELEM);
-	function_sel->setVisible(sel_idx==OperatorClassElement::FUNCTION_ELEM);
+	function_lbl->setVisible(sel_idx==OperatorClassElement::FunctionElem);
+	function_sel->setVisible(sel_idx==OperatorClassElement::FunctionElem);
 
-	operator_lbl->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	operator_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	elem_family_lbl->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	elem_family_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
+	operator_lbl->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	operator_sel->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	elem_family_lbl->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	elem_family_sel->setVisible(sel_idx==OperatorClassElement::OperatorElem);
 
-	storage_type->setVisible(sel_idx==OperatorClassElement::STORAGE_ELEM);
-	stg_num_lbl->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
-	stg_num_sb->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
+	storage_type->setVisible(sel_idx==OperatorClassElement::StorageElem);
+	stg_num_lbl->setVisible(sel_idx!=OperatorClassElement::StorageElem);
+	stg_num_sb->setVisible(sel_idx!=OperatorClassElement::StorageElem);
 }
 
 void OperatorClassWidget::editElement(int lin_idx)
@@ -137,12 +137,12 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 
 	elem_type=elem.getElementType();
 
-	if(elem_type==OperatorClassElement::FUNCTION_ELEM)
+	if(elem_type==OperatorClassElement::FunctionElem)
 	{
 		elements_tab->setCellText(elem.getFunction()->getSignature(), lin_idx, 0);
 		elements_tab->setCellText(elem.getFunction()->getTypeName(), lin_idx, 1);
 	}
-	else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
+	else if(elem_type==OperatorClassElement::OperatorElem)
 	{
 		elements_tab->setCellText(elem.getOperator()->getSignature(), lin_idx, 0);
 		elements_tab->setCellText(elem.getOperator()->getTypeName(), lin_idx, 1);
@@ -153,12 +153,12 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 		elements_tab->setCellText(BaseObject::getTypeName(ObjType), lin_idx, 1);
 	}
 
-	if(elem_type!=OperatorClassElement::STORAGE_ELEM)
+	if(elem_type!=OperatorClassElement::StorageElem)
 		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
 		elements_tab->setCellText(QString(" "), lin_idx, 2);
 
-	if(elem_type==OperatorClassElement::OPERATOR_ELEM && elem.getOperatorFamily())
+	if(elem_type==OperatorClassElement::OperatorElem && elem.getOperatorFamily())
 		elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);
 	else
 		elements_tab->clearCellText(lin_idx, 3);
@@ -176,9 +176,9 @@ void OperatorClassWidget::handleElement(int lin_idx)
 
 	try
 	{
-		if(elem_type==OperatorClassElement::FUNCTION_ELEM)
+		if(elem_type==OperatorClassElement::FunctionElem)
 			elem.setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()), stg_num_sb->value());
-		else  if(elem_type==OperatorClassElement::OPERATOR_ELEM)
+		else  if(elem_type==OperatorClassElement::OperatorElem)
 		{
 			elem.setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()), stg_num_sb->value());
 			elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(elem_family_sel->getSelectedObject()));

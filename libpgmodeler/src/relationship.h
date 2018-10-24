@@ -294,20 +294,20 @@ class Relationship: public BaseRelationship {
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
-		static const QString SUFFIX_SEPARATOR,
-		SRC_TAB_TOKEN, //{st}
-		DST_TAB_TOKEN, //{dt}
-		GEN_TAB_TOKEN, //{gt}
-		SRC_COL_TOKEN; //{sc}
+		static const QString SuffixSeparator,
+		SrcTabToken, //{st}
+		DstTabToken, //{dt}
+		GenTabToken, //{gt}
+		SrcColToken; //{sc}
 
 		//! \brief Patterns ids
-		static constexpr unsigned SRC_COL_PATTERN=0,
-		DST_COL_PATTERN=1,
-		PK_PATTERN=2,
-		UQ_PATTERN=3,
-		SRC_FK_PATTERN=4,
-		DST_FK_PATTERN=5,
-		PK_COL_PATTERN=6;
+		static constexpr unsigned SrcColPattern=0,
+		DstColPattern=1,
+		PkPattern=2,
+		UqPattern=3,
+		SrcFkPattern=4,
+		DstFkPattern=5,
+		PkColPattern=6;
 
 		Relationship(Relationship *rel);
 

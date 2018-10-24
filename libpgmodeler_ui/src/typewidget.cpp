@@ -40,7 +40,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjType)
 		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),8,0);
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
-		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 		{
 			functions_sel[i]=nullptr;
 			functions_sel[i]=new ObjectSelectorWidget(ObjFunction, true, this);
@@ -84,7 +84,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjType)
 		opclass_sel=new ObjectSelectorWidget(ObjOpClass, true, this);
 		grid->addWidget(opclass_sel,0,1,1,1);
 
-		for(i1=1, i=Type::CANONICAL_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++,i1++)
+		for(i1=1, i=Type::CanonicalFunc; i <= Type::SubtypeDiffFunc; i++,i1++)
 		{
 			functions_sel[i]=nullptr;
 			functions_sel[i]=new ObjectSelectorWidget(ObjFunction, true, this);
@@ -117,14 +117,14 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjType)
 		setRequiredField(range_subtype);
 		setRequiredField(input_lbl);
 		setRequiredField(output_lbl);
-		setRequiredField(functions_sel[Type::INPUT_FUNC]);
-		setRequiredField(functions_sel[Type::OUTPUT_FUNC]);
+		setRequiredField(functions_sel[Type::InputFunc]);
+		setRequiredField(functions_sel[Type::OutputFunc]);
 		setRequiredField(enumerations_gb);
 		setRequiredField(attributes_gb);
 
 		configureTabOrder({base_type_rb, enumeration_rb, composite_rb, range_rb,
 						   enum_name_edt, attrib_name_edt, attrib_collation_sel, attrib_type_wgt,
-						   opclass_sel, functions_sel[Type::CANONICAL_FUNC], functions_sel[Type::SUBTYPE_DIFF_FUNC],
+						   opclass_sel, functions_sel[Type::CanonicalFunc], functions_sel[Type::SubtypeDiffFunc],
 						   base_attribs_twg});
 
 		setMinimumSize(620, 750);
@@ -217,14 +217,14 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	opclass_sel->setModel(model);
 
-	for(i=Type::INPUT_FUNC; i <= Type::SUBTYPE_DIFF_FUNC; i++)
+	for(i=Type::InputFunc; i <= Type::SubtypeDiffFunc; i++)
 		functions_sel[i]->setModel(model);
 
 	if(type)
 	{
 		type_conf=type->getConfiguration();
 
-		if(type_conf==Type::COMPOSITE_TYPE)
+		if(type_conf==Type::CompositeType)
 		{
 			composite_rb->setChecked(true);
 			attributes_tab->blockSignals(true);
@@ -239,7 +239,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			attributes_tab->blockSignals(false);
 			attributes_tab->clearSelection();
 		}
-		else if(type_conf==Type::ENUMERATION_TYPE)
+		else if(type_conf==Type::EnumerationType)
 		{
 			enumeration_rb->setChecked(true);
 			enumerations_tab->blockSignals(true);
@@ -254,13 +254,13 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			enumerations_tab->blockSignals(false);
 			enumerations_tab->clearSelection();
 		}
-		else if(type_conf==Type::RANGE_TYPE)
+		else if(type_conf==Type::RangeType)
 		{
 			range_rb->setChecked(true);
 			opclass_sel->setSelectedObject(type->getSubtypeOpClass());
 			range_subtype->setAttributes(type->getSubtype(), model);
-			functions_sel[Type::CANONICAL_FUNC]->setSelectedObject(type->getFunction(Type::CANONICAL_FUNC));
-			functions_sel[Type::SUBTYPE_DIFF_FUNC]->setSelectedObject(type->getFunction(Type::SUBTYPE_DIFF_FUNC));
+			functions_sel[Type::CanonicalFunc]->setSelectedObject(type->getFunction(Type::CanonicalFunc));
+			functions_sel[Type::SubtypeDiffFunc]->setSelectedObject(type->getFunction(Type::SubtypeDiffFunc));
 		}
 		else
 		{
@@ -279,7 +279,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			storage_cmb->setCurrentIndex(storage_cmb->findText(~type->getStorage()));
 			alignment_cmb->setCurrentIndex(alignment_cmb->findText(~type->getAlignment()));
 
-			for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 				functions_sel[i]->setSelectedObject(type->getFunction(i));
 		}
 	}
@@ -305,7 +305,7 @@ void TypeWidget::applyConfiguration(void)
 		//Configuring an enumaration type
 		if(enumeration_rb->isChecked())
 		{
-			type->setConfiguration(Type::ENUMERATION_TYPE);
+			type->setConfiguration(Type::EnumerationType);
 
 			count=enumerations_tab->getRowCount();
 			for(i=0; i < count; i++)
@@ -314,7 +314,7 @@ void TypeWidget::applyConfiguration(void)
 		//Configuration a composite type
 		else if(composite_rb->isChecked())
 		{
-			type->setConfiguration(Type::COMPOSITE_TYPE);
+			type->setConfiguration(Type::CompositeType);
 
 			count=attributes_tab->getRowCount();
 			for(i=0; i < count; i++)
@@ -323,17 +323,17 @@ void TypeWidget::applyConfiguration(void)
 		//Configuration a range type
 		else if(range_rb->isChecked())
 		{
-			type->setConfiguration(Type::RANGE_TYPE);
+			type->setConfiguration(Type::RangeType);
 			type->setCollation(collation_sel->getSelectedObject());
 			type->setSubtype(range_subtype->getPgSQLType());
 			type->setSubtypeOpClass(dynamic_cast<OperatorClass *>(opclass_sel->getSelectedObject()));
-			type->setFunction(Type::CANONICAL_FUNC, dynamic_cast<Function *>(functions_sel[Type::CANONICAL_FUNC]->getSelectedObject()));
-			type->setFunction(Type::SUBTYPE_DIFF_FUNC, dynamic_cast<Function *>(functions_sel[Type::SUBTYPE_DIFF_FUNC]->getSelectedObject()));
+			type->setFunction(Type::CanonicalFunc, dynamic_cast<Function *>(functions_sel[Type::CanonicalFunc]->getSelectedObject()));
+			type->setFunction(Type::SubtypeDiffFunc, dynamic_cast<Function *>(functions_sel[Type::SubtypeDiffFunc]->getSelectedObject()));
 		}
 		//Configuring a base type
 		else
 		{
-			type->setConfiguration(Type::BASE_TYPE);
+			type->setConfiguration(Type::BaseType);
 			type->setLikeType(like_type->getPgSQLType());
 			type->setElement(element_type->getPgSQLType());
 			type->setInternalLength(internal_len_sb->value());
@@ -349,7 +349,7 @@ void TypeWidget::applyConfiguration(void)
 			type->setAlignment(PgSQLType(alignment_cmb->currentText()));
 			type->setStorage(StorageType(storage_cmb->currentText()));
 
-			for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+			for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 				type->setFunction(i, dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
 		}
 

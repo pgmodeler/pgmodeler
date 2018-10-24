@@ -21,7 +21,7 @@
 Type::Type(void)
 {
 	obj_type=ObjType;
-	setConfiguration(ENUMERATION_TYPE);
+	setConfiguration(EnumerationType);
 
 	attributes[ParsersAttributes::BASE_TYPE]=QString();
 	attributes[ParsersAttributes::COMPOSITE_TYPE]=QString();
@@ -182,7 +182,7 @@ void Type::removeEnumerations(void)
 void Type::setConfiguration(unsigned conf)
 {
 	//Raises an error if the configuration type is invalid
-	if(conf < BASE_TYPE || conf > RANGE_TYPE)
+	if(conf < BaseType || conf > RangeType)
 		throw Exception(AsgInvalidTypeConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	type_attribs.clear();
@@ -223,12 +223,12 @@ void Type::setFunction(unsigned func_id, Function *func)
 
 	/* Raises an error if the user try to reference a function id which is incompatible according
 	to the type's configuraiton */
-	if((config==BASE_TYPE && func_id >= CANONICAL_FUNC) ||
-			(config==RANGE_TYPE && func_id <= ANALYZE_FUNC))
+	if((config==BaseType && func_id >= CanonicalFunc) ||
+			(config==RangeType && func_id <= AnalyzeFunc))
 		throw Exception(RefInvalidFunctionIdTypeConfig,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function isn't defined and the function id is INPUT or OUTPUT,
 		because this function is mandatory for base types */
-	else if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
+	else if(!func && (func_id==InputFunc || func_id==OutputFunc))
 		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjType)),
@@ -238,7 +238,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 	{
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
-		if((func_id!=CANONICAL_FUNC && func_id!=SUBTYPE_DIFF_FUNC) &&
+		if((func_id!=CanonicalFunc && func_id!=SubtypeDiffFunc) &&
 				func->getLanguage()->getName()!=~LanguageType(LanguageType::c) &&
 				func->getLanguage()->getName()!=~LanguageType(LanguageType::internal))
 			throw Exception(AsgFunctionInvalidLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -246,12 +246,12 @@ void Type::setFunction(unsigned func_id, Function *func)
 		/* Raises an error if the parameter count for INPUT and RECV functions
 		 is different from 1 or 3. */
 		else if((param_count!=1 && param_count!=3 &&
-				 (func_id==INPUT_FUNC || func_id==RECV_FUNC)) ||
-				(param_count!=2 && func_id==SUBTYPE_DIFF_FUNC) ||
+				 (func_id==InputFunc || func_id==RecvFunc)) ||
+				(param_count!=2 && func_id==SubtypeDiffFunc) ||
 				(param_count!=1 &&
-				 (func_id==OUTPUT_FUNC   || func_id==SEND_FUNC ||
-				  func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
-				  func_id==ANALYZE_FUNC  || func_id==CANONICAL_FUNC)))
+				 (func_id==OutputFunc   || func_id==SendFunc ||
+				  func_id==TpmodInFunc || func_id==TpmodOutFunc ||
+				  func_id==AnalyzeFunc  || func_id==CanonicalFunc)))
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(ObjType)),
@@ -263,15 +263,15 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 OUTPUT and TPMOD_OUT should return cstring.
 		 The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
 		 respectively. Raises an error if some of conditions above is not satisfied. */
-		else if((func_id==INPUT_FUNC && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==OUTPUT_FUNC && func->getReturnType()!=QString("cstring")) ||
-				(func_id==RECV_FUNC && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==SEND_FUNC && func->getReturnType()!=QString("bytea")) ||
-				(func_id==TPMOD_IN_FUNC && func->getReturnType()!=QString("integer")) ||
-				(func_id==TPMOD_OUT_FUNC && func->getReturnType()!=QString("cstring")) ||
-				(func_id==ANALYZE_FUNC && func->getReturnType()!=QString("boolean")) ||
-				(func_id==CANONICAL_FUNC && func->getReturnType()!=QString("\"any\"")) ||
-				(func_id==SUBTYPE_DIFF_FUNC && func->getReturnType()!=QString("double precision")))
+		else if((func_id==InputFunc && func->getReturnType()!=QString("\"any\"")) ||
+				(func_id==OutputFunc && func->getReturnType()!=QString("cstring")) ||
+				(func_id==RecvFunc && func->getReturnType()!=QString("\"any\"")) ||
+				(func_id==SendFunc && func->getReturnType()!=QString("bytea")) ||
+				(func_id==TpmodInFunc && func->getReturnType()!=QString("integer")) ||
+				(func_id==TpmodOutFunc && func->getReturnType()!=QString("cstring")) ||
+				(func_id==AnalyzeFunc && func->getReturnType()!=QString("boolean")) ||
+				(func_id==CanonicalFunc && func->getReturnType()!=QString("\"any\"")) ||
+				(func_id==SubtypeDiffFunc && func->getReturnType()!=QString("double precision")))
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 							.arg(this->getName())
 							.arg(BaseObject::getTypeName(ObjType)),
@@ -286,21 +286,21 @@ void Type::setFunction(unsigned func_id, Function *func)
 		 TPMOD_OUT function must have a parameter of type (integer).
 		 The ANALYZE function must have a parameter of type (internal).
 		 Raises an error if some of above conditions is not satisfied.*/
-		else if((func_id==INPUT_FUNC &&
+		else if((func_id==InputFunc &&
 				 (func->getParameter(0).getType()!=QString("cstring") ||
 				  (param_count==3 &&
 				   (func->getParameter(1).getType()!=QString("oid") ||
 					func->getParameter(2).getType()!=QString("integer"))))) ||
-				(func_id==RECV_FUNC &&
+				(func_id==RecvFunc &&
 				 (func->getParameter(0).getType()!=QString("internal") ||
 				  (param_count==3 &&
 				   (func->getParameter(1).getType()!=QString("oid") ||
 					func->getParameter(2).getType()!=QString("integer"))))) ||
-				((func_id==SEND_FUNC || func_id==CANONICAL_FUNC || func_id==OUTPUT_FUNC) && func->getParameter(0).getType()!=QString("\"any\"")) ||
-				(func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
-				(func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!=QString("integer")) ||
-				(func_id==ANALYZE_FUNC && func->getParameter(0).getType()!=QString("internal")) ||
-				(func_id==SUBTYPE_DIFF_FUNC &&
+				((func_id==SendFunc || func_id==CanonicalFunc || func_id==OutputFunc) && func->getParameter(0).getType()!=QString("\"any\"")) ||
+				(func_id==TpmodInFunc && *(func->getParameter(0).getType())!=QString("cstring[]")) ||
+				(func_id==TpmodOutFunc && func->getParameter(0).getType()!=QString("integer")) ||
+				(func_id==AnalyzeFunc && func->getParameter(0).getType()!=QString("internal")) ||
+				(func_id==SubtypeDiffFunc &&
 				 (func->getParameter(0).getType()!=this->subtype ||
 				  func->getParameter(1).getType()!=this->subtype)))
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParameters)
@@ -317,8 +317,8 @@ void Type::setFunction(unsigned func_id, Function *func)
 
 void Type::convertFunctionParameters(bool inverse_conv)
 {
-	unsigned i, conf_funcs[]={ INPUT_FUNC, RECV_FUNC,
-							   OUTPUT_FUNC, SEND_FUNC };
+	unsigned i, conf_funcs[]={ InputFunc, RecvFunc,
+							   OutputFunc, SendFunc };
 	Parameter param;
 	Function *func=nullptr;
 
@@ -328,7 +328,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 
 		if(func)
 		{
-			if(conf_funcs[i]==OUTPUT_FUNC || conf_funcs[i]==SEND_FUNC)
+			if(conf_funcs[i]==OutputFunc || conf_funcs[i]==SendFunc)
 			{
 				param=func->getParameter(0);
 				func->removeParameter(0);
@@ -344,7 +344,7 @@ void Type::convertFunctionParameters(bool inverse_conv)
 					func->addParameter(param);
 				}
 			}
-			else if(conf_funcs[i]==INPUT_FUNC || conf_funcs[i]==RECV_FUNC)
+			else if(conf_funcs[i]==InputFunc || conf_funcs[i]==RecvFunc)
 			{
 				if(!inverse_conv)
 					func->setReturnType(PgSQLType(this));
@@ -615,17 +615,17 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(config==ENUMERATION_TYPE)
+	if(config==EnumerationType)
 	{
 		attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::_TRUE_;
 		setEnumerationsAttribute(def_type);
 	}
-	else if(config==COMPOSITE_TYPE)
+	else if(config==CompositeType)
 	{
 		attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::_TRUE_;
 		setElementsAttribute(def_type);
 	}
-	else if(config==RANGE_TYPE)
+	else if(config==RangeType)
 	{
 		attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
 
@@ -676,7 +676,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	if(config==BASE_TYPE || config==RANGE_TYPE)
+	if(config==BaseType || config==RangeType)
 	{
 		unsigned i;
 		QString func_attrib[]={ParsersAttributes::INPUT_FUNC,
@@ -724,7 +724,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 
 		if(this->config==type->config)
 		{
-			if(config==ENUMERATION_TYPE)
+			if(config==EnumerationType)
 			{
 				for(QString enum_val : type->enumerations)
 				{
@@ -747,7 +747,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					prev_val=enum_val;
 				}
 			}
-			else if(config==COMPOSITE_TYPE)
+			else if(config==CompositeType)
 			{
 				//Removing type attributes
 				for(TypeAttribute attrib : this->type_attribs)

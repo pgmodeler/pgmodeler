@@ -106,20 +106,20 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static constexpr unsigned BASE_TYPE=10,
-		ENUMERATION_TYPE=11,
-		COMPOSITE_TYPE=12,
-		RANGE_TYPE=13;
+		static constexpr unsigned BaseType=10,
+		EnumerationType=11,
+		CompositeType=12,
+		RangeType=13;
 
-		static constexpr unsigned INPUT_FUNC=0,
-		OUTPUT_FUNC=1,
-		RECV_FUNC=2,
-		SEND_FUNC=3,
-		TPMOD_IN_FUNC=4,
-		TPMOD_OUT_FUNC=5,
-		ANALYZE_FUNC=6,
-		CANONICAL_FUNC=7,
-		SUBTYPE_DIFF_FUNC=8;
+		static constexpr unsigned InputFunc=0,
+		OutputFunc=1,
+		RecvFunc=2,
+		SendFunc=3,
+		TpmodInFunc=4,
+		TpmodOutFunc=5,
+		AnalyzeFunc=6,
+		CanonicalFunc=7,
+		SubtypeDiffFunc=8;
 
 		Type(void);
 

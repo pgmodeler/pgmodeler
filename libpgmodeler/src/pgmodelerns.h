@@ -29,10 +29,10 @@
 
 namespace PgModelerNs {
 	//! \brief Default char used as unescaped value start delimiter
-	static const QChar UNESC_VALUE_START='/';
+	static const QChar UnescValueStart='/';
 
 	//! \brief Default char used as unescaped value end delimiter
-	static const QChar	UNESC_VALUE_END='/';
+	static const QChar	UnescValueEnd='/';
 
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes

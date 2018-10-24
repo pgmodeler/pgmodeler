@@ -52,10 +52,10 @@ void GraphicalView::configureObject(void)
 	title->configureObject(view);
 
 	//Gets the reference count on SELECT part of the SQL definition
-	count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
+	count=view->getReferenceCount(Reference::SqlReferSelect);
 
 	if(count==0)
-		count=count1=view->getReferenceCount(Reference::SQL_VIEW_DEFINITION);
+		count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
@@ -65,9 +65,9 @@ void GraphicalView::configureObject(void)
 	for(i=0; i < count; i++)
 	{
 		if(count1==0)
-			ref=view->getReference(i, Reference::SQL_REFER_SELECT);
+			ref=view->getReference(i, Reference::SqlReferSelect);
 		else
-			ref=view->getReference(i, Reference::SQL_VIEW_DEFINITION);
+			ref=view->getReference(i, Reference::SqlViewDefinition);
 
 		//Reuses the subitem if it was allocated before
 		if(!subitems.isEmpty() && i < subitems.size())
@@ -194,7 +194,7 @@ void GraphicalView::configureObject(void)
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
-			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
+			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
 		}
 
 		bodies[idx]->setPen(pen);

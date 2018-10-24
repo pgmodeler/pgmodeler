@@ -529,8 +529,8 @@ void Constraint::addExcludeElement(const QString &expr, Operator *oper, Operator
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
 			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -562,8 +562,8 @@ void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass
 		elem.setOperatorClass(op_class);
 		elem.setOperator(oper);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(ExcludeElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::AscOrder, asc_order);
 
 		if(getExcludeElementIndex(elem) >= 0)
 			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);

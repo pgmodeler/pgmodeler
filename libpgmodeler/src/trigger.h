@@ -76,7 +76,7 @@ class Trigger: public TableObject{
 		void setArgumentAttribute(unsigned tipo_def);
 
 	public:
-		static constexpr unsigned OLD_TABLE_NAME=0, NEW_TABLE_NAME=1;
+		static constexpr unsigned OldTableName=0, NewTableName=1;
 
 		Trigger(void);
 

@@ -60,7 +60,7 @@ void Extension::setHandlesType(bool value)
 
 void Extension::setVersion(unsigned ver, const QString &value)
 {
-	if(ver > OLD_VERSION)
+	if(ver > OldVersion)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(versions[ver] != value);
@@ -74,7 +74,7 @@ bool Extension::handlesType(void)
 
 QString Extension::getVersion(unsigned ver)
 {
-	if(ver > OLD_VERSION)
+	if(ver > OldVersion)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(versions[ver]);
@@ -87,8 +87,8 @@ QString Extension::getCodeDefinition(unsigned def_type)
 
 	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
 	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::CUR_VERSION]=versions[CUR_VERSION];
-	attributes[ParsersAttributes::OLD_VERSION]=versions[OLD_VERSION];
+	attributes[ParsersAttributes::CUR_VERSION]=versions[CurVersion];
+	attributes[ParsersAttributes::OLD_VERSION]=versions[OldVersion];
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -105,9 +105,9 @@ QString Extension::getAlterDefinition(BaseObject *object)
 		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
 		attributes[ParsersAttributes::NEW_VERSION]=QString();
 
-		if(!this->versions[CUR_VERSION].isEmpty() && !ext->versions[CUR_VERSION].isEmpty() &&
-				this->versions[CUR_VERSION].isEmpty() < ext->versions[CUR_VERSION].isEmpty())
-			attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CUR_VERSION];
+		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&
+				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())
+			attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CurVersion];
 
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -138,8 +138,8 @@ void Extension::operator = (Extension &ext)
 	QString prev_name=this->getName(true);
 
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(ext);
-	this->versions[CUR_VERSION]=ext.versions[CUR_VERSION];
-	this->versions[OLD_VERSION]=ext.versions[OLD_VERSION];
+	this->versions[CurVersion]=ext.versions[CurVersion];
+	this->versions[OldVersion]=ext.versions[OldVersion];
 	this->handles_type=ext.handles_type;
 
 	if(this->handles_type)

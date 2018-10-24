@@ -141,10 +141,10 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 					<strong>%2</strong> = Reference (source) table name.<br/> \
 					<strong>%3</strong> = Receiver (destination) table name.<br/> \
 					<strong>%4</strong> = Generated table name. <em>(Only for n:n relationships)</em>")
-					.arg(Relationship::SRC_COL_TOKEN)
-					.arg(Relationship::SRC_TAB_TOKEN)
-					.arg(Relationship::DST_TAB_TOKEN)
-					.arg(Relationship::GEN_TAB_TOKEN));
+					.arg(Relationship::SrcColToken)
+					.arg(Relationship::SrcTabToken)
+					.arg(Relationship::DstTabToken)
+					.arg(Relationship::GenTabToken));
 		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
 		vlayout->addWidget(frame);
 
@@ -528,13 +528,13 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 		else
 		{
 			//Using the settings of the relatinship itself
-			pk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_PATTERN));
-			src_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_FK_PATTERN));
-			dst_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_FK_PATTERN));
-			uq_pattern_txt->setPlainText(rel->getNamePattern(Relationship::UQ_PATTERN));
-			src_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SRC_COL_PATTERN));
-			dst_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DST_COL_PATTERN));
-			pk_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PK_COL_PATTERN));
+			pk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PkPattern));
+			src_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SrcFkPattern));
+			dst_fk_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DstFkPattern));
+			uq_pattern_txt->setPlainText(rel->getNamePattern(Relationship::UqPattern));
+			src_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::SrcColPattern));
+			dst_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::DstColPattern));
+			pk_col_pattern_txt->setPlainText(rel->getNamePattern(Relationship::PkColPattern));
 		}
 	}
 }
@@ -813,7 +813,7 @@ void RelationshipWidget::duplicateObject(int curr_row, int new_row)
 		PgModelerNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, obj_list, false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, rel);
+		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, rel);
 
 		rel->addObject(dynamic_cast<TableObject *>(dup_object));
 		listObjects(obj_type);
@@ -913,7 +913,7 @@ void RelationshipWidget::removeObjects(void)
 		for(i=0; i < count; i++)
 		{
 			object=rel->getObject(0, obj_type);
-			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
+			op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
 			rel->removeObject(object);
 		}
 
@@ -958,7 +958,7 @@ void RelationshipWidget::removeObject(int row)
 			obj_type=ObjConstraint;
 
 		object=rel->getObject(row, obj_type);
-		op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, rel);
+		op_id=op_list->registerObject(object, Operation::ObjectRemoved, 0, rel);
 		rel->removeObject(object);
 
 		if(obj_type==ObjColumn)
@@ -1065,7 +1065,7 @@ void RelationshipWidget::applyConfiguration(void)
 		}
 
 		if(!this->new_object && this->object->getObjectType()==ObjRelationship)
-			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+			op_list->registerObject(this->object, Operation::ObjectModified);
 		else
 			registerNewObject();
 
@@ -1081,9 +1081,9 @@ void RelationshipWidget::applyConfiguration(void)
 			QPlainTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
 																				 src_fk_pattern_txt, dst_fk_pattern_txt,
 																				 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-			unsigned pattern_ids[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
-																Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
-																Relationship::PK_PATTERN, Relationship::UQ_PATTERN, Relationship::PK_COL_PATTERN };
+			unsigned pattern_ids[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
+																Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																Relationship::PkPattern, Relationship::UqPattern, Relationship::PkColPattern };
 
 			rel=dynamic_cast<Relationship *>(base_rel);
 

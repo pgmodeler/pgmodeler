@@ -20,7 +20,7 @@
 
 OperatorClassElement::OperatorClassElement(void)
 {
-	element_type=OPERATOR_ELEM;
+	element_type=OperatorElem;
 	function=nullptr;
 	_operator=nullptr;
 	strategy_number=0;
@@ -44,7 +44,7 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 	//Configure the attributes that belongs to the element type
 	this->function=func;
 	this->strategy_number=stg_number;
-	this->element_type=FUNCTION_ELEM;
+	this->element_type=FunctionElem;
 }
 
 void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
@@ -63,12 +63,12 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
 	//Configure the attributes that belongs to the element type
 	this->_operator=oper;
 	this->strategy_number=stg_number;
-	this->element_type=OPERATOR_ELEM;
+	this->element_type=OperatorElem;
 }
 
 void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family)
 {
-	if(this->element_type==OPERATOR_ELEM)
+	if(this->element_type==OperatorElem)
 	{
 		if(op_family && op_family->getIndexingType()!=IndexingType::btree)
 			throw Exception(AsgInvalidOpFamilyOpClassElem,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -87,7 +87,7 @@ void OperatorClassElement::setStorage(PgSQLType storage)
 
 	//Configure the attributes that belongs to the element type
 	this->storage=storage;
-	this->element_type=STORAGE_ELEM;
+	this->element_type=StorageElem;
 }
 
 unsigned OperatorClassElement::getElementType(void)
@@ -134,7 +134,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::OP_FAMILY]=QString();
 	attributes[ParsersAttributes::DEFINITION]=QString();
 
-	if(element_type==FUNCTION_ELEM && function && strategy_number > 0)
+	if(element_type==FunctionElem && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
 		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
@@ -145,7 +145,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		else
 			attributes[ParsersAttributes::DEFINITION]=function->getCodeDefinition(def_type,true);
 	}
-	else if(element_type==OPERATOR_ELEM && _operator && strategy_number > 0)
+	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
 		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
@@ -164,7 +164,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 				attributes[ParsersAttributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
 		}
 	}
-	else if(element_type==STORAGE_ELEM && storage!=PgSQLType::null)
+	else if(element_type==StorageElem && storage!=PgSQLType::null)
 	{
 		//STORAGE storage_type
 		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;

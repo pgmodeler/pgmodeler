@@ -266,8 +266,8 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
 
-		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OLD_TABLE_NAME));
-		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NEW_TABLE_NAME));
+		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OldTableName));
+		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NewTableName));
 	}
 
 	updateColumnsCombo();
@@ -296,8 +296,8 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->setEvent(EventType::on_update, update_chk->isChecked());
 		trigger->setEvent(EventType::on_delete, delete_chk->isChecked());
 		trigger->setEvent(EventType::on_truncate, truncate_chk->isChecked());
-		trigger->setTransitionTableName(Trigger::OLD_TABLE_NAME, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
-		trigger->setTransitionTableName(Trigger::NEW_TABLE_NAME, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
+		trigger->setTransitionTableName(Trigger::OldTableName, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
+		trigger->setTransitionTableName(Trigger::NewTableName, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
 		trigger->removeArguments();
 		trigger->removeColumns();
 

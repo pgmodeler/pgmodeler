@@ -98,12 +98,12 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 
 	if(elem->isSortingEnabled())
 	{
-		if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
+		if(elem->getSortingAttribute(IndexElement::AscOrder))
 			elements_tab->setCellText(trUtf8("Ascending"), elem_idx, 5);
 		else
 			elements_tab->setCellText(trUtf8("Descending"), elem_idx, 5);
 
-		if(elem->getSortingAttribute(IndexElement::NULLS_FIRST))
+		if(elem->getSortingAttribute(IndexElement::NullsFirst))
 			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 6);
 		else
 			elements_tab->setCellText(trUtf8("No"), elem_idx, 6);

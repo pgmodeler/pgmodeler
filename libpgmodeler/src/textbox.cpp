@@ -42,13 +42,13 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 
-		if(text_attributes[ITALIC_TXT])
+		if(text_attributes[ItalicText])
 			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
 
-		if(text_attributes[BOLD_TXT])
+		if(text_attributes[BoldText])
 			attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
 
-		if(text_attributes[UNDERLINE_TXT])
+		if(text_attributes[UnderlineText])
 			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
 
 		if(text_color.name()!=QString("#000000"))
@@ -73,7 +73,7 @@ void Textbox::operator = (Textbox &txtbox)
 
 void Textbox::setTextAttribute(unsigned attrib, bool value)
 {
-	if(attrib > UNDERLINE_TXT)
+	if(attrib > UnderlineText)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	text_attributes[attrib]=value;
@@ -91,7 +91,7 @@ QColor Textbox::getTextColor(void)
 
 bool Textbox::getTextAttribute(unsigned attrib)
 {
-	if(attrib > UNDERLINE_TXT)
+	if(attrib > UnderlineText)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(text_attributes[attrib]);

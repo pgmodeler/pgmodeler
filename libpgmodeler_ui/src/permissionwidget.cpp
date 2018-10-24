@@ -73,7 +73,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	grid->setContentsMargins(2,2,2,2);
 	permissions_gb->setLayout(grid);
 
-	for(i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
+	for(i=Permission::PrivSelect; i<=Permission::PrivUsage; i++)
 	{
 		check=new QCheckBox;
 		check->setText(privs[i].toUpper());
@@ -140,7 +140,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			//Gets the checkboxes that represents the privilege and the GRANT OPTION
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
@@ -180,7 +180,7 @@ void PermissionWidget::disableGrantOptions(void)
 {
 	QCheckBox *check=nullptr;
 
-	for(unsigned i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
+	for(unsigned i=Permission::PrivSelect; i<=Permission::PrivUsage; i++)
 	{
 		check=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(i,1));
 		check->setEnabled(roles_tab->getRowCount() > 0);
@@ -375,7 +375,7 @@ void PermissionWidget::editPermission(void)
 
 		roles_tab->blockSignals(false);
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
@@ -423,7 +423,7 @@ void PermissionWidget::configurePermission(Permission *perm)
 		for(i=0; i < count; i++)
 			perm->addRole(reinterpret_cast<Role *>(roles_tab->getRowData(i).value<void *>()));
 
-		for(priv=Permission::PRIV_SELECT; priv <= Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv <= Permission::PrivUsage; priv++)
 		{
 			if(!privileges_tbw->isRowHidden(priv))
 			{
@@ -442,7 +442,7 @@ void PermissionWidget::cancelOperation(void)
 
 	permission=nullptr;
 
-	for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+	for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 	{
 		chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 		chk->setChecked(false);
@@ -469,7 +469,7 @@ void PermissionWidget::checkPrivilege(void)
 
 		chk=dynamic_cast<QCheckBox *>(obj_sender);
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			chk_priv=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk_gop=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
@@ -496,7 +496,7 @@ void PermissionWidget::enableEditButtons(void)
 	unsigned priv;
 	QCheckBox *chk=nullptr, *chk1=nullptr;
 
-	for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE && !checked_privs; priv++)
+	for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage && !checked_privs; priv++)
 	{
 		chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 		chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));

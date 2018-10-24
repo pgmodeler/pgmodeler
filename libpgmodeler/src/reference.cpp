@@ -101,9 +101,9 @@ QString Reference::getExpression(void)
 unsigned Reference::getReferenceType(void)
 {
 	if(expression.isEmpty())
-		return(REFER_COLUMN);
+		return(ReferColumn);
 	else
-		return(REFER_EXPRESSION);
+		return(ReferExpression);
 }
 
 void Reference::setReferenceAlias(const QString &alias)
@@ -127,10 +127,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	refer_type=getReferenceType();
 
 	//Case the reference is between the SELECT-FROM keywords
-	if(sql_type==SQL_REFER_SELECT)
+	if(sql_type==SqlReferSelect)
 	{
 		//Case the reference is linked to a column
-		if(refer_type==REFER_COLUMN)
+		if(refer_type==ReferColumn)
 		{
 			/* Generated SQL definition:
 			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
@@ -166,14 +166,14 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
-	else if(sql_type==SQL_REFER_FROM)
+	else if(sql_type==SqlReferFrom)
 	{
 		/* Case the reference is linked to a column only the table name is used.
 		 For expression the complete code is used thus the generated code is:
 
 		 ... FROM {TABLE_NAME} [AS ALIAS] or
 		 ... FROM {EXPRESSION} */
-		if(refer_type==REFER_COLUMN)
+		if(refer_type==ReferColumn)
 		{
 			sql_def+=table->getName(true);
 
@@ -189,7 +189,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	else
 	{
 		//Case the column is allocated
-		if(refer_type==REFER_COLUMN && column)
+		if(refer_type==ReferColumn && column)
 		{
 			/* Generated SQL definition:
 			... WHERE {TABLE_NAME | ALIAS}.{COLUMN_NAME} */
@@ -204,7 +204,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			if(column)
 				sql_def+=column->getName(true);
 		}
-		else if(refer_type==REFER_EXPRESSION)
+		else if(refer_type==ReferExpression)
 			sql_def=expression;
 	}
 
@@ -242,7 +242,7 @@ bool Reference::operator == (Reference &refer)
 
 	if(ref_type==refer.getReferenceType())
 	{
-		if(ref_type==REFER_COLUMN)
+		if(ref_type==ReferColumn)
 		{
 			return(this->table==refer.table &&
 				   this->column==refer.column &&

@@ -60,9 +60,9 @@ class OperatorClassElement {
 
 	public:
 		//! \brief Constants used to reference the element types
-		static constexpr unsigned OPERATOR_ELEM=0,
-		FUNCTION_ELEM=1,
-		STORAGE_ELEM=2;
+		static constexpr unsigned OperatorElem=0,
+		FunctionElem=1,
+		StorageElem=2;
 
 		OperatorClassElement(void);
 		virtual ~OperatorClassElement(void){}

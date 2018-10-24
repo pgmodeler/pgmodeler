@@ -659,7 +659,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		{
 			type=dynamic_cast<Type *>(diff.getObject());
 
-			if(type && type->getConfiguration()==Type::BASE_TYPE)
+			if(type && type->getConfiguration()==Type::BaseType)
 			{
 				type->convertFunctionParameters();
 				types.push_back(type);

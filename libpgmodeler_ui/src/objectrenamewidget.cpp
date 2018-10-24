@@ -95,7 +95,7 @@ void ObjectRenameWidget::applyRenaming(void)
 			if(obj_type!=ObjDatabase)
 			{
 				//Register the object on operations list before the modification
-				op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
+				op_list->registerObject(object, Operation::ObjectModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 
 				//Format the object name to check if it will have a conflicting name
 				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==ObjOperator);

@@ -81,16 +81,16 @@ void TagWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FILL_COLOR1);
-		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FILL_COLOR1);
+		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FillColor1);
+		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FillColor1);
 
 		for(auto &attr : attribs)
 		{
 			tag->setElementColors(attr,
 								  QString("%1,%2,%3")
-								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR1).name())
-								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR2).name())
-								  .arg(color_pickers[attr]->getColor(Tag::BORDER_COLOR).name()));
+								  .arg(color_pickers[attr]->getColor(Tag::FillColor1).name())
+								  .arg(color_pickers[attr]->getColor(Tag::FillColor2).name())
+								  .arg(color_pickers[attr]->getColor(Tag::BorderColor).name()));
 		}
 
 		model->getObjectReferences(tag, tagged_tabs);

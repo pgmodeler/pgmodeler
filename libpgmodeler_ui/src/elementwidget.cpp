@@ -116,12 +116,12 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 			elem_expr_txt->setPlainText(elem->getExpression());
 		}
 
-		if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
+		if(elem->getSortingAttribute(IndexElement::AscOrder))
 			ascending_rb->setChecked(true);
 		else
 			descending_rb->setChecked(true);
 
-		nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
+		nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NullsFirst));
 		sorting_chk->setChecked(elem->isSortingEnabled());
 		op_class_sel->setSelectedObject(elem->getOperatorClass());
 		collation_sel->setSelectedObject(elem->getCollation());
@@ -195,8 +195,8 @@ Element *ElementWidget::getElement(void)
 void ElementWidget::applyConfiguration(void)
 {
 	element->setSortingEnabled(sorting_chk->isChecked());
-	element->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
-	element->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
+	element->setSortingAttribute(IndexElement::NullsFirst, nulls_first_chk->isChecked());
+	element->setSortingAttribute(IndexElement::AscOrder, ascending_rb->isChecked());
 	element->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 	element->setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
 	element->setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()));

@@ -631,7 +631,7 @@ void TableWidget::removeObjects(void)
 			if(!object->isProtected() &&
 					!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
-				op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
+				op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
 				table->removeObject(object);
 			}
 			else
@@ -683,7 +683,7 @@ void TableWidget::removeObject(int row)
 		if(!object->isProtected() &&
 				!dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			op_id=op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+			op_id=op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
 			table->removeObject(object);
 			table->setModified(true);
 		}
@@ -733,7 +733,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 		PgModelerNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *table->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
 
 		table->addObject(dup_object);
 		table->setModified(true);
@@ -814,7 +814,7 @@ void TableWidget::applyConfiguration(void)
 		PartitioningType part_type;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+			op_list->registerObject(this->object, Operation::ObjectModified);
 		else
 			registerNewObject();
 
@@ -867,14 +867,14 @@ void TableWidget::applyConfiguration(void)
 					pk->addColumn(col, Constraint::SourceCols);
 
 				table->addConstraint(pk);
-				op_list->registerObject(pk, Operation::OBJECT_CREATED, -1, table);
+				op_list->registerObject(pk, Operation::ObjectCreated, -1, table);
 			}
 			else if(!pk->isAddedByRelationship())
 			{
 			  vector<Column *> orig_pk_cols = pk->getColumns(Constraint::SourceCols);
 
 				//If the table owns a pk we only update the columns
-				op_list->registerObject(pk, Operation::OBJECT_MODIFIED, -1, table);
+				op_list->registerObject(pk, Operation::ObjectModified, -1, table);
 				pk->removeColumns();
 
 				/* Adding the original primary key columns if they also exists in the
@@ -894,7 +894,7 @@ void TableWidget::applyConfiguration(void)
 		else if(pk_cols.empty() && pk && !pk->isAddedByRelationship())
 		{
 			//Removing the primary key from the table when no column is checked as pk
-			op_list->registerObject(pk, Operation::OBJECT_REMOVED, -1, table);
+			op_list->registerObject(pk, Operation::ObjectRemoved, -1, table);
 			table->removeObject(pk);
 		}
 

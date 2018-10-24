@@ -93,9 +93,9 @@ void TextboxView::__configureObject(void)
 		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(ObjTextbox)));
 
 		font=fmt.font();
-		font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
-		font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
-		font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
+		font.setItalic(txtbox->getTextAttribute(Textbox::ItalicText));
+		font.setBold(txtbox->getTextAttribute(Textbox::BoldText));
+		font.setUnderline(txtbox->getTextAttribute(Textbox::UnderlineText));
 		font.setPointSizeF(txtbox->getFontSize());
 
 		text->setFont(font);

@@ -113,10 +113,10 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 		else
 			fill_factor_sb->setValue(90);
 
-		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
-		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
-		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
-		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
+		concurrent_chk->setChecked(index->getIndexAttribute(Index::Concurrent));
+		fast_update_chk->setChecked(index->getIndexAttribute(Index::FastUpdate));
+		unique_chk->setChecked(index->getIndexAttribute(Index::Unique));
+		buffering_chk->setChecked(index->getIndexAttribute(Index::Buffering));
 		predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
@@ -139,10 +139,10 @@ void IndexWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
-		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
-		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
-		index->setIndexAttribute(Index::BUFFERING, buffering_chk->isChecked());
+		index->setIndexAttribute(Index::FastUpdate, fast_update_chk->isChecked());
+		index->setIndexAttribute(Index::Concurrent, concurrent_chk->isChecked());
+		index->setIndexAttribute(Index::Unique, unique_chk->isChecked());
+		index->setIndexAttribute(Index::Buffering, buffering_chk->isChecked());
 		index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 

@@ -30,7 +30,7 @@ OperationList::OperationList(DatabaseModel *model)
 	this->model=model;
 	xmlparser=model->getXMLParser();
 	current_index=0;
-	next_op_chain=Operation::NO_CHAIN;
+	next_op_chain=Operation::NoChain;
 	ignore_chain=false;
 	operations.reserve(max_size);
 }
@@ -59,12 +59,12 @@ void OperationList::startOperationChain(void)
 {
 	/* If the chaining is started and the user try it initializes
 		again, the earlier chaining is finished */
-	if(next_op_chain!=Operation::NO_CHAIN)
+	if(next_op_chain!=Operation::NoChain)
 		finishOperationChain();
 
 	/* The next operation inserted on the list will be the start
 		of the chaining */
-	next_op_chain=Operation::CHAIN_START;
+	next_op_chain=Operation::ChainStart;
 }
 
 void OperationList::finishOperationChain(void)
@@ -72,11 +72,11 @@ void OperationList::finishOperationChain(void)
 	/* If the chain is not ignored indicates that the next
 		element of the list no longer will be part of chaining */
 	if(!ignore_chain)
-		next_op_chain=Operation::NO_CHAIN;
+		next_op_chain=Operation::NoChain;
 	else if(ignore_chain)
 		/* If the chain is canceled indicates that the next element
 		 of the list still part of the chaining */
-		next_op_chain=Operation::CHAIN_MIDDLE;
+		next_op_chain=Operation::ChainMiddle;
 
 	if(operations.size() > 0 && !ignore_chain)
 	{
@@ -84,15 +84,15 @@ void OperationList::finishOperationChain(void)
 
 		/* Marks the last operatin as being the end of chaining in case it is
 		 on the middle of chain */
-		if(operations[idx]->getChainType()==Operation::CHAIN_MIDDLE)
-			operations[idx]->setChainType(Operation::CHAIN_END);
+		if(operations[idx]->getChainType()==Operation::ChainMiddle)
+			operations[idx]->setChainType(Operation::ChainEnd);
 
 		/* If the last operation is marked as CHAIN_START indicates that
 		 the chaining was open but only one operation is recorded
 		 and thus the operation is marked as NO_CHAIN because as it is
 		 only one operation there is no need to treat it as chaining */
-		else if(operations[idx]->getChainType()==Operation::CHAIN_START)
-			operations[idx]->setChainType(Operation::NO_CHAIN);
+		else if(operations[idx]->getChainType()==Operation::ChainStart)
+			operations[idx]->setChainType(Operation::NoChain);
 	}
 }
 
@@ -103,8 +103,8 @@ void OperationList::ignoreOperationChain(bool value)
 
 bool OperationList::isOperationChainStarted(void)
 {
-	return(next_op_chain==Operation::CHAIN_START ||
-		   next_op_chain==Operation::CHAIN_MIDDLE);
+	return(next_op_chain==Operation::ChainStart ||
+		   next_op_chain==Operation::ChainMiddle);
 }
 
 bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
@@ -159,8 +159,8 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 		obj_type=object->getObjectType();
 
 		//Stores a copy of the object if its about to be moved or modified
-		if(op_type==Operation::OBJECT_MODIFIED ||
-				op_type==Operation::OBJECT_MOVED)
+		if(op_type==Operation::ObjectModified ||
+				op_type==Operation::ObjectMoved)
 		{
 			BaseObject *copy_obj=nullptr;
 
@@ -398,15 +398,15 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		operation->setPoolObject(object_pool.back());
 
 		//Stores the object's permission befor its removal
-		if(op_type==Operation::OBJECT_REMOVED)
+		if(op_type==Operation::ObjectRemoved)
 		{
 			vector<Permission *> perms;
 			model->getPermissions(object, perms);
 			operation->setPermissions(perms);
 		}
 
-		if(next_op_chain==Operation::CHAIN_START)
-			next_op_chain=Operation::CHAIN_MIDDLE;
+		if(next_op_chain==Operation::ChainStart)
+			next_op_chain=Operation::ChainMiddle;
 
 		/*  Performing specific operations according to the type of object.
 		 If the object has a parent object, it must be discovered
@@ -423,7 +423,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				(obj_type==ObjIndex && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
 				(obj_type==ObjConstraint && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
 			{
-				if(op_type==Operation::OBJECT_REMOVED)
+				if(op_type==Operation::ObjectRemoved)
 					tab_obj->setParentTable(parent_tab);
 
 				if(tab_obj->getObjectType()==ObjConstraint)
@@ -532,21 +532,21 @@ unsigned OperationList::getChainSize(void)
 
 	//Checks if the current operations is chained
 	if(!operations.empty() &&
-			operations[i]->getChainType()!=Operation::NO_CHAIN)
+			operations[i]->getChainType()!=Operation::NoChain)
 	{
-		unsigned chain_type=Operation::NO_CHAIN;
+		unsigned chain_type=Operation::NoChain;
 		int inc=0;
 
 		//Case the operation is the end of a chain  runs the list in reverse order (from end to start)
-		if(operations[i]->getChainType()==Operation::CHAIN_END)
+		if(operations[i]->getChainType()==Operation::ChainEnd)
 		{
-			chain_type=Operation::CHAIN_START;
+			chain_type=Operation::ChainStart;
 			inc=-1;
 		}
 		//Case the operation is the start of a chain  runs the list in normal order (from start to end)
-		else if(operations[i]->getChainType()==Operation::CHAIN_START)
+		else if(operations[i]->getChainType()==Operation::ChainStart)
 		{
-			chain_type=Operation::CHAIN_END;
+			chain_type=Operation::ChainEnd;
 			inc=1;
 		}
 
@@ -586,14 +586,14 @@ void OperationList::undoOperation(void)
 			and active chaining flag is cleared marks the flag to start
 			the execution several operations at once */
 			if(!ignore_chain && !chain_active &&
-					operation->getChainType()!=Operation::NO_CHAIN)
+					operation->getChainType()!=Operation::NoChain)
 				chain_active=true;
 
 			/* If the chaining is active and the current operation is not part of
 			chain, aborts execution of the operation */
 			else if(chain_active &&
-					(operation->getChainType()==Operation::CHAIN_END ||
-					 operation->getChainType()==Operation::NO_CHAIN))
+					(operation->getChainType()==Operation::ChainEnd ||
+					 operation->getChainType()==Operation::NoChain))
 				break;
 
 			try
@@ -615,7 +615,7 @@ void OperationList::undoOperation(void)
 		/* Performs the operations while the current operation is part of chain
 		 or the undo option is available */
 		while(!ignore_chain && isUndoAvailable() &&
-			  operation->getChainType()!=Operation::NO_CHAIN);
+			  operation->getChainType()!=Operation::NoChain);
 
 		if(error.getErrorType()!=Custom)
 			throw Exception(UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
@@ -642,14 +642,14 @@ void OperationList::redoOperation(void)
 			and active chaining flag is cleared marks the flag to start
 			the execution several operations at once */
 			if(!ignore_chain && !chain_active &&
-					operation->getChainType()!=Operation::NO_CHAIN)
+					operation->getChainType()!=Operation::NoChain)
 				chain_active=true;
 
 			/* If the chaining is active and the current operation is not part of
 			chain or it is at the start of chain, aborts execution of the operation */
 			else if(chain_active &&
-					(operation->getChainType()==Operation::CHAIN_START ||
-					 operation->getChainType()==Operation::NO_CHAIN))
+					(operation->getChainType()==Operation::ChainStart ||
+					 operation->getChainType()==Operation::NoChain))
 				break;
 
 			try
@@ -670,7 +670,7 @@ void OperationList::redoOperation(void)
 		/* Performs the operations while the current operation is part of chain
 		 or the redo option is available */
 		while(!ignore_chain && isRedoAvailable() &&
-			  operation->getChainType()!=Operation::NO_CHAIN);
+			  operation->getChainType()!=Operation::NoChain);
 
 		if(error.getErrorType()!=Custom)
 			throw Exception(UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
@@ -687,7 +687,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		BaseTable *parent_tab=nullptr;
 		Relationship *parent_rel=nullptr;
 		QString xml_def;
-		unsigned op_type=Operation::NO_OPERATION;
+		unsigned op_type=Operation::NoOperation;
 		int obj_idx=-1;
 
 		object=oper->getPoolObject();
@@ -713,10 +713,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		/* If the XML definition of object is set indicates that it is referencing a column
 			included by relationship (special object) */
 		if(!xml_def.isEmpty() &&
-				((op_type==Operation::OBJECT_REMOVED && !redo) ||
-				 (op_type==Operation::OBJECT_CREATED && redo) ||
-				 (op_type==Operation::OBJECT_MODIFIED ||
-				  op_type==Operation::OBJECT_MOVED)))
+				((op_type==Operation::ObjectRemoved && !redo) ||
+				 (op_type==Operation::ObjectCreated && redo) ||
+				 (op_type==Operation::ObjectModified ||
+				  op_type==Operation::ObjectMoved)))
 		{
 			//Resets the XML parser and loads the buffer xml from the operation
 			xmlparser->restartParser();
@@ -738,8 +738,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 		/* If the operation is a modified/moved object, the object copy
 			stored in the pool will be restored */
-		if(op_type==Operation::OBJECT_MODIFIED ||
-				op_type==Operation::OBJECT_MOVED)
+		if(op_type==Operation::ObjectModified ||
+				op_type==Operation::ObjectMoved)
 		{
 			if(obj_type==ObjRelationship)
 			{
@@ -788,8 +788,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if the object was previously created and wants to redo the operation
 			the existing pool object will be inserted into table or in your relationship
 			on its original index */
-		else if((op_type==Operation::OBJECT_REMOVED && !redo) ||
-				(op_type==Operation::OBJECT_CREATED && redo))
+		else if((op_type==Operation::ObjectRemoved && !redo) ||
+				(op_type==Operation::ObjectCreated && redo))
 		{
 			if(aux_obj)
 				PgModelerNs::copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
@@ -809,14 +809,14 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 			model->addObject(object, obj_idx);
 
-			if(op_type==Operation::OBJECT_REMOVED)
+			if(op_type==Operation::ObjectRemoved)
 				model->addPermissions(oper->getPermissions());
 		}
 		/* If the operation is a previously created object or if the object
 			was removed and wants to redo the operation it'll be
 			excluded from the table or relationship */
-		else if((op_type==Operation::OBJECT_CREATED && !redo) ||
-				(op_type==Operation::OBJECT_REMOVED && redo))
+		else if((op_type==Operation::ObjectCreated && !redo) ||
+				(op_type==Operation::ObjectRemoved && redo))
 		{
 			if(parent_tab)
 				parent_tab->removeObject(object);
@@ -864,30 +864,30 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		{
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
-			if(op_type==Operation::OBJECT_MODIFIED ||
-					op_type==Operation::OBJECT_MOVED)
+			if(op_type==Operation::ObjectModified ||
+					op_type==Operation::ObjectMoved)
 				graph_obj->setModified(true);
 
 			//Case the object is a view is necessary to update the table-view relationships on the model
-			if(obj_type==ObjView && op_type==Operation::OBJECT_MODIFIED)
+			if(obj_type==ObjView && op_type==Operation::ObjectModified)
 				model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
 			else if((obj_type==ObjRelationship ||
 					 (obj_type==ObjTable && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
-					op_type==Operation::OBJECT_MODIFIED)
+					op_type==Operation::ObjectModified)
 				model->validateRelationships();
 
 			//If a object had its schema restored is necessary to update the envolved schemas
 			if((obj_type==ObjTable || obj_type==ObjView) &&
-					((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::OBJECT_MODIFIED) ||
-					 op_type==Operation::OBJECT_MOVED))
+					((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::ObjectModified) ||
+					 op_type==Operation::ObjectMoved))
 			{
 				dynamic_cast<BaseGraphicObject *>(graph_obj->getSchema())->setModified(true);
 
 				if(bkp_obj)
-					dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(op_type==Operation::OBJECT_MODIFIED);
+					dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(op_type==Operation::ObjectModified);
 			}
 		}
-		else if(op_type==Operation::OBJECT_MODIFIED)
+		else if(op_type==Operation::ObjectModified)
 		{
 			if(obj_type==ObjSchema)
 			{
@@ -908,7 +908,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		}
 
 		//Case the object is a type update the tables that are referencing it
-		if(op_type==Operation::OBJECT_MODIFIED &&
+		if(op_type==Operation::ObjectModified &&
 				(object->getObjectType()==ObjType || object->getObjectType()==ObjDomain ||
 				 object->getObjectType()==ObjTable || object->getObjectType()==ObjView ||
 				 object->getObjectType()==ObjExtension))
@@ -952,8 +952,8 @@ void OperationList::removeLastOperation(void)
 					is removed the iteration is stopped.*/
 			end=(ignore_chain ||
 				 (!ignore_chain &&
-				  (oper->getChainType()==Operation::NO_CHAIN ||
-				   oper->getChainType()==Operation::CHAIN_START)));
+				  (oper->getChainType()==Operation::NoChain ||
+				   oper->getChainType()==Operation::ChainStart)));
 
 			itr++; oper_idx--;
 		}
@@ -961,8 +961,8 @@ void OperationList::removeLastOperation(void)
 		/* If the head of chaining is removed (CHAIN_START)
 		 marks that the next element in the list is the new
 		 start of chain */
-		if(oper && oper->getChainType()==Operation::CHAIN_START)
-			next_op_chain=Operation::CHAIN_START;
+		if(oper && oper->getChainType()==Operation::ChainStart)
+			next_op_chain=Operation::ChainStart;
 
 		//Erasing the excluded operations
 		for(int i=operations.size()-1; i > oper_idx ; i--)

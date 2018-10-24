@@ -209,9 +209,9 @@ void BaseObjectWidget::startConfiguration(void)
 				this->object->getObjectType()!=ObjDatabase)
 		{
 			if(this->table)
-				op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->table);
 			else
-				op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->relationship);
 			new_object=false;
 		}
 		//! \brief If there is need to allocate the object

@@ -338,25 +338,25 @@ void TableObjectView::configureObject(void)
 			}
 			else if(index)
 			{
-				if(index->getIndexAttribute(Index::UNIQUE))
+				if(index->getIndexAttribute(Index::Unique))
 				{
 					str_constr+=QString("u");
 					atribs_tip += QString("unique") + QString(", ");
 				}
 
-				if(index->getIndexAttribute(Index::CONCURRENT))
+				if(index->getIndexAttribute(Index::Concurrent))
 				{
 					str_constr+=QString("c");
 					atribs_tip += QString("concurrent") + QString(", ");
 				}
 
-				if(index->getIndexAttribute(Index::FAST_UPDATE))
+				if(index->getIndexAttribute(Index::FastUpdate))
 				{
 					str_constr+=QString("f");
 					atribs_tip += QString("fast updated");
 				}
 
-				if(index->getIndexAttribute(Index::BUFFERING))
+				if(index->getIndexAttribute(Index::Buffering))
 				{
 					str_constr+=QString("b");
 					atribs_tip += QString("buffering");
@@ -444,7 +444,7 @@ void TableObjectView::configureObject(Reference reference)
 	descriptor->setPos(HorizSpacing, 1);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
-	if(reference.getReferenceType()==Reference::REFER_COLUMN)
+	if(reference.getReferenceType()==Reference::ReferColumn)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
@@ -498,9 +498,9 @@ void TableObjectView::configureObject(Reference reference)
 	//Configures a label for the alias (if there is one)
 	if(!compact_view &&
 		 ((reference.getColumn() && !reference.getColumnAlias().isEmpty()) ||
-			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::REFER_EXPRESSION)))
+			(!reference.getAlias().isEmpty() && reference.getReferenceType()==Reference::ReferExpression)))
 	{
-		if(reference.getReferenceType()==Reference::REFER_EXPRESSION)
+		if(reference.getReferenceType()==Reference::ReferExpression)
 			str_aux=reference.getAlias();
 		else
 			str_aux=reference.getColumnAlias();

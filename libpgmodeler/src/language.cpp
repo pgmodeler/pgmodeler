@@ -23,7 +23,7 @@ Language::Language(void)
 	obj_type=ObjLanguage;
 	is_trusted=false;
 
-	for(unsigned i=VALIDATOR_FUNC; i <= INLINE_FUNC; i++)
+	for(unsigned i=ValidatorFunc; i <= InlineFunc; i++)
 		functions[i]=nullptr;
 
 	attributes[ParsersAttributes::TRUSTED]=QString();
@@ -58,20 +58,20 @@ void  Language::setFunction(Function *func, unsigned func_type)
 			(func &&
 			 /* The handler function must be written in C and have
 								  'language_handler' as return type */
-			 ((func_type==HANDLER_FUNC &&
+			 ((func_type==HandlerFunc &&
 			   func->getReturnType()==QString("language_handler") &&
 			   func->getParameterCount()==0 &&
 			   func->getLanguage()->getName()==(~lang)) ||
 			  /* The validator function must be written in C and return 'void' also
 									   must have only one parameter of the type 'oid' */
-			  (func_type==VALIDATOR_FUNC &&
+			  (func_type==ValidatorFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("oid") &&
 			   func->getLanguage()->getName()==(~lang)) ||
 			  /* The inline function must be written in C and return 'void' also
 									   must have only one parameter of the type 'internal' */
-			  (func_type==INLINE_FUNC &&
+			  (func_type==InlineFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("internal") &&
@@ -81,8 +81,8 @@ void  Language::setFunction(Function *func, unsigned func_type)
 		this->functions[func_type]=func;
 	}
 	//Raises an error in case the function return type doesn't matches the required by each rule
-	else if((func_type==HANDLER_FUNC && func->getReturnType()!=QString("language_handler")) ||
-			((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!=QString("void")))
+	else if((func_type==HandlerFunc && func->getReturnType()!=QString("language_handler")) ||
+			((func_type==ValidatorFunc || func_type==InlineFunc) && func->getReturnType()!=QString("void")))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
 						.arg(BaseObject::getTypeName(ObjLanguage)),
@@ -94,7 +94,7 @@ void  Language::setFunction(Function *func, unsigned func_type)
 
 Function * Language::getFunction(unsigned func_type)
 {
-	if(func_type > INLINE_FUNC)
+	if(func_type > InlineFunc)
 		throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_type]);
@@ -123,7 +123,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : QString());
 
 	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
-		reduced_form=(!functions[VALIDATOR_FUNC] && !functions[HANDLER_FUNC] && !functions[INLINE_FUNC] && !this->getOwner());
+		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());
 
 	for(i=0; i < 3; i++)
 	{

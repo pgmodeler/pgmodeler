@@ -84,18 +84,18 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static constexpr unsigned PRIV_SELECT=0,
-		PRIV_INSERT=1,
-		PRIV_UPDATE=2,
-		PRIV_DELETE=3,
-		PRIV_TRUNCATE=4,
-		PRIV_REFERENCES=5,
-		PRIV_TRIGGER=6,
-		PRIV_CREATE=7,
-		PRIV_CONNECT=8,
-		PRIV_TEMPORARY=9,
-		PRIV_EXECUTE=10,
-		PRIV_USAGE=11;
+		static constexpr unsigned PrivSelect=0,
+		PrivInsert=1,
+		PrivUpdate=2,
+		PrivDelete=3,
+		PrivTruncate=4,
+		PrivReferences=5,
+		PrivTrigger=6,
+		PrivCreate=7,
+		PrivConnect=8,
+		PrivTemporary=9,
+		PrivExecute=10,
+		PrivUsage=11;
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of

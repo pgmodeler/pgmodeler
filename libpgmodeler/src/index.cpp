@@ -21,8 +21,8 @@
 Index::Index(void)
 {
 	obj_type=ObjIndex;
-	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
-			index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
+	index_attribs[Unique]=index_attribs[Concurrent]=
+			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;
 	attributes[ParsersAttributes::UNIQUE]=QString();
 	attributes[ParsersAttributes::CONCURRENT]=QString();
@@ -98,8 +98,8 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(IndexElement::AscOrder, asc_order);
 
 		if(getElementIndex(elem) >= 0)
 			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -132,8 +132,8 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(IndexElement::AscOrder, asc_order);
 
 		if(getElementIndex(elem) >= 0)
 			throw Exception(InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -201,7 +201,7 @@ unsigned Index::getIndexElementCount(void)
 
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
-	if(attrib_id > BUFFERING)
+	if(attrib_id > Buffering)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(index_attribs[attrib_id] != value);
@@ -234,7 +234,7 @@ unsigned Index::getFillFactor(void)
 
 bool Index::getIndexAttribute(unsigned attrib_id)
 {
-	if(attrib_id > BUFFERING)
+	if(attrib_id > Buffering)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(index_attribs[attrib_id]);
@@ -331,8 +331,8 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::UNIQUE]=(index_attribs[Unique] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[Concurrent] ? ParsersAttributes::_TRUE_ : QString());
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::PREDICATE]=predicate;
 	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
@@ -346,10 +346,10 @@ QString Index::getCodeDefinition(unsigned def_type)
 	}
 
 	if(this->indexing_type==IndexingType::gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : QString());
 
 	if(this->indexing_type==IndexingType::gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
@@ -393,12 +393,12 @@ QString Index::getAlterDefinition(BaseObject *object)
 				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
 
 			if(this->indexing_type==IndexingType::gin &&
-					this->index_attribs[FAST_UPDATE] != index->index_attribs[FAST_UPDATE])
-				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
+				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 
 			if(this->indexing_type==IndexingType::gist &&
-					this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
-				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+					this->index_attribs[Buffering] != index->index_attribs[Buffering])
+				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}
 
 		copyAttributes(attribs);

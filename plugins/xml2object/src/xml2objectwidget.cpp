@@ -84,7 +84,7 @@ void Xml2ObjectWidget::generateObject(void)
 							obj_type!=ObjRelationship && obj_type!=ObjBaseRelationship)
 					{
 						model->addObject(object);
-						op_list->registerObject(object, Operation::OBJECT_CREATED, -1, model);
+						op_list->registerObject(object, Operation::ObjectCreated, -1, model);
 					}
 
 					xmlparser->restorePosition();

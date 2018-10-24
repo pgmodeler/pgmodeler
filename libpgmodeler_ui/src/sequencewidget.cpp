@@ -88,7 +88,7 @@ void SequenceWidget::setAttributes(DatabaseModel *model, Sequence *sequence)
 	{
 		cyclic_chk->setChecked(false);
 		start_edt->setText(QString("1"));
-		maximum_edt->setText(Sequence::MAX_POSITIVE_VALUE);
+		maximum_edt->setText(Sequence::MaxPositiveValue);
 		minimum_edt->setText(QString("0"));
 		cache_edt->setText(QString("1"));
 		increment_edt->setText(QString("1"));
@@ -133,12 +133,12 @@ void SequenceWidget::setDefaultValues(void)
 	}
 	else
 	{
-		QString min = "0", max = Sequence::MAX_POSITIVE_VALUE;
+		QString min = "0", max = Sequence::MaxPositiveValue;
 
 		if(def_values_cmb->currentText() == "smallserial")
-			max = Sequence::MAX_SMALL_POSITIVE_VALUE;
+			max = Sequence::MaxSmallPositiveValue;
 		else if(def_values_cmb->currentText() == "bigserial")
-			max = Sequence::MAX_BIG_POSITIVE_VALUE;
+			max = Sequence::MaxBigPositiveValue;
 
 		start_edt->setText("1");
 		cache_edt->setText("1");

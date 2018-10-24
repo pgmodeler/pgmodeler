@@ -845,7 +845,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjColumn, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
-				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
@@ -857,7 +857,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
-				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
@@ -891,7 +891,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
 				ref_fk_infos[fk_name][ParsersAttributes::TABLE] = aux_table[ParsersAttributes::NAME];
 				ref_fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
 			}
@@ -1147,14 +1147,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
+		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DataSeparator);
 		schema = ref_fk_infos[fk_name][ParsersAttributes::SCHEMA];
 		table = ref_fk_infos[fk_name][ParsersAttributes::TABLE];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
-		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
+		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DataSeparator);
+		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DataSeparator);
 		schema = fk_infos[fk_name][ParsersAttributes::SCHEMA];
 		table = fk_infos[fk_name][ParsersAttributes::REF_TABLE];
 	}
@@ -1387,9 +1387,9 @@ QString DataManipulationForm::getDMLCommand(int row)
 				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END)) ||
-							(value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(PgModelerNs::UNESC_VALUE_END)) ||
-							(!value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END) && value.endsWith(PgModelerNs::UNESC_VALUE_END)))
+					if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
+							(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
+							(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
 						throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
 										MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1402,7 +1402,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(PgModelerNs::UNESC_VALUE_END))
+					else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1410,8 +1410,8 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_START, PgModelerNs::UNESC_VALUE_START);
-						value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_END, PgModelerNs::UNESC_VALUE_END);
+						value.replace(QString("\\") + PgModelerNs::UnescValueStart, PgModelerNs::UnescValueStart);
+						value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}

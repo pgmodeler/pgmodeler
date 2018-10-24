@@ -1472,7 +1472,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 						}
 
 						if(!tab_list.isEmpty())
-							orig_attribs[ParsersAttributes::REFERRERS] = tab_list.join(Table::DATA_SEPARATOR);
+							orig_attribs[ParsersAttributes::REFERRERS] = tab_list.join(Table::DataSeparator);
 					}
 				}
 				else
@@ -1626,7 +1626,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 								!cached_attribs[ParsersAttributes::REFERRERS].isEmpty() && item->childCount() == 5)
 				{
 					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
-					QStringList ref_tab_names = cached_attribs[ParsersAttributes::REFERRERS].split(Table::DATA_SEPARATOR);
+					QStringList ref_tab_names = cached_attribs[ParsersAttributes::REFERRERS].split(Table::DataSeparator);
 					QFont font;
 
 					refs_item=new QTreeWidgetItem(item);

@@ -73,7 +73,7 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	ref_type_cmb->setCurrentIndex(ref.getReferenceType());
 	ref_alias_edt->setText(ref.getReferenceAlias());
 
-	if(ref.getReferenceType()==Reference::REFER_COLUMN)
+	if(ref.getReferenceType()==Reference::ReferColumn)
 	{
 		if(ref.getColumn())
 			ref_object_sel->setSelectedObject(ref.getColumn());
@@ -89,14 +89,14 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 		expr_alias_edt->setText(ref.getAlias());
 	}
 
-	if(ref_flags == Reference::SQL_VIEW_DEFINITION)
+	if(ref_flags == Reference::SqlViewDefinition)
 		view_def_chk->setChecked(true);
 	else
 	{
-		select_from_chk->setChecked((ref_flags & Reference::SQL_REFER_SELECT) == Reference::SQL_REFER_SELECT);
-		from_where_chk->setChecked((ref_flags & Reference::SQL_REFER_FROM) == Reference::SQL_REFER_FROM);
-		after_where_chk->setChecked((ref_flags & Reference::SQL_REFER_WHERE) == Reference::SQL_REFER_WHERE);
-		end_expr_chk->setChecked((ref_flags & Reference::SQL_REFER_END_EXPR) == Reference::SQL_REFER_END_EXPR);
+		select_from_chk->setChecked((ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect);
+		from_where_chk->setChecked((ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom);
+		after_where_chk->setChecked((ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere);
+		end_expr_chk->setChecked((ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr);
 	}
 }
 
@@ -115,7 +115,7 @@ void ReferenceWidget::applyConfiguration(void)
 	try
 	{
 		//Creating a reference to a column
-		if(static_cast<unsigned>(ref_type_cmb->currentIndex())==Reference::REFER_COLUMN)
+		if(static_cast<unsigned>(ref_type_cmb->currentIndex())==Reference::ReferColumn)
 		{
 			Column *column = dynamic_cast<Column *>(ref_object_sel->getSelectedObject());
 			Table *table = (column ? dynamic_cast<Table *>(column->getParentTable()) :
@@ -138,19 +138,19 @@ void ReferenceWidget::applyConfiguration(void)
 		ref_flags = 0;
 
 		if(view_def_chk->isChecked())
-			ref_flags = Reference::SQL_VIEW_DEFINITION;
+			ref_flags = Reference::SqlViewDefinition;
 
 		if(select_from_chk->isChecked())
-			ref_flags |= Reference::SQL_REFER_SELECT;
+			ref_flags |= Reference::SqlReferSelect;
 
 		if(from_where_chk->isChecked())
-			ref_flags |= Reference::SQL_REFER_FROM;
+			ref_flags |= Reference::SqlReferFrom;
 
 		if(after_where_chk->isChecked())
-			ref_flags |= Reference::SQL_REFER_WHERE;
+			ref_flags |= Reference::SqlReferWhere;
 
 		if(end_expr_chk->isChecked())
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
+			ref_flags |= Reference::SqlReferEndExpr;
 
 		emit s_closeRequested();
 	}
@@ -163,7 +163,7 @@ void ReferenceWidget::applyConfiguration(void)
 void ReferenceWidget::selectReferenceType(void)
 {
 	//Marks if the select reference type treats a reference to an object
-	bool ref_obj=(ref_type_cmb->currentIndex()==static_cast<int>(Reference::REFER_COLUMN));
+	bool ref_obj=(ref_type_cmb->currentIndex()==static_cast<int>(Reference::ReferColumn));
 	ref_object_sel->setEnabled(ref_obj);
 	tab_alias_edt->setEnabled(ref_obj);
 	col_alias_edt->setEnabled(ref_obj);

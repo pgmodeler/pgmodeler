@@ -1278,11 +1278,11 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 		}
 
 		//Creates the relationships from the view references
-		ref_count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
+		ref_count=view->getReferenceCount(Reference::SqlReferSelect);
 
 		for(i=0; i < ref_count; i++)
 		{
-			ref = view->getReference(i, Reference::SQL_REFER_SELECT);
+			ref = view->getReference(i, Reference::SqlReferSelect);
 			tab = ref.getTable();
 
 			rel=getRelationship(view,tab);
@@ -1869,11 +1869,11 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				/* Relationships linking the view and the referenced tables are considered as
 			 special objects in this case only to be recreated more easely latter */
 
-				count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
+				count=view->getReferenceCount(Reference::SqlReferSelect);
 
 				for(i=0; i < count; i++)
 				{
-					ref=view->getReference(i, Reference::SQL_REFER_SELECT);
+					ref=view->getReference(i, Reference::SqlReferSelect);
 					table=ref.getTable();
 
 					if(table)
@@ -3453,10 +3453,10 @@ Role *DatabaseModel::createRole(void)
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
 							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
-	unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
-						 Role::OP_CREATEROLE, Role::OP_INHERIT,
-						 Role::OP_LOGIN, Role::OP_ENCRYPTED,
-						 Role::OP_REPLICATION, Role::OP_BYPASSRLS };
+	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
+						 Role::OpCreateRole, Role::OpInherit,
+						 Role::OpLogin, Role::OpEncrypted,
+						 Role::OpReplication, Role::OpBypassRls };
 
 	try
 	{
@@ -3499,11 +3499,11 @@ Role *DatabaseModel::createRole(void)
 
 						//Identifying the member role type
 						if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
-							role_type=Role::REF_ROLE;
+							role_type=Role::RefRole;
 						else if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
-							role_type=Role::MEMBER_ROLE;
+							role_type=Role::MemberRole;
 						else
-							role_type=Role::ADMIN_ROLE;
+							role_type=Role::AdminRole;
 
 						for(i=0; i < len; i++)
 						{
@@ -3632,11 +3632,11 @@ Language *DatabaseModel::createLanguage(void)
 												RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 							if(ref_type==ParsersAttributes::VALIDATOR_FUNC)
-								lang->setFunction(dynamic_cast<Function *>(func), Language::VALIDATOR_FUNC);
+								lang->setFunction(dynamic_cast<Function *>(func), Language::ValidatorFunc);
 							else if(ref_type==ParsersAttributes::HANDLER_FUNC)
-								lang->setFunction(dynamic_cast<Function *>(func), Language::HANDLER_FUNC);
+								lang->setFunction(dynamic_cast<Function *>(func), Language::HandlerFunc);
 							else
-								lang->setFunction(dynamic_cast<Function *>(func), Language::INLINE_FUNC);
+								lang->setFunction(dynamic_cast<Function *>(func), Language::InlineFunc);
 
 						}
 						else
@@ -3997,7 +3997,7 @@ Type *DatabaseModel::createType(void)
 
 		if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
 		{
-			type->setConfiguration(Type::BASE_TYPE);
+			type->setConfiguration(Type::BaseType);
 			type->setByValue(attribs[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
 
 			if(!attribs[ParsersAttributes::INTERNAL_LENGTH].isEmpty())
@@ -4025,23 +4025,23 @@ Type *DatabaseModel::createType(void)
 				type->setPreferred(attribs[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
 
 			//Configuring an auxiliary map used to reference the functions used by base type
-			func_types[ParsersAttributes::INPUT_FUNC]=Type::INPUT_FUNC;
-			func_types[ParsersAttributes::OUTPUT_FUNC]=Type::OUTPUT_FUNC;
-			func_types[ParsersAttributes::SEND_FUNC]=Type::SEND_FUNC;
-			func_types[ParsersAttributes::RECV_FUNC]=Type::RECV_FUNC;
-			func_types[ParsersAttributes::TPMOD_IN_FUNC]=Type::TPMOD_IN_FUNC;
-			func_types[ParsersAttributes::TPMOD_OUT_FUNC]=Type::TPMOD_OUT_FUNC;
-			func_types[ParsersAttributes::ANALYZE_FUNC]=Type::ANALYZE_FUNC;
+			func_types[ParsersAttributes::INPUT_FUNC]=Type::InputFunc;
+			func_types[ParsersAttributes::OUTPUT_FUNC]=Type::OutputFunc;
+			func_types[ParsersAttributes::SEND_FUNC]=Type::SendFunc;
+			func_types[ParsersAttributes::RECV_FUNC]=Type::RecvFunc;
+			func_types[ParsersAttributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
+			func_types[ParsersAttributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
+			func_types[ParsersAttributes::ANALYZE_FUNC]=Type::AnalyzeFunc;
 		}
 		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
-			type->setConfiguration(Type::COMPOSITE_TYPE);
+			type->setConfiguration(Type::CompositeType);
 		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::ENUM_TYPE)
-			type->setConfiguration(Type::ENUMERATION_TYPE);
+			type->setConfiguration(Type::EnumerationType);
 		else
 		{
-			type->setConfiguration(Type::RANGE_TYPE);
-			func_types[ParsersAttributes::CANONICAL_FUNC]=Type::CANONICAL_FUNC;
-			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SUBTYPE_DIFF_FUNC;
+			type->setConfiguration(Type::RangeType);
+			func_types[ParsersAttributes::CANONICAL_FUNC]=Type::CanonicalFunc;
+			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SubtypeDiffFunc;
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4072,7 +4072,7 @@ Type *DatabaseModel::createType(void)
 					{
 						aux_type=createPgSQLType();
 
-						if(type->getConfiguration()==Type::RANGE_TYPE)
+						if(type->getConfiguration()==Type::RangeType)
 							type->setSubtype(aux_type);
 						else
 							type->setLikeType(aux_type);
@@ -4460,9 +4460,9 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		op_class->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
 		op_class->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
-		elem_types[ParsersAttributes::FUNCTION]=OperatorClassElement::FUNCTION_ELEM;
-		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OPERATOR_ELEM;
-		elem_types[ParsersAttributes::STORAGE]=OperatorClassElement::STORAGE_ELEM;
+		elem_types[ParsersAttributes::FUNCTION]=OperatorClassElement::FunctionElem;
+		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OperatorElem;
+		elem_types[ParsersAttributes::STORAGE]=OperatorClassElement::StorageElem;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4505,17 +4505,17 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						xmlparser.accessElement(XmlParser::ChildElement);
 						xmlparser.getElementAttributes(attribs);
 
-						if(elem_type==OperatorClassElement::STORAGE_ELEM)
+						if(elem_type==OperatorClassElement::StorageElem)
 						{
 							type=createPgSQLType();
 							class_elem.setStorage(type);
 						}
-						else if(elem_type==OperatorClassElement::FUNCTION_ELEM)
+						else if(elem_type==OperatorClassElement::FunctionElem)
 						{
 							object=getObject(attribs[ParsersAttributes::SIGNATURE],ObjFunction);
 							class_elem.setFunction(dynamic_cast<Function *>(object),stg_number);
 						}
-						else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
+						else if(elem_type==OperatorClassElement::OperatorElem)
 						{
 							object=getObject(attribs[ParsersAttributes::SIGNATURE],ObjOperator);
 							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
@@ -5096,8 +5096,8 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 		elem.setOperator(nullptr);
 		elem.setOperatorClass(nullptr);
 
-		elem.setSortingAttribute(Element::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
-		elem.setSortingAttribute(Element::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(Element::AscOrder, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(Element::NullsFirst, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 
 		xmlparser.savePosition();
@@ -5313,10 +5313,10 @@ Index *DatabaseModel::createIndex(void)
 		index=new Index;
 		setBasicAttributes(index);
 		index->setParentTable(table);
-		index->setIndexAttribute(Index::CONCURRENT, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::UNIQUE, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::FAST_UPDATE, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::BUFFERING, attribs[ParsersAttributes::BUFFERING]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::Concurrent, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::Unique, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::FastUpdate, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::Buffering, attribs[ParsersAttributes::BUFFERING]==ParsersAttributes::_TRUE_);
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
 
@@ -5490,8 +5490,8 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
 
-		trigger->setTransitionTableName(Trigger::OLD_TABLE_NAME, attribs[ParsersAttributes::OLD_TABLE_NAME]);
-		trigger->setTransitionTableName(Trigger::NEW_TABLE_NAME, attribs[ParsersAttributes::NEW_TABLE_NAME]);
+		trigger->setTransitionTableName(Trigger::OldTableName, attribs[ParsersAttributes::OLD_TABLE_NAME]);
+		trigger->setTransitionTableName(Trigger::NewTableName, attribs[ParsersAttributes::NEW_TABLE_NAME]);
 
 		list_aux=attribs[ParsersAttributes::ARGUMENTS].split(',');
 		count=list_aux.count();
@@ -5966,13 +5966,13 @@ View *DatabaseModel::createView(void)
 						else
 						{
 							if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
-								type=Reference::SQL_REFER_SELECT;
+								type=Reference::SqlReferSelect;
 							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
-								type=Reference::SQL_REFER_FROM;
+								type=Reference::SqlReferFrom;
 							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SIMPLE_EXP)
-								type=Reference::SQL_REFER_WHERE;
+								type=Reference::SqlReferWhere;
 							else
-								type=Reference::SQL_REFER_END_EXPR;
+								type=Reference::SqlReferEndExpr;
 
 							list_aux=xmlparser.getElementContent().split(',');
 							count=list_aux.size();
@@ -6029,7 +6029,7 @@ View *DatabaseModel::createView(void)
 			itr=refs.begin();
 			while(itr!=refs.end())
 			{
-				view->addReference(*itr, Reference::SQL_VIEW_DEFINITION);
+				view->addReference(*itr, Reference::SqlViewDefinition);
 				itr++;
 			}
 		}
@@ -6109,8 +6109,8 @@ Extension *DatabaseModel::createExtension(void)
 		setBasicAttributes(extension);
 
 		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::_TRUE_);
-		extension->setVersion(Extension::CUR_VERSION, attribs[ParsersAttributes::CUR_VERSION]);
-		extension->setVersion(Extension::OLD_VERSION, attribs[ParsersAttributes::OLD_VERSION]);
+		extension->setVersion(Extension::CurVersion, attribs[ParsersAttributes::CUR_VERSION]);
+		extension->setVersion(Extension::OldVersion, attribs[ParsersAttributes::OLD_VERSION]);
 	}
 	catch(Exception &e)
 	{
@@ -6172,9 +6172,9 @@ Textbox *DatabaseModel::createTextbox(void)
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::ITALIC_TXT, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::BOLD_TXT, attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::ItalicText, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::BoldText, attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
 
 		if(!attribs[ParsersAttributes::COLOR].isEmpty())
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
@@ -6320,10 +6320,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 									ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN,
 									ParsersAttributes::PK_COL_PATTERN };
 
-			unsigned 	pattern_id[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
-										Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
-										Relationship::PK_PATTERN, Relationship::UQ_PATTERN,
-										Relationship::PK_COL_PATTERN },
+			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
+										Relationship::SrcFkPattern, Relationship::DstFkPattern,
+										Relationship::PkPattern, Relationship::UqPattern,
+										Relationship::PkColPattern },
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
 			sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
@@ -6505,7 +6505,7 @@ Permission *DatabaseModel::createPermission(void)
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
-	unsigned i, len, priv_type=Permission::PRIV_SELECT;
+	unsigned i, len, priv_type=Permission::PrivSelect;
 	bool priv_value, grant_op, revoke, cascade;
 
 	try
@@ -6589,29 +6589,29 @@ Permission *DatabaseModel::createPermission(void)
 						grant_op=(itr->second==ParsersAttributes::GRANT_OP);
 
 						if(itr->first==ParsersAttributes::CONNECT_PRIV)
-							priv_type=Permission::PRIV_CONNECT;
+							priv_type=Permission::PrivConnect;
 						else if(itr->first==ParsersAttributes::CREATE_PRIV)
-							priv_type=Permission::PRIV_CREATE;
+							priv_type=Permission::PrivCreate;
 						else if(itr->first==ParsersAttributes::DELETE_PRIV)
-							priv_type=Permission::PRIV_DELETE;
+							priv_type=Permission::PrivDelete;
 						else if(itr->first==ParsersAttributes::EXECUTE_PRIV)
-							priv_type=Permission::PRIV_EXECUTE;
+							priv_type=Permission::PrivExecute;
 						else if(itr->first==ParsersAttributes::INSERT_PRIV)
-							priv_type=Permission::PRIV_INSERT;
+							priv_type=Permission::PrivInsert;
 						else if(itr->first==ParsersAttributes::REFERENCES_PRIV)
-							priv_type=Permission::PRIV_REFERENCES;
+							priv_type=Permission::PrivReferences;
 						else if(itr->first==ParsersAttributes::SELECT_PRIV)
-							priv_type=Permission::PRIV_SELECT;
+							priv_type=Permission::PrivSelect;
 						else if(itr->first==ParsersAttributes::TEMPORARY_PRIV)
-							priv_type=Permission::PRIV_TEMPORARY;
+							priv_type=Permission::PrivTemporary;
 						else if(itr->first==ParsersAttributes::TRIGGER_PRIV)
-							priv_type=Permission::PRIV_TRIGGER;
+							priv_type=Permission::PrivTrigger;
 						else if(itr->first==ParsersAttributes::TRUNCATE_PRIV)
-							priv_type=Permission::PRIV_TRUNCATE;
+							priv_type=Permission::PrivTruncate;
 						else if(itr->first==ParsersAttributes::UPDATE_PRIV)
-							priv_type=Permission::PRIV_UPDATE;
+							priv_type=Permission::PrivUpdate;
 						else if(itr->first==ParsersAttributes::USAGE_PRIV)
-							priv_type=Permission::PRIV_USAGE;
+							priv_type=Permission::PrivUsage;
 
 						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
 					}
@@ -6813,7 +6813,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			{
 				usr_type=dynamic_cast<Type *>(type);
 
-				if(usr_type->getConfiguration()==Type::BASE_TYPE)
+				if(usr_type->getConfiguration()==Type::BaseType)
 					usr_type->convertFunctionParameters();
 			}
 		}
@@ -6828,7 +6828,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				usr_type=dynamic_cast<Type *>(object);
 
 				//Generating the shell type declaration (only for base types)
-				if(usr_type->getConfiguration()==Type::BASE_TYPE)
+				if(usr_type->getConfiguration()==Type::BaseType)
 					attribs_aux[ParsersAttributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
 				else
 					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
@@ -6937,7 +6937,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			for(auto &type : types)
 			{
 				usr_type=dynamic_cast<Type *>(type);
-				if(usr_type->getConfiguration()==Type::BASE_TYPE)
+				if(usr_type->getConfiguration()==Type::BaseType)
 				{
 					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 					usr_type->convertFunctionParameters(true);
@@ -6952,7 +6952,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			for(auto &type : types)
 			{
 				usr_type=dynamic_cast<Type *>(type);
-				if(usr_type->getConfiguration()==Type::BASE_TYPE)
+				if(usr_type->getConfiguration()==Type::BaseType)
 				{
 					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 					usr_type->convertFunctionParameters(true);
@@ -7578,7 +7578,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			{
 				Language *lang=dynamic_cast<Language *>(object);
 
-				for(unsigned i=Language::VALIDATOR_FUNC; i <= Language::INLINE_FUNC; i++)
+				for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
 				{
 					if(lang->getFunction(i))
 						getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
@@ -7616,7 +7616,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			{
 				Role *role=dynamic_cast<Role *>(object);
 				unsigned i, i1, count,
-						role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+						role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 				for(i=0; i < 3; i++)
 				{
@@ -7820,17 +7820,17 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *aux_type=nullptr;
 				unsigned count, i;
 
-				if(usr_type->getConfiguration()==Type::BASE_TYPE)
+				if(usr_type->getConfiguration()==Type::BaseType)
 				{
 					aux_type=getObjectPgSQLType(usr_type->getLikeType());
 
 					if(aux_type)
 						getObjectDependecies(aux_type, deps, inc_indirect_deps);
 
-					for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+					for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
 						getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
 				}
-				else if(usr_type->getConfiguration()==Type::COMPOSITE_TYPE)
+				else if(usr_type->getConfiguration()==Type::CompositeType)
 				{
 					count=usr_type->getAttributeCount();
 					for(i=0; i < count; i++)
@@ -8190,7 +8190,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						type=dynamic_cast<Type *>(*itr);
 						itr++;
 
-						for(i1=Type::INPUT_FUNC; i1 <= Type::ANALYZE_FUNC && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+						for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
 						{
 							if(type->getFunction(i1)==func)
 							{
@@ -8207,9 +8207,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						lang=dynamic_cast<Language *>(*itr);
 						itr++;
 
-						if(lang->getFunction(Language::HANDLER_FUNC)==func ||
-								lang->getFunction(Language::VALIDATOR_FUNC)==func ||
-								lang->getFunction(Language::INLINE_FUNC)==func)
+						if(lang->getFunction(Language::HandlerFunc)==func ||
+								lang->getFunction(Language::ValidatorFunc)==func ||
+								lang->getFunction(Language::InlineFunc)==func)
 						{
 							refer=true;
 							refs.push_back(lang);
@@ -8478,7 +8478,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			unsigned i,i1, count;
 			Role *role_aux=nullptr;
 			Role *role=dynamic_cast<Role *>(object);
-			unsigned role_types[3]={Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE};
+			unsigned role_types[3]={Role::RefRole, Role::MemberRole, Role::AdminRole};
 			Permission *perm=nullptr;
 
 			//Check if the role is being referencend by permissions
@@ -9294,7 +9294,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 
 	postgres=new Role;
 	postgres->setName(QString("postgres"));
-	postgres->setOption(Role::OP_SUPERUSER, true);
+	postgres->setOption(Role::OpSuperuser, true);
 	postgres->setSystemObject(true);
 	addRole(postgres);
 

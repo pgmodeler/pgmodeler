@@ -291,7 +291,7 @@ void Trigger::setConstraint(bool value)
 
 void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 {
-	if(tab_idx > NEW_TABLE_NAME)
+	if(tab_idx > NewTableName)
 		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(transition_tabs_names[tab_idx] != name);
@@ -300,7 +300,7 @@ void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 
 QString Trigger::getTransitionTableName(unsigned tab_idx)
 {
-	if(tab_idx > NEW_TABLE_NAME)
+	if(tab_idx > NewTableName)
 		throw Exception(RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(transition_tabs_names[tab_idx]);
@@ -424,13 +424,13 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 
 	if(def_type == SchemaParser::XmlDefinition)
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OLD_TABLE_NAME];
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NEW_TABLE_NAME];
+		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OldTableName];
+		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NewTableName];
 	}
 	else
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OLD_TABLE_NAME]);
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NEW_TABLE_NAME]);
+		attributes[ParsersAttributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OldTableName]);
+		attributes[ParsersAttributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

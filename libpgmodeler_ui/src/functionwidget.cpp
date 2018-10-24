@@ -448,7 +448,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 			{
 				lang=dynamic_cast<Language *>(object);
 
-				for(i1=Language::VALIDATOR_FUNC; i1 <= Language::INLINE_FUNC; i1++)
+				for(i1=Language::ValidatorFunc; i1 <= Language::InlineFunc; i1++)
 				{
 					if(lang->getFunction(i1)==func)
 						lang->setFunction(func, i1);
@@ -466,9 +466,9 @@ void FunctionWidget::validateConfiguredFunction(void)
 			else if(obj_type==ObjType)
 			{
 				type=dynamic_cast<Type *>(object);
-				if(type->getConfiguration()==Type::BASE_TYPE)
+				if(type->getConfiguration()==Type::BaseType)
 				{
-					for(i1=Type::INPUT_FUNC; i1 <=Type::ANALYZE_FUNC; i1++)
+					for(i1=Type::InputFunc; i1 <=Type::AnalyzeFunc; i1++)
 					{
 						if(type->getFunction(i1)==func)
 							type->setFunction(i1, func);

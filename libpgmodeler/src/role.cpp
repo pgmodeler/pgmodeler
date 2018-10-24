@@ -25,7 +25,7 @@ Role::Role(void)
 	obj_type=ObjRole;
 	object_id=Role::role_id++;
 
-	for(unsigned i=0; i <= OP_BYPASSRLS; i++)
+	for(unsigned i=0; i <= OpBypassRls; i++)
 		options[i]=false;
 
 	conn_limit=-1;
@@ -49,7 +49,7 @@ Role::Role(void)
 
 void Role::setOption(unsigned op_type, bool value)
 {
-	if(op_type > OP_BYPASSRLS)
+	if(op_type > OpBypassRls)
 		//Raises an error if the option type is invalid
 		throw Exception(AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -73,20 +73,20 @@ void Role::addRole(unsigned role_type, Role *role)
 				role_ref1, role_mem1, role_adm1;
 
 		//Check if the role to be added already exists in one of the internal role list
-		role_ref=this->isRoleExists(REF_ROLE, role);
-		role_mem=this->isRoleExists(MEMBER_ROLE, role);
-		role_adm=this->isRoleExists(ADMIN_ROLE, role);
+		role_ref=this->isRoleExists(RefRole, role);
+		role_mem=this->isRoleExists(MemberRole, role);
+		role_adm=this->isRoleExists(AdminRole, role);
 
 		/* Check if the role 'this' is referenced in one of the internal role list
 		 of the role to be added */
-		role_ref1=role->isRoleExists(REF_ROLE, this);
-		role_mem1=role->isRoleExists(MEMBER_ROLE, this);
-		role_adm1=role->isRoleExists(ADMIN_ROLE, this);
+		role_ref1=role->isRoleExists(RefRole, this);
+		role_mem1=role->isRoleExists(MemberRole, this);
+		role_adm1=role->isRoleExists(AdminRole, this);
 
 		//Raises an error if the role already exists in one of the internal list
-		if((role_type==REF_ROLE && role_ref) ||
-				(role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
-				(role_type==ADMIN_ROLE && (role_adm || role_mem)))
+		if((role_type==RefRole && role_ref) ||
+				(role_type==MemberRole && (role_mem || role_adm)) ||
+				(role_type==AdminRole && (role_adm || role_mem)))
 			throw Exception(Exception::getErrorMessage(InsDuplicatedRole)
 							.arg(role->getName())
 							.arg(this->getName()),
@@ -114,9 +114,9 @@ void Role::addRole(unsigned role_type, Role *role)
 			5) The role 'role' (from parameter) is already part of the 'ref_roles' list of role 'this'
 				 and the user try to add the object 'role' as an element of the 'member_roles' list
 				 of the role 'this' */
-		else if((role_type==REF_ROLE && ((role_mem || role_adm) || role_ref1)) ||
-				(role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
-				(role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
+		else if((role_type==RefRole && ((role_mem || role_adm) || role_ref1)) ||
+				(role_type==MemberRole && ((role_mem1 || role_adm1) || role_ref)) ||
+				(role_type==AdminRole &&  ((role_mem1 || role_adm1) || role_ref)))
 			throw Exception(Exception::getErrorMessage(AsgRoleReferenceRedundancy)
 							.arg(this->getName())
 							.arg(role->getName()),
@@ -125,9 +125,9 @@ void Role::addRole(unsigned role_type, Role *role)
 		{
 			switch(role_type)
 			{
-				case MEMBER_ROLE: member_roles.push_back(role); break;
-				case ADMIN_ROLE:  admin_roles.push_back(role); break;
-				case REF_ROLE:
+				case MemberRole: member_roles.push_back(role); break;
+				case AdminRole:  admin_roles.push_back(role); break;
+				case RefRole:
 				default:
 					ref_roles.push_back(role);
 				break;
@@ -164,15 +164,15 @@ void Role::setRoleAttribute(unsigned role_type)
 
 	switch(role_type)
 	{
-		case MEMBER_ROLE:
+		case MemberRole:
 			roles_vect=&member_roles;
 			attrib=ParsersAttributes::MEMBER_ROLES;
 		break;
-		case ADMIN_ROLE:
+		case AdminRole:
 			roles_vect=&admin_roles;
 			attrib=ParsersAttributes::ADMIN_ROLES;
 		break;
-		case REF_ROLE:
+		case RefRole:
 		default:
 			roles_vect=&ref_roles;
 			attrib=ParsersAttributes::REF_ROLES;
@@ -196,9 +196,9 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
 
 	switch(role_type)
 	{
-		case REF_ROLE: list=&ref_roles; break;
-		case MEMBER_ROLE: list=&member_roles; break;
-		case ADMIN_ROLE: list=&admin_roles; break;
+		case RefRole: list=&ref_roles; break;
+		case MemberRole: list=&member_roles; break;
+		case AdminRole: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,9 +219,9 @@ void Role::removeRoles(unsigned role_type)
 
 	switch(role_type)
 	{
-		case REF_ROLE: list=&ref_roles; break;
-		case MEMBER_ROLE: list=&member_roles; break;
-		case ADMIN_ROLE: list=&admin_roles; break;
+		case RefRole: list=&ref_roles; break;
+		case MemberRole: list=&member_roles; break;
+		case AdminRole: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -240,9 +240,9 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 
 	switch(role_type)
 	{
-		case REF_ROLE: list=&ref_roles; break;
-		case MEMBER_ROLE: list=&member_roles; break;
-		case ADMIN_ROLE: list=&admin_roles; break;
+		case RefRole: list=&ref_roles; break;
+		case MemberRole: list=&member_roles; break;
+		case AdminRole: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -262,7 +262,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 
 bool Role::getOption(unsigned op_type)
 {
-	if(op_type > OP_BYPASSRLS)
+	if(op_type > OpBypassRls)
 		throw Exception(AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(options[op_type]);
@@ -274,9 +274,9 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 
 	switch(role_type)
 	{
-		case REF_ROLE: list=&ref_roles; break;
-		case MEMBER_ROLE: list=&member_roles; break;
-		case ADMIN_ROLE: list=&admin_roles; break;
+		case RefRole: list=&ref_roles; break;
+		case MemberRole: list=&member_roles; break;
+		case AdminRole: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -296,9 +296,9 @@ unsigned Role::getRoleCount(unsigned role_type)
 
 	switch(role_type)
 	{
-		case REF_ROLE: list=&ref_roles; break;
-		case MEMBER_ROLE: list=&member_roles; break;
-		case ADMIN_ROLE: list=&admin_roles; break;
+		case RefRole: list=&ref_roles; break;
+		case MemberRole: list=&member_roles; break;
+		case AdminRole: list=&admin_roles; break;
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -334,11 +334,11 @@ QString Role::getCodeDefinition(unsigned def_type)
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
 							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
 
-	setRoleAttribute(REF_ROLE);
-	setRoleAttribute(MEMBER_ROLE);
-	setRoleAttribute(ADMIN_ROLE);
+	setRoleAttribute(RefRole);
+	setRoleAttribute(MemberRole);
+	setRoleAttribute(AdminRole);
 
-	for(i=0; i <= OP_BYPASSRLS; i++)
+	for(i=0; i <= OpBypassRls; i++)
 		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : QString());
 
 	attributes[ParsersAttributes::PASSWORD]=password;
@@ -373,9 +373,9 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		if(this->validity!=role->validity)
 			attribs[ParsersAttributes::VALIDITY]=role->validity;
 
-		for(unsigned i=0; i <= OP_BYPASSRLS; i++)
+		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
-			if((attribs.count(ParsersAttributes::PASSWORD) && i==OP_ENCRYPTED) ||
+			if((attribs.count(ParsersAttributes::PASSWORD) && i==OpEncrypted) ||
 					this->options[i]!=role->options[i])
 				attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
 		}

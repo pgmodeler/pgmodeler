@@ -219,7 +219,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		PgModelerNs::copyObject(&dup_object, object, obj_type);
 		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
 
 		view->addObject(dup_object);
 		view->setModified(true);
@@ -256,7 +256,7 @@ void ViewWidget::removeObjects(void)
 		{
 			object=view->getObject(0, obj_type);
 			view->removeObject(object);
-			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
+			op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
 		}
 	}
 	catch(Exception &e)
@@ -302,7 +302,7 @@ void ViewWidget::removeObject(int row)
 		view=dynamic_cast<View *>(this->object);
 		object=view->getObject(row, obj_type);
 		view->removeObject(object);
-		op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+		op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
 	}
 	catch(Exception &e)
 	{
@@ -456,20 +456,20 @@ unsigned ViewWidget::getReferenceFlag(int row)
 	unsigned ref_flags = 0;
 
 	if(flags_str[4] == '1')
-		ref_flags = Reference::SQL_VIEW_DEFINITION;
+		ref_flags = Reference::SqlViewDefinition;
 	else
 	{
 		if(flags_str[0] == '1')
-			ref_flags |= Reference::SQL_REFER_SELECT;
+			ref_flags |= Reference::SqlReferSelect;
 
 		if(flags_str[1] == '1')
-			ref_flags |= Reference::SQL_REFER_FROM;
+			ref_flags |= Reference::SqlReferFrom;
 
 		if(flags_str[2] == '1')
-			ref_flags |= Reference::SQL_REFER_WHERE;
+			ref_flags |= Reference::SqlReferWhere;
 
 		if(flags_str[3] == '1')
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
+			ref_flags |= Reference::SqlReferEndExpr;
 	}
 
 	return(ref_flags);
@@ -485,13 +485,13 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	Table *tab=nullptr;
 	Column *col=nullptr;
 	QString str_aux;
-	bool	selec_from = (ref_flags & Reference::SQL_REFER_SELECT) == Reference::SQL_REFER_SELECT,
-				from_where = (ref_flags & Reference::SQL_REFER_FROM) == Reference::SQL_REFER_FROM,
-				after_where = (ref_flags & Reference::SQL_REFER_WHERE) == Reference::SQL_REFER_WHERE,
-				end_expr = (ref_flags & Reference::SQL_REFER_END_EXPR) == Reference::SQL_REFER_END_EXPR,
-				view_def = (ref_flags & Reference::SQL_VIEW_DEFINITION) == Reference::SQL_VIEW_DEFINITION;
+	bool	selec_from = (ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect,
+				from_where = (ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom,
+				after_where = (ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere,
+				end_expr = (ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr,
+				view_def = (ref_flags & Reference::SqlViewDefinition) == Reference::SqlViewDefinition;
 
-	if(refer.getReferenceType()==Reference::REFER_COLUMN)
+	if(refer.getReferenceType()==Reference::ReferColumn)
 	{
 		tab=refer.getTable();
 		col=refer.getColumn();
@@ -542,11 +542,11 @@ void ViewWidget::updateCodePreview(void)
 			TableObject *tab_obj=nullptr;
 			map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 			unsigned i, count, i1, expr_type[]={
-												Reference::SQL_REFER_SELECT,
-												Reference::SQL_REFER_FROM,
-												Reference::SQL_REFER_WHERE,
-												Reference::SQL_REFER_END_EXPR,
-												Reference::SQL_VIEW_DEFINITION};
+												Reference::SqlReferSelect,
+												Reference::SqlReferFrom,
+												Reference::SqlReferWhere,
+												Reference::SqlReferEndExpr,
+												Reference::SqlViewDefinition};
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
@@ -656,20 +656,20 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 		ref_flags = 0;
 		refer=view->getReference(i);
 
-		if(view->getReferenceIndex(refer, Reference::SQL_VIEW_DEFINITION) >= 0)
-			ref_flags = Reference::SQL_VIEW_DEFINITION;
+		if(view->getReferenceIndex(refer, Reference::SqlViewDefinition) >= 0)
+			ref_flags = Reference::SqlViewDefinition;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_SELECT) >= 0)
-			ref_flags |= Reference::SQL_REFER_SELECT;
+		if(view->getReferenceIndex(refer, Reference::SqlReferSelect) >= 0)
+			ref_flags |= Reference::SqlReferSelect;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_FROM) >= 0)
-			ref_flags |= Reference::SQL_REFER_FROM;
+		if(view->getReferenceIndex(refer, Reference::SqlReferFrom) >= 0)
+			ref_flags |= Reference::SqlReferFrom;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_WHERE) >= 0)
-			ref_flags |= Reference::SQL_REFER_WHERE;
+		if(view->getReferenceIndex(refer, Reference::SqlReferWhere) >= 0)
+			ref_flags |= Reference::SqlReferWhere;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_END_EXPR) >= 0)
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
+		if(view->getReferenceIndex(refer, Reference::SqlReferEndExpr) >= 0)
+			ref_flags |= Reference::SqlReferEndExpr;
 
 		showReferenceData(refer, ref_flags, i);
 	}
@@ -688,16 +688,16 @@ void ViewWidget::applyConfiguration(void)
 	{
 		View *view=nullptr;
 		ObjectType types[]={ ObjTrigger, ObjRule, ObjIndex };
-		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
-													 Reference::SQL_REFER_FROM,
-													 Reference::SQL_REFER_WHERE,
-													 Reference::SQL_REFER_END_EXPR,
-													 Reference::SQL_VIEW_DEFINITION};
+		unsigned expr_type[]={ Reference::SqlReferSelect,
+													 Reference::SqlReferFrom,
+													 Reference::SqlReferWhere,
+													 Reference::SqlReferEndExpr,
+													 Reference::SqlViewDefinition};
 		Reference refer;
 		QString str_aux;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+			op_list->registerObject(this->object, Operation::ObjectModified);
 		else
 			registerNewObject();
 

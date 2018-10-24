@@ -67,14 +67,14 @@ class Sequence: public BaseObject {
 	public:
 		//! \brief Constants that indicates the maximum and minimum values accepted by sequence
 		static const QString //For serial sequences
-		MAX_POSITIVE_VALUE,
-		MAX_NEGATIVE_VALUE,
+		MaxPositiveValue,
+		MaxNegativeValue,
 		//For smallserial sequences
-		MAX_SMALL_POSITIVE_VALUE,
-		MAX_SMALL_NEGATIVE_VALUE,
+		MaxSmallPositiveValue,
+		MaxSmallNegativeValue,
 		//For bigserial sequences
-		MAX_BIG_POSITIVE_VALUE,
-		MAX_BIG_NEGATIVE_VALUE;
+		MaxBigPositiveValue,
+		MaxBigNegativeValue;
 
 		Sequence(void);
 

@@ -73,12 +73,12 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjB
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
 	});
 
 	connect(paste_tb, &QToolButton::clicked, [&](){
 		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});
@@ -347,11 +347,11 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	there have priority over the current table's columns */
 	if(!ini_data.isEmpty())
 	{		
-		buffer=ini_data.split(Table::DATA_LINE_BREAK);
+		buffer=ini_data.split(Table::DataLineBreak);
 
 		//The first line of the buffer always has the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
-			columns.append(buffer[0].split(Table::DATA_SEPARATOR));
+			columns.append(buffer[0].split(Table::DataSeparator));
 	}
 	else
 	{
@@ -392,7 +392,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	for(QString buf_row : buffer)
 	{
 		addRow();
-		values = buf_row.split(Table::DATA_SEPARATOR);
+		values = buf_row.split(Table::DataSeparator);
 		col = 0;
 
 		for(QString val : values)
@@ -482,7 +482,7 @@ QString TableDataWidget::generateDataBuffer(void)
 		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
 	//The first line of the buffer consists in the column names
-	buffer.push_back(col_names.join(Table::DATA_SEPARATOR));
+	buffer.push_back(col_names.join(Table::DataSeparator));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
@@ -491,9 +491,9 @@ QString TableDataWidget::generateDataBuffer(void)
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END)) ||
-					(value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(PgModelerNs::UNESC_VALUE_END)) ||
-					(!value.startsWith(PgModelerNs::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNs::UNESC_VALUE_END) && value.endsWith(PgModelerNs::UNESC_VALUE_END)))
+			if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
+					(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
+					(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
 				throw Exception(Exception::getErrorMessage(MalformedUnescapedValue)
 								.arg(row + 1).arg(col_names[col]),
 								MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -501,14 +501,14 @@ QString TableDataWidget::generateDataBuffer(void)
 			val_list.push_back(value);
 		}
 
-		buffer.push_back(val_list.join(Table::DATA_SEPARATOR));
+		buffer.push_back(val_list.join(Table::DataSeparator));
 		val_list.clear();
 	}
 
 	if(buffer.size() <= 1)
 		return(QString());
 
-	return(buffer.join(Table::DATA_LINE_BREAK));
+	return(buffer.join(Table::DataLineBreak));
 }
 
 void TableDataWidget::enterEvent(QEvent *)

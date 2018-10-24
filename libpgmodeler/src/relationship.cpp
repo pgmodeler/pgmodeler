@@ -20,19 +20,19 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
-const QString Relationship::SUFFIX_SEPARATOR=QString("_");
-const QString Relationship::SRC_TAB_TOKEN=QString("{st}");
-const QString Relationship::DST_TAB_TOKEN=QString("{dt}");
-const QString Relationship::GEN_TAB_TOKEN=QString("{gt}");
-const QString Relationship::SRC_COL_TOKEN=QString("{sc}");
+const QString Relationship::SuffixSeparator=QString("_");
+const QString Relationship::SrcTabToken=QString("{st}");
+const QString Relationship::DstTabToken=QString("{dt}");
+const QString Relationship::GenTabToken=QString("{gt}");
+const QString Relationship::SrcColToken=QString("{sc}");
 
-constexpr unsigned Relationship::SRC_COL_PATTERN;
-constexpr unsigned Relationship::DST_COL_PATTERN;
-constexpr unsigned Relationship::PK_PATTERN;
-constexpr unsigned Relationship::UQ_PATTERN;
-constexpr unsigned Relationship::SRC_FK_PATTERN;
-constexpr unsigned Relationship::DST_FK_PATTERN;
-constexpr unsigned Relationship::PK_COL_PATTERN;
+constexpr unsigned Relationship::SrcColPattern;
+constexpr unsigned Relationship::DstColPattern;
+constexpr unsigned Relationship::PkPattern;
+constexpr unsigned Relationship::UqPattern;
+constexpr unsigned Relationship::SrcFkPattern;
+constexpr unsigned Relationship::DstFkPattern;
+constexpr unsigned Relationship::PkColPattern;
 
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
@@ -153,22 +153,22 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			if(tab_name_relnn.size() > BaseObject::ObjectNameMaxLength)
 				tab_name_relnn.resize(BaseObject::ObjectNameMaxLength);
 
-			setNamePattern(PK_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
-			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
-			setNamePattern(DST_FK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
-			setNamePattern(UQ_PATTERN, GEN_TAB_TOKEN + SUFFIX_SEPARATOR + QString("uq"));
-			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
-			setNamePattern(DST_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + DST_TAB_TOKEN);
-			setNamePattern(PK_COL_PATTERN, QString("id"));
+			setNamePattern(PkPattern, GenTabToken + SuffixSeparator + QString("pk"));
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
+			setNamePattern(DstFkPattern, DstTabToken + SuffixSeparator + QString("fk"));
+			setNamePattern(UqPattern, GenTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
+			setNamePattern(DstColPattern, SrcColToken + SuffixSeparator + DstTabToken);
+			setNamePattern(PkColPattern, QString("id"));
 		}
 		else if(rel_type==RelationshipDep || rel_type==RelationshipGen)
-			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
 		else
 		{
-			setNamePattern(PK_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("pk"));
-			setNamePattern(SRC_FK_PATTERN, SRC_TAB_TOKEN + SUFFIX_SEPARATOR + QString("fk"));
-			setNamePattern(UQ_PATTERN, DST_TAB_TOKEN + SUFFIX_SEPARATOR + QString("uq"));
-			setNamePattern(SRC_COL_PATTERN, SRC_COL_TOKEN + SUFFIX_SEPARATOR + SRC_TAB_TOKEN);
+			setNamePattern(PkPattern, DstTabToken + SuffixSeparator + QString("pk"));
+			setNamePattern(SrcFkPattern, SrcTabToken + SuffixSeparator + QString("fk"));
+			setNamePattern(UqPattern, DstTabToken + SuffixSeparator + QString("uq"));
+			setNamePattern(SrcColPattern, SrcColToken + SuffixSeparator + SrcTabToken);
 		}
 
 		rejected_col_count=0;
@@ -185,14 +185,14 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 	if(!pattern.isEmpty())
 	{
 		QString aux_name=pattern,
-				pat_tokens[]={ SRC_TAB_TOKEN, DST_TAB_TOKEN,
-							   GEN_TAB_TOKEN, SRC_COL_TOKEN };
+				pat_tokens[]={ SrcTabToken, DstTabToken,
+							   GenTabToken, SrcColToken };
 		unsigned i, count=sizeof(pat_tokens)/sizeof(QString);
 
 		for(i=0; i < count; i++)
 			aux_name.replace(pat_tokens[i], QString("%1").arg(static_cast<char>('a' + i)));
 
-		if(pat_id > PK_COL_PATTERN)
+		if(pat_id > PkColPattern)
 			throw Exception(Exception::getErrorMessage(RefInvalidNamePatternId)
 							.arg(this->getName()),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!BaseObject::isValidName(aux_name))
@@ -206,7 +206,7 @@ void Relationship::setNamePattern(unsigned pat_id, const QString &pattern)
 
 QString Relationship::getNamePattern(unsigned pat_id)
 {
-	if(pat_id > PK_COL_PATTERN)
+	if(pat_id > PkColPattern)
 		throw Exception(RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(name_patterns[pat_id]);
@@ -217,23 +217,23 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 	QString name, aux_name;
 
 	name=name_patterns[pat_id];
-	name.replace(GEN_TAB_TOKEN, (rel_type==RelationshipNn ? tab_name_relnn : QString()));
+	name.replace(GenTabToken, (rel_type==RelationshipNn ? tab_name_relnn : QString()));
 
 	if(rel_type==RelationshipNn)
 	{
 		aux_name = use_alias && !src_table->getAlias().isEmpty() ? src_table->getAlias() : src_table->getName();
-		name.replace(SRC_TAB_TOKEN, aux_name);
+		name.replace(SrcTabToken, aux_name);
 
 		aux_name = use_alias && !dst_table->getAlias().isEmpty() ? dst_table->getAlias() : dst_table->getName();
-		name.replace(DST_TAB_TOKEN, aux_name);
+		name.replace(DstTabToken, aux_name);
 	}
 	else
 	{
 		aux_name = use_alias && !getReferenceTable()->getAlias().isEmpty() ? getReferenceTable()->getAlias() : getReferenceTable()->getName();
-		name.replace(SRC_TAB_TOKEN, aux_name);
+		name.replace(SrcTabToken, aux_name);
 
 		aux_name = use_alias && !getReceiverTable()->getAlias().isEmpty() ? getReceiverTable()->getAlias() : getReceiverTable()->getName();
-		name.replace(DST_TAB_TOKEN, aux_name);
+		name.replace(DstTabToken, aux_name);
 	}
 
 	aux_name.clear();
@@ -241,7 +241,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 	if(id_col)
 		aux_name = use_alias && !id_col->getAlias().isEmpty() ? id_col->getAlias() : id_col->getName();
 
-	name.replace(SRC_COL_TOKEN, aux_name);
+	name.replace(SrcColToken, aux_name);
 
 	if(name.size() > BaseObject::ObjectNameMaxLength)
 		name.remove(BaseObject::ObjectNameMaxLength, name.size());
@@ -320,8 +320,8 @@ void Relationship::createSpecialPrimaryKey(void)
 
 		 2) Use the same tablespace as the receiver table */
 		pk_special=new Constraint;
-		pk_special->setName(generateObjectName(PK_PATTERN));
-		pk_special->setAlias(generateObjectName(PK_PATTERN, nullptr, true));
+		pk_special->setName(generateObjectName(PkPattern));
+		pk_special->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_special->setConstraintType(ConstraintType::primary_key);
 		pk_special->setAddedByLinking(true);
 		pk_special->setProtected(true);
@@ -1290,8 +1290,8 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 				pk=this->pk_relident;
 
 			new_pk=true;
-			pk->setName(generateObjectName(PK_PATTERN));
-			pk->setAlias(generateObjectName(PK_PATTERN, nullptr, true));
+			pk->setName(generateObjectName(PkPattern));
+			pk->setAlias(generateObjectName(PkPattern, nullptr, true));
 		}
 
 		//Adds the columns from the strong entity primary key on the weak entity primary key
@@ -1352,8 +1352,8 @@ void Relationship::addUniqueKey(Table *recv_tab)
 		while(i < count)
 			uq->addColumn(gen_columns[i++], Constraint::SourceCols);
 
-		uq->setName(generateObjectName(UQ_PATTERN));
-		uq->setAlias(generateObjectName(UQ_PATTERN, nullptr, true));
+		uq->setName(generateObjectName(UqPattern));
+		uq->setAlias(generateObjectName(UqPattern, nullptr, true));
 		uq->setName(PgModelerNs::generateUniqueName(uq, (*recv_tab->getObjectList(ObjConstraint))));
 		recv_tab->addConstraint(uq);
 	}
@@ -1463,20 +1463,20 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 		if(rel_type!=RelationshipNn)
 		{
-			name=generateObjectName(SRC_FK_PATTERN);
-			fk_alias=generateObjectName(SRC_FK_PATTERN, nullptr, true);
+			name=generateObjectName(SrcFkPattern);
+			fk_alias=generateObjectName(SrcFkPattern, nullptr, true);
 		}
 		else
 		{
 			if(ref_tab==src_table)
 			{
-				name=generateObjectName(SRC_FK_PATTERN);
-				fk_alias=generateObjectName(SRC_FK_PATTERN, nullptr, true);
+				name=generateObjectName(SrcFkPattern);
+				fk_alias=generateObjectName(SrcFkPattern, nullptr, true);
 			}
 			else
 			{
-				name=generateObjectName(DST_FK_PATTERN);
-				fk_alias=generateObjectName(DST_FK_PATTERN, nullptr, true);
+				name=generateObjectName(DstFkPattern);
+				fk_alias=generateObjectName(DstFkPattern, nullptr, true);
 			}
 		}
 
@@ -1580,20 +1580,20 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 
 			if(rel_type!=RelationshipNn)
 			{
-				name=generateObjectName(SRC_COL_PATTERN, column_aux);
-				col_alias=generateObjectName(SRC_COL_PATTERN, column_aux, true);
+				name=generateObjectName(SrcColPattern, column_aux);
+				col_alias=generateObjectName(SrcColPattern, column_aux, true);
 			}
 			else
 			{
 				if(ref_tab==src_table && (!isSelfRelationship() || (isSelfRelationship() && !is_dst_table)))
 				{
-					name=generateObjectName(SRC_COL_PATTERN, column_aux);
-					col_alias=generateObjectName(SRC_COL_PATTERN, column_aux, true);
+					name=generateObjectName(SrcColPattern, column_aux);
+					col_alias=generateObjectName(SrcColPattern, column_aux, true);
 				}
 				else
 				{
-					name=generateObjectName(DST_COL_PATTERN, column_aux);
-					col_alias=generateObjectName(DST_COL_PATTERN, column_aux, true);
+					name=generateObjectName(DstColPattern, column_aux);
+					col_alias=generateObjectName(DstColPattern, column_aux, true);
 				}
 			}
 
@@ -1841,8 +1841,8 @@ void Relationship::addColumnsRelNn(void)
 		if(single_pk_column)
 		{
 			pk_col=new Column;
-			pk_col->setName(generateObjectName(PK_COL_PATTERN));
-			pk_col->setAlias(generateObjectName(PK_COL_PATTERN, nullptr, true));
+			pk_col->setName(generateObjectName(PkColPattern));
+			pk_col->setAlias(generateObjectName(PkColPattern, nullptr, true));
 			pk_col->setType(PgSQLType(QString("serial")));
 			pk_col->setAddedByLinking(true);
 			table_relnn->addColumn(pk_col);
@@ -1850,8 +1850,8 @@ void Relationship::addColumnsRelNn(void)
 
 		//Creates the primary key for the n-n relationship table
 		pk_tabnn=new Constraint;
-		pk_tabnn->setName(generateObjectName(PK_PATTERN));
-		pk_tabnn->setAlias(generateObjectName(PK_PATTERN, nullptr, true));
+		pk_tabnn->setName(generateObjectName(PkPattern));
+		pk_tabnn->setAlias(generateObjectName(PkPattern, nullptr, true));
 		pk_tabnn->setConstraintType(ConstraintType::primary_key);
 		pk_tabnn->setAddedByLinking(true);
 
@@ -2403,7 +2403,7 @@ bool Relationship::isInvalidated(void)
 
 				3) Check if the column (address) from the vector pk_columns is equal to the column
 					 obtained directly from the primary key */
-					col_name=generateObjectName(SRC_COL_PATTERN, rel_pk_col);
+					col_name=generateObjectName(SrcColPattern, rel_pk_col);
 					valid=(rel_pk_col==pk_col &&
 							(gen_col->getName()==col_name ||gen_col->getName().contains(pk_col->getName())) &&
 							(rel_pk_col->getType()==gen_col->getType() ||
@@ -2527,7 +2527,7 @@ bool Relationship::isInvalidated(void)
 				{
 					gen_col=fk->getColumn(i, Constraint::SourceCols);
 					pk_col=pk->getColumn(i, Constraint::SourceCols);
-					valid=(gen_col->getName()==generateObjectName(SRC_COL_PATTERN, pk_col) ||
+					valid=(gen_col->getName()==generateObjectName(SrcColPattern, pk_col) ||
 									gen_col->getName().contains(pk_col->getName()));
 				}
 
@@ -2539,7 +2539,7 @@ bool Relationship::isInvalidated(void)
 				{
 					gen_col=fk1->getColumn(i, Constraint::SourceCols);
 					pk_col=pk->getColumn(i, Constraint::SourceCols);
-					valid=(gen_col->getName()==generateObjectName(DST_COL_PATTERN, pk_col) ||
+					valid=(gen_col->getName()==generateObjectName(DstColPattern, pk_col) ||
 						   gen_col->getName().contains(pk_col->getName()));
 				}
 			}
@@ -2618,13 +2618,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RelationshipDep ? ParsersAttributes::_TRUE_ : QString());
 		attributes[ParsersAttributes::RELATIONSHIP_PART]=(rel_type==RelationshipPart ? ParsersAttributes::_TRUE_ : QString());
 
-		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SRC_COL_PATTERN];
-		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DST_COL_PATTERN];
-		attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PK_PATTERN];
-		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UQ_PATTERN];
-		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SRC_FK_PATTERN];
-		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DST_FK_PATTERN];
-		attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PK_COL_PATTERN];
+		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
+		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DstColPattern];
+		attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PkPattern];
+		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UqPattern];
+		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
+		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DstFkPattern];
+		attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PkColPattern];
 
 		attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 

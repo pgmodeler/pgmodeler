@@ -34,12 +34,12 @@ void RoleTest::alterCommandEndsWithSemiColon(void)
   QString alter_cmd;
 
   role1.setName("role1");
-  role1.setOption(Role::OP_SUPERUSER, true);
+  role1.setOption(Role::OpSuperuser, true);
 
   role2.setName("role2");
-  role2.setOption(Role::OP_CREATEDB, false);
-  role2.setOption(Role::OP_CREATEROLE, false);
-  role2.setOption(Role::OP_LOGIN, false);
+  role2.setOption(Role::OpCreateDb, false);
+  role2.setOption(Role::OpCreateRole, false);
+  role2.setOption(Role::OpLogin, false);
 
   alter_cmd=role1.getAlterDefinition(&role2);
   alter_cmd.remove(QString("\n%1\n").arg(ParsersAttributes::DDL_END_TOKEN));

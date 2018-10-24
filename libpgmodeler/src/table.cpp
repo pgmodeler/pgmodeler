@@ -19,8 +19,8 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-const QString Table::DATA_SEPARATOR = QString("•");
-const QString Table::DATA_LINE_BREAK = QString("%1%2").arg("⸣").arg('\n');
+const QString Table::DataSeparator = QString("•");
+const QString Table::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
 Table::Table(void) : BaseTable()
 {
@@ -1939,7 +1939,7 @@ QString Table::getInitialData(void)
 
 QString Table::getInitialDataCommands(void)
 {
-	QStringList buffer=initial_data.split(DATA_LINE_BREAK);
+	QStringList buffer=initial_data.split(DataLineBreak);
 
 	if(!buffer.isEmpty() && !buffer.at(0).isEmpty())
 	{
@@ -1947,7 +1947,7 @@ QString Table::getInitialDataCommands(void)
 		int curr_col=0;
 		QList<int> ignored_cols;
 
-		col_names=(buffer.at(0)).split(DATA_SEPARATOR);
+		col_names=(buffer.at(0)).split(DataSeparator);
 		col_names.removeDuplicates();
 		buffer.removeFirst();
 
@@ -1967,7 +1967,7 @@ QString Table::getInitialDataCommands(void)
 			curr_col=0;
 
 			//Filtering the invalid columns' values
-			for(QString value : buf_row.split(DATA_SEPARATOR))
+			for(QString value : buf_row.split(DataSeparator))
 			{
 				if(ignored_cols.contains(curr_col))
 					continue;
@@ -2002,7 +2002,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value=QString("DEFAULT");
 		}
 		//Unescaped values will not be enclosed in quotes
-		else if(value.startsWith(PgModelerNs::UNESC_VALUE_START) && value.endsWith(PgModelerNs::UNESC_VALUE_END))
+		else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
 		{
 			value.remove(0,1);
 			value.remove(value.length()-1, 1);
@@ -2010,8 +2010,8 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		//Quoting value
 		else
 		{
-			value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_START, PgModelerNs::UNESC_VALUE_START);
-			value.replace(QString("\\") + PgModelerNs::UNESC_VALUE_END, PgModelerNs::UNESC_VALUE_END);
+			value.replace(QString("\\") + PgModelerNs::UnescValueStart, PgModelerNs::UnescValueStart);
+			value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
 			value=QString("E'") + value + QString("'");

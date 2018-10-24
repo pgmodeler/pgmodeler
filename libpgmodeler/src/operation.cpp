@@ -24,8 +24,8 @@ Operation::Operation(void)
 	pool_obj=nullptr;
 	original_obj=nullptr;
 	object_idx=-1;
-	chain_type=NO_CHAIN;
-	op_type=NO_OPERATION;
+	chain_type=NoChain;
+	op_type=NoOperation;
 }
 
 QString Operation::generateOperationId(void)
@@ -51,12 +51,12 @@ void Operation::setObjectIndex(int idx)
 
 void Operation::setChainType(unsigned type)
 {
-	chain_type=(type > CHAIN_END ? NO_CHAIN : type);
+	chain_type=(type > ChainEnd ? NoChain : type);
 }
 
 void Operation::setOperationType(unsigned type)
 {
-	op_type=(type > OBJECT_MOVED ? NO_OPERATION : type);
+	op_type=(type > ObjectMoved ? NoOperation : type);
 }
 
 void Operation::setOriginalObject(BaseObject *object)

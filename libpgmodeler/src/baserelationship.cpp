@@ -135,7 +135,7 @@ void BaseRelationship::configureRelationship(void)
 
 		//Allocates the textbox for the name label
 		lables[RelNameLabel]=new Textbox;
-		lables[RelNameLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
+		lables[RelNameLabel]->setTextAttribute(Textbox::ItalicText, true);
 
 		//Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
 		if(rel_type!=RelationshipGen &&
@@ -144,8 +144,8 @@ void BaseRelationship::configureRelationship(void)
 		{
 			lables[SrcCardLabel]=new Textbox;
 			lables[DstCardLabel]=new Textbox;
-			lables[SrcCardLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
-			lables[DstCardLabel]->setTextAttribute(Textbox::ITALIC_TXT, true);
+			lables[SrcCardLabel]->setTextAttribute(Textbox::ItalicText, true);
+			lables[DstCardLabel]->setTextAttribute(Textbox::ItalicText, true);
 
 			//Configures the mandatory participation for both tables
 			setMandatoryTable(SrcTable,src_mandatory);

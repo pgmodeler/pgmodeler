@@ -117,14 +117,14 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		validity_chk->setChecked(!role->getValidity().isEmpty());
 		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), QString("yyyy-MM-dd hh:mm:ss")));
 
-		superusr_chk->setChecked(role->getOption(Role::OP_SUPERUSER));
-		create_db_chk->setChecked(role->getOption(Role::OP_CREATEDB));
-		create_role_chk->setChecked(role->getOption(Role::OP_CREATEROLE));
-		encrypt_pass_chk->setChecked(role->getOption(Role::OP_ENCRYPTED));
-		inh_perm_chk->setChecked(role->getOption(Role::OP_INHERIT));
-		can_login_chk->setChecked(role->getOption(Role::OP_LOGIN));
-		can_replicate_chk->setChecked(role->getOption(Role::OP_REPLICATION));
-		bypass_rls_chk->setChecked(role->getOption(Role::OP_BYPASSRLS));
+		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
+		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));
+		create_role_chk->setChecked(role->getOption(Role::OpCreateRole));
+		encrypt_pass_chk->setChecked(role->getOption(Role::OpEncrypted));
+		inh_perm_chk->setChecked(role->getOption(Role::OpInherit));
+		can_login_chk->setChecked(role->getOption(Role::OpLogin));
+		can_replicate_chk->setChecked(role->getOption(Role::OpReplication));
+		bypass_rls_chk->setChecked(role->getOption(Role::OpBypassRls));
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
@@ -140,7 +140,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		QString str_aux;
 		Role *aux_role=nullptr;
 		unsigned count, i, type_id,
-				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 		if(table_id > 3)
 			throw Exception(RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -172,7 +172,7 @@ void RoleWidget::fillMembersTable(void)
 	{
 		Role *aux_role=nullptr, *role=nullptr;
 		unsigned count, i, type_id,
-				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 		role=dynamic_cast<Role *>(this->object);
 
@@ -249,7 +249,7 @@ void RoleWidget::applyConfiguration(void)
 {
 	Role *role=nullptr, *aux_role=nullptr;
 	unsigned count, i, type_id,
-			role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 	try
 	{
@@ -264,14 +264,14 @@ void RoleWidget::applyConfiguration(void)
 		else
 			role->setValidity(QString());
 
-		role->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
-		role->setOption(Role::OP_CREATEDB, create_db_chk->isChecked());
-		role->setOption(Role::OP_CREATEROLE, create_role_chk->isChecked());
-		role->setOption(Role::OP_ENCRYPTED, encrypt_pass_chk->isChecked());
-		role->setOption(Role::OP_INHERIT, inh_perm_chk->isChecked());
-		role->setOption(Role::OP_LOGIN, can_login_chk->isChecked());
-		role->setOption(Role::OP_REPLICATION, can_replicate_chk->isChecked());
-		role->setOption(Role::OP_BYPASSRLS, bypass_rls_chk->isChecked());
+		role->setOption(Role::OpSuperuser, superusr_chk->isChecked());
+		role->setOption(Role::OpCreateDb, create_db_chk->isChecked());
+		role->setOption(Role::OpCreateRole, create_role_chk->isChecked());
+		role->setOption(Role::OpEncrypted, encrypt_pass_chk->isChecked());
+		role->setOption(Role::OpInherit, inh_perm_chk->isChecked());
+		role->setOption(Role::OpLogin, can_login_chk->isChecked());
+		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());
+		role->setOption(Role::OpBypassRls, bypass_rls_chk->isChecked());
 
 		for(type_id=0; type_id < 3; type_id++)
 		{

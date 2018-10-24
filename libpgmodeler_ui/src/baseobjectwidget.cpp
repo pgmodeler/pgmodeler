@@ -924,7 +924,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 				obj_type!=ObjView &&
 				obj_type!=ObjRelationship)
 		{
-			if(!op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
 				delete(this->object);
 
 			this->object=nullptr;
@@ -952,15 +952,15 @@ void BaseObjectWidget::registerNewObject(void)
 {
 	try
 	{
-		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::OBJECT_CREATED))
+		if(this->new_object && op_list && !op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
 		{
 			//If the object is a new one is necessary register it on the operation list
 			if(this->table)
-				op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->table);
 			else if(this->relationship)
-				op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjectCreated, -1, this->relationship);
 			else
-				op_list->registerObject(this->object, Operation::OBJECT_CREATED);
+				op_list->registerObject(this->object, Operation::ObjectCreated);
 		}
 	}
 	catch(Exception &e)

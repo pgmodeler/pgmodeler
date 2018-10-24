@@ -109,22 +109,22 @@ void OperationListWidget::updateOperationList(void)
 			item2->setFont(0,font);
 			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
 
-			if(op_type==Operation::OBJECT_CREATED)
+			if(op_type==Operation::ObjectCreated)
 			{
 				op_icon=QString("criado");
 				op_name=trUtf8("created");
 			}
-			else if(op_type==Operation::OBJECT_REMOVED)
+			else if(op_type==Operation::ObjectRemoved)
 			{
 				op_icon=QString("removido");
 				op_name=trUtf8("removed");
 			}
-			else if(op_type==Operation::OBJECT_MODIFIED)
+			else if(op_type==Operation::ObjectModified)
 			{
 				op_icon=QString("modificado");
 				op_name=trUtf8("modified");
 			}
-			else if(op_type==Operation::OBJECT_MOVED)
+			else if(op_type==Operation::ObjectMoved)
 			{
 				op_icon=QString("movimentado");
 				op_name=trUtf8("moved");

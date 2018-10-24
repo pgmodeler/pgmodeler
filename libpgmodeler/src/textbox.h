@@ -42,9 +42,9 @@ class Textbox: public BaseGraphicObject{
 
 	public:
 		//! \brief Constants used to configure the text attributes
-		static constexpr unsigned ITALIC_TXT=0,
-		BOLD_TXT=1,
-		UNDERLINE_TXT=2;
+		static constexpr unsigned ItalicText=0,
+		BoldText=1,
+		UnderlineText=2;
 
 		/*! \brief To define the content of the textboxes
 		 the method setComment() must be used and the getComment()

@@ -140,10 +140,10 @@ class Table: public BaseTable {
 
 	public:
 		//! \brief Default char for data separator in initial-data tag
-		static const QString DATA_SEPARATOR,
+		static const QString DataSeparator,
 
 		//! \brief Default char for data line break in initial-data tag
-		DATA_LINE_BREAK;
+		DataLineBreak;
 
 		Table(void);
 		~Table(void);

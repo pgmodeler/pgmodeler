@@ -22,8 +22,8 @@ Element::Element(void)
 {
 	column=nullptr;
 	operator_class=nullptr;
-	sorting_attibs[NULLS_FIRST]=false;
-	sorting_attibs[ASC_ORDER]=true;
+	sorting_attibs[NullsFirst]=false;
+	sorting_attibs[AscOrder]=true;
 	sorting_enabled=false;
 }
 
@@ -52,7 +52,7 @@ void Element::setOperatorClass(OperatorClass *oper_class)
 
 void Element::setSortingAttribute(unsigned attrib, bool value)
 {
-	if(attrib > NULLS_FIRST)
+	if(attrib > NullsFirst)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	sorting_attibs[attrib]=value;
@@ -70,7 +70,7 @@ bool Element::isSortingEnabled(void)
 
 bool Element::getSortingAttribute(unsigned attrib)
 {
-	if(attrib > NULLS_FIRST)
+	if(attrib > NullsFirst)
 		throw Exception(RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(sorting_attibs[attrib]);
@@ -97,8 +97,8 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[ParsersAttributes::EXPRESSION]=QString();
 	attributes[ParsersAttributes::OP_CLASS]=QString();
 	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? ParsersAttributes::_TRUE_ : QString());
 
 
 	if(column)
@@ -121,8 +121,8 @@ bool Element::isEqualsTo(Element &elem)
 		 this->expression == elem.expression &&
 		 this->operator_class == elem.operator_class &&
 		 this->sorting_enabled == elem.sorting_enabled &&
-		 this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
-		 this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+		 this->sorting_attibs[AscOrder] == elem.sorting_attibs[AscOrder] &&
+		 this->sorting_attibs[NullsFirst] == elem.sorting_attibs[NullsFirst]);
 }
 
 bool Element::operator == (Element &elem)
