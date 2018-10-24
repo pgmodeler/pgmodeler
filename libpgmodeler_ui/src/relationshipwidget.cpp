@@ -351,14 +351,14 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 				including_rb->setChecked(copy_op.isIncluding());
 				excluding_rb->setChecked(copy_op.isExcluding());
-				all_chk->setChecked(copy_op.isOptionSet(CopyOptions::ALL));
-				defaults_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::DEFAULTS));
-				constraints_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::CONSTRAINTS));
-				storage_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STORAGE));
-				comments_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::COMMENTS));
-				indexes_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::INDEXES));
-				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::IDENTITY));
-				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STATISTICS));
+				all_chk->setChecked(copy_op.isOptionSet(CopyOptions::All));
+				defaults_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Defaults));
+				constraints_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Constraints));
+				storage_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Storage));
+				comments_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Comments));
+				indexes_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Indexes));
+				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Identity));
+				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::Statistics));
 			}
 			else if(rel_type == BaseRelationship::RelationshipPart)
 			{
@@ -1102,18 +1102,18 @@ void RelationshipWidget::applyConfiguration(void)
 			if(!defaults_rb->isChecked())
 			{
 				if(including_rb->isChecked())
-					copy_mode=CopyOptions::INCLUDING;
+					copy_mode=CopyOptions::Including;
 				else
-					copy_mode=CopyOptions::EXCLUDING;
+					copy_mode=CopyOptions::Excluding;
 
-				copy_ops+=(all_chk->isChecked() ? CopyOptions::ALL : 0);
-				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::DEFAULTS : 0);
-				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::CONSTRAINTS : 0);
-				copy_ops+=(comments_chk->isChecked() ? CopyOptions::COMMENTS : 0);
-				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::INDEXES : 0);
-				copy_ops+=(storage_chk->isChecked() ? CopyOptions::STORAGE : 0);
-				copy_ops+=(identity_chk->isChecked() ? CopyOptions::IDENTITY : 0);
-				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::STATISTICS : 0);
+				copy_ops+=(all_chk->isChecked() ? CopyOptions::All : 0);
+				copy_ops+=(defaults_chk->isChecked() ? CopyOptions::Defaults : 0);
+				copy_ops+=(constraints_chk->isChecked() ? CopyOptions::Constraints : 0);
+				copy_ops+=(comments_chk->isChecked() ? CopyOptions::Comments : 0);
+				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::Indexes : 0);
+				copy_ops+=(storage_chk->isChecked() ? CopyOptions::Storage : 0);
+				copy_ops+=(identity_chk->isChecked() ? CopyOptions::Identity : 0);
+				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::Statistics : 0);
 			}
 
 			rel->setCopyOptions(CopyOptions(copy_mode, copy_ops));

@@ -32,7 +32,7 @@ Conversion::Conversion(void)
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 {
 	//Checks if the encoding index is valid
-	if(encoding_idx<=DST_ENCODING)
+	if(encoding_idx<=DstEncoding)
 	{
 		//If the passed enconding type is null an error is raised
 		if((~encoding_type).isEmpty())
@@ -94,7 +94,7 @@ void Conversion::setDefault(bool value)
 
 EncodingType Conversion::getEncoding(unsigned encoding_idx)
 {
-	if(encoding_idx > DST_ENCODING)
+	if(encoding_idx > DstEncoding)
 		throw Exception(RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(this->encodings[encoding_idx]);
@@ -116,8 +116,8 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SRC_ENCODING]);
-	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DST_ENCODING]);
+	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SrcEncoding]);
+	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DstEncoding]);
 
 	if(conversion_func)
 	{

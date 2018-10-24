@@ -4299,10 +4299,10 @@ Conversion *DatabaseModel::createConversion(void)
 		setBasicAttributes(conv);
 		xmlparser.getElementAttributes(attribs);
 
-		conv->setEncoding(Conversion::SRC_ENCODING,
+		conv->setEncoding(Conversion::SrcEncoding,
 						  EncodingType(attribs[ParsersAttributes::SRC_ENCODING]));
 
-		conv->setEncoding(Conversion::DST_ENCODING,
+		conv->setEncoding(Conversion::DstEncoding,
 						  EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
 
 		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
@@ -9500,18 +9500,18 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 														 ParsersAttributes::DST_LABEL,
 														 ParsersAttributes::NAME_LABEL };
 
-	save_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
-	save_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
-	save_objs_prot=(META_OBJS_PROTECTION & options) == META_OBJS_PROTECTION;
-	save_objs_sqldis=(META_OBJS_SQLDISABLED & options) == META_OBJS_SQLDISABLED;
-	save_textboxes=(META_TEXTBOX_OBJS & options) == META_TEXTBOX_OBJS;
-	save_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
-	save_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
-	save_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
-	save_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
-	save_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
-	save_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
-	save_objs_aliases=(META_OBJS_ALIASES & options) == META_OBJS_ALIASES;
+	save_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
+	save_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
+	save_objs_prot=(MetaObjsProtection & options) == MetaObjsProtection;
+	save_objs_sqldis=(MetaObjsSqlDisabled & options) == MetaObjsSqlDisabled;
+	save_textboxes=(MetaTextboxObjs & options) == MetaTextboxObjs;
+	save_tags=(MetaTagObjs & options) == MetaTagObjs;
+	save_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
+	save_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
+	save_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
+	save_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
+	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
 	output.open(QFile::WriteOnly);
 
@@ -9837,18 +9837,18 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
 			load_extattribs=false, load_genericsqls=false, load_objs_aliases=false;
 
-	load_db_attribs=(META_DB_ATTRIBUTES & options) == META_DB_ATTRIBUTES;
-	load_objs_pos=(META_OBJS_POSITIONING & options) == META_OBJS_POSITIONING;
-	load_objs_prot=(META_OBJS_PROTECTION & options) == META_OBJS_PROTECTION;
-	load_objs_sqldis=(META_OBJS_SQLDISABLED & options) == META_OBJS_SQLDISABLED;
-	load_textboxes=(META_TEXTBOX_OBJS & options) == META_TEXTBOX_OBJS;
-	load_tags=(META_TAG_OBJS & options) == META_TAG_OBJS;
-	load_custom_sql=(META_OBJS_CUSTOMSQL & options) == META_OBJS_CUSTOMSQL;
-	load_custom_colors=(META_OBJS_CUSTOMCOLORS & options) == META_OBJS_CUSTOMCOLORS;
-	load_fadeout=(META_OBJS_FADEDOUT & options) == META_OBJS_FADEDOUT;
-	load_extattribs=(META_OBJS_EXTATTRIBS & options) == META_OBJS_EXTATTRIBS;
-	load_genericsqls=(META_GENERIC_SQL_OBJS & options) == META_GENERIC_SQL_OBJS;
-	load_objs_aliases=(META_OBJS_ALIASES & options) == META_OBJS_ALIASES;
+	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
+	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
+	load_objs_prot=(MetaObjsProtection & options) == MetaObjsProtection;
+	load_objs_sqldis=(MetaObjsSqlDisabled & options) == MetaObjsSqlDisabled;
+	load_textboxes=(MetaTextboxObjs & options) == MetaTextboxObjs;
+	load_tags=(MetaTagObjs & options) == MetaTagObjs;
+	load_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
+	load_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
+	load_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
+	load_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
+	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
 	try
 	{

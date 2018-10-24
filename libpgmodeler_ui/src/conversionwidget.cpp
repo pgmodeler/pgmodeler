@@ -65,8 +65,8 @@ void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		conv_func_sel->setSelectedObject(conv->getConversionFunction());
 		default_conv_chk->setChecked(conv->isDefault());
-		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SRC_ENCODING))));
-		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DST_ENCODING))));
+		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SrcEncoding))));
+		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DstEncoding))));
 	}
 }
 
@@ -81,8 +81,8 @@ void ConversionWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		conv->setEncoding(Conversion::SRC_ENCODING, src_encoding_cmb->currentText());
-		conv->setEncoding(Conversion::DST_ENCODING, trg_encoding_cmb->currentText());
+		conv->setEncoding(Conversion::SrcEncoding, src_encoding_cmb->currentText());
+		conv->setEncoding(Conversion::DstEncoding, trg_encoding_cmb->currentText());
 		conv->setDefault(default_conv_chk->isChecked());
 		conv->setConversionFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 

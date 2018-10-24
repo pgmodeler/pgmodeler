@@ -180,19 +180,19 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setObjectListsCapacity(unsigned capacity);
 
 	public:
-		static constexpr unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
-		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
-		META_OBJS_PROTECTION=4,	//! \brief Handle objects' protection status when save/load metadata file
-		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
-		META_OBJS_CUSTOMSQL=16,	//! \brief Handle object's custom sql when save/load metadata file
-		META_OBJS_CUSTOMCOLORS=32,	//! \brief Handle object's custom colors when save/load metadata file
-		META_OBJS_FADEDOUT=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
-		META_OBJS_EXTATTRIBS=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
-		META_TEXTBOX_OBJS=256,	//! \brief Handle textboxes object when save/load metadata file
-		META_TAG_OBJS=512,	//! \brief Handle tags object when save/load metadata file
-		META_GENERIC_SQL_OBJS=1024,	//! \brief Handle generic sql object when save/load metadata file
-		META_OBJS_ALIASES=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
-		META_ALL_INFO=4095;	//! \brief Handle all metadata information about objects when save/load metadata file
+		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
+		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
+		MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file
+		MetaObjsSqlDisabled=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
+		MetaObjsCustomSql=16,	//! \brief Handle object's custom sql when save/load metadata file
+		MetaObjsCustomColors=32,	//! \brief Handle object's custom colors when save/load metadata file
+		MetaObjsFadeOut=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
+		MetaObjsExtAttribs=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
+		MetaTextboxObjs=256,	//! \brief Handle textboxes object when save/load metadata file
+		MetaTagObjs=512,	//! \brief Handle tags object when save/load metadata file
+		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
+		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
+		MetaAllInfo=4095;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
@@ -617,10 +617,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
-		void saveObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
+		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
+		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

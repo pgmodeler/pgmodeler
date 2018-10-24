@@ -166,18 +166,18 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
-		options+=(db_metadata_chk->isChecked() ? DatabaseModel::META_DB_ATTRIBUTES : 0);
-		options+=(custom_colors_chk->isChecked() ? DatabaseModel::META_OBJS_CUSTOMCOLORS : 0);
-		options+=(custom_sql_chk->isChecked() ? DatabaseModel::META_OBJS_CUSTOMSQL : 0);
-		options+=(objs_positioning_chk->isChecked() ? DatabaseModel::META_OBJS_POSITIONING : 0);
-		options+=(objs_protection_chk->isChecked() ? DatabaseModel::META_OBJS_PROTECTION : 0);
-		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::META_OBJS_SQLDISABLED : 0);
-		options+=(tag_objs_chk->isChecked() ? DatabaseModel::META_TAG_OBJS : 0);
-		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::META_TEXTBOX_OBJS : 0);
-		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::META_OBJS_FADEDOUT : 0);
-		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::META_OBJS_EXTATTRIBS : 0);
-		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::META_GENERIC_SQL_OBJS : 0);
-		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::META_OBJS_ALIASES : 0);
+		options+=(db_metadata_chk->isChecked() ? DatabaseModel::MetaDbAttributes : 0);
+		options+=(custom_colors_chk->isChecked() ? DatabaseModel::MetaObjsCustomColors : 0);
+		options+=(custom_sql_chk->isChecked() ? DatabaseModel::MetaObjsCustomSql : 0);
+		options+=(objs_positioning_chk->isChecked() ? DatabaseModel::MetaObjsPositioning : 0);
+		options+=(objs_protection_chk->isChecked() ? DatabaseModel::MetaObjsProtection : 0);
+		options+=(objs_sql_disabled_chk->isChecked() ? DatabaseModel::MetaObjsSqlDisabled : 0);
+		options+=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : 0);
+		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : 0);
+		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : 0);
+		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::MetaObjsExtAttribs : 0);
+		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
+		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
