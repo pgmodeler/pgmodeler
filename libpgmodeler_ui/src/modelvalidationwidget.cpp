@@ -273,7 +273,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		label->setText(trUtf8("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
 									 .arg(col->getName())
 									 .arg(col->getParentTable()->getSignature(true))
-									 .arg(BaseObject::getTypeName(ObjTable))
+									 .arg(BaseObject::getTypeName(ObjectType::ObjTable))
 									 .arg(~col->getType()));
 	}
 	else
@@ -450,7 +450,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 		msg=PgModelerUiNs::formatMessage(msg);
 
-		if(obj_type!=ObjBaseObject)
+		if(obj_type!=ObjectType::ObjBaseObject)
 			ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
 		else if(!cmd.isEmpty())
 			ico=QPixmap(PgModelerUiNs::getIconPath("sqlcmd"));

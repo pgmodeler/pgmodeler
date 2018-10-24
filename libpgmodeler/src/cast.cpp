@@ -20,7 +20,7 @@
 
 Cast::Cast(void)
 {
-	obj_type=ObjCast;
+	obj_type=ObjectType::ObjCast;
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
@@ -40,7 +40,7 @@ void Cast::setDataType(unsigned type_idx, PgSQLType type)
 		if((*type).isEmpty())
 			throw Exception(Exception::getErrorMessage(AsgNullTypeObject)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjCast)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
 							AsgNullTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(this->types[type_idx] != type);
@@ -79,7 +79,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(!cast_func)
 		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
 						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Retrieve the cast function parameter count for specific validations
@@ -89,7 +89,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(param_count==0 || param_count > 3)
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
 						AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -112,7 +112,7 @@ void Cast::setCastFunction(Function *cast_func)
 		if(error)
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParameters)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjCast)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
 							AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
@@ -123,7 +123,7 @@ void Cast::setCastFunction(Function *cast_func)
 	if(ret_type!=this->types[DstType] && !ret_type.canCastTo(this->types[DstType]))
 		throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjCast)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjCast)),
 						AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(cast_function != cast_func);

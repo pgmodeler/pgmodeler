@@ -20,7 +20,7 @@
 
 Textbox::Textbox(void)
 {
-	obj_type=ObjTextbox;
+	obj_type=ObjectType::ObjTextbox;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[ParsersAttributes::ITALIC]=QString();

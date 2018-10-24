@@ -20,7 +20,7 @@
 
 TypeAttribute::TypeAttribute(void)
 {
-	obj_type=ObjTypeAttribute;
+	obj_type=ObjectType::ObjTypeAttribute;
 }
 
 void TypeAttribute::setType(PgSQLType type)

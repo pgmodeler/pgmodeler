@@ -18,7 +18,7 @@
 
 #include "aggregatewidget.h"
 
-AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjAggregate)
+AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjAggregate)
 {
 	try
 	{
@@ -30,9 +30,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjA
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
 		initial_cond_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		final_func_sel=new ObjectSelectorWidget(ObjFunction, true, this);
-		transition_func_sel=new ObjectSelectorWidget(ObjFunction, true, this);
-		sort_op_sel=new ObjectSelectorWidget(ObjOperator, true, this);
+		final_func_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		transition_func_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		sort_op_sel=new ObjectSelectorWidget(ObjectType::ObjOperator, true, this);
 
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
@@ -66,7 +66,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjA
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
 		frame->setParent(this);
 
-		configureFormLayout(funcaoagregacao_grid, ObjAggregate);
+		configureFormLayout(funcaoagregacao_grid, ObjectType::ObjAggregate);
 
 		setRequiredField(state_type);
 		setRequiredField(input_type);

@@ -106,7 +106,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		/*! \brief Merges the specified grid layout with the 'baseobject_grid' creating a single form.
 			The obj_type parameter must be specified to show the object type icon */
-		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=ObjBaseObject);
+		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=ObjectType::ObjBaseObject);
 		
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */
@@ -144,7 +144,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		VERSIONS_INTERVAL=1,
 		AFTER_VERSION=2;
 		
-		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=ObjBaseObject);
+		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=ObjectType::ObjBaseObject);
 		
 		virtual ~BaseObjectWidget(void);
 		
@@ -207,7 +207,7 @@ void BaseObjectWidget::startConfiguration(void)
 		
 		//! \brief If the object is already allocated
 		if(this->object && op_list &&
-				this->object->getObjectType()!=ObjDatabase)
+				this->object->getObjectType()!=ObjectType::ObjDatabase)
 		{
 			if(this->table)
 				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->table);

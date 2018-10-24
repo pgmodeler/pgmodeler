@@ -141,7 +141,7 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	progress_lbl->setText(text);
 	progress_pb->setValue(progress);
 
-	if(obj_type!=ObjBaseObject)
+	if(obj_type!=ObjectType::ObjBaseObject)
 		ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
 	else if(!cmd.isEmpty())
 		ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));

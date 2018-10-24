@@ -177,9 +177,9 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("colar")), trUtf8("Pase items"));
 						act->setShortcut(paste_tb->shortcut());
 						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
-						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == ObjTable);
+						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == ObjectType::ObjTable);
 
-						if(obj_type == ObjTable)
+						if(obj_type == ObjectType::ObjTable)
 						{
 							item_menu.addSeparator();
 							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
@@ -226,7 +226,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
 
 		schema_cmb->clear();
-		listObjects(schema_cmb, { ObjSchema });
+		listObjects(schema_cmb, { ObjectType::ObjSchema });
 
 		disableControlButtons();
 		schema_cmb->setCurrentText(curr_schema);
@@ -270,9 +270,9 @@ void DataManipulationForm::listTables(void)
 	if(schema_cmb->currentIndex() > 0)
 	{
 		if(hide_views_chk->isChecked())
-			listObjects(table_cmb, { ObjTable }, schema_cmb->currentText());
+			listObjects(table_cmb, { ObjectType::ObjTable }, schema_cmb->currentText());
 		else
-			listObjects(table_cmb, { ObjTable, ObjView }, schema_cmb->currentText());
+			listObjects(table_cmb, { ObjectType::ObjTable, ObjectType::ObjView }, schema_cmb->currentText());
 	}
 
 	table_lbl->setEnabled(table_cmb->count() > 0);
@@ -296,7 +296,7 @@ void DataManipulationForm::listColumns(void)
 			vector<attribs_map> cols;
 
 			catalog.setConnection(conn);
-			cols=catalog.getObjectsAttributes(ObjColumn, schema_cmb->currentText(), table_cmb->currentText());
+			cols=catalog.getObjectsAttributes(ObjectType::ObjColumn, schema_cmb->currentText(), table_cmb->currentText());
 
 			for(auto &col : cols)
 			{
@@ -388,12 +388,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==ObjTable)
+		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==ObjectType::ObjTable)
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()==ObjTable)
+		if(table_cmb->currentData(Qt::UserRole).toUInt()==ObjectType::ObjTable)
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -407,15 +407,15 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == ObjTable &&
+												 table_cmb->currentData().toUInt() == ObjectType::ObjTable &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ObjTable &&
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ObjectType::ObjTable &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
 		code_compl_wgt->clearCustomItems();
-		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), ObjColumn);
+		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), ObjectType::ObjColumn);
 
 		columns_lst->clear();
 		QListWidgetItem *item = nullptr;
@@ -476,7 +476,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == ObjTable  &&
+											 table_cmb->currentData().toUInt() == ObjectType::ObjTable  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -726,7 +726,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 		table_oid = 0;
 
-		if(obj_type==ObjView)
+		if(obj_type==ObjectType::ObjView)
 		{
 			warning_frm->setVisible(true);
 			warning_lbl->setText(trUtf8("Views can't have their data handled through this grid, this way, all operations are disabled."));
@@ -735,7 +735,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		{
 			catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-			pks=catalog.getObjectsAttributes(ObjConstraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
+			pks=catalog.getObjectsAttributes(ObjectType::ObjConstraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
 
 			warning_frm->setVisible(pks.empty());
 
@@ -745,8 +745,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 				table_oid = pks[0][ParsersAttributes::TABLE].toUInt();
 		}
 
-		hint_frm->setVisible(obj_type==ObjTable);
-		add_tb->setEnabled(obj_type==ObjTable && !col_names.empty());
+		hint_frm->setVisible(obj_type==ObjectType::ObjTable);
+		add_tb->setEnabled(obj_type==ObjectType::ObjTable && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -757,7 +757,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			for(QString id : col_str_ids)
 				col_ids.push_back(id.toUInt());
 
-			columns=catalog.getObjectsAttributes(ObjColumn, schema, table, col_ids);
+			columns=catalog.getObjectsAttributes(ObjectType::ObjColumn, schema, table, col_ids);
 
 			for(auto &col : columns)
 				pk_col_names.push_back(col[ParsersAttributes::NAME]);
@@ -766,7 +766,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		catalog.closeConnection();
 
 		//For tables, even if there is no pk the user can manipulate data
-		if(obj_type==ObjTable)
+		if(obj_type==ObjectType::ObjTable)
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -794,14 +794,14 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		ref_fk_infos.clear();
 		fk_infos.clear();
 
-		if(obj_type==ObjView)
+		if(obj_type==ObjectType::ObjView)
 			return;
 
 		catalog.setConnection(conn);
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
-		fks=catalog.getObjectsAttributes(ObjConstraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
-		ref_fks=catalog.getObjectsAttributes(ObjConstraint, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
+		fks=catalog.getObjectsAttributes(ObjectType::ObjConstraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
+		ref_fks=catalog.getObjectsAttributes(ObjectType::ObjConstraint, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
 		if(!fks.empty() || !ref_fks.empty())
 		{
@@ -819,8 +819,8 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 			for(auto &fk : fks)
 			{				
-				aux_table = catalog.getObjectAttributes(ObjTable, fk[ParsersAttributes::REF_TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjSchema, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::ObjTable, fk[ParsersAttributes::REF_TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::ObjSchema, aux_table[ParsersAttributes::SCHEMA].toUInt());
 				fk_name = QString("%1.%2.%3")
 									.arg(aux_schema[ParsersAttributes::NAME])
 									.arg(aux_table[ParsersAttributes::NAME])
@@ -842,7 +842,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(ObjColumn, schema, table, col_ids))
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::ObjColumn, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
 				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
@@ -854,7 +854,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::DST_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
 				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DataSeparator);
@@ -871,8 +871,8 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				col_ids.clear();
 				name_list.clear();
 
-				aux_table = catalog.getObjectAttributes(ObjTable, fk[ParsersAttributes::TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjSchema, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::ObjTable, fk[ParsersAttributes::TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::ObjSchema, aux_table[ParsersAttributes::SCHEMA].toUInt());
 				fk_name = QString("%1.%2.%3")
 									.arg(aux_schema[ParsersAttributes::NAME])
 									.arg(aux_table[ParsersAttributes::NAME])
@@ -882,7 +882,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::ObjColumn, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
 
 				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),

@@ -46,7 +46,7 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 {
 	QString msg=QString("%1 `%2' (%3)"), obj_name;
 	BaseObject *ref_obj=nullptr;
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 
 	if(diff_type==AlterObject && old_object)
 		ref_obj=old_object;
@@ -58,9 +58,9 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	/* Forcing the usage of BaseObject::getSignature for the following object,
 	 since the custom getSignature for those types return some undesired
 	 SQL keywords for this context */
-	if(obj_type==ObjConstraint || obj_type==ObjTrigger || obj_type==ObjRule)
+	if(obj_type==ObjectType::ObjConstraint || obj_type==ObjectType::ObjTrigger || obj_type==ObjectType::ObjRule)
 		obj_name=dynamic_cast<TableObject *>(ref_obj)->TableObject::getSignature();
-	else if(obj_type==ObjOpClass || obj_type==ObjOpFamily)
+	else if(obj_type==ObjectType::ObjOpClass || obj_type==ObjectType::ObjOpFamily)
 		obj_name=ref_obj->BaseObject::getSignature();
 	else
 		obj_name=ref_obj->getSignature();

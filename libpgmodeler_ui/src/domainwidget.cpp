@@ -19,7 +19,7 @@
 #include "domainwidget.h"
 #include "numberedtexteditor.h"
 
-DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjDomain)
+DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjDomain)
 {
 	try
 	{
@@ -52,7 +52,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjDomain)
 		connect(constr_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleConstraint(int)));
 		connect(constr_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editConstraint(int)));
 
-		configureFormLayout(domain_grid, ObjDomain);
+		configureFormLayout(domain_grid, ObjectType::ObjDomain);
 		setRequiredField(data_type);
 		configureTabOrder({ def_value_edt, not_null_chk,	data_type, constr_name_edt, check_expr_txt });
 

@@ -20,7 +20,7 @@
 
 Domain::Domain(void)
 {
-	obj_type=ObjDomain;
+	obj_type=ObjectType::ObjDomain;
 	not_null=false;
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 	attributes[ParsersAttributes::NOT_NULL]=QString();
@@ -41,7 +41,7 @@ void Domain::addCheckConstraint(const QString &name, const QString &expr)
 	{
 		throw Exception(Exception::getErrorMessage(AsgDuplicatedObject)
 						.arg(name)
-						.arg(BaseObject::getTypeName(ObjConstraint))
+						.arg(BaseObject::getTypeName(ObjectType::ObjConstraint))
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
 						AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);

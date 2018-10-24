@@ -18,7 +18,7 @@
 
 #include "collationwidget.h"
 
-CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjCollation)
+CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjCollation)
 {
 	try
 	{
@@ -32,7 +32,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjC
 		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
-		configureFormLayout(collation_grid, ObjCollation);
+		configureFormLayout(collation_grid, ObjectType::ObjCollation);
 
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);

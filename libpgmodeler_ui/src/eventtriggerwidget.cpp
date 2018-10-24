@@ -18,7 +18,7 @@
 
 #include "eventtriggerwidget.h"
 
-EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjEventTrigger)
+EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjEventTrigger)
 {
 	map<QString, vector<QWidget *> > fields_map;
 	map<QWidget *, vector<QString> > values_map;
@@ -26,7 +26,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	Ui_EventTriggerWidget::setupUi(this);
 
-	function_sel=new ObjectSelectorWidget(ObjFunction, true, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
 	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									 ObjectsTableWidget::EditButton |
 									 ObjectsTableWidget::UpdateButton |
@@ -39,7 +39,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	eventtrigger_grid->addWidget(function_sel, 1, 1);
 	filter_layout->addWidget(filter_tab);
 
-	configureFormLayout(eventtrigger_grid, ObjEventTrigger);
+	configureFormLayout(eventtrigger_grid, ObjectType::ObjEventTrigger);
 	setRequiredField(function_lbl);
 
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(event_lbl);

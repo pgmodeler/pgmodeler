@@ -27,12 +27,12 @@
 #include "policywidget.h"
 #include "generalconfigwidget.h"
 
-TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
+TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjTable)
 {
 	QGridLayout *grid=nullptr;
 	QVBoxLayout *vbox=nullptr;
 	ObjectsTableWidget *tab=nullptr;
-	ObjectType types[]={ ObjColumn, ObjConstraint, ObjTrigger, ObjRule, ObjIndex, ObjPolicy };
+	ObjectType types[]={ ObjectType::ObjColumn, ObjectType::ObjConstraint, ObjectType::ObjTrigger, ObjectType::ObjRule, ObjectType::ObjIndex, ObjectType::ObjPolicy };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QPushButton *edt_data_tb=nullptr;
@@ -68,7 +68,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
 
-	tag_sel = new ObjectSelectorWidget(ObjTag, false, this);
+	tag_sel = new ObjectSelectorWidget(ObjectType::ObjTag, false, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
 	vbox->addWidget(tag_sel);
 	vbox->setContentsMargins(0,0,0,0);
@@ -99,19 +99,19 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
-	objects_tab_map[ObjColumn]->setColumnCount(6);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("PK"), 0);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Name"), 1);
-	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),1);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Type"), 2);
-	objects_tab_map[ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Default Value"), 3);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
-	objects_tab_map[ObjColumn]->setHeaderLabel(trUtf8("Alias"), 5);
-	objects_tab_map[ObjColumn]->adjustColumnToContents(0);
+	objects_tab_map[ObjectType::ObjColumn]->setColumnCount(6);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("PK"), 0);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("Name"), 1);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),1);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("Type"), 2);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("Default Value"), 3);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("Attribute(s)"), 4);
+	objects_tab_map[ObjectType::ObjColumn]->setHeaderLabel(trUtf8("Alias"), 5);
+	objects_tab_map[ObjectType::ObjColumn]->adjustColumnToContents(0);
 
-	connect(objects_tab_map[ObjColumn], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
-		if(col == 0 && objects_tab_map[ObjColumn]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
+	connect(objects_tab_map[ObjectType::ObjColumn], &ObjectsTableWidget::s_cellClicked, [&](int row, int col){
+		if(col == 0 && objects_tab_map[ObjectType::ObjColumn]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;
 			Table *table = dynamic_cast<Table *>(this->object);
@@ -124,49 +124,49 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 		}
 	});
 
-	objects_tab_map[ObjConstraint]->setColumnCount(5);
-	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Type"), 1);
-	objects_tab_map[ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("ON DELETE"), 2);
-	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
-	objects_tab_map[ObjConstraint]->setHeaderLabel(trUtf8("Alias"), 4);
+	objects_tab_map[ObjectType::ObjConstraint]->setColumnCount(5);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderLabel(trUtf8("Type"), 1);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderLabel(trUtf8("ON DELETE"), 2);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderLabel(trUtf8("ON UPDATE"), 3);
+	objects_tab_map[ObjectType::ObjConstraint]->setHeaderLabel(trUtf8("Alias"), 4);
 
-	objects_tab_map[ObjTrigger]->setColumnCount(5);
-	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
-	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Firing"), 2);
-	objects_tab_map[ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
-	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Events"), 3);
-	objects_tab_map[ObjTrigger]->setHeaderLabel(trUtf8("Alias"), 4);
+	objects_tab_map[ObjectType::ObjTrigger]->setColumnCount(5);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Firing"), 2);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Events"), 3);
+	objects_tab_map[ObjectType::ObjTrigger]->setHeaderLabel(trUtf8("Alias"), 4);
 
-	objects_tab_map[ObjRule]->setColumnCount(4);
-	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Execution"), 1);
-	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Event"), 2);
-	objects_tab_map[ObjRule]->setHeaderLabel(trUtf8("Alias"), 3);
+	objects_tab_map[ObjectType::ObjRule]->setColumnCount(4);
+	objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::ObjRule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Execution"), 1);
+	objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Event"), 2);
+	objects_tab_map[ObjectType::ObjRule]->setHeaderLabel(trUtf8("Alias"), 3);
 
-	objects_tab_map[ObjIndex]->setColumnCount(3);
-	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Indexing"), 1);
-	objects_tab_map[ObjIndex]->setHeaderLabel(trUtf8("Alias"), 2);
+	objects_tab_map[ObjectType::ObjIndex]->setColumnCount(3);
+	objects_tab_map[ObjectType::ObjIndex]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::ObjIndex]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::ObjIndex]->setHeaderLabel(trUtf8("Indexing"), 1);
+	objects_tab_map[ObjectType::ObjIndex]->setHeaderLabel(trUtf8("Alias"), 2);
 
-	objects_tab_map[ObjPolicy]->setColumnCount(7);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Command"), 1);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("keyword")),1);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Permissive"), 2);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("USING expression"), 3);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("CHECK expression"), 4);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Roles"), 5);
-	objects_tab_map[ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),5);
-	objects_tab_map[ObjPolicy]->setHeaderLabel(trUtf8("Alias"), 6);
+	objects_tab_map[ObjectType::ObjPolicy]->setColumnCount(7);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("Name"), 0);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("Command"), 1);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("keyword")),1);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("Permissive"), 2);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("USING expression"), 3);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("CHECK expression"), 4);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("Roles"), 5);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),5);
+	objects_tab_map[ObjectType::ObjPolicy]->setHeaderLabel(trUtf8("Alias"), 6);
 
 	partition_keys_tab = new ElementsTableWidget;
 	partition_keys_tab->setEnabled(false);
@@ -181,7 +181,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjTable)
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
-	configureFormLayout(table_grid, ObjTable);
+	configureFormLayout(table_grid, ObjectType::ObjTable);
 	configureTabOrder({ tag_sel });
 	setMinimumSize(660, 620);
 }
@@ -214,7 +214,7 @@ ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 
 ObjectType TableWidget::getObjectType(QObject *sender)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 
 	if(sender)
 	{
@@ -223,7 +223,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
 
-		while(itr!=itr_end && obj_type==ObjBaseObject)
+		while(itr!=itr_end && obj_type==ObjectType::ObjBaseObject)
 		{
 			if(itr->second==sender)
 				obj_type=itr->first;
@@ -241,7 +241,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	{
 		unsigned i, count;
 		Table *aux_tab=nullptr;
-		ObjectType types[]={ ObjColumn, ObjConstraint, ObjTrigger, ObjRule, ObjIndex, ObjPolicy };
+		ObjectType types[]={ ObjectType::ObjColumn, ObjectType::ObjConstraint, ObjectType::ObjTrigger, ObjectType::ObjRule, ObjectType::ObjIndex, ObjectType::ObjPolicy };
 		vector<PartitionKey> part_keys;
 
 		if(!table)
@@ -361,14 +361,14 @@ void TableWidget::listObjects(ObjectType obj_type)
 		tab->blockSignals(false);
 
 		//Enables the add button on the constraints, triggers and index tab only when there is columns created
-		if(obj_type==ObjColumn)
+		if(obj_type==ObjectType::ObjColumn)
 		{
-			objects_tab_map[ObjConstraint]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-															   objects_tab_map[ObjColumn]->getRowCount() > 0);
-			objects_tab_map[ObjTrigger]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-															objects_tab_map[ObjColumn]->getRowCount() > 0);
-			objects_tab_map[ObjIndex]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-														  objects_tab_map[ObjColumn]->getRowCount() > 0);
+			objects_tab_map[ObjectType::ObjConstraint]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+															   objects_tab_map[ObjectType::ObjColumn]->getRowCount() > 0);
+			objects_tab_map[ObjectType::ObjTrigger]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+															objects_tab_map[ObjectType::ObjColumn]->getRowCount() > 0);
+			objects_tab_map[ObjectType::ObjIndex]->setButtonsEnabled(ObjectsTableWidget::AddButton,
+														  objects_tab_map[ObjectType::ObjColumn]->getRowCount() > 0);
 		}
 	}
 	catch(Exception &e)
@@ -379,7 +379,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 
 void TableWidget::handleObject(void)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 	TableObject *object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 
@@ -394,23 +394,23 @@ void TableWidget::handleObject(void)
 		if(obj_table->getSelectedRow()>=0)
 			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
 
-		if(obj_type==ObjColumn)
+		if(obj_type==ObjectType::ObjColumn)
 			openEditingForm<Column, ColumnWidget>(object);
-		else if(obj_type==ObjConstraint)
+		else if(obj_type==ObjectType::ObjConstraint)
 			openEditingForm<Constraint, ConstraintWidget>(object);
-		else if(obj_type==ObjTrigger)
+		else if(obj_type==ObjectType::ObjTrigger)
 			openEditingForm<Trigger, TriggerWidget>(object);
-		else if(obj_type==ObjIndex)
+		else if(obj_type==ObjectType::ObjIndex)
 			openEditingForm<Index, IndexWidget>(object);
-		else if(obj_type==ObjRule)
+		else if(obj_type==ObjectType::ObjRule)
 			openEditingForm<Rule, RuleWidget>(object);
 		else
 			openEditingForm<Policy, PolicyWidget>(object);
 
 		listObjects(obj_type);
 
-		if(obj_type == ObjConstraint)
-			listObjects(ObjColumn);
+		if(obj_type == ObjectType::ObjConstraint)
+			listObjects(ObjectType::ObjColumn);
 	}
 	catch(Exception &e)
 	{
@@ -449,13 +449,13 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		tab->setCellText(object->getName(),row,1);
 	else
 		tab->setCellText(object->getName(),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 	{
 		Table *table = dynamic_cast<Table *>(this->object);
 		Constraint *pk = table->getPrimaryKey();
@@ -501,7 +501,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(column->getAlias(), row, 5);
 		tab->adjustColumnToContents(0);
 	}
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 	{
 		constr=dynamic_cast<Constraint *>(object);
 
@@ -524,7 +524,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		tab->setCellText(constr->getAlias(), row, 4);
 	}
-	else if(obj_type==ObjTrigger)
+	else if(obj_type==ObjectType::ObjTrigger)
 	{
 		trigger=dynamic_cast<Trigger *>(object);
 
@@ -546,7 +546,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(str_aux ,row,3);		
 		tab->setCellText(trigger->getAlias(), row, 4);
 	}
-	else if(obj_type==ObjRule)
+	else if(obj_type==ObjectType::ObjRule)
 	{
 		rule=dynamic_cast<Rule *>(object);
 
@@ -558,7 +558,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		tab->setCellText(rule->getAlias(), row, 3);
 	}
-	else if(obj_type==ObjIndex)
+	else if(obj_type==ObjectType::ObjIndex)
 	{
 		index=dynamic_cast<Index *>(object);
 
@@ -567,7 +567,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		tab->setCellText(index->getAlias(), row, 2);
 	}
-	else if(obj_type==ObjPolicy)
+	else if(obj_type==ObjectType::ObjPolicy)
 	{
 		QStringList rol_names;
 
@@ -614,7 +614,7 @@ void TableWidget::removeObjects(void)
 	Table *table=nullptr;
 	unsigned count, op_count=0, i;
 	BaseObject *object=nullptr;
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 
 	try
 	{
@@ -641,8 +641,8 @@ void TableWidget::removeObjects(void)
 								RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		if(obj_type == ObjConstraint)
-			listObjects(ObjColumn);
+		if(obj_type == ObjectType::ObjConstraint)
+			listObjects(ObjectType::ObjColumn);
 	}
 	catch(Exception &e)
 	{
@@ -670,7 +670,7 @@ void TableWidget::removeObject(int row)
 {
 	Table *table=nullptr;
 	BaseObject *object=nullptr;
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 	int op_id=-1;
 
 	try
@@ -693,8 +693,8 @@ void TableWidget::removeObject(int row)
 							.arg(object->getTypeName()),
 							RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(obj_type == ObjConstraint)
-			listObjects(ObjColumn);
+		if(obj_type == ObjectType::ObjConstraint)
+			listObjects(ObjectType::ObjColumn);
 	}
 	catch(Exception &e)
 	{
@@ -713,7 +713,7 @@ void TableWidget::removeObject(int row)
 
 void TableWidget::duplicateObject(int sel_row, int new_row)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 	Table *table = dynamic_cast<Table *>(this->object);
@@ -756,7 +756,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 
 void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 	Table *table=nullptr;
 	int count;
 
@@ -810,7 +810,7 @@ void TableWidget::applyConfiguration(void)
 		vector<BaseRelationship *> rels;
 		vector<Column *> pk_cols;
 		vector<PartitionKey> part_keys;
-		ObjectsTableWidget *col_tab = objects_tab_map[ObjColumn];
+		ObjectsTableWidget *col_tab = objects_tab_map[ObjectType::ObjColumn];
 		PartitioningType part_type;
 
 		if(!this->new_object)
@@ -861,7 +861,7 @@ void TableWidget::applyConfiguration(void)
 
 				pk = new Constraint;
 				pk->setName(pk_name);
-				pk->setName(PgModelerNs::generateUniqueName(pk, *table->getObjectList(ObjConstraint)));
+				pk->setName(PgModelerNs::generateUniqueName(pk, *table->getObjectList(ObjectType::ObjConstraint)));
 
 				for(Column *col : pk_cols)
 					pk->addColumn(col, Constraint::SourceCols);

@@ -20,7 +20,7 @@
 
 Type::Type(void)
 {
-	obj_type=ObjType;
+	obj_type=ObjectType::ObjType;
 	setConfiguration(EnumerationType);
 
 	attributes[ParsersAttributes::BASE_TYPE]=QString();
@@ -231,7 +231,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 	else if(!func && (func_id==InputFunc || func_id==OutputFunc))
 		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(ObjType)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjType)),
 						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	else if(func)
@@ -254,7 +254,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 				  func_id==AnalyzeFunc  || func_id==CanonicalFunc)))
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjType)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjType)),
 							AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Checking the return types of function in relation to type.
 		 INPUT, RECV and CANONICAL functions must return the data type that is being defined according to the
@@ -274,7 +274,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 				(func_id==SubtypeDiffFunc && func->getReturnType()!=QString("double precision")))
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidReturnType)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjType)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjType)),
 							AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Validating the parameter types of function in relation to the type configuration.

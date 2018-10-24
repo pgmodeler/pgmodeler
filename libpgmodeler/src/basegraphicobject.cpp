@@ -118,6 +118,6 @@ QObject *BaseGraphicObject::getReceiverObject(void)
 
 bool BaseGraphicObject::isGraphicObject(ObjectType type)
 {
-	return(type==ObjTable || type==ObjView || type==ObjRelationship ||
-				 type==ObjBaseRelationship || type==ObjTextbox || type==ObjSchema);
+	return(type==ObjectType::ObjTable || type==ObjectType::ObjView || type==ObjectType::ObjRelationship ||
+				 type==ObjectType::ObjBaseRelationship || type==ObjectType::ObjTextbox || type==ObjectType::ObjSchema);
 }

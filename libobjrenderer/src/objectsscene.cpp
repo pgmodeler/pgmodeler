@@ -71,8 +71,8 @@ ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
-	ObjectType obj_types[]={ ObjRelationship, ObjTextbox,
-							 ObjView, ObjTable, ObjSchema };
+	ObjectType obj_types[]={ ObjectType::ObjRelationship, ObjectType::ObjTextbox,
+							 ObjectType::ObjView, ObjectType::ObjTable, ObjectType::ObjSchema };
 	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 	this->removeItem(selection_rect);
@@ -95,12 +95,12 @@ ObjectsScene::~ObjectsScene(void)
 			/* Case the object is converted to a item group and can be converted to database
 			objects, indicates that the object can be removed from the scene */
 			if(item && !item->parentItem() &&
-					((dynamic_cast<RelationshipView *>(item) && obj_types[i]==ObjRelationship) ||
-					 (dynamic_cast<TextboxView *>(item) && obj_types[i]==ObjTextbox) ||
-					 (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==ObjTextbox) ||
-					 (dynamic_cast<GraphicalView *>(item) && obj_types[i]==ObjView) ||
-					 (dynamic_cast<TableView *>(item) && obj_types[i]==ObjTable) ||
-					 (dynamic_cast<SchemaView *>(item) && obj_types[i]==ObjSchema)))
+					((dynamic_cast<RelationshipView *>(item) && obj_types[i]==ObjectType::ObjRelationship) ||
+					 (dynamic_cast<TextboxView *>(item) && obj_types[i]==ObjectType::ObjTextbox) ||
+					 (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==ObjectType::ObjTextbox) ||
+					 (dynamic_cast<GraphicalView *>(item) && obj_types[i]==ObjectType::ObjView) ||
+					 (dynamic_cast<TableView *>(item) && obj_types[i]==ObjectType::ObjTable) ||
+					 (dynamic_cast<SchemaView *>(item) && obj_types[i]==ObjectType::ObjSchema)))
 
 			{
 				this->removeItem(item);
@@ -173,8 +173,8 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 				if(graph_obj)
 				{
-					if(graph_obj->getObjectType()!=ObjRelationship &&
-							graph_obj->getObjectType()!=ObjBaseRelationship)
+					if(graph_obj->getObjectType()!=ObjectType::ObjRelationship &&
+							graph_obj->getObjectType()!=ObjectType::ObjBaseRelationship)
 						pnt=graph_obj->getPosition();
 					else
 						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
@@ -187,8 +187,8 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 					if(selected_only)
 					{
-						if(graph_obj->getObjectType()!=ObjRelationship &&
-							 graph_obj->getObjectType()!=ObjBaseRelationship)
+						if(graph_obj->getObjectType()!=ObjectType::ObjRelationship &&
+							 graph_obj->getObjectType()!=ObjectType::ObjBaseRelationship)
 							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
 						else
 							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
@@ -291,8 +291,8 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 			base_obj=dynamic_cast<BaseGraphicObject *>(object->getSourceObject());
 
 			if(!value && base_obj &&
-					base_obj->getObjectType()!=ObjRelationship &&
-					base_obj->getObjectType()!=ObjBaseRelationship &&
+					base_obj->getObjectType()!=ObjectType::ObjRelationship &&
+					base_obj->getObjectType()!=ObjectType::ObjBaseRelationship &&
 					!base_obj->isProtected())
 				flags=QGraphicsItem::ItemIsMovable |
 					  QGraphicsItem::ItemIsSelectable |
@@ -907,8 +907,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 			if(!schema->isProtected())
 			{
 				//Get the table-table and table-view relationships
-				rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(ObjRelationship, schema);
-				base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(ObjBaseRelationship, schema);
+				rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(ObjectType::ObjRelationship, schema);
+				base_rels=dynamic_cast<DatabaseModel *>(schema->getDatabase())->getObjects(ObjectType::ObjBaseRelationship, schema);
 				rels.insert(rels.end(), base_rels.begin(), base_rels.end());
 
 				for(auto &rel : rels)

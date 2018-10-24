@@ -19,7 +19,7 @@
 
 Policy::Policy(void) : TableObject()
 {
-	obj_type=ObjPolicy;
+	obj_type=ObjectType::ObjPolicy;
 	permissive = false;
 	policy_cmd = PolicyCmdType::all;
 
@@ -32,12 +32,12 @@ Policy::Policy(void) : TableObject()
 
 void Policy::setParentTable(BaseTable *table)
 {
-	if(table && table->getObjectType() != ObjTable)
+	if(table && table->getObjectType() != ObjectType::ObjTable)
 	{
 		throw Exception(Exception::getErrorMessage(AsgInvalidObjectType)
 						.arg(this->obj_name)
 						.arg(this->getTypeName())
-						.arg(BaseObject::getTypeName(ObjTable)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjTable)),
 						AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 

@@ -76,7 +76,7 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 
 void ObjectRenameWidget::applyRenaming(void)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 
 	try
 	{
@@ -92,13 +92,13 @@ void ObjectRenameWidget::applyRenaming(void)
 
 			obj_type=object->getObjectType();
 
-			if(obj_type!=ObjDatabase)
+			if(obj_type!=ObjectType::ObjDatabase)
 			{
 				//Register the object on operations list before the modification
 				op_list->registerObject(object, Operation::ObjectModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 
 				//Format the object name to check if it will have a conflicting name
-				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==ObjOperator);
+				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==ObjectType::ObjOperator);
 
 				if(object->getSchema())
 					fmt_name=object->getSchema()->getName(true) + QString(".") + fmt_name;
@@ -135,8 +135,8 @@ void ObjectRenameWidget::applyRenaming(void)
 			{
 				obj_graph->setModified(true);
 
-				if(obj_graph->getObjectType()==ObjTable ||
-						obj_graph->getObjectType()==ObjView)
+				if(obj_graph->getObjectType()==ObjectType::ObjTable ||
+						obj_graph->getObjectType()==ObjectType::ObjView)
 				{
 					dynamic_cast<Schema *>(obj_graph->getSchema())->setModified(true);
 				}
@@ -155,7 +155,7 @@ void ObjectRenameWidget::applyRenaming(void)
 				tab->setCodeInvalidated(true);
 				dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
 			}
-			else if(object->getObjectType()==ObjSchema)
+			else if(object->getObjectType()==ObjectType::ObjSchema)
 			{
 				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
 				dynamic_cast<Schema *>(object)->setModified(true);
@@ -166,7 +166,7 @@ void ObjectRenameWidget::applyRenaming(void)
 
 			for(auto &obj : ref_objs)
 			{
-				if(obj->getObjectType()==ObjColumn)
+				if(obj->getObjectType()==ObjectType::ObjColumn)
 				{
 					col=dynamic_cast<Column *>(obj);
 					col->getParentTable()->setModified(true);
@@ -184,7 +184,7 @@ void ObjectRenameWidget::applyRenaming(void)
 	{
 		Messagebox msg_box;
 
-		if(obj_type!=ObjDatabase)
+		if(obj_type!=ObjectType::ObjDatabase)
 			op_list->removeLastOperation();
 
 		msg_box.show(e);

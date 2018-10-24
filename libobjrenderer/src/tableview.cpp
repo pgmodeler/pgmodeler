@@ -54,25 +54,25 @@ void TableView::configureObject(void)
 
 		if(obj_idx==0)
 		{
-			tab_objs.assign(table->getObjectList(ObjColumn)->begin(),
-							table->getObjectList(ObjColumn)->end());
+			tab_objs.assign(table->getObjectList(ObjectType::ObjColumn)->begin(),
+							table->getObjectList(ObjectType::ObjColumn)->end());
 		}
 		else
 		{
-			tab_objs.assign(table->getObjectList(ObjConstraint)->begin(),
-											table->getObjectList(ObjConstraint)->end());
+			tab_objs.assign(table->getObjectList(ObjectType::ObjConstraint)->begin(),
+											table->getObjectList(ObjectType::ObjConstraint)->end());
 			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjTrigger)->begin(),
-							table->getObjectList(ObjTrigger)->end());
+							table->getObjectList(ObjectType::ObjTrigger)->begin(),
+							table->getObjectList(ObjectType::ObjTrigger)->end());
 			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjIndex)->begin(),
-							table->getObjectList(ObjIndex)->end());
+							table->getObjectList(ObjectType::ObjIndex)->begin(),
+							table->getObjectList(ObjectType::ObjIndex)->end());
 			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjRule)->begin(),
-							table->getObjectList(ObjRule)->end());
+							table->getObjectList(ObjectType::ObjRule)->begin(),
+							table->getObjectList(ObjectType::ObjRule)->end());
 			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjPolicy)->begin(),
-							table->getObjectList(ObjPolicy)->end());
+							table->getObjectList(ObjectType::ObjPolicy)->begin(),
+							table->getObjectList(ObjectType::ObjPolicy)->end());
 		}
 
 		//Gets the subitems of the current group

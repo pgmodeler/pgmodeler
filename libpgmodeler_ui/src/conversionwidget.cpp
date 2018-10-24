@@ -18,7 +18,7 @@
 
 #include "conversionwidget.h"
 
-ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, ObjConversion)
+ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjConversion)
 {
 	try
 	{
@@ -28,7 +28,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		Ui_ConversionWidget::setupUi(this);
 
 		conv_func_sel=nullptr;
-		conv_func_sel=new ObjectSelectorWidget(ObjFunction, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
 		setRequiredField(src_encoding_lbl);
@@ -36,7 +36,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		setRequiredField(conv_func_lbl);
 		setRequiredField(conv_func_sel);
 
-		configureFormLayout(convcod_grid, ObjConversion);
+		configureFormLayout(convcod_grid, ObjectType::ObjConversion);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
 		convcod_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), convcod_grid->count()+1, 0, 1, 0);
 		convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);

@@ -20,7 +20,7 @@
 
 Index::Index(void)
 {
-	obj_type=ObjIndex;
+	obj_type=ObjectType::ObjIndex;
 	index_attribs[Unique]=index_attribs[Concurrent]=
 			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;

@@ -96,7 +96,7 @@ class Table: public BaseTable {
 		//! \brief The partitioning mode/type used by the table
 		PartitioningType partitioning_type;
 
-		/*! \brief Gets one table ancestor (ObjTable) or copy (ObjBaseTable) using its name and stores
+		/*! \brief Gets one table ancestor (ObjectType::ObjTable) or copy (ObjectType::ObjBaseTable) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 

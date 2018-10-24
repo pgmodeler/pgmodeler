@@ -18,12 +18,12 @@
 
 #include "schemawidget.h"
 
-SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjSchema)
+SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjSchema)
 {
 	Ui_SchemaWidget::setupUi(this);
 	QHBoxLayout *hbox=nullptr;
 
-	configureFormLayout(nullptr, ObjSchema);
+	configureFormLayout(nullptr, ObjectType::ObjSchema);
 
 	color_picker=new ColorPickerWidget(1, this);
 

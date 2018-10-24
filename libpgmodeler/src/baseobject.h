@@ -470,7 +470,7 @@ class BaseObject {
 		static void enableCachedCode(bool value);
 
 		/*! \brief Returns the valid object types in a vector. The types
-		ObjBaseObject, TYPE_ATTRIBUTE and ObjBaseTable aren't included in return vector.
+		ObjectType::ObjBaseObject, TYPE_ATTRIBUTE and ObjectType::ObjBaseTable aren't included in return vector.
 		By default table objects (columns, trigger, constraints, etc) are included. To
 		avoid the insertion of these types set the boolean param to false. */
 		static vector<ObjectType> getObjectTypes(bool inc_table_objs=true, vector<ObjectType> exclude_types={});
@@ -478,7 +478,7 @@ class BaseObject {
 		/*! \brief Returns the valid object types that are child or grouped under the specified type.
 	This method works a litte different from getObjectTypes() since this latter returns all valid types
 	and this one returns only the valid types for the current specified type. For now the only accepted
-	types are ObjDatabase, ObjSchema and ObjTable */
+	types are ObjectType::ObjDatabase, ObjectType::ObjSchema and ObjectType::ObjTable */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that

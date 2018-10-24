@@ -20,7 +20,7 @@
 
 Column::Column(void)
 {
-	obj_type=ObjColumn;
+	obj_type=ObjectType::ObjColumn;
 	not_null=seq_cycle=false;
 	attributes[ParsersAttributes::TYPE]=QString();
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
@@ -152,7 +152,7 @@ QString Column::getOldName(bool format)
 
 void Column::setParentRelationship(BaseObject *parent_rel)
 {
-	if(parent_rel && parent_rel->getObjectType()!=ObjRelationship)
+	if(parent_rel && parent_rel->getObjectType()!=ObjectType::ObjRelationship)
 		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->parent_rel=parent_rel;
@@ -167,11 +167,11 @@ void Column::setSequence(BaseObject *seq)
 {
 	if(seq)
 	{
-		if(seq->getObjectType()!=ObjSequence)
+		if(seq->getObjectType()!=ObjectType::ObjSequence)
 			throw Exception(Exception::getErrorMessage(AsgInvalidObjectType)
 							.arg(this->obj_name)
 							.arg(this->getTypeName())
-							.arg(BaseObject::getTypeName(ObjSequence)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjSequence)),
 							AsgInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(!type.isIntegerType())
 			throw Exception(Exception::getErrorMessage(IncompColumnTypeForSequence)

@@ -18,7 +18,7 @@
 
 #include "castwidget.h"
 
-CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjCast)
+CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjCast)
 {
 	try
 	{
@@ -30,13 +30,13 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjCast)
 
 		src_datatype=new PgSQLTypeWidget(this, trUtf8("Source data type"));
 		trg_datatype=new PgSQLTypeWidget(this, trUtf8("Target data type"));
-		conv_func_sel=new ObjectSelectorWidget(ObjFunction, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
 
 		cast_grid->addWidget(conv_func_sel,1,1,1,4);
 		cast_grid->addWidget(src_datatype,2,0,1,5);
 		cast_grid->addWidget(trg_datatype,3,0,1,5);
 
-		configureFormLayout(cast_grid, ObjCast);
+		configureFormLayout(cast_grid, ObjectType::ObjCast);
 
 		name_edt->setReadOnly(true);
 		font=name_edt->font();

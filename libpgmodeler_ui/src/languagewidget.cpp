@@ -18,7 +18,7 @@
 
 #include "languagewidget.h"
 
-LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, ObjLanguage)
+LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjLanguage)
 {
 	try
 	{
@@ -29,15 +29,15 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, ObjLan
 		func_validator_sel=nullptr;
 		func_inline_sel=nullptr;
 
-		func_handler_sel=new ObjectSelectorWidget(ObjFunction, true, this);
-		func_validator_sel=new ObjectSelectorWidget(ObjFunction, true, this);
-		func_inline_sel=new ObjectSelectorWidget(ObjFunction, true, this);
+		func_handler_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		func_validator_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
+		func_inline_sel=new ObjectSelectorWidget(ObjectType::ObjFunction, true, this);
 
 		language_grid->addWidget(func_handler_sel,1,1,1,2);
 		language_grid->addWidget(func_validator_sel,2,1,1,2);
 		language_grid->addWidget(func_inline_sel,3,1,1,2);
 
-		configureFormLayout(language_grid, ObjLanguage);
+		configureFormLayout(language_grid, ObjectType::ObjLanguage);
 
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
 

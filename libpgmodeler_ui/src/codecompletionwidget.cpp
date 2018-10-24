@@ -282,12 +282,12 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type==ObjFunction)
+		if(obj_type==ObjectType::ObjFunction)
 		{
 			dynamic_cast<Function *>(objects[i])->createSignature(false);
 			obj_name=dynamic_cast<Function *>(objects[i])->getSignature();
 		}
-		else if(obj_type==ObjOperator)
+		else if(obj_type==ObjectType::ObjOperator)
 			obj_name=dynamic_cast<Operator *>(objects[i])->getSignature(false);
 		else
 			obj_name+=objects[i]->getName(false, false);
@@ -319,10 +319,10 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 {
 	if(!obj)
 		qualifying_level=-1;
-	else if(obj->getObjectType()==ObjSchema)
+	else if(obj->getObjectType()==ObjectType::ObjSchema)
 		qualifying_level=0;
-	else if(obj->getObjectType()==ObjTable ||
-			obj->getObjectType()==ObjView)
+	else if(obj->getObjectType()==ObjectType::ObjTable ||
+			obj->getObjectType()==ObjectType::ObjView)
 		qualifying_level=1;
 	else
 		qualifying_level=2;
@@ -344,7 +344,7 @@ void CodeCompletionWidget::updateList(void)
 	QString pattern;
 	QStringList list;
 	vector<BaseObject *> objects;
-	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjTextbox, ObjRelationship, ObjBaseRelationship });
+	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::ObjTextbox, ObjectType::ObjRelationship, ObjectType::ObjBaseRelationship });
 	QTextCursor tc;
 
 	name_list->clear();
@@ -373,7 +373,7 @@ void CodeCompletionWidget::updateList(void)
 			word.remove(completion_trigger);
 			word.remove('"');
 
-			objects=db_model->findObjects(word, { ObjSchema, ObjTable, ObjView }, false, false, false, true);
+			objects=db_model->findObjects(word, { ObjectType::ObjSchema, ObjectType::ObjTable, ObjectType::ObjView }, false, false, false, true);
 
 			if(objects.size()==1)
 				setQualifyingLevel(objects[0]);
@@ -587,9 +587,9 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 
 
 	if(modify_name &&
-			(obj_type==ObjTable || TableObject::isTableObject(obj_type)))
+			(obj_type==ObjectType::ObjTable || TableObject::isTableObject(obj_type)))
 	{
-		if(obj_type==ObjTable)
+		if(obj_type==ObjectType::ObjTable)
 		{
 			Table *tab=dynamic_cast<Table *>(obj);
 
@@ -611,17 +611,17 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 			code_field_txt->setTextCursor(lvl_cur);
 		}
 	}
-	else if(obj_type==ObjFunction)
+	else if(obj_type==ObjectType::ObjFunction)
 	{
 		Function *func=dynamic_cast<Function *>(obj);
 		func->createSignature(true, sch_qualified);
 		name=func->getSignature();
 	}
-	else if(obj_type==ObjCast)
+	else if(obj_type==ObjectType::ObjCast)
 	{
 		name.replace(',', QLatin1String(" AS "));
 	}
-	else if(obj_type==ObjAggregate)
+	else if(obj_type==ObjectType::ObjAggregate)
 	{
 		Aggregate *agg;
 		agg=dynamic_cast<Aggregate *>(obj);

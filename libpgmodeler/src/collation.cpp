@@ -20,7 +20,7 @@
 
 Collation::Collation(void)
 {
-	obj_type=ObjCollation;
+	obj_type=ObjectType::ObjCollation;
 	encoding=BaseType::null;
 
 	attributes[ParsersAttributes::_LC_CTYPE_]=QString();

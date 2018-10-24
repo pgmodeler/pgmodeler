@@ -127,7 +127,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
 	if(!widget)	return;
 
-	if(widget->getHandledObjectType()!=ObjBaseObject && widget->windowTitle().isEmpty())
+	if(widget->getHandledObjectType()!=ObjectType::ObjBaseObject && widget->windowTitle().isEmpty())
 		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
 	else
 		setWindowTitle(widget->windowTitle());

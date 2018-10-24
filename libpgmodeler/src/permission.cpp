@@ -38,7 +38,7 @@ Permission::Permission(BaseObject *obj)
 		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->object=obj;
-	this->obj_type=ObjPermission;
+	this->obj_type=ObjectType::ObjPermission;
 	revoke=cascade=false;
 
 	attributes[ParsersAttributes::OBJECT]=QString();
@@ -56,10 +56,10 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 	bool result=false;
 	unsigned priv_id=static_cast<unsigned>(privilege);
 
-	result=(obj_type==ObjTable || obj_type==ObjColumn || obj_type==ObjView ||
-			obj_type==ObjSequence || obj_type==ObjDatabase || obj_type==ObjFunction ||
-			obj_type==ObjAggregate || obj_type==ObjLanguage || obj_type==ObjSchema ||
-			obj_type==ObjTablespace || obj_type==ObjDomain || obj_type==ObjType);
+	result=(obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjColumn || obj_type==ObjectType::ObjView ||
+			obj_type==ObjectType::ObjSequence || obj_type==ObjectType::ObjDatabase || obj_type==ObjectType::ObjFunction ||
+			obj_type==ObjectType::ObjAggregate || obj_type==ObjectType::ObjLanguage || obj_type==ObjectType::ObjSchema ||
+			obj_type==ObjectType::ObjTablespace || obj_type==ObjectType::ObjDomain || obj_type==ObjectType::ObjType);
 
 
 	//Validating privilege
@@ -84,30 +84,30 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER */
 		result=result &&
 
-			   (((obj_type==ObjTable || obj_type==ObjView) &&
+			   (((obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjView) &&
 				 (priv_id==PrivSelect || priv_id==PrivInsert ||
 				  priv_id==PrivUpdate || priv_id==PrivDelete ||
 				  priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
 
-				((obj_type==ObjTable || obj_type==ObjView) && priv_id==PrivTruncate) ||
+				((obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjView) && priv_id==PrivTruncate) ||
 
-				(obj_type==ObjColumn &&
+				(obj_type==ObjectType::ObjColumn &&
 				 (priv_id==PrivSelect ||priv_id==PrivInsert ||
 				  priv_id==PrivUpdate || priv_id==PrivReferences)) ||
 
-				(obj_type==ObjSequence &&
+				(obj_type==ObjectType::ObjSequence &&
 				 (priv_id==PrivUsage || priv_id==PrivSelect ||	priv_id==PrivUpdate)) ||
 
-				(obj_type==ObjDatabase &&
+				(obj_type==ObjectType::ObjDatabase &&
 				 (priv_id==PrivCreate || priv_id==PrivConnect ||	priv_id==PrivTemporary)) ||
 
-				((obj_type==ObjFunction || obj_type==ObjAggregate) && priv_id==PrivExecute) ||
+				((obj_type==ObjectType::ObjFunction || obj_type==ObjectType::ObjAggregate) && priv_id==PrivExecute) ||
 
-				((obj_type==ObjLanguage || obj_type==ObjType || obj_type==ObjDomain) && priv_id==PrivUsage) ||
+				((obj_type==ObjectType::ObjLanguage || obj_type==ObjectType::ObjType || obj_type==ObjectType::ObjDomain) && priv_id==PrivUsage) ||
 
-				(obj_type==ObjSchema && (priv_id==PrivUsage || priv_id==PrivCreate)) ||
+				(obj_type==ObjectType::ObjSchema && (priv_id==PrivUsage || priv_id==PrivCreate)) ||
 
-				(obj_type==ObjTablespace && priv_id==PrivCreate));
+				(obj_type==ObjectType::ObjTablespace && priv_id==PrivCreate));
 	}
 
 	return(result);
@@ -427,12 +427,12 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	{
 		//Views and Tables uses the same key word when setting permission (TABLE)
 		attributes[ParsersAttributes::TYPE]=
-				(object->getObjectType()==ObjView ? BaseObject::getSQLName(ObjTable): BaseObject::getSQLName(object->getObjectType()));
+				(object->getObjectType()==ObjectType::ObjView ? BaseObject::getSQLName(ObjectType::ObjTable): BaseObject::getSQLName(object->getObjectType()));
 	}
 	else
 		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 	{
 		attributes[ParsersAttributes::OBJECT]=object->getName(true);
 		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
@@ -459,9 +459,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && !grant_option[i])
-				priv_list.push_back(object->getObjectType() == ObjColumn ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
+				priv_list.push_back(object->getObjectType() == ObjectType::ObjColumn ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 			else if(grant_option[i])
-				gop_priv_list.push_back(object->getObjectType() == ObjColumn ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
+				gop_priv_list.push_back(object->getObjectType() == ObjectType::ObjColumn ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 		}
 
 		attributes[ParsersAttributes::PRIVILEGES] = priv_list.join(QChar(','));

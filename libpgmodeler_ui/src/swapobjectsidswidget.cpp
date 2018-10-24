@@ -8,8 +8,8 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjPermission, ObjRole, ObjTextbox,
-																   ObjColumn, ObjConstraint });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::ObjPermission, ObjectType::ObjRole, ObjectType::ObjTextbox,
+																   ObjectType::ObjColumn, ObjectType::ObjConstraint });
 		setupUi(this);
 
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -125,7 +125,7 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
 	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
-		if(itr.second->getObjectType() != ObjConstraint) {
+		if(itr.second->getObjectType() != ObjectType::ObjConstraint) {
 			objects.push_back(itr.second);
 		}
 	});
@@ -185,7 +185,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	if(!src_obj && !dst_obj)
 		throw Exception(OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	else if((src_obj->getObjectType()==ObjRelationship || dst_obj->getObjectType()==ObjRelationship) &&
+	else if((src_obj->getObjectType()==ObjectType::ObjRelationship || dst_obj->getObjectType()==ObjectType::ObjRelationship) &&
 			(src_obj->getObjectType() != dst_obj->getObjectType()))
 		throw Exception(InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -194,10 +194,10 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		//Special id swap for relationship
-		if(src_obj->getObjectType()==ObjRelationship)
+		if(src_obj->getObjectType()==ObjectType::ObjRelationship)
 		{
 			vector<BaseObject *>::iterator itr, itr1;
-			vector<BaseObject *> *list=model->getObjectList(ObjRelationship);
+			vector<BaseObject *> *list=model->getObjectList(ObjectType::ObjRelationship);
 
 			//Find the relationships in the list and swap the memory position too
 			itr=std::find(list->begin(), list->end(), src_obj);

@@ -26,7 +26,7 @@ Trigger::Trigger(void)
 
 	function=nullptr;
 	is_exec_per_row=is_constraint=is_deferrable=false;
-	obj_type=ObjTrigger;
+	obj_type=ObjectType::ObjTrigger;
 	referenced_table=nullptr;
 
 	for(i=0; i < 4; i++)
@@ -98,7 +98,7 @@ void Trigger::setFunction(Function *func)
 	if(!func)
 		throw Exception(Exception::getErrorMessage(AsgNotAllocatedFunction)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(ObjTrigger)),
+						.arg(BaseObject::getTypeName(ObjectType::ObjTrigger)),
 						AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -109,7 +109,7 @@ void Trigger::setFunction(Function *func)
 		else if(func->getParameterCount()!=0)
 			throw Exception(Exception::getErrorMessage(AsgFunctionInvalidParamCount)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(ObjTrigger)),
+							.arg(BaseObject::getTypeName(ObjectType::ObjTrigger)),
 							AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(function != func);
@@ -249,7 +249,7 @@ void Trigger::removeColumns(void)
 void Trigger::setReferecendTable(BaseTable *ref_table)
 {
 	//If the referenced table isn't valid raises an error
-	if(ref_table && ref_table->getObjectType()!=ObjTable)
+	if(ref_table && ref_table->getObjectType()!=ObjectType::ObjTable)
 		throw Exception(AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(referenced_table != ref_table);
@@ -445,11 +445,11 @@ void Trigger::validateTrigger(void)
 		if(!is_constraint)
 		{
 			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
-			if(firing_type==FiringType::instead_of && parent_type==ObjTable)
+			if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjTable)
 				throw Exception(InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement
-			else if(firing_type==FiringType::instead_of && parent_type==ObjView && !is_exec_per_row)
+			else if(firing_type==FiringType::instead_of && parent_type==ObjectType::ObjView && !is_exec_per_row)
 				throw Exception(InvUsageInsteadOfOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
@@ -457,11 +457,11 @@ void Trigger::validateTrigger(void)
 				throw Exception(InvUsageInsteadOfUpdateTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
-			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==ObjView))
+			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==ObjectType::ObjView))
 				throw Exception(InvUsageTruncateOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A view trigger cannot be AFTER/BEFORE when it executes for each row
-			else if(parent_type==ObjView && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
+			else if(parent_type==ObjectType::ObjView && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
 				throw Exception(InvUsageAfterBeforeViewTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Only constraint triggers can be deferrable or reference another table

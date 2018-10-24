@@ -18,10 +18,10 @@
 
 #include "textboxwidget.h"
 
-TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, ObjTextbox)
+TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ObjTextbox)
 {
 	Ui_TextboxWidget::setupUi(this);
-	configureFormLayout(textbox_grid, ObjTextbox);
+	configureFormLayout(textbox_grid, ObjectType::ObjTextbox);
 
 	text_txt->removeEventFilter(this);
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));

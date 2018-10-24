@@ -50,7 +50,7 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 {
 	try
 	{
-		obj_type=ObjRelationship;
+		obj_type=ObjectType::ObjRelationship;
 		QString str_aux;
 
 		/* Raises an error if the user tries to create a relationship which some
@@ -437,9 +437,9 @@ int Relationship::getObjectIndex(TableObject *object)
 
 	//Selecting the correct list using the object type
 	obj_type=object->getObjectType();
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		list=&rel_attributes;
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 		list=&rel_constraints;
 	else
 		//Raises an error if the object type isn't valid (not a column or constraint)
@@ -496,7 +496,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			rel_type==RelationshipPart) &&
 			!(tab_obj->isAddedByRelationship() &&
 			  tab_obj->isProtected() &&
-			  tab_obj->getObjectType()==ObjConstraint))
+			  tab_obj->getObjectType()==ObjectType::ObjConstraint))
 		throw Exception(AsgObjectInvalidRelationshipType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
@@ -507,9 +507,9 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 		{
 			//Gets the object list according the object type
 			obj_type=tab_obj->getObjectType();
-			if(obj_type==ObjColumn)
+			if(obj_type==ObjectType::ObjColumn)
 				obj_list=&rel_attributes;
-			else if(obj_type==ObjConstraint)
+			else if(obj_type==ObjectType::ObjConstraint)
 				obj_list=&rel_constraints;
 			else
 				//Raises an error if the object type isn't valid (not a column or constraint)
@@ -519,7 +519,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 			tab_obj->setParentTable(src_table);
 
 			//Generates the code for the object only for validation
-			if(obj_type==ObjColumn)
+			if(obj_type==ObjectType::ObjColumn)
 				dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SqlDefinition);
 			else
 			{
@@ -590,9 +590,9 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	TableObject *tab_obj=nullptr;
 	Table *recv_table=nullptr;
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		obj_list=&rel_attributes;
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 		obj_list=&rel_constraints;
 	else
 		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -604,7 +604,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 	tab_obj=obj_list->at(obj_id);
 	recv_table=this->getReceiverTable();
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 	{
 		Column *col=nullptr;
 		Constraint *constr=nullptr;
@@ -670,12 +670,12 @@ void Relationship::removeObject(TableObject *object)
 
 void Relationship::removeAttribute(unsigned attrib_idx)
 {
-	removeObject(attrib_idx, ObjColumn);
+	removeObject(attrib_idx, ObjectType::ObjColumn);
 }
 
 void Relationship::removeConstraint(unsigned constr_idx)
 {
-	removeObject(constr_idx, ObjConstraint);
+	removeObject(constr_idx, ObjectType::ObjConstraint);
 }
 
 vector<Column *> Relationship::getGeneratedColumns(void)
@@ -708,9 +708,9 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *list=nullptr;
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		list=&rel_attributes;
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 		list=&rel_constraints;
 	else
 		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -728,9 +728,9 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 	TableObject *obj_aux=nullptr;
 	bool found=false;
 
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		list=&rel_attributes;
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 		list=&rel_constraints;
 	else
 		throw Exception(RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -762,7 +762,7 @@ Column *Relationship::getAttribute(unsigned attrib_idx)
 
 Column *Relationship::getAttribute(const QString &name)
 {
-	return(dynamic_cast<Column *>(getObject(name,ObjColumn)));
+	return(dynamic_cast<Column *>(getObject(name,ObjectType::ObjColumn)));
 }
 
 vector<TableObject *> Relationship::getAttributes(void)
@@ -781,7 +781,7 @@ Constraint *Relationship::getConstraint(unsigned constr_idx)
 
 Constraint *Relationship::getConstraint(const QString &name)
 {
-	return(dynamic_cast<Constraint *>(getObject(name,ObjConstraint)));
+	return(dynamic_cast<Constraint *>(getObject(name,ObjectType::ObjConstraint)));
 }
 
 vector<TableObject *> Relationship::getConstraints(void)
@@ -801,9 +801,9 @@ unsigned Relationship::getConstraintCount(void)
 
 unsigned Relationship::getObjectCount(ObjectType obj_type)
 {
-	if(obj_type==ObjColumn)
+	if(obj_type==ObjectType::ObjColumn)
 		return(rel_attributes.size());
-	else if(obj_type==ObjConstraint)
+	else if(obj_type==ObjectType::ObjConstraint)
 		return(rel_constraints.size());
 	else
 		throw Exception(RefObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -829,7 +829,7 @@ void Relationship::addConstraints(Table *recv_tab)
 
 			if(constr->getConstraintType()!=ConstraintType::primary_key)
 			{
-				constr->setName(PgModelerNs::generateUniqueName(constr, (*recv_tab->getObjectList(ObjConstraint))));
+				constr->setName(PgModelerNs::generateUniqueName(constr, (*recv_tab->getObjectList(ObjectType::ObjConstraint))));
 				recv_tab->addConstraint(constr);
 			}
 			else
@@ -885,7 +885,7 @@ void Relationship::addColumnsRelGenPart(void)
 			i, i1, i2, id_tab,
 			idx, tab_count;
 	vector<Column *> columns;
-	ObjectType types[2]={ObjTable, ObjBaseTable};
+	ObjectType types[2]={ObjectType::ObjTable, ObjectType::ObjBaseTable};
 	ErrorCode err_code=Custom;
 	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
@@ -979,12 +979,12 @@ void Relationship::addColumnsRelGenPart(void)
 						for(i2=0; i2 < 2; i2++)
 						{
 							//Checking if the column came from a generalization relationship
-							if(types[i2]==ObjTable)
+							if(types[i2]==ObjectType::ObjTable)
 							{
-								tab_count=aux_tab->getObjectCount(ObjTable);
+								tab_count=aux_tab->getObjectCount(ObjectType::ObjTable);
 								for(idx=0; idx < tab_count; idx++)
 								{
-									parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, ObjTable));
+									parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, ObjectType::ObjTable));
 									cond=(aux_col->getParentTable()==parent_tab && aux_col->isAddedByGeneralization());
 								}
 
@@ -1141,7 +1141,7 @@ void Relationship::addConstraintsRelGenPart(void)
 {
 	Table *parent_tab=dynamic_cast<Table *>(getReferenceTable()),
 			*child_tab=dynamic_cast<Table *>(getReceiverTable());
-	vector<TableObject *> *constrs=parent_tab->getObjectList(ObjConstraint);
+	vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::ObjConstraint);
 	Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
 
 	try
@@ -1152,7 +1152,7 @@ void Relationship::addConstraintsRelGenPart(void)
 
 			if(constr->getConstraintType()==ConstraintType::check && !constr->isNoInherit())
 			{
-				aux_constr=dynamic_cast<Constraint *>(child_tab->getObject(constr->getName(), ObjConstraint));
+				aux_constr=dynamic_cast<Constraint *>(child_tab->getObject(constr->getName(), ObjectType::ObjConstraint));
 
 				if(!aux_constr)
 				{
@@ -1354,7 +1354,7 @@ void Relationship::addUniqueKey(Table *recv_tab)
 
 		uq->setName(generateObjectName(UqPattern));
 		uq->setAlias(generateObjectName(UqPattern, nullptr, true));
-		uq->setName(PgModelerNs::generateUniqueName(uq, (*recv_tab->getObjectList(ObjConstraint))));
+		uq->setName(PgModelerNs::generateUniqueName(uq, (*recv_tab->getObjectList(ObjectType::ObjConstraint))));
 		recv_tab->addConstraint(uq);
 	}
 	catch(Exception &e)
@@ -1482,7 +1482,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 		fk->setName(name);
 		fk->setAlias(fk_alias);
-		fk->setName(PgModelerNs::generateUniqueName(fk, (*recv_tab->getObjectList(ObjConstraint))));
+		fk->setName(PgModelerNs::generateUniqueName(fk, (*recv_tab->getObjectList(ObjectType::ObjConstraint))));
 		recv_tab->addConstraint(fk);
 	}
 	catch(Exception &e)
@@ -1516,7 +1516,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			if(column->getParentTable())
 				break;
 
-			column->setName(PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjColumn))));
+			column->setName(PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::ObjColumn))));
 			column->setAddedByLinking(true);
 			column->setParentRelationship(this);
 			recv_tab->addColumn(column);
@@ -1615,7 +1615,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 				column->setType(PgSQLType(QString("smallint")));
 
 			column->setName(name);
-			name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjColumn)));
+			name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::ObjColumn)));
 			column->setName(name);
 
 			if(!prev_name.isEmpty())

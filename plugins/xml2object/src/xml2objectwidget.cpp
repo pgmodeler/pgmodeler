@@ -81,7 +81,7 @@ void Xml2ObjectWidget::generateObject(void)
 					object=model->createObject(obj_type);
 
 					if(object && !dynamic_cast<TableObject *>(object) &&
-							obj_type!=ObjRelationship && obj_type!=ObjBaseRelationship)
+							obj_type!=ObjectType::ObjRelationship && obj_type!=ObjectType::ObjBaseRelationship)
 					{
 						model->addObject(object);
 						op_list->registerObject(object, Operation::ObjectCreated, -1, model);

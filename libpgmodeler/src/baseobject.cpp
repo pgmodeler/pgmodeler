@@ -76,7 +76,7 @@ BaseObject::BaseObject(void)
 	object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	code_invalidated=true;
-	obj_type=ObjBaseObject;
+	obj_type=ObjectType::ObjBaseObject;
 	schema=nullptr;
 	owner=nullptr;
 	tablespace=nullptr;
@@ -105,7 +105,7 @@ unsigned BaseObject::getGlobalId(void)
 
 QString BaseObject::getTypeName(ObjectType obj_type)
 {
-	if(obj_type!=ObjBaseObject)
+	if(obj_type!=ObjectType::ObjBaseObject)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
@@ -121,7 +121,7 @@ QString BaseObject::getTypeName(const QString &type_str)
 
 ObjectType BaseObject::getObjectType(const QString &type_name)
 {
-	ObjectType obj_type=ObjBaseObject;
+	ObjectType obj_type=ObjectType::ObjBaseObject;
 
 	for(int i=0; i < BaseObject::ObjectTypeCount; i++)
 	{
@@ -324,7 +324,7 @@ bool BaseObject::isValidName(const QString &name)
 
 void BaseObject::setDatabase(BaseObject *db)
 {
-	if((db && db->getObjectType()==ObjDatabase) || !db)
+	if((db && db->getObjectType()==ObjectType::ObjDatabase) || !db)
 		this->database=db;
 }
 
@@ -378,13 +378,13 @@ void BaseObject::setComment(const QString &comment)
 
 bool BaseObject::acceptsSchema(ObjectType obj_type)
 {
-	return(obj_type==ObjFunction || obj_type==ObjTable ||
-		   obj_type==ObjView  || obj_type==ObjDomain ||
-		   obj_type==ObjAggregate || obj_type==ObjOperator ||
-		   obj_type==ObjSequence || obj_type==ObjConversion ||
-		   obj_type==ObjType || obj_type==ObjOpClass ||
-		   obj_type==ObjOpFamily || obj_type==ObjCollation ||
-		   obj_type==ObjExtension);
+	return(obj_type==ObjectType::ObjFunction || obj_type==ObjectType::ObjTable ||
+		   obj_type==ObjectType::ObjView  || obj_type==ObjectType::ObjDomain ||
+		   obj_type==ObjectType::ObjAggregate || obj_type==ObjectType::ObjOperator ||
+		   obj_type==ObjectType::ObjSequence || obj_type==ObjectType::ObjConversion ||
+		   obj_type==ObjectType::ObjType || obj_type==ObjectType::ObjOpClass ||
+		   obj_type==ObjectType::ObjOpFamily || obj_type==ObjectType::ObjCollation ||
+		   obj_type==ObjectType::ObjExtension);
 }
 
 bool BaseObject::acceptsSchema(void)
@@ -394,15 +394,15 @@ bool BaseObject::acceptsSchema(void)
 
 bool BaseObject::acceptsOwner(ObjectType obj_type)
 {
-	return(obj_type==ObjFunction || obj_type==ObjTable ||
-		   obj_type==ObjDomain || obj_type==ObjSchema ||
-		   obj_type==ObjAggregate || obj_type==ObjOperator ||
-		   obj_type==ObjConversion || obj_type==ObjSequence ||
-		   obj_type==ObjLanguage || obj_type==ObjType ||
-		   obj_type==ObjTablespace || obj_type==ObjDatabase ||
-		   obj_type==ObjOpClass || obj_type==ObjOpFamily ||
-		   obj_type==ObjCollation  || obj_type==ObjView ||
-		   obj_type==ObjEventTrigger);
+	return(obj_type==ObjectType::ObjFunction || obj_type==ObjectType::ObjTable ||
+		   obj_type==ObjectType::ObjDomain || obj_type==ObjectType::ObjSchema ||
+		   obj_type==ObjectType::ObjAggregate || obj_type==ObjectType::ObjOperator ||
+		   obj_type==ObjectType::ObjConversion || obj_type==ObjectType::ObjSequence ||
+		   obj_type==ObjectType::ObjLanguage || obj_type==ObjectType::ObjType ||
+		   obj_type==ObjectType::ObjTablespace || obj_type==ObjectType::ObjDatabase ||
+		   obj_type==ObjectType::ObjOpClass || obj_type==ObjectType::ObjOpFamily ||
+		   obj_type==ObjectType::ObjCollation  || obj_type==ObjectType::ObjView ||
+		   obj_type==ObjectType::ObjEventTrigger);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -412,11 +412,11 @@ bool BaseObject::acceptsOwner(void)
 
 bool BaseObject::acceptsTablespace(ObjectType obj_type)
 {
-	return(obj_type==ObjIndex ||
-		   obj_type==ObjTable ||
-		   obj_type==ObjView ||
-		   obj_type==ObjConstraint ||
-		   obj_type==ObjDatabase);
+	return(obj_type==ObjectType::ObjIndex ||
+		   obj_type==ObjectType::ObjTable ||
+		   obj_type==ObjectType::ObjView ||
+		   obj_type==ObjectType::ObjConstraint ||
+		   obj_type==ObjectType::ObjDatabase);
 }
 
 bool BaseObject::acceptsTablespace(void)
@@ -426,9 +426,9 @@ bool BaseObject::acceptsTablespace(void)
 
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
-	return(obj_type==ObjDomain || obj_type==ObjColumn  ||
-		   obj_type==ObjCollation || obj_type==ObjType ||
-		   obj_type==ObjTypeAttribute);
+	return(obj_type==ObjectType::ObjDomain || obj_type==ObjectType::ObjColumn  ||
+		   obj_type==ObjectType::ObjCollation || obj_type==ObjectType::ObjType ||
+		   obj_type==ObjectType::ObjTypeAttribute);
 }
 
 bool BaseObject::acceptsCollation(void)
@@ -438,40 +438,40 @@ bool BaseObject::acceptsCollation(void)
 
 bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
-	return(obj_type!=ObjColumn && obj_type!=ObjConstraint &&
-				 obj_type!=ObjRelationship && obj_type!=ObjTextbox && obj_type!=ObjParameter &&
-				 obj_type!=ObjTypeAttribute && obj_type!=ObjBaseRelationship  &&
-				 obj_type!=ObjBaseObject && obj_type!=ObjBaseTable && obj_type!=ObjPermission &&
-				 obj_type!=ObjTag && obj_type!=ObjGenericSQL);
+	return(obj_type!=ObjectType::ObjColumn && obj_type!=ObjectType::ObjConstraint &&
+				 obj_type!=ObjectType::ObjRelationship && obj_type!=ObjectType::ObjTextbox && obj_type!=ObjectType::ObjParameter &&
+				 obj_type!=ObjectType::ObjTypeAttribute && obj_type!=ObjectType::ObjBaseRelationship  &&
+				 obj_type!=ObjectType::ObjBaseObject && obj_type!=ObjectType::ObjBaseTable && obj_type!=ObjectType::ObjPermission &&
+				 obj_type!=ObjectType::ObjTag && obj_type!=ObjectType::ObjGenericSQL);
 }
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
-	return(obj_type==ObjCollation || obj_type==ObjColumn ||
-		   obj_type==ObjDomain || obj_type==ObjEventTrigger ||
-		   obj_type==ObjExtension || obj_type==ObjFunction ||
-		   obj_type==ObjIndex || obj_type==ObjRole ||
-		   obj_type==ObjSchema || obj_type==ObjSequence ||
-		   obj_type==ObjTable || obj_type==ObjTablespace ||
-			 obj_type==ObjType || obj_type==ObjPolicy);
+	return(obj_type==ObjectType::ObjCollation || obj_type==ObjectType::ObjColumn ||
+		   obj_type==ObjectType::ObjDomain || obj_type==ObjectType::ObjEventTrigger ||
+		   obj_type==ObjectType::ObjExtension || obj_type==ObjectType::ObjFunction ||
+		   obj_type==ObjectType::ObjIndex || obj_type==ObjectType::ObjRole ||
+		   obj_type==ObjectType::ObjSchema || obj_type==ObjectType::ObjSequence ||
+		   obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjTablespace ||
+			 obj_type==ObjectType::ObjType || obj_type==ObjectType::ObjPolicy);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 {
-	return(obj_type!=ObjPermission && obj_type!=ObjRelationship &&
-				obj_type!=ObjTextbox && obj_type!=ObjTypeAttribute &&
-				obj_type!=ObjParameter && obj_type!=ObjBaseObject &&
-				obj_type!=ObjTag && obj_type!=ObjBaseRelationship &&
-				obj_type!=ObjBaseTable);
+	return(obj_type!=ObjectType::ObjPermission && obj_type!=ObjectType::ObjRelationship &&
+				obj_type!=ObjectType::ObjTextbox && obj_type!=ObjectType::ObjTypeAttribute &&
+				obj_type!=ObjectType::ObjParameter && obj_type!=ObjectType::ObjBaseObject &&
+				obj_type!=ObjectType::ObjTag && obj_type!=ObjectType::ObjBaseRelationship &&
+				obj_type!=ObjectType::ObjBaseTable);
 }
 
 bool BaseObject::acceptsAlias(ObjectType obj_type)
 {
-	return(obj_type==ObjRelationship || obj_type==ObjBaseRelationship ||
-				 obj_type==ObjTable || obj_type==ObjSchema || obj_type==ObjView ||
-				 obj_type == ObjColumn || obj_type == ObjConstraint ||
-				 obj_type == ObjIndex || obj_type == ObjRule ||
-				 obj_type == ObjTrigger || obj_type == ObjPolicy);
+	return(obj_type==ObjectType::ObjRelationship || obj_type==ObjectType::ObjBaseRelationship ||
+				 obj_type==ObjectType::ObjTable || obj_type==ObjectType::ObjSchema || obj_type==ObjectType::ObjView ||
+				 obj_type == ObjectType::ObjColumn || obj_type == ObjectType::ObjConstraint ||
+				 obj_type == ObjectType::ObjIndex || obj_type == ObjectType::ObjRule ||
+				 obj_type == ObjectType::ObjTrigger || obj_type == ObjectType::ObjPolicy);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -496,7 +496,7 @@ void BaseObject::setSchema(BaseObject *schema)
 						.arg(this->obj_name)
 						.arg(this->getTypeName()),
 						AsgNotAllocatedSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(schema && schema->getObjectType()!=ObjSchema)
+	else if(schema && schema->getObjectType()!=ObjectType::ObjSchema)
 		throw Exception(AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsSchema())
 		throw Exception(AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -507,7 +507,7 @@ void BaseObject::setSchema(BaseObject *schema)
 
 void BaseObject::setOwner(BaseObject *owner)
 {
-	if(owner && owner->getObjectType()!=ObjRole)
+	if(owner && owner->getObjectType()!=ObjectType::ObjRole)
 		throw Exception(AsgInvalidRoleObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsOwner())
 		throw Exception(AsgRoleObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -518,7 +518,7 @@ void BaseObject::setOwner(BaseObject *owner)
 
 void BaseObject::setTablespace(BaseObject *tablespace)
 {
-	if(tablespace && tablespace->getObjectType()!=ObjTablespace)
+	if(tablespace && tablespace->getObjectType()!=ObjectType::ObjTablespace)
 		throw Exception(AsgInvalidTablespaceObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsTablespace())
 		throw Exception(AsgTablespaceInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -531,7 +531,7 @@ void BaseObject::setCollation(BaseObject *collation)
 {
 	if(collation && !acceptsCollation())
 		throw Exception(AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	if(collation && collation->getObjectType()!=ObjCollation)
+	if(collation && collation->getObjectType()!=ObjectType::ObjCollation)
 		throw Exception(AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->collation != collation);
@@ -561,7 +561,7 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 	if(format)
 	{
 		QString aux_name;
-		aux_name=formatName(this->obj_name, (obj_type==ObjOperator));
+		aux_name=formatName(this->obj_name, (obj_type==ObjectType::ObjOperator));
 
 		if(this->schema && prepend_schema)
 			aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
@@ -697,11 +697,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def;
 
 	if((def_type==SchemaParser::SqlDefinition &&
-		obj_type!=ObjBaseObject && obj_type!=ObjBaseRelationship &&
-		obj_type!=ObjBaseTable && obj_type!=ObjTextbox) ||
+		obj_type!=ObjectType::ObjBaseObject && obj_type!=ObjectType::ObjBaseRelationship &&
+		obj_type!=ObjectType::ObjBaseTable && obj_type!=ObjectType::ObjTextbox) ||
 
 			(def_type==SchemaParser::XmlDefinition &&
-			 obj_type!=ObjBaseObject && obj_type!=ObjBaseTable))
+			 obj_type!=ObjectType::ObjBaseObject && obj_type!=ObjectType::ObjBaseTable))
 	{
 		bool format=false;
 
@@ -711,7 +711,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SqlDefinition) ||
 				(def_type==SchemaParser::XmlDefinition && reduced_form &&
-				 obj_type!=ObjTextbox && obj_type!=ObjRelationship));
+				 obj_type!=ObjectType::ObjTextbox && obj_type!=ObjectType::ObjRelationship));
 
 		setBasicAttributes(format);
 
@@ -751,7 +751,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				/** Only tablespaces and database do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
 				 with just a command line isolated from the others **/
-				if(obj_type!=ObjTablespace && obj_type!=ObjDatabase)
+				if(obj_type!=ObjectType::ObjTablespace && obj_type!=ObjectType::ObjDatabase)
 				{
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
@@ -840,7 +840,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			clearAttributes();
 
 			//Database object doesn't handles cached code.
-			if(use_cached_code && obj_type!=ObjDatabase)
+			if(use_cached_code && obj_type!=ObjectType::ObjDatabase)
 			{
 				if(def_type==SchemaParser::SqlDefinition ||
 						(!reduced_form && def_type==SchemaParser::XmlDefinition))
@@ -909,8 +909,8 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 						OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
 	else if(!enable_cl_obj_swap &&
-			(obj1->getObjectType()==ObjDatabase || obj1->getObjectType()==ObjTablespace || obj1->getObjectType()==ObjRole ||
-			 obj2->getObjectType()==ObjDatabase || obj2->getObjectType()==ObjTablespace || obj2->getObjectType()==ObjRole))
+			(obj1->getObjectType()==ObjectType::ObjDatabase || obj1->getObjectType()==ObjectType::ObjTablespace || obj1->getObjectType()==ObjectType::ObjRole ||
+			 obj2->getObjectType()==ObjectType::ObjDatabase || obj2->getObjectType()==ObjectType::ObjTablespace || obj2->getObjectType()==ObjectType::ObjRole))
 		throw Exception(InvIdSwapInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -936,22 +936,22 @@ void BaseObject::updateObjectId(BaseObject *obj)
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<ObjectType> exclude_types)
 {
-	vector<ObjectType> vet_types={ ObjBaseRelationship, ObjAggregate, ObjCast, ObjCollation,
-								   ObjConversion, ObjDatabase, ObjDomain, ObjExtension, ObjEventTrigger,
-								   ObjTag, ObjFunction, ObjLanguage, ObjOpClass, ObjOperator,
-								   ObjOpFamily, ObjRelationship, ObjRole, ObjSchema,
-								   ObjSequence, ObjTable, ObjTablespace, ObjTextbox,
-									 ObjType, ObjView, ObjPermission, ObjGenericSQL };
+	vector<ObjectType> vet_types={ ObjectType::ObjBaseRelationship, ObjectType::ObjAggregate, ObjectType::ObjCast, ObjectType::ObjCollation,
+								   ObjectType::ObjConversion, ObjectType::ObjDatabase, ObjectType::ObjDomain, ObjectType::ObjExtension, ObjectType::ObjEventTrigger,
+								   ObjectType::ObjTag, ObjectType::ObjFunction, ObjectType::ObjLanguage, ObjectType::ObjOpClass, ObjectType::ObjOperator,
+								   ObjectType::ObjOpFamily, ObjectType::ObjRelationship, ObjectType::ObjRole, ObjectType::ObjSchema,
+								   ObjectType::ObjSequence, ObjectType::ObjTable, ObjectType::ObjTablespace, ObjectType::ObjTextbox,
+									 ObjectType::ObjType, ObjectType::ObjView, ObjectType::ObjPermission, ObjectType::ObjGenericSQL };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
 	{
-		vet_types.push_back(ObjColumn);
-		vet_types.push_back(ObjConstraint);
-		vet_types.push_back(ObjTrigger);
-		vet_types.push_back(ObjRule);
-		vet_types.push_back(ObjIndex);
-		vet_types.push_back(ObjPolicy);
+		vet_types.push_back(ObjectType::ObjColumn);
+		vet_types.push_back(ObjectType::ObjConstraint);
+		vet_types.push_back(ObjectType::ObjTrigger);
+		vet_types.push_back(ObjectType::ObjRule);
+		vet_types.push_back(ObjectType::ObjIndex);
+		vet_types.push_back(ObjectType::ObjPolicy);
 	}
 
 	for(ObjectType type : exclude_types)
@@ -966,15 +966,15 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
-	if(obj_type==ObjDatabase)
-		return(vector<ObjectType>()={ObjCast, ObjRole, ObjLanguage, ObjTablespace, ObjSchema, ObjExtension, ObjEventTrigger});
-	else if(obj_type==ObjSchema)
-		return(vector<ObjectType>()={ObjAggregate, ObjConversion, ObjCollation, ObjDomain, ObjFunction,
-									ObjOpClass, ObjOperator, ObjOpFamily, ObjSequence, ObjType, ObjTable, ObjView});
-	else if(obj_type==ObjTable)
-		return(vector<ObjectType>()={ObjColumn, ObjConstraint, ObjRule, ObjTrigger, ObjIndex, ObjPolicy});
-	else if(obj_type==ObjView)
-		return(vector<ObjectType>()={ObjRule, ObjTrigger, ObjIndex});
+	if(obj_type==ObjectType::ObjDatabase)
+		return(vector<ObjectType>()={ObjectType::ObjCast, ObjectType::ObjRole, ObjectType::ObjLanguage, ObjectType::ObjTablespace, ObjectType::ObjSchema, ObjectType::ObjExtension, ObjectType::ObjEventTrigger});
+	else if(obj_type==ObjectType::ObjSchema)
+		return(vector<ObjectType>()={ObjectType::ObjAggregate, ObjectType::ObjConversion, ObjectType::ObjCollation, ObjectType::ObjDomain, ObjectType::ObjFunction,
+									ObjectType::ObjOpClass, ObjectType::ObjOperator, ObjectType::ObjOpFamily, ObjectType::ObjSequence, ObjectType::ObjType, ObjectType::ObjTable, ObjectType::ObjView});
+	else if(obj_type==ObjectType::ObjTable)
+		return(vector<ObjectType>()={ObjectType::ObjColumn, ObjectType::ObjConstraint, ObjectType::ObjRule, ObjectType::ObjTrigger, ObjectType::ObjIndex, ObjectType::ObjPolicy});
+	else if(obj_type==ObjectType::ObjView)
+		return(vector<ObjectType>()={ObjectType::ObjRule, ObjectType::ObjTrigger, ObjectType::ObjIndex});
 	else
 		return(vector<ObjectType>()={});
 }

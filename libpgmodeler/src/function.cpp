@@ -25,7 +25,7 @@ Function::Function(void)
 	returns_setof=false;
 	is_wnd_function=false;
 	is_leakproof=false;
-	obj_type=ObjFunction;
+	obj_type=ObjectType::ObjFunction;
 
 	execution_cost=100;
 	row_amount=1000;
@@ -211,7 +211,7 @@ void Function::setLanguage(BaseObject *language)
 	if(!language)
 		throw Exception(AsgNotAllocatedLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the language object is invalid
-	else if(language->getObjectType()!=ObjLanguage)
+	else if(language->getObjectType()!=ObjectType::ObjLanguage)
 		throw Exception(AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->language != language);

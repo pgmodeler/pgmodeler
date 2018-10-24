@@ -21,7 +21,7 @@
 BaseTable::BaseTable(void)
 {
 	tag=nullptr;
-	obj_type=ObjBaseTable;
+	obj_type=ObjectType::ObjBaseTable;
 	attributes[ParsersAttributes::TAG]=QString();
 	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
 	attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString();

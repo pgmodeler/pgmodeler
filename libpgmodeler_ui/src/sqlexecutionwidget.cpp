@@ -268,7 +268,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types=catalog.getObjectsAttributes(ObjType, QString(), QString(), type_ids);
+		types=catalog.getObjectsAttributes(ObjectType::ObjType, QString(), QString(), type_ids);
 
 		for(auto &tp : types)
 			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
