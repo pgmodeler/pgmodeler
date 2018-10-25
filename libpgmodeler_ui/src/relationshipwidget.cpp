@@ -478,10 +478,10 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 	if(value)
 	{
 		map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
-		deferrable_chk->setChecked(confs[Attributes::FOREIGN_KEYS][Attributes::Deferrable]==Attributes::True);
-		deferral_cmb->setCurrentText(confs[Attributes::FOREIGN_KEYS][Attributes::DeferType]);
-		upd_action_cmb->setCurrentText(confs[Attributes::FOREIGN_KEYS][Attributes::UPD_ACTION]);
-		del_action_cmb->setCurrentText(confs[Attributes::FOREIGN_KEYS][Attributes::DelAction]);
+		deferrable_chk->setChecked(confs[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
+		deferral_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DeferType]);
+		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UPD_ACTION]);
+		del_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DelAction]);
 	}
 	else
 	{

@@ -128,7 +128,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::STRATEGY_NUM]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
-	attributes[Attributes::FUNCTION]=QString();
+	attributes[Attributes::Function]=QString();
 	attributes[Attributes::OPERATOR]=QString();
 	attributes[Attributes::STORAGE]=QString();
 	attributes[Attributes::OP_FAMILY]=QString();
@@ -137,7 +137,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	if(element_type==FunctionElem && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-		attributes[Attributes::FUNCTION]=Attributes::True;
+		attributes[Attributes::Function]=Attributes::True;
 		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)

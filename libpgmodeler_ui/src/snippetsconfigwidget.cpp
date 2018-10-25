@@ -107,7 +107,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 {
 	QStringList ids;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
-						   Attributes::GENERAL : BaseObject::getSchemaName(obj_type));
+						   Attributes::General : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)
 	{
@@ -122,7 +122,7 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
 {
 	vector<attribs_map> snippets;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
-						   Attributes::GENERAL : BaseObject::getSchemaName(obj_type));
+						   Attributes::General : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)
 	{
@@ -306,7 +306,7 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 	QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
 
 	if(object_id.isEmpty())
-		object_id=Attributes::GENERAL;
+		object_id=Attributes::General;
 
 	return(attribs_map{ {Attributes::ID, id_edt->text()},
 						{Attributes::LABEL, label_edt->text()},
@@ -414,7 +414,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 		QString object_id=BaseObject::getSchemaName(obj_type);
 
 		if(object_id.isEmpty())
-			object_id=Attributes::GENERAL;
+			object_id=Attributes::General;
 
 		for(auto &cfg : config_params)
 		{
@@ -543,7 +543,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 			/* If the current group (object) is general does not include the submenu yet.
 		 This will be included as the last submenu */
-			if(object!=Attributes::GENERAL)
+			if(object!=Attributes::General)
 				snip_menu->addMenu(menu);
 		}
 
@@ -554,14 +554,14 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 	}
 
 	//Include the "general" submenu at the end of snippet menu
-	if(submenus.count(Attributes::GENERAL)!=0)
+	if(submenus.count(Attributes::General)!=0)
 	{
 		if(snip_menu->isEmpty())
-		  snip_menu->addMenu(submenus[Attributes::GENERAL]);
+		  snip_menu->addMenu(submenus[Attributes::General]);
 		else
 		{
 		  //Inserting the "general" submenu at the top of snippets actions
-		  snip_menu->insertMenu(snip_menu->actions().at(0), submenus[Attributes::GENERAL]);
+		  snip_menu->insertMenu(snip_menu->actions().at(0), submenus[Attributes::General]);
 		  snip_menu->insertSeparator(snip_menu->actions().at(1));
 		}
 	}

@@ -132,7 +132,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	for(auto itr : chk_constrs)
 	{
 		aux_attribs[Attributes::NAME] = itr.first;
-		aux_attribs[Attributes::EXPRESSION] = itr.second;
+		aux_attribs[Attributes::Expression] = itr.second;
 		attributes[Attributes::Constraints]+=schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, def_type);
 	}
 
@@ -172,7 +172,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::DefaultValue]=QString();
 		attributes[Attributes::NOT_NULL]=QString();
 		attributes[Attributes::Constraints]=QString();
-		attributes[Attributes::EXPRESSION]=QString();
+		attributes[Attributes::Expression]=QString();
 		attributes[Attributes::OLD_NAME]=QString();
 		attributes[Attributes::NEW_NAME]=QString();
 
@@ -198,7 +198,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 				 (aux_constrs.count(constr.first) && orig_expr != aux_expr))
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
-				aux_attribs[Attributes::EXPRESSION]=Attributes::UNSET;
+				aux_attribs[Attributes::Expression]=Attributes::UNSET;
 				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 
@@ -206,7 +206,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			if(aux_constrs.count(constr.first) && orig_expr != aux_expr)
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
-				aux_attribs[Attributes::EXPRESSION]=aux_constrs[constr.first];
+				aux_attribs[Attributes::Expression]=aux_constrs[constr.first];
 				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}
@@ -217,7 +217,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			if(orig_constrs.count(constr.first) == 0)
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
-				aux_attribs[Attributes::EXPRESSION]=constr.second;
+				aux_attribs[Attributes::Expression]=constr.second;
 				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}

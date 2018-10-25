@@ -43,7 +43,7 @@ Role::Role(void)
 	attributes[Attributes::MEMBER_ROLES]=QString();
 	attributes[Attributes::AdminRoles]=QString();
 	attributes[Attributes::REPLICATION]=QString();
-	attributes[Attributes::GROUP]=QString();
+	attributes[Attributes::Group]=QString();
 	attributes[Attributes::BypassRls]=QString();
 }
 

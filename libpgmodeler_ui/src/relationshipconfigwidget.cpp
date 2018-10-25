@@ -103,13 +103,13 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::ConnectTableEdges);
 		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::CrowsFoot);
 
-		deferrable_chk->setChecked(config_params[Attributes::FOREIGN_KEYS][Attributes::Deferrable]==Attributes::True);
-		deferral_cmb->setCurrentText(config_params[Attributes::FOREIGN_KEYS][Attributes::DeferType]);
+		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
+		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
 
-		idx=upd_action_cmb->findText(config_params[Attributes::FOREIGN_KEYS][Attributes::UPD_ACTION]);
+		idx=upd_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx=del_action_cmb->findText(config_params[Attributes::FOREIGN_KEYS][Attributes::DelAction]);
+		idx=del_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::DelAction]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		patterns[Attributes::RELATIONSHIP_11]=config_params[Attributes::RELATIONSHIP_11];
@@ -153,10 +153,10 @@ void RelationshipConfigWidget::saveConfiguration(void)
 		else
 			config_params[Attributes::Connection][Attributes::MODE]=Attributes::ConnectCenterPnts;
 
-		config_params[Attributes::FOREIGN_KEYS][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
-		config_params[Attributes::FOREIGN_KEYS][Attributes::DeferType]=deferral_cmb->currentText();
-		config_params[Attributes::FOREIGN_KEYS][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
-		config_params[Attributes::FOREIGN_KEYS][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
+		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
+		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
+		config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
+		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
 		config_params[Attributes::NAME_PATTERNS][Attributes::PATTERNS]=QString();
 

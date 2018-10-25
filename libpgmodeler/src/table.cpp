@@ -33,7 +33,7 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::ColsComment]=QString();
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::GEN_ALTER_CMDS]=QString();
+	attributes[Attributes::GenAlterCmds]=QString();
 	attributes[Attributes::ConstrSqlDisabled]=QString();
 	attributes[Attributes::ColIndexes]=QString();
 	attributes[Attributes::ConstrIndexes]=QString();
@@ -1594,14 +1594,14 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
 	attributes[Attributes::OIDS]=(with_oid ? Attributes::True : QString());
-	attributes[Attributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? Attributes::True : QString());
+	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
 	attributes[Attributes::UNLOGGED]=(unlogged ? Attributes::True : QString());
 	attributes[Attributes::RLS_ENABLED]=(rls_enabled ? Attributes::True : QString());
 	attributes[Attributes::RLS_FORCED]=(rls_forced ? Attributes::True : QString());
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::TAG]=QString();
-	attributes[Attributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? Attributes::True : QString());
+	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
 	attributes[Attributes::PARTITIONING]=~partitioning_type;
 	attributes[Attributes::PARTITION_KEY]=QString();
 	attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
@@ -1886,7 +1886,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 
 		if(this->getName()==tab->getName())
 		{
-			attribs[Attributes::HAS_CHANGES]=Attributes::True;
+			attribs[Attributes::HasChanges]=Attributes::True;
 
 			if(this->with_oid!=tab->with_oid)
 				attribs[Attributes::OIDS]=(tab->with_oid ? Attributes::True : Attributes::UNSET);

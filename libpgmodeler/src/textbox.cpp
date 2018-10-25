@@ -27,7 +27,7 @@ Textbox::Textbox(void)
 	attributes[Attributes::Bold]=QString();
 	attributes[Attributes::UNDERLINE]=QString();
 	attributes[Attributes::Color]=QString();
-	attributes[Attributes::FONT_SIZE]=QString();
+	attributes[Attributes::FontSize]=QString();
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
@@ -54,7 +54,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		if(text_color.name()!=QString("#000000"))
 			attributes[Attributes::Color]=text_color.name();
 
-		attributes[Attributes::FONT_SIZE]=QString("%1").arg(font_size);
+		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}

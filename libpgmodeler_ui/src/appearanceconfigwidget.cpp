@@ -25,7 +25,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	setupUi(this);
 
 	QString conf_ids[]={
-		Attributes::GLOBAL, //0
+		Attributes::Global, //0
 		Attributes::Constraints, //1
 		Attributes::OBJ_SELECTION, //2
 		Attributes::POSITION_INFO, //3
@@ -64,8 +64,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::PROT_COLUMN, //34
 		Attributes::PK_COLUMN, //35
 		Attributes::PK_COLUMN, //36
-		Attributes::FK_COLUMN, //37
-		Attributes::FK_COLUMN, //38
+		Attributes::FkColumn, //37
+		Attributes::FkColumn, //38
 		Attributes::UQ_COLUMN, //39
 		Attributes::UQ_COLUMN, //40
 		Attributes::NN_COLUMN, //41
@@ -238,7 +238,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 		}
 
 		this->enableConfigElement();
-		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::GLOBAL).font());
+		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::Global).font());
 		model->setObjectsModified();
 		updatePlaceholderItem();
 		scene->update();
@@ -282,7 +282,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attribs[attrib_id]=item.colors[2].name();
 			}
 			//If the item is a font config
-			else if(item.conf_id!=Attributes::GLOBAL && !item.obj_conf)
+			else if(item.conf_id!=Attributes::Global && !item.obj_conf)
 			{
 				font=item.font_fmt.font();
 

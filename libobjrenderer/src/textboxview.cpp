@@ -78,7 +78,7 @@ void TextboxView::setToolTip(const QString &tooltip)
 void TextboxView::__configureObject(void)
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
-	QTextCharFormat fmt=font_config[Attributes::GLOBAL];
+	QTextCharFormat fmt=font_config[Attributes::Global];
 	QPolygonF polygon;
 
 	polygon.append(QPointF(0.0f,0.0f));

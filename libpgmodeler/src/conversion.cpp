@@ -26,7 +26,7 @@ Conversion::Conversion(void)
 	attributes[Attributes::Default]=QString();
 	attributes[Attributes::SRC_ENCODING]=QString();
 	attributes[Attributes::DstEncoding]=QString();
-	attributes[Attributes::FUNCTION]=QString();
+	attributes[Attributes::Function]=QString();
 }
 
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
@@ -122,9 +122,9 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	if(conversion_func)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FUNCTION]=conversion_func->getName(true);
+			attributes[Attributes::Function]=conversion_func->getName(true);
 		else
-			attributes[Attributes::FUNCTION]=conversion_func->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=conversion_func->getCodeDefinition(def_type, true);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

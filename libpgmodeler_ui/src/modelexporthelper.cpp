@@ -290,7 +290,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 		//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
 		svg_def.replace(font_attr.arg(scene->font().family()),
-										font_attr.arg(BaseObjectView::getFontStyle(Attributes::GLOBAL).font().family()));
+										font_attr.arg(BaseObjectView::getFontStyle(Attributes::Global).font().family()));
 
 		/* Removing the empty (transparent) backgound object in order to save some space in the file if
 		the grid or delimiter is displayed */

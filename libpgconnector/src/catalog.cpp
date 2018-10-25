@@ -198,7 +198,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[Attributes::OID_FILTER_OP]=QString(">");
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
-		attribs[Attributes::EXC_BUILTIN_ARRAYS]=Attributes::True;
+		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
 
 	//Checking if the custom filter expression is present
 	if(attribs.count(Attributes::CustomFilter))
@@ -534,7 +534,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 	try
 	{
 		attribs_map attribs={{Attributes::OID, oid_field},
-							 {Attributes::EXT_OBJ_OIDS, ext_obj_oids}};
+							 {Attributes::ExtObjOids, ext_obj_oids}};
 
 
 		loadCatalogQuery(query_id);
@@ -597,7 +597,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		extra_attribs[Attributes::TABLE]=table;
 
 		if(!filter_oids.empty())
-			extra_attribs[Attributes::FILTER_OIDS]=createOidFilter(filter_oids);
+			extra_attribs[Attributes::FilterOids]=createOidFilter(filter_oids);
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
 		if(obj_type != ObjectType::Column)

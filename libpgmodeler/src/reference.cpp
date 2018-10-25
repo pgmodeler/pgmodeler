@@ -227,7 +227,7 @@ QString Reference::getXMLDefinition(void)
 		attribs[Attributes::Column]=column->getName();
 
 	attribs[Attributes::REF_ALIAS]=ref_alias;
-	attribs[Attributes::EXPRESSION]=expression;
+	attribs[Attributes::Expression]=expression;
 	attribs[Attributes::Alias]=alias;
 	attribs[Attributes::ColumnAlias]=column_alias;
 

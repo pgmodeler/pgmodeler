@@ -25,7 +25,7 @@ View::View(void) : BaseTable()
 	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::REFERENCES]=QString();
 	attributes[Attributes::SELECT_EXP]=QString();
-	attributes[Attributes::FROM_EXP]=QString();
+	attributes[Attributes::FromExp]=QString();
 	attributes[Attributes::SIMPLE_EXP]=QString();
 	attributes[Attributes::EndExp]=QString();
 	attributes[Attributes::CteExpression]=QString();
@@ -481,7 +481,7 @@ void View::setReferencesAttribute(void)
 {
 	QString str_aux;
 	QString attribs[]={ Attributes::SELECT_EXP,
-											Attributes::FROM_EXP,
+											Attributes::FromExp,
 											Attributes::SIMPLE_EXP,
 											Attributes::EndExp};
 	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
@@ -579,7 +579,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::TAG]=QString();
-	attributes[Attributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? Attributes::True : QString());
+	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
 
 	setSQLObjectAttribute();
 

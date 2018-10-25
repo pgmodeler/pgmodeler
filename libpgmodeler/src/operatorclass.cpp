@@ -23,7 +23,7 @@ OperatorClass::OperatorClass(void)
 	obj_type=ObjectType::OpClass;
 	family=nullptr;
 	is_default=false;
-	attributes[Attributes::FAMILY]=QString();
+	attributes[Attributes::Family]=QString();
 	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::INDEX_TYPE]=QString();
 	attributes[Attributes::TYPE]=QString();
@@ -183,9 +183,9 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(family)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FAMILY]=family->getName(true);
+			attributes[Attributes::Family]=family->getName(true);
 		else
-			attributes[Attributes::FAMILY]=family->getSignature();
+			attributes[Attributes::Family]=family->getSignature();
 	}
 
 	attributes[Attributes::SIGNATURE]=getSignature();

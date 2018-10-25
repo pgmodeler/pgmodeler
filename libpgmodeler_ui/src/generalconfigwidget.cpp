@@ -92,7 +92,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
 	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
-	config_params[Attributes::Configuration][Attributes::GRID_SIZE]=QString();
+	config_params[Attributes::Configuration][Attributes::GridSize]=QString();
 	config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]=QString();
 	config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString();
 	config_params[Attributes::Configuration][Attributes::PAPER_TYPE]=QString();
@@ -103,10 +103,10 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
 	config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=QString();
 	config_params[Attributes::Configuration][Attributes::PRINT_GRID]=QString();
-	config_params[Attributes::Configuration][Attributes::HIDE_REL_NAME]=QString();
-	config_params[Attributes::Configuration][Attributes::HIDE_EXT_ATTRIBS]=QString();
-	config_params[Attributes::Configuration][Attributes::HIDE_TABLE_TAGS]=QString();
-	config_params[Attributes::Configuration][Attributes::FILE_ASSOCIATED]=QString();
+	config_params[Attributes::Configuration][Attributes::HideRelName]=QString();
+	config_params[Attributes::Configuration][Attributes::HideExtAttribs]=QString();
+	config_params[Attributes::Configuration][Attributes::HideTableTags]=QString();
+	config_params[Attributes::Configuration][Attributes::FileAssociated]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeFont]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString();
 	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=QString();
@@ -123,7 +123,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=QString();
 	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=QString();
 	config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]=QString();
-	config_params[Attributes::Configuration][Attributes::HIGHLIGHT_LINES]=QString();
+	config_params[Attributes::Configuration][Attributes::HighlightLines]=QString();
 	config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=QString();
 	config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY]=QString();
 	config_params[Attributes::Configuration][Attributes::HISTORY_MAX_LENGTH]=QString();
@@ -271,7 +271,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		key_attribs.push_back(Attributes::ID);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
 
-		grid_size_spb->setValue((config_params[Attributes::Configuration][Attributes::GRID_SIZE]).toUInt());
+		grid_size_spb->setValue((config_params[Attributes::Configuration][Attributes::GridSize]).toUInt());
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HISTORY_MAX_LENGTH].toUInt());
 
@@ -317,14 +317,14 @@ void GeneralConfigWidget::loadConfiguration(void)
 		width_spb->setValue((custom_size.count() >= 2 ? custom_size[0].toDouble() : 500));
 		height_spb->setValue((custom_size.count() >= 2 ? custom_size[1].toDouble() : 500));
 
-		hide_ext_attribs_chk->setChecked(config_params[Attributes::Configuration][Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
-		hide_rel_name_chk->setChecked(config_params[Attributes::Configuration][Attributes::HIDE_REL_NAME]==Attributes::True);
-		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HIDE_TABLE_TAGS]==Attributes::True);
+		hide_ext_attribs_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideExtAttribs]==Attributes::True);
+		hide_rel_name_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideRelName]==Attributes::True);
+		hide_table_tags_chk->setChecked(config_params[Attributes::Configuration][Attributes::HideTableTags]==Attributes::True);
 
 		font_cmb->setCurrentFont(QFont(config_params[Attributes::Configuration][Attributes::CodeFont]));
 		font_size_spb->setValue(config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble());
 		disp_line_numbers_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]==Attributes::True);
-		hightlight_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::HIGHLIGHT_LINES]==Attributes::True);
+		hightlight_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::HighlightLines]==Attributes::True);
 		line_numbers_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]);
 		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]);
 		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]);
@@ -349,7 +349,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 			x = itr.second[Attributes::X_POS].toInt();
 			y = itr.second[Attributes::Y_POS].toInt();
 			w = itr.second[Attributes::WIDTH].toInt();
-			h = itr.second[Attributes::HEIGHT].toInt();
+			h = itr.second[Attributes::Height].toInt();
 			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
 			widgets_geom[itr.first].maximized = itr.second[Attributes::MAXIMIZED] == Attributes::True;
 		  }
@@ -466,7 +466,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 				   Attributes::WIDGET +
 				   GlobalAttributes::SchemaExt;
 
-		config_params[Attributes::Configuration][Attributes::GRID_SIZE]=QString::number(grid_size_spb->value());
+		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PAPER_TYPE]=QString::number(paper_cmb->currentIndex());
@@ -504,14 +504,14 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::PRINT_GRID]=(print_grid_chk->isChecked() ? Attributes::True : QString());
 
-		config_params[Attributes::Configuration][Attributes::HIDE_EXT_ATTRIBS]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HIDE_REL_NAME]=(hide_rel_name_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HIDE_TABLE_TAGS]=(hide_table_tags_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::HideExtAttribs]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::CodeFont]=font_cmb->currentText();
 		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HIGHLIGHT_LINES]=(hightlight_lines_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=line_numbers_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]=line_highlight_cp->getColor(0).name();
@@ -571,7 +571,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 			attribs[Attributes::X_POS] = QString::number(itr.second.geometry.left());
 			attribs[Attributes::Y_POS] = QString::number(itr.second.geometry.top());
 			attribs[Attributes::WIDTH] = QString::number(itr.second.geometry.width());
-			attribs[Attributes::HEIGHT] = QString::number(itr.second.geometry.height());
+			attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
 			attribs[Attributes::MAXIMIZED] = itr.second.maximized ? Attributes::True : QString();
 
 			schparser.ignoreUnkownAttributes(true);

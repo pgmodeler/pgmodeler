@@ -57,7 +57,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	ObjectType obj_type=ObjectType::BaseObject;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
-	double factor=(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+	double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
@@ -123,7 +123,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::ForeignKey)
 			{
-				attrib=Attributes::FK_COLUMN;
+				attrib=Attributes::FkColumn;
 				pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
@@ -214,7 +214,7 @@ void TableObjectView::configureObject(void)
 			}
 			else if(str_constr.indexOf(TextForeignKey)>=0)
 			{
-				fmt=font_config[Attributes::FK_COLUMN];
+				fmt=font_config[Attributes::FkColumn];
 				constr_type=ConstraintType::ForeignKey;
 			}
 			else if(str_constr.indexOf(TextUnique)>=0)

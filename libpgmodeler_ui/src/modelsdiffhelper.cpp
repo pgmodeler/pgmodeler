@@ -323,9 +323,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 									Attributes::PROTECTED,
 									Attributes::SQL_DISABLED,
 									Attributes::RECT_VISIBLE,
-									Attributes::FILL_COLOR,
-									Attributes::FADED_OUT,
-									Attributes::HIDE_EXT_ATTRIBS},
+									Attributes::FillColor,
+									Attributes::FadedOut,
+									Attributes::HideExtAttribs},
 								{ Attributes::ROLE,
 									Attributes::TABLESPACE,
 									Attributes::Collation,
@@ -869,7 +869,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			has_diffs=(create_objs_count!=0 || alter_objs.size()!=0 || drop_objs.size()!=0);
 
 			//Attributes used on the diff schema file
-			attribs[Attributes::HAS_CHANGES]=Attributes::True;
+			attribs[Attributes::HasChanges]=Attributes::True;
 			attribs[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
 			attribs[Attributes::DbModel]=source_model->getName();
 			attribs[Attributes::Database]=imported_model->getName();
@@ -884,10 +884,10 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[Attributes::CreateCmds]=QString();
 			attribs[Attributes::TRUNCATE_CMDS]=QString();
 			attribs[Attributes::ConstrDefs]=QString();
-			attribs[Attributes::FK_DEFS]=QString();
+			attribs[Attributes::FkDefs]=QString();
 			attribs[Attributes::UNSET_PERMS]=unset_perms;
 			attribs[Attributes::SET_PERMS]=set_perms;
-			attribs[Attributes::FUNCTION]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
+			attribs[Attributes::Function]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
 			attribs[Attributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
 
 			ritr=drop_objs.rbegin();
@@ -913,7 +913,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 				attribs[Attributes::ConstrDefs]+=itr.second;
 
 			for(auto &itr : create_fks)
-				attribs[Attributes::FK_DEFS]+=itr.second;
+				attribs[Attributes::FkDefs]+=itr.second;
 
 			for(auto &itr : truncate_tabs)
 				attribs[Attributes::TRUNCATE_CMDS]+=itr.second;

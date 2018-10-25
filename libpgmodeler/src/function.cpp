@@ -31,10 +31,10 @@ Function::Function(void)
 	row_amount=1000;
 
 	attributes[Attributes::PARAMETERS]=QString();
-	attributes[Attributes::EXECUTION_COST]=QString();
+	attributes[Attributes::ExecutionCost]=QString();
 	attributes[Attributes::ROW_AMOUNT]=QString();
 	attributes[Attributes::RETURN_TYPE]=QString();
-	attributes[Attributes::FUNCTION_TYPE]=QString();
+	attributes[Attributes::FunctionType]=QString();
 	attributes[Attributes::LANGUAGE]=QString();
 	attributes[Attributes::RETURNS_SETOF]=QString();
 	attributes[Attributes::SECURITY_TYPE]=QString();
@@ -457,9 +457,9 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setParametersAttribute(def_type);
 
-	attributes[Attributes::EXECUTION_COST]=QString("%1").arg(execution_cost);
+	attributes[Attributes::ExecutionCost]=QString("%1").arg(execution_cost);
 	attributes[Attributes::ROW_AMOUNT]=QString("%1").arg(row_amount);
-	attributes[Attributes::FUNCTION_TYPE]=(~function_type);
+	attributes[Attributes::FunctionType]=(~function_type);
 
 	if(language)
 	{
@@ -517,7 +517,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 		else
 		{
 			if(this->execution_cost!=func->execution_cost)
-				attribs[Attributes::EXECUTION_COST]=QString::number(func->execution_cost);
+				attribs[Attributes::ExecutionCost]=QString::number(func->execution_cost);
 
 			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
 			{
@@ -526,7 +526,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 			}
 
 			if(this->function_type!=func->function_type)
-				attribs[Attributes::FUNCTION_TYPE]=~func->function_type;
+				attribs[Attributes::FunctionType]=~func->function_type;
 
 			if(this->is_leakproof!=func->is_leakproof)
 				attribs[Attributes::LEAKPROOF]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);

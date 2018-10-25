@@ -28,7 +28,7 @@ Cast::Cast(void)
 	attributes[Attributes::DestType]=QString();
 	attributes[Attributes::CastType]=QString();
 	attributes[Attributes::IO_CAST]=QString();
-	attributes[Attributes::FUNCTION]=QString();
+	attributes[Attributes::Function]=QString();
 }
 
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
@@ -178,9 +178,9 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	if(!is_in_out && cast_function)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FUNCTION]=cast_function->getSignature();
+			attributes[Attributes::Function]=cast_function->getSignature();
 		else
-			attributes[Attributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
 		attributes[Attributes::IO_CAST]=(is_in_out ? Attributes::True : QString());

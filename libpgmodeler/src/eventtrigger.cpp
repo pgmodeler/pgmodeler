@@ -23,8 +23,8 @@ EventTrigger::EventTrigger(void)
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
 	attributes[Attributes::Event]=QString();
-	attributes[Attributes::FILTER]=QString();
-	attributes[Attributes::FUNCTION]=QString();
+	attributes[Attributes::Filter]=QString();
+	attributes[Attributes::Function]=QString();
 }
 
 void EventTrigger::setEvent(EventTriggerType evnt_type)
@@ -116,22 +116,22 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 		QStringList str_list;
 
 		if(function)
-			attributes[Attributes::FUNCTION]=function->getSignature();
+			attributes[Attributes::Function]=function->getSignature();
 
 		for(auto &flt : filter)
 			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
-		attributes[Attributes::FILTER]=str_list.join(QString("\n\t AND "));
+		attributes[Attributes::Filter]=str_list.join(QString("\n\t AND "));
 	}
 	else
 	{
 		if(function)
-			attributes[Attributes::FUNCTION]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::Function]=function->getCodeDefinition(def_type, true);
 
 		for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
-			attributes[Attributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
-												   .arg(Attributes::FILTER)
+			attributes[Attributes::Filter]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
+												   .arg(Attributes::Filter)
 												   .arg(Attributes::VARIABLE).arg(flt.first)
 												   .arg(Attributes::VALUES).arg(flt.second.join(','));
 	}

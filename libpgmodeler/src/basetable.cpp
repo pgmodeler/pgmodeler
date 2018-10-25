@@ -23,7 +23,7 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
 	attributes[Attributes::TAG]=QString();
-	attributes[Attributes::HIDE_EXT_ATTRIBS]=QString();
+	attributes[Attributes::HideExtAttribs]=QString();
 	attributes[Attributes::MAX_OBJ_COUNT]=QString();
 	hide_ext_attribs=false;
 }

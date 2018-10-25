@@ -4,7 +4,7 @@ Extension::Extension(void)
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
-	attributes[Attributes::HANDLES_TYPE]=QString();
+	attributes[Attributes::HandlesType]=QString();
 	attributes[Attributes::CurVersion]=QString();
 	attributes[Attributes::OLD_VERSION]=QString();
 }
@@ -86,7 +86,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[Attributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
-	attributes[Attributes::HANDLES_TYPE]=(handles_type ? Attributes::True : QString());
+	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : QString());
 	attributes[Attributes::CurVersion]=versions[CurVersion];
 	attributes[Attributes::OLD_VERSION]=versions[OldVersion];
 

@@ -3577,9 +3577,9 @@ Schema *DatabaseModel::createSchema(void)
 		schema=new Schema;
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
-		schema->setFillColor(QColor(attribs[Attributes::FILL_COLOR]));
+		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RECT_VISIBLE]==Attributes::True);
-		schema->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 	}
 	catch(Exception &e)
 	{
@@ -3623,7 +3623,7 @@ Language *DatabaseModel::createLanguage(void)
 
 						//Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
 						if(ref_type==Attributes::VALIDATOR_FUNC ||
-								ref_type==Attributes::HANDLER_FUNC ||
+								ref_type==Attributes::HandlerFunc ||
 								ref_type==Attributes::INLINE_FUNC)
 						{
 							//Gets the function signature and tries to retrieve it from the model
@@ -3641,7 +3641,7 @@ Language *DatabaseModel::createLanguage(void)
 
 							if(ref_type==Attributes::VALIDATOR_FUNC)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::ValidatorFunc);
-							else if(ref_type==Attributes::HANDLER_FUNC)
+							else if(ref_type==Attributes::HandlerFunc)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::HandlerFunc);
 							else
 								lang->setFunction(dynamic_cast<Function *>(func), Language::InlineFunc);
@@ -3697,14 +3697,14 @@ Function *DatabaseModel::createFunction(void)
 		if(!attribs[Attributes::BehaviorType].isEmpty())
 			func->setBehaviorType(BehaviorType(attribs[Attributes::BehaviorType]));
 
-		if(!attribs[Attributes::FUNCTION_TYPE].isEmpty())
-			func->setFunctionType(FunctionType(attribs[Attributes::FUNCTION_TYPE]));
+		if(!attribs[Attributes::FunctionType].isEmpty())
+			func->setFunctionType(FunctionType(attribs[Attributes::FunctionType]));
 
 		if(!attribs[Attributes::SECURITY_TYPE].isEmpty())
 			func->setSecurityType(SecurityType(attribs[Attributes::SECURITY_TYPE]));
 
-		if(!attribs[Attributes::EXECUTION_COST].isEmpty())
-			func->setExecutionCost(attribs[Attributes::EXECUTION_COST].toInt());
+		if(!attribs[Attributes::ExecutionCost].isEmpty())
+			func->setExecutionCost(attribs[Attributes::ExecutionCost].toInt());
 
 		if(!attribs[Attributes::ROW_AMOUNT].isEmpty())
 			func->setRowAmount(attribs[Attributes::ROW_AMOUNT].toInt());
@@ -4122,7 +4122,7 @@ Type *DatabaseModel::createType(void)
 						type->setSubtypeOpClass(op_class);
 					}
 					//Configuring the functions used by the type (only for BASE type)
-					else if(elem==Attributes::FUNCTION)
+					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 
@@ -4264,7 +4264,7 @@ Cast *DatabaseModel::createCast(void)
 						type_idx++;
 					}
 					//Extracts the conversion function
-					else if(elem==Attributes::FUNCTION)
+					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -4323,7 +4323,7 @@ Conversion *DatabaseModel::createConversion(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::FUNCTION)
+					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -4371,7 +4371,7 @@ Operator *DatabaseModel::createOperator(void)
 		xmlparser.getElementAttributes(attribs);
 
 		oper->setMerges(attribs[Attributes::MERGES]==Attributes::True);
-		oper->setHashes(attribs[Attributes::HASHES]==Attributes::True);
+		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
 		func_types[Attributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
 		func_types[Attributes::JOIN_FUNC]=Operator::FUNC_JOIN;
@@ -4417,7 +4417,7 @@ Operator *DatabaseModel::createOperator(void)
 						type=createPgSQLType();
 						oper->setArgumentType(type, arg_type);
 					}
-					else if(elem==Attributes::FUNCTION)
+					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -4468,7 +4468,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		op_class->setIndexingType(IndexingType(attribs[Attributes::INDEX_TYPE]));
 		op_class->setDefault(attribs[Attributes::Default]==Attributes::True);
 
-		elem_types[Attributes::FUNCTION]=OperatorClassElement::FunctionElem;
+		elem_types[Attributes::Function]=OperatorClassElement::FunctionElem;
 		elem_types[Attributes::OPERATOR]=OperatorClassElement::OperatorElem;
 		elem_types[Attributes::STORAGE]=OperatorClassElement::StorageElem;
 
@@ -4621,7 +4621,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 						else
 							aggreg->addDataType(type);
 					}
-					else if(elem==Attributes::FUNCTION)
+					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -4680,9 +4680,9 @@ Table *DatabaseModel::createTable(void)
 		table->setUnlogged(attribs[Attributes::UNLOGGED]==Attributes::True);
 		table->setRLSEnabled(attribs[Attributes::RLS_ENABLED]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RLS_FORCED]==Attributes::True);
-		table->setGenerateAlterCmds(attribs[Attributes::GEN_ALTER_CMDS]==Attributes::True);
-		table->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
-		table->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
+		table->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4931,7 +4931,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr_type=ConstraintType::Check;
 		else if(attribs[Attributes::TYPE]==Attributes::PK_CONSTR)
 			constr_type=ConstraintType::PrimaryKey;
-		else if(attribs[Attributes::TYPE]==Attributes::FK_CONSTR)
+		else if(attribs[Attributes::TYPE]==Attributes::FkConstr)
 			constr_type=ConstraintType::ForeignKey;
 		else if(attribs[Attributes::TYPE]==Attributes::UQ_CONSTR)
 			constr_type=ConstraintType::Unique;
@@ -4940,8 +4940,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 		constr->setConstraintType(constr_type);
 
-		if(!attribs[Attributes::FACTOR].isEmpty())
-			constr->setFillFactor(attribs[Attributes::FACTOR].toUInt());
+		if(!attribs[Attributes::Factor].isEmpty())
+			constr->setFillFactor(attribs[Attributes::Factor].toUInt());
 
 		setBasicAttributes(constr);
 
@@ -5004,12 +5004,12 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::EXCLUDE_ELEMENT)
+					if(elem==Attributes::ExcludeElement)
 					{
 						createElement(exc_elem, constr, parent_obj);
 						constr->addExcludeElement(exc_elem);
 					}
-					else if(elem==Attributes::EXPRESSION)
+					else if(elem==Attributes::Expression)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5095,7 +5095,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	xml_elem=xmlparser.getElementName();
 	is_part_key = xml_elem == Attributes::PARTITION_KEY;
 
-	if(xml_elem==Attributes::INDEX_ELEMENT || xml_elem==Attributes::EXCLUDE_ELEMENT || is_part_key)
+	if(xml_elem==Attributes::INDEX_ELEMENT || xml_elem==Attributes::ExcludeElement || is_part_key)
 	{
 		xmlparser.getElementAttributes(attribs);
 
@@ -5234,7 +5234,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 					elem.setColumn(column);
 				}
-				else if(xml_elem==Attributes::EXPRESSION)
+				else if(xml_elem==Attributes::Expression)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -5323,10 +5323,10 @@ Index *DatabaseModel::createIndex(void)
 		index->setParentTable(table);
 		index->setIndexAttribute(Index::Concurrent, attribs[Attributes::Concurrent]==Attributes::True);
 		index->setIndexAttribute(Index::Unique, attribs[Attributes::UNIQUE]==Attributes::True);
-		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FAST_UPDATE]==Attributes::True);
+		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FastUpdate]==Attributes::True);
 		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
 		index->setIndexingType(attribs[Attributes::INDEX_TYPE]);
-		index->setFillFactor(attribs[Attributes::FACTOR].toUInt());
+		index->setFillFactor(attribs[Attributes::Factor].toUInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5396,7 +5396,7 @@ Rule *DatabaseModel::createRule(void)
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
-		rule->setExecutionType(attribs[Attributes::EXEC_TYPE]);
+		rule->setExecutionType(attribs[Attributes::ExecType]);
 		rule->setEventType(attribs[Attributes::EventType]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5496,7 +5496,7 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		trigger->setExecutePerRow(attribs[Attributes::PER_ROW]==Attributes::True);
 
-		trigger->setFiringType(FiringType(attribs[Attributes::FIRING_TYPE]));
+		trigger->setFiringType(FiringType(attribs[Attributes::FiringType]));
 
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OLD_TABLE_NAME]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NEW_TABLE_NAME]);
@@ -5543,7 +5543,7 @@ Trigger *DatabaseModel::createTrigger(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::FUNCTION)
+					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -5639,7 +5639,7 @@ Policy *DatabaseModel::createPolicy(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::EXPRESSION)
+					if(elem==Attributes::Expression)
 					{
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.savePosition();
@@ -5718,7 +5718,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::FUNCTION)
+					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
 						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
@@ -5736,7 +5736,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 
 						event_trig->setFunction(dynamic_cast<Function *>(func));
 					}
-					else if(elem==Attributes::FILTER)
+					else if(elem==Attributes::Filter)
 					{
 						xmlparser.getElementAttributes(attribs);
 						event_trig->setFilter(attribs[Attributes::VARIABLE], attribs[Attributes::VALUES].split(','));
@@ -5887,8 +5887,8 @@ View *DatabaseModel::createView(void)
 		view->setMaterialized(attribs[Attributes::MATERIALIZED]==Attributes::True);
 		view->setRecursive(attribs[Attributes::RECURSIVE]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WITH_NO_DATA]==Attributes::True);
-		view->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
-		view->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+		view->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5963,7 +5963,7 @@ View *DatabaseModel::createView(void)
 							xmlparser.restorePosition();
 						}
 					}
-					else if(elem==Attributes::EXPRESSION)
+					else if(elem==Attributes::Expression)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
@@ -5975,7 +5975,7 @@ View *DatabaseModel::createView(void)
 						{
 							if(attribs[Attributes::TYPE]==Attributes::SELECT_EXP)
 								type=Reference::SqlReferSelect;
-							else if(attribs[Attributes::TYPE]==Attributes::FROM_EXP)
+							else if(attribs[Attributes::TYPE]==Attributes::FromExp)
 								type=Reference::SqlReferFrom;
 							else if(attribs[Attributes::TYPE]==Attributes::SIMPLE_EXP)
 								type=Reference::SqlReferWhere;
@@ -6116,7 +6116,7 @@ Extension *DatabaseModel::createExtension(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
-		extension->setHandlesType(attribs[Attributes::HANDLES_TYPE]==Attributes::True);
+		extension->setHandlesType(attribs[Attributes::HandlesType]==Attributes::True);
 		extension->setVersion(Extension::CurVersion, attribs[Attributes::CurVersion]);
 		extension->setVersion(Extension::OldVersion, attribs[Attributes::OLD_VERSION]);
 	}
@@ -6179,7 +6179,7 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		txtbox->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::ITALIC]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::UNDERLINE]==Attributes::True);
@@ -6187,8 +6187,8 @@ Textbox *DatabaseModel::createTextbox(void)
 		if(!attribs[Attributes::Color].isEmpty())
 			txtbox->setTextColor(QColor(attribs[Attributes::Color]));
 
-		if(!attribs[Attributes::FONT_SIZE].isEmpty())
-			txtbox->setFontSize(attribs[Attributes::FONT_SIZE].toDouble());
+		if(!attribs[Attributes::FontSize].isEmpty())
+			txtbox->setFontSize(attribs[Attributes::FontSize].toDouble());
 	}
 	catch(Exception &e)
 	{
@@ -6226,7 +6226,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 		xmlparser.getElementAttributes(attribs);
 		protect=(attribs[Attributes::PROTECTED]==Attributes::True);
-		faded_out=(attribs[Attributes::FADED_OUT]==Attributes::True);
+		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -6388,7 +6388,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem == Attributes::EXPRESSION && rel)
+					if(elem == Attributes::Expression && rel)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -6591,10 +6591,10 @@ Permission *DatabaseModel::createPermission(void)
 
 				while(itr!=itr_end)
 				{
-					if(itr->first!=Attributes::GRANT_OP)
+					if(itr->first!=Attributes::GrantOp)
 					{
 						priv_value=(itr->second==Attributes::True);
-						grant_op=(itr->second==Attributes::GRANT_OP);
+						grant_op=(itr->second==Attributes::GrantOp);
 
 						if(itr->first==Attributes::ConnectPriv)
 							priv_type=Permission::PrivConnect;
@@ -6602,7 +6602,7 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivCreate;
 						else if(itr->first==Attributes::DeletePriv)
 							priv_type=Permission::PrivDelete;
-						else if(itr->first==Attributes::EXECUTE_PRIV)
+						else if(itr->first==Attributes::ExecutPriv)
 							priv_type=Permission::PrivExecute;
 						else if(itr->first==Attributes::INSERT_PRIV)
 							priv_type=Permission::PrivInsert;
@@ -6815,7 +6815,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attribs_aux[Attributes::FUNCTION]=(!functions.empty() ? Attributes::True : QString());
+			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : QString());
 
 			for(auto &type : types)
 			{
@@ -6970,7 +6970,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::EXPORT_TO_FILE]=(export_file ? Attributes::True : QString());
+	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : QString());
 	def=schparser.getCodeDefinition(Attributes::DbModel, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
@@ -9637,8 +9637,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PREPENDED_SQL]=object->getPrependedSQL();
-			attribs[Attributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
-			attribs[Attributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
+			attribs[Attributes::HideExtAttribs]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
+			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
 
 			if(TableObject::isTableObject(obj_type))
 			{
@@ -9776,8 +9776,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_sqldis && !attribs[Attributes::SQL_DISABLED].isEmpty()) ||
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
 															!attribs[Attributes::PREPENDED_SQL].isEmpty())) ||
-				 (save_fadeout && !attribs[Attributes::FADED_OUT].isEmpty()) ||
-				 (save_extattribs && !attribs[Attributes::HIDE_EXT_ATTRIBS].isEmpty()) ||
+				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
+				 (save_extattribs && !attribs[Attributes::HideExtAttribs].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
@@ -10080,10 +10080,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								}
 
 								if(load_fadeout)
-									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 								if(load_extattribs && base_tab)
-									base_tab->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
+									base_tab->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
 							}
 
 							points.clear();

@@ -41,7 +41,7 @@ Operator::Operator(void)
 	attributes[Attributes::RESTRICTION_FUNC]=QString();
 	attributes[Attributes::JOIN_FUNC]=QString();
 	attributes[Attributes::OPERATOR_FUNC]=QString();
-	attributes[Attributes::HASHES]=QString();
+	attributes[Attributes::Hashes]=QString();
 	attributes[Attributes::MERGES]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	attributes[Attributes::REF_TYPE]=QString();
@@ -330,7 +330,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[Attributes::HASHES]=(hashes ? Attributes::True : QString());
+	attributes[Attributes::Hashes]=(hashes ? Attributes::True : QString());
 	attributes[Attributes::MERGES]=(merges ? Attributes::True : QString());
 	attributes[Attributes::SIGNATURE]=getSignature();
 

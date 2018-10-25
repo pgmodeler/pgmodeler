@@ -29,7 +29,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 					  Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
 					  Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
 					  Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
-					  Attributes::EXECUTE_PRIV, Attributes::USAGE_PRIV };
+					  Attributes::ExecutPriv, Attributes::USAGE_PRIV };
 
 	Ui_PermissionWidget::setupUi(this);
 

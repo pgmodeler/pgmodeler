@@ -28,7 +28,7 @@ Constraint::Constraint(void)
 	index_type=BaseType::Null;
 
 	attributes[Attributes::PK_CONSTR]=QString();
-	attributes[Attributes::FK_CONSTR]=QString();
+	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
 	attributes[Attributes::ExConstr]=QString();
@@ -37,7 +37,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::DstColumns]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
-	attributes[Attributes::EXPRESSION]=QString();
+	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::ComparisonType]=QString();
 	attributes[Attributes::DeferType]=QString();
@@ -45,7 +45,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::FACTOR]=QString();
+	attributes[Attributes::Factor]=QString();
 	attributes[Attributes::NO_INHERIT]=QString();
 	attributes[Attributes::Elements]=QString();
 }
@@ -664,7 +664,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	QString attrib;
 
 	attributes[Attributes::PK_CONSTR]=QString();
-	attributes[Attributes::FK_CONSTR]=QString();
+	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
 	attributes[Attributes::ExConstr]=QString();
@@ -678,7 +678,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=Attributes::PK_CONSTR;
 		break;
 		case ConstraintType::ForeignKey:
-			attrib=Attributes::FK_CONSTR;
+			attrib=Attributes::FkConstr;
 		break;
 		case ConstraintType::Unique:
 			attrib=Attributes::UQ_CONSTR;
@@ -692,7 +692,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[Attributes::TYPE]=attrib;
 	attributes[Attributes::UPD_ACTION]=(~upd_action);
 	attributes[Attributes::DelAction]=(~del_action);
-	attributes[Attributes::EXPRESSION]=expression;
+	attributes[Attributes::Expression]=expression;
 
 	if(constr_type!=ConstraintType::Check)
 	{
@@ -723,9 +723,9 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	setDeclInTableAttribute();
 
 	if(fill_factor!=0 && (constr_type==ConstraintType::PrimaryKey || constr_type==ConstraintType::Unique))
-		attributes[Attributes::FACTOR]=QString("%1").arg(fill_factor);
+		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 	else
-		attributes[Attributes::FACTOR]=QString();
+		attributes[Attributes::Factor]=QString();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

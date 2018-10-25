@@ -44,7 +44,7 @@ Permission::Permission(BaseObject *obj)
 	attributes[Attributes::OBJECT]=QString();
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::PARENT]=QString();
-	attributes[Attributes::GRANT_OP]=QString();
+	attributes[Attributes::GrantOp]=QString();
 	attributes[Attributes::ROLES]=QString();
 	attributes[Attributes::PRIVILEGES]=QString();
 	attributes[Attributes::Cascade]=QString();
@@ -416,7 +416,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 							Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
 							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
 							Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
-							Attributes::EXECUTE_PRIV, Attributes::USAGE_PRIV };
+							Attributes::ExecutPriv, Attributes::USAGE_PRIV };
 
 	obj_type=object->getObjectType();
 
@@ -445,7 +445,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && grant_option[i])
-				attributes[priv_vect[i]]=Attributes::GRANT_OP;
+				attributes[priv_vect[i]]=Attributes::GrantOp;
 			else if(privileges[i])
 				attributes[priv_vect[i]]=Attributes::True;
 			else

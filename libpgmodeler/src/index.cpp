@@ -29,15 +29,15 @@ Index::Index(void)
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::INDEX_TYPE]=QString();
 	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::EXPRESSION]=QString();
-	attributes[Attributes::FACTOR]=QString();
+	attributes[Attributes::Expression]=QString();
+	attributes[Attributes::Factor]=QString();
 	attributes[Attributes::PREDICATE]=QString();
 	attributes[Attributes::OP_CLASS]=QString();
 	attributes[Attributes::NULLS_FIRST]=QString();
 	attributes[Attributes::AscOrder]=QString();
 	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::Elements]=QString();
-	attributes[Attributes::FAST_UPDATE]=QString();
+	attributes[Attributes::FastUpdate]=QString();
 	attributes[Attributes::Buffering]=QString();
 	attributes[Attributes::STORAGE_PARAMS]=QString();
 }
@@ -346,18 +346,18 @@ QString Index::getCodeDefinition(unsigned def_type)
 	}
 
 	if(this->indexing_type==IndexingType::Gin)
-		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? Attributes::True : QString());
+		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : QString());
 
 	if(this->indexing_type==IndexingType::Gist)
 		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
-		attributes[Attributes::FACTOR]=QString("%1").arg(fill_factor);
+		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 		attributes[Attributes::STORAGE_PARAMS]=Attributes::True;
 	}
 	else if(def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::FACTOR]=QString("0");
+		attributes[Attributes::Factor]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
@@ -390,11 +390,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 		if(this->indexing_type==index->indexing_type)
 		{
 			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
-				attribs[Attributes::FACTOR]=QString::number(index->fill_factor);
+				attribs[Attributes::Factor]=QString::number(index->fill_factor);
 
 			if(this->indexing_type==IndexingType::Gin &&
 					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
-				attribs[Attributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::FastUpdate]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::UNSET);
 
 			if(this->indexing_type==IndexingType::Gist &&
 					this->index_attribs[Buffering] != index->index_attribs[Buffering])

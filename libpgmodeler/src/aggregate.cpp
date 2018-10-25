@@ -27,7 +27,7 @@ Aggregate::Aggregate(void)
 	attributes[Attributes::TRANSITION_FUNC]=QString();
 	attributes[Attributes::STATE_TYPE]=QString();
 	attributes[Attributes::BaseType]=QString();
-	attributes[Attributes::FINAL_FUNC]=QString();
+	attributes[Attributes::FinalFunc]=QString();
 	attributes[Attributes::INITIAL_COND]=QString();
 	attributes[Attributes::SORT_OP]=QString();
 }
@@ -241,12 +241,12 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[FinalFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::FINAL_FUNC]=functions[FinalFunc]->getSignature();
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSignature();
 		else
 		{
 			functions[FinalFunc]->setAttribute(Attributes::REF_TYPE,
-												Attributes::FINAL_FUNC);
-			attributes[Attributes::FINAL_FUNC]=functions[FinalFunc]->getCodeDefinition(def_type,true);
+												Attributes::FinalFunc);
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 

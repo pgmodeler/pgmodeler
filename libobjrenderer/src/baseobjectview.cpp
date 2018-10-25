@@ -232,17 +232,17 @@ void BaseObjectView::loadObjectsStyle(void)
 					xmlparser.getElementAttributes(attribs);
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::GLOBAL)
+					if(elem==Attributes::Global)
 					{
-						font.setFamily(attribs[Attributes::FONT]);
+						font.setFamily(attribs[Attributes::Font]);
 						font.setPointSizeF(attribs[Attributes::SIZE].toDouble());
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
 						font.setItalic(attribs[Attributes::ITALIC]==Attributes::True);
 						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
 						font_fmt.setFont(font);
-						font_config[Attributes::GLOBAL]=font_fmt;
+						font_config[Attributes::Global]=font_fmt;
 					}
-					else if(elem==Attributes::FONT)
+					else if(elem==Attributes::Font)
 					{
 						font_config[attribs[Attributes::ID]]=font_fmt;
 						itr=font_config.find(attribs[Attributes::ID]);
@@ -255,7 +255,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					}
 					else if(elem==Attributes::OBJECT)
 					{
-						list=attribs[Attributes::FILL_COLOR].split(',');
+						list=attribs[Attributes::FillColor].split(',');
 
 						vector<QColor> colors;
 						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
@@ -279,9 +279,9 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 {
 	QFont font;
 
-	if(id!=Attributes::GLOBAL)
+	if(id!=Attributes::Global)
 	{
-		font=font_config[Attributes::GLOBAL].font();
+		font=font_config[Attributes::Global].font();
 		font.setItalic(font_fmt.font().italic());
 		font.setBold(font_fmt.font().bold());
 		font.setUnderline(font_fmt.font().underline());
@@ -546,7 +546,7 @@ void BaseObjectView::configureProtectedIcon(void)
 		double factor;
 
 		//Calculates the factor used to resize the protection icon accordding the font size
-		factor=font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
+		factor=font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 
 		pol.append(QPointF(2,5)); pol.append(QPointF(2,2));
 		pol.append(QPointF(3,1)); pol.append(QPointF(4,0));
@@ -644,7 +644,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 double BaseObjectView::getFontFactor(void)
 {
-	return(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize);
+	return(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize);
 }
 
 double BaseObjectView::getScreenDpiFactor(void)

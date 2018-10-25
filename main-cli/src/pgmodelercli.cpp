@@ -1084,7 +1084,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
-		 obj_xml.contains(TagExpr.arg(Attributes::EXPRESSION)))
+		 obj_xml.contains(TagExpr.arg(Attributes::Expression)))
 	{
 		int start_idx=-1, end_idx=-1;
 		QRegExp regexp = QRegExp(AttributeExpr.arg(Attributes::Constraint));
@@ -1097,11 +1097,11 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 		obj_xml.remove(QRegExp(AttributeExpr.arg(Attributes::Constraint)));
 
-		start_idx = obj_xml.indexOf(TagExpr.arg(Attributes::EXPRESSION));
+		start_idx = obj_xml.indexOf(TagExpr.arg(Attributes::Expression));
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
 
-		end_idx = obj_xml.indexOf(EndTagExpr.arg(Attributes::EXPRESSION));
-		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
+		end_idx = obj_xml.indexOf(EndTagExpr.arg(Attributes::Expression));
+		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::Expression).length() + 1, QString("\n\t</constraint>\n"));
 	}
 
 	//Fix the references to op. classes and families if needed
@@ -1276,7 +1276,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FILTER_TABLE_TYPES, Attributes::True}});
+		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);
 		obj_oids[ObjectType::Database].push_back(db_oid.toUInt());
@@ -1472,7 +1472,7 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 			count=(end - start) + end_tag.size() + 1;
 			constr=obj_xml.mid(start, count);
 
-			if(constr.contains(Attributes::FK_CONSTR))
+			if(constr.contains(Attributes::FkConstr))
 			{
 				obj_xml.remove(start, count);
 				constr_lst.push_back(constr);

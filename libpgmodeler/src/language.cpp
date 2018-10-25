@@ -27,7 +27,7 @@ Language::Language(void)
 		functions[i]=nullptr;
 
 	attributes[Attributes::TRUSTED]=QString();
-	attributes[Attributes::HANDLER_FUNC]=QString();
+	attributes[Attributes::HandlerFunc]=QString();
 	attributes[Attributes::VALIDATOR_FUNC]=QString();
 	attributes[Attributes::INLINE_FUNC]=QString();
 }
@@ -117,7 +117,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	unsigned i;
 	QString attribs_func[3]={Attributes::VALIDATOR_FUNC,
-							 Attributes::HANDLER_FUNC,
+							 Attributes::HandlerFunc,
 							 Attributes::INLINE_FUNC};
 
 	attributes[Attributes::TRUSTED]=(is_trusted ? Attributes::True : QString());

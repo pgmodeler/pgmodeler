@@ -946,7 +946,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	try
 	{
 		attribs[Attributes::RECT_VISIBLE]=QString();
-		attribs[Attributes::FILL_COLOR]=QColor(dist(rand_num_engine),
+		attribs[Attributes::FillColor]=QColor(dist(rand_num_engine),
 													  dist(rand_num_engine),
 													  dist(rand_num_engine)).name();
 		loadObjectXML(ObjectType::Schema, attribs);
@@ -1010,7 +1010,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 			expr = constr_attrs.at(1);
 			expr.remove(0,1);
 			expr.remove(expr.length() - 1,1);
-			aux_attribs[Attributes::EXPRESSION] = expr;
+			aux_attribs[Attributes::Expression] = expr;
 
 			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
 		}
@@ -1183,7 +1183,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 	{
 		unsigned lang_oid, func_oid;
 		QString func_types[]={ Attributes::VALIDATOR_FUNC,
-							   Attributes::HANDLER_FUNC,
+							   Attributes::HandlerFunc,
 							   Attributes::INLINE_FUNC };
 
 		lang_oid=attribs[Attributes::OID].toUInt();
@@ -1240,7 +1240,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		vector<attribs_map> elems;
 		QStringList array_vals, list;
 
-		attribs[Attributes::FAMILY]=getObjectName(attribs[Attributes::FAMILY], true);
+		attribs[Attributes::Family]=getObjectName(attribs[Attributes::Family], true);
 		attribs[Attributes::TYPE]=getType(attribs[Attributes::TYPE], true, attribs);
 
 		//Generating attributes for STORAGE elements
@@ -1250,7 +1250,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			elem_attr[Attributes::Definition]=getType(attribs[Attributes::STORAGE], true);
 			elems.push_back(elem_attr);
 		}
-		else if(attribs[Attributes::FUNCTION].isEmpty() &&
+		else if(attribs[Attributes::Function].isEmpty() &&
 				attribs[Attributes::OPERATOR].isEmpty())
 		{
 			elem_attr[Attributes::STORAGE]=Attributes::True;
@@ -1259,11 +1259,11 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		}
 
 		//Generating attributes for FUNCTION elements
-		if(!attribs[Attributes::FUNCTION].isEmpty())
+		if(!attribs[Attributes::Function].isEmpty())
 		{
 			elem_attr.clear();
-			elem_attr[Attributes::FUNCTION]=Attributes::True;
-			array_vals=Catalog::parseArrayValues(attribs[Attributes::FUNCTION]);
+			elem_attr[Attributes::Function]=Attributes::True;
+			array_vals=Catalog::parseArrayValues(attribs[Attributes::Function]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -1395,7 +1395,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 
 	try
 	{
-		attribs[Attributes::FUNCTION]=getDependencyObject(attribs[Attributes::FUNCTION], ObjectType::Function, true);
+		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true);
 		attribs[Attributes::SOURCE_TYPE]=getType(attribs[Attributes::SOURCE_TYPE], true);
 		attribs[Attributes::DestType]=getType(attribs[Attributes::DestType], true);
 		loadObjectXML(ObjectType::Cast, attribs);
@@ -1416,7 +1416,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 
 	try
 	{
-		attribs[Attributes::FUNCTION]=getDependencyObject(attribs[Attributes::FUNCTION], ObjectType::Function, true, auto_resolve_deps);
+		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true, auto_resolve_deps);
 		loadObjectXML(ObjectType::Conversion, attribs);
 		conv=dbmodel->createConversion();
 		dbmodel->addConversion(conv);
@@ -1502,7 +1502,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	{
 		QStringList types;
 		QString func_types[]={ Attributes::TRANSITION_FUNC,
-													 Attributes::FINAL_FUNC },
+													 Attributes::FinalFunc },
 				sch_name;
 
 		for(unsigned i=0; i < 2; i++)
@@ -2010,7 +2010,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		QString tab_name, coll_name, opc_name;
 		int i;
 
-		attribs[Attributes::FACTOR]=QString("90");
+		attribs[Attributes::Factor]=QString("90");
 		tab_name=getDependencyObject(attribs[Attributes::TABLE], ObjectType::Table, true, auto_resolve_deps, false);
 		parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, ObjectType::Table));
 
@@ -2029,7 +2029,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
 		opclasses=Catalog::parseArrayValues(attribs[Attributes::OP_CLASSES]);
-		exprs = parseIndexExpressions(attribs[Attributes::EXPRESSIONS]);
+		exprs = parseIndexExpressions(attribs[Attributes::Expressions]);
 
 		for(i=0; i < cols.size(); i++)
 		{
@@ -2097,13 +2097,13 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 		//If the table oid is 0 indicates that the constraint is part of a data type like domains
 		if(!table_oid.isEmpty() && table_oid!=QString("0"))
 		{
-			QStringList factor=Catalog::parseArrayValues(attribs[Attributes::FACTOR]);
+			QStringList factor=Catalog::parseArrayValues(attribs[Attributes::Factor]);
 
 			//Retrieving the table is it was not imported yet and auto_resolve_deps is true
 			tab_name=getDependencyObject(table_oid, ObjectType::Table, true, auto_resolve_deps, false);
 
 			if(!factor.isEmpty() && factor[0].startsWith(QString("fillfactor=")))
-				attribs[Attributes::FACTOR]=factor[0].remove(QString("fillfactor="));
+				attribs[Attributes::Factor]=factor[0].remove(QString("fillfactor="));
 
 			attribs[attribs[Attributes::TYPE]]=Attributes::True;
 			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, ObjectType::Table));
@@ -2117,7 +2117,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				Operator *oper=nullptr;
 
 				attribs[Attributes::SRC_COLUMNS]=QString();
-				attribs[Attributes::EXPRESSION]=attribs[Attributes::Condition];
+				attribs[Attributes::Expression]=attribs[Attributes::Condition];
 
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 				opers=Catalog::parseArrayValues(attribs[Attributes::OPERATORS]);
@@ -2129,7 +2129,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * which we work to separate column only references from complex expression. Only complex expression will be used
 				 * and assigned to their exclude constraint elements. Column references are used in exclude elements but relying in
 				 * the cols list above */
-				exprs=attribs[Attributes::EXPRESSIONS]
+				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::INDEX_TYPE]), QString())
 							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
 										 QString::SkipEmptyParts);
@@ -2169,7 +2169,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			else
 			{
 				//Clears the tablespace attribute when the constraint is fk avoiding errors
-				if(attribs[Attributes::TYPE]==Attributes::FK_CONSTR)
+				if(attribs[Attributes::TYPE]==Attributes::FkConstr)
 					attribs[Attributes::TABLESPACE]=QString();
 
 				attribs[Attributes::SRC_COLUMNS]=getColumnNames(attribs[Attributes::TABLE], attribs[Attributes::SRC_COLUMNS]).join(',');
@@ -2216,9 +2216,9 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 {
 	try
 	{
-		attribs[Attributes::FUNCTION]=getDependencyObject(attribs[Attributes::FUNCTION], ObjectType::Function, true, true);
-		attribs[Attributes::FILTER]=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
-										   .arg(Attributes::FILTER)
+		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true, true);
+		attribs[Attributes::Filter]=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
+										   .arg(Attributes::Filter)
 										   .arg(Attributes::VARIABLE).arg(Attributes::TAG.toUpper())
 										   .arg(Attributes::VALUES)
 										   .arg(Catalog::parseArrayValues(attribs[Attributes::VALUES].remove('"')).join(','));

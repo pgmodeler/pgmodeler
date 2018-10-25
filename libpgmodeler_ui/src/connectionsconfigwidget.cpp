@@ -152,7 +152,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 
 			conn->setAutoBrowseDB(itr->second[Attributes::AutoBrowseDb]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DefaultFor.arg(Attributes::Diff)]==Attributes::True);
-			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(Attributes::EXPORT)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(Attributes::Export)]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpImport, itr->second[DefaultFor.arg(Attributes::IMPORT)]==Attributes::True);
 			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DefaultFor.arg(Attributes::VALIDATION)]==Attributes::True);
 
@@ -508,7 +508,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				attribs[Attributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? Attributes::True : QString());
 				attribs[Attributes::ConnectionTimeout]=attribs[Connection::ParamConnTimeout];
 
-				attribs[DefaultFor.arg(Attributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::Export)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : QString());
 				attribs[DefaultFor.arg(Attributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? Attributes::True : QString());
 				attribs[DefaultFor.arg(Attributes::Diff)]=(conn->isDefaultForOperation(Connection::OpDiff) ? Attributes::True : QString());
 				attribs[DefaultFor.arg(Attributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? Attributes::True : QString());

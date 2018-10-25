@@ -427,7 +427,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							elem=xmlparser.getElementName();
 						}
 
-						if(elem==Attributes::GROUP)
+						if(elem==Attributes::Group)
 						{
 							xmlparser.getElementAttributes(attribs);
 							group=attribs[Attributes::NAME];
@@ -480,7 +480,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::UNDERLINE]==Attributes::True);
 								partial_match=(attribs[Attributes::PARTIAL_MATCH]==Attributes::True);
-								fg_color.setNamedColor(attribs[Attributes::FOREGROUND_COLOR]);
+								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent
 								if(attribs[Attributes::BackgroundColor].isEmpty())

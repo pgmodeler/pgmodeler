@@ -1166,12 +1166,12 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 {
 	if(!attribs.empty())
 	{
-		attributes[Attributes::HAS_CHANGES]=Attributes::True;
+		attributes[Attributes::HasChanges]=Attributes::True;
 		for(auto &itr : attribs)
 			attributes[itr.first]=itr.second;
 	}
 	else
-		attributes[Attributes::HAS_CHANGES]=QString();
+		attributes[Attributes::HasChanges]=QString();
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object)

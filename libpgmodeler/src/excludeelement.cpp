@@ -31,7 +31,7 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::OPERATOR]=_operator->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::EXCLUDE_ELEMENT, attributes, def_type));
+	return(schparser.getCodeDefinition(Attributes::ExcludeElement, attributes, def_type));
 }
 
 bool ExcludeElement::operator == (ExcludeElement &elem)

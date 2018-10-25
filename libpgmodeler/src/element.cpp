@@ -94,7 +94,7 @@ OperatorClass *Element::getOperatorClass(void)
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
 	attributes[Attributes::Column]=QString();
-	attributes[Attributes::EXPRESSION]=QString();
+	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::OP_CLASS]=QString();
 	attributes[Attributes::USE_SORTING]=(this->sorting_enabled ? Attributes::True : QString());
 	attributes[Attributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
@@ -104,7 +104,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	if(column)
 		attributes[Attributes::Column]=column->getName(true);
 	else
-		attributes[Attributes::EXPRESSION]=expression;
+		attributes[Attributes::Expression]=expression;
 
 	if(operator_class)
 	{
