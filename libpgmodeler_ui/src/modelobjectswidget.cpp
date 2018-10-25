@@ -269,12 +269,12 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	if(tab_obj && tab_obj->isAddedByRelationship())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
+		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::INH_COLUMN).foreground());
 	}
 	else if(object->isProtected() || object->isSystemObject())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
 	}
 
 	item->setFont(0,font);

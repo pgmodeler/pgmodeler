@@ -22,17 +22,17 @@ unsigned Tag::tag_id=3000;
 
 Tag::Tag(void)
 {
-	QStringList attribs={ ParsersAttributes::TABLE_NAME,  ParsersAttributes::TABLE_SCHEMA_NAME,
-						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-						  ParsersAttributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TABLE_NAME,  Attributes::TABLE_SCHEMA_NAME,
+						  Attributes::TABLE_TITLE, Attributes::TABLE_BODY,
+						  Attributes::TABLE_EXT_BODY };
 
 	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
-	attributes[ParsersAttributes::STYLES]=QString();
+	attributes[Attributes::STYLES]=QString();
 
 	for(auto &attr : attribs)
 	{
-		if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+		if(attr!=Attributes::TABLE_NAME && attr!=Attributes::TABLE_SCHEMA_NAME)
 			color_config[attr] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
 		else
 			color_config[attr] = { QColor(0,0,0) };
@@ -110,7 +110,7 @@ void Tag::validateElementId(const QString &id, unsigned color_id)
 										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if((color_id > ColorCount) ||
 					(color_id > 0 &&
-					 (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
+					 (id==Attributes::TABLE_NAME || id==Attributes::TABLE_SCHEMA_NAME)))
 		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
 										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -154,16 +154,16 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			for(auto &itr : color_config)
 			{
-				attribs[ParsersAttributes::ID]=itr.first;
-				attribs[ParsersAttributes::COLORS]=QString();
+				attribs[Attributes::ID]=itr.first;
+				attribs[Attributes::Colors]=QString();
 
-				if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME)
-					attribs[ParsersAttributes::COLORS]=itr.second[FillColor1].name();
+				if(itr.first==Attributes::TABLE_NAME || itr.first==Attributes::TABLE_SCHEMA_NAME)
+					attribs[Attributes::Colors]=itr.second[FillColor1].name();
 				else
-					attribs[ParsersAttributes::COLORS]=itr.second[FillColor1].name() + QString(",") +
+					attribs[Attributes::Colors]=itr.second[FillColor1].name() + QString(",") +
 													   itr.second[FillColor2].name() + QString(",") + itr.second[BorderColor].name();
 
-				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XmlDefinition);
+				attributes[Attributes::STYLES]+=schparser.getCodeDefinition(Attributes::STYLE, attribs, SchemaParser::XmlDefinition);
 			}
 		}
 		catch(Exception &e)

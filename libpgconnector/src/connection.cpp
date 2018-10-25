@@ -19,7 +19,7 @@
 #include "connection.h"
 #include <QTextStream>
 #include <iostream>
-#include "parsersattributes.h"
+#include "attributes.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");

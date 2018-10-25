@@ -41,15 +41,15 @@ DatabaseModel::DatabaseModel(void)
 	conn_limit=-1;
 	last_zoom=1;
 	loading_model=invalidated=append_at_eod=prepend_at_bod=false;
-	attributes[ParsersAttributes::ENCODING]=QString();
-	attributes[ParsersAttributes::TEMPLATE_DB]=QString();
-	attributes[ParsersAttributes::CONN_LIMIT]=QString();
-	attributes[ParsersAttributes::LcCollate]=QString();
-	attributes[ParsersAttributes::LcCtype]=QString();
-	attributes[ParsersAttributes::AppendAtEod]=QString();
-	attributes[ParsersAttributes::PREPEND_AT_BOD]=QString();
-	attributes[ParsersAttributes::AllowConns]=QString();
-	attributes[ParsersAttributes::IS_TEMPLATE]=QString();
+	attributes[Attributes::ENCODING]=QString();
+	attributes[Attributes::TEMPLATE_DB]=QString();
+	attributes[Attributes::ConnLimit]=QString();
+	attributes[Attributes::LcCollate]=QString();
+	attributes[Attributes::LcCtype]=QString();
+	attributes[Attributes::AppendAtEod]=QString();
+	attributes[Attributes::PREPEND_AT_BOD]=QString();
+	attributes[Attributes::AllowConns]=QString();
+	attributes[Attributes::IS_TEMPLATE]=QString();
 }
 
 DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
@@ -2965,17 +2965,17 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 
 void DatabaseModel::configureDatabase(attribs_map &attribs)
 {
-	encoding=attribs[ParsersAttributes::ENCODING];
-	template_db=attribs[ParsersAttributes::TEMPLATE_DB];
-	localizations[0]=attribs[ParsersAttributes::LcCtype];
-	localizations[1]=attribs[ParsersAttributes::LcCollate];
-	append_at_eod=attribs[ParsersAttributes::AppendAtEod]==ParsersAttributes::True;
-	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::True;
-	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::True;
-	allow_conns=attribs[ParsersAttributes::AllowConns] != ParsersAttributes::False;
+	encoding=attribs[Attributes::ENCODING];
+	template_db=attribs[Attributes::TEMPLATE_DB];
+	localizations[0]=attribs[Attributes::LcCtype];
+	localizations[1]=attribs[Attributes::LcCollate];
+	append_at_eod=attribs[Attributes::AppendAtEod]==Attributes::True;
+	prepend_at_bod=attribs[Attributes::PREPEND_AT_BOD]==Attributes::True;
+	is_template=attribs[Attributes::IS_TEMPLATE]==Attributes::True;
+	allow_conns=attribs[Attributes::AllowConns] != Attributes::False;
 
-	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
-		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
+	if(!attribs[Attributes::ConnLimit].isEmpty())
+		conn_limit=attribs[Attributes::ConnLimit].toInt();
 
 	setBasicAttributes(this);
 }
@@ -3016,28 +3016,28 @@ void DatabaseModel::loadModel(const QString &filename)
 			//Gets the basic model information
 			xmlparser.getElementAttributes(attribs);
 
-			setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
+			setObjectListsCapacity(attribs[Attributes::MAX_OBJ_COUNT].toUInt());
 
-			this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
+			this->author=attribs[Attributes::MODEL_AUTHOR];
 
-			pos_str=attribs[ParsersAttributes::LAST_POSITION].split(',');
+			pos_str=attribs[Attributes::LAST_POSITION].split(',');
 
 			if(pos_str.size()>=2)
 				this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
 
-			this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toDouble();
+			this->last_zoom=attribs[Attributes::LAST_ZOOM].toDouble();
 			if(this->last_zoom <= 0) this->last_zoom=1;
 
-			this->is_template = attribs[ParsersAttributes::IS_TEMPLATE] == ParsersAttributes::True;
-			this->allow_conns = (attribs[ParsersAttributes::AllowConns].isEmpty() ||
-													 attribs[ParsersAttributes::AllowConns] == ParsersAttributes::True);
+			this->is_template = attribs[Attributes::IS_TEMPLATE] == Attributes::True;
+			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
+													 attribs[Attributes::AllowConns] == Attributes::True);
 
-			protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
+			protected_model=(attribs[Attributes::PROTECTED]==Attributes::True);
 
-			def_objs[ObjectType::Schema]=attribs[ParsersAttributes::DEFAULT_SCHEMA];
-			def_objs[ObjectType::Role]=attribs[ParsersAttributes::DEFAULT_OWNER];
-			def_objs[ObjectType::Collation]=attribs[ParsersAttributes::DEFAULT_COLLATION];
-			def_objs[ObjectType::Tablespace]=attribs[ParsersAttributes::DEFAULT_TABLESPACE];
+			def_objs[ObjectType::Schema]=attribs[Attributes::DEFAULT_SCHEMA];
+			def_objs[ObjectType::Role]=attribs[Attributes::DEFAULT_OWNER];
+			def_objs[ObjectType::Collation]=attribs[Attributes::DEFAULT_COLLATION];
+			def_objs[ObjectType::Tablespace]=attribs[Attributes::DEFAULT_TABLESPACE];
 
 			if(xmlparser.accessElement(XmlParser::ChildElement))
 			{
@@ -3249,13 +3249,13 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	obj_type_aux=object->getObjectType();
 
 	if(obj_type_aux!=ObjectType::Cast)
-		object->setName(attribs[ParsersAttributes::NAME]);
+		object->setName(attribs[Attributes::NAME]);
 
 	if(BaseObject::acceptsAlias(obj_type_aux))
-		object->setAlias(attribs[ParsersAttributes::Alias]);
+		object->setAlias(attribs[Attributes::Alias]);
 
-	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True;
-	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True;
+	protected_obj=attribs[Attributes::PROTECTED]==Attributes::True;
+	sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
 
 	xmlparser.savePosition();
 
@@ -3268,7 +3268,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				elem_name=xmlparser.getElementName();
 
 				//Defines the object's comment
-				if(elem_name==ParsersAttributes::COMMENT)
+				if(elem_name==Attributes::Comment)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -3276,49 +3276,49 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					xmlparser.restorePosition();
 				}
 				//Defines the object's schema
-				else if(elem_name==ParsersAttributes::SCHEMA)
+				else if(elem_name==Attributes::SCHEMA)
 				{
 					obj_type=ObjectType::Schema;
 					xmlparser.getElementAttributes(attribs_aux);
-					schema=dynamic_cast<Schema *>(getObject(attribs_aux[ParsersAttributes::NAME], obj_type));
+					schema=dynamic_cast<Schema *>(getObject(attribs_aux[Attributes::NAME], obj_type));
 					object->setSchema(schema);
-					has_error=(!schema && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+					has_error=(!schema && !attribs_aux[Attributes::NAME].isEmpty());
 				}
 				//Defines the object's tablespace
-				else if(elem_name==ParsersAttributes::TABLESPACE)
+				else if(elem_name==Attributes::TABLESPACE)
 				{
 					obj_type=ObjectType::Tablespace;
 					xmlparser.getElementAttributes(attribs_aux);
-					tabspc=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+					tabspc=getObject(attribs_aux[Attributes::NAME], obj_type);
 					object->setTablespace(tabspc);
-					has_error=(!tabspc && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+					has_error=(!tabspc && !attribs_aux[Attributes::NAME].isEmpty());
 				}
 				//Defines the object's owner
-				else if(elem_name==ParsersAttributes::ROLE)
+				else if(elem_name==Attributes::ROLE)
 				{
 					obj_type=ObjectType::Role;
 					xmlparser.getElementAttributes(attribs_aux);
-					owner=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+					owner=getObject(attribs_aux[Attributes::NAME], obj_type);
 					object->setOwner(owner);
-					has_error=(!owner && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+					has_error=(!owner && !attribs_aux[Attributes::NAME].isEmpty());
 				}
 				//Defines the object's schema
-				else if(elem_name==ParsersAttributes::COLLATION)
+				else if(elem_name==Attributes::Collation)
 				{
 					obj_type=ObjectType::Collation;
 					xmlparser.getElementAttributes(attribs_aux);
-					collation=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+					collation=getObject(attribs_aux[Attributes::NAME], obj_type);
 					object->setCollation(collation);
-					has_error=(!collation && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+					has_error=(!collation && !attribs_aux[Attributes::NAME].isEmpty());
 				}
-				else if(elem_name==ParsersAttributes::AppendedSql)
+				else if(elem_name==Attributes::AppendedSql)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
 					object->setAppendedSQL(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
-				else if(elem_name==ParsersAttributes::PREPENDED_SQL)
+				else if(elem_name==Attributes::PREPENDED_SQL)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -3326,16 +3326,16 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					xmlparser.restorePosition();
 				}
 				//Defines the object's position (only for graphical objects)
-				else if(elem_name==ParsersAttributes::POSITION)
+				else if(elem_name==Attributes::POSITION)
 				{
 					xmlparser.getElementAttributes(attribs);
 
-					if(elem_name==ParsersAttributes::POSITION &&
+					if(elem_name==Attributes::POSITION &&
 							(obj_type_aux!=ObjectType::Relationship &&
 							 obj_type_aux!=ObjectType::BaseRelationship))
 					{
-						dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[ParsersAttributes::X_POS].toDouble(),
-																			   attribs[ParsersAttributes::Y_POS].toDouble()));
+						dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[Attributes::X_POS].toDouble(),
+																				 attribs[Attributes::Y_POS].toDouble()));
 
 
 					}
@@ -3354,7 +3354,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 		throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 						.arg(object->getName())
 						.arg(object->getTypeName())
-						.arg(attribs_aux[ParsersAttributes::NAME])
+						.arg(attribs_aux[Attributes::NAME])
 				.arg(BaseObject::getTypeName(obj_type)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -3456,10 +3456,10 @@ Role *DatabaseModel::createRole(void)
 	QString elem_name;
 	unsigned role_type;
 
-	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-							 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
+	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+							 Attributes::CreateRole, Attributes::INHERIT,
+							 Attributes::LOGIN, Attributes::ENCRYPTED,
+							 Attributes::REPLICATION, Attributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
@@ -3474,16 +3474,16 @@ Role *DatabaseModel::createRole(void)
 		//Gets all the attributes values from the XML
 		xmlparser.getElementAttributes(attribs);
 
-		role->setPassword(attribs[ParsersAttributes::PASSWORD]);
-		role->setValidity(attribs[ParsersAttributes::VALIDITY]);
+		role->setPassword(attribs[Attributes::PASSWORD]);
+		role->setValidity(attribs[Attributes::VALIDITY]);
 
-		if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
-			role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
+		if(!attribs[Attributes::ConnLimit].isEmpty())
+			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
 
 		//Setting up the role options according to the configured on the XML
 		for(i=0; i < 8; i++)
 		{
-			marked=attribs[op_attribs[i]]==ParsersAttributes::True;
+			marked=attribs[op_attribs[i]]==Attributes::True;
 			role->setOption(op_vect[i], marked);
 		}
 
@@ -3496,19 +3496,19 @@ Role *DatabaseModel::createRole(void)
 					elem_name=xmlparser.getElementName();
 
 					//Getting the member roles
-					if(elem_name==ParsersAttributes::ROLES)
+					if(elem_name==Attributes::ROLES)
 					{
 						//Gets the member roles attributes
 						xmlparser.getElementAttributes(attribs_aux);
 
 						//The member roles names are separated by comma, so it is needed to split them
-						list=attribs_aux[ParsersAttributes::NAMES].split(',');
+						list=attribs_aux[Attributes::NAMES].split(',');
 						len=list.size();
 
 						//Identifying the member role type
-						if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
+						if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::REFER)
 							role_type=Role::RefRole;
-						else if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
+						else if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::MEMBER)
 							role_type=Role::MemberRole;
 						else
 							role_type=Role::AdminRole;
@@ -3556,7 +3556,7 @@ Tablespace *DatabaseModel::createTablespace(void)
 		tabspc=new Tablespace;
 		setBasicAttributes(tabspc);
 		xmlparser.getElementAttributes(attribs);
-		tabspc->setDirectory(attribs[ParsersAttributes::DIRECTORY]);
+		tabspc->setDirectory(attribs[Attributes::DIRECTORY]);
 	}
 	catch(Exception &e)
 	{
@@ -3577,9 +3577,9 @@ Schema *DatabaseModel::createSchema(void)
 		schema=new Schema;
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
-		schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
-		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::True);
-		schema->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+		schema->setFillColor(QColor(attribs[Attributes::FILL_COLOR]));
+		schema->setRectVisible(attribs[Attributes::RECT_VISIBLE]==Attributes::True);
+		schema->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
 	}
 	catch(Exception &e)
 	{
@@ -3604,7 +3604,7 @@ Language *DatabaseModel::createLanguage(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(lang);
 
-		lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::True);
+		lang->setTrusted(attribs[Attributes::TRUSTED]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3619,15 +3619,15 @@ Language *DatabaseModel::createLanguage(void)
 						xmlparser.getElementAttributes(attribs);
 
 						//Gets the function reference type
-						ref_type=attribs[ParsersAttributes::REF_TYPE];
+						ref_type=attribs[Attributes::REF_TYPE];
 
 						//Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
-						if(ref_type==ParsersAttributes::VALIDATOR_FUNC ||
-								ref_type==ParsersAttributes::HANDLER_FUNC ||
-								ref_type==ParsersAttributes::INLINE_FUNC)
+						if(ref_type==Attributes::VALIDATOR_FUNC ||
+								ref_type==Attributes::HANDLER_FUNC ||
+								ref_type==Attributes::INLINE_FUNC)
 						{
 							//Gets the function signature and tries to retrieve it from the model
-							signature=attribs[ParsersAttributes::SIGNATURE];
+							signature=attribs[Attributes::SIGNATURE];
 							func=getObject(signature, ObjectType::Function);
 
 							//Raises an error if the function doesn't exists
@@ -3639,9 +3639,9 @@ Language *DatabaseModel::createLanguage(void)
 												.arg(BaseObject::getTypeName(ObjectType::Function)),
 												ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-							if(ref_type==ParsersAttributes::VALIDATOR_FUNC)
+							if(ref_type==Attributes::VALIDATOR_FUNC)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::ValidatorFunc);
-							else if(ref_type==ParsersAttributes::HANDLER_FUNC)
+							else if(ref_type==Attributes::HANDLER_FUNC)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::HandlerFunc);
 							else
 								lang->setFunction(dynamic_cast<Function *>(func), Language::InlineFunc);
@@ -3682,32 +3682,32 @@ Function *DatabaseModel::createFunction(void)
 		setBasicAttributes(func);
 		xmlparser.getElementAttributes(attribs);
 
-		if(!attribs[ParsersAttributes::RETURNS_SETOF].isEmpty())
-			func->setReturnSetOf(attribs[ParsersAttributes::RETURNS_SETOF]==
-					ParsersAttributes::True);
+		if(!attribs[Attributes::RETURNS_SETOF].isEmpty())
+			func->setReturnSetOf(attribs[Attributes::RETURNS_SETOF]==
+					Attributes::True);
 
-		if(!attribs[ParsersAttributes::WINDOW_FUNC].isEmpty())
-			func->setWindowFunction(attribs[ParsersAttributes::WINDOW_FUNC]==
-					ParsersAttributes::True);
+		if(!attribs[Attributes::WINDOW_FUNC].isEmpty())
+			func->setWindowFunction(attribs[Attributes::WINDOW_FUNC]==
+					Attributes::True);
 
-		if(!attribs[ParsersAttributes::LEAKPROOF].isEmpty())
-			func->setLeakProof(attribs[ParsersAttributes::LEAKPROOF]==
-					ParsersAttributes::True);
+		if(!attribs[Attributes::LEAKPROOF].isEmpty())
+			func->setLeakProof(attribs[Attributes::LEAKPROOF]==
+					Attributes::True);
 
-		if(!attribs[ParsersAttributes::BehaviorType].isEmpty())
-			func->setBehaviorType(BehaviorType(attribs[ParsersAttributes::BehaviorType]));
+		if(!attribs[Attributes::BehaviorType].isEmpty())
+			func->setBehaviorType(BehaviorType(attribs[Attributes::BehaviorType]));
 
-		if(!attribs[ParsersAttributes::FUNCTION_TYPE].isEmpty())
-			func->setFunctionType(FunctionType(attribs[ParsersAttributes::FUNCTION_TYPE]));
+		if(!attribs[Attributes::FUNCTION_TYPE].isEmpty())
+			func->setFunctionType(FunctionType(attribs[Attributes::FUNCTION_TYPE]));
 
-		if(!attribs[ParsersAttributes::SECURITY_TYPE].isEmpty())
-			func->setSecurityType(SecurityType(attribs[ParsersAttributes::SECURITY_TYPE]));
+		if(!attribs[Attributes::SECURITY_TYPE].isEmpty())
+			func->setSecurityType(SecurityType(attribs[Attributes::SECURITY_TYPE]));
 
-		if(!attribs[ParsersAttributes::EXECUTION_COST].isEmpty())
-			func->setExecutionCost(attribs[ParsersAttributes::EXECUTION_COST].toInt());
+		if(!attribs[Attributes::EXECUTION_COST].isEmpty())
+			func->setExecutionCost(attribs[Attributes::EXECUTION_COST].toInt());
 
-		if(!attribs[ParsersAttributes::ROW_AMOUNT].isEmpty())
-			func->setRowAmount(attribs[ParsersAttributes::ROW_AMOUNT].toInt());
+		if(!attribs[Attributes::ROW_AMOUNT].isEmpty())
+			func->setRowAmount(attribs[Attributes::ROW_AMOUNT].toInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3719,7 +3719,7 @@ Function *DatabaseModel::createFunction(void)
 					obj_type=BaseObject::getObjectType(elem);
 
 					//Gets the function return type from the XML
-					if(elem==ParsersAttributes::RETURN_TYPE)
+					if(elem==Attributes::RETURN_TYPE)
 					{
 						xmlparser.savePosition();
 
@@ -3732,13 +3732,13 @@ Function *DatabaseModel::createFunction(void)
 								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 								{
 									//when the element found is a TYPE indicates that the function return type is a single one
-									if(xmlparser.getElementName()==ParsersAttributes::TYPE)
+									if(xmlparser.getElementName()==Attributes::TYPE)
 									{
 										type=createPgSQLType();
 										func->setReturnType(type);
 									}
 									//when the element found is a PARAMETER indicates that the function return type is a table
-									else if(xmlparser.getElementName()==ParsersAttributes::PARAMETER)
+									else if(xmlparser.getElementName()==Attributes::PARAMETER)
 									{
 										param=createParameter();
 										func->addReturnedTableColumn(param.getName(), param.getType());
@@ -3759,35 +3759,35 @@ Function *DatabaseModel::createFunction(void)
 					else if(obj_type==ObjectType::Language)
 					{
 						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[ParsersAttributes::NAME], obj_type);
+						object=getObject(attribs[Attributes::NAME], obj_type);
 
 						//Raises an error if the function doesn't exisits
 						if(!object)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(func->getName())
 											.arg(func->getTypeName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 								.arg(BaseObject::getTypeName(ObjectType::Language)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						func->setLanguage(dynamic_cast<Language *>(object));
 					}
 					//Gets a function parameter
-					else if(xmlparser.getElementName()==ParsersAttributes::PARAMETER)
+					else if(xmlparser.getElementName()==Attributes::PARAMETER)
 					{
 						param=createParameter();
 						func->addParameter(param);
 					}
 					//Gets the function code definition
-					else if(xmlparser.getElementName()==ParsersAttributes::DEFINITION)
+					else if(xmlparser.getElementName()==Attributes::DEFINITION)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs_aux);
 
-						if(!attribs_aux[ParsersAttributes::LIBRARY].isEmpty())
+						if(!attribs_aux[Attributes::LIBRARY].isEmpty())
 						{
-							func->setLibrary(attribs_aux[ParsersAttributes::LIBRARY]);
-							func->setSymbol(attribs_aux[ParsersAttributes::SYMBOL]);
+							func->setLibrary(attribs_aux[Attributes::LIBRARY]);
+							func->setSymbol(attribs_aux[Attributes::SYMBOL]);
 						}
 						else if(xmlparser.accessElement(XmlParser::ChildElement))
 							func->setSourceCode(xmlparser.getElementContent());
@@ -3830,8 +3830,8 @@ Parameter DatabaseModel::createParameter(void)
 		xmlparser.savePosition();
 		xmlparser.getElementAttributes(attribs);
 
-		param.setName(attribs[ParsersAttributes::NAME]);
-		param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+		param.setName(attribs[Attributes::NAME]);
+		param.setDefaultValue(attribs[Attributes::DEFAULT_VALUE]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3841,7 +3841,7 @@ Parameter DatabaseModel::createParameter(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						param.setType(createPgSQLType());
 					}
@@ -3850,9 +3850,9 @@ Parameter DatabaseModel::createParameter(void)
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::True);
-		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::True);
-		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::True);
+		param.setIn(attribs[Attributes::PARAM_IN]==Attributes::True);
+		param.setOut(attribs[Attributes::PARAM_OUT]==Attributes::True);
+		param.setVariadic(attribs[Attributes::PARAM_VARIADIC]==Attributes::True);
 
 		xmlparser.restorePosition();
 	}
@@ -3878,7 +3878,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 		xmlparser.savePosition();
 		xmlparser.getElementAttributes(attribs);
 
-		tpattrib.setName(attribs[ParsersAttributes::NAME]);
+		tpattrib.setName(attribs[Attributes::NAME]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3888,15 +3888,15 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						tpattrib.setType(createPgSQLType());
 					}
-					else if(elem==ParsersAttributes::COLLATION)
+					else if(elem==Attributes::Collation)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						collation=getObject(attribs[ParsersAttributes::NAME], ObjectType::Collation);
+						collation=getObject(attribs[Attributes::NAME], ObjectType::Collation);
 
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
@@ -3904,7 +3904,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(tpattrib.getName())
 											.arg(tpattrib.getTypeName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Collation)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -3941,29 +3941,29 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 
 	xmlparser.getElementAttributes(attribs);
 
-	if(!attribs[ParsersAttributes::LENGTH].isEmpty())
-		length=attribs[ParsersAttributes::LENGTH].toUInt();
+	if(!attribs[Attributes::LENGTH].isEmpty())
+		length=attribs[Attributes::LENGTH].toUInt();
 
-	if(!attribs[ParsersAttributes::DIMENSION].isEmpty())
-		dimension=attribs[ParsersAttributes::DIMENSION].toUInt();
+	if(!attribs[Attributes::DIMENSION].isEmpty())
+		dimension=attribs[Attributes::DIMENSION].toUInt();
 
-	if(!attribs[ParsersAttributes::PRECISION].isEmpty())
-		precision=attribs[ParsersAttributes::PRECISION].toInt();
+	if(!attribs[Attributes::PRECISION].isEmpty())
+		precision=attribs[Attributes::PRECISION].toInt();
 
-	with_timezone=(attribs[ParsersAttributes::WITH_TIMEZONE]==ParsersAttributes::True);
-	interv_type=attribs[ParsersAttributes::INTERVAL_TYPE];
+	with_timezone=(attribs[Attributes::WITH_TIMEZONE]==Attributes::True);
+	interv_type=attribs[Attributes::INTERVAL_TYPE];
 
-	if(!attribs[ParsersAttributes::SPATIAL_TYPE].isEmpty())
-		spatial_type=SpatialType(attribs[ParsersAttributes::SPATIAL_TYPE],
-				attribs[ParsersAttributes::SRID].toUInt(),
-				attribs[ParsersAttributes::VARIATION].toUInt());
+	if(!attribs[Attributes::SPATIAL_TYPE].isEmpty())
+		spatial_type=SpatialType(attribs[Attributes::SPATIAL_TYPE],
+				attribs[Attributes::SRID].toUInt(),
+				attribs[Attributes::VARIATION].toUInt());
 
-	name=attribs[ParsersAttributes::NAME];
+	name=attribs[Attributes::NAME];
 
 	/* A small tweak to detect a timestamp/date type which name contains the time zone modifier.
 		 This situation can occur mainly on reverse engineering operation where the data type of objects
 		 in most of times came as string form and need to be parsed */
-	if(!with_timezone && attribs[ParsersAttributes::NAME].contains(QString("with time zone"), Qt::CaseInsensitive))
+	if(!with_timezone && attribs[Attributes::NAME].contains(QString("with time zone"), Qt::CaseInsensitive))
 	{
 		with_timezone=true;
 		name.remove(QString(" with time zone"), Qt::CaseInsensitive);
@@ -4003,53 +4003,53 @@ Type *DatabaseModel::createType(void)
 		setBasicAttributes(type);
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BaseType)
+		if(attribs[Attributes::Configuration]==Attributes::BaseType)
 		{
 			type->setConfiguration(Type::BaseType);
-			type->setByValue(attribs[ParsersAttributes::ByValue]==ParsersAttributes::True);
+			type->setByValue(attribs[Attributes::ByValue]==Attributes::True);
 
-			if(!attribs[ParsersAttributes::INTERNAL_LENGTH].isEmpty())
-				type->setInternalLength(attribs[ParsersAttributes::INTERNAL_LENGTH].toUInt());
+			if(!attribs[Attributes::INTERNAL_LENGTH].isEmpty())
+				type->setInternalLength(attribs[Attributes::INTERNAL_LENGTH].toUInt());
 
-			if(!attribs[ParsersAttributes::Alignment].isEmpty())
-				type->setAlignment(attribs[ParsersAttributes::Alignment]);
+			if(!attribs[Attributes::Alignment].isEmpty())
+				type->setAlignment(attribs[Attributes::Alignment]);
 
-			if(!attribs[ParsersAttributes::STORAGE].isEmpty())
-				type->setStorage(attribs[ParsersAttributes::STORAGE]);
+			if(!attribs[Attributes::STORAGE].isEmpty())
+				type->setStorage(attribs[Attributes::STORAGE]);
 
-			if(!attribs[ParsersAttributes::ELEMENT].isEmpty())
-				type->setElement(attribs[ParsersAttributes::ELEMENT]);
+			if(!attribs[Attributes::ELEMENT].isEmpty())
+				type->setElement(attribs[Attributes::ELEMENT]);
 
-			if(!attribs[ParsersAttributes::DELIMITER].isEmpty())
-				type->setDelimiter(attribs[ParsersAttributes::DELIMITER][0].toLatin1());
+			if(!attribs[Attributes::DELIMITER].isEmpty())
+				type->setDelimiter(attribs[Attributes::DELIMITER][0].toLatin1());
 
-			if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
-				type->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+			if(!attribs[Attributes::DEFAULT_VALUE].isEmpty())
+				type->setDefaultValue(attribs[Attributes::DEFAULT_VALUE]);
 
-			if(!attribs[ParsersAttributes::Category].isEmpty())
-				type->setCategory(attribs[ParsersAttributes::Category]);
+			if(!attribs[Attributes::Category].isEmpty())
+				type->setCategory(attribs[Attributes::Category]);
 
-			if(!attribs[ParsersAttributes::PREFERRED].isEmpty())
-				type->setPreferred(attribs[ParsersAttributes::PREFERRED]==ParsersAttributes::True);
+			if(!attribs[Attributes::PREFERRED].isEmpty())
+				type->setPreferred(attribs[Attributes::PREFERRED]==Attributes::True);
 
 			//Configuring an auxiliary map used to reference the functions used by base type
-			func_types[ParsersAttributes::INPUT_FUNC]=Type::InputFunc;
-			func_types[ParsersAttributes::OUTPUT_FUNC]=Type::OutputFunc;
-			func_types[ParsersAttributes::SEND_FUNC]=Type::SendFunc;
-			func_types[ParsersAttributes::RECV_FUNC]=Type::RecvFunc;
-			func_types[ParsersAttributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
-			func_types[ParsersAttributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
-			func_types[ParsersAttributes::AnalyzeFunc]=Type::AnalyzeFunc;
+			func_types[Attributes::INPUT_FUNC]=Type::InputFunc;
+			func_types[Attributes::OUTPUT_FUNC]=Type::OutputFunc;
+			func_types[Attributes::SEND_FUNC]=Type::SendFunc;
+			func_types[Attributes::RECV_FUNC]=Type::RecvFunc;
+			func_types[Attributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
+			func_types[Attributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
+			func_types[Attributes::AnalyzeFunc]=Type::AnalyzeFunc;
 		}
-		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
+		else if(attribs[Attributes::Configuration]==Attributes::CompositeType)
 			type->setConfiguration(Type::CompositeType);
-		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::ENUM_TYPE)
+		else if(attribs[Attributes::Configuration]==Attributes::ENUM_TYPE)
 			type->setConfiguration(Type::EnumerationType);
 		else
 		{
 			type->setConfiguration(Type::RangeType);
-			func_types[ParsersAttributes::CanonicalFunc]=Type::CanonicalFunc;
-			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SubtypeDiffFunc;
+			func_types[Attributes::CanonicalFunc]=Type::CanonicalFunc;
+			func_types[Attributes::SUBTYPE_DIFF_FUNC]=Type::SubtypeDiffFunc;
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4061,22 +4061,22 @@ Type *DatabaseModel::createType(void)
 					elem=xmlparser.getElementName();
 
 					//Specific operations for ENUM type
-					if(elem==ParsersAttributes::ENUM_TYPE)
+					if(elem==Attributes::ENUM_TYPE)
 					{
 						xmlparser.getElementAttributes(attribs);
-						enums=attribs[ParsersAttributes::VALUES].split(',');
+						enums=attribs[Attributes::VALUES].split(',');
 
 						count=enums.size();
 						for(i=0; i < count; i++)
 							type->addEnumeration(enums[i]);
 					}
 					//Specific operations for COMPOSITE types
-					else if(elem==ParsersAttributes::TYPE_ATTRIBUTE)
+					else if(elem==Attributes::TYPE_ATTRIBUTE)
 					{
 						type->addAttribute(createTypeAttribute());
 					}
 					//Specific operations for BASE / RANGE type
-					else if(elem==ParsersAttributes::TYPE)
+					else if(elem==Attributes::TYPE)
 					{
 						aux_type=createPgSQLType();
 
@@ -4085,10 +4085,10 @@ Type *DatabaseModel::createType(void)
 						else
 							type->setLikeType(aux_type);
 					}
-					else if(elem==ParsersAttributes::COLLATION)
+					else if(elem==Attributes::Collation)
 					{
 						xmlparser.getElementAttributes(attribs);
-						collation=getObject(attribs[ParsersAttributes::NAME], ObjectType::Collation);
+						collation=getObject(attribs[Attributes::NAME], ObjectType::Collation);
 
 						//Raises an error if the operator class doesn't exists
 						if(!collation)
@@ -4096,17 +4096,17 @@ Type *DatabaseModel::createType(void)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Collation)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						type->setCollation(collation);
 					}
-					if(elem==ParsersAttributes::OP_CLASS)
+					if(elem==Attributes::OP_CLASS)
 					{
 						xmlparser.getElementAttributes(attribs);
-						op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], ObjectType::OpClass));
+						op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::NAME], ObjectType::OpClass));
 
 						//Raises an error if the operator class doesn't exists
 						if(!op_class)
@@ -4114,7 +4114,7 @@ Type *DatabaseModel::createType(void)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::OpClass)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -4122,26 +4122,26 @@ Type *DatabaseModel::createType(void)
 						type->setSubtypeOpClass(op_class);
 					}
 					//Configuring the functions used by the type (only for BASE type)
-					else if(elem==ParsersAttributes::FUNCTION)
+					else if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						//Tries to get the function from the model
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						//Raises an error if the function type is invalid
-						else if(func_types.count(attribs[ParsersAttributes::REF_TYPE])==0)
+						else if(func_types.count(attribs[Attributes::REF_TYPE])==0)
 							throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						type->setFunction(func_types[attribs[ParsersAttributes::REF_TYPE]],	dynamic_cast<Function *>(func));
+						type->setFunction(func_types[attribs[Attributes::REF_TYPE]],	dynamic_cast<Function *>(func));
 					}
 				}
 			}
@@ -4180,10 +4180,10 @@ Domain *DatabaseModel::createDomain(void)
 		setBasicAttributes(domain);
 		xmlparser.getElementAttributes(attribs);
 
-		if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
-			domain->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
+		if(!attribs[Attributes::DEFAULT_VALUE].isEmpty())
+			domain->setDefaultValue(attribs[Attributes::DEFAULT_VALUE]);
 
-		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::True);
+		domain->setNotNull(attribs[Attributes::NOT_NULL]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4194,17 +4194,17 @@ Domain *DatabaseModel::createDomain(void)
 					elem=xmlparser.getElementName();
 
 					//If a type element is found it'll be extracted an type which the domain is applied
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						domain->setType(createPgSQLType());
 					}
-					else if(elem==ParsersAttributes::CONSTRAINT)
+					else if(elem==Attributes::Constraint)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XmlParser::ChildElement);
 						xmlparser.accessElement(XmlParser::ChildElement);
-						domain->addCheckConstraint(attribs[ParsersAttributes::NAME], xmlparser.getElementContent());
+						domain->addCheckConstraint(attribs[Attributes::NAME], xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
 				}
@@ -4236,14 +4236,14 @@ Cast *DatabaseModel::createCast(void)
 		setBasicAttributes(cast);
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::CastType]==ParsersAttributes::IMPLICIT)
+		if(attribs[Attributes::CastType]==Attributes::IMPLICIT)
 			cast->setCastType(Cast::Implicit);
-		else if(attribs[ParsersAttributes::CastType]==ParsersAttributes::Assignment)
+		else if(attribs[Attributes::CastType]==Attributes::Assignment)
 			cast->setCastType(Cast::Assignment);
 		else
 			cast->setCastType(Cast::Explicit);
 
-		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::True);
+		cast->setInOut(attribs[Attributes::IO_CAST]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4254,7 +4254,7 @@ Cast *DatabaseModel::createCast(void)
 					elem=xmlparser.getElementName();
 
 					//Extract one argument type from the XML
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						type=createPgSQLType();
 						if(type_idx==0)
@@ -4264,17 +4264,17 @@ Cast *DatabaseModel::createCast(void)
 						type_idx++;
 					}
 					//Extracts the conversion function
-					else if(elem==ParsersAttributes::FUNCTION)
+					else if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(cast->getName())
 											.arg(cast->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4308,12 +4308,12 @@ Conversion *DatabaseModel::createConversion(void)
 		xmlparser.getElementAttributes(attribs);
 
 		conv->setEncoding(Conversion::SrcEncoding,
-						  EncodingType(attribs[ParsersAttributes::SRC_ENCODING]));
+							EncodingType(attribs[Attributes::SRC_ENCODING]));
 
 		conv->setEncoding(Conversion::DstEncoding,
-						  EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
+							EncodingType(attribs[Attributes::DST_ENCODING]));
 
-		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::True);
+		conv->setDefault(attribs[Attributes::DEFAULT]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4323,17 +4323,17 @@ Conversion *DatabaseModel::createConversion(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::FUNCTION)
+					if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(conv->getName())
 											.arg(conv->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4370,15 +4370,15 @@ Operator *DatabaseModel::createOperator(void)
 		setBasicAttributes(oper);
 		xmlparser.getElementAttributes(attribs);
 
-		oper->setMerges(attribs[ParsersAttributes::MERGES]==ParsersAttributes::True);
-		oper->setHashes(attribs[ParsersAttributes::HASHES]==ParsersAttributes::True);
+		oper->setMerges(attribs[Attributes::MERGES]==Attributes::True);
+		oper->setHashes(attribs[Attributes::HASHES]==Attributes::True);
 
-		func_types[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
-		func_types[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JOIN;
-		func_types[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
+		func_types[Attributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
+		func_types[Attributes::JOIN_FUNC]=Operator::FUNC_JOIN;
+		func_types[Attributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
 
-		oper_types[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
-		oper_types[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
+		oper_types[Attributes::CommutatorOp]=Operator::OPER_COMMUTATOR;
+		oper_types[Attributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4391,25 +4391,25 @@ Operator *DatabaseModel::createOperator(void)
 					if(elem==objs_schemas[~ObjectType::Operator])
 					{
 						xmlparser.getElementAttributes(attribs);
-						oper_aux=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Operator);
+						oper_aux=getObject(attribs[Attributes::SIGNATURE], ObjectType::Operator);
 
 						//Raises an error if the auxiliary operator doesn't exists
-						if(!oper_aux && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!oper_aux && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(oper->getSignature(true))
 											.arg(oper->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Operator)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
-										  oper_types[attribs[ParsersAttributes::REF_TYPE]]);
+											oper_types[attribs[Attributes::REF_TYPE]]);
 					}
-					else if(elem==ParsersAttributes::TYPE)
+					else if(elem==Attributes::TYPE)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						if(attribs[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
+						if(attribs[Attributes::REF_TYPE]!=Attributes::RIGHT_TYPE)
 							arg_type=Operator::LEFT_ARG;
 						else
 							arg_type=Operator::RIGHT_ARG;
@@ -4417,22 +4417,22 @@ Operator *DatabaseModel::createOperator(void)
 						type=createPgSQLType();
 						oper->setArgumentType(type, arg_type);
 					}
-					else if(elem==ParsersAttributes::FUNCTION)
+					else if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists on the model
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(oper->getName())
 											.arg(oper->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setFunction(dynamic_cast<Function *>(func),
-										  func_types[attribs[ParsersAttributes::REF_TYPE]]);
+											func_types[attribs[Attributes::REF_TYPE]]);
 					}
 				}
 			}
@@ -4465,12 +4465,12 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		setBasicAttributes(op_class);
 		xmlparser.getElementAttributes(attribs);
 
-		op_class->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
-		op_class->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::True);
+		op_class->setIndexingType(IndexingType(attribs[Attributes::INDEX_TYPE]));
+		op_class->setDefault(attribs[Attributes::DEFAULT]==Attributes::True);
 
-		elem_types[ParsersAttributes::FUNCTION]=OperatorClassElement::FunctionElem;
-		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OperatorElem;
-		elem_types[ParsersAttributes::STORAGE]=OperatorClassElement::StorageElem;
+		elem_types[Attributes::FUNCTION]=OperatorClassElement::FunctionElem;
+		elem_types[Attributes::OPERATOR]=OperatorClassElement::OperatorElem;
+		elem_types[Attributes::STORAGE]=OperatorClassElement::StorageElem;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4483,31 +4483,31 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					if(elem==objs_schemas[~ObjectType::OpFamily])
 					{
 						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::OpFamily);
+						object=getObject(attribs[Attributes::SIGNATURE], ObjectType::OpFamily);
 
 						//Raises an error if the operator family doesn't exists
 						if(!object)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(op_class->getName())
 											.arg(op_class->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::OpFamily)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						op_class->setFamily(dynamic_cast<OperatorFamily *>(object));
 					}
-					else if(elem==ParsersAttributes::TYPE)
+					else if(elem==Attributes::TYPE)
 					{
 						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 						op_class->setDataType(type);
 					}
-					else if(elem==ParsersAttributes::ELEMENT)
+					else if(elem==Attributes::ELEMENT)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						stg_number=attribs[ParsersAttributes::STRATEGY_NUM].toUInt();
-						elem_type=elem_types[attribs[ParsersAttributes::TYPE]];
+						stg_number=attribs[Attributes::STRATEGY_NUM].toUInt();
+						elem_type=elem_types[attribs[Attributes::TYPE]];
 
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -4520,12 +4520,12 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						}
 						else if(elem_type==OperatorClassElement::FunctionElem)
 						{
-							object=getObject(attribs[ParsersAttributes::SIGNATURE],ObjectType::Function);
+							object=getObject(attribs[Attributes::SIGNATURE],ObjectType::Function);
 							class_elem.setFunction(dynamic_cast<Function *>(object),stg_number);
 						}
 						else if(elem_type==OperatorClassElement::OperatorElem)
 						{
-							object=getObject(attribs[ParsersAttributes::SIGNATURE],ObjectType::Operator);
+							object=getObject(attribs[Attributes::SIGNATURE],ObjectType::Operator);
 							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
 
 							if(xmlparser.hasElement(XmlParser::NextElement))
@@ -4534,13 +4534,13 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 								xmlparser.accessElement(XmlParser::NextElement);
 								xmlparser.getElementAttributes(attribs_aux);
 
-								object=getObject(attribs_aux[ParsersAttributes::SIGNATURE],ObjectType::OpFamily);
+								object=getObject(attribs_aux[Attributes::SIGNATURE],ObjectType::OpFamily);
 
-								if(!object && !attribs_aux[ParsersAttributes::SIGNATURE].isEmpty())
+								if(!object && !attribs_aux[Attributes::SIGNATURE].isEmpty())
 									throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 													.arg(op_class->getName())
 													.arg(op_class->getTypeName())
-													.arg(attribs_aux[ParsersAttributes::SIGNATURE])
+													.arg(attribs_aux[Attributes::SIGNATURE])
 										.arg(BaseObject::getTypeName(ObjectType::OpFamily)),
 										ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4576,7 +4576,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 		op_family=new OperatorFamily;
 		setBasicAttributes(op_family);
 		xmlparser.getElementAttributes(attribs);
-		op_family->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
+		op_family->setIndexingType(IndexingType(attribs[Attributes::INDEX_TYPE]));
 	}
 	catch(Exception &e)
 	{
@@ -4601,7 +4601,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 		setBasicAttributes(aggreg);
 		xmlparser.getElementAttributes(attribs);
 
-		aggreg->setInitialCondition(attribs[ParsersAttributes::INITIAL_COND]);
+		aggreg->setInitialCondition(attribs[Attributes::INITIAL_COND]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4611,31 +4611,31 @@ Aggregate *DatabaseModel::createAggregate(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 
-						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::STATE_TYPE)
+						if(attribs[Attributes::REF_TYPE]==Attributes::STATE_TYPE)
 							aggreg->setStateType(type);
 						else
 							aggreg->addDataType(type);
 					}
-					else if(elem==ParsersAttributes::FUNCTION)
+					else if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists on the model
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(aggreg->getName())
 											.arg(aggreg->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
+						if(attribs[Attributes::REF_TYPE]==Attributes::TRANSITION_FUNC)
 							aggreg->setFunction(Aggregate::TransitionFunc,
 												dynamic_cast<Function *>(func));
 						else
@@ -4675,14 +4675,14 @@ Table *DatabaseModel::createTable(void)
 		setBasicAttributes(table);
 		xmlparser.getElementAttributes(attribs);
 
-		table->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
-		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::True);
-		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::True);
-		table->setRLSEnabled(attribs[ParsersAttributes::RLS_ENABLED]==ParsersAttributes::True);
-		table->setRLSForced(attribs[ParsersAttributes::RLS_FORCED]==ParsersAttributes::True);
-		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::True);
-		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
-		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+		table->setObjectListsCapacity(attribs[Attributes::MAX_OBJ_COUNT].toUInt());
+		table->setWithOIDs(attribs[Attributes::OIDS]==Attributes::True);
+		table->setUnlogged(attribs[Attributes::UNLOGGED]==Attributes::True);
+		table->setRLSEnabled(attribs[Attributes::RLS_ENABLED]==Attributes::True);
+		table->setRLSForced(attribs[Attributes::RLS_FORCED]==Attributes::True);
+		table->setGenerateAlterCmds(attribs[Attributes::GEN_ALTER_CMDS]==Attributes::True);
+		table->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
+		table->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4701,14 +4701,14 @@ Table *DatabaseModel::createTable(void)
 					else if(elem==BaseObject::objs_schemas[~ObjectType::Tag])
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						tag=getObject(aux_attribs[ParsersAttributes::NAME], ObjectType::Tag);
+						tag=getObject(aux_attribs[Attributes::NAME], ObjectType::Tag);
 
 						if(!tag)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[ParsersAttributes::TABLE])
+									.arg(aux_attribs[Attributes::TABLE])
 									.arg(BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -4716,10 +4716,10 @@ Table *DatabaseModel::createTable(void)
 						table->setTag(dynamic_cast<Tag *>(tag));
 					}
 					//Retrieving custom columns / constraint indexes
-					else if(elem==ParsersAttributes::CUSTOMIDXS)
+					else if(elem==Attributes::CustomIdxs)
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						obj_type=BaseObject::getObjectType(aux_attribs[ParsersAttributes::OBJECT_TYPE]);
+						obj_type=BaseObject::getObjectType(aux_attribs[Attributes::OBJECT_TYPE]);
 
 						xmlparser.savePosition();
 
@@ -4732,11 +4732,11 @@ Table *DatabaseModel::createTable(void)
 									elem=xmlparser.getElementName();
 
 									//The element <object> stores the index for each object in the current group
-									if(elem==ParsersAttributes::OBJECT)
+									if(elem==Attributes::OBJECT)
 									{
 										xmlparser.getElementAttributes(aux_attribs);
-										names.push_back(aux_attribs[ParsersAttributes::NAME]);
-										idxs.push_back(aux_attribs[ParsersAttributes::INDEX].toUInt());
+										names.push_back(aux_attribs[Attributes::NAME]);
+										idxs.push_back(aux_attribs[Attributes::INDEX].toUInt());
 									}
 								}
 							}
@@ -4749,10 +4749,10 @@ Table *DatabaseModel::createTable(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::PARTITIONING)
+					else if(elem==Attributes::PARTITIONING)
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						table->setPartitioningType(aux_attribs[ParsersAttributes::TYPE]);
+						table->setPartitioningType(aux_attribs[Attributes::TYPE]);
 						xmlparser.savePosition();
 
 						if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4760,7 +4760,7 @@ Table *DatabaseModel::createTable(void)
 							do
 							{
 								if(xmlparser.getElementType()==XML_ELEMENT_NODE &&
-									 xmlparser.getElementName()==ParsersAttributes::PARTITION_KEY)
+									 xmlparser.getElementName()==Attributes::PARTITION_KEY)
 								{
 										createElement(part_key, nullptr, table);
 										partition_keys.push_back(part_key);
@@ -4774,7 +4774,7 @@ Table *DatabaseModel::createTable(void)
 						xmlparser.restorePosition();
 					}
 					//Retrieving initial data
-					else if(elem==ParsersAttributes::INITIAL_DATA)
+					else if(elem==Attributes::INITIAL_DATA)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -4818,23 +4818,23 @@ Column *DatabaseModel::createColumn(void)
 		setBasicAttributes(column);
 
 		xmlparser.getElementAttributes(attribs);
-		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::True);
-		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
-		column->setIdSeqAttributes(attribs[ParsersAttributes::MIN_VALUE], attribs[ParsersAttributes::MAX_VALUE], attribs[ParsersAttributes::INCREMENT],
-																attribs[ParsersAttributes::START], attribs[ParsersAttributes::Cache], attribs[ParsersAttributes::CYCLE] == ParsersAttributes::True);
+		column->setNotNull(attribs[Attributes::NOT_NULL]==Attributes::True);
+		column->setDefaultValue(attribs[Attributes::DEFAULT_VALUE]);
+		column->setIdSeqAttributes(attribs[Attributes::MIN_VALUE], attribs[Attributes::MAX_VALUE], attribs[Attributes::INCREMENT],
+																attribs[Attributes::START], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);
 
-		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
-			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
+		if(!attribs[Attributes::IDENTITY_TYPE].isEmpty())
+			column->setIdentityType(IdentityType(attribs[Attributes::IDENTITY_TYPE]));
 
-		if(!attribs[ParsersAttributes::SEQUENCE].isEmpty())
+		if(!attribs[Attributes::SEQUENCE].isEmpty())
 		{
-			seq=getObject(attribs[ParsersAttributes::SEQUENCE], ObjectType::Sequence);
+			seq=getObject(attribs[Attributes::SEQUENCE], ObjectType::Sequence);
 
 			if(!seq)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-								.arg(attribs[ParsersAttributes::NAME])
+								.arg(attribs[Attributes::NAME])
 					.arg(BaseObject::getTypeName(ObjectType::Column))
-					.arg(attribs[ParsersAttributes::SEQUENCE])
+					.arg(attribs[Attributes::SEQUENCE])
 					.arg(BaseObject::getTypeName(ObjectType::Sequence)),
 					ErrorCode::PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4850,7 +4850,7 @@ Column *DatabaseModel::createColumn(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::TYPE)
+					if(elem==Attributes::TYPE)
 					{
 						column->setType(createPgSQLType());
 					}
@@ -4906,7 +4906,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		else
 		{
 			obj_type=ObjectType::Table;
-			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+			table=dynamic_cast<Table *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 			parent_obj=table;
 			ins_constr_table=true;
 
@@ -4914,9 +4914,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(!table)
 			{
 				str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-						.arg(attribs[ParsersAttributes::NAME])
+						.arg(attribs[Attributes::NAME])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint))
-						.arg(attribs[ParsersAttributes::TABLE])
+						.arg(attribs[Attributes::TABLE])
 						.arg(BaseObject::getTypeName(ObjectType::Table));
 
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4927,21 +4927,21 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		constr->setParentTable(table);
 
 		//Configuring the constraint type
-		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CkConstr)
+		if(attribs[Attributes::TYPE]==Attributes::CkConstr)
 			constr_type=ConstraintType::Check;
-		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
+		else if(attribs[Attributes::TYPE]==Attributes::PK_CONSTR)
 			constr_type=ConstraintType::PrimaryKey;
-		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
+		else if(attribs[Attributes::TYPE]==Attributes::FK_CONSTR)
 			constr_type=ConstraintType::ForeignKey;
-		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::UQ_CONSTR)
+		else if(attribs[Attributes::TYPE]==Attributes::UQ_CONSTR)
 			constr_type=ConstraintType::Unique;
 		else
 			constr_type=ConstraintType::Exclude;
 
 		constr->setConstraintType(constr_type);
 
-		if(!attribs[ParsersAttributes::FACTOR].isEmpty())
-			constr->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
+		if(!attribs[Attributes::FACTOR].isEmpty())
+			constr->setFillFactor(attribs[Attributes::FACTOR].toUInt());
 
 		setBasicAttributes(constr);
 
@@ -4951,26 +4951,26 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 							.arg(constr->getName()),
 							ErrorCode::InvPrimaryKeyAllocation,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
+		deferrable=(attribs[Attributes::DEFERRABLE]==Attributes::True);
 		constr->setDeferrable(deferrable);
 
-		if(deferrable && !attribs[ParsersAttributes::DEFER_TYPE].isEmpty())
-			constr->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
+		if(deferrable && !attribs[Attributes::DEFER_TYPE].isEmpty())
+			constr->setDeferralType(attribs[Attributes::DEFER_TYPE]);
 
 		if(constr_type==ConstraintType::ForeignKey)
 		{
-			if(!attribs[ParsersAttributes::COMPARISON_TYPE].isEmpty())
-				constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
+			if(!attribs[Attributes::ComparisonType].isEmpty())
+				constr->setMatchType(attribs[Attributes::ComparisonType]);
 
-			if(!attribs[ParsersAttributes::DEL_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], Constraint::DeleteAction);
+			if(!attribs[Attributes::DEL_ACTION].isEmpty())
+				constr->setActionType(attribs[Attributes::DEL_ACTION], Constraint::DeleteAction);
 
-			if(!attribs[ParsersAttributes::UPD_ACTION].isEmpty())
-				constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], Constraint::UpdateAction);
+			if(!attribs[Attributes::UPD_ACTION].isEmpty())
+				constr->setActionType(attribs[Attributes::UPD_ACTION], Constraint::UpdateAction);
 
-			ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], ObjectType::Table);
+			ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::Table);
 
-			if(!ref_table && table->getName(true)==attribs[ParsersAttributes::REF_TABLE])
+			if(!ref_table && table->getName(true)==attribs[Attributes::REF_TABLE])
 				ref_table=table;
 
 			//Raises an error if the referenced table doesn't exists
@@ -4979,7 +4979,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 						.arg(constr->getName())
 						.arg(constr->getTypeName())
-						.arg(attribs[ParsersAttributes::REF_TABLE])
+						.arg(attribs[Attributes::REF_TABLE])
 						.arg(BaseObject::getTypeName(ObjectType::Table));
 
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4989,11 +4989,11 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		}
 		else if(constr_type==ConstraintType::Check)
 		{
-			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::True);
+			constr->setNoInherit(attribs[Attributes::NO_INHERIT]==Attributes::True);
 		}
-		else if(constr_type==ConstraintType::Exclude &&	!attribs[ParsersAttributes::INDEX_TYPE].isEmpty())
+		else if(constr_type==ConstraintType::Exclude &&	!attribs[Attributes::INDEX_TYPE].isEmpty())
 		{
-			constr->setIndexType(attribs[ParsersAttributes::INDEX_TYPE]);
+			constr->setIndexType(attribs[Attributes::INDEX_TYPE]);
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5004,12 +5004,12 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::EXCLUDE_ELEMENT)
+					if(elem==Attributes::EXCLUDE_ELEMENT)
 					{
 						createElement(exc_elem, constr, parent_obj);
 						constr->addExcludeElement(exc_elem);
 					}
-					else if(elem==ParsersAttributes::EXPRESSION)
+					else if(elem==Attributes::EXPRESSION)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5018,14 +5018,14 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::COLUMNS)
+					else if(elem==Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						col_list=attribs[ParsersAttributes::NAMES].split(',');
+						col_list=attribs[Attributes::NAMES].split(',');
 						count=col_list.count();
 
-						if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
+						if(attribs[Attributes::REF_TYPE]==Attributes::SRC_COLUMNS)
 							col_type=Constraint::SourceCols;
 						else
 							col_type=Constraint::ReferencedCols;
@@ -5093,9 +5093,9 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	bool is_part_key = false;
 
 	xml_elem=xmlparser.getElementName();
-	is_part_key = xml_elem == ParsersAttributes::PARTITION_KEY;
+	is_part_key = xml_elem == Attributes::PARTITION_KEY;
 
-	if(xml_elem==ParsersAttributes::INDEX_ELEMENT || xml_elem==ParsersAttributes::EXCLUDE_ELEMENT || is_part_key)
+	if(xml_elem==Attributes::INDEX_ELEMENT || xml_elem==Attributes::EXCLUDE_ELEMENT || is_part_key)
 	{
 		xmlparser.getElementAttributes(attribs);
 
@@ -5104,9 +5104,9 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 		elem.setOperator(nullptr);
 		elem.setOperatorClass(nullptr);
 
-		elem.setSortingAttribute(Element::AscOrder, attribs[ParsersAttributes::AscOrder]==ParsersAttributes::True);
-		elem.setSortingAttribute(Element::NullsFirst, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::True);
-		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::False);
+		elem.setSortingAttribute(Element::AscOrder, attribs[Attributes::AscOrder]==Attributes::True);
+		elem.setSortingAttribute(Element::NullsFirst, attribs[Attributes::NULLS_FIRST]==Attributes::True);
+		elem.setSortingEnabled(attribs[Attributes::USE_SORTING]!=Attributes::False);
 
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
@@ -5117,10 +5117,10 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 			if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 			{
-				if(xml_elem==ParsersAttributes::OP_CLASS)
+				if(xml_elem==Attributes::OP_CLASS)
 				{
 					xmlparser.getElementAttributes(attribs);
-					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::OpClass));
+					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::OpClass));
 
 					//Raises an error if the operator class doesn't exists
 					if(!op_class)
@@ -5130,7 +5130,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(ObjectType::OpClass)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5138,7 +5138,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::PartKeyObjectInexistsModel)
 											.arg(parent_obj->getName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(ObjectType::OpClass)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5147,10 +5147,10 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					elem.setOperatorClass(op_class);
 				}
 				//Checking if elem is a ExcludeElement to be able to assign an operator to it
-				else if(xml_elem==ParsersAttributes::OPERATOR)
+				else if(xml_elem==Attributes::OPERATOR)
 				{
 					xmlparser.getElementAttributes(attribs);
-					oper=dynamic_cast<Operator *>(getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Operator));
+					oper=dynamic_cast<Operator *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::Operator));
 
 					//Raises an error if the operator doesn't exists
 					if(!oper)
@@ -5158,17 +5158,17 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 										.arg(tab_obj->getName())
 										.arg(tab_obj->getTypeName())
-										.arg(attribs[ParsersAttributes::SIGNATURE])
+										.arg(attribs[Attributes::SIGNATURE])
 								.arg(BaseObject::getTypeName(ObjectType::Operator)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
 					elem.setOperator(oper);
 				}
-				else if(xml_elem==ParsersAttributes::COLLATION)
+				else if(xml_elem==Attributes::Collation)
 				{
 					xmlparser.getElementAttributes(attribs);
-					collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], ObjectType::Collation));
+					collation=dynamic_cast<Collation *>(getObject(attribs[Attributes::NAME], ObjectType::Collation));
 
 					//Raises an error if the operator class doesn't exists
 					if(!collation)
@@ -5178,7 +5178,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 															.arg(tab_obj->getName())
 															.arg(tab_obj->getTypeName())
-															.arg(attribs[ParsersAttributes::NAME])
+															.arg(attribs[Attributes::NAME])
 															.arg(BaseObject::getTypeName(ObjectType::Collation)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5186,7 +5186,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::PartKeyObjectInexistsModel)
 															.arg(parent_obj->getName())
-															.arg(attribs[ParsersAttributes::NAME])
+															.arg(attribs[Attributes::NAME])
 															.arg(BaseObject::getTypeName(ObjectType::Collation)),
 															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5194,20 +5194,20 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 					elem.setCollation(collation);
 				}
-				else if(xml_elem==ParsersAttributes::COLUMN)
+				else if(xml_elem==Attributes::Column)
 				{
 					xmlparser.getElementAttributes(attribs);
 
 					if(parent_obj->getObjectType()==ObjectType::Table)
 					{
-						column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[ParsersAttributes::NAME]);
+						column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[Attributes::NAME]);
 
 						if(!column)
-							column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[ParsersAttributes::NAME], true);
+							column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[Attributes::NAME], true);
 					}
 					else
 					{
-						column=dynamic_cast<Column *>(dynamic_cast<Relationship *>(parent_obj)->getObject(attribs[ParsersAttributes::NAME], ObjectType::Column));
+						column=dynamic_cast<Column *>(dynamic_cast<Relationship *>(parent_obj)->getObject(attribs[Attributes::NAME], ObjectType::Column));
 					}
 
 					//Raises an error if the column doesn't exists
@@ -5218,7 +5218,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Column)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5226,7 +5226,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::PartKeyObjectInexistsModel)
 											.arg(parent_obj->getName())
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Column)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5234,7 +5234,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 					elem.setColumn(column);
 				}
-				else if(xml_elem==ParsersAttributes::EXPRESSION)
+				else if(xml_elem==Attributes::EXPRESSION)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -5266,17 +5266,17 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map aux_attribs;
 
-		aux_attribs[ParsersAttributes::SIGNATURE] = this->getSignature();
-		aux_attribs[ParsersAttributes::SQL_OBJECT] = this->getSQLName();
+		aux_attribs[Attributes::SIGNATURE] = this->getSignature();
+		aux_attribs[Attributes::SQL_OBJECT] = this->getSQLName();
 
 		if(this->conn_limit!=db_aux->conn_limit)
-			aux_attribs[ParsersAttributes::CONN_LIMIT]=QString::number(db_aux->conn_limit);
+			aux_attribs[Attributes::ConnLimit]=QString::number(db_aux->conn_limit);
 
 		if(this->is_template != db_aux->is_template)
-			aux_attribs[ParsersAttributes::IS_TEMPLATE] = (db_aux->is_template ? ParsersAttributes::True : ParsersAttributes::False);
+			aux_attribs[Attributes::IS_TEMPLATE] = (db_aux->is_template ? Attributes::True : Attributes::False);
 
 		if(this->allow_conns != db_aux->allow_conns)
-			aux_attribs[ParsersAttributes::AllowConns] = (db_aux->allow_conns ? ParsersAttributes::True : ParsersAttributes::False);
+			aux_attribs[Attributes::AllowConns] = (db_aux->allow_conns ? Attributes::True : Attributes::False);
 
 		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
 		alter_def+=BaseObject::getAlterDefinition(object);
@@ -5301,18 +5301,18 @@ Index *DatabaseModel::createIndex(void)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
 
 		//Raises an error if the parent table doesn't exists
 		if(!table)
 		{
 			str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-					.arg(attribs[ParsersAttributes::NAME])
+					.arg(attribs[Attributes::NAME])
 					.arg(BaseObject::getTypeName(ObjectType::Index))
-					.arg(attribs[ParsersAttributes::TABLE])
+					.arg(attribs[Attributes::TABLE])
 					.arg(BaseObject::getTypeName(ObjectType::Table));
 
 			throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5321,12 +5321,12 @@ Index *DatabaseModel::createIndex(void)
 		index=new Index;
 		setBasicAttributes(index);
 		index->setParentTable(table);
-		index->setIndexAttribute(Index::Concurrent, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::True);
-		index->setIndexAttribute(Index::Unique, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::True);
-		index->setIndexAttribute(Index::FastUpdate, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::True);
-		index->setIndexAttribute(Index::Buffering, attribs[ParsersAttributes::Buffering]==ParsersAttributes::True);
-		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
-		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
+		index->setIndexAttribute(Index::Concurrent, attribs[Attributes::Concurrent]==Attributes::True);
+		index->setIndexAttribute(Index::Unique, attribs[Attributes::UNIQUE]==Attributes::True);
+		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FAST_UPDATE]==Attributes::True);
+		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
+		index->setIndexingType(attribs[Attributes::INDEX_TYPE]);
+		index->setFillFactor(attribs[Attributes::FACTOR].toUInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5336,12 +5336,12 @@ Index *DatabaseModel::createIndex(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::INDEX_ELEMENT)
+					if(elem==Attributes::INDEX_ELEMENT)
 					{
 						createElement(idx_elem, index, table);
 						index->addIndexElement(idx_elem);
 					}
-					else if(elem==ParsersAttributes::PREDICATE)
+					else if(elem==Attributes::PREDICATE)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5382,22 +5382,22 @@ Rule *DatabaseModel::createRule(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-							.arg(attribs[ParsersAttributes::NAME])
+							.arg(attribs[Attributes::NAME])
 				.arg(BaseObject::getTypeName(ObjectType::Rule))
-				.arg(attribs[ParsersAttributes::TABLE])
+				.arg(attribs[Attributes::TABLE])
 				.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
-		rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
-		rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
+		rule->setExecutionType(attribs[Attributes::EXEC_TYPE]);
+		rule->setEventType(attribs[Attributes::EVENT_TYPE]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5407,8 +5407,8 @@ Rule *DatabaseModel::createRule(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::COMMANDS ||
-							elem==ParsersAttributes::CONDITION)
+					if(elem==Attributes::Commands ||
+							elem==Attributes::Condition)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5416,7 +5416,7 @@ Rule *DatabaseModel::createRule(void)
 						str_aux=xmlparser.getElementContent();
 						xmlparser.restorePosition();
 
-						if(elem==ParsersAttributes::COMMANDS)
+						if(elem==Attributes::Commands)
 						{
 							cmd_list=str_aux.split(';');
 							count=cmd_list.count();
@@ -5461,16 +5461,16 @@ Trigger *DatabaseModel::createTrigger(void)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-							.arg(attribs[ParsersAttributes::NAME])
+							.arg(attribs[Attributes::NAME])
 				.arg(BaseObject::getTypeName(ObjectType::Trigger))
-				.arg(attribs[ParsersAttributes::TABLE])
+				.arg(attribs[Attributes::TABLE])
 				.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5480,28 +5480,28 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		setBasicAttributes(trigger);
 
-		trigger->setConstraint(attribs[ParsersAttributes::CONSTRAINT]==ParsersAttributes::True);
+		trigger->setConstraint(attribs[Attributes::Constraint]==Attributes::True);
 
 		trigger->setEvent(EventType::OnInsert,
-							(attribs[ParsersAttributes::INS_EVENT]==ParsersAttributes::True));
+							(attribs[Attributes::INS_EVENT]==Attributes::True));
 
 		trigger->setEvent(EventType::OnDelete,
-							(attribs[ParsersAttributes::DEL_EVENT]==ParsersAttributes::True));
+							(attribs[Attributes::DEL_EVENT]==Attributes::True));
 
 		trigger->setEvent(EventType::OnUpdate,
-							(attribs[ParsersAttributes::UPD_EVENT]==ParsersAttributes::True));
+							(attribs[Attributes::UPD_EVENT]==Attributes::True));
 
 		trigger->setEvent(EventType::OnTruncate,
-							(attribs[ParsersAttributes::TRUNC_EVENT]==ParsersAttributes::True));
+							(attribs[Attributes::TRUNC_EVENT]==Attributes::True));
 
-		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==ParsersAttributes::True);
+		trigger->setExecutePerRow(attribs[Attributes::PER_ROW]==Attributes::True);
 
-		trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
+		trigger->setFiringType(FiringType(attribs[Attributes::FIRING_TYPE]));
 
-		trigger->setTransitionTableName(Trigger::OldTableName, attribs[ParsersAttributes::OLD_TABLE_NAME]);
-		trigger->setTransitionTableName(Trigger::NewTableName, attribs[ParsersAttributes::NEW_TABLE_NAME]);
+		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OLD_TABLE_NAME]);
+		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NEW_TABLE_NAME]);
 
-		list_aux=attribs[ParsersAttributes::Arguments].split(',');
+		list_aux=attribs[Attributes::Arguments].split(',');
 		count=list_aux.count();
 		for(i=0; i < count; i++)
 		{
@@ -5509,17 +5509,17 @@ Trigger *DatabaseModel::createTrigger(void)
 				trigger->addArgument(list_aux[i]);
 		}
 
-		trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
+		trigger->setDeferrable(attribs[Attributes::DEFERRABLE]==Attributes::True);
 
 		if(trigger->isDeferrable())
-			trigger->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
+			trigger->setDeferralType(attribs[Attributes::DEFER_TYPE]);
 
-		if(!attribs[ParsersAttributes::REF_TABLE].isEmpty())
+		if(!attribs[Attributes::REF_TABLE].isEmpty())
 		{
-			ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], ObjectType::Table);
+			ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::Table);
 
 			if(!ref_table)
-				ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], ObjectType::View);
+				ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::View);
 
 			//Raises an error if the trigger is referencing a inexistent table
 			if(!ref_table)
@@ -5527,7 +5527,7 @@ Trigger *DatabaseModel::createTrigger(void)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(trigger->getName())
 								.arg(trigger->getTypeName())
-								.arg(attribs[ParsersAttributes::REF_TABLE])
+								.arg(attribs[Attributes::REF_TABLE])
 						.arg(BaseObject::getTypeName(ObjectType::Table)),
 						ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -5543,18 +5543,18 @@ Trigger *DatabaseModel::createTrigger(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::FUNCTION)
+					if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 						{
 							str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 									.arg(trigger->getName())
 									.arg(trigger->getTypeName())
-									.arg(attribs[ParsersAttributes::SIGNATURE])
+									.arg(attribs[Attributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(ObjectType::Function));
 
 							throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5562,7 +5562,7 @@ Trigger *DatabaseModel::createTrigger(void)
 
 						trigger->setFunction(dynamic_cast<Function *>(func));
 					}
-					else if(elem==ParsersAttributes::CONDITION)
+					else if(elem==Attributes::Condition)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5570,11 +5570,11 @@ Trigger *DatabaseModel::createTrigger(void)
 						xmlparser.restorePosition();
 						trigger->setCondition(str_aux);
 					}
-					else if(elem==ParsersAttributes::COLUMNS)
+					else if(elem==Attributes::Columns)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						list_aux=attribs[ParsersAttributes::NAMES].split(',');
+						list_aux=attribs[Attributes::NAMES].split(',');
 						count=list_aux.count();
 
 						for(i=0; i < count; i++)
@@ -5618,18 +5618,18 @@ Policy *DatabaseModel::createPolicy(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 											.arg(BaseObject::getTypeName(ObjectType::Policy))
-											.arg(attribs[ParsersAttributes::TABLE])
+											.arg(attribs[Attributes::TABLE])
 											.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::True);
-		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
+		policy->setPermissive(attribs[Attributes::PERMISSIVE] == Attributes::True);
+		policy->setPolicyCommand(PolicyCmdType(attribs[Attributes::Command]));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5639,27 +5639,27 @@ Policy *DatabaseModel::createPolicy(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::EXPRESSION)
+					if(elem==Attributes::EXPRESSION)
 					{
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
 
-						if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::USING_EXP)
+						if(attribs[Attributes::TYPE] == Attributes::USING_EXP)
 							policy->setUsingExpression(xmlparser.getElementContent());
-						else if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::CheckExp)
+						else if(attribs[Attributes::TYPE] == Attributes::CheckExp)
 							policy->setCheckExpression(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
 					}
-					else if(xmlparser.getElementName()==ParsersAttributes::ROLES)
+					else if(xmlparser.getElementName()==Attributes::ROLES)
 					{
 						QStringList rol_names;
 						Role *role = nullptr;
 
 						xmlparser.getElementAttributes(attribs);
 
-						rol_names = attribs[ParsersAttributes::NAMES].split(',');
+						rol_names = attribs[Attributes::NAMES].split(',');
 
 						for(auto &name : rol_names)
 						{
@@ -5708,7 +5708,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 		event_trig=new EventTrigger;
 		setBasicAttributes(event_trig);
 		xmlparser.getElementAttributes(attribs);
-		event_trig->setEvent(EventTriggerType(attribs[ParsersAttributes::EVENT]));
+		event_trig->setEvent(EventTriggerType(attribs[Attributes::EVENT]));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5718,28 +5718,28 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::FUNCTION)
+					if(elem==Attributes::FUNCTION)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[ParsersAttributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(event_trig->getName())
 											.arg(event_trig->getTypeName())
-											.arg(attribs[ParsersAttributes::SIGNATURE])
+											.arg(attribs[Attributes::SIGNATURE])
 									.arg(BaseObject::getTypeName(ObjectType::Function)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 
 						event_trig->setFunction(dynamic_cast<Function *>(func));
 					}
-					else if(elem==ParsersAttributes::FILTER)
+					else if(elem==Attributes::FILTER)
 					{
 						xmlparser.getElementAttributes(attribs);
-						event_trig->setFilter(attribs[ParsersAttributes::VARIABLE], attribs[ParsersAttributes::VALUES].split(','));
+						event_trig->setFilter(attribs[Attributes::VARIABLE], attribs[Attributes::VALUES].split(','));
 					}
 				}
 			}
@@ -5768,7 +5768,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
-			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == ParsersAttributes::DEFINITION)
+			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == Attributes::DEFINITION)
 			{
 				xmlparser.accessElement(XmlParser::ChildElement);
 				genericsql->setDefinition(xmlparser.getElementContent());
@@ -5800,18 +5800,18 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 		setBasicAttributes(sequence);
 		xmlparser.getElementAttributes(attribs);
 
-		sequence->setValues(attribs[ParsersAttributes::MIN_VALUE],
-				attribs[ParsersAttributes::MAX_VALUE],
-				attribs[ParsersAttributes::INCREMENT],
-				attribs[ParsersAttributes::START],
-				attribs[ParsersAttributes::Cache]);
+		sequence->setValues(attribs[Attributes::MIN_VALUE],
+				attribs[Attributes::MAX_VALUE],
+				attribs[Attributes::INCREMENT],
+				attribs[Attributes::START],
+				attribs[Attributes::Cache]);
 
-		sequence->setCycle(attribs[ParsersAttributes::CYCLE]==ParsersAttributes::True);
+		sequence->setCycle(attribs[Attributes::Cycle]==Attributes::True);
 
 		//Getting the sequence's owner column
-		if(!attribs[ParsersAttributes::OWNER_COLUMN].isEmpty())
+		if(!attribs[Attributes::OWNER_COLUMN].isEmpty())
 		{
-			elem_list=attribs[ParsersAttributes::OWNER_COLUMN].split('.');
+			elem_list=attribs[Attributes::OWNER_COLUMN].split('.');
 			count=elem_list.count();
 
 			if(count==3)
@@ -5883,12 +5883,12 @@ View *DatabaseModel::createView(void)
 		setBasicAttributes(view);
 
 		xmlparser.getElementAttributes(attribs);
-		view->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
-		view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::True);
-		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::True);
-		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::True);
-		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
-		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+		view->setObjectListsCapacity(attribs[Attributes::MAX_OBJ_COUNT].toUInt());
+		view->setMaterialized(attribs[Attributes::MATERIALIZED]==Attributes::True);
+		view->setRecursive(attribs[Attributes::RECURSIVE]==Attributes::True);
+		view->setWithNoData(attribs[Attributes::WITH_NO_DATA]==Attributes::True);
+		view->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
+		view->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5898,15 +5898,15 @@ View *DatabaseModel::createView(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::REFERENCE)
+					if(elem==Attributes::REFERENCE)
 					{
 						xmlparser.getElementAttributes(attribs);
 
 						//If the table name is specified tries to create a reference to a table/column
-						if(!attribs[ParsersAttributes::TABLE].isEmpty())
+						if(!attribs[Attributes::TABLE].isEmpty())
 						{
 							column=nullptr;
-							table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], ObjectType::Table));
+							table=dynamic_cast<Table *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
 
 							//Raises an error if the table doesn't exists
 							if(!table)
@@ -5914,18 +5914,18 @@ View *DatabaseModel::createView(void)
 								str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 										.arg(view->getName())
 										.arg(BaseObject::getTypeName(ObjectType::View))
-										.arg(attribs[ParsersAttributes::TABLE])
+										.arg(attribs[Attributes::TABLE])
 										.arg(BaseObject::getTypeName(ObjectType::Table));
 
 								throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
 
-							if(!attribs[ParsersAttributes::COLUMN].isEmpty())
+							if(!attribs[Attributes::Column].isEmpty())
 							{
-								column=table->getColumn(attribs[ParsersAttributes::COLUMN]);
+								column=table->getColumn(attribs[Attributes::Column]);
 
 								if(!column)
-									column=table->getColumn(attribs[ParsersAttributes::COLUMN], true);
+									column=table->getColumn(attribs[Attributes::Column], true);
 
 								//Raises an error if the view references an inexistant column
 								if(!column)
@@ -5933,8 +5933,8 @@ View *DatabaseModel::createView(void)
 									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[ParsersAttributes::TABLE] + QString(".") +
-											attribs[ParsersAttributes::COLUMN])
+											.arg(attribs[Attributes::TABLE] + QString(".") +
+											attribs[Attributes::Column])
 											.arg(BaseObject::getTypeName(ObjectType::Column));
 
 									throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5943,41 +5943,41 @@ View *DatabaseModel::createView(void)
 
 							//Adds the configured reference to a temporarily list
 							reference = Reference(table, column,
-																		attribs[ParsersAttributes::Alias],
-																		attribs[ParsersAttributes::COLUMN_ALIAS]);
-							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
+																		attribs[Attributes::Alias],
+																		attribs[Attributes::ColumnAlias]);
+							reference.setReferenceAlias(attribs[Attributes::REF_ALIAS]);
 							refs.push_back(reference);
 						}
 						else
 						{
 							xmlparser.savePosition();
-							str_aux=attribs[ParsersAttributes::Alias];
+							str_aux=attribs[Attributes::Alias];
 
 							xmlparser.accessElement(XmlParser::ChildElement);
 							xmlparser.accessElement(XmlParser::ChildElement);
 
 							reference = Reference(xmlparser.getElementContent(),str_aux);
-							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
+							reference.setReferenceAlias(attribs[Attributes::REF_ALIAS]);
 							refs.push_back(reference);
 
 							xmlparser.restorePosition();
 						}
 					}
-					else if(elem==ParsersAttributes::EXPRESSION)
+					else if(elem==Attributes::EXPRESSION)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XmlParser::ChildElement);
 
-						if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CTE_EXPRESSION)
+						if(attribs[Attributes::TYPE]==Attributes::CteExpression)
 							view->setCommomTableExpression(xmlparser.getElementContent());
 						else
 						{
-							if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
+							if(attribs[Attributes::TYPE]==Attributes::SELECT_EXP)
 								type=Reference::SqlReferSelect;
-							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
+							else if(attribs[Attributes::TYPE]==Attributes::FROM_EXP)
 								type=Reference::SqlReferFrom;
-							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SIMPLE_EXP)
+							else if(attribs[Attributes::TYPE]==Attributes::SIMPLE_EXP)
 								type=Reference::SqlReferWhere;
 							else
 								type=Reference::SqlReferEndExpr;
@@ -6001,14 +6001,14 @@ View *DatabaseModel::createView(void)
 					else if(elem==BaseObject::getSchemaName(ObjectType::Tag))
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						tag=getObject(aux_attribs[ParsersAttributes::NAME] ,ObjectType::Tag);
+						tag=getObject(aux_attribs[Attributes::NAME] ,ObjectType::Tag);
 
 						if(!tag)
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[ParsersAttributes::NAME])
+											.arg(attribs[Attributes::NAME])
 									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[ParsersAttributes::TABLE])
+									.arg(aux_attribs[Attributes::TABLE])
 									.arg(BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -6065,16 +6065,16 @@ Collation *DatabaseModel::createCollation(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		encoding=EncodingType(attribs[ParsersAttributes::ENCODING]);
+		encoding=EncodingType(attribs[Attributes::ENCODING]);
 		collation->setEncoding(encoding);
 
 		//Creating a collation from a base locale
-		if(!attribs[ParsersAttributes::LOCALE].isEmpty())
-			collation->setLocale(attribs[ParsersAttributes::LOCALE]);
+		if(!attribs[Attributes::LOCALE].isEmpty())
+			collation->setLocale(attribs[Attributes::LOCALE]);
 		//Creating a collation from another collation
-		else if(!attribs[ParsersAttributes::COLLATION].isEmpty())
+		else if(!attribs[Attributes::Collation].isEmpty())
 		{
-			copy_coll=this->getObject(attribs[ParsersAttributes::COLLATION], ObjectType::Collation);
+			copy_coll=this->getObject(attribs[Attributes::Collation], ObjectType::Collation);
 
 			//Raises an error if the copy collation doesn't exists
 			if(!copy_coll)
@@ -6082,7 +6082,7 @@ Collation *DatabaseModel::createCollation(void)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(collation->getName())
 								.arg(BaseObject::getTypeName(ObjectType::Collation))
-								.arg(attribs[ParsersAttributes::COLLATION])
+								.arg(attribs[Attributes::Collation])
 						.arg(BaseObject::getTypeName(ObjectType::Collation)),
 						ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -6092,8 +6092,8 @@ Collation *DatabaseModel::createCollation(void)
 		//Creating a collation using LC_COLLATE and LC_CTYPE params
 		else
 		{
-			collation->setLocalization(Collation::LcCollate, attribs[ParsersAttributes::LcCollate]);
-			collation->setLocalization(Collation::LcCtype, attribs[ParsersAttributes::LcCtype]);
+			collation->setLocalization(Collation::LcCollate, attribs[Attributes::LcCollate]);
+			collation->setLocalization(Collation::LcCtype, attribs[Attributes::LcCtype]);
 		}
 	}
 	catch(Exception &e)
@@ -6116,9 +6116,9 @@ Extension *DatabaseModel::createExtension(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
-		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::True);
-		extension->setVersion(Extension::CurVersion, attribs[ParsersAttributes::CUR_VERSION]);
-		extension->setVersion(Extension::OldVersion, attribs[ParsersAttributes::OLD_VERSION]);
+		extension->setHandlesType(attribs[Attributes::HANDLES_TYPE]==Attributes::True);
+		extension->setVersion(Extension::CurVersion, attribs[Attributes::CurVersion]);
+		extension->setVersion(Extension::OldVersion, attribs[Attributes::OLD_VERSION]);
 	}
 	catch(Exception &e)
 	{
@@ -6148,10 +6148,10 @@ Tag *DatabaseModel::createTag(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::STYLE)
+					if(elem==Attributes::STYLE)
 					{
 						xmlparser.getElementAttributes(attribs);
-						tag->setElementColors(attribs[ParsersAttributes::ID],attribs[ParsersAttributes::COLORS]);
+						tag->setElementColors(attribs[Attributes::ID],attribs[Attributes::Colors]);
 					}
 				}
 			}
@@ -6179,16 +6179,16 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
-		txtbox->setTextAttribute(Textbox::ItalicText, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
-		txtbox->setTextAttribute(Textbox::BoldText, attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
-		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
+		txtbox->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
+		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::ITALIC]==Attributes::True);
+		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
+		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::UNDERLINE]==Attributes::True);
 
-		if(!attribs[ParsersAttributes::COLOR].isEmpty())
-			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
+		if(!attribs[Attributes::Color].isEmpty())
+			txtbox->setTextColor(QColor(attribs[Attributes::Color]));
 
-		if(!attribs[ParsersAttributes::FONT_SIZE].isEmpty())
-			txtbox->setFontSize(attribs[ParsersAttributes::FONT_SIZE].toDouble());
+		if(!attribs[Attributes::FONT_SIZE].isEmpty())
+			txtbox->setFontSize(attribs[Attributes::FONT_SIZE].toDouble());
 	}
 	catch(Exception &e)
 	{
@@ -6213,33 +6213,33 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	unsigned rel_type=0, i;
 	ObjectType table_types[2]={ObjectType::View, ObjectType::Table}, obj_rel_type;
 	QString str_aux, elem,
-			tab_attribs[2]={ ParsersAttributes::SRC_TABLE,
-							 ParsersAttributes::DST_TABLE };
+			tab_attribs[2]={ Attributes::SRC_TABLE,
+							 Attributes::DST_TABLE };
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
 
 	try
 	{
-		labels_id[ParsersAttributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
-		labels_id[ParsersAttributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
-		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DstCardLabel;
+		labels_id[Attributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
+		labels_id[Attributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_id[Attributes::DST_LABEL]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
-		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
-		faded_out=(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+		protect=(attribs[Attributes::PROTECTED]==Attributes::True);
+		faded_out=(attribs[Attributes::FADED_OUT]==Attributes::True);
 
-		if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
-			custom_color=QColor(attribs[ParsersAttributes::CUSTOM_COLOR]);
+		if(!attribs[Attributes::CustomColor].isEmpty())
+			custom_color=QColor(attribs[Attributes::CustomColor]);
 
-		if(attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW &&
-				attribs[ParsersAttributes::TYPE]!=ParsersAttributes::RELATIONSHIP_FK)
+		if(attribs[Attributes::TYPE]!=Attributes::RELATION_TAB_VIEW &&
+				attribs[Attributes::TYPE]!=Attributes::RELATIONSHIP_FK)
 		{
 			table_types[0]=ObjectType::Table;
 			obj_rel_type=ObjectType::Relationship;
 		}
 		else
 		{
-			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_FK)
 				table_types[0]=ObjectType::Table;
 
 			obj_rel_type=ObjectType::BaseRelationship;
@@ -6254,7 +6254,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			if(!tables[i])
 			{
 				str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-						.arg(attribs[ParsersAttributes::NAME])
+						.arg(attribs[Attributes::NAME])
 						.arg(BaseObject::getTypeName(obj_rel_type))
 						.arg(attribs[tab_attribs[i]])
 						.arg(BaseObject::getTypeName(table_types[i]));
@@ -6269,11 +6269,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
 			added to the table after its creation. */
-			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_FK)
 			{
 				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
-				base_rel->setName(attribs[ParsersAttributes::NAME]);
-				base_rel->setAlias(attribs[ParsersAttributes::Alias]);
+				base_rel->setName(attribs[Attributes::NAME]);
+				base_rel->setAlias(attribs[Attributes::Alias]);
 				addRelationship(base_rel);
 
 				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
@@ -6300,20 +6300,20 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					if(!base_rel->getReferenceForeignKey())
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvAllocationFKRelationship)
-									  .arg(attribs[ParsersAttributes::NAME])
+										.arg(attribs[Attributes::NAME])
 									  .arg(src_tab->getName(true)),
 										ErrorCode::InvAllocationFKRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 				}
 			}
 			else if(base_rel)
-				base_rel->setName(attribs[ParsersAttributes::NAME]);
+				base_rel->setName(attribs[Attributes::NAME]);
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(this->getName())
 								.arg(this->getTypeName())
-								.arg(attribs[ParsersAttributes::NAME])
+								.arg(attribs[Attributes::NAME])
 					.arg(BaseObject::getTypeName(ObjectType::BaseRelationship)),
 					ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -6323,10 +6323,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		}
 		else
 		{
-			QString pat_attrib[]= { ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN,
-									ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN,
-									ParsersAttributes::PK_PATTERN, ParsersAttributes::UQ_PATTERN,
-									ParsersAttributes::PK_COL_PATTERN };
+			QString pat_attrib[]= { Attributes::SRC_COL_PATTERN, Attributes::DST_COL_PATTERN,
+									Attributes::SRC_FK_PATTERN, Attributes::DST_FK_PATTERN,
+									Attributes::PK_PATTERN, Attributes::UQ_PATTERN,
+									Attributes::PK_COL_PATTERN };
 
 			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
 										Relationship::SrcFkPattern, Relationship::DstFkPattern,
@@ -6334,27 +6334,27 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 										Relationship::PkColPattern },
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
-			sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True;
-			src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::True;
-			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::True;
-			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::True;
-			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True;
-			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
-			del_action=ActionType(attribs[ParsersAttributes::DEL_ACTION]);
-			upd_action=ActionType(attribs[ParsersAttributes::UPD_ACTION]);
-			single_pk_col=(attribs[ParsersAttributes::SINGLE_PK_COLUMN]==ParsersAttributes::True);
+			sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
+			src_mand=attribs[Attributes::SRC_REQUIRED]==Attributes::True;
+			dst_mand=attribs[Attributes::DST_REQUIRED]==Attributes::True;
+			identifier=attribs[Attributes::IDENTIFIER]==Attributes::True;
+			deferrable=attribs[Attributes::DEFERRABLE]==Attributes::True;
+			defer_type=DeferralType(attribs[Attributes::DEFER_TYPE]);
+			del_action=ActionType(attribs[Attributes::DEL_ACTION]);
+			upd_action=ActionType(attribs[Attributes::UPD_ACTION]);
+			single_pk_col=(attribs[Attributes::SINGLE_PK_COLUMN]==Attributes::True);
 
-			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
+			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_11)
 				rel_type=BaseRelationship::Relationship11;
-			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_1N)
+			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_1N)
 				rel_type=BaseRelationship::Relationship1n;
-			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_NN)
+			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_NN)
 				rel_type=BaseRelationship::RelationshipNn;
-			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
+			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_GEN)
 				rel_type=BaseRelationship::RelationshipGen;
-			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
+			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_DEP)
 				rel_type=BaseRelationship::RelationshipDep;
-			else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_PART)
+			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_PART)
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
@@ -6362,17 +6362,17 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					dynamic_cast<Table *>(tables[1]),
 					src_mand, dst_mand,
 					identifier, deferrable, defer_type, del_action, upd_action,
-					CopyOptions(attribs[ParsersAttributes::COPY_MODE].toUInt(),
-					attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
+					CopyOptions(attribs[Attributes::CopyMode].toUInt(),
+					attribs[Attributes::CopyOptions].toUInt()));
 
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);
 
-			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
-				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
+			if(!attribs[Attributes::TABLE_NAME].isEmpty())
+				rel->setTableNameRelNN(attribs[Attributes::TABLE_NAME]);
 
-			rel->setName(attribs[ParsersAttributes::NAME]);
-			rel->setAlias(attribs[ParsersAttributes::Alias]);
+			rel->setName(attribs[Attributes::NAME]);
+			rel->setAlias(attribs[Attributes::Alias]);
 			base_rel=rel;
 
 			//Configuring the name patterns
@@ -6388,20 +6388,20 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem == ParsersAttributes::EXPRESSION && rel)
+					if(elem == Attributes::EXPRESSION && rel)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
 						rel->setPartitionBoundingExpr(xmlparser.getElementContent());
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::COLUMN && rel)
+					else if(elem==Attributes::Column && rel)
 					{
 						xmlparser.savePosition();
 						rel->addObject(createColumn());
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::CONSTRAINT && rel)
+					else if(elem==Attributes::Constraint && rel)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(constr_attribs);
@@ -6411,9 +6411,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						 * the relationship contains a special primary key (created during relationship connection)
 						 * and the current constraint is the original one owned by one of the tables prior the connection
 						 * of the relationship. */
-						if(constr_attribs[ParsersAttributes::TYPE] == ParsersAttributes::PK_CONSTR)
+						if(constr_attribs[Attributes::TYPE] == Attributes::PK_CONSTR)
 						{
-							table = getTable(constr_attribs[ParsersAttributes::TABLE]);
+							table = getTable(constr_attribs[Attributes::TABLE]);
 							rel->setOriginalPrimaryKey(createConstraint(table));
 						}
 						else
@@ -6421,7 +6421,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::LINE)
+					else if(elem==Attributes::LINE)
 					{
 						vector<QPointF> points;
 						xmlparser.savePosition();
@@ -6430,18 +6430,18 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						do
 						{
 							xmlparser.getElementAttributes(attribs);
-							points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toDouble(),
-											 attribs[ParsersAttributes::Y_POS].toDouble()));
+							points.push_back(QPointF(attribs[Attributes::X_POS].toDouble(),
+											 attribs[Attributes::Y_POS].toDouble()));
 						}
 						while(xmlparser.accessElement(XmlParser::NextElement));
 
 						base_rel->setPoints(points);
 						xmlparser.restorePosition();
 					}
-					else if(elem==ParsersAttributes::LABEL)
+					else if(elem==Attributes::LABEL)
 					{
 						xmlparser.getElementAttributes(attribs);
-						str_aux=attribs[ParsersAttributes::REF_TYPE];
+						str_aux=attribs[Attributes::REF_TYPE];
 
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -6449,15 +6449,15 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						xmlparser.restorePosition();
 
 						base_rel->setLabelDistance(labels_id[str_aux],
-												   QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
-												   attribs[ParsersAttributes::Y_POS].toFloat()));
+													 QPointF(attribs[Attributes::X_POS].toFloat(),
+													 attribs[Attributes::Y_POS].toFloat()));
 					}
-					else if(elem==ParsersAttributes::SPECIAL_PK_COLS && rel)
+					else if(elem==Attributes::SPECIAL_PK_COLS && rel)
 					{
 						QList<QString> col_list;
 
 						xmlparser.getElementAttributes(attribs);
-						col_list=attribs[ParsersAttributes::INDEXES].split(',');
+						col_list=attribs[Attributes::INDEXES].split(',');
 
 						while(!col_list.isEmpty())
 						{
@@ -6519,16 +6519,16 @@ Permission *DatabaseModel::createPermission(void)
 	try
 	{
 		xmlparser.getElementAttributes(priv_attribs);
-		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::True;
-		cascade=priv_attribs[ParsersAttributes::Cascade]==ParsersAttributes::True;
+		revoke=priv_attribs[Attributes::REVOKE]==Attributes::True;
+		cascade=priv_attribs[Attributes::Cascade]==Attributes::True;
 
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
 		xmlparser.getElementAttributes(attribs);
 
-		obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
-		obj_name=attribs[ParsersAttributes::NAME];
-		parent_name=attribs[ParsersAttributes::PARENT];
+		obj_type=BaseObject::getObjectType(attribs[Attributes::TYPE]);
+		obj_name=attribs[Attributes::NAME];
+		parent_name=attribs[Attributes::PARENT];
 
 		//If the object is a column its needed to get the parent table
 		if(obj_type==ObjectType::Column)
@@ -6558,11 +6558,11 @@ Permission *DatabaseModel::createPermission(void)
 
 		do
 		{
-			if(xmlparser.getElementName()==ParsersAttributes::ROLES)
+			if(xmlparser.getElementName()==Attributes::ROLES)
 			{
 				xmlparser.getElementAttributes(attribs);
 
-				list=attribs[ParsersAttributes::NAMES].split(',');
+				list=attribs[Attributes::NAMES].split(',');
 				len=list.size();
 
 				for(i=0; i < len; i++)
@@ -6582,7 +6582,7 @@ Permission *DatabaseModel::createPermission(void)
 					perm->addRole(role);
 				}
 			}
-			else if(xmlparser.getElementName()==ParsersAttributes::PRIVILEGES)
+			else if(xmlparser.getElementName()==Attributes::PRIVILEGES)
 			{
 				xmlparser.getElementAttributes(priv_attribs);
 
@@ -6591,34 +6591,34 @@ Permission *DatabaseModel::createPermission(void)
 
 				while(itr!=itr_end)
 				{
-					if(itr->first!=ParsersAttributes::GRANT_OP)
+					if(itr->first!=Attributes::GRANT_OP)
 					{
-						priv_value=(itr->second==ParsersAttributes::True);
-						grant_op=(itr->second==ParsersAttributes::GRANT_OP);
+						priv_value=(itr->second==Attributes::True);
+						grant_op=(itr->second==Attributes::GRANT_OP);
 
-						if(itr->first==ParsersAttributes::CONNECT_PRIV)
+						if(itr->first==Attributes::ConnectPriv)
 							priv_type=Permission::PrivConnect;
-						else if(itr->first==ParsersAttributes::CREATE_PRIV)
+						else if(itr->first==Attributes::CreatePriv)
 							priv_type=Permission::PrivCreate;
-						else if(itr->first==ParsersAttributes::DELETE_PRIV)
+						else if(itr->first==Attributes::DELETE_PRIV)
 							priv_type=Permission::PrivDelete;
-						else if(itr->first==ParsersAttributes::EXECUTE_PRIV)
+						else if(itr->first==Attributes::EXECUTE_PRIV)
 							priv_type=Permission::PrivExecute;
-						else if(itr->first==ParsersAttributes::INSERT_PRIV)
+						else if(itr->first==Attributes::INSERT_PRIV)
 							priv_type=Permission::PrivInsert;
-						else if(itr->first==ParsersAttributes::REFERENCES_PRIV)
+						else if(itr->first==Attributes::REFERENCES_PRIV)
 							priv_type=Permission::PrivReferences;
-						else if(itr->first==ParsersAttributes::SELECT_PRIV)
+						else if(itr->first==Attributes::SELECT_PRIV)
 							priv_type=Permission::PrivSelect;
-						else if(itr->first==ParsersAttributes::TEMPORARY_PRIV)
+						else if(itr->first==Attributes::TEMPORARY_PRIV)
 							priv_type=Permission::PrivTemporary;
-						else if(itr->first==ParsersAttributes::TRIGGER_PRIV)
+						else if(itr->first==Attributes::TRIGGER_PRIV)
 							priv_type=Permission::PrivTrigger;
-						else if(itr->first==ParsersAttributes::TRUNCATE_PRIV)
+						else if(itr->first==Attributes::TRUNCATE_PRIV)
 							priv_type=Permission::PrivTruncate;
-						else if(itr->first==ParsersAttributes::UPDATE_PRIV)
+						else if(itr->first==Attributes::UPDATE_PRIV)
 							priv_type=Permission::PrivUpdate;
-						else if(itr->first==ParsersAttributes::USAGE_PRIV)
+						else if(itr->first==Attributes::USAGE_PRIV)
 							priv_type=Permission::PrivUsage;
 
 						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
@@ -6716,18 +6716,18 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	QString def, bkp_appended_sql, bkp_prepended_sql;
 
 	//Forcing the name/signature cleanup due to the validation temp. names feature
-	attributes[ParsersAttributes::NAME]=QString();
-	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[Attributes::NAME]=QString();
+	attributes[Attributes::SIGNATURE]=QString();
 
 	if(conn_limit >= 0)
-		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
+		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		QString loc_attribs[]={ ParsersAttributes::LcCtype,  ParsersAttributes::LcCollate };
+		QString loc_attribs[]={ Attributes::LcCtype,  Attributes::LcCollate };
 
 		if(encoding!=BaseType::Null)
-			attributes[ParsersAttributes::ENCODING]=QString("'%1'").arg(~encoding);
+			attributes[Attributes::ENCODING]=QString("'%1'").arg(~encoding);
 
 		for(unsigned i=0; i < 2; i++)
 		{
@@ -6739,16 +6739,16 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	}
 	else
 	{
-		attributes[ParsersAttributes::ENCODING]=(~encoding);
-		attributes[ParsersAttributes::LcCollate]=localizations[1];
-		attributes[ParsersAttributes::LcCtype]=localizations[0];
-		attributes[ParsersAttributes::AppendAtEod]=(append_at_eod ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::PREPEND_AT_BOD]=(prepend_at_bod ? ParsersAttributes::True : QString());
+		attributes[Attributes::ENCODING]=(~encoding);
+		attributes[Attributes::LcCollate]=localizations[1];
+		attributes[Attributes::LcCtype]=localizations[0];
+		attributes[Attributes::AppendAtEod]=(append_at_eod ? Attributes::True : QString());
+		attributes[Attributes::PREPEND_AT_BOD]=(prepend_at_bod ? Attributes::True : QString());
 	}
 
-	attributes[ParsersAttributes::IS_TEMPLATE]=(is_template ? ParsersAttributes::True : ParsersAttributes::False);
-	attributes[ParsersAttributes::AllowConns]=(allow_conns ? ParsersAttributes::True : ParsersAttributes::False);
-	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
+	attributes[Attributes::IS_TEMPLATE]=(is_template ? Attributes::True : Attributes::False);
+	attributes[Attributes::AllowConns]=(allow_conns ? Attributes::True : Attributes::False);
+	attributes[Attributes::TEMPLATE_DB]=template_db;
 
 	if(def_type==SchemaParser::SqlDefinition && append_at_eod)
 	{
@@ -6795,7 +6795,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
 			msg=trUtf8("Generating %1 code: `%2' (%3)"),
-			attrib=ParsersAttributes::OBJECTS, attrib_aux,
+			attrib=Attributes::OBJECTS, attrib_aux,
 			def_type_str=(def_type==SchemaParser::SqlDefinition ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
 	map<unsigned, BaseObject *> objects_map;
@@ -6807,15 +6807,15 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		general_obj_cnt=objects_map.size();
 		gen_defs_count=0;
 
-		attribs_aux[ParsersAttributes::SHELL_TYPES]=QString();
-		attribs_aux[ParsersAttributes::PERMISSION]=QString();
-		attribs_aux[ParsersAttributes::SCHEMA]=QString();
-		attribs_aux[ParsersAttributes::TABLESPACE]=QString();
-		attribs_aux[ParsersAttributes::ROLE]=QString();
+		attribs_aux[Attributes::SHELL_TYPES]=QString();
+		attribs_aux[Attributes::PERMISSION]=QString();
+		attribs_aux[Attributes::SCHEMA]=QString();
+		attribs_aux[Attributes::TABLESPACE]=QString();
+		attribs_aux[Attributes::ROLE]=QString();
 
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::True : QString());
+			attribs_aux[Attributes::FUNCTION]=(!functions.empty() ? Attributes::True : QString());
 
 			for(auto &type : types)
 			{
@@ -6837,7 +6837,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 				//Generating the shell type declaration (only for base types)
 				if(usr_type->getConfiguration()==Type::BaseType)
-					attribs_aux[ParsersAttributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
+					attribs_aux[Attributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
 				else
 					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 			}
@@ -6863,7 +6863,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 			else if(obj_type==ObjectType::Permission)
 			{
-				attribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
+				attribs_aux[Attributes::PERMISSION]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
 			}
 			else if(obj_type==ObjectType::Constraint)
 			{
@@ -6925,20 +6925,20 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		attribs_aux[ParsersAttributes::SEARCH_PATH]=search_path;
-		attribs_aux[ParsersAttributes::MODEL_AUTHOR]=author;
-		attribs_aux[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
+		attribs_aux[Attributes::SEARCH_PATH]=search_path;
+		attribs_aux[Attributes::MODEL_AUTHOR]=author;
+		attribs_aux[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
 
 		if(def_type==SchemaParser::XmlDefinition)
 		{
-			attribs_aux[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-			attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::True : QString());
-			attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-			attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
-			attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
-			attribs_aux[ParsersAttributes::DEFAULT_OWNER]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : QString());
-			attribs_aux[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : QString());
-			attribs_aux[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : QString());
+			attribs_aux[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+			attribs_aux[Attributes::PROTECTED]=(this->is_protected ? Attributes::True : QString());
+			attribs_aux[Attributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+			attribs_aux[Attributes::LAST_ZOOM]=QString::number(last_zoom);
+			attribs_aux[Attributes::DEFAULT_SCHEMA]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
+			attribs_aux[Attributes::DEFAULT_OWNER]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : QString());
+			attribs_aux[Attributes::DEFAULT_TABLESPACE]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : QString());
+			attribs_aux[Attributes::DEFAULT_COLLATION]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : QString());
 		}
 		else
 		{
@@ -6970,8 +6970,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::True : QString());
-	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
+	attribs_aux[Attributes::EXPORT_TO_FILE]=(export_file ? Attributes::True : QString());
+	def=schparser.getCodeDefinition(Attributes::DB_MODEL, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
 		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + QString("\n---\n\n") + def;
@@ -9504,9 +9504,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
 			save_extattribs=false, save_genericsqls=false, save_objs_aliases=false;
-	QStringList labels_attrs={ ParsersAttributes::SRC_LABEL,
-														 ParsersAttributes::DST_LABEL,
-														 ParsersAttributes::NAME_LABEL };
+	QStringList labels_attrs={ Attributes::SRC_LABEL,
+														 Attributes::DST_LABEL,
+														 Attributes::NAME_LABEL };
 
 	save_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	save_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -9628,40 +9628,40 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 			base_tab=dynamic_cast<BaseTable *>(object);
 
-			attribs[ParsersAttributes::TABLE]=QString();
-			attribs[ParsersAttributes::NAME]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
-			attribs[ParsersAttributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
-			attribs[ParsersAttributes::TYPE]=object->getSchemaName();
-			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::True : QString());
-			attribs[ParsersAttributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? ParsersAttributes::True : QString());
-			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
-			attribs[ParsersAttributes::AppendedSql]=object->getAppendedSQL();
-			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
-			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::True : QString());
-			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::True : QString());
+			attribs[Attributes::TABLE]=QString();
+			attribs[Attributes::NAME]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
+			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
+			attribs[Attributes::TYPE]=object->getSchemaName();
+			attribs[Attributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
+			attribs[Attributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
+			attribs[Attributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
+			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
+			attribs[Attributes::PREPENDED_SQL]=object->getPrependedSQL();
+			attribs[Attributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
+			attribs[Attributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
 
 			if(TableObject::isTableObject(obj_type))
 			{
 				base_tab = dynamic_cast<TableObject *>(object)->getParentTable();
-				attribs[ParsersAttributes::TABLE]=base_tab->getSignature();
+				attribs[Attributes::TABLE]=base_tab->getSignature();
 			}
 
 			if(save_custom_sql && obj_type==ObjectType::Database)
 			{
-				attribs[ParsersAttributes::AppendAtEod]=(this->isAppendAtEOD() ? ParsersAttributes::True : ParsersAttributes::False);
-				attribs[ParsersAttributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? ParsersAttributes::True : ParsersAttributes::False);
+				attribs[Attributes::AppendAtEod]=(this->isAppendAtEOD() ? Attributes::True : Attributes::False);
+				attribs[Attributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? Attributes::True : Attributes::False);
 			}
 
 			//Configuring database model attributes
 			if(save_db_attribs && object==this)
 			{			
-				attribs[ParsersAttributes::MODEL_AUTHOR]=this->getAuthor();
-				attribs[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-				attribs[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
-				attribs[ParsersAttributes::DEFAULT_COLLATION]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_TABLESPACE]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : QString());
-				attribs[ParsersAttributes::DEFAULT_OWNER]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : QString());
+				attribs[Attributes::MODEL_AUTHOR]=this->getAuthor();
+				attribs[Attributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+				attribs[Attributes::LAST_ZOOM]=QString::number(last_zoom);
+				attribs[Attributes::DEFAULT_COLLATION]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getSignature() : QString());
+				attribs[Attributes::DEFAULT_SCHEMA]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : QString());
+				attribs[Attributes::DEFAULT_TABLESPACE]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : QString());
+				attribs[Attributes::DEFAULT_OWNER]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : QString());
 			}
 
 			//If the object is a graphic one and we need to save positions and colors
@@ -9675,28 +9675,28 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schema=dynamic_cast<Schema *>(object);
 
-						attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors ? schema->getFillColor().name() : QString());
-						attribs[ParsersAttributes::RECT_VISIBLE]=(schema->isRectVisible() ? ParsersAttributes::True : ParsersAttributes::False);
+						attribs[Attributes::CustomColor]=(save_custom_colors ? schema->getFillColor().name() : QString());
+						attribs[Attributes::RECT_VISIBLE]=(schema->isRectVisible() ? Attributes::True : Attributes::False);
 
 						if(schema->isRectVisible())
 						{
-							attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
-							attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+							attribs[Attributes::X_POS]=QString::number(pnt.x());
+							attribs[Attributes::Y_POS]=QString::number(pnt.y());
 						}
 					}
 					else
 					{
-						attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
-						attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+						attribs[Attributes::X_POS]=QString::number(pnt.x());
+						attribs[Attributes::Y_POS]=QString::number(pnt.y());
 					}
 
-					if(obj_type!=ObjectType::Schema || !attribs[ParsersAttributes::X_POS].isEmpty())
+					if(obj_type!=ObjectType::Schema || !attribs[Attributes::X_POS].isEmpty())
 					{
 						schparser.ignoreUnkownAttributes(true);
-						attribs[ParsersAttributes::POSITION]=
+						attribs[Attributes::POSITION]=
 								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, attribs);
+																						Attributes::POSITION + GlobalAttributes::SchemaExt, attribs);
 					}
 				}
 				else
@@ -9706,24 +9706,24 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 					attribs_map aux_attribs;
 
-					attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : ParsersAttributes::NONE);
+					attribs[Attributes::CustomColor]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : Attributes::NONE);
 
-					attribs[ParsersAttributes::SRC_TABLE]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
-					attribs[ParsersAttributes::SRC_TYPE]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
+					attribs[Attributes::SRC_TABLE]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
+					attribs[Attributes::SRC_TYPE]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
 
-					attribs[ParsersAttributes::DST_TABLE]=rel->getTable(BaseRelationship::DstTable)->getSignature();
-					attribs[ParsersAttributes::DST_TYPE]=rel->getTable(BaseRelationship::DstTable)->getSchemaName();
+					attribs[Attributes::DST_TABLE]=rel->getTable(BaseRelationship::DstTable)->getSignature();
+					attribs[Attributes::DST_TYPE]=rel->getTable(BaseRelationship::DstTable)->getSchemaName();
 
 					for(QPointF pnt : points)
 					{
-						attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
-						attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
+						attribs[Attributes::X_POS]=QString::number(pnt.x());
+						attribs[Attributes::Y_POS]=QString::number(pnt.y());
 
 						schparser.ignoreUnkownAttributes(true);
-						attribs[ParsersAttributes::POSITION]+=
+						attribs[Attributes::POSITION]+=
 								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, attribs);
+																						Attributes::POSITION + GlobalAttributes::SchemaExt, attribs);
 					}
 
 					//Saving the labels' custom positions
@@ -9732,17 +9732,17 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						pnt=rel->getLabelDistance(id);
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
-							aux_attribs[ParsersAttributes::X_POS]=QString::number(pnt.x());
-							aux_attribs[ParsersAttributes::Y_POS]=QString::number(pnt.y());
-							aux_attribs[ParsersAttributes::REF_TYPE]=labels_attrs[id];
+							aux_attribs[Attributes::X_POS]=QString::number(pnt.x());
+							aux_attribs[Attributes::Y_POS]=QString::number(pnt.y());
+							aux_attribs[Attributes::REF_TYPE]=labels_attrs[id];
 
-							aux_attribs[ParsersAttributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+							aux_attribs[Attributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																									 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																									 ParsersAttributes::POSITION + GlobalAttributes::SchemaExt, aux_attribs);
+																																									 Attributes::POSITION + GlobalAttributes::SchemaExt, aux_attribs);
 
-							attribs[ParsersAttributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+							attribs[Attributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								ParsersAttributes::LABEL + GlobalAttributes::SchemaExt, aux_attribs);
+																																								Attributes::LABEL + GlobalAttributes::SchemaExt, aux_attribs);
 						}
 					}
 				}
@@ -9752,14 +9752,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[ParsersAttributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																							 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																							 QString(ParsersAttributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+																																							 QString(Attributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[ParsersAttributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[Attributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								QString(ParsersAttributes::PREPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+																																								QString(Attributes::PREPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 			}
 
 			/* The object's metadata code will be generated only if one of the key attributes
@@ -9767,18 +9767,18 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if((save_db_attribs && obj_type==ObjectType::Database) ||
 				 (save_custom_colors &&
 					((obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship) ||
-					 (!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty()))) ||
+					 (!attribs[Attributes::CustomColor].isEmpty()))) ||
 				 (save_objs_pos &&
-					(!attribs[ParsersAttributes::POSITION].isEmpty() ||
-					 !attribs[ParsersAttributes::RECT_VISIBLE].isEmpty())) ||
-				 (save_tags && !attribs[ParsersAttributes::TAG].isEmpty()) ||
-				 (save_objs_prot && !attribs[ParsersAttributes::PROTECTED].isEmpty()) ||
-				 (save_objs_sqldis && !attribs[ParsersAttributes::SQL_DISABLED].isEmpty()) ||
-				 (save_custom_sql && (!attribs[ParsersAttributes::AppendedSql].isEmpty() ||
-															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())) ||
-				 (save_fadeout && !attribs[ParsersAttributes::FADED_OUT].isEmpty()) ||
-				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()) ||
-				 (save_objs_aliases && !attribs[ParsersAttributes::Alias].isEmpty()))
+					(!attribs[Attributes::POSITION].isEmpty() ||
+					 !attribs[Attributes::RECT_VISIBLE].isEmpty())) ||
+				 (save_tags && !attribs[Attributes::TAG].isEmpty()) ||
+				 (save_objs_prot && !attribs[Attributes::PROTECTED].isEmpty()) ||
+				 (save_objs_sqldis && !attribs[Attributes::SQL_DISABLED].isEmpty()) ||
+				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
+															!attribs[Attributes::PREPENDED_SQL].isEmpty())) ||
+				 (save_fadeout && !attribs[Attributes::FADED_OUT].isEmpty()) ||
+				 (save_extattribs && !attribs[Attributes::HIDE_EXT_ATTRIBS].isEmpty()) ||
+				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
@@ -9788,7 +9788,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				objs_def+=schparser.convertCharsToXMLEntities(
 										schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																							GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																							ParsersAttributes::INFO + GlobalAttributes::SchemaExt, attribs));
+																							Attributes::INFO + GlobalAttributes::SchemaExt, attribs));
 			}
 			else
 				idx++;
@@ -9799,10 +9799,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		if(!objs_def.isEmpty())
 		{
 			//Generates the metadata XML buffer
-			attribs[ParsersAttributes::INFO]=objs_def;
+			attribs[Attributes::INFO]=objs_def;
 			buf.append(schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						 ParsersAttributes::METADATA + GlobalAttributes::SchemaExt, attribs));
+																						 Attributes::METADATA + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
 			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), ~ObjectType::BaseObject);
@@ -9860,9 +9860,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 	try
 	{
-		labels_attrs[ParsersAttributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
-		labels_attrs[ParsersAttributes::DST_LABEL]=BaseRelationship::DstCardLabel;
-		labels_attrs[ParsersAttributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
+		labels_attrs[Attributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_attrs[Attributes::DST_LABEL]=BaseRelationship::DstCardLabel;
+		labels_attrs[Attributes::NAME_LABEL]=BaseRelationship::RelNameLabel;
 
 		xmlparser.restartParser();
 
@@ -9904,27 +9904,27 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
-					else if(elem_name==ParsersAttributes::INFO)
+					else if(elem_name==Attributes::INFO)
 					{
 						xmlparser.getElementAttributes(attribs);
-						obj_name=attribs[ParsersAttributes::OBJECT];
+						obj_name=attribs[Attributes::OBJECT];
 						xmlparser.savePosition();
 
-						obj_type=BaseObject::getObjectType(attribs[ParsersAttributes::TYPE]);
+						obj_type=BaseObject::getObjectType(attribs[Attributes::TYPE]);
 						progress=xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()) * 100;
 
 						if(obj_type==ObjectType::Database)
 						{
 							if(load_db_attribs)
 							{
-								QStringList pos=attribs[ParsersAttributes::LAST_POSITION].split(',');
+								QStringList pos=attribs[Attributes::LAST_POSITION].split(',');
 
-								default_objs[ObjectType::Schema]=getSchema(attribs[ParsersAttributes::DEFAULT_SCHEMA]);
-								default_objs[ObjectType::Role]=getRole(attribs[ParsersAttributes::DEFAULT_OWNER]);
-								default_objs[ObjectType::Collation]=getCollation(attribs[ParsersAttributes::DEFAULT_COLLATION]);
-								default_objs[ObjectType::Tablespace]=getTablespace(attribs[ParsersAttributes::DEFAULT_TABLESPACE]);
-								author=attribs[ParsersAttributes::MODEL_AUTHOR];
-								last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toFloat();
+								default_objs[ObjectType::Schema]=getSchema(attribs[Attributes::DEFAULT_SCHEMA]);
+								default_objs[ObjectType::Role]=getRole(attribs[Attributes::DEFAULT_OWNER]);
+								default_objs[ObjectType::Collation]=getCollation(attribs[Attributes::DEFAULT_COLLATION]);
+								default_objs[ObjectType::Tablespace]=getTablespace(attribs[Attributes::DEFAULT_TABLESPACE]);
+								author=attribs[Attributes::MODEL_AUTHOR];
+								last_zoom=attribs[Attributes::LAST_ZOOM].toFloat();
 
 								if(pos.size()>=2)
 									last_pos=QPoint(pos[0].toFloat(), pos[1].toFloat());
@@ -9934,13 +9934,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						}
 						else if(TableObject::isTableObject(obj_type))
 						{
-							base_tab = getTable(attribs[ParsersAttributes::TABLE]);
+							base_tab = getTable(attribs[Attributes::TABLE]);
 
 							if(!base_tab && (obj_type == ObjectType::Rule || obj_type == ObjectType::Index || obj_type == ObjectType::Trigger))
-								base_tab = getView(attribs[ParsersAttributes::TABLE]);
+								base_tab = getView(attribs[Attributes::TABLE]);
 
 							if(base_tab)
-								object = base_tab->getObject(attribs[ParsersAttributes::OBJECT], obj_type);
+								object = base_tab->getObject(attribs[Attributes::OBJECT], obj_type);
 
 							//Discarding the object if it was added by relationship
 							if(object && dynamic_cast<TableObject *>(object)->isAddedByRelationship())
@@ -9953,10 +9953,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						 involving the tables in paramenters src-table and dst-table */
 						if(!object && obj_type==ObjectType::Relationship)
 						{
-							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::SRC_TABLE],
-																								BaseObject::getObjectType(attribs[ParsersAttributes::SRC_TYPE])));
-							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[ParsersAttributes::DST_TABLE],
-																								BaseObject::getObjectType(attribs[ParsersAttributes::DST_TYPE])));
+							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::SRC_TABLE],
+																								BaseObject::getObjectType(attribs[Attributes::SRC_TYPE])));
+							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::DST_TABLE],
+																								BaseObject::getObjectType(attribs[Attributes::DST_TYPE])));
 							object=getRelationship(src_tab, dst_tab);
 						}
 
@@ -9966,33 +9966,33 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																	.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
 
 							if(!object->isSystemObject() &&
-								 ((!attribs[ParsersAttributes::PROTECTED].isEmpty() && load_objs_prot) ||
-									(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
+								 ((!attribs[Attributes::PROTECTED].isEmpty() && load_objs_prot) ||
+									(!attribs[Attributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
 							{
-								if(!attribs[ParsersAttributes::PROTECTED].isEmpty())
-									object->setProtected(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
+								if(!attribs[Attributes::PROTECTED].isEmpty())
+									object->setProtected(attribs[Attributes::PROTECTED]==Attributes::True);
 
-								if(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty())
-									object->setSQLDisabled(attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True);
+								if(!attribs[Attributes::SQL_DISABLED].isEmpty())
+									object->setSQLDisabled(attribs[Attributes::SQL_DISABLED]==Attributes::True);
 							}
-							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[ParsersAttributes::TAG].isEmpty())
+							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[Attributes::TAG].isEmpty())
 							{
-								tag=getTag(attribs[ParsersAttributes::TAG]);
+								tag=getTag(attribs[Attributes::TAG]);
 
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);
 							}
 							else if(obj_type==ObjectType::Database && load_custom_sql)
 							{
-								if(!attribs[ParsersAttributes::AppendAtEod].isEmpty())
-									this->setAppendAtEOD(attribs[ParsersAttributes::AppendAtEod]==ParsersAttributes::True);
+								if(!attribs[Attributes::AppendAtEod].isEmpty())
+									this->setAppendAtEOD(attribs[Attributes::AppendAtEod]==Attributes::True);
 
-								if(!attribs[ParsersAttributes::PREPEND_AT_BOD].isEmpty())
-									this->setPrependAtBOD(attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::True);
+								if(!attribs[Attributes::PREPEND_AT_BOD].isEmpty())
+									this->setPrependAtBOD(attribs[Attributes::PREPEND_AT_BOD]==Attributes::True);
 							}
 
-							if(load_objs_aliases && !attribs[ParsersAttributes::Alias].isEmpty())
-								object->setAlias(attribs[ParsersAttributes::Alias]);
+							if(load_objs_aliases && !attribs[Attributes::Alias].isEmpty())
+								object->setAlias(attribs[Attributes::Alias]);
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
@@ -10002,36 +10002,36 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									xmlparser.getElementAttributes(aux_attrib);
 
 									//Retrieving and storing the points
-									if(aux_elem==ParsersAttributes::POSITION)
+									if(aux_elem==Attributes::POSITION)
 									{
-										points.push_back(QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
-																						 aux_attrib[ParsersAttributes::Y_POS].toFloat()));
+										points.push_back(QPointF(aux_attrib[Attributes::X_POS].toFloat(),
+																						 aux_attrib[Attributes::Y_POS].toFloat()));
 									}
 									//Retrieving and storing the labels' custom positions
-									else if(aux_elem==ParsersAttributes::LABEL)
+									else if(aux_elem==Attributes::LABEL)
 									{
-										ref_type=aux_attrib[ParsersAttributes::REF_TYPE];
+										ref_type=aux_attrib[Attributes::REF_TYPE];
 										xmlparser.savePosition();
 
 										if(xmlparser.accessElement(XmlParser::ChildElement))
 										{
 											xmlparser.getElementAttributes(aux_attrib);
-											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[ParsersAttributes::X_POS].toFloat(),
-																																 aux_attrib[ParsersAttributes::Y_POS].toFloat());
+											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[Attributes::X_POS].toFloat(),
+																																 aux_attrib[Attributes::Y_POS].toFloat());
 										}
 
 										xmlparser.restorePosition();
 									}
-									else if(load_custom_sql && aux_elem==ParsersAttributes::AppendedSql &&
-													attribs[ParsersAttributes::AppendedSql].isEmpty())
+									else if(load_custom_sql && aux_elem==Attributes::AppendedSql &&
+													attribs[Attributes::AppendedSql].isEmpty())
 									{
 										xmlparser.savePosition();
 										xmlparser.accessElement(XmlParser::ChildElement);
 										object->setAppendedSQL(xmlparser.getElementContent());
 										xmlparser.restorePosition();
 									}
-									else if(load_custom_sql && aux_elem==ParsersAttributes::PREPENDED_SQL &&
-													attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())
+									else if(load_custom_sql && aux_elem==Attributes::PREPENDED_SQL &&
+													attribs[Attributes::PREPENDED_SQL].isEmpty())
 									{
 										xmlparser.savePosition();
 										xmlparser.accessElement(XmlParser::ChildElement);
@@ -10054,10 +10054,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								{
 									if(load_custom_colors)
 									{
-										if(attribs[ParsersAttributes::CUSTOM_COLOR]==ParsersAttributes::NONE)
+										if(attribs[Attributes::CustomColor]==Attributes::NONE)
 											rel->setCustomColor(Qt::transparent);
 										else
-											rel->setCustomColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
+											rel->setCustomColor(QColor(attribs[Attributes::CustomColor]));
 									}
 
 									if(load_objs_pos)
@@ -10074,16 +10074,16 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								else if(schema)
 								{
 									if(load_custom_colors)
-										schema->setFillColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
+										schema->setFillColor(QColor(attribs[Attributes::CustomColor]));
 
-									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::True);
+									schema->setRectVisible(attribs[Attributes::RECT_VISIBLE]==Attributes::True);
 								}
 
 								if(load_fadeout)
-									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FADED_OUT]==Attributes::True);
 
 								if(load_extattribs && base_tab)
-									base_tab->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
+									base_tab->setExtAttribsHidden(attribs[Attributes::HIDE_EXT_ATTRIBS]==Attributes::True);
 							}
 
 							points.clear();

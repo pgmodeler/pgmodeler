@@ -217,21 +217,21 @@ QString Reference::getXMLDefinition(void)
 	attribs_map attribs;
 	SchemaParser schparser;
 
-	attribs[ParsersAttributes::TABLE]=QString();
-	attribs[ParsersAttributes::COLUMN]=QString();
+	attribs[Attributes::TABLE]=QString();
+	attribs[Attributes::Column]=QString();
 
 	if(table)
-		attribs[ParsersAttributes::TABLE]=table->getName(true);
+		attribs[Attributes::TABLE]=table->getName(true);
 
 	if(column)
-		attribs[ParsersAttributes::COLUMN]=column->getName();
+		attribs[Attributes::Column]=column->getName();
 
-	attribs[ParsersAttributes::REF_ALIAS]=ref_alias;
-	attribs[ParsersAttributes::EXPRESSION]=expression;
-	attribs[ParsersAttributes::Alias]=alias;
-	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
+	attribs[Attributes::REF_ALIAS]=ref_alias;
+	attribs[Attributes::EXPRESSION]=expression;
+	attribs[Attributes::Alias]=alias;
+	attribs[Attributes::ColumnAlias]=column_alias;
 
-	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XmlDefinition));
+	return(schparser.getCodeDefinition(Attributes::REFERENCE, attribs, SchemaParser::XmlDefinition));
 }
 
 bool Reference::operator == (Reference &refer)

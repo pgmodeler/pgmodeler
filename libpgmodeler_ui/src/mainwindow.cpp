@@ -93,19 +93,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		while(itr!=itr_end)
 		{
 			attribs=itr->second;
-			if(attribs.count(ParsersAttributes::PATH)!=0)
+			if(attribs.count(Attributes::PATH)!=0)
 			{
 				try
 				{
 					//Storing the file of a previous session
-					if(itr->first.contains(ParsersAttributes::File) &&
-							!attribs[ParsersAttributes::PATH].isEmpty())
-						prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
+					if(itr->first.contains(Attributes::File) &&
+							!attribs[Attributes::PATH].isEmpty())
+						prev_session_files.push_back(attribs[Attributes::PATH]);
 
 					//Creating the recent models menu
-					else if(itr->first.contains(ParsersAttributes::RECENT) &&
-							!attribs[ParsersAttributes::PATH].isEmpty())
-						recent_models.push_back(attribs[ParsersAttributes::PATH]);
+					else if(itr->first.contains(Attributes::RECENT) &&
+							!attribs[Attributes::PATH].isEmpty())
+						recent_models.push_back(attribs[Attributes::PATH]);
 				}
 				catch(Exception &e)
 				{
@@ -396,17 +396,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 #ifndef Q_OS_MAC
 	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::True);
-	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AlignObjsToGrid]==ParsersAttributes::True);
-	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::True);
-	action_compact_view->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::COMPACT_VIEW]==ParsersAttributes::True);
+	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID]==Attributes::True);
+	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
+	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS]==Attributes::True);
+	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 															 action_alin_objs_grade->isChecked(),
 															 action_show_delimiters->isChecked());
 
 	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::True);
+	main_menu_mb->setVisible(confs[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]==Attributes::True);
 
 	if(main_menu_mb->isVisible())
 		file_menu->addAction(action_hide_main_menu);
@@ -429,7 +429,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
 	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CheckUpdate]==ParsersAttributes::True)
+	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
 		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
@@ -657,16 +657,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 			confs=conf_wgt->getConfigurationParams();
 
-			attribs[ParsersAttributes::COMPACT_VIEW]=action_compact_view->isChecked() ? ParsersAttributes::True : QString();
-			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::True : QString();
+			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : QString();
+			attribs[Attributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? Attributes::True : QString();
 
-			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
+			conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
 			attribs.clear();
 
 			count=models_tbw->count();
 
 			//Remove the references to old session
-			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(ParsersAttributes::File)));
+			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(Attributes::File)));
 
 			//Saving the session
 			for(i=0; i < count; i++)
@@ -675,9 +675,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				if(!model->getFilename().isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::File).arg(i);
-					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=model->getFilename();
+					param_id=QString("%1%2").arg(Attributes::File).arg(i);
+					attribs[Attributes::ID]=param_id;
+					attribs[Attributes::PATH]=model->getFilename();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 				}
@@ -692,9 +692,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				while(!recent_models.isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
-					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=recent_models.front();
+					param_id=QString("%1%2").arg(Attributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
+					attribs[Attributes::ID]=param_id;
+					attribs[Attributes::PATH]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 					recent_models.pop_front();
@@ -1146,9 +1146,9 @@ void MainWindow::setGridOptions(void)
 								 action_alin_objs_grade->isChecked(),
 								 action_show_delimiters->isChecked());
 
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AlignObjsToGrid] = (action_alin_objs_grade->isChecked() ? ParsersAttributes::True : ParsersAttributes::False);
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID] = (action_show_grid->isChecked() ? ParsersAttributes::True : ParsersAttributes::False);
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS] = (action_show_delimiters->isChecked() ? ParsersAttributes::True : ParsersAttributes::False);
+	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = (action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID] = (action_show_grid->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS] = (action_show_delimiters->isChecked() ? Attributes::True : Attributes::False);
 
 	if(current_model)
 	{
@@ -1165,7 +1165,7 @@ void MainWindow::setGridOptions(void)
 		current_model->scene->update();
 	}
 
-	conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs[ParsersAttributes::CONFIGURATION]);
+	conf_wgt->addConfigurationParam(Attributes::Configuration, attribs[Attributes::Configuration]);
 }
 
 void MainWindow::applyZoom(void)
@@ -1831,26 +1831,26 @@ void MainWindow::storeDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	attribs_map params;
 
-	params[ParsersAttributes::VALIDATOR]=ParsersAttributes::True;
-	params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
-	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
+	params[Attributes::VALIDATOR]=Attributes::True;
+	params[Attributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
+	conf_wgt->addConfigurationParam(Attributes::VALIDATOR, params);
 	params.clear();
 
-	params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::True;
-	params[ParsersAttributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::FADEIN_OBJECTS]=(obj_finder_wgt->fade_btn->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::True : QString());
-	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
+	params[Attributes::OBJECT_FINDER]=Attributes::True;
+	params[Attributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
+	params[Attributes::FADEIN_OBJECTS]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
+	params[Attributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
+	conf_wgt->addConfigurationParam(Attributes::OBJECT_FINDER, params);
 	params.clear();
 
-	params[ParsersAttributes::SQL_TOOL]=ParsersAttributes::True;
-	params[ParsersAttributes::SHOW_ATTRIBUTES_GRID]=(sql_tool_wgt->attributes_tb->isChecked() ? ParsersAttributes::True : QString());
-	params[ParsersAttributes::SHOW_SOURCE_PANE]=(sql_tool_wgt->source_pane_tb->isChecked() ? ParsersAttributes::True : QString());
-	conf_wgt->addConfigurationParam(ParsersAttributes::SQL_TOOL, params);
+	params[Attributes::SQL_TOOL]=Attributes::True;
+	params[Attributes::SHOW_ATTRIBUTES_GRID]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : QString());
+	params[Attributes::SHOW_SOURCE_PANE]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : QString());
+	conf_wgt->addConfigurationParam(Attributes::SQL_TOOL, params);
 	params.clear();
 }
 
@@ -1859,26 +1859,26 @@ void MainWindow::restoreDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-	if(confs.count(ParsersAttributes::VALIDATOR))
+	if(confs.count(Attributes::VALIDATOR))
 	{
-		model_valid_wgt->sql_validation_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::SQL_VALIDATION]==ParsersAttributes::True);
-		model_valid_wgt->use_tmp_names_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::USE_UNIQUE_NAMES]==ParsersAttributes::True);
-		model_valid_wgt->version_cmb->setCurrentText(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::PGSQL_VERSION]);
+		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::SQL_VALIDATION]==Attributes::True);
+		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::USE_UNIQUE_NAMES]==Attributes::True);
+		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PGSQL_VERSION]);
 	}
 
-	if(confs.count(ParsersAttributes::OBJECT_FINDER))
+	if(confs.count(Attributes::OBJECT_FINDER))
 	{
-		obj_finder_wgt->select_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::SELECT_OBJECTS]==ParsersAttributes::True);
-		obj_finder_wgt->fade_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::FADEIN_OBJECTS]==ParsersAttributes::True);
-		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::True);
-		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CaseSensitive]==ParsersAttributes::True);
-		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::True);
+		obj_finder_wgt->select_btn->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::SELECT_OBJECTS]==Attributes::True);
+		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::FADEIN_OBJECTS]==Attributes::True);
+		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::REGULAR_EXP]==Attributes::True);
+		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::CaseSensitive]==Attributes::True);
+		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::EXACT_MATCH]==Attributes::True);
 	}
 
-	if(confs.count(ParsersAttributes::SQL_TOOL))
+	if(confs.count(Attributes::SQL_TOOL))
 	{
-		sql_tool_wgt->attributes_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_ATTRIBUTES_GRID]==ParsersAttributes::True);
-		sql_tool_wgt->source_pane_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_SOURCE_PANE]==ParsersAttributes::True);
+		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SQL_TOOL][Attributes::SHOW_ATTRIBUTES_GRID]==Attributes::True);
+		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SQL_TOOL][Attributes::SHOW_SOURCE_PANE]==Attributes::True);
 	}
 }
 

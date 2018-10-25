@@ -38,16 +38,16 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 	attribs_map attribs;
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
 
-	attribs[ParsersAttributes::COLLATION]=QString();
+	attribs[Attributes::Collation]=QString();
 	configureAttributes(attribs, def_type);
 
 	if(collation)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attribs[ParsersAttributes::COLLATION]=collation->getName(true);
+			attribs[Attributes::Collation]=collation->getName(true);
 		else
-			attribs[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
+			attribs[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(ParsersAttributes::PARTITION_KEY, attribs, def_type));
+	return(schparser.getCodeDefinition(Attributes::PARTITION_KEY, attribs, def_type));
 }

@@ -30,21 +30,21 @@ Role::Role(void)
 
 	conn_limit=-1;
 
-	attributes[ParsersAttributes::SUPERUSER]=QString();
-	attributes[ParsersAttributes::CREATEDB]=QString();
-	attributes[ParsersAttributes::CREATEROLE]=QString();
-	attributes[ParsersAttributes::INHERIT]=QString();
-	attributes[ParsersAttributes::LOGIN]=QString();
-	attributes[ParsersAttributes::CONN_LIMIT]=QString();
-	attributes[ParsersAttributes::PASSWORD]=QString();
-	attributes[ParsersAttributes::ENCRYPTED]=QString();
-	attributes[ParsersAttributes::VALIDITY]=QString();
-	attributes[ParsersAttributes::REF_ROLES]=QString();
-	attributes[ParsersAttributes::MEMBER_ROLES]=QString();
-	attributes[ParsersAttributes::AdminRoles]=QString();
-	attributes[ParsersAttributes::REPLICATION]=QString();
-	attributes[ParsersAttributes::GROUP]=QString();
-	attributes[ParsersAttributes::BypassRls]=QString();
+	attributes[Attributes::SUPERUSER]=QString();
+	attributes[Attributes::CreateDb]=QString();
+	attributes[Attributes::CreateRole]=QString();
+	attributes[Attributes::INHERIT]=QString();
+	attributes[Attributes::LOGIN]=QString();
+	attributes[Attributes::ConnLimit]=QString();
+	attributes[Attributes::PASSWORD]=QString();
+	attributes[Attributes::ENCRYPTED]=QString();
+	attributes[Attributes::VALIDITY]=QString();
+	attributes[Attributes::REF_ROLES]=QString();
+	attributes[Attributes::MEMBER_ROLES]=QString();
+	attributes[Attributes::AdminRoles]=QString();
+	attributes[Attributes::REPLICATION]=QString();
+	attributes[Attributes::GROUP]=QString();
+	attributes[Attributes::BypassRls]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)
@@ -166,16 +166,16 @@ void Role::setRoleAttribute(unsigned role_type)
 	{
 		case MemberRole:
 			roles_vect=&member_roles;
-			attrib=ParsersAttributes::MEMBER_ROLES;
+			attrib=Attributes::MEMBER_ROLES;
 		break;
 		case AdminRole:
 			roles_vect=&admin_roles;
-			attrib=ParsersAttributes::AdminRoles;
+			attrib=Attributes::AdminRoles;
 		break;
 		case RefRole:
 		default:
 			roles_vect=&ref_roles;
-			attrib=ParsersAttributes::REF_ROLES;
+			attrib=Attributes::REF_ROLES;
 		break;
 	}
 
@@ -329,23 +329,23 @@ QString Role::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-							 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
+	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+						   Attributes::CreateRole, Attributes::INHERIT,
+						   Attributes::LOGIN, Attributes::ENCRYPTED,
+							 Attributes::REPLICATION, Attributes::BypassRls };
 
 	setRoleAttribute(RefRole);
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
 
 	for(i=0; i <= OpBypassRls; i++)
-		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::True : QString());
+		attributes[op_attribs[i]]=(options[i] ? Attributes::True : QString());
 
-	attributes[ParsersAttributes::PASSWORD]=password;
-	attributes[ParsersAttributes::VALIDITY]=validity;
+	attributes[Attributes::PASSWORD]=password;
+	attributes[Attributes::VALIDITY]=validity;
 
 	if(conn_limit >= 0)
-		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
+		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -360,24 +360,24 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 	try
 	{
 		attribs_map attribs;
-		QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-							   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-							   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-								 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
+		QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+							   Attributes::CreateRole, Attributes::INHERIT,
+							   Attributes::LOGIN, Attributes::ENCRYPTED,
+								 Attributes::REPLICATION, Attributes::BypassRls };
 
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
 		if(this->password!=role->password)
-			attribs[ParsersAttributes::PASSWORD]=role->password;
+			attribs[Attributes::PASSWORD]=role->password;
 
 		if(this->validity!=role->validity)
-			attribs[ParsersAttributes::VALIDITY]=role->validity;
+			attribs[Attributes::VALIDITY]=role->validity;
 
 		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
-			if((attribs.count(ParsersAttributes::PASSWORD) && i==OpEncrypted) ||
+			if((attribs.count(Attributes::PASSWORD) && i==OpEncrypted) ||
 					this->options[i]!=role->options[i])
-				attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::UNSET);
 		}
 
 		copyAttributes(attribs);

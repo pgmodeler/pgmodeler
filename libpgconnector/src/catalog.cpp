@@ -85,12 +85,12 @@ void Catalog::setConnection(Connection &conn)
 
 		//Retrieving the last system oid
 		executeCatalogQuery(QueryList, ObjectType::Database, res, true,
-		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
+		{{Attributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
-			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID].toUInt();
+			last_sys_oid=attribs[Attributes::LAST_SYS_OID].toUInt();
 		}
 
 		//Retrieving the list of objects created by extensions
@@ -182,44 +182,44 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	 * due to support to this char in the middle of objects' names */
 	for(auto &attr : attribs)
 	{
-		if(attr.first != ParsersAttributes::CUSTOM_FILTER && attr.second.contains(QChar('\'')))
+		if(attr.first != Attributes::CustomFilter && attr.second.contains(QChar('\'')))
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-	attribs[qry_type]=ParsersAttributes::True;
+	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)
-		attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
+		attribs[Attributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
 
 	if(list_only_sys_objs)
-		attribs[ParsersAttributes::OID_FILTER_OP]=QString("<=");
+		attribs[Attributes::OID_FILTER_OP]=QString("<=");
 	else
-		attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
+		attribs[Attributes::OID_FILTER_OP]=QString(">");
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
-		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::True;
+		attribs[Attributes::EXC_BUILTIN_ARRAYS]=Attributes::True;
 
 	//Checking if the custom filter expression is present
-	if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
+	if(attribs.count(Attributes::CustomFilter))
 	{
-		custom_filter=attribs[ParsersAttributes::CUSTOM_FILTER];
-		attribs.erase(ParsersAttributes::CUSTOM_FILTER);
+		custom_filter=attribs[Attributes::CustomFilter];
+		attribs.erase(Attributes::CustomFilter);
 	}
 
 	if(exclude_ext_objs && obj_type!=ObjectType::Database &&	obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Extension)
 	{
 		if(ext_oid_fields.count(obj_type)==0)
-			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+			attribs[Attributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
 		else
-			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
+			attribs[Attributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
 	}
 
 	loadCatalogQuery(BaseObject::getSchemaName(obj_type));
 	schparser.ignoreUnkownAttributes(true);
 	schparser.ignoreEmptyAttributes(true);
 
-	attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+	attribs[Attributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
 	sql=schparser.getCodeDefinition(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
@@ -265,8 +265,8 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	{
 		ResultSet res;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::TABLE]=tab_name;
 
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 		res.accessTuple(ResultSet::FirstTuple);
@@ -312,7 +312,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 					tab_attribs=getObjectsAttributes(type, QString(), QString(), { tab_oid });
 
 					//Retrieve the oid and names of the table's columns
-					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
+					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][Attributes::SCHEMA]], attr.second);
 
 					for(auto &col_attr : col_attribs)
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
@@ -333,15 +333,15 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		ResultSet res;
 		attribs_map objects;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::TABLE]=tab_name;
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
-				objects[res.getColumnValue(ParsersAttributes::OID)]=res.getColumnValue(ParsersAttributes::NAME);
+				objects[res.getColumnValue(Attributes::OID)]=res.getColumnValue(Attributes::NAME);
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 		}
@@ -364,8 +364,8 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		QStringList queries;
 		attribs_map attribs;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::TABLE]=tab_name;
 
 		for(ObjectType obj_type : obj_types)
 		{
@@ -398,9 +398,9 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		{
 			do
 			{
-				attribs[ParsersAttributes::OID]=res.getColumnValue(ParsersAttributes::OID);
-				attribs[ParsersAttributes::NAME]=res.getColumnValue(ParsersAttributes::NAME);
-				attribs[ParsersAttributes::OBJECT_TYPE]=res.getColumnValue(QString("object_type"));
+				attribs[Attributes::OID]=res.getColumnValue(Attributes::OID);
+				attribs[Attributes::NAME]=res.getColumnValue(Attributes::NAME);
+				attribs[Attributes::OBJECT_TYPE]=res.getColumnValue(QString("object_type"));
 				objects.push_back(attribs);
 				attribs.clear();
 			}
@@ -423,7 +423,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		attribs_map obj_attribs;
 
 		//Add the name of the object as extra attrib in order to retrieve the data only for it
-		extra_attribs[ParsersAttributes::NAME]=obj_name;
+		extra_attribs[Attributes::NAME]=obj_name;
 		executeCatalogQuery(QueryAttribs, obj_type, res, true, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -431,7 +431,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
+		obj_attribs[Attributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
 
 		return(obj_attribs);
 	}
@@ -458,7 +458,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
+				tuple[Attributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();
@@ -486,7 +486,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, a
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
 
-		attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+		attribs[Attributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
 		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -510,12 +510,12 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, a
 
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
-	QString query_id=ParsersAttributes::COMMENT;
+	QString query_id=Attributes::Comment;
 
 	try
 	{
-		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::True : QString())}};
+		attribs_map attribs={{Attributes::OID, oid_field},
+												 {Attributes::SHARED_OBJ, (is_shared_obj ? Attributes::True : QString())}};
 
 		loadCatalogQuery(query_id);
 		return(schparser.getCodeDefinition(attribs).simplified());
@@ -533,8 +533,8 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 	try
 	{
-		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-							 {ParsersAttributes::EXT_OBJ_OIDS, ext_obj_oids}};
+		attribs_map attribs={{Attributes::OID, oid_field},
+							 {Attributes::EXT_OBJ_OIDS, ext_obj_oids}};
 
 
 		loadCatalogQuery(query_id);
@@ -562,7 +562,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		{
 			attr_name.remove(BoolField);
 			if(value==PgSqlFalse) value.clear();
-			else value=ParsersAttributes::True;
+			else value=Attributes::True;
 		}
 
 		attr_name.replace('_','-');
@@ -593,15 +593,15 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		bool is_shared_obj=(obj_type==ObjectType::Database ||	obj_type==ObjectType::Role ||	obj_type==ObjectType::Tablespace ||
 												obj_type==ObjectType::Language || obj_type==ObjectType::Cast);
 
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-		extra_attribs[ParsersAttributes::TABLE]=table;
+		extra_attribs[Attributes::SCHEMA]=schema;
+		extra_attribs[Attributes::TABLE]=table;
 
 		if(!filter_oids.empty())
-			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+			extra_attribs[Attributes::FILTER_OIDS]=createOidFilter(filter_oids);
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
 		if(obj_type != ObjectType::Column)
-			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
+			extra_attribs[Attributes::Comment]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 
 		return(getMultipleAttributes(obj_type, extra_attribs));
 	}
@@ -633,9 +633,9 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		attribs_map attribs;
 		ResultSet res;
 
-		attribs[ParsersAttributes::CUSTOM_FILTER] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
-		attribs[ParsersAttributes::SCHEMA] = schema;
-		attribs[ParsersAttributes::TABLE] = table;
+		attribs[Attributes::CustomFilter] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
+		attribs[Attributes::SCHEMA] = schema;
+		attribs[Attributes::TABLE] = table;
 		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)
@@ -647,7 +647,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		else
 		{
 			res.accessTuple(ResultSet::FirstTuple);
-			return(res.getColumnValue(ParsersAttributes::OID));
+			return(res.getColumnValue(Attributes::OID));
 		}
 	}
 	catch(Exception &e)
@@ -678,13 +678,13 @@ attribs_map Catalog::getServerAttributes(void)
 			do
 			{
 				tuple=res.getTupleValues();
-				attr_name = tuple[ParsersAttributes::Attribute];
+				attr_name = tuple[Attributes::Attribute];
 				attr_name.replace('_','-');
-				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
+				attribs[attr_name]=tuple[Attributes::VALUE];
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 
-			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
+			attribs[Attributes::Connection] = connection.getConnectionId();
 			attribs_aux = connection.getServerInfo();
 			attribs.insert(attribs_aux.begin(), attribs_aux.end()) ;
 		}

@@ -22,17 +22,17 @@ View::View(void) : BaseTable()
 {
 	obj_type=ObjectType::View;
 	materialized=recursive=with_no_data=false;
-	attributes[ParsersAttributes::DEFINITION]=QString();
-	attributes[ParsersAttributes::REFERENCES]=QString();
-	attributes[ParsersAttributes::SELECT_EXP]=QString();
-	attributes[ParsersAttributes::FROM_EXP]=QString();
-	attributes[ParsersAttributes::SIMPLE_EXP]=QString();
-	attributes[ParsersAttributes::END_EXP]=QString();
-	attributes[ParsersAttributes::CTE_EXPRESSION]=QString();
-	attributes[ParsersAttributes::MATERIALIZED]=QString();
-	attributes[ParsersAttributes::RECURSIVE]=QString();
-	attributes[ParsersAttributes::WITH_NO_DATA]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
+	attributes[Attributes::DEFINITION]=QString();
+	attributes[Attributes::REFERENCES]=QString();
+	attributes[Attributes::SELECT_EXP]=QString();
+	attributes[Attributes::FROM_EXP]=QString();
+	attributes[Attributes::SIMPLE_EXP]=QString();
+	attributes[Attributes::END_EXP]=QString();
+	attributes[Attributes::CteExpression]=QString();
+	attributes[Attributes::MATERIALIZED]=QString();
+	attributes[Attributes::RECURSIVE]=QString();
+	attributes[Attributes::WITH_NO_DATA]=QString();
+	attributes[Attributes::Columns]=QString();
 }
 
 View::~View(void)
@@ -474,23 +474,23 @@ void View::setDefinitionAttribute(void)
 	if(!decl.endsWith(QChar(';')))
 		decl.append(QChar(';'));
 
-	attributes[ParsersAttributes::DEFINITION]=decl;
+	attributes[Attributes::DEFINITION]=decl;
 }
 
 void View::setReferencesAttribute(void)
 {
 	QString str_aux;
-	QString attribs[]={ ParsersAttributes::SELECT_EXP,
-											ParsersAttributes::FROM_EXP,
-											ParsersAttributes::SIMPLE_EXP,
-											ParsersAttributes::END_EXP};
+	QString attribs[]={ Attributes::SELECT_EXP,
+											Attributes::FROM_EXP,
+											Attributes::SIMPLE_EXP,
+											Attributes::END_EXP};
 	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
 	int cnt, i, i1;
 
 	cnt=references.size();
 	for(i=0; i < cnt; i++)
 		str_aux+=references[i].getXMLDefinition();
-	attributes[ParsersAttributes::REFERENCES]=str_aux;
+	attributes[Attributes::REFERENCES]=str_aux;
 
 	for(i=0; i < 4; i++)
 	{
@@ -573,21 +573,21 @@ QString View::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
-	attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::True : QString());
+	attributes[Attributes::CteExpression]=cte_expression;
+	attributes[Attributes::MATERIALIZED]=(materialized ? Attributes::True : QString());
+	attributes[Attributes::RECURSIVE]=(recursive ? Attributes::True : QString());
+	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::TAG]=QString();
+	attributes[Attributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? Attributes::True : QString());
 
 	setSQLObjectAttribute();
 
 	if(recursive)
-		attributes[ParsersAttributes::COLUMNS]=getColumnsList().join(',');
+		attributes[Attributes::Columns]=getColumnsList().join(',');
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
+		attributes[Attributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	if(def_type==SchemaParser::SqlDefinition)
 		setDefinitionAttribute();
@@ -596,7 +596,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 		setReferencesAttribute();
-		attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -605,7 +605,7 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-	  attributes[ParsersAttributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+	  attributes[Attributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)

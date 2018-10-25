@@ -40,18 +40,18 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
+		attributes[Attributes::NAME]=BaseObject::formatName(obj_name);
 	else
-		attributes[ParsersAttributes::NAME]=obj_name;
+		attributes[Attributes::NAME]=obj_name;
 
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
 
 	if(collation)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::COLLATION]=collation->getName(true);
+			attributes[Attributes::Collation]=collation->getName(true);
 		else
-			attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
+			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

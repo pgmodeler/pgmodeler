@@ -24,12 +24,12 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	QFrame *frame=nullptr;
 	QCheckBox *check=nullptr;
 	unsigned i;
-	QString privs[]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-					  ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-					  ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-					  ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-					  ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-					  ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+	QString privs[]={ Attributes::SELECT_PRIV, Attributes::INSERT_PRIV,
+					  Attributes::UPDATE_PRIV, Attributes::DELETE_PRIV,
+					  Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
+					  Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
+					  Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
+					  Attributes::EXECUTE_PRIV, Attributes::USAGE_PRIV };
 
 	Ui_PermissionWidget::setupUi(this);
 

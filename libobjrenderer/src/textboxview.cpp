@@ -78,7 +78,7 @@ void TextboxView::setToolTip(const QString &tooltip)
 void TextboxView::__configureObject(void)
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
-	QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
+	QTextCharFormat fmt=font_config[Attributes::GLOBAL];
 	QPolygonF polygon;
 
 	polygon.append(QPointF(0.0f,0.0f));
@@ -149,6 +149,6 @@ void TextboxView::configureObjectSelection(void)
 
 	pol_item->setPolygon(box->polygon());
 	pol_item->setPos(0,0);
-	pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
+	pol_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
 }

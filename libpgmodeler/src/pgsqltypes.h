@@ -26,7 +26,7 @@
 #define PGSQL_TYPES_H
 
 #include "exception.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 #include "schemaparser.h"
 #include <vector>
 #include <QRegExp>

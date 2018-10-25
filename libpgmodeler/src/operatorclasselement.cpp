@@ -125,57 +125,57 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	SchemaParser schparser;
 	attribs_map attributes;
 
-	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::STRATEGY_NUM]=QString();
-	attributes[ParsersAttributes::SIGNATURE]=QString();
-	attributes[ParsersAttributes::FUNCTION]=QString();
-	attributes[ParsersAttributes::OPERATOR]=QString();
-	attributes[ParsersAttributes::STORAGE]=QString();
-	attributes[ParsersAttributes::OP_FAMILY]=QString();
-	attributes[ParsersAttributes::DEFINITION]=QString();
+	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::STRATEGY_NUM]=QString();
+	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::FUNCTION]=QString();
+	attributes[Attributes::OPERATOR]=QString();
+	attributes[Attributes::STORAGE]=QString();
+	attributes[Attributes::OP_FAMILY]=QString();
+	attributes[Attributes::DEFINITION]=QString();
 
 	if(element_type==FunctionElem && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::True;
-		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
+		attributes[Attributes::FUNCTION]=Attributes::True;
+		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::SIGNATURE]=function->getSignature();
+			attributes[Attributes::SIGNATURE]=function->getSignature();
 		else
-			attributes[ParsersAttributes::DEFINITION]=function->getCodeDefinition(def_type,true);
+			attributes[Attributes::DEFINITION]=function->getCodeDefinition(def_type,true);
 	}
 	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
-		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::True;
-		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
+		attributes[Attributes::OPERATOR]=Attributes::True;
+		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::SIGNATURE]=_operator->getSignature();
+			attributes[Attributes::SIGNATURE]=_operator->getSignature();
 		else
-			attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
 
 		if(op_family)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[ParsersAttributes::OP_FAMILY]=op_family->getName(true);
+				attributes[Attributes::OP_FAMILY]=op_family->getName(true);
 			else
-				attributes[ParsersAttributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
+				attributes[Attributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
 		}
 	}
 	else if(element_type==StorageElem && storage!=PgSqlType::Null)
 	{
 		//STORAGE storage_type
-		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::True;
+		attributes[Attributes::STORAGE]=Attributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::TYPE]=(*storage);
+			attributes[Attributes::TYPE]=(*storage);
 		else
-			attributes[ParsersAttributes::DEFINITION]=storage.getCodeDefinition(def_type);
+			attributes[Attributes::DEFINITION]=storage.getCodeDefinition(def_type);
 	}
 
-	return(schparser.getCodeDefinition(ParsersAttributes::ELEMENT,attributes, def_type));
+	return(schparser.getCodeDefinition(Attributes::ELEMENT,attributes, def_type));
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)

@@ -57,7 +57,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	ObjectType obj_type=ObjectType::BaseObject;
 	Column *column=dynamic_cast<Column *>(this->getSourceObject());
 	bool ellipse_desc=false;
-	double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+	double factor=(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
@@ -98,9 +98,9 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
-				attrib=ParsersAttributes::NN_COLUMN;
+				attrib=Attributes::NN_COLUMN;
 			else
-				attrib=ParsersAttributes::COLUMN;
+				attrib=Attributes::Column;
 
 			desc->setBrush(this->getFillStyle(attrib));
 
@@ -114,7 +114,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 			if(constr_type==ConstraintType::PrimaryKey)
 			{
-				attrib=ParsersAttributes::PK_COLUMN;
+				attrib=Attributes::PK_COLUMN;
 				pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
 				pol.append(QPointF(2,9)); pol.append(QPointF(3,8)); pol.append(QPointF(3,6));
 				pol.append(QPointF(4,6)); pol.append(QPointF(5,7)); pol.append(QPointF(6,6));
@@ -123,7 +123,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::ForeignKey)
 			{
-				attrib=ParsersAttributes::FK_COLUMN;
+				attrib=Attributes::FK_COLUMN;
 				pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
@@ -131,7 +131,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::Unique)
 			{
-				attrib=ParsersAttributes::UQ_COLUMN;
+				attrib=Attributes::UQ_COLUMN;
 				pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -176,9 +176,9 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
 		desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
-		desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
+		desc->setBrush(this->getFillStyle(Attributes::REFERENCE));
 
-		pen = this->getBorderStyle(ParsersAttributes::REFERENCE);
+		pen = this->getBorderStyle(Attributes::REFERENCE);
 		pen.setWidthF(ObjectBorderWidth * 1.15f);
 		desc->setPen(pen);
 	}
@@ -209,28 +209,28 @@ void TableObjectView::configureObject(void)
 
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
 			{
-				fmt=font_config[ParsersAttributes::PK_COLUMN];
+				fmt=font_config[Attributes::PK_COLUMN];
 				constr_type=ConstraintType::PrimaryKey;
 			}
 			else if(str_constr.indexOf(TextForeignKey)>=0)
 			{
-				fmt=font_config[ParsersAttributes::FK_COLUMN];
+				fmt=font_config[Attributes::FK_COLUMN];
 				constr_type=ConstraintType::ForeignKey;
 			}
 			else if(str_constr.indexOf(TextUnique)>=0)
 			{
-				fmt=font_config[ParsersAttributes::UQ_COLUMN];
+				fmt=font_config[Attributes::UQ_COLUMN];
 				constr_type=ConstraintType::Unique;
 			}
 			else if(str_constr.indexOf(TextNotNull)>=0)
-				fmt=font_config[ParsersAttributes::NN_COLUMN];
+				fmt=font_config[Attributes::NN_COLUMN];
 			else
-				fmt=font_config[ParsersAttributes::COLUMN];
+				fmt=font_config[Attributes::Column];
 
 			if(column->isAddedByRelationship())
-				fmt=font_config[ParsersAttributes::INH_COLUMN];
+				fmt=font_config[Attributes::INH_COLUMN];
 			else if(column->isProtected())
-				fmt=font_config[ParsersAttributes::PROT_COLUMN];
+				fmt=font_config[Attributes::PROT_COLUMN];
 
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::PrimaryKey)).toLower() + QString(", ");
@@ -250,9 +250,9 @@ void TableObjectView::configureObject(void)
 		else
 		{
 			if(tab_obj->isAddedByRelationship())
-				fmt=font_config[ParsersAttributes::INH_COLUMN];
+				fmt=font_config[Attributes::INH_COLUMN];
 			else if(tab_obj->isProtected())
-				fmt=font_config[ParsersAttributes::PROT_COLUMN];
+				fmt=font_config[Attributes::PROT_COLUMN];
 			else
 				fmt=font_config[tab_obj->getSchemaName()];
 		}
@@ -277,7 +277,7 @@ void TableObjectView::configureObject(void)
 		px+=lables[0]->boundingRect().width();
 
 		//Configuring the type label
-		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
+		fmt=font_config[Attributes::OBJECT_TYPE];
 
 		if(compact_view)
 			lables[1]->setText(" ");
@@ -295,7 +295,7 @@ void TableObjectView::configureObject(void)
 		px+=lables[1]->boundingRect().width() + (3 * HorizSpacing);
 
 		//Configuring the constraints label
-		fmt=font_config[ParsersAttributes::CONSTRAINTS];
+		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
 			lables[2]->setText(" ");
 		else if(column)
@@ -447,7 +447,7 @@ void TableObjectView::configureObject(Reference reference)
 	if(reference.getReferenceType()==Reference::ReferColumn)
 	{
 		//Configures the name label as: [table].[column]
-		fmt=font_config[ParsersAttributes::REF_TABLE];
+		fmt=font_config[Attributes::REF_TABLE];
 
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
 			lables[0]->setText(reference.getReferenceAlias());
@@ -459,7 +459,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 
-		fmt=font_config[ParsersAttributes::REF_COLUMN];
+		fmt=font_config[Attributes::REF_COLUMN];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
 			lables[1]->setText(QString(" "));
 		else
@@ -477,7 +477,7 @@ void TableObjectView::configureObject(Reference reference)
 	}
 	else
 	{
-		fmt=font_config[ParsersAttributes::REF_TABLE];
+		fmt=font_config[Attributes::REF_TABLE];
 		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : QString();
 
 		if(str_aux.isEmpty())
@@ -506,7 +506,7 @@ void TableObjectView::configureObject(Reference reference)
 			str_aux=reference.getColumnAlias();
 
 		str_aux=QString(" (") + str_aux + QString(") ");
-		fmt=font_config[ParsersAttributes::Alias];
+		fmt=font_config[Attributes::Alias];
 		lables[2]->setText(str_aux);
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());

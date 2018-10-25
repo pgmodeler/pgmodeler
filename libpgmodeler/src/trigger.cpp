@@ -32,25 +32,25 @@ Trigger::Trigger(void)
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[ParsersAttributes::Arguments]=QString();
-	attributes[ParsersAttributes::EVENTS]=QString();
-	attributes[ParsersAttributes::TRIGGER_FUNC]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::FIRING_TYPE]=QString();
-	attributes[ParsersAttributes::PER_ROW]=QString();
-	attributes[ParsersAttributes::INS_EVENT]=QString();
-	attributes[ParsersAttributes::DEL_EVENT]=QString();
-	attributes[ParsersAttributes::UPD_EVENT]=QString();
-	attributes[ParsersAttributes::TRUNC_EVENT]=QString();
-	attributes[ParsersAttributes::CONDITION]=QString();
-	attributes[ParsersAttributes::REF_TABLE]=QString();
-	attributes[ParsersAttributes::DEFER_TYPE]=QString();
-	attributes[ParsersAttributes::DEFERRABLE]=QString();
-	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-	attributes[ParsersAttributes::CONSTRAINT]=QString();
-	attributes[ParsersAttributes::OLD_TABLE_NAME]=QString();
-	attributes[ParsersAttributes::NEW_TABLE_NAME]=QString();
+	attributes[Attributes::Arguments]=QString();
+	attributes[Attributes::EVENTS]=QString();
+	attributes[Attributes::TRIGGER_FUNC]=QString();
+	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::FIRING_TYPE]=QString();
+	attributes[Attributes::PER_ROW]=QString();
+	attributes[Attributes::INS_EVENT]=QString();
+	attributes[Attributes::DEL_EVENT]=QString();
+	attributes[Attributes::UPD_EVENT]=QString();
+	attributes[Attributes::TRUNC_EVENT]=QString();
+	attributes[Attributes::Condition]=QString();
+	attributes[Attributes::REF_TABLE]=QString();
+	attributes[Attributes::DEFER_TYPE]=QString();
+	attributes[Attributes::DEFERRABLE]=QString();
+	attributes[Attributes::DECL_IN_TABLE]=QString();
+	attributes[Attributes::Constraint]=QString();
+	attributes[Attributes::OLD_TABLE_NAME]=QString();
+	attributes[Attributes::NEW_TABLE_NAME]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -74,7 +74,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 		if(i < (count-1)) str_args+=QString(",");
 	}
 
-	attributes[ParsersAttributes::Arguments]=str_args;
+	attributes[Attributes::Arguments]=str_args;
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -346,8 +346,8 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
-			attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
-						ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
+			attribs[4]={Attributes::INS_EVENT, Attributes::DEL_EVENT,
+						Attributes::TRUNC_EVENT, Attributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
 										   EventType::OnTruncate, EventType::OnUpdate};
@@ -360,18 +360,18 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		if(events.at(event_types[i]))
 		{
 			str_aux+=sql_event[i];
-			attributes[attribs[i]]=ParsersAttributes::True;
+			attributes[attribs[i]]=Attributes::True;
 
 			if(event_types[i]==EventType::OnUpdate)
 			{
 				count=upd_columns.size();
-				attributes[ParsersAttributes::COLUMNS]=QString();
+				attributes[Attributes::Columns]=QString();
 
 				for(i1=0; i1 < count; i1++)
 				{
-					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
+					attributes[Attributes::Columns]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-						attributes[ParsersAttributes::COLUMNS]+=QString(",");
+						attributes[Attributes::Columns]+=QString(",");
 				}
 			}
 		}
@@ -379,17 +379,17 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
-	if(def_type==SchemaParser::SqlDefinition && !attributes[ParsersAttributes::COLUMNS].isEmpty())
-		str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
+	if(def_type==SchemaParser::SqlDefinition && !attributes[Attributes::Columns].isEmpty())
+		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
 
-	attributes[ParsersAttributes::EVENTS]=str_aux;
+	attributes[Attributes::EVENTS]=str_aux;
 
 	if(function)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getName(true);
+			attributes[Attributes::TRIGGER_FUNC]=function->getName(true);
 		else
-			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
 	}
 }
 
@@ -403,34 +403,34 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::True;
+		attributes[Attributes::DECL_IN_TABLE]=Attributes::True;
 
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
+	attributes[Attributes::Constraint]=(is_constraint ? Attributes::True : QString());
+	attributes[Attributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::True : QString());
+	attributes[Attributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : QString());
 
-	attributes[ParsersAttributes::CONDITION]=condition;
+	attributes[Attributes::Condition]=condition;
 
 	if(referenced_table)
-		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
+		attributes[Attributes::REF_TABLE]=referenced_table->getName(true);
 
-	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+	attributes[Attributes::DEFERRABLE]=(is_deferrable ? Attributes::True : QString());
+	attributes[Attributes::DEFER_TYPE]=(~deferral_type);
 
 	if(def_type == SchemaParser::XmlDefinition)
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OldTableName];
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NewTableName];
+		attributes[Attributes::OLD_TABLE_NAME]=transition_tabs_names[OldTableName];
+		attributes[Attributes::NEW_TABLE_NAME]=transition_tabs_names[NewTableName];
 	}
 	else
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OldTableName]);
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NewTableName]);
+		attributes[Attributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OldTableName]);
+		attributes[Attributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

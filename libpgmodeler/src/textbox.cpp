@@ -23,11 +23,11 @@ Textbox::Textbox(void)
 	obj_type=ObjectType::Textbox;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[ParsersAttributes::ITALIC]=QString();
-	attributes[ParsersAttributes::Bold]=QString();
-	attributes[ParsersAttributes::UNDERLINE]=QString();
-	attributes[ParsersAttributes::COLOR]=QString();
-	attributes[ParsersAttributes::FONT_SIZE]=QString();
+	attributes[Attributes::ITALIC]=QString();
+	attributes[Attributes::Bold]=QString();
+	attributes[Attributes::UNDERLINE]=QString();
+	attributes[Attributes::Color]=QString();
+	attributes[Attributes::FONT_SIZE]=QString();
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
@@ -43,18 +43,18 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setFadedOutAttribute();
 
 		if(text_attributes[ItalicText])
-			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::True;
+			attributes[Attributes::ITALIC]=Attributes::True;
 
 		if(text_attributes[BoldText])
-			attributes[ParsersAttributes::Bold]=ParsersAttributes::True;
+			attributes[Attributes::Bold]=Attributes::True;
 
 		if(text_attributes[UnderlineText])
-			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::True;
+			attributes[Attributes::UNDERLINE]=Attributes::True;
 
 		if(text_color.name()!=QString("#000000"))
-			attributes[ParsersAttributes::COLOR]=text_color.name();
+			attributes[Attributes::Color]=text_color.name();
 
-		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);
+		attributes[Attributes::FONT_SIZE]=QString("%1").arg(font_size);
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}

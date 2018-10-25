@@ -22,9 +22,9 @@ EventTrigger::EventTrigger(void)
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
-	attributes[ParsersAttributes::EVENT]=QString();
-	attributes[ParsersAttributes::FILTER]=QString();
-	attributes[ParsersAttributes::FUNCTION]=QString();
+	attributes[Attributes::EVENT]=QString();
+	attributes[Attributes::FILTER]=QString();
+	attributes[Attributes::FUNCTION]=QString();
 }
 
 void EventTrigger::setEvent(EventTriggerType evnt_type)
@@ -59,7 +59,7 @@ void EventTrigger::setFunction(Function *func)
 
 void EventTrigger::setFilter(const QString &variable, const QStringList &values)
 {
-	if(variable.toLower()!=ParsersAttributes::TAG)
+	if(variable.toLower()!=Attributes::TAG)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidEventTriggerVariable).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!values.isEmpty())
@@ -109,31 +109,31 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::EVENT]=~event;
+	attributes[Attributes::EVENT]=~event;
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
 		QStringList str_list;
 
 		if(function)
-			attributes[ParsersAttributes::FUNCTION]=function->getSignature();
+			attributes[Attributes::FUNCTION]=function->getSignature();
 
 		for(auto &flt : filter)
 			str_list.push_back(QString("%1 IN ('%2')").arg(flt.first).arg(flt.second.join(QString("','"))));
 
-		attributes[ParsersAttributes::FILTER]=str_list.join(QString("\n\t AND "));
+		attributes[Attributes::FILTER]=str_list.join(QString("\n\t AND "));
 	}
 	else
 	{
 		if(function)
-			attributes[ParsersAttributes::FUNCTION]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::FUNCTION]=function->getCodeDefinition(def_type, true);
 
 		for(auto &flt : filter)
 			//Creating an element <filter variable="" values=""/>
-			attributes[ParsersAttributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
-												   .arg(ParsersAttributes::FILTER)
-												   .arg(ParsersAttributes::VARIABLE).arg(flt.first)
-												   .arg(ParsersAttributes::VALUES).arg(flt.second.join(','));
+			attributes[Attributes::FILTER]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
+												   .arg(Attributes::FILTER)
+												   .arg(Attributes::VARIABLE).arg(flt.first)
+												   .arg(Attributes::VALUES).arg(flt.second.join(','));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -143,7 +143,7 @@ QString EventTrigger::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
 	}
 	catch(Exception &e)

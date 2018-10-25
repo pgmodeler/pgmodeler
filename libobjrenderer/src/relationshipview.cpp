@@ -249,11 +249,11 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 
 		//Alter the relationship line color when it is selected
 		if(line_color==Qt::transparent)
-			line_color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+			line_color=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP).color();
 
 		if(value.toBool())
 		{
-			QColor cor1=BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color(),
+			QColor cor1=BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION).color(),
 					cor2=line_color;
 
 			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
@@ -288,7 +288,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		{
 			vector<QGraphicsLineItem *> lines;
 			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
-			QColor sel_color = BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color();
+			QColor sel_color = BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION).color();
 			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 			int color_id = 0;
 
@@ -606,7 +606,7 @@ void RelationshipView::configureLine(void)
 
 		if(base_rel->isSelfRelationship())
 		{
-			double fnt_factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize,
+			double fnt_factor=font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize,
 					pos_factor = 0, offset = 0;
 			unsigned rel_cnt = tables[0]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SrcTable),
 																													base_rel->getTable(BaseRelationship::DstTable));
@@ -812,8 +812,8 @@ void RelationshipView::configureLine(void)
 					graph_points.push_back(pol);
 					pol->setZValue(0);
 					pol->setPolygon(pol_aux);
-					pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
-					pol->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+					pol->setBrush(BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION));
+					pol->setPen(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION));
 					this->addToGroup(pol);
 				}
 				else
@@ -850,7 +850,7 @@ void RelationshipView::configureLine(void)
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor(),
+			double font_factor=(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
 					border_factor = ConnLineLength * 0.30,
 					min_lim = 0, max_lim = 0,
@@ -1005,7 +1005,7 @@ void RelationshipView::configureLine(void)
 				pen.setColor(base_rel->getCustomColor());
 			else
 				//Using the default color
-				pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+				pen=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP);
 		}
 
 		//For dependency/partition relationships the line is dashed
@@ -1271,7 +1271,7 @@ void RelationshipView::configureDescriptor(void)
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
-			factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+			factor=(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -1284,7 +1284,7 @@ void RelationshipView::configureDescriptor(void)
 		pen.setColor(base_rel->getCustomColor());
 	else
 		//Using the default color
-		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		pen=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP);
 
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type == BaseRelationship::RelationshipPart)
@@ -1296,7 +1296,7 @@ void RelationshipView::configureDescriptor(void)
 	{
 		QColor colors[2];
 		QLinearGradient grad;
-		BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP, colors[0], colors[1]);
+		BaseObjectView::getFillStyle(Attributes::RELATIONSHIP, colors[0], colors[1]);
 
 		for(unsigned i=0; i < 2; i++)
 		{
@@ -1310,7 +1310,7 @@ void RelationshipView::configureDescriptor(void)
 		descriptor->setBrush(grad);
 	}
 	else
-		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+		descriptor->setBrush(BaseObjectView::getFillStyle(Attributes::RELATIONSHIP));
 
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type==BaseRelationship::RelationshipGen)
@@ -1415,8 +1415,8 @@ void RelationshipView::configureDescriptor(void)
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_selection->boundingRect().center());
 	pol_item->setPos(x,y);
-	pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
+	pol_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
 
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
@@ -1468,7 +1468,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
 		unsigned rel_type = base_rel->getRelationshipType();
-		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+		double factor=(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
 		bool mandatory[2] = { false, false };
@@ -1715,9 +1715,9 @@ void RelationshipView::configureAttributes(void)
 		QRectF rect;
 		QPolygonF pol;
 		double py, px,
-				factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
+				factor=font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
 
-		fmt=font_config[ParsersAttributes::Attribute];
+		fmt=font_config[Attributes::Attribute];
 		font=fmt.font();
 		font.setPointSizeF(font.pointSizeF() * 0.80f);
 
@@ -1772,13 +1772,13 @@ void RelationshipView::configureAttributes(void)
 			}
 
 			desc->setRect(rect);
-			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::Attribute));
-			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::Attribute));
+			desc->setPen(BaseObjectView::getBorderStyle(Attributes::Attribute));
+			desc->setBrush(BaseObjectView::getFillStyle(Attributes::Attribute));
 			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);
-			sel_attrib->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
-			sel_attrib->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+			sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION));
+			sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION));
 
 			attrib->setPos(px, py);
 
@@ -2004,11 +2004,11 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 		labels[label_id]->setPos(x,y);
 		labels[label_id]->setToolTip(this->toolTip());
 
-		char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::LABEL);
+		char_fmt=BaseObjectView::getFontStyle(Attributes::LABEL);
 		char_fmt.setFontPointSize(char_fmt.fontPointSize() * 0.90);
 		labels[label_id]->setFontStyle(char_fmt);
-		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-										BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
+		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::LABEL),
+										BaseObjectView::getBorderStyle(Attributes::LABEL));
 		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
 	}
 }

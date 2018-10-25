@@ -26,10 +26,10 @@ Language::Language(void)
 	for(unsigned i=ValidatorFunc; i <= InlineFunc; i++)
 		functions[i]=nullptr;
 
-	attributes[ParsersAttributes::TRUSTED]=QString();
-	attributes[ParsersAttributes::HANDLER_FUNC]=QString();
-	attributes[ParsersAttributes::VALIDATOR_FUNC]=QString();
-	attributes[ParsersAttributes::INLINE_FUNC]=QString();
+	attributes[Attributes::TRUSTED]=QString();
+	attributes[Attributes::HANDLER_FUNC]=QString();
+	attributes[Attributes::VALIDATOR_FUNC]=QString();
+	attributes[Attributes::INLINE_FUNC]=QString();
 }
 
 void Language::setName(const QString &name)
@@ -116,11 +116,11 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString attribs_func[3]={ParsersAttributes::VALIDATOR_FUNC,
-							 ParsersAttributes::HANDLER_FUNC,
-							 ParsersAttributes::INLINE_FUNC};
+	QString attribs_func[3]={Attributes::VALIDATOR_FUNC,
+							 Attributes::HANDLER_FUNC,
+							 Attributes::INLINE_FUNC};
 
-	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::True : QString());
+	attributes[Attributes::TRUSTED]=(is_trusted ? Attributes::True : QString());
 
 	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
 		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());
@@ -133,7 +133,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[attribs_func[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, attribs_func[i]);
+				functions[i]->setAttribute(Attributes::REF_TYPE, attribs_func[i]);
 				attributes[attribs_func[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}

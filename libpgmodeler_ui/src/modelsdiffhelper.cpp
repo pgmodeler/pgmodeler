@@ -319,19 +319,19 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
 								xml_differs=object->isCodeDiffersFrom(aux_object,
-								{ ParsersAttributes::MAX_OBJ_COUNT,
-								  ParsersAttributes::PROTECTED,
-								  ParsersAttributes::SQL_DISABLED,
-								  ParsersAttributes::RECT_VISIBLE,
-									ParsersAttributes::FILL_COLOR,
-									ParsersAttributes::FADED_OUT,
-									ParsersAttributes::HIDE_EXT_ATTRIBS},
-								{ ParsersAttributes::ROLE,
-								  ParsersAttributes::TABLESPACE,
-								  ParsersAttributes::COLLATION,
-								  ParsersAttributes::POSITION,
-								  ParsersAttributes::AppendedSql,
-								  ParsersAttributes::PREPENDED_SQL });
+								{ Attributes::MAX_OBJ_COUNT,
+									Attributes::PROTECTED,
+									Attributes::SQL_DISABLED,
+									Attributes::RECT_VISIBLE,
+									Attributes::FILL_COLOR,
+									Attributes::FADED_OUT,
+									Attributes::HIDE_EXT_ATTRIBS},
+								{ Attributes::ROLE,
+									Attributes::TABLESPACE,
+									Attributes::Collation,
+									Attributes::POSITION,
+									Attributes::AppendedSql,
+									Attributes::PREPENDED_SQL });
 
 							//If a difference was detected between the objects
 							if(objs_differs || xml_differs)
@@ -847,7 +847,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			if(create_objs.count(schema_id)!=0)
 				create_objs[schema_id]+=type->getCodeDefinition(SchemaParser::SqlDefinition, true);
 			else
-				attribs[ParsersAttributes::CREATE_CMDS]+=type->getCodeDefinition(SchemaParser::SqlDefinition, true);
+				attribs[Attributes::CreateCmds]+=type->getCodeDefinition(SchemaParser::SqlDefinition, true);
 
 			type->convertFunctionParameters(true);
 		}
@@ -869,63 +869,63 @@ void ModelsDiffHelper::processDiffInfos(void)
 			has_diffs=(create_objs_count!=0 || alter_objs.size()!=0 || drop_objs.size()!=0);
 
 			//Attributes used on the diff schema file
-			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::True;
-			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
-			attribs[ParsersAttributes::DB_MODEL]=source_model->getName();
-			attribs[ParsersAttributes::DATABASE]=imported_model->getName();
-			attribs[ParsersAttributes::DATE]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-			attribs[ParsersAttributes::CONNECTION]=imported_model->getName();
-			attribs[ParsersAttributes::Change]=QString::number(alter_objs.size());
-			attribs[ParsersAttributes::CREATE]=QString::number(create_objs_count);
-			attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
-			attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
-			attribs[ParsersAttributes::AlterCmds]=QString();
-			attribs[ParsersAttributes::DROP_CMDS]=QString();
-			attribs[ParsersAttributes::CREATE_CMDS]=QString();
-			attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
-			attribs[ParsersAttributes::CONSTR_DEFS]=QString();
-			attribs[ParsersAttributes::FK_DEFS]=QString();
-			attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
-			attribs[ParsersAttributes::SET_PERMS]=set_perms;
-			attribs[ParsersAttributes::FUNCTION]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? ParsersAttributes::True : QString());
-			attribs[ParsersAttributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
+			attribs[Attributes::HAS_CHANGES]=Attributes::True;
+			attribs[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
+			attribs[Attributes::DB_MODEL]=source_model->getName();
+			attribs[Attributes::Database]=imported_model->getName();
+			attribs[Attributes::Date]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+			attribs[Attributes::Connection]=imported_model->getName();
+			attribs[Attributes::Change]=QString::number(alter_objs.size());
+			attribs[Attributes::Create]=QString::number(create_objs_count);
+			attribs[Attributes::DROP]=QString::number(drop_objs.size());
+			attribs[Attributes::TRUNCATE]=QString::number(truncate_tabs.size());
+			attribs[Attributes::AlterCmds]=QString();
+			attribs[Attributes::DROP_CMDS]=QString();
+			attribs[Attributes::CreateCmds]=QString();
+			attribs[Attributes::TRUNCATE_CMDS]=QString();
+			attribs[Attributes::ConstrDefs]=QString();
+			attribs[Attributes::FK_DEFS]=QString();
+			attribs[Attributes::UNSET_PERMS]=unset_perms;
+			attribs[Attributes::SET_PERMS]=set_perms;
+			attribs[Attributes::FUNCTION]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
+			attribs[Attributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
 
 			ritr=drop_objs.rbegin();
 			ritr_end=drop_objs.rend();
 
-			attribs[ParsersAttributes::DROP_CMDS]+=no_inherit_def;
+			attribs[Attributes::DROP_CMDS]+=no_inherit_def;
 
 			while(ritr!=ritr_end)
 			{
-				attribs[ParsersAttributes::DROP_CMDS]+=ritr->second;
+				attribs[Attributes::DROP_CMDS]+=ritr->second;
 				ritr++;
 			}
 
-			attribs[ParsersAttributes::DROP_CMDS]+=col_drop_def;
+			attribs[Attributes::DROP_CMDS]+=col_drop_def;
 
 
 			for(auto &itr : create_objs)
-				attribs[ParsersAttributes::CREATE_CMDS]+=itr.second;
+				attribs[Attributes::CreateCmds]+=itr.second;
 
-			attribs[ParsersAttributes::CREATE_CMDS]+=inherit_def;
+			attribs[Attributes::CreateCmds]+=inherit_def;
 
 			for(auto &itr : create_constrs)
-				attribs[ParsersAttributes::CONSTR_DEFS]+=itr.second;
+				attribs[Attributes::ConstrDefs]+=itr.second;
 
 			for(auto &itr : create_fks)
-				attribs[ParsersAttributes::FK_DEFS]+=itr.second;
+				attribs[Attributes::FK_DEFS]+=itr.second;
 
 			for(auto &itr : truncate_tabs)
-				attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
+				attribs[Attributes::TRUNCATE_CMDS]+=itr.second;
 
 			for(auto &itr : alter_objs)
-				attribs[ParsersAttributes::AlterCmds]+=itr.second;
+				attribs[Attributes::AlterCmds]+=itr.second;
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);
 			diff_def=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-												 ParsersAttributes::DIFF + GlobalAttributes::SchemaExt, attribs);
+												 Attributes::DIFF + GlobalAttributes::SchemaExt, attribs);
 		}
 
 		if(diff_def.isEmpty())

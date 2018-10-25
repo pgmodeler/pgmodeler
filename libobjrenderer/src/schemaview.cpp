@@ -201,7 +201,7 @@ void SchemaView::configureObject(void)
 
 		//Configures the schema name at the top
 		sch_name->setText(compact_view && !schema->getAlias().isEmpty() ? schema->getAlias() : schema->getName());
-		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
+		font=BaseObjectView::getFontStyle(Attributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);
 		font.setPointSizeF(font.pointSizeF() * 1.3f);

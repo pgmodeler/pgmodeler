@@ -77,46 +77,46 @@ void BaseRelationship::configureRelationship(void)
 {
 	obj_type=ObjectType::BaseRelationship;
 
-	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::SRC_REQUIRED]=QString();
-	attributes[ParsersAttributes::DST_REQUIRED]=QString();
-	attributes[ParsersAttributes::SRC_TABLE]=QString();
-	attributes[ParsersAttributes::DST_TABLE]=QString();
-	attributes[ParsersAttributes::POINTS]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::CONSTRAINTS]=QString();
-	attributes[ParsersAttributes::ELEMENTS]=QString();
-	attributes[ParsersAttributes::IDENTIFIER]=QString();
-	attributes[ParsersAttributes::REDUCED_FORM]=QString();
-	attributes[ParsersAttributes::DEFERRABLE]=QString();
-	attributes[ParsersAttributes::DEFER_TYPE]=QString();
-	attributes[ParsersAttributes::TABLE_NAME]=QString();
-	attributes[ParsersAttributes::SPECIAL_PK_COLS]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_NN]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_GEN]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_DEP]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_PART]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_1N]=QString();
-	attributes[ParsersAttributes::RELATIONSHIP_11]=QString();
-	attributes[ParsersAttributes::CONSTRAINTS]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::AncestorTable]=QString();
-	attributes[ParsersAttributes::COPY_OPTIONS]=QString();
-	attributes[ParsersAttributes::COPY_MODE]=QString();
-	attributes[ParsersAttributes::SRC_COL_PATTERN]=QString();
-	attributes[ParsersAttributes::DST_COL_PATTERN]=QString();
-	attributes[ParsersAttributes::PK_PATTERN]=QString();
-	attributes[ParsersAttributes::UQ_PATTERN]=QString();
-	attributes[ParsersAttributes::SRC_FK_PATTERN]=QString();
-	attributes[ParsersAttributes::DST_FK_PATTERN]=QString();
-	attributes[ParsersAttributes::PK_COL_PATTERN]=QString();
-	attributes[ParsersAttributes::SINGLE_PK_COLUMN]=QString();
-	attributes[ParsersAttributes::UPD_ACTION]=QString();
-	attributes[ParsersAttributes::DEL_ACTION]=QString();
-	attributes[ParsersAttributes::CUSTOM_COLOR]=QString();
-	attributes[ParsersAttributes::REFERENCE_FK]=QString();
-	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
-	attributes[ParsersAttributes::ORIGINAL_PK]=QString();
+	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::SRC_REQUIRED]=QString();
+	attributes[Attributes::DST_REQUIRED]=QString();
+	attributes[Attributes::SRC_TABLE]=QString();
+	attributes[Attributes::DST_TABLE]=QString();
+	attributes[Attributes::POINTS]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::Constraints]=QString();
+	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::IDENTIFIER]=QString();
+	attributes[Attributes::REDUCED_FORM]=QString();
+	attributes[Attributes::DEFERRABLE]=QString();
+	attributes[Attributes::DEFER_TYPE]=QString();
+	attributes[Attributes::TABLE_NAME]=QString();
+	attributes[Attributes::SPECIAL_PK_COLS]=QString();
+	attributes[Attributes::RELATIONSHIP_NN]=QString();
+	attributes[Attributes::RELATIONSHIP_GEN]=QString();
+	attributes[Attributes::RELATIONSHIP_DEP]=QString();
+	attributes[Attributes::RELATIONSHIP_PART]=QString();
+	attributes[Attributes::RELATIONSHIP_1N]=QString();
+	attributes[Attributes::RELATIONSHIP_11]=QString();
+	attributes[Attributes::Constraints]=QString();
+	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::AncestorTable]=QString();
+	attributes[Attributes::CopyOptions]=QString();
+	attributes[Attributes::CopyMode]=QString();
+	attributes[Attributes::SRC_COL_PATTERN]=QString();
+	attributes[Attributes::DST_COL_PATTERN]=QString();
+	attributes[Attributes::PK_PATTERN]=QString();
+	attributes[Attributes::UQ_PATTERN]=QString();
+	attributes[Attributes::SRC_FK_PATTERN]=QString();
+	attributes[Attributes::DST_FK_PATTERN]=QString();
+	attributes[Attributes::PK_COL_PATTERN]=QString();
+	attributes[Attributes::SINGLE_PK_COLUMN]=QString();
+	attributes[Attributes::UPD_ACTION]=QString();
+	attributes[Attributes::DEL_ACTION]=QString();
+	attributes[Attributes::CustomColor]=QString();
+	attributes[Attributes::REFERENCE_FK]=QString();
+	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
+	attributes[Attributes::ORIGINAL_PK]=QString();
 
 	//Check if the relationship type is valid
 	if(rel_type <= RelationshipFk)
@@ -328,47 +328,47 @@ void BaseRelationship::setRelationshipAttributes(void)
 {
 	unsigned count, i;
 	QString str_aux,
-			label_attribs[3]={ ParsersAttributes::SRC_LABEL,
-							   ParsersAttributes::DST_LABEL,
-							   ParsersAttributes::NAME_LABEL};
+			label_attribs[3]={ Attributes::SRC_LABEL,
+							   Attributes::DST_LABEL,
+							   Attributes::NAME_LABEL};
 
 
-	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
-	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::True : QString());
+	attributes[Attributes::TYPE]=getRelTypeAttribute();
+	attributes[Attributes::SRC_REQUIRED]=(src_mandatory ? Attributes::True : QString());
+	attributes[Attributes::DST_REQUIRED]=(dst_mandatory ? Attributes::True : QString());
 
 	if(src_table)
-		attributes[ParsersAttributes::SRC_TABLE]=src_table->getName(true);
+		attributes[Attributes::SRC_TABLE]=src_table->getName(true);
 
 	if(dst_table)
-		attributes[ParsersAttributes::DST_TABLE]=dst_table->getName(true);
+		attributes[Attributes::DST_TABLE]=dst_table->getName(true);
 
 
 	count=points.size();
 	for(i=0; i < count; i++)
 	{
-		attributes[ParsersAttributes::X_POS]=QString("%1").arg(points[i].x());
-		attributes[ParsersAttributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XmlDefinition);
+		attributes[Attributes::X_POS]=QString("%1").arg(points[i].x());
+		attributes[Attributes::Y_POS]=QString("%1").arg(points[i].y());
+		str_aux+=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
 	}
-	attributes[ParsersAttributes::POINTS]=str_aux;
+	attributes[Attributes::POINTS]=str_aux;
 
 	str_aux=QString();
 	for(i=0; i < 3; i++)
 	{
 		if(!std::isnan(lables_dist[i].x()))
 		{
-			attributes[ParsersAttributes::X_POS]=QString("%1").arg(lables_dist[i].x());
-			attributes[ParsersAttributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XmlDefinition);
-			attributes[ParsersAttributes::REF_TYPE]=label_attribs[i];
-			str_aux+=schparser.getCodeDefinition(ParsersAttributes::LABEL, attributes, SchemaParser::XmlDefinition);
+			attributes[Attributes::X_POS]=QString("%1").arg(lables_dist[i].x());
+			attributes[Attributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
+			attributes[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
+			attributes[Attributes::REF_TYPE]=label_attribs[i];
+			str_aux+=schparser.getCodeDefinition(Attributes::LABEL, attributes, SchemaParser::XmlDefinition);
 		}
 	}
 
-	attributes[ParsersAttributes::LABELS_POS]=str_aux;
-	attributes[ParsersAttributes::CUSTOM_COLOR]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
-	attributes[ParsersAttributes::REFERENCE_FK]=(reference_fk ? reference_fk->getName() : QString());
+	attributes[Attributes::LABELS_POS]=str_aux;
+	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
+	attributes[Attributes::REFERENCE_FK]=(reference_fk ? reference_fk->getName() : QString());
 	setFadedOutAttribute();
 }
 
@@ -419,8 +419,8 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	{
 		bool reduced_form;
 		setRelationshipAttributes();
-		reduced_form=(attributes[ParsersAttributes::POINTS].isEmpty() &&
-					 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+		reduced_form=(attributes[Attributes::POINTS].isEmpty() &&
+					 attributes[Attributes::LABELS_POS].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();
@@ -505,17 +505,17 @@ QString BaseRelationship::getRelTypeAttribute(void)
 {
 	switch(rel_type)
 	{
-		case Relationship11: return(ParsersAttributes::RELATIONSHIP_11); break;
-		case Relationship1n: return(ParsersAttributes::RELATIONSHIP_1N); break;
-		case RelationshipNn: return(ParsersAttributes::RELATIONSHIP_NN); break;
-		case RelationshipGen: return(ParsersAttributes::RELATIONSHIP_GEN); break;
-		case RelationshipPart: return(ParsersAttributes::RELATIONSHIP_PART); break;
-		case RelationshipFk: return(ParsersAttributes::RELATIONSHIP_FK); break;
+		case Relationship11: return(Attributes::RELATIONSHIP_11); break;
+		case Relationship1n: return(Attributes::RELATIONSHIP_1N); break;
+		case RelationshipNn: return(Attributes::RELATIONSHIP_NN); break;
+		case RelationshipGen: return(Attributes::RELATIONSHIP_GEN); break;
+		case RelationshipPart: return(Attributes::RELATIONSHIP_PART); break;
+		case RelationshipFk: return(Attributes::RELATIONSHIP_FK); break;
 		default:
 			if(src_table->getObjectType()==ObjectType::View)
-				return(ParsersAttributes::RELATION_TAB_VIEW);
+				return(Attributes::RELATION_TAB_VIEW);
 			else
-				return(ParsersAttributes::RELATIONSHIP_DEP);
+				return(Attributes::RELATIONSHIP_DEP);
 		break;
 	}
 }

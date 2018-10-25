@@ -22,10 +22,10 @@ BaseGraphicObject::BaseGraphicObject(void)
 {
 	is_modified=true;
 	is_faded_out=false;
-	attributes[ParsersAttributes::X_POS]=QString();
-	attributes[ParsersAttributes::Y_POS]=QString();
-	attributes[ParsersAttributes::POSITION]=QString();
-	attributes[ParsersAttributes::FADED_OUT]=QString();
+	attributes[Attributes::X_POS]=QString();
+	attributes[Attributes::Y_POS]=QString();
+	attributes[Attributes::POSITION]=QString();
+	attributes[Attributes::FADED_OUT]=QString();
 	receiver_object=nullptr;
 }
 
@@ -76,14 +76,14 @@ bool BaseGraphicObject::isFadedOut(void)
 
 void BaseGraphicObject::setFadedOutAttribute(void)
 {
-	attributes[ParsersAttributes::FADED_OUT]=(is_faded_out ? ParsersAttributes::True : QString());
+	attributes[Attributes::FADED_OUT]=(is_faded_out ? Attributes::True : QString());
 }
 
 void BaseGraphicObject::setPositionAttribute(void)
 {
-	attributes[ParsersAttributes::X_POS]=QString("%1").arg(position.x());
-	attributes[ParsersAttributes::Y_POS]=QString("%1").arg(position.y());
-	attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XmlDefinition);
+	attributes[Attributes::X_POS]=QString("%1").arg(position.x());
+	attributes[Attributes::Y_POS]=QString("%1").arg(position.y());
+	attributes[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)

@@ -22,11 +22,11 @@ Rule::Rule(void)
 {
 	execution_type=BaseType::Null;
 	obj_type=ObjectType::Rule;
-	attributes[ParsersAttributes::EVENT_TYPE]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::CONDITION]=QString();
-	attributes[ParsersAttributes::EXEC_TYPE]=QString();
-	attributes[ParsersAttributes::COMMANDS]=QString();
+	attributes[Attributes::EVENT_TYPE]=QString();
+	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Condition]=QString();
+	attributes[Attributes::EXEC_TYPE]=QString();
+	attributes[Attributes::Commands]=QString();
 }
 
 void Rule::setCommandsAttribute(void)
@@ -41,7 +41,7 @@ void Rule::setCommandsAttribute(void)
 		if(i < (qtd-1)) str_cmds+=QString(";");
 	}
 
-	attributes[ParsersAttributes::COMMANDS]=str_cmds;
+	attributes[Attributes::Commands]=str_cmds;
 }
 
 void Rule::setEventType(EventType type)
@@ -127,12 +127,12 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setCommandsAttribute();
-	attributes[ParsersAttributes::CONDITION]=conditional_expr;
-	attributes[ParsersAttributes::EXEC_TYPE]=(~execution_type);
-	attributes[ParsersAttributes::EVENT_TYPE]=(~event_type);
+	attributes[Attributes::Condition]=conditional_expr;
+	attributes[Attributes::EXEC_TYPE]=(~execution_type);
+	attributes[Attributes::EVENT_TYPE]=(~event_type);
 
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

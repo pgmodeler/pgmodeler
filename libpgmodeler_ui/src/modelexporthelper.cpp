@@ -290,7 +290,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 		//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
 		svg_def.replace(font_attr.arg(scene->font().family()),
-										font_attr.arg(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font().family()));
+										font_attr.arg(BaseObjectView::getFontStyle(Attributes::GLOBAL).font().family()));
 
 		/* Removing the empty (transparent) backgound object in order to save some space in the file if
 		the grid or delimiter is displayed */
@@ -316,7 +316,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	unsigned i, count;
 	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
-	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + ParsersAttributes::DDL_END_TOKEN + QString(")");
+	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DDL_END_TOKEN + QString(")");
 	QRegExp comm_regexp;
 
 	try
@@ -826,7 +826,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			}
 			else
 			{
-				ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+				ddl_tk_found=(lin.indexOf(Attributes::DDL_END_TOKEN) >= 0);
 				lin.remove(QRegExp(QString("^(--)+(.)+$")));
 
 				//If the line isn't empty after cleanup it will be included on sql command

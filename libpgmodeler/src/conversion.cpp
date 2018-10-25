@@ -23,10 +23,10 @@ Conversion::Conversion(void)
 	obj_type=ObjectType::Conversion;
 	conversion_func=nullptr;
 	is_default=false;
-	attributes[ParsersAttributes::DEFAULT]=QString();
-	attributes[ParsersAttributes::SRC_ENCODING]=QString();
-	attributes[ParsersAttributes::DST_ENCODING]=QString();
-	attributes[ParsersAttributes::FUNCTION]=QString();
+	attributes[Attributes::DEFAULT]=QString();
+	attributes[Attributes::SRC_ENCODING]=QString();
+	attributes[Attributes::DST_ENCODING]=QString();
+	attributes[Attributes::FUNCTION]=QString();
 }
 
 void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
@@ -115,16 +115,16 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SrcEncoding]);
-	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DstEncoding]);
+	attributes[Attributes::DEFAULT]=(is_default ? Attributes::True : QString());
+	attributes[Attributes::SRC_ENCODING]=(~encodings[SrcEncoding]);
+	attributes[Attributes::DST_ENCODING]=(~encodings[DstEncoding]);
 
 	if(conversion_func)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::FUNCTION]=conversion_func->getName(true);
+			attributes[Attributes::FUNCTION]=conversion_func->getName(true);
 		else
-			attributes[ParsersAttributes::FUNCTION]=conversion_func->getCodeDefinition(def_type, true);
+			attributes[Attributes::FUNCTION]=conversion_func->getCodeDefinition(def_type, true);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

@@ -29,7 +29,7 @@
 
 #include "exception.h"
 #include "xmlparser.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 #include <algorithm>
 #include <QWidget>
 

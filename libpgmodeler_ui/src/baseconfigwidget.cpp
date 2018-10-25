@@ -227,7 +227,7 @@ void BaseConfigWidget::getConfigurationParams(map<QString, attribs_map> &config_
 	{
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
-		aux_attribs[ParsersAttributes::CONTENTS]=xmlparser.getElementContent();
+		aux_attribs[Attributes::Contents]=xmlparser.getElementContent();
 		xmlparser.restorePosition();
 	}
 

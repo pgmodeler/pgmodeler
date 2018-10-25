@@ -25,7 +25,7 @@
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
 
-#include "parsersattributes.h"
+#include "attributes.h"
 #include "exception.h"
 #include "pgsqltypes.h"
 #include "schemaparser.h"

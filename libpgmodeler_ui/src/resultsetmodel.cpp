@@ -65,7 +65,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		col = 0;
 
 		for(auto &tp : types)
-			type_names[tp[ParsersAttributes::OID].toInt()]=tp[ParsersAttributes::NAME];
+			type_names[tp[Attributes::OID].toInt()]=tp[Attributes::NAME];
 
 		for(col=0; col < col_count; col++)
 			tooltip_data.push_back(type_names[res.getColumnTypeId(col)]);

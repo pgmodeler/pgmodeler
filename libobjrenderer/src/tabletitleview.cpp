@@ -69,15 +69,15 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 	if(object->getObjectType()==ObjectType::View && !tag)
 	{
-		name_attrib=ParsersAttributes::VIEW_NAME;
-		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;
-		title_color_attrib=ParsersAttributes::VIEW_TITLE;
+		name_attrib=Attributes::VIEW_NAME;
+		schema_name_attrib=Attributes::VIEW_SCHEMA_NAME;
+		title_color_attrib=Attributes::VIEW_TITLE;
 	}
 	else
 	{
-		name_attrib=ParsersAttributes::TABLE_NAME;
-		schema_name_attrib=ParsersAttributes::TABLE_SCHEMA_NAME;
-		title_color_attrib=ParsersAttributes::TABLE_TITLE;
+		name_attrib=Attributes::TABLE_NAME;
+		schema_name_attrib=Attributes::TABLE_SCHEMA_NAME;
+		title_color_attrib=Attributes::TABLE_TITLE;
 	}
 
 	//Strike out the table name when its sql is disabled

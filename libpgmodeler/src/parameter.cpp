@@ -94,15 +94,15 @@ QString Parameter::getCodeDefinition(unsigned def_type)
 QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
+		attributes[Attributes::NAME]=BaseObject::formatName(obj_name);
 	else
-		attributes[ParsersAttributes::NAME]=obj_name;
+		attributes[Attributes::NAME]=obj_name;
 
-	attributes[ParsersAttributes::PARAM_IN]=(is_in ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::PARAM_OUT]=(is_out ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::PARAM_VARIADIC]=(is_variadic ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+	attributes[Attributes::PARAM_IN]=(is_in ? Attributes::True : QString());
+	attributes[Attributes::PARAM_OUT]=(is_out ? Attributes::True : QString());
+	attributes[Attributes::PARAM_VARIADIC]=(is_variadic ? Attributes::True : QString());
+	attributes[Attributes::DEFAULT_VALUE]=default_value;
+	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }

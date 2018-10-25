@@ -23,13 +23,13 @@ Aggregate::Aggregate(void)
 	obj_type=ObjectType::Aggregate;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[ParsersAttributes::TYPES]=QString();
-	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
-	attributes[ParsersAttributes::STATE_TYPE]=QString();
-	attributes[ParsersAttributes::BaseType]=QString();
-	attributes[ParsersAttributes::FINAL_FUNC]=QString();
-	attributes[ParsersAttributes::INITIAL_COND]=QString();
-	attributes[ParsersAttributes::SORT_OP]=QString();
+	attributes[Attributes::TYPES]=QString();
+	attributes[Attributes::TRANSITION_FUNC]=QString();
+	attributes[Attributes::STATE_TYPE]=QString();
+	attributes[Attributes::BaseType]=QString();
+	attributes[Attributes::FINAL_FUNC]=QString();
+	attributes[Attributes::INITIAL_COND]=QString();
+	attributes[Attributes::SORT_OP]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
@@ -155,7 +155,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 		an aggregate that accepts any possible data '*' e.g. function(*) */
 	if(def_type == SchemaParser::SqlDefinition && str_types.isEmpty()) str_types='*';
 
-	attributes[ParsersAttributes::TYPES]=str_types;
+	attributes[Attributes::TYPES]=str_types;
 }
 
 void Aggregate::addDataType(PgSqlType type)
@@ -229,42 +229,42 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[TransitionFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TransitionFunc]->getSignature();
+			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getSignature();
 		else
 		{
-			functions[TransitionFunc]->setAttribute(ParsersAttributes::REF_TYPE,
-													 ParsersAttributes::TRANSITION_FUNC);
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
+			functions[TransitionFunc]->setAttribute(Attributes::REF_TYPE,
+													 Attributes::TRANSITION_FUNC);
+			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
 	if(functions[FinalFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FinalFunc]->getSignature();
+			attributes[Attributes::FINAL_FUNC]=functions[FinalFunc]->getSignature();
 		else
 		{
-			functions[FinalFunc]->setAttribute(ParsersAttributes::REF_TYPE,
-												ParsersAttributes::FINAL_FUNC);
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FinalFunc]->getCodeDefinition(def_type,true);
+			functions[FinalFunc]->setAttribute(Attributes::REF_TYPE,
+												Attributes::FINAL_FUNC);
+			attributes[Attributes::FINAL_FUNC]=functions[FinalFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
 	if(sort_operator)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::SORT_OP]=sort_operator->getName(true);
+			attributes[Attributes::SORT_OP]=sort_operator->getName(true);
 		else
-			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
 	if(!initial_condition.isEmpty())
-		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
+		attributes[Attributes::INITIAL_COND]=initial_condition;
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::STATE_TYPE]=*(state_type);
+		attributes[Attributes::STATE_TYPE]=*(state_type);
 	else
-		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
+		attributes[Attributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,Attributes::STATE_TYPE);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

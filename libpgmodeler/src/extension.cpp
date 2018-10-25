@@ -4,9 +4,9 @@ Extension::Extension(void)
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
-	attributes[ParsersAttributes::HANDLES_TYPE]=QString();
-	attributes[ParsersAttributes::CUR_VERSION]=QString();
-	attributes[ParsersAttributes::OLD_VERSION]=QString();
+	attributes[Attributes::HANDLES_TYPE]=QString();
+	attributes[Attributes::CurVersion]=QString();
+	attributes[Attributes::OLD_VERSION]=QString();
 }
 
 void Extension::setName(const QString &name)
@@ -85,10 +85,10 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
-	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::CUR_VERSION]=versions[CurVersion];
-	attributes[ParsersAttributes::OLD_VERSION]=versions[OldVersion];
+	attributes[Attributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
+	attributes[Attributes::HANDLES_TYPE]=(handles_type ? Attributes::True : QString());
+	attributes[Attributes::CurVersion]=versions[CurVersion];
+	attributes[Attributes::OLD_VERSION]=versions[OldVersion];
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -102,12 +102,12 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		attributes[ParsersAttributes::NEW_VERSION]=QString();
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::NEW_VERSION]=QString();
 
 		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&
 				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())
-			attributes[ParsersAttributes::NEW_VERSION]=ext->versions[CurVersion];
+			attributes[Attributes::NEW_VERSION]=ext->versions[CurVersion];
 
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -119,7 +119,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 QString Extension::getDropDefinition(bool cascade)
 {
-	attributes[ParsersAttributes::NAME] = this->getName(true);
+	attributes[Attributes::NAME] = this->getName(true);
 	return(BaseObject::getDropDefinition(cascade));
 }
 

@@ -17,7 +17,7 @@
 */
 
 #include "schemaparser.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 
 const char SchemaParser::CharComment='#';
 const char SchemaParser::CharLineEnd='\n';
@@ -891,7 +891,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 					 GlobalAttributes::SQLSchemaDir + GlobalAttributes::DirSeparator + obj_name + GlobalAttributes::SchemaExt;
 
-			attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
+			attribs[Attributes::PGSQL_VERSION]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
 			return(getCodeDefinition(filename, attribs));
@@ -1431,7 +1431,7 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	try
 	{
 		loadFile(filename);
-		attribs[ParsersAttributes::PGSQL_VERSION]=pgsql_version;
+		attribs[Attributes::PGSQL_VERSION]=pgsql_version;
 		return(getCodeDefinition(attribs));
 	}
 	catch(Exception &e)

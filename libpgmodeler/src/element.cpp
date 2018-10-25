@@ -93,25 +93,25 @@ OperatorClass *Element::getOperatorClass(void)
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
-	attributes[ParsersAttributes::COLUMN]=QString();
-	attributes[ParsersAttributes::EXPRESSION]=QString();
-	attributes[ParsersAttributes::OP_CLASS]=QString();
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? ParsersAttributes::True : QString());
+	attributes[Attributes::Column]=QString();
+	attributes[Attributes::EXPRESSION]=QString();
+	attributes[Attributes::OP_CLASS]=QString();
+	attributes[Attributes::USE_SORTING]=(this->sorting_enabled ? Attributes::True : QString());
+	attributes[Attributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
+	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : QString());
 
 
 	if(column)
-		attributes[ParsersAttributes::COLUMN]=column->getName(true);
+		attributes[Attributes::Column]=column->getName(true);
 	else
-		attributes[ParsersAttributes::EXPRESSION]=expression;
+		attributes[Attributes::EXPRESSION]=expression;
 
 	if(operator_class)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::OP_CLASS]=operator_class->getName(true);
+			attributes[Attributes::OP_CLASS]=operator_class->getName(true);
 		else
-			attributes[ParsersAttributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
+			attributes[Attributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
 	}
 }
 

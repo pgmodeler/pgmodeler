@@ -25,19 +25,19 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	setupUi(this);
 
 	QString conf_ids[]={
-		ParsersAttributes::GLOBAL, //0
-		ParsersAttributes::CONSTRAINTS, //1
-		ParsersAttributes::OBJ_SELECTION, //2
-		ParsersAttributes::POSITION_INFO, //3
-		ParsersAttributes::POSITION_INFO, //4
-		ParsersAttributes::OBJECT_TYPE, //5
-		ParsersAttributes::LOCKER_ARC, //6
-		ParsersAttributes::LOCKER_BODY, //7
-		ParsersAttributes::TABLE_SCHEMA_NAME, //8
-		ParsersAttributes::TABLE_NAME, //9
-		ParsersAttributes::TABLE_BODY, //10
-		ParsersAttributes::TABLE_EXT_BODY, //11
-		ParsersAttributes::TABLE_TITLE, //12
+		Attributes::GLOBAL, //0
+		Attributes::Constraints, //1
+		Attributes::OBJ_SELECTION, //2
+		Attributes::POSITION_INFO, //3
+		Attributes::POSITION_INFO, //4
+		Attributes::OBJECT_TYPE, //5
+		Attributes::LOCKER_ARC, //6
+		Attributes::LOCKER_BODY, //7
+		Attributes::TABLE_SCHEMA_NAME, //8
+		Attributes::TABLE_NAME, //9
+		Attributes::TABLE_BODY, //10
+		Attributes::TABLE_EXT_BODY, //11
+		Attributes::TABLE_TITLE, //12
 		BaseObject::getSchemaName(ObjectType::Rule), //13
 		BaseObject::getSchemaName(ObjectType::Rule), //14
 		BaseObject::getSchemaName(ObjectType::Index), //15
@@ -48,36 +48,36 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		BaseObject::getSchemaName(ObjectType::Constraint), //20
 		BaseObject::getSchemaName(ObjectType::Policy), //21
 		BaseObject::getSchemaName(ObjectType::Policy), //22
-		ParsersAttributes::VIEW_SCHEMA_NAME, //21 -> 23
-		ParsersAttributes::VIEW_NAME, //22
-		ParsersAttributes::VIEW_BODY, //23
-		ParsersAttributes::VIEW_EXT_BODY, //24
-		ParsersAttributes::VIEW_TITLE, //25
-		ParsersAttributes::Alias, //26
-		ParsersAttributes::REF_COLUMN, //27
-		ParsersAttributes::REF_TABLE, //28
-		ParsersAttributes::REFERENCE, //29
+		Attributes::VIEW_SCHEMA_NAME, //21 -> 23
+		Attributes::VIEW_NAME, //22
+		Attributes::VIEW_BODY, //23
+		Attributes::VIEW_EXT_BODY, //24
+		Attributes::VIEW_TITLE, //25
+		Attributes::Alias, //26
+		Attributes::REF_COLUMN, //27
+		Attributes::REF_TABLE, //28
+		Attributes::REFERENCE, //29
 		BaseObject::getSchemaName(ObjectType::Textbox), //30
-		ParsersAttributes::COLUMN, //31
-		ParsersAttributes::COLUMN, //32
-		ParsersAttributes::INH_COLUMN, //33
-		ParsersAttributes::PROT_COLUMN, //34
-		ParsersAttributes::PK_COLUMN, //35
-		ParsersAttributes::PK_COLUMN, //36
-		ParsersAttributes::FK_COLUMN, //37
-		ParsersAttributes::FK_COLUMN, //38
-		ParsersAttributes::UQ_COLUMN, //39
-		ParsersAttributes::UQ_COLUMN, //40
-		ParsersAttributes::NN_COLUMN, //41
-		ParsersAttributes::NN_COLUMN, //42
-		ParsersAttributes::RELATIONSHIP, //43
-		ParsersAttributes::LABEL, //44
-		ParsersAttributes::LABEL, //45
-		ParsersAttributes::Attribute, //46
-		ParsersAttributes::Attribute, //47
-		ParsersAttributes::TAG, //48
-		ParsersAttributes::TAG, //49
-		ParsersAttributes::PLACEHOLDER /*50*/};
+		Attributes::Column, //31
+		Attributes::Column, //32
+		Attributes::INH_COLUMN, //33
+		Attributes::PROT_COLUMN, //34
+		Attributes::PK_COLUMN, //35
+		Attributes::PK_COLUMN, //36
+		Attributes::FK_COLUMN, //37
+		Attributes::FK_COLUMN, //38
+		Attributes::UQ_COLUMN, //39
+		Attributes::UQ_COLUMN, //40
+		Attributes::NN_COLUMN, //41
+		Attributes::NN_COLUMN, //42
+		Attributes::RELATIONSHIP, //43
+		Attributes::LABEL, //44
+		Attributes::LABEL, //45
+		Attributes::Attribute, //46
+		Attributes::Attribute, //47
+		Attributes::TAG, //48
+		Attributes::TAG, //49
+		Attributes::PLACEHOLDER /*50*/};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
 			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 22, 25, 26, 27,
@@ -211,8 +211,8 @@ void AppearanceConfigWidget::loadExampleModel(void)
 
 void AppearanceConfigWidget::updatePlaceholderItem(void)
 {
-	placeholder->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
-	QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
+	placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::PLACEHOLDER));
+	QPen pen=BaseObjectView::getBorderStyle(Attributes::PLACEHOLDER);
 	pen.setStyle(Qt::DashLine);
 	placeholder->setPen(pen);
 }
@@ -238,7 +238,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 		}
 
 		this->enableConfigElement();
-		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font());
+		font_cmb->setCurrentFont(BaseObjectView::getFontStyle(Attributes::GLOBAL).font());
 		model->setObjectsModified();
 		updatePlaceholderItem();
 		scene->update();
@@ -282,7 +282,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attribs[attrib_id]=item.colors[2].name();
 			}
 			//If the item is a font config
-			else if(item.conf_id!=ParsersAttributes::GLOBAL && !item.obj_conf)
+			else if(item.conf_id!=Attributes::GLOBAL && !item.obj_conf)
 			{
 				font=item.font_fmt.font();
 
@@ -290,14 +290,14 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attrib_id=item.conf_id + QString("-fcolor");
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
-				attribs[attrib_id]=(font.italic() ? ParsersAttributes::True : ParsersAttributes::False);
+				attrib_id=item.conf_id + QString("-") + Attributes::ITALIC;
+				attribs[attrib_id]=(font.italic() ? Attributes::True : Attributes::False);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::Bold;
-				attribs[attrib_id]=(font.bold() ? ParsersAttributes::True : ParsersAttributes::False);
+				attrib_id=item.conf_id + QString("-") + Attributes::Bold;
+				attribs[attrib_id]=(font.bold() ? Attributes::True : Attributes::False);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
-				attribs[attrib_id]=(font.underline() ? ParsersAttributes::True : ParsersAttributes::False);
+				attrib_id=item.conf_id + QString("-") + Attributes::UNDERLINE;
+				attribs[attrib_id]=(font.underline() ? Attributes::True : Attributes::False);
 			}
 			//Special case: treating the global font element
 			else

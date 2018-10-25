@@ -31,7 +31,7 @@
 #include "exception.h"
 #include "xmlparser.h"
 #include "globalattributes.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 #include <algorithm>
 
 class SyntaxHighlighter: public QSyntaxHighlighter {

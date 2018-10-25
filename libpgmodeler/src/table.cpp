@@ -26,25 +26,25 @@ Table::Table(void) : BaseTable()
 {
 	obj_type=ObjectType::Table;
 	with_oid=gen_alter_cmds=unlogged=rls_enabled=rls_forced=false;
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::INH_COLUMNS]=QString();
-	attributes[ParsersAttributes::CONSTRAINTS]=QString();
-	attributes[ParsersAttributes::OIDS]=QString();
-	attributes[ParsersAttributes::COLS_COMMENT]=QString();
-	attributes[ParsersAttributes::COPY_TABLE]=QString();
-	attributes[ParsersAttributes::AncestorTable]=QString();
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=QString();
-	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=QString();
-	attributes[ParsersAttributes::COL_INDEXES]=QString();
-	attributes[ParsersAttributes::CONSTR_INDEXES]=QString();
-	attributes[ParsersAttributes::UNLOGGED]=QString();
-	attributes[ParsersAttributes::INITIAL_DATA]=QString();
-	attributes[ParsersAttributes::RLS_ENABLED]=QString();
-	attributes[ParsersAttributes::RLS_FORCED]=QString();
-	attributes[ParsersAttributes::PARTITIONING]=QString();
-	attributes[ParsersAttributes::PARTITION_KEY]=QString();
-	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
-	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::INH_COLUMNS]=QString();
+	attributes[Attributes::Constraints]=QString();
+	attributes[Attributes::OIDS]=QString();
+	attributes[Attributes::ColsComment]=QString();
+	attributes[Attributes::CopyTable]=QString();
+	attributes[Attributes::AncestorTable]=QString();
+	attributes[Attributes::GEN_ALTER_CMDS]=QString();
+	attributes[Attributes::ConstrSqlDisabled]=QString();
+	attributes[Attributes::ColIndexes]=QString();
+	attributes[Attributes::ConstrIndexes]=QString();
+	attributes[Attributes::UNLOGGED]=QString();
+	attributes[Attributes::INITIAL_DATA]=QString();
+	attributes[Attributes::RLS_ENABLED]=QString();
+	attributes[Attributes::RLS_FORCED]=QString();
+	attributes[Attributes::PARTITIONING]=QString();
+	attributes[Attributes::PARTITION_KEY]=QString();
+	attributes[Attributes::PARTITIONED_TABLE]=QString();
+	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
 
 	copy_table=partitioned_table=nullptr;
 	partitioning_type=BaseType::Null;
@@ -159,19 +159,19 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-		attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
-		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==ObjectType::Column ? ParsersAttributes::True : QString());
-		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==ObjectType::Constraint ? ParsersAttributes::True : QString());
-		attribs[ParsersAttributes::TABLE]=this->getName(true);
-		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
-		attribs[ParsersAttributes::COMMENT]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
+		attribs[Attributes::SIGNATURE]=tab_obj->getSignature();
+		attribs[Attributes::SQL_OBJECT]=tab_obj->getSQLName();
+		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : QString());
+		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
+		attribs[Attributes::TABLE]=this->getName(true);
+		attribs[Attributes::NAME]=tab_obj->getName(true);
+		attribs[Attributes::Comment]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
-			attributes[ParsersAttributes::COLS_COMMENT]+=QString("-- ");
+			attributes[Attributes::ColsComment]+=QString("-- ");
 
-		attributes[ParsersAttributes::COLS_COMMENT]+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attribs, SchemaParser::SqlDefinition);
+		attributes[Attributes::ColsComment]+=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::SqlDefinition);
 		schparser.ignoreUnkownAttributes(false);
 	}
 }
@@ -184,14 +184,14 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-	attributes[ParsersAttributes::AncestorTable]=list.join(',');
+	attributes[Attributes::AncestorTable]=list.join(',');
 }
 
 void Table::setRelObjectsIndexesAttribute(void)
 {
 	attribs_map aux_attribs;
 	vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
-	QString attribs[]={ ParsersAttributes::COL_INDEXES,  ParsersAttributes::CONSTR_INDEXES };
+	QString attribs[]={ Attributes::ColIndexes,  Attributes::ConstrIndexes };
 	ObjectType obj_types[]={ ObjectType::Column, ObjectType::Constraint };
 	unsigned idx=0, size=obj_indexes.size();
 
@@ -203,13 +203,13 @@ void Table::setRelObjectsIndexesAttribute(void)
 		{
 			for(auto &obj_idx : (*obj_indexes[idx]))
 			{
-				aux_attribs[ParsersAttributes::NAME]=obj_idx.first;
-				aux_attribs[ParsersAttributes::INDEX]=QString::number(obj_idx.second);
-				aux_attribs[ParsersAttributes::OBJECTS]+=schparser.getCodeDefinition(ParsersAttributes::OBJECT, aux_attribs, SchemaParser::XmlDefinition);
+				aux_attribs[Attributes::NAME]=obj_idx.first;
+				aux_attribs[Attributes::INDEX]=QString::number(obj_idx.second);
+				aux_attribs[Attributes::OBJECTS]+=schparser.getCodeDefinition(Attributes::OBJECT, aux_attribs, SchemaParser::XmlDefinition);
 			}
 
-			aux_attribs[ParsersAttributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
-			attributes[attribs[idx]]=schparser.getCodeDefinition(ParsersAttributes::CUSTOMIDXS, aux_attribs, SchemaParser::XmlDefinition);
+			aux_attribs[Attributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
+			attributes[attribs[idx]]=schparser.getCodeDefinition(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlDefinition);
 			aux_attribs.clear();
 		}
 	}
@@ -249,10 +249,10 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 				str_cols.remove(count-2,2);
 		}
 
-		attributes[ParsersAttributes::INH_COLUMNS]=inh_cols;
+		attributes[Attributes::INH_COLUMNS]=inh_cols;
 	}
 
-	attributes[ParsersAttributes::COLUMNS]=str_cols;
+	attributes[Attributes::Columns]=str_cols;
 }
 
 void Table::setConstraintsAttribute(unsigned def_type)
@@ -322,11 +322,11 @@ void Table::setConstraintsAttribute(unsigned def_type)
 				str_constr+=lines[i];
 			}
 
-			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::True : QString());
+			attributes[Attributes::ConstrSqlDisabled]=(dis_sql_cnt==lines.size() ? Attributes::True : QString());
 		}
 	}
 
-	attributes[ParsersAttributes::CONSTRAINTS]=str_constr;
+	attributes[Attributes::Constraints]=str_constr;
 }
 
 vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
@@ -1593,35 +1593,35 @@ void Table::updateAlterCmdsStatus(void)
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
-	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::COPY_TABLE]=QString();
-	attributes[ParsersAttributes::AncestorTable]=QString();
-	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::PARTITIONING]=~partitioning_type;
-	attributes[ParsersAttributes::PARTITION_KEY]=QString();
-	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
+	attributes[Attributes::OIDS]=(with_oid ? Attributes::True : QString());
+	attributes[Attributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? Attributes::True : QString());
+	attributes[Attributes::UNLOGGED]=(unlogged ? Attributes::True : QString());
+	attributes[Attributes::RLS_ENABLED]=(rls_enabled ? Attributes::True : QString());
+	attributes[Attributes::RLS_FORCED]=(rls_forced ? Attributes::True : QString());
+	attributes[Attributes::CopyTable]=QString();
+	attributes[Attributes::AncestorTable]=QString();
+	attributes[Attributes::TAG]=QString();
+	attributes[Attributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? Attributes::True : QString());
+	attributes[Attributes::PARTITIONING]=~partitioning_type;
+	attributes[Attributes::PARTITION_KEY]=QString();
+	attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);
 
 	if(def_type == SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(',');
+		attributes[Attributes::PARTITION_KEY]=part_keys_code.join(',');
 	else
-		attributes[ParsersAttributes::PARTITION_KEY]=part_keys_code.join(' ');
+		attributes[Attributes::PARTITION_KEY]=part_keys_code.join(' ');
 
 	if(def_type==SchemaParser::SqlDefinition && copy_table)
-		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + copy_op.getSQLDefinition();
+		attributes[Attributes::CopyTable]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
 	if(def_type==SchemaParser::SqlDefinition && partitioned_table)
-		attributes[ParsersAttributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
+		attributes[Attributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[ParsersAttributes::TAG]=tag->getCodeDefinition(def_type, true);
+		attributes[Attributes::TAG]=tag->getCodeDefinition(def_type, true);
 
 	(copy_table ? copy_table->getName(true) : QString());
 
@@ -1634,11 +1634,11 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
 		setFadedOutAttribute();
-		attributes[ParsersAttributes::INITIAL_DATA]=initial_data;
-		attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::INITIAL_DATA]=initial_data;
+		attributes[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 	else
-		attributes[ParsersAttributes::INITIAL_DATA]=getInitialDataCommands();
+		attributes[Attributes::INITIAL_DATA]=getInitialDataCommands();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -1881,24 +1881,24 @@ QString Table::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map attribs;
 
-		attribs[ParsersAttributes::OIDS]=QString();
-		attribs[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
+		attribs[Attributes::OIDS]=QString();
+		attribs[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())
 		{
-			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::True;
+			attribs[Attributes::HAS_CHANGES]=Attributes::True;
 
 			if(this->with_oid!=tab->with_oid)
-				attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::OIDS]=(tab->with_oid ? Attributes::True : Attributes::UNSET);
 
 			if(this->unlogged!=tab->unlogged)
-				attribs[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::UNLOGGED]=(tab->unlogged ? Attributes::True : Attributes::UNSET);
 
 			if(this->rls_enabled!=tab->rls_enabled)
-				attribs[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::RLS_ENABLED]=(tab->rls_enabled ? Attributes::True : Attributes::UNSET);
 
 			if(this->rls_forced!=tab->rls_forced)
-				attribs[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::RLS_FORCED]=(tab->rls_forced ? Attributes::True : Attributes::UNSET);
 		}
 
 		copyAttributes(attribs);
@@ -1917,8 +1917,8 @@ QString Table::getTruncateDefinition(bool cascade)
 	try
 	{
 		BaseObject::setBasicAttributes(true);
-		attributes[ParsersAttributes::Cascade]=(cascade ? ParsersAttributes::True : QString());
-		return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
+		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+		return(BaseObject::getAlterDefinition(Attributes::TRUNCATE_PRIV, attributes, false, false));
 	}
 	catch(Exception &e)
 	{
@@ -2033,7 +2033,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		}
 
 		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
-									.arg(val_list.join(", ")).arg(ParsersAttributes::DDL_END_TOKEN);
+									.arg(val_list.join(", ")).arg(Attributes::DDL_END_TOKEN);
 	}
 
 	return(fmt_cmd);

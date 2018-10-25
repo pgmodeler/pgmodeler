@@ -23,10 +23,10 @@ Collation::Collation(void)
 	obj_type=ObjectType::Collation;
 	encoding=BaseType::Null;
 
-	attributes[ParsersAttributes::LcCtype]=QString();
-	attributes[ParsersAttributes::LcCollate]=QString();
-	attributes[ParsersAttributes::LOCALE]=QString();
-	attributes[ParsersAttributes::ENCODING]=QString();
+	attributes[Attributes::LcCtype]=QString();
+	attributes[Attributes::LcCollate]=QString();
+	attributes[Attributes::LOCALE]=QString();
+	attributes[Attributes::ENCODING]=QString();
 }
 
 void Collation::setLocale(const QString &locale)
@@ -102,16 +102,16 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(!locale.isEmpty())
 	{
-		attributes[ParsersAttributes::LOCALE]=locale;
+		attributes[Attributes::LOCALE]=locale;
 
 		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
-			attributes[ParsersAttributes::LOCALE]=locale + "." + (~encoding).toLower();
+			attributes[Attributes::LOCALE]=locale + "." + (~encoding).toLower();
 	}
 	else if(collation)
-		attributes[ParsersAttributes::COLLATION]=collation->getName(true);
+		attributes[Attributes::Collation]=collation->getName(true);
 	else
 	{
-		QString lc_attribs[2]={ ParsersAttributes::LcCtype, ParsersAttributes::LcCollate };
+		QString lc_attribs[2]={ Attributes::LcCtype, Attributes::LcCollate };
 
 		if(localization[LcCtype].isEmpty() && localization[LcCollate].isEmpty())
 			throw Exception(ErrorCode::EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -126,7 +126,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[ParsersAttributes::ENCODING]=~encoding;
+	attributes[Attributes::ENCODING]=~encoding;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -134,7 +134,7 @@ QString Collation::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
 	}
 	catch(Exception &e)

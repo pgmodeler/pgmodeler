@@ -30,23 +30,23 @@ Function::Function(void)
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[ParsersAttributes::PARAMETERS]=QString();
-	attributes[ParsersAttributes::EXECUTION_COST]=QString();
-	attributes[ParsersAttributes::ROW_AMOUNT]=QString();
-	attributes[ParsersAttributes::RETURN_TYPE]=QString();
-	attributes[ParsersAttributes::FUNCTION_TYPE]=QString();
-	attributes[ParsersAttributes::LANGUAGE]=QString();
-	attributes[ParsersAttributes::RETURNS_SETOF]=QString();
-	attributes[ParsersAttributes::SECURITY_TYPE]=QString();
-	attributes[ParsersAttributes::BehaviorType]=QString();
-	attributes[ParsersAttributes::DEFINITION]=QString();
-	attributes[ParsersAttributes::SIGNATURE]=QString();
-	attributes[ParsersAttributes::REF_TYPE]=QString();
-	attributes[ParsersAttributes::WINDOW_FUNC]=QString();
-	attributes[ParsersAttributes::RETURN_TABLE]=QString();
-	attributes[ParsersAttributes::LIBRARY]=QString();
-	attributes[ParsersAttributes::SYMBOL]=QString();
-	attributes[ParsersAttributes::LEAKPROOF]=QString();
+	attributes[Attributes::PARAMETERS]=QString();
+	attributes[Attributes::EXECUTION_COST]=QString();
+	attributes[Attributes::ROW_AMOUNT]=QString();
+	attributes[Attributes::RETURN_TYPE]=QString();
+	attributes[Attributes::FUNCTION_TYPE]=QString();
+	attributes[Attributes::LANGUAGE]=QString();
+	attributes[Attributes::RETURNS_SETOF]=QString();
+	attributes[Attributes::SECURITY_TYPE]=QString();
+	attributes[Attributes::BehaviorType]=QString();
+	attributes[Attributes::DEFINITION]=QString();
+	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::REF_TYPE]=QString();
+	attributes[Attributes::WINDOW_FUNC]=QString();
+	attributes[Attributes::RETURN_TABLE]=QString();
+	attributes[Attributes::LIBRARY]=QString();
+	attributes[Attributes::SYMBOL]=QString();
+	attributes[Attributes::LEAKPROOF]=QString();
 }
 
 void Function::setName(const QString &name)
@@ -139,7 +139,7 @@ void Function::setParametersAttribute(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		str_param.remove(str_param.size()-2,2);
 
-	attributes[ParsersAttributes::PARAMETERS]=str_param;
+	attributes[Attributes::PARAMETERS]=str_param;
 }
 
 void Function::setTableReturnTypeAttribute(unsigned def_type)
@@ -156,7 +156,7 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		str_type.remove(str_type.size()-2,2);
 
-	attributes[ParsersAttributes::RETURN_TABLE]=str_type;
+	attributes[Attributes::RETURN_TABLE]=str_type;
 }
 
 void Function::setExecutionCost(unsigned exec_cost)
@@ -457,40 +457,40 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setParametersAttribute(def_type);
 
-	attributes[ParsersAttributes::EXECUTION_COST]=QString("%1").arg(execution_cost);
-	attributes[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(row_amount);
-	attributes[ParsersAttributes::FUNCTION_TYPE]=(~function_type);
+	attributes[Attributes::EXECUTION_COST]=QString("%1").arg(execution_cost);
+	attributes[Attributes::ROW_AMOUNT]=QString("%1").arg(row_amount);
+	attributes[Attributes::FUNCTION_TYPE]=(~function_type);
 
 	if(language)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attributes[ParsersAttributes::LANGUAGE]=language->getName(false);
-			attributes[ParsersAttributes::RETURN_TYPE]=(*return_type);
+			attributes[Attributes::LANGUAGE]=language->getName(false);
+			attributes[Attributes::RETURN_TYPE]=(*return_type);
 		}
 		else
 		{
-			attributes[ParsersAttributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
-			attributes[ParsersAttributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
+			attributes[Attributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
+			attributes[Attributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
 		}
 	}
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
-	attributes[ParsersAttributes::BehaviorType]=(~behavior_type);
-	attributes[ParsersAttributes::DEFINITION]=source_code;
+	attributes[Attributes::RETURNS_SETOF]=(returns_setof ? Attributes::True : QString());
+	attributes[Attributes::WINDOW_FUNC]=(is_wnd_function ? Attributes::True : QString());
+	attributes[Attributes::LEAKPROOF]=(is_leakproof ? Attributes::True : QString());
+	attributes[Attributes::SECURITY_TYPE]=(~security_type);
+	attributes[Attributes::BehaviorType]=(~behavior_type);
+	attributes[Attributes::DEFINITION]=source_code;
 
 	if(language->getName()==~LanguageType(LanguageType::C))
 	{
-		attributes[ParsersAttributes::SYMBOL]=symbol;
-		attributes[ParsersAttributes::LIBRARY]=library;
+		attributes[Attributes::SYMBOL]=symbol;
+		attributes[Attributes::LIBRARY]=library;
 	}
 
-	attributes[ParsersAttributes::SIGNATURE]=signature;
+	attributes[Attributes::SIGNATURE]=signature;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -505,40 +505,40 @@ QString Function::getAlterDefinition(BaseObject *object)
 	{
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->source_code.simplified()!=func->source_code.simplified() ||
 				this->library!=func->library ||
 				this->symbol!=func->symbol)
 		{
-			attribs[ParsersAttributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SqlDefinition);
-			attribs[ParsersAttributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+			attribs[Attributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
 		}
 		else
 		{
 			if(this->execution_cost!=func->execution_cost)
-				attribs[ParsersAttributes::EXECUTION_COST]=QString::number(func->execution_cost);
+				attribs[Attributes::EXECUTION_COST]=QString::number(func->execution_cost);
 
 			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
 			{
-				attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::True;
-				attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
+				attribs[Attributes::RETURNS_SETOF]=Attributes::True;
+				attribs[Attributes::ROW_AMOUNT]=QString::number(row_amount);
 			}
 
 			if(this->function_type!=func->function_type)
-				attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
+				attribs[Attributes::FUNCTION_TYPE]=~func->function_type;
 
 			if(this->is_leakproof!=func->is_leakproof)
-				attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::LEAKPROOF]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);
 
 			if(this->security_type!=func->security_type)
-				attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
+				attribs[Attributes::SECURITY_TYPE]=~func->security_type;
 
 			if((this->behavior_type!=func->behavior_type) &&
 					((this->behavior_type==BehaviorType::CalledOnNullInput) ||
 					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
 					  func->function_type==BehaviorType::CalledOnNullInput)))
-				attribs[ParsersAttributes::BehaviorType]=~func->behavior_type;
+				attribs[Attributes::BehaviorType]=~func->behavior_type;
 		}
 
 		copyAttributes(attribs);

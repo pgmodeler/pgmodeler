@@ -23,11 +23,11 @@ OperatorClass::OperatorClass(void)
 	obj_type=ObjectType::OpClass;
 	family=nullptr;
 	is_default=false;
-	attributes[ParsersAttributes::FAMILY]=QString();
-	attributes[ParsersAttributes::ELEMENTS]=QString();
-	attributes[ParsersAttributes::INDEX_TYPE]=QString();
-	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::DEFAULT]=QString();
+	attributes[Attributes::FAMILY]=QString();
+	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::INDEX_TYPE]=QString();
+	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::DEFAULT]=QString();
 }
 
 OperatorClass::~OperatorClass(void)
@@ -78,7 +78,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 				i < count-1) str_elems+=QString(",\n");
 	}
 
-	attributes[ParsersAttributes::ELEMENTS]=str_elems;
+	attributes[Attributes::ELEMENTS]=str_elems;
 }
 
 void OperatorClass::addElement(OperatorClassElement elem)
@@ -172,23 +172,23 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setElementsAttribute(def_type);
-	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::True : QString());
+	attributes[Attributes::INDEX_TYPE]=(~indexing_type);
+	attributes[Attributes::DEFAULT]=(is_default ? Attributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::TYPE]=(*data_type);
+		attributes[Attributes::TYPE]=(*data_type);
 	else
-		attributes[ParsersAttributes::TYPE]=data_type.getCodeDefinition(def_type);
+		attributes[Attributes::TYPE]=data_type.getCodeDefinition(def_type);
 
 	if(family)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::FAMILY]=family->getName(true);
+			attributes[Attributes::FAMILY]=family->getName(true);
 		else
-			attributes[ParsersAttributes::FAMILY]=family->getSignature();
+			attributes[Attributes::FAMILY]=family->getSignature();
 	}
 
-	attributes[ParsersAttributes::SIGNATURE]=getSignature();
+	attributes[Attributes::SIGNATURE]=getSignature();
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 

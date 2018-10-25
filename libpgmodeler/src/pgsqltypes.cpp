@@ -1588,39 +1588,39 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs_map attribs;
 		SchemaParser schparser;
 
-		attribs[ParsersAttributes::LENGTH]=QString();
-		attribs[ParsersAttributes::DIMENSION]=QString();
-		attribs[ParsersAttributes::PRECISION]=QString();
-		attribs[ParsersAttributes::WITH_TIMEZONE]=QString();
-		attribs[ParsersAttributes::INTERVAL_TYPE]=QString();
-		attribs[ParsersAttributes::SPATIAL_TYPE]=QString();
-		attribs[ParsersAttributes::VARIATION]=QString();
-		attribs[ParsersAttributes::SRID]=QString();
-		attribs[ParsersAttributes::REF_TYPE]=ref_type;
+		attribs[Attributes::LENGTH]=QString();
+		attribs[Attributes::DIMENSION]=QString();
+		attribs[Attributes::PRECISION]=QString();
+		attribs[Attributes::WITH_TIMEZONE]=QString();
+		attribs[Attributes::INTERVAL_TYPE]=QString();
+		attribs[Attributes::SPATIAL_TYPE]=QString();
+		attribs[Attributes::VARIATION]=QString();
+		attribs[Attributes::SRID]=QString();
+		attribs[Attributes::REF_TYPE]=ref_type;
 
-		attribs[ParsersAttributes::NAME]=(~(*this));
-		attribs[ParsersAttributes::LENGTH]=QString("%1").arg(this->length);
+		attribs[Attributes::NAME]=(~(*this));
+		attribs[Attributes::LENGTH]=QString("%1").arg(this->length);
 
 		if(dimension > 0)
-			attribs[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimension);
+			attribs[Attributes::DIMENSION]=QString("%1").arg(this->dimension);
 
 		if(precision >= 0)
-			attribs[ParsersAttributes::PRECISION]=QString("%1").arg(this->precision);
+			attribs[Attributes::PRECISION]=QString("%1").arg(this->precision);
 
 		if(interval_type != BaseType::Null)
-			attribs[ParsersAttributes::INTERVAL_TYPE]=(~interval_type);
+			attribs[Attributes::INTERVAL_TYPE]=(~interval_type);
 
 		if(isGiSType())
 		{
-			attribs[ParsersAttributes::SPATIAL_TYPE]=(~spatial_type);
-			attribs[ParsersAttributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
-			attribs[ParsersAttributes::SRID]=QString("%1").arg(spatial_type.getSRID());
+			attribs[Attributes::SPATIAL_TYPE]=(~spatial_type);
+			attribs[Attributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
+			attribs[Attributes::SRID]=QString("%1").arg(spatial_type.getSRID());
 		}
 
 		if(with_timezone)
-			attribs[ParsersAttributes::WITH_TIMEZONE]=ParsersAttributes::True;
+			attribs[Attributes::WITH_TIMEZONE]=Attributes::True;
 
-		return(schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
+		return(schparser.getCodeDefinition(Attributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}
 }
 

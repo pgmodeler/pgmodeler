@@ -107,12 +107,12 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 {
 	QStringList ids;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
-						   ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
+						   Attributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)
 	{
-		if(snip.second[ParsersAttributes::OBJECT]==type_name)
-			ids.push_back(snip.second[ParsersAttributes::ID]);
+		if(snip.second[Attributes::OBJECT]==type_name)
+			ids.push_back(snip.second[Attributes::ID]);
 	}
 
 	return(ids);
@@ -122,11 +122,11 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
 {
 	vector<attribs_map> snippets;
 	QString type_name=(obj_type==ObjectType::BaseObject ?
-						   ParsersAttributes::GENERAL : BaseObject::getSchemaName(obj_type));
+						   Attributes::GENERAL : BaseObject::getSchemaName(obj_type));
 
 	for(auto &snip : config_params)
 	{
-		if(snip.second[ParsersAttributes::OBJECT]==type_name)
+		if(snip.second[Attributes::OBJECT]==type_name)
 			snippets.push_back(snip.second);
 	}
 
@@ -160,9 +160,9 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 { 
 	SchemaParser schparser;
 	QStringList aux_attribs;
-	QString buf=snippet[ParsersAttributes::CONTENTS];
+	QString buf=snippet[Attributes::Contents];
 
-	if(snippet[ParsersAttributes::PARSABLE]!=ParsersAttributes::True)
+	if(snippet[Attributes::PARSABLE]!=Attributes::True)
 		return(buf);
 
 	try
@@ -170,7 +170,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 		schparser.loadBuffer(buf);
 
 		//Assigning dummy values for empty attributes
-		if(snippet[ParsersAttributes::PLACEHOLDERS]==ParsersAttributes::True)
+		if(snippet[Attributes::PLACEHOLDERS]==Attributes::True)
 		{
 			aux_attribs=schparser.extractAttributes();
 			for(QString attr : aux_attribs)
@@ -213,24 +213,24 @@ void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
 	snippets_cmb->clear();
 
 	for(auto &cfg : config)
-		snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(ParsersAttributes::LABEL)), cfg.first);
+		snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(Attributes::LABEL)), cfg.first);
 }
 
 bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &orig_id)
 {
 	Messagebox msg_box;
-	QString snip_id=attribs.at(ParsersAttributes::ID),
+	QString snip_id=attribs.at(Attributes::ID),
 			err_msg;
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
 		err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
 	else if(!IdFormatRegExp.exactMatch(snip_id))
 		err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
-	else if(attribs[ParsersAttributes::LABEL].isEmpty())
+	else if(attribs[Attributes::LABEL].isEmpty())
 		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-	else if(attribs[ParsersAttributes::CONTENTS].isEmpty())
+	else if(attribs[Attributes::Contents].isEmpty())
 		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-	else if(attribs[ParsersAttributes::PARSABLE]==ParsersAttributes::True)
+	else if(attribs[Attributes::PARSABLE]==Attributes::True)
 	{
 		try
 		{
@@ -270,7 +270,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 		QStringList inv_snippets;
 
 		this->resetForm();
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { ParsersAttributes::ID });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { Attributes::ID });
 
 		//Check if there are invalid snippets loaded
 		for(auto &snip : config_params)
@@ -306,28 +306,28 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 	QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
 
 	if(object_id.isEmpty())
-		object_id=ParsersAttributes::GENERAL;
+		object_id=Attributes::GENERAL;
 
-	return(attribs_map{ {ParsersAttributes::ID, id_edt->text()},
-						{ParsersAttributes::LABEL, label_edt->text()},
-						{ParsersAttributes::OBJECT, object_id},
-						{ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::True : ParsersAttributes::False)},
-						{ParsersAttributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
-						 ParsersAttributes::True : ParsersAttributes::False)},
-						{ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} });
+	return(attribs_map{ {Attributes::ID, id_edt->text()},
+						{Attributes::LABEL, label_edt->text()},
+						{Attributes::OBJECT, object_id},
+						{Attributes::PARSABLE, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
+						{Attributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
+						 Attributes::True : Attributes::False)},
+						{Attributes::Contents, snippet_txt->toPlainText()} });
 }
 
 void SnippetsConfigWidget::editSnippet(void)
 {
 	QString snip_id=snippets_cmb->currentData().toString();
-	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(ParsersAttributes::OBJECT));
+	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(Attributes::OBJECT));
 
 	enableEditMode(true);
-	snippet_txt->setPlainText(config_params[snip_id].at(ParsersAttributes::CONTENTS));
+	snippet_txt->setPlainText(config_params[snip_id].at(Attributes::Contents));
 	id_edt->setText(snip_id);
-	label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
-	parsable_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PARSABLE)==ParsersAttributes::True);
-	placeholders_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::True);
+	label_edt->setText(config_params[snip_id].at(Attributes::LABEL));
+	parsable_chk->setChecked(config_params[snip_id].at(Attributes::PARSABLE)==Attributes::True);
+	placeholders_chk->setChecked(config_params[snip_id].at(Attributes::PLACEHOLDERS)==Attributes::True);
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 
@@ -414,11 +414,11 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 		QString object_id=BaseObject::getSchemaName(obj_type);
 
 		if(object_id.isEmpty())
-			object_id=ParsersAttributes::GENERAL;
+			object_id=Attributes::GENERAL;
 
 		for(auto &cfg : config_params)
 		{
-			if(cfg.second.at(ParsersAttributes::OBJECT)==object_id)
+			if(cfg.second.at(Attributes::OBJECT)==object_id)
 				flt_snippets[cfg.first]=cfg.second;
 		}
 
@@ -451,7 +451,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 				snippet_sch=root_dir +
 							GlobalAttributes::SchemasDir +
 							GlobalAttributes::DirSeparator +
-							ParsersAttributes::SNIPPET +
+							Attributes::SNIPPET +
 							GlobalAttributes::SchemaExt;
 
 		attribs_map attribs;
@@ -466,7 +466,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 
 			for(auto &snip : snippets)
 			{
-				attribs[ParsersAttributes::SNIPPET]+=
+				attribs[Attributes::SNIPPET]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
 			}
 		}
@@ -520,8 +520,8 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 	for(attribs_map snip : snippets)
 	{
-		object=snip[ParsersAttributes::OBJECT];
-		snip_id=snip[ParsersAttributes::ID];
+		object=snip[Attributes::OBJECT];
+		snip_id=snip[Attributes::ID];
 
 		//Creating the snippet submenu for the current object type
 		if(submenus.count(object)==0)
@@ -543,25 +543,25 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 			/* If the current group (object) is general does not include the submenu yet.
 		 This will be included as the last submenu */
-			if(object!=ParsersAttributes::GENERAL)
+			if(object!=Attributes::GENERAL)
 				snip_menu->addMenu(menu);
 		}
 
 		//Creating the action for the current snippet
 		act=new QAction(QPixmap(PgModelerUiNs::getIconPath("codesnippet")), snip_id, submenus[object]);
-		act->setToolTip(snip[ParsersAttributes::LABEL]);
+		act->setToolTip(snip[Attributes::LABEL]);
 		submenus[object]->addAction(act);
 	}
 
 	//Include the "general" submenu at the end of snippet menu
-	if(submenus.count(ParsersAttributes::GENERAL)!=0)
+	if(submenus.count(Attributes::GENERAL)!=0)
 	{
 		if(snip_menu->isEmpty())
-		  snip_menu->addMenu(submenus[ParsersAttributes::GENERAL]);
+		  snip_menu->addMenu(submenus[Attributes::GENERAL]);
 		else
 		{
 		  //Inserting the "general" submenu at the top of snippets actions
-		  snip_menu->insertMenu(snip_menu->actions().at(0), submenus[ParsersAttributes::GENERAL]);
+		  snip_menu->insertMenu(snip_menu->actions().at(0), submenus[Attributes::GENERAL]);
 		  snip_menu->insertSeparator(snip_menu->actions().at(1));
 		}
 	}

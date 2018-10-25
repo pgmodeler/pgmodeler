@@ -24,22 +24,22 @@ Index::Index(void)
 	index_attribs[Unique]=index_attribs[Concurrent]=
 			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;
-	attributes[ParsersAttributes::UNIQUE]=QString();
-	attributes[ParsersAttributes::CONCURRENT]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::INDEX_TYPE]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::EXPRESSION]=QString();
-	attributes[ParsersAttributes::FACTOR]=QString();
-	attributes[ParsersAttributes::PREDICATE]=QString();
-	attributes[ParsersAttributes::OP_CLASS]=QString();
-	attributes[ParsersAttributes::NULLS_FIRST]=QString();
-	attributes[ParsersAttributes::AscOrder]=QString();
-	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-	attributes[ParsersAttributes::ELEMENTS]=QString();
-	attributes[ParsersAttributes::FAST_UPDATE]=QString();
-	attributes[ParsersAttributes::Buffering]=QString();
-	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::UNIQUE]=QString();
+	attributes[Attributes::Concurrent]=QString();
+	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::INDEX_TYPE]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::EXPRESSION]=QString();
+	attributes[Attributes::FACTOR]=QString();
+	attributes[Attributes::PREDICATE]=QString();
+	attributes[Attributes::OP_CLASS]=QString();
+	attributes[Attributes::NULLS_FIRST]=QString();
+	attributes[Attributes::AscOrder]=QString();
+	attributes[Attributes::DECL_IN_TABLE]=QString();
+	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::FAST_UPDATE]=QString();
+	attributes[Attributes::Buffering]=QString();
+	attributes[Attributes::STORAGE_PARAMS]=QString();
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -54,7 +54,7 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
-	attributes[ParsersAttributes::ELEMENTS]=str_elem;
+	attributes[Attributes::ELEMENTS]=str_elem;
 }
 
 int Index::getElementIndex(IndexElement elem)
@@ -331,38 +331,38 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[Unique] ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[Concurrent] ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::PREDICATE]=predicate;
-	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::UNIQUE]=(index_attribs[Unique] ? Attributes::True : QString());
+	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
+	attributes[Attributes::INDEX_TYPE]=(~indexing_type);
+	attributes[Attributes::PREDICATE]=predicate;
+	attributes[Attributes::STORAGE_PARAMS]=QString();
 
 	if(getParentTable())
 	{
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
 		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
-			attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
+			attributes[Attributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
 	}
 
 	if(this->indexing_type==IndexingType::Gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? ParsersAttributes::True : QString());
+		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? Attributes::True : QString());
 
 	if(this->indexing_type==IndexingType::Gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::Buffering]=(index_attribs[Buffering] ? ParsersAttributes::True : QString());
+		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
-		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
-		attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::True;
+		attributes[Attributes::FACTOR]=QString("%1").arg(fill_factor);
+		attributes[Attributes::STORAGE_PARAMS]=Attributes::True;
 	}
 	else if(def_type==SchemaParser::XmlDefinition)
-		attributes[ParsersAttributes::FACTOR]=QString("0");
+		attributes[Attributes::FACTOR]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::True;
+		attributes[Attributes::DECL_IN_TABLE]=Attributes::True;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -385,20 +385,20 @@ QString Index::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
 			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
-				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
+				attribs[Attributes::FACTOR]=QString::number(index->fill_factor);
 
 			if(this->indexing_type==IndexingType::Gin &&
 					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
-				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::UNSET);
 
 			if(this->indexing_type==IndexingType::Gist &&
 					this->index_attribs[Buffering] != index->index_attribs[Buffering])
-				attribs[ParsersAttributes::Buffering]=(index->index_attribs[Buffering] ? ParsersAttributes::True : ParsersAttributes::UNSET);
+				attribs[Attributes::Buffering]=(index->index_attribs[Buffering] ? Attributes::True : Attributes::UNSET);
 		}
 
 		copyAttributes(attribs);

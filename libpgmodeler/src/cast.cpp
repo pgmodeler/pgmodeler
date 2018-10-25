@@ -24,11 +24,11 @@ Cast::Cast(void)
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
-	attributes[ParsersAttributes::SOURCE_TYPE]=QString();
-	attributes[ParsersAttributes::DEST_TYPE]=QString();
-	attributes[ParsersAttributes::CastType]=QString();
-	attributes[ParsersAttributes::IO_CAST]=QString();
-	attributes[ParsersAttributes::FUNCTION]=QString();
+	attributes[Attributes::SOURCE_TYPE]=QString();
+	attributes[Attributes::DEST_TYPE]=QString();
+	attributes[Attributes::CastType]=QString();
+	attributes[Attributes::IO_CAST]=QString();
+	attributes[Attributes::FUNCTION]=QString();
 }
 
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
@@ -155,7 +155,7 @@ unsigned Cast::getCastType(void)
 
 QString Cast::getDropDefinition(bool cascade)
 {
-	attributes[ParsersAttributes::SIGNATURE].replace(QString(","), QString(" AS "));
+	attributes[Attributes::SIGNATURE].replace(QString(","), QString(" AS "));
 	return(BaseObject::getDropDefinition(cascade));
 }
 
@@ -166,41 +166,41 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		attributes[ParsersAttributes::SOURCE_TYPE]=(*types[SrcType]);
-		attributes[ParsersAttributes::DEST_TYPE]=(*types[DstType]);
+		attributes[Attributes::SOURCE_TYPE]=(*types[SrcType]);
+		attributes[Attributes::DEST_TYPE]=(*types[DstType]);
 	}
 	else
 	{
-		attributes[ParsersAttributes::SOURCE_TYPE]=types[SrcType].getCodeDefinition(def_type);
-		attributes[ParsersAttributes::DEST_TYPE]=types[DstType].getCodeDefinition(def_type);
+		attributes[Attributes::SOURCE_TYPE]=types[SrcType].getCodeDefinition(def_type);
+		attributes[Attributes::DEST_TYPE]=types[DstType].getCodeDefinition(def_type);
 	}
 
 	if(!is_in_out && cast_function)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::FUNCTION]=cast_function->getSignature();
+			attributes[Attributes::FUNCTION]=cast_function->getSignature();
 		else
-			attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
+			attributes[Attributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::True : QString());
+		attributes[Attributes::IO_CAST]=(is_in_out ? Attributes::True : QString());
 
 	if(cast_type==Assignment)
-		attributes[ParsersAttributes::CastType]=ParsersAttributes::Assignment;
+		attributes[Attributes::CastType]=Attributes::Assignment;
 	else if(cast_type==Implicit)
-		attributes[ParsersAttributes::CastType]=ParsersAttributes::IMPLICIT;
+		attributes[Attributes::CastType]=Attributes::IMPLICIT;
 	else
-		attributes[ParsersAttributes::CastType]=QString();
+		attributes[Attributes::CastType]=QString();
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::CastType]=attributes[ParsersAttributes::CastType].toUpper();
+		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Cast::getSignature(bool)
 {
-	attributes[ParsersAttributes::SIGNATURE]=this->getName().remove(QString("cast"));
+	attributes[Attributes::SIGNATURE]=this->getName().remove(QString("cast"));
 	return(BaseObject::getSignature(false));
 }
 

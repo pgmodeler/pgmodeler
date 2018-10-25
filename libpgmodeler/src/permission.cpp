@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=ObjectType::Permission;
 	revoke=cascade=false;
 
-	attributes[ParsersAttributes::OBJECT]=QString();
-	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::PARENT]=QString();
-	attributes[ParsersAttributes::GRANT_OP]=QString();
-	attributes[ParsersAttributes::ROLES]=QString();
-	attributes[ParsersAttributes::PRIVILEGES]=QString();
-	attributes[ParsersAttributes::Cascade]=QString();
-	attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
+	attributes[Attributes::OBJECT]=QString();
+	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::PARENT]=QString();
+	attributes[Attributes::GRANT_OP]=QString();
+	attributes[Attributes::ROLES]=QString();
+	attributes[Attributes::PRIVILEGES]=QString();
+	attributes[Attributes::Cascade]=QString();
+	attributes[Attributes::PRIVILEGES_GOP]=QString();
 }
 
 bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
@@ -411,43 +411,43 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	unsigned i, count;
 	ObjectType obj_type;
-	QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-							ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-							ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-							ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-							ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-							ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+	QString priv_vect[12]={ Attributes::SELECT_PRIV, Attributes::INSERT_PRIV,
+							Attributes::UPDATE_PRIV, Attributes::DELETE_PRIV,
+							Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
+							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
+							Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
+							Attributes::EXECUTE_PRIV, Attributes::USAGE_PRIV };
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::Cascade]=(cascade ? ParsersAttributes::True : QString());
+	attributes[Attributes::REVOKE]=(revoke ? Attributes::True : QString());
+	attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
 		//Views and Tables uses the same key word when setting permission (TABLE)
-		attributes[ParsersAttributes::TYPE]=
+		attributes[Attributes::TYPE]=
 				(object->getObjectType()==ObjectType::View ? BaseObject::getSQLName(ObjectType::Table): BaseObject::getSQLName(object->getObjectType()));
 	}
 	else
-		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
+		attributes[Attributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
 	if(obj_type==ObjectType::Column)
 	{
-		attributes[ParsersAttributes::OBJECT]=object->getName(true);
-		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
+		attributes[Attributes::OBJECT]=object->getName(true);
+		attributes[Attributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
 	}
 	else
-		attributes[ParsersAttributes::OBJECT]=object->getSignature();
+		attributes[Attributes::OBJECT]=object->getSignature();
 
 	if(def_type==SchemaParser::XmlDefinition)
 	{
 		for(i=0; i < 12; i++)
 		{
 			if(privileges[i] && grant_option[i])
-				attributes[priv_vect[i]]=ParsersAttributes::GRANT_OP;
+				attributes[priv_vect[i]]=Attributes::GRANT_OP;
 			else if(privileges[i])
-				attributes[priv_vect[i]]=ParsersAttributes::True;
+				attributes[priv_vect[i]]=Attributes::True;
 			else
 				attributes[priv_vect[i]]=QString();
 		}
@@ -464,16 +464,16 @@ QString Permission::getCodeDefinition(unsigned def_type)
 				gop_priv_list.push_back(object->getObjectType() == ObjectType::Column ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 		}
 
-		attributes[ParsersAttributes::PRIVILEGES] = priv_list.join(QChar(','));
-		attributes[ParsersAttributes::PRIVILEGES_GOP] = gop_priv_list.join(QChar(','));
+		attributes[Attributes::PRIVILEGES] = priv_list.join(QChar(','));
+		attributes[Attributes::PRIVILEGES_GOP] = gop_priv_list.join(QChar(','));
 	}
 
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-		attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + QString(",");
+		attributes[Attributes::ROLES]+=roles[i]->getName(true) + QString(",");
 
-	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
+	attributes[Attributes::ROLES].remove(attributes[Attributes::ROLES].size()-1,1);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

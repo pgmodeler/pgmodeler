@@ -23,11 +23,11 @@ Policy::Policy(void) : TableObject()
 	permissive = false;
 	policy_cmd = PolicyCmdType::All;
 
-	attributes[ParsersAttributes::PERMISSIVE] = QString();
-	attributes[ParsersAttributes::COMMAND] = QString();
-	attributes[ParsersAttributes::USING_EXP] = QString();
-	attributes[ParsersAttributes::CheckExp] = QString();
-	attributes[ParsersAttributes::ROLES] = QString();
+	attributes[Attributes::PERMISSIVE] = QString();
+	attributes[Attributes::Command] = QString();
+	attributes[Attributes::USING_EXP] = QString();
+	attributes[Attributes::CheckExp] = QString();
+	attributes[Attributes::ROLES] = QString();
 }
 
 void Policy::setParentTable(BaseTable *table)
@@ -116,17 +116,17 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	QStringList rol_names;
 
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::COMMAND] = ~policy_cmd;
+	attributes[Attributes::Command] = ~policy_cmd;
 
 	for(auto role : roles)
 		rol_names.append(role->getName(true));
 
-	attributes[ParsersAttributes::PERMISSIVE] = (permissive ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::USING_EXP] = using_expr;
-	attributes[ParsersAttributes::CheckExp] = check_expr;
-	attributes[ParsersAttributes::ROLES] = rol_names.join(QString(", "));
+	attributes[Attributes::PERMISSIVE] = (permissive ? Attributes::True : QString());
+	attributes[Attributes::USING_EXP] = using_expr;
+	attributes[Attributes::CheckExp] = check_expr;
+	attributes[Attributes::ROLES] = rol_names.join(QString(", "));
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -151,13 +151,13 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		QStringList rol_names, aux_rol_names;
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->using_expr.simplified() != policy->using_expr.simplified())
-			attribs[ParsersAttributes::USING_EXP] = policy->using_expr;
+			attribs[Attributes::USING_EXP] = policy->using_expr;
 
 		if(this->check_expr.simplified() != policy->check_expr.simplified())
-			attribs[ParsersAttributes::CheckExp] = policy->check_expr;
+			attribs[Attributes::CheckExp] = policy->check_expr;
 
 		for(auto role : this->roles)
 			rol_names.append(role->getName(true));
@@ -169,9 +169,9 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		aux_rol_names.sort();
 
 		if(!rol_names.isEmpty() && aux_rol_names.isEmpty())
-			attribs[ParsersAttributes::ROLES] = ParsersAttributes::UNSET;
+			attribs[Attributes::ROLES] = Attributes::UNSET;
 		else if(rol_names.join(QString(", ")) != aux_rol_names.join(QString(", ")))
-			attribs[ParsersAttributes::ROLES] = aux_rol_names.join(QString(", "));
+			attribs[Attributes::ROLES] = aux_rol_names.join(QString(", "));
 
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

@@ -300,8 +300,8 @@ void DataManipulationForm::listColumns(void)
 
 			for(auto &col : cols)
 			{
-				col_names.push_back(col[ParsersAttributes::NAME]);
-				code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
+				col_names.push_back(col[Attributes::NAME]);
+				code_compl_wgt->insertCustomItem(col[Attributes::NAME], {},
 				QPixmap(PgModelerUiNs::getIconPath("column")));
 			}
 
@@ -735,14 +735,14 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		{
 			catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-			pks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
+			pks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='p'")}});
 
 			warning_frm->setVisible(pks.empty());
 
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
 			else
-				table_oid = pks[0][ParsersAttributes::TABLE].toUInt();
+				table_oid = pks[0][Attributes::TABLE].toUInt();
 		}
 
 		hint_frm->setVisible(obj_type==ObjectType::Table);
@@ -751,7 +751,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 		if(!pks.empty())
 		{
-			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][ParsersAttributes::COLUMNS]);
+			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][Attributes::Columns]);
 			vector<unsigned> col_ids;
 
 			for(QString id : col_str_ids)
@@ -760,7 +760,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			columns=catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids);
 
 			for(auto &col : columns)
-				pk_col_names.push_back(col[ParsersAttributes::NAME]);
+				pk_col_names.push_back(col[Attributes::NAME]);
 		}
 
 		catalog.closeConnection();
@@ -800,8 +800,8 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		catalog.setConnection(conn);
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
-		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
-		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
+		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='f'")}});
+		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
 		if(!fks.empty() || !ref_fks.empty())
 		{
@@ -819,45 +819,45 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 			for(auto &fk : fks)
 			{				
-				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[ParsersAttributes::REF_TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::REF_TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::SCHEMA].toUInt());
 				fk_name = QString("%1.%2.%3")
-									.arg(aux_schema[ParsersAttributes::NAME])
-									.arg(aux_table[ParsersAttributes::NAME])
-									.arg(fk[ParsersAttributes::NAME]);
+									.arg(aux_schema[Attributes::NAME])
+									.arg(aux_table[Attributes::NAME])
+									.arg(fk[Attributes::NAME]);
 
 				//Store the referenced schema and table names
-				fk_infos[fk_name][ParsersAttributes::REF_TABLE] = aux_table[ParsersAttributes::NAME];
-				fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+				fk_infos[fk_name][Attributes::REF_TABLE] = aux_table[Attributes::NAME];
+				fk_infos[fk_name][Attributes::SCHEMA] = aux_schema[Attributes::NAME];
 				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
-																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
-																													.arg(aux_table[ParsersAttributes::NAME])
-																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencedTable()));
+																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::NAME])
+																													.arg(aux_table[Attributes::NAME])
+																													.arg(fk[Attributes::NAME]), this, SLOT(browseReferencedTable()));
 				action->setData(fk_name);
 
 				col_ids.clear();
 				name_list.clear();
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SRC_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+					name_list.push_back(BaseObject::formatName(col[Attributes::NAME]));
 
-				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
 
 				//Storing the referenced columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::DST_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::DST_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::NAME], aux_table[Attributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[Attributes::NAME]));
 
-				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::DST_COLUMNS] = name_list.join(Table::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
@@ -871,29 +871,29 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				col_ids.clear();
 				name_list.clear();
 
-				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[ParsersAttributes::TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::TABLE].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::SCHEMA].toUInt());
 				fk_name = QString("%1.%2.%3")
-									.arg(aux_schema[ParsersAttributes::NAME])
-									.arg(aux_table[ParsersAttributes::NAME])
-									.arg(fk[ParsersAttributes::NAME]);
+									.arg(aux_schema[Attributes::NAME])
+									.arg(aux_table[Attributes::NAME])
+									.arg(fk[Attributes::NAME]);
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SRC_COLUMNS]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::NAME], aux_table[Attributes::NAME], col_ids))
+					name_list.push_back(BaseObject::formatName(col[Attributes::NAME]));
 
 				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
-																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
-																													.arg(aux_table[ParsersAttributes::NAME])
-																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
+																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::NAME])
+																													.arg(aux_table[Attributes::NAME])
+																													.arg(fk[Attributes::NAME]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
-				ref_fk_infos[fk_name][ParsersAttributes::TABLE] = aux_table[ParsersAttributes::NAME];
-				ref_fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+				ref_fk_infos[fk_name][Attributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::TABLE] = aux_table[Attributes::NAME];
+				ref_fk_infos[fk_name][Attributes::SCHEMA] = aux_schema[Attributes::NAME];
 			}
 		}
 
@@ -1147,16 +1147,16 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DataSeparator);
-		schema = ref_fk_infos[fk_name][ParsersAttributes::SCHEMA];
-		table = ref_fk_infos[fk_name][ParsersAttributes::TABLE];
+		ref_cols = ref_fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
+		schema = ref_fk_infos[fk_name][Attributes::SCHEMA];
+		table = ref_fk_infos[fk_name][Attributes::TABLE];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DataSeparator);
-		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DataSeparator);
-		schema = fk_infos[fk_name][ParsersAttributes::SCHEMA];
-		table = fk_infos[fk_name][ParsersAttributes::REF_TABLE];
+		src_cols =  fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DST_COLUMNS].split(Table::DataSeparator);
+		schema = fk_infos[fk_name][Attributes::SCHEMA];
+		table = fk_infos[fk_name][Attributes::REF_TABLE];
 	}
 
 	for(QString col_name : src_cols)

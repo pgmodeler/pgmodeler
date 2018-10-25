@@ -20,18 +20,18 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 	attribs_map attributes;
 
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
-	attributes[ParsersAttributes::OPERATOR]=QString();
+	attributes[Attributes::OPERATOR]=QString();
 	configureAttributes(attributes, def_type);
 
 	if(_operator)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[ParsersAttributes::OPERATOR]=_operator->getName(true);
+			attributes[Attributes::OPERATOR]=_operator->getName(true);
 		else
-			attributes[ParsersAttributes::OPERATOR]=_operator->getCodeDefinition(def_type, true);
+			attributes[Attributes::OPERATOR]=_operator->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(ParsersAttributes::EXCLUDE_ELEMENT, attributes, def_type));
+	return(schparser.getCodeDefinition(Attributes::EXCLUDE_ELEMENT, attributes, def_type));
 }
 
 bool ExcludeElement::operator == (ExcludeElement &elem)

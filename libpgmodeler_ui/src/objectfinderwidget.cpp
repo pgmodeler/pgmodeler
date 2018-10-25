@@ -363,18 +363,18 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
 				}
 				else if(dynamic_cast<TableObject *>(objs[i]) &&
 						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::INH_COLUMN).foreground());
 				}
 				else
 				{
 					fnt.setItalic(false);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
 				}
 
 
@@ -416,12 +416,12 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
 					}
 					else
 					{
 						fnt.setItalic(false);
-						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
 					}
 
 					tab_item->setFont(fnt);

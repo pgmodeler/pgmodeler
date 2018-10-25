@@ -232,37 +232,37 @@ void BaseObjectView::loadObjectsStyle(void)
 					xmlparser.getElementAttributes(attribs);
 					elem=xmlparser.getElementName();
 
-					if(elem==ParsersAttributes::GLOBAL)
+					if(elem==Attributes::GLOBAL)
 					{
-						font.setFamily(attribs[ParsersAttributes::FONT]);
-						font.setPointSizeF(attribs[ParsersAttributes::SIZE].toDouble());
-						font.setBold(attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
-						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
-						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
+						font.setFamily(attribs[Attributes::FONT]);
+						font.setPointSizeF(attribs[Attributes::SIZE].toDouble());
+						font.setBold(attribs[Attributes::Bold]==Attributes::True);
+						font.setItalic(attribs[Attributes::ITALIC]==Attributes::True);
+						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
 						font_fmt.setFont(font);
-						font_config[ParsersAttributes::GLOBAL]=font_fmt;
+						font_config[Attributes::GLOBAL]=font_fmt;
 					}
-					else if(elem==ParsersAttributes::FONT)
+					else if(elem==Attributes::FONT)
 					{
-						font_config[attribs[ParsersAttributes::ID]]=font_fmt;
-						itr=font_config.find(attribs[ParsersAttributes::ID]);
+						font_config[attribs[Attributes::ID]]=font_fmt;
+						itr=font_config.find(attribs[Attributes::ID]);
 						font=font_fmt.font();
-						font.setBold(attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
-						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
-						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
+						font.setBold(attribs[Attributes::Bold]==Attributes::True);
+						font.setItalic(attribs[Attributes::ITALIC]==Attributes::True);
+						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
 						(itr->second).setFont(font);
-						(itr->second).setForeground(QColor(attribs[ParsersAttributes::COLOR]));
+						(itr->second).setForeground(QColor(attribs[Attributes::Color]));
 					}
-					else if(elem==ParsersAttributes::OBJECT)
+					else if(elem==Attributes::OBJECT)
 					{
-						list=attribs[ParsersAttributes::FILL_COLOR].split(',');
+						list=attribs[Attributes::FILL_COLOR].split(',');
 
 						vector<QColor> colors;
 						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
 						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
-						colors.push_back(QColor(attribs[ParsersAttributes::BorderColor]));
+						colors.push_back(QColor(attribs[Attributes::BorderColor]));
 
-						color_config[attribs[ParsersAttributes::ID]]=colors;
+						color_config[attribs[Attributes::ID]]=colors;
 					}
 				}
 			}
@@ -279,9 +279,9 @@ void BaseObjectView::setFontStyle(const QString &id, QTextCharFormat font_fmt)
 {
 	QFont font;
 
-	if(id!=ParsersAttributes::GLOBAL)
+	if(id!=Attributes::GLOBAL)
 	{
-		font=font_config[ParsersAttributes::GLOBAL].font();
+		font=font_config[Attributes::GLOBAL].font();
 		font.setItalic(font_fmt.font().italic());
 		font.setBold(font_fmt.font().bold());
 		font.setUnderline(font_fmt.font().underline());
@@ -343,7 +343,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 		if(!colors.empty())
 		{
-			if(id==ParsersAttributes::OBJ_SELECTION || id==ParsersAttributes::PLACEHOLDER)
+			if(id==Attributes::OBJ_SELECTION || id==Attributes::PLACEHOLDER)
 			{
 				colors[0].setAlpha(ObjectAlphaChannel);
 				colors[1].setAlpha(ObjectAlphaChannel);
@@ -369,7 +369,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 
 		if(!colors.empty())
 		{
-			if(id==ParsersAttributes::OBJ_SELECTION)
+			if(id==Attributes::OBJ_SELECTION)
 				colors[2].setAlpha(ObjectAlphaChannel);
 
 			pen.setWidthF(ObjectBorderWidth);
@@ -462,14 +462,14 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 {
 	if(this->isSelected())
 	{
-		QFont fnt=font_config[ParsersAttributes::POSITION_INFO].font();
+		QFont fnt=font_config[Attributes::POSITION_INFO].font();
 
-		pos_info_rect->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
-		pos_info_rect->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
+		pos_info_rect->setBrush(BaseObjectView::getFillStyle(Attributes::POSITION_INFO));
+		pos_info_rect->setPen(BaseObjectView::getBorderStyle(Attributes::POSITION_INFO));
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
 		pos_info_txt->setFont(fnt);
-		pos_info_txt->setBrush(font_config[ParsersAttributes::POSITION_INFO].foreground());
+		pos_info_txt->setBrush(font_config[Attributes::POSITION_INFO].foreground());
 
 		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(roundf(pos.x())).arg(roundf(pos.y())));
 		pos_info_rect->setRect(pos_info_txt->boundingRect());
@@ -490,7 +490,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 		if(this->getSourceObject()->isSQLDisabled())
 		{
 			QTextCharFormat char_fmt;
-			char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::POSITION_INFO);
+			char_fmt=BaseObjectView::getFontStyle(Attributes::POSITION_INFO);
 			char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
 
 			sql_disabled_txt->setFont(char_fmt.font());
@@ -498,8 +498,8 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_txt->setBrush(char_fmt.foreground());
 
 			sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));
-			sql_disabled_box->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::POSITION_INFO));
-			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::POSITION_INFO));
+			sql_disabled_box->setPen(BaseObjectView::getBorderStyle(Attributes::POSITION_INFO));
+			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(Attributes::POSITION_INFO));
 
 			px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HorizSpacing),
 					py=-(sql_disabled_box->boundingRect().height()/2);
@@ -532,8 +532,8 @@ void BaseObjectView::configureObjectSelection(void)
 		rect_item->setRect(this->boundingRect());
 		rect_item->setPos(0,0);
 		rect_item->setBorderRadius(5);
-		rect_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-		rect_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+		rect_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
+		rect_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
 	}
 }
 
@@ -546,7 +546,7 @@ void BaseObjectView::configureProtectedIcon(void)
 		double factor;
 
 		//Calculates the factor used to resize the protection icon accordding the font size
-		factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
+		factor=font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
 
 		pol.append(QPointF(2,5)); pol.append(QPointF(2,2));
 		pol.append(QPointF(3,1)); pol.append(QPointF(4,0));
@@ -562,8 +562,8 @@ void BaseObjectView::configureProtectedIcon(void)
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
-		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_ARC));
-		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_ARC));
+		pol_item->setBrush(this->getFillStyle(Attributes::LOCKER_ARC));
+		pol_item->setPen(this->getBorderStyle(Attributes::LOCKER_ARC));
 
 		pol.clear();
 		pol.append(QPointF(1,5));  pol.append(QPointF(10,5));
@@ -577,8 +577,8 @@ void BaseObjectView::configureProtectedIcon(void)
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);
-		pol_item->setBrush(this->getFillStyle(ParsersAttributes::LOCKER_BODY));
-		pol_item->setPen(this->getBorderStyle(ParsersAttributes::LOCKER_BODY));
+		pol_item->setBrush(this->getFillStyle(Attributes::LOCKER_BODY));
+		pol_item->setPen(this->getBorderStyle(Attributes::LOCKER_BODY));
 	}
 }
 
@@ -629,10 +629,10 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 		if(visible)
 		{
-			QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
+			QPen pen=BaseObjectView::getBorderStyle(Attributes::PLACEHOLDER);
 			pen.setStyle(Qt::DashLine);
 
-			placeholder->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
+			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::PLACEHOLDER));
 			placeholder->setPen(pen);
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
 			placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));
@@ -644,7 +644,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 double BaseObjectView::getFontFactor(void)
 {
-	return(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize);
+	return(font_config[Attributes::GLOBAL].font().pointSizeF()/DefaultFontSize);
 }
 
 double BaseObjectView::getScreenDpiFactor(void)

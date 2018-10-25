@@ -678,7 +678,7 @@ void PgModelerCli::extractObjectXML(void)
 	QFile input;
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
-	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(ParsersAttributes::DB_MODEL)),
+	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DB_MODEL)),
 			default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)")),
 
 			//[schema].[func_name](...OUT [type]...)
@@ -711,7 +711,7 @@ void PgModelerCli::extractObjectXML(void)
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
 		buf.remove(0, buf.indexOf(QString("\n")));
-		buf.remove(QString("<\\%1>").arg(ParsersAttributes::DB_MODEL));
+		buf.remove(QString("<\\%1>").arg(Attributes::DB_MODEL));
 		ts.setString(&buf);
 
 		//Extracts the objects xml line by line
@@ -766,7 +766,7 @@ void PgModelerCli::extractObjectXML(void)
 					/* Checking if the line start a relationship. Relationships are treated
 		  a little different because they can be empty <relationship attribs /> or
 		  contain open and close tags <relationship attribs></relationship> */
-					is_rel=lin.contains(ParsersAttributes::RELATIONSHIP);
+					is_rel=lin.contains(Attributes::RELATIONSHIP);
 
 					if(is_rel)
 					{
@@ -879,7 +879,7 @@ void PgModelerCli::recreateObjects(void)
 
 				//Discarding fk relationships
 				if(obj_type!=ObjectType::Relationship ||
-						(obj_type==ObjectType::Relationship && !xml_def.contains(QString("\"%1\"").arg(ParsersAttributes::RELATIONSHIP_FK))))
+						(obj_type==ObjectType::Relationship && !xml_def.contains(QString("\"%1\"").arg(Attributes::RELATIONSHIP_FK))))
 				{
 					object=model->createObject(obj_type);
 
@@ -1024,7 +1024,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Remove recheck attribute from <element> tags.
-	if(obj_xml.contains(TagExpr.arg(ParsersAttributes::ELEMENT)))
+	if(obj_xml.contains(TagExpr.arg(Attributes::ELEMENT)))
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
@@ -1038,7 +1038,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replacing attribute owner by onwer-col for sequences
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
-		obj_xml.replace(ParsersAttributes::OWNER, ParsersAttributes::OWNER_COLUMN);
+		obj_xml.replace(Attributes::OWNER, Attributes::OWNER_COLUMN);
 
 	//Remove sysid attribute from <role> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
@@ -1047,8 +1047,8 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
 	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
 	{
-		obj_xml.replace(TagExpr.arg(ParsersAttributes::PARAMETER), TagExpr.arg(ParsersAttributes::TYPE_ATTRIBUTE));
-		obj_xml.replace(EndTagExpr.arg(ParsersAttributes::PARAMETER), EndTagExpr.arg(ParsersAttributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(TagExpr.arg(Attributes::PARAMETER), TagExpr.arg(Attributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(EndTagExpr.arg(Attributes::PARAMETER), EndTagExpr.arg(Attributes::TYPE_ATTRIBUTE));
 	}
 
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
@@ -1061,19 +1061,19 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("constr-indexes"))));
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("attrib-indexes"))));
 
-		obj_xml.replace(QString("line-color"), ParsersAttributes::CUSTOM_COLOR);
+		obj_xml.replace(QString("line-color"), Attributes::CustomColor);
 	}
 
 	//Renaming the tag <condition> to <predicate> on indexes
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Index))))
 	{
-		obj_xml.replace(TagExpr.arg(ParsersAttributes::CONDITION), TagExpr.arg(ParsersAttributes::PREDICATE));
-		obj_xml.replace(EndTagExpr.arg(ParsersAttributes::CONDITION), EndTagExpr.arg(ParsersAttributes::PREDICATE));
+		obj_xml.replace(TagExpr.arg(Attributes::Condition), TagExpr.arg(Attributes::PREDICATE));
+		obj_xml.replace(EndTagExpr.arg(Attributes::Condition), EndTagExpr.arg(Attributes::PREDICATE));
 	}
 
 	//Renaming the attribute default to default-value on domain
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))))
-		obj_xml.replace(ParsersAttributes::DEFAULT, ParsersAttributes::DEFAULT_VALUE);
+		obj_xml.replace(Attributes::DEFAULT, Attributes::DEFAULT_VALUE);
 
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(TagExpr.arg(QString("grant"))))
@@ -1084,24 +1084,24 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replace the constraint attribute and tag expression by constraint tag in <domain>.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))) &&
-		 obj_xml.contains(TagExpr.arg(ParsersAttributes::EXPRESSION)))
+		 obj_xml.contains(TagExpr.arg(Attributes::EXPRESSION)))
 	{
 		int start_idx=-1, end_idx=-1;
-		QRegExp regexp = QRegExp(AttributeExpr.arg(ParsersAttributes::CONSTRAINT));
+		QRegExp regexp = QRegExp(AttributeExpr.arg(Attributes::Constraint));
 		QString constr_name;
 
 		regexp.indexIn(obj_xml);
 		constr_name = regexp.capturedTexts().at(0);
-		constr_name.remove(QString("%1=\"").arg(ParsersAttributes::CONSTRAINT));
+		constr_name.remove(QString("%1=\"").arg(Attributes::Constraint));
 		constr_name.remove(constr_name.length() - 1, 1);
 
-		obj_xml.remove(QRegExp(AttributeExpr.arg(ParsersAttributes::CONSTRAINT)));
+		obj_xml.remove(QRegExp(AttributeExpr.arg(Attributes::Constraint)));
 
-		start_idx = obj_xml.indexOf(TagExpr.arg(ParsersAttributes::EXPRESSION));
+		start_idx = obj_xml.indexOf(TagExpr.arg(Attributes::EXPRESSION));
 		obj_xml.insert(start_idx, QString("\n\t<constraint name=\"%1\" type=\"check\">\n\t\t").arg(constr_name));
 
-		end_idx = obj_xml.indexOf(EndTagExpr.arg(ParsersAttributes::EXPRESSION));
-		obj_xml.insert(end_idx + EndTagExpr.arg(ParsersAttributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
+		end_idx = obj_xml.indexOf(EndTagExpr.arg(Attributes::EXPRESSION));
+		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::EXPRESSION).length() + 1, QString("\n\t</constraint>\n"));
 	}
 
 	//Fix the references to op. classes and families if needed
@@ -1115,7 +1115,7 @@ void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Index))) ||
 			obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
 									 .arg(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Constraint)))
-									 .arg(ParsersAttributes::EX_CONSTR))))
+									 .arg(Attributes::EX_CONSTR))))
 		ref_obj_type=ObjectType::OpClass;
 	else if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::OpClass))))
 		ref_obj_type=ObjectType::OpFamily;
@@ -1276,7 +1276,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::True}});
+		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FILTER_TABLE_TYPES, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);
 		obj_oids[ObjectType::Database].push_back(db_oid.toUInt());
@@ -1458,8 +1458,8 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 {
 	QStringList constr_lst;
 	int start=0, end=0, pos=0, count=0;
-	QString start_tag=QString("<%1").arg(ParsersAttributes::CONSTRAINT),
-			end_tag=QString("</%1").arg(ParsersAttributes::CONSTRAINT),
+	QString start_tag=QString("<%1").arg(Attributes::Constraint),
+			end_tag=QString("</%1").arg(Attributes::Constraint),
 			constr;
 
 	do
@@ -1472,7 +1472,7 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 			count=(end - start) + end_tag.size() + 1;
 			constr=obj_xml.mid(start, count);
 
-			if(constr.contains(ParsersAttributes::FK_CONSTR))
+			if(constr.contains(Attributes::FK_CONSTR))
 			{
 				obj_xml.remove(start, count);
 				constr_lst.push_back(constr);
@@ -1492,16 +1492,16 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 bool PgModelerCli::containsRelAttributes(const QString &str)
 {
 	bool found=false;
-	static vector<QString> attribs={ ParsersAttributes::RELATIONSHIP,
-									 ParsersAttributes::TYPE, ParsersAttributes::SRC_REQUIRED, ParsersAttributes::DST_REQUIRED,
-									 ParsersAttributes::SRC_TABLE, ParsersAttributes::DST_TABLE,	ParsersAttributes::POINTS,
-									 ParsersAttributes::COLUMNS,	ParsersAttributes::COLUMN, ParsersAttributes::CONSTRAINT,
-									 ParsersAttributes::LABEL, ParsersAttributes::LINE, ParsersAttributes::POSITION,
-									 ParsersAttributes::IDENTIFIER, ParsersAttributes::DEFERRABLE, ParsersAttributes::DEFER_TYPE,
-									 ParsersAttributes::TABLE_NAME, ParsersAttributes::SPECIAL_PK_COLS, ParsersAttributes::TABLE,
-									 ParsersAttributes::AncestorTable, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
-									 ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN, ParsersAttributes::PK_PATTERN,
-									 ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
+	static vector<QString> attribs={ Attributes::RELATIONSHIP,
+									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DST_REQUIRED,
+									 Attributes::SRC_TABLE, Attributes::DST_TABLE,	Attributes::POINTS,
+									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
+									 Attributes::LABEL, Attributes::LINE, Attributes::POSITION,
+									 Attributes::IDENTIFIER, Attributes::DEFERRABLE, Attributes::DEFER_TYPE,
+									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
+									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
+									 Attributes::SRC_COL_PATTERN, Attributes::DST_COL_PATTERN, Attributes::PK_PATTERN,
+									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DST_FK_PATTERN };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);
@@ -1561,10 +1561,10 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 		QString startup_script=QString("%1/start-pgmodeler.sh")
 							   .arg(QFileInfo(GlobalAttributes::PgModelerAppPath).absolutePath());
 
-		attribs[ParsersAttributes::WORKING_DIR]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-		attribs[ParsersAttributes::Application]=(QFileInfo(startup_script).exists() ?
+		attribs[Attributes::WORKING_DIR]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+		attribs[Attributes::Application]=(QFileInfo(startup_script).exists() ?
 													 startup_script : GlobalAttributes::PgModelerAppPath);
-		attribs[ParsersAttributes::ICON]=exec_icon;
+		attribs[Attributes::ICON]=exec_icon;
 	}
 
 	try
@@ -1593,7 +1593,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 				out.write(buf.data(), buf.size());
 				out.close();
 				buf.clear();
-				attribs[ParsersAttributes::ICON]=dbm_icon;
+				attribs[Attributes::ICON]=dbm_icon;
 			}
 		}
 

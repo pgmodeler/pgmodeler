@@ -22,9 +22,9 @@ BaseTable::BaseTable(void)
 {
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
-	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
-	attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString();
+	attributes[Attributes::TAG]=QString();
+	attributes[Attributes::HIDE_EXT_ATTRIBS]=QString();
+	attributes[Attributes::MAX_OBJ_COUNT]=QString();
 	hide_ext_attribs=false;
 }
 

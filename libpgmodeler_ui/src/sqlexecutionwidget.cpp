@@ -271,7 +271,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		types=catalog.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
 
 		for(auto &tp : types)
-			type_names[tp[ParsersAttributes::OID].toUInt()]=tp[ParsersAttributes::NAME];
+			type_names[tp[Attributes::OID].toUInt()]=tp[Attributes::NAME];
 
 		catalog.setFilter(orig_filter);
 
@@ -448,8 +448,8 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 		else
 			fmt_cmd += QString("-- %1 %2\n").arg(trUtf8("Rows:")).arg(rows);
 
-		if(!fmt_cmd.trimmed().endsWith(ParsersAttributes::DDL_END_TOKEN))
-			fmt_cmd += ParsersAttributes::DDL_END_TOKEN + QChar('\n');
+		if(!fmt_cmd.trimmed().endsWith(Attributes::DDL_END_TOKEN))
+			fmt_cmd += Attributes::DDL_END_TOKEN + QChar('\n');
 
 		SQLExecutionWidget::validateSQLHistoryLength(sql_cmd_conn.getConnectionId(true,true), fmt_cmd, cmd_history_txt);
 	}
@@ -468,7 +468,7 @@ void SQLExecutionWidget::validateSQLHistoryLength(const QString &conn_id, const 
 	{
 		QStringList buffer = cmds.split(QChar('\n'));
 		cmds = buffer.mid(buffer.size()/2).join(QChar('\n'));
-		cmds = cmds.mid(cmds.indexOf(ParsersAttributes::DDL_END_TOKEN) + ParsersAttributes::DDL_END_TOKEN.length());
+		cmds = cmds.mid(cmds.indexOf(Attributes::DDL_END_TOKEN) + Attributes::DDL_END_TOKEN.length());
 		cmd_history[conn_id] = cmds.trimmed();
 
 		if(cmd_history_txt)
@@ -829,14 +829,14 @@ void SQLExecutionWidget::saveSQLHistory(void)
 
 		for(auto hist : cmd_history)
 		{
-			attribs[ParsersAttributes::CONNECTION] = hist.first;
-			attribs[ParsersAttributes::COMMANDS] = hist.second;
+			attribs[Attributes::Connection] = hist.first;
+			attribs[Attributes::Commands] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
 			commands += schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
 																							GlobalAttributes::DirSeparator +
 																							GlobalAttributes::SchemasDir +
 																							GlobalAttributes::DirSeparator +
-																							ParsersAttributes::COMMANDS +
+																							Attributes::Commands +
 																							GlobalAttributes::SchemaExt, attribs);
 		}
 
@@ -848,7 +848,7 @@ void SQLExecutionWidget::saveSQLHistory(void)
 											 GlobalAttributes::SchemaExt);
 
 		attribs.clear();
-		attribs[ParsersAttributes::COMMANDS] = commands;
+		attribs[Attributes::Commands] = commands;
 		buffer.append(schparser.getCodeDefinition(attribs));
 
 
@@ -896,13 +896,13 @@ void SQLExecutionWidget::loadSQLHistory(void)
 		{
 			do
 			{
-				if(xmlparser.getElementName() == ParsersAttributes::COMMANDS)
+				if(xmlparser.getElementName() == Attributes::Commands)
 				{
 					xmlparser.getElementAttributes(attribs);
 					xmlparser.savePosition();
 
 					if(xmlparser.accessElement(XmlParser::ChildElement))
-						cmd_history[attribs[ParsersAttributes::CONNECTION]].append(xmlparser.getElementContent());
+						cmd_history[attribs[Attributes::Connection]].append(xmlparser.getElementContent());
 
 					xmlparser.restorePosition();
 				}

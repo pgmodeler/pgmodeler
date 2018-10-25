@@ -32,16 +32,16 @@ Sequence::Sequence(void)
 	setDefaultValues(PgSqlType(QString("serial")));
 	owner_col=nullptr;
 
-	attributes[ParsersAttributes::INCREMENT]=QString();
-	attributes[ParsersAttributes::MIN_VALUE]=QString();
-	attributes[ParsersAttributes::MAX_VALUE]=QString();
-	attributes[ParsersAttributes::START]=QString();
-	attributes[ParsersAttributes::Cache]=QString();
-	attributes[ParsersAttributes::CYCLE]=QString();
-	attributes[ParsersAttributes::OWNER_COLUMN]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::COLUMN]=QString();
-	attributes[ParsersAttributes::COL_IS_IDENTITY]=QString();
+	attributes[Attributes::INCREMENT]=QString();
+	attributes[Attributes::MIN_VALUE]=QString();
+	attributes[Attributes::MAX_VALUE]=QString();
+	attributes[Attributes::START]=QString();
+	attributes[Attributes::Cache]=QString();
+	attributes[Attributes::Cycle]=QString();
+	attributes[Attributes::OWNER_COLUMN]=QString();
+	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Column]=QString();
+	attributes[Attributes::ColIsIdentity]=QString();
 }
 
 bool Sequence::isZeroValue(const QString &value)
@@ -392,22 +392,22 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 
 	if(owner_col)
 	{
-		attributes[ParsersAttributes::OWNER_COLUMN]=owner_col->getSignature();
+		attributes[Attributes::OWNER_COLUMN]=owner_col->getSignature();
 		table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
 
-	attributes[ParsersAttributes::TABLE]=(table ? table->getName(true) : QString());
-	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
+	attributes[Attributes::TABLE]=(table ? table->getName(true) : QString());
+	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : QString());
 
-	attributes[ParsersAttributes::COL_IS_IDENTITY]=
-			(owner_col && owner_col->getIdentityType() != BaseType::Null ? ParsersAttributes::True : QString());
+	attributes[Attributes::ColIsIdentity]=
+			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : QString());
 
-	attributes[ParsersAttributes::INCREMENT]=increment;
-	attributes[ParsersAttributes::MIN_VALUE]=min_value;
-	attributes[ParsersAttributes::MAX_VALUE]=max_value;
-	attributes[ParsersAttributes::START]=start;
-	attributes[ParsersAttributes::Cache]=cache;
-	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::True : QString());
+	attributes[Attributes::INCREMENT]=increment;
+	attributes[Attributes::MIN_VALUE]=min_value;
+	attributes[Attributes::MAX_VALUE]=max_value;
+	attributes[Attributes::START]=start;
+	attributes[Attributes::Cache]=cache;
+	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -424,7 +424,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 		Table *table=nullptr;
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if((this->owner_col && !seq->owner_col) ||
 				(!this->owner_col && seq->owner_col) ||
@@ -433,36 +433,36 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 		{
 			if(seq->owner_col)
 			{
-				attribs[ParsersAttributes::OWNER_COLUMN]=seq->owner_col->getSignature();
+				attribs[Attributes::OWNER_COLUMN]=seq->owner_col->getSignature();
 				table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
 
 				if(table)
 				{
-					attribs[ParsersAttributes::TABLE]=table->getName(true);
-					attribs[ParsersAttributes::COLUMN]=seq->owner_col->getName(true);
+					attribs[Attributes::TABLE]=table->getName(true);
+					attribs[Attributes::Column]=seq->owner_col->getName(true);
 				}
 			}
 			else
-				attribs[ParsersAttributes::OWNER_COLUMN]=ParsersAttributes::UNSET;
+				attribs[Attributes::OWNER_COLUMN]=Attributes::UNSET;
 		}
 
 		if(!seq->increment.isEmpty() && this->increment!=seq->increment)
-			attribs[ParsersAttributes::INCREMENT]=seq->increment;
+			attribs[Attributes::INCREMENT]=seq->increment;
 
 		if(!seq->min_value.isEmpty() && this->min_value!=seq->min_value)
-			attribs[ParsersAttributes::MIN_VALUE]=seq->min_value;
+			attribs[Attributes::MIN_VALUE]=seq->min_value;
 
 		if(!seq->max_value.isEmpty() && this->max_value!=seq->max_value)
-			attribs[ParsersAttributes::MAX_VALUE]=seq->max_value;
+			attribs[Attributes::MAX_VALUE]=seq->max_value;
 
 		if(!seq->start.isEmpty() && this->start!=seq->start)
-			attribs[ParsersAttributes::START]=seq->start;
+			attribs[Attributes::START]=seq->start;
 
 		if(!seq->cache.isEmpty() && this->cache!=seq->cache)
-			attribs[ParsersAttributes::Cache]=seq->cache;
+			attribs[Attributes::Cache]=seq->cache;
 
 		if(this->cycle!=seq->cycle)
-			attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::True : ParsersAttributes::UNSET);
+			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::UNSET);
 
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

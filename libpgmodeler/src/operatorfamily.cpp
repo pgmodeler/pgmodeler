@@ -21,7 +21,7 @@
 OperatorFamily::OperatorFamily(void)
 {
 	obj_type=ObjectType::OpFamily;
-	attributes[ParsersAttributes::INDEX_TYPE]=QString();
+	attributes[Attributes::INDEX_TYPE]=QString();
 }
 
 void OperatorFamily::setIndexingType(IndexingType idx_type)
@@ -45,8 +45,8 @@ QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::SIGNATURE]=getSignature();
-	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
+	attributes[Attributes::SIGNATURE]=getSignature();
+	attributes[Attributes::INDEX_TYPE]=(~indexing_type);
 	return(BaseObject::getCodeDefinition(def_type,reduced_form));
 }
 

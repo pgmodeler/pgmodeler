@@ -22,10 +22,10 @@ Domain::Domain(void)
 {
 	obj_type=ObjectType::Domain;
 	not_null=false;
-	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
-	attributes[ParsersAttributes::NOT_NULL]=QString();
-	attributes[ParsersAttributes::TYPE]=QString();
-	attributes[ParsersAttributes::CONSTRAINTS]=QString();
+	attributes[Attributes::DEFAULT_VALUE]=QString();
+	attributes[Attributes::NOT_NULL]=QString();
+	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Constraints]=QString();
 }
 
 void Domain::addCheckConstraint(const QString &name, const QString &expr)
@@ -126,20 +126,20 @@ QString Domain::getCodeDefinition(unsigned def_type)
 
 	attribs_map aux_attribs;
 
-	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::True : QString());
-	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+	attributes[Attributes::NOT_NULL]=(not_null ? Attributes::True : QString());
+	attributes[Attributes::DEFAULT_VALUE]=default_value;
 
 	for(auto itr : chk_constrs)
 	{
-		aux_attribs[ParsersAttributes::NAME] = itr.first;
-		aux_attribs[ParsersAttributes::EXPRESSION] = itr.second;
-		attributes[ParsersAttributes::CONSTRAINTS]+=schparser.getCodeDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, def_type);
+		aux_attribs[Attributes::NAME] = itr.first;
+		aux_attribs[Attributes::EXPRESSION] = itr.second;
+		attributes[Attributes::Constraints]+=schparser.getCodeDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, def_type);
 	}
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::TYPE]=(*type);
+		attributes[Attributes::TYPE]=(*type);
 	else
-		attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+		attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -169,23 +169,23 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attribs_map orig_constrs, aux_constrs, aux_attribs;
 		QString orig_expr, aux_expr;
 
-		attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
-		attributes[ParsersAttributes::NOT_NULL]=QString();
-		attributes[ParsersAttributes::CONSTRAINTS]=QString();
-		attributes[ParsersAttributes::EXPRESSION]=QString();
-		attributes[ParsersAttributes::OLD_NAME]=QString();
-		attributes[ParsersAttributes::NEW_NAME]=QString();
+		attributes[Attributes::DEFAULT_VALUE]=QString();
+		attributes[Attributes::NOT_NULL]=QString();
+		attributes[Attributes::Constraints]=QString();
+		attributes[Attributes::EXPRESSION]=QString();
+		attributes[Attributes::OLD_NAME]=QString();
+		attributes[Attributes::NEW_NAME]=QString();
 
 		if(this->default_value!=domain->default_value)
-			attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
+			attributes[Attributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::UNSET);
 
 		if(this->not_null!=domain->not_null)
-			attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::True : ParsersAttributes::UNSET);
+			attributes[Attributes::NOT_NULL]=(domain->not_null ? Attributes::True : Attributes::UNSET);
 
 		orig_constrs = this->chk_constrs;
 		aux_constrs = domain->chk_constrs;
-		aux_attribs[ParsersAttributes::SQL_OBJECT] = this->getSQLName();
-		aux_attribs[ParsersAttributes::SIGNATURE] = this->getSignature();
+		aux_attribs[Attributes::SQL_OBJECT] = this->getSQLName();
+		aux_attribs[Attributes::SIGNATURE] = this->getSignature();
 
 		//Generating the DROP for check constraints that does not exists anymore
 		for(auto constr : orig_constrs)
@@ -197,17 +197,17 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			if(aux_constrs.count(constr.first) == 0 ||
 				 (aux_constrs.count(constr.first) && orig_expr != aux_expr))
 			{
-				aux_attribs[ParsersAttributes::NAME]=constr.first;
-				aux_attribs[ParsersAttributes::EXPRESSION]=ParsersAttributes::UNSET;
-				attributes[ParsersAttributes::CONSTRAINTS]+=BaseObject::getAlterDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				aux_attribs[Attributes::NAME]=constr.first;
+				aux_attribs[Attributes::EXPRESSION]=Attributes::UNSET;
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
 			}
 
 			//We should include a command to recreate the check constraint with the new expression
 			if(aux_constrs.count(constr.first) && orig_expr != aux_expr)
 			{
-				aux_attribs[ParsersAttributes::NAME]=constr.first;
-				aux_attribs[ParsersAttributes::EXPRESSION]=aux_constrs[constr.first];
-				attributes[ParsersAttributes::CONSTRAINTS]+=BaseObject::getAlterDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				aux_attribs[Attributes::NAME]=constr.first;
+				aux_attribs[Attributes::EXPRESSION]=aux_constrs[constr.first];
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
 			}
 		}
 
@@ -216,9 +216,9 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		{
 			if(orig_constrs.count(constr.first) == 0)
 			{
-				aux_attribs[ParsersAttributes::NAME]=constr.first;
-				aux_attribs[ParsersAttributes::EXPRESSION]=constr.second;
-				attributes[ParsersAttributes::CONSTRAINTS]+=BaseObject::getAlterDefinition(ParsersAttributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				aux_attribs[Attributes::NAME]=constr.first;
+				aux_attribs[Attributes::EXPRESSION]=constr.second;
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
 			}
 		}
 

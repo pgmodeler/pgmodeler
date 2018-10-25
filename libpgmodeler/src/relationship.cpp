@@ -380,7 +380,7 @@ QString Relationship::getTableNameRelNN(void)
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = part_bound_expr.toLower() == ParsersAttributes::DEFAULT.toLower() ? QString() : part_bound_expr;
+	part_bounding_expr = part_bound_expr.toLower() == Attributes::DEFAULT.toLower() ? QString() : part_bound_expr;
 	this->invalidated = true;
 }
 
@@ -2561,41 +2561,41 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			unsigned count, i;
 
-			attributes[ParsersAttributes::RELATIONSHIP_1N]=ParsersAttributes::True;
-			attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->getCodeDefinition(def_type);
+			attributes[Attributes::RELATIONSHIP_1N]=Attributes::True;
+			attributes[Attributes::Constraints]=fk_rel1n->getCodeDefinition(def_type);
 
 			if(uq_rel11)
-				attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->getCodeDefinition(def_type);
+				attributes[Attributes::Constraints]+=uq_rel11->getCodeDefinition(def_type);
 
 			count=rel_constraints.size();
 			for(i=0; i < count; i++)
 			{
 				if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::PrimaryKey)
-					attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
+					attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->getCodeDefinition(def_type, false);
 
 			}
 
-			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+			attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
 		}
 		else if(table_relnn && rel_type==RelationshipNn)
 		{
 			unsigned count, i;
 
-			attributes[ParsersAttributes::RELATIONSHIP_NN]=ParsersAttributes::True;
-			attributes[ParsersAttributes::TABLE]=table_relnn->getCodeDefinition(def_type);
+			attributes[Attributes::RELATIONSHIP_NN]=Attributes::True;
+			attributes[Attributes::TABLE]=table_relnn->getCodeDefinition(def_type);
 
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
 			{
 				if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::PrimaryKey &&
 						table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::Check)
-					attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
+					attributes[Attributes::Constraints]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
 			}
 		}
 		else if(rel_type==RelationshipGen)
 		{
-			attributes[ParsersAttributes::RELATIONSHIP_GEN]=ParsersAttributes::True;
-			attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
+			attributes[Attributes::RELATIONSHIP_GEN]=Attributes::True;
+			attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
 		}
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition));
@@ -2606,49 +2606,49 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[ParsersAttributes::IDENTIFIER]=(identifier ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::SINGLE_PK_COLUMN]=(single_pk_column ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
-		attributes[ParsersAttributes::UPD_ACTION]=~upd_action;
-		attributes[ParsersAttributes::DEL_ACTION]=~del_action;
+		attributes[Attributes::IDENTIFIER]=(identifier ? Attributes::True : QString());
+		attributes[Attributes::SINGLE_PK_COLUMN]=(single_pk_column ? Attributes::True : QString());
+		attributes[Attributes::DEFERRABLE]=(deferrable ? Attributes::True : QString());
+		attributes[Attributes::DEFER_TYPE]=~deferral_type;
+		attributes[Attributes::UPD_ACTION]=~upd_action;
+		attributes[Attributes::DEL_ACTION]=~del_action;
 
-		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
-		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RelationshipGen ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RelationshipDep ? ParsersAttributes::True : QString());
-		attributes[ParsersAttributes::RELATIONSHIP_PART]=(rel_type==RelationshipPart ? ParsersAttributes::True : QString());
+		attributes[Attributes::TABLE_NAME]=tab_name_relnn;
+		attributes[Attributes::RELATIONSHIP_GEN]=(rel_type==RelationshipGen ? Attributes::True : QString());
+		attributes[Attributes::RELATIONSHIP_DEP]=(rel_type==RelationshipDep ? Attributes::True : QString());
+		attributes[Attributes::RELATIONSHIP_PART]=(rel_type==RelationshipPart ? Attributes::True : QString());
 
-		attributes[ParsersAttributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
-		attributes[ParsersAttributes::DST_COL_PATTERN]=name_patterns[DstColPattern];
-		attributes[ParsersAttributes::PK_PATTERN]=name_patterns[PkPattern];
-		attributes[ParsersAttributes::UQ_PATTERN]=name_patterns[UqPattern];
-		attributes[ParsersAttributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
-		attributes[ParsersAttributes::DST_FK_PATTERN]=name_patterns[DstFkPattern];
-		attributes[ParsersAttributes::PK_COL_PATTERN]=name_patterns[PkColPattern];
+		attributes[Attributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
+		attributes[Attributes::DST_COL_PATTERN]=name_patterns[DstColPattern];
+		attributes[Attributes::PK_PATTERN]=name_patterns[PkPattern];
+		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
+		attributes[Attributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
+		attributes[Attributes::DST_FK_PATTERN]=name_patterns[DstFkPattern];
+		attributes[Attributes::PK_COL_PATTERN]=name_patterns[PkColPattern];
 
-		attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
+		attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
 
-		attributes[ParsersAttributes::COLUMNS]=QString();
+		attributes[Attributes::Columns]=QString();
 		count=rel_attributes.size();
 		for(i=0; i < count; i++)
 		{
-			attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Column *>(rel_attributes[i])->
+			attributes[Attributes::Columns]+=dynamic_cast<Column *>(rel_attributes[i])->
 													getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
-		attributes[ParsersAttributes::CONSTRAINTS]=QString();
+		attributes[Attributes::Constraints]=QString();
 		count=rel_constraints.size();
 		for(i=0; i < count; i++)
 		{
 			if(!rel_constraints[i]->isProtected())
-				attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
+				attributes[Attributes::Constraints]+=dynamic_cast<Constraint *>(rel_constraints[i])->
 															getCodeDefinition(SchemaParser::XmlDefinition, true);
 		}
 
 		if(pk_original)
 		{
 			pk_original->setParentTable(getReceiverTable());
-			attributes[ParsersAttributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
 			pk_original->setParentTable(nullptr);
 		}
 
@@ -2657,23 +2657,23 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			if(!gen_columns.empty() && i < gen_columns.size())
 			{
-				attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
-				if(i < count-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
+				attributes[Attributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
+				if(i < count-1) attributes[Attributes::SPECIAL_PK_COLS]+=",";
 			}
 		}
 
 		if(copy_options.getCopyMode()!=0)
 		{
-			attributes[ParsersAttributes::COPY_OPTIONS]=QString("%1").arg(copy_options.getCopyOptionsIds());
-			attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());
+			attributes[Attributes::CopyOptions]=QString("%1").arg(copy_options.getCopyOptionsIds());
+			attributes[Attributes::CopyMode]=QString("%1").arg(copy_options.getCopyMode());
 		}
 
-		reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
-					 attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
-					 attributes[ParsersAttributes::POINTS].isEmpty() &&
-					 attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty() &&
-					 attributes[ParsersAttributes::POINTS].isEmpty() &&
-					 attributes[ParsersAttributes::LABELS_POS].isEmpty());
+		reduced_form=(attributes[Attributes::Columns].isEmpty() &&
+					 attributes[Attributes::Constraints].isEmpty() &&
+					 attributes[Attributes::POINTS].isEmpty() &&
+					 attributes[Attributes::SPECIAL_PK_COLS].isEmpty() &&
+					 attributes[Attributes::POINTS].isEmpty() &&
+					 attributes[Attributes::LABELS_POS].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();
@@ -2710,23 +2710,23 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	if(rel_type != RelationshipGen && rel_type != RelationshipPart)
 		return(QString());
 
-	attributes[ParsersAttributes::INHERIT]=QString();
-	attributes[ParsersAttributes::AncestorTable]=QString();
-	attributes[ParsersAttributes::PARTITIONED_TABLE]=QString();
-	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=QString();
+	attributes[Attributes::INHERIT]=QString();
+	attributes[Attributes::AncestorTable]=QString();
+	attributes[Attributes::PARTITIONED_TABLE]=QString();
+	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
 
 	if(rel_type == RelationshipGen)
 	{
-		attributes[ParsersAttributes::INHERIT]=(undo_inh_part ? ParsersAttributes::UNSET : ParsersAttributes::True);
-		attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-		attributes[ParsersAttributes::AncestorTable]=getReferenceTable()->getName(true);
+		attributes[Attributes::INHERIT]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[Attributes::AncestorTable]=getReferenceTable()->getName(true);
 	}
 	else
 	{
-		attributes[ParsersAttributes::PARTITIONING]=(undo_inh_part ? ParsersAttributes::UNSET : ParsersAttributes::True);
-		attributes[ParsersAttributes::TABLE]=getReceiverTable()->getName(true);
-		attributes[ParsersAttributes::PARTITIONED_TABLE]=getReferenceTable()->getName(true);
-		attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=getReceiverTable()->getPartitionBoundingExpr();
+		attributes[Attributes::PARTITIONING]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[Attributes::PARTITIONED_TABLE]=getReferenceTable()->getName(true);
+		attributes[Attributes::PARTITION_BOUND_EXPR]=getReceiverTable()->getPartitionBoundingExpr();
 	}
 
 	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));

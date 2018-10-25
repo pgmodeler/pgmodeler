@@ -111,7 +111,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		Connection *conn=nullptr;
 
 		destroyConnections();
-		key_attribs.push_back(ParsersAttributes::Alias);
+		key_attribs.push_back(Attributes::Alias);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, key_attribs);
 
 		/*try
@@ -134,13 +134,13 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		{
 			conn=new Connection;
 
-			conn->setConnectionParam(Connection::ParamAlias, itr->second[ParsersAttributes::Alias]);
+			conn->setConnectionParam(Connection::ParamAlias, itr->second[Attributes::Alias]);
 			conn->setConnectionParam(Connection::ParamServerFqdn, itr->second[Connection::ParamServerFqdn]);
 			conn->setConnectionParam(Connection::ParamPort, itr->second[Connection::ParamPort]);
 			conn->setConnectionParam(Connection::ParamUser, itr->second[Connection::ParamUser]);
 			conn->setConnectionParam(Connection::ParamPassword,itr->second[Connection::ParamPassword]);
 			conn->setConnectionParam(Connection::ParamDbName, itr->second[Connection::ParamDbName]);
-			conn->setConnectionParam(Connection::ParamConnTimeout, itr->second[ParsersAttributes::CONNECTION_TIMEOUT]);
+			conn->setConnectionParam(Connection::ParamConnTimeout, itr->second[Attributes::ConnectionTimeout]);
 			conn->setConnectionParam(Connection::ParamSslMode, itr->second[Connection::ParamSslMode]);
 			conn->setConnectionParam(Connection::ParamSslRootCert, itr->second[Connection::ParamSslRootCert]);
 			conn->setConnectionParam(Connection::ParamSslCert, itr->second[Connection::ParamSslCert]);
@@ -150,11 +150,11 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 			conn->setConnectionParam(Connection::ParamKerberosServer, itr->second[Connection::ParamKerberosServer]);
 			conn->setConnectionParam(Connection::ParamOthers, itr->second[Connection::ParamOthers]);
 
-			conn->setAutoBrowseDB(itr->second[ParsersAttributes::AutoBrowseDb]==ParsersAttributes::True);
-			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DefaultFor.arg(ParsersAttributes::DIFF)]==ParsersAttributes::True);
-			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(ParsersAttributes::EXPORT)]==ParsersAttributes::True);
-			conn->setDefaultForOperation(Connection::OpImport, itr->second[DefaultFor.arg(ParsersAttributes::IMPORT)]==ParsersAttributes::True);
-			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DefaultFor.arg(ParsersAttributes::VALIDATION)]==ParsersAttributes::True);
+			conn->setAutoBrowseDB(itr->second[Attributes::AutoBrowseDb]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpDiff, itr->second[DefaultFor.arg(Attributes::DIFF)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpExport, itr->second[DefaultFor.arg(Attributes::EXPORT)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpImport, itr->second[DefaultFor.arg(Attributes::IMPORT)]==Attributes::True);
+			conn->setDefaultForOperation(Connection::OpValidation, itr->second[DefaultFor.arg(Attributes::VALIDATION)]==Attributes::True);
 
 			connections.push_back(conn);
 			itr++;
@@ -494,7 +494,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
 		if(connections.empty())
-			config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]=QString("  ");
+			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]=QString("  ");
 		else
 		{
 			for(Connection *conn : connections)
@@ -504,17 +504,17 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				if(attribs[Connection::ParamServerFqdn].isEmpty())
 					attribs[Connection::ParamServerFqdn]=attribs[Connection::ParamServerIp];
 
-				attribs[ParsersAttributes::Alias]=attribs[Connection::ParamAlias];
-				attribs[ParsersAttributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? ParsersAttributes::True : QString());
-				attribs[ParsersAttributes::CONNECTION_TIMEOUT]=attribs[Connection::ParamConnTimeout];
+				attribs[Attributes::Alias]=attribs[Connection::ParamAlias];
+				attribs[Attributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? Attributes::True : QString());
+				attribs[Attributes::ConnectionTimeout]=attribs[Connection::ParamConnTimeout];
 
-				attribs[DefaultFor.arg(ParsersAttributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? ParsersAttributes::True : QString());
-				attribs[DefaultFor.arg(ParsersAttributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? ParsersAttributes::True : QString());
-				attribs[DefaultFor.arg(ParsersAttributes::DIFF)]=(conn->isDefaultForOperation(Connection::OpDiff) ? ParsersAttributes::True : QString());
-				attribs[DefaultFor.arg(ParsersAttributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? ParsersAttributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::EXPORT)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::IMPORT)]=(conn->isDefaultForOperation(Connection::OpImport) ? Attributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::DIFF)]=(conn->isDefaultForOperation(Connection::OpDiff) ? Attributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::VALIDATION)]=(conn->isDefaultForOperation(Connection::OpValidation) ? Attributes::True : QString());
 
 				schparser.ignoreUnkownAttributes(true);
-				config_params[GlobalAttributes::ConnectionsConf][ParsersAttributes::CONNECTIONS]+=
+				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
 						schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
 													GlobalAttributes::DirSeparator +
 													GlobalAttributes::SchemasDir +

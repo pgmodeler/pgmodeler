@@ -202,7 +202,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CodeCompletion]==ParsersAttributes::True)
+	if(confs[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);
@@ -226,8 +226,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(enable_snippets)
 		{
 			clearCustomItems();
-			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
-												SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
+			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::ID),
+												SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::LABEL),
 												QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
 		}
 	}
