@@ -96,9 +96,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[ParsersAttributes::COLUMN]=QString();
 	attributes[ParsersAttributes::EXPRESSION]=QString();
 	attributes[ParsersAttributes::OP_CLASS]=QString();
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? ParsersAttributes::True : QString());
 
 
 	if(column)

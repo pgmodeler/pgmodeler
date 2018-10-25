@@ -330,7 +330,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 								  ParsersAttributes::TABLESPACE,
 								  ParsersAttributes::COLLATION,
 								  ParsersAttributes::POSITION,
-								  ParsersAttributes::APPENDED_SQL,
+								  ParsersAttributes::AppendedSql,
 								  ParsersAttributes::PREPENDED_SQL });
 
 							//If a difference was detected between the objects
@@ -869,17 +869,17 @@ void ModelsDiffHelper::processDiffInfos(void)
 			has_diffs=(create_objs_count!=0 || alter_objs.size()!=0 || drop_objs.size()!=0);
 
 			//Attributes used on the diff schema file
-			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::True;
 			attribs[ParsersAttributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
 			attribs[ParsersAttributes::DB_MODEL]=source_model->getName();
 			attribs[ParsersAttributes::DATABASE]=imported_model->getName();
 			attribs[ParsersAttributes::DATE]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
 			attribs[ParsersAttributes::CONNECTION]=imported_model->getName();
-			attribs[ParsersAttributes::CHANGE]=QString::number(alter_objs.size());
+			attribs[ParsersAttributes::Change]=QString::number(alter_objs.size());
 			attribs[ParsersAttributes::CREATE]=QString::number(create_objs_count);
 			attribs[ParsersAttributes::DROP]=QString::number(drop_objs.size());
 			attribs[ParsersAttributes::TRUNCATE]=QString::number(truncate_tabs.size());
-			attribs[ParsersAttributes::ALTER_CMDS]=QString();
+			attribs[ParsersAttributes::AlterCmds]=QString();
 			attribs[ParsersAttributes::DROP_CMDS]=QString();
 			attribs[ParsersAttributes::CREATE_CMDS]=QString();
 			attribs[ParsersAttributes::TRUNCATE_CMDS]=QString();
@@ -887,7 +887,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[ParsersAttributes::FK_DEFS]=QString();
 			attribs[ParsersAttributes::UNSET_PERMS]=unset_perms;
 			attribs[ParsersAttributes::SET_PERMS]=set_perms;
-			attribs[ParsersAttributes::FUNCTION]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::FUNCTION]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? ParsersAttributes::True : QString());
 			attribs[ParsersAttributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
 
 			ritr=drop_objs.rbegin();
@@ -919,7 +919,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 				attribs[ParsersAttributes::TRUNCATE_CMDS]+=itr.second;
 
 			for(auto &itr : alter_objs)
-				attribs[ParsersAttributes::ALTER_CMDS]+=itr.second;
+				attribs[ParsersAttributes::AlterCmds]+=itr.second;
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);

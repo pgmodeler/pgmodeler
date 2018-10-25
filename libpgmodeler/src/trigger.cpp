@@ -32,7 +32,7 @@ Trigger::Trigger(void)
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[ParsersAttributes::ARGUMENTS]=QString();
+	attributes[ParsersAttributes::Arguments]=QString();
 	attributes[ParsersAttributes::EVENTS]=QString();
 	attributes[ParsersAttributes::TRIGGER_FUNC]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
@@ -74,7 +74,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 		if(i < (count-1)) str_args+=QString(",");
 	}
 
-	attributes[ParsersAttributes::ARGUMENTS]=str_args;
+	attributes[ParsersAttributes::Arguments]=str_args;
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -360,7 +360,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		if(events.at(event_types[i]))
 		{
 			str_aux+=sql_event[i];
-			attributes[attribs[i]]=ParsersAttributes::_TRUE_;
+			attributes[attribs[i]]=ParsersAttributes::True;
 
 			if(event_types[i]==EventType::OnUpdate)
 			{
@@ -403,23 +403,23 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::True;
 
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::True : QString());
 
 	attributes[ParsersAttributes::CONDITION]=condition;
 
 	if(referenced_table)
 		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
 
-	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 
 	if(def_type == SchemaParser::XmlDefinition)

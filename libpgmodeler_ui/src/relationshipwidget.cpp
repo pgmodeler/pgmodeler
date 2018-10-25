@@ -478,7 +478,7 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 	if(value)
 	{
 		map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
-		deferrable_chk->setChecked(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+		deferrable_chk->setChecked(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
 		deferral_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
 		upd_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
 		del_action_cmb->setCurrentText(confs[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]);

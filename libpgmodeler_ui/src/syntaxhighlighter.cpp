@@ -475,18 +475,18 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 																	ErrorCode::DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
-								chr_sensitive=(attribs[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
-								italic=(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-								bold=(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-								underline=(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
-								partial_match=(attribs[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
+								chr_sensitive=(attribs[ParsersAttributes::CaseSensitive]==ParsersAttributes::True);
+								italic=(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
+								bold=(attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
+								underline=(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
+								partial_match=(attribs[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::True);
 								fg_color.setNamedColor(attribs[ParsersAttributes::FOREGROUND_COLOR]);
 
 								//If the attribute isn't defined the bg color will be transparent
-								if(attribs[ParsersAttributes::BACKGROUND_COLOR].isEmpty())
+								if(attribs[ParsersAttributes::BackgroundColor].isEmpty())
 									bg_color.setRgb(0,0,0,0);
 								else
-									bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
+									bg_color.setNamedColor(attribs[ParsersAttributes::BackgroundColor]);
 
 								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
 									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
@@ -524,9 +524,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										expr_type=attribs[ParsersAttributes::TYPE];
 										regexp.setPattern(attribs[ParsersAttributes::VALUE]);
 
-										if(attribs[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
+										if(attribs[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::True)
 											regexp.setPatternSyntax(QRegExp::RegExp2);
-										else if(attribs[ParsersAttributes::WILDCARD]==ParsersAttributes::_TRUE_)
+										else if(attribs[ParsersAttributes::WILDCARD]==ParsersAttributes::True)
 											regexp.setPatternSyntax(QRegExp::Wildcard);
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);

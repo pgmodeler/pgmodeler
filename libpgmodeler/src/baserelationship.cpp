@@ -100,7 +100,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[ParsersAttributes::RELATIONSHIP_11]=QString();
 	attributes[ParsersAttributes::CONSTRAINTS]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::AncestorTable]=QString();
 	attributes[ParsersAttributes::COPY_OPTIONS]=QString();
 	attributes[ParsersAttributes::COPY_MODE]=QString();
 	attributes[ParsersAttributes::SRC_COL_PATTERN]=QString();
@@ -334,8 +334,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 
 
 	attributes[ParsersAttributes::TYPE]=getRelTypeAttribute();
-	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? ParsersAttributes::True : QString());
 
 	if(src_table)
 		attributes[ParsersAttributes::SRC_TABLE]=src_table->getName(true);

@@ -465,7 +465,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		//The import process will exclude built-in array array types, system and extension objects
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 						  Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
+		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
 		if(thread_id == SrcImportThread)

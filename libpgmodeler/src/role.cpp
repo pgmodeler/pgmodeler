@@ -41,10 +41,10 @@ Role::Role(void)
 	attributes[ParsersAttributes::VALIDITY]=QString();
 	attributes[ParsersAttributes::REF_ROLES]=QString();
 	attributes[ParsersAttributes::MEMBER_ROLES]=QString();
-	attributes[ParsersAttributes::ADMIN_ROLES]=QString();
+	attributes[ParsersAttributes::AdminRoles]=QString();
 	attributes[ParsersAttributes::REPLICATION]=QString();
 	attributes[ParsersAttributes::GROUP]=QString();
-	attributes[ParsersAttributes::BYPASSRLS]=QString();
+	attributes[ParsersAttributes::BypassRls]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)
@@ -170,7 +170,7 @@ void Role::setRoleAttribute(unsigned role_type)
 		break;
 		case AdminRole:
 			roles_vect=&admin_roles;
-			attrib=ParsersAttributes::ADMIN_ROLES;
+			attrib=ParsersAttributes::AdminRoles;
 		break;
 		case RefRole:
 		default:
@@ -332,14 +332,14 @@ QString Role::getCodeDefinition(unsigned def_type)
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
+							 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
 
 	setRoleAttribute(RefRole);
 	setRoleAttribute(MemberRole);
 	setRoleAttribute(AdminRole);
 
 	for(i=0; i <= OpBypassRls; i++)
-		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::_TRUE_ : QString());
+		attributes[op_attribs[i]]=(options[i] ? ParsersAttributes::True : QString());
 
 	attributes[ParsersAttributes::PASSWORD]=password;
 	attributes[ParsersAttributes::VALIDITY]=validity;
@@ -363,9 +363,9 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 							   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 							   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-								 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
+								 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
 
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, ignore_name_diff);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
 		if(this->password!=role->password)
 			attribs[ParsersAttributes::PASSWORD]=role->password;
@@ -377,7 +377,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		{
 			if((attribs.count(ParsersAttributes::PASSWORD) && i==OpEncrypted) ||
 					this->options[i]!=role->options[i])
-				attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[op_attribs[i]]=(role->options[i] ? ParsersAttributes::True : ParsersAttributes::UNSET);
 		}
 
 		copyAttributes(attribs);

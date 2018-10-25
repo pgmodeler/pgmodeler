@@ -173,7 +173,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setElementsAttribute(def_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[ParsersAttributes::TYPE]=(*data_type);

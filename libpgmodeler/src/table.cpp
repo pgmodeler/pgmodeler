@@ -32,7 +32,7 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::OIDS]=QString();
 	attributes[ParsersAttributes::COLS_COMMENT]=QString();
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::AncestorTable]=QString();
 	attributes[ParsersAttributes::GEN_ALTER_CMDS]=QString();
 	attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=QString();
 	attributes[ParsersAttributes::COL_INDEXES]=QString();
@@ -161,8 +161,8 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 
 		attribs[ParsersAttributes::SIGNATURE]=tab_obj->getSignature();
 		attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
-		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==ObjectType::Column ? ParsersAttributes::_TRUE_ : QString());
-		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==ObjectType::Constraint ? ParsersAttributes::_TRUE_ : QString());
+		attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==ObjectType::Column ? ParsersAttributes::True : QString());
+		attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==ObjectType::Constraint ? ParsersAttributes::True : QString());
 		attribs[ParsersAttributes::TABLE]=this->getName(true);
 		attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
 		attribs[ParsersAttributes::COMMENT]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
@@ -184,7 +184,7 @@ void Table::setAncestorTableAttribute(void)
 	for(i=0; i < count; i++)
 		list.push_back(ancestor_tables[i]->getName(true));
 
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=list.join(',');
+	attributes[ParsersAttributes::AncestorTable]=list.join(',');
 }
 
 void Table::setRelObjectsIndexesAttribute(void)
@@ -322,7 +322,7 @@ void Table::setConstraintsAttribute(unsigned def_type)
 				str_constr+=lines[i];
 			}
 
-			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::_TRUE_ : QString());
+			attributes[ParsersAttributes::CONSTR_SQL_DISABLED]=(dis_sql_cnt==lines.size() ? ParsersAttributes::True : QString());
 		}
 	}
 
@@ -1593,15 +1593,15 @@ void Table::updateAlterCmdsStatus(void)
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
-	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::OIDS]=(with_oid ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::GEN_ALTER_CMDS]=(gen_alter_cmds ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::UNLOGGED]=(unlogged ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::RLS_ENABLED]=(rls_enabled ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::RLS_FORCED]=(rls_forced ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::COPY_TABLE]=QString();
-	attributes[ParsersAttributes::ANCESTOR_TABLE]=QString();
+	attributes[ParsersAttributes::AncestorTable]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::PARTITIONING]=~partitioning_type;
 	attributes[ParsersAttributes::PARTITION_KEY]=QString();
 	attributes[ParsersAttributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
@@ -1882,23 +1882,23 @@ QString Table::getAlterDefinition(BaseObject *object)
 		attribs_map attribs;
 
 		attribs[ParsersAttributes::OIDS]=QString();
-		attribs[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object, true);
+		attribs[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())
 		{
-			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+			attribs[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::True;
 
 			if(this->with_oid!=tab->with_oid)
-				attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::OIDS]=(tab->with_oid ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 			if(this->unlogged!=tab->unlogged)
-				attribs[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::UNLOGGED]=(tab->unlogged ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 			if(this->rls_enabled!=tab->rls_enabled)
-				attribs[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::RLS_ENABLED]=(tab->rls_enabled ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 			if(this->rls_forced!=tab->rls_forced)
-				attribs[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::RLS_FORCED]=(tab->rls_forced ? ParsersAttributes::True : ParsersAttributes::UNSET);
 		}
 
 		copyAttributes(attribs);
@@ -1917,7 +1917,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	try
 	{
 		BaseObject::setBasicAttributes(true);
-		attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::Cascade]=(cascade ? ParsersAttributes::True : QString());
 		return(BaseObject::getAlterDefinition(ParsersAttributes::TRUNCATE_PRIV, attributes, false, false));
 	}
 	catch(Exception &e)

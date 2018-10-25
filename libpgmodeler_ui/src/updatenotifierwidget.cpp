@@ -138,9 +138,9 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 				QJsonDocument json_doc=QJsonDocument::fromJson(reply->readAll());
 				QJsonObject json_obj=json_doc.object();
 				QString version=json_obj.value(ParsersAttributes::NEW_VERSION).toString(),
-						changelog=json_obj.value(ParsersAttributes::CHANGELOG).toString(),
+						changelog=json_obj.value(ParsersAttributes::Changelog).toString(),
 						date=json_obj.value(ParsersAttributes::DATE).toString();
-				bool upd_found=(!version.isEmpty() && version!=ParsersAttributes::_FALSE_);
+				bool upd_found=(!version.isEmpty() && version!=ParsersAttributes::False);
 
 				if(upd_found)
 				{

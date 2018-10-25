@@ -236,9 +236,9 @@ void BaseObjectView::loadObjectsStyle(void)
 					{
 						font.setFamily(attribs[ParsersAttributes::FONT]);
 						font.setPointSizeF(attribs[ParsersAttributes::SIZE].toDouble());
-						font.setBold(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+						font.setBold(attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
+						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
+						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
 						font_fmt.setFont(font);
 						font_config[ParsersAttributes::GLOBAL]=font_fmt;
 					}
@@ -247,9 +247,9 @@ void BaseObjectView::loadObjectsStyle(void)
 						font_config[attribs[ParsersAttributes::ID]]=font_fmt;
 						itr=font_config.find(attribs[ParsersAttributes::ID]);
 						font=font_fmt.font();
-						font.setBold(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+						font.setBold(attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
+						font.setItalic(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
+						font.setUnderline(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
 						(itr->second).setFont(font);
 						(itr->second).setForeground(QColor(attribs[ParsersAttributes::COLOR]));
 					}
@@ -260,7 +260,7 @@ void BaseObjectView::loadObjectsStyle(void)
 						vector<QColor> colors;
 						colors.push_back(!list.isEmpty() ? QColor(list[0]) : QColor(0,0,0));
 						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
-						colors.push_back(QColor(attribs[ParsersAttributes::BORDER_COLOR]));
+						colors.push_back(QColor(attribs[ParsersAttributes::BorderColor]));
 
 						color_config[attribs[ParsersAttributes::ID]]=colors;
 					}

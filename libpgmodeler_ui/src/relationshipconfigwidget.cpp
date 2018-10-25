@@ -103,7 +103,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		tab_edges_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CONNECT_TABLE_EDGES);
 		crows_foot_rb->setChecked(config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]==ParsersAttributes::CROWS_FOOT);
 
-		deferrable_chk->setChecked(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+		deferrable_chk->setChecked(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
 		deferral_cmb->setCurrentText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]);
 
 		idx=upd_action_cmb->findText(config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]);
@@ -153,7 +153,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 		else
 			config_params[ParsersAttributes::CONNECTION][ParsersAttributes::MODE]=ParsersAttributes::CONNECT_CENTER_PNTS;
 
-		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFERRABLE]=(deferrable_chk->isChecked() ? ParsersAttributes::True : ParsersAttributes::False);
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEFER_TYPE]=deferral_cmb->currentText();
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
 		config_params[ParsersAttributes::FOREIGN_KEYS][ParsersAttributes::DEL_ACTION]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());

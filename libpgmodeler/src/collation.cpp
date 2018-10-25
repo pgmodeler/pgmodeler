@@ -23,8 +23,8 @@ Collation::Collation(void)
 	obj_type=ObjectType::Collation;
 	encoding=BaseType::Null;
 
-	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
-	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
+	attributes[ParsersAttributes::LcCtype]=QString();
+	attributes[ParsersAttributes::LcCollate]=QString();
 	attributes[ParsersAttributes::LOCALE]=QString();
 	attributes[ParsersAttributes::ENCODING]=QString();
 }
@@ -111,7 +111,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::COLLATION]=collation->getName(true);
 	else
 	{
-		QString lc_attribs[2]={ ParsersAttributes::_LC_CTYPE_, ParsersAttributes::_LC_COLLATE_ };
+		QString lc_attribs[2]={ ParsersAttributes::LcCtype, ParsersAttributes::LcCollate };
 
 		if(localization[LcCtype].isEmpty() && localization[LcCollate].isEmpty())
 			throw Exception(ErrorCode::EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -134,7 +134,7 @@ QString Collation::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
 	}
 	catch(Exception &e)

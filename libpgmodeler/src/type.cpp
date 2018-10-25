@@ -23,7 +23,7 @@ Type::Type(void)
 	obj_type=ObjectType::Type;
 	setConfiguration(EnumerationType);
 
-	attributes[ParsersAttributes::BASE_TYPE]=QString();
+	attributes[ParsersAttributes::BaseType]=QString();
 	attributes[ParsersAttributes::COMPOSITE_TYPE]=QString();
 	attributes[ParsersAttributes::RANGE_TYPE]=QString();
 	attributes[ParsersAttributes::TYPE_ATTRIBUTE]=QString();
@@ -35,22 +35,22 @@ Type::Type(void)
 	attributes[ParsersAttributes::SEND_FUNC]=QString();
 	attributes[ParsersAttributes::TPMOD_IN_FUNC]=QString();
 	attributes[ParsersAttributes::TPMOD_OUT_FUNC]=QString();
-	attributes[ParsersAttributes::ANALYZE_FUNC]=QString();
+	attributes[ParsersAttributes::AnalyzeFunc]=QString();
 	attributes[ParsersAttributes::INTERNAL_LENGTH]=QString();
-	attributes[ParsersAttributes::BY_VALUE]=QString();
-	attributes[ParsersAttributes::ALIGNMENT]=QString();
+	attributes[ParsersAttributes::ByValue]=QString();
+	attributes[ParsersAttributes::Alignment]=QString();
 	attributes[ParsersAttributes::STORAGE]=QString();
 	attributes[ParsersAttributes::DEFAULT_VALUE]=QString();
 	attributes[ParsersAttributes::ELEMENT]=QString();
 	attributes[ParsersAttributes::DELIMITER]=QString();
 	attributes[ParsersAttributes::REDUCED_FORM]=QString();
-	attributes[ParsersAttributes::CATEGORY]=QString();
+	attributes[ParsersAttributes::Category]=QString();
 	attributes[ParsersAttributes::PREFERRED]=QString();
 	attributes[ParsersAttributes::LIKE_TYPE]=QString();
 	attributes[ParsersAttributes::COLLATABLE]=QString();
 	attributes[ParsersAttributes::SUBTYPE]=QString();
 	attributes[ParsersAttributes::SUBTYPE_DIFF_FUNC]=QString();
-	attributes[ParsersAttributes::CANONICAL_FUNC]=QString();
+	attributes[ParsersAttributes::CanonicalFunc]=QString();
 	attributes[ParsersAttributes::OP_CLASS]=QString();
 }
 
@@ -617,17 +617,17 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(config==EnumerationType)
 	{
-		attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::ENUM_TYPE]=ParsersAttributes::True;
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==CompositeType)
 	{
-		attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::COMPOSITE_TYPE]=ParsersAttributes::True;
 		setElementsAttribute(def_type);
 	}
 	else if(config==RangeType)
 	{
-		attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::RANGE_TYPE]=ParsersAttributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::SUBTYPE]=(*subtype);
@@ -644,15 +644,15 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 	else
 	{
-		attributes[ParsersAttributes::BASE_TYPE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::BaseType]=ParsersAttributes::True;
 
 		if(internal_len==0 && def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("VARIABLE");
 		else
 			attributes[ParsersAttributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
 
-		attributes[ParsersAttributes::BY_VALUE]=(by_value ? ParsersAttributes::_TRUE_ : QString());
-		attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
+		attributes[ParsersAttributes::ByValue]=(by_value ? ParsersAttributes::True : QString());
+		attributes[ParsersAttributes::Alignment]=(*alignment);
 		attributes[ParsersAttributes::STORAGE]=(~storage);
 		attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
@@ -662,10 +662,10 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(delimiter!='\0')
 			attributes[ParsersAttributes::DELIMITER]=delimiter;
 
-		attributes[ParsersAttributes::CATEGORY]=~(category);
+		attributes[ParsersAttributes::Category]=~(category);
 
-		attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::_TRUE_ : QString());
-		attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::PREFERRED]=(preferred ? ParsersAttributes::True : QString());
+		attributes[ParsersAttributes::COLLATABLE]=(collatable ? ParsersAttributes::True : QString());
 
 		if(like_type!=QString("\"any\""))
 		{
@@ -685,8 +685,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 							   ParsersAttributes::SEND_FUNC,
 							   ParsersAttributes::TPMOD_IN_FUNC,
 							   ParsersAttributes::TPMOD_OUT_FUNC,
-							   ParsersAttributes::ANALYZE_FUNC,
-							   ParsersAttributes::CANONICAL_FUNC,
+							   ParsersAttributes::AnalyzeFunc,
+							   ParsersAttributes::CanonicalFunc,
 							   ParsersAttributes::SUBTYPE_DIFF_FUNC};
 
 		for(i=0; i < sizeof(functions)/sizeof(Function *); i++)
@@ -730,10 +730,10 @@ QString Type::getAlterDefinition(BaseObject *object)
 				{
 					if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
 					{
-						attribs[ParsersAttributes::BEFORE]=QString();
+						attribs[ParsersAttributes::Before]=QString();
 						if(prev_val.isEmpty())
 						{
-							attribs[ParsersAttributes::BEFORE]=ParsersAttributes::_TRUE_;
+							attribs[ParsersAttributes::Before]=ParsersAttributes::True;
 							prev_val=this->enumerations[0];
 						}
 
@@ -754,8 +754,8 @@ QString Type::getAlterDefinition(BaseObject *object)
 				{
 					if(type->getAttributeIndex(attrib.getName()) < 0)
 					{
-						attribs[ParsersAttributes::DROP]=ParsersAttributes::_TRUE_;
-						attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+						attribs[ParsersAttributes::DROP]=ParsersAttributes::True;
+						attribs[ParsersAttributes::Attribute]=attrib.getName(true);
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
@@ -770,7 +770,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					//Creating type attributes
 					if(attrib_idx < 0)
 					{
-						attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+						attribs[ParsersAttributes::Attribute]=attrib.getName(true);
 						attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						attribs[ParsersAttributes::COLLATION]=QString();
 
@@ -783,17 +783,17 @@ QString Type::getAlterDefinition(BaseObject *object)
 					//Changing type attributes
 					else
 					{
-						attribs[ParsersAttributes::CHANGE]=ParsersAttributes::_TRUE_;
+						attribs[ParsersAttributes::Change]=ParsersAttributes::True;
 
 						if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
 						{
-							attribs[ParsersAttributes::ATTRIBUTE]=attrib.getName(true);
+							attribs[ParsersAttributes::Attribute]=attrib.getName(true);
 							attribs[ParsersAttributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						}
 
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
-						attributes[ParsersAttributes::CHANGE]=QString();
+						attributes[ParsersAttributes::Change]=QString();
 					}
 
 					attribs.clear();

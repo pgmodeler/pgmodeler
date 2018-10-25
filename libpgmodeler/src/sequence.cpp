@@ -36,7 +36,7 @@ Sequence::Sequence(void)
 	attributes[ParsersAttributes::MIN_VALUE]=QString();
 	attributes[ParsersAttributes::MAX_VALUE]=QString();
 	attributes[ParsersAttributes::START]=QString();
-	attributes[ParsersAttributes::CACHE]=QString();
+	attributes[ParsersAttributes::Cache]=QString();
 	attributes[ParsersAttributes::CYCLE]=QString();
 	attributes[ParsersAttributes::OWNER_COLUMN]=QString();
 	attributes[ParsersAttributes::TABLE]=QString();
@@ -400,14 +400,14 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::COLUMN]=(owner_col ? owner_col->getName(true) : QString());
 
 	attributes[ParsersAttributes::COL_IS_IDENTITY]=
-			(owner_col && owner_col->getIdentityType() != BaseType::Null ? ParsersAttributes::_TRUE_ : QString());
+			(owner_col && owner_col->getIdentityType() != BaseType::Null ? ParsersAttributes::True : QString());
 
 	attributes[ParsersAttributes::INCREMENT]=increment;
 	attributes[ParsersAttributes::MIN_VALUE]=min_value;
 	attributes[ParsersAttributes::MAX_VALUE]=max_value;
 	attributes[ParsersAttributes::START]=start;
-	attributes[ParsersAttributes::CACHE]=cache;
-	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::Cache]=cache;
+	attributes[ParsersAttributes::CYCLE]=(cycle ? ParsersAttributes::True : QString());
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -424,7 +424,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 		Table *table=nullptr;
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if((this->owner_col && !seq->owner_col) ||
 				(!this->owner_col && seq->owner_col) ||
@@ -459,10 +459,10 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[ParsersAttributes::START]=seq->start;
 
 		if(!seq->cache.isEmpty() && this->cache!=seq->cache)
-			attribs[ParsersAttributes::CACHE]=seq->cache;
+			attribs[ParsersAttributes::Cache]=seq->cache;
 
 		if(this->cycle!=seq->cycle)
-			attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+			attribs[ParsersAttributes::CYCLE]=(seq->cycle ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

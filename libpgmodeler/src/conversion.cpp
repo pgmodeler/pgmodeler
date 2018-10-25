@@ -115,7 +115,7 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DEFAULT]=(is_default ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::SRC_ENCODING]=(~encodings[SrcEncoding]);
 	attributes[ParsersAttributes::DST_ENCODING]=(~encodings[DstEncoding]);
 

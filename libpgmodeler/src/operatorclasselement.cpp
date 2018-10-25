@@ -137,7 +137,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	if(element_type==FunctionElem && function && strategy_number > 0)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::FUNCTION]=ParsersAttributes::True;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
@@ -148,7 +148,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
-		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::OPERATOR]=ParsersAttributes::True;
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
@@ -167,7 +167,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==StorageElem && storage!=PgSqlType::Null)
 	{
 		//STORAGE storage_type
-		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::STORAGE]=ParsersAttributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[ParsersAttributes::TYPE]=(*storage);

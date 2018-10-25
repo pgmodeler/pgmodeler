@@ -83,7 +83,7 @@ BaseObject::BaseObject(void)
 	database=nullptr;
 	collation=nullptr;
 	attributes[ParsersAttributes::NAME]=QString();
-	attributes[ParsersAttributes::ALIAS]=QString();
+	attributes[ParsersAttributes::Alias]=QString();
 	attributes[ParsersAttributes::COMMENT]=QString();
 	attributes[ParsersAttributes::OWNER]=QString();
 	attributes[ParsersAttributes::TABLESPACE]=QString();
@@ -91,7 +91,7 @@ BaseObject::BaseObject(void)
 	attributes[ParsersAttributes::COLLATION]=QString();
 	attributes[ParsersAttributes::PROTECTED]=QString();
 	attributes[ParsersAttributes::SQL_DISABLED]=QString();
-	attributes[ParsersAttributes::APPENDED_SQL]=QString();
+	attributes[ParsersAttributes::AppendedSql]=QString();
 	attributes[ParsersAttributes::PREPENDED_SQL]=QString();
 	attributes[ParsersAttributes::DROP]=QString();
 	attributes[ParsersAttributes::SIGNATURE]=QString();
@@ -677,8 +677,8 @@ void BaseObject::setBasicAttributes(bool format_name)
 	if(attributes[ParsersAttributes::NAME].isEmpty())
 		attributes[ParsersAttributes::NAME]=this->getName(format_name);
 
-	if(attributes[ParsersAttributes::ALIAS].isEmpty())
-		attributes[ParsersAttributes::ALIAS]=this->getAlias();
+	if(attributes[ParsersAttributes::Alias].isEmpty())
+		attributes[ParsersAttributes::Alias]=this->getAlias();
 
 	if(attributes[ParsersAttributes::SIGNATURE].isEmpty())
 		attributes[ParsersAttributes::SIGNATURE]=this->getSignature(format_name);
@@ -706,7 +706,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::True : QString());
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SqlDefinition) ||
@@ -724,7 +724,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XmlDefinition)
-			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : QString());
+			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::True : QString());
 
 		if(tablespace)
 		{
@@ -781,17 +781,17 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(!appended_sql.isEmpty())
 		{
-			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
+			attributes[ParsersAttributes::AppendedSql]=appended_sql;
 
 			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
-				attributes[ParsersAttributes::APPENDED_SQL]=
-						schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove('-'), attributes, def_type);
+				attributes[ParsersAttributes::AppendedSql]=
+						schparser.getCodeDefinition(QString(ParsersAttributes::AppendedSql).remove('-'), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::APPENDED_SQL]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
+				attributes[ParsersAttributes::AppendedSql]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
 			}
 		}
 
@@ -817,7 +817,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + '\n');
 		}
 
-		attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::True : QString());
 
 		try
 		{
@@ -1127,9 +1127,9 @@ QString BaseObject::getDropDefinition(bool cascade)
 			/* Creating an attribute that identifies the object type in order
 		 to permit conditional code generation inside the DROP script */
 			if(attribs.count(this->getSchemaName())==0)
-				attribs[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+				attribs[this->getSchemaName()]=ParsersAttributes::True;
 
-			attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::Cascade]=(cascade ? ParsersAttributes::True : QString());
 
 			return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SqlDefinition));
 		}
@@ -1166,7 +1166,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 {
 	if(!attribs.empty())
 	{
-		attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::True;
 		for(auto &itr : attribs)
 			attributes[itr.first]=itr.second;
 	}

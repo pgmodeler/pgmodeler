@@ -574,12 +574,12 @@ QString View::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::CTE_EXPRESSION]=cte_expression;
-	attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::MATERIALIZED]=(materialized ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::RECURSIVE]=(recursive ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::WITH_NO_DATA]=(with_no_data ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::COLUMNS]=QString();
 	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=(isExtAttribsHidden() ? ParsersAttributes::True : QString());
 
 	setSQLObjectAttribute();
 

@@ -34,11 +34,11 @@ Index::Index(void)
 	attributes[ParsersAttributes::PREDICATE]=QString();
 	attributes[ParsersAttributes::OP_CLASS]=QString();
 	attributes[ParsersAttributes::NULLS_FIRST]=QString();
-	attributes[ParsersAttributes::ASC_ORDER]=QString();
+	attributes[ParsersAttributes::AscOrder]=QString();
 	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
 	attributes[ParsersAttributes::ELEMENTS]=QString();
 	attributes[ParsersAttributes::FAST_UPDATE]=QString();
-	attributes[ParsersAttributes::BUFFERING]=QString();
+	attributes[ParsersAttributes::Buffering]=QString();
 	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
 }
 
@@ -331,8 +331,8 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[Unique] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[Concurrent] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::UNIQUE]=(index_attribs[Unique] ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[Concurrent] ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::PREDICATE]=predicate;
 	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
@@ -346,15 +346,15 @@ QString Index::getCodeDefinition(unsigned def_type)
 	}
 
 	if(this->indexing_type==IndexingType::Gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FastUpdate] ? ParsersAttributes::True : QString());
 
 	if(this->indexing_type==IndexingType::Gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::Buffering]=(index_attribs[Buffering] ? ParsersAttributes::True : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
-		attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::True;
 	}
 	else if(def_type==SchemaParser::XmlDefinition)
 		attributes[ParsersAttributes::FACTOR]=QString("0");
@@ -362,7 +362,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::True;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -385,7 +385,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
@@ -394,11 +394,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 			if(this->indexing_type==IndexingType::Gin &&
 					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
-				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FastUpdate] ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 			if(this->indexing_type==IndexingType::Gist &&
 					this->index_attribs[Buffering] != index->index_attribs[Buffering])
-				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[Buffering] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::Buffering]=(index->index_attribs[Buffering] ? ParsersAttributes::True : ParsersAttributes::UNSET);
 		}
 
 		copyAttributes(attribs);

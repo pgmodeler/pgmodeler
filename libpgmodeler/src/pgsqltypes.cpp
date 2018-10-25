@@ -1618,7 +1618,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		}
 
 		if(with_timezone)
-			attribs[ParsersAttributes::WITH_TIMEZONE]=ParsersAttributes::_TRUE_;
+			attribs[ParsersAttributes::WITH_TIMEZONE]=ParsersAttributes::True;
 
 		return(schparser.getCodeDefinition(ParsersAttributes::PGSQL_BASE_TYPE, attribs, def_type));
 	}

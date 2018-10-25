@@ -38,7 +38,7 @@ Function::Function(void)
 	attributes[ParsersAttributes::LANGUAGE]=QString();
 	attributes[ParsersAttributes::RETURNS_SETOF]=QString();
 	attributes[ParsersAttributes::SECURITY_TYPE]=QString();
-	attributes[ParsersAttributes::BEHAVIOR_TYPE]=QString();
+	attributes[ParsersAttributes::BehaviorType]=QString();
 	attributes[ParsersAttributes::DEFINITION]=QString();
 	attributes[ParsersAttributes::SIGNATURE]=QString();
 	attributes[ParsersAttributes::REF_TYPE]=QString();
@@ -477,11 +477,11 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::RETURNS_SETOF]=(returns_setof ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::WINDOW_FUNC]=(is_wnd_function ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::LEAKPROOF]=(is_leakproof ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::SECURITY_TYPE]=(~security_type);
-	attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
+	attributes[ParsersAttributes::BehaviorType]=(~behavior_type);
 	attributes[ParsersAttributes::DEFINITION]=source_code;
 
 	if(language->getName()==~LanguageType(LanguageType::C))
@@ -505,7 +505,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 	{
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->source_code.simplified()!=func->source_code.simplified() ||
 				this->library!=func->library ||
@@ -521,7 +521,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
 			{
-				attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::_TRUE_;
+				attribs[ParsersAttributes::RETURNS_SETOF]=ParsersAttributes::True;
 				attribs[ParsersAttributes::ROW_AMOUNT]=QString::number(row_amount);
 			}
 
@@ -529,7 +529,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 				attribs[ParsersAttributes::FUNCTION_TYPE]=~func->function_type;
 
 			if(this->is_leakproof!=func->is_leakproof)
-				attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+				attribs[ParsersAttributes::LEAKPROOF]=(func->is_leakproof ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 			if(this->security_type!=func->security_type)
 				attribs[ParsersAttributes::SECURITY_TYPE]=~func->security_type;
@@ -538,7 +538,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 					((this->behavior_type==BehaviorType::CalledOnNullInput) ||
 					 ((this->behavior_type==BehaviorType::Strict || this->behavior_type==BehaviorType::ReturnsNullOnNullInput) &&
 					  func->function_type==BehaviorType::CalledOnNullInput)))
-				attribs[ParsersAttributes::BEHAVIOR_TYPE]=~func->behavior_type;
+				attribs[ParsersAttributes::BehaviorType]=~func->behavior_type;
 		}
 
 		copyAttributes(attribs);

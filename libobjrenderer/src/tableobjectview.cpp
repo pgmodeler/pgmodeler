@@ -506,7 +506,7 @@ void TableObjectView::configureObject(Reference reference)
 			str_aux=reference.getColumnAlias();
 
 		str_aux=QString(" (") + str_aux + QString(") ");
-		fmt=font_config[ParsersAttributes::ALIAS];
+		fmt=font_config[ParsersAttributes::Alias];
 		lables[2]->setText(str_aux);
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());

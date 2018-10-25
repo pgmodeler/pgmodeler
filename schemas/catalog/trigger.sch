@@ -77,7 +77,7 @@
 	    END AS columns, ]
 	    
 	    
-     %if ({pgsql-ver} >= "10.0") %then
+     %if ({pgsql-ver} >=f "10.0") %then
         [ tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
      %else
         [ NULL AS old_table_name, NULL AS new_table_name, ]

@@ -26,7 +26,7 @@ Policy::Policy(void) : TableObject()
 	attributes[ParsersAttributes::PERMISSIVE] = QString();
 	attributes[ParsersAttributes::COMMAND] = QString();
 	attributes[ParsersAttributes::USING_EXP] = QString();
-	attributes[ParsersAttributes::CHECK_EXP] = QString();
+	attributes[ParsersAttributes::CheckExp] = QString();
 	attributes[ParsersAttributes::ROLES] = QString();
 }
 
@@ -123,9 +123,9 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	for(auto role : roles)
 		rol_names.append(role->getName(true));
 
-	attributes[ParsersAttributes::PERMISSIVE] = (permissive ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::PERMISSIVE] = (permissive ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::USING_EXP] = using_expr;
-	attributes[ParsersAttributes::CHECK_EXP] = check_expr;
+	attributes[ParsersAttributes::CheckExp] = check_expr;
 	attributes[ParsersAttributes::ROLES] = rol_names.join(QString(", "));
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -151,13 +151,13 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		QStringList rol_names, aux_rol_names;
 		attribs_map attribs;
 
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->using_expr.simplified() != policy->using_expr.simplified())
 			attribs[ParsersAttributes::USING_EXP] = policy->using_expr;
 
 		if(this->check_expr.simplified() != policy->check_expr.simplified())
-			attribs[ParsersAttributes::CHECK_EXP] = policy->check_expr;
+			attribs[ParsersAttributes::CheckExp] = policy->check_expr;
 
 		for(auto role : this->roles)
 			rol_names.append(role->getName(true));

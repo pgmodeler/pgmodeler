@@ -748,7 +748,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 	{
 		QTreeWidgetItem *group=nullptr, *item=nullptr;
 		QFont grp_fnt=tree_wgt->font();
-		attribs_map extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}};
+		attribs_map extra_attribs={{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::True}};
 		QString tooltip=QString("OID: %1"), name, label;
 		bool child_checked=false;
 		vector<attribs_map> objects_vect;

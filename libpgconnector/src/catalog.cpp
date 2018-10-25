@@ -187,7 +187,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	}
 
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-	attribs[qry_type]=ParsersAttributes::_TRUE_;
+	attribs[qry_type]=ParsersAttributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)
 		attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
@@ -198,7 +198,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
-		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
+		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::True;
 
 	//Checking if the custom filter expression is present
 	if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
@@ -515,7 +515,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	try
 	{
 		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : QString())}};
+												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::True : QString())}};
 
 		loadCatalogQuery(query_id);
 		return(schparser.getCodeDefinition(attribs).simplified());
@@ -562,7 +562,7 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		{
 			attr_name.remove(BoolField);
 			if(value==PgSqlFalse) value.clear();
-			else value=ParsersAttributes::_TRUE_;
+			else value=ParsersAttributes::True;
 		}
 
 		attr_name.replace('_','-');
@@ -678,7 +678,7 @@ attribs_map Catalog::getServerAttributes(void)
 			do
 			{
 				tuple=res.getTupleValues();
-				attr_name = tuple[ParsersAttributes::ATTRIBUTE];
+				attr_name = tuple[ParsersAttributes::Attribute];
 				attr_name.replace('_','-');
 				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
 			}

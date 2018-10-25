@@ -29,7 +29,7 @@ Constraint::Constraint(void)
 
 	attributes[ParsersAttributes::PK_CONSTR]=QString();
 	attributes[ParsersAttributes::FK_CONSTR]=QString();
-	attributes[ParsersAttributes::CK_CONSTR]=QString();
+	attributes[ParsersAttributes::CkConstr]=QString();
 	attributes[ParsersAttributes::UQ_CONSTR]=QString();
 	attributes[ParsersAttributes::EX_CONSTR]=QString();
 	attributes[ParsersAttributes::REF_TABLE]=QString();
@@ -653,7 +653,7 @@ void Constraint::setDeclInTableAttribute(void)
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
 		attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
 	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::PrimaryKey)
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::True;
 }
 
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
@@ -665,14 +665,14 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	attributes[ParsersAttributes::PK_CONSTR]=QString();
 	attributes[ParsersAttributes::FK_CONSTR]=QString();
-	attributes[ParsersAttributes::CK_CONSTR]=QString();
+	attributes[ParsersAttributes::CkConstr]=QString();
 	attributes[ParsersAttributes::UQ_CONSTR]=QString();
 	attributes[ParsersAttributes::EX_CONSTR]=QString();
 
 	switch(!constr_type)
 	{
 		case ConstraintType::Check:
-			attrib=ParsersAttributes::CK_CONSTR;
+			attrib=ParsersAttributes::CkConstr;
 		break;
 		case ConstraintType::PrimaryKey:
 			attrib=ParsersAttributes::PK_CONSTR;
@@ -687,7 +687,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=ParsersAttributes::EX_CONSTR;
 		break;
 	}
-	attributes[attrib]=ParsersAttributes::_TRUE_;
+	attributes[attrib]=ParsersAttributes::True;
 
 	attributes[ParsersAttributes::TYPE]=attrib;
 	attributes[ParsersAttributes::UPD_ACTION]=(~upd_action);
@@ -711,8 +711,8 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	}
 
 	attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : QString());
-	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 	attributes[ParsersAttributes::INDEX_TYPE]=(~ index_type);

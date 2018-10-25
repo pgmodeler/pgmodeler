@@ -162,7 +162,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 	QStringList aux_attribs;
 	QString buf=snippet[ParsersAttributes::CONTENTS];
 
-	if(snippet[ParsersAttributes::PARSABLE]!=ParsersAttributes::_TRUE_)
+	if(snippet[ParsersAttributes::PARSABLE]!=ParsersAttributes::True)
 		return(buf);
 
 	try
@@ -170,7 +170,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 		schparser.loadBuffer(buf);
 
 		//Assigning dummy values for empty attributes
-		if(snippet[ParsersAttributes::PLACEHOLDERS]==ParsersAttributes::_TRUE_)
+		if(snippet[ParsersAttributes::PLACEHOLDERS]==ParsersAttributes::True)
 		{
 			aux_attribs=schparser.extractAttributes();
 			for(QString attr : aux_attribs)
@@ -230,7 +230,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[ParsersAttributes::CONTENTS].isEmpty())
 		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-	else if(attribs[ParsersAttributes::PARSABLE]==ParsersAttributes::_TRUE_)
+	else if(attribs[ParsersAttributes::PARSABLE]==ParsersAttributes::True)
 	{
 		try
 		{
@@ -311,9 +311,9 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 	return(attribs_map{ {ParsersAttributes::ID, id_edt->text()},
 						{ParsersAttributes::LABEL, label_edt->text()},
 						{ParsersAttributes::OBJECT, object_id},
-						{ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
+						{ParsersAttributes::PARSABLE, (parsable_chk->isChecked() ? ParsersAttributes::True : ParsersAttributes::False)},
 						{ParsersAttributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
-						 ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_)},
+						 ParsersAttributes::True : ParsersAttributes::False)},
 						{ParsersAttributes::CONTENTS, snippet_txt->toPlainText()} });
 }
 
@@ -326,8 +326,8 @@ void SnippetsConfigWidget::editSnippet(void)
 	snippet_txt->setPlainText(config_params[snip_id].at(ParsersAttributes::CONTENTS));
 	id_edt->setText(snip_id);
 	label_edt->setText(config_params[snip_id].at(ParsersAttributes::LABEL));
-	parsable_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PARSABLE)==ParsersAttributes::_TRUE_);
-	placeholders_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::_TRUE_);
+	parsable_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PARSABLE)==ParsersAttributes::True);
+	placeholders_chk->setChecked(config_params[snip_id].at(ParsersAttributes::PLACEHOLDERS)==ParsersAttributes::True);
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 

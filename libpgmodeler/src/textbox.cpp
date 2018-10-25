@@ -24,7 +24,7 @@ Textbox::Textbox(void)
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[ParsersAttributes::ITALIC]=QString();
-	attributes[ParsersAttributes::BOLD]=QString();
+	attributes[ParsersAttributes::Bold]=QString();
 	attributes[ParsersAttributes::UNDERLINE]=QString();
 	attributes[ParsersAttributes::COLOR]=QString();
 	attributes[ParsersAttributes::FONT_SIZE]=QString();
@@ -43,13 +43,13 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setFadedOutAttribute();
 
 		if(text_attributes[ItalicText])
-			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::True;
 
 		if(text_attributes[BoldText])
-			attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::Bold]=ParsersAttributes::True;
 
 		if(text_attributes[UnderlineText])
-			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
+			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::True;
 
 		if(text_color.name()!=QString("#000000"))
 			attributes[ParsersAttributes::COLOR]=text_color.name();

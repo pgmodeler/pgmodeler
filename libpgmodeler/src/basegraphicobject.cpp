@@ -76,7 +76,7 @@ bool BaseGraphicObject::isFadedOut(void)
 
 void BaseGraphicObject::setFadedOutAttribute(void)
 {
-	attributes[ParsersAttributes::FADED_OUT]=(is_faded_out ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::FADED_OUT]=(is_faded_out ? ParsersAttributes::True : QString());
 }
 
 void BaseGraphicObject::setPositionAttribute(void)

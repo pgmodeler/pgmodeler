@@ -26,7 +26,7 @@ Aggregate::Aggregate(void)
 	attributes[ParsersAttributes::TYPES]=QString();
 	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
 	attributes[ParsersAttributes::STATE_TYPE]=QString();
-	attributes[ParsersAttributes::BASE_TYPE]=QString();
+	attributes[ParsersAttributes::BaseType]=QString();
 	attributes[ParsersAttributes::FINAL_FUNC]=QString();
 	attributes[ParsersAttributes::INITIAL_COND]=QString();
 	attributes[ParsersAttributes::SORT_OP]=QString();

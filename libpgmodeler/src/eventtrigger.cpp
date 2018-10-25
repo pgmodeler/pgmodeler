@@ -143,7 +143,7 @@ QString EventTrigger::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
 	}
 	catch(Exception &e)

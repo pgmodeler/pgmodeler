@@ -126,7 +126,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 
 	attribs_map aux_attribs;
 
-	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::NOT_NULL]=(not_null ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
 	for(auto itr : chk_constrs)
@@ -180,7 +180,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			attributes[ParsersAttributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : ParsersAttributes::UNSET);
 
 		if(this->not_null!=domain->not_null)
-			attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+			attributes[ParsersAttributes::NOT_NULL]=(domain->not_null ? ParsersAttributes::True : ParsersAttributes::UNSET);
 
 		orig_constrs = this->chk_constrs;
 		aux_constrs = domain->chk_constrs;

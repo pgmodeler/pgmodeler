@@ -120,7 +120,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 							 ParsersAttributes::HANDLER_FUNC,
 							 ParsersAttributes::INLINE_FUNC};
 
-	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::True : QString());
 
 	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
 		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());

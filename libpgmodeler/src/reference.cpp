@@ -228,7 +228,7 @@ QString Reference::getXMLDefinition(void)
 
 	attribs[ParsersAttributes::REF_ALIAS]=ref_alias;
 	attribs[ParsersAttributes::EXPRESSION]=expression;
-	attribs[ParsersAttributes::ALIAS]=alias;
+	attribs[ParsersAttributes::Alias]=alias;
 	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
 	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XmlDefinition));

@@ -1276,7 +1276,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::_TRUE_}});
+		catalog.getObjectsOIDs(obj_oids, col_oids, {{ParsersAttributes::FILTER_TABLE_TYPES, ParsersAttributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);
 		obj_oids[ObjectType::Database].push_back(db_oid.toUInt());
@@ -1499,7 +1499,7 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 									 ParsersAttributes::LABEL, ParsersAttributes::LINE, ParsersAttributes::POSITION,
 									 ParsersAttributes::IDENTIFIER, ParsersAttributes::DEFERRABLE, ParsersAttributes::DEFER_TYPE,
 									 ParsersAttributes::TABLE_NAME, ParsersAttributes::SPECIAL_PK_COLS, ParsersAttributes::TABLE,
-									 ParsersAttributes::ANCESTOR_TABLE, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
+									 ParsersAttributes::AncestorTable, ParsersAttributes::COPY_OPTIONS, ParsersAttributes::COPY_MODE,
 									 ParsersAttributes::SRC_COL_PATTERN, ParsersAttributes::DST_COL_PATTERN, ParsersAttributes::PK_PATTERN,
 									 ParsersAttributes::UQ_PATTERN, ParsersAttributes::SRC_FK_PATTERN, ParsersAttributes::DST_FK_PATTERN };
 
@@ -1562,7 +1562,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 							   .arg(QFileInfo(GlobalAttributes::PgModelerAppPath).absolutePath());
 
 		attribs[ParsersAttributes::WORKING_DIR]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-		attribs[ParsersAttributes::APPLICATION]=(QFileInfo(startup_script).exists() ?
+		attribs[ParsersAttributes::Application]=(QFileInfo(startup_script).exists() ?
 													 startup_script : GlobalAttributes::PgModelerAppPath);
 		attribs[ParsersAttributes::ICON]=exec_icon;
 	}

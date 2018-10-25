@@ -47,7 +47,7 @@ Permission::Permission(BaseObject *obj)
 	attributes[ParsersAttributes::GRANT_OP]=QString();
 	attributes[ParsersAttributes::ROLES]=QString();
 	attributes[ParsersAttributes::PRIVILEGES]=QString();
-	attributes[ParsersAttributes::CASCADE]=QString();
+	attributes[ParsersAttributes::Cascade]=QString();
 	attributes[ParsersAttributes::PRIVILEGES_GOP]=QString();
 }
 
@@ -420,8 +420,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::REVOKE]=(revoke ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::Cascade]=(cascade ? ParsersAttributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -447,7 +447,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			if(privileges[i] && grant_option[i])
 				attributes[priv_vect[i]]=ParsersAttributes::GRANT_OP;
 			else if(privileges[i])
-				attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
+				attributes[priv_vect[i]]=ParsersAttributes::True;
 			else
 				attributes[priv_vect[i]]=QString();
 		}

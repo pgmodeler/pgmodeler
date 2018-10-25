@@ -86,7 +86,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[ParsersAttributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
-	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::HANDLES_TYPE]=(handles_type ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::CUR_VERSION]=versions[CurVersion];
 	attributes[ParsersAttributes::OLD_VERSION]=versions[OldVersion];
 
@@ -102,7 +102,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[ParsersAttributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		attributes[ParsersAttributes::NEW_VERSION]=QString();
 
 		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&

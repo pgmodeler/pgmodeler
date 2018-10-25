@@ -202,7 +202,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_)
+	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CodeCompletion]==ParsersAttributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);

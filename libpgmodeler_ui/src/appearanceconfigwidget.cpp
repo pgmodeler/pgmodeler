@@ -53,7 +53,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::VIEW_BODY, //23
 		ParsersAttributes::VIEW_EXT_BODY, //24
 		ParsersAttributes::VIEW_TITLE, //25
-		ParsersAttributes::ALIAS, //26
+		ParsersAttributes::Alias, //26
 		ParsersAttributes::REF_COLUMN, //27
 		ParsersAttributes::REF_TABLE, //28
 		ParsersAttributes::REFERENCE, //29
@@ -73,8 +73,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		ParsersAttributes::RELATIONSHIP, //43
 		ParsersAttributes::LABEL, //44
 		ParsersAttributes::LABEL, //45
-		ParsersAttributes::ATTRIBUTE, //46
-		ParsersAttributes::ATTRIBUTE, //47
+		ParsersAttributes::Attribute, //46
+		ParsersAttributes::Attribute, //47
 		ParsersAttributes::TAG, //48
 		ParsersAttributes::TAG, //49
 		ParsersAttributes::PLACEHOLDER /*50*/};
@@ -291,13 +291,13 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
 				attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
-				attribs[attrib_id]=(font.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				attribs[attrib_id]=(font.italic() ? ParsersAttributes::True : ParsersAttributes::False);
 
-				attrib_id=item.conf_id + QString("-") + ParsersAttributes::BOLD;
-				attribs[attrib_id]=(font.bold() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				attrib_id=item.conf_id + QString("-") + ParsersAttributes::Bold;
+				attribs[attrib_id]=(font.bold() ? ParsersAttributes::True : ParsersAttributes::False);
 
 				attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
-				attribs[attrib_id]=(font.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				attribs[attrib_id]=(font.underline() ? ParsersAttributes::True : ParsersAttributes::False);
 			}
 			//Special case: treating the global font element
 			else

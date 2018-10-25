@@ -26,7 +26,7 @@ Cast::Cast(void)
 	is_in_out=false;
 	attributes[ParsersAttributes::SOURCE_TYPE]=QString();
 	attributes[ParsersAttributes::DEST_TYPE]=QString();
-	attributes[ParsersAttributes::CAST_TYPE]=QString();
+	attributes[ParsersAttributes::CastType]=QString();
 	attributes[ParsersAttributes::IO_CAST]=QString();
 	attributes[ParsersAttributes::FUNCTION]=QString();
 }
@@ -183,17 +183,17 @@ QString Cast::getCodeDefinition(unsigned def_type)
 			attributes[ParsersAttributes::FUNCTION]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::IO_CAST]=(is_in_out ? ParsersAttributes::True : QString());
 
 	if(cast_type==Assignment)
-		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
+		attributes[ParsersAttributes::CastType]=ParsersAttributes::Assignment;
 	else if(cast_type==Implicit)
-		attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
+		attributes[ParsersAttributes::CastType]=ParsersAttributes::IMPLICIT;
 	else
-		attributes[ParsersAttributes::CAST_TYPE]=QString();
+		attributes[ParsersAttributes::CastType]=QString();
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();
+		attributes[ParsersAttributes::CastType]=attributes[ParsersAttributes::CastType].toUpper();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

@@ -116,7 +116,7 @@ QString TableObject::getDropDefinition(bool cascade)
 	if(getParentTable())
 		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
 
-	attributes[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+	attributes[this->getSchemaName()]=ParsersAttributes::True;
 
 	return(BaseObject::getDropDefinition(cascade));
 }

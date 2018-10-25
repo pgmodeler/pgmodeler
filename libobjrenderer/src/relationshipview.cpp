@@ -1717,7 +1717,7 @@ void RelationshipView::configureAttributes(void)
 		double py, px,
 				factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DefaultFontSize;
 
-		fmt=font_config[ParsersAttributes::ATTRIBUTE];
+		fmt=font_config[ParsersAttributes::Attribute];
 		font=fmt.font();
 		font.setPointSizeF(font.pointSizeF() * 0.80f);
 
@@ -1772,8 +1772,8 @@ void RelationshipView::configureAttributes(void)
 			}
 
 			desc->setRect(rect);
-			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::ATTRIBUTE));
-			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));
+			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::Attribute));
+			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::Attribute));
 			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);

@@ -98,9 +98,9 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else
 		attributes[ParsersAttributes::NAME]=obj_name;
 
-	attributes[ParsersAttributes::PARAM_IN]=(is_in ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::PARAM_OUT]=(is_out ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::PARAM_VARIADIC]=(is_variadic ? ParsersAttributes::_TRUE_ : QString());
+	attributes[ParsersAttributes::PARAM_IN]=(is_in ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::PARAM_OUT]=(is_out ? ParsersAttributes::True : QString());
+	attributes[ParsersAttributes::PARAM_VARIADIC]=(is_variadic ? ParsersAttributes::True : QString());
 	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 
