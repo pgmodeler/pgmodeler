@@ -49,5 +49,5 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 			attribs[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::PARTITION_KEY, attribs, def_type));
+	return(schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type));
 }

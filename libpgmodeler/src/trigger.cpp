@@ -38,7 +38,7 @@ Trigger::Trigger(void)
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::FiringType]=QString();
-	attributes[Attributes::PER_ROW]=QString();
+	attributes[Attributes::PerRow]=QString();
 	attributes[Attributes::InsEvent]=QString();
 	attributes[Attributes::DelEvent]=QString();
 	attributes[Attributes::UPD_EVENT]=QString();
@@ -412,7 +412,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::FiringType]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[Attributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : QString());
+	attributes[Attributes::PerRow]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : QString());
 
 	attributes[Attributes::Condition]=condition;
 

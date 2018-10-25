@@ -30,7 +30,7 @@ Type::Type(void)
 	attributes[Attributes::EnumType]=QString();
 	attributes[Attributes::Enumerations]=QString();
 	attributes[Attributes::InputFunc]=QString();
-	attributes[Attributes::OUTPUT_FUNC]=QString();
+	attributes[Attributes::OutputFunc]=QString();
 	attributes[Attributes::RECV_FUNC]=QString();
 	attributes[Attributes::SEND_FUNC]=QString();
 	attributes[Attributes::TPMOD_IN_FUNC]=QString();
@@ -51,7 +51,7 @@ Type::Type(void)
 	attributes[Attributes::SUBTYPE]=QString();
 	attributes[Attributes::SUBTYPE_DIFF_FUNC]=QString();
 	attributes[Attributes::CanonicalFunc]=QString();
-	attributes[Attributes::OP_CLASS]=QString();
+	attributes[Attributes::OpClass]=QString();
 }
 
 void Type::setName(const QString &name)
@@ -637,9 +637,9 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(subtype_opclass)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::OP_CLASS]=subtype_opclass->getName(true);
+				attributes[Attributes::OpClass]=subtype_opclass->getName(true);
 			else
-				attributes[Attributes::OP_CLASS]=subtype_opclass->getCodeDefinition(def_type, true);
+				attributes[Attributes::OpClass]=subtype_opclass->getCodeDefinition(def_type, true);
 		}
 	}
 	else
@@ -680,7 +680,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		unsigned i;
 		QString func_attrib[]={Attributes::InputFunc,
-							   Attributes::OUTPUT_FUNC,
+							   Attributes::OutputFunc,
 							   Attributes::RECV_FUNC,
 							   Attributes::SEND_FUNC,
 							   Attributes::TPMOD_IN_FUNC,

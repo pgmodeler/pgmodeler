@@ -38,7 +38,7 @@ Sequence::Sequence(void)
 	attributes[Attributes::START]=QString();
 	attributes[Attributes::Cache]=QString();
 	attributes[Attributes::Cycle]=QString();
-	attributes[Attributes::OWNER_COLUMN]=QString();
+	attributes[Attributes::OwnerColumn]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::Column]=QString();
 	attributes[Attributes::ColIsIdentity]=QString();
@@ -392,7 +392,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 
 	if(owner_col)
 	{
-		attributes[Attributes::OWNER_COLUMN]=owner_col->getSignature();
+		attributes[Attributes::OwnerColumn]=owner_col->getSignature();
 		table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
 
@@ -433,7 +433,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 		{
 			if(seq->owner_col)
 			{
-				attribs[Attributes::OWNER_COLUMN]=seq->owner_col->getSignature();
+				attribs[Attributes::OwnerColumn]=seq->owner_col->getSignature();
 				table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
 
 				if(table)
@@ -443,7 +443,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 				}
 			}
 			else
-				attribs[Attributes::OWNER_COLUMN]=Attributes::UNSET;
+				attribs[Attributes::OwnerColumn]=Attributes::UNSET;
 		}
 
 		if(!seq->increment.isEmpty() && this->increment!=seq->increment)

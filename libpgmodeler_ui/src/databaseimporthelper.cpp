@@ -683,8 +683,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			attribs[Attributes::SQL_DISABLED]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : QString());
 			attribs[Attributes::Comment]=getComment(attribs);
 
-			if(attribs.count(Attributes::OWNER))
-				attribs[Attributes::OWNER]=getDependencyObject(attribs[Attributes::OWNER], ObjectType::Role, false, auto_resolve_deps);
+			if(attribs.count(Attributes::Owner))
+				attribs[Attributes::Owner]=getDependencyObject(attribs[Attributes::Owner], ObjectType::Role, false, auto_resolve_deps);
 
 			if(attribs.count(Attributes::TABLESPACE))
 				attribs[Attributes::TABLESPACE]=getDependencyObject(attribs[Attributes::TABLESPACE], ObjectType::Tablespace, false, auto_resolve_deps);
@@ -695,7 +695,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
 			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
 			object was previously registered in the vector of permissions to be created */
-			if(!attribs[Attributes::PERMISSION].isEmpty() &&
+			if(!attribs[Attributes::Permission].isEmpty() &&
 				 std::find(obj_perms.begin(), obj_perms.end(), oid)==obj_perms.end())
 				obj_perms.push_back(oid);
 
@@ -1070,7 +1070,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				 the parameter type will be renamed to "any" (see rules on Type::setFunction()) */
 			if(i==0 &&
 					(attribs[Attributes::REF_TYPE]==Attributes::SEND_FUNC ||
-					 attribs[Attributes::REF_TYPE]==Attributes::OUTPUT_FUNC ||
+					 attribs[Attributes::REF_TYPE]==Attributes::OutputFunc ||
 					 attribs[Attributes::REF_TYPE]==Attributes::CanonicalFunc))
 				type=PgSqlType(QString("\"any\""));
 			else
@@ -1137,7 +1137,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				param_xmls.push_front(param.getCodeDefinition(SchemaParser::XmlDefinition));
 			}
 
-			attribs[Attributes::PARAMETERS]+=param_xmls.join(QChar('\n'));
+			attribs[Attributes::Parameters]+=param_xmls.join(QChar('\n'));
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
@@ -1251,7 +1251,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			elems.push_back(elem_attr);
 		}
 		else if(attribs[Attributes::Function].isEmpty() &&
-				attribs[Attributes::OPERATOR].isEmpty())
+				attribs[Attributes::Operator].isEmpty())
 		{
 			elem_attr[Attributes::STORAGE]=Attributes::True;
 			elem_attr[Attributes::Definition]=attribs[Attributes::TYPE];
@@ -1275,11 +1275,11 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		}
 
 		//Generating attributes for OPERATOR elements
-		if(!attribs[Attributes::OPERATOR].isEmpty())
+		if(!attribs[Attributes::Operator].isEmpty())
 		{
 			elem_attr.clear();
-			elem_attr[Attributes::OPERATOR]=Attributes::True;
-			array_vals=Catalog::parseArrayValues(attribs[Attributes::OPERATOR]);
+			elem_attr[Attributes::Operator]=Attributes::True;
+			array_vals=Catalog::parseArrayValues(attribs[Attributes::Operator]);
 
 			for(int i=0; i < array_vals.size(); i++)
 			{
@@ -1322,7 +1322,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 		QRegExp regexp;
 		QString op_signature,
 
-				func_types[]={ Attributes::OPERATOR_FUNC,
+				func_types[]={ Attributes::OperatorFunc,
 							   Attributes::RESTRICTION_FUNC,
 							   Attributes::JoinFunc },
 
@@ -1436,13 +1436,13 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 
 	try
 	{
-		QStringList owner_col=attribs[Attributes::OWNER_COLUMN].split(':'),
+		QStringList owner_col=attribs[Attributes::OwnerColumn].split(':'),
 				seq_attribs=Catalog::parseArrayValues(attribs[Attributes::Attribute]);
 		QString attr[]={ Attributes::START, Attributes::MinValue,
 						 Attributes::MaxValue, Attributes::Increment,
 						 Attributes::Cache, Attributes::Cycle };
 
-		attribs[Attributes::OWNER_COLUMN]=QString();
+		attribs[Attributes::OwnerColumn]=QString();
 
 		/* If there are owner columns and the oid of sequence is greater than the owner column's table oid
 		stores the oid of both (sequence and table) in order to swap it's ids at the end of import to
@@ -1581,7 +1581,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 
 			attribs[Attributes::SUBTYPE]=getType(range_attr[0], true);
 			attribs[Attributes::Collation]=getDependencyObject(range_attr[1], ObjectType::Collation, true);
-			attribs[Attributes::OP_CLASS]=getDependencyObject(range_attr[2], ObjectType::OpClass, true);
+			attribs[Attributes::OpClass]=getDependencyObject(range_attr[2], ObjectType::OpClass, true);
 			attribs[Attributes::CanonicalFunc]=getDependencyObject(range_attr[3], ObjectType::Function, true);
 			attribs[Attributes::SUBTYPE_DIFF_FUNC]=getDependencyObject(range_attr[4], ObjectType::Function, true);
 		}
@@ -1589,7 +1589,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		{
 			QString type_name=getObjectName(attribs[Attributes::Oid]),
 					func_types[]={ Attributes::InputFunc,
-								   Attributes::OUTPUT_FUNC,
+								   Attributes::OutputFunc,
 								   Attributes::RECV_FUNC,
 								   Attributes::SEND_FUNC,
 								   Attributes::TPMOD_IN_FUNC,
@@ -1665,8 +1665,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		//Creating columns
 		while(itr!=itr_end)
 		{
-			if(itr->second.count(Attributes::PERMISSION) &&
-					!itr->second.at(Attributes::PERMISSION).isEmpty())
+			if(itr->second.count(Attributes::Permission) &&
+					!itr->second.at(Attributes::Permission).isEmpty())
 				col_perms[tab_oid].push_back(itr->second[Attributes::Oid].toUInt());
 
 			if(itr->second[Attributes::Inherited]==Attributes::True)
@@ -1774,24 +1774,24 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			inherited_cols.push_back(table->getColumn(col_idx));
 
 		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
-		table->setPartitionBoundingExpr(attribs[Attributes::PARTITION_BOUND_EXPR].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+		table->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
 
 		// Retrieving the partitioned table related to the partition table being created
-		if(!attribs[Attributes::PARTITIONED_TABLE].isEmpty())
+		if(!attribs[Attributes::PartitionedTable].isEmpty())
 		{
 			Table *partitioned_tab = nullptr;
 
-			attribs[Attributes::PARTITIONED_TABLE] =
-					getDependencyObject(attribs[Attributes::PARTITIONED_TABLE], ObjectType::Table, true, auto_resolve_deps, false);
+			attribs[Attributes::PartitionedTable] =
+					getDependencyObject(attribs[Attributes::PartitionedTable], ObjectType::Table, true, auto_resolve_deps, false);
 
-			partitioned_tab = dbmodel->getTable(attribs[Attributes::PARTITIONED_TABLE]);
+			partitioned_tab = dbmodel->getTable(attribs[Attributes::PartitionedTable]);
 			table->setPartionedTable(partitioned_tab);
 
 			if(!partitioned_tab)
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 												.arg(attribs[Attributes::Name]).arg(BaseObject::getTypeName(ObjectType::Table))
-												.arg(attribs[Attributes::PARTITIONED_TABLE]).arg(BaseObject::getTypeName(ObjectType::Table)),
+												.arg(attribs[Attributes::PartitionedTable]).arg(BaseObject::getTypeName(ObjectType::Table)),
 												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
@@ -1807,13 +1807,13 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			OperatorClass *opclass = nullptr;
 			vector<PartitionKey> part_keys;
 
-			part_type = PartitioningType(attribs[Attributes::PARTITIONING]);
+			part_type = PartitioningType(attribs[Attributes::Partitioning]);
 			table->setPartitioningType(part_type);
 
-			cols=Catalog::parseArrayValues(attribs[Attributes::PART_KEY_COLS]);
-			collations=Catalog::parseArrayValues(attribs[Attributes::PART_KEY_COLLS]);
-			opclasses=Catalog::parseArrayValues(attribs[Attributes::PART_KEY_OPCLS]);
-			exprs = parseIndexExpressions(attribs[Attributes::PART_KEY_EXPRS]);
+			cols=Catalog::parseArrayValues(attribs[Attributes::PartKeyCols]);
+			collations=Catalog::parseArrayValues(attribs[Attributes::PartKeyColls]);
+			opclasses=Catalog::parseArrayValues(attribs[Attributes::PartKeyOpCls]);
+			exprs = parseIndexExpressions(attribs[Attributes::PartKeyExprs]);
 
 			for(int i = 0; i < cols.size(); i++)
 			{
@@ -2028,7 +2028,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 
 		cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
-		opclasses=Catalog::parseArrayValues(attribs[Attributes::OP_CLASSES]);
+		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 		exprs = parseIndexExpressions(attribs[Attributes::Expressions]);
 
 		for(i=0; i < cols.size(); i++)
@@ -2120,8 +2120,8 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				attribs[Attributes::Expression]=attribs[Attributes::Condition];
 
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
-				opers=Catalog::parseArrayValues(attribs[Attributes::OPERATORS]);
-				opclasses=Catalog::parseArrayValues(attribs[Attributes::OP_CLASSES]);
+				opers=Catalog::parseArrayValues(attribs[Attributes::Operators]);
+				opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
 
 				/* Due to the way exclude constraints are constructed (similar to indexes),
 				 * we get the constraint's definition in for of expressions. Internally we use pg_get_constraintdef.
@@ -2249,7 +2249,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 		Table *table=nullptr;
 
 		//Parses the permissions vector string
-		perm_list=Catalog::parseArrayValues(attribs[Attributes::PERMISSION]);
+		perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
 
 		if(!perm_list.isEmpty())
 		{
@@ -2507,7 +2507,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 	{
 		//Get the list of parent table's oids
 		oid=(*itr);
-		inh_list=Catalog::parseArrayValues(user_objs[oid][Attributes::PARENTS]);
+		inh_list=Catalog::parseArrayValues(user_objs[oid][Attributes::Parents]);
 		itr++;
 
 		if(!inh_list.isEmpty())
@@ -2802,7 +2802,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				extra_attribs[Attributes::Dimension]=(dimension > 0 ? QString::number(dimension) : QString());
 
 				schparser.ignoreUnkownAttributes(true);
-				xml_def=schparser.getCodeDefinition(Attributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XmlDefinition);
+				xml_def=schparser.getCodeDefinition(Attributes::PgSqlBaseType, extra_attribs, SchemaParser::XmlDefinition);
 				schparser.ignoreUnkownAttributes(false);
 			}
 			else

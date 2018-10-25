@@ -23,7 +23,7 @@ Policy::Policy(void) : TableObject()
 	permissive = false;
 	policy_cmd = PolicyCmdType::All;
 
-	attributes[Attributes::PERMISSIVE] = QString();
+	attributes[Attributes::Permissive] = QString();
 	attributes[Attributes::Command] = QString();
 	attributes[Attributes::USING_EXP] = QString();
 	attributes[Attributes::CheckExp] = QString();
@@ -123,7 +123,7 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	for(auto role : roles)
 		rol_names.append(role->getName(true));
 
-	attributes[Attributes::PERMISSIVE] = (permissive ? Attributes::True : QString());
+	attributes[Attributes::Permissive] = (permissive ? Attributes::True : QString());
 	attributes[Attributes::USING_EXP] = using_expr;
 	attributes[Attributes::CheckExp] = check_expr;
 	attributes[Attributes::ROLES] = rol_names.join(QString(", "));

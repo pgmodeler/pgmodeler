@@ -3474,7 +3474,7 @@ Role *DatabaseModel::createRole(void)
 		//Gets all the attributes values from the XML
 		xmlparser.getElementAttributes(attribs);
 
-		role->setPassword(attribs[Attributes::PASSWORD]);
+		role->setPassword(attribs[Attributes::Password]);
 		role->setValidity(attribs[Attributes::VALIDITY]);
 
 		if(!attribs[Attributes::ConnLimit].isEmpty())
@@ -3738,7 +3738,7 @@ Function *DatabaseModel::createFunction(void)
 										func->setReturnType(type);
 									}
 									//when the element found is a PARAMETER indicates that the function return type is a table
-									else if(xmlparser.getElementName()==Attributes::PARAMETER)
+									else if(xmlparser.getElementName()==Attributes::Parameter)
 									{
 										param=createParameter();
 										func->addReturnedTableColumn(param.getName(), param.getType());
@@ -3773,7 +3773,7 @@ Function *DatabaseModel::createFunction(void)
 						func->setLanguage(dynamic_cast<Language *>(object));
 					}
 					//Gets a function parameter
-					else if(xmlparser.getElementName()==Attributes::PARAMETER)
+					else if(xmlparser.getElementName()==Attributes::Parameter)
 					{
 						param=createParameter();
 						func->addParameter(param);
@@ -3850,9 +3850,9 @@ Parameter DatabaseModel::createParameter(void)
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		param.setIn(attribs[Attributes::PARAM_IN]==Attributes::True);
-		param.setOut(attribs[Attributes::PARAM_OUT]==Attributes::True);
-		param.setVariadic(attribs[Attributes::PARAM_VARIADIC]==Attributes::True);
+		param.setIn(attribs[Attributes::ParamIn]==Attributes::True);
+		param.setOut(attribs[Attributes::ParamOut]==Attributes::True);
+		param.setVariadic(attribs[Attributes::ParamVariadic]==Attributes::True);
 
 		xmlparser.restorePosition();
 	}
@@ -4034,7 +4034,7 @@ Type *DatabaseModel::createType(void)
 
 			//Configuring an auxiliary map used to reference the functions used by base type
 			func_types[Attributes::InputFunc]=Type::InputFunc;
-			func_types[Attributes::OUTPUT_FUNC]=Type::OutputFunc;
+			func_types[Attributes::OutputFunc]=Type::OutputFunc;
 			func_types[Attributes::SEND_FUNC]=Type::SendFunc;
 			func_types[Attributes::RECV_FUNC]=Type::RecvFunc;
 			func_types[Attributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
@@ -4103,7 +4103,7 @@ Type *DatabaseModel::createType(void)
 
 						type->setCollation(collation);
 					}
-					if(elem==Attributes::OP_CLASS)
+					if(elem==Attributes::OpClass)
 					{
 						xmlparser.getElementAttributes(attribs);
 						op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::Name], ObjectType::OpClass));
@@ -4373,7 +4373,7 @@ Operator *DatabaseModel::createOperator(void)
 		oper->setMerges(attribs[Attributes::Merges]==Attributes::True);
 		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
-		func_types[Attributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
+		func_types[Attributes::OperatorFunc]=Operator::FUNC_OPERATOR;
 		func_types[Attributes::JoinFunc]=Operator::FUNC_JOIN;
 		func_types[Attributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
 
@@ -4469,7 +4469,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		op_class->setDefault(attribs[Attributes::Default]==Attributes::True);
 
 		elem_types[Attributes::Function]=OperatorClassElement::FunctionElem;
-		elem_types[Attributes::OPERATOR]=OperatorClassElement::OperatorElem;
+		elem_types[Attributes::Operator]=OperatorClassElement::OperatorElem;
 		elem_types[Attributes::STORAGE]=OperatorClassElement::StorageElem;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4749,7 +4749,7 @@ Table *DatabaseModel::createTable(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==Attributes::PARTITIONING)
+					else if(elem==Attributes::Partitioning)
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						table->setPartitioningType(aux_attribs[Attributes::TYPE]);
@@ -4760,7 +4760,7 @@ Table *DatabaseModel::createTable(void)
 							do
 							{
 								if(xmlparser.getElementType()==XML_ELEMENT_NODE &&
-									 xmlparser.getElementName()==Attributes::PARTITION_KEY)
+									 xmlparser.getElementName()==Attributes::PartitionKey)
 								{
 										createElement(part_key, nullptr, table);
 										partition_keys.push_back(part_key);
@@ -4929,7 +4929,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		//Configuring the constraint type
 		if(attribs[Attributes::TYPE]==Attributes::CkConstr)
 			constr_type=ConstraintType::Check;
-		else if(attribs[Attributes::TYPE]==Attributes::PK_CONSTR)
+		else if(attribs[Attributes::TYPE]==Attributes::PkConstr)
 			constr_type=ConstraintType::PrimaryKey;
 		else if(attribs[Attributes::TYPE]==Attributes::FkConstr)
 			constr_type=ConstraintType::ForeignKey;
@@ -5093,7 +5093,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	bool is_part_key = false;
 
 	xml_elem=xmlparser.getElementName();
-	is_part_key = xml_elem == Attributes::PARTITION_KEY;
+	is_part_key = xml_elem == Attributes::PartitionKey;
 
 	if(xml_elem==Attributes::IndexElement || xml_elem==Attributes::ExcludeElement || is_part_key)
 	{
@@ -5117,7 +5117,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 			if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 			{
-				if(xml_elem==Attributes::OP_CLASS)
+				if(xml_elem==Attributes::OpClass)
 				{
 					xmlparser.getElementAttributes(attribs);
 					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::OpClass));
@@ -5147,7 +5147,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 					elem.setOperatorClass(op_class);
 				}
 				//Checking if elem is a ExcludeElement to be able to assign an operator to it
-				else if(xml_elem==Attributes::OPERATOR)
+				else if(xml_elem==Attributes::Operator)
 				{
 					xmlparser.getElementAttributes(attribs);
 					oper=dynamic_cast<Operator *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::Operator));
@@ -5494,7 +5494,7 @@ Trigger *DatabaseModel::createTrigger(void)
 		trigger->setEvent(EventType::OnTruncate,
 							(attribs[Attributes::TRUNC_EVENT]==Attributes::True));
 
-		trigger->setExecutePerRow(attribs[Attributes::PER_ROW]==Attributes::True);
+		trigger->setExecutePerRow(attribs[Attributes::PerRow]==Attributes::True);
 
 		trigger->setFiringType(FiringType(attribs[Attributes::FiringType]));
 
@@ -5628,7 +5628,7 @@ Policy *DatabaseModel::createPolicy(void)
 											.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		policy->setPermissive(attribs[Attributes::PERMISSIVE] == Attributes::True);
+		policy->setPermissive(attribs[Attributes::Permissive] == Attributes::True);
 		policy->setPolicyCommand(PolicyCmdType(attribs[Attributes::Command]));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5809,9 +5809,9 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 		sequence->setCycle(attribs[Attributes::Cycle]==Attributes::True);
 
 		//Getting the sequence's owner column
-		if(!attribs[Attributes::OWNER_COLUMN].isEmpty())
+		if(!attribs[Attributes::OwnerColumn].isEmpty())
 		{
-			elem_list=attribs[Attributes::OWNER_COLUMN].split('.');
+			elem_list=attribs[Attributes::OwnerColumn].split('.');
 			count=elem_list.count();
 
 			if(count==3)
@@ -6325,8 +6325,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		{
 			QString pat_attrib[]= { Attributes::SRC_COL_PATTERN, Attributes::DstColPattern,
 									Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
-									Attributes::PK_PATTERN, Attributes::UQ_PATTERN,
-									Attributes::PK_COL_PATTERN };
+									Attributes::PkPattern, Attributes::UQ_PATTERN,
+									Attributes::PkColPattern };
 
 			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
 										Relationship::SrcFkPattern, Relationship::DstFkPattern,
@@ -6411,7 +6411,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						 * the relationship contains a special primary key (created during relationship connection)
 						 * and the current constraint is the original one owned by one of the tables prior the connection
 						 * of the relationship. */
-						if(constr_attribs[Attributes::TYPE] == Attributes::PK_CONSTR)
+						if(constr_attribs[Attributes::TYPE] == Attributes::PkConstr)
 						{
 							table = getTable(constr_attribs[Attributes::TABLE]);
 							rel->setOriginalPrimaryKey(createConstraint(table));
@@ -6528,7 +6528,7 @@ Permission *DatabaseModel::createPermission(void)
 
 		obj_type=BaseObject::getObjectType(attribs[Attributes::TYPE]);
 		obj_name=attribs[Attributes::Name];
-		parent_name=attribs[Attributes::PARENT];
+		parent_name=attribs[Attributes::Parent];
 
 		//If the object is a column its needed to get the parent table
 		if(obj_type==ObjectType::Column)
@@ -6808,7 +6808,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		gen_defs_count=0;
 
 		attribs_aux[Attributes::SHELL_TYPES]=QString();
-		attribs_aux[Attributes::PERMISSION]=QString();
+		attribs_aux[Attributes::Permission]=QString();
 		attribs_aux[Attributes::SCHEMA]=QString();
 		attribs_aux[Attributes::TABLESPACE]=QString();
 		attribs_aux[Attributes::ROLE]=QString();
@@ -6863,7 +6863,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 			else if(obj_type==ObjectType::Permission)
 			{
-				attribs_aux[Attributes::PERMISSION]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
+				attribs_aux[Attributes::Permission]+=dynamic_cast<Permission *>(object)->getCodeDefinition(def_type);
 			}
 			else if(obj_type==ObjectType::Constraint)
 			{
@@ -6927,7 +6927,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		attribs_aux[Attributes::SEARCH_PATH]=search_path;
 		attribs_aux[Attributes::ModelAuthor]=author;
-		attribs_aux[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
+		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 
 		if(def_type==SchemaParser::XmlDefinition)
 		{

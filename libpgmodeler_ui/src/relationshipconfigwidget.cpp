@@ -140,7 +140,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 		patterns_sch=root_dir +
 					 GlobalAttributes::SchemasDir +
 					 GlobalAttributes::DirSeparator +
-					 Attributes::PATTERNS +
+					 Attributes::Patterns +
 					 GlobalAttributes::SchemaExt;
 
 
@@ -158,14 +158,14 @@ void RelationshipConfigWidget::saveConfiguration(void)
 		config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
 		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
-		config_params[Attributes::NamePatterns][Attributes::PATTERNS]=QString();
+		config_params[Attributes::NamePatterns][Attributes::Patterns]=QString();
 
 		for(auto &itr : patterns)
 		{
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
-			config_params[Attributes::NamePatterns][Attributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+			config_params[Attributes::NamePatterns][Attributes::Patterns]+=schparser.getCodeDefinition(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);
@@ -213,10 +213,10 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 									 dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
 									 pk_col_pattern_txt };
 
-	QList<QString> pattern_ids={ Attributes::PK_PATTERN,  Attributes::UQ_PATTERN,
+	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UQ_PATTERN,
 								 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern,
 								 Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
-								 Attributes::PK_COL_PATTERN };
+								 Attributes::PkColPattern };
 
 	relnn=(rel_type==Attributes::RELATIONSHIP_NN);
 	reldep=(rel_type==Attributes::RELATIONSHIP_DEP || rel_type==Attributes::RELATIONSHIP_PART);
@@ -252,13 +252,13 @@ void RelationshipConfigWidget::updatePattern(void)
 {
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
-	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PK_PATTERN },
+	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
 												{ uq_pattern_txt, Attributes::UQ_PATTERN },
 												{ src_col_pattern_txt, Attributes::SRC_COL_PATTERN },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },
 												{ src_fk_pattern_txt, Attributes::SRC_FK_PATTERN   },
 												{ dst_fk_pattern_txt, Attributes::DstFkPattern   },
-												{ pk_col_pattern_txt, Attributes::PK_COL_PATTERN   } };
+												{ pk_col_pattern_txt, Attributes::PkColPattern   } };
 
 	setConfigurationChanged(true);
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();

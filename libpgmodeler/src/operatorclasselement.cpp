@@ -129,9 +129,9 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::STRATEGY_NUM]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	attributes[Attributes::Function]=QString();
-	attributes[Attributes::OPERATOR]=QString();
+	attributes[Attributes::Operator]=QString();
 	attributes[Attributes::STORAGE]=QString();
-	attributes[Attributes::OP_FAMILY]=QString();
+	attributes[Attributes::OpFamily]=QString();
 	attributes[Attributes::Definition]=QString();
 
 	if(element_type==FunctionElem && function && strategy_number > 0)
@@ -148,7 +148,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
-		attributes[Attributes::OPERATOR]=Attributes::True;
+		attributes[Attributes::Operator]=Attributes::True;
 		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
@@ -159,7 +159,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		if(op_family)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::OP_FAMILY]=op_family->getName(true);
+				attributes[Attributes::OpFamily]=op_family->getName(true);
 			else
 				attributes[Attributes::Definition]+=op_family->getCodeDefinition(def_type,true);
 		}

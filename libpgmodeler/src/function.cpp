@@ -30,7 +30,7 @@ Function::Function(void)
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[Attributes::PARAMETERS]=QString();
+	attributes[Attributes::Parameters]=QString();
 	attributes[Attributes::ExecutionCost]=QString();
 	attributes[Attributes::ROW_AMOUNT]=QString();
 	attributes[Attributes::RETURN_TYPE]=QString();
@@ -139,7 +139,7 @@ void Function::setParametersAttribute(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		str_param.remove(str_param.size()-2,2);
 
-	attributes[Attributes::PARAMETERS]=str_param;
+	attributes[Attributes::Parameters]=str_param;
 }
 
 void Function::setTableReturnTypeAttribute(unsigned def_type)

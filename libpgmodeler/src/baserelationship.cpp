@@ -82,7 +82,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::DstRequired]=QString();
 	attributes[Attributes::SRC_TABLE]=QString();
 	attributes[Attributes::DstTable]=QString();
-	attributes[Attributes::POINTS]=QString();
+	attributes[Attributes::Points]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Constraints]=QString();
 	attributes[Attributes::Elements]=QString();
@@ -105,18 +105,18 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::CopyMode]=QString();
 	attributes[Attributes::SRC_COL_PATTERN]=QString();
 	attributes[Attributes::DstColPattern]=QString();
-	attributes[Attributes::PK_PATTERN]=QString();
+	attributes[Attributes::PkPattern]=QString();
 	attributes[Attributes::UQ_PATTERN]=QString();
 	attributes[Attributes::SRC_FK_PATTERN]=QString();
 	attributes[Attributes::DstFkPattern]=QString();
-	attributes[Attributes::PK_COL_PATTERN]=QString();
+	attributes[Attributes::PkColPattern]=QString();
 	attributes[Attributes::SINGLE_PK_COLUMN]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::CustomColor]=QString();
 	attributes[Attributes::REFERENCE_FK]=QString();
-	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
-	attributes[Attributes::ORIGINAL_PK]=QString();
+	attributes[Attributes::PartitionBoundExpr]=QString();
+	attributes[Attributes::OriginalPk]=QString();
 
 	//Check if the relationship type is valid
 	if(rel_type <= RelationshipFk)
@@ -351,7 +351,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 		attributes[Attributes::Y_POS]=QString("%1").arg(points[i].y());
 		str_aux+=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
 	}
-	attributes[Attributes::POINTS]=str_aux;
+	attributes[Attributes::Points]=str_aux;
 
 	str_aux=QString();
 	for(i=0; i < 3; i++)
@@ -419,7 +419,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	{
 		bool reduced_form;
 		setRelationshipAttributes();
-		reduced_form=(attributes[Attributes::POINTS].isEmpty() &&
+		reduced_form=(attributes[Attributes::Points].isEmpty() &&
 					 attributes[Attributes::LabelsPos].isEmpty());
 
 		if(!reduced_form)

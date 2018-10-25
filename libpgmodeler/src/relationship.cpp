@@ -2620,13 +2620,13 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		attributes[Attributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
-		attributes[Attributes::PK_PATTERN]=name_patterns[PkPattern];
+		attributes[Attributes::PkPattern]=name_patterns[PkPattern];
 		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
 		attributes[Attributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
 		attributes[Attributes::DstFkPattern]=name_patterns[DstFkPattern];
-		attributes[Attributes::PK_COL_PATTERN]=name_patterns[PkColPattern];
+		attributes[Attributes::PkColPattern]=name_patterns[PkColPattern];
 
-		attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
+		attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 
 		attributes[Attributes::Columns]=QString();
 		count=rel_attributes.size();
@@ -2648,7 +2648,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(pk_original)
 		{
 			pk_original->setParentTable(getReceiverTable());
-			attributes[Attributes::ORIGINAL_PK]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::OriginalPk]=pk_original->getCodeDefinition(SchemaParser::XmlDefinition);
 			pk_original->setParentTable(nullptr);
 		}
 
@@ -2670,9 +2670,9 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		reduced_form=(attributes[Attributes::Columns].isEmpty() &&
 					 attributes[Attributes::Constraints].isEmpty() &&
-					 attributes[Attributes::POINTS].isEmpty() &&
+					 attributes[Attributes::Points].isEmpty() &&
 					 attributes[Attributes::SPECIAL_PK_COLS].isEmpty() &&
-					 attributes[Attributes::POINTS].isEmpty() &&
+					 attributes[Attributes::Points].isEmpty() &&
 					 attributes[Attributes::LabelsPos].isEmpty());
 
 		if(!reduced_form)
@@ -2712,8 +2712,8 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 
 	attributes[Attributes::Inherit]=QString();
 	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::PARTITIONED_TABLE]=QString();
-	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
+	attributes[Attributes::PartitionedTable]=QString();
+	attributes[Attributes::PartitionBoundExpr]=QString();
 
 	if(rel_type == RelationshipGen)
 	{
@@ -2723,10 +2723,10 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	}
 	else
 	{
-		attributes[Attributes::PARTITIONING]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::Partitioning]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
 		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
-		attributes[Attributes::PARTITIONED_TABLE]=getReferenceTable()->getName(true);
-		attributes[Attributes::PARTITION_BOUND_EXPR]=getReceiverTable()->getPartitionBoundingExpr();
+		attributes[Attributes::PartitionedTable]=getReferenceTable()->getName(true);
+		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();
 	}
 
 	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));

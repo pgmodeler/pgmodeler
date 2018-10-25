@@ -1038,7 +1038,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replacing attribute owner by onwer-col for sequences
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
-		obj_xml.replace(Attributes::OWNER, Attributes::OWNER_COLUMN);
+		obj_xml.replace(Attributes::Owner, Attributes::OwnerColumn);
 
 	//Remove sysid attribute from <role> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
@@ -1047,8 +1047,8 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
 	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
 	{
-		obj_xml.replace(TagExpr.arg(Attributes::PARAMETER), TagExpr.arg(Attributes::TYPE_ATTRIBUTE));
-		obj_xml.replace(EndTagExpr.arg(Attributes::PARAMETER), EndTagExpr.arg(Attributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(TagExpr.arg(Attributes::Parameter), TagExpr.arg(Attributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(EndTagExpr.arg(Attributes::Parameter), EndTagExpr.arg(Attributes::TYPE_ATTRIBUTE));
 	}
 
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
@@ -1494,13 +1494,13 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 	bool found=false;
 	static vector<QString> attribs={ Attributes::RELATIONSHIP,
 									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DstRequired,
-									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::POINTS,
+									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::Points,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
 									 Attributes::Label, Attributes::Line, Attributes::POSITION,
 									 Attributes::Identifier, Attributes::Deferrable, Attributes::DeferType,
 									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
-									 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern, Attributes::PK_PATTERN,
+									 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern, Attributes::PkPattern,
 									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)

@@ -41,10 +41,10 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::InitialData]=QString();
 	attributes[Attributes::RLS_ENABLED]=QString();
 	attributes[Attributes::RLS_FORCED]=QString();
-	attributes[Attributes::PARTITIONING]=QString();
-	attributes[Attributes::PARTITION_KEY]=QString();
-	attributes[Attributes::PARTITIONED_TABLE]=QString();
-	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
+	attributes[Attributes::Partitioning]=QString();
+	attributes[Attributes::PartitionKey]=QString();
+	attributes[Attributes::PartitionedTable]=QString();
+	attributes[Attributes::PartitionBoundExpr]=QString();
 
 	copy_table=partitioned_table=nullptr;
 	partitioning_type=BaseType::Null;
@@ -1602,23 +1602,23 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::TAG]=QString();
 	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
-	attributes[Attributes::PARTITIONING]=~partitioning_type;
-	attributes[Attributes::PARTITION_KEY]=QString();
-	attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;
+	attributes[Attributes::Partitioning]=~partitioning_type;
+	attributes[Attributes::PartitionKey]=QString();
+	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);
 
 	if(def_type == SchemaParser::SqlDefinition)
-		attributes[Attributes::PARTITION_KEY]=part_keys_code.join(',');
+		attributes[Attributes::PartitionKey]=part_keys_code.join(',');
 	else
-		attributes[Attributes::PARTITION_KEY]=part_keys_code.join(' ');
+		attributes[Attributes::PartitionKey]=part_keys_code.join(' ');
 
 	if(def_type==SchemaParser::SqlDefinition && copy_table)
 		attributes[Attributes::CopyTable]=copy_table->getName(true) + copy_op.getSQLDefinition();
 
 	if(def_type==SchemaParser::SqlDefinition && partitioned_table)
-		attributes[Attributes::PARTITIONED_TABLE]=partitioned_table->getName(true);
+		attributes[Attributes::PartitionedTable]=partitioned_table->getName(true);
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
 		attributes[Attributes::TAG]=tag->getCodeDefinition(def_type, true);

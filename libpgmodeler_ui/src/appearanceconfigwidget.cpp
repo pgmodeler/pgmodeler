@@ -62,8 +62,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::Column, //32
 		Attributes::InhColumn, //33
 		Attributes::PROT_COLUMN, //34
-		Attributes::PK_COLUMN, //35
-		Attributes::PK_COLUMN, //36
+		Attributes::PkColumn, //35
+		Attributes::PkColumn, //36
 		Attributes::FkColumn, //37
 		Attributes::FkColumn, //38
 		Attributes::UQ_COLUMN, //39
@@ -77,7 +77,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::Attribute, //47
 		Attributes::TAG, //48
 		Attributes::TAG, //49
-		Attributes::PLACEHOLDER /*50*/};
+		Attributes::Placeholder /*50*/};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
 			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 22, 25, 26, 27,
@@ -211,8 +211,8 @@ void AppearanceConfigWidget::loadExampleModel(void)
 
 void AppearanceConfigWidget::updatePlaceholderItem(void)
 {
-	placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::PLACEHOLDER));
-	QPen pen=BaseObjectView::getBorderStyle(Attributes::PLACEHOLDER);
+	placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
+	QPen pen=BaseObjectView::getBorderStyle(Attributes::Placeholder);
 	pen.setStyle(Qt::DashLine);
 	placeholder->setPen(pen);
 }

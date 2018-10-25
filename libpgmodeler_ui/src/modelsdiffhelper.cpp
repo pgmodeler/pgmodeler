@@ -870,7 +870,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Attributes used on the diff schema file
 			attribs[Attributes::HasChanges]=Attributes::True;
-			attribs[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
+			attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 			attribs[Attributes::DbModel]=source_model->getName();
 			attribs[Attributes::Database]=imported_model->getName();
 			attribs[Attributes::Date]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");

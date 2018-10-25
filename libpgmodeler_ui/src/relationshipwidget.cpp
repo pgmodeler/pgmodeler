@@ -517,13 +517,13 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 			QString rel_type=rel->getRelTypeAttribute();
 
 			//Using the global settings
-			pk_pattern_txt->setPlainText(confs[rel_type][Attributes::PK_PATTERN]);
+			pk_pattern_txt->setPlainText(confs[rel_type][Attributes::PkPattern]);
 			src_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::SRC_FK_PATTERN]);
 			dst_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::DstFkPattern]);
 			uq_pattern_txt->setPlainText(confs[rel_type][Attributes::UQ_PATTERN]);
 			src_col_pattern_txt->setPlainText(confs[rel_type][Attributes::SRC_COL_PATTERN]);
 			dst_col_pattern_txt->setPlainText(confs[rel_type][Attributes::DstColPattern]);
-			pk_col_pattern_txt->setPlainText(confs[rel_type][Attributes::PK_COL_PATTERN]);
+			pk_col_pattern_txt->setPlainText(confs[rel_type][Attributes::PkColPattern]);
 		}
 		else
 		{

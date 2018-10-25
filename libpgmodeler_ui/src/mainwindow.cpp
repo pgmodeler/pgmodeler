@@ -93,19 +93,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		while(itr!=itr_end)
 		{
 			attribs=itr->second;
-			if(attribs.count(Attributes::PATH)!=0)
+			if(attribs.count(Attributes::Path)!=0)
 			{
 				try
 				{
 					//Storing the file of a previous session
 					if(itr->first.contains(Attributes::File) &&
-							!attribs[Attributes::PATH].isEmpty())
-						prev_session_files.push_back(attribs[Attributes::PATH]);
+							!attribs[Attributes::Path].isEmpty())
+						prev_session_files.push_back(attribs[Attributes::Path]);
 
 					//Creating the recent models menu
 					else if(itr->first.contains(Attributes::RECENT) &&
-							!attribs[Attributes::PATH].isEmpty())
-						recent_models.push_back(attribs[Attributes::PATH]);
+							!attribs[Attributes::Path].isEmpty())
+						recent_models.push_back(attribs[Attributes::Path]);
 				}
 				catch(Exception &e)
 				{
@@ -677,7 +677,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				{
 					param_id=QString("%1%2").arg(Attributes::File).arg(i);
 					attribs[Attributes::Id]=param_id;
-					attribs[Attributes::PATH]=model->getFilename();
+					attribs[Attributes::Path]=model->getFilename();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 				}
@@ -694,7 +694,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				{
 					param_id=QString("%1%2").arg(Attributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
 					attribs[Attributes::Id]=param_id;
-					attribs[Attributes::PATH]=recent_models.front();
+					attribs[Attributes::Path]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 					recent_models.pop_front();
@@ -1834,7 +1834,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params[Attributes::VALIDATOR]=Attributes::True;
 	params[Attributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
+	params[Attributes::PgSqlVersion]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(Attributes::VALIDATOR, params);
 	params.clear();
 
@@ -1863,7 +1863,7 @@ void MainWindow::restoreDockWidgetsSettings(void)
 	{
 		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::SQL_VALIDATION]==Attributes::True);
 		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::USE_UNIQUE_NAMES]==Attributes::True);
-		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PGSQL_VERSION]);
+		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PgSqlVersion]);
 	}
 
 	if(confs.count(Attributes::ObjectFinder))

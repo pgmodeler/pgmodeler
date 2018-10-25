@@ -114,7 +114,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 			if(constr_type==ConstraintType::PrimaryKey)
 			{
-				attrib=Attributes::PK_COLUMN;
+				attrib=Attributes::PkColumn;
 				pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
 				pol.append(QPointF(2,9)); pol.append(QPointF(3,8)); pol.append(QPointF(3,6));
 				pol.append(QPointF(4,6)); pol.append(QPointF(5,7)); pol.append(QPointF(6,6));
@@ -209,7 +209,7 @@ void TableObjectView::configureObject(void)
 
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
 			{
-				fmt=font_config[Attributes::PK_COLUMN];
+				fmt=font_config[Attributes::PkColumn];
 				constr_type=ConstraintType::PrimaryKey;
 			}
 			else if(str_constr.indexOf(TextForeignKey)>=0)

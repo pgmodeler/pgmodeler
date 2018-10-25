@@ -32,7 +32,7 @@ Index::Index(void)
 	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::Factor]=QString();
 	attributes[Attributes::PREDICATE]=QString();
-	attributes[Attributes::OP_CLASS]=QString();
+	attributes[Attributes::OpClass]=QString();
 	attributes[Attributes::NullsFirst]=QString();
 	attributes[Attributes::AscOrder]=QString();
 	attributes[Attributes::DeclInTable]=QString();

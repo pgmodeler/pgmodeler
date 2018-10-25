@@ -162,7 +162,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 	QStringList aux_attribs;
 	QString buf=snippet[Attributes::Contents];
 
-	if(snippet[Attributes::PARSABLE]!=Attributes::True)
+	if(snippet[Attributes::Parsable]!=Attributes::True)
 		return(buf);
 
 	try
@@ -170,7 +170,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 		schparser.loadBuffer(buf);
 
 		//Assigning dummy values for empty attributes
-		if(snippet[Attributes::PLACEHOLDERS]==Attributes::True)
+		if(snippet[Attributes::Placeholders]==Attributes::True)
 		{
 			aux_attribs=schparser.extractAttributes();
 			for(QString attr : aux_attribs)
@@ -230,7 +230,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Contents].isEmpty())
 		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
-	else if(attribs[Attributes::PARSABLE]==Attributes::True)
+	else if(attribs[Attributes::Parsable]==Attributes::True)
 	{
 		try
 		{
@@ -311,8 +311,8 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 	return(attribs_map{ {Attributes::Id, id_edt->text()},
 						{Attributes::Label, label_edt->text()},
 						{Attributes::Object, object_id},
-						{Attributes::PARSABLE, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
-						{Attributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
+						{Attributes::Parsable, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
+						{Attributes::Placeholders, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
 						 Attributes::True : Attributes::False)},
 						{Attributes::Contents, snippet_txt->toPlainText()} });
 }
@@ -326,8 +326,8 @@ void SnippetsConfigWidget::editSnippet(void)
 	snippet_txt->setPlainText(config_params[snip_id].at(Attributes::Contents));
 	id_edt->setText(snip_id);
 	label_edt->setText(config_params[snip_id].at(Attributes::Label));
-	parsable_chk->setChecked(config_params[snip_id].at(Attributes::PARSABLE)==Attributes::True);
-	placeholders_chk->setChecked(config_params[snip_id].at(Attributes::PLACEHOLDERS)==Attributes::True);
+	parsable_chk->setChecked(config_params[snip_id].at(Attributes::Parsable)==Attributes::True);
+	placeholders_chk->setChecked(config_params[snip_id].at(Attributes::Placeholders)==Attributes::True);
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 

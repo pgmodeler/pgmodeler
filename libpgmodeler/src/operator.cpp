@@ -40,7 +40,7 @@ Operator::Operator(void)
 	attributes[Attributes::NegatorOp]=QString();
 	attributes[Attributes::RESTRICTION_FUNC]=QString();
 	attributes[Attributes::JoinFunc]=QString();
-	attributes[Attributes::OPERATOR_FUNC]=QString();
+	attributes[Attributes::OperatorFunc]=QString();
 	attributes[Attributes::Hashes]=QString();
 	attributes[Attributes::Merges]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
@@ -284,7 +284,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 			op_attribs[]={ Attributes::CommutatorOp,
 						   Attributes::NegatorOp },
 
-			func_attribs[]={Attributes::OPERATOR_FUNC,
+			func_attribs[]={Attributes::OperatorFunc,
 							Attributes::JoinFunc,
 							Attributes::RESTRICTION_FUNC};
 

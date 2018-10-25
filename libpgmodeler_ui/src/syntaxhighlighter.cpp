@@ -479,7 +479,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								italic=(attribs[Attributes::Italic]==Attributes::True);
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::UNDERLINE]==Attributes::True);
-								partial_match=(attribs[Attributes::PARTIAL_MATCH]==Attributes::True);
+								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);
 								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent

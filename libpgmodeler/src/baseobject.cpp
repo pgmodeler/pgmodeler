@@ -85,7 +85,7 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::Name]=QString();
 	attributes[Attributes::Alias]=QString();
 	attributes[Attributes::Comment]=QString();
-	attributes[Attributes::OWNER]=QString();
+	attributes[Attributes::Owner]=QString();
 	attributes[Attributes::TABLESPACE]=QString();
 	attributes[Attributes::SCHEMA]=QString();
 	attributes[Attributes::Collation]=QString();
@@ -746,7 +746,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
 			{
-				attributes[Attributes::OWNER]=owner->getName(format);
+				attributes[Attributes::Owner]=owner->getName(format);
 
 				/** Only tablespaces and database do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
@@ -756,14 +756,14 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 									 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-									 Attributes::OWNER + GlobalAttributes::SchemaExt;
+									 Attributes::Owner + GlobalAttributes::SchemaExt;
 
 					sch_parser.ignoreUnkownAttributes(true);
-					attributes[Attributes::OWNER]=sch_parser.getCodeDefinition(filename, attributes);
+					attributes[Attributes::Owner]=sch_parser.getCodeDefinition(filename, attributes);
 				}
 			}
 			else
-				attributes[Attributes::OWNER]=owner->getCodeDefinition(def_type, true);
+				attributes[Attributes::Owner]=owner->getCodeDefinition(def_type, true);
 		}
 
 		if(!comment.isEmpty())
@@ -1193,7 +1193,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 
 	try
 	{
-		QStringList attribs={ Attributes::OWNER, Attributes::SCHEMA, Attributes::TABLESPACE };
+		QStringList attribs={ Attributes::Owner, Attributes::SCHEMA, Attributes::TABLESPACE };
 		bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
 		BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
 				*aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };

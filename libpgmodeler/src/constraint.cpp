@@ -27,7 +27,7 @@ Constraint::Constraint(void)
 	fill_factor=0;
 	index_type=BaseType::Null;
 
-	attributes[Attributes::PK_CONSTR]=QString();
+	attributes[Attributes::PkConstr]=QString();
 	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
@@ -663,7 +663,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	QString attrib;
 
-	attributes[Attributes::PK_CONSTR]=QString();
+	attributes[Attributes::PkConstr]=QString();
 	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
@@ -675,7 +675,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=Attributes::CkConstr;
 		break;
 		case ConstraintType::PrimaryKey:
-			attrib=Attributes::PK_CONSTR;
+			attrib=Attributes::PkConstr;
 		break;
 		case ConstraintType::ForeignKey:
 			attrib=Attributes::FkConstr;

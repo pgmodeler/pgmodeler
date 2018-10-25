@@ -343,7 +343,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 		if(!colors.empty())
 		{
-			if(id==Attributes::ObjSelection || id==Attributes::PLACEHOLDER)
+			if(id==Attributes::ObjSelection || id==Attributes::Placeholder)
 			{
 				colors[0].setAlpha(ObjectAlphaChannel);
 				colors[1].setAlpha(ObjectAlphaChannel);
@@ -629,10 +629,10 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 		if(visible)
 		{
-			QPen pen=BaseObjectView::getBorderStyle(Attributes::PLACEHOLDER);
+			QPen pen=BaseObjectView::getBorderStyle(Attributes::Placeholder);
 			pen.setStyle(Qt::DashLine);
 
-			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::PLACEHOLDER));
+			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 			placeholder->setPen(pen);
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
 			placeholder->setPos(this->mapToScene(this->bounding_rect.topLeft()));

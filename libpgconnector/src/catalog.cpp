@@ -219,7 +219,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	schparser.ignoreUnkownAttributes(true);
 	schparser.ignoreEmptyAttributes(true);
 
-	attribs[Attributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+	attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
 	sql=schparser.getCodeDefinition(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
@@ -486,7 +486,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, a
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
 
-		attribs[Attributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+		attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
 		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))

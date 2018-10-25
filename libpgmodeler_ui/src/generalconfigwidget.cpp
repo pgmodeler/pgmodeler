@@ -93,12 +93,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
 	config_params[Attributes::Configuration][Attributes::GridSize]=QString();
-	config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]=QString();
+	config_params[Attributes::Configuration][Attributes::OpListSize]=QString();
 	config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString();
-	config_params[Attributes::Configuration][Attributes::PAPER_TYPE]=QString();
-	config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]=QString();
-	config_params[Attributes::Configuration][Attributes::PAPER_MARGIN]=QString();
-	config_params[Attributes::Configuration][Attributes::PAPER_CUSTOM_SIZE]=QString();
+	config_params[Attributes::Configuration][Attributes::PaperType]=QString();
+	config_params[Attributes::Configuration][Attributes::PaperOrientation]=QString();
+	config_params[Attributes::Configuration][Attributes::PaperMargin]=QString();
+	config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString();
 	config_params[Attributes::Configuration][Attributes::File]=QString();
 	config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
 	config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=QString();
@@ -272,7 +272,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
 
 		grid_size_spb->setValue((config_params[Attributes::Configuration][Attributes::GridSize]).toUInt());
-		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]).toUInt());
+		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OpListSize]).toUInt());
 		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
 
 		interv=(config_params[Attributes::Configuration][Attributes::AutoSaveInterval]).toUInt();
@@ -300,14 +300,14 @@ void GeneralConfigWidget::loadConfiguration(void)
 		print_grid_chk->setChecked(config_params[Attributes::Configuration][Attributes::PRINT_GRID]==Attributes::True);
 		print_pg_num_chk->setChecked(config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]==Attributes::True);
 
-		paper_cmb->setCurrentIndex((config_params[Attributes::Configuration][Attributes::PAPER_TYPE]).toUInt());
-		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::PORTRAIT);
-		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::Landscape);
+		paper_cmb->setCurrentIndex((config_params[Attributes::Configuration][Attributes::PaperType]).toUInt());
+		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::PORTRAIT);
+		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Landscape);
 
 		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MinObjectOpacity].toUInt());
 
-		margin=config_params[Attributes::Configuration][Attributes::PAPER_MARGIN].split(',');
-		custom_size=config_params[Attributes::Configuration][Attributes::PAPER_CUSTOM_SIZE].split(',');
+		margin=config_params[Attributes::Configuration][Attributes::PaperMargin].split(',');
+		custom_size=config_params[Attributes::Configuration][Attributes::PaperCustomSize].split(',');
 
 		left_marg->setValue((margin.count() >= 4 ? margin[0].toDouble() : 2));
 		top_marg->setValue((margin.count()>= 4 ? margin[1].toDouble() : 2));
@@ -467,10 +467,10 @@ void GeneralConfigWidget::saveConfiguration(void)
 				   GlobalAttributes::SchemaExt;
 
 		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
-		config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]=QString::number(oplist_size_spb->value());
+		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
-		config_params[Attributes::Configuration][Attributes::PAPER_TYPE]=QString::number(paper_cmb->currentIndex());
-		config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? Attributes::PORTRAIT : Attributes::Landscape);
+		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());
+		config_params[Attributes::Configuration][Attributes::PaperOrientation]=(portrait_rb->isChecked() ? Attributes::PORTRAIT : Attributes::Landscape);
 		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
@@ -491,15 +491,15 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(align_grid ? Attributes::True : QString());
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
-		config_params[Attributes::Configuration][Attributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(left_marg->value())
+		config_params[Attributes::Configuration][Attributes::PaperMargin]=QString("%1,%2,%3,%4").arg(left_marg->value())
 																						 .arg(top_marg->value())
 																						 .arg(right_marg->value())
 																						 .arg(bottom_marg->value());
 
 		if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
-			config_params[Attributes::Configuration][Attributes::PAPER_CUSTOM_SIZE]=QString();
+			config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString();
 		else
-			config_params[Attributes::Configuration][Attributes::PAPER_CUSTOM_SIZE]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
+			config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
 		config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::PRINT_GRID]=(print_grid_chk->isChecked() ? Attributes::True : QString());

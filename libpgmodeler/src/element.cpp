@@ -95,7 +95,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
 	attributes[Attributes::Column]=QString();
 	attributes[Attributes::Expression]=QString();
-	attributes[Attributes::OP_CLASS]=QString();
+	attributes[Attributes::OpClass]=QString();
 	attributes[Attributes::USE_SORTING]=(this->sorting_enabled ? Attributes::True : QString());
 	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
 	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : QString());
@@ -109,9 +109,9 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	if(operator_class)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::OP_CLASS]=operator_class->getName(true);
+			attributes[Attributes::OpClass]=operator_class->getName(true);
 		else
-			attributes[Attributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
+			attributes[Attributes::OpClass]=operator_class->getCodeDefinition(def_type, true);
 	}
 }
 
