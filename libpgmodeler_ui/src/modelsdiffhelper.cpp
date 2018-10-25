@@ -319,7 +319,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
 								xml_differs=object->isCodeDiffersFrom(aux_object,
-								{ Attributes::MAX_OBJ_COUNT,
+								{ Attributes::MaxObjCount,
 									Attributes::PROTECTED,
 									Attributes::SQL_DISABLED,
 									Attributes::RECT_VISIBLE,

@@ -825,8 +825,8 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 				pol.append(QPointF(event->scenePos().x(), event->scenePos().y()));
 				pol.append(QPointF(sel_ini_pnt.x(), event->scenePos().y()));
 				selection_rect->setPolygon(pol);
-				selection_rect->setBrush(BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION));
-				selection_rect->setPen(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION));
+				selection_rect->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
+				selection_rect->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
 			}
 		}
 	}

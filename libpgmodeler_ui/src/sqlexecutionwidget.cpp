@@ -271,7 +271,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		types=catalog.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
 
 		for(auto &tp : types)
-			type_names[tp[Attributes::OID].toUInt()]=tp[Attributes::NAME];
+			type_names[tp[Attributes::Oid].toUInt()]=tp[Attributes::Name];
 
 		catalog.setFilter(orig_filter);
 

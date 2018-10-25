@@ -6,7 +6,7 @@ Extension::Extension(void)
 	handles_type=false;
 	attributes[Attributes::HandlesType]=QString();
 	attributes[Attributes::CurVersion]=QString();
-	attributes[Attributes::OLD_VERSION]=QString();
+	attributes[Attributes::OldVersion]=QString();
 }
 
 void Extension::setName(const QString &name)
@@ -85,10 +85,10 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::NAME]=this->getName(def_type==SchemaParser::SqlDefinition, false);
+	attributes[Attributes::Name]=this->getName(def_type==SchemaParser::SqlDefinition, false);
 	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : QString());
 	attributes[Attributes::CurVersion]=versions[CurVersion];
-	attributes[Attributes::OLD_VERSION]=versions[OldVersion];
+	attributes[Attributes::OldVersion]=versions[OldVersion];
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -103,11 +103,11 @@ QString Extension::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		attributes[Attributes::NEW_VERSION]=QString();
+		attributes[Attributes::NewVersion]=QString();
 
 		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&
 				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())
-			attributes[Attributes::NEW_VERSION]=ext->versions[CurVersion];
+			attributes[Attributes::NewVersion]=ext->versions[CurVersion];
 
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
@@ -119,7 +119,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 
 QString Extension::getDropDefinition(bool cascade)
 {
-	attributes[Attributes::NAME] = this->getName(true);
+	attributes[Attributes::Name] = this->getName(true);
 	return(BaseObject::getDropDefinition(cascade));
 }
 

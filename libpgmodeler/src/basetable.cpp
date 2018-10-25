@@ -24,7 +24,7 @@ BaseTable::BaseTable(void)
 	obj_type=ObjectType::BaseTable;
 	attributes[Attributes::TAG]=QString();
 	attributes[Attributes::HideExtAttribs]=QString();
-	attributes[Attributes::MAX_OBJ_COUNT]=QString();
+	attributes[Attributes::MaxObjCount]=QString();
 	hide_ext_attribs=false;
 }
 

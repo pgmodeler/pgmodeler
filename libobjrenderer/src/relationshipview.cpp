@@ -253,7 +253,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 
 		if(value.toBool())
 		{
-			QColor cor1=BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION).color(),
+			QColor cor1=BaseObjectView::getBorderStyle(Attributes::ObjSelection).color(),
 					cor2=line_color;
 
 			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
@@ -288,7 +288,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		{
 			vector<QGraphicsLineItem *> lines;
 			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
-			QColor sel_color = BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION).color();
+			QColor sel_color = BaseObjectView::getBorderStyle(Attributes::ObjSelection).color();
 			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 			int color_id = 0;
 
@@ -812,8 +812,8 @@ void RelationshipView::configureLine(void)
 					graph_points.push_back(pol);
 					pol->setZValue(0);
 					pol->setPolygon(pol_aux);
-					pol->setBrush(BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION));
-					pol->setPen(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION));
+					pol->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
+					pol->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
 					this->addToGroup(pol);
 				}
 				else
@@ -1415,8 +1415,8 @@ void RelationshipView::configureDescriptor(void)
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_selection->boundingRect().center());
 	pol_item->setPos(x,y);
-	pol_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
@@ -1777,8 +1777,8 @@ void RelationshipView::configureAttributes(void)
 			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);
-			sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION));
-			sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION));
+			sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
+			sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
 
 			attrib->setPos(px, py);
 

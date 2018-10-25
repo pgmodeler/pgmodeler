@@ -98,7 +98,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
 
 			if(column->isNotNull())
-				attrib=Attributes::NN_COLUMN;
+				attrib=Attributes::NnColumn;
 			else
 				attrib=Attributes::Column;
 
@@ -223,7 +223,7 @@ void TableObjectView::configureObject(void)
 				constr_type=ConstraintType::Unique;
 			}
 			else if(str_constr.indexOf(TextNotNull)>=0)
-				fmt=font_config[Attributes::NN_COLUMN];
+				fmt=font_config[Attributes::NnColumn];
 			else
 				fmt=font_config[Attributes::Column];
 
@@ -277,7 +277,7 @@ void TableObjectView::configureObject(void)
 		px+=lables[0]->boundingRect().width();
 
 		//Configuring the type label
-		fmt=font_config[Attributes::OBJECT_TYPE];
+		fmt=font_config[Attributes::ObjectType];
 
 		if(compact_view)
 			lables[1]->setText(" ");

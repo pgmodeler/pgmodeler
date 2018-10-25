@@ -29,7 +29,7 @@ View::View(void) : BaseTable()
 	attributes[Attributes::SIMPLE_EXP]=QString();
 	attributes[Attributes::EndExp]=QString();
 	attributes[Attributes::CteExpression]=QString();
-	attributes[Attributes::MATERIALIZED]=QString();
+	attributes[Attributes::Materialized]=QString();
 	attributes[Attributes::RECURSIVE]=QString();
 	attributes[Attributes::WITH_NO_DATA]=QString();
 	attributes[Attributes::Columns]=QString();
@@ -574,7 +574,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[Attributes::CteExpression]=cte_expression;
-	attributes[Attributes::MATERIALIZED]=(materialized ? Attributes::True : QString());
+	attributes[Attributes::Materialized]=(materialized ? Attributes::True : QString());
 	attributes[Attributes::RECURSIVE]=(recursive ? Attributes::True : QString());
 	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
@@ -596,7 +596,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 		setReferencesAttribute();
-		attributes[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

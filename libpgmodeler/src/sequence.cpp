@@ -33,8 +33,8 @@ Sequence::Sequence(void)
 	owner_col=nullptr;
 
 	attributes[Attributes::Increment]=QString();
-	attributes[Attributes::MIN_VALUE]=QString();
-	attributes[Attributes::MAX_VALUE]=QString();
+	attributes[Attributes::MinValue]=QString();
+	attributes[Attributes::MaxValue]=QString();
 	attributes[Attributes::START]=QString();
 	attributes[Attributes::Cache]=QString();
 	attributes[Attributes::Cycle]=QString();
@@ -403,8 +403,8 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : QString());
 
 	attributes[Attributes::Increment]=increment;
-	attributes[Attributes::MIN_VALUE]=min_value;
-	attributes[Attributes::MAX_VALUE]=max_value;
+	attributes[Attributes::MinValue]=min_value;
+	attributes[Attributes::MaxValue]=max_value;
 	attributes[Attributes::START]=start;
 	attributes[Attributes::Cache]=cache;
 	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
@@ -450,10 +450,10 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Increment]=seq->increment;
 
 		if(!seq->min_value.isEmpty() && this->min_value!=seq->min_value)
-			attribs[Attributes::MIN_VALUE]=seq->min_value;
+			attribs[Attributes::MinValue]=seq->min_value;
 
 		if(!seq->max_value.isEmpty() && this->max_value!=seq->max_value)
-			attribs[Attributes::MAX_VALUE]=seq->max_value;
+			attribs[Attributes::MaxValue]=seq->max_value;
 
 		if(!seq->start.isEmpty() && this->start!=seq->start)
 			attribs[Attributes::START]=seq->start;

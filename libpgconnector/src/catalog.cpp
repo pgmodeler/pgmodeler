@@ -85,7 +85,7 @@ void Catalog::setConnection(Connection &conn)
 
 		//Retrieving the last system oid
 		executeCatalogQuery(QueryList, ObjectType::Database, res, true,
-		{{Attributes::NAME, conn.getConnectionParam(Connection::ParamDbName)}});
+		{{Attributes::Name, conn.getConnectionParam(Connection::ParamDbName)}});
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
@@ -193,9 +193,9 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[Attributes::LastSysOid]=QString("%1").arg(last_sys_oid);
 
 	if(list_only_sys_objs)
-		attribs[Attributes::OID_FILTER_OP]=QString("<=");
+		attribs[Attributes::OidFilterOp]=QString("<=");
 	else
-		attribs[Attributes::OID_FILTER_OP]=QString(">");
+		attribs[Attributes::OidFilterOp]=QString(">");
 
 	if(obj_type==ObjectType::Type && exclude_array_types)
 		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
@@ -210,9 +210,9 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	if(exclude_ext_objs && obj_type!=ObjectType::Database &&	obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Extension)
 	{
 		if(ext_oid_fields.count(obj_type)==0)
-			attribs[Attributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+			attribs[Attributes::NotExtObject]=getNotExtObjectQuery(oid_fields[obj_type]);
 		else
-			attribs[Attributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
+			attribs[Attributes::NotExtObject]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
 	}
 
 	loadCatalogQuery(BaseObject::getSchemaName(obj_type));
@@ -341,7 +341,7 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		{
 			do
 			{
-				objects[res.getColumnValue(Attributes::OID)]=res.getColumnValue(Attributes::NAME);
+				objects[res.getColumnValue(Attributes::Oid)]=res.getColumnValue(Attributes::Name);
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 		}
@@ -398,9 +398,9 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		{
 			do
 			{
-				attribs[Attributes::OID]=res.getColumnValue(Attributes::OID);
-				attribs[Attributes::NAME]=res.getColumnValue(Attributes::NAME);
-				attribs[Attributes::OBJECT_TYPE]=res.getColumnValue(QString("object_type"));
+				attribs[Attributes::Oid]=res.getColumnValue(Attributes::Oid);
+				attribs[Attributes::Name]=res.getColumnValue(Attributes::Name);
+				attribs[Attributes::ObjectType]=res.getColumnValue(QString("object_type"));
 				objects.push_back(attribs);
 				attribs.clear();
 			}
@@ -423,7 +423,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		attribs_map obj_attribs;
 
 		//Add the name of the object as extra attrib in order to retrieve the data only for it
-		extra_attribs[Attributes::NAME]=obj_name;
+		extra_attribs[Attributes::Name]=obj_name;
 		executeCatalogQuery(QueryAttribs, obj_type, res, true, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -431,7 +431,7 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[Attributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
+		obj_attribs[Attributes::ObjectType]=QString("%1").arg(~obj_type);
 
 		return(obj_attribs);
 	}
@@ -458,7 +458,7 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[Attributes::OBJECT_TYPE]=QString("%1").arg(~obj_type);
+				tuple[Attributes::ObjectType]=QString("%1").arg(~obj_type);
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();
@@ -514,7 +514,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 
 	try
 	{
-		attribs_map attribs={{Attributes::OID, oid_field},
+		attribs_map attribs={{Attributes::Oid, oid_field},
 												 {Attributes::SHARED_OBJ, (is_shared_obj ? Attributes::True : QString())}};
 
 		loadCatalogQuery(query_id);
@@ -533,7 +533,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 	try
 	{
-		attribs_map attribs={{Attributes::OID, oid_field},
+		attribs_map attribs={{Attributes::Oid, oid_field},
 							 {Attributes::ExtObjOids, ext_obj_oids}};
 
 
@@ -647,7 +647,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		else
 		{
 			res.accessTuple(ResultSet::FirstTuple);
-			return(res.getColumnValue(Attributes::OID));
+			return(res.getColumnValue(Attributes::Oid));
 		}
 	}
 	catch(Exception &e)

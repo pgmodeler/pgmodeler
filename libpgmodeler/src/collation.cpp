@@ -25,7 +25,7 @@ Collation::Collation(void)
 
 	attributes[Attributes::LcCtype]=QString();
 	attributes[Attributes::LcCollate]=QString();
-	attributes[Attributes::LOCALE]=QString();
+	attributes[Attributes::Locale]=QString();
 	attributes[Attributes::Encoding]=QString();
 }
 
@@ -102,10 +102,10 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(!locale.isEmpty())
 	{
-		attributes[Attributes::LOCALE]=locale;
+		attributes[Attributes::Locale]=locale;
 
 		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
-			attributes[Attributes::LOCALE]=locale + "." + (~encoding).toLower();
+			attributes[Attributes::Locale]=locale + "." + (~encoding).toLower();
 	}
 	else if(collation)
 		attributes[Attributes::Collation]=collation->getName(true);

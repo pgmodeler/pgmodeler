@@ -1598,7 +1598,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[Attributes::SRID]=QString();
 		attribs[Attributes::REF_TYPE]=ref_type;
 
-		attribs[Attributes::NAME]=(~(*this));
+		attribs[Attributes::Name]=(~(*this));
 		attribs[Attributes::Length]=QString("%1").arg(this->length);
 
 		if(dimension > 0)

@@ -111,7 +111,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 
 	for(auto &snip : config_params)
 	{
-		if(snip.second[Attributes::OBJECT]==type_name)
+		if(snip.second[Attributes::Object]==type_name)
 			ids.push_back(snip.second[Attributes::Id]);
 	}
 
@@ -126,7 +126,7 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
 
 	for(auto &snip : config_params)
 	{
-		if(snip.second[Attributes::OBJECT]==type_name)
+		if(snip.second[Attributes::Object]==type_name)
 			snippets.push_back(snip.second);
 	}
 
@@ -310,7 +310,7 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 
 	return(attribs_map{ {Attributes::Id, id_edt->text()},
 						{Attributes::Label, label_edt->text()},
-						{Attributes::OBJECT, object_id},
+						{Attributes::Object, object_id},
 						{Attributes::PARSABLE, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
 						{Attributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
 						 Attributes::True : Attributes::False)},
@@ -320,7 +320,7 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 void SnippetsConfigWidget::editSnippet(void)
 {
 	QString snip_id=snippets_cmb->currentData().toString();
-	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(Attributes::OBJECT));
+	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(Attributes::Object));
 
 	enableEditMode(true);
 	snippet_txt->setPlainText(config_params[snip_id].at(Attributes::Contents));
@@ -418,7 +418,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 
 		for(auto &cfg : config_params)
 		{
-			if(cfg.second.at(Attributes::OBJECT)==object_id)
+			if(cfg.second.at(Attributes::Object)==object_id)
 				flt_snippets[cfg.first]=cfg.second;
 		}
 
@@ -520,7 +520,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 	for(attribs_map snip : snippets)
 	{
-		object=snip[Attributes::OBJECT];
+		object=snip[Attributes::Object];
 		snip_id=snip[Attributes::Id];
 
 		//Creating the snippet submenu for the current object type

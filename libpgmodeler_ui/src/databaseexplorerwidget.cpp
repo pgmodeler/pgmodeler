@@ -61,12 +61,12 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Language, QT_TR_NOOP("Language")},	{Attributes::LcCollate, QT_TR_NOOP("LC COLLATE")},
 	{Attributes::LcCtype, QT_TR_NOOP("LC CTYPE")},	{Attributes::LeakProof, QT_TR_NOOP("Leak proof")},
 	{Attributes::LeftType, QT_TR_NOOP("Left type")},	{Attributes::Length, QT_TR_NOOP("Length")},
-	{Attributes::Library, QT_TR_NOOP("Library")},	{Attributes::LOGIN, QT_TR_NOOP("Can login")},
-	{Attributes::MATERIALIZED, QT_TR_NOOP("Materialized")},	{Attributes::MEMBER_ROLES, QT_TR_NOOP("Member roles")},
-	{Attributes::MERGES, QT_TR_NOOP("Merges")},	{Attributes::NAME, QT_TR_NOOP("Name")},
-	{Attributes::NEGATOR_OP, QT_TR_NOOP("Negator op.")},	{Attributes::NOT_NULL, QT_TR_NOOP("Not null")},
-	{Attributes::OBJECT_TYPE, QT_TR_NOOP("Object type")},	{Attributes::OID, QT_TR_NOOP("OID")},
-	{Attributes::OIDS, QT_TR_NOOP("With OIDs")},	{Attributes::OLD_VERSION, QT_TR_NOOP("Old version")},
+	{Attributes::Library, QT_TR_NOOP("Library")},	{Attributes::Login, QT_TR_NOOP("Can login")},
+	{Attributes::Materialized, QT_TR_NOOP("Materialized")},	{Attributes::MemberRoles, QT_TR_NOOP("Member roles")},
+	{Attributes::Merges, QT_TR_NOOP("Merges")},	{Attributes::Name, QT_TR_NOOP("Name")},
+	{Attributes::NegatorOp, QT_TR_NOOP("Negator op.")},	{Attributes::NotNull, QT_TR_NOOP("Not null")},
+	{Attributes::ObjectType, QT_TR_NOOP("Object type")},	{Attributes::Oid, QT_TR_NOOP("OID")},
+	{Attributes::Oids, QT_TR_NOOP("With OIDs")},	{Attributes::OldVersion, QT_TR_NOOP("Old version")},
 	{Attributes::OPERATOR, QT_TR_NOOP("Operator")},	{Attributes::OPERATOR_FUNC, QT_TR_NOOP("Operator func.")},
 	{Attributes::OUTPUT_FUNC, QT_TR_NOOP("Output func.")},	{Attributes::OWNER, QT_TR_NOOP("Owner")},
 	{Attributes::OWNER_COLUMN, QT_TR_NOOP("Owner column")},	{Attributes::PARENTS, QT_TR_NOOP("Parents")},
@@ -89,8 +89,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::VALIDITY, QT_TR_NOOP("Validity")},	{Attributes::WINDOW_FUNC, QT_TR_NOOP("Windows func.")},
 	{Attributes::False, QT_TR_NOOP("false")},	{Attributes::True, QT_TR_NOOP("true")},
 	{Attributes::Cache, QT_TR_NOOP("Cache value")},	{Attributes::Cycle, QT_TR_NOOP("Cycle")},
-	{Attributes::Increment, QT_TR_NOOP("Increment")},	{Attributes::MAX_VALUE, QT_TR_NOOP("Max. value")},
-	{Attributes::MIN_VALUE, QT_TR_NOOP("Min. value")},	{Attributes::START, QT_TR_NOOP("Start value")},
+	{Attributes::Increment, QT_TR_NOOP("Increment")},	{Attributes::MaxValue, QT_TR_NOOP("Max. value")},
+	{Attributes::MinValue, QT_TR_NOOP("Min. value")},	{Attributes::START, QT_TR_NOOP("Start value")},
 	{Attributes::LastValue, QT_TR_NOOP("Last value")},	{Attributes::SUBTYPE, QT_TR_NOOP("Subtype")},
 	{Attributes::OP_CLASS, QT_TR_NOOP("Op. class")},	{Attributes::CanonicalFunc, QT_TR_NOOP("Canonical func.")},
 	{Attributes::SUBTYPE_DIFF_FUNC, QT_TR_NOOP("Subtype diff func.")},	{Attributes::Deferrable, QT_TR_NOOP("Deferrable")},
@@ -104,7 +104,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::Commands, QT_TR_NOOP("Commands")},	{Attributes::POSITION, QT_TR_NOOP("Position")},
 	{Attributes::ComparisonType, QT_TR_NOOP("Comparison type")},	{Attributes::DelAction, QT_TR_NOOP("On delete")},
 	{Attributes::DstColumns, QT_TR_NOOP("Ref. columns")},	{Attributes::Expressions, QT_TR_NOOP("Expressions")},
-	{Attributes::Factor, QT_TR_NOOP("Fill factor")},	{Attributes::NO_INHERIT, QT_TR_NOOP("No inherit")},
+	{Attributes::Factor, QT_TR_NOOP("Fill factor")},	{Attributes::NoInherit, QT_TR_NOOP("No inherit")},
 	{Attributes::OP_CLASSES, QT_TR_NOOP("Op. classes")},	{Attributes::OPERATORS, QT_TR_NOOP("Operators")},
 	{Attributes::REF_TABLE, QT_TR_NOOP("Ref. table")},	{Attributes::Columns, QT_TR_NOOP("Columns")},
 	{Attributes::UPD_ACTION, QT_TR_NOOP("On update")},	{Attributes::SRC_COLUMNS, QT_TR_NOOP("Columns")},
@@ -113,7 +113,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::ClientEncoding, QT_TR_NOOP("Client encoding")},	{Attributes::ConfigFile, QT_TR_NOOP("Configuration file")},
 	{Attributes::DataDirectory, QT_TR_NOOP("Data directory")},	{Attributes::DynamicLibraryPath, QT_TR_NOOP("Dynamic library path")},
 	{Attributes::DynamicSharedMemory, QT_TR_NOOP("Dynamic shared memory")},	{Attributes::HbaFile, QT_TR_NOOP("Hba file")},
-	{Attributes::LISTEN_ADDRESSES, QT_TR_NOOP("Listen addresses")},	{Attributes::MAX_CONNECTIONS, QT_TR_NOOP("Max. connections")},
+	{Attributes::ListenAddresses, QT_TR_NOOP("Listen addresses")},	{Attributes::MaxConnections, QT_TR_NOOP("Max. connections")},
 	{Attributes::PORT, QT_TR_NOOP("Listen port")},	{Attributes::SERVER_ENCODING, QT_TR_NOOP("Server encoding")},
 	{Attributes::SSL, QT_TR_NOOP("SSL")},	{Attributes::SSL_CA_FILE, QT_TR_NOOP("SSL ca file")},
 	{Attributes::SSL_CERT_FILE, QT_TR_NOOP("SSL cert file")},	{Attributes::SSL_CRL_FILE, QT_TR_NOOP("SSL crl file")},
@@ -315,8 +315,8 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 										{Attributes::Collation, ObjectType::Collation},
 										{Attributes::TABLE, ObjectType::Table}};
 
-	if(attribs.count(Attributes::OBJECT_TYPE)!=0)
-		obj_type=static_cast<ObjectType>(attribs[Attributes::OBJECT_TYPE].toUInt());
+	if(attribs.count(Attributes::ObjectType)!=0)
+		obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 
 	try
 	{
@@ -357,17 +357,17 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			attribs[Attributes::PERMISSION]=Catalog::parseArrayValues(attribs[Attributes::PERMISSION]).join(ElemSeparator);
 
 		//Removing system schemas from object's name
-		if(attribs.count(Attributes::NAME)!=0 &&
-			 (attribs[Attributes::NAME].startsWith(QString("pg_catalog.")) ||
-				attribs[Attributes::NAME].startsWith(QString("information_schema."))))
-			attribs[Attributes::NAME]=attribs[Attributes::NAME].split('.').at(1);
+		if(attribs.count(Attributes::Name)!=0 &&
+			 (attribs[Attributes::Name].startsWith(QString("pg_catalog.")) ||
+				attribs[Attributes::Name].startsWith(QString("information_schema."))))
+			attribs[Attributes::Name]=attribs[Attributes::Name].split('.').at(1);
 
 	for(auto &attrib : attribs)
 	{
 		attr_name=attrib.first;
 		attr_value=attrib.second;
 
-		if(attr_name==Attributes::OBJECT_TYPE)
+		if(attr_name==Attributes::ObjectType)
 			attr_value=BaseObject::getTypeName(static_cast<ObjectType>(attr_value.toUInt()));
 
 		//If the current attribute is related to a dependency object, retreive its real name
@@ -383,13 +383,13 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 		fmt_attribs[attr_name]=attr_value;
 	}
 
-	if(attribs[Attributes::OID].toUInt() > 0)
+	if(attribs[Attributes::Oid].toUInt() > 0)
 	{
 		attribs[Attributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-		attribs[Attributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+		attribs[Attributes::ObjectType]=BaseObject::getSchemaName(obj_type);
 
 		if(attribs.count(Attributes::SIGNATURE)==0)
-			attribs[Attributes::SIGNATURE]=BaseObject::formatName(attribs[Attributes::NAME]);
+			attribs[Attributes::SIGNATURE]=BaseObject::formatName(attribs[Attributes::Name]);
 
 		if(attribs.count(Attributes::SCHEMA)!=0)
 			attribs[Attributes::SIGNATURE]=QString("%1.%2")
@@ -457,7 +457,7 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 
 	formatOidAttribs(attribs, { Attributes::TYPES }, ObjectType::Type, true);
 	attribs[Attributes::SIGNATURE]=(QString("%1(%2)")
-											 .arg(BaseObject::formatName(attribs[Attributes::NAME]))
+											 .arg(BaseObject::formatName(attribs[Attributes::Name]))
 											.arg(attribs[Attributes::TYPES])).replace(ElemSeparator, QString(","));
 
 	attribs[Attributes::STATE_TYPE]=getObjectName(ObjectType::Type, attribs[Attributes::STATE_TYPE]);
@@ -477,12 +477,12 @@ void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
 {
 	formatOidAttribs(attribs, { Attributes::AdminRoles,
-								Attributes::MEMBER_ROLES,
+								Attributes::MemberRoles,
 								Attributes::REF_ROLES }, ObjectType::Role, true);
 
 	formatBooleanAttribs(attribs, { Attributes::SUPERUSER, Attributes::Inherit,
 									Attributes::CreateRole, Attributes::CreateDb,
-									Attributes::LOGIN, Attributes::Encrypted,
+									Attributes::Login, Attributes::Encrypted,
 									Attributes::REPLICATION });
 }
 
@@ -494,7 +494,7 @@ void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 {
-	formatBooleanAttribs(attribs, { Attributes::NOT_NULL });
+	formatBooleanAttribs(attribs, { Attributes::NotNull });
 	attribs[Attributes::TYPE]=getObjectName(ObjectType::Type, attribs[Attributes::TYPE]);
 }
 
@@ -513,7 +513,7 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 
 	formatOidAttribs(attribs, { Attributes::ArgTypes }, ObjectType::Type, true);
 	attribs[Attributes::SIGNATURE]=(QString("%1(%2)")
-											 .arg(BaseObject::formatName(attribs[Attributes::NAME]))
+											 .arg(BaseObject::formatName(attribs[Attributes::Name]))
 											.arg(attribs[Attributes::ArgTypes])).replace(ElemSeparator, QString(","));
 
 	formatBooleanAttribs(attribs, { Attributes::WINDOW_FUNC,
@@ -524,20 +524,20 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { Attributes::Hashes,
-									Attributes::MERGES });
+									Attributes::Merges });
 
 	formatOidAttribs(attribs, { Attributes::LeftType,
 								Attributes::RIGHT_TYPE}, ObjectType::Type, false);
 
 	formatOidAttribs(attribs, { Attributes::CommutatorOp,
-								Attributes::NEGATOR_OP}, ObjectType::Operator, false);
+								Attributes::NegatorOp}, ObjectType::Operator, false);
 
 	formatOidAttribs(attribs, { Attributes::OPERATOR_FUNC,
 								Attributes::RESTRICTION_FUNC,
 								Attributes::JoinFunc }, ObjectType::Function, false);
 
 	attribs[Attributes::SIGNATURE]=(QString("%1(%2,%3)")
-											 .arg(BaseObject::formatName(attribs[Attributes::NAME], true))
+											 .arg(BaseObject::formatName(attribs[Attributes::Name], true))
 											.arg(attribs[Attributes::LeftType])
 			.arg(attribs[Attributes::RIGHT_TYPE])).replace(ElemSeparator, QString(","));
 }
@@ -546,7 +546,7 @@ void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 {
 	QStringList part_keys;
 
-	formatBooleanAttribs(attribs, { Attributes::OIDS,
+	formatBooleanAttribs(attribs, { Attributes::Oids,
 																	Attributes::UNLOGGED,
 																	Attributes::RLS_ENABLED,
 																	Attributes::RLS_FORCED});
@@ -557,7 +557,7 @@ void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 	part_keys.push_back(getObjectsNames(ObjectType::Column,
 																			Catalog::parseArrayValues(attribs[Attributes::PART_KEY_COLS]),
 																			getObjectName(ObjectType::Schema, attribs[Attributes::SCHEMA]),
-																			attribs[Attributes::NAME]).join(ElemSeparator));
+																			attribs[Attributes::Name]).join(ElemSeparator));
 
 	part_keys.push_back(Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(ElemSeparator));
 	part_keys.removeAll(QString());
@@ -573,8 +573,8 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 {
 	QStringList owner_col,
 			seq_values=Catalog::parseArrayValues(attribs[Attributes::Attribute]),
-			seq_attrs={ Attributes::START, Attributes::MIN_VALUE,
-						Attributes::MAX_VALUE, Attributes::Increment,
+			seq_attrs={ Attributes::START, Attributes::MinValue,
+						Attributes::MaxValue, Attributes::Increment,
 						Attributes::Cache, Attributes::Cycle };
 	QString sch_name=getObjectName(ObjectType::Schema, attribs[Attributes::SCHEMA]);
 
@@ -591,7 +591,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 		vector<attribs_map> col_attribs=catalog.getObjectsAttributes(ObjectType::Column, names[0], names[1], { owner_col[1].toUInt() });
 
 		if(!col_attribs.empty())
-			attribs[Attributes::OWNER_COLUMN]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(Attributes::NAME));
+			attribs[Attributes::OWNER_COLUMN]=QString("%1.%2.%3").arg(names[0], names[1], col_attribs[0].at(Attributes::Name));
 	}
 
 	//Retrieving the current value of the sequence by querying the database
@@ -601,7 +601,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 		ResultSet res;
 
 		conn.connect();
-		conn.executeDMLCommand(QString("SELECT last_value FROM \"%1\".\"%2\"").arg(sch_name).arg(BaseObject::formatName(attribs[Attributes::NAME])), res);
+		conn.executeDMLCommand(QString("SELECT last_value FROM \"%1\".\"%2\"").arg(sch_name).arg(BaseObject::formatName(attribs[Attributes::Name])), res);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 			attribs[Attributes::LastValue]=res.getColumnValue(QString("last_value"));
@@ -616,7 +616,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatViewAttribs(attribs_map &attribs)
 {
-	formatBooleanAttribs(attribs, { Attributes::MATERIALIZED });
+	formatBooleanAttribs(attribs, { Attributes::Materialized });
 }
 
 void DatabaseExplorerWidget::formatTypeAttribs(attribs_map &attribs)
@@ -731,10 +731,10 @@ void DatabaseExplorerWidget::formatRuleAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatColumnAttribs(attribs_map &attribs)
 {
-	formatBooleanAttribs(attribs, { Attributes::NOT_NULL,
+	formatBooleanAttribs(attribs, { Attributes::NotNull,
 									Attributes::Inherited });
-	attribs[Attributes::POSITION]=attribs[Attributes::OID];
-	attribs.erase(Attributes::OID);
+	attribs[Attributes::POSITION]=attribs[Attributes::Oid];
+	attribs.erase(Attributes::Oid);
 	attribs.erase(Attributes::TYPE_OID);
 }
 
@@ -750,7 +750,7 @@ void DatabaseExplorerWidget::formatConstraintAttribs(attribs_map &attribs)
 	QStringList names=getObjectName(ObjectType::Table, attribs[Attributes::TABLE]).split('.');
 
 	formatBooleanAttribs(attribs, { Attributes::Deferrable,
-									Attributes::NO_INHERIT });
+									Attributes::NoInherit });
 	attribs[Attributes::TYPE]=~types[attribs[Attributes::TYPE]];
 	attribs[Attributes::OP_CLASSES]=getObjectsNames(ObjectType::OpClass,
 															 Catalog::parseArrayValues(attribs[Attributes::OP_CLASSES])).join(ElemSeparator);
@@ -828,28 +828,28 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 	try
 	{
 		if(attribs.empty() ||
-				attribs[Attributes::OID].isEmpty() ||
-				attribs[Attributes::OID]==QString("0") ||
-				attribs[Attributes::NAME].isEmpty())
+				attribs[Attributes::Oid].isEmpty() ||
+				attribs[Attributes::Oid]==QString("0") ||
+				attribs[Attributes::Name].isEmpty())
 			return(DepNotDefined);
 		else
 		{
-			ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::OBJECT_TYPE].toUInt());
+			ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 			attribs_map aux_attribs;
-			QString oid=attribs[Attributes::OID],
+			QString oid=attribs[Attributes::Oid],
 					obj_name=DepNotFound.arg(oid), sch_name;
 
 			if(obj_type!=ObjectType::Type)
-				obj_name=BaseObject::formatName(attribs[Attributes::NAME], obj_type==ObjectType::Operator);
+				obj_name=BaseObject::formatName(attribs[Attributes::Name], obj_type==ObjectType::Operator);
 			else
-				obj_name=attribs[Attributes::NAME];
+				obj_name=attribs[Attributes::Name];
 
 			//Retrieving the schema name
 			if(!attribs[Attributes::SCHEMA].isEmpty() &&
 					attribs[Attributes::SCHEMA]!=QString("0"))
 			{
 				aux_attribs=catalog.getObjectAttributes(ObjectType::Schema, attribs[Attributes::SCHEMA].toUInt());
-				sch_name=BaseObject::formatName(aux_attribs[Attributes::NAME], false);
+				sch_name=BaseObject::formatName(aux_attribs[Attributes::Name], false);
 
 				if(!sch_name.isEmpty())
 					obj_name=sch_name + QString(".") + obj_name;
@@ -916,7 +916,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 			//Retrieve all the objects by their oids and put them on a auxiliary map in which key is their oids
 			attribs_vect=catalog.getObjectsAttributes(obj_type, sch_name, tab_name, oids_vect);
 			for(attribs_map attr : attribs_vect)
-				attrs_map[attr[Attributes::OID]]=attr;
+				attrs_map[attr[Attributes::Oid]]=attr;
 
 			//Retreving the names from the auxiliary map using the provided oids
 			for(QString oid : oids)
@@ -1124,23 +1124,23 @@ void DatabaseExplorerWidget::handleSelectedSnippet(const QString &snip_id)
 	}
 	//Formatting the "name" attribute if it is not schema qualified
 	else if(attribs.count(Attributes::SCHEMA) &&
-			attribs.count(Attributes::NAME) &&
-			!attribs[Attributes::NAME].contains('.'))
+			attribs.count(Attributes::Name) &&
+			!attribs[Attributes::Name].contains('.'))
 	{
 		QString obj_name;
 
 		if(obj_type!=ObjectType::Operator)
-			obj_name=BaseObject::formatName(attribs[Attributes::NAME]);
+			obj_name=BaseObject::formatName(attribs[Attributes::Name]);
 		else
-			obj_name=attribs[Attributes::NAME];
+			obj_name=attribs[Attributes::Name];
 
-		attribs[Attributes::NAME]=BaseObject::formatName(attribs[Attributes::SCHEMA]) + QString(".") + obj_name;
+		attribs[Attributes::Name]=BaseObject::formatName(attribs[Attributes::SCHEMA]) + QString(".") + obj_name;
 	}
 
 	if(attribs.count(Attributes::SQL_OBJECT)==0)
 	{
 		attribs[Attributes::SQL_OBJECT]=BaseObject::getSQLName(obj_type);
-		attribs[Attributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_type);
+		attribs[Attributes::ObjectType]=BaseObject::getSchemaName(obj_type);
 	}
 
 	for(auto &attr : attribs)
@@ -1180,7 +1180,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		obj_name.remove(QRegExp("( )+(\\[)(.)+(\\])"));
 
 	//Formatting the names
-	attribs[Attributes::NAME]=BaseObject::formatName(obj_name, obj_type==ObjectType::Operator);
+	attribs[Attributes::Name]=BaseObject::formatName(obj_name, obj_type==ObjectType::Operator);
 	attribs[Attributes::TABLE]=BaseObject::formatName(item->data(DatabaseImportForm::ObjectTable, Qt::UserRole).toString());
 	attribs[Attributes::SCHEMA]=BaseObject::formatName(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString());
 
@@ -1188,17 +1188,17 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	if(obj_type!=ObjectType::Index && TableObject::isTableObject(obj_type))
 	{
 		attribs[Attributes::TABLE]=attribs[Attributes::SCHEMA] + QString(".") + attribs[Attributes::TABLE];
-		attribs[Attributes::SIGNATURE]=attribs[Attributes::NAME] + QString(" ON %1").arg(attribs[Attributes::TABLE]);
+		attribs[Attributes::SIGNATURE]=attribs[Attributes::Name] + QString(" ON %1").arg(attribs[Attributes::TABLE]);
 	}
 	//For operators and functions there must exist the signature attribute
 	else if(obj_type==ObjectType::Operator || obj_type==ObjectType::Function)
-		attribs[Attributes::SIGNATURE]=attribs[Attributes::SCHEMA] + QString(".") + attribs[Attributes::NAME] + QString("(%1)").arg(types.join(ElemSeparator));
+		attribs[Attributes::SIGNATURE]=attribs[Attributes::SCHEMA] + QString(".") + attribs[Attributes::Name] + QString("(%1)").arg(types.join(ElemSeparator));
 	else if(obj_type==ObjectType::Cast)
 		attribs[Attributes::SIGNATURE]=QString("(%1 AS %2)").arg(types[0]).arg(types[1]);
 	else if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
 	{
 		attribs_map aux_attribs=item->data(DatabaseImportForm::ObjectOtherData, Qt::UserRole).value<attribs_map>();
-		attribs[Attributes::SIGNATURE]=QString("%1 USING %2").arg(attribs[Attributes::NAME]).arg(aux_attribs[Attributes::IndexType]);
+		attribs[Attributes::SIGNATURE]=QString("%1 USING %2").arg(attribs[Attributes::Name]).arg(aux_attribs[Attributes::IndexType]);
 	}
 	else
 	{
@@ -1208,19 +1208,19 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		{
 			attribs_map aux_attribs=item->data(DatabaseImportForm::ObjectOtherData, Qt::UserRole).value<attribs_map>();
 
-			if(aux_attribs[Attributes::MATERIALIZED] == Attributes::True)
+			if(aux_attribs[Attributes::Materialized] == Attributes::True)
 			{
 				attribs[Attributes::SQL_OBJECT] =
-						QString("%1 %2").arg(Attributes::MATERIALIZED.toUpper())
+						QString("%1 %2").arg(Attributes::Materialized.toUpper())
 														.arg(BaseObject::getSQLName(ObjectType::View));
 			}
 		}
 
 		if(!attribs[Attributes::SCHEMA].isEmpty() &&
-				attribs[Attributes::NAME].indexOf(attribs[Attributes::SCHEMA] + QString(".")) < 0)
-			attribs[Attributes::SIGNATURE]=attribs[Attributes::SCHEMA] + QString(".") + attribs[Attributes::NAME];
+				attribs[Attributes::Name].indexOf(attribs[Attributes::SCHEMA] + QString(".")) < 0)
+			attribs[Attributes::SIGNATURE]=attribs[Attributes::SCHEMA] + QString(".") + attribs[Attributes::Name];
 		else
-			attribs[Attributes::SIGNATURE]=attribs[Attributes::NAME];
+			attribs[Attributes::SIGNATURE]=attribs[Attributes::Name];
 	}
 
 	return(attribs);
@@ -1493,13 +1493,13 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 						attribs_map ref_table, ref_schema;
 						QStringList tab_list;
 
-						ref_fks = catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{ Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[Attributes::OID])}});
+						ref_fks = catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{ Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[Attributes::Oid])}});
 
 						for(auto &fk : ref_fks)
 						{
 							ref_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::TABLE].toUInt());
 							ref_schema = catalog.getObjectAttributes(ObjectType::Schema, ref_table[Attributes::SCHEMA].toUInt());
-							tab_list.push_back(QString("%1.%2").arg(ref_schema[Attributes::NAME]).arg(ref_table[Attributes::NAME]));
+							tab_list.push_back(QString("%1.%2").arg(ref_schema[Attributes::Name]).arg(ref_table[Attributes::Name]));
 						}
 
 						if(!tab_list.isEmpty())
@@ -1606,7 +1606,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 
 				cached_attribs=item->data(DatabaseImportForm::ObjectOtherData,Qt::UserRole).value<attribs_map>();
 
-				if(cached_attribs[Attributes::OBJECT_TYPE]==BaseObject::getSchemaName(ObjectType::Constraint) &&  item->childCount()==0)
+				if(cached_attribs[Attributes::ObjectType]==BaseObject::getSchemaName(ObjectType::Constraint) &&  item->childCount()==0)
 				{
 					QTreeWidgetItem *fk_item=nullptr, *src_item=nullptr;
 
@@ -1653,7 +1653,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						}
 					}
 				}
-				else if(cached_attribs[Attributes::OBJECT_TYPE] == BaseObject::getSchemaName(ObjectType::Table) &&
+				else if(cached_attribs[Attributes::ObjectType] == BaseObject::getSchemaName(ObjectType::Table) &&
 								!cached_attribs[Attributes::REFERRERS].isEmpty() && item->childCount() == 5)
 				{
 					QTreeWidgetItem *refs_item=nullptr, *tab_item=nullptr;
@@ -1727,7 +1727,7 @@ void DatabaseExplorerWidget::finishObjectRename(void)
 			ObjectType obj_type=static_cast<ObjectType>(rename_item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 
 			objects_trw->closePersistentEditor(rename_item);
-			attribs[Attributes::NEW_NAME]=BaseObject::formatName(rename_item->text(0), obj_type==ObjectType::Operator);
+			attribs[Attributes::NewName]=BaseObject::formatName(rename_item->text(0), obj_type==ObjectType::Operator);
 
 			//Generate the drop command
 			schparser.ignoreEmptyAttributes(true);

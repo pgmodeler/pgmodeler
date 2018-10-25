@@ -27,12 +27,12 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	QString conf_ids[]={
 		Attributes::Global, //0
 		Attributes::Constraints, //1
-		Attributes::OBJ_SELECTION, //2
+		Attributes::ObjSelection, //2
 		Attributes::POSITION_INFO, //3
 		Attributes::POSITION_INFO, //4
-		Attributes::OBJECT_TYPE, //5
-		Attributes::LOCKER_ARC, //6
-		Attributes::LOCKER_BODY, //7
+		Attributes::ObjectType, //5
+		Attributes::LockerArc, //6
+		Attributes::LockerBody, //7
 		Attributes::TABLE_SCHEMA_NAME, //8
 		Attributes::TABLE_NAME, //9
 		Attributes::TABLE_BODY, //10
@@ -68,8 +68,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::FkColumn, //38
 		Attributes::UQ_COLUMN, //39
 		Attributes::UQ_COLUMN, //40
-		Attributes::NN_COLUMN, //41
-		Attributes::NN_COLUMN, //42
+		Attributes::NnColumn, //41
+		Attributes::NnColumn, //42
 		Attributes::RELATIONSHIP, //43
 		Attributes::Label, //44
 		Attributes::Label, //45

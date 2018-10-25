@@ -658,12 +658,12 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				db_item=new QTreeWidgetItem;
 				db_item->setText(0, import_helper.getCurrentDatabase());
 				db_item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(ObjectType::Database)));
-				attribs=catalog.getObjectsAttributes(ObjectType::Database, QString(), QString(), {}, {{Attributes::NAME, import_helper.getCurrentDatabase()}});
+				attribs=catalog.getObjectsAttributes(ObjectType::Database, QString(), QString(), {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
-				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::OID).toUInt());
+				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
 				db_item->setData(ObjectTypeId, Qt::UserRole, ~ObjectType::Database);
 
-				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(Attributes::OID)));
+				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(Attributes::Oid)));
 				tree_wgt->addTopLevelItem(db_item);
 			}
 
@@ -787,16 +787,16 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
 			for(attribs_map &attribs : objects_vect)
 			{
-				obj_type=static_cast<ObjectType>(attribs[Attributes::OBJECT_TYPE].toUInt());
+				obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 				group=gen_groups[obj_type];
 				group->setData(ObjectCount, Qt::UserRole,
 											 group->data(ObjectCount, Qt::UserRole).toUInt() + 1);
 
 				//Creates individual items for each object of the current type
-				oid=attribs[Attributes::OID].toUInt();
+				oid=attribs[Attributes::Oid].toUInt();
 
-				attribs[Attributes::NAME].remove(QRegExp(QString("( )(without)( time zone)")));
-				label=name=attribs[Attributes::NAME];
+				attribs[Attributes::Name].remove(QRegExp(QString("( )(without)( time zone)")));
+				label=name=attribs[Attributes::Name];
 
 				//Removing the trailing type string from op. families or op. classes names
 				if(obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass)
@@ -810,8 +810,8 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				item=new QTreeWidgetItem(group);
 				item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 				item->setText(0, label);
-				item->setText(ObjectId, attribs[Attributes::OID].rightJustified(10, '0'));
-				item->setData(ObjectId, Qt::UserRole, attribs[Attributes::OID].toUInt());
+				item->setText(ObjectId, attribs[Attributes::Oid].rightJustified(10, '0'));
+				item->setData(ObjectId, Qt::UserRole, attribs[Attributes::Oid].toUInt());
 				item->setData(ObjectName, Qt::UserRole, name);
 
 				if(checkable_items)

@@ -120,12 +120,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeCompletion]=QString();
 	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=QString();
-	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=QString();
-	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=QString();
-	config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]=QString();
+	config_params[Attributes::Configuration][Attributes::LineNumbersColor]=QString();
+	config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=QString();
+	config_params[Attributes::Configuration][Attributes::LineHighlightColor]=QString();
 	config_params[Attributes::Configuration][Attributes::HighlightLines]=QString();
 	config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=QString();
-	config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY]=QString();
+	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString();
 	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString();
 	config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]=QString();
 	config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=QString();
@@ -304,7 +304,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::PORTRAIT);
 		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::Landscape);
 
-		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY].toUInt());
+		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MinObjectOpacity].toUInt());
 
 		margin=config_params[Attributes::Configuration][Attributes::PAPER_MARGIN].split(',');
 		custom_size=config_params[Attributes::Configuration][Attributes::PAPER_CUSTOM_SIZE].split(',');
@@ -325,9 +325,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 		font_size_spb->setValue(config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble());
 		disp_line_numbers_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]==Attributes::True);
 		hightlight_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::HighlightLines]==Attributes::True);
-		line_numbers_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]);
-		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]);
-		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]);
+		line_numbers_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersColor]);
+		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]);
+		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineHighlightColor]);
 
 		source_editor_edt->setText(config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]);
 		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_ARGS]);
@@ -351,7 +351,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 			w = itr.second[Attributes::WIDTH].toInt();
 			h = itr.second[Attributes::Height].toInt();
 			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
-			widgets_geom[itr.first].maximized = itr.second[Attributes::MAXIMIZED] == Attributes::True;
+			widgets_geom[itr.first].maximized = itr.second[Attributes::Maximized] == Attributes::True;
 		  }
 		}
 
@@ -480,7 +480,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
-		config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
+		config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
 		config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
 		config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
@@ -512,9 +512,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=line_numbers_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
-		config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]=line_highlight_cp->getColor(0).name();
+		config_params[Attributes::Configuration][Attributes::LineNumbersColor]=line_numbers_cp->getColor(0).name();
+		config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
+		config_params[Attributes::Configuration][Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 
 		config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]=source_editor_edt->text();
 		config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_ARGS]=source_editor_args_edt->text();
@@ -549,7 +549,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			else if(itr->first==Attributes::VALIDATOR ||
-					itr->first==Attributes::OBJECT_FINDER ||
+					itr->first==Attributes::ObjectFinder ||
 					itr->first==Attributes::SQL_TOOL)
 			{
 				schparser.ignoreUnkownAttributes(true);
@@ -572,7 +572,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 			attribs[Attributes::Y_POS] = QString::number(itr.second.geometry.top());
 			attribs[Attributes::WIDTH] = QString::number(itr.second.geometry.width());
 			attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
-			attribs[Attributes::MAXIMIZED] = itr.second.maximized ? Attributes::True : QString();
+			attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
 
 			schparser.ignoreUnkownAttributes(true);
 			config_params[Attributes::Configuration][Attributes::WIDGETS_GEOMETRY]+=

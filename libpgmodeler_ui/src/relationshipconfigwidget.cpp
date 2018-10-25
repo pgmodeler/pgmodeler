@@ -98,10 +98,10 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		vector<QString> key_attribs={Attributes::TYPE};
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, key_attribs);
 
-		fk_to_pk_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::ConnectFkToPk);
-		center_pnts_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::ConnectCenterPnts);
-		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::ConnectTableEdges);
-		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::CrowsFoot);
+		fk_to_pk_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectFkToPk);
+		center_pnts_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectCenterPnts);
+		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectTableEdges);
+		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::CrowsFoot);
 
 		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
@@ -145,27 +145,27 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 
 		if(crows_foot_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::MODE]=Attributes::CrowsFoot;
+			config_params[Attributes::Connection][Attributes::Mode]=Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::MODE]=Attributes::ConnectFkToPk;
+			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectFkToPk;
 		else if(tab_edges_rb->isChecked())
-			config_params[Attributes::Connection][Attributes::MODE]=Attributes::ConnectTableEdges;
+			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectTableEdges;
 		else
-			config_params[Attributes::Connection][Attributes::MODE]=Attributes::ConnectCenterPnts;
+			config_params[Attributes::Connection][Attributes::Mode]=Attributes::ConnectCenterPnts;
 
 		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
 		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
 		config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
 		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
-		config_params[Attributes::NAME_PATTERNS][Attributes::PATTERNS]=QString();
+		config_params[Attributes::NamePatterns][Attributes::PATTERNS]=QString();
 
 		for(auto &itr : patterns)
 		{
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
 			config_params[itr.first]=itr.second;
-			config_params[Attributes::NAME_PATTERNS][Attributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
+			config_params[Attributes::NamePatterns][Attributes::PATTERNS]+=schparser.getCodeDefinition(patterns_sch, itr.second);
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::RelationshipsConf, config_params);

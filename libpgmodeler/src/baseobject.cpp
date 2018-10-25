@@ -82,7 +82,7 @@ BaseObject::BaseObject(void)
 	tablespace=nullptr;
 	database=nullptr;
 	collation=nullptr;
-	attributes[Attributes::NAME]=QString();
+	attributes[Attributes::Name]=QString();
 	attributes[Attributes::Alias]=QString();
 	attributes[Attributes::Comment]=QString();
 	attributes[Attributes::OWNER]=QString();
@@ -674,8 +674,8 @@ bool BaseObject::isSystemObject(void)
 
 void BaseObject::setBasicAttributes(bool format_name)
 {
-	if(attributes[Attributes::NAME].isEmpty())
-		attributes[Attributes::NAME]=this->getName(format_name);
+	if(attributes[Attributes::Name].isEmpty())
+		attributes[Attributes::Name]=this->getName(format_name);
 
 	if(attributes[Attributes::Alias].isEmpty())
 		attributes[Attributes::Alias]=this->getAlias();
@@ -1200,9 +1200,9 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 
 		if(!ignore_name_diff && this->getName()!=object->getName())
 		{
-			attributes[Attributes::NEW_NAME]=object->getName(true, false);
+			attributes[Attributes::NewName]=object->getName(true, false);
 			alter+=BaseObject::getAlterDefinition(Attributes::RENAME, attributes, true);
-			attributes[Attributes::NAME]=attributes[Attributes::NEW_NAME];
+			attributes[Attributes::Name]=attributes[Attributes::NewName];
 			attributes[Attributes::SIGNATURE]=object->getSignature(true);
 		}
 

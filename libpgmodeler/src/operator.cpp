@@ -37,12 +37,12 @@ Operator::Operator(void)
 	attributes[Attributes::LeftType]=QString();
 	attributes[Attributes::RIGHT_TYPE]=QString();
 	attributes[Attributes::CommutatorOp]=QString();
-	attributes[Attributes::NEGATOR_OP]=QString();
+	attributes[Attributes::NegatorOp]=QString();
 	attributes[Attributes::RESTRICTION_FUNC]=QString();
 	attributes[Attributes::JoinFunc]=QString();
 	attributes[Attributes::OPERATOR_FUNC]=QString();
 	attributes[Attributes::Hashes]=QString();
-	attributes[Attributes::MERGES]=QString();
+	attributes[Attributes::Merges]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	attributes[Attributes::REF_TYPE]=QString();
 }
@@ -282,7 +282,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	unsigned i;
 	QString type_attribs[]={Attributes::LeftType, Attributes::RIGHT_TYPE},
 			op_attribs[]={ Attributes::CommutatorOp,
-						   Attributes::NEGATOR_OP },
+						   Attributes::NegatorOp },
 
 			func_attribs[]={Attributes::OPERATOR_FUNC,
 							Attributes::JoinFunc,
@@ -331,7 +331,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 
 	attributes[Attributes::Hashes]=(hashes ? Attributes::True : QString());
-	attributes[Attributes::MERGES]=(merges ? Attributes::True : QString());
+	attributes[Attributes::Merges]=(merges ? Attributes::True : QString());
 	attributes[Attributes::SIGNATURE]=getSignature();
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

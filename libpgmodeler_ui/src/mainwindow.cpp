@@ -1838,13 +1838,13 @@ void MainWindow::storeDockWidgetsSettings(void)
 	conf_wgt->addConfigurationParam(Attributes::VALIDATOR, params);
 	params.clear();
 
-	params[Attributes::OBJECT_FINDER]=Attributes::True;
+	params[Attributes::ObjectFinder]=Attributes::True;
 	params[Attributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
-	conf_wgt->addConfigurationParam(Attributes::OBJECT_FINDER, params);
+	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
 	params.clear();
 
 	params[Attributes::SQL_TOOL]=Attributes::True;
@@ -1866,13 +1866,13 @@ void MainWindow::restoreDockWidgetsSettings(void)
 		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PGSQL_VERSION]);
 	}
 
-	if(confs.count(Attributes::OBJECT_FINDER))
+	if(confs.count(Attributes::ObjectFinder))
 	{
-		obj_finder_wgt->select_btn->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::SELECT_OBJECTS]==Attributes::True);
-		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::FadeInObjects]==Attributes::True);
-		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::REGULAR_EXP]==Attributes::True);
-		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::CaseSensitive]==Attributes::True);
-		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::ExactMatch]==Attributes::True);
+		obj_finder_wgt->select_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::SELECT_OBJECTS]==Attributes::True);
+		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::FadeInObjects]==Attributes::True);
+		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::REGULAR_EXP]==Attributes::True);
+		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::CaseSensitive]==Attributes::True);
+		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::ExactMatch]==Attributes::True);
 	}
 
 	if(confs.count(Attributes::SQL_TOOL))

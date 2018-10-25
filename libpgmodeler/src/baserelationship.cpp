@@ -330,7 +330,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	QString str_aux,
 			label_attribs[3]={ Attributes::SRC_LABEL,
 							   Attributes::DstLabel,
-							   Attributes::NAME_LABEL};
+							   Attributes::NameLabel};
 
 
 	attributes[Attributes::TYPE]=getRelTypeAttribute();

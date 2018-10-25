@@ -49,8 +49,8 @@ Trigger::Trigger(void)
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::Constraint]=QString();
-	attributes[Attributes::OLD_TABLE_NAME]=QString();
-	attributes[Attributes::NEW_TABLE_NAME]=QString();
+	attributes[Attributes::OldTableName]=QString();
+	attributes[Attributes::NewTableName]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -424,13 +424,13 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 
 	if(def_type == SchemaParser::XmlDefinition)
 	{
-		attributes[Attributes::OLD_TABLE_NAME]=transition_tabs_names[OldTableName];
-		attributes[Attributes::NEW_TABLE_NAME]=transition_tabs_names[NewTableName];
+		attributes[Attributes::OldTableName]=transition_tabs_names[OldTableName];
+		attributes[Attributes::NewTableName]=transition_tabs_names[NewTableName];
 	}
 	else
 	{
-		attributes[Attributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OldTableName]);
-		attributes[Attributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NewTableName]);
+		attributes[Attributes::OldTableName]=BaseObject::formatName(transition_tabs_names[OldTableName]);
+		attributes[Attributes::NewTableName]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

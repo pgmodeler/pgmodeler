@@ -149,6 +149,6 @@ void TextboxView::configureObjectSelection(void)
 
 	pol_item->setPolygon(box->polygon());
 	pol_item->setPos(0,0);
-	pol_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 }

@@ -253,7 +253,7 @@ void BaseObjectView::loadObjectsStyle(void)
 						(itr->second).setFont(font);
 						(itr->second).setForeground(QColor(attribs[Attributes::Color]));
 					}
-					else if(elem==Attributes::OBJECT)
+					else if(elem==Attributes::Object)
 					{
 						list=attribs[Attributes::FillColor].split(',');
 
@@ -343,7 +343,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 
 		if(!colors.empty())
 		{
-			if(id==Attributes::OBJ_SELECTION || id==Attributes::PLACEHOLDER)
+			if(id==Attributes::ObjSelection || id==Attributes::PLACEHOLDER)
 			{
 				colors[0].setAlpha(ObjectAlphaChannel);
 				colors[1].setAlpha(ObjectAlphaChannel);
@@ -369,7 +369,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 
 		if(!colors.empty())
 		{
-			if(id==Attributes::OBJ_SELECTION)
+			if(id==Attributes::ObjSelection)
 				colors[2].setAlpha(ObjectAlphaChannel);
 
 			pen.setWidthF(ObjectBorderWidth);
@@ -532,8 +532,8 @@ void BaseObjectView::configureObjectSelection(void)
 		rect_item->setRect(this->boundingRect());
 		rect_item->setPos(0,0);
 		rect_item->setBorderRadius(5);
-		rect_item->setBrush(this->getFillStyle(Attributes::OBJ_SELECTION));
-		rect_item->setPen(this->getBorderStyle(Attributes::OBJ_SELECTION));
+		rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+		rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 	}
 }
 
@@ -562,8 +562,8 @@ void BaseObjectView::configureProtectedIcon(void)
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
-		pol_item->setBrush(this->getFillStyle(Attributes::LOCKER_ARC));
-		pol_item->setPen(this->getBorderStyle(Attributes::LOCKER_ARC));
+		pol_item->setBrush(this->getFillStyle(Attributes::LockerArc));
+		pol_item->setPen(this->getBorderStyle(Attributes::LockerArc));
 
 		pol.clear();
 		pol.append(QPointF(1,5));  pol.append(QPointF(10,5));
@@ -577,8 +577,8 @@ void BaseObjectView::configureProtectedIcon(void)
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);
-		pol_item->setBrush(this->getFillStyle(Attributes::LOCKER_BODY));
-		pol_item->setPen(this->getBorderStyle(Attributes::LOCKER_BODY));
+		pol_item->setBrush(this->getFillStyle(Attributes::LockerBody));
+		pol_item->setPen(this->getBorderStyle(Attributes::LockerBody));
 	}
 }
 

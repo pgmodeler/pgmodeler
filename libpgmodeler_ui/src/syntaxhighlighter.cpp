@@ -430,7 +430,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 						if(elem==Attributes::Group)
 						{
 							xmlparser.getElementAttributes(attribs);
-							group=attribs[Attributes::NAME];
+							group=attribs[Attributes::Name];
 
 							/* If the parser is on the group declaration block and not in the build block
 								 some validations are made. */
@@ -488,8 +488,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								else
 									bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
 
-								if(!attribs[Attributes::LOOKAHEAD_CHAR].isEmpty())
-									lookahead_char[group]=attribs[Attributes::LOOKAHEAD_CHAR][0];
+								if(!attribs[Attributes::LookaheadChar].isEmpty())
+									lookahead_char[group]=attribs[Attributes::LookaheadChar][0];
 
 								format.setFontFamily(default_font.family());
 								format.setFontPointSize(default_font.pointSizeF());

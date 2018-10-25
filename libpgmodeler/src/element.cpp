@@ -97,7 +97,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::OP_CLASS]=QString();
 	attributes[Attributes::USE_SORTING]=(this->sorting_enabled ? Attributes::True : QString());
-	attributes[Attributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
+	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
 	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : QString());
 
 

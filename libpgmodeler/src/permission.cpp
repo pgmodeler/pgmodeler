@@ -41,7 +41,7 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=ObjectType::Permission;
 	revoke=cascade=false;
 
-	attributes[Attributes::OBJECT]=QString();
+	attributes[Attributes::Object]=QString();
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::PARENT]=QString();
 	attributes[Attributes::GrantOp]=QString();
@@ -434,11 +434,11 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	if(obj_type==ObjectType::Column)
 	{
-		attributes[Attributes::OBJECT]=object->getName(true);
+		attributes[Attributes::Object]=object->getName(true);
 		attributes[Attributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
 	}
 	else
-		attributes[Attributes::OBJECT]=object->getSignature();
+		attributes[Attributes::Object]=object->getSignature();
 
 	if(def_type==SchemaParser::XmlDefinition)
 	{

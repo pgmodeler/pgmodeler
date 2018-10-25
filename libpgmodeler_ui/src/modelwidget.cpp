@@ -174,11 +174,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	magnifier_frm->setCursor(Qt::CrossCursor);
 
 	QColor c1, c2;
-	BaseObjectView::getFillStyle(Attributes::OBJ_SELECTION, c1, c2);
+	BaseObjectView::getFillStyle(Attributes::ObjSelection, c1, c2);
 	c1.setAlpha(50);
 	magnifier_frm->setStyleSheet(QString("background-color: %1; border: 1px solid %2;")
 															 .arg(c1.name(QColor::HexArgb))
-															 .arg(BaseObjectView::getBorderStyle(Attributes::OBJ_SELECTION).color().name(QColor::HexArgb)));
+															 .arg(BaseObjectView::getBorderStyle(Attributes::ObjSelection).color().name(QColor::HexArgb)));
 
 	magnifier_area_lbl = new QLabel(this);
 	magnifier_area_lbl->raise();

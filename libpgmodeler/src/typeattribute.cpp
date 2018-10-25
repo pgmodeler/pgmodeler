@@ -40,9 +40,9 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[Attributes::NAME]=BaseObject::formatName(obj_name);
+		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
 	else
-		attributes[Attributes::NAME]=obj_name;
+		attributes[Attributes::Name]=obj_name;
 
 	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
 

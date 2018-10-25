@@ -29,7 +29,7 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::InhColumns]=QString();
 	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::OIDS]=QString();
+	attributes[Attributes::Oids]=QString();
 	attributes[Attributes::ColsComment]=QString();
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
@@ -164,7 +164,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : QString());
 		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
 		attribs[Attributes::TABLE]=this->getName(true);
-		attribs[Attributes::NAME]=tab_obj->getName(true);
+		attribs[Attributes::Name]=tab_obj->getName(true);
 		attribs[Attributes::Comment]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
 
 		schparser.ignoreUnkownAttributes(true);
@@ -203,12 +203,12 @@ void Table::setRelObjectsIndexesAttribute(void)
 		{
 			for(auto &obj_idx : (*obj_indexes[idx]))
 			{
-				aux_attribs[Attributes::NAME]=obj_idx.first;
+				aux_attribs[Attributes::Name]=obj_idx.first;
 				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
-				aux_attribs[Attributes::OBJECTS]+=schparser.getCodeDefinition(Attributes::OBJECT, aux_attribs, SchemaParser::XmlDefinition);
+				aux_attribs[Attributes::Objects]+=schparser.getCodeDefinition(Attributes::Object, aux_attribs, SchemaParser::XmlDefinition);
 			}
 
-			aux_attribs[Attributes::OBJECT_TYPE]=BaseObject::getSchemaName(obj_types[idx]);
+			aux_attribs[Attributes::ObjectType]=BaseObject::getSchemaName(obj_types[idx]);
 			attributes[attribs[idx]]=schparser.getCodeDefinition(Attributes::CustomIdxs, aux_attribs, SchemaParser::XmlDefinition);
 			aux_attribs.clear();
 		}
@@ -1593,7 +1593,7 @@ void Table::updateAlterCmdsStatus(void)
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
-	attributes[Attributes::OIDS]=(with_oid ? Attributes::True : QString());
+	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
 	attributes[Attributes::UNLOGGED]=(unlogged ? Attributes::True : QString());
 	attributes[Attributes::RLS_ENABLED]=(rls_enabled ? Attributes::True : QString());
@@ -1635,7 +1635,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 		setPositionAttribute();
 		setFadedOutAttribute();
 		attributes[Attributes::InitialData]=initial_data;
-		attributes[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 	else
 		attributes[Attributes::InitialData]=getInitialDataCommands();
@@ -1881,7 +1881,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map attribs;
 
-		attribs[Attributes::OIDS]=QString();
+		attribs[Attributes::Oids]=QString();
 		attribs[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())
@@ -1889,7 +1889,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::HasChanges]=Attributes::True;
 
 			if(this->with_oid!=tab->with_oid)
-				attribs[Attributes::OIDS]=(tab->with_oid ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::Oids]=(tab->with_oid ? Attributes::True : Attributes::UNSET);
 
 			if(this->unlogged!=tab->unlogged)
 				attribs[Attributes::UNLOGGED]=(tab->unlogged ? Attributes::True : Attributes::UNSET);
