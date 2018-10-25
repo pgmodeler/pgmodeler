@@ -103,13 +103,13 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		tab_edges_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::ConnectTableEdges);
 		crows_foot_rb->setChecked(config_params[Attributes::Connection][Attributes::MODE]==Attributes::CrowsFoot);
 
-		deferrable_chk->setChecked(config_params[Attributes::FOREIGN_KEYS][Attributes::DEFERRABLE]==Attributes::True);
-		deferral_cmb->setCurrentText(config_params[Attributes::FOREIGN_KEYS][Attributes::DEFER_TYPE]);
+		deferrable_chk->setChecked(config_params[Attributes::FOREIGN_KEYS][Attributes::Deferrable]==Attributes::True);
+		deferral_cmb->setCurrentText(config_params[Attributes::FOREIGN_KEYS][Attributes::DeferType]);
 
 		idx=upd_action_cmb->findText(config_params[Attributes::FOREIGN_KEYS][Attributes::UPD_ACTION]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		idx=del_action_cmb->findText(config_params[Attributes::FOREIGN_KEYS][Attributes::DEL_ACTION]);
+		idx=del_action_cmb->findText(config_params[Attributes::FOREIGN_KEYS][Attributes::DelAction]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		patterns[Attributes::RELATIONSHIP_11]=config_params[Attributes::RELATIONSHIP_11];
@@ -153,10 +153,10 @@ void RelationshipConfigWidget::saveConfiguration(void)
 		else
 			config_params[Attributes::Connection][Attributes::MODE]=Attributes::ConnectCenterPnts;
 
-		config_params[Attributes::FOREIGN_KEYS][Attributes::DEFERRABLE]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
-		config_params[Attributes::FOREIGN_KEYS][Attributes::DEFER_TYPE]=deferral_cmb->currentText();
+		config_params[Attributes::FOREIGN_KEYS][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
+		config_params[Attributes::FOREIGN_KEYS][Attributes::DeferType]=deferral_cmb->currentText();
 		config_params[Attributes::FOREIGN_KEYS][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
-		config_params[Attributes::FOREIGN_KEYS][Attributes::DEL_ACTION]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
+		config_params[Attributes::FOREIGN_KEYS][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
 		config_params[Attributes::NAME_PATTERNS][Attributes::PATTERNS]=QString();
 
@@ -214,8 +214,8 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 									 pk_col_pattern_txt };
 
 	QList<QString> pattern_ids={ Attributes::PK_PATTERN,  Attributes::UQ_PATTERN,
-								 Attributes::SRC_COL_PATTERN, Attributes::DST_COL_PATTERN,
-								 Attributes::SRC_FK_PATTERN, Attributes::DST_FK_PATTERN,
+								 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern,
+								 Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
 								 Attributes::PK_COL_PATTERN };
 
 	relnn=(rel_type==Attributes::RELATIONSHIP_NN);
@@ -255,9 +255,9 @@ void RelationshipConfigWidget::updatePattern(void)
 	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PK_PATTERN },
 												{ uq_pattern_txt, Attributes::UQ_PATTERN },
 												{ src_col_pattern_txt, Attributes::SRC_COL_PATTERN },
-												{ dst_col_pattern_txt, Attributes::DST_COL_PATTERN },
+												{ dst_col_pattern_txt, Attributes::DstColPattern },
 												{ src_fk_pattern_txt, Attributes::SRC_FK_PATTERN   },
-												{ dst_fk_pattern_txt, Attributes::DST_FK_PATTERN   },
+												{ dst_fk_pattern_txt, Attributes::DstFkPattern   },
 												{ pk_col_pattern_txt, Attributes::PK_COL_PATTERN   } };
 
 	setConfigurationChanged(true);

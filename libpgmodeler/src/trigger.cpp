@@ -33,21 +33,21 @@ Trigger::Trigger(void)
 		events[tipos[i]]=false;
 
 	attributes[Attributes::Arguments]=QString();
-	attributes[Attributes::EVENTS]=QString();
+	attributes[Attributes::Events]=QString();
 	attributes[Attributes::TRIGGER_FUNC]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::FIRING_TYPE]=QString();
 	attributes[Attributes::PER_ROW]=QString();
 	attributes[Attributes::INS_EVENT]=QString();
-	attributes[Attributes::DEL_EVENT]=QString();
+	attributes[Attributes::DelEvent]=QString();
 	attributes[Attributes::UPD_EVENT]=QString();
 	attributes[Attributes::TRUNC_EVENT]=QString();
 	attributes[Attributes::Condition]=QString();
 	attributes[Attributes::REF_TABLE]=QString();
-	attributes[Attributes::DEFER_TYPE]=QString();
-	attributes[Attributes::DEFERRABLE]=QString();
-	attributes[Attributes::DECL_IN_TABLE]=QString();
+	attributes[Attributes::DeferType]=QString();
+	attributes[Attributes::Deferrable]=QString();
+	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::Constraint]=QString();
 	attributes[Attributes::OLD_TABLE_NAME]=QString();
 	attributes[Attributes::NEW_TABLE_NAME]=QString();
@@ -346,7 +346,7 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
-			attribs[4]={Attributes::INS_EVENT, Attributes::DEL_EVENT,
+			attribs[4]={Attributes::INS_EVENT, Attributes::DelEvent,
 						Attributes::TRUNC_EVENT, Attributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
@@ -382,7 +382,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition && !attributes[Attributes::Columns].isEmpty())
 		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
 
-	attributes[Attributes::EVENTS]=str_aux;
+	attributes[Attributes::Events]=str_aux;
 
 	if(function)
 	{
@@ -403,7 +403,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[Attributes::DECL_IN_TABLE]=Attributes::True;
+		attributes[Attributes::DeclInTable]=Attributes::True;
 
 	if(getParentTable())
 		attributes[Attributes::TABLE]=getParentTable()->getName(true);
@@ -419,8 +419,8 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(referenced_table)
 		attributes[Attributes::REF_TABLE]=referenced_table->getName(true);
 
-	attributes[Attributes::DEFERRABLE]=(is_deferrable ? Attributes::True : QString());
-	attributes[Attributes::DEFER_TYPE]=(~deferral_type);
+	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : QString());
+	attributes[Attributes::DeferType]=(~deferral_type);
 
 	if(def_type == SchemaParser::XmlDefinition)
 	{

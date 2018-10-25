@@ -23,7 +23,7 @@ unsigned Tablespace::tabspace_id=1000;
 Tablespace::Tablespace(void)
 {
 	obj_type=ObjectType::Tablespace;
-	attributes[Attributes::DIRECTORY]=QString();
+	attributes[Attributes::Directory]=QString();
 	object_id=Tablespace::tabspace_id++;
 }
 
@@ -64,7 +64,7 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	if(!directory.isEmpty())
-		attributes[Attributes::DIRECTORY]=QString("'") + directory + QString("'");
+		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

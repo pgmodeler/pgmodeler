@@ -678,7 +678,7 @@ void PgModelerCli::extractObjectXML(void)
 	QFile input;
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
-	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DB_MODEL)),
+	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
 			default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)")),
 
 			//[schema].[func_name](...OUT [type]...)
@@ -711,7 +711,7 @@ void PgModelerCli::extractObjectXML(void)
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
 		buf.remove(0, buf.indexOf(QString("\n")));
-		buf.remove(QString("<\\%1>").arg(Attributes::DB_MODEL));
+		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
 		ts.setString(&buf);
 
 		//Extracts the objects xml line by line
@@ -1024,7 +1024,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	}
 
 	//Remove recheck attribute from <element> tags.
-	if(obj_xml.contains(TagExpr.arg(Attributes::ELEMENT)))
+	if(obj_xml.contains(TagExpr.arg(Attributes::Element)))
 		obj_xml.remove(QRegExp(AttributeExpr.arg(QString("recheck"))));
 
 	//Remove values greater-op, less-op, sort-op or sort2-op from ref-type attribute from <operator> tags.
@@ -1073,7 +1073,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Renaming the attribute default to default-value on domain
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Domain))))
-		obj_xml.replace(Attributes::DEFAULT, Attributes::DEFAULT_VALUE);
+		obj_xml.replace(Attributes::Default, Attributes::DefaultValue);
 
 	//Renaming the tag <grant> to <permission>
 	if(obj_xml.contains(TagExpr.arg(QString("grant"))))
@@ -1115,7 +1115,7 @@ void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Index))) ||
 			obj_xml.contains(QRegExp(QString("(%1)(.)+(type=)(\")(%2)(\")")
 									 .arg(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Constraint)))
-									 .arg(Attributes::EX_CONSTR))))
+									 .arg(Attributes::ExConstr))))
 		ref_obj_type=ObjectType::OpClass;
 	else if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::OpClass))))
 		ref_obj_type=ObjectType::OpFamily;
@@ -1493,15 +1493,15 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 {
 	bool found=false;
 	static vector<QString> attribs={ Attributes::RELATIONSHIP,
-									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DST_REQUIRED,
-									 Attributes::SRC_TABLE, Attributes::DST_TABLE,	Attributes::POINTS,
+									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DstRequired,
+									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::POINTS,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
 									 Attributes::LABEL, Attributes::LINE, Attributes::POSITION,
-									 Attributes::IDENTIFIER, Attributes::DEFERRABLE, Attributes::DEFER_TYPE,
+									 Attributes::IDENTIFIER, Attributes::Deferrable, Attributes::DeferType,
 									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
-									 Attributes::SRC_COL_PATTERN, Attributes::DST_COL_PATTERN, Attributes::PK_PATTERN,
-									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DST_FK_PATTERN };
+									 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern, Attributes::PK_PATTERN,
+									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);

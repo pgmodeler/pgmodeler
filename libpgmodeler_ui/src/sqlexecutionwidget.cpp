@@ -448,8 +448,8 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 		else
 			fmt_cmd += QString("-- %1 %2\n").arg(trUtf8("Rows:")).arg(rows);
 
-		if(!fmt_cmd.trimmed().endsWith(Attributes::DDL_END_TOKEN))
-			fmt_cmd += Attributes::DDL_END_TOKEN + QChar('\n');
+		if(!fmt_cmd.trimmed().endsWith(Attributes::DdlEndToken))
+			fmt_cmd += Attributes::DdlEndToken + QChar('\n');
 
 		SQLExecutionWidget::validateSQLHistoryLength(sql_cmd_conn.getConnectionId(true,true), fmt_cmd, cmd_history_txt);
 	}
@@ -468,7 +468,7 @@ void SQLExecutionWidget::validateSQLHistoryLength(const QString &conn_id, const 
 	{
 		QStringList buffer = cmds.split(QChar('\n'));
 		cmds = buffer.mid(buffer.size()/2).join(QChar('\n'));
-		cmds = cmds.mid(cmds.indexOf(Attributes::DDL_END_TOKEN) + Attributes::DDL_END_TOKEN.length());
+		cmds = cmds.mid(cmds.indexOf(Attributes::DdlEndToken) + Attributes::DdlEndToken.length());
 		cmd_history[conn_id] = cmds.trimmed();
 
 		if(cmd_history_txt)

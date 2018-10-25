@@ -101,7 +101,7 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::PARAM_IN]=(is_in ? Attributes::True : QString());
 	attributes[Attributes::PARAM_OUT]=(is_out ? Attributes::True : QString());
 	attributes[Attributes::PARAM_VARIADIC]=(is_variadic ? Attributes::True : QString());
-	attributes[Attributes::DEFAULT_VALUE]=default_value;
+	attributes[Attributes::DefaultValue]=default_value;
 	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));

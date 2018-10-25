@@ -42,7 +42,7 @@ void RoleTest::alterCommandEndsWithSemiColon(void)
   role2.setOption(Role::OpLogin, false);
 
   alter_cmd=role1.getAlterDefinition(&role2);
-  alter_cmd.remove(QString("\n%1\n").arg(Attributes::DDL_END_TOKEN));
+  alter_cmd.remove(QString("\n%1\n").arg(Attributes::DdlEndToken));
   QCOMPARE(alter_cmd.endsWith(";"), true);
 }
 

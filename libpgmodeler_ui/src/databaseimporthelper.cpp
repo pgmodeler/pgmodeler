@@ -677,7 +677,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				  dbmodel->getObjectIndex(obj_name, obj_type) < 0)))
 		{
 			if(TableObject::isTableObject(obj_type))
-				attribs[Attributes::DECL_IN_TABLE]=QString();
+				attribs[Attributes::DeclInTable]=QString();
 
 			//System objects will have the sql disabled by default
 			attribs[Attributes::SQL_DISABLED]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : QString());
@@ -1012,7 +1012,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 			expr.remove(expr.length() - 1,1);
 			aux_attribs[Attributes::EXPRESSION] = expr;
 
-			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, SchemaParser::XmlDefinition);
+			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
 		}
 
 		attribs[Attributes::TYPE]=getType(attribs[Attributes::TYPE], true, attribs);
@@ -1143,8 +1143,8 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		//Case the function's language is C the symbol is the 'definition' attribute
 		if(getObjectName(attribs[Attributes::LANGUAGE])==~LanguageType("c"))
 		{
-			attribs[Attributes::SYMBOL]=attribs[Attributes::DEFINITION];
-			attribs[Attributes::DEFINITION]=QString();
+			attribs[Attributes::SYMBOL]=attribs[Attributes::Definition];
+			attribs[Attributes::Definition]=QString();
 		}
 
 		//Get the language reference code
@@ -1247,14 +1247,14 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		if(attribs[Attributes::STORAGE]!=QString("0"))
 		{
 			elem_attr[Attributes::STORAGE]=Attributes::True;
-			elem_attr[Attributes::DEFINITION]=getType(attribs[Attributes::STORAGE], true);
+			elem_attr[Attributes::Definition]=getType(attribs[Attributes::STORAGE], true);
 			elems.push_back(elem_attr);
 		}
 		else if(attribs[Attributes::FUNCTION].isEmpty() &&
 				attribs[Attributes::OPERATOR].isEmpty())
 		{
 			elem_attr[Attributes::STORAGE]=Attributes::True;
-			elem_attr[Attributes::DEFINITION]=attribs[Attributes::TYPE];
+			elem_attr[Attributes::Definition]=attribs[Attributes::TYPE];
 			elems.push_back(elem_attr);
 		}
 
@@ -1269,7 +1269,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			{
 				list=array_vals[i].split(':');
 				elem_attr[Attributes::STRATEGY_NUM]=list[0];
-				elem_attr[Attributes::DEFINITION]=getDependencyObject(list[1], ObjectType::Function, true);
+				elem_attr[Attributes::Definition]=getDependencyObject(list[1], ObjectType::Function, true);
 				elems.push_back(elem_attr);
 			}
 		}
@@ -1284,10 +1284,10 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			for(int i=0; i < array_vals.size(); i++)
 			{
 				list=array_vals[i].split(':');
-				elem_attr[Attributes::DEFINITION]="";
+				elem_attr[Attributes::Definition]="";
 				elem_attr[Attributes::STRATEGY_NUM]=list[0];
-				elem_attr[Attributes::DEFINITION]+=getDependencyObject(list[1], ObjectType::Operator, true);
-				elem_attr[Attributes::DEFINITION]+=getDependencyObject(list[2], ObjectType::OpFamily, true);
+				elem_attr[Attributes::Definition]+=getDependencyObject(list[1], ObjectType::Operator, true);
+				elem_attr[Attributes::Definition]+=getDependencyObject(list[2], ObjectType::OpFamily, true);
 				elems.push_back(elem_attr);
 			}
 		}
@@ -1296,7 +1296,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		for(unsigned i=0; i < elems.size(); i++)
 		{
 			schparser.ignoreUnkownAttributes(true);
-			attribs[Attributes::ELEMENTS]+=schparser.getCodeDefinition(Attributes::ELEMENT, elems[i], SchemaParser::XmlDefinition);
+			attribs[Attributes::Elements]+=schparser.getCodeDefinition(Attributes::Element, elems[i], SchemaParser::XmlDefinition);
 			schparser.ignoreUnkownAttributes(false);
 		}
 
@@ -1397,7 +1397,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 	{
 		attribs[Attributes::FUNCTION]=getDependencyObject(attribs[Attributes::FUNCTION], ObjectType::Function, true);
 		attribs[Attributes::SOURCE_TYPE]=getType(attribs[Attributes::SOURCE_TYPE], true);
-		attribs[Attributes::DEST_TYPE]=getType(attribs[Attributes::DEST_TYPE], true);
+		attribs[Attributes::DestType]=getType(attribs[Attributes::DestType], true);
 		loadObjectXML(ObjectType::Cast, attribs);
 		cast=dbmodel->createCast();
 		dbmodel->addCast(cast);
@@ -1549,10 +1549,10 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	{
 		attribs[attribs[Attributes::Configuration]]=Attributes::True;
 
-		if(!attribs[Attributes::ENUM_TYPE].isEmpty())
+		if(!attribs[Attributes::EnumType].isEmpty())
 		{
-			attribs[Attributes::ENUMERATIONS]=Catalog::parseArrayValues(attribs[Attributes::ENUMERATIONS]).join(',');
-			attribs[Attributes::ENUMERATIONS].remove('"');
+			attribs[Attributes::Enumerations]=Catalog::parseArrayValues(attribs[Attributes::Enumerations]).join(',');
+			attribs[Attributes::Enumerations].remove('"');
 		}
 		else if(!attribs[Attributes::CompositeType].isEmpty())
 		{
@@ -1597,7 +1597,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 								   Attributes::AnalyzeFunc };
 			unsigned i, count=sizeof(func_types)/sizeof(QString);
 
-			attribs[Attributes::ELEMENT]=getType(attribs[Attributes::ELEMENT], false);
+			attribs[Attributes::Element]=getType(attribs[Attributes::Element], false);
 
 			/* Workaround: if importing a datatype that is part of an extension we avoid the importing of
 			 * its supporting functions (since they will not be necessary here because the type will be sql-disabled)*/
@@ -1741,7 +1741,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
 				 the cast if the casting is equivalent to the column type. */
 
-				def_val = itr->second[Attributes::DEFAULT_VALUE];
+				def_val = itr->second[Attributes::DefaultValue];
 
 				if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
 				{
@@ -1879,7 +1879,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 		attribs[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, pos_attrib, SchemaParser::XmlDefinition);
 
-		ref=Reference(attribs[Attributes::DEFINITION], QString());
+		ref=Reference(attribs[Attributes::Definition], QString());
 		ref.setDefinitionExpression(true);
 		attribs[Attributes::REFERENCES]=ref.getXMLDefinition();
 
@@ -2069,7 +2069,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			}
 
 			if(elem.getColumn() || !elem.getExpression().isEmpty())
-				attribs[Attributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
 		attribs[Attributes::TABLE]=tab_name;
@@ -2108,7 +2108,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			attribs[attribs[Attributes::TYPE]]=Attributes::True;
 			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, ObjectType::Table));
 
-			if(attribs[Attributes::TYPE]==Attributes::EX_CONSTR)
+			if(attribs[Attributes::TYPE]==Attributes::ExConstr)
 			{
 				QStringList cols, opclasses, opers, exprs;
 				ExcludeElement elem;
@@ -2163,7 +2163,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 							elem.setOperator(oper);
 					}
 
-					attribs[Attributes::ELEMENTS]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
+					attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 				}
 			}
 			else
@@ -2176,7 +2176,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			}
 
 			attribs[Attributes::REF_TABLE]=getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
-			attribs[Attributes::DST_COLUMNS]=getColumnNames(ref_tab_oid, attribs[Attributes::DST_COLUMNS]).join(',');
+			attribs[Attributes::DstColumns]=getColumnNames(ref_tab_oid, attribs[Attributes::DstColumns]).join(',');
 			attribs[Attributes::TABLE]=tab_name;
 
 			loadObjectXML(ObjectType::Constraint, attribs);
@@ -2734,7 +2734,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					type_attr[Attributes::NAME].contains(QString("[]")))
 			{
 				obj_name=type_attr[Attributes::NAME];
-				elem_tp_oid=type_attr[Attributes::ELEMENT].toUInt();
+				elem_tp_oid=type_attr[Attributes::Element].toUInt();
 
 				if(generate_xml)
 				{
@@ -2799,7 +2799,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 			if(generate_xml)
 			{
 				extra_attribs[Attributes::NAME]=obj_name;
-				extra_attribs[Attributes::DIMENSION]=(dimension > 0 ? QString::number(dimension) : QString());
+				extra_attribs[Attributes::Dimension]=(dimension > 0 ? QString::number(dimension) : QString());
 
 				schparser.ignoreUnkownAttributes(true);
 				xml_def=schparser.getCodeDefinition(Attributes::PGSQL_BASE_TYPE, extra_attribs, SchemaParser::XmlDefinition);

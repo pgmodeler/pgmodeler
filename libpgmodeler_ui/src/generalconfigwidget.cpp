@@ -114,12 +114,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::CheckUpdate]=QString();
 	config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=QString();
 	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
-	config_params[Attributes::Configuration][Attributes::DISABLE_SMOOTHNESS]=QString();
+	config_params[Attributes::Configuration][Attributes::DisableSmoothness]=QString();
 	config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]=QString();
 	config_params[Attributes::Configuration][Attributes::ConfirmValidation]=QString();
 	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeCompletion]=QString();
-	config_params[Attributes::Configuration][Attributes::DISPLAY_LINE_NUMBERS]=QString();
+	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=QString();
 	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=QString();
 	config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=QString();
 	config_params[Attributes::Configuration][Attributes::LINE_HIGHLIGHT_COLOR]=QString();
@@ -290,7 +290,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::INVERT_RANGESEL_TRIGGER]==Attributes::True);
 		check_upd_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
 		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]==Attributes::True);
-		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DISABLE_SMOOTHNESS]==Attributes::True);
+		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
 		simple_obj_creation_chk->setChecked(config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]==Attributes::True);
 		confirm_validation_chk->setChecked(config_params[Attributes::Configuration][Attributes::ConfirmValidation]==Attributes::True);
 		code_completion_chk->setChecked(config_params[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True);
@@ -323,7 +323,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		font_cmb->setCurrentFont(QFont(config_params[Attributes::Configuration][Attributes::CodeFont]));
 		font_size_spb->setValue(config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble());
-		disp_line_numbers_chk->setChecked(config_params[Attributes::Configuration][Attributes::DISPLAY_LINE_NUMBERS]==Attributes::True);
+		disp_line_numbers_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]==Attributes::True);
 		hightlight_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::HIGHLIGHT_LINES]==Attributes::True);
 		line_numbers_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]);
 		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]);
@@ -475,7 +475,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::INVERT_RANGESEL_TRIGGER]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::DISABLE_SMOOTHNESS]=(disable_smooth_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : QString());
@@ -510,7 +510,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		config_params[Attributes::Configuration][Attributes::CodeFont]=font_cmb->currentText();
 		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
-		config_params[Attributes::Configuration][Attributes::DISPLAY_LINE_NUMBERS]=(disp_line_numbers_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HIGHLIGHT_LINES]=(hightlight_lines_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_COLOR]=line_numbers_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LINE_NUMBERS_BG_COLOR]=line_numbers_bg_cp->getColor(0).name();
@@ -529,7 +529,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		itr=config_params.begin();
 		itr_end=config_params.end();
 
-		config_params[Attributes::Configuration][Attributes::DOCK_WIDGETS]=QString();
+		config_params[Attributes::Configuration][Attributes::DockWidgets]=QString();
 		config_params[Attributes::Configuration][Attributes::WIDGETS_GEOMETRY]=QString();
 		config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
 		config_params[Attributes::Configuration][Attributes::File]=QString();
@@ -554,7 +554,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
-				config_params[Attributes::Configuration][Attributes::DOCK_WIDGETS]+=
+				config_params[Attributes::Configuration][Attributes::DockWidgets]+=
 						schparser.getCodeDefinition(widget_sch, itr->second);
 				schparser.ignoreUnkownAttributes(false);
 				schparser.ignoreEmptyAttributes(false);

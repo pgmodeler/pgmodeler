@@ -25,7 +25,7 @@ Cast::Cast(void)
 	cast_type=Explicit;
 	is_in_out=false;
 	attributes[Attributes::SOURCE_TYPE]=QString();
-	attributes[Attributes::DEST_TYPE]=QString();
+	attributes[Attributes::DestType]=QString();
 	attributes[Attributes::CastType]=QString();
 	attributes[Attributes::IO_CAST]=QString();
 	attributes[Attributes::FUNCTION]=QString();
@@ -167,12 +167,12 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 	{
 		attributes[Attributes::SOURCE_TYPE]=(*types[SrcType]);
-		attributes[Attributes::DEST_TYPE]=(*types[DstType]);
+		attributes[Attributes::DestType]=(*types[DstType]);
 	}
 	else
 	{
 		attributes[Attributes::SOURCE_TYPE]=types[SrcType].getCodeDefinition(def_type);
-		attributes[Attributes::DEST_TYPE]=types[DstType].getCodeDefinition(def_type);
+		attributes[Attributes::DestType]=types[DstType].getCodeDefinition(def_type);
 	}
 
 	if(!is_in_out && cast_function)

@@ -35,8 +35,8 @@ Index::Index(void)
 	attributes[Attributes::OP_CLASS]=QString();
 	attributes[Attributes::NULLS_FIRST]=QString();
 	attributes[Attributes::AscOrder]=QString();
-	attributes[Attributes::DECL_IN_TABLE]=QString();
-	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::DeclInTable]=QString();
+	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::FAST_UPDATE]=QString();
 	attributes[Attributes::Buffering]=QString();
 	attributes[Attributes::STORAGE_PARAMS]=QString();
@@ -54,7 +54,7 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
-	attributes[Attributes::ELEMENTS]=str_elem;
+	attributes[Attributes::Elements]=str_elem;
 }
 
 int Index::getElementIndex(IndexElement elem)
@@ -362,7 +362,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[Attributes::DECL_IN_TABLE]=Attributes::True;
+		attributes[Attributes::DeclInTable]=Attributes::True;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

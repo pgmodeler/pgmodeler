@@ -851,13 +851,13 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				name_list.clear();
 
 				//Storing the referenced columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[Attributes::DST_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::DstColumns]))
 					col_ids.push_back(id.toUInt());
 
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::NAME], aux_table[Attributes::NAME], col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::NAME]));
 
-				fk_infos[fk_name][Attributes::DST_COLUMNS] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(Table::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
@@ -1154,7 +1154,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	else
 	{
 		src_cols =  fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
-		ref_cols = fk_infos[fk_name][Attributes::DST_COLUMNS].split(Table::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(Table::DataSeparator);
 		schema = fk_infos[fk_name][Attributes::SCHEMA];
 		table = fk_infos[fk_name][Attributes::REF_TABLE];
 	}

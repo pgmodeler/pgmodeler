@@ -93,7 +93,7 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::SQL_DISABLED]=QString();
 	attributes[Attributes::AppendedSql]=QString();
 	attributes[Attributes::PREPENDED_SQL]=QString();
-	attributes[Attributes::DROP]=QString();
+	attributes[Attributes::Drop]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
@@ -813,8 +813,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(def_type==SchemaParser::SqlDefinition && this->acceptsDropCommand())
 		{
-			attributes[Attributes::DROP]=getDropDefinition(true);
-			attributes[Attributes::DROP].remove(Attributes::DDL_END_TOKEN + '\n');
+			attributes[Attributes::Drop]=getDropDefinition(true);
+			attributes[Attributes::Drop].remove(Attributes::DdlEndToken + '\n');
 		}
 
 		attributes[Attributes::REDUCED_FORM]=(reduced_form ? Attributes::True : QString());
@@ -1131,7 +1131,7 @@ QString BaseObject::getDropDefinition(bool cascade)
 
 			attribs[Attributes::Cascade]=(cascade ? Attributes::True : QString());
 
-			return(schparser.getCodeDefinition(Attributes::DROP, attribs, SchemaParser::SqlDefinition));
+			return(schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition));
 		}
 		else
 			return(QString());

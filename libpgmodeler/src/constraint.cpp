@@ -31,23 +31,23 @@ Constraint::Constraint(void)
 	attributes[Attributes::FK_CONSTR]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
-	attributes[Attributes::EX_CONSTR]=QString();
+	attributes[Attributes::ExConstr]=QString();
 	attributes[Attributes::REF_TABLE]=QString();
 	attributes[Attributes::SRC_COLUMNS]=QString();
-	attributes[Attributes::DST_COLUMNS]=QString();
-	attributes[Attributes::DEL_ACTION]=QString();
+	attributes[Attributes::DstColumns]=QString();
+	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
 	attributes[Attributes::EXPRESSION]=QString();
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::ComparisonType]=QString();
-	attributes[Attributes::DEFER_TYPE]=QString();
+	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::INDEX_TYPE]=QString();
-	attributes[Attributes::DEFERRABLE]=QString();
+	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::TABLE]=QString();
-	attributes[Attributes::DECL_IN_TABLE]=QString();
+	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::FACTOR]=QString();
 	attributes[Attributes::NO_INHERIT]=QString();
-	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::Elements]=QString();
 }
 
 Constraint::~Constraint(void)
@@ -197,7 +197,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	if(col_type==ReferencedCols)
 	{
 		col_vector=&ref_columns;
-		attrib=Attributes::DST_COLUMNS;
+		attrib=Attributes::DstColumns;
 	}
 	else
 	{
@@ -630,7 +630,7 @@ void Constraint::setExcludeElementsAttribute(unsigned def_type)
 		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
-	attributes[Attributes::ELEMENTS]=str_elem;
+	attributes[Attributes::Elements]=str_elem;
 }
 
 void Constraint::setIndexType(IndexingType index_type)
@@ -651,9 +651,9 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 void Constraint::setDeclInTableAttribute(void)
 {
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
-		attributes[Attributes::DECL_IN_TABLE]=QString();
+		attributes[Attributes::DeclInTable]=QString();
 	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::PrimaryKey)
-		attributes[Attributes::DECL_IN_TABLE]=Attributes::True;
+		attributes[Attributes::DeclInTable]=Attributes::True;
 }
 
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
@@ -667,7 +667,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[Attributes::FK_CONSTR]=QString();
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
-	attributes[Attributes::EX_CONSTR]=QString();
+	attributes[Attributes::ExConstr]=QString();
 
 	switch(!constr_type)
 	{
@@ -684,14 +684,14 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=Attributes::UQ_CONSTR;
 		break;
 		default:
-			attrib=Attributes::EX_CONSTR;
+			attrib=Attributes::ExConstr;
 		break;
 	}
 	attributes[attrib]=Attributes::True;
 
 	attributes[Attributes::TYPE]=attrib;
 	attributes[Attributes::UPD_ACTION]=(~upd_action);
-	attributes[Attributes::DEL_ACTION]=(~del_action);
+	attributes[Attributes::DelAction]=(~del_action);
 	attributes[Attributes::EXPRESSION]=expression;
 
 	if(constr_type!=ConstraintType::Check)
@@ -711,10 +711,10 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	}
 
 	attributes[Attributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : QString());
-	attributes[Attributes::DEFERRABLE]=(deferrable ? Attributes::True : QString());
+	attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
 	attributes[Attributes::NO_INHERIT]=(no_inherit ? Attributes::True : QString());
 	attributes[Attributes::ComparisonType]=(~match_type);
-	attributes[Attributes::DEFER_TYPE]=(~deferral_type);
+	attributes[Attributes::DeferType]=(~deferral_type);
 	attributes[Attributes::INDEX_TYPE]=(~ index_type);
 
 	if(getParentTable())

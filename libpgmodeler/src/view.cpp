@@ -22,12 +22,12 @@ View::View(void) : BaseTable()
 {
 	obj_type=ObjectType::View;
 	materialized=recursive=with_no_data=false;
-	attributes[Attributes::DEFINITION]=QString();
+	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::REFERENCES]=QString();
 	attributes[Attributes::SELECT_EXP]=QString();
 	attributes[Attributes::FROM_EXP]=QString();
 	attributes[Attributes::SIMPLE_EXP]=QString();
-	attributes[Attributes::END_EXP]=QString();
+	attributes[Attributes::EndExp]=QString();
 	attributes[Attributes::CteExpression]=QString();
 	attributes[Attributes::MATERIALIZED]=QString();
 	attributes[Attributes::RECURSIVE]=QString();
@@ -474,7 +474,7 @@ void View::setDefinitionAttribute(void)
 	if(!decl.endsWith(QChar(';')))
 		decl.append(QChar(';'));
 
-	attributes[Attributes::DEFINITION]=decl;
+	attributes[Attributes::Definition]=decl;
 }
 
 void View::setReferencesAttribute(void)
@@ -483,7 +483,7 @@ void View::setReferencesAttribute(void)
 	QString attribs[]={ Attributes::SELECT_EXP,
 											Attributes::FROM_EXP,
 											Attributes::SIMPLE_EXP,
-											Attributes::END_EXP};
+											Attributes::EndExp};
 	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
 	int cnt, i, i1;
 

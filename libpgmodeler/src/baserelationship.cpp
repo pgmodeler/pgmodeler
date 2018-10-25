@@ -79,17 +79,17 @@ void BaseRelationship::configureRelationship(void)
 
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::SRC_REQUIRED]=QString();
-	attributes[Attributes::DST_REQUIRED]=QString();
+	attributes[Attributes::DstRequired]=QString();
 	attributes[Attributes::SRC_TABLE]=QString();
-	attributes[Attributes::DST_TABLE]=QString();
+	attributes[Attributes::DstTable]=QString();
 	attributes[Attributes::POINTS]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::IDENTIFIER]=QString();
 	attributes[Attributes::REDUCED_FORM]=QString();
-	attributes[Attributes::DEFERRABLE]=QString();
-	attributes[Attributes::DEFER_TYPE]=QString();
+	attributes[Attributes::Deferrable]=QString();
+	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::TABLE_NAME]=QString();
 	attributes[Attributes::SPECIAL_PK_COLS]=QString();
 	attributes[Attributes::RELATIONSHIP_NN]=QString();
@@ -104,15 +104,15 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::CopyOptions]=QString();
 	attributes[Attributes::CopyMode]=QString();
 	attributes[Attributes::SRC_COL_PATTERN]=QString();
-	attributes[Attributes::DST_COL_PATTERN]=QString();
+	attributes[Attributes::DstColPattern]=QString();
 	attributes[Attributes::PK_PATTERN]=QString();
 	attributes[Attributes::UQ_PATTERN]=QString();
 	attributes[Attributes::SRC_FK_PATTERN]=QString();
-	attributes[Attributes::DST_FK_PATTERN]=QString();
+	attributes[Attributes::DstFkPattern]=QString();
 	attributes[Attributes::PK_COL_PATTERN]=QString();
 	attributes[Attributes::SINGLE_PK_COLUMN]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
-	attributes[Attributes::DEL_ACTION]=QString();
+	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::CustomColor]=QString();
 	attributes[Attributes::REFERENCE_FK]=QString();
 	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
@@ -329,19 +329,19 @@ void BaseRelationship::setRelationshipAttributes(void)
 	unsigned count, i;
 	QString str_aux,
 			label_attribs[3]={ Attributes::SRC_LABEL,
-							   Attributes::DST_LABEL,
+							   Attributes::DstLabel,
 							   Attributes::NAME_LABEL};
 
 
 	attributes[Attributes::TYPE]=getRelTypeAttribute();
 	attributes[Attributes::SRC_REQUIRED]=(src_mandatory ? Attributes::True : QString());
-	attributes[Attributes::DST_REQUIRED]=(dst_mandatory ? Attributes::True : QString());
+	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : QString());
 
 	if(src_table)
 		attributes[Attributes::SRC_TABLE]=src_table->getName(true);
 
 	if(dst_table)
-		attributes[Attributes::DST_TABLE]=dst_table->getName(true);
+		attributes[Attributes::DstTable]=dst_table->getName(true);
 
 
 	count=points.size();

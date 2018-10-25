@@ -21,7 +21,7 @@
 GenericSQL::GenericSQL(void)
 {
 	obj_type=ObjectType::GenericSql;
-	attributes[Attributes::DEFINITION] = QString();
+	attributes[Attributes::Definition] = QString();
 }
 
 void GenericSQL::setDefinition(const QString &def)
@@ -40,7 +40,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::DEFINITION] = definition;
+	attributes[Attributes::Definition] = definition;
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 

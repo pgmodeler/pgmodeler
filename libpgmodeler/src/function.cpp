@@ -39,7 +39,7 @@ Function::Function(void)
 	attributes[Attributes::RETURNS_SETOF]=QString();
 	attributes[Attributes::SECURITY_TYPE]=QString();
 	attributes[Attributes::BehaviorType]=QString();
-	attributes[Attributes::DEFINITION]=QString();
+	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	attributes[Attributes::REF_TYPE]=QString();
 	attributes[Attributes::WINDOW_FUNC]=QString();
@@ -482,7 +482,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::LEAKPROOF]=(is_leakproof ? Attributes::True : QString());
 	attributes[Attributes::SECURITY_TYPE]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
-	attributes[Attributes::DEFINITION]=source_code;
+	attributes[Attributes::Definition]=source_code;
 
 	if(language->getName()==~LanguageType(LanguageType::C))
 	{
@@ -511,8 +511,8 @@ QString Function::getAlterDefinition(BaseObject *object)
 				this->library!=func->library ||
 				this->symbol!=func->symbol)
 		{
-			attribs[Attributes::DEFINITION]=func->getCodeDefinition(SchemaParser::SqlDefinition);
-			attribs[Attributes::DEFINITION].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
+			attribs[Attributes::Definition]=func->getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Definition].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));
 		}
 		else
 		{

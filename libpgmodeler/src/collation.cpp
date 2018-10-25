@@ -26,7 +26,7 @@ Collation::Collation(void)
 	attributes[Attributes::LcCtype]=QString();
 	attributes[Attributes::LcCollate]=QString();
 	attributes[Attributes::LOCALE]=QString();
-	attributes[Attributes::ENCODING]=QString();
+	attributes[Attributes::Encoding]=QString();
 }
 
 void Collation::setLocale(const QString &locale)
@@ -126,7 +126,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[Attributes::ENCODING]=~encoding;
+	attributes[Attributes::Encoding]=~encoding;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 

@@ -27,8 +27,8 @@ Type::Type(void)
 	attributes[Attributes::CompositeType]=QString();
 	attributes[Attributes::RANGE_TYPE]=QString();
 	attributes[Attributes::TYPE_ATTRIBUTE]=QString();
-	attributes[Attributes::ENUM_TYPE]=QString();
-	attributes[Attributes::ENUMERATIONS]=QString();
+	attributes[Attributes::EnumType]=QString();
+	attributes[Attributes::Enumerations]=QString();
 	attributes[Attributes::INPUT_FUNC]=QString();
 	attributes[Attributes::OUTPUT_FUNC]=QString();
 	attributes[Attributes::RECV_FUNC]=QString();
@@ -40,9 +40,9 @@ Type::Type(void)
 	attributes[Attributes::ByValue]=QString();
 	attributes[Attributes::Alignment]=QString();
 	attributes[Attributes::STORAGE]=QString();
-	attributes[Attributes::DEFAULT_VALUE]=QString();
-	attributes[Attributes::ELEMENT]=QString();
-	attributes[Attributes::DELIMITER]=QString();
+	attributes[Attributes::DefaultValue]=QString();
+	attributes[Attributes::Element]=QString();
+	attributes[Attributes::Delimiter]=QString();
 	attributes[Attributes::REDUCED_FORM]=QString();
 	attributes[Attributes::Category]=QString();
 	attributes[Attributes::PREFERRED]=QString();
@@ -448,7 +448,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
 		if(i < (count-1)) str_enum+=QString(",");
 	}
 
-	attributes[Attributes::ENUMERATIONS]=str_enum;
+	attributes[Attributes::Enumerations]=str_enum;
 }
 
 void Type::setCategory(CategoryType categ)
@@ -617,7 +617,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(config==EnumerationType)
 	{
-		attributes[Attributes::ENUM_TYPE]=Attributes::True;
+		attributes[Attributes::EnumType]=Attributes::True;
 		setEnumerationsAttribute(def_type);
 	}
 	else if(config==CompositeType)
@@ -654,13 +654,13 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[Attributes::ByValue]=(by_value ? Attributes::True : QString());
 		attributes[Attributes::Alignment]=(*alignment);
 		attributes[Attributes::STORAGE]=(~storage);
-		attributes[Attributes::DEFAULT_VALUE]=default_value;
+		attributes[Attributes::DefaultValue]=default_value;
 
 		if(element!=QString("\"any\""))
-			attributes[Attributes::ELEMENT]=(*element);
+			attributes[Attributes::Element]=(*element);
 
 		if(delimiter!='\0')
-			attributes[Attributes::DELIMITER]=delimiter;
+			attributes[Attributes::Delimiter]=delimiter;
 
 		attributes[Attributes::Category]=~(category);
 
@@ -754,12 +754,12 @@ QString Type::getAlterDefinition(BaseObject *object)
 				{
 					if(type->getAttributeIndex(attrib.getName()) < 0)
 					{
-						attribs[Attributes::DROP]=Attributes::True;
+						attribs[Attributes::Drop]=Attributes::True;
 						attribs[Attributes::Attribute]=attrib.getName(true);
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
-						attributes[Attributes::DROP]=QString();
+						attributes[Attributes::Drop]=QString();
 					}
 				}
 

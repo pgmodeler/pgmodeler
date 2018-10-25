@@ -1843,7 +1843,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params[Attributes::FADEIN_OBJECTS]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
 	conf_wgt->addConfigurationParam(Attributes::OBJECT_FINDER, params);
 	params.clear();
 
@@ -1872,7 +1872,7 @@ void MainWindow::restoreDockWidgetsSettings(void)
 		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::FADEIN_OBJECTS]==Attributes::True);
 		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::REGULAR_EXP]==Attributes::True);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::CaseSensitive]==Attributes::True);
-		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::EXACT_MATCH]==Attributes::True);
+		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::OBJECT_FINDER][Attributes::ExactMatch]==Attributes::True);
 	}
 
 	if(confs.count(Attributes::SQL_TOOL))

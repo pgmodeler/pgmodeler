@@ -2033,7 +2033,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		}
 
 		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
-									.arg(val_list.join(", ")).arg(Attributes::DDL_END_TOKEN);
+									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken);
 	}
 
 	return(fmt_cmd);

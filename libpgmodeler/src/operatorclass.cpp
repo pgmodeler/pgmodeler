@@ -24,10 +24,10 @@ OperatorClass::OperatorClass(void)
 	family=nullptr;
 	is_default=false;
 	attributes[Attributes::FAMILY]=QString();
-	attributes[Attributes::ELEMENTS]=QString();
+	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::INDEX_TYPE]=QString();
 	attributes[Attributes::TYPE]=QString();
-	attributes[Attributes::DEFAULT]=QString();
+	attributes[Attributes::Default]=QString();
 }
 
 OperatorClass::~OperatorClass(void)
@@ -78,7 +78,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
 				i < count-1) str_elems+=QString(",\n");
 	}
 
-	attributes[Attributes::ELEMENTS]=str_elems;
+	attributes[Attributes::Elements]=str_elems;
 }
 
 void OperatorClass::addElement(OperatorClassElement elem)
@@ -173,7 +173,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setElementsAttribute(def_type);
 	attributes[Attributes::INDEX_TYPE]=(~indexing_type);
-	attributes[Attributes::DEFAULT]=(is_default ? Attributes::True : QString());
+	attributes[Attributes::Default]=(is_default ? Attributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::TYPE]=(*data_type);

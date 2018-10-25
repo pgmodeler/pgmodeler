@@ -412,7 +412,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	unsigned i, count;
 	ObjectType obj_type;
 	QString priv_vect[12]={ Attributes::SELECT_PRIV, Attributes::INSERT_PRIV,
-							Attributes::UPDATE_PRIV, Attributes::DELETE_PRIV,
+							Attributes::UPDATE_PRIV, Attributes::DeletePriv,
 							Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
 							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
 							Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,

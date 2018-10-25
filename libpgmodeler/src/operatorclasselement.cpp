@@ -132,7 +132,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::OPERATOR]=QString();
 	attributes[Attributes::STORAGE]=QString();
 	attributes[Attributes::OP_FAMILY]=QString();
-	attributes[Attributes::DEFINITION]=QString();
+	attributes[Attributes::Definition]=QString();
 
 	if(element_type==FunctionElem && function && strategy_number > 0)
 	{
@@ -143,7 +143,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::SIGNATURE]=function->getSignature();
 		else
-			attributes[Attributes::DEFINITION]=function->getCodeDefinition(def_type,true);
+			attributes[Attributes::Definition]=function->getCodeDefinition(def_type,true);
 	}
 	else if(element_type==OperatorElem && _operator && strategy_number > 0)
 	{
@@ -154,14 +154,14 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::SIGNATURE]=_operator->getSignature();
 		else
-			attributes[Attributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::Definition]=_operator->getCodeDefinition(def_type,true);
 
 		if(op_family)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
 				attributes[Attributes::OP_FAMILY]=op_family->getName(true);
 			else
-				attributes[Attributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
+				attributes[Attributes::Definition]+=op_family->getCodeDefinition(def_type,true);
 		}
 	}
 	else if(element_type==StorageElem && storage!=PgSqlType::Null)
@@ -172,10 +172,10 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::TYPE]=(*storage);
 		else
-			attributes[Attributes::DEFINITION]=storage.getCodeDefinition(def_type);
+			attributes[Attributes::Definition]=storage.getCodeDefinition(def_type);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::ELEMENT,attributes, def_type));
+	return(schparser.getCodeDefinition(Attributes::Element,attributes, def_type));
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)

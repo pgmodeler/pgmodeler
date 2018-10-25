@@ -23,11 +23,11 @@ Column::Column(void)
 	obj_type=ObjectType::Column;
 	not_null=seq_cycle=false;
 	attributes[Attributes::TYPE]=QString();
-	attributes[Attributes::DEFAULT_VALUE]=QString();
+	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NOT_NULL]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::SEQUENCE]=QString();
-	attributes[Attributes::DECL_IN_TABLE]=QString();
+	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::IDENTITY_TYPE]=QString();
 	attributes[Attributes::INCREMENT]=QString();
 	attributes[Attributes::MIN_VALUE]=QString();
@@ -241,7 +241,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
 	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);	
-	attributes[Attributes::DEFAULT_VALUE]=QString();
+	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::IDENTITY_TYPE]=QString();
 
 	if(identity_type != BaseType::Null)
@@ -257,19 +257,19 @@ QString Column::getCodeDefinition(unsigned def_type)
 	else
 	{
 		if(!sequence)
-			attributes[Attributes::DEFAULT_VALUE]=default_value;
+			attributes[Attributes::DefaultValue]=default_value;
 		else
 		{
 			//Configuring the default value of the column to get the next value of the sequence
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::DEFAULT_VALUE]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
+				attributes[Attributes::DefaultValue]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
 
 			attributes[Attributes::SEQUENCE]=sequence->getName(true);
 		}
 	}
 
 	attributes[Attributes::NOT_NULL]=(!not_null ? QString() : Attributes::True);
-	attributes[Attributes::DECL_IN_TABLE]=(isDeclaredInTable() ? Attributes::True : QString());
+	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : QString());
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -304,7 +304,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 			def_val=col->default_value;
 
 		if(this->default_value!=def_val)
-			attribs[Attributes::DEFAULT_VALUE]=(def_val.isEmpty() ? Attributes::UNSET : def_val);
+			attribs[Attributes::DefaultValue]=(def_val.isEmpty() ? Attributes::UNSET : def_val);
 
 		if(this->not_null!=col->not_null)
 			attribs[Attributes::NOT_NULL]=(!col->not_null ? Attributes::UNSET : Attributes::True);

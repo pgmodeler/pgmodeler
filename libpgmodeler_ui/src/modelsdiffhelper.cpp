@@ -871,16 +871,16 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Attributes used on the diff schema file
 			attribs[Attributes::HAS_CHANGES]=Attributes::True;
 			attribs[Attributes::PGMODELER_VERSION]=GlobalAttributes::PgModelerVersion;
-			attribs[Attributes::DB_MODEL]=source_model->getName();
+			attribs[Attributes::DbModel]=source_model->getName();
 			attribs[Attributes::Database]=imported_model->getName();
 			attribs[Attributes::Date]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
 			attribs[Attributes::Connection]=imported_model->getName();
 			attribs[Attributes::Change]=QString::number(alter_objs.size());
 			attribs[Attributes::Create]=QString::number(create_objs_count);
-			attribs[Attributes::DROP]=QString::number(drop_objs.size());
+			attribs[Attributes::Drop]=QString::number(drop_objs.size());
 			attribs[Attributes::TRUNCATE]=QString::number(truncate_tabs.size());
 			attribs[Attributes::AlterCmds]=QString();
-			attribs[Attributes::DROP_CMDS]=QString();
+			attribs[Attributes::DropCmds]=QString();
 			attribs[Attributes::CreateCmds]=QString();
 			attribs[Attributes::TRUNCATE_CMDS]=QString();
 			attribs[Attributes::ConstrDefs]=QString();
@@ -893,15 +893,15 @@ void ModelsDiffHelper::processDiffInfos(void)
 			ritr=drop_objs.rbegin();
 			ritr_end=drop_objs.rend();
 
-			attribs[Attributes::DROP_CMDS]+=no_inherit_def;
+			attribs[Attributes::DropCmds]+=no_inherit_def;
 
 			while(ritr!=ritr_end)
 			{
-				attribs[Attributes::DROP_CMDS]+=ritr->second;
+				attribs[Attributes::DropCmds]+=ritr->second;
 				ritr++;
 			}
 
-			attribs[Attributes::DROP_CMDS]+=col_drop_def;
+			attribs[Attributes::DropCmds]+=col_drop_def;
 
 
 			for(auto &itr : create_objs)
@@ -925,7 +925,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			schparser.setPgSQLVersion(pgsql_version);
 			diff_def=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-												 Attributes::DIFF + GlobalAttributes::SchemaExt, attribs);
+												 Attributes::Diff + GlobalAttributes::SchemaExt, attribs);
 		}
 
 		if(diff_def.isEmpty())

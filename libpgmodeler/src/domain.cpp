@@ -22,7 +22,7 @@ Domain::Domain(void)
 {
 	obj_type=ObjectType::Domain;
 	not_null=false;
-	attributes[Attributes::DEFAULT_VALUE]=QString();
+	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NOT_NULL]=QString();
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::Constraints]=QString();
@@ -127,13 +127,13 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	attribs_map aux_attribs;
 
 	attributes[Attributes::NOT_NULL]=(not_null ? Attributes::True : QString());
-	attributes[Attributes::DEFAULT_VALUE]=default_value;
+	attributes[Attributes::DefaultValue]=default_value;
 
 	for(auto itr : chk_constrs)
 	{
 		aux_attribs[Attributes::NAME] = itr.first;
 		aux_attribs[Attributes::EXPRESSION] = itr.second;
-		attributes[Attributes::Constraints]+=schparser.getCodeDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, def_type);
+		attributes[Attributes::Constraints]+=schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, def_type);
 	}
 
 	if(def_type==SchemaParser::SqlDefinition)
@@ -169,7 +169,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attribs_map orig_constrs, aux_constrs, aux_attribs;
 		QString orig_expr, aux_expr;
 
-		attributes[Attributes::DEFAULT_VALUE]=QString();
+		attributes[Attributes::DefaultValue]=QString();
 		attributes[Attributes::NOT_NULL]=QString();
 		attributes[Attributes::Constraints]=QString();
 		attributes[Attributes::EXPRESSION]=QString();
@@ -177,7 +177,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::NEW_NAME]=QString();
 
 		if(this->default_value!=domain->default_value)
-			attributes[Attributes::DEFAULT_VALUE]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::UNSET);
+			attributes[Attributes::DefaultValue]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::UNSET);
 
 		if(this->not_null!=domain->not_null)
 			attributes[Attributes::NOT_NULL]=(domain->not_null ? Attributes::True : Attributes::UNSET);
@@ -199,7 +199,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
 				aux_attribs[Attributes::EXPRESSION]=Attributes::UNSET;
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 
 			//We should include a command to recreate the check constraint with the new expression
@@ -207,7 +207,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
 				aux_attribs[Attributes::EXPRESSION]=aux_constrs[constr.first];
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}
 
@@ -218,7 +218,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 			{
 				aux_attribs[Attributes::NAME]=constr.first;
 				aux_attribs[Attributes::EXPRESSION]=constr.second;
-				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DOM_CONSTRAINT, aux_attribs, false, true);
+				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 		}
 

@@ -380,7 +380,7 @@ QString Relationship::getTableNameRelNN(void)
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = part_bound_expr.toLower() == Attributes::DEFAULT.toLower() ? QString() : part_bound_expr;
+	part_bounding_expr = part_bound_expr.toLower() == Attributes::Default.toLower() ? QString() : part_bound_expr;
 	this->invalidated = true;
 }
 
@@ -2608,10 +2608,10 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		setRelationshipAttributes();
 		attributes[Attributes::IDENTIFIER]=(identifier ? Attributes::True : QString());
 		attributes[Attributes::SINGLE_PK_COLUMN]=(single_pk_column ? Attributes::True : QString());
-		attributes[Attributes::DEFERRABLE]=(deferrable ? Attributes::True : QString());
-		attributes[Attributes::DEFER_TYPE]=~deferral_type;
+		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
+		attributes[Attributes::DeferType]=~deferral_type;
 		attributes[Attributes::UPD_ACTION]=~upd_action;
-		attributes[Attributes::DEL_ACTION]=~del_action;
+		attributes[Attributes::DelAction]=~del_action;
 
 		attributes[Attributes::TABLE_NAME]=tab_name_relnn;
 		attributes[Attributes::RELATIONSHIP_GEN]=(rel_type==RelationshipGen ? Attributes::True : QString());
@@ -2619,11 +2619,11 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::RELATIONSHIP_PART]=(rel_type==RelationshipPart ? Attributes::True : QString());
 
 		attributes[Attributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
-		attributes[Attributes::DST_COL_PATTERN]=name_patterns[DstColPattern];
+		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
 		attributes[Attributes::PK_PATTERN]=name_patterns[PkPattern];
 		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
 		attributes[Attributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
-		attributes[Attributes::DST_FK_PATTERN]=name_patterns[DstFkPattern];
+		attributes[Attributes::DstFkPattern]=name_patterns[DstFkPattern];
 		attributes[Attributes::PK_COL_PATTERN]=name_patterns[PkColPattern];
 
 		attributes[Attributes::PARTITION_BOUND_EXPR]=part_bounding_expr;

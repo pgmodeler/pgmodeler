@@ -22,7 +22,7 @@ Rule::Rule(void)
 {
 	execution_type=BaseType::Null;
 	obj_type=ObjectType::Rule;
-	attributes[Attributes::EVENT_TYPE]=QString();
+	attributes[Attributes::EventType]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::Condition]=QString();
 	attributes[Attributes::EXEC_TYPE]=QString();
@@ -129,7 +129,7 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	setCommandsAttribute();
 	attributes[Attributes::Condition]=conditional_expr;
 	attributes[Attributes::EXEC_TYPE]=(~execution_type);
-	attributes[Attributes::EVENT_TYPE]=(~event_type);
+	attributes[Attributes::EventType]=(~event_type);
 
 	if(getParentTable())
 		attributes[Attributes::TABLE]=getParentTable()->getName(true);

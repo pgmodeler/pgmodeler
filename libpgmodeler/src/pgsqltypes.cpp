@@ -1589,7 +1589,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		SchemaParser schparser;
 
 		attribs[Attributes::LENGTH]=QString();
-		attribs[Attributes::DIMENSION]=QString();
+		attribs[Attributes::Dimension]=QString();
 		attribs[Attributes::PRECISION]=QString();
 		attribs[Attributes::WITH_TIMEZONE]=QString();
 		attribs[Attributes::INTERVAL_TYPE]=QString();
@@ -1602,7 +1602,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[Attributes::LENGTH]=QString("%1").arg(this->length);
 
 		if(dimension > 0)
-			attribs[Attributes::DIMENSION]=QString("%1").arg(this->dimension);
+			attribs[Attributes::Dimension]=QString("%1").arg(this->dimension);
 
 		if(precision >= 0)
 			attribs[Attributes::PRECISION]=QString("%1").arg(this->precision);

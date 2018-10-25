@@ -22,7 +22,7 @@ EventTrigger::EventTrigger(void)
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
-	attributes[Attributes::EVENT]=QString();
+	attributes[Attributes::Event]=QString();
 	attributes[Attributes::FILTER]=QString();
 	attributes[Attributes::FUNCTION]=QString();
 }
@@ -109,7 +109,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::EVENT]=~event;
+	attributes[Attributes::Event]=~event;
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
