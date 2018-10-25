@@ -3334,8 +3334,8 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 							(obj_type_aux!=ObjectType::Relationship &&
 							 obj_type_aux!=ObjectType::BaseRelationship))
 					{
-						dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[Attributes::X_POS].toDouble(),
-																				 attribs[Attributes::Y_POS].toDouble()));
+						dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[Attributes::XPos].toDouble(),
+																				 attribs[Attributes::YPos].toDouble()));
 
 
 					}
@@ -3475,7 +3475,7 @@ Role *DatabaseModel::createRole(void)
 		xmlparser.getElementAttributes(attribs);
 
 		role->setPassword(attribs[Attributes::Password]);
-		role->setValidity(attribs[Attributes::VALIDITY]);
+		role->setValidity(attribs[Attributes::Validity]);
 
 		if(!attribs[Attributes::ConnLimit].isEmpty())
 			role->setConnectionLimit(attribs[Attributes::ConnLimit].toInt());
@@ -3622,7 +3622,7 @@ Language *DatabaseModel::createLanguage(void)
 						ref_type=attribs[Attributes::RefType];
 
 						//Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
-						if(ref_type==Attributes::VALIDATOR_FUNC ||
+						if(ref_type==Attributes::ValidatorFunc ||
 								ref_type==Attributes::HandlerFunc ||
 								ref_type==Attributes::InlineFunc)
 						{
@@ -3639,7 +3639,7 @@ Language *DatabaseModel::createLanguage(void)
 												.arg(BaseObject::getTypeName(ObjectType::Function)),
 												ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-							if(ref_type==Attributes::VALIDATOR_FUNC)
+							if(ref_type==Attributes::ValidatorFunc)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::ValidatorFunc);
 							else if(ref_type==Attributes::HandlerFunc)
 								lang->setFunction(dynamic_cast<Function *>(func), Language::HandlerFunc);
@@ -3686,8 +3686,8 @@ Function *DatabaseModel::createFunction(void)
 			func->setReturnSetOf(attribs[Attributes::ReturnsSetOf]==
 					Attributes::True);
 
-		if(!attribs[Attributes::WINDOW_FUNC].isEmpty())
-			func->setWindowFunction(attribs[Attributes::WINDOW_FUNC]==
+		if(!attribs[Attributes::WindowFunc].isEmpty())
+			func->setWindowFunction(attribs[Attributes::WindowFunc]==
 					Attributes::True);
 
 		if(!attribs[Attributes::LeakProof].isEmpty())
@@ -3950,13 +3950,13 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	if(!attribs[Attributes::Precision].isEmpty())
 		precision=attribs[Attributes::Precision].toInt();
 
-	with_timezone=(attribs[Attributes::WITH_TIMEZONE]==Attributes::True);
+	with_timezone=(attribs[Attributes::WithTimezone]==Attributes::True);
 	interv_type=attribs[Attributes::IntervalType];
 
 	if(!attribs[Attributes::SpatialType].isEmpty())
 		spatial_type=SpatialType(attribs[Attributes::SpatialType],
 				attribs[Attributes::Srid].toUInt(),
-				attribs[Attributes::VARIATION].toUInt());
+				attribs[Attributes::Variation].toUInt());
 
 	name=attribs[Attributes::Name];
 
@@ -4064,7 +4064,7 @@ Type *DatabaseModel::createType(void)
 					if(elem==Attributes::EnumType)
 					{
 						xmlparser.getElementAttributes(attribs);
-						enums=attribs[Attributes::VALUES].split(',');
+						enums=attribs[Attributes::Values].split(',');
 
 						count=enums.size();
 						for(i=0; i < count; i++)
@@ -4677,7 +4677,7 @@ Table *DatabaseModel::createTable(void)
 
 		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
-		table->setUnlogged(attribs[Attributes::UNLOGGED]==Attributes::True);
+		table->setUnlogged(attribs[Attributes::Unlogged]==Attributes::True);
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
@@ -4933,7 +4933,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr_type=ConstraintType::PrimaryKey;
 		else if(attribs[Attributes::Type]==Attributes::FkConstr)
 			constr_type=ConstraintType::ForeignKey;
-		else if(attribs[Attributes::Type]==Attributes::UQ_CONSTR)
+		else if(attribs[Attributes::Type]==Attributes::UqConstr)
 			constr_type=ConstraintType::Unique;
 		else
 			constr_type=ConstraintType::Exclude;
@@ -4965,8 +4965,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(!attribs[Attributes::DelAction].isEmpty())
 				constr->setActionType(attribs[Attributes::DelAction], Constraint::DeleteAction);
 
-			if(!attribs[Attributes::UPD_ACTION].isEmpty())
-				constr->setActionType(attribs[Attributes::UPD_ACTION], Constraint::UpdateAction);
+			if(!attribs[Attributes::UpdAction].isEmpty())
+				constr->setActionType(attribs[Attributes::UpdAction], Constraint::UpdateAction);
 
 			ref_table=getObject(attribs[Attributes::RefTable], ObjectType::Table);
 
@@ -5106,7 +5106,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 
 		elem.setSortingAttribute(Element::AscOrder, attribs[Attributes::AscOrder]==Attributes::True);
 		elem.setSortingAttribute(Element::NullsFirst, attribs[Attributes::NullsFirst]==Attributes::True);
-		elem.setSortingEnabled(attribs[Attributes::USE_SORTING]!=Attributes::False);
+		elem.setSortingEnabled(attribs[Attributes::UseSorting]!=Attributes::False);
 
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
@@ -5322,7 +5322,7 @@ Index *DatabaseModel::createIndex(void)
 		setBasicAttributes(index);
 		index->setParentTable(table);
 		index->setIndexAttribute(Index::Concurrent, attribs[Attributes::Concurrent]==Attributes::True);
-		index->setIndexAttribute(Index::Unique, attribs[Attributes::UNIQUE]==Attributes::True);
+		index->setIndexAttribute(Index::Unique, attribs[Attributes::Unique]==Attributes::True);
 		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FastUpdate]==Attributes::True);
 		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
 		index->setIndexingType(attribs[Attributes::IndexType]);
@@ -5489,7 +5489,7 @@ Trigger *DatabaseModel::createTrigger(void)
 							(attribs[Attributes::DelEvent]==Attributes::True));
 
 		trigger->setEvent(EventType::OnUpdate,
-							(attribs[Attributes::UPD_EVENT]==Attributes::True));
+							(attribs[Attributes::UpdEvent]==Attributes::True));
 
 		trigger->setEvent(EventType::OnTruncate,
 							(attribs[Attributes::TruncEvent]==Attributes::True));
@@ -5645,7 +5645,7 @@ Policy *DatabaseModel::createPolicy(void)
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
 
-						if(attribs[Attributes::Type] == Attributes::USING_EXP)
+						if(attribs[Attributes::Type] == Attributes::UsingExp)
 							policy->setUsingExpression(xmlparser.getElementContent());
 						else if(attribs[Attributes::Type] == Attributes::CheckExp)
 							policy->setCheckExpression(xmlparser.getElementContent());
@@ -5739,7 +5739,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 					else if(elem==Attributes::Filter)
 					{
 						xmlparser.getElementAttributes(attribs);
-						event_trig->setFilter(attribs[Attributes::VARIABLE], attribs[Attributes::VALUES].split(','));
+						event_trig->setFilter(attribs[Attributes::Variable], attribs[Attributes::Values].split(','));
 					}
 				}
 			}
@@ -5886,7 +5886,7 @@ View *DatabaseModel::createView(void)
 		view->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
-		view->setWithNoData(attribs[Attributes::WITH_NO_DATA]==Attributes::True);
+		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
 		view->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
@@ -6182,7 +6182,7 @@ Textbox *DatabaseModel::createTextbox(void)
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
-		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::UNDERLINE]==Attributes::True);
+		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
 
 		if(!attribs[Attributes::Color].isEmpty())
 			txtbox->setTextColor(QColor(attribs[Attributes::Color]));
@@ -6325,7 +6325,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		{
 			QString pat_attrib[]= { Attributes::SrcColPattern, Attributes::DstColPattern,
 									Attributes::SrcFkPattern, Attributes::DstFkPattern,
-									Attributes::PkPattern, Attributes::UQ_PATTERN,
+									Attributes::PkPattern, Attributes::UqPattern,
 									Attributes::PkColPattern };
 
 			unsigned 	pattern_id[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
@@ -6341,7 +6341,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			deferrable=attribs[Attributes::Deferrable]==Attributes::True;
 			defer_type=DeferralType(attribs[Attributes::DeferType]);
 			del_action=ActionType(attribs[Attributes::DelAction]);
-			upd_action=ActionType(attribs[Attributes::UPD_ACTION]);
+			upd_action=ActionType(attribs[Attributes::UpdAction]);
 			single_pk_col=(attribs[Attributes::SinglePkColumn]==Attributes::True);
 
 			if(attribs[Attributes::Type]==Attributes::Relationship11)
@@ -6430,8 +6430,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						do
 						{
 							xmlparser.getElementAttributes(attribs);
-							points.push_back(QPointF(attribs[Attributes::X_POS].toDouble(),
-											 attribs[Attributes::Y_POS].toDouble()));
+							points.push_back(QPointF(attribs[Attributes::XPos].toDouble(),
+											 attribs[Attributes::YPos].toDouble()));
 						}
 						while(xmlparser.accessElement(XmlParser::NextElement));
 
@@ -6449,8 +6449,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						xmlparser.restorePosition();
 
 						base_rel->setLabelDistance(labels_id[str_aux],
-													 QPointF(attribs[Attributes::X_POS].toFloat(),
-													 attribs[Attributes::Y_POS].toFloat()));
+													 QPointF(attribs[Attributes::XPos].toFloat(),
+													 attribs[Attributes::YPos].toFloat()));
 					}
 					else if(elem==Attributes::SpecialPkCols && rel)
 					{
@@ -6616,9 +6616,9 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivTrigger;
 						else if(itr->first==Attributes::TruncatePriv)
 							priv_type=Permission::PrivTruncate;
-						else if(itr->first==Attributes::UPDATE_PRIV)
+						else if(itr->first==Attributes::UpdatePriv)
 							priv_type=Permission::PrivUpdate;
-						else if(itr->first==Attributes::USAGE_PRIV)
+						else if(itr->first==Attributes::UsagePriv)
 							priv_type=Permission::PrivUsage;
 
 						perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
@@ -9680,17 +9680,17 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 						if(schema->isRectVisible())
 						{
-							attribs[Attributes::X_POS]=QString::number(pnt.x());
-							attribs[Attributes::Y_POS]=QString::number(pnt.y());
+							attribs[Attributes::XPos]=QString::number(pnt.x());
+							attribs[Attributes::YPos]=QString::number(pnt.y());
 						}
 					}
 					else
 					{
-						attribs[Attributes::X_POS]=QString::number(pnt.x());
-						attribs[Attributes::Y_POS]=QString::number(pnt.y());
+						attribs[Attributes::XPos]=QString::number(pnt.x());
+						attribs[Attributes::YPos]=QString::number(pnt.y());
 					}
 
-					if(obj_type!=ObjectType::Schema || !attribs[Attributes::X_POS].isEmpty())
+					if(obj_type!=ObjectType::Schema || !attribs[Attributes::XPos].isEmpty())
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]=
@@ -9716,8 +9716,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 					for(QPointF pnt : points)
 					{
-						attribs[Attributes::X_POS]=QString::number(pnt.x());
-						attribs[Attributes::Y_POS]=QString::number(pnt.y());
+						attribs[Attributes::XPos]=QString::number(pnt.x());
+						attribs[Attributes::YPos]=QString::number(pnt.y());
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]+=
@@ -9732,8 +9732,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						pnt=rel->getLabelDistance(id);
 						if(!std::isnan(pnt.x()) && !std::isnan(pnt.y()))
 						{
-							aux_attribs[Attributes::X_POS]=QString::number(pnt.x());
-							aux_attribs[Attributes::Y_POS]=QString::number(pnt.y());
+							aux_attribs[Attributes::XPos]=QString::number(pnt.x());
+							aux_attribs[Attributes::YPos]=QString::number(pnt.y());
 							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
 							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
@@ -10004,8 +10004,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									//Retrieving and storing the points
 									if(aux_elem==Attributes::Position)
 									{
-										points.push_back(QPointF(aux_attrib[Attributes::X_POS].toFloat(),
-																						 aux_attrib[Attributes::Y_POS].toFloat()));
+										points.push_back(QPointF(aux_attrib[Attributes::XPos].toFloat(),
+																						 aux_attrib[Attributes::YPos].toFloat()));
 									}
 									//Retrieving and storing the labels' custom positions
 									else if(aux_elem==Attributes::Label)
@@ -10016,8 +10016,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										if(xmlparser.accessElement(XmlParser::ChildElement))
 										{
 											xmlparser.getElementAttributes(aux_attrib);
-											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[Attributes::X_POS].toFloat(),
-																																 aux_attrib[Attributes::Y_POS].toFloat());
+											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[Attributes::XPos].toFloat(),
+																																 aux_attrib[Attributes::YPos].toFloat());
 										}
 
 										xmlparser.restorePosition();

@@ -41,7 +41,7 @@ Trigger::Trigger(void)
 	attributes[Attributes::PerRow]=QString();
 	attributes[Attributes::InsEvent]=QString();
 	attributes[Attributes::DelEvent]=QString();
-	attributes[Attributes::UPD_EVENT]=QString();
+	attributes[Attributes::UpdEvent]=QString();
 	attributes[Attributes::TruncEvent]=QString();
 	attributes[Attributes::Condition]=QString();
 	attributes[Attributes::RefTable]=QString();
@@ -347,7 +347,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
 			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
-						Attributes::TruncEvent, Attributes::UPD_EVENT },
+						Attributes::TruncEvent, Attributes::UpdEvent },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
 										   EventType::OnTruncate, EventType::OnUpdate};

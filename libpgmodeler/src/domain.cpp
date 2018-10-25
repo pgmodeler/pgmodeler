@@ -177,10 +177,10 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::NewName]=QString();
 
 		if(this->default_value!=domain->default_value)
-			attributes[Attributes::DefaultValue]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::UNSET);
+			attributes[Attributes::DefaultValue]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::Unset);
 
 		if(this->not_null!=domain->not_null)
-			attributes[Attributes::NotNull]=(domain->not_null ? Attributes::True : Attributes::UNSET);
+			attributes[Attributes::NotNull]=(domain->not_null ? Attributes::True : Attributes::Unset);
 
 		orig_constrs = this->chk_constrs;
 		aux_constrs = domain->chk_constrs;
@@ -198,7 +198,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 				 (aux_constrs.count(constr.first) && orig_expr != aux_expr))
 			{
 				aux_attribs[Attributes::Name]=constr.first;
-				aux_attribs[Attributes::Expression]=Attributes::UNSET;
+				aux_attribs[Attributes::Expression]=Attributes::Unset;
 				attributes[Attributes::Constraints]+=BaseObject::getAlterDefinition(Attributes::DomConstraint, aux_attribs, false, true);
 			}
 

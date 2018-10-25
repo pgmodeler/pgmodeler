@@ -106,12 +106,12 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::SrcColPattern]=QString();
 	attributes[Attributes::DstColPattern]=QString();
 	attributes[Attributes::PkPattern]=QString();
-	attributes[Attributes::UQ_PATTERN]=QString();
+	attributes[Attributes::UqPattern]=QString();
 	attributes[Attributes::SrcFkPattern]=QString();
 	attributes[Attributes::DstFkPattern]=QString();
 	attributes[Attributes::PkColPattern]=QString();
 	attributes[Attributes::SinglePkColumn]=QString();
-	attributes[Attributes::UPD_ACTION]=QString();
+	attributes[Attributes::UpdAction]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::CustomColor]=QString();
 	attributes[Attributes::ReferenceFk]=QString();
@@ -347,8 +347,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 	count=points.size();
 	for(i=0; i < count; i++)
 	{
-		attributes[Attributes::X_POS]=QString("%1").arg(points[i].x());
-		attributes[Attributes::Y_POS]=QString("%1").arg(points[i].y());
+		attributes[Attributes::XPos]=QString("%1").arg(points[i].x());
+		attributes[Attributes::YPos]=QString("%1").arg(points[i].y());
 		str_aux+=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
 	}
 	attributes[Attributes::Points]=str_aux;
@@ -358,8 +358,8 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		if(!std::isnan(lables_dist[i].x()))
 		{
-			attributes[Attributes::X_POS]=QString("%1").arg(lables_dist[i].x());
-			attributes[Attributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
+			attributes[Attributes::XPos]=QString("%1").arg(lables_dist[i].x());
+			attributes[Attributes::YPos]=QString("%1").arg(lables_dist[i].y());
 			attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
 			attributes[Attributes::RefType]=label_attribs[i];
 			str_aux+=schparser.getCodeDefinition(Attributes::Label, attributes, SchemaParser::XmlDefinition);

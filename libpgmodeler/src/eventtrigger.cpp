@@ -132,8 +132,8 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 			//Creating an element <filter variable="" values=""/>
 			attributes[Attributes::Filter]+=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 												   .arg(Attributes::Filter)
-												   .arg(Attributes::VARIABLE).arg(flt.first)
-												   .arg(Attributes::VALUES).arg(flt.second.join(','));
+												   .arg(Attributes::Variable).arg(flt.first)
+												   .arg(Attributes::Values).arg(flt.second.join(','));
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));

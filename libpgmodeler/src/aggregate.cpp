@@ -23,7 +23,7 @@ Aggregate::Aggregate(void)
 	obj_type=ObjectType::Aggregate;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[Attributes::TYPES]=QString();
+	attributes[Attributes::Types]=QString();
 	attributes[Attributes::TransitionFunc]=QString();
 	attributes[Attributes::StateType]=QString();
 	attributes[Attributes::BaseType]=QString();
@@ -155,7 +155,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 		an aggregate that accepts any possible data '*' e.g. function(*) */
 	if(def_type == SchemaParser::SqlDefinition && str_types.isEmpty()) str_types='*';
 
-	attributes[Attributes::TYPES]=str_types;
+	attributes[Attributes::Types]=str_types;
 }
 
 void Aggregate::addDataType(PgSqlType type)

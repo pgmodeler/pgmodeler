@@ -69,9 +69,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 	if(object->getObjectType()==ObjectType::View && !tag)
 	{
-		name_attrib=Attributes::VIEW_NAME;
-		schema_name_attrib=Attributes::VIEW_SCHEMA_NAME;
-		title_color_attrib=Attributes::VIEW_TITLE;
+		name_attrib=Attributes::ViewName;
+		schema_name_attrib=Attributes::ViewSchemaName;
+		title_color_attrib=Attributes::ViewTitle;
 	}
 	else
 	{

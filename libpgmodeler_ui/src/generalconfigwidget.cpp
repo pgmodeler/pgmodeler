@@ -124,12 +124,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=QString();
 	config_params[Attributes::Configuration][Attributes::LineHighlightColor]=QString();
 	config_params[Attributes::Configuration][Attributes::HighlightLines]=QString();
-	config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=QString();
+	config_params[Attributes::Configuration][Attributes::UsePlaceholders]=QString();
 	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString();
 	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString();
 	config_params[Attributes::Configuration][Attributes::SourceEditorApp]=QString();
-	config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=QString();
-	config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=QString();
+	config_params[Attributes::Configuration][Attributes::UiLanguage]=QString();
+	config_params[Attributes::Configuration][Attributes::UseCurvedLines]=QString();
 	config_params[Attributes::Configuration][Attributes::	SaveRestoreGeometry]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
@@ -294,8 +294,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		simple_obj_creation_chk->setChecked(config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]==Attributes::True);
 		confirm_validation_chk->setChecked(config_params[Attributes::Configuration][Attributes::ConfirmValidation]==Attributes::True);
 		code_completion_chk->setChecked(config_params[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True);
-		use_placeholders_chk->setChecked(config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]==Attributes::True);
-		use_curved_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]==Attributes::True);
+		use_placeholders_chk->setChecked(config_params[Attributes::Configuration][Attributes::UsePlaceholders]==Attributes::True);
+		use_curved_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::UseCurvedLines]==Attributes::True);
 
 		print_grid_chk->setChecked(config_params[Attributes::Configuration][Attributes::PrintGrid]==Attributes::True);
 		print_pg_num_chk->setChecked(config_params[Attributes::Configuration][Attributes::PrintPgNum]==Attributes::True);
@@ -335,7 +335,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 
-		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]);
+		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
 
 		for(QWidget *wgt : child_wgts)
@@ -344,11 +344,11 @@ void GeneralConfigWidget::loadConfiguration(void)
 		widgets_geom.clear();
 		for(auto itr : config_params)
 		{
-		  if(itr.second.count(Attributes::X_POS))
+		  if(itr.second.count(Attributes::XPos))
 		  {
-			x = itr.second[Attributes::X_POS].toInt();
-			y = itr.second[Attributes::Y_POS].toInt();
-			w = itr.second[Attributes::WIDTH].toInt();
+			x = itr.second[Attributes::XPos].toInt();
+			y = itr.second[Attributes::YPos].toInt();
+			w = itr.second[Attributes::Width].toInt();
 			h = itr.second[Attributes::Height].toInt();
 			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
 			widgets_geom[itr.first].maximized = itr.second[Attributes::Maximized] == Attributes::True;
@@ -463,7 +463,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		widget_sch=root_dir +
 				   GlobalAttributes::SchemasDir +
 				   GlobalAttributes::DirSeparator +
-				   Attributes::WIDGET +
+				   Attributes::Widget +
 				   GlobalAttributes::SchemaExt;
 
 		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
@@ -481,9 +481,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
-		config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::UsePlaceholders]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
-		config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::UseCurvedLines]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
 		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(show_grid ? Attributes::True : QString());
@@ -518,7 +518,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_edt->text();
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
-		config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=ui_language_cmb->currentData().toString();
+		config_params[Attributes::Configuration][Attributes::UiLanguage]=ui_language_cmb->currentData().toString();
 
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
@@ -530,7 +530,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		itr_end=config_params.end();
 
 		config_params[Attributes::Configuration][Attributes::DockWidgets]=QString();
-		config_params[Attributes::Configuration][Attributes::WIDGETS_GEOMETRY]=QString();
+		config_params[Attributes::Configuration][Attributes::WidgetsGeometry]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 
@@ -548,7 +548,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
-			else if(itr->first==Attributes::VALIDATOR ||
+			else if(itr->first==Attributes::Validator ||
 					itr->first==Attributes::ObjectFinder ||
 					itr->first==Attributes::SqlTool)
 			{
@@ -568,14 +568,14 @@ void GeneralConfigWidget::saveConfiguration(void)
 		  for(auto &itr : widgets_geom)
 		  {
 			attribs[Attributes::Id] = itr.first;
-			attribs[Attributes::X_POS] = QString::number(itr.second.geometry.left());
-			attribs[Attributes::Y_POS] = QString::number(itr.second.geometry.top());
-			attribs[Attributes::WIDTH] = QString::number(itr.second.geometry.width());
+			attribs[Attributes::XPos] = QString::number(itr.second.geometry.left());
+			attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
+			attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
 			attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
 			attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
 
 			schparser.ignoreUnkownAttributes(true);
-			config_params[Attributes::Configuration][Attributes::WIDGETS_GEOMETRY]+=
+			config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
 				schparser.getCodeDefinition(widget_sch, attribs);
 			schparser.ignoreUnkownAttributes(false);
 		  }

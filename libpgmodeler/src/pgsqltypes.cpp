@@ -1591,10 +1591,10 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[Attributes::Length]=QString();
 		attribs[Attributes::Dimension]=QString();
 		attribs[Attributes::Precision]=QString();
-		attribs[Attributes::WITH_TIMEZONE]=QString();
+		attribs[Attributes::WithTimezone]=QString();
 		attribs[Attributes::IntervalType]=QString();
 		attribs[Attributes::SpatialType]=QString();
-		attribs[Attributes::VARIATION]=QString();
+		attribs[Attributes::Variation]=QString();
 		attribs[Attributes::Srid]=QString();
 		attribs[Attributes::RefType]=ref_type;
 
@@ -1613,12 +1613,12 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(isGiSType())
 		{
 			attribs[Attributes::SpatialType]=(~spatial_type);
-			attribs[Attributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
+			attribs[Attributes::Variation]=QString("%1").arg(spatial_type.getVariation());
 			attribs[Attributes::Srid]=QString("%1").arg(spatial_type.getSRID());
 		}
 
 		if(with_timezone)
-			attribs[Attributes::WITH_TIMEZONE]=Attributes::True;
+			attribs[Attributes::WithTimezone]=Attributes::True;
 
 		return(schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type));
 	}

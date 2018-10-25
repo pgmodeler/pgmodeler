@@ -30,13 +30,13 @@ Constraint::Constraint(void)
 	attributes[Attributes::PkConstr]=QString();
 	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
-	attributes[Attributes::UQ_CONSTR]=QString();
+	attributes[Attributes::UqConstr]=QString();
 	attributes[Attributes::ExConstr]=QString();
 	attributes[Attributes::RefTable]=QString();
 	attributes[Attributes::SrcColumns]=QString();
 	attributes[Attributes::DstColumns]=QString();
 	attributes[Attributes::DelAction]=QString();
-	attributes[Attributes::UPD_ACTION]=QString();
+	attributes[Attributes::UpdAction]=QString();
 	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::Type]=QString();
 	attributes[Attributes::ComparisonType]=QString();
@@ -666,7 +666,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[Attributes::PkConstr]=QString();
 	attributes[Attributes::FkConstr]=QString();
 	attributes[Attributes::CkConstr]=QString();
-	attributes[Attributes::UQ_CONSTR]=QString();
+	attributes[Attributes::UqConstr]=QString();
 	attributes[Attributes::ExConstr]=QString();
 
 	switch(!constr_type)
@@ -681,7 +681,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			attrib=Attributes::FkConstr;
 		break;
 		case ConstraintType::Unique:
-			attrib=Attributes::UQ_CONSTR;
+			attrib=Attributes::UqConstr;
 		break;
 		default:
 			attrib=Attributes::ExConstr;
@@ -690,7 +690,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[attrib]=Attributes::True;
 
 	attributes[Attributes::Type]=attrib;
-	attributes[Attributes::UPD_ACTION]=(~upd_action);
+	attributes[Attributes::UpdAction]=(~upd_action);
 	attributes[Attributes::DelAction]=(~del_action);
 	attributes[Attributes::Expression]=expression;
 

@@ -37,7 +37,7 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::ConstrSqlDisabled]=QString();
 	attributes[Attributes::ColIndexes]=QString();
 	attributes[Attributes::ConstrIndexes]=QString();
-	attributes[Attributes::UNLOGGED]=QString();
+	attributes[Attributes::Unlogged]=QString();
 	attributes[Attributes::InitialData]=QString();
 	attributes[Attributes::RlsEnabled]=QString();
 	attributes[Attributes::RlsForced]=QString();
@@ -1595,7 +1595,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	QStringList part_keys_code;
 	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
-	attributes[Attributes::UNLOGGED]=(unlogged ? Attributes::True : QString());
+	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : QString());
 	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : QString());
 	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
 	attributes[Attributes::CopyTable]=QString();
@@ -1889,16 +1889,16 @@ QString Table::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::HasChanges]=Attributes::True;
 
 			if(this->with_oid!=tab->with_oid)
-				attribs[Attributes::Oids]=(tab->with_oid ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::Oids]=(tab->with_oid ? Attributes::True : Attributes::Unset);
 
 			if(this->unlogged!=tab->unlogged)
-				attribs[Attributes::UNLOGGED]=(tab->unlogged ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::Unlogged]=(tab->unlogged ? Attributes::True : Attributes::Unset);
 
 			if(this->rls_enabled!=tab->rls_enabled)
-				attribs[Attributes::RlsEnabled]=(tab->rls_enabled ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::RlsEnabled]=(tab->rls_enabled ? Attributes::True : Attributes::Unset);
 
 			if(this->rls_forced!=tab->rls_forced)
-				attribs[Attributes::RlsForced]=(tab->rls_forced ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::RlsForced]=(tab->rls_forced ? Attributes::True : Attributes::Unset);
 		}
 
 		copyAttributes(attribs);

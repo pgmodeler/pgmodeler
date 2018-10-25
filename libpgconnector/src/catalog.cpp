@@ -680,7 +680,7 @@ attribs_map Catalog::getServerAttributes(void)
 				tuple=res.getTupleValues();
 				attr_name = tuple[Attributes::Attribute];
 				attr_name.replace('_','-');
-				attribs[attr_name]=tuple[Attributes::VALUE];
+				attribs[attr_name]=tuple[Attributes::Value];
 			}
 			while(res.accessTuple(ResultSet::NextTuple));
 

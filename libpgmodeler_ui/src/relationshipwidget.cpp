@@ -480,7 +480,7 @@ void RelationshipWidget::useFKGlobalSettings(bool value)
 		map<QString, attribs_map> confs=RelationshipConfigWidget::getConfigurationParams();
 		deferrable_chk->setChecked(confs[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DeferType]);
-		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UPD_ACTION]);
+		upd_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::UpdAction]);
 		del_action_cmb->setCurrentText(confs[Attributes::ForeignKeys][Attributes::DelAction]);
 	}
 	else
@@ -520,7 +520,7 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 			pk_pattern_txt->setPlainText(confs[rel_type][Attributes::PkPattern]);
 			src_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::SrcFkPattern]);
 			dst_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::DstFkPattern]);
-			uq_pattern_txt->setPlainText(confs[rel_type][Attributes::UQ_PATTERN]);
+			uq_pattern_txt->setPlainText(confs[rel_type][Attributes::UqPattern]);
 			src_col_pattern_txt->setPlainText(confs[rel_type][Attributes::SrcColPattern]);
 			dst_col_pattern_txt->setPlainText(confs[rel_type][Attributes::DstColPattern]);
 			pk_col_pattern_txt->setPlainText(confs[rel_type][Attributes::PkColPattern]);

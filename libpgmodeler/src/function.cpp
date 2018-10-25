@@ -42,7 +42,7 @@ Function::Function(void)
 	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::Signature]=QString();
 	attributes[Attributes::RefType]=QString();
-	attributes[Attributes::WINDOW_FUNC]=QString();
+	attributes[Attributes::WindowFunc]=QString();
 	attributes[Attributes::ReturnTable]=QString();
 	attributes[Attributes::Library]=QString();
 	attributes[Attributes::Symbol]=QString();
@@ -478,7 +478,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	setTableReturnTypeAttribute(def_type);
 
 	attributes[Attributes::ReturnsSetOf]=(returns_setof ? Attributes::True : QString());
-	attributes[Attributes::WINDOW_FUNC]=(is_wnd_function ? Attributes::True : QString());
+	attributes[Attributes::WindowFunc]=(is_wnd_function ? Attributes::True : QString());
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : QString());
 	attributes[Attributes::SecurityType]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
@@ -529,7 +529,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 				attribs[Attributes::FunctionType]=~func->function_type;
 
 			if(this->is_leakproof!=func->is_leakproof)
-				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::Unset);
 
 			if(this->security_type!=func->security_type)
 				attribs[Attributes::SecurityType]=~func->security_type;

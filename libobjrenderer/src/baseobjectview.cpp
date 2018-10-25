@@ -238,7 +238,7 @@ void BaseObjectView::loadObjectsStyle(void)
 						font.setPointSizeF(attribs[Attributes::Size].toDouble());
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
 						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
-						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
+						font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
 						font_fmt.setFont(font);
 						font_config[Attributes::Global]=font_fmt;
 					}
@@ -249,7 +249,7 @@ void BaseObjectView::loadObjectsStyle(void)
 						font=font_fmt.font();
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
 						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
-						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
+						font.setUnderline(attribs[Attributes::Underline]==Attributes::True);
 						(itr->second).setFont(font);
 						(itr->second).setForeground(QColor(attribs[Attributes::Color]));
 					}

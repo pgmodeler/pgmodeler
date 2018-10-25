@@ -1233,7 +1233,7 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 		if(this->getComment()!=object->getComment())
 		{
 			if(object->getComment().isEmpty())
-				attributes[Attributes::Comment]=Attributes::UNSET;
+				attributes[Attributes::Comment]=Attributes::Unset;
 			else
 				attributes[Attributes::Comment]=object->getComment();
 

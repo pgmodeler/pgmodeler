@@ -1501,7 +1501,7 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 									 Attributes::TableName, Attributes::SpecialPkCols, Attributes::Table,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
 									 Attributes::SrcColPattern, Attributes::DstColPattern, Attributes::PkPattern,
-									 Attributes::UQ_PATTERN, Attributes::SrcFkPattern, Attributes::DstFkPattern };
+									 Attributes::UqPattern, Attributes::SrcFkPattern, Attributes::DstFkPattern };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);
@@ -1561,7 +1561,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 		QString startup_script=QString("%1/start-pgmodeler.sh")
 							   .arg(QFileInfo(GlobalAttributes::PgModelerAppPath).absolutePath());
 
-		attribs[Attributes::WORKING_DIR]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 		attribs[Attributes::Application]=(QFileInfo(startup_script).exists() ?
 													 startup_script : GlobalAttributes::PgModelerAppPath);
 		attribs[Attributes::Icon]=exec_icon;

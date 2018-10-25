@@ -28,7 +28,7 @@ Language::Language(void)
 
 	attributes[Attributes::Trusted]=QString();
 	attributes[Attributes::HandlerFunc]=QString();
-	attributes[Attributes::VALIDATOR_FUNC]=QString();
+	attributes[Attributes::ValidatorFunc]=QString();
 	attributes[Attributes::InlineFunc]=QString();
 }
 
@@ -116,7 +116,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString attribs_func[3]={Attributes::VALIDATOR_FUNC,
+	QString attribs_func[3]={Attributes::ValidatorFunc,
 							 Attributes::HandlerFunc,
 							 Attributes::InlineFunc};
 

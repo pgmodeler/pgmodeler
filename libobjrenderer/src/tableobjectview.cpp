@@ -131,7 +131,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 			else if(constr_type==ConstraintType::Unique)
 			{
-				attrib=Attributes::UQ_COLUMN;
+				attrib=Attributes::UqColumn;
 				pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
 				pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -219,7 +219,7 @@ void TableObjectView::configureObject(void)
 			}
 			else if(str_constr.indexOf(TextUnique)>=0)
 			{
-				fmt=font_config[Attributes::UQ_COLUMN];
+				fmt=font_config[Attributes::UqColumn];
 				constr_type=ConstraintType::Unique;
 			}
 			else if(str_constr.indexOf(TextNotNull)>=0)

@@ -1831,11 +1831,11 @@ void MainWindow::storeDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	attribs_map params;
 
-	params[Attributes::VALIDATOR]=Attributes::True;
+	params[Attributes::Validator]=Attributes::True;
 	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::PgSqlVersion]=model_valid_wgt->version_cmb->currentText();
-	conf_wgt->addConfigurationParam(Attributes::VALIDATOR, params);
+	conf_wgt->addConfigurationParam(Attributes::Validator, params);
 	params.clear();
 
 	params[Attributes::ObjectFinder]=Attributes::True;
@@ -1859,11 +1859,11 @@ void MainWindow::restoreDockWidgetsSettings(void)
 	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-	if(confs.count(Attributes::VALIDATOR))
+	if(confs.count(Attributes::Validator))
 	{
-		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::SqlValidation]==Attributes::True);
-		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::USE_UNIQUE_NAMES]==Attributes::True);
-		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PgSqlVersion]);
+		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::Validator][Attributes::SqlValidation]==Attributes::True);
+		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::Validator][Attributes::UseUniqueNames]==Attributes::True);
+		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::PgSqlVersion]);
 	}
 
 	if(confs.count(Attributes::ObjectFinder))

@@ -31,7 +31,7 @@ View::View(void) : BaseTable()
 	attributes[Attributes::CteExpression]=QString();
 	attributes[Attributes::Materialized]=QString();
 	attributes[Attributes::Recursive]=QString();
-	attributes[Attributes::WITH_NO_DATA]=QString();
+	attributes[Attributes::WithNoData]=QString();
 	attributes[Attributes::Columns]=QString();
 }
 
@@ -576,7 +576,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::CteExpression]=cte_expression;
 	attributes[Attributes::Materialized]=(materialized ? Attributes::True : QString());
 	attributes[Attributes::Recursive]=(recursive ? Attributes::True : QString());
-	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
+	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Tag]=QString();
 	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());

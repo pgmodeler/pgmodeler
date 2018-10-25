@@ -443,7 +443,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 				}
 			}
 			else
-				attribs[Attributes::OwnerColumn]=Attributes::UNSET;
+				attribs[Attributes::OwnerColumn]=Attributes::Unset;
 		}
 
 		if(!seq->increment.isEmpty() && this->increment!=seq->increment)
@@ -462,7 +462,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Cache]=seq->cache;
 
 		if(this->cycle!=seq->cycle)
-			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::UNSET);
+			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::Unset);
 
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

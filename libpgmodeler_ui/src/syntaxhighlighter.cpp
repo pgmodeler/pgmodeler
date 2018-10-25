@@ -390,27 +390,27 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 					{
 						elem=xmlparser.getElementName();
 
-						if(elem==Attributes::WORD_SEPARATORS)
+						if(elem==Attributes::WordSeparators)
 						{
 							xmlparser.getElementAttributes(attribs);
-							word_separators=attribs[Attributes::VALUE];
+							word_separators=attribs[Attributes::Value];
 						}
-						else if(elem==Attributes::WORD_DELIMITERS)
+						else if(elem==Attributes::WordDelimiters)
 						{
 							xmlparser.getElementAttributes(attribs);
-							word_delimiters=attribs[Attributes::VALUE];
+							word_delimiters=attribs[Attributes::Value];
 						}
 						else if(elem==Attributes::IgnoredChars)
 						{
 							xmlparser.getElementAttributes(attribs);
-							ignored_chars=attribs[Attributes::VALUE];
+							ignored_chars=attribs[Attributes::Value];
 						}
 						else if(elem==Attributes::CompletionTrigger)
 						{
 							xmlparser.getElementAttributes(attribs);
 
-							if(attribs[Attributes::VALUE].size() >= 1)
-								completion_trigger=attribs[Attributes::VALUE].at(0);
+							if(attribs[Attributes::Value].size() >= 1)
+								completion_trigger=attribs[Attributes::Value].at(0);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -478,7 +478,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								chr_sensitive=(attribs[Attributes::CaseSensitive]==Attributes::True);
 								italic=(attribs[Attributes::Italic]==Attributes::True);
 								bold=(attribs[Attributes::Bold]==Attributes::True);
-								underline=(attribs[Attributes::UNDERLINE]==Attributes::True);
+								underline=(attribs[Attributes::Underline]==Attributes::True);
 								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);
 								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
@@ -522,11 +522,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									{
 										xmlparser.getElementAttributes(attribs);
 										expr_type=attribs[Attributes::Type];
-										regexp.setPattern(attribs[Attributes::VALUE]);
+										regexp.setPattern(attribs[Attributes::Value]);
 
 										if(attribs[Attributes::RegularExp]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::RegExp2);
-										else if(attribs[Attributes::WILDCARD]==Attributes::True)
+										else if(attribs[Attributes::Wildcard]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::Wildcard);
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);

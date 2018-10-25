@@ -25,7 +25,7 @@ Textbox::Textbox(void)
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[Attributes::Italic]=QString();
 	attributes[Attributes::Bold]=QString();
-	attributes[Attributes::UNDERLINE]=QString();
+	attributes[Attributes::Underline]=QString();
 	attributes[Attributes::Color]=QString();
 	attributes[Attributes::FontSize]=QString();
 }
@@ -49,7 +49,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Bold]=Attributes::True;
 
 		if(text_attributes[UnderlineText])
-			attributes[Attributes::UNDERLINE]=Attributes::True;
+			attributes[Attributes::Underline]=Attributes::True;
 
 		if(text_color.name()!=QString("#000000"))
 			attributes[Attributes::Color]=text_color.name();

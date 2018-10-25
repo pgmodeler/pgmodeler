@@ -106,7 +106,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		deferrable_chk->setChecked(config_params[Attributes::ForeignKeys][Attributes::Deferrable]==Attributes::True);
 		deferral_cmb->setCurrentText(config_params[Attributes::ForeignKeys][Attributes::DeferType]);
 
-		idx=upd_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]);
+		idx=upd_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::UpdAction]);
 		upd_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
 		idx=del_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::DelAction]);
@@ -155,7 +155,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 
 		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
 		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
-		config_params[Attributes::ForeignKeys][Attributes::UPD_ACTION]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
+		config_params[Attributes::ForeignKeys][Attributes::UpdAction]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
 		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
 
 		config_params[Attributes::NamePatterns][Attributes::Patterns]=QString();
@@ -213,7 +213,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 									 dst_col_pattern_txt, src_fk_pattern_txt, dst_fk_pattern_txt,
 									 pk_col_pattern_txt };
 
-	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UQ_PATTERN,
+	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UqPattern,
 								 Attributes::SrcColPattern, Attributes::DstColPattern,
 								 Attributes::SrcFkPattern, Attributes::DstFkPattern,
 								 Attributes::PkColPattern };
@@ -253,7 +253,7 @@ void RelationshipConfigWidget::updatePattern(void)
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
 	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
-												{ uq_pattern_txt, Attributes::UQ_PATTERN },
+												{ uq_pattern_txt, Attributes::UqPattern },
 												{ src_col_pattern_txt, Attributes::SrcColPattern },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },
 												{ src_fk_pattern_txt, Attributes::SrcFkPattern   },

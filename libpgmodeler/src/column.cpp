@@ -304,17 +304,17 @@ QString Column::getAlterDefinition(BaseObject *object)
 			def_val=col->default_value;
 
 		if(this->default_value!=def_val)
-			attribs[Attributes::DefaultValue]=(def_val.isEmpty() ? Attributes::UNSET : def_val);
+			attribs[Attributes::DefaultValue]=(def_val.isEmpty() ? Attributes::Unset : def_val);
 
 		if(this->not_null!=col->not_null)
-			attribs[Attributes::NotNull]=(!col->not_null ? Attributes::UNSET : Attributes::True);
+			attribs[Attributes::NotNull]=(!col->not_null ? Attributes::Unset : Attributes::True);
 
 		attribs[Attributes::NewIdentityType] = QString();
 
 		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
 			attribs[Attributes::IdentityType] = ~col->identity_type;
 		else if(this->identity_type != BaseType::Null && col->identity_type == BaseType::Null)
-			attribs[Attributes::IdentityType] = Attributes::UNSET;
+			attribs[Attributes::IdentityType] = Attributes::Unset;
 		else if(this->identity_type != BaseType::Null && col->identity_type != BaseType::Null &&
 						this->identity_type != col->identity_type)
 			attribs[Attributes::NewIdentityType] = ~col->identity_type;
@@ -328,7 +328,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		attribs[Attributes::Cycle] = QString();
 
 		//Checking differences in the underlying sequence (identity col)
-		if(attribs[Attributes::IdentityType] != Attributes::UNSET)
+		if(attribs[Attributes::IdentityType] != Attributes::Unset)
 		{
 			if(!col->seq_min_value.isEmpty() && this->seq_min_value != col->seq_min_value)
 			{

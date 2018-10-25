@@ -48,11 +48,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		BaseObject::getSchemaName(ObjectType::Constraint), //20
 		BaseObject::getSchemaName(ObjectType::Policy), //21
 		BaseObject::getSchemaName(ObjectType::Policy), //22
-		Attributes::VIEW_SCHEMA_NAME, //21 -> 23
-		Attributes::VIEW_NAME, //22
-		Attributes::VIEW_BODY, //23
-		Attributes::VIEW_EXT_BODY, //24
-		Attributes::VIEW_TITLE, //25
+		Attributes::ViewSchemaName, //21 -> 23
+		Attributes::ViewName, //22
+		Attributes::ViewBody, //23
+		Attributes::ViewExtBody, //24
+		Attributes::ViewTitle, //25
 		Attributes::Alias, //26
 		Attributes::RefColumn, //27
 		Attributes::RefTable, //28
@@ -66,8 +66,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::PkColumn, //36
 		Attributes::FkColumn, //37
 		Attributes::FkColumn, //38
-		Attributes::UQ_COLUMN, //39
-		Attributes::UQ_COLUMN, //40
+		Attributes::UqColumn, //39
+		Attributes::UqColumn, //40
 		Attributes::NnColumn, //41
 		Attributes::NnColumn, //42
 		Attributes::Relationship, //43
@@ -296,7 +296,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attrib_id=item.conf_id + QString("-") + Attributes::Bold;
 				attribs[attrib_id]=(font.bold() ? Attributes::True : Attributes::False);
 
-				attrib_id=item.conf_id + QString("-") + Attributes::UNDERLINE;
+				attrib_id=item.conf_id + QString("-") + Attributes::Underline;
 				attribs[attrib_id]=(font.underline() ? Attributes::True : Attributes::False);
 			}
 			//Special case: treating the global font element

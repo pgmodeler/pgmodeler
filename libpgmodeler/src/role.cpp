@@ -38,7 +38,7 @@ Role::Role(void)
 	attributes[Attributes::ConnLimit]=QString();
 	attributes[Attributes::Password]=QString();
 	attributes[Attributes::Encrypted]=QString();
-	attributes[Attributes::VALIDITY]=QString();
+	attributes[Attributes::Validity]=QString();
 	attributes[Attributes::RefRoles]=QString();
 	attributes[Attributes::MemberRoles]=QString();
 	attributes[Attributes::AdminRoles]=QString();
@@ -342,7 +342,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 		attributes[op_attribs[i]]=(options[i] ? Attributes::True : QString());
 
 	attributes[Attributes::Password]=password;
-	attributes[Attributes::VALIDITY]=validity;
+	attributes[Attributes::Validity]=validity;
 
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
@@ -371,13 +371,13 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 			attribs[Attributes::Password]=role->password;
 
 		if(this->validity!=role->validity)
-			attribs[Attributes::VALIDITY]=role->validity;
+			attribs[Attributes::Validity]=role->validity;
 
 		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
 			if((attribs.count(Attributes::Password) && i==OpEncrypted) ||
 					this->options[i]!=role->options[i])
-				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::UNSET);
+				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 
 		copyAttributes(attribs);

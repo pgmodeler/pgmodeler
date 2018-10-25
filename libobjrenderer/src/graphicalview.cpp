@@ -40,7 +40,7 @@ void GraphicalView::configureObject(void)
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
-	QString attribs[]={ Attributes::VIEW_BODY, Attributes::VIEW_EXT_BODY },
+	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
 			tag_attribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;

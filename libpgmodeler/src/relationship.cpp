@@ -2610,7 +2610,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::SinglePkColumn]=(single_pk_column ? Attributes::True : QString());
 		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
 		attributes[Attributes::DeferType]=~deferral_type;
-		attributes[Attributes::UPD_ACTION]=~upd_action;
+		attributes[Attributes::UpdAction]=~upd_action;
 		attributes[Attributes::DelAction]=~del_action;
 
 		attributes[Attributes::TableName]=tab_name_relnn;
@@ -2621,7 +2621,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::SrcColPattern]=name_patterns[SrcColPattern];
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
 		attributes[Attributes::PkPattern]=name_patterns[PkPattern];
-		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
+		attributes[Attributes::UqPattern]=name_patterns[UqPattern];
 		attributes[Attributes::SrcFkPattern]=name_patterns[SrcFkPattern];
 		attributes[Attributes::DstFkPattern]=name_patterns[DstFkPattern];
 		attributes[Attributes::PkColPattern]=name_patterns[PkColPattern];
@@ -2717,13 +2717,13 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 
 	if(rel_type == RelationshipGen)
 	{
-		attributes[Attributes::Inherit]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::Inherit]=(undo_inh_part ? Attributes::Unset : Attributes::True);
 		attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		attributes[Attributes::AncestorTable]=getReferenceTable()->getName(true);
 	}
 	else
 	{
-		attributes[Attributes::Partitioning]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::Partitioning]=(undo_inh_part ? Attributes::Unset : Attributes::True);
 		attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		attributes[Attributes::PartitionedTable]=getReferenceTable()->getName(true);
 		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();

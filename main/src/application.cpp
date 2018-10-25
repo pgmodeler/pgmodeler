@@ -68,12 +68,12 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	if(input.open(QFile::ReadOnly))
 	{
 		QString buf = QString(input.readAll());
-		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UI_LANGUAGE));
+		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
 		int idx =	regexp.indexIn(QString(buf));
 
 		//Extract the value of the ui-language attribute in the conf file
 		lang_id = buf.mid(idx, regexp.matchedLength());
-		lang_id.remove(Attributes::UI_LANGUAGE);
+		lang_id.remove(Attributes::UiLanguage);
 		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
 	}
 

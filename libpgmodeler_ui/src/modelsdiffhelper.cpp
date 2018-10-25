@@ -885,7 +885,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[Attributes::TruncateCmds]=QString();
 			attribs[Attributes::ConstrDefs]=QString();
 			attribs[Attributes::FkDefs]=QString();
-			attribs[Attributes::UNSET_PERMS]=unset_perms;
+			attribs[Attributes::UnsetPerms]=unset_perms;
 			attribs[Attributes::SetPerms]=set_perms;
 			attribs[Attributes::Function]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
 			attribs[Attributes::SearchPath]=(has_diffs ? sch_names.join(',') : QString());

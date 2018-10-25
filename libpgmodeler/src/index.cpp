@@ -24,7 +24,7 @@ Index::Index(void)
 	index_attribs[Unique]=index_attribs[Concurrent]=
 			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;
-	attributes[Attributes::UNIQUE]=QString();
+	attributes[Attributes::Unique]=QString();
 	attributes[Attributes::Concurrent]=QString();
 	attributes[Attributes::Table]=QString();
 	attributes[Attributes::IndexType]=QString();
@@ -331,7 +331,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[Attributes::UNIQUE]=(index_attribs[Unique] ? Attributes::True : QString());
+	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : QString());
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Predicate]=predicate;
@@ -394,11 +394,11 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 			if(this->indexing_type==IndexingType::Gin &&
 					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
-				attribs[Attributes::FastUpdate]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::FastUpdate]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::Unset);
 
 			if(this->indexing_type==IndexingType::Gist &&
 					this->index_attribs[Buffering] != index->index_attribs[Buffering])
-				attribs[Attributes::Buffering]=(index->index_attribs[Buffering] ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::Buffering]=(index->index_attribs[Buffering] ? Attributes::True : Attributes::Unset);
 		}
 
 		copyAttributes(attribs);

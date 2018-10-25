@@ -737,7 +737,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 							prev_val=this->enumerations[0];
 						}
 
-						attribs[Attributes::VALUE]=enum_val;
+						attribs[Attributes::Value]=enum_val;
 						attribs[Attributes::ExistingValue]=prev_val;
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);

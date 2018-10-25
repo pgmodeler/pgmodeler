@@ -1182,7 +1182,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 	try
 	{
 		unsigned lang_oid, func_oid;
-		QString func_types[]={ Attributes::VALIDATOR_FUNC,
+		QString func_types[]={ Attributes::ValidatorFunc,
 							   Attributes::HandlerFunc,
 							   Attributes::InlineFunc };
 
@@ -1452,8 +1452,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 			Table *tab = nullptr;
 			QString col_name, tab_name;
 			attribs_map pos_attrib={
-				{ Attributes::X_POS, QString("0") },
-				{ Attributes::Y_POS, QString("0") }};
+				{ Attributes::XPos, QString("0") },
+				{ Attributes::YPos, QString("0") }};
 
 			if(attribs[Attributes::Oid].toUInt() > owner_col[0].toUInt())
 				seq_tab_swap[attribs[Attributes::Oid]]=owner_col[0];
@@ -1508,13 +1508,13 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 		for(unsigned i=0; i < 2; i++)
 			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, auto_resolve_deps, true, {{Attributes::RefType, func_types[i]}});
 
-		types=getTypes(attribs[Attributes::TYPES], true);
-		attribs[Attributes::TYPES]=QString();
+		types=getTypes(attribs[Attributes::Types], true);
+		attribs[Attributes::Types]=QString();
 
 		if(!types.isEmpty())
 		{
 			for(int i=0; i < types.size(); i++)
-				attribs[Attributes::TYPES]+=types[i];
+				attribs[Attributes::Types]+=types[i];
 		}
 
 		attribs[Attributes::StateType]=getType(attribs[Attributes::StateType], true,
@@ -1639,8 +1639,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		QString type_def, unknown_obj_xml, type_name, def_val;
 		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={
-			{ Attributes::X_POS, QString("0") },
-			{ Attributes::Y_POS, QString("0") }};
+			{ Attributes::XPos, QString("0") },
+			{ Attributes::YPos, QString("0") }};
 
 		attribs[Attributes::Columns]=QString();
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
@@ -1874,8 +1874,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 	try
 	{
-		attribs_map pos_attrib={{ Attributes::X_POS, QString("0") },
-								{ Attributes::Y_POS, QString("0") }};
+		attribs_map pos_attrib={{ Attributes::XPos, QString("0") },
+								{ Attributes::YPos, QString("0") }};
 
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
@@ -2219,9 +2219,9 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true, true);
 		attribs[Attributes::Filter]=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 										   .arg(Attributes::Filter)
-										   .arg(Attributes::VARIABLE).arg(Attributes::Tag.toUpper())
-										   .arg(Attributes::VALUES)
-										   .arg(Catalog::parseArrayValues(attribs[Attributes::VALUES].remove('"')).join(','));
+										   .arg(Attributes::Variable).arg(Attributes::Tag.toUpper())
+										   .arg(Attributes::Values)
+										   .arg(Catalog::parseArrayValues(attribs[Attributes::Values].remove('"')).join(','));
 
 		loadObjectXML(ObjectType::EventTrigger, attribs);
 		dbmodel->addEventTrigger(dbmodel->createEventTrigger());
@@ -2629,7 +2629,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				}
 				else if(obj_type==ObjectType::Aggregate)
 				{
-					QStringList params=getTypes(obj_attr[Attributes::TYPES], false);
+					QStringList params=getTypes(obj_attr[Attributes::Types], false);
 
 					if(params.isEmpty())
 						params.push_back(QString("*"));
@@ -2747,16 +2747,16 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			/* If the type was generated from a table/sequence/view/domain and the source object is not
 				 yet imported and the auto resolve deps is enabled, we need to import it */
-			if(!type_attr[Attributes::TYPE_CLASS].isEmpty() && auto_resolve_deps &&
+			if(!type_attr[Attributes::TypeClass].isEmpty() && auto_resolve_deps &&
 				 (!user_objs.count(object_id) && !system_objs.count(object_id)))
 			{
 				ObjectType obj_type;
 
-				if(type_attr[Attributes::TYPE_CLASS]==BaseObject::getSchemaName(ObjectType::Table))
+				if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Table))
 					obj_type=ObjectType::Table;
-				else if(type_attr[Attributes::TYPE_CLASS]==BaseObject::getSchemaName(ObjectType::View))
+				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::View))
 					obj_type=ObjectType::View;
-				else if(type_attr[Attributes::TYPE_CLASS]==BaseObject::getSchemaName(ObjectType::Domain))
+				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Domain))
 					obj_type=ObjectType::Domain;
 				else
 					obj_type=ObjectType::Sequence;
