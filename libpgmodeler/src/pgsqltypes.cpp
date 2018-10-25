@@ -1590,13 +1590,13 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 
 		attribs[Attributes::Length]=QString();
 		attribs[Attributes::Dimension]=QString();
-		attribs[Attributes::PRECISION]=QString();
+		attribs[Attributes::Precision]=QString();
 		attribs[Attributes::WITH_TIMEZONE]=QString();
 		attribs[Attributes::IntervalType]=QString();
 		attribs[Attributes::SPATIAL_TYPE]=QString();
 		attribs[Attributes::VARIATION]=QString();
 		attribs[Attributes::SRID]=QString();
-		attribs[Attributes::REF_TYPE]=ref_type;
+		attribs[Attributes::RefType]=ref_type;
 
 		attribs[Attributes::Name]=(~(*this));
 		attribs[Attributes::Length]=QString("%1").arg(this->length);
@@ -1605,7 +1605,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 			attribs[Attributes::Dimension]=QString("%1").arg(this->dimension);
 
 		if(precision >= 0)
-			attribs[Attributes::PRECISION]=QString("%1").arg(this->precision);
+			attribs[Attributes::Precision]=QString("%1").arg(this->precision);
 
 		if(interval_type != BaseType::Null)
 			attribs[Attributes::IntervalType]=(~interval_type);

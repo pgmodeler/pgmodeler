@@ -32,7 +32,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::CkConstr]=QString();
 	attributes[Attributes::UQ_CONSTR]=QString();
 	attributes[Attributes::ExConstr]=QString();
-	attributes[Attributes::REF_TABLE]=QString();
+	attributes[Attributes::RefTable]=QString();
 	attributes[Attributes::SRC_COLUMNS]=QString();
 	attributes[Attributes::DstColumns]=QString();
 	attributes[Attributes::DelAction]=QString();
@@ -710,7 +710,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			setColumnsAttribute(ReferencedCols, def_type, inc_addedbyrel);
 	}
 
-	attributes[Attributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : QString());
+	attributes[Attributes::RefTable]=(ref_table ? ref_table->getName(true) : QString());
 	attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
 	attributes[Attributes::NoInherit]=(no_inherit ? Attributes::True : QString());
 	attributes[Attributes::ComparisonType]=(~match_type);

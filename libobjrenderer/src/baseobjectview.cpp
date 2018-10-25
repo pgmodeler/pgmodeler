@@ -462,14 +462,14 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 {
 	if(this->isSelected())
 	{
-		QFont fnt=font_config[Attributes::POSITION_INFO].font();
+		QFont fnt=font_config[Attributes::PositionInfo].font();
 
-		pos_info_rect->setBrush(BaseObjectView::getFillStyle(Attributes::POSITION_INFO));
-		pos_info_rect->setPen(BaseObjectView::getBorderStyle(Attributes::POSITION_INFO));
+		pos_info_rect->setBrush(BaseObjectView::getFillStyle(Attributes::PositionInfo));
+		pos_info_rect->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.95);
 		pos_info_txt->setFont(fnt);
-		pos_info_txt->setBrush(font_config[Attributes::POSITION_INFO].foreground());
+		pos_info_txt->setBrush(font_config[Attributes::PositionInfo].foreground());
 
 		pos_info_txt->setText(QString(" x:%1 y:%2 ").arg(roundf(pos.x())).arg(roundf(pos.y())));
 		pos_info_rect->setRect(pos_info_txt->boundingRect());
@@ -490,7 +490,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 		if(this->getSourceObject()->isSQLDisabled())
 		{
 			QTextCharFormat char_fmt;
-			char_fmt=BaseObjectView::getFontStyle(Attributes::POSITION_INFO);
+			char_fmt=BaseObjectView::getFontStyle(Attributes::PositionInfo);
 			char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
 
 			sql_disabled_txt->setFont(char_fmt.font());
@@ -498,8 +498,8 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_txt->setBrush(char_fmt.foreground());
 
 			sql_disabled_box->setRect(QRectF(QPointF(0,0), sql_disabled_txt->boundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));
-			sql_disabled_box->setPen(BaseObjectView::getBorderStyle(Attributes::POSITION_INFO));
-			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(Attributes::POSITION_INFO));
+			sql_disabled_box->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
+			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(Attributes::PositionInfo));
 
 			px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HorizSpacing),
 					py=-(sql_disabled_box->boundingRect().height()/2);

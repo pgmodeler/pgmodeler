@@ -232,7 +232,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getSignature();
 		else
 		{
-			functions[TransitionFunc]->setAttribute(Attributes::REF_TYPE,
+			functions[TransitionFunc]->setAttribute(Attributes::RefType,
 													 Attributes::TRANSITION_FUNC);
 			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
@@ -244,7 +244,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSignature();
 		else
 		{
-			functions[FinalFunc]->setAttribute(Attributes::REF_TYPE,
+			functions[FinalFunc]->setAttribute(Attributes::RefType,
 												Attributes::FinalFunc);
 			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getCodeDefinition(def_type,true);
 		}

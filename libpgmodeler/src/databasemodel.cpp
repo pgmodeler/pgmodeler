@@ -47,7 +47,7 @@ DatabaseModel::DatabaseModel(void)
 	attributes[Attributes::LcCollate]=QString();
 	attributes[Attributes::LcCtype]=QString();
 	attributes[Attributes::AppendAtEod]=QString();
-	attributes[Attributes::PREPEND_AT_BOD]=QString();
+	attributes[Attributes::PrependAtBod]=QString();
 	attributes[Attributes::AllowConns]=QString();
 	attributes[Attributes::IsTemplate]=QString();
 }
@@ -2970,7 +2970,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	localizations[0]=attribs[Attributes::LcCtype];
 	localizations[1]=attribs[Attributes::LcCollate];
 	append_at_eod=attribs[Attributes::AppendAtEod]==Attributes::True;
-	prepend_at_bod=attribs[Attributes::PREPEND_AT_BOD]==Attributes::True;
+	prepend_at_bod=attribs[Attributes::PrependAtBod]==Attributes::True;
 	is_template=attribs[Attributes::IsTemplate]==Attributes::True;
 	allow_conns=attribs[Attributes::AllowConns] != Attributes::False;
 
@@ -3032,7 +3032,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
-			protected_model=(attribs[Attributes::PROTECTED]==Attributes::True);
+			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
 			def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
 			def_objs[ObjectType::Role]=attribs[Attributes::DefaultOwner];
@@ -3254,7 +3254,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	if(BaseObject::acceptsAlias(obj_type_aux))
 		object->setAlias(attribs[Attributes::Alias]);
 
-	protected_obj=attribs[Attributes::PROTECTED]==Attributes::True;
+	protected_obj=attribs[Attributes::Protected]==Attributes::True;
 	sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
 
 	xmlparser.savePosition();
@@ -3318,7 +3318,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					object->setAppendedSQL(xmlparser.getElementContent());
 					xmlparser.restorePosition();
 				}
-				else if(elem_name==Attributes::PREPENDED_SQL)
+				else if(elem_name==Attributes::PrependedSql)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -3326,11 +3326,11 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					xmlparser.restorePosition();
 				}
 				//Defines the object's position (only for graphical objects)
-				else if(elem_name==Attributes::POSITION)
+				else if(elem_name==Attributes::Position)
 				{
 					xmlparser.getElementAttributes(attribs);
 
-					if(elem_name==Attributes::POSITION &&
+					if(elem_name==Attributes::Position &&
 							(obj_type_aux!=ObjectType::Relationship &&
 							 obj_type_aux!=ObjectType::BaseRelationship))
 					{
@@ -3459,7 +3459,7 @@ Role *DatabaseModel::createRole(void)
 	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
 							 Attributes::CreateRole, Attributes::Inherit,
 							 Attributes::Login, Attributes::Encrypted,
-							 Attributes::REPLICATION, Attributes::BypassRls };
+							 Attributes::Replication, Attributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
@@ -3506,7 +3506,7 @@ Role *DatabaseModel::createRole(void)
 						len=list.size();
 
 						//Identifying the member role type
-						if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::REFER)
+						if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::Refer)
 							role_type=Role::RefRole;
 						else if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::Member)
 							role_type=Role::MemberRole;
@@ -3578,7 +3578,7 @@ Schema *DatabaseModel::createSchema(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
-		schema->setRectVisible(attribs[Attributes::RECT_VISIBLE]==Attributes::True);
+		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 	}
 	catch(Exception &e)
@@ -3619,7 +3619,7 @@ Language *DatabaseModel::createLanguage(void)
 						xmlparser.getElementAttributes(attribs);
 
 						//Gets the function reference type
-						ref_type=attribs[Attributes::REF_TYPE];
+						ref_type=attribs[Attributes::RefType];
 
 						//Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
 						if(ref_type==Attributes::VALIDATOR_FUNC ||
@@ -3682,8 +3682,8 @@ Function *DatabaseModel::createFunction(void)
 		setBasicAttributes(func);
 		xmlparser.getElementAttributes(attribs);
 
-		if(!attribs[Attributes::RETURNS_SETOF].isEmpty())
-			func->setReturnSetOf(attribs[Attributes::RETURNS_SETOF]==
+		if(!attribs[Attributes::ReturnsSetOf].isEmpty())
+			func->setReturnSetOf(attribs[Attributes::ReturnsSetOf]==
 					Attributes::True);
 
 		if(!attribs[Attributes::WINDOW_FUNC].isEmpty())
@@ -3719,7 +3719,7 @@ Function *DatabaseModel::createFunction(void)
 					obj_type=BaseObject::getObjectType(elem);
 
 					//Gets the function return type from the XML
-					if(elem==Attributes::RETURN_TYPE)
+					if(elem==Attributes::ReturnType)
 					{
 						xmlparser.savePosition();
 
@@ -3947,8 +3947,8 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	if(!attribs[Attributes::Dimension].isEmpty())
 		dimension=attribs[Attributes::Dimension].toUInt();
 
-	if(!attribs[Attributes::PRECISION].isEmpty())
-		precision=attribs[Attributes::PRECISION].toInt();
+	if(!attribs[Attributes::Precision].isEmpty())
+		precision=attribs[Attributes::Precision].toInt();
 
 	with_timezone=(attribs[Attributes::WITH_TIMEZONE]==Attributes::True);
 	interv_type=attribs[Attributes::IntervalType];
@@ -4029,14 +4029,14 @@ Type *DatabaseModel::createType(void)
 			if(!attribs[Attributes::Category].isEmpty())
 				type->setCategory(attribs[Attributes::Category]);
 
-			if(!attribs[Attributes::PREFERRED].isEmpty())
-				type->setPreferred(attribs[Attributes::PREFERRED]==Attributes::True);
+			if(!attribs[Attributes::Preferred].isEmpty())
+				type->setPreferred(attribs[Attributes::Preferred]==Attributes::True);
 
 			//Configuring an auxiliary map used to reference the functions used by base type
 			func_types[Attributes::InputFunc]=Type::InputFunc;
 			func_types[Attributes::OutputFunc]=Type::OutputFunc;
 			func_types[Attributes::SEND_FUNC]=Type::SendFunc;
-			func_types[Attributes::RECV_FUNC]=Type::RecvFunc;
+			func_types[Attributes::RecvFunc]=Type::RecvFunc;
 			func_types[Attributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
 			func_types[Attributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
 			func_types[Attributes::AnalyzeFunc]=Type::AnalyzeFunc;
@@ -4138,10 +4138,10 @@ Type *DatabaseModel::createType(void)
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						//Raises an error if the function type is invalid
-						else if(func_types.count(attribs[Attributes::REF_TYPE])==0)
+						else if(func_types.count(attribs[Attributes::RefType])==0)
 							throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						type->setFunction(func_types[attribs[Attributes::REF_TYPE]],	dynamic_cast<Function *>(func));
+						type->setFunction(func_types[attribs[Attributes::RefType]],	dynamic_cast<Function *>(func));
 					}
 				}
 			}
@@ -4375,7 +4375,7 @@ Operator *DatabaseModel::createOperator(void)
 
 		func_types[Attributes::OperatorFunc]=Operator::FUNC_OPERATOR;
 		func_types[Attributes::JoinFunc]=Operator::FUNC_JOIN;
-		func_types[Attributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
+		func_types[Attributes::RestrictionFunc]=Operator::FUNC_RESTRICT;
 
 		oper_types[Attributes::CommutatorOp]=Operator::OPER_COMMUTATOR;
 		oper_types[Attributes::NegatorOp]=Operator::OPER_NEGATOR;
@@ -4403,13 +4403,13 @@ Operator *DatabaseModel::createOperator(void)
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
-											oper_types[attribs[Attributes::REF_TYPE]]);
+											oper_types[attribs[Attributes::RefType]]);
 					}
 					else if(elem==Attributes::TYPE)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						if(attribs[Attributes::REF_TYPE]!=Attributes::RIGHT_TYPE)
+						if(attribs[Attributes::RefType]!=Attributes::RIGHT_TYPE)
 							arg_type=Operator::LEFT_ARG;
 						else
 							arg_type=Operator::RIGHT_ARG;
@@ -4432,7 +4432,7 @@ Operator *DatabaseModel::createOperator(void)
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 						oper->setFunction(dynamic_cast<Function *>(func),
-											func_types[attribs[Attributes::REF_TYPE]]);
+											func_types[attribs[Attributes::RefType]]);
 					}
 				}
 			}
@@ -4616,7 +4616,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 
-						if(attribs[Attributes::REF_TYPE]==Attributes::STATE_TYPE)
+						if(attribs[Attributes::RefType]==Attributes::STATE_TYPE)
 							aggreg->setStateType(type);
 						else
 							aggreg->addDataType(type);
@@ -4635,7 +4635,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						if(attribs[Attributes::REF_TYPE]==Attributes::TRANSITION_FUNC)
+						if(attribs[Attributes::RefType]==Attributes::TRANSITION_FUNC)
 							aggreg->setFunction(Aggregate::TransitionFunc,
 												dynamic_cast<Function *>(func));
 						else
@@ -4968,9 +4968,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(!attribs[Attributes::UPD_ACTION].isEmpty())
 				constr->setActionType(attribs[Attributes::UPD_ACTION], Constraint::UpdateAction);
 
-			ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::Table);
+			ref_table=getObject(attribs[Attributes::RefTable], ObjectType::Table);
 
-			if(!ref_table && table->getName(true)==attribs[Attributes::REF_TABLE])
+			if(!ref_table && table->getName(true)==attribs[Attributes::RefTable])
 				ref_table=table;
 
 			//Raises an error if the referenced table doesn't exists
@@ -4979,7 +4979,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 						.arg(constr->getName())
 						.arg(constr->getTypeName())
-						.arg(attribs[Attributes::REF_TABLE])
+						.arg(attribs[Attributes::RefTable])
 						.arg(BaseObject::getTypeName(ObjectType::Table));
 
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5025,7 +5025,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						col_list=attribs[Attributes::Names].split(',');
 						count=col_list.count();
 
-						if(attribs[Attributes::REF_TYPE]==Attributes::SRC_COLUMNS)
+						if(attribs[Attributes::RefType]==Attributes::SRC_COLUMNS)
 							col_type=Constraint::SourceCols;
 						else
 							col_type=Constraint::ReferencedCols;
@@ -5341,7 +5341,7 @@ Index *DatabaseModel::createIndex(void)
 						createElement(idx_elem, index, table);
 						index->addIndexElement(idx_elem);
 					}
-					else if(elem==Attributes::PREDICATE)
+					else if(elem==Attributes::Predicate)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -5514,12 +5514,12 @@ Trigger *DatabaseModel::createTrigger(void)
 		if(trigger->isDeferrable())
 			trigger->setDeferralType(attribs[Attributes::DeferType]);
 
-		if(!attribs[Attributes::REF_TABLE].isEmpty())
+		if(!attribs[Attributes::RefTable].isEmpty())
 		{
-			ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::Table);
+			ref_table=getObject(attribs[Attributes::RefTable], ObjectType::Table);
 
 			if(!ref_table)
-				ref_table=getObject(attribs[Attributes::REF_TABLE], ObjectType::View);
+				ref_table=getObject(attribs[Attributes::RefTable], ObjectType::View);
 
 			//Raises an error if the trigger is referencing a inexistent table
 			if(!ref_table)
@@ -5527,7 +5527,7 @@ Trigger *DatabaseModel::createTrigger(void)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(trigger->getName())
 								.arg(trigger->getTypeName())
-								.arg(attribs[Attributes::REF_TABLE])
+								.arg(attribs[Attributes::RefTable])
 						.arg(BaseObject::getTypeName(ObjectType::Table)),
 						ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -5885,7 +5885,7 @@ View *DatabaseModel::createView(void)
 		xmlparser.getElementAttributes(attribs);
 		view->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
-		view->setRecursive(attribs[Attributes::RECURSIVE]==Attributes::True);
+		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WITH_NO_DATA]==Attributes::True);
 		view->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
@@ -5898,7 +5898,7 @@ View *DatabaseModel::createView(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::REFERENCE)
+					if(elem==Attributes::Reference)
 					{
 						xmlparser.getElementAttributes(attribs);
 
@@ -5945,7 +5945,7 @@ View *DatabaseModel::createView(void)
 							reference = Reference(table, column,
 																		attribs[Attributes::Alias],
 																		attribs[Attributes::ColumnAlias]);
-							reference.setReferenceAlias(attribs[Attributes::REF_ALIAS]);
+							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
 							refs.push_back(reference);
 						}
 						else
@@ -5957,7 +5957,7 @@ View *DatabaseModel::createView(void)
 							xmlparser.accessElement(XmlParser::ChildElement);
 
 							reference = Reference(xmlparser.getElementContent(),str_aux);
-							reference.setReferenceAlias(attribs[Attributes::REF_ALIAS]);
+							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
 							refs.push_back(reference);
 
 							xmlparser.restorePosition();
@@ -6225,21 +6225,21 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		labels_id[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
-		protect=(attribs[Attributes::PROTECTED]==Attributes::True);
+		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
 
-		if(attribs[Attributes::TYPE]!=Attributes::RELATION_TAB_VIEW &&
-				attribs[Attributes::TYPE]!=Attributes::RELATIONSHIP_FK)
+		if(attribs[Attributes::TYPE]!=Attributes::RelationshipTabView &&
+				attribs[Attributes::TYPE]!=Attributes::RelationshipFk)
 		{
 			table_types[0]=ObjectType::Table;
 			obj_rel_type=ObjectType::Relationship;
 		}
 		else
 		{
-			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_FK)
+			if(attribs[Attributes::TYPE]==Attributes::RelationshipFk)
 				table_types[0]=ObjectType::Table;
 
 			obj_rel_type=ObjectType::BaseRelationship;
@@ -6269,7 +6269,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
 			added to the table after its creation. */
-			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_FK)
+			if(attribs[Attributes::TYPE]==Attributes::RelationshipFk)
 			{
 				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[Attributes::Name]);
@@ -6344,17 +6344,17 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			upd_action=ActionType(attribs[Attributes::UPD_ACTION]);
 			single_pk_col=(attribs[Attributes::SINGLE_PK_COLUMN]==Attributes::True);
 
-			if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_11)
+			if(attribs[Attributes::TYPE]==Attributes::Relationship11)
 				rel_type=BaseRelationship::Relationship11;
-			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_1N)
+			else if(attribs[Attributes::TYPE]==Attributes::Relationship1n)
 				rel_type=BaseRelationship::Relationship1n;
-			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_NN)
+			else if(attribs[Attributes::TYPE]==Attributes::RelationshipNn)
 				rel_type=BaseRelationship::RelationshipNn;
-			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_GEN)
+			else if(attribs[Attributes::TYPE]==Attributes::RelationshipGen)
 				rel_type=BaseRelationship::RelationshipGen;
-			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_DEP)
+			else if(attribs[Attributes::TYPE]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else if(attribs[Attributes::TYPE]==Attributes::RELATIONSHIP_PART)
+			else if(attribs[Attributes::TYPE]==Attributes::RelationshipPart)
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
@@ -6441,7 +6441,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					else if(elem==Attributes::Label)
 					{
 						xmlparser.getElementAttributes(attribs);
-						str_aux=attribs[Attributes::REF_TYPE];
+						str_aux=attribs[Attributes::RefType];
 
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -6582,7 +6582,7 @@ Permission *DatabaseModel::createPermission(void)
 					perm->addRole(role);
 				}
 			}
-			else if(xmlparser.getElementName()==Attributes::PRIVILEGES)
+			else if(xmlparser.getElementName()==Attributes::Privileges)
 			{
 				xmlparser.getElementAttributes(priv_attribs);
 
@@ -6606,7 +6606,7 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivExecute;
 						else if(itr->first==Attributes::InsertPriv)
 							priv_type=Permission::PrivInsert;
-						else if(itr->first==Attributes::REFERENCES_PRIV)
+						else if(itr->first==Attributes::ReferencesPriv)
 							priv_type=Permission::PrivReferences;
 						else if(itr->first==Attributes::SELECT_PRIV)
 							priv_type=Permission::PrivSelect;
@@ -6743,7 +6743,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[Attributes::LcCollate]=localizations[1];
 		attributes[Attributes::LcCtype]=localizations[0];
 		attributes[Attributes::AppendAtEod]=(append_at_eod ? Attributes::True : QString());
-		attributes[Attributes::PREPEND_AT_BOD]=(prepend_at_bod ? Attributes::True : QString());
+		attributes[Attributes::PrependAtBod]=(prepend_at_bod ? Attributes::True : QString());
 	}
 
 	attributes[Attributes::IsTemplate]=(is_template ? Attributes::True : Attributes::False);
@@ -6932,7 +6932,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		if(def_type==SchemaParser::XmlDefinition)
 		{
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-			attribs_aux[Attributes::PROTECTED]=(this->is_protected ? Attributes::True : QString());
+			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : QString());
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 			attribs_aux[Attributes::LastZoom]=QString::number(last_zoom);
 			attribs_aux[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
@@ -9632,11 +9632,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::Name]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
 			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
 			attribs[Attributes::TYPE]=object->getSchemaName();
-			attribs[Attributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
+			attribs[Attributes::Protected]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
 			attribs[Attributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
 			attribs[Attributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
-			attribs[Attributes::PREPENDED_SQL]=object->getPrependedSQL();
+			attribs[Attributes::PrependedSql]=object->getPrependedSQL();
 			attribs[Attributes::HideExtAttribs]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
 
@@ -9649,7 +9649,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql && obj_type==ObjectType::Database)
 			{
 				attribs[Attributes::AppendAtEod]=(this->isAppendAtEOD() ? Attributes::True : Attributes::False);
-				attribs[Attributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? Attributes::True : Attributes::False);
+				attribs[Attributes::PrependAtBod]=(this->isPrependedAtBOD() ? Attributes::True : Attributes::False);
 			}
 
 			//Configuring database model attributes
@@ -9676,7 +9676,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						schema=dynamic_cast<Schema *>(object);
 
 						attribs[Attributes::CustomColor]=(save_custom_colors ? schema->getFillColor().name() : QString());
-						attribs[Attributes::RECT_VISIBLE]=(schema->isRectVisible() ? Attributes::True : Attributes::False);
+						attribs[Attributes::RectVisible]=(schema->isRectVisible() ? Attributes::True : Attributes::False);
 
 						if(schema->isRectVisible())
 						{
@@ -9693,10 +9693,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					if(obj_type!=ObjectType::Schema || !attribs[Attributes::X_POS].isEmpty())
 					{
 						schparser.ignoreUnkownAttributes(true);
-						attribs[Attributes::POSITION]=
+						attribs[Attributes::Position]=
 								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						Attributes::POSITION + GlobalAttributes::SchemaExt, attribs);
+																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
 					}
 				}
 				else
@@ -9720,10 +9720,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						attribs[Attributes::Y_POS]=QString::number(pnt.y());
 
 						schparser.ignoreUnkownAttributes(true);
-						attribs[Attributes::POSITION]+=
+						attribs[Attributes::Position]+=
 								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						Attributes::POSITION + GlobalAttributes::SchemaExt, attribs);
+																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
 					}
 
 					//Saving the labels' custom positions
@@ -9734,13 +9734,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						{
 							aux_attribs[Attributes::X_POS]=QString::number(pnt.x());
 							aux_attribs[Attributes::Y_POS]=QString::number(pnt.y());
-							aux_attribs[Attributes::REF_TYPE]=labels_attrs[id];
+							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
-							aux_attribs[Attributes::POSITION]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																									 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																									 Attributes::POSITION + GlobalAttributes::SchemaExt, aux_attribs);
+																																									 Attributes::Position + GlobalAttributes::SchemaExt, aux_attribs);
 
-							attribs[Attributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																																								Attributes::Label + GlobalAttributes::SchemaExt, aux_attribs);
 						}
@@ -9757,9 +9757,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 																																							 QString(Attributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[Attributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								QString(Attributes::PREPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+																																								QString(Attributes::PrependedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 			}
 
 			/* The object's metadata code will be generated only if one of the key attributes
@@ -9769,13 +9769,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					((obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship) ||
 					 (!attribs[Attributes::CustomColor].isEmpty()))) ||
 				 (save_objs_pos &&
-					(!attribs[Attributes::POSITION].isEmpty() ||
-					 !attribs[Attributes::RECT_VISIBLE].isEmpty())) ||
+					(!attribs[Attributes::Position].isEmpty() ||
+					 !attribs[Attributes::RectVisible].isEmpty())) ||
 				 (save_tags && !attribs[Attributes::TAG].isEmpty()) ||
-				 (save_objs_prot && !attribs[Attributes::PROTECTED].isEmpty()) ||
+				 (save_objs_prot && !attribs[Attributes::Protected].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[Attributes::SQL_DISABLED].isEmpty()) ||
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
-															!attribs[Attributes::PREPENDED_SQL].isEmpty())) ||
+															!attribs[Attributes::PrependedSql].isEmpty())) ||
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
 				 (save_extattribs && !attribs[Attributes::HideExtAttribs].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
@@ -9966,11 +9966,11 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																	.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
 
 							if(!object->isSystemObject() &&
-								 ((!attribs[Attributes::PROTECTED].isEmpty() && load_objs_prot) ||
+								 ((!attribs[Attributes::Protected].isEmpty() && load_objs_prot) ||
 									(!attribs[Attributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
 							{
-								if(!attribs[Attributes::PROTECTED].isEmpty())
-									object->setProtected(attribs[Attributes::PROTECTED]==Attributes::True);
+								if(!attribs[Attributes::Protected].isEmpty())
+									object->setProtected(attribs[Attributes::Protected]==Attributes::True);
 
 								if(!attribs[Attributes::SQL_DISABLED].isEmpty())
 									object->setSQLDisabled(attribs[Attributes::SQL_DISABLED]==Attributes::True);
@@ -9987,8 +9987,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(!attribs[Attributes::AppendAtEod].isEmpty())
 									this->setAppendAtEOD(attribs[Attributes::AppendAtEod]==Attributes::True);
 
-								if(!attribs[Attributes::PREPEND_AT_BOD].isEmpty())
-									this->setPrependAtBOD(attribs[Attributes::PREPEND_AT_BOD]==Attributes::True);
+								if(!attribs[Attributes::PrependAtBod].isEmpty())
+									this->setPrependAtBOD(attribs[Attributes::PrependAtBod]==Attributes::True);
 							}
 
 							if(load_objs_aliases && !attribs[Attributes::Alias].isEmpty())
@@ -10002,7 +10002,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									xmlparser.getElementAttributes(aux_attrib);
 
 									//Retrieving and storing the points
-									if(aux_elem==Attributes::POSITION)
+									if(aux_elem==Attributes::Position)
 									{
 										points.push_back(QPointF(aux_attrib[Attributes::X_POS].toFloat(),
 																						 aux_attrib[Attributes::Y_POS].toFloat()));
@@ -10010,7 +10010,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									//Retrieving and storing the labels' custom positions
 									else if(aux_elem==Attributes::Label)
 									{
-										ref_type=aux_attrib[Attributes::REF_TYPE];
+										ref_type=aux_attrib[Attributes::RefType];
 										xmlparser.savePosition();
 
 										if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -10030,8 +10030,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										object->setAppendedSQL(xmlparser.getElementContent());
 										xmlparser.restorePosition();
 									}
-									else if(load_custom_sql && aux_elem==Attributes::PREPENDED_SQL &&
-													attribs[Attributes::PREPENDED_SQL].isEmpty())
+									else if(load_custom_sql && aux_elem==Attributes::PrependedSql &&
+													attribs[Attributes::PrependedSql].isEmpty())
 									{
 										xmlparser.savePosition();
 										xmlparser.accessElement(XmlParser::ChildElement);
@@ -10076,7 +10076,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									if(load_custom_colors)
 										schema->setFillColor(QColor(attribs[Attributes::CustomColor]));
 
-									schema->setRectVisible(attribs[Attributes::RECT_VISIBLE]==Attributes::True);
+									schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 								}
 
 								if(load_fadeout)

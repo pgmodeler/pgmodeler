@@ -23,14 +23,14 @@ View::View(void) : BaseTable()
 	obj_type=ObjectType::View;
 	materialized=recursive=with_no_data=false;
 	attributes[Attributes::Definition]=QString();
-	attributes[Attributes::REFERENCES]=QString();
+	attributes[Attributes::References]=QString();
 	attributes[Attributes::SELECT_EXP]=QString();
 	attributes[Attributes::FromExp]=QString();
 	attributes[Attributes::SIMPLE_EXP]=QString();
 	attributes[Attributes::EndExp]=QString();
 	attributes[Attributes::CteExpression]=QString();
 	attributes[Attributes::Materialized]=QString();
-	attributes[Attributes::RECURSIVE]=QString();
+	attributes[Attributes::Recursive]=QString();
 	attributes[Attributes::WITH_NO_DATA]=QString();
 	attributes[Attributes::Columns]=QString();
 }
@@ -490,7 +490,7 @@ void View::setReferencesAttribute(void)
 	cnt=references.size();
 	for(i=0; i < cnt; i++)
 		str_aux+=references[i].getXMLDefinition();
-	attributes[Attributes::REFERENCES]=str_aux;
+	attributes[Attributes::References]=str_aux;
 
 	for(i=0; i < 4; i++)
 	{
@@ -575,7 +575,7 @@ QString View::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::CteExpression]=cte_expression;
 	attributes[Attributes::Materialized]=(materialized ? Attributes::True : QString());
-	attributes[Attributes::RECURSIVE]=(recursive ? Attributes::True : QString());
+	attributes[Attributes::Recursive]=(recursive ? Attributes::True : QString());
 	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::TAG]=QString();

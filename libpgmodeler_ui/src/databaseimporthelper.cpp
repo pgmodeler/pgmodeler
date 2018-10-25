@@ -832,7 +832,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 
 				if(generate_xml)
 				{
-					obj_attr[Attributes::REDUCED_FORM]=Attributes::True;
+					obj_attr[Attributes::ReducedForm]=Attributes::True;
 					schparser.ignoreUnkownAttributes(true);
 					xml_def=schparser.getCodeDefinition(BaseObject::getSchemaName(obj_type), obj_attr, SchemaParser::XmlDefinition);
 					schparser.ignoreUnkownAttributes(false);
@@ -945,7 +945,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 
 	try
 	{
-		attribs[Attributes::RECT_VISIBLE]=QString();
+		attribs[Attributes::RectVisible]=QString();
 		attribs[Attributes::FillColor]=QColor(dist(rand_num_engine),
 													  dist(rand_num_engine),
 													  dist(rand_num_engine)).name();
@@ -968,7 +968,7 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 
 	try
 	{
-		QString role_types[]={ Attributes::REF_ROLES,
+		QString role_types[]={ Attributes::RefRoles,
 							   Attributes::AdminRoles,
 							   Attributes::MemberRoles };
 
@@ -1069,9 +1069,9 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			/* If the function is to be used as a user-defined data type support functions
 				 the parameter type will be renamed to "any" (see rules on Type::setFunction()) */
 			if(i==0 &&
-					(attribs[Attributes::REF_TYPE]==Attributes::SEND_FUNC ||
-					 attribs[Attributes::REF_TYPE]==Attributes::OutputFunc ||
-					 attribs[Attributes::REF_TYPE]==Attributes::CanonicalFunc))
+					(attribs[Attributes::RefType]==Attributes::SEND_FUNC ||
+					 attribs[Attributes::RefType]==Attributes::OutputFunc ||
+					 attribs[Attributes::RefType]==Attributes::CanonicalFunc))
 				type=PgSqlType(QString("\"any\""));
 			else
 			{
@@ -1110,7 +1110,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
 			if(!param_modes.isEmpty() && param_modes[i]==QString("t"))
-				attribs[Attributes::RETURN_TABLE]+=param.getCodeDefinition(SchemaParser::XmlDefinition);
+				attribs[Attributes::ReturnTable]+=param.getCodeDefinition(SchemaParser::XmlDefinition);
 			else
 				parameters.push_back(param);
 		}
@@ -1151,16 +1151,16 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		attribs[Attributes::Language]=getDependencyObject(attribs[Attributes::Language], ObjectType::Language);
 
 		//Get the return type if there is no return table configured
-		if(attribs[Attributes::RETURN_TABLE].isEmpty())
+		if(attribs[Attributes::ReturnTable].isEmpty())
 		{
 			/* If the function is to be used as a user-defined data type support functions
 				 the return type will be renamed to "any" (see rules on Type::setFunction()) */
-			if(attribs[Attributes::REF_TYPE]==Attributes::InputFunc ||
-					attribs[Attributes::REF_TYPE]==Attributes::RECV_FUNC ||
-					attribs[Attributes::REF_TYPE]==Attributes::CanonicalFunc)
-				attribs[Attributes::RETURN_TYPE]=PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
+			if(attribs[Attributes::RefType]==Attributes::InputFunc ||
+					attribs[Attributes::RefType]==Attributes::RecvFunc ||
+					attribs[Attributes::RefType]==Attributes::CanonicalFunc)
+				attribs[Attributes::ReturnType]=PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
 			else
-				attribs[Attributes::RETURN_TYPE]=getType(attribs[Attributes::RETURN_TYPE], true);
+				attribs[Attributes::ReturnType]=getType(attribs[Attributes::ReturnType], true);
 		}
 
 		loadObjectXML(ObjectType::Function, attribs);
@@ -1195,7 +1195,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 				 function is defined after the language pgModeler will raise errors so in order to continue
 				 the import these fuctions are simply ignored */
 			if(func_oid < lang_oid)
-				attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true , true, true, {{Attributes::REF_TYPE, func_types[i]}});
+				attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true , true, true, {{Attributes::RefType, func_types[i]}});
 			else
 				attribs[func_types[i]]=QString();
 		}
@@ -1323,7 +1323,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 		QString op_signature,
 
 				func_types[]={ Attributes::OperatorFunc,
-							   Attributes::RESTRICTION_FUNC,
+							   Attributes::RestrictionFunc,
 							   Attributes::JoinFunc },
 
 				arg_types[]= { Attributes::LeftType,
@@ -1333,15 +1333,15 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 							   Attributes::NegatorOp };
 
 		for(unsigned i=0; i < 3; i++)
-			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, true, true, {{Attributes::REF_TYPE, func_types[i]}});
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, true, true, {{Attributes::RefType, func_types[i]}});
 
 		for(unsigned i=0; i < 2; i++)
-			attribs[arg_types[i]]=getType(attribs[arg_types[i]], true, {{Attributes::REF_TYPE, arg_types[i]}});
+			attribs[arg_types[i]]=getType(attribs[arg_types[i]], true, {{Attributes::RefType, arg_types[i]}});
 
 		regexp.setPattern(Attributes::SIGNATURE + QString("(=)(\")"));
 		for(unsigned i=0; i < 2; i++)
 		{
-			attribs[op_types[i]]=getDependencyObject(attribs[op_types[i]], ObjectType::Operator, true, false, true, {{Attributes::REF_TYPE, op_types[i]}});
+			attribs[op_types[i]]=getDependencyObject(attribs[op_types[i]], ObjectType::Operator, true, false, true, {{Attributes::RefType, op_types[i]}});
 
 			if(!attribs[op_types[i]].isEmpty())
 			{
@@ -1461,8 +1461,8 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 			/* Get the table and the owner column instances so the sequence code can be disabled if the
 				column is an identity one */
 			tab_name = getDependencyObject(owner_col[0], ObjectType::Table, true, auto_resolve_deps, false,
-			{{ Attributes::POSITION,
-				 schparser.getCodeDefinition(Attributes::POSITION, pos_attrib, SchemaParser::XmlDefinition)}});
+			{{ Attributes::Position,
+				 schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition)}});
 
 			col_name=getColumnName(owner_col[0], owner_col[1]);
 			tab = dbmodel->getTable(tab_name);
@@ -1506,7 +1506,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 				sch_name;
 
 		for(unsigned i=0; i < 2; i++)
-			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, auto_resolve_deps, true, {{Attributes::REF_TYPE, func_types[i]}});
+			attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, auto_resolve_deps, true, {{Attributes::RefType, func_types[i]}});
 
 		types=getTypes(attribs[Attributes::TYPES], true);
 		attribs[Attributes::TYPES]=QString();
@@ -1518,7 +1518,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 		}
 
 		attribs[Attributes::STATE_TYPE]=getType(attribs[Attributes::STATE_TYPE], true,
-		{{Attributes::REF_TYPE, Attributes::STATE_TYPE}});
+		{{Attributes::RefType, Attributes::STATE_TYPE}});
 		attribs[Attributes::SORT_OP]=getDependencyObject(attribs[Attributes::SORT_OP], ObjectType::Operator, true);
 
 		loadObjectXML(ObjectType::Aggregate, attribs);
@@ -1575,9 +1575,9 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 				}
 			}
 		}
-		else if(!attribs[Attributes::RANGE_TYPE].isEmpty())
+		else if(!attribs[Attributes::RangeType].isEmpty())
 		{
-			QStringList range_attr=Catalog::parseArrayValues(attribs[Attributes::RANGE_ATTRIBS]);
+			QStringList range_attr=Catalog::parseArrayValues(attribs[Attributes::RangeAttribs]);
 
 			attribs[Attributes::SUBTYPE]=getType(range_attr[0], true);
 			attribs[Attributes::Collation]=getDependencyObject(range_attr[1], ObjectType::Collation, true);
@@ -1590,7 +1590,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			QString type_name=getObjectName(attribs[Attributes::Oid]),
 					func_types[]={ Attributes::InputFunc,
 								   Attributes::OutputFunc,
-								   Attributes::RECV_FUNC,
+								   Attributes::RecvFunc,
 								   Attributes::SEND_FUNC,
 								   Attributes::TPMOD_IN_FUNC,
 								   Attributes::TPMOD_OUT_FUNC,
@@ -1605,7 +1605,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			{
 				for(i=0; i < count; i++)
 				{
-					attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, true, true, {{Attributes::REF_TYPE, func_types[i]}});
+					attribs[func_types[i]]=getDependencyObject(attribs[func_types[i]], ObjectType::Function, true, true, true, {{Attributes::RefType, func_types[i]}});
 
 					/* Since pgModeler requires that type functions refers to the constructing type as "any"
 						 it's necessary to replace the function parameter types names */
@@ -1643,7 +1643,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			{ Attributes::Y_POS, QString("0") }};
 
 		attribs[Attributes::Columns]=QString();
-		attribs[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, pos_attrib, SchemaParser::XmlDefinition);
+		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
 		//Retrieving columns if they were not retrieved yet
 		if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
@@ -1877,11 +1877,11 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs_map pos_attrib={{ Attributes::X_POS, QString("0") },
 								{ Attributes::Y_POS, QString("0") }};
 
-		attribs[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, pos_attrib, SchemaParser::XmlDefinition);
+		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
 		ref=Reference(attribs[Attributes::Definition], QString());
 		ref.setDefinitionExpression(true);
-		attribs[Attributes::REFERENCES]=ref.getXMLDefinition();
+		attribs[Attributes::References]=ref.getXMLDefinition();
 
 		loadObjectXML(ObjectType::View, attribs);
 		view=dbmodel->createView();
@@ -2090,7 +2090,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 	try
 	{
 		QString table_oid=attribs[Attributes::TABLE],
-				ref_tab_oid=attribs[Attributes::REF_TABLE],
+				ref_tab_oid=attribs[Attributes::RefTable],
 				tab_name;
 		Table *table=nullptr;
 
@@ -2175,7 +2175,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				attribs[Attributes::SRC_COLUMNS]=getColumnNames(attribs[Attributes::TABLE], attribs[Attributes::SRC_COLUMNS]).join(',');
 			}
 
-			attribs[Attributes::REF_TABLE]=getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
+			attribs[Attributes::RefTable]=getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
 			attribs[Attributes::DstColumns]=getColumnNames(ref_tab_oid, attribs[Attributes::DstColumns]).join(',');
 			attribs[Attributes::TABLE]=tab_name;
 

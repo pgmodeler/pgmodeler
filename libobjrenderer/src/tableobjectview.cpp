@@ -176,9 +176,9 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
 		desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
-		desc->setBrush(this->getFillStyle(Attributes::REFERENCE));
+		desc->setBrush(this->getFillStyle(Attributes::Reference));
 
-		pen = this->getBorderStyle(Attributes::REFERENCE);
+		pen = this->getBorderStyle(Attributes::Reference);
 		pen.setWidthF(ObjectBorderWidth * 1.15f);
 		desc->setPen(pen);
 	}
@@ -230,7 +230,7 @@ void TableObjectView::configureObject(void)
 			if(column->isAddedByRelationship())
 				fmt=font_config[Attributes::InhColumn];
 			else if(column->isProtected())
-				fmt=font_config[Attributes::PROT_COLUMN];
+				fmt=font_config[Attributes::ProtColumn];
 
 			if(str_constr.indexOf(TextPrimaryKey)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::PrimaryKey)).toLower() + QString(", ");
@@ -252,7 +252,7 @@ void TableObjectView::configureObject(void)
 			if(tab_obj->isAddedByRelationship())
 				fmt=font_config[Attributes::InhColumn];
 			else if(tab_obj->isProtected())
-				fmt=font_config[Attributes::PROT_COLUMN];
+				fmt=font_config[Attributes::ProtColumn];
 			else
 				fmt=font_config[tab_obj->getSchemaName()];
 		}
@@ -447,7 +447,7 @@ void TableObjectView::configureObject(Reference reference)
 	if(reference.getReferenceType()==Reference::ReferColumn)
 	{
 		//Configures the name label as: [table].[column]
-		fmt=font_config[Attributes::REF_TABLE];
+		fmt=font_config[Attributes::RefTable];
 
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
 			lables[0]->setText(reference.getReferenceAlias());
@@ -459,7 +459,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 
-		fmt=font_config[Attributes::REF_COLUMN];
+		fmt=font_config[Attributes::RefColumn];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
 			lables[1]->setText(QString(" "));
 		else
@@ -477,7 +477,7 @@ void TableObjectView::configureObject(Reference reference)
 	}
 	else
 	{
-		fmt=font_config[Attributes::REF_TABLE];
+		fmt=font_config[Attributes::RefTable];
 		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : QString();
 
 		if(str_aux.isEmpty())

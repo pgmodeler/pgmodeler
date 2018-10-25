@@ -133,7 +133,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[attribs_func[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(Attributes::REF_TYPE, attribs_func[i]);
+				functions[i]->setAttribute(Attributes::RefType, attribs_func[i]);
 				attributes[attribs_func[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}

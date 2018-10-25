@@ -841,7 +841,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 																							name==~LanguageType(LanguageType::PlPgsql))))
 					{
 						item->setFont(0, grp_fnt);
-						item->setForeground(0, BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
+						item->setForeground(0, BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 						item->setToolTip(0, trUtf8("This is a pgModeler's built-in object. It will be ignored if checked by user."));
 					}
 				}

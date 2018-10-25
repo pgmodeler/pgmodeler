@@ -28,8 +28,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::Global, //0
 		Attributes::Constraints, //1
 		Attributes::ObjSelection, //2
-		Attributes::POSITION_INFO, //3
-		Attributes::POSITION_INFO, //4
+		Attributes::PositionInfo, //3
+		Attributes::PositionInfo, //4
 		Attributes::ObjectType, //5
 		Attributes::LockerArc, //6
 		Attributes::LockerBody, //7
@@ -54,14 +54,14 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::VIEW_EXT_BODY, //24
 		Attributes::VIEW_TITLE, //25
 		Attributes::Alias, //26
-		Attributes::REF_COLUMN, //27
-		Attributes::REF_TABLE, //28
-		Attributes::REFERENCE, //29
+		Attributes::RefColumn, //27
+		Attributes::RefTable, //28
+		Attributes::Reference, //29
 		BaseObject::getSchemaName(ObjectType::Textbox), //30
 		Attributes::Column, //31
 		Attributes::Column, //32
 		Attributes::InhColumn, //33
-		Attributes::PROT_COLUMN, //34
+		Attributes::ProtColumn, //34
 		Attributes::PkColumn, //35
 		Attributes::PkColumn, //36
 		Attributes::FkColumn, //37
@@ -70,7 +70,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::UQ_COLUMN, //40
 		Attributes::NnColumn, //41
 		Attributes::NnColumn, //42
-		Attributes::RELATIONSHIP, //43
+		Attributes::Relationship, //43
 		Attributes::Label, //44
 		Attributes::Label, //45
 		Attributes::Attribute, //46

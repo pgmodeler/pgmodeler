@@ -25,13 +25,13 @@ Type::Type(void)
 
 	attributes[Attributes::BaseType]=QString();
 	attributes[Attributes::CompositeType]=QString();
-	attributes[Attributes::RANGE_TYPE]=QString();
+	attributes[Attributes::RangeType]=QString();
 	attributes[Attributes::TYPE_ATTRIBUTE]=QString();
 	attributes[Attributes::EnumType]=QString();
 	attributes[Attributes::Enumerations]=QString();
 	attributes[Attributes::InputFunc]=QString();
 	attributes[Attributes::OutputFunc]=QString();
-	attributes[Attributes::RECV_FUNC]=QString();
+	attributes[Attributes::RecvFunc]=QString();
 	attributes[Attributes::SEND_FUNC]=QString();
 	attributes[Attributes::TPMOD_IN_FUNC]=QString();
 	attributes[Attributes::TPMOD_OUT_FUNC]=QString();
@@ -43,9 +43,9 @@ Type::Type(void)
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::Element]=QString();
 	attributes[Attributes::Delimiter]=QString();
-	attributes[Attributes::REDUCED_FORM]=QString();
+	attributes[Attributes::ReducedForm]=QString();
 	attributes[Attributes::Category]=QString();
-	attributes[Attributes::PREFERRED]=QString();
+	attributes[Attributes::Preferred]=QString();
 	attributes[Attributes::LikeType]=QString();
 	attributes[Attributes::Collatable]=QString();
 	attributes[Attributes::SUBTYPE]=QString();
@@ -627,7 +627,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 	else if(config==RangeType)
 	{
-		attributes[Attributes::RANGE_TYPE]=Attributes::True;
+		attributes[Attributes::RangeType]=Attributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::SUBTYPE]=(*subtype);
@@ -664,7 +664,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		attributes[Attributes::Category]=~(category);
 
-		attributes[Attributes::PREFERRED]=(preferred ? Attributes::True : QString());
+		attributes[Attributes::Preferred]=(preferred ? Attributes::True : QString());
 		attributes[Attributes::Collatable]=(collatable ? Attributes::True : QString());
 
 		if(like_type!=QString("\"any\""))
@@ -681,7 +681,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		unsigned i;
 		QString func_attrib[]={Attributes::InputFunc,
 							   Attributes::OutputFunc,
-							   Attributes::RECV_FUNC,
+							   Attributes::RecvFunc,
 							   Attributes::SEND_FUNC,
 							   Attributes::TPMOD_IN_FUNC,
 							   Attributes::TPMOD_OUT_FUNC,
@@ -697,7 +697,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 					attributes[func_attrib[i]]=functions[i]->getName();
 				else
 				{
-					functions[i]->setAttribute(Attributes::REF_TYPE, func_attrib[i]);
+					functions[i]->setAttribute(Attributes::RefType, func_attrib[i]);
 					attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
 				}
 			}

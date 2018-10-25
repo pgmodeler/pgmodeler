@@ -249,7 +249,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 
 		//Alter the relationship line color when it is selected
 		if(line_color==Qt::transparent)
-			line_color=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP).color();
+			line_color=BaseObjectView::getBorderStyle(Attributes::Relationship).color();
 
 		if(value.toBool())
 		{
@@ -1005,7 +1005,7 @@ void RelationshipView::configureLine(void)
 				pen.setColor(base_rel->getCustomColor());
 			else
 				//Using the default color
-				pen=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP);
+				pen=BaseObjectView::getBorderStyle(Attributes::Relationship);
 		}
 
 		//For dependency/partition relationships the line is dashed
@@ -1284,7 +1284,7 @@ void RelationshipView::configureDescriptor(void)
 		pen.setColor(base_rel->getCustomColor());
 	else
 		//Using the default color
-		pen=BaseObjectView::getBorderStyle(Attributes::RELATIONSHIP);
+		pen=BaseObjectView::getBorderStyle(Attributes::Relationship);
 
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type == BaseRelationship::RelationshipPart)
@@ -1296,7 +1296,7 @@ void RelationshipView::configureDescriptor(void)
 	{
 		QColor colors[2];
 		QLinearGradient grad;
-		BaseObjectView::getFillStyle(Attributes::RELATIONSHIP, colors[0], colors[1]);
+		BaseObjectView::getFillStyle(Attributes::Relationship, colors[0], colors[1]);
 
 		for(unsigned i=0; i < 2; i++)
 		{
@@ -1310,7 +1310,7 @@ void RelationshipView::configureDescriptor(void)
 		descriptor->setBrush(grad);
 	}
 	else
-		descriptor->setBrush(BaseObjectView::getFillStyle(Attributes::RELATIONSHIP));
+		descriptor->setBrush(BaseObjectView::getFillStyle(Attributes::Relationship));
 
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type==BaseRelationship::RelationshipGen)

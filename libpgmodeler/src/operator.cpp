@@ -38,13 +38,13 @@ Operator::Operator(void)
 	attributes[Attributes::RIGHT_TYPE]=QString();
 	attributes[Attributes::CommutatorOp]=QString();
 	attributes[Attributes::NegatorOp]=QString();
-	attributes[Attributes::RESTRICTION_FUNC]=QString();
+	attributes[Attributes::RestrictionFunc]=QString();
 	attributes[Attributes::JoinFunc]=QString();
 	attributes[Attributes::OperatorFunc]=QString();
 	attributes[Attributes::Hashes]=QString();
 	attributes[Attributes::Merges]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
-	attributes[Attributes::REF_TYPE]=QString();
+	attributes[Attributes::RefType]=QString();
 }
 
 bool Operator::isValidName(const QString &name)
@@ -286,7 +286,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			func_attribs[]={Attributes::OperatorFunc,
 							Attributes::JoinFunc,
-							Attributes::RESTRICTION_FUNC};
+							Attributes::RestrictionFunc};
 
 	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
 	{
@@ -310,7 +310,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[op_attribs[i]]=operators[i]->getName(true);
 			else
 			{
-				operators[i]->attributes[Attributes::REF_TYPE]=op_attribs[i];
+				operators[i]->attributes[Attributes::RefType]=op_attribs[i];
 				attributes[op_attribs[i]]=operators[i]->getCodeDefinition(def_type, true);
 			}
 		}
@@ -324,7 +324,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[func_attribs[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(Attributes::REF_TYPE, func_attribs[i]);
+				functions[i]->setAttribute(Attributes::RefType, func_attribs[i]);
 				attributes[func_attribs[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}

@@ -89,10 +89,10 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::TABLESPACE]=QString();
 	attributes[Attributes::SCHEMA]=QString();
 	attributes[Attributes::Collation]=QString();
-	attributes[Attributes::PROTECTED]=QString();
+	attributes[Attributes::Protected]=QString();
 	attributes[Attributes::SQL_DISABLED]=QString();
 	attributes[Attributes::AppendedSql]=QString();
-	attributes[Attributes::PREPENDED_SQL]=QString();
+	attributes[Attributes::PrependedSql]=QString();
 	attributes[Attributes::Drop]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
@@ -724,7 +724,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XmlDefinition)
-			attributes[Attributes::PROTECTED]=(is_protected ? Attributes::True : QString());
+			attributes[Attributes::Protected]=(is_protected ? Attributes::True : QString());
 
 		if(tablespace)
 		{
@@ -797,17 +797,17 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		if(!prepended_sql.isEmpty())
 		{
-			attributes[Attributes::PREPENDED_SQL]=prepended_sql;
+			attributes[Attributes::PrependedSql]=prepended_sql;
 
 			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
-				attributes[Attributes::PREPENDED_SQL]=
-						schparser.getCodeDefinition(QString(Attributes::PREPENDED_SQL).remove('-'), attributes, def_type);
+				attributes[Attributes::PrependedSql]=
+						schparser.getCodeDefinition(QString(Attributes::PrependedSql).remove('-'), attributes, def_type);
 			}
 			else
 			{
-				attributes[Attributes::PREPENDED_SQL]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
+				attributes[Attributes::PrependedSql]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
 			}
 		}
 
@@ -817,7 +817,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::Drop].remove(Attributes::DdlEndToken + '\n');
 		}
 
-		attributes[Attributes::REDUCED_FORM]=(reduced_form ? Attributes::True : QString());
+		attributes[Attributes::ReducedForm]=(reduced_form ? Attributes::True : QString());
 
 		try
 		{
@@ -1201,7 +1201,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 		if(!ignore_name_diff && this->getName()!=object->getName())
 		{
 			attributes[Attributes::NewName]=object->getName(true, false);
-			alter+=BaseObject::getAlterDefinition(Attributes::RENAME, attributes, true);
+			alter+=BaseObject::getAlterDefinition(Attributes::Rename, attributes, true);
 			attributes[Attributes::Name]=attributes[Attributes::NewName];
 			attributes[Attributes::SIGNATURE]=object->getSignature(true);
 		}

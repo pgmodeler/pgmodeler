@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 						prev_session_files.push_back(attribs[Attributes::Path]);
 
 					//Creating the recent models menu
-					else if(itr->first.contains(Attributes::RECENT) &&
+					else if(itr->first.contains(Attributes::Recent) &&
 							!attribs[Attributes::Path].isEmpty())
 						recent_models.push_back(attribs[Attributes::Path]);
 				}
@@ -692,7 +692,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				while(!recent_models.isEmpty())
 				{
-					param_id=QString("%1%2").arg(Attributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
+					param_id=QString("%1%2").arg(Attributes::Recent).arg(QString::number(i++).rightJustified(2, '0'));
 					attribs[Attributes::Id]=param_id;
 					attribs[Attributes::Path]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
@@ -1841,7 +1841,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params[Attributes::ObjectFinder]=Attributes::True;
 	params[Attributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
-	params[Attributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
 	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
@@ -1870,7 +1870,7 @@ void MainWindow::restoreDockWidgetsSettings(void)
 	{
 		obj_finder_wgt->select_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::SELECT_OBJECTS]==Attributes::True);
 		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::FadeInObjects]==Attributes::True);
-		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::REGULAR_EXP]==Attributes::True);
+		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::RegularExp]==Attributes::True);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::CaseSensitive]==Attributes::True);
 		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::ExactMatch]==Attributes::True);
 	}

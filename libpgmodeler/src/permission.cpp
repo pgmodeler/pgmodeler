@@ -46,9 +46,9 @@ Permission::Permission(BaseObject *obj)
 	attributes[Attributes::Parent]=QString();
 	attributes[Attributes::GrantOp]=QString();
 	attributes[Attributes::ROLES]=QString();
-	attributes[Attributes::PRIVILEGES]=QString();
+	attributes[Attributes::Privileges]=QString();
 	attributes[Attributes::Cascade]=QString();
-	attributes[Attributes::PRIVILEGES_GOP]=QString();
+	attributes[Attributes::PrivilegesGop]=QString();
 }
 
 bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
@@ -413,7 +413,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	ObjectType obj_type;
 	QString priv_vect[12]={ Attributes::SELECT_PRIV, Attributes::InsertPriv,
 							Attributes::UPDATE_PRIV, Attributes::DeletePriv,
-							Attributes::TRUNCATE_PRIV, Attributes::REFERENCES_PRIV,
+							Attributes::TRUNCATE_PRIV, Attributes::ReferencesPriv,
 							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
 							Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
 							Attributes::ExecutPriv, Attributes::USAGE_PRIV };
@@ -464,8 +464,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 				gop_priv_list.push_back(object->getObjectType() == ObjectType::Column ? QString("%1(%2)").arg(priv_vect[i].toUpper()).arg(object->getName(true)) : priv_vect[i].toUpper());
 		}
 
-		attributes[Attributes::PRIVILEGES] = priv_list.join(QChar(','));
-		attributes[Attributes::PRIVILEGES_GOP] = gop_priv_list.join(QChar(','));
+		attributes[Attributes::Privileges] = priv_list.join(QChar(','));
+		attributes[Attributes::PrivilegesGop] = gop_priv_list.join(QChar(','));
 	}
 
 	count=roles.size();

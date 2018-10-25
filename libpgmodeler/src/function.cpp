@@ -33,17 +33,17 @@ Function::Function(void)
 	attributes[Attributes::Parameters]=QString();
 	attributes[Attributes::ExecutionCost]=QString();
 	attributes[Attributes::ROW_AMOUNT]=QString();
-	attributes[Attributes::RETURN_TYPE]=QString();
+	attributes[Attributes::ReturnType]=QString();
 	attributes[Attributes::FunctionType]=QString();
 	attributes[Attributes::Language]=QString();
-	attributes[Attributes::RETURNS_SETOF]=QString();
+	attributes[Attributes::ReturnsSetOf]=QString();
 	attributes[Attributes::SECURITY_TYPE]=QString();
 	attributes[Attributes::BehaviorType]=QString();
 	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::SIGNATURE]=QString();
-	attributes[Attributes::REF_TYPE]=QString();
+	attributes[Attributes::RefType]=QString();
 	attributes[Attributes::WINDOW_FUNC]=QString();
-	attributes[Attributes::RETURN_TABLE]=QString();
+	attributes[Attributes::ReturnTable]=QString();
 	attributes[Attributes::Library]=QString();
 	attributes[Attributes::SYMBOL]=QString();
 	attributes[Attributes::LeakProof]=QString();
@@ -156,7 +156,7 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		str_type.remove(str_type.size()-2,2);
 
-	attributes[Attributes::RETURN_TABLE]=str_type;
+	attributes[Attributes::ReturnTable]=str_type;
 }
 
 void Function::setExecutionCost(unsigned exec_cost)
@@ -466,18 +466,18 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(def_type==SchemaParser::SqlDefinition)
 		{
 			attributes[Attributes::Language]=language->getName(false);
-			attributes[Attributes::RETURN_TYPE]=(*return_type);
+			attributes[Attributes::ReturnType]=(*return_type);
 		}
 		else
 		{
 			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
-			attributes[Attributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
+			attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
 		}
 	}
 
 	setTableReturnTypeAttribute(def_type);
 
-	attributes[Attributes::RETURNS_SETOF]=(returns_setof ? Attributes::True : QString());
+	attributes[Attributes::ReturnsSetOf]=(returns_setof ? Attributes::True : QString());
 	attributes[Attributes::WINDOW_FUNC]=(is_wnd_function ? Attributes::True : QString());
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : QString());
 	attributes[Attributes::SECURITY_TYPE]=(~security_type);
@@ -521,7 +521,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
 			{
-				attribs[Attributes::RETURNS_SETOF]=Attributes::True;
+				attribs[Attributes::ReturnsSetOf]=Attributes::True;
 				attribs[Attributes::ROW_AMOUNT]=QString::number(row_amount);
 			}
 

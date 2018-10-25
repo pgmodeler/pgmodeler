@@ -24,7 +24,7 @@ BaseGraphicObject::BaseGraphicObject(void)
 	is_faded_out=false;
 	attributes[Attributes::X_POS]=QString();
 	attributes[Attributes::Y_POS]=QString();
-	attributes[Attributes::POSITION]=QString();
+	attributes[Attributes::Position]=QString();
 	attributes[Attributes::FadedOut]=QString();
 	receiver_object=nullptr;
 }
@@ -83,7 +83,7 @@ void BaseGraphicObject::setPositionAttribute(void)
 {
 	attributes[Attributes::X_POS]=QString("%1").arg(position.x());
 	attributes[Attributes::Y_POS]=QString("%1").arg(position.y());
-	attributes[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
+	attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)

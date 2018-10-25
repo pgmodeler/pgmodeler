@@ -22,9 +22,9 @@ map<QString, attribs_map> RelationshipConfigWidget::config_params;
 
 RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
-	QStringList list, rel_types={ Attributes::RELATIONSHIP_11, Attributes::RELATIONSHIP_1N,
-								  Attributes::RELATIONSHIP_NN, Attributes::RELATIONSHIP_GEN,
-								  Attributes::RELATIONSHIP_DEP, Attributes::RELATIONSHIP_PART };
+	QStringList list, rel_types={ Attributes::Relationship11, Attributes::Relationship1n,
+								  Attributes::RelationshipNn, Attributes::RelationshipGen,
+								  Attributes::RelationshipDep, Attributes::RelationshipPart };
 	unsigned rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							  BaseRelationship::RelationshipNn, BaseRelationship::RelationshipGen,
 							  BaseRelationship::RelationshipDep, BaseRelationship::RelationshipPart};
@@ -112,12 +112,12 @@ void RelationshipConfigWidget::loadConfiguration(void)
 		idx=del_action_cmb->findText(config_params[Attributes::ForeignKeys][Attributes::DelAction]);
 		del_action_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-		patterns[Attributes::RELATIONSHIP_11]=config_params[Attributes::RELATIONSHIP_11];
-		patterns[Attributes::RELATIONSHIP_1N]=config_params[Attributes::RELATIONSHIP_1N];
-		patterns[Attributes::RELATIONSHIP_NN]=config_params[Attributes::RELATIONSHIP_NN];
-		patterns[Attributes::RELATIONSHIP_GEN]=config_params[Attributes::RELATIONSHIP_GEN];
-		patterns[Attributes::RELATIONSHIP_DEP]=config_params[Attributes::RELATIONSHIP_DEP];
-		patterns[Attributes::RELATIONSHIP_PART]=config_params[Attributes::RELATIONSHIP_PART];
+		patterns[Attributes::Relationship11]=config_params[Attributes::Relationship11];
+		patterns[Attributes::Relationship1n]=config_params[Attributes::Relationship1n];
+		patterns[Attributes::RelationshipNn]=config_params[Attributes::RelationshipNn];
+		patterns[Attributes::RelationshipGen]=config_params[Attributes::RelationshipGen];
+		patterns[Attributes::RelationshipDep]=config_params[Attributes::RelationshipDep];
+		patterns[Attributes::RelationshipPart]=config_params[Attributes::RelationshipPart];
 
 		fillNamePatterns();
 		this->applyConfiguration();
@@ -218,9 +218,9 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 								 Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
 								 Attributes::PkColPattern };
 
-	relnn=(rel_type==Attributes::RELATIONSHIP_NN);
-	reldep=(rel_type==Attributes::RELATIONSHIP_DEP || rel_type==Attributes::RELATIONSHIP_PART);
-	relgen=(rel_type==Attributes::RELATIONSHIP_GEN);
+	relnn=(rel_type==Attributes::RelationshipNn);
+	reldep=(rel_type==Attributes::RelationshipDep || rel_type==Attributes::RelationshipPart);
+	relgen=(rel_type==Attributes::RelationshipGen);
 
 	dst_col_pattern_txt->setEnabled(relnn);
 	dst_fk_pattern_txt->setEnabled(relnn);

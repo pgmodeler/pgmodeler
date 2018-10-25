@@ -87,17 +87,17 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::Constraints]=QString();
 	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::Identifier]=QString();
-	attributes[Attributes::REDUCED_FORM]=QString();
+	attributes[Attributes::ReducedForm]=QString();
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::TABLE_NAME]=QString();
 	attributes[Attributes::SPECIAL_PK_COLS]=QString();
-	attributes[Attributes::RELATIONSHIP_NN]=QString();
-	attributes[Attributes::RELATIONSHIP_GEN]=QString();
-	attributes[Attributes::RELATIONSHIP_DEP]=QString();
-	attributes[Attributes::RELATIONSHIP_PART]=QString();
-	attributes[Attributes::RELATIONSHIP_1N]=QString();
-	attributes[Attributes::RELATIONSHIP_11]=QString();
+	attributes[Attributes::RelationshipNn]=QString();
+	attributes[Attributes::RelationshipGen]=QString();
+	attributes[Attributes::RelationshipDep]=QString();
+	attributes[Attributes::RelationshipPart]=QString();
+	attributes[Attributes::Relationship1n]=QString();
+	attributes[Attributes::Relationship11]=QString();
 	attributes[Attributes::Constraints]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::AncestorTable]=QString();
@@ -114,7 +114,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::UPD_ACTION]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::CustomColor]=QString();
-	attributes[Attributes::REFERENCE_FK]=QString();
+	attributes[Attributes::ReferenceFk]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
 	attributes[Attributes::OriginalPk]=QString();
 
@@ -349,7 +349,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 	{
 		attributes[Attributes::X_POS]=QString("%1").arg(points[i].x());
 		attributes[Attributes::Y_POS]=QString("%1").arg(points[i].y());
-		str_aux+=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
+		str_aux+=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
 	}
 	attributes[Attributes::Points]=str_aux;
 
@@ -360,15 +360,15 @@ void BaseRelationship::setRelationshipAttributes(void)
 		{
 			attributes[Attributes::X_POS]=QString("%1").arg(lables_dist[i].x());
 			attributes[Attributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
-			attributes[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
-			attributes[Attributes::REF_TYPE]=label_attribs[i];
+			attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
+			attributes[Attributes::RefType]=label_attribs[i];
 			str_aux+=schparser.getCodeDefinition(Attributes::Label, attributes, SchemaParser::XmlDefinition);
 		}
 	}
 
 	attributes[Attributes::LabelsPos]=str_aux;
 	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
-	attributes[Attributes::REFERENCE_FK]=(reference_fk ? reference_fk->getName() : QString());
+	attributes[Attributes::ReferenceFk]=(reference_fk ? reference_fk->getName() : QString());
 	setFadedOutAttribute();
 }
 
@@ -505,17 +505,17 @@ QString BaseRelationship::getRelTypeAttribute(void)
 {
 	switch(rel_type)
 	{
-		case Relationship11: return(Attributes::RELATIONSHIP_11); break;
-		case Relationship1n: return(Attributes::RELATIONSHIP_1N); break;
-		case RelationshipNn: return(Attributes::RELATIONSHIP_NN); break;
-		case RelationshipGen: return(Attributes::RELATIONSHIP_GEN); break;
-		case RelationshipPart: return(Attributes::RELATIONSHIP_PART); break;
-		case RelationshipFk: return(Attributes::RELATIONSHIP_FK); break;
+		case Relationship11: return(Attributes::Relationship11); break;
+		case Relationship1n: return(Attributes::Relationship1n); break;
+		case RelationshipNn: return(Attributes::RelationshipNn); break;
+		case RelationshipGen: return(Attributes::RelationshipGen); break;
+		case RelationshipPart: return(Attributes::RelationshipPart); break;
+		case RelationshipFk: return(Attributes::RelationshipFk); break;
 		default:
 			if(src_table->getObjectType()==ObjectType::View)
-				return(Attributes::RELATION_TAB_VIEW);
+				return(Attributes::RelationshipTabView);
 			else
-				return(Attributes::RELATIONSHIP_DEP);
+				return(Attributes::RelationshipDep);
 		break;
 	}
 }

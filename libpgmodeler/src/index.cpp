@@ -31,7 +31,7 @@ Index::Index(void)
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::Factor]=QString();
-	attributes[Attributes::PREDICATE]=QString();
+	attributes[Attributes::Predicate]=QString();
 	attributes[Attributes::OpClass]=QString();
 	attributes[Attributes::NullsFirst]=QString();
 	attributes[Attributes::AscOrder]=QString();
@@ -334,7 +334,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::UNIQUE]=(index_attribs[Unique] ? Attributes::True : QString());
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
 	attributes[Attributes::IndexType]=(~indexing_type);
-	attributes[Attributes::PREDICATE]=predicate;
+	attributes[Attributes::Predicate]=predicate;
 	attributes[Attributes::STORAGE_PARAMS]=QString();
 
 	if(getParentTable())

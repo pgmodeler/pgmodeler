@@ -2561,7 +2561,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			unsigned count, i;
 
-			attributes[Attributes::RELATIONSHIP_1N]=Attributes::True;
+			attributes[Attributes::Relationship1n]=Attributes::True;
 			attributes[Attributes::Constraints]=fk_rel1n->getCodeDefinition(def_type);
 
 			if(uq_rel11)
@@ -2581,7 +2581,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			unsigned count, i;
 
-			attributes[Attributes::RELATIONSHIP_NN]=Attributes::True;
+			attributes[Attributes::RelationshipNn]=Attributes::True;
 			attributes[Attributes::TABLE]=table_relnn->getCodeDefinition(def_type);
 
 			count=table_relnn->getConstraintCount();
@@ -2594,7 +2594,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		}
 		else if(rel_type==RelationshipGen)
 		{
-			attributes[Attributes::RELATIONSHIP_GEN]=Attributes::True;
+			attributes[Attributes::RelationshipGen]=Attributes::True;
 			attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
 		}
 
@@ -2614,9 +2614,9 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::DelAction]=~del_action;
 
 		attributes[Attributes::TABLE_NAME]=tab_name_relnn;
-		attributes[Attributes::RELATIONSHIP_GEN]=(rel_type==RelationshipGen ? Attributes::True : QString());
-		attributes[Attributes::RELATIONSHIP_DEP]=(rel_type==RelationshipDep ? Attributes::True : QString());
-		attributes[Attributes::RELATIONSHIP_PART]=(rel_type==RelationshipPart ? Attributes::True : QString());
+		attributes[Attributes::RelationshipGen]=(rel_type==RelationshipGen ? Attributes::True : QString());
+		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : QString());
+		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : QString());
 
 		attributes[Attributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];

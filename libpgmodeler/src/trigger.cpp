@@ -44,7 +44,7 @@ Trigger::Trigger(void)
 	attributes[Attributes::UPD_EVENT]=QString();
 	attributes[Attributes::TRUNC_EVENT]=QString();
 	attributes[Attributes::Condition]=QString();
-	attributes[Attributes::REF_TABLE]=QString();
+	attributes[Attributes::RefTable]=QString();
 	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeclInTable]=QString();
@@ -417,7 +417,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Condition]=condition;
 
 	if(referenced_table)
-		attributes[Attributes::REF_TABLE]=referenced_table->getName(true);
+		attributes[Attributes::RefTable]=referenced_table->getName(true);
 
 	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : QString());
 	attributes[Attributes::DeferType]=(~deferral_type);

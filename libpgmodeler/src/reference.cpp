@@ -226,12 +226,12 @@ QString Reference::getXMLDefinition(void)
 	if(column)
 		attribs[Attributes::Column]=column->getName();
 
-	attribs[Attributes::REF_ALIAS]=ref_alias;
+	attribs[Attributes::RefAlias]=ref_alias;
 	attribs[Attributes::Expression]=expression;
 	attribs[Attributes::Alias]=alias;
 	attribs[Attributes::ColumnAlias]=column_alias;
 
-	return(schparser.getCodeDefinition(Attributes::REFERENCE, attribs, SchemaParser::XmlDefinition));
+	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
 }
 
 bool Reference::operator == (Reference &refer)

@@ -100,9 +100,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::PaperMargin]=QString();
 	config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString();
 	config_params[Attributes::Configuration][Attributes::File]=QString();
-	config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
-	config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=QString();
-	config_params[Attributes::Configuration][Attributes::PRINT_GRID]=QString();
+	config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
+	config_params[Attributes::Configuration][Attributes::PrintPgNum]=QString();
+	config_params[Attributes::Configuration][Attributes::PrintGrid]=QString();
 	config_params[Attributes::Configuration][Attributes::HideRelName]=QString();
 	config_params[Attributes::Configuration][Attributes::HideExtAttribs]=QString();
 	config_params[Attributes::Configuration][Attributes::HideTableTags]=QString();
@@ -297,11 +297,11 @@ void GeneralConfigWidget::loadConfiguration(void)
 		use_placeholders_chk->setChecked(config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]==Attributes::True);
 		use_curved_lines_chk->setChecked(config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]==Attributes::True);
 
-		print_grid_chk->setChecked(config_params[Attributes::Configuration][Attributes::PRINT_GRID]==Attributes::True);
-		print_pg_num_chk->setChecked(config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]==Attributes::True);
+		print_grid_chk->setChecked(config_params[Attributes::Configuration][Attributes::PrintGrid]==Attributes::True);
+		print_pg_num_chk->setChecked(config_params[Attributes::Configuration][Attributes::PrintPgNum]==Attributes::True);
 
 		paper_cmb->setCurrentIndex((config_params[Attributes::Configuration][Attributes::PaperType]).toUInt());
-		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::PORTRAIT);
+		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Portrait);
 		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Landscape);
 
 		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MinObjectOpacity].toUInt());
@@ -470,7 +470,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());
-		config_params[Attributes::Configuration][Attributes::PaperOrientation]=(portrait_rb->isChecked() ? Attributes::PORTRAIT : Attributes::Landscape);
+		config_params[Attributes::Configuration][Attributes::PaperOrientation]=(portrait_rb->isChecked() ? Attributes::Portrait : Attributes::Landscape);
 		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
@@ -501,8 +501,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 		else
 			config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
-		config_params[Attributes::Configuration][Attributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::PRINT_GRID]=(print_grid_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::PrintPgNum]=(print_pg_num_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::PrintGrid]=(print_grid_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::HideExtAttribs]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : QString());
@@ -524,14 +524,14 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::SAVE_RESTORE_GEOMETRY]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
-		config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
+		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
 
 		config_params[Attributes::Configuration][Attributes::DockWidgets]=QString();
 		config_params[Attributes::Configuration][Attributes::WIDGETS_GEOMETRY]=QString();
-		config_params[Attributes::Configuration][Attributes::RECENT_MODELS]=QString();
+		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 
 		while(itr!=itr_end)
@@ -543,9 +543,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if((itr->first).contains(QRegExp(QString("(") + Attributes::RECENT + QString(")([0-9]+)"))))
+			else if((itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
-				config_params[Attributes::Configuration][Attributes::RECENT_MODELS]+=
+				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			else if(itr->first==Attributes::VALIDATOR ||

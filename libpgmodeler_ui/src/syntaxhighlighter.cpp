@@ -524,7 +524,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 										expr_type=attribs[Attributes::TYPE];
 										regexp.setPattern(attribs[Attributes::VALUE]);
 
-										if(attribs[Attributes::REGULAR_EXP]==Attributes::True)
+										if(attribs[Attributes::RegularExp]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::RegExp2);
 										else if(attribs[Attributes::WILDCARD]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::Wildcard);

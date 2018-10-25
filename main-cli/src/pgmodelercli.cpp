@@ -766,7 +766,7 @@ void PgModelerCli::extractObjectXML(void)
 					/* Checking if the line start a relationship. Relationships are treated
 		  a little different because they can be empty <relationship attribs /> or
 		  contain open and close tags <relationship attribs></relationship> */
-					is_rel=lin.contains(Attributes::RELATIONSHIP);
+					is_rel=lin.contains(Attributes::Relationship);
 
 					if(is_rel)
 					{
@@ -879,7 +879,7 @@ void PgModelerCli::recreateObjects(void)
 
 				//Discarding fk relationships
 				if(obj_type!=ObjectType::Relationship ||
-						(obj_type==ObjectType::Relationship && !xml_def.contains(QString("\"%1\"").arg(Attributes::RELATIONSHIP_FK))))
+						(obj_type==ObjectType::Relationship && !xml_def.contains(QString("\"%1\"").arg(Attributes::RelationshipFk))))
 				{
 					object=model->createObject(obj_type);
 
@@ -1067,8 +1067,8 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	//Renaming the tag <condition> to <predicate> on indexes
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Index))))
 	{
-		obj_xml.replace(TagExpr.arg(Attributes::Condition), TagExpr.arg(Attributes::PREDICATE));
-		obj_xml.replace(EndTagExpr.arg(Attributes::Condition), EndTagExpr.arg(Attributes::PREDICATE));
+		obj_xml.replace(TagExpr.arg(Attributes::Condition), TagExpr.arg(Attributes::Predicate));
+		obj_xml.replace(EndTagExpr.arg(Attributes::Condition), EndTagExpr.arg(Attributes::Predicate));
 	}
 
 	//Renaming the attribute default to default-value on domain
@@ -1492,11 +1492,11 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 bool PgModelerCli::containsRelAttributes(const QString &str)
 {
 	bool found=false;
-	static vector<QString> attribs={ Attributes::RELATIONSHIP,
+	static vector<QString> attribs={ Attributes::Relationship,
 									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DstRequired,
 									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::Points,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
-									 Attributes::Label, Attributes::Line, Attributes::POSITION,
+									 Attributes::Label, Attributes::Line, Attributes::Position,
 									 Attributes::Identifier, Attributes::Deferrable, Attributes::DeferType,
 									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,

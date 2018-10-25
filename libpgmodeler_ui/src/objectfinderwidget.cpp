@@ -363,7 +363,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 				}
 				else if(dynamic_cast<TableObject *>(objs[i]) &&
 						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
@@ -416,7 +416,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::PROT_COLUMN).foreground());
+						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 					}
 					else
 					{

@@ -320,18 +320,18 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 							if(!objs_differs)
 								xml_differs=object->isCodeDiffersFrom(aux_object,
 								{ Attributes::MaxObjCount,
-									Attributes::PROTECTED,
+									Attributes::Protected,
 									Attributes::SQL_DISABLED,
-									Attributes::RECT_VISIBLE,
+									Attributes::RectVisible,
 									Attributes::FillColor,
 									Attributes::FadedOut,
 									Attributes::HideExtAttribs},
 								{ Attributes::ROLE,
 									Attributes::TABLESPACE,
 									Attributes::Collation,
-									Attributes::POSITION,
+									Attributes::Position,
 									Attributes::AppendedSql,
-									Attributes::PREPENDED_SQL });
+									Attributes::PrependedSql });
 
 							//If a difference was detected between the objects
 							if(objs_differs || xml_differs)
