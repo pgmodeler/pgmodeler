@@ -27,7 +27,7 @@ Index::Index(void)
 	attributes[Attributes::UNIQUE]=QString();
 	attributes[Attributes::Concurrent]=QString();
 	attributes[Attributes::TABLE]=QString();
-	attributes[Attributes::INDEX_TYPE]=QString();
+	attributes[Attributes::IndexType]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Expression]=QString();
 	attributes[Attributes::Factor]=QString();
@@ -333,7 +333,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	setIndexElementsAttribute(def_type);
 	attributes[Attributes::UNIQUE]=(index_attribs[Unique] ? Attributes::True : QString());
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
-	attributes[Attributes::INDEX_TYPE]=(~indexing_type);
+	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::PREDICATE]=predicate;
 	attributes[Attributes::STORAGE_PARAMS]=QString();
 

@@ -29,14 +29,14 @@ Type::Type(void)
 	attributes[Attributes::TYPE_ATTRIBUTE]=QString();
 	attributes[Attributes::EnumType]=QString();
 	attributes[Attributes::Enumerations]=QString();
-	attributes[Attributes::INPUT_FUNC]=QString();
+	attributes[Attributes::InputFunc]=QString();
 	attributes[Attributes::OUTPUT_FUNC]=QString();
 	attributes[Attributes::RECV_FUNC]=QString();
 	attributes[Attributes::SEND_FUNC]=QString();
 	attributes[Attributes::TPMOD_IN_FUNC]=QString();
 	attributes[Attributes::TPMOD_OUT_FUNC]=QString();
 	attributes[Attributes::AnalyzeFunc]=QString();
-	attributes[Attributes::INTERNAL_LENGTH]=QString();
+	attributes[Attributes::InternalLength]=QString();
 	attributes[Attributes::ByValue]=QString();
 	attributes[Attributes::Alignment]=QString();
 	attributes[Attributes::STORAGE]=QString();
@@ -46,7 +46,7 @@ Type::Type(void)
 	attributes[Attributes::REDUCED_FORM]=QString();
 	attributes[Attributes::Category]=QString();
 	attributes[Attributes::PREFERRED]=QString();
-	attributes[Attributes::LIKE_TYPE]=QString();
+	attributes[Attributes::LikeType]=QString();
 	attributes[Attributes::Collatable]=QString();
 	attributes[Attributes::SUBTYPE]=QString();
 	attributes[Attributes::SUBTYPE_DIFF_FUNC]=QString();
@@ -647,9 +647,9 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[Attributes::BaseType]=Attributes::True;
 
 		if(internal_len==0 && def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::INTERNAL_LENGTH]=QString("VARIABLE");
+			attributes[Attributes::InternalLength]=QString("VARIABLE");
 		else
-			attributes[Attributes::INTERNAL_LENGTH]=QString("%1").arg(internal_len);
+			attributes[Attributes::InternalLength]=QString("%1").arg(internal_len);
 
 		attributes[Attributes::ByValue]=(by_value ? Attributes::True : QString());
 		attributes[Attributes::Alignment]=(*alignment);
@@ -670,16 +670,16 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(like_type!=QString("\"any\""))
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::LIKE_TYPE]=(*like_type);
+				attributes[Attributes::LikeType]=(*like_type);
 			else
-				attributes[Attributes::LIKE_TYPE]=like_type.getCodeDefinition(SchemaParser::XmlDefinition);
+				attributes[Attributes::LikeType]=like_type.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 	}
 
 	if(config==BaseType || config==RangeType)
 	{
 		unsigned i;
-		QString func_attrib[]={Attributes::INPUT_FUNC,
+		QString func_attrib[]={Attributes::InputFunc,
 							   Attributes::OUTPUT_FUNC,
 							   Attributes::RECV_FUNC,
 							   Attributes::SEND_FUNC,

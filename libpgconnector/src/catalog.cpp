@@ -90,7 +90,7 @@ void Catalog::setConnection(Connection &conn)
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
-			last_sys_oid=attribs[Attributes::LAST_SYS_OID].toUInt();
+			last_sys_oid=attribs[Attributes::LastSysOid].toUInt();
 		}
 
 		//Retrieving the list of objects created by extensions
@@ -190,7 +190,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)
-		attribs[Attributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
+		attribs[Attributes::LastSysOid]=QString("%1").arg(last_sys_oid);
 
 	if(list_only_sys_objs)
 		attribs[Attributes::OID_FILTER_OP]=QString("<=");

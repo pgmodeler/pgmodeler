@@ -112,7 +112,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 	for(auto &snip : config_params)
 	{
 		if(snip.second[Attributes::OBJECT]==type_name)
-			ids.push_back(snip.second[Attributes::ID]);
+			ids.push_back(snip.second[Attributes::Id]);
 	}
 
 	return(ids);
@@ -213,20 +213,20 @@ void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
 	snippets_cmb->clear();
 
 	for(auto &cfg : config)
-		snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(Attributes::LABEL)), cfg.first);
+		snippets_cmb->addItem(QString("[%1] %2").arg(cfg.first, cfg.second.at(Attributes::Label)), cfg.first);
 }
 
 bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &orig_id)
 {
 	Messagebox msg_box;
-	QString snip_id=attribs.at(Attributes::ID),
+	QString snip_id=attribs.at(Attributes::Id),
 			err_msg;
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
 		err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
 	else if(!IdFormatRegExp.exactMatch(snip_id))
 		err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
-	else if(attribs[Attributes::LABEL].isEmpty())
+	else if(attribs[Attributes::Label].isEmpty())
 		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Contents].isEmpty())
 		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
@@ -270,7 +270,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 		QStringList inv_snippets;
 
 		this->resetForm();
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { Attributes::ID });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { Attributes::Id });
 
 		//Check if there are invalid snippets loaded
 		for(auto &snip : config_params)
@@ -308,8 +308,8 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 	if(object_id.isEmpty())
 		object_id=Attributes::General;
 
-	return(attribs_map{ {Attributes::ID, id_edt->text()},
-						{Attributes::LABEL, label_edt->text()},
+	return(attribs_map{ {Attributes::Id, id_edt->text()},
+						{Attributes::Label, label_edt->text()},
 						{Attributes::OBJECT, object_id},
 						{Attributes::PARSABLE, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
 						{Attributes::PLACEHOLDERS, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
@@ -325,7 +325,7 @@ void SnippetsConfigWidget::editSnippet(void)
 	enableEditMode(true);
 	snippet_txt->setPlainText(config_params[snip_id].at(Attributes::Contents));
 	id_edt->setText(snip_id);
-	label_edt->setText(config_params[snip_id].at(Attributes::LABEL));
+	label_edt->setText(config_params[snip_id].at(Attributes::Label));
 	parsable_chk->setChecked(config_params[snip_id].at(Attributes::PARSABLE)==Attributes::True);
 	placeholders_chk->setChecked(config_params[snip_id].at(Attributes::PLACEHOLDERS)==Attributes::True);
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
@@ -521,7 +521,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 	for(attribs_map snip : snippets)
 	{
 		object=snip[Attributes::OBJECT];
-		snip_id=snip[Attributes::ID];
+		snip_id=snip[Attributes::Id];
 
 		//Creating the snippet submenu for the current object type
 		if(submenus.count(object)==0)
@@ -549,7 +549,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 		//Creating the action for the current snippet
 		act=new QAction(QPixmap(PgModelerUiNs::getIconPath("codesnippet")), snip_id, submenus[object]);
-		act->setToolTip(snip[Attributes::LABEL]);
+		act->setToolTip(snip[Attributes::Label]);
 		submenus[object]->addAction(act);
 	}
 

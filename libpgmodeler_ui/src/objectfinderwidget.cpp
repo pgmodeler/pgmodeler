@@ -369,7 +369,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::INH_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
 				}
 				else
 				{

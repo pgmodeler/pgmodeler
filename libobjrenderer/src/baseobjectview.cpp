@@ -237,18 +237,18 @@ void BaseObjectView::loadObjectsStyle(void)
 						font.setFamily(attribs[Attributes::Font]);
 						font.setPointSizeF(attribs[Attributes::SIZE].toDouble());
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
-						font.setItalic(attribs[Attributes::ITALIC]==Attributes::True);
+						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
 						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
 						font_fmt.setFont(font);
 						font_config[Attributes::Global]=font_fmt;
 					}
 					else if(elem==Attributes::Font)
 					{
-						font_config[attribs[Attributes::ID]]=font_fmt;
-						itr=font_config.find(attribs[Attributes::ID]);
+						font_config[attribs[Attributes::Id]]=font_fmt;
+						itr=font_config.find(attribs[Attributes::Id]);
 						font=font_fmt.font();
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
-						font.setItalic(attribs[Attributes::ITALIC]==Attributes::True);
+						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
 						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);
 						(itr->second).setFont(font);
 						(itr->second).setForeground(QColor(attribs[Attributes::Color]));
@@ -262,7 +262,7 @@ void BaseObjectView::loadObjectsStyle(void)
 						colors.push_back(list.size()==2 ? QColor(list[1]) : colors[0]);
 						colors.push_back(QColor(attribs[Attributes::BorderColor]));
 
-						color_config[attribs[Attributes::ID]]=colors;
+						color_config[attribs[Attributes::Id]]=colors;
 					}
 				}
 			}

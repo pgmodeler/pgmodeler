@@ -23,7 +23,7 @@ Textbox::Textbox(void)
 	obj_type=ObjectType::Textbox;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[Attributes::ITALIC]=QString();
+	attributes[Attributes::Italic]=QString();
 	attributes[Attributes::Bold]=QString();
 	attributes[Attributes::UNDERLINE]=QString();
 	attributes[Attributes::Color]=QString();
@@ -43,7 +43,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setFadedOutAttribute();
 
 		if(text_attributes[ItalicText])
-			attributes[Attributes::ITALIC]=Attributes::True;
+			attributes[Attributes::Italic]=Attributes::True;
 
 		if(text_attributes[BoldText])
 			attributes[Attributes::Bold]=Attributes::True;

@@ -39,7 +39,7 @@ Trigger::Trigger(void)
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::FiringType]=QString();
 	attributes[Attributes::PER_ROW]=QString();
-	attributes[Attributes::INS_EVENT]=QString();
+	attributes[Attributes::InsEvent]=QString();
 	attributes[Attributes::DelEvent]=QString();
 	attributes[Attributes::UPD_EVENT]=QString();
 	attributes[Attributes::TRUNC_EVENT]=QString();
@@ -346,7 +346,7 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
-			attribs[4]={Attributes::INS_EVENT, Attributes::DelEvent,
+			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
 						Attributes::TRUNC_EVENT, Attributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,

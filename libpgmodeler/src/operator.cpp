@@ -34,12 +34,12 @@ Operator::Operator(void)
 	argument_types[LEFT_ARG]=PgSqlType(QString("\"any\""));
 	argument_types[RIGHT_ARG]=PgSqlType(QString("\"any\""));
 
-	attributes[Attributes::LEFT_TYPE]=QString();
+	attributes[Attributes::LeftType]=QString();
 	attributes[Attributes::RIGHT_TYPE]=QString();
 	attributes[Attributes::CommutatorOp]=QString();
 	attributes[Attributes::NEGATOR_OP]=QString();
 	attributes[Attributes::RESTRICTION_FUNC]=QString();
-	attributes[Attributes::JOIN_FUNC]=QString();
+	attributes[Attributes::JoinFunc]=QString();
 	attributes[Attributes::OPERATOR_FUNC]=QString();
 	attributes[Attributes::Hashes]=QString();
 	attributes[Attributes::MERGES]=QString();
@@ -280,12 +280,12 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString type_attribs[]={Attributes::LEFT_TYPE, Attributes::RIGHT_TYPE},
+	QString type_attribs[]={Attributes::LeftType, Attributes::RIGHT_TYPE},
 			op_attribs[]={ Attributes::CommutatorOp,
 						   Attributes::NEGATOR_OP },
 
 			func_attribs[]={Attributes::OPERATOR_FUNC,
-							Attributes::JOIN_FUNC,
+							Attributes::JoinFunc,
 							Attributes::RESTRICTION_FUNC};
 
 	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)

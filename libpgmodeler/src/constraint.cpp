@@ -41,7 +41,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::ComparisonType]=QString();
 	attributes[Attributes::DeferType]=QString();
-	attributes[Attributes::INDEX_TYPE]=QString();
+	attributes[Attributes::IndexType]=QString();
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::DeclInTable]=QString();
@@ -715,7 +715,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[Attributes::NO_INHERIT]=(no_inherit ? Attributes::True : QString());
 	attributes[Attributes::ComparisonType]=(~match_type);
 	attributes[Attributes::DeferType]=(~deferral_type);
-	attributes[Attributes::INDEX_TYPE]=(~ index_type);
+	attributes[Attributes::IndexType]=(~ index_type);
 
 	if(getParentTable())
 		attributes[Attributes::TABLE]=getParentTable()->getName(true);

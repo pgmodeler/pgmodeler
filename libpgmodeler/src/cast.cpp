@@ -27,7 +27,7 @@ Cast::Cast(void)
 	attributes[Attributes::SOURCE_TYPE]=QString();
 	attributes[Attributes::DestType]=QString();
 	attributes[Attributes::CastType]=QString();
-	attributes[Attributes::IO_CAST]=QString();
+	attributes[Attributes::IoCast]=QString();
 	attributes[Attributes::Function]=QString();
 }
 
@@ -183,12 +183,12 @@ QString Cast::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[Attributes::IO_CAST]=(is_in_out ? Attributes::True : QString());
+		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : QString());
 
 	if(cast_type==Assignment)
 		attributes[Attributes::CastType]=Attributes::Assignment;
 	else if(cast_type==Implicit)
-		attributes[Attributes::CastType]=Attributes::IMPLICIT;
+		attributes[Attributes::CastType]=Attributes::Implicit;
 	else
 		attributes[Attributes::CastType]=QString();
 

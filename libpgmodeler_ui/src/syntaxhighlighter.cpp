@@ -400,7 +400,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 							xmlparser.getElementAttributes(attribs);
 							word_delimiters=attribs[Attributes::VALUE];
 						}
-						else if(elem==Attributes::IGNORED_CHARS)
+						else if(elem==Attributes::IgnoredChars)
 						{
 							xmlparser.getElementAttributes(attribs);
 							ignored_chars=attribs[Attributes::VALUE];
@@ -418,7 +418,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								the groups used to highlight the source code. ALL groups
 								in this block must be declared before they are built
 								otherwise an error will be triggered. */
-						else if(elem==Attributes::HIGHLIGHT_ORDER)
+						else if(elem==Attributes::HighlightOrder)
 						{
 							//Marks a flag indication that groups are being declared
 							groups_decl=true;
@@ -446,7 +446,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
 								{
 									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclaration)
-																	.arg(group).arg(Attributes::HIGHLIGHT_ORDER),
+																	.arg(group).arg(Attributes::HighlightOrder),
 																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
@@ -465,7 +465,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
 								{
 									throw Exception(Exception::getErrorMessage(ErrorCode::DefNotDeclaredGroup)
-																	.arg(group).arg(Attributes::HIGHLIGHT_ORDER),
+																	.arg(group).arg(Attributes::HighlightOrder),
 																	ErrorCode::DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
@@ -476,7 +476,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								}
 
 								chr_sensitive=(attribs[Attributes::CaseSensitive]==Attributes::True);
-								italic=(attribs[Attributes::ITALIC]==Attributes::True);
+								italic=(attribs[Attributes::Italic]==Attributes::True);
 								bold=(attribs[Attributes::Bold]==Attributes::True);
 								underline=(attribs[Attributes::UNDERLINE]==Attributes::True);
 								partial_match=(attribs[Attributes::PARTIAL_MATCH]==Attributes::True);
@@ -533,7 +533,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 										if(expr_type.isEmpty() ||
 												expr_type==Attributes::SIMPLE_EXP ||
-												expr_type==Attributes::INITIAL_EXP)
+												expr_type==Attributes::InitialExp)
 											initial_exprs[group].push_back(regexp);
 										else
 											final_exprs[group].push_back(regexp);

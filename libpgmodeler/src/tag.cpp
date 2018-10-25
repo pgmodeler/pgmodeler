@@ -154,7 +154,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			for(auto &itr : color_config)
 			{
-				attribs[Attributes::ID]=itr.first;
+				attribs[Attributes::Id]=itr.first;
 				attribs[Attributes::Colors]=QString();
 
 				if(itr.first==Attributes::TABLE_NAME || itr.first==Attributes::TABLE_SCHEMA_NAME)

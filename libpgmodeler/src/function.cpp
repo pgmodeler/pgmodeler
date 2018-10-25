@@ -35,7 +35,7 @@ Function::Function(void)
 	attributes[Attributes::ROW_AMOUNT]=QString();
 	attributes[Attributes::RETURN_TYPE]=QString();
 	attributes[Attributes::FunctionType]=QString();
-	attributes[Attributes::LANGUAGE]=QString();
+	attributes[Attributes::Language]=QString();
 	attributes[Attributes::RETURNS_SETOF]=QString();
 	attributes[Attributes::SECURITY_TYPE]=QString();
 	attributes[Attributes::BehaviorType]=QString();
@@ -44,9 +44,9 @@ Function::Function(void)
 	attributes[Attributes::REF_TYPE]=QString();
 	attributes[Attributes::WINDOW_FUNC]=QString();
 	attributes[Attributes::RETURN_TABLE]=QString();
-	attributes[Attributes::LIBRARY]=QString();
+	attributes[Attributes::Library]=QString();
 	attributes[Attributes::SYMBOL]=QString();
-	attributes[Attributes::LEAKPROOF]=QString();
+	attributes[Attributes::LeakProof]=QString();
 }
 
 void Function::setName(const QString &name)
@@ -465,12 +465,12 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attributes[Attributes::LANGUAGE]=language->getName(false);
+			attributes[Attributes::Language]=language->getName(false);
 			attributes[Attributes::RETURN_TYPE]=(*return_type);
 		}
 		else
 		{
-			attributes[Attributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
+			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
 			attributes[Attributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
 		}
 	}
@@ -479,7 +479,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[Attributes::RETURNS_SETOF]=(returns_setof ? Attributes::True : QString());
 	attributes[Attributes::WINDOW_FUNC]=(is_wnd_function ? Attributes::True : QString());
-	attributes[Attributes::LEAKPROOF]=(is_leakproof ? Attributes::True : QString());
+	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : QString());
 	attributes[Attributes::SECURITY_TYPE]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
 	attributes[Attributes::Definition]=source_code;
@@ -487,7 +487,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(language->getName()==~LanguageType(LanguageType::C))
 	{
 		attributes[Attributes::SYMBOL]=symbol;
-		attributes[Attributes::LIBRARY]=library;
+		attributes[Attributes::Library]=library;
 	}
 
 	attributes[Attributes::SIGNATURE]=signature;
@@ -529,7 +529,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 				attribs[Attributes::FunctionType]=~func->function_type;
 
 			if(this->is_leakproof!=func->is_leakproof)
-				attribs[Attributes::LEAKPROOF]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);
 
 			if(this->security_type!=func->security_type)
 				attribs[Attributes::SECURITY_TYPE]=~func->security_type;

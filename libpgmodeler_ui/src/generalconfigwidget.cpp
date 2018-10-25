@@ -110,7 +110,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::CodeFont]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString();
 	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=QString();
-	config_params[Attributes::Configuration][Attributes::INVERT_RANGESEL_TRIGGER]=QString();
+	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=QString();
 	config_params[Attributes::Configuration][Attributes::CheckUpdate]=QString();
 	config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=QString();
 	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
@@ -126,7 +126,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::HighlightLines]=QString();
 	config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=QString();
 	config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY]=QString();
-	config_params[Attributes::Configuration][Attributes::HISTORY_MAX_LENGTH]=QString();
+	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString();
 	config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]=QString();
 	config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=QString();
 	config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=QString();
@@ -268,12 +268,12 @@ void GeneralConfigWidget::loadConfiguration(void)
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(true);
 
-		key_attribs.push_back(Attributes::ID);
+		key_attribs.push_back(Attributes::Id);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::GeneralConf, config_params, key_attribs);
 
 		grid_size_spb->setValue((config_params[Attributes::Configuration][Attributes::GridSize]).toUInt());
 		oplist_size_spb->setValue((config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]).toUInt());
-		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HISTORY_MAX_LENGTH].toUInt());
+		history_max_length_spb->setValue(config_params[Attributes::Configuration][Attributes::HistoryMaxLength].toUInt());
 
 		interv=(config_params[Attributes::Configuration][Attributes::AutoSaveInterval]).toUInt();
 		tab_width=(config_params[Attributes::Configuration][Attributes::CodeTabWidth]).toInt();
@@ -287,7 +287,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		tab_width_spb->setValue(tab_width);
 
 		corner_move_chk->setChecked(config_params[Attributes::Configuration][Attributes::CanvasCornerMove]==Attributes::True);
-		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::INVERT_RANGESEL_TRIGGER]==Attributes::True);
+		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]==Attributes::True);
 		check_upd_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
 		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]==Attributes::True);
 		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
@@ -302,7 +302,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		paper_cmb->setCurrentIndex((config_params[Attributes::Configuration][Attributes::PAPER_TYPE]).toUInt());
 		portrait_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::PORTRAIT);
-		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::LANDSCAPE);
+		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]==Attributes::Landscape);
 
 		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY].toUInt());
 
@@ -470,9 +470,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::OP_LIST_SIZE]=QString::number(oplist_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PAPER_TYPE]=QString::number(paper_cmb->currentIndex());
-		config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? Attributes::PORTRAIT : Attributes::LANDSCAPE);
+		config_params[Attributes::Configuration][Attributes::PAPER_ORIENTATION]=(portrait_rb->isChecked() ? Attributes::PORTRAIT : Attributes::Landscape);
 		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::INVERT_RANGESEL_TRIGGER]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : QString());
@@ -482,7 +482,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::MIN_OBJECT_OPACITY]=QString::number(min_obj_opacity_spb->value());
 		config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HISTORY_MAX_LENGTH]=QString::number(history_max_length_spb->value());
+		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
 		config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
@@ -567,7 +567,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		{
 		  for(auto &itr : widgets_geom)
 		  {
-			attribs[Attributes::ID] = itr.first;
+			attribs[Attributes::Id] = itr.first;
 			attribs[Attributes::X_POS] = QString::number(itr.second.geometry.left());
 			attribs[Attributes::Y_POS] = QString::number(itr.second.geometry.top());
 			attribs[Attributes::WIDTH] = QString::number(itr.second.geometry.width());

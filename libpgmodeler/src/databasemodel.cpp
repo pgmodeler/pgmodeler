@@ -49,7 +49,7 @@ DatabaseModel::DatabaseModel(void)
 	attributes[Attributes::AppendAtEod]=QString();
 	attributes[Attributes::PREPEND_AT_BOD]=QString();
 	attributes[Attributes::AllowConns]=QString();
-	attributes[Attributes::IS_TEMPLATE]=QString();
+	attributes[Attributes::IsTemplate]=QString();
 }
 
 DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
@@ -2971,7 +2971,7 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 	localizations[1]=attribs[Attributes::LcCollate];
 	append_at_eod=attribs[Attributes::AppendAtEod]==Attributes::True;
 	prepend_at_bod=attribs[Attributes::PREPEND_AT_BOD]==Attributes::True;
-	is_template=attribs[Attributes::IS_TEMPLATE]==Attributes::True;
+	is_template=attribs[Attributes::IsTemplate]==Attributes::True;
 	allow_conns=attribs[Attributes::AllowConns] != Attributes::False;
 
 	if(!attribs[Attributes::ConnLimit].isEmpty())
@@ -3020,15 +3020,15 @@ void DatabaseModel::loadModel(const QString &filename)
 
 			this->author=attribs[Attributes::MODEL_AUTHOR];
 
-			pos_str=attribs[Attributes::LAST_POSITION].split(',');
+			pos_str=attribs[Attributes::LastPosition].split(',');
 
 			if(pos_str.size()>=2)
 				this->last_pos=QPoint(pos_str[0].toUInt(),pos_str[1].toUInt());
 
-			this->last_zoom=attribs[Attributes::LAST_ZOOM].toDouble();
+			this->last_zoom=attribs[Attributes::LastZoom].toDouble();
 			if(this->last_zoom <= 0) this->last_zoom=1;
 
-			this->is_template = attribs[Attributes::IS_TEMPLATE] == Attributes::True;
+			this->is_template = attribs[Attributes::IsTemplate] == Attributes::True;
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
@@ -3457,7 +3457,7 @@ Role *DatabaseModel::createRole(void)
 	unsigned role_type;
 
 	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
-							 Attributes::CreateRole, Attributes::INHERIT,
+							 Attributes::CreateRole, Attributes::Inherit,
 							 Attributes::LOGIN, Attributes::Encrypted,
 							 Attributes::REPLICATION, Attributes::BypassRls };
 
@@ -3624,7 +3624,7 @@ Language *DatabaseModel::createLanguage(void)
 						//Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
 						if(ref_type==Attributes::VALIDATOR_FUNC ||
 								ref_type==Attributes::HandlerFunc ||
-								ref_type==Attributes::INLINE_FUNC)
+								ref_type==Attributes::InlineFunc)
 						{
 							//Gets the function signature and tries to retrieve it from the model
 							signature=attribs[Attributes::SIGNATURE];
@@ -3690,8 +3690,8 @@ Function *DatabaseModel::createFunction(void)
 			func->setWindowFunction(attribs[Attributes::WINDOW_FUNC]==
 					Attributes::True);
 
-		if(!attribs[Attributes::LEAKPROOF].isEmpty())
-			func->setLeakProof(attribs[Attributes::LEAKPROOF]==
+		if(!attribs[Attributes::LeakProof].isEmpty())
+			func->setLeakProof(attribs[Attributes::LeakProof]==
 					Attributes::True);
 
 		if(!attribs[Attributes::BehaviorType].isEmpty())
@@ -3784,9 +3784,9 @@ Function *DatabaseModel::createFunction(void)
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs_aux);
 
-						if(!attribs_aux[Attributes::LIBRARY].isEmpty())
+						if(!attribs_aux[Attributes::Library].isEmpty())
 						{
-							func->setLibrary(attribs_aux[Attributes::LIBRARY]);
+							func->setLibrary(attribs_aux[Attributes::Library]);
 							func->setSymbol(attribs_aux[Attributes::SYMBOL]);
 						}
 						else if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -3941,8 +3941,8 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 
 	xmlparser.getElementAttributes(attribs);
 
-	if(!attribs[Attributes::LENGTH].isEmpty())
-		length=attribs[Attributes::LENGTH].toUInt();
+	if(!attribs[Attributes::Length].isEmpty())
+		length=attribs[Attributes::Length].toUInt();
 
 	if(!attribs[Attributes::Dimension].isEmpty())
 		dimension=attribs[Attributes::Dimension].toUInt();
@@ -3951,7 +3951,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 		precision=attribs[Attributes::PRECISION].toInt();
 
 	with_timezone=(attribs[Attributes::WITH_TIMEZONE]==Attributes::True);
-	interv_type=attribs[Attributes::INTERVAL_TYPE];
+	interv_type=attribs[Attributes::IntervalType];
 
 	if(!attribs[Attributes::SPATIAL_TYPE].isEmpty())
 		spatial_type=SpatialType(attribs[Attributes::SPATIAL_TYPE],
@@ -4008,8 +4008,8 @@ Type *DatabaseModel::createType(void)
 			type->setConfiguration(Type::BaseType);
 			type->setByValue(attribs[Attributes::ByValue]==Attributes::True);
 
-			if(!attribs[Attributes::INTERNAL_LENGTH].isEmpty())
-				type->setInternalLength(attribs[Attributes::INTERNAL_LENGTH].toUInt());
+			if(!attribs[Attributes::InternalLength].isEmpty())
+				type->setInternalLength(attribs[Attributes::InternalLength].toUInt());
 
 			if(!attribs[Attributes::Alignment].isEmpty())
 				type->setAlignment(attribs[Attributes::Alignment]);
@@ -4033,7 +4033,7 @@ Type *DatabaseModel::createType(void)
 				type->setPreferred(attribs[Attributes::PREFERRED]==Attributes::True);
 
 			//Configuring an auxiliary map used to reference the functions used by base type
-			func_types[Attributes::INPUT_FUNC]=Type::InputFunc;
+			func_types[Attributes::InputFunc]=Type::InputFunc;
 			func_types[Attributes::OUTPUT_FUNC]=Type::OutputFunc;
 			func_types[Attributes::SEND_FUNC]=Type::SendFunc;
 			func_types[Attributes::RECV_FUNC]=Type::RecvFunc;
@@ -4236,14 +4236,14 @@ Cast *DatabaseModel::createCast(void)
 		setBasicAttributes(cast);
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[Attributes::CastType]==Attributes::IMPLICIT)
+		if(attribs[Attributes::CastType]==Attributes::Implicit)
 			cast->setCastType(Cast::Implicit);
 		else if(attribs[Attributes::CastType]==Attributes::Assignment)
 			cast->setCastType(Cast::Assignment);
 		else
 			cast->setCastType(Cast::Explicit);
 
-		cast->setInOut(attribs[Attributes::IO_CAST]==Attributes::True);
+		cast->setInOut(attribs[Attributes::IoCast]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4374,7 +4374,7 @@ Operator *DatabaseModel::createOperator(void)
 		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
 		func_types[Attributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
-		func_types[Attributes::JOIN_FUNC]=Operator::FUNC_JOIN;
+		func_types[Attributes::JoinFunc]=Operator::FUNC_JOIN;
 		func_types[Attributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
 
 		oper_types[Attributes::CommutatorOp]=Operator::OPER_COMMUTATOR;
@@ -4465,7 +4465,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		setBasicAttributes(op_class);
 		xmlparser.getElementAttributes(attribs);
 
-		op_class->setIndexingType(IndexingType(attribs[Attributes::INDEX_TYPE]));
+		op_class->setIndexingType(IndexingType(attribs[Attributes::IndexType]));
 		op_class->setDefault(attribs[Attributes::Default]==Attributes::True);
 
 		elem_types[Attributes::Function]=OperatorClassElement::FunctionElem;
@@ -4576,7 +4576,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 		op_family=new OperatorFamily;
 		setBasicAttributes(op_family);
 		xmlparser.getElementAttributes(attribs);
-		op_family->setIndexingType(IndexingType(attribs[Attributes::INDEX_TYPE]));
+		op_family->setIndexingType(IndexingType(attribs[Attributes::IndexType]));
 	}
 	catch(Exception &e)
 	{
@@ -4601,7 +4601,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 		setBasicAttributes(aggreg);
 		xmlparser.getElementAttributes(attribs);
 
-		aggreg->setInitialCondition(attribs[Attributes::INITIAL_COND]);
+		aggreg->setInitialCondition(attribs[Attributes::InitialCond]);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4736,7 +4736,7 @@ Table *DatabaseModel::createTable(void)
 									{
 										xmlparser.getElementAttributes(aux_attribs);
 										names.push_back(aux_attribs[Attributes::NAME]);
-										idxs.push_back(aux_attribs[Attributes::INDEX].toUInt());
+										idxs.push_back(aux_attribs[Attributes::Index].toUInt());
 									}
 								}
 							}
@@ -4774,7 +4774,7 @@ Table *DatabaseModel::createTable(void)
 						xmlparser.restorePosition();
 					}
 					//Retrieving initial data
-					else if(elem==Attributes::INITIAL_DATA)
+					else if(elem==Attributes::InitialData)
 					{
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -4820,11 +4820,11 @@ Column *DatabaseModel::createColumn(void)
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[Attributes::NOT_NULL]==Attributes::True);
 		column->setDefaultValue(attribs[Attributes::DefaultValue]);
-		column->setIdSeqAttributes(attribs[Attributes::MIN_VALUE], attribs[Attributes::MAX_VALUE], attribs[Attributes::INCREMENT],
+		column->setIdSeqAttributes(attribs[Attributes::MIN_VALUE], attribs[Attributes::MAX_VALUE], attribs[Attributes::Increment],
 																attribs[Attributes::START], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);
 
-		if(!attribs[Attributes::IDENTITY_TYPE].isEmpty())
-			column->setIdentityType(IdentityType(attribs[Attributes::IDENTITY_TYPE]));
+		if(!attribs[Attributes::IdentityType].isEmpty())
+			column->setIdentityType(IdentityType(attribs[Attributes::IdentityType]));
 
 		if(!attribs[Attributes::SEQUENCE].isEmpty())
 		{
@@ -4991,9 +4991,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		{
 			constr->setNoInherit(attribs[Attributes::NO_INHERIT]==Attributes::True);
 		}
-		else if(constr_type==ConstraintType::Exclude &&	!attribs[Attributes::INDEX_TYPE].isEmpty())
+		else if(constr_type==ConstraintType::Exclude &&	!attribs[Attributes::IndexType].isEmpty())
 		{
-			constr->setIndexType(attribs[Attributes::INDEX_TYPE]);
+			constr->setIndexType(attribs[Attributes::IndexType]);
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5095,7 +5095,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	xml_elem=xmlparser.getElementName();
 	is_part_key = xml_elem == Attributes::PARTITION_KEY;
 
-	if(xml_elem==Attributes::INDEX_ELEMENT || xml_elem==Attributes::ExcludeElement || is_part_key)
+	if(xml_elem==Attributes::IndexElement || xml_elem==Attributes::ExcludeElement || is_part_key)
 	{
 		xmlparser.getElementAttributes(attribs);
 
@@ -5273,7 +5273,7 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 			aux_attribs[Attributes::ConnLimit]=QString::number(db_aux->conn_limit);
 
 		if(this->is_template != db_aux->is_template)
-			aux_attribs[Attributes::IS_TEMPLATE] = (db_aux->is_template ? Attributes::True : Attributes::False);
+			aux_attribs[Attributes::IsTemplate] = (db_aux->is_template ? Attributes::True : Attributes::False);
 
 		if(this->allow_conns != db_aux->allow_conns)
 			aux_attribs[Attributes::AllowConns] = (db_aux->allow_conns ? Attributes::True : Attributes::False);
@@ -5325,7 +5325,7 @@ Index *DatabaseModel::createIndex(void)
 		index->setIndexAttribute(Index::Unique, attribs[Attributes::UNIQUE]==Attributes::True);
 		index->setIndexAttribute(Index::FastUpdate, attribs[Attributes::FastUpdate]==Attributes::True);
 		index->setIndexAttribute(Index::Buffering, attribs[Attributes::Buffering]==Attributes::True);
-		index->setIndexingType(attribs[Attributes::INDEX_TYPE]);
+		index->setIndexingType(attribs[Attributes::IndexType]);
 		index->setFillFactor(attribs[Attributes::Factor].toUInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5336,7 +5336,7 @@ Index *DatabaseModel::createIndex(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::INDEX_ELEMENT)
+					if(elem==Attributes::IndexElement)
 					{
 						createElement(idx_elem, index, table);
 						index->addIndexElement(idx_elem);
@@ -5483,7 +5483,7 @@ Trigger *DatabaseModel::createTrigger(void)
 		trigger->setConstraint(attribs[Attributes::Constraint]==Attributes::True);
 
 		trigger->setEvent(EventType::OnInsert,
-							(attribs[Attributes::INS_EVENT]==Attributes::True));
+							(attribs[Attributes::InsEvent]==Attributes::True));
 
 		trigger->setEvent(EventType::OnDelete,
 							(attribs[Attributes::DelEvent]==Attributes::True));
@@ -5802,7 +5802,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 
 		sequence->setValues(attribs[Attributes::MIN_VALUE],
 				attribs[Attributes::MAX_VALUE],
-				attribs[Attributes::INCREMENT],
+				attribs[Attributes::Increment],
 				attribs[Attributes::START],
 				attribs[Attributes::Cache]);
 
@@ -6151,7 +6151,7 @@ Tag *DatabaseModel::createTag(void)
 					if(elem==Attributes::STYLE)
 					{
 						xmlparser.getElementAttributes(attribs);
-						tag->setElementColors(attribs[Attributes::ID],attribs[Attributes::Colors]);
+						tag->setElementColors(attribs[Attributes::Id],attribs[Attributes::Colors]);
 					}
 				}
 			}
@@ -6180,7 +6180,7 @@ Textbox *DatabaseModel::createTextbox(void)
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::ITALIC]==Attributes::True);
+		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::UNDERLINE]==Attributes::True);
 
@@ -6337,7 +6337,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
 			src_mand=attribs[Attributes::SRC_REQUIRED]==Attributes::True;
 			dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
-			identifier=attribs[Attributes::IDENTIFIER]==Attributes::True;
+			identifier=attribs[Attributes::Identifier]==Attributes::True;
 			deferrable=attribs[Attributes::Deferrable]==Attributes::True;
 			defer_type=DeferralType(attribs[Attributes::DeferType]);
 			del_action=ActionType(attribs[Attributes::DelAction]);
@@ -6421,7 +6421,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(elem==Attributes::LINE)
+					else if(elem==Attributes::Line)
 					{
 						vector<QPointF> points;
 						xmlparser.savePosition();
@@ -6438,7 +6438,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						base_rel->setPoints(points);
 						xmlparser.restorePosition();
 					}
-					else if(elem==Attributes::LABEL)
+					else if(elem==Attributes::Label)
 					{
 						xmlparser.getElementAttributes(attribs);
 						str_aux=attribs[Attributes::REF_TYPE];
@@ -6457,7 +6457,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						QList<QString> col_list;
 
 						xmlparser.getElementAttributes(attribs);
-						col_list=attribs[Attributes::INDEXES].split(',');
+						col_list=attribs[Attributes::Indexes].split(',');
 
 						while(!col_list.isEmpty())
 						{
@@ -6604,7 +6604,7 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivDelete;
 						else if(itr->first==Attributes::ExecutPriv)
 							priv_type=Permission::PrivExecute;
-						else if(itr->first==Attributes::INSERT_PRIV)
+						else if(itr->first==Attributes::InsertPriv)
 							priv_type=Permission::PrivInsert;
 						else if(itr->first==Attributes::REFERENCES_PRIV)
 							priv_type=Permission::PrivReferences;
@@ -6746,7 +6746,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[Attributes::PREPEND_AT_BOD]=(prepend_at_bod ? Attributes::True : QString());
 	}
 
-	attributes[Attributes::IS_TEMPLATE]=(is_template ? Attributes::True : Attributes::False);
+	attributes[Attributes::IsTemplate]=(is_template ? Attributes::True : Attributes::False);
 	attributes[Attributes::AllowConns]=(allow_conns ? Attributes::True : Attributes::False);
 	attributes[Attributes::TEMPLATE_DB]=template_db;
 
@@ -6933,8 +6933,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		{
 			attribs_aux[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::PROTECTED]=(this->is_protected ? Attributes::True : QString());
-			attribs_aux[Attributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-			attribs_aux[Attributes::LAST_ZOOM]=QString::number(last_zoom);
+			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+			attribs_aux[Attributes::LastZoom]=QString::number(last_zoom);
 			attribs_aux[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
 			attribs_aux[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : QString());
 			attribs_aux[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : QString());
@@ -9656,8 +9656,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_db_attribs && object==this)
 			{			
 				attribs[Attributes::MODEL_AUTHOR]=this->getAuthor();
-				attribs[Attributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
-				attribs[Attributes::LAST_ZOOM]=QString::number(last_zoom);
+				attribs[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
+				attribs[Attributes::LastZoom]=QString::number(last_zoom);
 				attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getSignature() : QString());
 				attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : QString());
 				attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : QString());
@@ -9742,7 +9742,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 							attribs[Attributes::POSITION]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								Attributes::LABEL + GlobalAttributes::SchemaExt, aux_attribs);
+																																								Attributes::Label + GlobalAttributes::SchemaExt, aux_attribs);
 						}
 					}
 				}
@@ -9788,7 +9788,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				objs_def+=schparser.convertCharsToXMLEntities(
 										schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																							GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																							Attributes::INFO + GlobalAttributes::SchemaExt, attribs));
+																							Attributes::Info + GlobalAttributes::SchemaExt, attribs));
 			}
 			else
 				idx++;
@@ -9799,7 +9799,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		if(!objs_def.isEmpty())
 		{
 			//Generates the metadata XML buffer
-			attribs[Attributes::INFO]=objs_def;
+			attribs[Attributes::Info]=objs_def;
 			buf.append(schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																						 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																						 Attributes::METADATA + GlobalAttributes::SchemaExt, attribs));
@@ -9904,7 +9904,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						new_object=nullptr;
 						xmlparser.restorePosition();
 					}
-					else if(elem_name==Attributes::INFO)
+					else if(elem_name==Attributes::Info)
 					{
 						xmlparser.getElementAttributes(attribs);
 						obj_name=attribs[Attributes::OBJECT];
@@ -9917,14 +9917,14 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						{
 							if(load_db_attribs)
 							{
-								QStringList pos=attribs[Attributes::LAST_POSITION].split(',');
+								QStringList pos=attribs[Attributes::LastPosition].split(',');
 
 								default_objs[ObjectType::Schema]=getSchema(attribs[Attributes::DefaultSchema]);
 								default_objs[ObjectType::Role]=getRole(attribs[Attributes::DefaultOwner]);
 								default_objs[ObjectType::Collation]=getCollation(attribs[Attributes::DefaultCollation]);
 								default_objs[ObjectType::Tablespace]=getTablespace(attribs[Attributes::DefaultTablespace]);
 								author=attribs[Attributes::MODEL_AUTHOR];
-								last_zoom=attribs[Attributes::LAST_ZOOM].toFloat();
+								last_zoom=attribs[Attributes::LastZoom].toFloat();
 
 								if(pos.size()>=2)
 									last_pos=QPoint(pos[0].toFloat(), pos[1].toFloat());
@@ -10008,7 +10008,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 																						 aux_attrib[Attributes::Y_POS].toFloat()));
 									}
 									//Retrieving and storing the labels' custom positions
-									else if(aux_elem==Attributes::LABEL)
+									else if(aux_elem==Attributes::Label)
 									{
 										ref_type=aux_attrib[Attributes::REF_TYPE];
 										xmlparser.savePosition();

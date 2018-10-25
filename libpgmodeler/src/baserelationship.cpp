@@ -86,7 +86,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Constraints]=QString();
 	attributes[Attributes::Elements]=QString();
-	attributes[Attributes::IDENTIFIER]=QString();
+	attributes[Attributes::Identifier]=QString();
 	attributes[Attributes::REDUCED_FORM]=QString();
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeferType]=QString();
@@ -362,11 +362,11 @@ void BaseRelationship::setRelationshipAttributes(void)
 			attributes[Attributes::Y_POS]=QString("%1").arg(lables_dist[i].y());
 			attributes[Attributes::POSITION]=schparser.getCodeDefinition(Attributes::POSITION, attributes, SchemaParser::XmlDefinition);
 			attributes[Attributes::REF_TYPE]=label_attribs[i];
-			str_aux+=schparser.getCodeDefinition(Attributes::LABEL, attributes, SchemaParser::XmlDefinition);
+			str_aux+=schparser.getCodeDefinition(Attributes::Label, attributes, SchemaParser::XmlDefinition);
 		}
 	}
 
-	attributes[Attributes::LABELS_POS]=str_aux;
+	attributes[Attributes::LabelsPos]=str_aux;
 	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
 	attributes[Attributes::REFERENCE_FK]=(reference_fk ? reference_fk->getName() : QString());
 	setFadedOutAttribute();
@@ -420,7 +420,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 		setRelationshipAttributes();
 		reduced_form=(attributes[Attributes::POINTS].isEmpty() &&
-					 attributes[Attributes::LABELS_POS].isEmpty());
+					 attributes[Attributes::LabelsPos].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();

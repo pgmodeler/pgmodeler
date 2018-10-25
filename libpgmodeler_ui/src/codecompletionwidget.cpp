@@ -226,8 +226,8 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(enable_snippets)
 		{
 			clearCustomItems();
-			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::ID),
-												SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::LABEL),
+			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::Id),
+												SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::Label),
 												QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
 		}
 	}

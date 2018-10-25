@@ -1496,8 +1496,8 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DstRequired,
 									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::POINTS,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
-									 Attributes::LABEL, Attributes::LINE, Attributes::POSITION,
-									 Attributes::IDENTIFIER, Attributes::Deferrable, Attributes::DeferType,
+									 Attributes::Label, Attributes::Line, Attributes::POSITION,
+									 Attributes::Identifier, Attributes::Deferrable, Attributes::DeferType,
 									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
 									 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern, Attributes::PK_PATTERN,
@@ -1564,7 +1564,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 		attribs[Attributes::WORKING_DIR]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 		attribs[Attributes::Application]=(QFileInfo(startup_script).exists() ?
 													 startup_script : GlobalAttributes::PgModelerAppPath);
-		attribs[Attributes::ICON]=exec_icon;
+		attribs[Attributes::Icon]=exec_icon;
 	}
 
 	try
@@ -1593,7 +1593,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 				out.write(buf.data(), buf.size());
 				out.close();
 				buf.clear();
-				attribs[Attributes::ICON]=dbm_icon;
+				attribs[Attributes::Icon]=dbm_icon;
 			}
 		}
 

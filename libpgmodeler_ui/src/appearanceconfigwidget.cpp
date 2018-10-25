@@ -60,7 +60,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		BaseObject::getSchemaName(ObjectType::Textbox), //30
 		Attributes::Column, //31
 		Attributes::Column, //32
-		Attributes::INH_COLUMN, //33
+		Attributes::InhColumn, //33
 		Attributes::PROT_COLUMN, //34
 		Attributes::PK_COLUMN, //35
 		Attributes::PK_COLUMN, //36
@@ -71,8 +71,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::NN_COLUMN, //41
 		Attributes::NN_COLUMN, //42
 		Attributes::RELATIONSHIP, //43
-		Attributes::LABEL, //44
-		Attributes::LABEL, //45
+		Attributes::Label, //44
+		Attributes::Label, //45
 		Attributes::Attribute, //46
 		Attributes::Attribute, //47
 		Attributes::TAG, //48
@@ -290,7 +290,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 				attrib_id=item.conf_id + QString("-fcolor");
 				attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-				attrib_id=item.conf_id + QString("-") + Attributes::ITALIC;
+				attrib_id=item.conf_id + QString("-") + Attributes::Italic;
 				attribs[attrib_id]=(font.italic() ? Attributes::True : Attributes::False);
 
 				attrib_id=item.conf_id + QString("-") + Attributes::Bold;

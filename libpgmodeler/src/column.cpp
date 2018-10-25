@@ -28,8 +28,8 @@ Column::Column(void)
 	attributes[Attributes::TABLE]=QString();
 	attributes[Attributes::SEQUENCE]=QString();
 	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::IDENTITY_TYPE]=QString();
-	attributes[Attributes::INCREMENT]=QString();
+	attributes[Attributes::IdentityType]=QString();
+	attributes[Attributes::Increment]=QString();
 	attributes[Attributes::MIN_VALUE]=QString();
 	attributes[Attributes::MAX_VALUE]=QString();
 	attributes[Attributes::START]=QString();
@@ -242,12 +242,12 @@ QString Column::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);	
 	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::IDENTITY_TYPE]=QString();
+	attributes[Attributes::IdentityType]=QString();
 
 	if(identity_type != BaseType::Null)
 	{
-		attributes[Attributes::IDENTITY_TYPE] = ~identity_type;	
-		attributes[Attributes::INCREMENT]=seq_increment;
+		attributes[Attributes::IdentityType] = ~identity_type;	
+		attributes[Attributes::Increment]=seq_increment;
 		attributes[Attributes::MIN_VALUE]=seq_min_value;
 		attributes[Attributes::MAX_VALUE]=seq_max_value;
 		attributes[Attributes::START]=seq_start;
@@ -312,9 +312,9 @@ QString Column::getAlterDefinition(BaseObject *object)
 		attribs[Attributes::NEW_IDENTITY_TYPE] = QString();
 
 		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
-			attribs[Attributes::IDENTITY_TYPE] = ~col->identity_type;
+			attribs[Attributes::IdentityType] = ~col->identity_type;
 		else if(this->identity_type != BaseType::Null && col->identity_type == BaseType::Null)
-			attribs[Attributes::IDENTITY_TYPE] = Attributes::UNSET;
+			attribs[Attributes::IdentityType] = Attributes::UNSET;
 		else if(this->identity_type != BaseType::Null && col->identity_type != BaseType::Null &&
 						this->identity_type != col->identity_type)
 			attribs[Attributes::NEW_IDENTITY_TYPE] = ~col->identity_type;
@@ -323,12 +323,12 @@ QString Column::getAlterDefinition(BaseObject *object)
 		attribs[Attributes::MIN_VALUE] = QString();
 		attribs[Attributes::MAX_VALUE] = QString();
 		attribs[Attributes::START] = QString();
-		attribs[Attributes::INCREMENT] = QString();
+		attribs[Attributes::Increment] = QString();
 		attribs[Attributes::Cache] = QString();
 		attribs[Attributes::Cycle] = QString();
 
 		//Checking differences in the underlying sequence (identity col)
-		if(attribs[Attributes::IDENTITY_TYPE] != Attributes::UNSET)
+		if(attribs[Attributes::IdentityType] != Attributes::UNSET)
 		{
 			if(!col->seq_min_value.isEmpty() && this->seq_min_value != col->seq_min_value)
 			{
@@ -350,7 +350,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 
 			if(!col->seq_increment.isEmpty() && this->seq_increment != col->seq_increment)
 			{
-				attribs[Attributes::INCREMENT] = col->seq_increment;
+				attribs[Attributes::Increment] = col->seq_increment;
 				ident_seq_changed = true;
 			}
 

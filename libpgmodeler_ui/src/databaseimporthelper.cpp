@@ -422,7 +422,7 @@ void DatabaseImportHelper::createConstraints(void)
 			//Check constraints are created only if they are not inherited, other types are created normally
 			if(attribs[Attributes::TYPE]!=Attributes::CkConstr ||
 					(attribs[Attributes::TYPE]==Attributes::CkConstr &&
-					 attribs[Attributes::INHERITED]!=Attributes::True))
+					 attribs[Attributes::Inherited]!=Attributes::True))
 			{
 				emit s_progressUpdated(progress,
 										 trUtf8("Creating object `%1' (%2)...")
@@ -1141,21 +1141,21 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
-		if(getObjectName(attribs[Attributes::LANGUAGE])==~LanguageType("c"))
+		if(getObjectName(attribs[Attributes::Language])==~LanguageType("c"))
 		{
 			attribs[Attributes::SYMBOL]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();
 		}
 
 		//Get the language reference code
-		attribs[Attributes::LANGUAGE]=getDependencyObject(attribs[Attributes::LANGUAGE], ObjectType::Language);
+		attribs[Attributes::Language]=getDependencyObject(attribs[Attributes::Language], ObjectType::Language);
 
 		//Get the return type if there is no return table configured
 		if(attribs[Attributes::RETURN_TABLE].isEmpty())
 		{
 			/* If the function is to be used as a user-defined data type support functions
 				 the return type will be renamed to "any" (see rules on Type::setFunction()) */
-			if(attribs[Attributes::REF_TYPE]==Attributes::INPUT_FUNC ||
+			if(attribs[Attributes::REF_TYPE]==Attributes::InputFunc ||
 					attribs[Attributes::REF_TYPE]==Attributes::RECV_FUNC ||
 					attribs[Attributes::REF_TYPE]==Attributes::CanonicalFunc)
 				attribs[Attributes::RETURN_TYPE]=PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
@@ -1184,7 +1184,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 		unsigned lang_oid, func_oid;
 		QString func_types[]={ Attributes::VALIDATOR_FUNC,
 							   Attributes::HandlerFunc,
-							   Attributes::INLINE_FUNC };
+							   Attributes::InlineFunc };
 
 		lang_oid=attribs[Attributes::OID].toUInt();
 		for(unsigned i=0; i < 3; i++)
@@ -1324,9 +1324,9 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 
 				func_types[]={ Attributes::OPERATOR_FUNC,
 							   Attributes::RESTRICTION_FUNC,
-							   Attributes::JOIN_FUNC },
+							   Attributes::JoinFunc },
 
-				arg_types[]= { Attributes::LEFT_TYPE,
+				arg_types[]= { Attributes::LeftType,
 							   Attributes::RIGHT_TYPE },
 
 				op_types[]=  { Attributes::CommutatorOp,
@@ -1439,7 +1439,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 		QStringList owner_col=attribs[Attributes::OWNER_COLUMN].split(':'),
 				seq_attribs=Catalog::parseArrayValues(attribs[Attributes::Attribute]);
 		QString attr[]={ Attributes::START, Attributes::MIN_VALUE,
-						 Attributes::MAX_VALUE, Attributes::INCREMENT,
+						 Attributes::MAX_VALUE, Attributes::Increment,
 						 Attributes::Cache, Attributes::Cycle };
 
 		attribs[Attributes::OWNER_COLUMN]=QString();
@@ -1588,7 +1588,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		else
 		{
 			QString type_name=getObjectName(attribs[Attributes::OID]),
-					func_types[]={ Attributes::INPUT_FUNC,
+					func_types[]={ Attributes::InputFunc,
 								   Attributes::OUTPUT_FUNC,
 								   Attributes::RECV_FUNC,
 								   Attributes::SEND_FUNC,
@@ -1669,7 +1669,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 					!itr->second.at(Attributes::PERMISSION).isEmpty())
 				col_perms[tab_oid].push_back(itr->second[Attributes::OID].toUInt());
 
-			if(itr->second[Attributes::INHERITED]==Attributes::True)
+			if(itr->second[Attributes::Inherited]==Attributes::True)
 				inh_cols.push_back(col_idx);
 
 			col.setName(itr->second[Attributes::NAME]);
@@ -1724,8 +1724,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			col.setComment(itr->second[Attributes::Comment]);
 
 			//Overriding the default value if the column is identity
-			if(!itr->second[Attributes::IDENTITY_TYPE].isEmpty())
-				col.setIdentityType(itr->second[Attributes::IDENTITY_TYPE]);
+			if(!itr->second[Attributes::IdentityType].isEmpty())
+				col.setIdentityType(itr->second[Attributes::IdentityType]);
 			else
 			{
 				/* Removing extra/forced type casting in the retrieved default value.
@@ -1797,7 +1797,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		}
 
 		// Creating partition keys if present
-		if(attribs[Attributes::IS_PARTITIONED] == Attributes::True)
+		if(attribs[Attributes::IsPartitioned] == Attributes::True)
 		{
 			QStringList cols, collations, opclasses, exprs;
 			PartitionKey part_key;
@@ -2130,7 +2130,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				 * and assigned to their exclude constraint elements. Column references are used in exclude elements but relying in
 				 * the cols list above */
 				exprs=attribs[Attributes::Expressions]
-							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::INDEX_TYPE]), QString())
+							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), QString())
 							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
 										 QString::SkipEmptyParts);
 
@@ -2636,8 +2636,8 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				}
 				else if(obj_type==ObjectType::Operator)
 				{
-					if(obj_attr[Attributes::LEFT_TYPE].toUInt() > 0)
-						params.push_back(getType(obj_attr[Attributes::LEFT_TYPE], false));
+					if(obj_attr[Attributes::LeftType].toUInt() > 0)
+						params.push_back(getType(obj_attr[Attributes::LeftType], false));
 					else
 						params.push_back(QString("NONE"));
 
@@ -2648,7 +2648,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				}
 				else
 				{
-					obj_name += QString(" USING %1").arg(obj_attr[Attributes::INDEX_TYPE]);
+					obj_name += QString(" USING %1").arg(obj_attr[Attributes::IndexType]);
 				}
 
 				if(obj_type != ObjectType::OpFamily && obj_type != ObjectType::OpClass)

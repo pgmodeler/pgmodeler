@@ -28,7 +28,7 @@ Aggregate::Aggregate(void)
 	attributes[Attributes::STATE_TYPE]=QString();
 	attributes[Attributes::BaseType]=QString();
 	attributes[Attributes::FinalFunc]=QString();
-	attributes[Attributes::INITIAL_COND]=QString();
+	attributes[Attributes::InitialCond]=QString();
 	attributes[Attributes::SORT_OP]=QString();
 }
 
@@ -259,7 +259,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	}
 
 	if(!initial_condition.isEmpty())
-		attributes[Attributes::INITIAL_COND]=initial_condition;
+		attributes[Attributes::InitialCond]=initial_condition;
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::STATE_TYPE]=*(state_type);

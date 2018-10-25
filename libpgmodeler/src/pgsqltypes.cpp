@@ -1588,18 +1588,18 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs_map attribs;
 		SchemaParser schparser;
 
-		attribs[Attributes::LENGTH]=QString();
+		attribs[Attributes::Length]=QString();
 		attribs[Attributes::Dimension]=QString();
 		attribs[Attributes::PRECISION]=QString();
 		attribs[Attributes::WITH_TIMEZONE]=QString();
-		attribs[Attributes::INTERVAL_TYPE]=QString();
+		attribs[Attributes::IntervalType]=QString();
 		attribs[Attributes::SPATIAL_TYPE]=QString();
 		attribs[Attributes::VARIATION]=QString();
 		attribs[Attributes::SRID]=QString();
 		attribs[Attributes::REF_TYPE]=ref_type;
 
 		attribs[Attributes::NAME]=(~(*this));
-		attribs[Attributes::LENGTH]=QString("%1").arg(this->length);
+		attribs[Attributes::Length]=QString("%1").arg(this->length);
 
 		if(dimension > 0)
 			attribs[Attributes::Dimension]=QString("%1").arg(this->dimension);
@@ -1608,7 +1608,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 			attribs[Attributes::PRECISION]=QString("%1").arg(this->precision);
 
 		if(interval_type != BaseType::Null)
-			attribs[Attributes::INTERVAL_TYPE]=(~interval_type);
+			attribs[Attributes::IntervalType]=(~interval_type);
 
 		if(isGiSType())
 		{

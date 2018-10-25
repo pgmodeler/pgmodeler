@@ -676,7 +676,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				if(!model->getFilename().isEmpty())
 				{
 					param_id=QString("%1%2").arg(Attributes::File).arg(i);
-					attribs[Attributes::ID]=param_id;
+					attribs[Attributes::Id]=param_id;
 					attribs[Attributes::PATH]=model->getFilename();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
@@ -693,7 +693,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				while(!recent_models.isEmpty())
 				{
 					param_id=QString("%1%2").arg(Attributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
-					attribs[Attributes::ID]=param_id;
+					attribs[Attributes::Id]=param_id;
 					attribs[Attributes::PATH]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();

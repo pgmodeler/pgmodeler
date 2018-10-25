@@ -2004,11 +2004,11 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 		labels[label_id]->setPos(x,y);
 		labels[label_id]->setToolTip(this->toolTip());
 
-		char_fmt=BaseObjectView::getFontStyle(Attributes::LABEL);
+		char_fmt=BaseObjectView::getFontStyle(Attributes::Label);
 		char_fmt.setFontPointSize(char_fmt.fontPointSize() * 0.90);
 		labels[label_id]->setFontStyle(char_fmt);
-		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::LABEL),
-										BaseObjectView::getBorderStyle(Attributes::LABEL));
+		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::Label),
+										BaseObjectView::getBorderStyle(Attributes::Label));
 		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
 	}
 }

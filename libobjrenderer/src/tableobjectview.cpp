@@ -228,7 +228,7 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[Attributes::Column];
 
 			if(column->isAddedByRelationship())
-				fmt=font_config[Attributes::INH_COLUMN];
+				fmt=font_config[Attributes::InhColumn];
 			else if(column->isProtected())
 				fmt=font_config[Attributes::PROT_COLUMN];
 
@@ -250,7 +250,7 @@ void TableObjectView::configureObject(void)
 		else
 		{
 			if(tab_obj->isAddedByRelationship())
-				fmt=font_config[Attributes::INH_COLUMN];
+				fmt=font_config[Attributes::InhColumn];
 			else if(tab_obj->isProtected())
 				fmt=font_config[Attributes::PROT_COLUMN];
 			else

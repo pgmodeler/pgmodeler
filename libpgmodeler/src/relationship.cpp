@@ -2606,7 +2606,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[Attributes::IDENTIFIER]=(identifier ? Attributes::True : QString());
+		attributes[Attributes::Identifier]=(identifier ? Attributes::True : QString());
 		attributes[Attributes::SINGLE_PK_COLUMN]=(single_pk_column ? Attributes::True : QString());
 		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
 		attributes[Attributes::DeferType]=~deferral_type;
@@ -2673,7 +2673,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 					 attributes[Attributes::POINTS].isEmpty() &&
 					 attributes[Attributes::SPECIAL_PK_COLS].isEmpty() &&
 					 attributes[Attributes::POINTS].isEmpty() &&
-					 attributes[Attributes::LABELS_POS].isEmpty());
+					 attributes[Attributes::LabelsPos].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();
@@ -2710,14 +2710,14 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	if(rel_type != RelationshipGen && rel_type != RelationshipPart)
 		return(QString());
 
-	attributes[Attributes::INHERIT]=QString();
+	attributes[Attributes::Inherit]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::PARTITIONED_TABLE]=QString();
 	attributes[Attributes::PARTITION_BOUND_EXPR]=QString();
 
 	if(rel_type == RelationshipGen)
 	{
-		attributes[Attributes::INHERIT]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
+		attributes[Attributes::Inherit]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
 		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
 		attributes[Attributes::AncestorTable]=getReferenceTable()->getName(true);
 	}

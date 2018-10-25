@@ -27,7 +27,7 @@ Table::Table(void) : BaseTable()
 	obj_type=ObjectType::Table;
 	with_oid=gen_alter_cmds=unlogged=rls_enabled=rls_forced=false;
 	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::INH_COLUMNS]=QString();
+	attributes[Attributes::InhColumns]=QString();
 	attributes[Attributes::Constraints]=QString();
 	attributes[Attributes::OIDS]=QString();
 	attributes[Attributes::ColsComment]=QString();
@@ -38,7 +38,7 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::ColIndexes]=QString();
 	attributes[Attributes::ConstrIndexes]=QString();
 	attributes[Attributes::UNLOGGED]=QString();
-	attributes[Attributes::INITIAL_DATA]=QString();
+	attributes[Attributes::InitialData]=QString();
 	attributes[Attributes::RLS_ENABLED]=QString();
 	attributes[Attributes::RLS_FORCED]=QString();
 	attributes[Attributes::PARTITIONING]=QString();
@@ -204,7 +204,7 @@ void Table::setRelObjectsIndexesAttribute(void)
 			for(auto &obj_idx : (*obj_indexes[idx]))
 			{
 				aux_attribs[Attributes::NAME]=obj_idx.first;
-				aux_attribs[Attributes::INDEX]=QString::number(obj_idx.second);
+				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
 				aux_attribs[Attributes::OBJECTS]+=schparser.getCodeDefinition(Attributes::OBJECT, aux_attribs, SchemaParser::XmlDefinition);
 			}
 
@@ -249,7 +249,7 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 				str_cols.remove(count-2,2);
 		}
 
-		attributes[Attributes::INH_COLUMNS]=inh_cols;
+		attributes[Attributes::InhColumns]=inh_cols;
 	}
 
 	attributes[Attributes::Columns]=str_cols;
@@ -1634,11 +1634,11 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 		setRelObjectsIndexesAttribute();
 		setPositionAttribute();
 		setFadedOutAttribute();
-		attributes[Attributes::INITIAL_DATA]=initial_data;
+		attributes[Attributes::InitialData]=initial_data;
 		attributes[Attributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 	else
-		attributes[Attributes::INITIAL_DATA]=getInitialDataCommands();
+		attributes[Attributes::InitialData]=getInitialDataCommands();
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
