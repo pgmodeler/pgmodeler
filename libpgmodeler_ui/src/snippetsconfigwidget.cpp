@@ -451,7 +451,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 				snippet_sch=root_dir +
 							GlobalAttributes::SchemasDir +
 							GlobalAttributes::DirSeparator +
-							Attributes::SNIPPET +
+							Attributes::Snippet +
 							GlobalAttributes::SchemaExt;
 
 		attribs_map attribs;
@@ -466,7 +466,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 
 			for(auto &snip : snippets)
 			{
-				attribs[Attributes::SNIPPET]+=
+				attribs[Attributes::Snippet]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
 			}
 		}

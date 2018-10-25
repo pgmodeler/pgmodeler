@@ -3255,7 +3255,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 		object->setAlias(attribs[Attributes::Alias]);
 
 	protected_obj=attribs[Attributes::Protected]==Attributes::True;
-	sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
+	sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
 
 	xmlparser.savePosition();
 
@@ -3276,7 +3276,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					xmlparser.restorePosition();
 				}
 				//Defines the object's schema
-				else if(elem_name==Attributes::SCHEMA)
+				else if(elem_name==Attributes::Schema)
 				{
 					obj_type=ObjectType::Schema;
 					xmlparser.getElementAttributes(attribs_aux);
@@ -3294,7 +3294,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					has_error=(!tabspc && !attribs_aux[Attributes::Name].isEmpty());
 				}
 				//Defines the object's owner
-				else if(elem_name==Attributes::ROLE)
+				else if(elem_name==Attributes::Role)
 				{
 					obj_type=ObjectType::Role;
 					xmlparser.getElementAttributes(attribs_aux);
@@ -3496,7 +3496,7 @@ Role *DatabaseModel::createRole(void)
 					elem_name=xmlparser.getElementName();
 
 					//Getting the member roles
-					if(elem_name==Attributes::ROLES)
+					if(elem_name==Attributes::Roles)
 					{
 						//Gets the member roles attributes
 						xmlparser.getElementAttributes(attribs_aux);
@@ -3506,9 +3506,9 @@ Role *DatabaseModel::createRole(void)
 						len=list.size();
 
 						//Identifying the member role type
-						if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::Refer)
+						if(attribs_aux[Attributes::RoleType]==Attributes::Refer)
 							role_type=Role::RefRole;
-						else if(attribs_aux[Attributes::ROLE_TYPE]==Attributes::Member)
+						else if(attribs_aux[Attributes::RoleType]==Attributes::Member)
 							role_type=Role::MemberRole;
 						else
 							role_type=Role::AdminRole;
@@ -3627,7 +3627,7 @@ Language *DatabaseModel::createLanguage(void)
 								ref_type==Attributes::InlineFunc)
 						{
 							//Gets the function signature and tries to retrieve it from the model
-							signature=attribs[Attributes::SIGNATURE];
+							signature=attribs[Attributes::Signature];
 							func=getObject(signature, ObjectType::Function);
 
 							//Raises an error if the function doesn't exists
@@ -3700,14 +3700,14 @@ Function *DatabaseModel::createFunction(void)
 		if(!attribs[Attributes::FunctionType].isEmpty())
 			func->setFunctionType(FunctionType(attribs[Attributes::FunctionType]));
 
-		if(!attribs[Attributes::SECURITY_TYPE].isEmpty())
-			func->setSecurityType(SecurityType(attribs[Attributes::SECURITY_TYPE]));
+		if(!attribs[Attributes::SecurityType].isEmpty())
+			func->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
 
 		if(!attribs[Attributes::ExecutionCost].isEmpty())
 			func->setExecutionCost(attribs[Attributes::ExecutionCost].toInt());
 
-		if(!attribs[Attributes::ROW_AMOUNT].isEmpty())
-			func->setRowAmount(attribs[Attributes::ROW_AMOUNT].toInt());
+		if(!attribs[Attributes::RowAmount].isEmpty())
+			func->setRowAmount(attribs[Attributes::RowAmount].toInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3953,8 +3953,8 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	with_timezone=(attribs[Attributes::WITH_TIMEZONE]==Attributes::True);
 	interv_type=attribs[Attributes::IntervalType];
 
-	if(!attribs[Attributes::SPATIAL_TYPE].isEmpty())
-		spatial_type=SpatialType(attribs[Attributes::SPATIAL_TYPE],
+	if(!attribs[Attributes::SpatialType].isEmpty())
+		spatial_type=SpatialType(attribs[Attributes::SpatialType],
 				attribs[Attributes::SRID].toUInt(),
 				attribs[Attributes::VARIATION].toUInt());
 
@@ -4035,7 +4035,7 @@ Type *DatabaseModel::createType(void)
 			//Configuring an auxiliary map used to reference the functions used by base type
 			func_types[Attributes::InputFunc]=Type::InputFunc;
 			func_types[Attributes::OutputFunc]=Type::OutputFunc;
-			func_types[Attributes::SEND_FUNC]=Type::SendFunc;
+			func_types[Attributes::SendFunc]=Type::SendFunc;
 			func_types[Attributes::RecvFunc]=Type::RecvFunc;
 			func_types[Attributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
 			func_types[Attributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
@@ -4127,14 +4127,14 @@ Type *DatabaseModel::createType(void)
 						xmlparser.getElementAttributes(attribs);
 
 						//Tries to get the function from the model
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(type->getName())
 											.arg(type->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						//Raises an error if the function type is invalid
@@ -4267,14 +4267,14 @@ Cast *DatabaseModel::createCast(void)
 					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(cast->getName())
 											.arg(cast->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4326,14 +4326,14 @@ Conversion *DatabaseModel::createConversion(void)
 					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(conv->getName())
 											.arg(conv->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4391,14 +4391,14 @@ Operator *DatabaseModel::createOperator(void)
 					if(elem==objs_schemas[~ObjectType::Operator])
 					{
 						xmlparser.getElementAttributes(attribs);
-						oper_aux=getObject(attribs[Attributes::SIGNATURE], ObjectType::Operator);
+						oper_aux=getObject(attribs[Attributes::Signature], ObjectType::Operator);
 
 						//Raises an error if the auxiliary operator doesn't exists
-						if(!oper_aux && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!oper_aux && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(oper->getSignature(true))
 											.arg(oper->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Operator)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4409,7 +4409,7 @@ Operator *DatabaseModel::createOperator(void)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						if(attribs[Attributes::RefType]!=Attributes::RIGHT_TYPE)
+						if(attribs[Attributes::RefType]!=Attributes::RightType)
 							arg_type=Operator::LEFT_ARG;
 						else
 							arg_type=Operator::RIGHT_ARG;
@@ -4420,14 +4420,14 @@ Operator *DatabaseModel::createOperator(void)
 					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists on the model
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(oper->getName())
 											.arg(oper->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4483,14 +4483,14 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					if(elem==objs_schemas[~ObjectType::OpFamily])
 					{
 						xmlparser.getElementAttributes(attribs);
-						object=getObject(attribs[Attributes::SIGNATURE], ObjectType::OpFamily);
+						object=getObject(attribs[Attributes::Signature], ObjectType::OpFamily);
 
 						//Raises an error if the operator family doesn't exists
 						if(!object)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(op_class->getName())
 											.arg(op_class->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::OpFamily)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4520,12 +4520,12 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						}
 						else if(elem_type==OperatorClassElement::FunctionElem)
 						{
-							object=getObject(attribs[Attributes::SIGNATURE],ObjectType::Function);
+							object=getObject(attribs[Attributes::Signature],ObjectType::Function);
 							class_elem.setFunction(dynamic_cast<Function *>(object),stg_number);
 						}
 						else if(elem_type==OperatorClassElement::OperatorElem)
 						{
-							object=getObject(attribs[Attributes::SIGNATURE],ObjectType::Operator);
+							object=getObject(attribs[Attributes::Signature],ObjectType::Operator);
 							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
 
 							if(xmlparser.hasElement(XmlParser::NextElement))
@@ -4534,13 +4534,13 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 								xmlparser.accessElement(XmlParser::NextElement);
 								xmlparser.getElementAttributes(attribs_aux);
 
-								object=getObject(attribs_aux[Attributes::SIGNATURE],ObjectType::OpFamily);
+								object=getObject(attribs_aux[Attributes::Signature],ObjectType::OpFamily);
 
-								if(!object && !attribs_aux[Attributes::SIGNATURE].isEmpty())
+								if(!object && !attribs_aux[Attributes::Signature].isEmpty())
 									throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 													.arg(op_class->getName())
 													.arg(op_class->getTypeName())
-													.arg(attribs_aux[Attributes::SIGNATURE])
+													.arg(attribs_aux[Attributes::Signature])
 										.arg(BaseObject::getTypeName(ObjectType::OpFamily)),
 										ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4624,14 +4624,14 @@ Aggregate *DatabaseModel::createAggregate(void)
 					else if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists on the model
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(aggreg->getName())
 											.arg(aggreg->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4678,8 +4678,8 @@ Table *DatabaseModel::createTable(void)
 		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
 		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
 		table->setUnlogged(attribs[Attributes::UNLOGGED]==Attributes::True);
-		table->setRLSEnabled(attribs[Attributes::RLS_ENABLED]==Attributes::True);
-		table->setRLSForced(attribs[Attributes::RLS_FORCED]==Attributes::True);
+		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
+		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
 		table->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
@@ -4826,15 +4826,15 @@ Column *DatabaseModel::createColumn(void)
 		if(!attribs[Attributes::IdentityType].isEmpty())
 			column->setIdentityType(IdentityType(attribs[Attributes::IdentityType]));
 
-		if(!attribs[Attributes::SEQUENCE].isEmpty())
+		if(!attribs[Attributes::Sequence].isEmpty())
 		{
-			seq=getObject(attribs[Attributes::SEQUENCE], ObjectType::Sequence);
+			seq=getObject(attribs[Attributes::Sequence], ObjectType::Sequence);
 
 			if(!seq)
 				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 								.arg(attribs[Attributes::Name])
 					.arg(BaseObject::getTypeName(ObjectType::Column))
-					.arg(attribs[Attributes::SEQUENCE])
+					.arg(attribs[Attributes::Sequence])
 					.arg(BaseObject::getTypeName(ObjectType::Sequence)),
 					ErrorCode::PermissionRefInexistObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5120,7 +5120,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				if(xml_elem==Attributes::OpClass)
 				{
 					xmlparser.getElementAttributes(attribs);
-					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::OpClass));
+					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[Attributes::Signature], ObjectType::OpClass));
 
 					//Raises an error if the operator class doesn't exists
 					if(!op_class)
@@ -5130,7 +5130,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(tab_obj->getName())
 											.arg(tab_obj->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 									.arg(BaseObject::getTypeName(ObjectType::OpClass)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5138,7 +5138,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::PartKeyObjectInexistsModel)
 											.arg(parent_obj->getName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 									.arg(BaseObject::getTypeName(ObjectType::OpClass)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5150,7 +5150,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 				else if(xml_elem==Attributes::Operator)
 				{
 					xmlparser.getElementAttributes(attribs);
-					oper=dynamic_cast<Operator *>(getObject(attribs[Attributes::SIGNATURE], ObjectType::Operator));
+					oper=dynamic_cast<Operator *>(getObject(attribs[Attributes::Signature], ObjectType::Operator));
 
 					//Raises an error if the operator doesn't exists
 					if(!oper)
@@ -5158,7 +5158,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 						throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 										.arg(tab_obj->getName())
 										.arg(tab_obj->getTypeName())
-										.arg(attribs[Attributes::SIGNATURE])
+										.arg(attribs[Attributes::Signature])
 								.arg(BaseObject::getTypeName(ObjectType::Operator)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
@@ -5266,8 +5266,8 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map aux_attribs;
 
-		aux_attribs[Attributes::SIGNATURE] = this->getSignature();
-		aux_attribs[Attributes::SQL_OBJECT] = this->getSQLName();
+		aux_attribs[Attributes::Signature] = this->getSignature();
+		aux_attribs[Attributes::SqlObject] = this->getSQLName();
 
 		if(this->conn_limit!=db_aux->conn_limit)
 			aux_attribs[Attributes::ConnLimit]=QString::number(db_aux->conn_limit);
@@ -5546,15 +5546,15 @@ Trigger *DatabaseModel::createTrigger(void)
 					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 						{
 							str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 									.arg(trigger->getName())
 									.arg(trigger->getTypeName())
-									.arg(attribs[Attributes::SIGNATURE])
+									.arg(attribs[Attributes::Signature])
 									.arg(BaseObject::getTypeName(ObjectType::Function));
 
 							throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5652,7 +5652,7 @@ Policy *DatabaseModel::createPolicy(void)
 
 						xmlparser.restorePosition();
 					}
-					else if(xmlparser.getElementName()==Attributes::ROLES)
+					else if(xmlparser.getElementName()==Attributes::Roles)
 					{
 						QStringList rol_names;
 						Role *role = nullptr;
@@ -5721,15 +5721,15 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 					if(elem==Attributes::Function)
 					{
 						xmlparser.getElementAttributes(attribs);
-						func=getObject(attribs[Attributes::SIGNATURE], ObjectType::Function);
+						func=getObject(attribs[Attributes::Signature], ObjectType::Function);
 
 						//Raises an error if the function doesn't exists
-						if(!func && !attribs[Attributes::SIGNATURE].isEmpty())
+						if(!func && !attribs[Attributes::Signature].isEmpty())
 						{
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(event_trig->getName())
 											.arg(event_trig->getTypeName())
-											.arg(attribs[Attributes::SIGNATURE])
+											.arg(attribs[Attributes::Signature])
 									.arg(BaseObject::getTypeName(ObjectType::Function)),
 									ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -5973,11 +5973,11 @@ View *DatabaseModel::createView(void)
 							view->setCommomTableExpression(xmlparser.getElementContent());
 						else
 						{
-							if(attribs[Attributes::TYPE]==Attributes::SELECT_EXP)
+							if(attribs[Attributes::TYPE]==Attributes::SelectExp)
 								type=Reference::SqlReferSelect;
 							else if(attribs[Attributes::TYPE]==Attributes::FromExp)
 								type=Reference::SqlReferFrom;
-							else if(attribs[Attributes::TYPE]==Attributes::SIMPLE_EXP)
+							else if(attribs[Attributes::TYPE]==Attributes::SimpleExp)
 								type=Reference::SqlReferWhere;
 							else
 								type=Reference::SqlReferEndExpr;
@@ -6323,7 +6323,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		}
 		else
 		{
-			QString pat_attrib[]= { Attributes::SRC_COL_PATTERN, Attributes::DstColPattern,
+			QString pat_attrib[]= { Attributes::SrcColPattern, Attributes::DstColPattern,
 									Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
 									Attributes::PkPattern, Attributes::UQ_PATTERN,
 									Attributes::PkColPattern };
@@ -6334,7 +6334,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 										Relationship::PkColPattern },
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
-			sql_disabled=attribs[Attributes::SQL_DISABLED]==Attributes::True;
+			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
 			src_mand=attribs[Attributes::SRC_REQUIRED]==Attributes::True;
 			dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
@@ -6342,7 +6342,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			defer_type=DeferralType(attribs[Attributes::DeferType]);
 			del_action=ActionType(attribs[Attributes::DelAction]);
 			upd_action=ActionType(attribs[Attributes::UPD_ACTION]);
-			single_pk_col=(attribs[Attributes::SINGLE_PK_COLUMN]==Attributes::True);
+			single_pk_col=(attribs[Attributes::SinglePkColumn]==Attributes::True);
 
 			if(attribs[Attributes::TYPE]==Attributes::Relationship11)
 				rel_type=BaseRelationship::Relationship11;
@@ -6452,7 +6452,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 													 QPointF(attribs[Attributes::X_POS].toFloat(),
 													 attribs[Attributes::Y_POS].toFloat()));
 					}
-					else if(elem==Attributes::SPECIAL_PK_COLS && rel)
+					else if(elem==Attributes::SpecialPkCols && rel)
 					{
 						QList<QString> col_list;
 
@@ -6519,7 +6519,7 @@ Permission *DatabaseModel::createPermission(void)
 	try
 	{
 		xmlparser.getElementAttributes(priv_attribs);
-		revoke=priv_attribs[Attributes::REVOKE]==Attributes::True;
+		revoke=priv_attribs[Attributes::Revoke]==Attributes::True;
 		cascade=priv_attribs[Attributes::Cascade]==Attributes::True;
 
 		xmlparser.savePosition();
@@ -6558,7 +6558,7 @@ Permission *DatabaseModel::createPermission(void)
 
 		do
 		{
-			if(xmlparser.getElementName()==Attributes::ROLES)
+			if(xmlparser.getElementName()==Attributes::Roles)
 			{
 				xmlparser.getElementAttributes(attribs);
 
@@ -6608,7 +6608,7 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivInsert;
 						else if(itr->first==Attributes::ReferencesPriv)
 							priv_type=Permission::PrivReferences;
-						else if(itr->first==Attributes::SELECT_PRIV)
+						else if(itr->first==Attributes::SelectPriv)
 							priv_type=Permission::PrivSelect;
 						else if(itr->first==Attributes::TEMPORARY_PRIV)
 							priv_type=Permission::PrivTemporary;
@@ -6717,7 +6717,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	//Forcing the name/signature cleanup due to the validation temp. names feature
 	attributes[Attributes::Name]=QString();
-	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::Signature]=QString();
 
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
@@ -6807,11 +6807,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		general_obj_cnt=objects_map.size();
 		gen_defs_count=0;
 
-		attribs_aux[Attributes::SHELL_TYPES]=QString();
+		attribs_aux[Attributes::ShellTypes]=QString();
 		attribs_aux[Attributes::Permission]=QString();
-		attribs_aux[Attributes::SCHEMA]=QString();
+		attribs_aux[Attributes::Schema]=QString();
 		attribs_aux[Attributes::TABLESPACE]=QString();
-		attribs_aux[Attributes::ROLE]=QString();
+		attribs_aux[Attributes::Role]=QString();
 
 		if(def_type==SchemaParser::SqlDefinition)
 		{
@@ -6837,7 +6837,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 				//Generating the shell type declaration (only for base types)
 				if(usr_type->getConfiguration()==Type::BaseType)
-					attribs_aux[Attributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
+					attribs_aux[Attributes::ShellTypes]+=usr_type->getCodeDefinition(def_type, true);
 				else
 					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 			}
@@ -6925,7 +6925,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 		}
 
-		attribs_aux[Attributes::SEARCH_PATH]=search_path;
+		attribs_aux[Attributes::SearchPath]=search_path;
 		attribs_aux[Attributes::ModelAuthor]=author;
 		attribs_aux[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
 
@@ -9633,7 +9633,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
 			attribs[Attributes::TYPE]=object->getSchemaName();
 			attribs[Attributes::Protected]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
-			attribs[Attributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
+			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
 			attribs[Attributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PrependedSql]=object->getPrependedSQL();
@@ -9709,7 +9709,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					attribs[Attributes::CustomColor]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : Attributes::None);
 
 					attribs[Attributes::SRC_TABLE]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
-					attribs[Attributes::SRC_TYPE]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
+					attribs[Attributes::SrcType]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
 
 					attribs[Attributes::DstTable]=rel->getTable(BaseRelationship::DstTable)->getSignature();
 					attribs[Attributes::DstType]=rel->getTable(BaseRelationship::DstTable)->getSchemaName();
@@ -9773,7 +9773,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					 !attribs[Attributes::RectVisible].isEmpty())) ||
 				 (save_tags && !attribs[Attributes::TAG].isEmpty()) ||
 				 (save_objs_prot && !attribs[Attributes::Protected].isEmpty()) ||
-				 (save_objs_sqldis && !attribs[Attributes::SQL_DISABLED].isEmpty()) ||
+				 (save_objs_sqldis && !attribs[Attributes::SqlDisabled].isEmpty()) ||
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
 															!attribs[Attributes::PrependedSql].isEmpty())) ||
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
@@ -9954,7 +9954,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(!object && obj_type==ObjectType::Relationship)
 						{
 							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::SRC_TABLE],
-																								BaseObject::getObjectType(attribs[Attributes::SRC_TYPE])));
+																								BaseObject::getObjectType(attribs[Attributes::SrcType])));
 							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::DstTable],
 																								BaseObject::getObjectType(attribs[Attributes::DstType])));
 							object=getRelationship(src_tab, dst_tab);
@@ -9967,13 +9967,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 							if(!object->isSystemObject() &&
 								 ((!attribs[Attributes::Protected].isEmpty() && load_objs_prot) ||
-									(!attribs[Attributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
+									(!attribs[Attributes::SqlDisabled].isEmpty() && load_objs_sqldis)))
 							{
 								if(!attribs[Attributes::Protected].isEmpty())
 									object->setProtected(attribs[Attributes::Protected]==Attributes::True);
 
-								if(!attribs[Attributes::SQL_DISABLED].isEmpty())
-									object->setSQLDisabled(attribs[Attributes::SQL_DISABLED]==Attributes::True);
+								if(!attribs[Attributes::SqlDisabled].isEmpty())
+									object->setSQLDisabled(attribs[Attributes::SqlDisabled]==Attributes::True);
 							}
 							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[Attributes::TAG].isEmpty())
 							{

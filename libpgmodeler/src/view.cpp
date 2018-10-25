@@ -24,9 +24,9 @@ View::View(void) : BaseTable()
 	materialized=recursive=with_no_data=false;
 	attributes[Attributes::Definition]=QString();
 	attributes[Attributes::References]=QString();
-	attributes[Attributes::SELECT_EXP]=QString();
+	attributes[Attributes::SelectExp]=QString();
 	attributes[Attributes::FromExp]=QString();
-	attributes[Attributes::SIMPLE_EXP]=QString();
+	attributes[Attributes::SimpleExp]=QString();
 	attributes[Attributes::EndExp]=QString();
 	attributes[Attributes::CteExpression]=QString();
 	attributes[Attributes::Materialized]=QString();
@@ -480,9 +480,9 @@ void View::setDefinitionAttribute(void)
 void View::setReferencesAttribute(void)
 {
 	QString str_aux;
-	QString attribs[]={ Attributes::SELECT_EXP,
+	QString attribs[]={ Attributes::SelectExp,
 											Attributes::FromExp,
-											Attributes::SIMPLE_EXP,
+											Attributes::SimpleExp,
 											Attributes::EndExp};
 	vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where, &exp_end};
 	int cnt, i, i1;
@@ -605,7 +605,7 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-	  attributes[Attributes::SQL_OBJECT]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+	  attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)

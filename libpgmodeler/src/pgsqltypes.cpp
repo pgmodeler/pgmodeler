@@ -1593,7 +1593,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[Attributes::Precision]=QString();
 		attribs[Attributes::WITH_TIMEZONE]=QString();
 		attribs[Attributes::IntervalType]=QString();
-		attribs[Attributes::SPATIAL_TYPE]=QString();
+		attribs[Attributes::SpatialType]=QString();
 		attribs[Attributes::VARIATION]=QString();
 		attribs[Attributes::SRID]=QString();
 		attribs[Attributes::RefType]=ref_type;
@@ -1612,7 +1612,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 
 		if(isGiSType())
 		{
-			attribs[Attributes::SPATIAL_TYPE]=(~spatial_type);
+			attribs[Attributes::SpatialType]=(~spatial_type);
 			attribs[Attributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
 			attribs[Attributes::SRID]=QString("%1").arg(spatial_type.getSRID());
 		}

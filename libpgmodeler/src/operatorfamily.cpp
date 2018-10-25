@@ -45,7 +45,7 @@ QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::SIGNATURE]=getSignature();
+	attributes[Attributes::Signature]=getSignature();
 	attributes[Attributes::IndexType]=(~indexing_type);
 	return(BaseObject::getCodeDefinition(def_type,reduced_form));
 }

@@ -2607,7 +2607,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		setRelationshipAttributes();
 		attributes[Attributes::Identifier]=(identifier ? Attributes::True : QString());
-		attributes[Attributes::SINGLE_PK_COLUMN]=(single_pk_column ? Attributes::True : QString());
+		attributes[Attributes::SinglePkColumn]=(single_pk_column ? Attributes::True : QString());
 		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
 		attributes[Attributes::DeferType]=~deferral_type;
 		attributes[Attributes::UPD_ACTION]=~upd_action;
@@ -2618,7 +2618,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : QString());
 		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : QString());
 
-		attributes[Attributes::SRC_COL_PATTERN]=name_patterns[SrcColPattern];
+		attributes[Attributes::SrcColPattern]=name_patterns[SrcColPattern];
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
 		attributes[Attributes::PkPattern]=name_patterns[PkPattern];
 		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
@@ -2657,8 +2657,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		{
 			if(!gen_columns.empty() && i < gen_columns.size())
 			{
-				attributes[Attributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
-				if(i < count-1) attributes[Attributes::SPECIAL_PK_COLS]+=",";
+				attributes[Attributes::SpecialPkCols]+=QString("%1").arg(column_ids_pk_rel[i]);
+				if(i < count-1) attributes[Attributes::SpecialPkCols]+=",";
 			}
 		}
 
@@ -2671,7 +2671,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		reduced_form=(attributes[Attributes::Columns].isEmpty() &&
 					 attributes[Attributes::Constraints].isEmpty() &&
 					 attributes[Attributes::Points].isEmpty() &&
-					 attributes[Attributes::SPECIAL_PK_COLS].isEmpty() &&
+					 attributes[Attributes::SpecialPkCols].isEmpty() &&
 					 attributes[Attributes::Points].isEmpty() &&
 					 attributes[Attributes::LabelsPos].isEmpty());
 

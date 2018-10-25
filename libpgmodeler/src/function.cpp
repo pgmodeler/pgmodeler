@@ -32,15 +32,15 @@ Function::Function(void)
 
 	attributes[Attributes::Parameters]=QString();
 	attributes[Attributes::ExecutionCost]=QString();
-	attributes[Attributes::ROW_AMOUNT]=QString();
+	attributes[Attributes::RowAmount]=QString();
 	attributes[Attributes::ReturnType]=QString();
 	attributes[Attributes::FunctionType]=QString();
 	attributes[Attributes::Language]=QString();
 	attributes[Attributes::ReturnsSetOf]=QString();
-	attributes[Attributes::SECURITY_TYPE]=QString();
+	attributes[Attributes::SecurityType]=QString();
 	attributes[Attributes::BehaviorType]=QString();
 	attributes[Attributes::Definition]=QString();
-	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::Signature]=QString();
 	attributes[Attributes::RefType]=QString();
 	attributes[Attributes::WINDOW_FUNC]=QString();
 	attributes[Attributes::ReturnTable]=QString();
@@ -458,7 +458,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	setParametersAttribute(def_type);
 
 	attributes[Attributes::ExecutionCost]=QString("%1").arg(execution_cost);
-	attributes[Attributes::ROW_AMOUNT]=QString("%1").arg(row_amount);
+	attributes[Attributes::RowAmount]=QString("%1").arg(row_amount);
 	attributes[Attributes::FunctionType]=(~function_type);
 
 	if(language)
@@ -480,7 +480,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::ReturnsSetOf]=(returns_setof ? Attributes::True : QString());
 	attributes[Attributes::WINDOW_FUNC]=(is_wnd_function ? Attributes::True : QString());
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : QString());
-	attributes[Attributes::SECURITY_TYPE]=(~security_type);
+	attributes[Attributes::SecurityType]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
 	attributes[Attributes::Definition]=source_code;
 
@@ -490,7 +490,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[Attributes::Library]=library;
 	}
 
-	attributes[Attributes::SIGNATURE]=signature;
+	attributes[Attributes::Signature]=signature;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -522,7 +522,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 			if(this->returns_setof && func->returns_setof && this->row_amount!=func->row_amount)
 			{
 				attribs[Attributes::ReturnsSetOf]=Attributes::True;
-				attribs[Attributes::ROW_AMOUNT]=QString::number(row_amount);
+				attribs[Attributes::RowAmount]=QString::number(row_amount);
 			}
 
 			if(this->function_type!=func->function_type)
@@ -532,7 +532,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 				attribs[Attributes::LeakProof]=(func->is_leakproof ? Attributes::True : Attributes::UNSET);
 
 			if(this->security_type!=func->security_type)
-				attribs[Attributes::SECURITY_TYPE]=~func->security_type;
+				attribs[Attributes::SecurityType]=~func->security_type;
 
 			if((this->behavior_type!=func->behavior_type) &&
 					((this->behavior_type==BehaviorType::CalledOnNullInput) ||

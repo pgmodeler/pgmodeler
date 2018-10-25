@@ -396,9 +396,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 #ifndef Q_OS_MAC
 	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID]==Attributes::True);
+	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
 	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
-	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS]==Attributes::True);
+	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
 	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
@@ -406,7 +406,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 															 action_show_delimiters->isChecked());
 
 	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]==Attributes::True);
+	main_menu_mb->setVisible(confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True);
 
 	if(main_menu_mb->isVisible())
 		file_menu->addAction(action_hide_main_menu);
@@ -658,7 +658,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			confs=conf_wgt->getConfigurationParams();
 
 			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : QString();
-			attribs[Attributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? Attributes::True : QString();
+			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : QString();
 
 			conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
 			attribs.clear();
@@ -1147,8 +1147,8 @@ void MainWindow::setGridOptions(void)
 								 action_show_delimiters->isChecked());
 
 	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = (action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False);
-	attribs[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID] = (action_show_grid->isChecked() ? Attributes::True : Attributes::False);
-	attribs[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS] = (action_show_delimiters->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::ShowCanvasGrid] = (action_show_grid->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::ShowPageDelimiters] = (action_show_delimiters->isChecked() ? Attributes::True : Attributes::False);
 
 	if(current_model)
 	{
@@ -1832,14 +1832,14 @@ void MainWindow::storeDockWidgetsSettings(void)
 	attribs_map params;
 
 	params[Attributes::VALIDATOR]=Attributes::True;
-	params[Attributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::PgSqlVersion]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(Attributes::VALIDATOR, params);
 	params.clear();
 
 	params[Attributes::ObjectFinder]=Attributes::True;
-	params[Attributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
+	params[Attributes::SelectObjects]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
@@ -1847,10 +1847,10 @@ void MainWindow::storeDockWidgetsSettings(void)
 	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
 	params.clear();
 
-	params[Attributes::SQL_TOOL]=Attributes::True;
-	params[Attributes::SHOW_ATTRIBUTES_GRID]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : QString());
-	params[Attributes::SHOW_SOURCE_PANE]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : QString());
-	conf_wgt->addConfigurationParam(Attributes::SQL_TOOL, params);
+	params[Attributes::SqlTool]=Attributes::True;
+	params[Attributes::ShowAttributesGrid]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : QString());
+	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : QString());
+	conf_wgt->addConfigurationParam(Attributes::SqlTool, params);
 	params.clear();
 }
 
@@ -1861,24 +1861,24 @@ void MainWindow::restoreDockWidgetsSettings(void)
 
 	if(confs.count(Attributes::VALIDATOR))
 	{
-		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::SQL_VALIDATION]==Attributes::True);
+		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::SqlValidation]==Attributes::True);
 		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::VALIDATOR][Attributes::USE_UNIQUE_NAMES]==Attributes::True);
 		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::VALIDATOR][Attributes::PgSqlVersion]);
 	}
 
 	if(confs.count(Attributes::ObjectFinder))
 	{
-		obj_finder_wgt->select_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::SELECT_OBJECTS]==Attributes::True);
+		obj_finder_wgt->select_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::SelectObjects]==Attributes::True);
 		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::FadeInObjects]==Attributes::True);
 		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::RegularExp]==Attributes::True);
 		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::CaseSensitive]==Attributes::True);
 		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::ExactMatch]==Attributes::True);
 	}
 
-	if(confs.count(Attributes::SQL_TOOL))
+	if(confs.count(Attributes::SqlTool))
 	{
-		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SQL_TOOL][Attributes::SHOW_ATTRIBUTES_GRID]==Attributes::True);
-		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SQL_TOOL][Attributes::SHOW_SOURCE_PANE]==Attributes::True);
+		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowAttributesGrid]==Attributes::True);
+		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowSourcePane]==Attributes::True);
 	}
 }
 

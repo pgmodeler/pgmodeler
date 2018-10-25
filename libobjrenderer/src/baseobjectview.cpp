@@ -235,7 +235,7 @@ void BaseObjectView::loadObjectsStyle(void)
 					if(elem==Attributes::Global)
 					{
 						font.setFamily(attribs[Attributes::Font]);
-						font.setPointSizeF(attribs[Attributes::SIZE].toDouble());
+						font.setPointSizeF(attribs[Attributes::Size].toDouble());
 						font.setBold(attribs[Attributes::Bold]==Attributes::True);
 						font.setItalic(attribs[Attributes::Italic]==Attributes::True);
 						font.setUnderline(attribs[Attributes::UNDERLINE]==Attributes::True);

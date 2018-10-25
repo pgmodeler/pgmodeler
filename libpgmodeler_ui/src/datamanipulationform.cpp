@@ -820,7 +820,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			for(auto &fk : fks)
 			{				
 				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::RefTable].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::SCHEMA].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")
 									.arg(aux_schema[Attributes::Name])
 									.arg(aux_table[Attributes::Name])
@@ -828,7 +828,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 				//Store the referenced schema and table names
 				fk_infos[fk_name][Attributes::RefTable] = aux_table[Attributes::Name];
-				fk_infos[fk_name][Attributes::SCHEMA] = aux_schema[Attributes::Name];
+				fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
 																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
 																													.arg(aux_table[Attributes::Name])
@@ -872,7 +872,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				name_list.clear();
 
 				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::SCHEMA].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")
 									.arg(aux_schema[Attributes::Name])
 									.arg(aux_table[Attributes::Name])
@@ -893,7 +893,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 				ref_fk_infos[fk_name][Attributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
 				ref_fk_infos[fk_name][Attributes::TABLE] = aux_table[Attributes::Name];
-				ref_fk_infos[fk_name][Attributes::SCHEMA] = aux_schema[Attributes::Name];
+				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
 		}
 
@@ -1148,14 +1148,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	{
 		src_cols =  pk_col_names;
 		ref_cols = ref_fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
-		schema = ref_fk_infos[fk_name][Attributes::SCHEMA];
+		schema = ref_fk_infos[fk_name][Attributes::Schema];
 		table = ref_fk_infos[fk_name][Attributes::TABLE];
 	}
 	else
 	{
 		src_cols =  fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
 		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(Table::DataSeparator);
-		schema = fk_infos[fk_name][Attributes::SCHEMA];
+		schema = fk_infos[fk_name][Attributes::Schema];
 		table = fk_infos[fk_name][Attributes::RefTable];
 	}
 

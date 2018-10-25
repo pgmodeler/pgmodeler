@@ -321,12 +321,12 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 								xml_differs=object->isCodeDiffersFrom(aux_object,
 								{ Attributes::MaxObjCount,
 									Attributes::Protected,
-									Attributes::SQL_DISABLED,
+									Attributes::SqlDisabled,
 									Attributes::RectVisible,
 									Attributes::FillColor,
 									Attributes::FadedOut,
 									Attributes::HideExtAttribs},
-								{ Attributes::ROLE,
+								{ Attributes::Role,
 									Attributes::TABLESPACE,
 									Attributes::Collation,
 									Attributes::Position,
@@ -886,9 +886,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[Attributes::ConstrDefs]=QString();
 			attribs[Attributes::FkDefs]=QString();
 			attribs[Attributes::UNSET_PERMS]=unset_perms;
-			attribs[Attributes::SET_PERMS]=set_perms;
+			attribs[Attributes::SetPerms]=set_perms;
 			attribs[Attributes::Function]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
-			attribs[Attributes::SEARCH_PATH]=(has_diffs ? sch_names.join(',') : QString());
+			attribs[Attributes::SearchPath]=(has_diffs ? sch_names.join(',') : QString());
 
 			ritr=drop_objs.rbegin();
 			ritr_end=drop_objs.rend();

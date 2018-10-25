@@ -24,7 +24,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	QFrame *frame=nullptr;
 	QCheckBox *check=nullptr;
 	unsigned i;
-	QString privs[]={ Attributes::SELECT_PRIV, Attributes::InsertPriv,
+	QString privs[]={ Attributes::SelectPriv, Attributes::InsertPriv,
 					  Attributes::UPDATE_PRIV, Attributes::DeletePriv,
 					  Attributes::TRUNCATE_PRIV, Attributes::ReferencesPriv,
 					  Attributes::TRIGGER_PRIV, Attributes::CreatePriv,

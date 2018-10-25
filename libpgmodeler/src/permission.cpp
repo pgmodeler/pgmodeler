@@ -45,7 +45,7 @@ Permission::Permission(BaseObject *obj)
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::Parent]=QString();
 	attributes[Attributes::GrantOp]=QString();
-	attributes[Attributes::ROLES]=QString();
+	attributes[Attributes::Roles]=QString();
 	attributes[Attributes::Privileges]=QString();
 	attributes[Attributes::Cascade]=QString();
 	attributes[Attributes::PrivilegesGop]=QString();
@@ -411,7 +411,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	unsigned i, count;
 	ObjectType obj_type;
-	QString priv_vect[12]={ Attributes::SELECT_PRIV, Attributes::InsertPriv,
+	QString priv_vect[12]={ Attributes::SelectPriv, Attributes::InsertPriv,
 							Attributes::UPDATE_PRIV, Attributes::DeletePriv,
 							Attributes::TRUNCATE_PRIV, Attributes::ReferencesPriv,
 							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
@@ -420,7 +420,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[Attributes::REVOKE]=(revoke ? Attributes::True : QString());
+	attributes[Attributes::Revoke]=(revoke ? Attributes::True : QString());
 	attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
@@ -471,9 +471,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	count=roles.size();
 
 	for(i=0; i < count; i++)
-		attributes[Attributes::ROLES]+=roles[i]->getName(true) + QString(",");
+		attributes[Attributes::Roles]+=roles[i]->getName(true) + QString(",");
 
-	attributes[Attributes::ROLES].remove(attributes[Attributes::ROLES].size()-1,1);
+	attributes[Attributes::Roles].remove(attributes[Attributes::Roles].size()-1,1);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

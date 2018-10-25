@@ -184,8 +184,8 @@ QString Domain::getAlterDefinition(BaseObject *object)
 
 		orig_constrs = this->chk_constrs;
 		aux_constrs = domain->chk_constrs;
-		aux_attribs[Attributes::SQL_OBJECT] = this->getSQLName();
-		aux_attribs[Attributes::SIGNATURE] = this->getSignature();
+		aux_attribs[Attributes::SqlObject] = this->getSQLName();
+		aux_attribs[Attributes::Signature] = this->getSignature();
 
 		//Generating the DROP for check constraints that does not exists anymore
 		for(auto constr : orig_constrs)

@@ -214,7 +214,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 									 pk_col_pattern_txt };
 
 	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UQ_PATTERN,
-								 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern,
+								 Attributes::SrcColPattern, Attributes::DstColPattern,
 								 Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
 								 Attributes::PkColPattern };
 
@@ -254,7 +254,7 @@ void RelationshipConfigWidget::updatePattern(void)
 	QString rel_type=rel_type_cmb->currentData().toString();
 	map<QPlainTextEdit *, QString> inputs_map={ { pk_pattern_txt, Attributes::PkPattern },
 												{ uq_pattern_txt, Attributes::UQ_PATTERN },
-												{ src_col_pattern_txt, Attributes::SRC_COL_PATTERN },
+												{ src_col_pattern_txt, Attributes::SrcColPattern },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },
 												{ src_fk_pattern_txt, Attributes::SRC_FK_PATTERN   },
 												{ dst_fk_pattern_txt, Attributes::DstFkPattern   },

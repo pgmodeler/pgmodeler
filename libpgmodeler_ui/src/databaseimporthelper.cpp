@@ -680,7 +680,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				attribs[Attributes::DeclInTable]=QString();
 
 			//System objects will have the sql disabled by default
-			attribs[Attributes::SQL_DISABLED]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : QString());
+			attribs[Attributes::SqlDisabled]=(catalog.isSystemObject(oid) || catalog.isExtensionObject(oid) ? Attributes::True : QString());
 			attribs[Attributes::Comment]=getComment(attribs);
 
 			if(attribs.count(Attributes::Owner))
@@ -689,8 +689,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(attribs.count(Attributes::TABLESPACE))
 				attribs[Attributes::TABLESPACE]=getDependencyObject(attribs[Attributes::TABLESPACE], ObjectType::Tablespace, false, auto_resolve_deps);
 
-			if(attribs.count(Attributes::SCHEMA))
-				attribs[Attributes::SCHEMA]=getDependencyObject(attribs[Attributes::SCHEMA], ObjectType::Schema, false, auto_resolve_deps);
+			if(attribs.count(Attributes::Schema))
+				attribs[Attributes::Schema]=getDependencyObject(attribs[Attributes::Schema], ObjectType::Schema, false, auto_resolve_deps);
 
 			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
 			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
@@ -826,7 +826,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 					createObject(obj_attr);
 
 				if(use_signature)
-					obj_name=obj_attr[Attributes::SIGNATURE]=getObjectName(oid, true);
+					obj_name=obj_attr[Attributes::Signature]=getObjectName(oid, true);
 				else
 					obj_name=obj_attr[Attributes::Name]=getObjectName(oid);
 
@@ -1069,7 +1069,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			/* If the function is to be used as a user-defined data type support functions
 				 the parameter type will be renamed to "any" (see rules on Type::setFunction()) */
 			if(i==0 &&
-					(attribs[Attributes::RefType]==Attributes::SEND_FUNC ||
+					(attribs[Attributes::RefType]==Attributes::SendFunc ||
 					 attribs[Attributes::RefType]==Attributes::OutputFunc ||
 					 attribs[Attributes::RefType]==Attributes::CanonicalFunc))
 				type=PgSqlType(QString("\"any\""));
@@ -1327,7 +1327,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 							   Attributes::JoinFunc },
 
 				arg_types[]= { Attributes::LeftType,
-							   Attributes::RIGHT_TYPE },
+							   Attributes::RightType },
 
 				op_types[]=  { Attributes::CommutatorOp,
 							   Attributes::NegatorOp };
@@ -1338,7 +1338,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 		for(unsigned i=0; i < 2; i++)
 			attribs[arg_types[i]]=getType(attribs[arg_types[i]], true, {{Attributes::RefType, arg_types[i]}});
 
-		regexp.setPattern(Attributes::SIGNATURE + QString("(=)(\")"));
+		regexp.setPattern(Attributes::Signature + QString("(=)(\")"));
 		for(unsigned i=0; i < 2; i++)
 		{
 			attribs[op_types[i]]=getDependencyObject(attribs[op_types[i]], ObjectType::Operator, true, false, true, {{Attributes::RefType, op_types[i]}});
@@ -1396,7 +1396,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 	try
 	{
 		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true);
-		attribs[Attributes::SOURCE_TYPE]=getType(attribs[Attributes::SOURCE_TYPE], true);
+		attribs[Attributes::SourceType]=getType(attribs[Attributes::SourceType], true);
 		attribs[Attributes::DestType]=getType(attribs[Attributes::DestType], true);
 		loadObjectXML(ObjectType::Cast, attribs);
 		cast=dbmodel->createCast();
@@ -1519,7 +1519,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 
 		attribs[Attributes::STATE_TYPE]=getType(attribs[Attributes::STATE_TYPE], true,
 		{{Attributes::RefType, Attributes::STATE_TYPE}});
-		attribs[Attributes::SORT_OP]=getDependencyObject(attribs[Attributes::SORT_OP], ObjectType::Operator, true);
+		attribs[Attributes::SortOp]=getDependencyObject(attribs[Attributes::SortOp], ObjectType::Operator, true);
 
 		loadObjectXML(ObjectType::Aggregate, attribs);
 		agg=dbmodel->createAggregate();
@@ -1591,7 +1591,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 					func_types[]={ Attributes::InputFunc,
 								   Attributes::OutputFunc,
 								   Attributes::RecvFunc,
-								   Attributes::SEND_FUNC,
+								   Attributes::SendFunc,
 								   Attributes::TPMOD_IN_FUNC,
 								   Attributes::TPMOD_OUT_FUNC,
 								   Attributes::AnalyzeFunc };
@@ -1650,7 +1650,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		{
 			/* Since the schema name sometimes comes in form os <schema name="public"/> tag
 		 it is needed extract only the name from before retrieve the columns of the table */
-			QString sch_name=attribs[Attributes::SCHEMA];
+			QString sch_name=attribs[Attributes::Schema];
 			sch_name.replace(QRegExp(QString("(\\t)*(<)(schema)( )+(name)( )*(=)")), QString());
 			sch_name.replace(QRegExp(QString("(/)(>)(\n)*")), QString());
 			sch_name.replace('"', QString());
@@ -1682,7 +1682,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			{
 				/* Building the type name prepending the schema name in order to search it on
 				 * the user defined types list at PgSQLType class */
-				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::SCHEMA], true), false);
+				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
 				type_name+=QString(".");
 
 				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
@@ -2201,7 +2201,7 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 	try
 	{
 		attribs[Attributes::TABLE]=getDependencyObject(attribs[Attributes::TABLE], ObjectType::Table, true, auto_resolve_deps, false);
-		attribs[Attributes::ROLES]=getObjectNames(attribs[Attributes::ROLES]).join(',');
+		attribs[Attributes::Roles]=getObjectNames(attribs[Attributes::Roles]).join(',');
 		loadObjectXML(ObjectType::Policy, attribs);
 		dbmodel->createPolicy();
 	}
@@ -2597,7 +2597,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 
 			//If the object accepts an schema retrieve the schema name too
 			if(BaseObject::acceptsSchema(obj_type))
-				sch_name=getObjectName(obj_attr[Attributes::SCHEMA]);
+				sch_name=getObjectName(obj_attr[Attributes::Schema]);
 
 			if(!sch_name.isEmpty())
 				obj_name.prepend(sch_name + QString("."));
@@ -2641,8 +2641,8 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 					else
 						params.push_back(QString("NONE"));
 
-					if(obj_attr[Attributes::RIGHT_TYPE].toUInt() > 0)
-						params.push_back(getType(obj_attr[Attributes::RIGHT_TYPE], false));
+					if(obj_attr[Attributes::RightType].toUInt() > 0)
+						params.push_back(getType(obj_attr[Attributes::RightType], false));
 					else
 						params.push_back(QString("NONE"));
 				}
@@ -2773,7 +2773,7 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
 		 if the schema's names is already present in the type's name (in case of table types) */
-			sch_name=getObjectName(type_attr[Attributes::SCHEMA]);
+			sch_name=getObjectName(type_attr[Attributes::Schema]);
 			if(!sch_name.isEmpty() &&
 				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
 					type_oid > catalog.getLastSysObjectOID()) &&

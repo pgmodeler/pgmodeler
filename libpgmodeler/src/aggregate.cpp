@@ -29,7 +29,7 @@ Aggregate::Aggregate(void)
 	attributes[Attributes::BaseType]=QString();
 	attributes[Attributes::FinalFunc]=QString();
 	attributes[Attributes::InitialCond]=QString();
-	attributes[Attributes::SORT_OP]=QString();
+	attributes[Attributes::SortOp]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
@@ -253,9 +253,9 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(sort_operator)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::SORT_OP]=sort_operator->getName(true);
+			attributes[Attributes::SortOp]=sort_operator->getName(true);
 		else
-			attributes[Attributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::SortOp]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
 	if(!initial_condition.isEmpty())

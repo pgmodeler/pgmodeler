@@ -342,7 +342,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::TABLE]=getParentTable()->getName(true);
 
 		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
-			attributes[Attributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
+			attributes[Attributes::Schema]=getParentTable()->getSchema()->getName(true);
 	}
 
 	if(this->indexing_type==IndexingType::Gin)

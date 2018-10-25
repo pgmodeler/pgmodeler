@@ -91,7 +91,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::TABLE_NAME]=QString();
-	attributes[Attributes::SPECIAL_PK_COLS]=QString();
+	attributes[Attributes::SpecialPkCols]=QString();
 	attributes[Attributes::RelationshipNn]=QString();
 	attributes[Attributes::RelationshipGen]=QString();
 	attributes[Attributes::RelationshipDep]=QString();
@@ -103,14 +103,14 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::CopyOptions]=QString();
 	attributes[Attributes::CopyMode]=QString();
-	attributes[Attributes::SRC_COL_PATTERN]=QString();
+	attributes[Attributes::SrcColPattern]=QString();
 	attributes[Attributes::DstColPattern]=QString();
 	attributes[Attributes::PkPattern]=QString();
 	attributes[Attributes::UQ_PATTERN]=QString();
 	attributes[Attributes::SRC_FK_PATTERN]=QString();
 	attributes[Attributes::DstFkPattern]=QString();
 	attributes[Attributes::PkColPattern]=QString();
-	attributes[Attributes::SINGLE_PK_COLUMN]=QString();
+	attributes[Attributes::SinglePkColumn]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::CustomColor]=QString();

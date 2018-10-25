@@ -26,7 +26,7 @@ Column::Column(void)
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NotNull]=QString();
 	attributes[Attributes::TABLE]=QString();
-	attributes[Attributes::SEQUENCE]=QString();
+	attributes[Attributes::Sequence]=QString();
 	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::IdentityType]=QString();
 	attributes[Attributes::Increment]=QString();
@@ -264,7 +264,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 			if(def_type==SchemaParser::SqlDefinition)
 				attributes[Attributes::DefaultValue]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
 
-			attributes[Attributes::SEQUENCE]=sequence->getName(true);
+			attributes[Attributes::Sequence]=sequence->getName(true);
 		}
 	}
 

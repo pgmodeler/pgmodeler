@@ -112,12 +112,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=QString();
 	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=QString();
 	config_params[Attributes::Configuration][Attributes::CheckUpdate]=QString();
-	config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=QString();
-	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
+	config_params[Attributes::Configuration][Attributes::SaveLastPosition]=QString();
+	config_params[Attributes::Configuration][Attributes::ShowMainMenu]=QString();
 	config_params[Attributes::Configuration][Attributes::DisableSmoothness]=QString();
-	config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]=QString();
+	config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=QString();
 	config_params[Attributes::Configuration][Attributes::ConfirmValidation]=QString();
-	config_params[Attributes::Configuration][Attributes::SHOW_MAIN_MENU]=QString();
+	config_params[Attributes::Configuration][Attributes::ShowMainMenu]=QString();
 	config_params[Attributes::Configuration][Attributes::CodeCompletion]=QString();
 	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=QString();
 	config_params[Attributes::Configuration][Attributes::LineNumbersColor]=QString();
@@ -127,10 +127,10 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]=QString();
 	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString();
 	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString();
-	config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]=QString();
+	config_params[Attributes::Configuration][Attributes::SourceEditorApp]=QString();
 	config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=QString();
 	config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=QString();
-	config_params[Attributes::Configuration][Attributes::	SAVE_RESTORE_GEOMETRY]=QString();
+	config_params[Attributes::Configuration][Attributes::	SaveRestoreGeometry]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -289,9 +289,9 @@ void GeneralConfigWidget::loadConfiguration(void)
 		corner_move_chk->setChecked(config_params[Attributes::Configuration][Attributes::CanvasCornerMove]==Attributes::True);
 		invert_rangesel_chk->setChecked(config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]==Attributes::True);
 		check_upd_chk->setChecked(config_params[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True);
-		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]==Attributes::True);
+		save_last_pos_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveLastPosition]==Attributes::True);
 		disable_smooth_chk->setChecked(config_params[Attributes::Configuration][Attributes::DisableSmoothness]==Attributes::True);
-		simple_obj_creation_chk->setChecked(config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]==Attributes::True);
+		simple_obj_creation_chk->setChecked(config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]==Attributes::True);
 		confirm_validation_chk->setChecked(config_params[Attributes::Configuration][Attributes::ConfirmValidation]==Attributes::True);
 		code_completion_chk->setChecked(config_params[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True);
 		use_placeholders_chk->setChecked(config_params[Attributes::Configuration][Attributes::USE_PLACEHOLDERS]==Attributes::True);
@@ -329,10 +329,10 @@ void GeneralConfigWidget::loadConfiguration(void)
 		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]);
 		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineHighlightColor]);
 
-		source_editor_edt->setText(config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]);
-		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_ARGS]);
+		source_editor_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
+		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorArgs]);
 
-		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SAVE_RESTORE_GEOMETRY]==Attributes::True);
+		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]);
@@ -406,7 +406,7 @@ QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, co
 void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
 {
 	if(!widget ||
-		 config_params[Attributes::Configuration][Attributes::SAVE_RESTORE_GEOMETRY] != Attributes::True)
+		 config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry] != Attributes::True)
 		return;
 
 	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
@@ -418,7 +418,7 @@ void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &cus
 bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
 {
 	if(!widget ||
-		 config_params[Attributes::Configuration][Attributes::SAVE_RESTORE_GEOMETRY] != Attributes::True)
+		 config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry] != Attributes::True)
 		return(false);
 
 	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
@@ -474,9 +474,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SAVE_LAST_POSITION]=(save_last_pos_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::SaveLastPosition]=(save_last_pos_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SIMPLIFIED_OBJ_CREATION]=(simple_obj_creation_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=(simple_obj_creation_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
@@ -486,8 +486,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::USE_CURVED_LINES]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
-		config_params[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID]=(show_grid ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS]=(show_delim ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(show_grid ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(show_delim ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(align_grid ? Attributes::True : QString());
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
@@ -516,12 +516,12 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 
-		config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_APP]=source_editor_edt->text();
-		config_params[Attributes::Configuration][Attributes::SOURCE_EDITOR_ARGS]=source_editor_args_edt->text();
+		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_edt->text();
+		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
 		config_params[Attributes::Configuration][Attributes::UI_LANGUAGE]=ui_language_cmb->currentData().toString();
 
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SAVE_RESTORE_GEOMETRY]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
@@ -550,7 +550,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 			}
 			else if(itr->first==Attributes::VALIDATOR ||
 					itr->first==Attributes::ObjectFinder ||
-					itr->first==Attributes::SQL_TOOL)
+					itr->first==Attributes::SqlTool)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
@@ -612,9 +612,9 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ObjectsScene::setInvertRangeSelectionTrigger(invert_rangesel_chk->isChecked());
 	ObjectsScene::setGridSize(grid_size_spb->value());
 
-	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::SHOW_CANVAS_GRID]==Attributes::True,
+	ObjectsScene::setGridOptions(config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True,
 															 config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True,
-															 config_params[Attributes::Configuration][Attributes::SHOW_PAGE_DELIMITERS]==Attributes::True);
+															 config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
 
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());

@@ -27,7 +27,7 @@ Policy::Policy(void) : TableObject()
 	attributes[Attributes::Command] = QString();
 	attributes[Attributes::USING_EXP] = QString();
 	attributes[Attributes::CheckExp] = QString();
-	attributes[Attributes::ROLES] = QString();
+	attributes[Attributes::Roles] = QString();
 }
 
 void Policy::setParentTable(BaseTable *table)
@@ -126,7 +126,7 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Permissive] = (permissive ? Attributes::True : QString());
 	attributes[Attributes::USING_EXP] = using_expr;
 	attributes[Attributes::CheckExp] = check_expr;
-	attributes[Attributes::ROLES] = rol_names.join(QString(", "));
+	attributes[Attributes::Roles] = rol_names.join(QString(", "));
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -169,9 +169,9 @@ QString Policy::getAlterDefinition(BaseObject *object)
 		aux_rol_names.sort();
 
 		if(!rol_names.isEmpty() && aux_rol_names.isEmpty())
-			attribs[Attributes::ROLES] = Attributes::UNSET;
+			attribs[Attributes::Roles] = Attributes::UNSET;
 		else if(rol_names.join(QString(", ")) != aux_rol_names.join(QString(", ")))
-			attribs[Attributes::ROLES] = aux_rol_names.join(QString(", "));
+			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
 
 		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));

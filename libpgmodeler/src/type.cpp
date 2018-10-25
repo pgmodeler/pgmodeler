@@ -32,7 +32,7 @@ Type::Type(void)
 	attributes[Attributes::InputFunc]=QString();
 	attributes[Attributes::OutputFunc]=QString();
 	attributes[Attributes::RecvFunc]=QString();
-	attributes[Attributes::SEND_FUNC]=QString();
+	attributes[Attributes::SendFunc]=QString();
 	attributes[Attributes::TPMOD_IN_FUNC]=QString();
 	attributes[Attributes::TPMOD_OUT_FUNC]=QString();
 	attributes[Attributes::AnalyzeFunc]=QString();
@@ -682,7 +682,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		QString func_attrib[]={Attributes::InputFunc,
 							   Attributes::OutputFunc,
 							   Attributes::RecvFunc,
-							   Attributes::SEND_FUNC,
+							   Attributes::SendFunc,
 							   Attributes::TPMOD_IN_FUNC,
 							   Attributes::TPMOD_OUT_FUNC,
 							   Attributes::AnalyzeFunc,

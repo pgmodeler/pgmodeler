@@ -24,7 +24,7 @@ Cast::Cast(void)
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
-	attributes[Attributes::SOURCE_TYPE]=QString();
+	attributes[Attributes::SourceType]=QString();
 	attributes[Attributes::DestType]=QString();
 	attributes[Attributes::CastType]=QString();
 	attributes[Attributes::IoCast]=QString();
@@ -155,7 +155,7 @@ unsigned Cast::getCastType(void)
 
 QString Cast::getDropDefinition(bool cascade)
 {
-	attributes[Attributes::SIGNATURE].replace(QString(","), QString(" AS "));
+	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
 	return(BaseObject::getDropDefinition(cascade));
 }
 
@@ -166,12 +166,12 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		attributes[Attributes::SOURCE_TYPE]=(*types[SrcType]);
+		attributes[Attributes::SourceType]=(*types[SrcType]);
 		attributes[Attributes::DestType]=(*types[DstType]);
 	}
 	else
 	{
-		attributes[Attributes::SOURCE_TYPE]=types[SrcType].getCodeDefinition(def_type);
+		attributes[Attributes::SourceType]=types[SrcType].getCodeDefinition(def_type);
 		attributes[Attributes::DestType]=types[DstType].getCodeDefinition(def_type);
 	}
 
@@ -200,7 +200,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
 
 QString Cast::getSignature(bool)
 {
-	attributes[Attributes::SIGNATURE]=this->getName().remove(QString("cast"));
+	attributes[Attributes::Signature]=this->getName().remove(QString("cast"));
 	return(BaseObject::getSignature(false));
 }
 

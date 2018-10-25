@@ -127,7 +127,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::TYPE]=QString();
 	attributes[Attributes::STRATEGY_NUM]=QString();
-	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::Signature]=QString();
 	attributes[Attributes::Function]=QString();
 	attributes[Attributes::Operator]=QString();
 	attributes[Attributes::STORAGE]=QString();
@@ -141,7 +141,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::SIGNATURE]=function->getSignature();
+			attributes[Attributes::Signature]=function->getSignature();
 		else
 			attributes[Attributes::Definition]=function->getCodeDefinition(def_type,true);
 	}
@@ -152,7 +152,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::SIGNATURE]=_operator->getSignature();
+			attributes[Attributes::Signature]=_operator->getSignature();
 		else
 			attributes[Attributes::Definition]=_operator->getCodeDefinition(def_type,true);
 

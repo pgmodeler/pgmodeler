@@ -39,8 +39,8 @@ Table::Table(void) : BaseTable()
 	attributes[Attributes::ConstrIndexes]=QString();
 	attributes[Attributes::UNLOGGED]=QString();
 	attributes[Attributes::InitialData]=QString();
-	attributes[Attributes::RLS_ENABLED]=QString();
-	attributes[Attributes::RLS_FORCED]=QString();
+	attributes[Attributes::RlsEnabled]=QString();
+	attributes[Attributes::RlsForced]=QString();
 	attributes[Attributes::Partitioning]=QString();
 	attributes[Attributes::PartitionKey]=QString();
 	attributes[Attributes::PartitionedTable]=QString();
@@ -159,8 +159,8 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 	{
 		attribs_map attribs;
 
-		attribs[Attributes::SIGNATURE]=tab_obj->getSignature();
-		attribs[Attributes::SQL_OBJECT]=tab_obj->getSQLName();
+		attribs[Attributes::Signature]=tab_obj->getSignature();
+		attribs[Attributes::SqlObject]=tab_obj->getSQLName();
 		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : QString());
 		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
 		attribs[Attributes::TABLE]=this->getName(true);
@@ -1596,8 +1596,8 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
 	attributes[Attributes::UNLOGGED]=(unlogged ? Attributes::True : QString());
-	attributes[Attributes::RLS_ENABLED]=(rls_enabled ? Attributes::True : QString());
-	attributes[Attributes::RLS_FORCED]=(rls_forced ? Attributes::True : QString());
+	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : QString());
+	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::TAG]=QString();
@@ -1895,10 +1895,10 @@ QString Table::getAlterDefinition(BaseObject *object)
 				attribs[Attributes::UNLOGGED]=(tab->unlogged ? Attributes::True : Attributes::UNSET);
 
 			if(this->rls_enabled!=tab->rls_enabled)
-				attribs[Attributes::RLS_ENABLED]=(tab->rls_enabled ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::RlsEnabled]=(tab->rls_enabled ? Attributes::True : Attributes::UNSET);
 
 			if(this->rls_forced!=tab->rls_forced)
-				attribs[Attributes::RLS_FORCED]=(tab->rls_forced ? Attributes::True : Attributes::UNSET);
+				attribs[Attributes::RlsForced]=(tab->rls_forced ? Attributes::True : Attributes::UNSET);
 		}
 
 		copyAttributes(attribs);

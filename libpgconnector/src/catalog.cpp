@@ -265,7 +265,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	{
 		ResultSet res;
 
-		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::Schema]=sch_name;
 		extra_attribs[Attributes::TABLE]=tab_name;
 
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
@@ -312,7 +312,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 					tab_attribs=getObjectsAttributes(type, QString(), QString(), { tab_oid });
 
 					//Retrieve the oid and names of the table's columns
-					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][Attributes::SCHEMA]], attr.second);
+					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][Attributes::Schema]], attr.second);
 
 					for(auto &col_attr : col_attribs)
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
@@ -333,7 +333,7 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		ResultSet res;
 		attribs_map objects;
 
-		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::Schema]=sch_name;
 		extra_attribs[Attributes::TABLE]=tab_name;
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
@@ -364,7 +364,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		QStringList queries;
 		attribs_map attribs;
 
-		extra_attribs[Attributes::SCHEMA]=sch_name;
+		extra_attribs[Attributes::Schema]=sch_name;
 		extra_attribs[Attributes::TABLE]=tab_name;
 
 		for(ObjectType obj_type : obj_types)
@@ -515,7 +515,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	try
 	{
 		attribs_map attribs={{Attributes::Oid, oid_field},
-												 {Attributes::SHARED_OBJ, (is_shared_obj ? Attributes::True : QString())}};
+												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : QString())}};
 
 		loadCatalogQuery(query_id);
 		return(schparser.getCodeDefinition(attribs).simplified());
@@ -593,7 +593,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 		bool is_shared_obj=(obj_type==ObjectType::Database ||	obj_type==ObjectType::Role ||	obj_type==ObjectType::Tablespace ||
 												obj_type==ObjectType::Language || obj_type==ObjectType::Cast);
 
-		extra_attribs[Attributes::SCHEMA]=schema;
+		extra_attribs[Attributes::Schema]=schema;
 		extra_attribs[Attributes::TABLE]=table;
 
 		if(!filter_oids.empty())
@@ -634,7 +634,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		ResultSet res;
 
 		attribs[Attributes::CustomFilter] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
-		attribs[Attributes::SCHEMA] = schema;
+		attribs[Attributes::Schema] = schema;
 		attribs[Attributes::TABLE] = table;
 		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 

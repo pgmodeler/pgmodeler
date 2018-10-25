@@ -87,14 +87,14 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::Comment]=QString();
 	attributes[Attributes::Owner]=QString();
 	attributes[Attributes::TABLESPACE]=QString();
-	attributes[Attributes::SCHEMA]=QString();
+	attributes[Attributes::Schema]=QString();
 	attributes[Attributes::Collation]=QString();
 	attributes[Attributes::Protected]=QString();
-	attributes[Attributes::SQL_DISABLED]=QString();
+	attributes[Attributes::SqlDisabled]=QString();
 	attributes[Attributes::AppendedSql]=QString();
 	attributes[Attributes::PrependedSql]=QString();
 	attributes[Attributes::Drop]=QString();
-	attributes[Attributes::SIGNATURE]=QString();
+	attributes[Attributes::Signature]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -680,11 +680,11 @@ void BaseObject::setBasicAttributes(bool format_name)
 	if(attributes[Attributes::Alias].isEmpty())
 		attributes[Attributes::Alias]=this->getAlias();
 
-	if(attributes[Attributes::SIGNATURE].isEmpty())
-		attributes[Attributes::SIGNATURE]=this->getSignature(format_name);
+	if(attributes[Attributes::Signature].isEmpty())
+		attributes[Attributes::Signature]=this->getSignature(format_name);
 
-	if(attributes[Attributes::SQL_OBJECT].isEmpty())
-		attributes[Attributes::SQL_OBJECT]=objs_sql[~this->obj_type];
+	if(attributes[Attributes::SqlObject].isEmpty())
+		attributes[Attributes::SqlObject]=objs_sql[~this->obj_type];
 }
 
 QString BaseObject::__getCodeDefinition(unsigned def_type)
@@ -706,7 +706,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[Attributes::SQL_DISABLED]=(sql_disabled ? Attributes::True : QString());
+		attributes[Attributes::SqlDisabled]=(sql_disabled ? Attributes::True : QString());
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SqlDefinition) ||
@@ -718,9 +718,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(schema)
 		{
 			if(def_type==SchemaParser::XmlDefinition)
-				attributes[Attributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
+				attributes[Attributes::Schema]=schema->getCodeDefinition(def_type, true);
 			else
-				attributes[Attributes::SCHEMA]=schema->getName(format);
+				attributes[Attributes::Schema]=schema->getName(format);
 		}
 
 		if(def_type==SchemaParser::XmlDefinition)
@@ -1193,7 +1193,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 
 	try
 	{
-		QStringList attribs={ Attributes::Owner, Attributes::SCHEMA, Attributes::TABLESPACE };
+		QStringList attribs={ Attributes::Owner, Attributes::Schema, Attributes::TABLESPACE };
 		bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
 		BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
 				*aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
@@ -1203,7 +1203,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 			attributes[Attributes::NewName]=object->getName(true, false);
 			alter+=BaseObject::getAlterDefinition(Attributes::Rename, attributes, true);
 			attributes[Attributes::Name]=attributes[Attributes::NewName];
-			attributes[Attributes::SIGNATURE]=object->getSignature(true);
+			attributes[Attributes::Signature]=object->getSignature(true);
 		}
 
 		for(unsigned i=0; i < 3; i++)

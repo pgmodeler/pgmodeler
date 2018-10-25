@@ -1498,9 +1498,9 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
 									 Attributes::Label, Attributes::Line, Attributes::Position,
 									 Attributes::Identifier, Attributes::Deferrable, Attributes::DeferType,
-									 Attributes::TABLE_NAME, Attributes::SPECIAL_PK_COLS, Attributes::TABLE,
+									 Attributes::TABLE_NAME, Attributes::SpecialPkCols, Attributes::TABLE,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
-									 Attributes::SRC_COL_PATTERN, Attributes::DstColPattern, Attributes::PkPattern,
+									 Attributes::SrcColPattern, Attributes::DstColPattern, Attributes::PkPattern,
 									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
