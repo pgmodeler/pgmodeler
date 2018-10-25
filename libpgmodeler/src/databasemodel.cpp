@@ -44,11 +44,11 @@ DatabaseModel::DatabaseModel(void)
 	attributes[ParsersAttributes::ENCODING]=QString();
 	attributes[ParsersAttributes::TEMPLATE_DB]=QString();
 	attributes[ParsersAttributes::CONN_LIMIT]=QString();
-	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
-	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
-	attributes[ParsersAttributes::APPEND_AT_EOD]=QString();
+	attributes[ParsersAttributes::LcCollate]=QString();
+	attributes[ParsersAttributes::LcCtype]=QString();
+	attributes[ParsersAttributes::AppendAtEod]=QString();
 	attributes[ParsersAttributes::PREPEND_AT_BOD]=QString();
-	attributes[ParsersAttributes::ALLOW_CONNS]=QString();
+	attributes[ParsersAttributes::AllowConns]=QString();
 	attributes[ParsersAttributes::IS_TEMPLATE]=QString();
 }
 
@@ -744,9 +744,13 @@ void DatabaseModel::destroyObjects(void)
 	map<unsigned, BaseObject *> objects;
 	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
 	vector<ObjectType> rem_obj_types;
+	vector<BaseObject *> perms;
 
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
+
+	//Making a copy of the permissions list so these objects can be destroyed at the end
+	perms = permissions;
 
 	for(unsigned i=0; i < 5; i++)
 	{
@@ -779,8 +783,9 @@ void DatabaseModel::destroyObjects(void)
 		object = ritr->second;
 		ritr++;
 
-		// We ignore the database itself as well table children objects
+		// We ignore the database itself, permission objects (destroyed separetely) and table children objects
 		if(object->getObjectType() == ObjectType::Database ||
+			 object->getObjectType() == ObjectType::Permission ||
 			 TableObject::isTableObject(object->getObjectType()))
 			continue;
 
@@ -802,6 +807,9 @@ void DatabaseModel::destroyObjects(void)
 	}
 
 	PgSqlType::removeUserTypes(this);
+
+	for(auto &perm : perms)
+		delete(perm);
 
 	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
 	if(!rem_obj_types.empty())
@@ -2959,12 +2967,12 @@ void DatabaseModel::configureDatabase(attribs_map &attribs)
 {
 	encoding=attribs[ParsersAttributes::ENCODING];
 	template_db=attribs[ParsersAttributes::TEMPLATE_DB];
-	localizations[0]=attribs[ParsersAttributes::_LC_CTYPE_];
-	localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
-	append_at_eod=attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_;
-	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_;
-	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::_TRUE_;
-	allow_conns=attribs[ParsersAttributes::ALLOW_CONNS] != ParsersAttributes::_FALSE_;
+	localizations[0]=attribs[ParsersAttributes::LcCtype];
+	localizations[1]=attribs[ParsersAttributes::LcCollate];
+	append_at_eod=attribs[ParsersAttributes::AppendAtEod]==ParsersAttributes::True;
+	prepend_at_bod=attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::True;
+	is_template=attribs[ParsersAttributes::IS_TEMPLATE]==ParsersAttributes::True;
+	allow_conns=attribs[ParsersAttributes::AllowConns] != ParsersAttributes::False;
 
 	if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 		conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
@@ -3020,11 +3028,11 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->last_zoom=attribs[ParsersAttributes::LAST_ZOOM].toDouble();
 			if(this->last_zoom <= 0) this->last_zoom=1;
 
-			this->is_template = attribs[ParsersAttributes::IS_TEMPLATE] == ParsersAttributes::_TRUE_;
-			this->allow_conns = (attribs[ParsersAttributes::ALLOW_CONNS].isEmpty() ||
-													 attribs[ParsersAttributes::ALLOW_CONNS] == ParsersAttributes::_TRUE_);
+			this->is_template = attribs[ParsersAttributes::IS_TEMPLATE] == ParsersAttributes::True;
+			this->allow_conns = (attribs[ParsersAttributes::AllowConns].isEmpty() ||
+													 attribs[ParsersAttributes::AllowConns] == ParsersAttributes::True);
 
-			protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+			protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
 
 			def_objs[ObjectType::Schema]=attribs[ParsersAttributes::DEFAULT_SCHEMA];
 			def_objs[ObjectType::Role]=attribs[ParsersAttributes::DEFAULT_OWNER];
@@ -3244,10 +3252,10 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 		object->setName(attribs[ParsersAttributes::NAME]);
 
 	if(BaseObject::acceptsAlias(obj_type_aux))
-		object->setAlias(attribs[ParsersAttributes::ALIAS]);
+		object->setAlias(attribs[ParsersAttributes::Alias]);
 
-	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
-	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
+	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True;
+	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True;
 
 	xmlparser.savePosition();
 
@@ -3303,7 +3311,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					object->setCollation(collation);
 					has_error=(!collation && !attribs_aux[ParsersAttributes::NAME].isEmpty());
 				}
-				else if(elem_name==ParsersAttributes::APPENDED_SQL)
+				else if(elem_name==ParsersAttributes::AppendedSql)
 				{
 					xmlparser.savePosition();
 					xmlparser.accessElement(XmlParser::ChildElement);
@@ -3451,7 +3459,7 @@ Role *DatabaseModel::createRole(void)
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 						   ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
 						   ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
-							 ParsersAttributes::REPLICATION, ParsersAttributes::BYPASSRLS };
+							 ParsersAttributes::REPLICATION, ParsersAttributes::BypassRls };
 
 	unsigned op_vect[]={ Role::OpSuperuser, Role::OpCreateDb,
 						 Role::OpCreateRole, Role::OpInherit,
@@ -3475,7 +3483,7 @@ Role *DatabaseModel::createRole(void)
 		//Setting up the role options according to the configured on the XML
 		for(i=0; i < 8; i++)
 		{
-			marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
+			marked=attribs[op_attribs[i]]==ParsersAttributes::True;
 			role->setOption(op_vect[i], marked);
 		}
 
@@ -3570,8 +3578,8 @@ Schema *DatabaseModel::createSchema(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(schema);
 		schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
-		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
-		schema->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::True);
+		schema->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
 	}
 	catch(Exception &e)
 	{
@@ -3596,7 +3604,7 @@ Language *DatabaseModel::createLanguage(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(lang);
 
-		lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::_TRUE_);
+		lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3676,18 +3684,18 @@ Function *DatabaseModel::createFunction(void)
 
 		if(!attribs[ParsersAttributes::RETURNS_SETOF].isEmpty())
 			func->setReturnSetOf(attribs[ParsersAttributes::RETURNS_SETOF]==
-					ParsersAttributes::_TRUE_);
+					ParsersAttributes::True);
 
 		if(!attribs[ParsersAttributes::WINDOW_FUNC].isEmpty())
 			func->setWindowFunction(attribs[ParsersAttributes::WINDOW_FUNC]==
-					ParsersAttributes::_TRUE_);
+					ParsersAttributes::True);
 
 		if(!attribs[ParsersAttributes::LEAKPROOF].isEmpty())
 			func->setLeakProof(attribs[ParsersAttributes::LEAKPROOF]==
-					ParsersAttributes::_TRUE_);
+					ParsersAttributes::True);
 
-		if(!attribs[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
-			func->setBehaviorType(BehaviorType(attribs[ParsersAttributes::BEHAVIOR_TYPE]));
+		if(!attribs[ParsersAttributes::BehaviorType].isEmpty())
+			func->setBehaviorType(BehaviorType(attribs[ParsersAttributes::BehaviorType]));
 
 		if(!attribs[ParsersAttributes::FUNCTION_TYPE].isEmpty())
 			func->setFunctionType(FunctionType(attribs[ParsersAttributes::FUNCTION_TYPE]));
@@ -3842,9 +3850,9 @@ Parameter DatabaseModel::createParameter(void)
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
-		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
-		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::_TRUE_);
+		param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::True);
+		param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::True);
+		param.setVariadic(attribs[ParsersAttributes::PARAM_VARIADIC]==ParsersAttributes::True);
 
 		xmlparser.restorePosition();
 	}
@@ -3942,7 +3950,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	if(!attribs[ParsersAttributes::PRECISION].isEmpty())
 		precision=attribs[ParsersAttributes::PRECISION].toInt();
 
-	with_timezone=(attribs[ParsersAttributes::WITH_TIMEZONE]==ParsersAttributes::_TRUE_);
+	with_timezone=(attribs[ParsersAttributes::WITH_TIMEZONE]==ParsersAttributes::True);
 	interv_type=attribs[ParsersAttributes::INTERVAL_TYPE];
 
 	if(!attribs[ParsersAttributes::SPATIAL_TYPE].isEmpty())
@@ -3995,16 +4003,16 @@ Type *DatabaseModel::createType(void)
 		setBasicAttributes(type);
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
+		if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BaseType)
 		{
 			type->setConfiguration(Type::BaseType);
-			type->setByValue(attribs[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
+			type->setByValue(attribs[ParsersAttributes::ByValue]==ParsersAttributes::True);
 
 			if(!attribs[ParsersAttributes::INTERNAL_LENGTH].isEmpty())
 				type->setInternalLength(attribs[ParsersAttributes::INTERNAL_LENGTH].toUInt());
 
-			if(!attribs[ParsersAttributes::ALIGNMENT].isEmpty())
-				type->setAlignment(attribs[ParsersAttributes::ALIGNMENT]);
+			if(!attribs[ParsersAttributes::Alignment].isEmpty())
+				type->setAlignment(attribs[ParsersAttributes::Alignment]);
 
 			if(!attribs[ParsersAttributes::STORAGE].isEmpty())
 				type->setStorage(attribs[ParsersAttributes::STORAGE]);
@@ -4018,11 +4026,11 @@ Type *DatabaseModel::createType(void)
 			if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
 				type->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-			if(!attribs[ParsersAttributes::CATEGORY].isEmpty())
-				type->setCategory(attribs[ParsersAttributes::CATEGORY]);
+			if(!attribs[ParsersAttributes::Category].isEmpty())
+				type->setCategory(attribs[ParsersAttributes::Category]);
 
 			if(!attribs[ParsersAttributes::PREFERRED].isEmpty())
-				type->setPreferred(attribs[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
+				type->setPreferred(attribs[ParsersAttributes::PREFERRED]==ParsersAttributes::True);
 
 			//Configuring an auxiliary map used to reference the functions used by base type
 			func_types[ParsersAttributes::INPUT_FUNC]=Type::InputFunc;
@@ -4031,7 +4039,7 @@ Type *DatabaseModel::createType(void)
 			func_types[ParsersAttributes::RECV_FUNC]=Type::RecvFunc;
 			func_types[ParsersAttributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
 			func_types[ParsersAttributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
-			func_types[ParsersAttributes::ANALYZE_FUNC]=Type::AnalyzeFunc;
+			func_types[ParsersAttributes::AnalyzeFunc]=Type::AnalyzeFunc;
 		}
 		else if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
 			type->setConfiguration(Type::CompositeType);
@@ -4040,7 +4048,7 @@ Type *DatabaseModel::createType(void)
 		else
 		{
 			type->setConfiguration(Type::RangeType);
-			func_types[ParsersAttributes::CANONICAL_FUNC]=Type::CanonicalFunc;
+			func_types[ParsersAttributes::CanonicalFunc]=Type::CanonicalFunc;
 			func_types[ParsersAttributes::SUBTYPE_DIFF_FUNC]=Type::SubtypeDiffFunc;
 		}
 
@@ -4175,7 +4183,7 @@ Domain *DatabaseModel::createDomain(void)
 		if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
 			domain->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
+		domain->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4228,14 +4236,14 @@ Cast *DatabaseModel::createCast(void)
 		setBasicAttributes(cast);
 		xmlparser.getElementAttributes(attribs);
 
-		if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::IMPLICIT)
+		if(attribs[ParsersAttributes::CastType]==ParsersAttributes::IMPLICIT)
 			cast->setCastType(Cast::Implicit);
-		else if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::ASSIGNMENT)
+		else if(attribs[ParsersAttributes::CastType]==ParsersAttributes::Assignment)
 			cast->setCastType(Cast::Assignment);
 		else
 			cast->setCastType(Cast::Explicit);
 
-		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
+		cast->setInOut(attribs[ParsersAttributes::IO_CAST]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4305,7 +4313,7 @@ Conversion *DatabaseModel::createConversion(void)
 		conv->setEncoding(Conversion::DstEncoding,
 						  EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
 
-		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
+		conv->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4362,8 +4370,8 @@ Operator *DatabaseModel::createOperator(void)
 		setBasicAttributes(oper);
 		xmlparser.getElementAttributes(attribs);
 
-		oper->setMerges(attribs[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
-		oper->setHashes(attribs[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
+		oper->setMerges(attribs[ParsersAttributes::MERGES]==ParsersAttributes::True);
+		oper->setHashes(attribs[ParsersAttributes::HASHES]==ParsersAttributes::True);
 
 		func_types[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
 		func_types[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JOIN;
@@ -4458,7 +4466,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 		xmlparser.getElementAttributes(attribs);
 
 		op_class->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
-		op_class->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
+		op_class->setDefault(attribs[ParsersAttributes::DEFAULT]==ParsersAttributes::True);
 
 		elem_types[ParsersAttributes::FUNCTION]=OperatorClassElement::FunctionElem;
 		elem_types[ParsersAttributes::OPERATOR]=OperatorClassElement::OperatorElem;
@@ -4668,13 +4676,13 @@ Table *DatabaseModel::createTable(void)
 		xmlparser.getElementAttributes(attribs);
 
 		table->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
-		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
-		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::_TRUE_);
-		table->setRLSEnabled(attribs[ParsersAttributes::RLS_ENABLED]==ParsersAttributes::_TRUE_);
-		table->setRLSForced(attribs[ParsersAttributes::RLS_FORCED]==ParsersAttributes::_TRUE_);
-		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::_TRUE_);
-		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
-		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::True);
+		table->setUnlogged(attribs[ParsersAttributes::UNLOGGED]==ParsersAttributes::True);
+		table->setRLSEnabled(attribs[ParsersAttributes::RLS_ENABLED]==ParsersAttributes::True);
+		table->setRLSForced(attribs[ParsersAttributes::RLS_FORCED]==ParsersAttributes::True);
+		table->setGenerateAlterCmds(attribs[ParsersAttributes::GEN_ALTER_CMDS]==ParsersAttributes::True);
+		table->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
+		table->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4810,10 +4818,10 @@ Column *DatabaseModel::createColumn(void)
 		setBasicAttributes(column);
 
 		xmlparser.getElementAttributes(attribs);
-		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
+		column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::True);
 		column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 		column->setIdSeqAttributes(attribs[ParsersAttributes::MIN_VALUE], attribs[ParsersAttributes::MAX_VALUE], attribs[ParsersAttributes::INCREMENT],
-																attribs[ParsersAttributes::START], attribs[ParsersAttributes::CACHE], attribs[ParsersAttributes::CYCLE] == ParsersAttributes::_TRUE_);
+																attribs[ParsersAttributes::START], attribs[ParsersAttributes::Cache], attribs[ParsersAttributes::CYCLE] == ParsersAttributes::True);
 
 		if(!attribs[ParsersAttributes::IDENTITY_TYPE].isEmpty())
 			column->setIdentityType(IdentityType(attribs[ParsersAttributes::IDENTITY_TYPE]));
@@ -4919,7 +4927,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		constr->setParentTable(table);
 
 		//Configuring the constraint type
-		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
+		if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CkConstr)
 			constr_type=ConstraintType::Check;
 		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
 			constr_type=ConstraintType::PrimaryKey;
@@ -4943,7 +4951,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 							.arg(constr->getName()),
 							ErrorCode::InvPrimaryKeyAllocation,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+		deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
 		constr->setDeferrable(deferrable);
 
 		if(deferrable && !attribs[ParsersAttributes::DEFER_TYPE].isEmpty())
@@ -4981,7 +4989,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		}
 		else if(constr_type==ConstraintType::Check)
 		{
-			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::_TRUE_);
+			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::True);
 		}
 		else if(constr_type==ConstraintType::Exclude &&	!attribs[ParsersAttributes::INDEX_TYPE].isEmpty())
 		{
@@ -5096,9 +5104,9 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 		elem.setOperator(nullptr);
 		elem.setOperatorClass(nullptr);
 
-		elem.setSortingAttribute(Element::AscOrder, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
-		elem.setSortingAttribute(Element::NullsFirst, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
-		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
+		elem.setSortingAttribute(Element::AscOrder, attribs[ParsersAttributes::AscOrder]==ParsersAttributes::True);
+		elem.setSortingAttribute(Element::NullsFirst, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::True);
+		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::False);
 
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
@@ -5265,10 +5273,10 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 			aux_attribs[ParsersAttributes::CONN_LIMIT]=QString::number(db_aux->conn_limit);
 
 		if(this->is_template != db_aux->is_template)
-			aux_attribs[ParsersAttributes::IS_TEMPLATE] = (db_aux->is_template ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+			aux_attribs[ParsersAttributes::IS_TEMPLATE] = (db_aux->is_template ? ParsersAttributes::True : ParsersAttributes::False);
 
 		if(this->allow_conns != db_aux->allow_conns)
-			aux_attribs[ParsersAttributes::ALLOW_CONNS] = (db_aux->allow_conns ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+			aux_attribs[ParsersAttributes::AllowConns] = (db_aux->allow_conns ? ParsersAttributes::True : ParsersAttributes::False);
 
 		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
 		alter_def+=BaseObject::getAlterDefinition(object);
@@ -5313,10 +5321,10 @@ Index *DatabaseModel::createIndex(void)
 		index=new Index;
 		setBasicAttributes(index);
 		index->setParentTable(table);
-		index->setIndexAttribute(Index::Concurrent, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::Unique, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::FastUpdate, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
-		index->setIndexAttribute(Index::Buffering, attribs[ParsersAttributes::BUFFERING]==ParsersAttributes::_TRUE_);
+		index->setIndexAttribute(Index::Concurrent, attribs[ParsersAttributes::CONCURRENT]==ParsersAttributes::True);
+		index->setIndexAttribute(Index::Unique, attribs[ParsersAttributes::UNIQUE]==ParsersAttributes::True);
+		index->setIndexAttribute(Index::FastUpdate, attribs[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::True);
+		index->setIndexAttribute(Index::Buffering, attribs[ParsersAttributes::Buffering]==ParsersAttributes::True);
 		index->setIndexingType(attribs[ParsersAttributes::INDEX_TYPE]);
 		index->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
 
@@ -5472,28 +5480,28 @@ Trigger *DatabaseModel::createTrigger(void)
 
 		setBasicAttributes(trigger);
 
-		trigger->setConstraint(attribs[ParsersAttributes::CONSTRAINT]==ParsersAttributes::_TRUE_);
+		trigger->setConstraint(attribs[ParsersAttributes::CONSTRAINT]==ParsersAttributes::True);
 
 		trigger->setEvent(EventType::OnInsert,
-						  (attribs[ParsersAttributes::INS_EVENT]==ParsersAttributes::_TRUE_));
+							(attribs[ParsersAttributes::INS_EVENT]==ParsersAttributes::True));
 
 		trigger->setEvent(EventType::OnDelete,
-						  (attribs[ParsersAttributes::DEL_EVENT]==ParsersAttributes::_TRUE_));
+							(attribs[ParsersAttributes::DEL_EVENT]==ParsersAttributes::True));
 
 		trigger->setEvent(EventType::OnUpdate,
-						  (attribs[ParsersAttributes::UPD_EVENT]==ParsersAttributes::_TRUE_));
+							(attribs[ParsersAttributes::UPD_EVENT]==ParsersAttributes::True));
 
 		trigger->setEvent(EventType::OnTruncate,
-						  (attribs[ParsersAttributes::TRUNC_EVENT]==ParsersAttributes::_TRUE_));
+							(attribs[ParsersAttributes::TRUNC_EVENT]==ParsersAttributes::True));
 
-		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==ParsersAttributes::_TRUE_);
+		trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==ParsersAttributes::True);
 
 		trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
 
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[ParsersAttributes::OLD_TABLE_NAME]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[ParsersAttributes::NEW_TABLE_NAME]);
 
-		list_aux=attribs[ParsersAttributes::ARGUMENTS].split(',');
+		list_aux=attribs[ParsersAttributes::Arguments].split(',');
 		count=list_aux.count();
 		for(i=0; i < count; i++)
 		{
@@ -5501,7 +5509,7 @@ Trigger *DatabaseModel::createTrigger(void)
 				trigger->addArgument(list_aux[i]);
 		}
 
-		trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
+		trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True);
 
 		if(trigger->isDeferrable())
 			trigger->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
@@ -5620,7 +5628,7 @@ Policy *DatabaseModel::createPolicy(void)
 											.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::_TRUE_);
+		policy->setPermissive(attribs[ParsersAttributes::PERMISSIVE] == ParsersAttributes::True);
 		policy->setPolicyCommand(PolicyCmdType(attribs[ParsersAttributes::COMMAND]));
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5639,7 +5647,7 @@ Policy *DatabaseModel::createPolicy(void)
 
 						if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::USING_EXP)
 							policy->setUsingExpression(xmlparser.getElementContent());
-						else if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::CHECK_EXP)
+						else if(attribs[ParsersAttributes::TYPE] == ParsersAttributes::CheckExp)
 							policy->setCheckExpression(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
@@ -5796,9 +5804,9 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 				attribs[ParsersAttributes::MAX_VALUE],
 				attribs[ParsersAttributes::INCREMENT],
 				attribs[ParsersAttributes::START],
-				attribs[ParsersAttributes::CACHE]);
+				attribs[ParsersAttributes::Cache]);
 
-		sequence->setCycle(attribs[ParsersAttributes::CYCLE]==ParsersAttributes::_TRUE_);
+		sequence->setCycle(attribs[ParsersAttributes::CYCLE]==ParsersAttributes::True);
 
 		//Getting the sequence's owner column
 		if(!attribs[ParsersAttributes::OWNER_COLUMN].isEmpty())
@@ -5876,11 +5884,11 @@ View *DatabaseModel::createView(void)
 
 		xmlparser.getElementAttributes(attribs);
 		view->setObjectListsCapacity(attribs[ParsersAttributes::MAX_OBJ_COUNT].toUInt());
-		view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::_TRUE_);
-		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::_TRUE_);
-		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::_TRUE_);
-		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
-		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		view->setMaterialized(attribs[ParsersAttributes::MATERIALIZED]==ParsersAttributes::True);
+		view->setRecursive(attribs[ParsersAttributes::RECURSIVE]==ParsersAttributes::True);
+		view->setWithNoData(attribs[ParsersAttributes::WITH_NO_DATA]==ParsersAttributes::True);
+		view->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
+		view->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5935,7 +5943,7 @@ View *DatabaseModel::createView(void)
 
 							//Adds the configured reference to a temporarily list
 							reference = Reference(table, column,
-																		attribs[ParsersAttributes::ALIAS],
+																		attribs[ParsersAttributes::Alias],
 																		attribs[ParsersAttributes::COLUMN_ALIAS]);
 							reference.setReferenceAlias(attribs[ParsersAttributes::REF_ALIAS]);
 							refs.push_back(reference);
@@ -5943,7 +5951,7 @@ View *DatabaseModel::createView(void)
 						else
 						{
 							xmlparser.savePosition();
-							str_aux=attribs[ParsersAttributes::ALIAS];
+							str_aux=attribs[ParsersAttributes::Alias];
 
 							xmlparser.accessElement(XmlParser::ChildElement);
 							xmlparser.accessElement(XmlParser::ChildElement);
@@ -6084,8 +6092,8 @@ Collation *DatabaseModel::createCollation(void)
 		//Creating a collation using LC_COLLATE and LC_CTYPE params
 		else
 		{
-			collation->setLocalization(Collation::LcCollate, attribs[ParsersAttributes::_LC_COLLATE_]);
-			collation->setLocalization(Collation::LcCtype, attribs[ParsersAttributes::_LC_CTYPE_]);
+			collation->setLocalization(Collation::LcCollate, attribs[ParsersAttributes::LcCollate]);
+			collation->setLocalization(Collation::LcCtype, attribs[ParsersAttributes::LcCtype]);
 		}
 	}
 	catch(Exception &e)
@@ -6108,7 +6116,7 @@ Extension *DatabaseModel::createExtension(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(extension);
 
-		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::_TRUE_);
+		extension->setHandlesType(attribs[ParsersAttributes::HANDLES_TYPE]==ParsersAttributes::True);
 		extension->setVersion(Extension::CurVersion, attribs[ParsersAttributes::CUR_VERSION]);
 		extension->setVersion(Extension::OldVersion, attribs[ParsersAttributes::OLD_VERSION]);
 	}
@@ -6171,10 +6179,10 @@ Textbox *DatabaseModel::createTextbox(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::ItalicText, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::BoldText, attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+		txtbox->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
+		txtbox->setTextAttribute(Textbox::ItalicText, attribs[ParsersAttributes::ITALIC]==ParsersAttributes::True);
+		txtbox->setTextAttribute(Textbox::BoldText, attribs[ParsersAttributes::Bold]==ParsersAttributes::True);
+		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::True);
 
 		if(!attribs[ParsersAttributes::COLOR].isEmpty())
 			txtbox->setTextColor(QColor(attribs[ParsersAttributes::COLOR]));
@@ -6217,8 +6225,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		labels_id[ParsersAttributes::DST_LABEL]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
-		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
-		faded_out=(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+		protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
+		faded_out=(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
 
 		if(!attribs[ParsersAttributes::CUSTOM_COLOR].isEmpty())
 			custom_color=QColor(attribs[ParsersAttributes::CUSTOM_COLOR]);
@@ -6265,7 +6273,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			{
 				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[ParsersAttributes::NAME]);
-				base_rel->setAlias(attribs[ParsersAttributes::ALIAS]);
+				base_rel->setAlias(attribs[ParsersAttributes::Alias]);
 				addRelationship(base_rel);
 
 				/* If the source table doesn't have any fk that references the destination table indicates that the relationship
@@ -6326,15 +6334,15 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 										Relationship::PkColPattern },
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
-			sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
-			src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
-			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
-			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
-			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
+			sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True;
+			src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::True;
+			dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::True;
+			identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::True;
+			deferrable=attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::True;
 			defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 			del_action=ActionType(attribs[ParsersAttributes::DEL_ACTION]);
 			upd_action=ActionType(attribs[ParsersAttributes::UPD_ACTION]);
-			single_pk_col=(attribs[ParsersAttributes::SINGLE_PK_COLUMN]==ParsersAttributes::_TRUE_);
+			single_pk_col=(attribs[ParsersAttributes::SINGLE_PK_COLUMN]==ParsersAttributes::True);
 
 			if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
 				rel_type=BaseRelationship::Relationship11;
@@ -6364,7 +6372,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
 
 			rel->setName(attribs[ParsersAttributes::NAME]);
-			rel->setAlias(attribs[ParsersAttributes::ALIAS]);
+			rel->setAlias(attribs[ParsersAttributes::Alias]);
 			base_rel=rel;
 
 			//Configuring the name patterns
@@ -6511,8 +6519,8 @@ Permission *DatabaseModel::createPermission(void)
 	try
 	{
 		xmlparser.getElementAttributes(priv_attribs);
-		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::_TRUE_;
-		cascade=priv_attribs[ParsersAttributes::CASCADE]==ParsersAttributes::_TRUE_;
+		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::True;
+		cascade=priv_attribs[ParsersAttributes::Cascade]==ParsersAttributes::True;
 
 		xmlparser.savePosition();
 		xmlparser.accessElement(XmlParser::ChildElement);
@@ -6585,7 +6593,7 @@ Permission *DatabaseModel::createPermission(void)
 				{
 					if(itr->first!=ParsersAttributes::GRANT_OP)
 					{
-						priv_value=(itr->second==ParsersAttributes::_TRUE_);
+						priv_value=(itr->second==ParsersAttributes::True);
 						grant_op=(itr->second==ParsersAttributes::GRANT_OP);
 
 						if(itr->first==ParsersAttributes::CONNECT_PRIV)
@@ -6716,7 +6724,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		QString loc_attribs[]={ ParsersAttributes::_LC_CTYPE_,  ParsersAttributes::_LC_COLLATE_ };
+		QString loc_attribs[]={ ParsersAttributes::LcCtype,  ParsersAttributes::LcCollate };
 
 		if(encoding!=BaseType::Null)
 			attributes[ParsersAttributes::ENCODING]=QString("'%1'").arg(~encoding);
@@ -6732,14 +6740,14 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	else
 	{
 		attributes[ParsersAttributes::ENCODING]=(~encoding);
-		attributes[ParsersAttributes::_LC_COLLATE_]=localizations[1];
-		attributes[ParsersAttributes::_LC_CTYPE_]=localizations[0];
-		attributes[ParsersAttributes::APPEND_AT_EOD]=(append_at_eod ? ParsersAttributes::_TRUE_ : QString());
-		attributes[ParsersAttributes::PREPEND_AT_BOD]=(prepend_at_bod ? ParsersAttributes::_TRUE_ : QString());
+		attributes[ParsersAttributes::LcCollate]=localizations[1];
+		attributes[ParsersAttributes::LcCtype]=localizations[0];
+		attributes[ParsersAttributes::AppendAtEod]=(append_at_eod ? ParsersAttributes::True : QString());
+		attributes[ParsersAttributes::PREPEND_AT_BOD]=(prepend_at_bod ? ParsersAttributes::True : QString());
 	}
 
-	attributes[ParsersAttributes::IS_TEMPLATE]=(is_template ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-	attributes[ParsersAttributes::ALLOW_CONNS]=(allow_conns ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+	attributes[ParsersAttributes::IS_TEMPLATE]=(is_template ? ParsersAttributes::True : ParsersAttributes::False);
+	attributes[ParsersAttributes::AllowConns]=(allow_conns ? ParsersAttributes::True : ParsersAttributes::False);
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;
 
 	if(def_type==SchemaParser::SqlDefinition && append_at_eod)
@@ -6807,7 +6815,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::_TRUE_ : QString());
+			attribs_aux[ParsersAttributes::FUNCTION]=(!functions.empty() ? ParsersAttributes::True : QString());
 
 			for(auto &type : types)
 			{
@@ -6924,7 +6932,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		if(def_type==SchemaParser::XmlDefinition)
 		{
 			attribs_aux[ParsersAttributes::MAX_OBJ_COUNT]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-			attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::_TRUE_ : QString());
+			attribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? ParsersAttributes::True : QString());
 			attribs_aux[ParsersAttributes::LAST_POSITION]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 			attribs_aux[ParsersAttributes::LAST_ZOOM]=QString::number(last_zoom);
 			attribs_aux[ParsersAttributes::DEFAULT_SCHEMA]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
@@ -6962,7 +6970,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::_TRUE_ : QString());
+	attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? ParsersAttributes::True : QString());
 	def=schparser.getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
@@ -9622,15 +9630,15 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 			attribs[ParsersAttributes::TABLE]=QString();
 			attribs[ParsersAttributes::NAME]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
-			attribs[ParsersAttributes::ALIAS]=(save_objs_aliases ? object->getAlias() : QString());
+			attribs[ParsersAttributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
 			attribs[ParsersAttributes::TYPE]=object->getSchemaName();
-			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::_TRUE_ : QString());
-			attribs[ParsersAttributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::PROTECTED]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? ParsersAttributes::True : QString());
+			attribs[ParsersAttributes::SQL_DISABLED]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? ParsersAttributes::True : QString());
 			attribs[ParsersAttributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
-			attribs[ParsersAttributes::APPENDED_SQL]=object->getAppendedSQL();
+			attribs[ParsersAttributes::AppendedSql]=object->getAppendedSQL();
 			attribs[ParsersAttributes::PREPENDED_SQL]=object->getPrependedSQL();
-			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::_TRUE_ : QString());
-			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::_TRUE_ : QString());
+			attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? ParsersAttributes::True : QString());
+			attribs[ParsersAttributes::FADED_OUT]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? ParsersAttributes::True : QString());
 
 			if(TableObject::isTableObject(obj_type))
 			{
@@ -9640,8 +9648,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 			if(save_custom_sql && obj_type==ObjectType::Database)
 			{
-				attribs[ParsersAttributes::APPEND_AT_EOD]=(this->isAppendAtEOD() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-				attribs[ParsersAttributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+				attribs[ParsersAttributes::AppendAtEod]=(this->isAppendAtEOD() ? ParsersAttributes::True : ParsersAttributes::False);
+				attribs[ParsersAttributes::PREPEND_AT_BOD]=(this->isPrependedAtBOD() ? ParsersAttributes::True : ParsersAttributes::False);
 			}
 
 			//Configuring database model attributes
@@ -9668,7 +9676,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 						schema=dynamic_cast<Schema *>(object);
 
 						attribs[ParsersAttributes::CUSTOM_COLOR]=(save_custom_colors ? schema->getFillColor().name() : QString());
-						attribs[ParsersAttributes::RECT_VISIBLE]=(schema->isRectVisible() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+						attribs[ParsersAttributes::RECT_VISIBLE]=(schema->isRectVisible() ? ParsersAttributes::True : ParsersAttributes::False);
 
 						if(schema->isRectVisible())
 						{
@@ -9744,9 +9752,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[ParsersAttributes::APPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[ParsersAttributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 																																							 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																							 QString(ParsersAttributes::APPENDED_SQL).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+																																							 QString(ParsersAttributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 
 				if(!object->getPrependedSQL().isEmpty())
 					attribs[ParsersAttributes::PREPENDED_SQL]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
@@ -9766,11 +9774,11 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_tags && !attribs[ParsersAttributes::TAG].isEmpty()) ||
 				 (save_objs_prot && !attribs[ParsersAttributes::PROTECTED].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[ParsersAttributes::SQL_DISABLED].isEmpty()) ||
-				 (save_custom_sql && (!attribs[ParsersAttributes::APPENDED_SQL].isEmpty() ||
+				 (save_custom_sql && (!attribs[ParsersAttributes::AppendedSql].isEmpty() ||
 															!attribs[ParsersAttributes::PREPENDED_SQL].isEmpty())) ||
 				 (save_fadeout && !attribs[ParsersAttributes::FADED_OUT].isEmpty()) ||
 				 (save_extattribs && !attribs[ParsersAttributes::HIDE_EXT_ATTRIBS].isEmpty()) ||
-				 (save_objs_aliases && !attribs[ParsersAttributes::ALIAS].isEmpty()))
+				 (save_objs_aliases && !attribs[ParsersAttributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
@@ -9962,10 +9970,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty() && load_objs_sqldis)))
 							{
 								if(!attribs[ParsersAttributes::PROTECTED].isEmpty())
-									object->setProtected(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+									object->setProtected(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::True);
 
 								if(!attribs[ParsersAttributes::SQL_DISABLED].isEmpty())
-									object->setSQLDisabled(attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_);
+									object->setSQLDisabled(attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::True);
 							}
 							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[ParsersAttributes::TAG].isEmpty())
 							{
@@ -9976,15 +9984,15 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 							}
 							else if(obj_type==ObjectType::Database && load_custom_sql)
 							{
-								if(!attribs[ParsersAttributes::APPEND_AT_EOD].isEmpty())
-									this->setAppendAtEOD(attribs[ParsersAttributes::APPEND_AT_EOD]==ParsersAttributes::_TRUE_);
+								if(!attribs[ParsersAttributes::AppendAtEod].isEmpty())
+									this->setAppendAtEOD(attribs[ParsersAttributes::AppendAtEod]==ParsersAttributes::True);
 
 								if(!attribs[ParsersAttributes::PREPEND_AT_BOD].isEmpty())
-									this->setPrependAtBOD(attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::_TRUE_);
+									this->setPrependAtBOD(attribs[ParsersAttributes::PREPEND_AT_BOD]==ParsersAttributes::True);
 							}
 
-							if(load_objs_aliases && !attribs[ParsersAttributes::ALIAS].isEmpty())
-								object->setAlias(attribs[ParsersAttributes::ALIAS]);
+							if(load_objs_aliases && !attribs[ParsersAttributes::Alias].isEmpty())
+								object->setAlias(attribs[ParsersAttributes::Alias]);
 
 							if(xmlparser.accessElement(XmlParser::ChildElement))
 							{
@@ -10014,8 +10022,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 										xmlparser.restorePosition();
 									}
-									else if(load_custom_sql && aux_elem==ParsersAttributes::APPENDED_SQL &&
-													attribs[ParsersAttributes::APPENDED_SQL].isEmpty())
+									else if(load_custom_sql && aux_elem==ParsersAttributes::AppendedSql &&
+													attribs[ParsersAttributes::AppendedSql].isEmpty())
 									{
 										xmlparser.savePosition();
 										xmlparser.accessElement(XmlParser::ChildElement);
@@ -10068,14 +10076,14 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									if(load_custom_colors)
 										schema->setFillColor(QColor(attribs[ParsersAttributes::CUSTOM_COLOR]));
 
-									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
+									schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::True);
 								}
 
 								if(load_fadeout)
-									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::_TRUE_);
+									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[ParsersAttributes::FADED_OUT]==ParsersAttributes::True);
 
 								if(load_extattribs && base_tab)
-									base_tab->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::_TRUE_);
+									base_tab->setExtAttribsHidden(attribs[ParsersAttributes::HIDE_EXT_ATTRIBS]==ParsersAttributes::True);
 							}
 
 							points.clear();
