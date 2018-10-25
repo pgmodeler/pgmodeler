@@ -24,7 +24,7 @@ Conversion::Conversion(void)
 	conversion_func=nullptr;
 	is_default=false;
 	attributes[Attributes::Default]=QString();
-	attributes[Attributes::SRC_ENCODING]=QString();
+	attributes[Attributes::SrcEncoding]=QString();
 	attributes[Attributes::DstEncoding]=QString();
 	attributes[Attributes::Function]=QString();
 }
@@ -116,7 +116,7 @@ QString Conversion::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[Attributes::Default]=(is_default ? Attributes::True : QString());
-	attributes[Attributes::SRC_ENCODING]=(~encodings[SrcEncoding]);
+	attributes[Attributes::SrcEncoding]=(~encodings[SrcEncoding]);
 	attributes[Attributes::DstEncoding]=(~encodings[DstEncoding]);
 
 	if(conversion_func)

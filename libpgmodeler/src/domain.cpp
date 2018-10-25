@@ -24,7 +24,7 @@ Domain::Domain(void)
 	not_null=false;
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NotNull]=QString();
-	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Type]=QString();
 	attributes[Attributes::Constraints]=QString();
 }
 
@@ -137,9 +137,9 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	}
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[Attributes::TYPE]=(*type);
+		attributes[Attributes::Type]=(*type);
 	else
-		attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
+		attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

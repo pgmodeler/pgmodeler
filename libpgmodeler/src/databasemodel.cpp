@@ -42,7 +42,7 @@ DatabaseModel::DatabaseModel(void)
 	last_zoom=1;
 	loading_model=invalidated=append_at_eod=prepend_at_bod=false;
 	attributes[Attributes::Encoding]=QString();
-	attributes[Attributes::TEMPLATE_DB]=QString();
+	attributes[Attributes::TemplateDb]=QString();
 	attributes[Attributes::ConnLimit]=QString();
 	attributes[Attributes::LcCollate]=QString();
 	attributes[Attributes::LcCtype]=QString();
@@ -2966,7 +2966,7 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 void DatabaseModel::configureDatabase(attribs_map &attribs)
 {
 	encoding=attribs[Attributes::Encoding];
-	template_db=attribs[Attributes::TEMPLATE_DB];
+	template_db=attribs[Attributes::TemplateDb];
 	localizations[0]=attribs[Attributes::LcCtype];
 	localizations[1]=attribs[Attributes::LcCollate];
 	append_at_eod=attribs[Attributes::AppendAtEod]==Attributes::True;
@@ -3285,7 +3285,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					has_error=(!schema && !attribs_aux[Attributes::Name].isEmpty());
 				}
 				//Defines the object's tablespace
-				else if(elem_name==Attributes::TABLESPACE)
+				else if(elem_name==Attributes::Tablespace)
 				{
 					obj_type=ObjectType::Tablespace;
 					xmlparser.getElementAttributes(attribs_aux);
@@ -3456,7 +3456,7 @@ Role *DatabaseModel::createRole(void)
 	QString elem_name;
 	unsigned role_type;
 
-	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							 Attributes::CreateRole, Attributes::Inherit,
 							 Attributes::Login, Attributes::Encrypted,
 							 Attributes::Replication, Attributes::BypassRls };
@@ -3604,7 +3604,7 @@ Language *DatabaseModel::createLanguage(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(lang);
 
-		lang->setTrusted(attribs[Attributes::TRUSTED]==Attributes::True);
+		lang->setTrusted(attribs[Attributes::Trusted]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -3732,7 +3732,7 @@ Function *DatabaseModel::createFunction(void)
 								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 								{
 									//when the element found is a TYPE indicates that the function return type is a single one
-									if(xmlparser.getElementName()==Attributes::TYPE)
+									if(xmlparser.getElementName()==Attributes::Type)
 									{
 										type=createPgSQLType();
 										func->setReturnType(type);
@@ -3787,7 +3787,7 @@ Function *DatabaseModel::createFunction(void)
 						if(!attribs_aux[Attributes::Library].isEmpty())
 						{
 							func->setLibrary(attribs_aux[Attributes::Library]);
-							func->setSymbol(attribs_aux[Attributes::SYMBOL]);
+							func->setSymbol(attribs_aux[Attributes::Symbol]);
 						}
 						else if(xmlparser.accessElement(XmlParser::ChildElement))
 							func->setSourceCode(xmlparser.getElementContent());
@@ -3841,7 +3841,7 @@ Parameter DatabaseModel::createParameter(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						param.setType(createPgSQLType());
 					}
@@ -3888,7 +3888,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						tpattrib.setType(createPgSQLType());
 					}
@@ -3955,7 +3955,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 
 	if(!attribs[Attributes::SpatialType].isEmpty())
 		spatial_type=SpatialType(attribs[Attributes::SpatialType],
-				attribs[Attributes::SRID].toUInt(),
+				attribs[Attributes::Srid].toUInt(),
 				attribs[Attributes::VARIATION].toUInt());
 
 	name=attribs[Attributes::Name];
@@ -4014,8 +4014,8 @@ Type *DatabaseModel::createType(void)
 			if(!attribs[Attributes::Alignment].isEmpty())
 				type->setAlignment(attribs[Attributes::Alignment]);
 
-			if(!attribs[Attributes::STORAGE].isEmpty())
-				type->setStorage(attribs[Attributes::STORAGE]);
+			if(!attribs[Attributes::Storage].isEmpty())
+				type->setStorage(attribs[Attributes::Storage]);
 
 			if(!attribs[Attributes::Element].isEmpty())
 				type->setElement(attribs[Attributes::Element]);
@@ -4037,8 +4037,8 @@ Type *DatabaseModel::createType(void)
 			func_types[Attributes::OutputFunc]=Type::OutputFunc;
 			func_types[Attributes::SendFunc]=Type::SendFunc;
 			func_types[Attributes::RecvFunc]=Type::RecvFunc;
-			func_types[Attributes::TPMOD_IN_FUNC]=Type::TpmodInFunc;
-			func_types[Attributes::TPMOD_OUT_FUNC]=Type::TpmodOutFunc;
+			func_types[Attributes::TpmodInFunc]=Type::TpmodInFunc;
+			func_types[Attributes::TpmodOutFunc]=Type::TpmodOutFunc;
 			func_types[Attributes::AnalyzeFunc]=Type::AnalyzeFunc;
 		}
 		else if(attribs[Attributes::Configuration]==Attributes::CompositeType)
@@ -4049,7 +4049,7 @@ Type *DatabaseModel::createType(void)
 		{
 			type->setConfiguration(Type::RangeType);
 			func_types[Attributes::CanonicalFunc]=Type::CanonicalFunc;
-			func_types[Attributes::SUBTYPE_DIFF_FUNC]=Type::SubtypeDiffFunc;
+			func_types[Attributes::SubtypeDiffFunc]=Type::SubtypeDiffFunc;
 		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4071,12 +4071,12 @@ Type *DatabaseModel::createType(void)
 							type->addEnumeration(enums[i]);
 					}
 					//Specific operations for COMPOSITE types
-					else if(elem==Attributes::TYPE_ATTRIBUTE)
+					else if(elem==Attributes::TypeAttribute)
 					{
 						type->addAttribute(createTypeAttribute());
 					}
 					//Specific operations for BASE / RANGE type
-					else if(elem==Attributes::TYPE)
+					else if(elem==Attributes::Type)
 					{
 						aux_type=createPgSQLType();
 
@@ -4194,7 +4194,7 @@ Domain *DatabaseModel::createDomain(void)
 					elem=xmlparser.getElementName();
 
 					//If a type element is found it'll be extracted an type which the domain is applied
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						domain->setType(createPgSQLType());
 					}
@@ -4254,7 +4254,7 @@ Cast *DatabaseModel::createCast(void)
 					elem=xmlparser.getElementName();
 
 					//Extract one argument type from the XML
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						type=createPgSQLType();
 						if(type_idx==0)
@@ -4308,7 +4308,7 @@ Conversion *DatabaseModel::createConversion(void)
 		xmlparser.getElementAttributes(attribs);
 
 		conv->setEncoding(Conversion::SrcEncoding,
-							EncodingType(attribs[Attributes::SRC_ENCODING]));
+							EncodingType(attribs[Attributes::SrcEncoding]));
 
 		conv->setEncoding(Conversion::DstEncoding,
 							EncodingType(attribs[Attributes::DstEncoding]));
@@ -4405,7 +4405,7 @@ Operator *DatabaseModel::createOperator(void)
 						oper->setOperator(dynamic_cast<Operator *>(oper_aux),
 											oper_types[attribs[Attributes::RefType]]);
 					}
-					else if(elem==Attributes::TYPE)
+					else if(elem==Attributes::Type)
 					{
 						xmlparser.getElementAttributes(attribs);
 
@@ -4470,7 +4470,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 		elem_types[Attributes::Function]=OperatorClassElement::FunctionElem;
 		elem_types[Attributes::Operator]=OperatorClassElement::OperatorElem;
-		elem_types[Attributes::STORAGE]=OperatorClassElement::StorageElem;
+		elem_types[Attributes::Storage]=OperatorClassElement::StorageElem;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4496,7 +4496,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
 						op_class->setFamily(dynamic_cast<OperatorFamily *>(object));
 					}
-					else if(elem==Attributes::TYPE)
+					else if(elem==Attributes::Type)
 					{
 						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
@@ -4506,8 +4506,8 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					{
 						xmlparser.getElementAttributes(attribs);
 
-						stg_number=attribs[Attributes::STRATEGY_NUM].toUInt();
-						elem_type=elem_types[attribs[Attributes::TYPE]];
+						stg_number=attribs[Attributes::StrategyNum].toUInt();
+						elem_type=elem_types[attribs[Attributes::Type]];
 
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
@@ -4611,12 +4611,12 @@ Aggregate *DatabaseModel::createAggregate(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						xmlparser.getElementAttributes(attribs);
 						type=createPgSQLType();
 
-						if(attribs[Attributes::RefType]==Attributes::STATE_TYPE)
+						if(attribs[Attributes::RefType]==Attributes::StateType)
 							aggreg->setStateType(type);
 						else
 							aggreg->addDataType(type);
@@ -4635,7 +4635,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 								.arg(BaseObject::getTypeName(ObjectType::Function)),
 								ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-						if(attribs[Attributes::RefType]==Attributes::TRANSITION_FUNC)
+						if(attribs[Attributes::RefType]==Attributes::TransitionFunc)
 							aggreg->setFunction(Aggregate::TransitionFunc,
 												dynamic_cast<Function *>(func));
 						else
@@ -4708,7 +4708,7 @@ Table *DatabaseModel::createTable(void)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(attribs[Attributes::Name])
 									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[Attributes::TABLE])
+									.arg(aux_attribs[Attributes::Table])
 									.arg(BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -4752,7 +4752,7 @@ Table *DatabaseModel::createTable(void)
 					else if(elem==Attributes::Partitioning)
 					{
 						xmlparser.getElementAttributes(aux_attribs);
-						table->setPartitioningType(aux_attribs[Attributes::TYPE]);
+						table->setPartitioningType(aux_attribs[Attributes::Type]);
 						xmlparser.savePosition();
 
 						if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4821,7 +4821,7 @@ Column *DatabaseModel::createColumn(void)
 		column->setNotNull(attribs[Attributes::NotNull]==Attributes::True);
 		column->setDefaultValue(attribs[Attributes::DefaultValue]);
 		column->setIdSeqAttributes(attribs[Attributes::MinValue], attribs[Attributes::MaxValue], attribs[Attributes::Increment],
-																attribs[Attributes::START], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);
+																attribs[Attributes::Start], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);
 
 		if(!attribs[Attributes::IdentityType].isEmpty())
 			column->setIdentityType(IdentityType(attribs[Attributes::IdentityType]));
@@ -4850,7 +4850,7 @@ Column *DatabaseModel::createColumn(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::TYPE)
+					if(elem==Attributes::Type)
 					{
 						column->setType(createPgSQLType());
 					}
@@ -4906,7 +4906,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		else
 		{
 			obj_type=ObjectType::Table;
-			table=dynamic_cast<Table *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+			table=dynamic_cast<Table *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 			parent_obj=table;
 			ins_constr_table=true;
 
@@ -4916,7 +4916,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 						.arg(attribs[Attributes::Name])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint))
-						.arg(attribs[Attributes::TABLE])
+						.arg(attribs[Attributes::Table])
 						.arg(BaseObject::getTypeName(ObjectType::Table));
 
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4927,13 +4927,13 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		constr->setParentTable(table);
 
 		//Configuring the constraint type
-		if(attribs[Attributes::TYPE]==Attributes::CkConstr)
+		if(attribs[Attributes::Type]==Attributes::CkConstr)
 			constr_type=ConstraintType::Check;
-		else if(attribs[Attributes::TYPE]==Attributes::PkConstr)
+		else if(attribs[Attributes::Type]==Attributes::PkConstr)
 			constr_type=ConstraintType::PrimaryKey;
-		else if(attribs[Attributes::TYPE]==Attributes::FkConstr)
+		else if(attribs[Attributes::Type]==Attributes::FkConstr)
 			constr_type=ConstraintType::ForeignKey;
-		else if(attribs[Attributes::TYPE]==Attributes::UQ_CONSTR)
+		else if(attribs[Attributes::Type]==Attributes::UQ_CONSTR)
 			constr_type=ConstraintType::Unique;
 		else
 			constr_type=ConstraintType::Exclude;
@@ -5025,7 +5025,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						col_list=attribs[Attributes::Names].split(',');
 						count=col_list.count();
 
-						if(attribs[Attributes::RefType]==Attributes::SRC_COLUMNS)
+						if(attribs[Attributes::RefType]==Attributes::SrcColumns)
 							col_type=Constraint::SourceCols;
 						else
 							col_type=Constraint::ReferencedCols;
@@ -5301,10 +5301,10 @@ Index *DatabaseModel::createIndex(void)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::View));
 
 		//Raises an error if the parent table doesn't exists
 		if(!table)
@@ -5312,7 +5312,7 @@ Index *DatabaseModel::createIndex(void)
 			str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 					.arg(attribs[Attributes::Name])
 					.arg(BaseObject::getTypeName(ObjectType::Index))
-					.arg(attribs[Attributes::TABLE])
+					.arg(attribs[Attributes::Table])
 					.arg(BaseObject::getTypeName(ObjectType::Table));
 
 			throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5382,16 +5382,16 @@ Rule *DatabaseModel::createRule(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::View));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 							.arg(attribs[Attributes::Name])
 				.arg(BaseObject::getTypeName(ObjectType::Rule))
-				.arg(attribs[Attributes::TABLE])
+				.arg(attribs[Attributes::Table])
 				.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5461,16 +5461,16 @@ Trigger *DatabaseModel::createTrigger(void)
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::View));
+			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::View));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 							.arg(attribs[Attributes::Name])
 				.arg(BaseObject::getTypeName(ObjectType::Trigger))
-				.arg(attribs[Attributes::TABLE])
+				.arg(attribs[Attributes::Table])
 				.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5492,7 +5492,7 @@ Trigger *DatabaseModel::createTrigger(void)
 							(attribs[Attributes::UPD_EVENT]==Attributes::True));
 
 		trigger->setEvent(EventType::OnTruncate,
-							(attribs[Attributes::TRUNC_EVENT]==Attributes::True));
+							(attribs[Attributes::TruncEvent]==Attributes::True));
 
 		trigger->setExecutePerRow(attribs[Attributes::PerRow]==Attributes::True);
 
@@ -5618,13 +5618,13 @@ Policy *DatabaseModel::createPolicy(void)
 
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 
 		if(!table)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(attribs[Attributes::Name])
 											.arg(BaseObject::getTypeName(ObjectType::Policy))
-											.arg(attribs[Attributes::TABLE])
+											.arg(attribs[Attributes::Table])
 											.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5645,9 +5645,9 @@ Policy *DatabaseModel::createPolicy(void)
 						xmlparser.savePosition();
 						xmlparser.accessElement(XmlParser::ChildElement);
 
-						if(attribs[Attributes::TYPE] == Attributes::USING_EXP)
+						if(attribs[Attributes::Type] == Attributes::USING_EXP)
 							policy->setUsingExpression(xmlparser.getElementContent());
-						else if(attribs[Attributes::TYPE] == Attributes::CheckExp)
+						else if(attribs[Attributes::Type] == Attributes::CheckExp)
 							policy->setCheckExpression(xmlparser.getElementContent());
 
 						xmlparser.restorePosition();
@@ -5803,7 +5803,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 		sequence->setValues(attribs[Attributes::MinValue],
 				attribs[Attributes::MaxValue],
 				attribs[Attributes::Increment],
-				attribs[Attributes::START],
+				attribs[Attributes::Start],
 				attribs[Attributes::Cache]);
 
 		sequence->setCycle(attribs[Attributes::Cycle]==Attributes::True);
@@ -5903,10 +5903,10 @@ View *DatabaseModel::createView(void)
 						xmlparser.getElementAttributes(attribs);
 
 						//If the table name is specified tries to create a reference to a table/column
-						if(!attribs[Attributes::TABLE].isEmpty())
+						if(!attribs[Attributes::Table].isEmpty())
 						{
 							column=nullptr;
-							table=dynamic_cast<Table *>(getObject(attribs[Attributes::TABLE], ObjectType::Table));
+							table=dynamic_cast<Table *>(getObject(attribs[Attributes::Table], ObjectType::Table));
 
 							//Raises an error if the table doesn't exists
 							if(!table)
@@ -5914,7 +5914,7 @@ View *DatabaseModel::createView(void)
 								str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 										.arg(view->getName())
 										.arg(BaseObject::getTypeName(ObjectType::View))
-										.arg(attribs[Attributes::TABLE])
+										.arg(attribs[Attributes::Table])
 										.arg(BaseObject::getTypeName(ObjectType::Table));
 
 								throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5933,7 +5933,7 @@ View *DatabaseModel::createView(void)
 									str_aux=Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(view->getName())
 											.arg(BaseObject::getTypeName(ObjectType::View))
-											.arg(attribs[Attributes::TABLE] + QString(".") +
+											.arg(attribs[Attributes::Table] + QString(".") +
 											attribs[Attributes::Column])
 											.arg(BaseObject::getTypeName(ObjectType::Column));
 
@@ -5969,15 +5969,15 @@ View *DatabaseModel::createView(void)
 						xmlparser.getElementAttributes(attribs);
 						xmlparser.accessElement(XmlParser::ChildElement);
 
-						if(attribs[Attributes::TYPE]==Attributes::CteExpression)
+						if(attribs[Attributes::Type]==Attributes::CteExpression)
 							view->setCommomTableExpression(xmlparser.getElementContent());
 						else
 						{
-							if(attribs[Attributes::TYPE]==Attributes::SelectExp)
+							if(attribs[Attributes::Type]==Attributes::SelectExp)
 								type=Reference::SqlReferSelect;
-							else if(attribs[Attributes::TYPE]==Attributes::FromExp)
+							else if(attribs[Attributes::Type]==Attributes::FromExp)
 								type=Reference::SqlReferFrom;
-							else if(attribs[Attributes::TYPE]==Attributes::SimpleExp)
+							else if(attribs[Attributes::Type]==Attributes::SimpleExp)
 								type=Reference::SqlReferWhere;
 							else
 								type=Reference::SqlReferEndExpr;
@@ -6008,7 +6008,7 @@ View *DatabaseModel::createView(void)
 							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 											.arg(attribs[Attributes::Name])
 									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[Attributes::TABLE])
+									.arg(aux_attribs[Attributes::Table])
 									.arg(BaseObject::getTypeName(ObjectType::Tag))
 									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
@@ -6148,7 +6148,7 @@ Tag *DatabaseModel::createTag(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==Attributes::STYLE)
+					if(elem==Attributes::Style)
 					{
 						xmlparser.getElementAttributes(attribs);
 						tag->setElementColors(attribs[Attributes::Id],attribs[Attributes::Colors]);
@@ -6213,7 +6213,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	unsigned rel_type=0, i;
 	ObjectType table_types[2]={ObjectType::View, ObjectType::Table}, obj_rel_type;
 	QString str_aux, elem,
-			tab_attribs[2]={ Attributes::SRC_TABLE,
+			tab_attribs[2]={ Attributes::SrcTable,
 							 Attributes::DstTable };
 	QColor custom_color=Qt::transparent;
 	Table *table = nullptr;
@@ -6221,7 +6221,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	try
 	{
 		labels_id[Attributes::NameLabel]=BaseRelationship::RelNameLabel;
-		labels_id[Attributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_id[Attributes::SrcLabel]=BaseRelationship::SrcCardLabel;
 		labels_id[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
@@ -6231,15 +6231,15 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
 
-		if(attribs[Attributes::TYPE]!=Attributes::RelationshipTabView &&
-				attribs[Attributes::TYPE]!=Attributes::RelationshipFk)
+		if(attribs[Attributes::Type]!=Attributes::RelationshipTabView &&
+				attribs[Attributes::Type]!=Attributes::RelationshipFk)
 		{
 			table_types[0]=ObjectType::Table;
 			obj_rel_type=ObjectType::Relationship;
 		}
 		else
 		{
-			if(attribs[Attributes::TYPE]==Attributes::RelationshipFk)
+			if(attribs[Attributes::Type]==Attributes::RelationshipFk)
 				table_types[0]=ObjectType::Table;
 
 			obj_rel_type=ObjectType::BaseRelationship;
@@ -6269,7 +6269,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			/* Creates the fk relationship if it not exists. This generally happens when a foreign key is
 			added to the table after its creation. */
-			if(attribs[Attributes::TYPE]==Attributes::RelationshipFk)
+			if(attribs[Attributes::Type]==Attributes::RelationshipFk)
 			{
 				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
 				base_rel->setName(attribs[Attributes::Name]);
@@ -6324,7 +6324,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		else
 		{
 			QString pat_attrib[]= { Attributes::SrcColPattern, Attributes::DstColPattern,
-									Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
+									Attributes::SrcFkPattern, Attributes::DstFkPattern,
 									Attributes::PkPattern, Attributes::UQ_PATTERN,
 									Attributes::PkColPattern };
 
@@ -6335,7 +6335,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
-			src_mand=attribs[Attributes::SRC_REQUIRED]==Attributes::True;
+			src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
 			dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
 			deferrable=attribs[Attributes::Deferrable]==Attributes::True;
@@ -6344,17 +6344,17 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			upd_action=ActionType(attribs[Attributes::UPD_ACTION]);
 			single_pk_col=(attribs[Attributes::SinglePkColumn]==Attributes::True);
 
-			if(attribs[Attributes::TYPE]==Attributes::Relationship11)
+			if(attribs[Attributes::Type]==Attributes::Relationship11)
 				rel_type=BaseRelationship::Relationship11;
-			else if(attribs[Attributes::TYPE]==Attributes::Relationship1n)
+			else if(attribs[Attributes::Type]==Attributes::Relationship1n)
 				rel_type=BaseRelationship::Relationship1n;
-			else if(attribs[Attributes::TYPE]==Attributes::RelationshipNn)
+			else if(attribs[Attributes::Type]==Attributes::RelationshipNn)
 				rel_type=BaseRelationship::RelationshipNn;
-			else if(attribs[Attributes::TYPE]==Attributes::RelationshipGen)
+			else if(attribs[Attributes::Type]==Attributes::RelationshipGen)
 				rel_type=BaseRelationship::RelationshipGen;
-			else if(attribs[Attributes::TYPE]==Attributes::RelationshipDep)
+			else if(attribs[Attributes::Type]==Attributes::RelationshipDep)
 				rel_type=BaseRelationship::RelationshipDep;
-			else if(attribs[Attributes::TYPE]==Attributes::RelationshipPart)
+			else if(attribs[Attributes::Type]==Attributes::RelationshipPart)
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
@@ -6368,8 +6368,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			rel->setSQLDisabled(sql_disabled);
 			rel->setSiglePKColumn(single_pk_col);
 
-			if(!attribs[Attributes::TABLE_NAME].isEmpty())
-				rel->setTableNameRelNN(attribs[Attributes::TABLE_NAME]);
+			if(!attribs[Attributes::TableName].isEmpty())
+				rel->setTableNameRelNN(attribs[Attributes::TableName]);
 
 			rel->setName(attribs[Attributes::Name]);
 			rel->setAlias(attribs[Attributes::Alias]);
@@ -6411,9 +6411,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						 * the relationship contains a special primary key (created during relationship connection)
 						 * and the current constraint is the original one owned by one of the tables prior the connection
 						 * of the relationship. */
-						if(constr_attribs[Attributes::TYPE] == Attributes::PkConstr)
+						if(constr_attribs[Attributes::Type] == Attributes::PkConstr)
 						{
-							table = getTable(constr_attribs[Attributes::TABLE]);
+							table = getTable(constr_attribs[Attributes::Table]);
 							rel->setOriginalPrimaryKey(createConstraint(table));
 						}
 						else
@@ -6526,7 +6526,7 @@ Permission *DatabaseModel::createPermission(void)
 		xmlparser.accessElement(XmlParser::ChildElement);
 		xmlparser.getElementAttributes(attribs);
 
-		obj_type=BaseObject::getObjectType(attribs[Attributes::TYPE]);
+		obj_type=BaseObject::getObjectType(attribs[Attributes::Type]);
 		obj_name=attribs[Attributes::Name];
 		parent_name=attribs[Attributes::Parent];
 
@@ -6610,11 +6610,11 @@ Permission *DatabaseModel::createPermission(void)
 							priv_type=Permission::PrivReferences;
 						else if(itr->first==Attributes::SelectPriv)
 							priv_type=Permission::PrivSelect;
-						else if(itr->first==Attributes::TEMPORARY_PRIV)
+						else if(itr->first==Attributes::TemporaryPriv)
 							priv_type=Permission::PrivTemporary;
-						else if(itr->first==Attributes::TRIGGER_PRIV)
+						else if(itr->first==Attributes::TriggerPriv)
 							priv_type=Permission::PrivTrigger;
-						else if(itr->first==Attributes::TRUNCATE_PRIV)
+						else if(itr->first==Attributes::TruncatePriv)
 							priv_type=Permission::PrivTruncate;
 						else if(itr->first==Attributes::UPDATE_PRIV)
 							priv_type=Permission::PrivUpdate;
@@ -6748,7 +6748,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::IsTemplate]=(is_template ? Attributes::True : Attributes::False);
 	attributes[Attributes::AllowConns]=(allow_conns ? Attributes::True : Attributes::False);
-	attributes[Attributes::TEMPLATE_DB]=template_db;
+	attributes[Attributes::TemplateDb]=template_db;
 
 	if(def_type==SchemaParser::SqlDefinition && append_at_eod)
 	{
@@ -6810,7 +6810,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		attribs_aux[Attributes::ShellTypes]=QString();
 		attribs_aux[Attributes::Permission]=QString();
 		attribs_aux[Attributes::Schema]=QString();
-		attribs_aux[Attributes::TABLESPACE]=QString();
+		attribs_aux[Attributes::Tablespace]=QString();
 		attribs_aux[Attributes::Role]=QString();
 
 		if(def_type==SchemaParser::SqlDefinition)
@@ -9504,7 +9504,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
 			save_extattribs=false, save_genericsqls=false, save_objs_aliases=false;
-	QStringList labels_attrs={ Attributes::SRC_LABEL,
+	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
 
@@ -9628,13 +9628,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 			base_tab=dynamic_cast<BaseTable *>(object);
 
-			attribs[Attributes::TABLE]=QString();
+			attribs[Attributes::Table]=QString();
 			attribs[Attributes::Name]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
 			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
-			attribs[Attributes::TYPE]=object->getSchemaName();
+			attribs[Attributes::Type]=object->getSchemaName();
 			attribs[Attributes::Protected]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
 			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
-			attribs[Attributes::TAG]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
+			attribs[Attributes::Tag]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PrependedSql]=object->getPrependedSQL();
 			attribs[Attributes::HideExtAttribs]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
@@ -9643,7 +9643,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(TableObject::isTableObject(obj_type))
 			{
 				base_tab = dynamic_cast<TableObject *>(object)->getParentTable();
-				attribs[Attributes::TABLE]=base_tab->getSignature();
+				attribs[Attributes::Table]=base_tab->getSignature();
 			}
 
 			if(save_custom_sql && obj_type==ObjectType::Database)
@@ -9708,7 +9708,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 					attribs[Attributes::CustomColor]=(save_custom_colors && rel->getCustomColor()!=Qt::transparent ? rel->getCustomColor().name() : Attributes::None);
 
-					attribs[Attributes::SRC_TABLE]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
+					attribs[Attributes::SrcTable]=rel->getTable(BaseRelationship::SrcTable)->getSignature();
 					attribs[Attributes::SrcType]=rel->getTable(BaseRelationship::SrcTable)->getSchemaName();
 
 					attribs[Attributes::DstTable]=rel->getTable(BaseRelationship::DstTable)->getSignature();
@@ -9771,7 +9771,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_pos &&
 					(!attribs[Attributes::Position].isEmpty() ||
 					 !attribs[Attributes::RectVisible].isEmpty())) ||
-				 (save_tags && !attribs[Attributes::TAG].isEmpty()) ||
+				 (save_tags && !attribs[Attributes::Tag].isEmpty()) ||
 				 (save_objs_prot && !attribs[Attributes::Protected].isEmpty()) ||
 				 (save_objs_sqldis && !attribs[Attributes::SqlDisabled].isEmpty()) ||
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
@@ -9860,7 +9860,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 	try
 	{
-		labels_attrs[Attributes::SRC_LABEL]=BaseRelationship::SrcCardLabel;
+		labels_attrs[Attributes::SrcLabel]=BaseRelationship::SrcCardLabel;
 		labels_attrs[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
 		labels_attrs[Attributes::NameLabel]=BaseRelationship::RelNameLabel;
 
@@ -9910,7 +9910,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						obj_name=attribs[Attributes::Object];
 						xmlparser.savePosition();
 
-						obj_type=BaseObject::getObjectType(attribs[Attributes::TYPE]);
+						obj_type=BaseObject::getObjectType(attribs[Attributes::Type]);
 						progress=xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()) * 100;
 
 						if(obj_type==ObjectType::Database)
@@ -9934,10 +9934,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						}
 						else if(TableObject::isTableObject(obj_type))
 						{
-							base_tab = getTable(attribs[Attributes::TABLE]);
+							base_tab = getTable(attribs[Attributes::Table]);
 
 							if(!base_tab && (obj_type == ObjectType::Rule || obj_type == ObjectType::Index || obj_type == ObjectType::Trigger))
-								base_tab = getView(attribs[Attributes::TABLE]);
+								base_tab = getView(attribs[Attributes::Table]);
 
 							if(base_tab)
 								object = base_tab->getObject(attribs[Attributes::Object], obj_type);
@@ -9953,7 +9953,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						 involving the tables in paramenters src-table and dst-table */
 						if(!object && obj_type==ObjectType::Relationship)
 						{
-							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::SRC_TABLE],
+							src_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::SrcTable],
 																								BaseObject::getObjectType(attribs[Attributes::SrcType])));
 							dst_tab=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::DstTable],
 																								BaseObject::getObjectType(attribs[Attributes::DstType])));
@@ -9975,9 +9975,9 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(!attribs[Attributes::SqlDisabled].isEmpty())
 									object->setSQLDisabled(attribs[Attributes::SqlDisabled]==Attributes::True);
 							}
-							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[Attributes::TAG].isEmpty())
+							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[Attributes::Tag].isEmpty())
 							{
-								tag=getTag(attribs[Attributes::TAG]);
+								tag=getTag(attribs[Attributes::Tag]);
 
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);

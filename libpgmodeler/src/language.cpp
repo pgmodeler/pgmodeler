@@ -26,7 +26,7 @@ Language::Language(void)
 	for(unsigned i=ValidatorFunc; i <= InlineFunc; i++)
 		functions[i]=nullptr;
 
-	attributes[Attributes::TRUSTED]=QString();
+	attributes[Attributes::Trusted]=QString();
 	attributes[Attributes::HandlerFunc]=QString();
 	attributes[Attributes::VALIDATOR_FUNC]=QString();
 	attributes[Attributes::InlineFunc]=QString();
@@ -120,7 +120,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 							 Attributes::HandlerFunc,
 							 Attributes::InlineFunc};
 
-	attributes[Attributes::TRUSTED]=(is_trusted ? Attributes::True : QString());
+	attributes[Attributes::Trusted]=(is_trusted ? Attributes::True : QString());
 
 	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
 		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());

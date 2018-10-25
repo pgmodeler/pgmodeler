@@ -578,7 +578,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Recursive]=(recursive ? Attributes::True : QString());
 	attributes[Attributes::WITH_NO_DATA]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::TAG]=QString();
+	attributes[Attributes::Tag]=QString();
 	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
 
 	setSQLObjectAttribute();
@@ -587,7 +587,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Columns]=getColumnsList().join(',');
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::TAG]=tag->getCodeDefinition(def_type, true);
+		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
 
 	if(def_type==SchemaParser::SqlDefinition)
 		setDefinitionAttribute();

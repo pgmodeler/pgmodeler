@@ -24,8 +24,8 @@ Aggregate::Aggregate(void)
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
 	attributes[Attributes::TYPES]=QString();
-	attributes[Attributes::TRANSITION_FUNC]=QString();
-	attributes[Attributes::STATE_TYPE]=QString();
+	attributes[Attributes::TransitionFunc]=QString();
+	attributes[Attributes::StateType]=QString();
 	attributes[Attributes::BaseType]=QString();
 	attributes[Attributes::FinalFunc]=QString();
 	attributes[Attributes::InitialCond]=QString();
@@ -229,12 +229,12 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	if(functions[TransitionFunc])
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getSignature();
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getSignature();
 		else
 		{
 			functions[TransitionFunc]->setAttribute(Attributes::RefType,
-													 Attributes::TRANSITION_FUNC);
-			attributes[Attributes::TRANSITION_FUNC]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
+													 Attributes::TransitionFunc);
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
@@ -262,9 +262,9 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::InitialCond]=initial_condition;
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[Attributes::STATE_TYPE]=*(state_type);
+		attributes[Attributes::StateType]=*(state_type);
 	else
-		attributes[Attributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,Attributes::STATE_TYPE);
+		attributes[Attributes::StateType]=state_type.getCodeDefinition(def_type,Attributes::StateType);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

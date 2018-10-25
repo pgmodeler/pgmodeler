@@ -217,11 +217,11 @@ QString Reference::getXMLDefinition(void)
 	attribs_map attribs;
 	SchemaParser schparser;
 
-	attribs[Attributes::TABLE]=QString();
+	attribs[Attributes::Table]=QString();
 	attribs[Attributes::Column]=QString();
 
 	if(table)
-		attribs[Attributes::TABLE]=table->getName(true);
+		attribs[Attributes::Table]=table->getName(true);
 
 	if(column)
 		attribs[Attributes::Column]=column->getName();

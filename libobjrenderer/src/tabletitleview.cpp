@@ -75,9 +75,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 	else
 	{
-		name_attrib=Attributes::TABLE_NAME;
-		schema_name_attrib=Attributes::TABLE_SCHEMA_NAME;
-		title_color_attrib=Attributes::TABLE_TITLE;
+		name_attrib=Attributes::TableName;
+		schema_name_attrib=Attributes::TableSchemaName;
+		title_color_attrib=Attributes::TableTitle;
 	}
 
 	//Strike out the table name when its sql is disabled

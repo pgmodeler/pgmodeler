@@ -22,17 +22,17 @@ Column::Column(void)
 {
 	obj_type=ObjectType::Column;
 	not_null=seq_cycle=false;
-	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Type]=QString();
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NotNull]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::Sequence]=QString();
 	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::IdentityType]=QString();
 	attributes[Attributes::Increment]=QString();
 	attributes[Attributes::MinValue]=QString();
 	attributes[Attributes::MaxValue]=QString();
-	attributes[Attributes::START]=QString();
+	attributes[Attributes::Start]=QString();
 	attributes[Attributes::Cache]=QString();
 	attributes[Attributes::Cycle]=QString();
 
@@ -238,9 +238,9 @@ QString Column::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	if(getParentTable())
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);	
+	attributes[Attributes::Type]=type.getCodeDefinition(def_type);	
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::IdentityType]=QString();
 
@@ -250,7 +250,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Increment]=seq_increment;
 		attributes[Attributes::MinValue]=seq_min_value;
 		attributes[Attributes::MaxValue]=seq_max_value;
-		attributes[Attributes::START]=seq_start;
+		attributes[Attributes::Start]=seq_start;
 		attributes[Attributes::Cache]=seq_cache;
 		attributes[Attributes::Cycle]=(seq_cycle ? Attributes::True : QString());
 	}
@@ -290,13 +290,13 @@ QString Column::getAlterDefinition(BaseObject *object)
 		BaseObject::setBasicAttributes(true);
 
 		if(getParentTable())
-			attribs[Attributes::TABLE]=getParentTable()->getName(true);
+			attribs[Attributes::Table]=getParentTable()->getName(true);
 
 		if(!this->type.isEquivalentTo(col->type) ||
 				(this->type.isEquivalentTo(col->type) &&
 				 ((this->type.hasVariableLength() && (this->type.getLength()!=col->type.getLength())) ||
 					(this->type.acceptsPrecision() && (this->type.getPrecision()!=col->type.getPrecision())))))
-			attribs[Attributes::TYPE]=col->type.getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Type]=col->type.getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(col->sequence)
 			def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature());
@@ -322,7 +322,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		attribs[Attributes::CurIdentityType] = QString();
 		attribs[Attributes::MinValue] = QString();
 		attribs[Attributes::MaxValue] = QString();
-		attribs[Attributes::START] = QString();
+		attribs[Attributes::Start] = QString();
 		attribs[Attributes::Increment] = QString();
 		attribs[Attributes::Cache] = QString();
 		attribs[Attributes::Cycle] = QString();
@@ -344,7 +344,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 
 			if(!col->seq_start.isEmpty() && this->seq_start != col->seq_start)
 			{
-				attribs[Attributes::START] = col->seq_start;
+				attribs[Attributes::Start] = col->seq_start;
 				ident_seq_changed = true;
 			}
 

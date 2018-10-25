@@ -83,10 +83,10 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		event_cmb->setCurrentText(~event_trig->getEvent());
 		function_sel->setSelectedObject(event_trig->getFunction());
 
-		QStringList filter=event_trig->getFilter(Attributes::TAG.toUpper());
+		QStringList filter=event_trig->getFilter(Attributes::Tag.toUpper());
 
 		if(filter.isEmpty())
-			filter=event_trig->getFilter(Attributes::TAG);
+			filter=event_trig->getFilter(Attributes::Tag);
 
 		filter_tab->blockSignals(true);
 
@@ -118,7 +118,7 @@ void EventTriggerWidget::applyConfiguration(void)
 
 		event_trig->clearFilter();
 		for(unsigned row=0; row < filter_tab->getRowCount(); row++)
-			event_trig->setFilter(Attributes::TAG.toUpper(), filter_tab->getCellText(row, 0));
+			event_trig->setFilter(Attributes::Tag.toUpper(), filter_tab->getCellText(row, 0));
 
 		finishConfiguration();
 	}

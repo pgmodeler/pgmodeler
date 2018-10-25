@@ -518,7 +518,7 @@ void RelationshipWidget::usePatternGlobalSettings(bool value)
 
 			//Using the global settings
 			pk_pattern_txt->setPlainText(confs[rel_type][Attributes::PkPattern]);
-			src_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::SRC_FK_PATTERN]);
+			src_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::SrcFkPattern]);
 			dst_fk_pattern_txt->setPlainText(confs[rel_type][Attributes::DstFkPattern]);
 			uq_pattern_txt->setPlainText(confs[rel_type][Attributes::UQ_PATTERN]);
 			src_col_pattern_txt->setPlainText(confs[rel_type][Attributes::SrcColPattern]);

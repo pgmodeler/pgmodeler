@@ -86,7 +86,7 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::Alias]=QString();
 	attributes[Attributes::Comment]=QString();
 	attributes[Attributes::Owner]=QString();
-	attributes[Attributes::TABLESPACE]=QString();
+	attributes[Attributes::Tablespace]=QString();
 	attributes[Attributes::Schema]=QString();
 	attributes[Attributes::Collation]=QString();
 	attributes[Attributes::Protected]=QString();
@@ -729,9 +729,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(tablespace)
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::TABLESPACE]=tablespace->getName(format);
+				attributes[Attributes::Tablespace]=tablespace->getName(format);
 			else
-				attributes[Attributes::TABLESPACE]=tablespace->getCodeDefinition(def_type, true);
+				attributes[Attributes::Tablespace]=tablespace->getCodeDefinition(def_type, true);
 		}
 
 		if(collation && attributes[Attributes::Collation].isEmpty())
@@ -1193,7 +1193,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 
 	try
 	{
-		QStringList attribs={ Attributes::Owner, Attributes::Schema, Attributes::TABLESPACE };
+		QStringList attribs={ Attributes::Owner, Attributes::Schema, Attributes::Tablespace };
 		bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
 		BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
 				*aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };

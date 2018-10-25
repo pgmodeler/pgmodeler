@@ -116,7 +116,7 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	QStringList rol_names;
 
 	if(getParentTable())
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[Attributes::Command] = ~policy_cmd;
 

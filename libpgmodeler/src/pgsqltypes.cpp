@@ -1595,7 +1595,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs[Attributes::IntervalType]=QString();
 		attribs[Attributes::SpatialType]=QString();
 		attribs[Attributes::VARIATION]=QString();
-		attribs[Attributes::SRID]=QString();
+		attribs[Attributes::Srid]=QString();
 		attribs[Attributes::RefType]=ref_type;
 
 		attribs[Attributes::Name]=(~(*this));
@@ -1614,7 +1614,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		{
 			attribs[Attributes::SpatialType]=(~spatial_type);
 			attribs[Attributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
-			attribs[Attributes::SRID]=QString("%1").arg(spatial_type.getSRID());
+			attribs[Attributes::Srid]=QString("%1").arg(spatial_type.getSRID());
 		}
 
 		if(with_timezone)

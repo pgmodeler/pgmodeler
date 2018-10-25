@@ -114,7 +114,7 @@ void TableObject::setCodeInvalidated(bool value)
 QString TableObject::getDropDefinition(bool cascade)
 {
 	if(getParentTable())
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[this->getSchemaName()]=Attributes::True;
 

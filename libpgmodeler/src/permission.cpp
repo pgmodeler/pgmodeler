@@ -42,7 +42,7 @@ Permission::Permission(BaseObject *obj)
 	revoke=cascade=false;
 
 	attributes[Attributes::Object]=QString();
-	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Type]=QString();
 	attributes[Attributes::Parent]=QString();
 	attributes[Attributes::GrantOp]=QString();
 	attributes[Attributes::Roles]=QString();
@@ -413,9 +413,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	ObjectType obj_type;
 	QString priv_vect[12]={ Attributes::SelectPriv, Attributes::InsertPriv,
 							Attributes::UPDATE_PRIV, Attributes::DeletePriv,
-							Attributes::TRUNCATE_PRIV, Attributes::ReferencesPriv,
-							Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
-							Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
+							Attributes::TruncatePriv, Attributes::ReferencesPriv,
+							Attributes::TriggerPriv, Attributes::CreatePriv,
+							Attributes::ConnectPriv, Attributes::TemporaryPriv,
 							Attributes::ExecutPriv, Attributes::USAGE_PRIV };
 
 	obj_type=object->getObjectType();
@@ -426,11 +426,11 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 	{
 		//Views and Tables uses the same key word when setting permission (TABLE)
-		attributes[Attributes::TYPE]=
+		attributes[Attributes::Type]=
 				(object->getObjectType()==ObjectType::View ? BaseObject::getSQLName(ObjectType::Table): BaseObject::getSQLName(object->getObjectType()));
 	}
 	else
-		attributes[Attributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
+		attributes[Attributes::Type]=BaseObject::getSchemaName(object->getObjectType());
 
 	if(obj_type==ObjectType::Column)
 	{

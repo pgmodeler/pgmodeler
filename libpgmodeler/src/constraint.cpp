@@ -33,17 +33,17 @@ Constraint::Constraint(void)
 	attributes[Attributes::UQ_CONSTR]=QString();
 	attributes[Attributes::ExConstr]=QString();
 	attributes[Attributes::RefTable]=QString();
-	attributes[Attributes::SRC_COLUMNS]=QString();
+	attributes[Attributes::SrcColumns]=QString();
 	attributes[Attributes::DstColumns]=QString();
 	attributes[Attributes::DelAction]=QString();
 	attributes[Attributes::UPD_ACTION]=QString();
 	attributes[Attributes::Expression]=QString();
-	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Type]=QString();
 	attributes[Attributes::ComparisonType]=QString();
 	attributes[Attributes::DeferType]=QString();
 	attributes[Attributes::IndexType]=QString();
 	attributes[Attributes::Deferrable]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::DeclInTable]=QString();
 	attributes[Attributes::Factor]=QString();
 	attributes[Attributes::NoInherit]=QString();
@@ -202,7 +202,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
 	else
 	{
 		col_vector=&columns;
-		attrib=Attributes::SRC_COLUMNS;
+		attrib=Attributes::SrcColumns;
 	}
 
 	count=col_vector->size();
@@ -689,7 +689,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	}
 	attributes[attrib]=Attributes::True;
 
-	attributes[Attributes::TYPE]=attrib;
+	attributes[Attributes::Type]=attrib;
 	attributes[Attributes::UPD_ACTION]=(~upd_action);
 	attributes[Attributes::DelAction]=(~del_action);
 	attributes[Attributes::Expression]=expression;
@@ -718,7 +718,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[Attributes::IndexType]=(~ index_type);
 
 	if(getParentTable())
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	setDeclInTableAttribute();
 

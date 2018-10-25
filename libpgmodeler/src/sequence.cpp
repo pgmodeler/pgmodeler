@@ -35,11 +35,11 @@ Sequence::Sequence(void)
 	attributes[Attributes::Increment]=QString();
 	attributes[Attributes::MinValue]=QString();
 	attributes[Attributes::MaxValue]=QString();
-	attributes[Attributes::START]=QString();
+	attributes[Attributes::Start]=QString();
 	attributes[Attributes::Cache]=QString();
 	attributes[Attributes::Cycle]=QString();
 	attributes[Attributes::OwnerColumn]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::Column]=QString();
 	attributes[Attributes::ColIsIdentity]=QString();
 }
@@ -396,7 +396,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 		table=dynamic_cast<Table *>(owner_col->getParentTable());
 	}
 
-	attributes[Attributes::TABLE]=(table ? table->getName(true) : QString());
+	attributes[Attributes::Table]=(table ? table->getName(true) : QString());
 	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : QString());
 
 	attributes[Attributes::ColIsIdentity]=
@@ -405,7 +405,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Increment]=increment;
 	attributes[Attributes::MinValue]=min_value;
 	attributes[Attributes::MaxValue]=max_value;
-	attributes[Attributes::START]=start;
+	attributes[Attributes::Start]=start;
 	attributes[Attributes::Cache]=cache;
 	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
 
@@ -438,7 +438,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 
 				if(table)
 				{
-					attribs[Attributes::TABLE]=table->getName(true);
+					attribs[Attributes::Table]=table->getName(true);
 					attribs[Attributes::Column]=seq->owner_col->getName(true);
 				}
 			}
@@ -456,7 +456,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::MaxValue]=seq->max_value;
 
 		if(!seq->start.isEmpty() && this->start!=seq->start)
-			attribs[Attributes::START]=seq->start;
+			attribs[Attributes::Start]=seq->start;
 
 		if(!seq->cache.isEmpty() && this->cache!=seq->cache)
 			attribs[Attributes::Cache]=seq->cache;

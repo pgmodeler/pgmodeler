@@ -26,9 +26,9 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	unsigned i;
 	QString privs[]={ Attributes::SelectPriv, Attributes::InsertPriv,
 					  Attributes::UPDATE_PRIV, Attributes::DeletePriv,
-					  Attributes::TRUNCATE_PRIV, Attributes::ReferencesPriv,
-					  Attributes::TRIGGER_PRIV, Attributes::CreatePriv,
-					  Attributes::ConnectPriv, Attributes::TEMPORARY_PRIV,
+					  Attributes::TruncatePriv, Attributes::ReferencesPriv,
+					  Attributes::TriggerPriv, Attributes::CreatePriv,
+					  Attributes::ConnectPriv, Attributes::TemporaryPriv,
 					  Attributes::ExecutPriv, Attributes::USAGE_PRIV };
 
 	Ui_PermissionWidget::setupUi(this);

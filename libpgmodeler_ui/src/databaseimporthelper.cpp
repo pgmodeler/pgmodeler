@@ -279,7 +279,7 @@ void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const Q
 		for(auto &itr : cols)
 		{
 			col_oid=itr.at(Attributes::Oid).toUInt();
-			tab_oid=itr.at(Attributes::TABLE).toUInt();
+			tab_oid=itr.at(Attributes::Table).toUInt();
 			columns[tab_oid][col_oid]=itr;
 		}
 	}
@@ -420,8 +420,8 @@ void DatabaseImportHelper::createConstraints(void)
 		try
 		{
 			//Check constraints are created only if they are not inherited, other types are created normally
-			if(attribs[Attributes::TYPE]!=Attributes::CkConstr ||
-					(attribs[Attributes::TYPE]==Attributes::CkConstr &&
+			if(attribs[Attributes::Type]!=Attributes::CkConstr ||
+					(attribs[Attributes::Type]==Attributes::CkConstr &&
 					 attribs[Attributes::Inherited]!=Attributes::True))
 			{
 				emit s_progressUpdated(progress,
@@ -686,8 +686,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(attribs.count(Attributes::Owner))
 				attribs[Attributes::Owner]=getDependencyObject(attribs[Attributes::Owner], ObjectType::Role, false, auto_resolve_deps);
 
-			if(attribs.count(Attributes::TABLESPACE))
-				attribs[Attributes::TABLESPACE]=getDependencyObject(attribs[Attributes::TABLESPACE], ObjectType::Tablespace, false, auto_resolve_deps);
+			if(attribs.count(Attributes::Tablespace))
+				attribs[Attributes::Tablespace]=getDependencyObject(attribs[Attributes::Tablespace], ObjectType::Tablespace, false, auto_resolve_deps);
 
 			if(attribs.count(Attributes::Schema))
 				attribs[Attributes::Schema]=getDependencyObject(attribs[Attributes::Schema], ObjectType::Schema, false, auto_resolve_deps);
@@ -1015,7 +1015,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 			attribs[Attributes::Constraints]+= schparser.getCodeDefinition(Attributes::DomConstraint, aux_attribs, SchemaParser::XmlDefinition);
 		}
 
-		attribs[Attributes::TYPE]=getType(attribs[Attributes::TYPE], true, attribs);
+		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true, attribs);
 		attribs[Attributes::Collation]=getDependencyObject(attribs[Attributes::Collation], ObjectType::Collation);
 		loadObjectXML(ObjectType::Domain, attribs);
 		dom=dbmodel->createDomain();
@@ -1143,7 +1143,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		//Case the function's language is C the symbol is the 'definition' attribute
 		if(getObjectName(attribs[Attributes::Language])==~LanguageType("c"))
 		{
-			attribs[Attributes::SYMBOL]=attribs[Attributes::Definition];
+			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();
 		}
 
@@ -1241,20 +1241,20 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 		QStringList array_vals, list;
 
 		attribs[Attributes::Family]=getObjectName(attribs[Attributes::Family], true);
-		attribs[Attributes::TYPE]=getType(attribs[Attributes::TYPE], true, attribs);
+		attribs[Attributes::Type]=getType(attribs[Attributes::Type], true, attribs);
 
 		//Generating attributes for STORAGE elements
-		if(attribs[Attributes::STORAGE]!=QString("0"))
+		if(attribs[Attributes::Storage]!=QString("0"))
 		{
-			elem_attr[Attributes::STORAGE]=Attributes::True;
-			elem_attr[Attributes::Definition]=getType(attribs[Attributes::STORAGE], true);
+			elem_attr[Attributes::Storage]=Attributes::True;
+			elem_attr[Attributes::Definition]=getType(attribs[Attributes::Storage], true);
 			elems.push_back(elem_attr);
 		}
 		else if(attribs[Attributes::Function].isEmpty() &&
 				attribs[Attributes::Operator].isEmpty())
 		{
-			elem_attr[Attributes::STORAGE]=Attributes::True;
-			elem_attr[Attributes::Definition]=attribs[Attributes::TYPE];
+			elem_attr[Attributes::Storage]=Attributes::True;
+			elem_attr[Attributes::Definition]=attribs[Attributes::Type];
 			elems.push_back(elem_attr);
 		}
 
@@ -1268,7 +1268,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			for(int i=0; i < array_vals.size(); i++)
 			{
 				list=array_vals[i].split(':');
-				elem_attr[Attributes::STRATEGY_NUM]=list[0];
+				elem_attr[Attributes::StrategyNum]=list[0];
 				elem_attr[Attributes::Definition]=getDependencyObject(list[1], ObjectType::Function, true);
 				elems.push_back(elem_attr);
 			}
@@ -1285,7 +1285,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 			{
 				list=array_vals[i].split(':');
 				elem_attr[Attributes::Definition]="";
-				elem_attr[Attributes::STRATEGY_NUM]=list[0];
+				elem_attr[Attributes::StrategyNum]=list[0];
 				elem_attr[Attributes::Definition]+=getDependencyObject(list[1], ObjectType::Operator, true);
 				elem_attr[Attributes::Definition]+=getDependencyObject(list[2], ObjectType::OpFamily, true);
 				elems.push_back(elem_attr);
@@ -1438,7 +1438,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 	{
 		QStringList owner_col=attribs[Attributes::OwnerColumn].split(':'),
 				seq_attribs=Catalog::parseArrayValues(attribs[Attributes::Attribute]);
-		QString attr[]={ Attributes::START, Attributes::MinValue,
+		QString attr[]={ Attributes::Start, Attributes::MinValue,
 						 Attributes::MaxValue, Attributes::Increment,
 						 Attributes::Cache, Attributes::Cycle };
 
@@ -1501,7 +1501,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	try
 	{
 		QStringList types;
-		QString func_types[]={ Attributes::TRANSITION_FUNC,
+		QString func_types[]={ Attributes::TransitionFunc,
 													 Attributes::FinalFunc },
 				sch_name;
 
@@ -1517,8 +1517,8 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 				attribs[Attributes::TYPES]+=types[i];
 		}
 
-		attribs[Attributes::STATE_TYPE]=getType(attribs[Attributes::STATE_TYPE], true,
-		{{Attributes::RefType, Attributes::STATE_TYPE}});
+		attribs[Attributes::StateType]=getType(attribs[Attributes::StateType], true,
+		{{Attributes::RefType, Attributes::StateType}});
 		attribs[Attributes::SortOp]=getDependencyObject(attribs[Attributes::SortOp], ObjectType::Operator, true);
 
 		loadObjectXML(ObjectType::Aggregate, attribs);
@@ -1559,8 +1559,8 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 			QStringList comp_attribs, values;
 			TypeAttribute type_attrib;
 
-			comp_attribs=Catalog::parseArrayValues(attribs[Attributes::TYPE_ATTRIBUTE]);
-			attribs[Attributes::TYPE_ATTRIBUTE]=QString();
+			comp_attribs=Catalog::parseArrayValues(attribs[Attributes::TypeAttribute]);
+			attribs[Attributes::TypeAttribute]=QString();
 
 			for(int i=0; i < comp_attribs.size(); i++)
 			{
@@ -1571,7 +1571,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 					type_attrib.setName(values[0].remove('"'));
 					type_attrib.setType(PgSqlType::parseString(values[1].remove('\\')));
 					type_attrib.setCollation(dbmodel->getObject(getObjectName(values[2].remove('"')),	ObjectType::Collation));
-					attribs[Attributes::TYPE_ATTRIBUTE]+=type_attrib.getCodeDefinition(SchemaParser::XmlDefinition);
+					attribs[Attributes::TypeAttribute]+=type_attrib.getCodeDefinition(SchemaParser::XmlDefinition);
 				}
 			}
 		}
@@ -1579,11 +1579,11 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 		{
 			QStringList range_attr=Catalog::parseArrayValues(attribs[Attributes::RangeAttribs]);
 
-			attribs[Attributes::SUBTYPE]=getType(range_attr[0], true);
+			attribs[Attributes::Subtype]=getType(range_attr[0], true);
 			attribs[Attributes::Collation]=getDependencyObject(range_attr[1], ObjectType::Collation, true);
 			attribs[Attributes::OpClass]=getDependencyObject(range_attr[2], ObjectType::OpClass, true);
 			attribs[Attributes::CanonicalFunc]=getDependencyObject(range_attr[3], ObjectType::Function, true);
-			attribs[Attributes::SUBTYPE_DIFF_FUNC]=getDependencyObject(range_attr[4], ObjectType::Function, true);
+			attribs[Attributes::SubtypeDiffFunc]=getDependencyObject(range_attr[4], ObjectType::Function, true);
 		}
 		else
 		{
@@ -1592,8 +1592,8 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 								   Attributes::OutputFunc,
 								   Attributes::RecvFunc,
 								   Attributes::SendFunc,
-								   Attributes::TPMOD_IN_FUNC,
-								   Attributes::TPMOD_OUT_FUNC,
+								   Attributes::TpmodInFunc,
+								   Attributes::TpmodOutFunc,
 								   Attributes::AnalyzeFunc };
 			unsigned i, count=sizeof(func_types)/sizeof(QString);
 
@@ -1673,7 +1673,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 				inh_cols.push_back(col_idx);
 
 			col.setName(itr->second[Attributes::Name]);
-			type_oid=itr->second[Attributes::TYPE_OID].toUInt();
+			type_oid=itr->second[Attributes::TypeOid].toUInt();
 
 			/* If the type has an entry on the types map and its OID is greater than system object oids,
 		 means that it's a user defined type, thus, there is the need to check if the type
@@ -1700,7 +1700,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			else
 			{
 				is_type_registered=(types.count(type_oid)!=0);
-				type_name=itr->second[Attributes::TYPE];
+				type_name=itr->second[Attributes::Type];
 			}
 
 			/* Checking if the type used by the column exists (is registered),
@@ -1709,13 +1709,13 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		 the non-array type, this way, if the original type is created there is no need to create the array form */
 			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
 			{
-				type_def=getDependencyObject(itr->second[Attributes::TYPE_OID], ObjectType::Type);
+				type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Type);
 				unknown_obj_xml=UnkownObjectOidXml.arg(type_oid);
 
 				/* If the type still doesn't exists means that the column maybe is referencing a domain
 		  this way pgModeler will try to retrieve the mentionend object */
 				if(type_def==unknown_obj_xml)
-					type_def=getDependencyObject(itr->second[Attributes::TYPE_OID], ObjectType::Domain);
+					type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Domain);
 			}
 
 			col.setIdentityType(BaseType::Null);
@@ -1916,10 +1916,10 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 
 		attribs[Attributes::Commands]=Catalog::parseRuleCommands(attribs[Attributes::Commands]).join(';');
 
-		if(attribs[Attributes::TABLE_TYPE]==BaseObject::getSchemaName(ObjectType::View))
+		if(attribs[Attributes::TableType]==BaseObject::getSchemaName(ObjectType::View))
 			table_type=ObjectType::View;
 
-		attribs[Attributes::TABLE]=getDependencyObject(attribs[Attributes::TABLE], table_type, true, auto_resolve_deps, false);
+		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 
 		loadObjectXML(ObjectType::Rule, attribs);
 		rule=dbmodel->createRule();
@@ -1938,11 +1938,11 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	{
 		ObjectType table_type=ObjectType::Table;
 
-		if(attribs[Attributes::TABLE_TYPE]==BaseObject::getSchemaName(ObjectType::View))
+		if(attribs[Attributes::TableType]==BaseObject::getSchemaName(ObjectType::View))
 			table_type=ObjectType::View;
 
-		attribs[Attributes::TABLE]=getDependencyObject(attribs[Attributes::TABLE], table_type, true, auto_resolve_deps, false);
-		attribs[Attributes::TRIGGER_FUNC]=getDependencyObject(attribs[Attributes::TRIGGER_FUNC], ObjectType::Function, true, true);
+		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
+		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 		attribs[Attributes::Arguments]=Catalog::parseArrayValues(attribs[Attributes::Arguments].remove(QString(",\"\""))).join(',');
 
 		loadObjectXML(ObjectType::Trigger, attribs);
@@ -2011,12 +2011,12 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		int i;
 
 		attribs[Attributes::Factor]=QString("90");
-		tab_name=getDependencyObject(attribs[Attributes::TABLE], ObjectType::Table, true, auto_resolve_deps, false);
+		tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
 		parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, ObjectType::Table));
 
 		if(!parent_tab)
 		{
-			tab_name=getDependencyObject(attribs[Attributes::TABLE], ObjectType::View, true, auto_resolve_deps, false);
+			tab_name=getDependencyObject(attribs[Attributes::Table], ObjectType::View, true, auto_resolve_deps, false);
 			parent_tab=dynamic_cast<BaseTable *>(dbmodel->getObject(tab_name, ObjectType::View));
 
 			if(!parent_tab)
@@ -2038,9 +2038,9 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 			if(cols[i]!=QString("0"))
 			{
 				if(parent_tab->getObjectType() == ObjectType::Table)
-					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::TABLE], cols[i])));
+					elem.setColumn(dynamic_cast<Table *>(parent_tab)->getColumn(getColumnName(attribs[Attributes::Table], cols[i])));
 				else
-					elem.setExpression(getColumnName(attribs[Attributes::TABLE], cols[i]));
+					elem.setExpression(getColumnName(attribs[Attributes::Table], cols[i]));
 			}
 			else if(!exprs.isEmpty())
 			{
@@ -2072,7 +2072,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 				attribs[Attributes::Elements]+=elem.getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
-		attribs[Attributes::TABLE]=tab_name;
+		attribs[Attributes::Table]=tab_name;
 		loadObjectXML(ObjectType::Index, attribs);
 		dbmodel->createIndex();
 	}
@@ -2089,7 +2089,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 
 	try
 	{
-		QString table_oid=attribs[Attributes::TABLE],
+		QString table_oid=attribs[Attributes::Table],
 				ref_tab_oid=attribs[Attributes::RefTable],
 				tab_name;
 		Table *table=nullptr;
@@ -2105,10 +2105,10 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			if(!factor.isEmpty() && factor[0].startsWith(QString("fillfactor=")))
 				attribs[Attributes::Factor]=factor[0].remove(QString("fillfactor="));
 
-			attribs[attribs[Attributes::TYPE]]=Attributes::True;
+			attribs[attribs[Attributes::Type]]=Attributes::True;
 			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, ObjectType::Table));
 
-			if(attribs[Attributes::TYPE]==Attributes::ExConstr)
+			if(attribs[Attributes::Type]==Attributes::ExConstr)
 			{
 				QStringList cols, opclasses, opers, exprs;
 				ExcludeElement elem;
@@ -2116,7 +2116,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				OperatorClass *opclass=nullptr;
 				Operator *oper=nullptr;
 
-				attribs[Attributes::SRC_COLUMNS]=QString();
+				attribs[Attributes::SrcColumns]=QString();
 				attribs[Attributes::Expression]=attribs[Attributes::Condition];
 
 				cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
@@ -2169,15 +2169,15 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			else
 			{
 				//Clears the tablespace attribute when the constraint is fk avoiding errors
-				if(attribs[Attributes::TYPE]==Attributes::FkConstr)
-					attribs[Attributes::TABLESPACE]=QString();
+				if(attribs[Attributes::Type]==Attributes::FkConstr)
+					attribs[Attributes::Tablespace]=QString();
 
-				attribs[Attributes::SRC_COLUMNS]=getColumnNames(attribs[Attributes::TABLE], attribs[Attributes::SRC_COLUMNS]).join(',');
+				attribs[Attributes::SrcColumns]=getColumnNames(attribs[Attributes::Table], attribs[Attributes::SrcColumns]).join(',');
 			}
 
 			attribs[Attributes::RefTable]=getDependencyObject(ref_tab_oid, ObjectType::Table, false, true, false);
 			attribs[Attributes::DstColumns]=getColumnNames(ref_tab_oid, attribs[Attributes::DstColumns]).join(',');
-			attribs[Attributes::TABLE]=tab_name;
+			attribs[Attributes::Table]=tab_name;
 
 			loadObjectXML(ObjectType::Constraint, attribs);
 			constr=dbmodel->createConstraint(nullptr);
@@ -2200,7 +2200,7 @@ void DatabaseImportHelper::createPolicy(attribs_map &attribs)
 {
 	try
 	{
-		attribs[Attributes::TABLE]=getDependencyObject(attribs[Attributes::TABLE], ObjectType::Table, true, auto_resolve_deps, false);
+		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], ObjectType::Table, true, auto_resolve_deps, false);
 		attribs[Attributes::Roles]=getObjectNames(attribs[Attributes::Roles]).join(',');
 		loadObjectXML(ObjectType::Policy, attribs);
 		dbmodel->createPolicy();
@@ -2219,7 +2219,7 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 		attribs[Attributes::Function]=getDependencyObject(attribs[Attributes::Function], ObjectType::Function, true, true);
 		attribs[Attributes::Filter]=QString("\t<%1 %2=\"%3\" %4=\"%5\"/>\n")
 										   .arg(Attributes::Filter)
-										   .arg(Attributes::VARIABLE).arg(Attributes::TAG.toUpper())
+										   .arg(Attributes::VARIABLE).arg(Attributes::Tag.toUpper())
 										   .arg(Attributes::VALUES)
 										   .arg(Catalog::parseArrayValues(attribs[Attributes::VALUES].remove('"')).join(','));
 
@@ -2266,8 +2266,8 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			else
 			{
 				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
-				table=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(attribs[Attributes::TABLE]), ObjectType::Table));
-				object=table->getObject(getColumnName(attribs[Attributes::TABLE], attribs[Attributes::Oid]), ObjectType::Column);
+				table=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), ObjectType::Table));
+				object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
 			}
 		}
 

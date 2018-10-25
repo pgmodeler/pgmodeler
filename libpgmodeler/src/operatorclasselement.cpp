@@ -125,12 +125,12 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	SchemaParser schparser;
 	attribs_map attributes;
 
-	attributes[Attributes::TYPE]=QString();
-	attributes[Attributes::STRATEGY_NUM]=QString();
+	attributes[Attributes::Type]=QString();
+	attributes[Attributes::StrategyNum]=QString();
 	attributes[Attributes::Signature]=QString();
 	attributes[Attributes::Function]=QString();
 	attributes[Attributes::Operator]=QString();
-	attributes[Attributes::STORAGE]=QString();
+	attributes[Attributes::Storage]=QString();
 	attributes[Attributes::OpFamily]=QString();
 	attributes[Attributes::Definition]=QString();
 
@@ -138,7 +138,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	{
 		//FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
 		attributes[Attributes::Function]=Attributes::True;
-		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
+		attributes[Attributes::StrategyNum]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::Signature]=function->getSignature();
@@ -149,7 +149,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	{
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ FOR SEARCH | FOR ORDER BY sort_family_name ]
 		attributes[Attributes::Operator]=Attributes::True;
-		attributes[Attributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
+		attributes[Attributes::StrategyNum]=QString("%1").arg(strategy_number);
 
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::Signature]=_operator->getSignature();
@@ -167,10 +167,10 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	else if(element_type==StorageElem && storage!=PgSqlType::Null)
 	{
 		//STORAGE storage_type
-		attributes[Attributes::STORAGE]=Attributes::True;
+		attributes[Attributes::Storage]=Attributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::TYPE]=(*storage);
+			attributes[Attributes::Type]=(*storage);
 		else
 			attributes[Attributes::Definition]=storage.getCodeDefinition(def_type);
 	}

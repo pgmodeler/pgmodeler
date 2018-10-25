@@ -327,7 +327,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 									Attributes::FadedOut,
 									Attributes::HideExtAttribs},
 								{ Attributes::Role,
-									Attributes::TABLESPACE,
+									Attributes::Tablespace,
 									Attributes::Collation,
 									Attributes::Position,
 									Attributes::AppendedSql,
@@ -878,11 +878,11 @@ void ModelsDiffHelper::processDiffInfos(void)
 			attribs[Attributes::Change]=QString::number(alter_objs.size());
 			attribs[Attributes::Create]=QString::number(create_objs_count);
 			attribs[Attributes::Drop]=QString::number(drop_objs.size());
-			attribs[Attributes::TRUNCATE]=QString::number(truncate_tabs.size());
+			attribs[Attributes::Truncate]=QString::number(truncate_tabs.size());
 			attribs[Attributes::AlterCmds]=QString();
 			attribs[Attributes::DropCmds]=QString();
 			attribs[Attributes::CreateCmds]=QString();
-			attribs[Attributes::TRUNCATE_CMDS]=QString();
+			attribs[Attributes::TruncateCmds]=QString();
 			attribs[Attributes::ConstrDefs]=QString();
 			attribs[Attributes::FkDefs]=QString();
 			attribs[Attributes::UNSET_PERMS]=unset_perms;
@@ -916,7 +916,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 				attribs[Attributes::FkDefs]+=itr.second;
 
 			for(auto &itr : truncate_tabs)
-				attribs[Attributes::TRUNCATE_CMDS]+=itr.second;
+				attribs[Attributes::TruncateCmds]+=itr.second;
 
 			for(auto &itr : alter_objs)
 				attribs[Attributes::AlterCmds]+=itr.second;

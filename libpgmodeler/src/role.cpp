@@ -30,7 +30,7 @@ Role::Role(void)
 
 	conn_limit=-1;
 
-	attributes[Attributes::SUPERUSER]=QString();
+	attributes[Attributes::Superuser]=QString();
 	attributes[Attributes::CreateDb]=QString();
 	attributes[Attributes::CreateRole]=QString();
 	attributes[Attributes::Inherit]=QString();
@@ -329,7 +329,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 						   Attributes::CreateRole, Attributes::Inherit,
 						   Attributes::Login, Attributes::Encrypted,
 							 Attributes::Replication, Attributes::BypassRls };
@@ -360,7 +360,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 	try
 	{
 		attribs_map attribs;
-		QString op_attribs[]={ Attributes::SUPERUSER, Attributes::CreateDb,
+		QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
 							   Attributes::CreateRole, Attributes::Inherit,
 							   Attributes::Login, Attributes::Encrypted,
 								 Attributes::Replication, Attributes::BypassRls };

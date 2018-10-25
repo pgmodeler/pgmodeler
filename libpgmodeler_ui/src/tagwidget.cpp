@@ -23,15 +23,15 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Tag)
 	Ui_TagWidget::setupUi(this);
 	configureFormLayout(tag_grid, ObjectType::Tag);
 
-	QStringList attribs={ Attributes::TABLE_NAME, Attributes::TABLE_SCHEMA_NAME,
-						  Attributes::TABLE_TITLE, Attributes::TABLE_BODY,
-						  Attributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 	unsigned color_count=1;
 	int row=0;
 
 	for(auto &attr : attribs)
 	{
-		if(color_count==1 && attr!=Attributes::TABLE_NAME && attr!=Attributes::TABLE_SCHEMA_NAME)
+		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
 
 		color_pickers[attr]=new ColorPickerWidget(color_count, this);
@@ -46,15 +46,15 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Tag)
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)
 {
 	unsigned color_count=1, i;
-	QStringList attribs={ Attributes::TABLE_NAME, Attributes::TABLE_SCHEMA_NAME,
-						  Attributes::TABLE_TITLE, Attributes::TABLE_BODY,
-						  Attributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 
 	BaseObjectWidget::setAttributes(model, op_list, tag);
 
 	for(auto &attr : attribs)
 	{
-		if(color_count==1 && attr!=Attributes::TABLE_NAME && attr!=Attributes::TABLE_SCHEMA_NAME)
+		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
 
 		for(i=0; i < color_count; i++)
@@ -73,16 +73,16 @@ void TagWidget::applyConfiguration(void)
 	{
 		Tag *tag=nullptr;
 		vector<BaseObject *> tagged_tabs;
-		QStringList attribs={ Attributes::TABLE_TITLE, Attributes::TABLE_BODY,
-							  Attributes::TABLE_EXT_BODY };
+		QStringList attribs={ Attributes::TableTitle, Attributes::TableBody,
+							  Attributes::TableExtBody };
 
 		startConfiguration<Tag>();
 		tag=dynamic_cast<Tag *>(this->object);
 
 		BaseObjectWidget::applyConfiguration();
 
-		tag->setElementColor(Attributes::TABLE_NAME, color_pickers[Attributes::TABLE_NAME]->getColor(0), Tag::FillColor1);
-		tag->setElementColor(Attributes::TABLE_SCHEMA_NAME, color_pickers[Attributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FillColor1);
+		tag->setElementColor(Attributes::TableName, color_pickers[Attributes::TableName]->getColor(0), Tag::FillColor1);
+		tag->setElementColor(Attributes::TableSchemaName, color_pickers[Attributes::TableSchemaName]->getColor(0), Tag::FillColor1);
 
 		for(auto &attr : attribs)
 		{

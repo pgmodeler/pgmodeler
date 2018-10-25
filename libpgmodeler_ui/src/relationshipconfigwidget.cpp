@@ -95,7 +95,7 @@ void RelationshipConfigWidget::loadConfiguration(void)
 	try
 	{
 		int idx;
-		vector<QString> key_attribs={Attributes::TYPE};
+		vector<QString> key_attribs={Attributes::Type};
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::RelationshipsConf, config_params, key_attribs);
 
 		fk_to_pk_rb->setChecked(config_params[Attributes::Connection][Attributes::Mode]==Attributes::ConnectFkToPk);
@@ -215,7 +215,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 
 	QList<QString> pattern_ids={ Attributes::PkPattern,  Attributes::UQ_PATTERN,
 								 Attributes::SrcColPattern, Attributes::DstColPattern,
-								 Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern,
+								 Attributes::SrcFkPattern, Attributes::DstFkPattern,
 								 Attributes::PkColPattern };
 
 	relnn=(rel_type==Attributes::RelationshipNn);
@@ -256,7 +256,7 @@ void RelationshipConfigWidget::updatePattern(void)
 												{ uq_pattern_txt, Attributes::UQ_PATTERN },
 												{ src_col_pattern_txt, Attributes::SrcColPattern },
 												{ dst_col_pattern_txt, Attributes::DstColPattern },
-												{ src_fk_pattern_txt, Attributes::SRC_FK_PATTERN   },
+												{ src_fk_pattern_txt, Attributes::SrcFkPattern   },
 												{ dst_fk_pattern_txt, Attributes::DstFkPattern   },
 												{ pk_col_pattern_txt, Attributes::PkColPattern   } };
 

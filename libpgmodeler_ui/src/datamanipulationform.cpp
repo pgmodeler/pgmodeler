@@ -742,7 +742,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
 			else
-				table_oid = pks[0][Attributes::TABLE].toUInt();
+				table_oid = pks[0][Attributes::Table].toUInt();
 		}
 
 		hint_frm->setVisible(obj_type==ObjectType::Table);
@@ -839,13 +839,13 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				name_list.clear();
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[Attributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
 					col_ids.push_back(id.toUInt());
 
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
@@ -871,7 +871,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				col_ids.clear();
 				name_list.clear();
 
-				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::TABLE].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::Table].toUInt());
 				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")
 									.arg(aux_schema[Attributes::Name])
@@ -879,7 +879,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 									.arg(fk[Attributes::Name]);
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[Attributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
 					col_ids.push_back(id.toUInt());
 
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
@@ -891,8 +891,8 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][Attributes::SRC_COLUMNS] = name_list.join(Table::DataSeparator);
-				ref_fk_infos[fk_name][Attributes::TABLE] = aux_table[Attributes::Name];
+				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::Table] = aux_table[Attributes::Name];
 				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
 		}
@@ -1147,13 +1147,13 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
+		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
 		schema = ref_fk_infos[fk_name][Attributes::Schema];
-		table = ref_fk_infos[fk_name][Attributes::TABLE];
+		table = ref_fk_infos[fk_name][Attributes::Table];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][Attributes::SRC_COLUMNS].split(Table::DataSeparator);
+		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
 		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(Table::DataSeparator);
 		schema = fk_infos[fk_name][Attributes::Schema];
 		table = fk_infos[fk_name][Attributes::RefTable];

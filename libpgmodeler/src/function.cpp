@@ -45,7 +45,7 @@ Function::Function(void)
 	attributes[Attributes::WINDOW_FUNC]=QString();
 	attributes[Attributes::ReturnTable]=QString();
 	attributes[Attributes::Library]=QString();
-	attributes[Attributes::SYMBOL]=QString();
+	attributes[Attributes::Symbol]=QString();
 	attributes[Attributes::LeakProof]=QString();
 }
 
@@ -486,7 +486,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(language->getName()==~LanguageType(LanguageType::C))
 	{
-		attributes[Attributes::SYMBOL]=symbol;
+		attributes[Attributes::Symbol]=symbol;
 		attributes[Attributes::Library]=library;
 	}
 

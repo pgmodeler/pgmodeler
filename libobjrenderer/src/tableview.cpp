@@ -37,7 +37,7 @@ void TableView::configureObject(void)
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs;
-	QString atribs[]={ Attributes::TABLE_BODY, Attributes::TABLE_EXT_BODY };
+	QString atribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
 
 	//Configures the table title

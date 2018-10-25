@@ -44,7 +44,7 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::Name]=obj_name;
 
-	attributes[Attributes::TYPE]=type.getCodeDefinition(def_type);
+	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
 	if(collation)
 	{

@@ -41,7 +41,7 @@ void GraphicalView::configureObject(void)
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::VIEW_BODY, Attributes::VIEW_EXT_BODY },
-			tag_attribs[]={ Attributes::TABLE_BODY, Attributes::TABLE_EXT_BODY };
+			tag_attribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;

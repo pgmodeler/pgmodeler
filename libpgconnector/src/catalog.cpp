@@ -266,7 +266,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 		ResultSet res;
 
 		extra_attribs[Attributes::Schema]=sch_name;
-		extra_attribs[Attributes::TABLE]=tab_name;
+		extra_attribs[Attributes::Table]=tab_name;
 
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 		res.accessTuple(ResultSet::FirstTuple);
@@ -334,7 +334,7 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		attribs_map objects;
 
 		extra_attribs[Attributes::Schema]=sch_name;
-		extra_attribs[Attributes::TABLE]=tab_name;
+		extra_attribs[Attributes::Table]=tab_name;
 		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
 		if(res.accessTuple(ResultSet::FirstTuple))
@@ -365,7 +365,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		attribs_map attribs;
 
 		extra_attribs[Attributes::Schema]=sch_name;
-		extra_attribs[Attributes::TABLE]=tab_name;
+		extra_attribs[Attributes::Table]=tab_name;
 
 		for(ObjectType obj_type : obj_types)
 		{
@@ -594,7 +594,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 												obj_type==ObjectType::Language || obj_type==ObjectType::Cast);
 
 		extra_attribs[Attributes::Schema]=schema;
-		extra_attribs[Attributes::TABLE]=table;
+		extra_attribs[Attributes::Table]=table;
 
 		if(!filter_oids.empty())
 			extra_attribs[Attributes::FilterOids]=createOidFilter(filter_oids);
@@ -635,7 +635,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 
 		attribs[Attributes::CustomFilter] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
 		attribs[Attributes::Schema] = schema;
-		attribs[Attributes::TABLE] = table;
+		attribs[Attributes::Table] = table;
 		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)

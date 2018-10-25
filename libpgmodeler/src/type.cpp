@@ -26,20 +26,20 @@ Type::Type(void)
 	attributes[Attributes::BaseType]=QString();
 	attributes[Attributes::CompositeType]=QString();
 	attributes[Attributes::RangeType]=QString();
-	attributes[Attributes::TYPE_ATTRIBUTE]=QString();
+	attributes[Attributes::TypeAttribute]=QString();
 	attributes[Attributes::EnumType]=QString();
 	attributes[Attributes::Enumerations]=QString();
 	attributes[Attributes::InputFunc]=QString();
 	attributes[Attributes::OutputFunc]=QString();
 	attributes[Attributes::RecvFunc]=QString();
 	attributes[Attributes::SendFunc]=QString();
-	attributes[Attributes::TPMOD_IN_FUNC]=QString();
-	attributes[Attributes::TPMOD_OUT_FUNC]=QString();
+	attributes[Attributes::TpmodInFunc]=QString();
+	attributes[Attributes::TpmodOutFunc]=QString();
 	attributes[Attributes::AnalyzeFunc]=QString();
 	attributes[Attributes::InternalLength]=QString();
 	attributes[Attributes::ByValue]=QString();
 	attributes[Attributes::Alignment]=QString();
-	attributes[Attributes::STORAGE]=QString();
+	attributes[Attributes::Storage]=QString();
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::Element]=QString();
 	attributes[Attributes::Delimiter]=QString();
@@ -48,8 +48,8 @@ Type::Type(void)
 	attributes[Attributes::Preferred]=QString();
 	attributes[Attributes::LikeType]=QString();
 	attributes[Attributes::Collatable]=QString();
-	attributes[Attributes::SUBTYPE]=QString();
-	attributes[Attributes::SUBTYPE_DIFF_FUNC]=QString();
+	attributes[Attributes::Subtype]=QString();
+	attributes[Attributes::SubtypeDiffFunc]=QString();
 	attributes[Attributes::CanonicalFunc]=QString();
 	attributes[Attributes::OpClass]=QString();
 }
@@ -429,7 +429,7 @@ void Type::setElementsAttribute(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		str_elem.remove(str_elem.lastIndexOf(','), str_elem.size());
 
-	attributes[Attributes::TYPE_ATTRIBUTE]=str_elem;
+	attributes[Attributes::TypeAttribute]=str_elem;
 }
 
 void Type::setEnumerationsAttribute(unsigned def_type)
@@ -630,9 +630,9 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[Attributes::RangeType]=Attributes::True;
 
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::SUBTYPE]=(*subtype);
+			attributes[Attributes::Subtype]=(*subtype);
 		else
-			attributes[Attributes::SUBTYPE]=subtype.getCodeDefinition(SchemaParser::XmlDefinition);
+			attributes[Attributes::Subtype]=subtype.getCodeDefinition(SchemaParser::XmlDefinition);
 
 		if(subtype_opclass)
 		{
@@ -653,7 +653,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		attributes[Attributes::ByValue]=(by_value ? Attributes::True : QString());
 		attributes[Attributes::Alignment]=(*alignment);
-		attributes[Attributes::STORAGE]=(~storage);
+		attributes[Attributes::Storage]=(~storage);
 		attributes[Attributes::DefaultValue]=default_value;
 
 		if(element!=QString("\"any\""))
@@ -683,11 +683,11 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 							   Attributes::OutputFunc,
 							   Attributes::RecvFunc,
 							   Attributes::SendFunc,
-							   Attributes::TPMOD_IN_FUNC,
-							   Attributes::TPMOD_OUT_FUNC,
+							   Attributes::TpmodInFunc,
+							   Attributes::TpmodOutFunc,
 							   Attributes::AnalyzeFunc,
 							   Attributes::CanonicalFunc,
-							   Attributes::SUBTYPE_DIFF_FUNC};
+							   Attributes::SubtypeDiffFunc};
 
 		for(i=0; i < sizeof(functions)/sizeof(Function *); i++)
 		{
@@ -771,7 +771,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					if(attrib_idx < 0)
 					{
 						attribs[Attributes::Attribute]=attrib.getName(true);
-						attribs[Attributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
+						attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						attribs[Attributes::Collation]=QString();
 
 						if(attrib.getCollation())
@@ -788,7 +788,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						if(!type_attribs[attrib_idx].getType().isEquivalentTo(attrib.getType()))
 						{
 							attribs[Attributes::Attribute]=attrib.getName(true);
-							attribs[Attributes::TYPE]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
+							attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
 						}
 
 						copyAttributes(attribs);

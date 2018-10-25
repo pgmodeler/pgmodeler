@@ -59,7 +59,7 @@ void EventTrigger::setFunction(Function *func)
 
 void EventTrigger::setFilter(const QString &variable, const QStringList &values)
 {
-	if(variable.toLower()!=Attributes::TAG)
+	if(variable.toLower()!=Attributes::Tag)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidEventTriggerVariable).arg(variable),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!values.isEmpty())

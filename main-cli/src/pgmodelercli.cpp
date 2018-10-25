@@ -1047,8 +1047,8 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	//Replace <parameter> tag by <typeattrib> on <usertype> tags.
 	if(obj_xml.contains(TagExpr.arg(QString("usertype"))))
 	{
-		obj_xml.replace(TagExpr.arg(Attributes::Parameter), TagExpr.arg(Attributes::TYPE_ATTRIBUTE));
-		obj_xml.replace(EndTagExpr.arg(Attributes::Parameter), EndTagExpr.arg(Attributes::TYPE_ATTRIBUTE));
+		obj_xml.replace(TagExpr.arg(Attributes::Parameter), TagExpr.arg(Attributes::TypeAttribute));
+		obj_xml.replace(EndTagExpr.arg(Attributes::Parameter), EndTagExpr.arg(Attributes::TypeAttribute));
 	}
 
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Relationship))))
@@ -1493,15 +1493,15 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 {
 	bool found=false;
 	static vector<QString> attribs={ Attributes::Relationship,
-									 Attributes::TYPE, Attributes::SRC_REQUIRED, Attributes::DstRequired,
-									 Attributes::SRC_TABLE, Attributes::DstTable,	Attributes::Points,
+									 Attributes::Type, Attributes::SrcRequired, Attributes::DstRequired,
+									 Attributes::SrcTable, Attributes::DstTable,	Attributes::Points,
 									 Attributes::Columns,	Attributes::Column, Attributes::Constraint,
 									 Attributes::Label, Attributes::Line, Attributes::Position,
 									 Attributes::Identifier, Attributes::Deferrable, Attributes::DeferType,
-									 Attributes::TABLE_NAME, Attributes::SpecialPkCols, Attributes::TABLE,
+									 Attributes::TableName, Attributes::SpecialPkCols, Attributes::Table,
 									 Attributes::AncestorTable, Attributes::CopyOptions, Attributes::CopyMode,
 									 Attributes::SrcColPattern, Attributes::DstColPattern, Attributes::PkPattern,
-									 Attributes::UQ_PATTERN, Attributes::SRC_FK_PATTERN, Attributes::DstFkPattern };
+									 Attributes::UQ_PATTERN, Attributes::SrcFkPattern, Attributes::DstFkPattern };
 
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);

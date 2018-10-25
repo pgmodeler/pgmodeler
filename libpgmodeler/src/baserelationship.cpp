@@ -77,10 +77,10 @@ void BaseRelationship::configureRelationship(void)
 {
 	obj_type=ObjectType::BaseRelationship;
 
-	attributes[Attributes::TYPE]=QString();
-	attributes[Attributes::SRC_REQUIRED]=QString();
+	attributes[Attributes::Type]=QString();
+	attributes[Attributes::SrcRequired]=QString();
 	attributes[Attributes::DstRequired]=QString();
-	attributes[Attributes::SRC_TABLE]=QString();
+	attributes[Attributes::SrcTable]=QString();
 	attributes[Attributes::DstTable]=QString();
 	attributes[Attributes::Points]=QString();
 	attributes[Attributes::Columns]=QString();
@@ -90,7 +90,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::ReducedForm]=QString();
 	attributes[Attributes::Deferrable]=QString();
 	attributes[Attributes::DeferType]=QString();
-	attributes[Attributes::TABLE_NAME]=QString();
+	attributes[Attributes::TableName]=QString();
 	attributes[Attributes::SpecialPkCols]=QString();
 	attributes[Attributes::RelationshipNn]=QString();
 	attributes[Attributes::RelationshipGen]=QString();
@@ -99,7 +99,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::Relationship1n]=QString();
 	attributes[Attributes::Relationship11]=QString();
 	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::CopyOptions]=QString();
 	attributes[Attributes::CopyMode]=QString();
@@ -107,7 +107,7 @@ void BaseRelationship::configureRelationship(void)
 	attributes[Attributes::DstColPattern]=QString();
 	attributes[Attributes::PkPattern]=QString();
 	attributes[Attributes::UQ_PATTERN]=QString();
-	attributes[Attributes::SRC_FK_PATTERN]=QString();
+	attributes[Attributes::SrcFkPattern]=QString();
 	attributes[Attributes::DstFkPattern]=QString();
 	attributes[Attributes::PkColPattern]=QString();
 	attributes[Attributes::SinglePkColumn]=QString();
@@ -328,17 +328,17 @@ void BaseRelationship::setRelationshipAttributes(void)
 {
 	unsigned count, i;
 	QString str_aux,
-			label_attribs[3]={ Attributes::SRC_LABEL,
+			label_attribs[3]={ Attributes::SrcLabel,
 							   Attributes::DstLabel,
 							   Attributes::NameLabel};
 
 
-	attributes[Attributes::TYPE]=getRelTypeAttribute();
-	attributes[Attributes::SRC_REQUIRED]=(src_mandatory ? Attributes::True : QString());
+	attributes[Attributes::Type]=getRelTypeAttribute();
+	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : QString());
 	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : QString());
 
 	if(src_table)
-		attributes[Attributes::SRC_TABLE]=src_table->getName(true);
+		attributes[Attributes::SrcTable]=src_table->getName(true);
 
 	if(dst_table)
 		attributes[Attributes::DstTable]=dst_table->getName(true);

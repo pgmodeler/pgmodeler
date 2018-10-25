@@ -26,7 +26,7 @@ OperatorClass::OperatorClass(void)
 	attributes[Attributes::Family]=QString();
 	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::IndexType]=QString();
-	attributes[Attributes::TYPE]=QString();
+	attributes[Attributes::Type]=QString();
 	attributes[Attributes::Default]=QString();
 }
 
@@ -176,9 +176,9 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::Default]=(is_default ? Attributes::True : QString());
 
 	if(def_type==SchemaParser::SqlDefinition)
-		attributes[Attributes::TYPE]=(*data_type);
+		attributes[Attributes::Type]=(*data_type);
 	else
-		attributes[Attributes::TYPE]=data_type.getCodeDefinition(def_type);
+		attributes[Attributes::Type]=data_type.getCodeDefinition(def_type);
 
 	if(family)
 	{

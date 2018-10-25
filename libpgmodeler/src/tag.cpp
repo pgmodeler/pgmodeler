@@ -22,17 +22,17 @@ unsigned Tag::tag_id=3000;
 
 Tag::Tag(void)
 {
-	QStringList attribs={ Attributes::TABLE_NAME,  Attributes::TABLE_SCHEMA_NAME,
-						  Attributes::TABLE_TITLE, Attributes::TABLE_BODY,
-						  Attributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 
 	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
-	attributes[Attributes::STYLES]=QString();
+	attributes[Attributes::Styles]=QString();
 
 	for(auto &attr : attribs)
 	{
-		if(attr!=Attributes::TABLE_NAME && attr!=Attributes::TABLE_SCHEMA_NAME)
+		if(attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_config[attr] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
 		else
 			color_config[attr] = { QColor(0,0,0) };
@@ -110,7 +110,7 @@ void Tag::validateElementId(const QString &id, unsigned color_id)
 										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if((color_id > ColorCount) ||
 					(color_id > 0 &&
-					 (id==Attributes::TABLE_NAME || id==Attributes::TABLE_SCHEMA_NAME)))
+					 (id==Attributes::TableName || id==Attributes::TableSchemaName)))
 		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
 										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -157,13 +157,13 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attribs[Attributes::Id]=itr.first;
 				attribs[Attributes::Colors]=QString();
 
-				if(itr.first==Attributes::TABLE_NAME || itr.first==Attributes::TABLE_SCHEMA_NAME)
+				if(itr.first==Attributes::TableName || itr.first==Attributes::TableSchemaName)
 					attribs[Attributes::Colors]=itr.second[FillColor1].name();
 				else
 					attribs[Attributes::Colors]=itr.second[FillColor1].name() + QString(",") +
 													   itr.second[FillColor2].name() + QString(",") + itr.second[BorderColor].name();
 
-				attributes[Attributes::STYLES]+=schparser.getCodeDefinition(Attributes::STYLE, attribs, SchemaParser::XmlDefinition);
+				attributes[Attributes::Styles]+=schparser.getCodeDefinition(Attributes::Style, attribs, SchemaParser::XmlDefinition);
 			}
 		}
 		catch(Exception &e)

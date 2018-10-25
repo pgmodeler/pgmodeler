@@ -33,11 +33,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::ObjectType, //5
 		Attributes::LockerArc, //6
 		Attributes::LockerBody, //7
-		Attributes::TABLE_SCHEMA_NAME, //8
-		Attributes::TABLE_NAME, //9
-		Attributes::TABLE_BODY, //10
-		Attributes::TABLE_EXT_BODY, //11
-		Attributes::TABLE_TITLE, //12
+		Attributes::TableSchemaName, //8
+		Attributes::TableName, //9
+		Attributes::TableBody, //10
+		Attributes::TableExtBody, //11
+		Attributes::TableTitle, //12
 		BaseObject::getSchemaName(ObjectType::Rule), //13
 		BaseObject::getSchemaName(ObjectType::Rule), //14
 		BaseObject::getSchemaName(ObjectType::Index), //15
@@ -75,8 +75,8 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 		Attributes::Label, //45
 		Attributes::Attribute, //46
 		Attributes::Attribute, //47
-		Attributes::TAG, //48
-		Attributes::TAG, //49
+		Attributes::Tag, //48
+		Attributes::Tag, //49
 		Attributes::Placeholder /*50*/};
 	int i, count=element_cmb->count(),
 			//This auxiliary vector stores the id of elements that represents color/font conf. of objects

@@ -163,7 +163,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
 		attribs[Attributes::SqlObject]=tab_obj->getSQLName();
 		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : QString());
 		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
-		attribs[Attributes::TABLE]=this->getName(true);
+		attribs[Attributes::Table]=this->getName(true);
 		attribs[Attributes::Name]=tab_obj->getName(true);
 		attribs[Attributes::Comment]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
 
@@ -1600,7 +1600,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::TAG]=QString();
+	attributes[Attributes::Tag]=QString();
 	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]=QString();
@@ -1621,7 +1621,7 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 		attributes[Attributes::PartitionedTable]=partitioned_table->getName(true);
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
-		attributes[Attributes::TAG]=tag->getCodeDefinition(def_type, true);
+		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
 
 	(copy_table ? copy_table->getName(true) : QString());
 
@@ -1918,7 +1918,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	{
 		BaseObject::setBasicAttributes(true);
 		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
-		return(BaseObject::getAlterDefinition(Attributes::TRUNCATE_PRIV, attributes, false, false));
+		return(BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false));
 	}
 	catch(Exception &e)
 	{

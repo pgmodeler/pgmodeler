@@ -2575,14 +2575,14 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 			}
 
-			attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+			attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		}
 		else if(table_relnn && rel_type==RelationshipNn)
 		{
 			unsigned count, i;
 
 			attributes[Attributes::RelationshipNn]=Attributes::True;
-			attributes[Attributes::TABLE]=table_relnn->getCodeDefinition(def_type);
+			attributes[Attributes::Table]=table_relnn->getCodeDefinition(def_type);
 
 			count=table_relnn->getConstraintCount();
 			for(i=0; i < count; i++)
@@ -2595,7 +2595,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		else if(rel_type==RelationshipGen)
 		{
 			attributes[Attributes::RelationshipGen]=Attributes::True;
-			attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+			attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		}
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition));
@@ -2613,7 +2613,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::UPD_ACTION]=~upd_action;
 		attributes[Attributes::DelAction]=~del_action;
 
-		attributes[Attributes::TABLE_NAME]=tab_name_relnn;
+		attributes[Attributes::TableName]=tab_name_relnn;
 		attributes[Attributes::RelationshipGen]=(rel_type==RelationshipGen ? Attributes::True : QString());
 		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : QString());
 		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : QString());
@@ -2622,7 +2622,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
 		attributes[Attributes::PkPattern]=name_patterns[PkPattern];
 		attributes[Attributes::UQ_PATTERN]=name_patterns[UqPattern];
-		attributes[Attributes::SRC_FK_PATTERN]=name_patterns[SrcFkPattern];
+		attributes[Attributes::SrcFkPattern]=name_patterns[SrcFkPattern];
 		attributes[Attributes::DstFkPattern]=name_patterns[DstFkPattern];
 		attributes[Attributes::PkColPattern]=name_patterns[PkColPattern];
 
@@ -2718,13 +2718,13 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	if(rel_type == RelationshipGen)
 	{
 		attributes[Attributes::Inherit]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
-		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		attributes[Attributes::AncestorTable]=getReferenceTable()->getName(true);
 	}
 	else
 	{
 		attributes[Attributes::Partitioning]=(undo_inh_part ? Attributes::UNSET : Attributes::True);
-		attributes[Attributes::TABLE]=getReceiverTable()->getName(true);
+		attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		attributes[Attributes::PartitionedTable]=getReferenceTable()->getName(true);
 		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();
 	}

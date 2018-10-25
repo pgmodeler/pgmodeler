@@ -34,15 +34,15 @@ Trigger::Trigger(void)
 
 	attributes[Attributes::Arguments]=QString();
 	attributes[Attributes::Events]=QString();
-	attributes[Attributes::TRIGGER_FUNC]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::TriggerFunc]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::FiringType]=QString();
 	attributes[Attributes::PerRow]=QString();
 	attributes[Attributes::InsEvent]=QString();
 	attributes[Attributes::DelEvent]=QString();
 	attributes[Attributes::UPD_EVENT]=QString();
-	attributes[Attributes::TRUNC_EVENT]=QString();
+	attributes[Attributes::TruncEvent]=QString();
 	attributes[Attributes::Condition]=QString();
 	attributes[Attributes::RefTable]=QString();
 	attributes[Attributes::DeferType]=QString();
@@ -347,7 +347,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
 			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
-						Attributes::TRUNC_EVENT, Attributes::UPD_EVENT },
+						Attributes::TruncEvent, Attributes::UPD_EVENT },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
 	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
 										   EventType::OnTruncate, EventType::OnUpdate};
@@ -387,9 +387,9 @@ void Trigger::setBasicAttributes(unsigned def_type)
 	if(function)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::TRIGGER_FUNC]=function->getName(true);
+			attributes[Attributes::TriggerFunc]=function->getName(true);
 		else
-			attributes[Attributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::TriggerFunc]=function->getCodeDefinition(def_type, true);
 	}
 }
 
@@ -406,7 +406,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::DeclInTable]=Attributes::True;
 
 	if(getParentTable())
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[Attributes::Constraint]=(is_constraint ? Attributes::True : QString());
 	attributes[Attributes::FiringType]=(~firing_type);

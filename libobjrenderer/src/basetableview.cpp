@@ -320,12 +320,12 @@ void BaseTableView::configureTag(void)
 		QPolygonF pol;
 		QPointF p1, p2;
 		double bottom;
-		QFont fnt=BaseObjectView::getFontStyle(Attributes::TAG).font();
+		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
 		tag_name->setFont(fnt);
 		tag_name->setText(tag->getName());
-		tag_name->setBrush(BaseObjectView::getFontStyle(Attributes::TAG).foreground());
+		tag_name->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
 
 		p1=tag_name->boundingRect().topLeft();
 		p2=tag_name->boundingRect().bottomRight();
@@ -339,8 +339,8 @@ void BaseTableView::configureTag(void)
 		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p2.y() + BaseObjectView::VertSpacing));
 
 		tag_body->setPolygon(pol);
-		tag_body->setPen(BaseObjectView::getBorderStyle(Attributes::TAG));
-		tag_body->setBrush(BaseObjectView::getFillStyle(Attributes::TAG));
+		tag_body->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
+		tag_body->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
 
 		tag_name->setPos(-5, bottom - 1.5f);
 		tag_body->setPos(-5, bottom - 1.5f);

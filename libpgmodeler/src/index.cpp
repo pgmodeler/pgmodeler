@@ -26,7 +26,7 @@ Index::Index(void)
 	fill_factor=90;
 	attributes[Attributes::UNIQUE]=QString();
 	attributes[Attributes::Concurrent]=QString();
-	attributes[Attributes::TABLE]=QString();
+	attributes[Attributes::Table]=QString();
 	attributes[Attributes::IndexType]=QString();
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Expression]=QString();
@@ -39,7 +39,7 @@ Index::Index(void)
 	attributes[Attributes::Elements]=QString();
 	attributes[Attributes::FastUpdate]=QString();
 	attributes[Attributes::Buffering]=QString();
-	attributes[Attributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::StorageParams]=QString();
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -335,26 +335,26 @@ QString Index::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Predicate]=predicate;
-	attributes[Attributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::StorageParams]=QString();
 
 	if(getParentTable())
 	{
-		attributes[Attributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
 			attributes[Attributes::Schema]=getParentTable()->getSchema()->getName(true);
 	}
 
 	if(this->indexing_type==IndexingType::Gin)
-		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : QString());
+		attributes[Attributes::StorageParams]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : QString());
 
 	if(this->indexing_type==IndexingType::Gist)
-		attributes[Attributes::STORAGE_PARAMS]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
+		attributes[Attributes::StorageParams]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
 
 	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
 	{
 		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
-		attributes[Attributes::STORAGE_PARAMS]=Attributes::True;
+		attributes[Attributes::StorageParams]=Attributes::True;
 	}
 	else if(def_type==SchemaParser::XmlDefinition)
 		attributes[Attributes::Factor]=QString("0");

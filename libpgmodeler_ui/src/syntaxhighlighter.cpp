@@ -521,7 +521,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 									{
 										xmlparser.getElementAttributes(attribs);
-										expr_type=attribs[Attributes::TYPE];
+										expr_type=attribs[Attributes::Type];
 										regexp.setPattern(attribs[Attributes::VALUE]);
 
 										if(attribs[Attributes::RegularExp]==Attributes::True)
