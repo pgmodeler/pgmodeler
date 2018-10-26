@@ -90,7 +90,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DIR_SEPARATOR  +
+            GlobalAttributes::DirSeparator  +
 			plugin_name + QString(".dll");
 #else
 #ifdef Q_OS_MAC

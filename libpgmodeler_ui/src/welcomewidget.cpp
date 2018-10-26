@@ -38,7 +38,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 #ifdef Q_OS_LINUX
 	PgModelerUiNs::__configureWidgetFont(btn, 1.20f);
 #else
-		PgModelerUiNS::__configureWidgetFont(btn, 1.50f);
+    PgModelerUiNs::__configureWidgetFont(btn, 1.50f);
 #endif
 	}
 }

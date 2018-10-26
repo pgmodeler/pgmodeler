@@ -1662,13 +1662,13 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 
 	//Checking if the .dbm registry key exists
 	QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::PGMODELER_APP_PATH);
+    QString exe_path=QDir::toNativeSeparators(GlobalAttributes::PgModelerAppPath);
 
 	//If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall && dbm_ext.value(QString("Default")).toString().isEmpty())
-		throw Exception(msg_no_association, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(msg_no_association, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!uninstall && !dbm_ext.value(QString("Default")).toString().isEmpty())
-		throw Exception(msg_file_associated, ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(msg_file_associated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		if(!uninstall)

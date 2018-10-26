@@ -94,10 +94,10 @@ namespace GlobalAttributes {
 								 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName)),
 #else
 	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-									  QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +  QString("/%1").arg(PGMODELER_APP_NAME)),
+                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +  QString("/%1").arg(PgModelerAppName)),
 
 	TemporaryDir=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
-								 QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PGMODELER_APP_NAME)),
+                                 QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName)),
 #endif
 
 	SQLHighlightConfPath=ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt,
