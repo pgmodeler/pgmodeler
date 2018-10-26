@@ -95,7 +95,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DIR_SEPARATOR  +
+            GlobalAttributes::DirSeparator  +
 			QString("lib") + plugin_name + QString(".dylib");
 #else
 		lib=dir_plugins + plugin_name +
