@@ -11,7 +11,7 @@
 
 # General Qt settings
 QT += core widgets printsupport network svg
-CONFIG += ordered qt stl rtti exceptions warn_on c++11
+CONFIG += ordered qt stl rtti exceptions warn_on c++14
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
