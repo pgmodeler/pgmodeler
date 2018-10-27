@@ -32,7 +32,7 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
-* Due to the usage of Qt's raster engine to draw objects the process to handle objects on the canvas tends to get slower as lots of objects are created due to the constantly CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
+* Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created due causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
 * The diff process still presents false-positive results due its limitations. Sometimes, there is the need to run the process twice to get the full changes.
 * pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space.
 * pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X.

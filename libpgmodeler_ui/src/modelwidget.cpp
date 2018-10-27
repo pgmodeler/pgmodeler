@@ -155,6 +155,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	viewport->setCacheMode(QGraphicsView::CacheBackground);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
 
@@ -489,10 +490,6 @@ ModelWidget::~ModelWidget(void)
 
 	delete(viewport);
 	delete(scene);
-
-	op_list->removeOperations();
-	db_model->destroyObjects();
-
 	delete(op_list);
 	delete(db_model);
 }

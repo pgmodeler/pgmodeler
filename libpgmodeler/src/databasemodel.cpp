@@ -744,13 +744,9 @@ void DatabaseModel::destroyObjects(void)
 	map<unsigned, BaseObject *> objects;
 	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
 	vector<ObjectType> rem_obj_types;
-	vector<BaseObject *> perms;
 
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
-
-	//Making a copy of the permissions list so these objects can be destroyed at the end
-	perms = permissions;
 
 	for(unsigned i=0; i < 5; i++)
 	{
@@ -808,8 +804,10 @@ void DatabaseModel::destroyObjects(void)
 
 	PgSqlType::removeUserTypes(this);
 
-	for(auto &perm : perms)
+	for(auto &perm : 	permissions)
 		delete(perm);
+
+	permissions.clear();
 
 	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
 	if(!rem_obj_types.empty())
