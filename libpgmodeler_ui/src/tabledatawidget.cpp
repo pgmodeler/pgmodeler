@@ -21,14 +21,14 @@
 #include "bulkdataeditwidget.h"
 #include "sqlexecutionwidget.h"
 
-const QString TableDataWidget::PLACEHOLDER_COLUMN=QString("$placeholder$");
+const QString TableDataWidget::PlaceholderColumn=QString("$placeholder$");
 
-TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE_OBJECT)
+TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {
 	Ui_TableDataWidget::setupUi(this);
-	configureFormLayout(tabledata_grid, BASE_OBJECT);
+	configureFormLayout(tabledata_grid, ObjectType::BaseObject);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(OBJ_TABLE)));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(ObjectType::Table)));
 
 	comment_lbl->setVisible(false);
 	comment_edt->setVisible(false);
@@ -73,18 +73,18 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, BASE
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
 	});
 
 	connect(paste_tb, &QToolButton::clicked, [&](){
 		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DATA_SEPARATOR, Table::DATA_LINE_BREAK));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNS::bulkDataEdit(data_tbw);
+		PgModelerUiNs::bulkDataEdit(data_tbw);
 	});
 
 	connect(copy_tb, &QToolButton::clicked, [&](){
@@ -173,7 +173,7 @@ void TableDataWidget::deleteColumns(void)
 	Messagebox msg_box;
 
 	msg_box.show(trUtf8("Delete columns is an irreversible action! Do you really want to proceed?"),
-							 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
@@ -208,7 +208,7 @@ void TableDataWidget::clearRows(bool confirm)
 
 	if(confirm)
 		msg_box.show(trUtf8("Remove all rows is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
@@ -223,7 +223,7 @@ void TableDataWidget::clearColumns(void)
 	Messagebox msg_box;
 
 		msg_box.show(trUtf8("Remove all columns is an irreversible action! Do you really want to proceed?"),
-								 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
@@ -255,7 +255,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 
 			item->setText(col_name);
 
-			if(act->text()==PLACEHOLDER_COLUMN)
+			if(act->text()==PlaceholderColumn)
 			{
 				item->setFlags(Qt::NoItemFlags);
 				item->setForeground(QColor(Qt::red));
@@ -274,7 +274,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 			{
 				item=data_tbw->item(row, col_idx);
 
-				if(col_name==PLACEHOLDER_COLUMN)
+				if(col_name==PlaceholderColumn)
 					setItemInvalid(item);
 				else
 				{
@@ -347,15 +347,15 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	there have priority over the current table's columns */
 	if(!ini_data.isEmpty())
 	{		
-		buffer=ini_data.split(Table::DATA_LINE_BREAK);
+		buffer=ini_data.split(Table::DataLineBreak);
 
 		//The first line of the buffer always has the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
-			columns.append(buffer[0].split(Table::DATA_SEPARATOR));
+			columns.append(buffer[0].split(Table::DataSeparator));
 	}
 	else
 	{
-		for(auto object : *table->getObjectList(OBJ_COLUMN))
+		for(auto object : *table->getObjectList(ObjectType::Column))
 			columns.push_back(object->getName());
 	}
 
@@ -392,7 +392,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	for(QString buf_row : buffer)
 	{
 		addRow();
-		values = buf_row.split(Table::DATA_SEPARATOR);
+		values = buf_row.split(Table::DataSeparator);
 		col = 0;
 
 		for(QString val : values)
@@ -434,7 +434,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 
 	col_names_menu.clear();
 
-	for(auto object : *table->getObjectList(OBJ_COLUMN))
+	for(auto object : *table->getObjectList(ObjectType::Column))
 		col_names.push_back(object->getName());
 
 	for(int col = 0; col < data_tbw->columnCount(); col++)
@@ -449,7 +449,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	}
 
 	col_names_menu.addSeparator();
-	col_names_menu.addAction(PLACEHOLDER_COLUMN);
+	col_names_menu.addAction(PlaceholderColumn);
 }
 
 void TableDataWidget::toggleWarningFrame(void)
@@ -482,7 +482,7 @@ QString TableDataWidget::generateDataBuffer(void)
 		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
 	//The first line of the buffer consists in the column names
-	buffer.push_back(col_names.join(Table::DATA_SEPARATOR));
+	buffer.push_back(col_names.join(Table::DataSeparator));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
@@ -491,24 +491,24 @@ QString TableDataWidget::generateDataBuffer(void)
 			value = data_tbw->item(row, col)->text();
 
 			//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-			if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
-					(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
-					(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
-				throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
-								.arg(row + 1).arg(col_names[col]),
-								ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
+					(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
+					(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
+				throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
+												.arg(row + 1).arg(col_names[col]),
+												ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			val_list.push_back(value);
 		}
 
-		buffer.push_back(val_list.join(Table::DATA_SEPARATOR));
+		buffer.push_back(val_list.join(Table::DataSeparator));
 		val_list.clear();
 	}
 
 	if(buffer.size() <= 1)
 		return(QString());
 
-	return(buffer.join(Table::DATA_LINE_BREAK));
+	return(buffer.join(Table::DataLineBreak));
 }
 
 void TableDataWidget::enterEvent(QEvent *)

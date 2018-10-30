@@ -26,7 +26,7 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	scrollarea = nullptr;
 	this->model=nullptr;
 	zoom_factor=1;
-	curr_resize_factor=RESIZE_FACTOR;
+	curr_resize_factor=ResizeFactor;
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	QVBoxLayout *vbox = new QVBoxLayout;
@@ -106,9 +106,9 @@ bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
 		QPoint dt_angle = w_event->angleDelta();
 
 		if(dt_angle.y() < 0)
-			model->applyZoom(model->getCurrentZoom() - ModelWidget::ZOOM_INCREMENT);
+			model->applyZoom(model->getCurrentZoom() - ModelWidget::ZoomIncrement);
 		else
-			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZOOM_INCREMENT);
+			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZoomIncrement);
 
 		return(false);
 	}
@@ -203,8 +203,8 @@ void ModelOverviewWidget::resizeOverview(void)
 		//Make an initial calculation of the overview window size
 		scene_rect=this->model->scene->sceneRect();
 		curr_size=scene_rect.size();
-		curr_size.setWidth(curr_size.width() * RESIZE_FACTOR);
-		curr_size.setHeight(curr_size.height() * RESIZE_FACTOR);
+		curr_size.setWidth(curr_size.width() * ResizeFactor);
+		curr_size.setHeight(curr_size.height() * ResizeFactor);
 
 		//If the size exceeds the screen's width or height in 90%
 		if(curr_size.width() > screen_rect.width() * 0.90f ||
@@ -221,7 +221,7 @@ void ModelOverviewWidget::resizeOverview(void)
 			}
 			else
 			{
-				curr_resize_factor=RESIZE_FACTOR/2;
+				curr_resize_factor=ResizeFactor/2;
 				pixmap_size=scene_rect.size().toSize();
 			}
 
@@ -231,7 +231,7 @@ void ModelOverviewWidget::resizeOverview(void)
 		}
 		else
 		{
-			curr_resize_factor=RESIZE_FACTOR;
+			curr_resize_factor=ResizeFactor;
 			pixmap_size=scene_rect.size().toSize();
 		}
 

@@ -46,8 +46,8 @@ ModelValidationHelper::~ModelValidationHelper(void)
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
 {
 	if(!refs.empty() ||
-		 val_type==ValidationInfo::MISSING_EXTENSION ||
-		 (val_type==ValidationInfo::BROKEN_REL_CONFIG &&
+		 val_type==ValidationInfo::MissingExtension ||
+		 (val_type==ValidationInfo::BrokenRelConfig &&
 			 std::find(inv_rels.begin(), inv_rels.end(), object)==inv_rels.end()))
 	{
 		//Configures a validation info
@@ -55,7 +55,7 @@ void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject
 		error_count++;
 		val_infos.push_back(info);
 
-		if(val_type==ValidationInfo::BROKEN_REL_CONFIG)
+		if(val_type==ValidationInfo::BrokenRelConfig)
 			inv_rels.push_back(object);
 
 		//Emit the signal containing the info
@@ -71,13 +71,13 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		BaseObject *obj=nullptr;
 
 		//Resolving broken references by swaping the object ids
-		if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-			 info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+		if(info.getValidationType()==ValidationInfo::BrokenReference ||
+			 info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 		{
 			BaseObject *info_obj=info.getObject(), *aux_obj=nullptr;
 			unsigned obj_id=info_obj->getObjectId();
 
-			if(info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+			if(info.getValidationType()==ValidationInfo::BrokenReference)
 			{
 				//Search for the object with the minor id
 				while(!refs.empty() && !valid_canceled)
@@ -106,7 +106,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						}
 					}
 
-					if(aux_obj && (aux_obj->getObjectType()==OBJ_VIEW || aux_obj->getObjectType()==OBJ_TABLE))
+					if(aux_obj && (aux_obj->getObjectType()==ObjectType::View || aux_obj->getObjectType()==ObjectType::Table))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
@@ -132,7 +132,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			emit s_objectIdChanged(info_obj);
 		}
 		//Resolving no unique name by renaming the constraints/indexes
-		else if(info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+		else if(info.getValidationType()==ValidationInfo::NoUniqueName)
 		{
 			unsigned suffix=1;
 			QString new_name;
@@ -143,8 +143,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
-			bool rename_obj=(refs.back()->getObjectType()==OBJ_TABLE ||
-							 refs.back()->getObjectType()==OBJ_VIEW);
+			bool rename_obj=(refs.back()->getObjectType()==ObjectType::Table ||
+							 refs.back()->getObjectType()==ObjectType::View);
 
 			if(rename_obj)
 			{
@@ -192,7 +192,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			}
 		}
 		//Resolving the absence of postgis extension
-		else if(info.getValidationType()==ValidationInfo::MISSING_EXTENSION && !db_model->getExtension(QString("postgis")))
+		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
 		{
 			Extension *extension = new Extension();
 			extension->setName(QString("postgis"));
@@ -233,7 +233,7 @@ void ModelValidationHelper::redirectExportProgress(int prog, QString msg, Object
 void ModelValidationHelper::setValidationParams(DatabaseModel *model, Connection *conn, const QString &pgsql_ver, bool use_tmp_names)
 {
 	if(!model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	fix_mode=false;
 	valid_canceled=false;
@@ -259,15 +259,15 @@ bool ModelValidationHelper::isInFixMode()
 void ModelValidationHelper::validateModel(void)
 {
 	if(!db_model)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_LANGUAGE, OBJ_FUNCTION,
-							 OBJ_TYPE, OBJ_DOMAIN, OBJ_SEQUENCE, OBJ_OPERATOR, OBJ_OPFAMILY,
-							 OBJ_OPCLASS, OBJ_COLLATION, OBJ_TABLE, OBJ_EXTENSION, OBJ_VIEW, OBJ_RELATIONSHIP },
-				aux_types[]={ OBJ_TABLE, OBJ_VIEW },
-				tab_obj_types[]={ OBJ_CONSTRAINT, OBJ_INDEX },
+		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
+							 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
+							 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View, ObjectType::Relationship },
+				aux_types[]={ ObjectType::Table, ObjectType::View },
+				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
 				obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
@@ -282,7 +282,7 @@ void ModelValidationHelper::validateModel(void)
 		map<QString, vector<BaseObject *> > dup_objects;
 		map<QString, vector<BaseObject *> >::iterator mitr;
 		QString name, signal_msg=QString("`%1' (%2)");
-		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), OBJ_EXTENSION) >= 0;
+		bool postgis_exists = db_model->getObjectIndex(QString("postgis"), ObjectType::Extension) >= 0;
 
 		warn_count=error_count=progress=0;
 		val_infos.clear();
@@ -309,11 +309,11 @@ void ModelValidationHelper::validateModel(void)
 
 					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
 		   * Reference table cannot own an id greater thant receiver table */
-					if(obj_type==OBJ_RELATIONSHIP)
+					if(obj_type==ObjectType::Relationship)
 					{
 						rel=dynamic_cast<Relationship *>(object);
-						if(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN ||
-								rel->getRelationshipType()==Relationship::RELATIONSHIP_DEP)
+						if(rel->getRelationshipType()==Relationship::RelationshipGen ||
+								rel->getRelationshipType()==Relationship::RelationshipDep)
 						{
 							recv_tab=rel->getReceiverTable();
 							ref_tab=rel->getReferenceTable();
@@ -342,7 +342,7 @@ void ModelValidationHelper::validateModel(void)
 				at end of code defintion being free of any reference breaking. */
 							if(object != refs.back() &&
 									(
-										((col || (constr && constr->getConstraintType()!=ConstraintType::foreign_key)) &&
+										((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
 										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId()))
 										||
 										(!constr && refs.back()->getObjectId() <= object->getObjectId()))
@@ -362,9 +362,9 @@ void ModelValidationHelper::validateModel(void)
 						/* Validating a special object. The validation made here is to check if the special object
 				(constraint/index/trigger/view) references a column added by a relationship and
 				 that relationship is being created after the creation of the special object */
-						if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW /* || obj_type==OBJ_SEQUENCE */)
+						if(obj_type==ObjectType::Table || obj_type==ObjectType::View /* || obj_type==ObjectType::ObjSequence */)
 						{
-							vector<ObjectType> tab_aux_types={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
+							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 							vector<TableObject *> *tab_objs;
 							vector<Column *> ref_cols;
 							vector<BaseObject *> rels;
@@ -391,14 +391,14 @@ void ModelValidationHelper::validateModel(void)
 
 										if(!tab_obj->isAddedByRelationship())
 										{
-											if(obj_tp==OBJ_CONSTRAINT)
+											if(obj_tp==ObjectType::Constraint)
 											{
 												constr=dynamic_cast<Constraint *>(tab_obj);
 
-												if(constr->getConstraintType()!=ConstraintType::primary_key)
+												if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 													ref_cols=constr->getRelationshipAddedColumns();
 											}
-											else if(obj_tp==OBJ_TRIGGER)
+											else if(obj_tp==ObjectType::Trigger)
 												ref_cols=dynamic_cast<Trigger *>(tab_obj)->getRelationshipAddedColumns();
 											else
 												ref_cols=dynamic_cast<Index *>(tab_obj)->getRelationshipAddedColumns();
@@ -412,7 +412,7 @@ void ModelValidationHelper::validateModel(void)
 												rels.push_back(rel);
 										}
 
-										generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, tab_obj, rels);
+										generateValidationInfo(ValidationInfo::SpObjBrokenReference, tab_obj, rels);
 									}
 								}
 							}
@@ -428,12 +428,12 @@ void ModelValidationHelper::validateModel(void)
 										rels.push_back(rel);
 								}
 
-								generateValidationInfo(ValidationInfo::SP_OBJ_BROKEN_REFERENCE, object, rels);
+								generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
 							}
 						}
 					}
 
-					generateValidationInfo(ValidationInfo::BROKEN_REFERENCE, object, refs_aux);
+					generateValidationInfo(ValidationInfo::BrokenReference, object, refs_aux);
 				}
 			}
 
@@ -445,7 +445,7 @@ void ModelValidationHelper::validateModel(void)
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
 	  and indexs of all tables/views. The table and view names are checked too. */
-		obj_list=db_model->getObjectList(OBJ_TABLE);
+		obj_list=db_model->getObjectList(ObjectType::Table);
 		itr=obj_list->begin();
 
 		//Searching the model's tables and gathering all the constraints and index
@@ -475,9 +475,9 @@ void ModelValidationHelper::validateModel(void)
 					/* If the object is an index or	a primary key, unique or exclude constraint,
 		  insert the object on duplicated	objects map */
 					if((!constr ||
-						(constr && (constr->getConstraintType()==ConstraintType::primary_key ||
-									constr->getConstraintType()==ConstraintType::unique ||
-									constr->getConstraintType()==ConstraintType::exclude))))
+						(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
+									constr->getConstraintType()==ConstraintType::Unique ||
+									constr->getConstraintType()==ConstraintType::Exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}
@@ -506,7 +506,7 @@ void ModelValidationHelper::validateModel(void)
 			if(mitr->second.size() > 1)
 			{
 				refs.assign(mitr->second.begin() + 1, mitr->second.end());
-				generateValidationInfo(ValidationInfo::NO_UNIQUE_NAME, mitr->second.front(), refs);
+				generateValidationInfo(ValidationInfo::NoUniqueName, mitr->second.front(), refs);
 				refs.clear();
 			}
 
@@ -520,7 +520,7 @@ void ModelValidationHelper::validateModel(void)
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
 		if(!postgis_exists)
 		{
-			obj_list=db_model->getObjectList(OBJ_TABLE);
+			obj_list=db_model->getObjectList(ObjectType::Table);
 			itr=obj_list->begin();
 			i=0;
 
@@ -529,12 +529,12 @@ void ModelValidationHelper::validateModel(void)
 				table = dynamic_cast<Table *>(*itr);
 				itr++;
 
-				for(auto &obj : *table->getObjectList(OBJ_COLUMN))
+				for(auto &obj : *table->getObjectList(ObjectType::Column))
 				{
 					col = dynamic_cast<Column *>(obj);
 
 					if(col->getType().isGiSType())
-						generateValidationInfo(ValidationInfo::MISSING_EXTENSION, col, {});
+						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 				}
 
 				progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
@@ -547,15 +547,15 @@ void ModelValidationHelper::validateModel(void)
 	   only when there is no validation infos generated because for each broken relationship there is the need to do a revalidation of all relationships */
 		if(val_infos.empty())
 		{
-			obj_list=db_model->getObjectList(OBJ_RELATIONSHIP);
-			itr=db_model->getObjectList(OBJ_RELATIONSHIP)->begin();
+			obj_list=db_model->getObjectList(ObjectType::Relationship);
+			itr=db_model->getObjectList(ObjectType::Relationship)->begin();
 
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
 				progress=40 + ((i/static_cast<float>(obj_list->size()))*20);
 
 				if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
-					generateValidationInfo(ValidationInfo::BROKEN_REL_CONFIG, *itr, {});
+					generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});
 
 				itr++;
 			}
@@ -605,15 +605,15 @@ void ModelValidationHelper::applyFixes(void)
 			for(unsigned i=0; i < val_infos.size() && !valid_canceled; i++)
 			{
 				if(!validate_rels)
-					validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REFERENCE ||
-												 val_infos[i].getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE ||
-												 val_infos[i].getValidationType()==ValidationInfo::NO_UNIQUE_NAME ||
-												 val_infos[i].getValidationType()==ValidationInfo::MISSING_EXTENSION);
+					validate_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenReference ||
+												 val_infos[i].getValidationType()==ValidationInfo::SpObjBrokenReference ||
+												 val_infos[i].getValidationType()==ValidationInfo::NoUniqueName ||
+												 val_infos[i].getValidationType()==ValidationInfo::MissingExtension);
 
 				/* Checking if a broken relatinship is found, when this is the case all the pending validation info
 		   will not be analyzed until no broken relationship is found */
 				if(!found_broken_rels)
-					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BROKEN_REL_CONFIG);
+					found_broken_rels=(val_infos[i].getValidationType()==ValidationInfo::BrokenRelConfig);
 
 				if(!valid_canceled)
 					resolveConflict(val_infos[i]);
@@ -658,7 +658,7 @@ void ModelValidationHelper::captureThreadError(Exception e)
 
 	emit s_validationInfoGenerated(val_info);
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		emit s_validationFinished();
 }
 

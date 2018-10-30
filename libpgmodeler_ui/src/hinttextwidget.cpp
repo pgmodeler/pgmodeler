@@ -24,7 +24,7 @@
 HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(parent)
 {
 	if(!btn_parent)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QHBoxLayout *layout=new QHBoxLayout(btn_parent);
 	QGraphicsDropShadowEffect *shadow=nullptr;
@@ -36,7 +36,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 	hint_tb=new QToolButton(this);
 	hint_tb->setCheckable(true);
 	hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	hint_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("help")));
+	hint_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("help")));
 
 	shadow=new QGraphicsDropShadowEffect(this);
 	shadow->setOffset(5,5);
@@ -49,11 +49,11 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
 	this->setVisible(false);
 	text_lbl->installEventFilter(this);
-	PgModelerUiNS::configureWidgetFont(text_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(text_lbl, PgModelerUiNs::MediumFontFactor);
 
 	parent->installEventFilter(this);
 
-	setIconSize(SMALL_ICON);
+	setIconSize(SmallIcon);
 	connect(hint_tb, SIGNAL(toggled(bool)), this, SLOT(setVisible(bool)));
 }
 
@@ -116,9 +116,9 @@ void HintTextWidget::setText(const QString &text)
 void HintTextWidget::setIconSize(unsigned icon_sz)
 {
 	if(icon_sz==0)
-		icon_sz=SMALL_ICON;
-	else if(icon_sz > LARGE_ICON)
-		icon_sz=LARGE_ICON;
+		icon_sz=SmallIcon;
+	else if(icon_sz > LargeIcon)
+		icon_sz=LargeIcon;
 
 	hint_tb->setMaximumSize(icon_sz + 8, icon_sz + 8);
 	hint_tb->setIconSize(QSize(icon_sz, icon_sz));

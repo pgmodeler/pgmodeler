@@ -29,18 +29,18 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 
 		setupUi(this);
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
-		elem_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		elem_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		parent_obj=nullptr;
-		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
-		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);
+		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
 
 		element_grid->addWidget(collation_sel, 3,1,1,2);
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(collation_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
 		warning_frame->setParent(this);
@@ -102,7 +102,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 		else
 			setPartitionKey(part_key);
 
-		if(parent_obj->getObjectType() == OBJ_TABLE &&
+		if(parent_obj->getObjectType() == ObjectType::Table &&
 			 (column || (!column && elem->getExpression().isEmpty())))
 		{
 			column_rb->setChecked(true);
@@ -116,12 +116,12 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, 
 			elem_expr_txt->setPlainText(elem->getExpression());
 		}
 
-		if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
+		if(elem->getSortingAttribute(IndexElement::AscOrder))
 			ascending_rb->setChecked(true);
 		else
 			descending_rb->setChecked(true);
 
-		nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NULLS_FIRST));
+		nulls_first_chk->setChecked(elem->getSortingAttribute(IndexElement::NullsFirst));
 		sorting_chk->setChecked(elem->isSortingEnabled());
 		op_class_sel->setSelectedObject(elem->getOperatorClass());
 		collation_sel->setSelectedObject(elem->getCollation());
@@ -134,12 +134,12 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	if(!model || !parent_obj)
 	{
 		this->setEnabled(false);
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
-					parent_obj->getObjectType()!=OBJ_VIEW &&
-					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(parent_obj->getObjectType()!=ObjectType::Table &&
+					parent_obj->getObjectType()!=ObjectType::View &&
+					parent_obj->getObjectType()!=ObjectType::Relationship)
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setEnabled(true);
 	this->parent_obj=parent_obj;
@@ -148,11 +148,11 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	cols_combo_parent->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
-	column_rb->setVisible(parent_obj->getObjectType() == OBJ_TABLE);
-	expression_rb->setChecked(parent_obj->getObjectType() == OBJ_VIEW);
+	cols_combo_parent->setVisible(parent_obj->getObjectType() == ObjectType::Table);
+	column_rb->setVisible(parent_obj->getObjectType() == ObjectType::Table);
+	expression_rb->setChecked(parent_obj->getObjectType() == ObjectType::View);
 
-	if(parent_obj->getObjectType() == OBJ_TABLE)
+	if(parent_obj->getObjectType() == ObjectType::Table)
 		updateColumnsCombo();
 }
 
@@ -195,8 +195,8 @@ Element *ElementWidget::getElement(void)
 void ElementWidget::applyConfiguration(void)
 {
 	element->setSortingEnabled(sorting_chk->isChecked());
-	element->setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
-	element->setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
+	element->setSortingAttribute(IndexElement::NullsFirst, nulls_first_chk->isChecked());
+	element->setSortingAttribute(IndexElement::AscOrder, ascending_rb->isChecked());
 	element->setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 	element->setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
 	element->setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()));

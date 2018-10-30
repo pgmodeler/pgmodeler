@@ -54,15 +54,15 @@ class Reference {
 
 	public:
 		//! \brief Constants used to define the reference type
-		static const unsigned REFER_COLUMN=0, //! \brief The reference is based on a table column
-		REFER_EXPRESSION=1; //! \brief The reference is based on an expression
+		static constexpr unsigned ReferColumn=0, //! \brief The reference is based on a table column
+		ReferExpression=1; //! \brief The reference is based on an expression
 
 		//! \brief Constants used on the view code generation
-		static const unsigned SQL_REFER_WHERE=1,
-		SQL_REFER_SELECT=2,
-		SQL_REFER_FROM=4,
-		SQL_REFER_END_EXPR=8,
-		SQL_VIEW_DEFINITION=16;
+		static constexpr unsigned SqlReferWhere=1,
+		SqlReferSelect=2,
+		SqlReferFrom=4,
+		SqlReferEndExpr=8,
+		SqlViewDefinition=16;
 
 		Reference(void);
 

@@ -93,45 +93,45 @@ void OperationListWidget::updateOperationList(void)
 
 			item=new QTreeWidgetItem;
 			str_aux=QString(BaseObject::getSchemaName(obj_type));
-			item->setData(0, Qt::UserRole, QVariant(obj_type));
+			item->setData(0, Qt::UserRole, QVariant(~obj_type));
 
-			if(obj_type==BASE_RELATIONSHIP)
+			if(obj_type==ObjectType::BaseRelationship)
 				str_aux+=QString("tv");
 
-			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux)));
+			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux)));
 
 			operations_tw->insertTopLevelItem(i,item);
 			item->setFont(0,font);
 			item->setText(0,trUtf8("Object: %1").arg(BaseObject::getTypeName(obj_type)));
 
 			item2=new QTreeWidgetItem(item);
-			item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("uid")));
+			item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("uid")));
 			item2->setFont(0,font);
 			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
 
-			if(op_type==Operation::OBJECT_CREATED)
+			if(op_type==Operation::ObjectCreated)
 			{
 				op_icon=QString("criado");
 				op_name=trUtf8("created");
 			}
-			else if(op_type==Operation::OBJECT_REMOVED)
+			else if(op_type==Operation::ObjectRemoved)
 			{
 				op_icon=QString("removido");
 				op_name=trUtf8("removed");
 			}
-			else if(op_type==Operation::OBJECT_MODIFIED)
+			else if(op_type==Operation::ObjectModified)
 			{
 				op_icon=QString("modificado");
 				op_name=trUtf8("modified");
 			}
-			else if(op_type==Operation::OBJECT_MOVED)
+			else if(op_type==Operation::ObjectMoved)
 			{
 				op_icon=QString("movimentado");
 				op_name=trUtf8("moved");
 			}
 
 			item1=new QTreeWidgetItem(item);
-			item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(op_icon)));
+			item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(op_icon)));
 			item1->setFont(0,font);
 			item1->setText(0,trUtf8("Operation: %1").arg(op_name));
 
@@ -169,10 +169,10 @@ void OperationListWidget::undoOperation(void)
 		QApplication::restoreOverrideCursor();
 		this->updateOperationList();
 
-		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		if(e.getErrorType()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
-			msg_box.show(e, "", Messagebox::ALERT_ICON);
+			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -193,10 +193,10 @@ void OperationListWidget::redoOperation(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ERR_UNDO_REDO_OPR_INV_OBJECT)
+		if(e.getErrorType()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
-			msg_box.show(e, "", Messagebox::ALERT_ICON);
+			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
 			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -209,8 +209,8 @@ void OperationListWidget::removeOperations(void)
 
 	msg_box.show(trUtf8("Operation history exclusion"),
 				 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-				 Messagebox::CONFIRM_ICON,
-				 Messagebox::YES_NO_BUTTONS);
+				 Messagebox::ConfirmIcon,
+				 Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
 	{

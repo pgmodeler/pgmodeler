@@ -21,36 +21,36 @@
 Trigger::Trigger(void)
 {
 	unsigned i;
-	EventType tipos[4]={EventType::on_insert, EventType::on_delete,
-						EventType::on_update, EventType::on_truncate};
+	EventType tipos[4]={EventType::OnInsert, EventType::OnDelete,
+						EventType::OnUpdate, EventType::OnTruncate};
 
 	function=nullptr;
 	is_exec_per_row=is_constraint=is_deferrable=false;
-	obj_type=OBJ_TRIGGER;
+	obj_type=ObjectType::Trigger;
 	referenced_table=nullptr;
 
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[ParsersAttributes::ARGUMENTS]=QString();
-	attributes[ParsersAttributes::EVENTS]=QString();
-	attributes[ParsersAttributes::TRIGGER_FUNC]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::FIRING_TYPE]=QString();
-	attributes[ParsersAttributes::PER_ROW]=QString();
-	attributes[ParsersAttributes::INS_EVENT]=QString();
-	attributes[ParsersAttributes::DEL_EVENT]=QString();
-	attributes[ParsersAttributes::UPD_EVENT]=QString();
-	attributes[ParsersAttributes::TRUNC_EVENT]=QString();
-	attributes[ParsersAttributes::CONDITION]=QString();
-	attributes[ParsersAttributes::REF_TABLE]=QString();
-	attributes[ParsersAttributes::DEFER_TYPE]=QString();
-	attributes[ParsersAttributes::DEFERRABLE]=QString();
-	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-	attributes[ParsersAttributes::CONSTRAINT]=QString();
-	attributes[ParsersAttributes::OLD_TABLE_NAME]=QString();
-	attributes[ParsersAttributes::NEW_TABLE_NAME]=QString();
+	attributes[Attributes::Arguments]=QString();
+	attributes[Attributes::Events]=QString();
+	attributes[Attributes::TriggerFunc]=QString();
+	attributes[Attributes::Table]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::FiringType]=QString();
+	attributes[Attributes::PerRow]=QString();
+	attributes[Attributes::InsEvent]=QString();
+	attributes[Attributes::DelEvent]=QString();
+	attributes[Attributes::UpdEvent]=QString();
+	attributes[Attributes::TruncEvent]=QString();
+	attributes[Attributes::Condition]=QString();
+	attributes[Attributes::RefTable]=QString();
+	attributes[Attributes::DeferType]=QString();
+	attributes[Attributes::Deferrable]=QString();
+	attributes[Attributes::DeclInTable]=QString();
+	attributes[Attributes::Constraint]=QString();
+	attributes[Attributes::OldTableName]=QString();
+	attributes[Attributes::NewTableName]=QString();
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -66,7 +66,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 	count=arguments.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 			str_args+=QString("'") + arguments[i] + QString("'");
 		else
 			str_args+=arguments[i];
@@ -74,7 +74,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
 		if(i < (count-1)) str_args+=QString(",");
 	}
 
-	attributes[ParsersAttributes::ARGUMENTS]=str_args;
+	attributes[Attributes::Arguments]=str_args;
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -85,8 +85,8 @@ void Trigger::setFiringType(FiringType firing_type)
 
 void Trigger::setEvent(EventType event, bool value)
 {
-	if(event==EventType::on_select)
-		throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(event==EventType::OnSelect)
+		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(events[event] != value);
 	events[event]=value;
@@ -96,21 +96,21 @@ void Trigger::setFunction(Function *func)
 {
 	//Case the function is null an error is raised
 	if(!func)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
-						ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Trigger)),
+						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
 		if(func->getReturnType()!=QString("trigger"))
-			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_TRIGGER_FUNCTION).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidTriggerFunction).arg(QString("trigger")),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Case the function has some parameters raise an error
 		else if(func->getParameterCount()!=0)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParamCount)
 							.arg(this->getName())
-							.arg(BaseObject::getTypeName(OBJ_TRIGGER)),
-							ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							.arg(BaseObject::getTypeName(ObjectType::Trigger)),
+							ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		setCodeInvalidated(function != func);
 		this->function=func;
@@ -126,21 +126,21 @@ void Trigger::setCondition(const QString &cond)
 void Trigger::addColumn(Column *column)
 {
 	if(!column)
-		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!column->getParentTable())
-		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_COLUMN_NO_PARENT))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgColumnNoParent)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgNotAllocatedColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(this->getParentTable() &&
 			column->getParentTable() != this->getParentTable())
-		throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidColumnTrigger)
 						.arg(column->getName(true))
 						.arg(this->getName(true)),
-						ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgInvalidColumnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	upd_columns.push_back(column);
 	setCodeInvalidated(true);
@@ -150,7 +150,7 @@ void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<QString>::iterator itr;
 
@@ -168,8 +168,8 @@ void Trigger::setExecutePerRow(bool value)
 
 bool Trigger::isExecuteOnEvent(EventType event)
 {
-	if(event==EventType::on_select)
-		throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(event==EventType::OnSelect)
+		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(events.at(!event));
 }
@@ -183,7 +183,7 @@ QString Trigger::getArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(arguments[arg_idx]);
 }
@@ -192,7 +192,7 @@ Column *Trigger::getColumn(unsigned col_idx)
 {
 	//Raises an error if the column index is invalid (out of bound)
 	if(col_idx>=upd_columns.size())
-		throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(upd_columns[col_idx]);
 }
@@ -226,7 +226,7 @@ void Trigger::removeArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
 	if(arg_idx>=arguments.size())
-		throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	vector<QString>::iterator itr;
 	itr=arguments.begin()+arg_idx;
@@ -249,8 +249,8 @@ void Trigger::removeColumns(void)
 void Trigger::setReferecendTable(BaseTable *ref_table)
 {
 	//If the referenced table isn't valid raises an error
-	if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
-		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(ref_table && ref_table->getObjectType()!=ObjectType::Table)
+		throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(referenced_table != ref_table);
 	this->referenced_table=ref_table;
@@ -291,8 +291,8 @@ void Trigger::setConstraint(bool value)
 
 void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 {
-	if(tab_idx > NEW_TABLE_NAME)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(tab_idx > NewTableName)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(transition_tabs_names[tab_idx] != name);
 	transition_tabs_names[tab_idx] = name;
@@ -300,8 +300,8 @@ void Trigger::setTransitionTableName(unsigned tab_idx, const QString &name)
 
 QString Trigger::getTransitionTableName(unsigned tab_idx)
 {
-	if(tab_idx > NEW_TABLE_NAME)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(tab_idx > NewTableName)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(transition_tabs_names[tab_idx]);
 }
@@ -346,11 +346,11 @@ vector<Column *> Trigger::getRelationshipAddedColumns(void)
 void Trigger::setBasicAttributes(unsigned def_type)
 {
 	QString str_aux,
-			attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
-						ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
+			attribs[4]={Attributes::InsEvent, Attributes::DelEvent,
+						Attributes::TruncEvent, Attributes::UpdEvent },
 			sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
-	unsigned count, i, i1, event_types[4]={EventType::on_insert, EventType::on_delete,
-										   EventType::on_truncate, EventType::on_update};
+	unsigned count, i, i1, event_types[4]={EventType::OnInsert, EventType::OnDelete,
+										   EventType::OnTruncate, EventType::OnUpdate};
 
 
 	setArgumentAttribute(def_type);
@@ -360,18 +360,18 @@ void Trigger::setBasicAttributes(unsigned def_type)
 		if(events.at(event_types[i]))
 		{
 			str_aux+=sql_event[i];
-			attributes[attribs[i]]=ParsersAttributes::_TRUE_;
+			attributes[attribs[i]]=Attributes::True;
 
-			if(event_types[i]==EventType::on_update)
+			if(event_types[i]==EventType::OnUpdate)
 			{
 				count=upd_columns.size();
-				attributes[ParsersAttributes::COLUMNS]=QString();
+				attributes[Attributes::Columns]=QString();
 
 				for(i1=0; i1 < count; i1++)
 				{
-					attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
+					attributes[Attributes::Columns]+=upd_columns.at(i1)->getName(true);
 					if(i1 < count-1)
-						attributes[ParsersAttributes::COLUMNS]+=QString(",");
+						attributes[Attributes::Columns]+=QString(",");
 				}
 			}
 		}
@@ -379,17 +379,17 @@ void Trigger::setBasicAttributes(unsigned def_type)
 
 	if(!str_aux.isEmpty()) str_aux.remove(str_aux.size()-3,3);
 
-	if(def_type==SchemaParser::SQL_DEFINITION && !attributes[ParsersAttributes::COLUMNS].isEmpty())
-		str_aux+=QString(" OF ") + attributes[ParsersAttributes::COLUMNS];
+	if(def_type==SchemaParser::SqlDefinition && !attributes[Attributes::Columns].isEmpty())
+		str_aux+=QString(" OF ") + attributes[Attributes::Columns];
 
-	attributes[ParsersAttributes::EVENTS]=str_aux;
+	attributes[Attributes::Events]=str_aux;
 
 	if(function)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getName(true);
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::TriggerFunc]=function->getName(true);
 		else
-			attributes[ParsersAttributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
+			attributes[Attributes::TriggerFunc]=function->getCodeDefinition(def_type, true);
 	}
 }
 
@@ -403,34 +403,34 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	/* Case the trigger doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[Attributes::DeclInTable]=Attributes::True;
 
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[ParsersAttributes::CONSTRAINT]=(is_constraint ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
+	attributes[Attributes::Constraint]=(is_constraint ? Attributes::True : QString());
+	attributes[Attributes::FiringType]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !is_constraint) || is_constraint ? ParsersAttributes::_TRUE_ : QString());
+	attributes[Attributes::PerRow]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : QString());
 
-	attributes[ParsersAttributes::CONDITION]=condition;
+	attributes[Attributes::Condition]=condition;
 
 	if(referenced_table)
-		attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
+		attributes[Attributes::RefTable]=referenced_table->getName(true);
 
-	attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
+	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : QString());
+	attributes[Attributes::DeferType]=(~deferral_type);
 
-	if(def_type == SchemaParser::XML_DEFINITION)
+	if(def_type == SchemaParser::XmlDefinition)
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=transition_tabs_names[OLD_TABLE_NAME];
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=transition_tabs_names[NEW_TABLE_NAME];
+		attributes[Attributes::OldTableName]=transition_tabs_names[OldTableName];
+		attributes[Attributes::NewTableName]=transition_tabs_names[NewTableName];
 	}
 	else
 	{
-		attributes[ParsersAttributes::OLD_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[OLD_TABLE_NAME]);
-		attributes[ParsersAttributes::NEW_TABLE_NAME]=BaseObject::formatName(transition_tabs_names[NEW_TABLE_NAME]);
+		attributes[Attributes::OldTableName]=BaseObject::formatName(transition_tabs_names[OldTableName]);
+		attributes[Attributes::NewTableName]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
 	return(BaseObject::__getCodeDefinition(def_type));
@@ -445,34 +445,34 @@ void Trigger::validateTrigger(void)
 		if(!is_constraint)
 		{
 			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
-			if(firing_type==FiringType::instead_of && parent_type==OBJ_TABLE)
-				throw Exception(ERR_TABLE_TRIG_INSTEADOF_FIRING,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			if(firing_type==FiringType::InsteadOf && parent_type==ObjectType::Table)
+				throw Exception(ErrorCode::InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement
-			else if(firing_type==FiringType::instead_of && parent_type==OBJ_VIEW && !is_exec_per_row)
-				throw Exception(ERR_TRIGGER_INV_INSTEADOF_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(firing_type==FiringType::InsteadOf && parent_type==ObjectType::View && !is_exec_per_row)
+				throw Exception(ErrorCode::InvUsageInsteadOfOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A trigger cannot make reference to columns when using INSTEAD OF mode and UPDATE event
-			else if(firing_type==FiringType::instead_of && events[EventType::on_update] && !upd_columns.empty())
-				throw Exception(ERR_TRIGGER_INV_INSTEADOF_UPDATE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(firing_type==FiringType::InsteadOf && events[EventType::OnUpdate] && !upd_columns.empty())
+				throw Exception(ErrorCode::InvUsageInsteadOfUpdateTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The TRUNCATE event can only be used when the trigger executes for each statement and belongs to a table
-			else if(events[EventType::on_truncate] && (is_exec_per_row || parent_type==OBJ_VIEW))
-				throw Exception(ERR_TRIGGER_INV_TRUNCATE_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(events[EventType::OnTruncate] && (is_exec_per_row || parent_type==ObjectType::View))
+				throw Exception(ErrorCode::InvUsageTruncateOnTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//A view trigger cannot be AFTER/BEFORE when it executes for each row
-			else if(parent_type==OBJ_VIEW && is_exec_per_row && (firing_type==FiringType::after || firing_type==FiringType::before))
-				throw Exception(ERR_VIEW_TRIG_INV_AFTBFR_USAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(parent_type==ObjectType::View && is_exec_per_row && (firing_type==FiringType::After || firing_type==FiringType::Before))
+				throw Exception(ErrorCode::InvUsageAfterBeforeViewTrigger,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//Only constraint triggers can be deferrable or reference another table
 			else if(referenced_table || is_deferrable)
-				throw Exception(ERR_TRIG_USING_CONSTRIG_ATRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(ErrorCode::InvUseConstraintTriggerAttribs,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		//Constraint triggers can only be executed on AFTER events and for each row
 		else
 		{
-			if(firing_type!=FiringType::after && !is_exec_per_row)
-				throw Exception(ERR_CONST_TRIG_NOT_AFTER_ROW,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			if(firing_type!=FiringType::After && !is_exec_per_row)
+				throw Exception(ErrorCode::InvConstrTriggerNotAfterRow,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }

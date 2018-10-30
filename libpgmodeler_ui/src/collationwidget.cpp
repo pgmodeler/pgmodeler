@@ -18,7 +18,7 @@
 
 #include "collationwidget.h"
 
-CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLLATION)
+CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Collation)
 {
 	try
 	{
@@ -32,7 +32,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
-		configureFormLayout(collation_grid, OBJ_COLLATION);
+		configureFormLayout(collation_grid, ObjectType::Collation);
 
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);
@@ -88,10 +88,10 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 			if(locale_cmb->currentIndex()==0)
 			{
-				idx=lcctype_cmb->findText(collation->getLocalization(Collation::_LC_CTYPE));
+				idx=lcctype_cmb->findText(collation->getLocalization(Collation::LcCtype));
 				lcctype_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 
-				idx=lccollate_cmb->findText(collation->getLocalization(Collation::_LC_COLLATE));
+				idx=lccollate_cmb->findText(collation->getLocalization(Collation::LcCollate));
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 			}
 		}
@@ -160,10 +160,10 @@ void CollationWidget::applyConfiguration(void)
 			collation->setLocale(locale_cmb->currentText());
 
 		if(lccollate_cmb->currentIndex() > 0)
-			collation->setLocalization(Collation::_LC_COLLATE, lccollate_cmb->currentText());
+			collation->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());
 
 		if(lcctype_cmb->currentIndex() > 0)
-			collation->setLocalization(Collation::_LC_CTYPE, lcctype_cmb->currentText());
+			collation->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
 
 		finishConfiguration();
 	}

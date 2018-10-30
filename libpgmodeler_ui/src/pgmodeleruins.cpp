@@ -8,7 +8,7 @@
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
 
-namespace PgModelerUiNS {
+namespace PgModelerUiNs {
 
 	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{
@@ -27,7 +27,7 @@ namespace PgModelerUiNS {
 	QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 	{
 		if(!output_trw)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QTreeWidgetItem *item=nullptr;
 
@@ -64,7 +64,7 @@ namespace PgModelerUiNS {
 	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
 	{
 		if(!output_lst)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
 
@@ -90,24 +90,24 @@ namespace PgModelerUiNS {
 
 	void disableObjectSQL(BaseObject *object, bool disable)
 	{
-		if(object && object->getObjectType()!=BASE_RELATIONSHIP)
+		if(object && object->getObjectType()!=ObjectType::BaseRelationship)
 		{
 			Messagebox msgbox;
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
 
 			if(object->isSystemObject())
-				throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 								.arg(object->getName(true))
 								.arg(object->getTypeName()),
-								ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			object->setSQLDisabled(disable);
 
-			if(obj_type!=OBJ_DATABASE && curr_val!=disable)
+			if(obj_type!=ObjectType::Database && curr_val!=disable)
 			{
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
-							Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 				if(msgbox.result()==QDialog::Accepted)
 					disableReferencesSQL(object);
@@ -115,10 +115,10 @@ namespace PgModelerUiNS {
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
 	   codes when the code of parent table is disabled too in order to avoid export errors */
-			if(object->getObjectType()==OBJ_TABLE)
+			if(object->getObjectType()==ObjectType::Table)
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(OBJ_CONSTRAINT);
+				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{
@@ -126,8 +126,8 @@ namespace PgModelerUiNS {
 
 					/* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
 		   The constraint is FK and the reference table is disabled the FK will not be enabled */
-					if((constr->getConstraintType()!=ConstraintType::foreign_key && !constr->isDeclaredInTable()) ||
-							(constr->getConstraintType()==ConstraintType::foreign_key &&
+					if((constr->getConstraintType()!=ConstraintType::ForeignKey && !constr->isDeclaredInTable()) ||
+							(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							 (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
 						constr->setSQLDisabled(disable);
 				}
@@ -150,7 +150,7 @@ namespace PgModelerUiNS {
 				tab_obj=dynamic_cast<TableObject *>(refs.back());
 
 				//If the object is a relationship added does not do anything since the relationship itself will be disabled
-				if(refs.back()->getObjectType()!=BASE_RELATIONSHIP &&
+				if(refs.back()->getObjectType()!=ObjectType::BaseRelationship &&
 						(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 				{
 					refs.back()->setSQLDisabled(object->isSQLDisabled());
@@ -211,16 +211,16 @@ namespace PgModelerUiNS {
 
 		switch(factor_id)
 		{
-			case SMALL_FONT_FACTOR:
+			case SmallFontFactor:
 				factor=0.80f;
 			break;
-			case MEDIUM_FONT_FACTOR:
+			case MediumFontFactor:
 				factor=0.90f;
 			break;
-			case BIG_FONT_FACTOR:
+			case BigFontFactor:
 				factor=1.10f;
 			break;
-			case HUGE_FONT_FACTOR:
+			case HugeFontFactor:
 			default:
 				factor=1.40f;
 			break;
@@ -259,7 +259,7 @@ namespace PgModelerUiNS {
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(~ex.getErrorType());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
@@ -345,7 +345,7 @@ namespace PgModelerUiNS {
 		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
 
 		base_frm.setMainWidget(bulkedit_wgt);
-		base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
 
 		if(base_frm.exec() == QDialog::Accepted)
 		{

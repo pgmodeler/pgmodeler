@@ -39,7 +39,7 @@ class Column: public TableObject{
 		bool not_null;
 
 		//! \brief Data type of the column
-		PgSQLType type;
+		PgSqlType type;
 
 		/*! \brief Default value of the column.
 		 Note: The user must format the default value in
@@ -84,7 +84,7 @@ class Column: public TableObject{
 		void setNotNull(bool value);
 
 		//! \brief Defines the column data type
-		void setType(PgSQLType type);
+		void setType(PgSqlType type);
 
 		//! \brief Defines the identity mode of the column
 		void setIdentityType(IdentityType id_type);
@@ -105,7 +105,7 @@ class Column: public TableObject{
 		bool isIdentity(void);
 
 		//! \brief Returns the data type of the column
-		PgSQLType getType(void);
+		PgSqlType getType(void);
 
 		//! \brief Returns the identity mode of the column
 		IdentityType getIdentityType(void);

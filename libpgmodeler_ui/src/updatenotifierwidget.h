@@ -49,7 +49,7 @@
 #include "ui_updatenotifierwidget.h"
 #include "messagebox.h"
 #include "globalattributes.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 
 class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 	private:

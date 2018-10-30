@@ -102,7 +102,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		static const QString COLUMN_NULL_VALUE;
+		static const QString ColumnNullValue;
 
 		SQLExecutionWidget(QWidget * parent = 0);
 		~SQLExecutionWidget(void);

@@ -80,15 +80,15 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 
 	public:
 		//! \brief Constants used to access the tree widget items data
-		static const unsigned OBJECT_ID=1,
-		OBJECT_TYPE=2,
-		OBJECT_NAME=3,
-		OBJECT_SCHEMA=4,
-		OBJECT_TABLE=5,
-		OBJECT_ATTRIBS=6, //Stores the object's attributes returned by catalog query
-		OBJECT_OTHER_DATA=7, //General purpose usage
-		OBJECT_COUNT=8,
-		OBJECT_SOURCE=9; //Only for gropus
+		static constexpr unsigned ObjectId=1,
+		ObjectTypeId=2,
+		ObjectName=3,
+		ObjectSchema=4,
+		ObjectTable=5,
+		ObjectAttribs=6, //Stores the object's attributes returned by catalog query
+		ObjectOtherData=7, //General purpose usage
+		ObjectCount=8,
+		ObjectSource=9; //Only for gropus
 		
 		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~DatabaseImportForm(void);
@@ -116,7 +116,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
 		The "root" parameter is used to associate the group of objects as child of it.
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
-		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains OBJ_SCHEMA or OBJ_TABLE or OBJ_VIEW */
+		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjectType::ObjSchema or ObjectType::ObjTable or ObjectType::ObjView */
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
 																											 const QString &schema=QString(), const QString &table=QString(), unsigned sort_by = 0);

@@ -35,7 +35,7 @@ can be used in a particular indexing method.
 class OperatorClass: public BaseObject {
 	private:
 		//! \brief Data type witch the operator class acts on
-		PgSQLType data_type;
+		PgSqlType data_type;
 
 		//! \brief Operator family that the operator class is part
 		OperatorFamily *family;
@@ -59,7 +59,7 @@ class OperatorClass: public BaseObject {
 		~OperatorClass(void);
 
 		//! \brief Sets the data type that the operator class works on
-		void setDataType(PgSQLType data_type);
+		void setDataType(PgSqlType data_type);
 
 		//! \brief Sets the operator family that the operator class is part
 		void setFamily(OperatorFamily *family);
@@ -78,7 +78,7 @@ class OperatorClass: public BaseObject {
 		void removeElements(void);
 
 		//! \brief Methods used to obtain the class attributes
-		PgSQLType getDataType(void);
+		PgSqlType getDataType(void);
 		OperatorFamily *getFamily(void);
 		IndexingType getIndexingType(void);
 		bool isDefault(void);

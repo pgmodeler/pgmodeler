@@ -38,7 +38,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Random number generator engine used to generate random colors for imported schemas
 		default_random_engine rand_num_engine;
 		
-		static const QString UNKNOWN_OBJECT_OID_XML;
+		static const QString UnkownObjectOidXml;
 		
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */
@@ -129,7 +129,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
 		map<unsigned, Table *> imported_tables;
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 		
 		SchemaParser schparser;
 		
@@ -272,7 +272,7 @@ class DatabaseImportHelper: public QObject {
 		
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 		
 		//! \brief This signal is emited when the import has finished
 		void s_importFinished(Exception e=Exception());

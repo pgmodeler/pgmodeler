@@ -104,7 +104,7 @@ void ObjectFinderWidget::fadeObjects(void)
 	vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
-	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -137,7 +137,7 @@ void ObjectFinderWidget::selectObjects(void)
 	BaseGraphicObject *graph_obj = nullptr;
 	bool sel_listed = false;
 
-	for(auto obj_type : {OBJ_TABLE, OBJ_VIEW, OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA})
+	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -291,8 +291,8 @@ void ObjectFinderWidget::editObject(void)
 {
 	if(selected_obj)
 	{
-		if(selected_obj->getObjectType()==OBJ_PERMISSION)
-			model_wgt->showObjectForm(OBJ_PERMISSION, dynamic_cast<Permission *>(selected_obj)->getObject());
+		if(selected_obj->getObjectType()==ObjectType::Permission)
+			model_wgt->showObjectForm(ObjectType::Permission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
 			vector<BaseObject *> vect;
@@ -330,7 +330,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 		for(lin_idx=0, i=0; i < objs.size(); i++)
 		{
-			if(objs[i]->getObjectType()==BASE_RELATIONSHIP)
+			if(objs[i]->getObjectType()==ObjectType::BaseRelationship)
 				str_aux=QString("tv");
 			else
 				str_aux.clear();
@@ -357,24 +357,24 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				fnt=tab_item->font();
 
 				tab_item->setText(objs[i]->getName());
-				tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
+				tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
 
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 				}
 				else if(dynamic_cast<TableObject *>(objs[i]) &&
 						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
 				{
 					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
 				}
 				else
 				{
 					fnt.setItalic(false);
-					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
 				}
 
 
@@ -416,16 +416,16 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 					}
 					else
 					{
 						fnt.setItalic(false);
-						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+						tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
 					}
 
 					tab_item->setFont(fnt);
-					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(parent_obj->getObjectType())));
+					tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(parent_obj->getObjectType())));
 				}
 			}
 
@@ -466,19 +466,19 @@ void ObjectFinderWidget::updateObjectTypeList(QListWidget *list_wgt)
 		{
 			item=new QListWidgetItem;
 
-			if(types[type_id]==BASE_RELATIONSHIP)
+			if(types[type_id]==ObjectType::BaseRelationship)
 				str_aux=QString(BaseObject::getSchemaName(types[type_id])) + QString("tv");
 			else
 				str_aux=QString(BaseObject::getSchemaName(types[type_id]));
 
-			icon=QPixmap(PgModelerUiNS::getIconPath(str_aux));
+			icon=QPixmap(PgModelerUiNs::getIconPath(str_aux));
 
 			item->setText(BaseObject::getTypeName(types[type_id]));
 			item->setIcon(icon);
 
 			//By default all object types are checked
 			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, QVariant(types[type_id]));
+			item->setData(Qt::UserRole, QVariant(~types[type_id]));
 			list_wgt->insertItem(type_id, item);
 		}
 	}

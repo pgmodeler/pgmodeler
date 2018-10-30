@@ -45,9 +45,9 @@ class Language: public BaseObject{
 			> VALIDATOR: Function that validates the code written in the language's syntax
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
-		static const unsigned VALIDATOR_FUNC=0,
-		HANDLER_FUNC=1,
-		INLINE_FUNC=2;
+		static constexpr unsigned ValidatorFunc=0,
+		HandlerFunc=1,
+		InlineFunc=2;
 
 		Language(void);
 

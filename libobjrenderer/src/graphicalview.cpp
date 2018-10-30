@@ -40,8 +40,8 @@ void GraphicalView::configureObject(void)
 	vector<TableObject *> tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
-	QString attribs[]={ ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_EXT_BODY },
-			tag_attribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
+	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
+			tag_attribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	double width, type_width=0, px=0;
 	TableObjectView *col_item=nullptr;
 	QList<TableObjectView *> col_items;
@@ -52,10 +52,10 @@ void GraphicalView::configureObject(void)
 	title->configureObject(view);
 
 	//Gets the reference count on SELECT part of the SQL definition
-	count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
+	count=view->getReferenceCount(Reference::SqlReferSelect);
 
 	if(count==0)
-		count=count1=view->getReferenceCount(Reference::SQL_VIEW_DEFINITION);
+		count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
@@ -65,9 +65,9 @@ void GraphicalView::configureObject(void)
 	for(i=0; i < count; i++)
 	{
 		if(count1==0)
-			ref=view->getReference(i, Reference::SQL_REFER_SELECT);
+			ref=view->getReference(i, Reference::SqlReferSelect);
 		else
-			ref=view->getReference(i, Reference::SQL_VIEW_DEFINITION);
+			ref=view->getReference(i, Reference::SqlViewDefinition);
 
 		//Reuses the subitem if it was allocated before
 		if(!subitems.isEmpty() && i < subitems.size())
@@ -83,7 +83,7 @@ void GraphicalView::configureObject(void)
 
 		columns->removeFromGroup(graph_ref);
 		graph_ref->configureObject(ref);
-		graph_ref->moveBy(HORIZ_SPACING, (i * graph_ref->boundingRect().height()) + VERT_SPACING);
+		graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
 		columns->addToGroup(graph_ref);
 	}
 
@@ -97,14 +97,14 @@ void GraphicalView::configureObject(void)
 		i--;
 	}
 
-	tab_objs.assign(view->getObjectList(OBJ_RULE)->begin(),
-					view->getObjectList(OBJ_RULE)->end());
+	tab_objs.assign(view->getObjectList(ObjectType::Rule)->begin(),
+					view->getObjectList(ObjectType::Rule)->end());
 	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(OBJ_TRIGGER)->begin(),
-					view->getObjectList(OBJ_TRIGGER)->end());
+					view->getObjectList(ObjectType::Trigger)->begin(),
+					view->getObjectList(ObjectType::Trigger)->end());
 	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(OBJ_INDEX)->begin(),
-					view->getObjectList(OBJ_INDEX)->end());
+					view->getObjectList(ObjectType::Index)->begin(),
+					view->getObjectList(ObjectType::Index)->end());
 
 	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
 	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
@@ -135,17 +135,17 @@ void GraphicalView::configureObject(void)
 
 			//Configures the item and set its position
 			col_item->configureObject();
-			col_item->moveBy(HORIZ_SPACING, (i * col_item->boundingRect().height()) + VERT_SPACING);
+			col_item->moveBy(HorizSpacing, (i * col_item->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-				  col_item->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
+				  col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
 			if(type_width < col_item->getChildObject(2)->boundingRect().width())
-				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HORIZ_SPACING);
+				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HorizSpacing);
 
 			col_items.push_back(col_item);
 		}
@@ -184,7 +184,7 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VERT_SPACING)));
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
 
 		pen=this->getBorderStyle(attribs[idx]);
 		pen.setStyle(Qt::DashLine);
@@ -194,7 +194,7 @@ void GraphicalView::configureObject(void)
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
-			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BORDER_COLOR));
+			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
 		}
 
 		bodies[idx]->setPen(pen);
@@ -213,7 +213,7 @@ void GraphicalView::configureObject(void)
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
+										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
 		}
 	}
 

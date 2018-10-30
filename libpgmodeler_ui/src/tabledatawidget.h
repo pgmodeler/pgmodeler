@@ -59,7 +59,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void enterEvent(QEvent *);
 
 	public:
-		static const QString PLACEHOLDER_COLUMN;
+		static const QString PlaceholderColumn;
 
 		TableDataWidget(QWidget * parent = 0);
 

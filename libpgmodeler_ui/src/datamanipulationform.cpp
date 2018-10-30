@@ -26,12 +26,13 @@
 #include "databaseexplorerwidget.h"
 #include "generalconfigwidget.h"
 
-const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
-const unsigned DataManipulationForm::NO_OPERATION=0;
-const unsigned DataManipulationForm::OP_INSERT=1;
-const unsigned DataManipulationForm::OP_UPDATE=2;
-const unsigned DataManipulationForm::OP_DELETE=3;
+const QColor DataManipulationForm::RowColors[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 bool DataManipulationForm::has_csv_clipboard=false;
+
+constexpr unsigned DataManipulationForm::NoOperation;
+constexpr unsigned DataManipulationForm::OpInsert;
+constexpr unsigned DataManipulationForm::OpUpdate;
+constexpr unsigned DataManipulationForm::OpDelete;
 
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
@@ -41,11 +42,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	table_oid=0;
 
-	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(warning_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
-	filter_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
@@ -70,8 +71,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	});
 
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -147,7 +148,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
-		PgModelerUiNS::bulkDataEdit(results_tbw);
+		PgModelerUiNs::bulkDataEdit(results_tbw);
 	});
 
 	connect(filter_tb, &QToolButton::toggled,
@@ -170,15 +171,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 						QAction *act = nullptr;
 						ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("copiar")), trUtf8("Copy items"));
+						act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("copiar")), trUtf8("Copy items"));
 						act->setMenu(&copy_menu);
 
-						act = item_menu.addAction(QIcon(PgModelerUiNS::getIconPath("colar")), trUtf8("Pase items"));
+						act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("colar")), trUtf8("Pase items"));
 						act->setShortcut(paste_tb->shortcut());
 						connect(act, SIGNAL(triggered(bool)), paste_tb, SLOT(click()));
-						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == OBJ_TABLE);
+						act->setEnabled(!qApp->clipboard()->text().isEmpty() && obj_type == ObjectType::Table);
 
-						if(obj_type == OBJ_TABLE)
+						if(obj_type == ObjectType::Table)
 						{
 							item_menu.addSeparator();
 							act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
@@ -215,17 +216,17 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 		QString db_name;
 
 		tmpl_conn_params=conn.getConnectionParams();
-		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::PARAM_DB_NAME))
-				.arg(conn.getConnectionParam(Connection::PARAM_SERVER_IP).isEmpty() ?
-						 conn.getConnectionParam(Connection::PARAM_SERVER_FQDN) : conn.getConnectionParam(Connection::PARAM_SERVER_IP))
-				.arg(conn.getConnectionParam(Connection::PARAM_PORT));
+		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::ParamDbName))
+				.arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
+						 conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
+				.arg(conn.getConnectionParam(Connection::ParamPort));
 
 		db_name_lbl->setText(db_name);
 		db_name.remove(QRegExp("<(/)?(strong|em)>"));
 		this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
 
 		schema_cmb->clear();
-		listObjects(schema_cmb, { OBJ_SCHEMA });
+		listObjects(schema_cmb, { ObjectType::Schema });
 
 		disableControlButtons();
 		schema_cmb->setCurrentText(curr_schema);
@@ -269,9 +270,9 @@ void DataManipulationForm::listTables(void)
 	if(schema_cmb->currentIndex() > 0)
 	{
 		if(hide_views_chk->isChecked())
-			listObjects(table_cmb, { OBJ_TABLE }, schema_cmb->currentText());
+			listObjects(table_cmb, { ObjectType::Table }, schema_cmb->currentText());
 		else
-			listObjects(table_cmb, { OBJ_TABLE, OBJ_VIEW }, schema_cmb->currentText());
+			listObjects(table_cmb, { ObjectType::Table, ObjectType::View }, schema_cmb->currentText());
 	}
 
 	table_lbl->setEnabled(table_cmb->count() > 0);
@@ -295,13 +296,13 @@ void DataManipulationForm::listColumns(void)
 			vector<attribs_map> cols;
 
 			catalog.setConnection(conn);
-			cols=catalog.getObjectsAttributes(OBJ_COLUMN, schema_cmb->currentText(), table_cmb->currentText());
+			cols=catalog.getObjectsAttributes(ObjectType::Column, schema_cmb->currentText(), table_cmb->currentText());
 
 			for(auto &col : cols)
 			{
-				col_names.push_back(col[ParsersAttributes::NAME]);
-				code_compl_wgt->insertCustomItem(col[ParsersAttributes::NAME], {},
-				QPixmap(PgModelerUiNS::getIconPath("column")));
+				col_names.push_back(col[Attributes::Name]);
+				code_compl_wgt->insertCustomItem(col[Attributes::Name], {},
+				QPixmap(PgModelerUiNs::getIconPath("column")));
 			}
 
 			ord_column_cmb->addItems(col_names);
@@ -333,7 +334,7 @@ void DataManipulationForm::retrieveData(void)
 		if(!changed_rows.empty())
 		{
 			msg_box.show(trUtf8("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
-						 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Rejected)
 				return;
@@ -387,12 +388,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
+		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::Table)
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()==OBJ_TABLE)
+		if(table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::Table)
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -406,15 +407,15 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
+												 table_cmb->currentData().toUInt() == ~ObjectType::Table &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == OBJ_TABLE &&
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ~ObjectType::Table &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
 		code_compl_wgt->clearCustomItems();
-		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
+		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), ObjectType::Column);
 
 		columns_lst->clear();
 		QListWidgetItem *item = nullptr;
@@ -475,7 +476,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == OBJ_TABLE  &&
+											 table_cmb->currentData().toUInt() == ~ObjectType::Table  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -670,7 +671,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn);
-		catalog.setFilter(Catalog::LIST_ALL_OBJS);
+		catalog.setFilter(Catalog::ListAllObjects);
 		combo->blockSignals(true);
 		combo->clear();
 
@@ -688,8 +689,8 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 
 			for(; idx < count; idx++)
 			{
-				combo->setItemIcon(idx, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
-				combo->setItemData(idx, obj_type);
+				combo->setItemIcon(idx, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
+				combo->setItemData(idx, ~obj_type);
 			}
 
 			idx=count;
@@ -725,7 +726,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 
 		table_oid = 0;
 
-		if(obj_type==OBJ_VIEW)
+		if(obj_type==ObjectType::View)
 		{
 			warning_frm->setVisible(true);
 			warning_lbl->setText(trUtf8("Views can't have their data handled through this grid, this way, all operations are disabled."));
@@ -734,38 +735,38 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		{
 			catalog.setConnection(conn);
 			//Retrieving the constraints from catalog using a custom filter to select only primary keys (contype=p)
-			pks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='p'")}});
+			pks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='p'")}});
 
 			warning_frm->setVisible(pks.empty());
 
 			if(pks.empty())
 				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
 			else
-				table_oid = pks[0][ParsersAttributes::TABLE].toUInt();
+				table_oid = pks[0][Attributes::Table].toUInt();
 		}
 
-		hint_frm->setVisible(obj_type==OBJ_TABLE);
-		add_tb->setEnabled(obj_type==OBJ_TABLE && !col_names.empty());
+		hint_frm->setVisible(obj_type==ObjectType::Table);
+		add_tb->setEnabled(obj_type==ObjectType::Table && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
 		{
-			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][ParsersAttributes::COLUMNS]);
+			QStringList col_str_ids=Catalog::parseArrayValues(pks[0][Attributes::Columns]);
 			vector<unsigned> col_ids;
 
 			for(QString id : col_str_ids)
 				col_ids.push_back(id.toUInt());
 
-			columns=catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids);
+			columns=catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids);
 
 			for(auto &col : columns)
-				pk_col_names.push_back(col[ParsersAttributes::NAME]);
+				pk_col_names.push_back(col[Attributes::Name]);
 		}
 
 		catalog.closeConnection();
 
 		//For tables, even if there is no pk the user can manipulate data
-		if(obj_type==OBJ_TABLE)
+		if(obj_type==ObjectType::Table)
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -793,14 +794,14 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 		ref_fk_infos.clear();
 		fk_infos.clear();
 
-		if(obj_type==OBJ_VIEW)
+		if(obj_type==ObjectType::View)
 			return;
 
 		catalog.setConnection(conn);
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
-		fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, schema, table, {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f'")}});
-		ref_fks=catalog.getObjectsAttributes(OBJ_CONSTRAINT, QString(), QString(), {}, {{ParsersAttributes::CUSTOM_FILTER, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
+		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='f'")}});
+		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
 		if(!fks.empty() || !ref_fks.empty())
 		{
@@ -811,56 +812,56 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
 
 			for(auto &fk : fks)
 			{				
-				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::REF_TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::RefTable].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")
-									.arg(aux_schema[ParsersAttributes::NAME])
-									.arg(aux_table[ParsersAttributes::NAME])
-									.arg(fk[ParsersAttributes::NAME]);
+									.arg(aux_schema[Attributes::Name])
+									.arg(aux_table[Attributes::Name])
+									.arg(fk[Attributes::Name]);
 
 				//Store the referenced schema and table names
-				fk_infos[fk_name][ParsersAttributes::REF_TABLE] = aux_table[ParsersAttributes::NAME];
-				fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
-				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
-																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
-																													.arg(aux_table[ParsersAttributes::NAME])
-																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferencedTable()));
+				fk_infos[fk_name][Attributes::RefTable] = aux_table[Attributes::Name];
+				fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
+				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
+																													.arg(aux_table[Attributes::Name])
+																													.arg(fk[Attributes::Name]), this, SLOT(browseReferencedTable()));
 				action->setData(fk_name);
 
 				col_ids.clear();
 				name_list.clear();
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, schema, table, col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
+					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
 
 				//Storing the referenced columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::DST_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::DstColumns]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
+					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][ParsersAttributes::DST_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
+				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(Table::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNS::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
@@ -870,29 +871,29 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				col_ids.clear();
 				name_list.clear();
 
-				aux_table = catalog.getObjectAttributes(OBJ_TABLE, fk[ParsersAttributes::TABLE].toUInt());
-				aux_schema = catalog.getObjectAttributes(OBJ_SCHEMA, aux_table[ParsersAttributes::SCHEMA].toUInt());
+				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::Table].toUInt());
+				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")
-									.arg(aux_schema[ParsersAttributes::NAME])
-									.arg(aux_table[ParsersAttributes::NAME])
-									.arg(fk[ParsersAttributes::NAME]);
+									.arg(aux_schema[Attributes::Name])
+									.arg(aux_table[Attributes::Name])
+									.arg(fk[Attributes::Name]);
 
 				//Storing the source columns in a string
-				for(QString id : Catalog::parseArrayValues(fk[ParsersAttributes::SRC_COLUMNS]))
+				for(QString id : Catalog::parseArrayValues(fk[Attributes::SrcColumns]))
 					col_ids.push_back(id.toUInt());
 
-				for(auto &col : catalog.getObjectsAttributes(OBJ_COLUMN, aux_schema[ParsersAttributes::NAME], aux_table[ParsersAttributes::NAME], col_ids))
-					name_list.push_back(BaseObject::formatName(col[ParsersAttributes::NAME]));
+				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
+					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				action = submenu->addAction(QPixmap(PgModelerUiNS::getIconPath("table")),
-																		QString("%1.%2 (%3)").arg(aux_schema[ParsersAttributes::NAME])
-																													.arg(aux_table[ParsersAttributes::NAME])
-																													.arg(fk[ParsersAttributes::NAME]), this, SLOT(browseReferrerTable()));
+				action = submenu->addAction(QPixmap(PgModelerUiNs::getIconPath("table")),
+																		QString("%1.%2 (%3)").arg(aux_schema[Attributes::Name])
+																													.arg(aux_table[Attributes::Name])
+																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS] = name_list.join(Table::DATA_SEPARATOR);
-				ref_fk_infos[fk_name][ParsersAttributes::TABLE] = aux_table[ParsersAttributes::NAME];
-				ref_fk_infos[fk_name][ParsersAttributes::SCHEMA] = aux_schema[ParsersAttributes::NAME];
+				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::Table] = aux_table[Attributes::Name];
+				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
 		}
 
@@ -908,18 +909,18 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 {
 	if(row < results_tbw->rowCount() &&
-			(operation==NO_OPERATION || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OP_INSERT))
+			(operation==NoOperation || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OpInsert))
 	{
 		QTableWidgetItem *item=nullptr, *header_item=results_tbw->verticalHeaderItem(row);
 		QString tooltip=trUtf8("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
 
-		if(operation==OP_DELETE)
+		if(operation==OpDelete)
 			tooltip=tooltip.arg(trUtf8("deleted"));
-		else if(operation==OP_UPDATE)
+		else if(operation==OpUpdate)
 			tooltip=tooltip.arg(trUtf8("updated"));
-		else if(operation==OP_INSERT)
+		else if(operation==OpInsert)
 			tooltip=tooltip.arg(trUtf8("inserted"));
 		else
 			tooltip.clear();
@@ -935,24 +936,24 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 				item->setToolTip(tooltip);
 
 				//Restore the item's font and text when the operation is delete or none
-				if(operation==NO_OPERATION || operation==OP_DELETE)
+				if(operation==NoOperation || operation==OpDelete)
 				{
 					item->setFont(fnt);
 					item->setText(item->data(Qt::UserRole).toString());
 				}
 
-				if(operation==NO_OPERATION)
+				if(operation==NoOperation)
 					//Restore the item's background
 					item->setBackground(prev_row_colors[row]);
 				else
 				{
 					//Saves the item's background if it isn't already marked
-					if(header_item->data(Qt::UserRole)!=OP_DELETE &&
-							header_item->data(Qt::UserRole)!=OP_UPDATE)
+					if(header_item->data(Qt::UserRole)!=OpDelete &&
+							header_item->data(Qt::UserRole)!=OpUpdate)
 						prev_row_colors[row]=item->background();
 
 					//Changes the item's background according to the operation
-					item->setBackground(ROW_COLORS[operation - 1]);
+					item->setBackground(RowColors[operation - 1]);
 				}
 
 				marked_cols++;
@@ -963,12 +964,12 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 		{
 			auto itr=std::find(changed_rows.begin(), changed_rows.end(), row);
 
-			if(operation==NO_OPERATION && itr!=changed_rows.end())
+			if(operation==NoOperation && itr!=changed_rows.end())
 			{
 				changed_rows.erase(std::find(changed_rows.begin(), changed_rows.end(), row));
 				prev_row_colors.erase(row);
 			}
-			else if(operation!=NO_OPERATION && itr==changed_rows.end())
+			else if(operation!=NoOperation && itr==changed_rows.end())
 				changed_rows.push_back(row);
 
 			header_item->setData(Qt::UserRole, operation);
@@ -983,7 +984,7 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 
 void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 {
-	if(results_tbw->verticalHeaderItem(item->row())->data(Qt::UserRole)!=OP_INSERT)
+	if(results_tbw->verticalHeaderItem(item->row())->data(Qt::UserRole)!=OpInsert)
 	{
 		bool items_changed=false;
 		QTableWidgetItem *aux_item=nullptr;
@@ -1002,7 +1003,7 @@ void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 
 		fnt.setBold(items_changed);
 		item->setFont(fnt);
-		markOperationOnRow((items_changed ? OP_UPDATE : NO_OPERATION), item->row());
+		markOperationOnRow((items_changed ? OpUpdate : NoOperation), item->row());
 	}
 }
 
@@ -1018,10 +1019,10 @@ void DataManipulationForm::markDeleteOnRows(void)
 		{
 			item=results_tbw->verticalHeaderItem(row);
 
-			if(item->data(Qt::UserRole)==OP_INSERT)
+			if(item->data(Qt::UserRole)==OpInsert)
 				ins_rows.push_back(row);
 			else
-				markOperationOnRow(OP_DELETE, row);
+				markOperationOnRow(OpDelete, row);
 		}
 	}
 
@@ -1056,7 +1057,7 @@ void DataManipulationForm::addRow(bool focus_new_row)
 	results_tbw->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(row + 1)));
 	results_tbw->blockSignals(false);
 
-	markOperationOnRow(OP_INSERT, row);
+	markOperationOnRow(OpInsert, row);
 	item=results_tbw->item(row, 0);
 	hint_frm->setVisible(true);
 
@@ -1102,7 +1103,7 @@ void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 
 		//Mark the rows as no-op to remove their indexes from changed rows set
 		for(idx=0; idx < cnt; idx++)
-			markOperationOnRow(NO_OPERATION, ins_rows[idx]);
+			markOperationOnRow(NoOperation, ins_rows[idx]);
 
 		//Remove the rows
 		for(idx=0; idx < cnt; idx++)
@@ -1146,16 +1147,16 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
-		schema = ref_fk_infos[fk_name][ParsersAttributes::SCHEMA];
-		table = ref_fk_infos[fk_name][ParsersAttributes::TABLE];
+		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
+		schema = ref_fk_infos[fk_name][Attributes::Schema];
+		table = ref_fk_infos[fk_name][Attributes::Table];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][ParsersAttributes::SRC_COLUMNS].split(Table::DATA_SEPARATOR);
-		ref_cols = fk_infos[fk_name][ParsersAttributes::DST_COLUMNS].split(Table::DATA_SEPARATOR);
-		schema = fk_infos[fk_name][ParsersAttributes::SCHEMA];
-		table = fk_infos[fk_name][ParsersAttributes::REF_TABLE];
+		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(Table::DataSeparator);
+		schema = fk_infos[fk_name][Attributes::Schema];
+		table = fk_infos[fk_name][Attributes::RefTable];
 	}
 
 	for(QString col_name : src_cols)
@@ -1174,7 +1175,7 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->setAttribute(Qt::WA_DeleteOnClose, true);
 	data_manip->setAttributes(conn, schema, table, filter.join(QString("AND")));
 
-	PgModelerUiNS::resizeDialog(data_manip);
+	PgModelerUiNs::resizeDialog(data_manip);
 	data_manip->show();
 }
 
@@ -1198,7 +1199,7 @@ void DataManipulationForm::undoOperations(void)
 	{
 		for(int row=sel_range[0].topRow(); row <= sel_range[0].bottomRow(); row++)
 		{
-			if(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt()==OP_INSERT)
+			if(results_tbw->verticalHeaderItem(row)->data(Qt::UserRole).toUInt()==OpInsert)
 				ins_rows.push_back(row);
 			else
 				rows.push_back(row);
@@ -1214,22 +1215,22 @@ void DataManipulationForm::undoOperations(void)
 	for(auto &row : rows)
 	{
 		item=results_tbw->verticalHeaderItem(row);
-		if(item->data(Qt::UserRole).toUInt()!=OP_INSERT)
-			markOperationOnRow(NO_OPERATION, row);
+		if(item->data(Qt::UserRole).toUInt()!=OpInsert)
+			markOperationOnRow(NoOperation, row);
 	}
 
 	//If there is no selection, remove all new rows
 	if(sel_range.isEmpty())
 	{
 		if(results_tbw->rowCount() > 0 &&
-				results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OP_INSERT)
+				results_tbw->verticalHeaderItem(results_tbw->rowCount()-1)->data(Qt::UserRole)==OpInsert)
 		{
 			do
 			{
 				results_tbw->removeRow(results_tbw->rowCount()-1);
 				item=results_tbw->verticalHeaderItem(results_tbw->rowCount()-1);
 			}
-			while(item && item->data(Qt::UserRole)==OP_INSERT);
+			while(item && item->data(Qt::UserRole)==OpInsert);
 		}
 
 		clearChangedRows();
@@ -1258,7 +1259,7 @@ void DataManipulationForm::saveChanges(void)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	int row=0;
 	Connection conn=Connection(tmpl_conn_params);
@@ -1269,8 +1270,8 @@ void DataManipulationForm::saveChanges(void)
 		Messagebox msg_box;
 
 		msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
-					 Messagebox::ALERT_ICON,
-					 Messagebox::YES_NO_BUTTONS);
+					 Messagebox::AlertIcon,
+					 Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -1299,9 +1300,9 @@ void DataManipulationForm::saveChanges(void)
 	}
 	catch(Exception &e)
 	{
-		map<unsigned, QString> op_names={{ OP_DELETE, trUtf8("delete") },
-										 { OP_UPDATE, trUtf8("update") },
-										 { OP_INSERT, trUtf8("insert") }};
+		map<unsigned, QString> op_names={{ OpDelete, trUtf8("delete") },
+										 { OpUpdate, trUtf8("update") },
+										 { OpInsert, trUtf8("insert") }};
 
 		QString tab_name=QString("%1.%2")
 						 .arg(schema_cmb->currentText())
@@ -1318,9 +1319,9 @@ void DataManipulationForm::saveChanges(void)
 		results_tbw->selectRow(row);
 		results_tbw->scrollToItem(results_tbw->item(row, 0));
 
-		throw Exception(Exception::getErrorMessage(ERR_ROW_DATA_NOT_MANIPULATED)
+		throw Exception(Exception::getErrorMessage(ErrorCode::RowDataNotManipulated)
 						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
-						ERR_ROW_DATA_NOT_MANIPULATED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+						ErrorCode::RowDataNotManipulated,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 #endif
 }
@@ -1341,7 +1342,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 	QString col_name, value;
 	QVariant data;
 
-	if(op_type==OP_DELETE || op_type==OP_UPDATE)
+	if(op_type==OpDelete || op_type==OpUpdate)
 	{
 		if(pk_col_names.isEmpty())
 		{
@@ -1358,20 +1359,20 @@ QString DataManipulationForm::getDMLCommand(int row)
 		{
 			data = results_tbw->item(row,  col_names.indexOf(pk_col))->data(Qt::UserRole);
 
-			if(data.toString() == SQLExecutionWidget::COLUMN_NULL_VALUE)
+			if(data.toString() == SQLExecutionWidget::ColumnNullValue)
 				flt_list.push_back(QString("\"%1\" IS NULL").arg(pk_col));
 			else
 				flt_list.push_back(QString("\"%1\"='%2'").arg(pk_col).arg(data.toString().replace("\'","''")));
 		}
 	}
 
-	if(op_type==OP_DELETE)
+	if(op_type==OpDelete)
 	{
 		fmt_cmd=QString(del_cmd).arg(tab_name).arg(flt_list.join(QString(" AND ")));
 	}
-	else if(op_type==OP_UPDATE || op_type==OP_INSERT)
+	else if(op_type==OpUpdate || op_type==OpInsert)
 	{
-		fmt_cmd=(op_type==OP_UPDATE ? upd_cmd : ins_cmd);
+		fmt_cmd=(op_type==OpUpdate ? upd_cmd : ins_cmd);
 
 		for(int col=0; col < results_tbw->columnCount(); col++)
 		{
@@ -1383,15 +1384,15 @@ QString DataManipulationForm::getDMLCommand(int row)
 				value=item->text();
 				col_name=results_tbw->horizontalHeaderItem(col)->text();
 
-				if(op_type==OP_INSERT || (op_type==OP_UPDATE && value!=item->data(Qt::UserRole)))
+				if(op_type==OpInsert || (op_type==OpUpdate && value!=item->data(Qt::UserRole)))
 				{
 					//Checking if the value is a malformed unescaped value, e.g., {value, value}, {value\}
-					if((value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END)) ||
-							(value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(PgModelerNS::UNESC_VALUE_END)) ||
-							(!value.startsWith(PgModelerNS::UNESC_VALUE_START) && !value.endsWith(QString("\\") + PgModelerNS::UNESC_VALUE_END) && value.endsWith(PgModelerNS::UNESC_VALUE_END)))
-						throw Exception(Exception::getErrorMessage(ERR_MALFORMED_UNESCAPED_VALUE)
+					if((value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd)) ||
+							(value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(PgModelerNs::UnescValueEnd)) ||
+							(!value.startsWith(PgModelerNs::UnescValueStart) && !value.endsWith(QString("\\") + PgModelerNs::UnescValueEnd) && value.endsWith(PgModelerNs::UnescValueEnd)))
+						throw Exception(Exception::getErrorMessage(ErrorCode::MalformedUnescapedValue)
 										.arg(row + 1).arg(col_name),
-										ERR_MALFORMED_UNESCAPED_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::MalformedUnescapedValue,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					col_list.push_back(QString("\"%1\"").arg(col_name));
 
@@ -1401,7 +1402,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 						value=QString("DEFAULT");
 					}
 					//Unescaped values will not be enclosed in quotes
-					else if(value.startsWith(PgModelerNS::UNESC_VALUE_START) && value.endsWith(PgModelerNS::UNESC_VALUE_END))
+					else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
 					{
 						value.remove(0,1);
 						value.remove(value.length()-1, 1);
@@ -1409,13 +1410,13 @@ QString DataManipulationForm::getDMLCommand(int row)
 					//Quoting value
 					else
 					{
-						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_START, PgModelerNS::UNESC_VALUE_START);
-						value.replace(QString("\\") + PgModelerNS::UNESC_VALUE_END, PgModelerNS::UNESC_VALUE_END);
+						value.replace(QString("\\") + PgModelerNs::UnescValueStart, PgModelerNs::UnescValueStart);
+						value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 						value.replace("\'","''");
 						value=QString("E'") + value + QString("'");
 					}
 
-					if(op_type==OP_INSERT)
+					if(op_type==OpInsert)
 						val_list.push_back(value);
 					else
 						val_list.push_back(QString("\"%1\"=%2").arg(col_name).arg(value));
@@ -1427,7 +1428,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 			return(QString());
 		else
 		{
-			if(op_type==OP_UPDATE)
+			if(op_type==OpUpdate)
 				fmt_cmd=fmt_cmd.arg(tab_name).arg(val_list.join(QString(", "))).arg(flt_list.join(QString(" AND ")));
 			else
 				fmt_cmd=fmt_cmd.arg(tab_name).arg(col_list.join(QString(", "))).arg(val_list.join(QString(", ")));

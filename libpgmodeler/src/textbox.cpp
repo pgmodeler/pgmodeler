@@ -20,19 +20,19 @@
 
 Textbox::Textbox(void)
 {
-	obj_type=OBJ_TEXTBOX;
+	obj_type=ObjectType::Textbox;
 	font_size=9.0f;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[ParsersAttributes::ITALIC]=QString();
-	attributes[ParsersAttributes::BOLD]=QString();
-	attributes[ParsersAttributes::UNDERLINE]=QString();
-	attributes[ParsersAttributes::COLOR]=QString();
-	attributes[ParsersAttributes::FONT_SIZE]=QString();
+	attributes[Attributes::Italic]=QString();
+	attributes[Attributes::Bold]=QString();
+	attributes[Attributes::Underline]=QString();
+	attributes[Attributes::Color]=QString();
+	attributes[Attributes::FontSize]=QString();
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		return(QString());
 	else
 	{
@@ -42,21 +42,21 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 
-		if(text_attributes[ITALIC_TXT])
-			attributes[ParsersAttributes::ITALIC]=ParsersAttributes::_TRUE_;
+		if(text_attributes[ItalicText])
+			attributes[Attributes::Italic]=Attributes::True;
 
-		if(text_attributes[BOLD_TXT])
-			attributes[ParsersAttributes::BOLD]=ParsersAttributes::_TRUE_;
+		if(text_attributes[BoldText])
+			attributes[Attributes::Bold]=Attributes::True;
 
-		if(text_attributes[UNDERLINE_TXT])
-			attributes[ParsersAttributes::UNDERLINE]=ParsersAttributes::_TRUE_;
+		if(text_attributes[UnderlineText])
+			attributes[Attributes::Underline]=Attributes::True;
 
 		if(text_color.name()!=QString("#000000"))
-			attributes[ParsersAttributes::COLOR]=text_color.name();
+			attributes[Attributes::Color]=text_color.name();
 
-		attributes[ParsersAttributes::FONT_SIZE]=QString("%1").arg(font_size);
+		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::XML_DEFINITION));
+		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}
 }
 
@@ -73,8 +73,8 @@ void Textbox::operator = (Textbox &txtbox)
 
 void Textbox::setTextAttribute(unsigned attrib, bool value)
 {
-	if(attrib > UNDERLINE_TXT)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib > UnderlineText)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	text_attributes[attrib]=value;
 }
@@ -91,8 +91,8 @@ QColor Textbox::getTextColor(void)
 
 bool Textbox::getTextAttribute(unsigned attrib)
 {
-	if(attrib > UNDERLINE_TXT)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib > UnderlineText)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(text_attributes[attrib]);
 }

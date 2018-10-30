@@ -22,9 +22,9 @@
 ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(parent)
 {
 	Ui_ObjectDepsRefsWidget::setupUi(this);
-	configureFormLayout(objectdepsrefs_grid, BASE_OBJECT);
+	configureFormLayout(objectdepsrefs_grid, ObjectType::BaseObject);
 
-	PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 	model_wgt=nullptr;
 	alert_frm->setVisible(false);
@@ -46,7 +46,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 	updateObjectTables();
 }
@@ -54,7 +54,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 void ObjectDepsRefsWidget::setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj)
 {
 	if(!model_wgt)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->model_wgt=model_wgt;
 	setAttributes(model_wgt->getDatabaseModel(), object, parent_obj);
@@ -116,7 +116,7 @@ void ObjectDepsRefsWidget::handleItemSelection(QTableWidgetItem *item)
 		{
 			parent=dynamic_cast<TableObject *>(this->object)->getParentTable();
 
-			if(parent->getObjectType()==OBJ_TABLE)
+			if(parent->getObjectType()==ObjectType::Table)
 				parent_tab=dynamic_cast<Table *>(parent);
 			else
 				parent_view=dynamic_cast<View *>(parent);

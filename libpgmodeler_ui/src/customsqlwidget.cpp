@@ -26,24 +26,24 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		QFont font;
 
 		Ui_CustomSQLWidget::setupUi(this);
-		configureFormLayout(sqlappend_grid, BASE_OBJECT);
+		configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
 
-		append_sql_txt=PgModelerUiNS::createNumberedTextEditor(append_sql_wgt, true);
-		prepend_sql_txt=PgModelerUiNS::createNumberedTextEditor(prepend_sql_wgt, true);
+		append_sql_txt=PgModelerUiNs::createNumberedTextEditor(append_sql_wgt, true);
+		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		append_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
 		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
 		name_edt->setReadOnly(true);
 		comment_edt->setVisible(false);
 		comment_lbl->setVisible(false);
 
-		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));
@@ -106,9 +106,9 @@ void CustomSQLWidget::configureMenus(void)
 	for(int i=0; i < count; i++)
 		btns[i]->setMenu(nullptr);
 
-	if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+	if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
 	{
-		if(obj_type==OBJ_TABLE)
+		if(obj_type==ObjectType::Table)
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);
@@ -122,9 +122,9 @@ void CustomSQLWidget::configureMenus(void)
 void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!BaseObject::acceptsCustomSQL(object->getObjectType()))
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -132,7 +132,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
-		if(object->getObjectType()==OBJ_DATABASE)
+		if(object->getObjectType()==ObjectType::Database)
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
 
 		append_sql_txt->setFocus();
@@ -145,13 +145,13 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
 		prepend_sql_txt->moveCursor(QTextCursor::End);
 
-		end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
-		begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+		end_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
+		begin_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
 
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 		configureMenus();
 	}
@@ -164,7 +164,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 void CustomSQLWidget::applyConfiguration(void)
 {
-	if(this->object->getObjectType()==OBJ_DATABASE)
+	if(this->object->getObjectType()==ObjectType::Database)
 	{
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
 		dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());

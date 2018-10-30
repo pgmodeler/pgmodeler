@@ -29,15 +29,15 @@
 
 class TypeAttribute: public BaseObject {
 	private:
-		PgSQLType type;
+		PgSqlType type;
 
 		QString getCodeDefinition(unsigned, bool){ return(""); }
 
 	public:
 		TypeAttribute(void);
 
-		void setType(PgSQLType type);
-		PgSQLType getType(void);
+		void setType(PgSqlType type);
+		PgSqlType getType(void);
 
 		//! \brief Returns the SQL / XML code definition for the parameter
 		virtual QString getCodeDefinition(unsigned def_type) final;

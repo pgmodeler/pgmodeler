@@ -27,12 +27,12 @@
 
 #include "baseobject.h"
 
-namespace PgModelerNS {
+namespace PgModelerNs {
 	//! \brief Default char used as unescaped value start delimiter
-	const static QChar UNESC_VALUE_START='/';
+	static const QChar UnescValueStart='/';
 
 	//! \brief Default char used as unescaped value end delimiter
-	const static QChar	UNESC_VALUE_END='/';
+	static const QChar	UnescValueEnd='/';
 
 	/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 		 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
@@ -65,27 +65,27 @@ namespace PgModelerNS {
 		if(!obj)
 			return("");
 		//Cast objects will not have the name changed since their name are automatically generated
-		else if(obj->getObjectType()==OBJ_CAST || obj->getObjectType()==OBJ_DATABASE)
+		else if(obj->getObjectType()==ObjectType::Cast || obj->getObjectType()==ObjectType::Database)
 			return(obj->getName());
 
 		obj_name=obj->getName(fmt_name);
 		obj_type=obj->getObjectType();
 
-		if(!use_suf_on_conflict && obj_type!=OBJ_OPERATOR)
+		if(!use_suf_on_conflict && obj_type!=ObjectType::Operator)
 			obj_name += suffix;
 
-		counter = (use_suf_on_conflict && obj_type!= OBJ_OPERATOR? 0 : 1);
+		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
 		id=QString::number(obj->getObjectId());
 		len=obj_name.size() + id.size();
 
 		//If the name length exceeds the maximum size
-		if(len > BaseObject::OBJECT_NAME_MAX_LENGTH)
+		if(len > BaseObject::ObjectNameMaxLength)
 		{
 			//Remove the last chars in the count of 3 + length of id
 			obj_name.chop(id.size() + 3);
 
 			//Append the id of the object on its name (this is not applied to operators)
-			if(obj_type!=OBJ_OPERATOR)
+			if(obj_type!=ObjectType::Operator)
 				obj_name+=QString("_") + id;
 		}
 
@@ -101,7 +101,7 @@ namespace PgModelerNS {
 			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name)==aux_name)
 			{
 				//For operators is appended a '?' on the name
-				if(obj_type==OBJ_OPERATOR)
+				if(obj_type==ObjectType::Operator)
 					aux_name=QString("%1%2").arg(obj_name).arg(QString("").leftJustified(counter++, oper_uniq_chr));
 				else
 				{

@@ -294,20 +294,20 @@ class Relationship: public BaseRelationship {
 
 	public:
 		//! \brief String used as the name suffix separator. Default '_'
-		static const QString SUFFIX_SEPARATOR,
-		SRC_TAB_TOKEN, //{st}
-		DST_TAB_TOKEN, //{dt}
-		GEN_TAB_TOKEN, //{gt}
-		SRC_COL_TOKEN; //{sc}
+		static const QString SuffixSeparator,
+		SrcTabToken, //{st}
+		DstTabToken, //{dt}
+		GenTabToken, //{gt}
+		SrcColToken; //{sc}
 
 		//! \brief Patterns ids
-		static const unsigned SRC_COL_PATTERN,
-		DST_COL_PATTERN,
-		PK_PATTERN,
-		UQ_PATTERN,
-		SRC_FK_PATTERN,
-		DST_FK_PATTERN,
-		PK_COL_PATTERN;
+		static constexpr unsigned SrcColPattern=0,
+		DstColPattern=1,
+		PkPattern=2,
+		UqPattern=3,
+		SrcFkPattern=4,
+		DstFkPattern=5,
+		PkColPattern=6;
 
 		Relationship(Relationship *rel);
 
@@ -315,9 +315,9 @@ class Relationship: public BaseRelationship {
 					 Table *src_tab, Table *dst_tab,
 					 bool src_mdtry=false, bool dst_mdtry=false,
 					 bool identifier=false, bool deferrable=false,
-					 DeferralType deferral_type=DeferralType::immediate,
-					 ActionType fk_del_act=ActionType::null,
-					 ActionType fk_upd_act=ActionType::null,
+					 DeferralType deferral_type=DeferralType::Immediate,
+					 ActionType fk_del_act=ActionType::Null,
+					 ActionType fk_upd_act=ActionType::Null,
 					 CopyOptions copy_op = CopyOptions(0,0));
 
 		//! \brief  Connects the relationship making the configuration according to its type

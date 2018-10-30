@@ -30,7 +30,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 		version_cmb->addItem(trUtf8("Autodetect"));
-		version_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+		version_cmb->addItems(PgSqlVersions::AllVersions);
 
 		options_frm->setVisible(false);
 		curr_step=0;
@@ -206,7 +206,7 @@ bool ModelValidationWidget::isValidationRunning(void)
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 {
 	if(validation_thread &&
-			val_info.getValidationType()!=ValidationInfo::VALIDATION_ABORTED &&
+			val_info.getValidationType()!=ValidationInfo::ValidationAborted &&
 			!validation_thread->isRunning() &&
 			validation_helper->isValidationCanceled())
 		return;
@@ -219,13 +219,13 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	QString ref_name;
 
 	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-	if(val_info.getValidationType()==ValidationInfo::BROKEN_REFERENCE)
+	if(val_info.getValidationType()==ValidationInfo::BrokenReference)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getObject()->getObjectId())
 					   .arg(val_info.getReferences().size()));
-	else if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+	else if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 	{
 		QString str_aux;
 
@@ -242,7 +242,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(str_aux)
 					   .arg(val_info.getReferences().size()));
 	}
-	else if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+	else if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 	{
 		tab_obj=dynamic_cast<TableObject *>(val_info.getObject());
 
@@ -260,35 +260,35 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(val_info.getReferences().size()));
 
 	}
-	else if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+	else if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and needs to be relocated.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getObjectId()));
-	else if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	else if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
-	else if(val_info.getValidationType() == ValidationInfo::MISSING_EXTENSION)
+	else if(val_info.getValidationType() == ValidationInfo::MissingExtension)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
 
 		label->setText(trUtf8("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
 									 .arg(col->getName())
 									 .arg(col->getParentTable()->getSignature(true))
-									 .arg(BaseObject::getTypeName(OBJ_TABLE))
+									 .arg(BaseObject::getTypeName(ObjectType::Table))
 									 .arg(~col->getType()));
 	}
 	else
 		label->setText(val_info.getErrors().at(0));
 
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR ||
-			val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError ||
+			val_info.getValidationType()==ValidationInfo::ValidationAborted)
 	{
 		QStringList errors=val_info.getErrors();
-		item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		validation_prog_pb->setValue(validation_prog_pb->maximum());
 		reenableValidation();
 
-		if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+		if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		{
 			//Adding all the sql errors into the output pane
 			while(!errors.isEmpty())
@@ -305,17 +305,17 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	}
 	else
 	{
-		item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")));
+		item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 
-		if(val_info.getValidationType()==ValidationInfo::BROKEN_REL_CONFIG)
+		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
-			PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
-												QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), item);
+			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
+												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
 		}
-		else if(val_info.getValidationType()==ValidationInfo::MISSING_EXTENSION)
+		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
 		{
-			PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
-																					QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), item);
+			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
+																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
 		}
 		else
 		{
@@ -326,7 +326,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				item1=new QTreeWidgetItem(item);
 				label1=new QLabel;
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-				item1->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(refs.back()->getSchemaName())));
+				item1->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(refs.back()->getSchemaName())));
 
 				tab_obj=dynamic_cast<TableObject *>(refs.back());
 				ref_name=refs.back()->getName(true);
@@ -334,7 +334,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				if(tab_obj)
 					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + QString(".") + ref_name;
 
-				if(val_info.getValidationType()==ValidationInfo::NO_UNIQUE_NAME)
+				if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 				{
 					//If the referrer object is a table object, concatenates the parent table name
 					if(tab_obj)
@@ -359,7 +359,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				}
 				else
 				{
-					if(val_info.getValidationType()==ValidationInfo::SP_OBJ_BROKEN_REFERENCE)
+					if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 						label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
 										.arg(ref_name.remove('"'))
 										.arg(refs.back()->getObjectId()));
@@ -389,7 +389,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	output_trw->setItemHidden(item, false);
 	output_trw->scrollToBottom();
 
-	if(val_info.getValidationType()==ValidationInfo::SQL_VALIDATION_ERR)
+	if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		emit s_validationFinished(validation_helper->getErrorCount() != 0);
 }
 
@@ -431,16 +431,16 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
 		{
 			warn_count_lbl->setText(QString::number(1));
-			PgModelerUiNS::createOutputTreeItem(output_trw,
+			PgModelerUiNs::createOutputTreeItem(output_trw,
 												trUtf8("SQL validation not executed! No connection defined."),
-												QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		}		
 		else
 			warn_count_lbl->setText(QString::number(0));
 
-		PgModelerUiNS::createOutputTreeItem(output_trw,
+		PgModelerUiNs::createOutputTreeItem(output_trw,
 											trUtf8("Database model successfully validated."),
-											QPixmap(PgModelerUiNS::getIconPath("msgbox_info")));
+											QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
 		emit s_validationFinished(validation_helper->getErrorCount() != 0);
 	}
@@ -448,14 +448,14 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 	{
 		QPixmap ico;
 
-		msg=PgModelerUiNS::formatMessage(msg);
+		msg=PgModelerUiNs::formatMessage(msg);
 
-		if(obj_type!=BASE_OBJECT)
-			ico=QPixmap(PgModelerUiNS::getIconPath(obj_type));
+		if(obj_type!=ObjectType::BaseObject)
+			ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
 		else if(!cmd.isEmpty())
-			ico=QPixmap(PgModelerUiNS::getIconPath("sqlcmd"));
+			ico=QPixmap(PgModelerUiNs::getIconPath("sqlcmd"));
 		else
-			ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
+			ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 
 		if(is_code_gen)
 		{
@@ -464,21 +464,21 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		}
 		else
 		{
-			ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("codigosql")));
+			ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("codigosql")));
 			object_lbl->setText(trUtf8("Running SQL commands on server..."));
 
-			item=PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico, nullptr, false);
+			item=PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico, nullptr, false);
 
 			if(!cmd.isEmpty())
-				PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+				PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
 		}
 	}
 }
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerUiNS::formatMessage(obj_name)));
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(obj_type)));
+	object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerUiNs::formatMessage(obj_name)));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
 void ModelValidationWidget::configureValidation(void)

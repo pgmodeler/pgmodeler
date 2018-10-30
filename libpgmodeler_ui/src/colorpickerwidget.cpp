@@ -32,8 +32,8 @@ ColorPickerWidget::ColorPickerWidget(int color_count, QWidget * parent) : QWidge
 
 	if(color_count==0)
 		color_count=1;
-	else if(color_count > MAX_COLOR_BUTTONS)
-		color_count=MAX_COLOR_BUTTONS;
+	else if(color_count > MaxColorButtons)
+		color_count=MaxColorButtons;
 
 	hbox=new QHBoxLayout(this);
 	hbox->setContentsMargins(0,0,0,0);
@@ -80,7 +80,7 @@ void ColorPickerWidget::setColor(int color_idx, const QColor &color)
 	QString cl_name;
 
 	if(color_idx < 0 || color_idx >=  colors.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(this->isEnabled())
 		cl_name=color.name();
@@ -94,7 +94,7 @@ void ColorPickerWidget::setColor(int color_idx, const QColor &color)
 QColor ColorPickerWidget::getColor(int color_idx)
 {
 	if(color_idx < 0 || color_idx >= colors.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(colors[color_idx]);
 }
@@ -107,7 +107,7 @@ unsigned ColorPickerWidget::getColorCount(void)
 bool ColorPickerWidget::isButtonVisible(unsigned idx)
 {
 	if(idx >= static_cast<unsigned>(buttons.size()))
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(buttons[idx]->isVisible());
 }
@@ -115,7 +115,7 @@ bool ColorPickerWidget::isButtonVisible(unsigned idx)
 void ColorPickerWidget::setButtonToolTip(unsigned button_idx, const QString &tooltip)
 {
 	if(button_idx >= static_cast<unsigned>(buttons.size()))
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buttons[button_idx]->setToolTip(tooltip);
 }
@@ -134,7 +134,7 @@ void ColorPickerWidget::setEnabled(bool value)
 void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
 {
 	if(idx >= static_cast<unsigned>(buttons.size()))
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buttons[idx]->setVisible(value);
 }

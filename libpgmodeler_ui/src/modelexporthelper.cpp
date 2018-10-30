@@ -11,7 +11,7 @@ void ModelExportHelper::resetExportParams(void)
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
 	simulate=use_tmp_names=db_sql_reenabled=false;
-	created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
+	created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 	db_model=nullptr;
 	connection=nullptr;
 	scene=nullptr;
@@ -62,7 +62,7 @@ void ModelExportHelper::setIgnoredErrors(const QStringList &err_codes)
 void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &filename, const QString &pgsql_ver)
 {
 	if(!db_model)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
 
@@ -72,11 +72,11 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 		BaseObject::setPgSQLVersion(pgsql_ver);
 		emit s_progressUpdated(progress,
 							   trUtf8("Generating SQL code for PostgreSQL `%1'").arg(BaseObject::getPgSQLVersion()),
-							   BASE_OBJECT);
+							   ObjectType::BaseObject);
 		progress=1;
-		db_model->saveModel(filename, SchemaParser::SQL_DEFINITION);
+		db_model->saveModel(filename, SchemaParser::SqlDefinition);
 
-		emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), BASE_OBJECT);
+		emit s_progressUpdated(100, trUtf8("Output SQL file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 		emit s_exportFinished();
 	}
 	catch(Exception &e)
@@ -91,7 +91,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename, double zoom, bool show_grid, bool show_delim, bool page_by_page, QGraphicsView *viewp)
 {
 	if(!scene)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -146,14 +146,14 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename=fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
 		}
 		else
 		{
 			QRectF rect=scene->itemsBoundingRect(true);
 
 			//Give some margin to the resulting image
-			QSizeF margin=QSizeF(5 * BaseObjectView::HORIZ_SPACING, 5 * BaseObjectView::VERT_SPACING);
+			QSizeF margin=QSizeF(5 * BaseObjectView::HorizSpacing, 5 * BaseObjectView::VertSpacing);
 			rect.setTopLeft(rect.topLeft() - QPointF(margin.width(), margin.height()));
 			rect.setSize(rect.size() + margin);
 
@@ -198,7 +198,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
 			emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
-								   trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), BASE_OBJECT);
+								   trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
 			//Render the entire viewport onto the pixmap
 			view->render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -214,8 +214,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 				ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);
 				scene->update();
 
-				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file),
-								ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 
@@ -225,7 +225,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 
 		if(!export_canceled)
 		{
-			emit s_progressUpdated(100, trUtf8("Output image `%1' successfully written.").arg(filename), BASE_OBJECT);
+			emit s_progressUpdated(100, trUtf8("Output image `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 			emit s_exportFinished();
 		}
 		else
@@ -243,7 +243,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim)
 {
 	if(!scene)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	bool shw_dlm=false, shw_grd=false, align_objs=false;
 	QSvgGenerator svg_gen;
@@ -273,8 +273,8 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	scene->update();
 
 	if(!fi.exists() || !fi.isWritable() || !fi.isReadable())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename),
-											ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
+											ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QFile svg_file;
 	svg_file.setFileName(filename);
@@ -290,7 +290,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 		//Forcing the usage of the font settings defined for BaseObjectView and its subclasses
 		svg_def.replace(font_attr.arg(scene->font().family()),
-										font_attr.arg(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font().family()));
+										font_attr.arg(BaseObjectView::getFontStyle(Attributes::Global).font().family()));
 
 		/* Removing the empty (transparent) backgound object in order to save some space in the file if
 		the grid or delimiter is displayed */
@@ -304,7 +304,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 		svg_file.close();
 	}
 
-	emit s_progressUpdated(100, trUtf8("Output file `%1' successfully written.").arg(filename), BASE_OBJECT);
+	emit s_progressUpdated(100, trUtf8("Output file `%1' successfully written.").arg(filename), ObjectType::BaseObject);
 	emit s_exportFinished();
 }
 
@@ -314,30 +314,30 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	QString  version, sql_cmd, buf, sql_cmd_comment;
 	Connection new_db_conn;
 	unsigned i, count;
-	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
+	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	BaseObject *object=nullptr;
-	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + ParsersAttributes::DDL_END_TOKEN + QString(")");
+	QString tmpl_comm_regexp = QString("(COMMENT)( )+(ON)( )+(%1)(.)+(\n)(") + Attributes::DdlEndToken + QString(")");
 	QRegExp comm_regexp;
 
 	try
 	{
 		if(!db_model)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* If the export is called using ignore duplications or drop database and simulation mode at same time
 		an error is raised because the simulate mode (mainly used as SQL validation) cannot
 		undo column addition (this can be changed in the future) */
 		if(simulate && (ignore_dup || drop_db || drop_objs))
-			throw Exception(ERR_MIX_INCOMP_EXPORT_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::MixingIncompExportOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(drop_db && drop_objs)
-			throw Exception(ERR_MIX_INCOMP_DROP_OPTS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::MixingIncompDropOptions,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)), Qt::DirectConnection);
 
 		export_canceled=false;
 		db_created=false;
 		progress=sql_gen_progress=0;
-		created_objs[OBJ_ROLE]=created_objs[OBJ_TABLESPACE]=-1;
+		created_objs[ObjectType::Role]=created_objs[ObjectType::Tablespace]=-1;
 		errors.clear();
 
 		//Retrive the DBMS version in order to generate the correct code
@@ -364,7 +364,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			generateTempObjectNames(db_model);
 		}
 		else if(use_tmp_names)
-			throw Exception(ERR_INV_USE_TMPNAMES_EXPORT_OPT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InvUsageTempNamesExportOption,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		if(simulate && db_model->isSQLDisabled())
@@ -427,9 +427,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 											   .arg(object->getTypeName()),
 											   object->getObjectType());
 
-						sql_cmd=object->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 
-						if(types[type_id] == OBJ_TABLESPACE)
+						if(types[type_id] == ObjectType::Tablespace)
 						{
 							comm_regexp = QRegExp(tmpl_comm_regexp.arg(object->getSQLName()));
 							pos = comm_regexp.indexIn(sql_cmd);
@@ -469,9 +469,9 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 				emit s_progressUpdated(progress,
 									   trUtf8("Creating database `%1'")
 									   .arg(db_model->getName()),
-									   OBJ_DATABASE);
+									   ObjectType::Database);
 
-				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION);
+				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
 
 				/* If we find a comment on statment we should strip it from the DB definition in
@@ -499,7 +499,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			//Connects to the new created database to create the other objects
 			progress=20;
 			new_db_conn=conn;
-			new_db_conn.setConnectionParam(Connection::PARAM_DB_NAME, db_model->getName());
+			new_db_conn.setConnectionParam(Connection::ParamDbName, db_model->getName());
 			emit s_progressUpdated(progress,
 								   trUtf8("Connecting to database `%1'")
 								   .arg(db_model->getName()));
@@ -511,7 +511,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			emit s_progressUpdated(progress, trUtf8("Generating SQL for `%1' objects...").arg(db_model->getObjectCount()));
 
 			//Exporting the database model definition using the opened connection
-			buf=db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+			buf=db_model->getCodeDefinition(SchemaParser::SqlDefinition, false);
 			progress=40;
 			exportBufferToDBMS(buf, new_db_conn, drop_objs);
 		}
@@ -582,12 +582,12 @@ void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 	Table *tab=nullptr;
 	Relationship *rel=nullptr;
 
-	objects.insert(objects.end(), db_model->getObjectList(OBJ_TABLE)->begin(),
-				   db_model->getObjectList(OBJ_TABLE)->end());
+	objects.insert(objects.end(), db_model->getObjectList(ObjectType::Table)->begin(),
+				   db_model->getObjectList(ObjectType::Table)->end());
 
 	//Store the relationship on the auxiliary vector but only many-to-many are considered
-	objects.insert(objects.end(), db_model->getObjectList(OBJ_RELATIONSHIP)->begin(),
-				   db_model->getObjectList(OBJ_RELATIONSHIP)->end());
+	objects.insert(objects.end(), db_model->getObjectList(ObjectType::Relationship)->begin(),
+				   db_model->getObjectList(ObjectType::Relationship)->end());
 
 	alter_cmds_status.clear();
 
@@ -630,12 +630,12 @@ void ModelExportHelper::restoreGenAtlerCmdsStatus(void)
 void ModelExportHelper::undoDBMSExport(DatabaseModel *db_model, Connection &conn, bool use_tmp_names)
 {
 	QString drop_cmd=QString("DROP %1 %2;");
-	ObjectType types[]={OBJ_ROLE, OBJ_TABLESPACE};
+	ObjectType types[]={ObjectType::Role, ObjectType::Tablespace};
 	int type_id;
 	BaseObject *object=nullptr;
 
 	//In case of error during the export all created object are removed
-	if(db_created || created_objs[OBJ_ROLE] >= 0 || created_objs[OBJ_TABLESPACE] >= 0)
+	if(db_created || created_objs[ObjectType::Role] >= 0 || created_objs[ObjectType::Tablespace] >= 0)
 	{
 		emit s_progressUpdated(99, trUtf8("Destroying objects created on the server."));
 
@@ -681,20 +681,20 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	QTextStream stream(&tmp_name);
 	QDateTime dt=QDateTime::currentDateTime();
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	map<ObjectType, QString> obj_suffixes={ { OBJ_DATABASE, QString("db_") },
-											{ OBJ_ROLE, QString("rl_")},
-											{ OBJ_TABLESPACE, QString("tb_")} };
+	map<ObjectType, QString> obj_suffixes={ { ObjectType::Database, QString("db_") },
+											{ ObjectType::Role, QString("rl_")},
+											{ ObjectType::Tablespace, QString("tb_")} };
 
 	orig_obj_names.clear();
 	orig_obj_names[db_model]=db_model->getName();
 
-	for(auto &role : *db_model->getObjectList(OBJ_ROLE))
+	for(auto &role : *db_model->getObjectList(ObjectType::Role))
 	{
 		if(!role->isSystemObject())
 			orig_obj_names[role]=role->getName();
 	}
 
-	for(auto &tabspc : *db_model->getObjectList(OBJ_TABLESPACE))
+	for(auto &tabspc : *db_model->getObjectList(ObjectType::Tablespace))
 	{
 		if(!tabspc->isSystemObject())
 			orig_obj_names[tabspc]=tabspc->getName();
@@ -763,7 +763,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			alter_tab=QString("ALTER TABLE");
 	vector<QString> db_sql_cmds;
 	QTextStream ts;
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 	bool ddl_tk_found=false, is_create=false, is_drop=false;
 	unsigned aux_prog=0, curr_size=0, buf_size=sql_buf.size(),
 			factor=(db_name.isEmpty() ? 70 : 90);
@@ -776,13 +776,13 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
 
-	vector<ObjectType> obj_types={ OBJ_ROLE, OBJ_FUNCTION, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY,
-								   OBJ_RULE,	OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN,
-								   OBJ_SCHEMA,	OBJ_AGGREGATE, OBJ_OPFAMILY,
-								   OBJ_OPCLASS, OBJ_OPERATOR,  OBJ_SEQUENCE,
-								   OBJ_CONVERSION, OBJ_CAST,	OBJ_LANGUAGE,
-								   OBJ_COLLATION, OBJ_EXTENSION, OBJ_TYPE,
-								   OBJ_EVENT_TRIGGER, OBJ_DATABASE };
+	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
+								   ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
+								   ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
+								   ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
+								   ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
+								   ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
+								   ObjectType::EventTrigger, ObjectType::Database };
 
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
@@ -791,10 +791,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 	if(!conn.isStablished())
 	{
-		orig_conn_db_name = conn.getConnectionParam(Connection::PARAM_DB_NAME);
+		orig_conn_db_name = conn.getConnectionParam(Connection::ParamDbName);
 
 		if(!db_name.isEmpty())
-			conn.setConnectionParam(Connection::PARAM_DB_NAME, db_name);
+			conn.setConnectionParam(Connection::ParamDbName, db_name);
 
 		conn.connect();
 	}
@@ -826,7 +826,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			}
 			else
 			{
-				ddl_tk_found=(lin.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0);
+				ddl_tk_found=(lin.indexOf(Attributes::DdlEndToken) >= 0);
 				lin.remove(QRegExp(QString("^(--)+(.)+$")));
 
 				//If the line isn't empty after cleanup it will be included on sql command
@@ -845,7 +845,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				{
 					aux_cmd.remove('"');
 					aux_cmd.remove(QString("IF EXISTS "));
-					obj_type=(aux_cmd.contains(QString("COLUMN")) ? OBJ_COLUMN : OBJ_CONSTRAINT);
+					obj_type=(aux_cmd.contains(QString("COLUMN")) ? ObjectType::Column : ObjectType::Constraint);
 					reg_aux=QRegExp(QString("(COLUMN|CONSTRAINT)( )+"));
 
 					//Extracting the table name
@@ -893,21 +893,21 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 						//Appeding special tokens when the object is an index or view
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
-							if(obj_tp==OBJ_INDEX)
+							if(obj_tp==ObjectType::Index)
 							{
 								lin.remove(QString("UNIQUE"));
 								lin.remove(QString("CONCURRENTLY"));
 							}
-							else if(obj_tp==OBJ_VIEW)
+							else if(obj_tp==ObjectType::View)
 							{
 								lin.remove(QString("MATERIALIZED"));
 								lin.remove(QString("RECURSIVE"));
 							}
-							else if(obj_tp==OBJ_TABLE)
+							else if(obj_tp==ObjectType::Table)
 							{
 								lin.remove(QString("UNLOGGED"));
 							}
-							else if(obj_tp==OBJ_FUNCTION)
+							else if(obj_tp==ObjectType::Function)
 							{
 								lin.remove(QString("OR REPLACE"));
 							}
@@ -933,12 +933,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
-							if(obj_tp!=OBJ_CAST)
+							if(obj_tp!=ObjectType::Cast)
 							{
 								int spc_idx=lin.indexOf(' ');
 								obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
 
-								if(obj_tp!=OBJ_FUNCTION)
+								if(obj_tp!=ObjectType::Function)
 								{
 									obj_name=obj_name.remove('(').simplified();
 									obj_name=obj_name.remove(')').simplified();
@@ -971,13 +971,13 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				else if(!sql_cmd.trimmed().isEmpty())
 				{
 					//General commands like grant, revoke or set aren't explicitly shown
-					emit s_progressUpdated(aux_prog, trUtf8("Running auxiliary command."), BASE_OBJECT, sql_cmd);
+					emit s_progressUpdated(aux_prog, trUtf8("Running auxiliary command."), ObjectType::BaseObject, sql_cmd);
 				}
 
 				//Executes the extracted SQL command
 				if(!sql_cmd.isEmpty())
 				{
-					if(obj_type!=OBJ_DATABASE)
+					if(obj_type!=ObjectType::Database)
 						conn.executeDDLCommand(sql_cmd);
 					else
 						db_sql_cmds.push_back(sql_cmd);
@@ -991,7 +991,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			{
 				conn.close();
 				aux_conn=conn;
-				aux_conn.setConnectionParam(Connection::PARAM_DB_NAME, orig_conn_db_name);
+				aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
 				aux_conn.connect();
 				for(QString cmd : db_sql_cmds)
 					aux_conn.executeDDLCommand(cmd);

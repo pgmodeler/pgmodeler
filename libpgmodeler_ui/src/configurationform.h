@@ -48,12 +48,12 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		void showEvent(QShowEvent *);
 		
 	public:
-		static const int	GENERAL_CONF_WGT=0,
-		RELATIONSHIPS_CONF_WGT=1,
-		APPEARANCE_CONF_WGT=2,
-		CONNECTIONS_CONF_WGT=3,
-		SNIPPETS_CONF_WGT=4,
-		PLUGINS_CONF_WGT=5;
+		static constexpr int	GeneralConfWgt=0,
+		RelationshipsConfWgt=1,
+		AppearanceConfWgt=2,
+		ConnectionsConfWgt=3,
+		SnippetsConfWgt=4,
+		PluginsConfWgt=5;
 		
 		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~ConfigurationForm(void);

@@ -18,17 +18,17 @@
 
 #include "sequencewidget.h"
 
-SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SEQUENCE)
+SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Sequence)
 {
 	try
 	{
 		Ui_SequenceWidget::setupUi(this);
 
 		column_sel=nullptr;
-		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
+		column_sel=new ObjectSelectorWidget(ObjectType::Column, true, this);
 		sequence_grid->addWidget(column_sel, 4, 1, 1, 3);
 
-		configureFormLayout(sequence_grid, OBJ_SEQUENCE);
+		configureFormLayout(sequence_grid, ObjectType::Sequence);
 		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
 		configureTabOrder();
 
@@ -88,7 +88,7 @@ void SequenceWidget::setAttributes(DatabaseModel *model, Sequence *sequence)
 	{
 		cyclic_chk->setChecked(false);
 		start_edt->setText(QString("1"));
-		maximum_edt->setText(Sequence::MAX_POSITIVE_VALUE);
+		maximum_edt->setText(Sequence::MaxPositiveValue);
 		minimum_edt->setText(QString("0"));
 		cache_edt->setText(QString("1"));
 		increment_edt->setText(QString("1"));
@@ -133,12 +133,12 @@ void SequenceWidget::setDefaultValues(void)
 	}
 	else
 	{
-		QString min = "0", max = Sequence::MAX_POSITIVE_VALUE;
+		QString min = "0", max = Sequence::MaxPositiveValue;
 
 		if(def_values_cmb->currentText() == "smallserial")
-			max = Sequence::MAX_SMALL_POSITIVE_VALUE;
+			max = Sequence::MaxSmallPositiveValue;
 		else if(def_values_cmb->currentText() == "bigserial")
-			max = Sequence::MAX_BIG_POSITIVE_VALUE;
+			max = Sequence::MaxBigPositiveValue;
 
 		start_edt->setText("1");
 		cache_edt->setText("1");

@@ -93,11 +93,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
 	connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
 
-	pgsqlvers_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
-	pgsqlvers1_cmb->addItems(PgSQLVersions::ALL_VERSIONS);
+	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
+	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
 
-	double values[]={ ModelWidget::MINIMUM_ZOOM, 0.10f, 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
-										2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MAXIMUM_ZOOM };
+	double values[]={ ModelWidget::MinimumZoom, 0.10f, 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
+										2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MaximumZoom };
 	unsigned cnt=sizeof(values)/sizeof(double);
 
 	for(unsigned i=0; i < cnt; i++)
@@ -113,7 +113,7 @@ void ModelExportForm::exec(ModelWidget *model)
 	if(model)
 	{
 		this->model=model;
-		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OP_EXPORT);
+		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
 		selectExportMode();
 		QDialog::exec();
 	}
@@ -123,39 +123,39 @@ void ModelExportForm::handleErrorIgnored(QString err_code, QString err_msg, QStr
 {
 	QTreeWidgetItem *item=nullptr;
 
-	item=PgModelerUiNS::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
-																					 QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")), nullptr, false);
+	item=PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
+																					 QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
-	PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(err_msg),
-																			QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")),	item, false);
+	PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(err_msg),
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),	item, false);
 
-	PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+	PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
 }
 
 void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
 {
 	QTreeWidgetItem *item=nullptr;
-	QString text=PgModelerUiNS::formatMessage(msg);
+	QString text=PgModelerUiNs::formatMessage(msg);
 	QPixmap ico;
 
 	progress_lbl->setText(text);
 	progress_pb->setValue(progress);
 
-	if(obj_type!=BASE_OBJECT)
-		ico=QPixmap(PgModelerUiNS::getIconPath(obj_type));
+	if(obj_type!=ObjectType::BaseObject)
+		ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
 	else if(!cmd.isEmpty())
-		ico=QPixmap(PgModelerUiNS::getIconPath("codigosql"));
+		ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
 	else
-		ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
+		ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 
 	ico_lbl->setPixmap(ico);
 
 	if(!is_code_gen)
 	{
-		item=PgModelerUiNS::createOutputTreeItem(output_trw, text, ico, nullptr, false);
+		item=PgModelerUiNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
 
 		if(!cmd.isEmpty())
-			PgModelerUiNS::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+			PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
 	}
 }
 
@@ -294,12 +294,12 @@ void ModelExportForm::selectOutputFile(void)
 
 void ModelExportForm::captureThreadError(Exception e)
 {
-	QTreeWidgetItem *item=PgModelerUiNS::createOutputTreeItem(output_trw, PgModelerUiNS::formatMessage(e.getErrorMessage()),
-																														QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")), nullptr, false, true);
+	QTreeWidgetItem *item=PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(e.getErrorMessage()),
+																														QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), nullptr, false, true);
 
-	PgModelerUiNS::createExceptionsTree(output_trw, e, item);
+	PgModelerUiNs::createExceptionsTree(output_trw, e, item);
 
-	ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_erro")));
+	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 	finishExport(trUtf8("Exporting process aborted!"));
 
 	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -313,22 +313,22 @@ void ModelExportForm::cancelExport(void)
 
 void ModelExportForm::handleExportCanceled(void)
 {
-	QPixmap ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta"));
+	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta"));
 	QString msg=trUtf8("Exporting process canceled by user!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
+	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::handleExportFinished(void)
 {
-	QPixmap ico=QPixmap(PgModelerUiNS::getIconPath("msgbox_info"));
+	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 	QString msg=trUtf8("Exporting process sucessfuly ended!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNS::createOutputTreeItem(output_trw, msg, ico);
+	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void ModelExportForm::finishExport(const QString &msg)

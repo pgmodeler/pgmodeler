@@ -78,7 +78,7 @@ void TextboxView::setToolTip(const QString &tooltip)
 void TextboxView::__configureObject(void)
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
-	QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
+	QTextCharFormat fmt=font_config[Attributes::Global];
 	QPolygonF polygon;
 
 	polygon.append(QPointF(0.0f,0.0f));
@@ -89,13 +89,13 @@ void TextboxView::__configureObject(void)
 	if(!override_style)
 	{
 		QFont font;
-		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
-		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
+		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
 
 		font=fmt.font();
-		font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
-		font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
-		font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
+		font.setItalic(txtbox->getTextAttribute(Textbox::ItalicText));
+		font.setBold(txtbox->getTextAttribute(Textbox::BoldText));
+		font.setUnderline(txtbox->getTextAttribute(Textbox::UnderlineText));
 		font.setPointSizeF(txtbox->getFontSize());
 
 		text->setFont(font);
@@ -105,18 +105,18 @@ void TextboxView::__configureObject(void)
 	text->setText(txtbox->getComment());
 
 	if(text->font().italic())
-		text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);
+		text->setPos(HorizSpacing * 1.5, VertSpacing * 0.90);
 	else
-		text->setPos(HORIZ_SPACING, VERT_SPACING);
+		text->setPos(HorizSpacing, VertSpacing);
 
-	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HORIZ_SPACING)),
-						roundf(text->boundingRect().height() + (1.5 * VERT_SPACING)));
+	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HorizSpacing)),
+						roundf(text->boundingRect().height() + (1.5 * VertSpacing)));
 
 	box->setPos(0,0);
 	box->setPolygon(polygon);
 
-	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
-						   box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
+	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HorizSpacing),
+						   box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VertSpacing));
 
 	this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());
@@ -149,6 +149,6 @@ void TextboxView::configureObjectSelection(void)
 
 	pol_item->setPolygon(box->polygon());
 	pol_item->setPos(0,0);
-	pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 }

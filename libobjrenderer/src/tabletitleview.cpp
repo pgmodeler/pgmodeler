@@ -28,7 +28,7 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 
 	//box=new QGraphicsPolygonItem;
 	box=new RoundedRectItem;
-	box->setRoundedCorners(RoundedRectItem::TOPLEFT_CORNER | RoundedRectItem::TOPRIGHT_CORNER);
+	box->setRoundedCorners(RoundedRectItem::TopLeftCorner | RoundedRectItem::TopRightCorner);
 	box->setZValue(0);
 
 	this->addToGroup(box);
@@ -58,26 +58,26 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
-	else if(object->getObjectType()!=OBJ_TABLE  &&
-			object->getObjectType()!=OBJ_VIEW)
-		throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	else if(object->getObjectType()!=ObjectType::Table  &&
+			object->getObjectType()!=ObjectType::View)
+		throw Exception(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	schema=dynamic_cast<Schema *>(object->getSchema());
 	tag=dynamic_cast<BaseTable *>(object)->getTag();
 
-	if(object->getObjectType()==OBJ_VIEW && !tag)
+	if(object->getObjectType()==ObjectType::View && !tag)
 	{
-		name_attrib=ParsersAttributes::VIEW_NAME;
-		schema_name_attrib=ParsersAttributes::VIEW_SCHEMA_NAME;
-		title_color_attrib=ParsersAttributes::VIEW_TITLE;
+		name_attrib=Attributes::ViewName;
+		schema_name_attrib=Attributes::ViewSchemaName;
+		title_color_attrib=Attributes::ViewTitle;
 	}
 	else
 	{
-		name_attrib=ParsersAttributes::TABLE_NAME;
-		schema_name_attrib=ParsersAttributes::TABLE_SCHEMA_NAME;
-		title_color_attrib=ParsersAttributes::TABLE_TITLE;
+		name_attrib=Attributes::TableName;
+		schema_name_attrib=Attributes::TableSchemaName;
+		title_color_attrib=Attributes::TableTitle;
 	}
 
 	//Strike out the table name when its sql is disabled
@@ -88,7 +88,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(!tag)
 		schema_name->setBrush(fmt.foreground());
 	else
-		schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FILL_COLOR1));
+		schema_name->setBrush(tag->getElementColor(schema_name_attrib, Tag::FillColor1));
 
 	if(schema->isRectVisible())
 		schema_name->setText(QString(" "));
@@ -113,27 +113,27 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	}
 	else
 	{
-		obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FILL_COLOR1));
+		obj_name->setBrush(tag->getElementColor(name_attrib, Tag::FillColor1));
 		box->setBrush(tag->getFillStyle(title_color_attrib));
 	}
 
 	pen=this->getBorderStyle(title_color_attrib);
 
 	if(tag)
-		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BORDER_COLOR));
+		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
-	if(object->getObjectType()==OBJ_VIEW ||
+	if(object->getObjectType()==ObjectType::View ||
 	   (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 
 	box->setPen(pen);
 
 	if(schema->isRectVisible())
-		this->resizeTitle(obj_name->boundingRect().width()  + (2 * HORIZ_SPACING),
-						  obj_name->boundingRect().height() + (2 * VERT_SPACING));
+		this->resizeTitle(obj_name->boundingRect().width()  + (2 * HorizSpacing),
+						  obj_name->boundingRect().height() + (2 * VertSpacing));
 	else
-		this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HORIZ_SPACING),
-						  schema_name->boundingRect().height() + (2 * VERT_SPACING));
+		this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HorizSpacing),
+						  schema_name->boundingRect().height() + (2 * VertSpacing));
 }
 
 void TableTitleView::resizeTitle(double width, double height)
@@ -141,12 +141,12 @@ void TableTitleView::resizeTitle(double width, double height)
 	box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==QString(" "))
-		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);
+		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VertSpacing);
 	else
 	{
-		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, VERT_SPACING);
-		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VERT_SPACING);
-		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VERT_SPACING);
+		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, VertSpacing);
+		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VertSpacing);
+		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VertSpacing);
 	}
 
 	this->bounding_rect.setTopLeft(this->pos());

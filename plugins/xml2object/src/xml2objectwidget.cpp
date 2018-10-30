@@ -5,7 +5,7 @@ Xml2ObjectWidget::Xml2ObjectWidget(QWidget *parent, Qt::WindowFlags f) : QDialog
 	setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt);
-	code_hl->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
+	code_hl->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
 
 	connect(close_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearSource(void)));
@@ -34,8 +34,8 @@ void Xml2ObjectWidget::loadXML(void)
 		f.open(QFile::ReadOnly);
 
 		if(!f.isOpen())
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_dlg.selectedFiles().at(0)),
-							ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 		code_txt->setPlainText(QString::fromUtf8(f.readAll()));
@@ -59,7 +59,7 @@ void Xml2ObjectWidget::generateObject(void)
 		BaseObject *object=nullptr;
 		ObjectType obj_type;
 		QString elem_name;
-		XMLParser *xmlparser=model->getXMLParser();
+		XmlParser *xmlparser=model->getXMLParser();
 
 		if(!op_list->isOperationChainStarted())
 			op_list->startOperationChain();
@@ -67,7 +67,7 @@ void Xml2ObjectWidget::generateObject(void)
 		xmlparser->restartParser();
 		xmlparser->loadXMLBuffer(code_txt->toPlainText().toUtf8());
 
-		if(xmlparser->accessElement(XMLParser::CHILD_ELEMENT))
+		if(xmlparser->accessElement(XmlParser::ChildElement))
 		{
 			do
 			{
@@ -81,16 +81,16 @@ void Xml2ObjectWidget::generateObject(void)
 					object=model->createObject(obj_type);
 
 					if(object && !dynamic_cast<TableObject *>(object) &&
-							obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
+							obj_type!=ObjectType::Relationship && obj_type!=ObjectType::BaseRelationship)
 					{
 						model->addObject(object);
-						op_list->registerObject(object, Operation::OBJECT_CREATED, -1, model);
+						op_list->registerObject(object, Operation::ObjectCreated, -1, model);
 					}
 
 					xmlparser->restorePosition();
 				}
 			}
-			while(xmlparser->accessElement(xmlparser->NEXT_ELEMENT));
+			while(xmlparser->accessElement(xmlparser->NextElement));
 		}
 
 		op_list->finishOperationChain();

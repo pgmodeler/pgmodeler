@@ -39,7 +39,7 @@ class OperationList: public QObject {
 		//! \brief Inidcates that operation chaining is ignored temporarily
 		bool ignore_chain;
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		//! \brief List of objects that were removed / modified on the model
 		vector<BaseObject *> object_pool;

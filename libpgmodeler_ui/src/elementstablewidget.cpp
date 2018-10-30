@@ -33,20 +33,20 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 		connect(&element_form, SIGNAL(accepted()), element_wgt, SLOT(applyConfiguration()));
 
 		QVBoxLayout *vbox = new QVBoxLayout(this);
-		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																				(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																				(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 
 		elements_tab->setColumnCount(7);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 		elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("operator")),2);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("operator")),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opclass")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opclass")),3);
 		elements_tab->setHeaderLabel(trUtf8("Collation"), 4);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("collation")),4);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("collation")),4);
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 5);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 6);
 
@@ -98,12 +98,12 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 
 	if(elem->isSortingEnabled())
 	{
-		if(elem->getSortingAttribute(IndexElement::ASC_ORDER))
+		if(elem->getSortingAttribute(IndexElement::AscOrder))
 			elements_tab->setCellText(trUtf8("Ascending"), elem_idx, 5);
 		else
 			elements_tab->setCellText(trUtf8("Descending"), elem_idx, 5);
 
-		if(elem->getSortingAttribute(IndexElement::NULLS_FIRST))
+		if(elem->getSortingAttribute(IndexElement::NullsFirst))
 			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 6);
 		else
 			elements_tab->setCellText(trUtf8("No"), elem_idx, 6);

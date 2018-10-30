@@ -21,10 +21,10 @@
 BaseTable::BaseTable(void)
 {
 	tag=nullptr;
-	obj_type=BASE_TABLE;
-	attributes[ParsersAttributes::TAG]=QString();
-	attributes[ParsersAttributes::HIDE_EXT_ATTRIBS]=QString();
-	attributes[ParsersAttributes::MAX_OBJ_COUNT]=QString();
+	obj_type=ObjectType::BaseTable;
+	attributes[Attributes::Tag]=QString();
+	attributes[Attributes::HideExtAttribs]=QString();
+	attributes[Attributes::MaxObjCount]=QString();
 	hide_ext_attribs=false;
 }
 

@@ -37,7 +37,7 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
 
@@ -150,7 +150,7 @@ class ModelWidget: public QWidget {
 		QTimer zoom_info_timer;
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -194,10 +194,10 @@ class ModelWidget: public QWidget {
 		void showMagnifierArea(bool show);
 
 	protected:
-		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
-		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
-		BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
-		BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
+		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
+		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
+		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
 
 		QAction *action_source_code,
 		*action_edit,
@@ -277,9 +277,9 @@ class ModelWidget: public QWidget {
 		void toggleAllExtendedAttributes(bool value);
 
 	public:
-		static constexpr double MINIMUM_ZOOM=0.050000,
-		MAXIMUM_ZOOM=5.000001,
-		ZOOM_INCREMENT=0.050000;
+		static constexpr double MinimumZoom=0.050000,
+		MaximumZoom=5.000001,
+		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);

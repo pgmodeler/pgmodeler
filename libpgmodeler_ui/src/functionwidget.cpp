@@ -19,7 +19,7 @@
 #include "functionwidget.h"
 #include "baseform.h"
 
-FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
+FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Function)
 {
 	try
 	{
@@ -34,7 +34,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		Ui_FunctionWidget::setupUi(this);
 
-		configureFormLayout(function_grid, OBJ_FUNCTION);
+		configureFormLayout(function_grid, ObjectType::Function);
 		source_code_txt=new NumberedTextEditor(this, true);
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
 
@@ -47,21 +47,21 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		vlayout->addWidget(ret_type);
 		vlayout->addSpacerItem(spacer);
 
-		return_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-										 ObjectsTableWidget::UPDATE_BUTTON, true, this);
+		return_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+										 ObjectsTableWidget::UpdateButton, true, this);
 		return_tab->setColumnCount(2);
 		return_tab->setHeaderLabel(trUtf8("Column"), 0);
-		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		return_tab->setHeaderLabel(trUtf8("Type"), 1);
-		return_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
-		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-											 ObjectsTableWidget::UPDATE_BUTTON, true, this);
+		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											 ObjectsTableWidget::UpdateButton, true, this);
 		parameters_tab->setColumnCount(4);
 		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
-		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("parameter")),0);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("parameter")),0);
 		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
-		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
 		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
@@ -80,7 +80,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(leakproof_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
@@ -212,7 +212,7 @@ Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 		try
 		{
 			param.setName(tab->getCellText(row,0));
-			param.setType(tab->getRowData(row).value<PgSQLType>());
+			param.setType(tab->getRowData(row).value<PgSqlType>());
 
 			if(tab==parameters_tab)
 			{
@@ -240,7 +240,7 @@ void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab,
 
 		tab->setCellText(param.getName(),row,0);
 		tab->setCellText(*param.getType(),row,1);
-		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
+		tab->setRowData(QVariant::fromValue<PgSqlType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
@@ -265,10 +265,10 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	QStringList list;
 	unsigned count=0, i;
 	Parameter param;
-	PgSQLType aux_type;
+	PgSqlType aux_type;
 
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
-	languages=model->getObjects(OBJ_LANGUAGE);
+	languages=model->getObjects(ObjectType::Language);
 
 	while(!languages.empty())
 	{
@@ -279,7 +279,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	list.sort();
 	language_cmb->addItems(list);
-	language_cmb->setCurrentText(~LanguageType(LanguageType::sql));
+	language_cmb->setCurrentText(~LanguageType(LanguageType::Sql));
 
 	if(func)
 	{
@@ -358,7 +358,7 @@ void FunctionWidget::selectLanguage(void)
 {
 	bool c_lang;
 
-	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::c));
+	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::C));
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
@@ -366,15 +366,15 @@ void FunctionWidget::selectLanguage(void)
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-											  GlobalAttributes::DIR_SEPARATOR +
+			source_code_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+												GlobalAttributes::DirSeparator +
 											  language_cmb->currentText() +
-											  GlobalAttributes::HIGHLIGHT_FILE_SUF +
-											  GlobalAttributes::CONFIGURATION_EXT);
+												GlobalAttributes::HighlightFileSuffix +
+												GlobalAttributes::ConfigurationExt);
 		}
 		catch(Exception &)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			source_code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		}
 
 		source_code_hl->rehighlight();
@@ -420,41 +420,41 @@ void FunctionWidget::validateConfiguredFunction(void)
 
 				If the function is invalid the instances raises	exceptions accusing the error
 				that is enough to check	the validity of the function in relation to objects that reference it. */
-			if(obj_type==OBJ_CONVERSION)
+			if(obj_type==ObjectType::Conversion)
 			{
 				conv=dynamic_cast<Conversion *>(object);
 				if(conv->getConversionFunction()==func)
 					conv->setConversionFunction(func);
 			}
-			else if(obj_type==OBJ_CAST)
+			else if(obj_type==ObjectType::Cast)
 			{
 				cast=dynamic_cast<Cast *>(object);
 				if(cast->getCastFunction()==func)
 					cast->setCastFunction(func);
 			}
-			else if(obj_type==OBJ_AGGREGATE)
+			else if(obj_type==ObjectType::Aggregate)
 			{
 				aggr=dynamic_cast<Aggregate *>(object);
-				if(aggr->getFunction(Aggregate::FINAL_FUNC)==func)
-					aggr->setFunction(Aggregate::FINAL_FUNC, func);
-				else if(aggr->getFunction(Aggregate::TRANSITION_FUNC)==func)
-					aggr->setFunction(Aggregate::TRANSITION_FUNC, func);
+				if(aggr->getFunction(Aggregate::FinalFunc)==func)
+					aggr->setFunction(Aggregate::FinalFunc, func);
+				else if(aggr->getFunction(Aggregate::TransitionFunc)==func)
+					aggr->setFunction(Aggregate::TransitionFunc, func);
 			}
-			else if(obj_type==OBJ_TRIGGER)
+			else if(obj_type==ObjectType::Trigger)
 			{
 				dynamic_cast<Trigger *>(object)->setFunction(func);
 			}
-			else if(obj_type==OBJ_LANGUAGE)
+			else if(obj_type==ObjectType::Language)
 			{
 				lang=dynamic_cast<Language *>(object);
 
-				for(i1=Language::VALIDATOR_FUNC; i1 <= Language::INLINE_FUNC; i1++)
+				for(i1=Language::ValidatorFunc; i1 <= Language::InlineFunc; i1++)
 				{
 					if(lang->getFunction(i1)==func)
 						lang->setFunction(func, i1);
 				}
 			}
-			else if(obj_type==OBJ_OPERATOR)
+			else if(obj_type==ObjectType::Operator)
 			{
 				oper=dynamic_cast<Operator *>(object);
 				for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
@@ -463,19 +463,19 @@ void FunctionWidget::validateConfiguredFunction(void)
 						oper->setFunction(func, i1);
 				}
 			}
-			else if(obj_type==OBJ_TYPE)
+			else if(obj_type==ObjectType::Type)
 			{
 				type=dynamic_cast<Type *>(object);
-				if(type->getConfiguration()==Type::BASE_TYPE)
+				if(type->getConfiguration()==Type::BaseType)
 				{
-					for(i1=Type::INPUT_FUNC; i1 <=Type::ANALYZE_FUNC; i1++)
+					for(i1=Type::InputFunc; i1 <=Type::AnalyzeFunc; i1++)
 					{
 						if(type->getFunction(i1)==func)
 							type->setFunction(i1, func);
 					}
 				}
 			}
-			else if(obj_type==OBJ_EVENT_TRIGGER)
+			else if(obj_type==ObjectType::EventTrigger)
 			{
 				dynamic_cast<EventTrigger *>(object)->setFunction(func);
 			}
@@ -483,10 +483,10 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InvFuncConfigInvalidatesObject)
 						.arg(object->getName(true))
 						.arg(object->getTypeName()),
-						ERR_FUNC_CONFIG_INV_OBJECT,
+						ErrorCode::InvFuncConfigInvalidatesObject,
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -504,7 +504,7 @@ void FunctionWidget::applyConfiguration(void)
 		startConfiguration<Function>();
 
 		func=dynamic_cast<Function *>(this->object);
-		func->setLanguage(model->getObject(language_cmb->currentText(), OBJ_LANGUAGE));
+		func->setLanguage(model->getObject(language_cmb->currentText(), ObjectType::Language));
 		func->setFunctionType(func_type_cmb->currentText());
 		func->setWindowFunction(window_func_chk->isChecked());
 		func->setLeakProof(leakproof_chk->isChecked());
@@ -519,7 +519,7 @@ void FunctionWidget::applyConfiguration(void)
 		for(i=0; i < count; i++)
 		{
 			param.setName(parameters_tab->getCellText(i,0));
-			param.setType(parameters_tab->getRowData(i).value<PgSQLType>());
+			param.setType(parameters_tab->getRowData(i).value<PgSqlType>());
 
 			str_aux=parameters_tab->getCellText(i,2);
 			param.setIn(str_aux.indexOf(QString("IN")) >= 0);
@@ -532,7 +532,7 @@ void FunctionWidget::applyConfiguration(void)
 		}
 
 
-		if(language_cmb->currentText()==~LanguageType(LanguageType::c))
+		if(language_cmb->currentText()==~LanguageType(LanguageType::C))
 		{
 			func->setLibrary(library_edt->text());
 			func->setSymbol(symbol_edt->text());
@@ -553,7 +553,7 @@ void FunctionWidget::applyConfiguration(void)
 			for(i=0; i<count; i++)
 			{
 				func->addReturnedTableColumn(return_tab->getCellText(i,0),
-											 return_tab->getRowData(i).value<PgSQLType>());
+											 return_tab->getRowData(i).value<PgSqlType>());
 			}
 		}
 

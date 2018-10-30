@@ -18,7 +18,7 @@
 
 #include "operatorclasswidget.h"
 
-OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPCLASS)
+OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpClass)
 {
 	try
 	{
@@ -30,24 +30,24 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		Ui_OperatorClassWidget::setupUi(this);
 
-		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
+		family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
 		data_type=new PgSQLTypeWidget(this);
-		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
-		elem_family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, true, this);
-		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
+		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
-		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
+		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
 		elements_tab->setColumnCount(4);
 		elements_tab->setHeaderLabel(trUtf8("Object"),0);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),0);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),0);
 
 		elements_tab->setHeaderLabel(trUtf8("Type"),1);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
 		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
-		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("opfamily")),3);
+		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
@@ -60,10 +60,10 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(data_type,4,0,1,5);
 		grid->addWidget(elements_grp,5,0,1,5);
 		this->setLayout(grid);
-		configureFormLayout(grid, OBJ_OPCLASS);
+		configureFormLayout(grid, ObjectType::OpClass);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
@@ -102,17 +102,17 @@ void OperatorClassWidget::selectElementType(int elem_type)
 {
 	unsigned sel_idx=static_cast<unsigned>(elem_type);
 
-	function_lbl->setVisible(sel_idx==OperatorClassElement::FUNCTION_ELEM);
-	function_sel->setVisible(sel_idx==OperatorClassElement::FUNCTION_ELEM);
+	function_lbl->setVisible(sel_idx==OperatorClassElement::FunctionElem);
+	function_sel->setVisible(sel_idx==OperatorClassElement::FunctionElem);
 
-	operator_lbl->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	operator_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	elem_family_lbl->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
-	elem_family_sel->setVisible(sel_idx==OperatorClassElement::OPERATOR_ELEM);
+	operator_lbl->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	operator_sel->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	elem_family_lbl->setVisible(sel_idx==OperatorClassElement::OperatorElem);
+	elem_family_sel->setVisible(sel_idx==OperatorClassElement::OperatorElem);
 
-	storage_type->setVisible(sel_idx==OperatorClassElement::STORAGE_ELEM);
-	stg_num_lbl->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
-	stg_num_sb->setVisible(sel_idx!=OperatorClassElement::STORAGE_ELEM);
+	storage_type->setVisible(sel_idx==OperatorClassElement::StorageElem);
+	stg_num_lbl->setVisible(sel_idx!=OperatorClassElement::StorageElem);
+	stg_num_sb->setVisible(sel_idx!=OperatorClassElement::StorageElem);
 }
 
 void OperatorClassWidget::editElement(int lin_idx)
@@ -137,12 +137,12 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 
 	elem_type=elem.getElementType();
 
-	if(elem_type==OperatorClassElement::FUNCTION_ELEM)
+	if(elem_type==OperatorClassElement::FunctionElem)
 	{
 		elements_tab->setCellText(elem.getFunction()->getSignature(), lin_idx, 0);
 		elements_tab->setCellText(elem.getFunction()->getTypeName(), lin_idx, 1);
 	}
-	else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
+	else if(elem_type==OperatorClassElement::OperatorElem)
 	{
 		elements_tab->setCellText(elem.getOperator()->getSignature(), lin_idx, 0);
 		elements_tab->setCellText(elem.getOperator()->getTypeName(), lin_idx, 1);
@@ -150,15 +150,15 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 	else
 	{
 		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
-		elements_tab->setCellText(BaseObject::getTypeName(OBJ_TYPE), lin_idx, 1);
+		elements_tab->setCellText(BaseObject::getTypeName(ObjectType::Type), lin_idx, 1);
 	}
 
-	if(elem_type!=OperatorClassElement::STORAGE_ELEM)
+	if(elem_type!=OperatorClassElement::StorageElem)
 		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
 		elements_tab->setCellText(QString(" "), lin_idx, 2);
 
-	if(elem_type==OperatorClassElement::OPERATOR_ELEM && elem.getOperatorFamily())
+	if(elem_type==OperatorClassElement::OperatorElem && elem.getOperatorFamily())
 		elements_tab->setCellText(elem.getOperatorFamily()->getName(true), lin_idx, 3);
 	else
 		elements_tab->clearCellText(lin_idx, 3);
@@ -176,9 +176,9 @@ void OperatorClassWidget::handleElement(int lin_idx)
 
 	try
 	{
-		if(elem_type==OperatorClassElement::FUNCTION_ELEM)
+		if(elem_type==OperatorClassElement::FunctionElem)
 			elem.setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()), stg_num_sb->value());
-		else  if(elem_type==OperatorClassElement::OPERATOR_ELEM)
+		else  if(elem_type==OperatorClassElement::OperatorElem)
 		{
 			elem.setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()), stg_num_sb->value());
 			elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(elem_family_sel->getSelectedObject()));
@@ -205,7 +205,7 @@ void OperatorClassWidget::handleElement(int lin_idx)
 
 void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class)
 {
-	PgSQLType type;
+	PgSqlType type;
 	unsigned i, count;
 
 	BaseObjectWidget::setAttributes(model, op_list, op_class, schema);

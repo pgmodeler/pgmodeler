@@ -96,7 +96,7 @@ class Table: public BaseTable {
 		//! \brief The partitioning mode/type used by the table
 		PartitioningType partitioning_type;
 
-		/*! \brief Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
+		/*! \brief Gets one table ancestor (ObjectType::ObjTable) or copy (ObjectType::ObjBaseTable) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
@@ -140,10 +140,10 @@ class Table: public BaseTable {
 
 	public:
 		//! \brief Default char for data separator in initial-data tag
-		static const QString DATA_SEPARATOR,
+		static const QString DataSeparator,
 
 		//! \brief Default char for data line break in initial-data tag
-		DATA_LINE_BREAK;
+		DataLineBreak;
 
 		Table(void);
 		~Table(void);

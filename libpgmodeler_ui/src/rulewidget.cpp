@@ -18,7 +18,7 @@
 
 #include "rulewidget.h"
 
-RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
+RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Rule)
 {
 	try
 	{
@@ -28,22 +28,22 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		Ui_RuleWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		command_hl=new SyntaxHighlighter(comando_txt, false, true);
-		command_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		command_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		command_cp=new CodeCompletionWidget(comando_txt);
 
-		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
+		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
-		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigosql")),0);
+		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
 		rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		configureFormLayout(rule_grid, OBJ_RULE);
+		configureFormLayout(rule_grid, ObjectType::Rule);
 
 		EventType::getTypes(list);
 		event_cmb->addItems(list);
@@ -87,7 +87,7 @@ void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Bas
 	unsigned qtd, i;
 
 	if(!parent_tab)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, rule, parent_tab);
 

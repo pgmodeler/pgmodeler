@@ -21,20 +21,20 @@
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
 bool RelationshipView::use_crows_foot=false;
-unsigned RelationshipView::line_conn_mode=RelationshipView::CONNECT_FK_TO_PK;
+unsigned RelationshipView::line_conn_mode=RelationshipView::ConnectFkToPk;
 
 RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
 	if(!rel)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	for(unsigned i=BaseRelationship::SRC_CARD_LABEL;
-			i <= BaseRelationship::REL_NAME_LABEL; i++)
+	for(unsigned i=BaseRelationship::SrcCardLabel;
+			i <= BaseRelationship::RelNameLabel; i++)
 	{
 		if(rel->getLabel(i))
 		{
 			labels[i]=new TextboxView(rel->getLabel(i), true);
-			labels[i]->setZValue(i==BaseRelationship::REL_NAME_LABEL ? 1 : 2);
+			labels[i]->setZValue(i==BaseRelationship::RelNameLabel ? 1 : 2);
 			this->addToGroup(labels[i]);
 		}
 		else
@@ -67,7 +67,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		cf_descriptors[i] = nullptr;
 
 		line_circles[i]=new QGraphicsEllipseItem;
-		line_circles[i]->setRect(QRectF(0,0,GRAPHIC_PNT_RADIUS,GRAPHIC_PNT_RADIUS));
+		line_circles[i]->setRect(QRectF(0,0,GraphicPointRadius,GraphicPointRadius));
 		line_circles[i]->setZValue(0);
 		line_circles[i]->setVisible(false);
 		this->addToGroup(line_circles[i]);
@@ -170,7 +170,7 @@ void RelationshipView::setCrowsFoot(bool value)
 	use_crows_foot = value;
 
 	if(value)
-		line_conn_mode=RelationshipView::CONNECT_TABLE_EGDES;
+		line_conn_mode=RelationshipView::ConnectTableEdges;
 }
 
 bool RelationshipView::isCrowsFoot(void)
@@ -181,11 +181,11 @@ bool RelationshipView::isCrowsFoot(void)
 void RelationshipView::setLineConnectionMode(unsigned mode)
 {
 	if(use_crows_foot)
-		line_conn_mode=CONNECT_TABLE_EGDES;
+		line_conn_mode=ConnectTableEdges;
 	else
 	{
-		if(mode > CONNECT_TABLE_EGDES)
-			mode=CONNECT_TABLE_EGDES;
+		if(mode > ConnectTableEdges)
+			mode=ConnectTableEdges;
 
 		line_conn_mode=mode;
 	}
@@ -199,7 +199,7 @@ unsigned RelationshipView::getLineConnectinMode(void)
 QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
 {
 	if(table_idx > 2)
-		throw Exception(ERR_REF_ELEM_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(conn_points[table_idx]);
 }
@@ -211,7 +211,7 @@ BaseRelationship *RelationshipView::getSourceObject(void)
 
 TextboxView *RelationshipView::getLabel(unsigned lab_idx)
 {
-	if(lab_idx > BaseRelationship::REL_NAME_LABEL)
+	if(lab_idx > BaseRelationship::RelNameLabel)
 		return(nullptr);
 	else
 		return(labels[lab_idx]);
@@ -249,11 +249,11 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 
 		//Alter the relationship line color when it is selected
 		if(line_color==Qt::transparent)
-			line_color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+			line_color=BaseObjectView::getBorderStyle(Attributes::Relationship).color();
 
 		if(value.toBool())
 		{
-			QColor cor1=BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color(),
+			QColor cor1=BaseObjectView::getBorderStyle(Attributes::ObjSelection).color(),
 					cor2=line_color;
 
 			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
@@ -288,7 +288,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		{
 			vector<QGraphicsLineItem *> lines;
 			QVector<QGradientStop> grad_stops = descriptor->brush().gradient()->stops();
-			QColor sel_color = BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color();
+			QColor sel_color = BaseObjectView::getBorderStyle(Attributes::ObjSelection).color();
 			QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 			int color_id = 0;
 
@@ -321,7 +321,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 				else
 					round_cf_descriptors[idx]->setBrush(descriptor->brush());
 
-				if(this->getSourceObject()->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK)
+				if(this->getSourceObject()->getRelationshipType() == BaseRelationship::RelationshipFk)
 					pen.setStyle(Qt::DashLine);
 
 				round_cf_descriptors[idx]->setPen(pen);
@@ -549,8 +549,8 @@ void RelationshipView::configureObject(void)
 {
 	BaseRelationship *rel_base=this->getSourceObject();
 
-	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
-	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SrcTable)->getReceiverObject());
+	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DstTable)->getReceiverObject());
 
 	tables[0]->addConnectedRelationship(rel_base);
 
@@ -606,10 +606,10 @@ void RelationshipView::configureLine(void)
 
 		if(base_rel->isSelfRelationship())
 		{
-			double fnt_factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE,
+			double fnt_factor=font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize,
 					pos_factor = 0, offset = 0;
-			unsigned rel_cnt = tables[0]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SRC_TABLE),
-																													base_rel->getTable(BaseRelationship::DST_TABLE));
+			unsigned rel_cnt = tables[0]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SrcTable),
+																													base_rel->getTable(BaseRelationship::DstTable));
 
 			/* Sefl-relationshihp line format:
 
@@ -654,19 +654,19 @@ void RelationshipView::configureLine(void)
 		else
 		{
 			Relationship *rel=dynamic_cast<Relationship *>(base_rel);
-			bool rel_1n= (rel_type==Relationship::RELATIONSHIP_11 ||
-										rel_type==Relationship::RELATIONSHIP_1N ||
-										rel_type==Relationship::RELATIONSHIP_FK);
+			bool rel_1n= (rel_type==Relationship::Relationship11 ||
+										rel_type==Relationship::Relationship1n ||
+										rel_type==Relationship::RelationshipFk);
 
 			if(rel &&
-				 rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
+				 rel->getRelationshipType()==Relationship::Relationship11 &&
 				 rel->isIdentifier())
 			{
 				tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
 				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
 			}
 
-			if(line_conn_mode==CONNECT_CENTER_PNTS || line_conn_mode==CONNECT_TABLE_EGDES || !rel_1n)
+			if(line_conn_mode==ConnectCenterPoints || line_conn_mode==ConnectTableEdges || !rel_1n)
 			{
 				vector<vector<QGraphicsLineItem *> *> ref_lines={ &fk_lines, &pk_lines };
 
@@ -685,7 +685,7 @@ void RelationshipView::configureLine(void)
 					}
 				}
 			}
-			else if(line_conn_mode==CONNECT_FK_TO_PK && rel_1n)
+			else if(line_conn_mode==ConnectFkToPk && rel_1n)
 			{
 				QPointF pnt;
 				QRectF rec_tab_rect, ref_tab_rect;
@@ -697,8 +697,8 @@ void RelationshipView::configureLine(void)
 
 				if(!rel)
 				{
-					ref_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DST_TABLE));
-					rec_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE));
+					ref_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::DstTable));
+					rec_tab=dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SrcTable));
 				}
 				else
 				{
@@ -723,37 +723,37 @@ void RelationshipView::configureLine(void)
 					conn_same_sides = true;
 
 					if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
-						pk_pnt_type=fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
+						pk_pnt_type=fk_pnt_type=BaseTableView::LeftConnPoint;
 					else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
-						pk_pnt_type=fk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
+						pk_pnt_type=fk_pnt_type=BaseTableView::RightConnPoint;
 				}
 				else
 				{
 					//Connecting the relationship on the opposite sides depending on the tables' position
 					if(ref_tab_rect.right() <= rec_tab_rect.left())
 					{
-						pk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
-						fk_pnt_type=BaseTableView::LEFT_CONN_POINT;
+						pk_pnt_type=BaseTableView::RightConnPoint;
+						fk_pnt_type=BaseTableView::LeftConnPoint;
 					}
 					else
 					{
-						pk_pnt_type=BaseTableView::LEFT_CONN_POINT;
-						fk_pnt_type=BaseTableView::RIGHT_CONN_POINT;
+						pk_pnt_type=BaseTableView::LeftConnPoint;
+						fk_pnt_type=BaseTableView::RightConnPoint;
 					}
 				}
 
 				for(auto &constr : fks)
 				{
-					cnt=constr->getColumnCount(Constraint::SOURCE_COLS);
+					cnt=constr->getColumnCount(Constraint::SourceCols);
 
 					for(i=0; i < cnt; i++)
 					{
-						pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SOURCE_COLS), fk_pnt_type);
+						pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SourceCols), fk_pnt_type);
 						fk_py+=pnt.y();
 						fk_px=pnt.x();
 						fk_points.push_back(this->mapFromItem(rec_tab_view, pnt));
 
-						pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::REFERENCED_COLS), pk_pnt_type);
+						pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::ReferencedCols), pk_pnt_type);
 						pk_py+=pnt.y();
 						pk_px=pnt.x();
 						pk_points.push_back(this->mapFromItem(ref_tab_view, pnt));
@@ -762,13 +762,13 @@ void RelationshipView::configureLine(void)
 
 				if(!fks.empty())
 				{
-					double pk_dx=(pk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH),
-							fk_dx=(fk_pnt_type==BaseTableView::LEFT_CONN_POINT ? -CONN_LINE_LENGTH : CONN_LINE_LENGTH);
+					double pk_dx=(pk_pnt_type==BaseTableView::LeftConnPoint ? -ConnLineLength : ConnLineLength),
+							fk_dx=(fk_pnt_type==BaseTableView::LeftConnPoint ? -ConnLineLength : ConnLineLength);
 
 					pk_pnt=this->mapFromItem(ref_tab_view, QPointF(pk_px + pk_dx, pk_py/pk_points.size()));
 					fk_pnt=this->mapFromItem(rec_tab_view, QPointF(fk_px + fk_dx, fk_py/fk_points.size()));
 
-					if(rel_type==Relationship::RELATIONSHIP_FK)
+					if(rel_type==Relationship::RelationshipFk)
 					{
 						p_central[1]=pk_pnt;
 						p_central[0]=fk_pnt;
@@ -786,7 +786,7 @@ void RelationshipView::configureLine(void)
 					 * This situation may happen when the relationship is being validated and the needed fks was not
 					 * created yet. In a second interaction of the rel. validation they are created
 					 *  and the relationship is properly configured */
-					if(rel_type==Relationship::RELATIONSHIP_FK)
+					if(rel_type==Relationship::RelationshipFk)
 					{
 						p_central[1]=pk_pnt=ref_tab_view->getCenter();
 						p_central[0]=fk_pnt=rec_tab_view->getCenter();
@@ -812,15 +812,15 @@ void RelationshipView::configureLine(void)
 					graph_points.push_back(pol);
 					pol->setZValue(0);
 					pol->setPolygon(pol_aux);
-					pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
-					pol->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+					pol->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
+					pol->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
 					this->addToGroup(pol);
 				}
 				else
 					pol=graph_points[i];
 
 				pol->setPos(points[i]);
-				pol->moveBy(-GRAPHIC_PNT_RADIUS/2, -GRAPHIC_PNT_RADIUS/2);
+				pol->moveBy(-GraphicPointRadius/2, -GraphicPointRadius/2);
 				pol->setVisible(this->isSelected());
 			}
 
@@ -836,7 +836,7 @@ void RelationshipView::configureLine(void)
 			}
 		}
 
-		if(base_rel->isSelfRelationship() || line_conn_mode != CONNECT_TABLE_EGDES)
+		if(base_rel->isSelfRelationship() || line_conn_mode != ConnectTableEdges)
 		{
 			conn_points[0]=p_central[0];
 			conn_points[1]=p_central[1];
@@ -844,23 +844,23 @@ void RelationshipView::configureLine(void)
 			points.insert(points.begin(),p_central[0]);
 			points.push_back(p_central[1]);
 		}
-		else if(line_conn_mode == CONNECT_TABLE_EGDES)
+		else if(line_conn_mode == ConnectTableEdges)
 		{
 			QRectF brect;
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double font_factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor(),
+			double font_factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
-					border_factor = CONN_LINE_LENGTH * 0.30,
+					border_factor = ConnLineLength * 0.30,
 					min_lim = 0, max_lim = 0,
 					conn_rels_factors[2] = { 0, 0 };
 			unsigned conn_rels_cnt[2] = { 0, 0 };
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
-				conn_rels_cnt[tab_idx] = tables[tab_idx]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SRC_TABLE),
-																																				base_rel->getTable(BaseRelationship::DST_TABLE));
+				conn_rels_cnt[tab_idx] = tables[tab_idx]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SrcTable),
+																																				base_rel->getTable(BaseRelationship::DstTable));
 				conn_rels_factors[tab_idx] = conn_rels_cnt[tab_idx] == 1 ? 1 : 0.08f * (tables[tab_idx]->getConnectedRelationshipIndex(base_rel));
 
 				if(!points.empty())
@@ -871,28 +871,28 @@ void RelationshipView::configureLine(void)
 						line = QLineF(tables[1]->getCenter(), points[points.size() - 1]);
 				}
 
-				if(rel_type==BaseRelationship::RELATIONSHIP_GEN || rel_type==BaseRelationship::RELATIONSHIP_DEP || rel_type==BaseRelationship::RELATIONSHIP_PART)
+				if(rel_type==BaseRelationship::RelationshipGen || rel_type==BaseRelationship::RelationshipDep || rel_type==BaseRelationship::RelationshipPart)
 					size_factor = 0.40;
 				else if(use_crows_foot)
 				{
-					if(rel_type==BaseRelationship::RELATIONSHIP_NN ||
-						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_FK) ||
-						 (tab_idx == 0 &&	rel_type==BaseRelationship::RELATIONSHIP_1N && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
-						 (tab_idx == 0 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::SRC_TABLE)) ||
-						 (tab_idx == 1 && rel_type==BaseRelationship::RELATIONSHIP_11 && base_rel->isTableMandatory(BaseRelationship::DST_TABLE)))
+					if(rel_type==BaseRelationship::RelationshipNn ||
+						 (tab_idx == 1 && rel_type==BaseRelationship::RelationshipFk) ||
+						 (tab_idx == 0 &&	rel_type==BaseRelationship::Relationship1n && base_rel->isTableMandatory(BaseRelationship::SrcTable)) ||
+						 (tab_idx == 0 && rel_type==BaseRelationship::Relationship11 && base_rel->isTableMandatory(BaseRelationship::SrcTable)) ||
+						 (tab_idx == 1 && rel_type==BaseRelationship::Relationship11 && base_rel->isTableMandatory(BaseRelationship::DstTable)))
 						size_factor = 1 * font_factor;
 					else
 						size_factor = 1.5 * font_factor;
 
-					if(rel_type == BaseRelationship::RELATIONSHIP_PART ||
-					   rel_type == BaseRelationship::RELATIONSHIP_GEN ||
-						 rel_type == BaseRelationship::RELATIONSHIP_DEP ||
-						 rel_type == BaseRelationship::RELATIONSHIP_11 ||
-						 (tab_idx == 0 && rel_type == BaseRelationship::RELATIONSHIP_1N) ||
-						 (tab_idx == 1 && rel_type == BaseRelationship::RELATIONSHIP_FK))
-						border_factor = CONN_LINE_LENGTH * 0.30;
+					if(rel_type == BaseRelationship::RelationshipPart ||
+					   rel_type == BaseRelationship::RelationshipGen ||
+						 rel_type == BaseRelationship::RelationshipDep ||
+						 rel_type == BaseRelationship::Relationship11 ||
+						 (tab_idx == 0 && rel_type == BaseRelationship::Relationship1n) ||
+						 (tab_idx == 1 && rel_type == BaseRelationship::RelationshipFk))
+						border_factor = ConnLineLength * 0.30;
 					else
-						border_factor = CONN_LINE_LENGTH * 0.75;
+						border_factor = ConnLineLength * 0.75;
 				}
 				else
 					size_factor = 0.65 * font_factor;
@@ -961,18 +961,18 @@ void RelationshipView::configureLine(void)
 						if(edge.dx() == 0)
 						{
 							if(pi.x() < center.x())
-								pi.setX(pi.x() - CONN_LINE_LENGTH * size_factor);
+								pi.setX(pi.x() - ConnLineLength * size_factor);
 							else
-								pi.setX(pi.x() + CONN_LINE_LENGTH * size_factor);
+								pi.setX(pi.x() + ConnLineLength * size_factor);
 
 							conn_vert_sides[tab_idx] = true;
 						}
 						else
 						{
 							if(pi.y() < center.y())
-								pi.setY(pi.y() - CONN_LINE_LENGTH * size_factor);
+								pi.setY(pi.y() - ConnLineLength * size_factor);
 							else
-								pi.setY(pi.y() + CONN_LINE_LENGTH * size_factor);
+								pi.setY(pi.y() + ConnLineLength * size_factor);
 
 							conn_horiz_sides[tab_idx] = true;
 						}
@@ -1005,12 +1005,12 @@ void RelationshipView::configureLine(void)
 				pen.setColor(base_rel->getCustomColor());
 			else
 				//Using the default color
-				pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+				pen=BaseObjectView::getBorderStyle(Attributes::Relationship);
 		}
 
 		//For dependency/partition relationships the line is dashed
-		if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
-		   rel_type == BaseRelationship::RELATIONSHIP_PART)
+		if(rel_type==BaseRelationship::RelationshipDep ||
+		   rel_type == BaseRelationship::RelationshipPart)
 			pen.setStyle(Qt::DashLine);
 
 		/* For identifier relationships an additional point is created on the center of the
@@ -1034,7 +1034,7 @@ void RelationshipView::configureLine(void)
 			points.insert(points.begin() + idx_lin_desc, p_int);
 		}
 
-		if(line_conn_mode==CONNECT_FK_TO_PK)
+		if(line_conn_mode==ConnectFkToPk)
 		{
 			vector<QPointF> ref_points={ fk_pnt, pk_pnt };
 			vector<vector<QPointF> *> ref_pnt_vects={ &fk_points, &pk_points };
@@ -1062,9 +1062,9 @@ void RelationshipView::configureLine(void)
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
 					if(rel && (rel->isIdentifier() && vet_idx==0))
-						pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
+						pen.setWidthF(ObjectBorderWidth * 1.90f);
 					else
-						pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
+						pen.setWidthF(ObjectBorderWidth * 1.45f);
 
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
@@ -1099,9 +1099,9 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
-				pen.setWidthF(OBJ_BORDER_WIDTH * 1.90f);
+				pen.setWidthF(ObjectBorderWidth * 1.90f);
 			else
-				pen.setWidthF(OBJ_BORDER_WIDTH * 1.45f);
+				pen.setWidthF(ObjectBorderWidth * 1.45f);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
@@ -1123,19 +1123,19 @@ void RelationshipView::configureLine(void)
 		}
 
 		//Exposing the line ending circles
-		if((!base_rel->isSelfRelationship() && line_conn_mode==CONNECT_CENTER_PNTS && !use_crows_foot) ||
+		if((!base_rel->isSelfRelationship() && line_conn_mode==ConnectCenterPoints && !use_crows_foot) ||
 			 (!base_rel->isSelfRelationship() &&
-				((line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_DEP) ||
-				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_GEN) ||
-				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_PART) ||
-				 (line_conn_mode != CONNECT_TABLE_EGDES && rel_type==BaseRelationship::RELATIONSHIP_NN  && !use_crows_foot))))
+				((line_conn_mode != ConnectTableEdges && rel_type==BaseRelationship::RelationshipDep) ||
+				 (line_conn_mode != ConnectTableEdges && rel_type==BaseRelationship::RelationshipGen) ||
+				 (line_conn_mode != ConnectTableEdges && rel_type==BaseRelationship::RelationshipPart) ||
+				 (line_conn_mode != ConnectTableEdges && rel_type==BaseRelationship::RelationshipNn  && !use_crows_foot))))
 		{
 			for(i=0; i < 2; i++)
 			{
 				line_circles[i]->setVisible(true);
 				line_circles[i]->setPen(pen);
 				line_circles[i]->setBrush(pen.color());
-				line_circles[i]->setPos(p_central[i]-QPointF(GRAPHIC_PNT_RADIUS/2, GRAPHIC_PNT_RADIUS/2));
+				line_circles[i]->setPos(p_central[i]-QPointF(GraphicPointRadius/2, GraphicPointRadius/2));
 			}
 		}
 		else
@@ -1224,17 +1224,17 @@ void RelationshipView::configureLine(void)
 
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
 		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
-		if(rel_type==BaseRelationship::RELATIONSHIP_FK)
+		if(rel_type==BaseRelationship::RelationshipFk)
 			tool_tip=base_rel->getName(true) +
-					 QString(" (") + BaseObject::getTypeName(OBJ_RELATIONSHIP) + QString(")");
+					 QString(" (") + BaseObject::getTypeName(ObjectType::Relationship) + QString(")");
 		else
 			tool_tip=base_rel->getName(true) +
 					 QString(" (") + base_rel->getTypeName() + QString(")");
 
 		tool_tip += QString("\nId: %1\n").arg(base_rel->getObjectId()) +
-								TableObjectView::CONSTR_DELIM_START +
+								TableObjectView::ConstrDelimStart +
 								QString(" %1 ").arg(base_rel->getRelationshipTypeName()) +
-								TableObjectView::CONSTR_DELIM_END;
+								TableObjectView::ConstrDelimEnd;
 
 		if(!base_rel->getAlias().isEmpty())
 			tool_tip += QString("\nAlias: %1").arg(base_rel->getAlias());
@@ -1271,7 +1271,7 @@ void RelationshipView::configureDescriptor(void)
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
-			factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+			factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -1284,10 +1284,10 @@ void RelationshipView::configureDescriptor(void)
 		pen.setColor(base_rel->getCustomColor());
 	else
 		//Using the default color
-		pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
+		pen=BaseObjectView::getBorderStyle(Attributes::Relationship);
 
-	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
-	   rel_type == BaseRelationship::RELATIONSHIP_PART)
+	if(rel_type==BaseRelationship::RelationshipDep ||
+	   rel_type == BaseRelationship::RelationshipPart)
 		pen.setStyle(Qt::DashLine);
 
 	descriptor->setPen(pen);
@@ -1296,7 +1296,7 @@ void RelationshipView::configureDescriptor(void)
 	{
 		QColor colors[2];
 		QLinearGradient grad;
-		BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP, colors[0], colors[1]);
+		BaseObjectView::getFillStyle(Attributes::Relationship, colors[0], colors[1]);
 
 		for(unsigned i=0; i < 2; i++)
 		{
@@ -1310,15 +1310,15 @@ void RelationshipView::configureDescriptor(void)
 		descriptor->setBrush(grad);
 	}
 	else
-		descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+		descriptor->setBrush(BaseObjectView::getFillStyle(Attributes::Relationship));
 
-	if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
-	   rel_type==BaseRelationship::RELATIONSHIP_GEN)
+	if(rel_type==BaseRelationship::RelationshipDep ||
+	   rel_type==BaseRelationship::RelationshipGen)
 	{
 	  pol.append(QPointF(0,0)); pol.append(QPointF(18,10));
 	  pol.append(QPointF(0,20)); pol.append(QPointF(0,10));
 	}
-	else if(rel_type==BaseRelationship::RELATIONSHIP_PART)
+	else if(rel_type==BaseRelationship::RelationshipPart)
 	{
 	  pol.append(QPointF(0,4)); pol.append(QPointF(4,0));
 	  pol.append(QPointF(18,12)); pol.append(QPointF(4,24));
@@ -1358,9 +1358,9 @@ void RelationshipView::configureDescriptor(void)
 				/* Workaround to avoid the inheritance / dependency relationship to get the descriptor rotated to the wrong side
 				 * We create and auxiliary line with points from the position at 65% of the curve to the 45% and use the
 				 * angle of that line instead of the angle at 50% of the curve */
-				if((rel_type == BaseRelationship::RELATIONSHIP_DEP ||
-					rel_type == BaseRelationship::RELATIONSHIP_GEN ||
-					rel_type == BaseRelationship::RELATIONSHIP_PART) &&
+				if((rel_type == BaseRelationship::RelationshipDep ||
+					rel_type == BaseRelationship::RelationshipGen ||
+					rel_type == BaseRelationship::RelationshipPart) &&
 					 curve->isControlPointsInverted() && !curve->isSimpleCurve() && !curve->isStraightLine())
 				{
 					QLineF lin_aux = QLineF(path.pointAtPercent(0.65), path.pointAtPercent(0.45));
@@ -1402,10 +1402,10 @@ void RelationshipView::configureDescriptor(void)
 												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
 
 	configureSQLDisabledInfo();
-	x1+=6 * HORIZ_SPACING;
-	y1-=3 * VERT_SPACING;
+	x1+=6 * HorizSpacing;
+	y1-=3 * VertSpacing;
 	sql_disabled_box->setPos(x1, y1);
-	sql_disabled_txt->setPos(x1 + HORIZ_SPACING, y1 + VERT_SPACING);
+	sql_disabled_txt->setPos(x1 + HorizSpacing, y1 + VertSpacing);
 
 	descriptor->setPolygon(pol);
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());
@@ -1415,8 +1415,8 @@ void RelationshipView::configureDescriptor(void)
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_selection->boundingRect().center());
 	pol_item->setPos(x,y);
-	pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
@@ -1433,9 +1433,9 @@ void RelationshipView::configureDescriptor(void)
 	 * relationships the descriptor is still displayed. */
 	descriptor->setVisible(!use_crows_foot ||
 												 (use_crows_foot && (
-														rel_type == BaseRelationship::RELATIONSHIP_DEP ||
-														rel_type == BaseRelationship::RELATIONSHIP_GEN ||
-														rel_type == BaseRelationship::RELATIONSHIP_PART)));
+														rel_type == BaseRelationship::RelationshipDep ||
+														rel_type == BaseRelationship::RelationshipGen ||
+														rel_type == BaseRelationship::RelationshipPart)));
 	obj_shadow->setVisible(descriptor->isVisible());
 }
 
@@ -1445,9 +1445,9 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
 	//Hiding all descriptors related to crow's foot when the notation is not being used
-	if(!use_crows_foot && cf_descriptors[BaseRelationship::SRC_TABLE])
+	if(!use_crows_foot && cf_descriptors[BaseRelationship::SrcTable])
 	{
-		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
+		for(unsigned tab_id = BaseRelationship::SrcTable; tab_id <= BaseRelationship::DstTable; tab_id++)
 		{
 			for(auto &item : cf_descriptors[tab_id]->childItems())
 			{
@@ -1460,45 +1460,45 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 		}
 	}
 	else if(use_crows_foot && base_rel &&
-		 (base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_11 ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_1N ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_NN ||
-			base_rel->getRelationshipType() == BaseRelationship::RELATIONSHIP_FK))
+		 (base_rel->getRelationshipType() == BaseRelationship::Relationship11 ||
+			base_rel->getRelationshipType() == BaseRelationship::Relationship1n ||
+			base_rel->getRelationshipType() == BaseRelationship::RelationshipNn ||
+			base_rel->getRelationshipType() == BaseRelationship::RelationshipFk))
 	{
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
 		unsigned rel_type = base_rel->getRelationshipType();
-		double factor=(font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE) * BaseObjectView::getScreenDpiFactor();
+		double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
 		bool mandatory[2] = { false, false };
 
-		if(rel_type == BaseRelationship::RELATIONSHIP_NN || rel_type == BaseRelationship::RELATIONSHIP_FK)
+		if(rel_type == BaseRelationship::RelationshipNn || rel_type == BaseRelationship::RelationshipFk)
 		{
-			tables[BaseRelationship::SRC_TABLE] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
-			tables[BaseRelationship::DST_TABLE] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
-			mandatory[BaseRelationship::SRC_TABLE] = base_rel->isTableMandatory(BaseRelationship::SRC_TABLE);
-			mandatory[BaseRelationship::DST_TABLE] = base_rel->isTableMandatory(BaseRelationship::DST_TABLE);
+			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SrcTable)->getReceiverObject());
+			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DstTable)->getReceiverObject());
+			mandatory[BaseRelationship::SrcTable] = base_rel->isTableMandatory(BaseRelationship::SrcTable);
+			mandatory[BaseRelationship::DstTable] = base_rel->isTableMandatory(BaseRelationship::DstTable);
 		}
 		else
 		{
-			tables[BaseRelationship::SRC_TABLE] = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
-			tables[BaseRelationship::DST_TABLE] = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
-			mandatory[BaseRelationship::SRC_TABLE] = rel->isReferenceTableMandatory();
-			mandatory[BaseRelationship::DST_TABLE] = rel->isReceiverTableMandatory();
+			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
+			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+			mandatory[BaseRelationship::SrcTable] = rel->isReferenceTableMandatory();
+			mandatory[BaseRelationship::DstTable] = rel->isReceiverTableMandatory();
 
 			/* There's a special case for one-to-one relationships that will cause the crow's foot
 			 * descriptors to be positioned in the oposite sides when compared to other relationships.
 			 * This because pgModeler switches automatically the receiver table to be the destination one
 			 * when the mandatory table of the relationship is the destination. So we use and auxiliary (signal inverter)
 			 * variable to alter the descriptors position */
-			if(mandatory[BaseRelationship::SRC_TABLE] && rel_type == BaseRelationship::RELATIONSHIP_11 &&
-				 rel->getTable(BaseRelationship::DST_TABLE) == rel->getReferenceTable())
+			if(mandatory[BaseRelationship::SrcTable] && rel_type == BaseRelationship::Relationship11 &&
+				 rel->getTable(BaseRelationship::DstTable) == rel->getReferenceTable())
 				signal = -1;
 		}
 
 		//Allocatting all objects related to the crow's foot descriptors
-		if(cf_descriptors[BaseRelationship::SRC_TABLE] == nullptr)
+		if(cf_descriptors[BaseRelationship::SrcTable] == nullptr)
 		{
 			int src_zvalue = lines.front()->zValue() + 1,
 					dst_zvalue = lines.back()->zValue() + 1;
@@ -1515,17 +1515,17 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 			{
 				line_item = new QGraphicsLineItem;
 				src_cf_lines.push_back(line_item);
-				cf_descriptors[BaseRelationship::SRC_TABLE]->setZValue(src_zvalue);
+				cf_descriptors[BaseRelationship::SrcTable]->setZValue(src_zvalue);
 
 				line_item = new QGraphicsLineItem;
 				dst_cf_lines.push_back(line_item);
-				cf_descriptors[BaseRelationship::DST_TABLE]->setZValue(dst_zvalue);
+				cf_descriptors[BaseRelationship::DstTable]->setZValue(dst_zvalue);
 			}
 		}
 		else
 		{
-			cf_descriptors[BaseRelationship::SRC_TABLE]->setVisible(true);
-			cf_descriptors[BaseRelationship::DST_TABLE]->setVisible(true);
+			cf_descriptors[BaseRelationship::SrcTable]->setVisible(true);
+			cf_descriptors[BaseRelationship::DstTable]->setVisible(true);
 		}
 
 		QPointF pi;
@@ -1538,7 +1538,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 		unsigned lin_idx = 0;
 		double px = 0, py = 0, min_x = 0, max_x = 0, min_y = 0, max_y = 0;
 
-		for(unsigned tab_id = BaseRelationship::SRC_TABLE; tab_id <= BaseRelationship::DST_TABLE; tab_id++)
+		for(unsigned tab_id = BaseRelationship::SrcTable; tab_id <= BaseRelationship::DstTable; tab_id++)
 		{
 			cf_descriptors[tab_id]->setRotation(0);
 
@@ -1550,11 +1550,11 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 			}
 
 			//Configuring the minimum cardinality descriptor
-			if((tab_id == BaseRelationship::SRC_TABLE &&
-					rel_type != BaseRelationship::RELATIONSHIP_NN && rel_type != BaseRelationship::RELATIONSHIP_FK) ||
+			if((tab_id == BaseRelationship::SrcTable &&
+					rel_type != BaseRelationship::RelationshipNn && rel_type != BaseRelationship::RelationshipFk) ||
 
-				 (tab_id == BaseRelationship::DST_TABLE &&
-					(rel_type == BaseRelationship::RELATIONSHIP_11 || rel_type == BaseRelationship::RELATIONSHIP_FK)))
+				 (tab_id == BaseRelationship::DstTable &&
+					(rel_type == BaseRelationship::Relationship11 || rel_type == BaseRelationship::RelationshipFk)))
 			{
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
@@ -1562,14 +1562,14 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 				line_item->setVisible(true);
 
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-				line_item->setPos((10 * signal) * (tab_id == BaseRelationship::DST_TABLE ? -1 : 1), 0);
+				line_item->setPos((10 * signal) * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
 
 			}
 			else
 			{
 				//Configuring the crow's foot descriptor
-				if(tab_id == BaseRelationship::SRC_TABLE)
+				if(tab_id == BaseRelationship::SrcTable)
 				{
 					px = 0;
 					line = QLineF(QPointF(14, 0), QPointF(0, - 10 * factor));
@@ -1603,38 +1603,38 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 			round_cf_descriptors[tab_id]->setVisible(false);
 
 			//Configuring the maximum cardinality descriptor
-			if((tab_id == BaseRelationship::SRC_TABLE && mandatory[tab_id]) || rel_type == BaseRelationship::RELATIONSHIP_NN)
+			if((tab_id == BaseRelationship::SrcTable && mandatory[tab_id]) || rel_type == BaseRelationship::RelationshipNn)
 			{
 				line_item = cf_lines[tab_id]->at(lin_idx++);
 				cf_descriptors[tab_id]->addToGroup(line_item);
 				line_item->setVisible(true);
 
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
-				line_item->setPos(15 * signal * (tab_id == BaseRelationship::DST_TABLE ? -1 : 1), 0);
+				line_item->setPos(15 * signal * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
 			}
 			else if(!mandatory[tab_id] &&
-							((rel_type != BaseRelationship::RELATIONSHIP_FK) ||
-							 (tab_id == BaseRelationship::SRC_TABLE && rel_type == BaseRelationship::RELATIONSHIP_FK)))
+							((rel_type != BaseRelationship::RelationshipFk) ||
+							 (tab_id == BaseRelationship::SrcTable && rel_type == BaseRelationship::RelationshipFk)))
 			{
 				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];
 				cf_descriptors[tab_id]->addToGroup(circle_item);
 				circle_item->setVisible(true);
-				circle_item->setRect(QRectF(0, 0, GRAPHIC_PNT_RADIUS * 2.20 * factor, GRAPHIC_PNT_RADIUS * 2.20 * factor));
+				circle_item->setRect(QRectF(0, 0, GraphicPointRadius * 2.20 * factor, GraphicPointRadius * 2.20 * factor));
 
 				py = -(circle_item->boundingRect().height()/2.20);
 
-				if(tab_id == BaseRelationship::SRC_TABLE)
+				if(tab_id == BaseRelationship::SrcTable)
 				{
-					if(base_rel->isSelfRelationship() || rel_type != BaseRelationship::RELATIONSHIP_NN)
+					if(base_rel->isSelfRelationship() || rel_type != BaseRelationship::RelationshipNn)
 						px = 15;
 					else
 						px = 11;
 				}
 				else
 				{
-					if(rel_type == BaseRelationship::RELATIONSHIP_11)
+					if(rel_type == BaseRelationship::Relationship11)
 					{
 						if(signal < 0)
 							px = 15;
@@ -1647,7 +1647,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 
 				pen = pens[tab_id];
 
-				if(rel_type == BaseRelationship::RELATIONSHIP_FK)
+				if(rel_type == BaseRelationship::RelationshipFk)
 					pen.setStyle(Qt::DashLine);
 
 				circle_item->setPos(px, py);
@@ -1715,9 +1715,9 @@ void RelationshipView::configureAttributes(void)
 		QRectF rect;
 		QPolygonF pol;
 		double py, px,
-				factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+				factor=font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 
-		fmt=font_config[ParsersAttributes::ATTRIBUTE];
+		fmt=font_config[Attributes::Attribute];
 		font=fmt.font();
 		font.setPointSizeF(font.pointSizeF() * 0.80f);
 
@@ -1727,7 +1727,7 @@ void RelationshipView::configureAttributes(void)
 
 		//Calculates the first attribute position based upon the attribute count and descriptor size
 		count=rel->getAttributeCount();
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HORIZ_SPACING) * factor);
+		px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HorizSpacing) * factor);
 		py=descriptor->pos().y() - (count * rect.height()/(4.0f * factor));
 
 		for(i=0; i < count; i++)
@@ -1772,24 +1772,24 @@ void RelationshipView::configureAttributes(void)
 			}
 
 			desc->setRect(rect);
-			desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::ATTRIBUTE));
-			desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));
+			desc->setPen(BaseObjectView::getBorderStyle(Attributes::Attribute));
+			desc->setBrush(BaseObjectView::getFillStyle(Attributes::Attribute));
 			lin->setPen(descriptor->pen());
 			text->setBrush(fmt.foreground());
 			text->setFont(font);
-			sel_attrib->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
-			sel_attrib->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+			sel_attrib->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
+			sel_attrib->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
 
 			attrib->setPos(px, py);
 
 			text->setText(compact_view && !col->getAlias().isEmpty() ? col->getAlias() : col->getName());
-			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
-			desc->setPos(0, VERT_SPACING * factor);
+			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HorizSpacing * factor), 0));
+			desc->setPos(0, VertSpacing * factor);
 
 			pol.clear();
 			pol.append(text->boundingRect().topLeft());
-			pol.append(text->boundingRect().topRight()  + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
-			pol.append(text->boundingRect().bottomRight() + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
+			pol.append(text->boundingRect().topRight()  + QPointF(desc->boundingRect().width() + (HorizSpacing * factor), 0));
+			pol.append(text->boundingRect().bottomRight() + QPointF(desc->boundingRect().width() + (HorizSpacing * factor), 0));
 			pol.append(text->boundingRect().bottomLeft());
 			sel_attrib->setPolygon(pol);
 
@@ -1797,7 +1797,7 @@ void RelationshipView::configureAttributes(void)
 									descriptor->pos().y() + (descriptor->boundingRect().height()/2.0f));
 			lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
 
-			py+=desc->boundingRect().height() + (2 * VERT_SPACING);
+			py+=desc->boundingRect().height() + (2 * VertSpacing);
 		}
 
 		i=attributes.size()-1;
@@ -1820,24 +1820,24 @@ void RelationshipView::configureLabels(void)
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
-	label_dist=base_rel->getLabelDistance(BaseRelationship::REL_NAME_LABEL);
+	label_dist=base_rel->getLabelDistance(BaseRelationship::RelNameLabel);
 
 	pnt=descriptor->pos();
 	x=pnt.x() -
-		((labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().width() -
+		((labels[BaseRelationship::RelNameLabel]->boundingRect().width() -
 		 descriptor->boundingRect().width())/2.0f);
 
 	if(base_rel->isSelfRelationship())
-		y=pnt.y() -	labels[BaseRelationship::REL_NAME_LABEL]->boundingRect().height() - (2 * VERT_SPACING);
+		y=pnt.y() -	labels[BaseRelationship::RelNameLabel]->boundingRect().height() - (2 * VertSpacing);
 	else
-		y=pnt.y() + descriptor->boundingRect().height() + VERT_SPACING;
+		y=pnt.y() + descriptor->boundingRect().height() + VertSpacing;
 
-	labels[BaseRelationship::REL_NAME_LABEL]->setVisible(!hide_name_label);
-	configureLabelPosition(BaseRelationship::REL_NAME_LABEL, x, y);
+	labels[BaseRelationship::RelNameLabel]->setVisible(!hide_name_label);
+	configureLabelPosition(BaseRelationship::RelNameLabel, x, y);
 
 	if(!hide_name_label)
 	{
-		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::REL_NAME_LABEL]->getSourceObject());
+		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::RelNameLabel]->getSourceObject());
 
 		if(compact_view && !base_rel->getAlias().isEmpty())
 		{
@@ -1852,42 +1852,42 @@ void RelationshipView::configureLabels(void)
 	}
 
 	//Hides the cardinality labels when crow's feet is enabled
-	if(labels[BaseRelationship::SRC_CARD_LABEL] && labels[BaseRelationship::DST_CARD_LABEL])
+	if(labels[BaseRelationship::SrcCardLabel] && labels[BaseRelationship::DstCardLabel])
 	{
-		labels[BaseRelationship::SRC_CARD_LABEL]->setVisible(!use_crows_foot);
-		labels[BaseRelationship::DST_CARD_LABEL]->setVisible(!use_crows_foot);
+		labels[BaseRelationship::SrcCardLabel]->setVisible(!use_crows_foot);
+		labels[BaseRelationship::DstCardLabel]->setVisible(!use_crows_foot);
 	}
 
 	if(!use_crows_foot &&
-		 rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
-		 rel_type!=BaseRelationship::RELATIONSHIP_DEP &&
-		 rel_type!=BaseRelationship::RELATIONSHIP_PART)
+		 rel_type!=BaseRelationship::RelationshipGen &&
+		 rel_type!=BaseRelationship::RelationshipDep &&
+		 rel_type!=BaseRelationship::RelationshipPart)
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-		double dl, da, factor, v_space=VERT_SPACING * 2.5, h_space=HORIZ_SPACING * 2.5;
+		double dl, da, factor, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
-		unsigned label_ids[2]={ BaseRelationship::SRC_CARD_LABEL,
-														BaseRelationship::DST_CARD_LABEL };
+		unsigned label_ids[2]={ BaseRelationship::SrcCardLabel,
+														BaseRelationship::DstCardLabel };
 
 		if(!base_rel->isSelfRelationship() &&
-				line_conn_mode==CONNECT_FK_TO_PK && rel_type!=BaseRelationship::RELATIONSHIP_NN)
+				line_conn_mode==ConnectFkToPk && rel_type!=BaseRelationship::RelationshipNn)
 		{
 			for(idx=0; idx < 2; idx++)
 			{
 				pos=conn_points[idx];
 				da=labels[idx]->boundingRect().height()/2.0f;
 
-				if((rel_type!=BaseRelationship::RELATIONSHIP_FK && pos.x() < tables[idx]->pos().x()) ||
-						(rel_type==BaseRelationship::RELATIONSHIP_FK && pos.x() >= tables[idx]->pos().x()))
+				if((rel_type!=BaseRelationship::RelationshipFk && pos.x() < tables[idx]->pos().x()) ||
+						(rel_type==BaseRelationship::RelationshipFk && pos.x() >= tables[idx]->pos().x()))
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.80 : 0.55);
+					factor=(rel_type==BaseRelationship::RelationshipFk ? 0.80 : 0.55);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 				else
 				{
-					factor=(rel_type==BaseRelationship::RELATIONSHIP_FK ? 0.05 : 0.45);
+					factor=(rel_type==BaseRelationship::RelationshipFk ? 0.05 : 0.45);
 					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
 				}
 
@@ -1983,8 +1983,8 @@ void RelationshipView::configureLabels(void)
 
 void RelationshipView::configureLabelPosition(unsigned label_id, double x, double y)
 {
-	if(label_id > BaseRelationship::REL_NAME_LABEL)
-		throw Exception(ERR_REF_OBJ_INV_INDEX ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(label_id > BaseRelationship::RelNameLabel)
+		throw Exception(ErrorCode::RefObjectInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(labels[label_id])
 	{
@@ -2004,11 +2004,11 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 		labels[label_id]->setPos(x,y);
 		labels[label_id]->setToolTip(this->toolTip());
 
-		char_fmt=BaseObjectView::getFontStyle(ParsersAttributes::LABEL);
+		char_fmt=BaseObjectView::getFontStyle(Attributes::Label);
 		char_fmt.setFontPointSize(char_fmt.fontPointSize() * 0.90);
 		labels[label_id]->setFontStyle(char_fmt);
-		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-										BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
+		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::Label),
+										BaseObjectView::getBorderStyle(Attributes::Label));
 		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
 	}
 }
@@ -2032,10 +2032,10 @@ QRectF RelationshipView::__boundingRect(void)
 	for(i=0; i < count; i++)
 	{
 		p=points[i];
-		if(x1 > p.x()) x1=p.x() - GRAPHIC_PNT_RADIUS;
-		if(y1 > p.y()) y1=p.y() - GRAPHIC_PNT_RADIUS;
-		if(x2 < p.x()) x2=p.x() + GRAPHIC_PNT_RADIUS;
-		if(y2 < p.y()) y2=p.y() + GRAPHIC_PNT_RADIUS;
+		if(x1 > p.x()) x1=p.x() - GraphicPointRadius;
+		if(y1 > p.y()) y1=p.y() - GraphicPointRadius;
+		if(x2 < p.x()) x2=p.x() + GraphicPointRadius;
+		if(y2 < p.y()) y2=p.y() + GraphicPointRadius;
 	}
 
 	//Checks if some label is out of reference dimension

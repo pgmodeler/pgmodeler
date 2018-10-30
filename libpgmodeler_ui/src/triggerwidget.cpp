@@ -18,7 +18,7 @@
 
 #include "triggerwidget.h"
 
-TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIGGER)
+TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Trigger)
 {
 	try
 	{
@@ -27,26 +27,26 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		Ui_TriggerWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-										  (ObjectsTableWidget::EDIT_BUTTON |
-											 ObjectsTableWidget::UPDATE_BUTTON |
-											 ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+										  (ObjectsTableWidget::EditButton |
+											 ObjectsTableWidget::UpdateButton |
+											 ObjectsTableWidget::DuplicateButton), true, this);
 
-		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::DUPLICATE_BUTTON, true, this);
+		arguments_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
-		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
-		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
+		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		ref_table_sel->setEnabled(false);
 
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
 		columns_tab->setColumnCount(2);
 		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("column")),0);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
 		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
-		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("usertype")),1);
+		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
@@ -58,7 +58,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		FiringType::getTypes(list);
 		firing_mode_cmb->addItems(list);
 
-		configureFormLayout(trigger_grid, OBJ_TRIGGER);
+		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
@@ -97,7 +97,7 @@ void TriggerWidget::selectUpdateEvent(void)
 	/* Disable the columns tab when the trigger belongs to a view.
 	pgModeler does not support triggers reference view columns (yet) */
 	arg_cols_tbw->widget(1)->setEnabled(update_chk->isChecked() &&
-										table->getObjectType()==OBJ_TABLE);
+										table->getObjectType()==ObjectType::Table);
 }
 
 void TriggerWidget::setConstraintTrigger(bool value)
@@ -115,7 +115,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 		deferrable_chk->setChecked(false);
 	}
 	else
-		firing_mode_cmb->setCurrentText(~FiringType(FiringType::after));
+		firing_mode_cmb->setCurrentText(~FiringType(FiringType::After));
 }
 
 void TriggerWidget::enableTransitionTableNames(void)
@@ -134,8 +134,8 @@ void TriggerWidget::enableTransitionTableNames(void)
 			num_evnts++;
 	}
 
-	old_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || delete_chk->isChecked()));
-	new_table_edt->setEnabled(firing_type == FiringType::after && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
+	old_table_edt->setEnabled(firing_type == FiringType::After && num_evnts == 1 && (update_chk->isChecked() || delete_chk->isChecked()));
+	new_table_edt->setEnabled(firing_type == FiringType::After && num_evnts == 1 && (update_chk->isChecked() || insert_chk->isChecked()));
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -147,7 +147,7 @@ void TriggerWidget::addColumn(int lin_idx)
 		column=reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex(),Qt::UserRole).value<void *>());
 		column_cmb->removeItem(column_cmb->currentIndex());
 		addColumn(column, lin_idx);
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -173,14 +173,14 @@ void TriggerWidget::updateColumnsCombo(void)
 
 	try
 	{
-		if(this->table->getObjectType()==OBJ_TABLE)
+		if(this->table->getObjectType()==ObjectType::Table)
 		{
-			col_count=table->getObjectCount(OBJ_COLUMN);
+			col_count=table->getObjectCount(ObjectType::Column);
 			column_cmb->clear();
 
 			for(i=0; i < col_count; i++)
 			{
-				column=dynamic_cast<Column *>(table->getObject(i, OBJ_COLUMN));
+				column=dynamic_cast<Column *>(table->getObject(i, ObjectType::Column));
 
 				if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				{
@@ -190,7 +190,7 @@ void TriggerWidget::updateColumnsCombo(void)
 				}
 			}
 
-			columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+			columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 		}
 	}
 	catch(Exception &e)
@@ -221,7 +221,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	Column *column=nullptr;
 
 	if(!parent_table)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 	ref_table_sel->setModel(model);
@@ -237,10 +237,10 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		deferral_type_cmb->setCurrentIndex(deferral_type_cmb->findText(~trigger->getDeferralType()));
 		firing_mode_cmb->setCurrentIndex(firing_mode_cmb->findText(~trigger->getFiringType()));
 
-		insert_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_insert));
-		delete_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_delete));
-		update_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_update));
-		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_truncate));
+		insert_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnInsert));
+		delete_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnDelete));
+		update_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnUpdate));
+		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::OnTruncate));
 		ref_table_sel->setSelectedObject(trigger->getReferencedTable());
 		function_sel->setSelectedObject(trigger->getFunction());
 
@@ -262,12 +262,12 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 			arguments_tab->setCellText(trigger->getArgument(i), i, 0);
 		}
 
-		columns_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
 
-		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OLD_TABLE_NAME));
-		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NEW_TABLE_NAME));
+		old_table_edt->setText(trigger->getTransitionTableName(Trigger::OldTableName));
+		new_table_edt->setText(trigger->getTransitionTableName(Trigger::NewTableName));
 	}
 
 	updateColumnsCombo();
@@ -292,12 +292,12 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->setCondition(cond_expr_txt->toPlainText());
 		trigger->setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()));
 		trigger->setReferecendTable(dynamic_cast<Table *>(ref_table_sel->getSelectedObject()));
-		trigger->setEvent(EventType::on_insert, insert_chk->isChecked());
-		trigger->setEvent(EventType::on_update, update_chk->isChecked());
-		trigger->setEvent(EventType::on_delete, delete_chk->isChecked());
-		trigger->setEvent(EventType::on_truncate, truncate_chk->isChecked());
-		trigger->setTransitionTableName(Trigger::OLD_TABLE_NAME, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
-		trigger->setTransitionTableName(Trigger::NEW_TABLE_NAME, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
+		trigger->setEvent(EventType::OnInsert, insert_chk->isChecked());
+		trigger->setEvent(EventType::OnUpdate, update_chk->isChecked());
+		trigger->setEvent(EventType::OnDelete, delete_chk->isChecked());
+		trigger->setEvent(EventType::OnTruncate, truncate_chk->isChecked());
+		trigger->setTransitionTableName(Trigger::OldTableName, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
+		trigger->setTransitionTableName(Trigger::NewTableName, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
 		trigger->removeArguments();
 		trigger->removeColumns();
 

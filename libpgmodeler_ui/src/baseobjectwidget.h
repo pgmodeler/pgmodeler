@@ -38,18 +38,19 @@
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
-Q_DECLARE_METATYPE(PgSQLType)
+Q_DECLARE_METATYPE(PgSqlType)
 
 class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 	private:
 		Q_OBJECT
 		
 	protected:
-		static const int MAX_OBJECT_SIZE=16777215;
-		static const QColor PROT_LINE_BGCOLOR,
-		PROT_LINE_FGCOLOR,
-		RELINC_LINE_BGCOLOR,
-		RELINC_LINE_FGCOLOR;
+		static constexpr int MaxObjectSize=16777215;
+
+		static const QColor ProtRowBgColor,
+		ProtRowFgColor,
+		RelAddedRowBgColor,
+		RelAddedRowFgColor;
 
 		bool object_protected;
 
@@ -105,7 +106,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		/*! \brief Merges the specified grid layout with the 'baseobject_grid' creating a single form.
 			The obj_type parameter must be specified to show the object type icon */
-		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=BASE_OBJECT);
+		void configureFormLayout(QGridLayout *grid=nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */
@@ -139,11 +140,11 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static const unsigned UNTIL_VERSION=0,
+		static constexpr unsigned UNTIL_VERSION=0,
 		VERSIONS_INTERVAL=1,
 		AFTER_VERSION=2;
 		
-		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
+		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=ObjectType::BaseObject);
 		
 		virtual ~BaseObjectWidget(void);
 		
@@ -206,12 +207,12 @@ void BaseObjectWidget::startConfiguration(void)
 		
 		//! \brief If the object is already allocated
 		if(this->object && op_list &&
-				this->object->getObjectType()!=OBJ_DATABASE)
+				this->object->getObjectType()!=ObjectType::Database)
 		{
 			if(this->table)
-				op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->table);
+				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->table);
 			else
-				op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->relationship);
+				op_list->registerObject(this->object, Operation::ObjectModified, -1, this->relationship);
 			new_object=false;
 		}
 		//! \brief If there is need to allocate the object

@@ -35,12 +35,12 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 	private:
 		Q_OBJECT
 
-		static const unsigned GENERAL_TAB=0,
-		SETTINGS_TAB=1,
-		ATTRIBUTES_TAB=2,
-		CONSTRAINTS_TAB=3,
-		SPECIAL_PK_TAB=4,
-		ADVANCED_TAB=5;
+		static constexpr unsigned GeneralTab=0,
+		SettingsTab=1,
+		AttributesTab=2,
+		ConstraintsTab=3,
+		SpecialPkTab=4,
+		AdvancedTab=5;
 
 		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht,
 		*identifier_ht, *single_pk_ht, *default_part_ht;

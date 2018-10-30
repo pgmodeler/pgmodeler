@@ -21,7 +21,7 @@
 #include <iostream>
 #include "pgmodeleruins.h"
 
-const QString ModelFixForm::PGMODELER_CLI=QString("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli=QString("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -30,17 +30,17 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	setupUi(this);
 	hideEvent(nullptr);
 
-	PgModelerUiNS::configureWidgetFont(invalid_cli_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(not_found_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(invalid_cli_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(not_found_lbl, PgModelerUiNs::MediumFontFactor);
 
 	//Configuring font style for output widget
-	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT].isEmpty())
+	if(!confs[Attributes::Configuration][Attributes::CodeFont].isEmpty())
 	{
-		double size=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT_SIZE].toDouble();
+		double size=confs[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
 		if(size < 5.0f) size=5.0f;
 
-		output_txt->setFontFamily(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_FONT]);
+		output_txt->setFontFamily(confs[Attributes::Configuration][Attributes::CodeFont]);
 		output_txt->setFontPointSize(size);
 	}
 
@@ -72,20 +72,20 @@ void ModelFixForm::hideEvent(QHideEvent *)
 
 int ModelFixForm::exec(void)
 {
-	QFileInfo fi(GlobalAttributes::PGMODELER_CLI_PATH);
+	QFileInfo fi(GlobalAttributes::PgModelerCLIPath);
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
 		not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
-							   .arg(PGMODELER_CLI).arg(fi.absoluteDir().absolutePath()));
+							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
 		pgmodeler_cli_edt->setVisible(true);
 		sel_cli_exe_tb->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(GlobalAttributes::PGMODELER_CLI_PATH);
+		pgmodeler_cli_edt->setText(GlobalAttributes::PgModelerCLIPath);
 
 	return(QDialog::exec());
 }
@@ -95,7 +95,7 @@ void ModelFixForm::enableFix(void)
 	if(!pgmodeler_cli_edt->text().isEmpty())
 	{
 		QFileInfo fi(pgmodeler_cli_edt->text());
-		bool visible=!fi.exists() || fi.baseName()!=PGMODELER_CLI;
+		bool visible=!fi.exists() || fi.baseName()!=PgModelerCli;
 
 		invalid_cli_lbl->setVisible(visible);
 		message_frm->setVisible(visible);
@@ -139,7 +139,7 @@ void ModelFixForm::selectFile(void)
 
 	if(sender_obj==sel_cli_exe_tb)
 	{
-		QString cli_cmd=PGMODELER_CLI;
+		QString cli_cmd=PgModelerCli;
 		txt=pgmodeler_cli_edt;
 
 #ifdef Q_OS_WIN

@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	PluginsConfigWidget *plugins_conf_wgt=nullptr;
 	QGridLayout *grid=nullptr;
 
-	pending_op=NO_PENDING_OPER;
+	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
 	canvas_info_wgt = new SceneInfoWidget(this);
@@ -60,24 +60,24 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
 		grid->addWidget(central_wgt, 0, 0);
-		views_stw->widget(WELCOME_VIEW)->setLayout(grid);
+		views_stw->widget(WelcomeView)->setLayout(grid);
 
-		action_welcome->setData(WELCOME_VIEW);
-		action_design->setData(DESIGN_VIEW);
-		action_manage->setData(MANAGE_VIEW);
+		action_welcome->setData(WelcomeView);
+		action_design->setData(DesignView);
+		action_manage->setData(ManageView);
 
 		sql_tool_wgt=new SQLToolWidget;
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
 		grid->setSpacing(0);
 		grid->addWidget(sql_tool_wgt, 0, 0);
-		views_stw->widget(MANAGE_VIEW)->setLayout(grid);
+		views_stw->widget(ManageView)->setLayout(grid);
 
 		configuration_form=new ConfigurationForm(nullptr, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
-		PgModelerUiNS::resizeDialog(configuration_form);
+		PgModelerUiNs::resizeDialog(configuration_form);
 		configuration_form->loadConfiguration();
 
-		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
+		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
 		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
@@ -93,19 +93,19 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		while(itr!=itr_end)
 		{
 			attribs=itr->second;
-			if(attribs.count(ParsersAttributes::PATH)!=0)
+			if(attribs.count(Attributes::Path)!=0)
 			{
 				try
 				{
 					//Storing the file of a previous session
-					if(itr->first.contains(ParsersAttributes::_FILE_) &&
-							!attribs[ParsersAttributes::PATH].isEmpty())
-						prev_session_files.push_back(attribs[ParsersAttributes::PATH]);
+					if(itr->first.contains(Attributes::File) &&
+							!attribs[Attributes::Path].isEmpty())
+						prev_session_files.push_back(attribs[Attributes::Path]);
 
 					//Creating the recent models menu
-					else if(itr->first.contains(ParsersAttributes::RECENT) &&
-							!attribs[ParsersAttributes::PATH].isEmpty())
-						recent_models.push_back(attribs[ParsersAttributes::PATH]);
+					else if(itr->first.contains(Attributes::Recent) &&
+							!attribs[Attributes::Path].isEmpty())
+						recent_models.push_back(attribs[Attributes::Path]);
 				}
 				catch(Exception &e)
 				{
@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
 
-	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PGMODELER_VERSION;
+	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
 #ifdef DEMO_VERSION
 	window_title+=trUtf8(" (Demo)");
@@ -318,7 +318,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
-	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NO_PENDING_OPER; });
+	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NoPendingOp; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
@@ -333,7 +333,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	showRightWidgetsBar();
 	showBottomWidgetsBar();
 
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	confs=conf_wgt->getConfigurationParams();
 
 	//If a previous session was restored save the temp models
@@ -352,7 +352,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 		if(btn)
 		{
-			PgModelerUiNS::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNS::MEDIUM_FONT_FACTOR));
+			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -396,17 +396,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 #ifndef Q_OS_MAC
 	//Restoring the canvas grid options
-	action_show_grid->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID]==ParsersAttributes::_TRUE_);
-	action_alin_objs_grade->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID]==ParsersAttributes::_TRUE_);
-	action_show_delimiters->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS]==ParsersAttributes::_TRUE_);
-	action_compact_view->setChecked(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::COMPACT_VIEW]==ParsersAttributes::_TRUE_);
+	action_show_grid->setChecked(confs[Attributes::Configuration][Attributes::ShowCanvasGrid]==Attributes::True);
+	action_alin_objs_grade->setChecked(confs[Attributes::Configuration][Attributes::AlignObjsToGrid]==Attributes::True);
+	action_show_delimiters->setChecked(confs[Attributes::Configuration][Attributes::ShowPageDelimiters]==Attributes::True);
+	action_compact_view->setChecked(confs[Attributes::Configuration][Attributes::CompactView]==Attributes::True);
 
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 															 action_alin_objs_grade->isChecked(),
 															 action_show_delimiters->isChecked());
 
 	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_MAIN_MENU]==ParsersAttributes::_TRUE_);
+	main_menu_mb->setVisible(confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True);
 
 	if(main_menu_mb->isVisible())
 		file_menu->addAction(action_hide_main_menu);
@@ -429,7 +429,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 #warning "NO UPDATE CHECK: Update checking is disabled."
 #else
 	//Enabling update check at startup
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CHECK_UPDATE]==ParsersAttributes::_TRUE_)
+	if(confs[Attributes::Configuration][Attributes::CheckUpdate]==Attributes::True)
 		QTimer::singleShot(10000, update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
@@ -463,7 +463,7 @@ MainWindow::~MainWindow(void)
 
 void MainWindow::restoreTemporaryModels(void)
 {
-	PgModelerUiNS::resizeDialog(restoration_form);
+	PgModelerUiNs::resizeDialog(restoration_form);
 
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())
@@ -571,10 +571,10 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DIR_SEPARATOR + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
-	PgModelerUiNS::resizeDialog(&model_fix_form);
+	PgModelerUiNs::resizeDialog(&model_fix_form);
 	GeneralConfigWidget::restoreWidgetGeometry(&model_fix_form);
 	model_fix_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&model_fix_form);
@@ -636,7 +636,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				msg_box.show(trUtf8("Save modified model(s)"),
 							 trUtf8("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
-							 Messagebox::CONFIRM_ICON,Messagebox::YES_NO_BUTTONS);
+							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				/* If the user rejects the message box the close event will be aborted
 				causing pgModeler not to be finished */
@@ -654,19 +654,19 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			attribs_map attribs;
 
 			this->overview_wgt->close();
-			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 			confs=conf_wgt->getConfigurationParams();
 
-			attribs[ParsersAttributes::COMPACT_VIEW]=action_compact_view->isChecked() ? ParsersAttributes::_TRUE_ : QString();
-			attribs[ParsersAttributes::SHOW_MAIN_MENU]=main_menu_mb->isVisible() ? ParsersAttributes::_TRUE_ : QString();
+			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : QString();
+			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : QString();
 
-			conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs);
+			conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
 			attribs.clear();
 
 			count=models_tbw->count();
 
 			//Remove the references to old session
-			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(ParsersAttributes::_FILE_)));
+			conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)([0-9])+").arg(Attributes::File)));
 
 			//Saving the session
 			for(i=0; i < count; i++)
@@ -675,9 +675,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				if(!model->getFilename().isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
-					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=model->getFilename();
+					param_id=QString("%1%2").arg(Attributes::File).arg(i);
+					attribs[Attributes::Id]=param_id;
+					attribs[Attributes::Path]=model->getFilename();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 				}
@@ -692,9 +692,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				while(!recent_models.isEmpty())
 				{
-					param_id=QString("%1%2").arg(ParsersAttributes::RECENT).arg(QString::number(i++).rightJustified(2, '0'));
-					attribs[ParsersAttributes::ID]=param_id;
-					attribs[ParsersAttributes::PATH]=recent_models.front();
+					param_id=QString("%1%2").arg(Attributes::Recent).arg(QString::number(i++).rightJustified(2, '0'));
+					attribs[Attributes::Id]=param_id;
+					attribs[Attributes::Path]=recent_models.front();
 					conf_wgt->addConfigurationParam(param_id, attribs);
 					attribs.clear();
 					recent_models.pop_front();
@@ -710,7 +710,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			restoration_form->removeTemporaryModels();
 
 			//Remove import log files
-			QDir dir(GlobalAttributes::TEMPORARY_DIR);
+			QDir dir(GlobalAttributes::TemporaryDir);
 			QStringList log_files;
 
 			dir.setNameFilters({QString("*.log")});
@@ -731,7 +731,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::updateConnections(bool force)
 {
 	ConnectionsConfigWidget *conn_cfg_wgt=
-			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT));
+			dynamic_cast<ConnectionsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::ConnectionsConfWgt));
 
 	if(force || (!force && (conn_cfg_wgt->isConfigurationChanged() ||
 							model_valid_wgt->connections_cmb->count()==0 ||
@@ -744,7 +744,7 @@ void MainWindow::updateConnections(bool force)
 		}
 
 		if(sender()!=model_valid_wgt)
-			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OP_VALIDATION);
+			ConnectionsConfigWidget::fillConnectionsComboBox(model_valid_wgt->connections_cmb, true, Connection::OpValidation);
 	}
 }
 
@@ -772,7 +772,7 @@ void MainWindow::saveTemporaryModels(void)
 				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
 
 				if(model->isModified())
-					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XML_DEFINITION);
+					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlDefinition);
 			}
 
 			bg_saving_pb->setValue(100);
@@ -799,7 +799,7 @@ void MainWindow::updateRecentModelsMenu(void)
 	recent_mdls_menu.clear();
 	recent_models.removeDuplicates();
 
-	for(int i=0; i < recent_models.size() && i < MAX_RECENT_MODELS; i++)
+	for(int i=0; i < recent_models.size() && i < MaxRecentModels; i++)
 	{
 		act=recent_mdls_menu.addAction(QFileInfo(recent_models[i]).fileName(),this,SLOT(loadModelFromAction(void)));
 		act->setToolTip(recent_models[i]);
@@ -858,7 +858,7 @@ void MainWindow::addModel(const QString &filename)
 #warning "DEMO VERSION: database model creation limit."
 	if(models_tbw->count()==1)
 		throw Exception(trUtf8("The demonstration version can create only `one' instance of database model!"),
-						ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #endif
 
 	try
@@ -898,7 +898,7 @@ void MainWindow::addModel(const QString &filename)
 				models_tbw->setTabToolTip(models_tbw->currentIndex(), filename);
 
 				//Get the "public" schema and set as system object
-				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), OBJ_SCHEMA));
+				public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject(QString("public"), ObjectType::Schema));
 				if(public_sch)	public_sch->setSystemObject(true);
 
 				model_tab->db_model->setInvalidated(false);
@@ -953,9 +953,9 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 	try
 	{
 		if(!model_wgt)
-			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else if(model_wgt->parent())
-			throw Exception(ERR_ASG_WGT_ALREADY_HAS_PARENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgWidgetAlreadyHasParent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		model_nav_wgt->addModel(model_wgt);
 
@@ -983,7 +983,7 @@ int MainWindow::getModelCount(void)
 ModelWidget *MainWindow::getModel(int idx)
 {
 	if(idx < 0 || idx > models_tbw->count())
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
 }
@@ -1068,7 +1068,7 @@ void MainWindow::setCurrentModel(void)
 
 		for(QToolButton *btn : btns)
 		{
-			PgModelerUiNS::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNS::MEDIUM_FONT_FACTOR));
+			PgModelerUiNs::configureWidgetFont(btn, static_cast<unsigned>(PgModelerUiNs::MediumFontFactor));
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
@@ -1138,7 +1138,7 @@ void MainWindow::setCurrentModel(void)
 
 void MainWindow::setGridOptions(void)
 {
-	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt = dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> attribs = conf_wgt->getConfigurationParams();
 
 	//Configures the global settings for the scene grid
@@ -1146,9 +1146,9 @@ void MainWindow::setGridOptions(void)
 								 action_alin_objs_grade->isChecked(),
 								 action_show_delimiters->isChecked());
 
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::ALIGN_OBJS_TO_GRID] = (action_alin_objs_grade->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_CANVAS_GRID] = (action_show_grid->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
-	attribs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SHOW_PAGE_DELIMITERS] = (action_show_delimiters->isChecked() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
+	attribs[Attributes::Configuration][Attributes::AlignObjsToGrid] = (action_alin_objs_grade->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::ShowCanvasGrid] = (action_show_grid->isChecked() ? Attributes::True : Attributes::False);
+	attribs[Attributes::Configuration][Attributes::ShowPageDelimiters] = (action_show_delimiters->isChecked() ? Attributes::True : Attributes::False);
 
 	if(current_model)
 	{
@@ -1158,14 +1158,14 @@ void MainWindow::setGridOptions(void)
 			current_model->scene->alignObjectsToGrid();
 
 			//Forcing the relationship updating to fit the new position of the tables
-			current_model->getDatabaseModel()->setObjectsModified({ OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+			current_model->getDatabaseModel()->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
 		}
 
 		//Redraw the scene to apply the new grid options
 		current_model->scene->update();
 	}
 
-	conf_wgt->addConfigurationParam(ParsersAttributes::CONFIGURATION, attribs[ParsersAttributes::CONFIGURATION]);
+	conf_wgt->addConfigurationParam(Attributes::Configuration, attribs[Attributes::Configuration]);
 }
 
 void MainWindow::applyZoom(void)
@@ -1176,10 +1176,10 @@ void MainWindow::applyZoom(void)
 
 		if(sender()==action_normal_zoom)
 			zoom=1;
-		else if(sender()==action_inc_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
-			zoom+=ModelWidget::ZOOM_INCREMENT;
-		else if(sender()==action_dec_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
-			zoom-=ModelWidget::ZOOM_INCREMENT;
+		else if(sender()==action_inc_zoom && zoom < ModelWidget::MaximumZoom)
+			zoom+=ModelWidget::ZoomIncrement;
+		else if(sender()==action_dec_zoom && zoom > ModelWidget::MinimumZoom)
+			zoom-=ModelWidget::ZoomIncrement;
 
 		current_model->applyZoom(zoom);
 	}
@@ -1190,7 +1190,7 @@ void MainWindow::removeModelActions(void)
 	QList<QAction *> act_list;
 	act_list=general_tb->actions();
 
-	while(act_list.size() > GENERAL_ACTIONS_COUNT)
+	while(act_list.size() > GeneralActionsCount)
 	{
 		general_tb->removeAction(act_list.back());
 		act_list.pop_back();
@@ -1221,7 +1221,7 @@ void MainWindow::closeModel(int model_id)
 		{
 			msg_box.show(trUtf8("Save model"),
 						 trUtf8("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
-						 Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 #endif
 
@@ -1285,7 +1285,7 @@ void MainWindow::applyConfigurations(void)
 		int count, i;
 		ModelWidget *model=nullptr;
 
-		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		//Disable the auto save if the option is not checked
 		if(!conf_wgt->autosave_interv_chk->isChecked())
@@ -1344,7 +1344,7 @@ void MainWindow::saveModel(ModelWidget *model)
 	Messagebox msg_box;
 	msg_box.show(trUtf8("Warning"),
 				 trUtf8("You're running a demonstration version! The model saving feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	try
 	{
@@ -1359,9 +1359,9 @@ void MainWindow::saveModel(ModelWidget *model)
 			{
 				msg_box.show(trUtf8("Confirmation"),
 							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
-							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+							 Messagebox::AlertIcon, Messagebox::AllButtons,
 							 trUtf8("Validate"), trUtf8("Save anyway"), QString(),
-								PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("salvar"));
+								PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("salvar"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
 				if(msg_box.isCancelled())
@@ -1374,7 +1374,7 @@ void MainWindow::saveModel(ModelWidget *model)
 				else if(msg_box.result()==QDialog::Accepted)
 				{
 					validation_btn->setChecked(true);
-					this->pending_op=(sender()==action_save_as ? PENDING_SAVE_AS_OPER : PENDING_SAVE_OPER);
+					this->pending_op=(sender()==action_save_as ? PendingSaveAsOp : PendingSaveOp);
 					action_design->setChecked(true);
 					model_valid_wgt->validateModel();
 				}
@@ -1388,7 +1388,7 @@ void MainWindow::saveModel(ModelWidget *model)
 					&& (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
-				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PENDING_SAVE_AS_OPER)
+				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PendingSaveAsOp)
 				{
 					QFileDialog file_dlg;
 
@@ -1437,14 +1437,14 @@ void MainWindow::exportModel(void)
 	{
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
-					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 trUtf8("Validate"), trUtf8("Export anyway"), QString(),
-					 PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("exportar"));
+					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("exportar"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
-			this->pending_op=PENDING_EXPORT_OPER;
+			this->pending_op=PendingExportOp;
 			model_valid_wgt->validateModel();
 		}
 	}
@@ -1455,7 +1455,7 @@ void MainWindow::exportModel(void)
 		stopTimers(true);
 		connect(&model_export_form, &ModelExportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
-		PgModelerUiNS::resizeDialog(&model_export_form);
+		PgModelerUiNs::resizeDialog(&model_export_form);
 		GeneralConfigWidget::restoreWidgetGeometry(&model_export_form);
 		model_export_form.exec(current_model);
 		GeneralConfigWidget::saveWidgetGeometry(&model_export_form);
@@ -1472,7 +1472,7 @@ void MainWindow::importDatabase(void)
 
 	connect(&db_import_form, &DatabaseImportForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 	db_import_form.setModelWidget(current_model);
-	PgModelerUiNS::resizeDialog(&db_import_form);
+	PgModelerUiNs::resizeDialog(&db_import_form);
 	GeneralConfigWidget::restoreWidgetGeometry(&db_import_form);
 	db_import_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&db_import_form);
@@ -1497,14 +1497,14 @@ void MainWindow::diffModelDatabase(void)
 	{
 		msg_box.show(trUtf8("Confirmation"),
 					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
-					 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS,
+					 Messagebox::AlertIcon, Messagebox::AllButtons,
 					 trUtf8("Validate"), trUtf8("Diff anyway"), QString(),
-					 PgModelerUiNS::getIconPath("validation"), PgModelerUiNS::getIconPath("diff"));
+					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("diff"));
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
 			validation_btn->setChecked(true);
-			this->pending_op=PENDING_DIFF_OPER;
+			this->pending_op=PendingDiffOp;
 			model_valid_wgt->validateModel();
 		}
 	}
@@ -1517,7 +1517,7 @@ void MainWindow::diffModelDatabase(void)
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
 
-		PgModelerUiNS::resizeDialog(&modeldb_diff_frm);
+		PgModelerUiNs::resizeDialog(&modeldb_diff_frm);
 		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		GeneralConfigWidget::saveWidgetGeometry(&modeldb_diff_frm);
@@ -1536,7 +1536,7 @@ void MainWindow::printModel(void)
 		QRectF margins;
 		QSizeF custom_size;
 		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(trUtf8("Database model printing"));
@@ -1568,7 +1568,7 @@ void MainWindow::printModel(void)
 					orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
 				msg_box.show(trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
-							 Messagebox::ALERT_ICON, Messagebox::ALL_BUTTONS);
+							 Messagebox::AlertIcon, Messagebox::AllButtons);
 			}
 
 			if(!msg_box.isCancelled())
@@ -1589,7 +1589,7 @@ void MainWindow::loadModel(void)
 	try
 	{
 		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
-		file_dlg.setWindowIcon(QPixmap(PgModelerUiNS::getIconPath("pgsqlModeler48x48")));
+		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -1637,12 +1637,12 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 {
 	Messagebox msg_box;
 
-	msg_box.show(Exception(Exception::getErrorMessage(ERR_MODEL_FILE_NOT_LOADED).arg(filename),
-						   ERR_MODEL_FILE_NOT_LOADED ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-				 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
-				 Messagebox::ERROR_ICON, Messagebox::YES_NO_BUTTONS,
-				 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
-				 PgModelerUiNS::getIconPath("fixobject"), PgModelerUiNS::getIconPath("msgbox_erro"));
+	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
+												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
+							 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
+							 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+							 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
 		fixModel(filename);
@@ -1687,9 +1687,9 @@ void MainWindow::updateToolsState(bool model_closed)
 		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
 		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT));
+		action_inc_zoom->setEnabled(current_model->getCurrentZoom() <= (ModelWidget::MaximumZoom - ModelWidget::ZoomIncrement));
 		action_normal_zoom->setEnabled(current_model->getCurrentZoom()!=0);
-		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MINIMUM_ZOOM);
+		action_dec_zoom->setEnabled(current_model->getCurrentZoom() >= ModelWidget::MinimumZoom);
 	}
 }
 
@@ -1729,7 +1729,7 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openSupport(void)
 {
-  QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_SUPPORT));
+	QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerSupport));
 }
 
 void MainWindow::toggleUpdateNotifier(bool show)
@@ -1803,7 +1803,7 @@ QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
 
 void MainWindow::configureSamplesMenu(void)
 {
-	QDir dir(GlobalAttributes::SAMPLES_DIR);
+	QDir dir(GlobalAttributes::SamplesDir);
 	QStringList files=dir.entryList({QString("*.dbm")});
 	QAction *act=nullptr;
 	QString path;
@@ -1811,7 +1811,7 @@ void MainWindow::configureSamplesMenu(void)
 	while(!files.isEmpty())
 	{
 		act=sample_mdls_menu.addAction(files.front(),this,SLOT(loadModelFromAction(void)));
-		path=QFileInfo(GlobalAttributes::SAMPLES_DIR + GlobalAttributes::DIR_SEPARATOR + files.front()).absoluteFilePath();
+		path=QFileInfo(GlobalAttributes::SamplesDir + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);
 		files.pop_front();
@@ -1828,57 +1828,57 @@ void MainWindow::configureSamplesMenu(void)
 
 void MainWindow::storeDockWidgetsSettings(void)
 {
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	attribs_map params;
 
-	params[ParsersAttributes::VALIDATOR]=ParsersAttributes::_TRUE_;
-	params[ParsersAttributes::SQL_VALIDATION]=(model_valid_wgt->sql_validation_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::USE_UNIQUE_NAMES]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::PGSQL_VERSION]=model_valid_wgt->version_cmb->currentText();
-	conf_wgt->addConfigurationParam(ParsersAttributes::VALIDATOR, params);
+	params[Attributes::Validator]=Attributes::True;
+	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::PgSqlVersion]=model_valid_wgt->version_cmb->currentText();
+	conf_wgt->addConfigurationParam(Attributes::Validator, params);
 	params.clear();
 
-	params[ParsersAttributes::OBJECT_FINDER]=ParsersAttributes::_TRUE_;
-	params[ParsersAttributes::SELECT_OBJECTS]=(obj_finder_wgt->select_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::FADEIN_OBJECTS]=(obj_finder_wgt->fade_btn->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::REGULAR_EXP]=(obj_finder_wgt->regexp_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::CASE_SENSITIVE]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::EXACT_MATCH]=(obj_finder_wgt->exact_match_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	conf_wgt->addConfigurationParam(ParsersAttributes::OBJECT_FINDER, params);
+	params[Attributes::ObjectFinder]=Attributes::True;
+	params[Attributes::SelectObjects]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
+	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
+	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
+	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
 	params.clear();
 
-	params[ParsersAttributes::SQL_TOOL]=ParsersAttributes::_TRUE_;
-	params[ParsersAttributes::SHOW_ATTRIBUTES_GRID]=(sql_tool_wgt->attributes_tb->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	params[ParsersAttributes::SHOW_SOURCE_PANE]=(sql_tool_wgt->source_pane_tb->isChecked() ? ParsersAttributes::_TRUE_ : QString());
-	conf_wgt->addConfigurationParam(ParsersAttributes::SQL_TOOL, params);
+	params[Attributes::SqlTool]=Attributes::True;
+	params[Attributes::ShowAttributesGrid]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : QString());
+	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : QString());
+	conf_wgt->addConfigurationParam(Attributes::SqlTool, params);
 	params.clear();
 }
 
 void MainWindow::restoreDockWidgetsSettings(void)
 {
-	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
+	GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 	map<QString, attribs_map> confs=conf_wgt->getConfigurationParams();
 
-	if(confs.count(ParsersAttributes::VALIDATOR))
+	if(confs.count(Attributes::Validator))
 	{
-		model_valid_wgt->sql_validation_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::SQL_VALIDATION]==ParsersAttributes::_TRUE_);
-		model_valid_wgt->use_tmp_names_chk->setChecked(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::USE_UNIQUE_NAMES]==ParsersAttributes::_TRUE_);
-		model_valid_wgt->version_cmb->setCurrentText(confs[ParsersAttributes::VALIDATOR][ParsersAttributes::PGSQL_VERSION]);
+		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::Validator][Attributes::SqlValidation]==Attributes::True);
+		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::Validator][Attributes::UseUniqueNames]==Attributes::True);
+		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::PgSqlVersion]);
 	}
 
-	if(confs.count(ParsersAttributes::OBJECT_FINDER))
+	if(confs.count(Attributes::ObjectFinder))
 	{
-		obj_finder_wgt->select_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::SELECT_OBJECTS]==ParsersAttributes::_TRUE_);
-		obj_finder_wgt->fade_btn->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::FADEIN_OBJECTS]==ParsersAttributes::_TRUE_);
-		obj_finder_wgt->regexp_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_);
-		obj_finder_wgt->case_sensitive_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
-		obj_finder_wgt->exact_match_chk->setChecked(confs[ParsersAttributes::OBJECT_FINDER][ParsersAttributes::EXACT_MATCH]==ParsersAttributes::_TRUE_);
+		obj_finder_wgt->select_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::SelectObjects]==Attributes::True);
+		obj_finder_wgt->fade_btn->setChecked(confs[Attributes::ObjectFinder][Attributes::FadeInObjects]==Attributes::True);
+		obj_finder_wgt->regexp_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::RegularExp]==Attributes::True);
+		obj_finder_wgt->case_sensitive_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::CaseSensitive]==Attributes::True);
+		obj_finder_wgt->exact_match_chk->setChecked(confs[Attributes::ObjectFinder][Attributes::ExactMatch]==Attributes::True);
 	}
 
-	if(confs.count(ParsersAttributes::SQL_TOOL))
+	if(confs.count(Attributes::SqlTool))
 	{
-		sql_tool_wgt->attributes_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_ATTRIBUTES_GRID]==ParsersAttributes::_TRUE_);
-		sql_tool_wgt->source_pane_tb->setChecked(confs[ParsersAttributes::SQL_TOOL][ParsersAttributes::SHOW_SOURCE_PANE]==ParsersAttributes::_TRUE_);
+		sql_tool_wgt->attributes_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowAttributesGrid]==Attributes::True);
+		sql_tool_wgt->source_pane_tb->setChecked(confs[Attributes::SqlTool][Attributes::ShowSourcePane]==Attributes::True);
 	}
 }
 
@@ -1890,29 +1890,29 @@ void MainWindow::showDemoVersionWarning(void)
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
-						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MAX_OBJECT_COUNT),
-						Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
+						Messagebox::AlertIcon, Messagebox::OkButton);
 #endif
 }
 
 void MainWindow::executePendingOperation(bool valid_error)
 {
-	if(!valid_error && pending_op!=NO_PENDING_OPER)
+	if(!valid_error && pending_op!=NoPendingOp)
 	{
 		static const QString op_names[]={ QString(), QT_TR_NOOP("save"), QT_TR_NOOP("save"),
-										  QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
+																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
-		PgModelerUiNS::createOutputTreeItem(model_valid_wgt->output_trw,
+		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,
 											trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
 
-		if(pending_op==PENDING_SAVE_OPER || pending_op==PENDING_SAVE_AS_OPER)
+		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
 			saveModel();
-		else if(pending_op==PENDING_EXPORT_OPER)
+		else if(pending_op==PendingExportOp)
 			exportModel();
-		else if(pending_op==PENDING_DIFF_OPER)
+		else if(pending_op==PendingDiffOp)
 			diffModelDatabase();
 
-		pending_op=NO_PENDING_OPER;
+		pending_op=NoPendingOp;
 	}
 }
 
@@ -1941,7 +1941,7 @@ void MainWindow::changeCurrentView(bool checked)
 		action_design->blockSignals(false);
 
 		actions=general_tb->actions();
-		for(int i=GENERAL_ACTIONS_COUNT; i < actions.count(); i++)
+		for(int i=GeneralActionsCount; i < actions.count(); i++)
 		{
 			actions[i]->setEnabled(enable);
 
@@ -1979,7 +1979,7 @@ void MainWindow::changeCurrentView(bool checked)
 void MainWindow::reportBug(void)
 {
 	BugReportForm bugrep_frm;
-	PgModelerUiNS::resizeDialog(&bugrep_frm);
+	PgModelerUiNs::resizeDialog(&bugrep_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&bugrep_frm);
 	bugrep_frm.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&bugrep_frm);
@@ -2002,7 +2002,7 @@ void MainWindow::handleObjectsMetadata(void)
 	objs_meta_frm.setModelWidgets(model_nav_wgt->getModelWidgets());
 	connect(&objs_meta_frm, SIGNAL(s_metadataHandled()), model_objs_wgt, SLOT(updateObjectsView()));
 
-	PgModelerUiNS::resizeDialog(&objs_meta_frm);
+	PgModelerUiNs::resizeDialog(&objs_meta_frm);
 	GeneralConfigWidget::restoreWidgetGeometry(&objs_meta_frm);
 	objs_meta_frm.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&objs_meta_frm);
@@ -2014,7 +2014,7 @@ void MainWindow::arrangeObjects(void)
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{
@@ -2042,7 +2042,7 @@ void MainWindow::toggleCompactView(void)
 	{
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
 		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
-		model_wgt->getDatabaseModel()->setObjectsModified({ OBJ_TABLE, OBJ_VIEW, OBJ_RELATIONSHIP, BASE_RELATIONSHIP, OBJ_SCHEMA});
+		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
 	}
 
 	QApplication::restoreOverrideCursor();

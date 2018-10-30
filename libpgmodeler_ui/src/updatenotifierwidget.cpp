@@ -37,8 +37,8 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_SRC_URL); });
-	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PGMODELER_DOWNLOAD_URL); });
+	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerSourceURL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerDownloadURL); });
 
 
 	connect(hide_tb, &QToolButton::clicked, this,
@@ -47,9 +47,9 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 		emit s_visibilityChanged(false);
 	});
 
-	PgModelerUiNS::configureWidgetFont(changelog_txt, PgModelerUiNS::MEDIUM_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(ver_num_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(changelog_txt, PgModelerUiNs::MediumFontFactor);
+	PgModelerUiNs::configureWidgetFont(ver_num_lbl, PgModelerUiNs::BigFontFactor);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);
 	this->adjustSize();
 }
 
@@ -97,7 +97,7 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 
 void UpdateNotifierWidget::checkForUpdate(void)
 {
-	QUrl url(GlobalAttributes::PGMODELER_UPD_CHECK_URL + GlobalAttributes::PGMODELER_VERSION);
+	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL + GlobalAttributes::PgModelerVersion);
 	QNetworkRequest req(url);
 
 	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");
@@ -114,7 +114,7 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 	{
 		msg_box.show(trUtf8("Failed to check updates"),
 					 trUtf8("The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: <em>%1</em> - <strong>%2</strong>.").arg(http_status).arg(reply->errorString()),
-					 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+					 Messagebox::ErrorIcon, Messagebox::OkButton);
 	}
 	else
 	{
@@ -124,8 +124,8 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 		{
 			QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 
-			if(http_status==302 && !url.startsWith(GlobalAttributes::PGMODELER_SITE))
-				url.prepend(GlobalAttributes::PGMODELER_SITE);
+			if(http_status==302 && !url.startsWith(GlobalAttributes::PgModelerSite))
+				url.prepend(GlobalAttributes::PgModelerSite);
 
 			QNetworkRequest req(url);
 			update_chk_reply=update_chk_manager.get(req);
@@ -137,10 +137,10 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 			{
 				QJsonDocument json_doc=QJsonDocument::fromJson(reply->readAll());
 				QJsonObject json_obj=json_doc.object();
-				QString version=json_obj.value(ParsersAttributes::NEW_VERSION).toString(),
-						changelog=json_obj.value(ParsersAttributes::CHANGELOG).toString(),
-						date=json_obj.value(ParsersAttributes::DATE).toString();
-				bool upd_found=(!version.isEmpty() && version!=ParsersAttributes::_FALSE_);
+				QString version=json_obj.value(Attributes::NewVersion).toString(),
+						changelog=json_obj.value(Attributes::Changelog).toString(),
+						date=json_obj.value(Attributes::Date).toString();
+				bool upd_found=(!version.isEmpty() && version!=Attributes::False);
 
 				if(upd_found)
 				{
@@ -152,7 +152,7 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 				{
 					msg_box.show(trUtf8("No updates found"),
 								 trUtf8("You are running the most recent pgModeler version! No update needed."),
-								 Messagebox::INFO_ICON, Messagebox::OK_BUTTON);
+								 Messagebox::InfoIcon, Messagebox::OkButton);
 				}
 
 				emit s_updateAvailable(upd_found);
@@ -161,7 +161,7 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 			{
 				msg_box.show(trUtf8("Failed to check updates"),
 							 trUtf8("The update notifier failed to check for new versions! A HTTP status code was returned: <strong>%1</strong>").arg(http_status),
-							 Messagebox::ERROR_ICON, Messagebox::OK_BUTTON);
+							 Messagebox::ErrorIcon, Messagebox::OkButton);
 			}
 
 			delete(update_chk_reply);

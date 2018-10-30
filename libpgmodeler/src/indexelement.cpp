@@ -38,17 +38,17 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 	attribs_map attributes;
 
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
-	attributes[ParsersAttributes::COLLATION]=QString();
+	attributes[Attributes::Collation]=QString();
 	configureAttributes(attributes, def_type);
 
 	if(collation)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::COLLATION]=collation->getName(true);
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::Collation]=collation->getName(true);
 		else
-			attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
+			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(ParsersAttributes::INDEX_ELEMENT,attributes, def_type));
+	return(schparser.getCodeDefinition(Attributes::IndexElement,attributes, def_type));
 }
 

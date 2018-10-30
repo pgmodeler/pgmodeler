@@ -60,7 +60,7 @@ class Type: public BaseObject {
 		preferred; //PREFERRED
 
 		//! \brief Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
-		PgSQLType alignment, //ALIGNMENT
+		PgSqlType alignment, //ALIGNMENT
 		element; //ELEMENT
 
 		//! \brief Type's storage
@@ -75,7 +75,7 @@ class Type: public BaseObject {
 		/*! \brief Type which will have some of its attributes copied to the current type
 		 (only for base type). If like_type is 'any' means that the
 		 current type does not copy attributes of any type */
-		PgSQLType like_type,  //LIKE
+		PgSqlType like_type,  //LIKE
 
 		//! \brief Subtype used by a range type
 		subtype; //SUBTYPE
@@ -106,20 +106,20 @@ class Type: public BaseObject {
 		void convertFunctionParameters(bool inverse_conv=false);
 
 	public:
-		static const unsigned BASE_TYPE=10,
-		ENUMERATION_TYPE=11,
-		COMPOSITE_TYPE=12,
-		RANGE_TYPE=13;
+		static constexpr unsigned BaseType=10,
+		EnumerationType=11,
+		CompositeType=12,
+		RangeType=13;
 
-		static const unsigned INPUT_FUNC=0,
-		OUTPUT_FUNC=1,
-		RECV_FUNC=2,
-		SEND_FUNC=3,
-		TPMOD_IN_FUNC=4,
-		TPMOD_OUT_FUNC=5,
-		ANALYZE_FUNC=6,
-		CANONICAL_FUNC=7,
-		SUBTYPE_DIFF_FUNC=8;
+		static constexpr unsigned InputFunc=0,
+		OutputFunc=1,
+		RecvFunc=2,
+		SendFunc=3,
+		TpmodInFunc=4,
+		TpmodOutFunc=5,
+		AnalyzeFunc=6,
+		CanonicalFunc=7,
+		SubtypeDiffFunc=8;
 
 		Type(void);
 
@@ -165,7 +165,7 @@ class Type: public BaseObject {
 		void setCollatable(bool value);
 
 		//! \brief Sets the alignment for the type (only for base type)
-		void setAlignment(PgSQLType type);
+		void setAlignment(PgSqlType type);
 
 		//! \brief Sets the storage type (only for base type)
 		void setStorage(StorageType strg);
@@ -174,7 +174,7 @@ class Type: public BaseObject {
 		void setDefaultValue(const QString &value);
 
 		//! \brief Sets the element for the type (only for base type)
-		void setElement(PgSQLType elem);
+		void setElement(PgSqlType elem);
 
 		//! \brief Sets the delimiter for the type (only for base type)
 		void setDelimiter(char delim);
@@ -186,15 +186,15 @@ class Type: public BaseObject {
 		void setPreferred(bool value);
 
 		//! \brief Sets the type that will be used as template (only for base type)
-		void setLikeType(PgSQLType like_type);
+		void setLikeType(PgSqlType like_type);
 
 		//! \brief Sets the subtype that will be used by the range (only for range type)
-		void setSubtype(PgSQLType subtype);
+		void setSubtype(PgSqlType subtype);
 
 		//! \brief Sets the subtype operator class (only for range type)
 		void setSubtypeOpClass(OperatorClass *opclass);
 
-		PgSQLType getSubtype(void);
+		PgSqlType getSubtype(void);
 		OperatorClass *getSubtypeOpClass(void);
 		TypeAttribute getAttribute(unsigned attrib_idx);
 		unsigned getAttributeCount(void);
@@ -203,15 +203,15 @@ class Type: public BaseObject {
 		unsigned getConfiguration(void);
 		CategoryType getCategory(void);
 		bool isPreferred(void);
-		PgSQLType getLikeType(void);
+		PgSqlType getLikeType(void);
 		Function *getFunction(unsigned func_id);
 		unsigned getInternalLength(void);
 		bool isByValue(void);
 		bool isCollatable(void);
-		PgSQLType getAlignment(void);
+		PgSqlType getAlignment(void);
 		StorageType getStorage(void);
 		QString getDefaultValue(void);
-		PgSQLType getElement(void);
+		PgSqlType getElement(void);
 		char getDelimiter(void);
 
 		/*! \brief Returns the SQL / XML definition for the type. If the boolean

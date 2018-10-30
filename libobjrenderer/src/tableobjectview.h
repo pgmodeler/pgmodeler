@@ -44,7 +44,7 @@ class TableObjectView: public BaseObjectView
 		 The constraint type parameter is only used when the source object is a
 		 column  and is used to format the descriptor indication that the column
 		 has a constraint */
-		void configureDescriptor(ConstraintType constr_type=BaseType::null);
+		void configureDescriptor(ConstraintType constr_type=BaseType::Null);
 
 		QVariant itemChange(GraphicsItemChange, const QVariant &value)
 		{
@@ -52,16 +52,16 @@ class TableObjectView: public BaseObjectView
 		}
 
 	public:
-		static const QString	CONSTR_DELIM_END,
-		CONSTR_DELIM_START,
-		TYPE_SEPARATOR,
-		CONSTR_SEPARATOR,
-		TXT_FOREIGN_KEY,
-		TXT_NOT_NULL,
-		TXT_PRIMARY_KEY,
-		TXT_UNIQUE,
-		TXT_CHECK,
-		TXT_EXCLUDE;
+		static const QString	ConstrDelimEnd,
+		ConstrDelimStart,
+		TypeSeparator,
+		ConstrSeparator,
+		TextForeignKey,
+		TextNotNull,
+		TextPrimaryKey,
+		TextUnique,
+		TextCheck,
+		TextExclude;
 
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);

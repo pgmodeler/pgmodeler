@@ -1,18 +1,18 @@
 #include "swapobjectsidswidget.h"
 #include "pgmodeleruins.h"
 
-const QString SwapObjectsIdsWidget::ID_LABEL = QString("ID: <strong>%1</strong>");
+const QString SwapObjectsIdsWidget::IdLabel = QString("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {OBJ_PERMISSION, OBJ_ROLE, OBJ_TEXTBOX,
-																   OBJ_COLUMN, OBJ_CONSTRAINT });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission, ObjectType::Role, ObjectType::Textbox,
+																   ObjectType::Column, ObjectType::Constraint });
 		setupUi(this);
 
-		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
@@ -120,12 +120,12 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 	if(!model)
 		return;
 
-	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SQL_DEFINITION);
+	map<unsigned, BaseObject *> creation_order = model->getCreationOrder(SchemaParser::SqlDefinition);
 	vector<BaseObject *> objects;
 
 	//Using an stl function to extract all the values (objects) from the map and put them into a list
 	std::for_each(creation_order.begin(), creation_order.end(), [&](const std::pair<unsigned, BaseObject *> &itr) {
-		if(itr.second->getObjectType() != OBJ_CONSTRAINT) {
+		if(itr.second->getObjectType() != ObjectType::Constraint) {
 			objects.push_back(itr.second);
 		}
 	});
@@ -155,8 +155,8 @@ void SwapObjectsIdsWidget::showObjectId(void)
 	id_lbl->clear();
 	if(sel_obj)
 	{
-		id_lbl->setText(ID_LABEL.arg(sel_obj->getObjectId()));
-		ico_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(sel_obj->getObjectType())));
+		id_lbl->setText(IdLabel.arg(sel_obj->getObjectId()));
+		ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(sel_obj->getObjectType())));
 		ico_lbl->setToolTip(sel_obj->getTypeName());
 
 		id_lbl->setVisible(true);
@@ -183,21 +183,21 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 			*graph_dst_obj=dynamic_cast<BaseGraphicObject *>(dst_obj);
 
 	if(!src_obj && !dst_obj)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
-	else if((src_obj->getObjectType()==OBJ_RELATIONSHIP || dst_obj->getObjectType()==OBJ_RELATIONSHIP) &&
+	else if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
 			(src_obj->getObjectType() != dst_obj->getObjectType()))
-		throw Exception(ERR_INV_REL_ID_SWAP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
 		BaseObject::swapObjectsIds(src_obj, dst_obj, false);
 
 		//Special id swap for relationship
-		if(src_obj->getObjectType()==OBJ_RELATIONSHIP)
+		if(src_obj->getObjectType()==ObjectType::Relationship)
 		{
 			vector<BaseObject *>::iterator itr, itr1;
-			vector<BaseObject *> *list=model->getObjectList(OBJ_RELATIONSHIP);
+			vector<BaseObject *> *list=model->getObjectList(ObjectType::Relationship);
 
 			//Find the relationships in the list and swap the memory position too
 			itr=std::find(list->begin(), list->end(), src_obj);
@@ -219,8 +219,8 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 		model->setInvalidated(true);
 		fillCreationOrderGrid();
 
-		src_id_lbl->setText(ID_LABEL.arg(src_object_sel->getSelectedObject()->getObjectId()));
-		dst_id_lbl->setText(ID_LABEL.arg(dst_object_sel->getSelectedObject()->getObjectId()));
+		src_id_lbl->setText(IdLabel.arg(src_object_sel->getSelectedObject()->getObjectId()));
+		dst_id_lbl->setText(IdLabel.arg(dst_object_sel->getSelectedObject()->getObjectId()));
 
 		emit s_objectsIdsSwapped();
 	}
