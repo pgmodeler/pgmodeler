@@ -36,18 +36,18 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 	for(unsigned i=0; i < 3; i++)
 	{
 		lables[i]=new QGraphicsSimpleTextItem;
-		this->addToGroup(lables[i]);
+		//this->addToGroup(lables[i]);
 	}
 }
 
 TableObjectView::~TableObjectView(void)
 {
-	this->removeFromGroup(descriptor);
+	//this->removeFromGroup(descriptor);
 	delete(descriptor);
 
 	for(unsigned i=0; i < 3; i++)
 	{
-		this->removeFromGroup(lables[i]);
+		//this->removeFromGroup(lables[i]);
 		delete(lables[i]);
 	}
 }
@@ -71,7 +71,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		this->removeFromGroup(descriptor);
+		//this->removeFromGroup(descriptor);
 		delete(descriptor);
 		descriptor=nullptr;
 	}
@@ -83,7 +83,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		else
 			descriptor=new QGraphicsPolygonItem;
 
-		this->addToGroup(descriptor);
+		//this->addToGroup(descriptor);
 	}
 
 	if(column)
@@ -260,7 +260,7 @@ void TableObjectView::configureObject(void)
 		configureDescriptor(constr_type);
 
 		//Set the descriptor position as the first item on the view
-		descriptor->setPos(HorizSpacing, 1);
+		descriptor->setPos(HorizSpacing, 0);
 		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
@@ -409,7 +409,7 @@ void TableObjectView::configureObject(void)
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
 			atribs_tip=QString("\n") + ConstrDelimStart +
-					   QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
+								 QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
 
 		}
 
@@ -420,16 +420,8 @@ void TableObjectView::configureObject(void)
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
 
-		//Calculating the object bounding rect that is composed by the join of the all object's child dimensions
 		descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
-		bounding_rect.setTopLeft(QPointF(descriptor->boundingRect().left(), lables[0]->boundingRect().top()));
-
-		//Special case: when the constraint label has no text use the type label dimension
-		if(lables[2]->boundingRect().width()==0)
-			bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
-		else
-			bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
-
+		calculateBoundingRect();
 		this->setToolTip(tooltip + atribs_tip);
 	}
 }
@@ -516,12 +508,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setText(QString());
 
 	descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
-	bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));
-
-	if(lables[2]->text().isEmpty())
-		bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
-	else
-		bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
+	calculateBoundingRect();
 }
 
 void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
@@ -533,6 +520,26 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 		descriptor->setPos(px, descriptor->pos().y());
 	else
 		lables[obj_idx-1]->setPos(px, lables[obj_idx-1]->pos().y());
+
+	calculateBoundingRect();
+}
+
+void TableObjectView::calculateBoundingRect(void)
+{
+	double width = 0, height = 0;
+
+	width = descriptor->boundingRect().width();
+	height = descriptor->boundingRect().height();
+
+	for(int i = 0; i < 3; i++)
+	{
+		width += lables[i]->boundingRect().width();
+
+		if(height < lables[i]->boundingRect().height())
+			height = lables[i]->boundingRect().height();
+	}
+
+	bounding_rect = QRectF(QPointF(0,0), QSizeF(width, height));
 }
 
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
@@ -588,12 +595,28 @@ QString TableObjectView::getConstraintString(Column *column)
 			str_constr+=TextNotNull + ConstrSeparator;
 
 		if(!str_constr.isEmpty())
-			str_constr= ConstrDelimStart +
-						ConstrSeparator + str_constr +
-						ConstrDelimEnd;
+			str_constr= ConstrDelimStart + ConstrSeparator + str_constr + ConstrDelimEnd;
 
 		return(str_constr);
 	}
 	else return(QString());
+}
+
+void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	descriptor->paint(painter, option, widget);
+
+	for(int i = 0 ; i < 3; i++)
+	{
+		lables[i]->paint(painter, option, widget);
+		/*painter->setFont(lables[i]->font());
+		painter->setPen(lables[i]->brush().color());
+		painter->drawText(lables[i]->pos(), lables[i]->text());*/
+	}
+}
+
+QRectF TableObjectView::boundingRect(void) const
+{
+	return(bounding_rect);
 }
 

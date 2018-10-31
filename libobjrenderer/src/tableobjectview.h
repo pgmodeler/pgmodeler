@@ -51,6 +51,8 @@ class TableObjectView: public BaseObjectView
 			return(value);
 		}
 
+		void calculateBoundingRect(void);
+
 	public:
 		static const QString	ConstrDelimEnd,
 		ConstrDelimStart,
@@ -81,6 +83,10 @@ class TableObjectView: public BaseObjectView
 		/*! \brief Returns a formatted string containing the keywords indicating the constraints
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+
+		virtual QRectF boundingRect(void) const;
 };
 
 #endif

@@ -98,8 +98,7 @@ void TableView::configureObject(void)
 				col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 				col_item->setSourceObject(tab_obj);
 				col_item->configureObject();
-				col_item->moveBy(-col_item->scenePos().x(),
-								 -col_item->scenePos().y());
+				col_item->moveBy(-col_item->scenePos().x(),-col_item->scenePos().y());
 			}
 			else
 				col_item=new TableObjectView(tab_obj);

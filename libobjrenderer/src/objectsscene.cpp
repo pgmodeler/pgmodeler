@@ -451,7 +451,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		QGraphicsScene::addItem(item);
 
-#warning "Debug!"
+		#warning "Debug!"
 		QTextStream out(stdout);
 		out << this->items().count()  << endl;
 	}
