@@ -26,21 +26,13 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 	obj_name=new QGraphicsSimpleTextItem;
 	obj_name->setZValue(1);
 
-	//box=new QGraphicsPolygonItem;
 	box=new RoundedRectItem;
 	box->setRoundedCorners(RoundedRectItem::TopLeftCorner | RoundedRectItem::TopRightCorner);
 	box->setZValue(0);
-
-	this->addToGroup(box);
-	this->addToGroup(schema_name);
-	this->addToGroup(obj_name);
 }
 
 TableTitleView::~TableTitleView(void)
 {
-	this->removeFromGroup(schema_name);
-	this->removeFromGroup(obj_name);
-	this->removeFromGroup(box);
 	delete(schema_name);
 	delete(obj_name);
 	delete(box);
@@ -122,34 +114,45 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(tag)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
-	if(object->getObjectType()==ObjectType::View ||
-	   (table && table->isPartition()))
+	if(object->getObjectType()==ObjectType::View || (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 
 	box->setPen(pen);
 
 	if(schema->isRectVisible())
 		this->resizeTitle(obj_name->boundingRect().width()  + (2 * HorizSpacing),
-						  obj_name->boundingRect().height() + (2 * VertSpacing));
+											obj_name->boundingRect().height() + (2 * VertSpacing));
 	else
 		this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HorizSpacing),
-						  schema_name->boundingRect().height() + (2 * VertSpacing));
+											schema_name->boundingRect().height() + (2 * VertSpacing));
 }
 
 void TableTitleView::resizeTitle(double width, double height)
 {
+	double py = (height / 1.5);
 	box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==QString(" "))
-		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VertSpacing);
+		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, py);
 	else
 	{
-		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, VertSpacing);
-		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VertSpacing);
-		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VertSpacing);
+		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, py);
+		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), py);
 	}
 
 	this->bounding_rect.setTopLeft(this->pos());
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
 }
 
+void TableTitleView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	box->paint(painter, option, widget);
+
+	painter->setFont(schema_name->font());
+	painter->setPen(schema_name->brush().color());
+	painter->drawText(schema_name->pos(), schema_name->text());
+
+	painter->setFont(obj_name->font());
+	painter->setPen(obj_name->brush().color());
+	painter->drawText(obj_name->pos(), obj_name->text());
+}
