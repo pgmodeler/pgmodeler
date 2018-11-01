@@ -66,6 +66,8 @@ void TextPolygonItem::setFont(const QFont &fnt)
 void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	QGraphicsPolygonItem::paint(painter, option, widget);
+
+	painter->translate(text_item->pos());
 	text_item->paint(painter, option, widget);
 }
 

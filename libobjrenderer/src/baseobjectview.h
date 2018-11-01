@@ -59,11 +59,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 mainly when creating relationships between tables. */
 		unsigned sel_order;
 
-		//! \brief Graphical text for the position info
-		QGraphicsSimpleTextItem *pos_info_txt;
-
-		//! \brief Graphical object (rectangle) of the position info
-		QGraphicsRectItem *pos_info_rect;
+		//! \brief This item display the current object position on the scene
+		TextPolygonItem *pos_info_item;
 
 		//! \brief Stores the objects bounding rect
 		QRectF bounding_rect;
@@ -85,6 +82,9 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Graphical text for the sql disabled info
 		QGraphicsSimpleTextItem *sql_disabled_txt;
+
+		//! \brief This items is used to display the sql disabled status of the object
+		TextPolygonItem *sql_disabled_item;
 
 		//! \brief Stores the object font configuration
 		static map<QString, QTextCharFormat> font_config;

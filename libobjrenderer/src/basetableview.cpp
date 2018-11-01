@@ -248,7 +248,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			//Sets the selection position as same as item's position
 			rect1=this->mapRectToItem(item, item->boundingRect());
 			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x(), -rect1.top()));
+			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top()));
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
@@ -324,18 +324,18 @@ void BaseTableView::configureTag(void)
 		p2=tag_item->getTextBoundingRect().bottomRight();
 		bottom=this->boundingRect().bottom();
 
-		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p1.y() - BaseObjectView::VertSpacing));
-		pol.append(QPointF(p2.x(), p1.y() - BaseObjectView::VertSpacing));
-		pol.append(QPointF(p2.x() + BaseObjectView::HorizSpacing + 5, p2.y()/2));
-		pol.append(QPointF(p2.x(), p2.y() + BaseObjectView::VertSpacing));
-		pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VertSpacing));
-		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p2.y() + BaseObjectView::VertSpacing));
+		pol.append(QPointF(p1.x()- HorizSpacing, p1.y() - VertSpacing));
+		pol.append(QPointF(p2.x(), p1.y() - VertSpacing));
+		pol.append(QPointF(p2.x() + HorizSpacing + 5, p2.y()/2));
+		pol.append(QPointF(p2.x(), p2.y() + VertSpacing));
+		pol.append(QPointF(p1.x(), p2.y() + VertSpacing));
+		pol.append(QPointF(p1.x()-HorizSpacing, p2.y() + VertSpacing));
 
 		tag_item->setPolygon(pol);
 		tag_item->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
 		tag_item->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
 		tag_item->setPos(-5, bottom - 1.5f);
-		tag_item->setTextPos(-5, bottom - 1.5f);
+		tag_item->setTextPos(HorizSpacing/2, 0);
 	}
 }
 
