@@ -78,7 +78,7 @@ void TableView::configureObject(void)
 		//Gets the subitems of the current group
 		subitems=groups[obj_idx]->childItems();
 		groups[obj_idx]->moveBy(-groups[obj_idx]->scenePos().x(),
-								-groups[obj_idx]->scenePos().y());
+														-groups[obj_idx]->scenePos().y());
 		count=tab_objs.size();
 
 		//Special case: if there is no item on extended attributes, the extended body is hidden
@@ -110,7 +110,7 @@ void TableView::configureObject(void)
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (6 * HorizSpacing);
+						col_item->getChildObject(1)->boundingRect().width() + (5 * HorizSpacing);
 
 			if(px < width)
 				px=width;
@@ -139,9 +139,7 @@ void TableView::configureObject(void)
 			col_item->setChildObjectXPos(2, px);
 
 			//Positioning the constraints label
-			col_item->setChildObjectXPos(3, px +
-																			((col_item->getChildObject(2)->boundingRect().width() +
-																				col_item->getChildObject(3)->boundingRect().width()) * 0.90));
+			col_item->setChildObjectXPos(3, px + (col_item->getChildObject(2)->boundingRect().width() * 1.05));
 
 			groups[obj_idx]->addToGroup(col_item);
 		}
@@ -184,9 +182,7 @@ void TableView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
-			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
-
+			col_item->setChildObjectXPos(3, width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing) - 1);
 
 			//Generating the connection points of the columns
 			if(obj_idx==0)

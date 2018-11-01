@@ -502,7 +502,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_box->setBrush(BaseObjectView::getFillStyle(Attributes::PositionInfo));
 
 			px=bounding_rect.width() - sql_disabled_box->boundingRect().width() + (1.5 * HorizSpacing),
-					py=-(sql_disabled_box->boundingRect().height()/2);
+			py=-(sql_disabled_box->boundingRect().height()/2);
 
 			sql_disabled_txt->setPos(px + (HorizSpacing * 0.75), py + (VertSpacing * 0.75));
 			sql_disabled_box->setPos(px, py);

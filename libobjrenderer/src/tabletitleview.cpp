@@ -53,7 +53,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
 	else if(object->getObjectType()!=ObjectType::Table  &&
-			object->getObjectType()!=ObjectType::View)
+					object->getObjectType()!=ObjectType::View)
 		throw Exception(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	schema=dynamic_cast<Schema *>(object->getSchema());
@@ -72,7 +72,6 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		title_color_attrib=Attributes::TableTitle;
 	}
 
-	//Strike out the table name when its sql is disabled
 	fmt=font_config[schema_name_attrib];
 	font=fmt.font();
 	schema_name->setFont(font);

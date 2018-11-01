@@ -297,9 +297,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
-			lables[2]->setText(" ");
+			lables[2]->setText(QString(" "));
 		else if(column)
-			lables[2]->setText(str_constr);
+			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -401,6 +401,8 @@ void TableObjectView::configureObject(void)
 				lables[2]->setText(ConstrDelimStart + QString(" ") +
 								   str_constr + QString(" ") +
 								   ConstrDelimEnd);
+			else
+				lables[2]->setText(QString(" "));
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -433,7 +435,7 @@ void TableObjectView::configureObject(Reference reference)
 	QString str_aux;
 
 	configureDescriptor();
-	descriptor->setPos(HorizSpacing, 1);
+	descriptor->setPos(HorizSpacing, 0);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	if(reference.getReferenceType()==Reference::ReferColumn)
@@ -482,7 +484,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText(QString());
+		lables[1]->setText(QString(" "));
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
@@ -505,7 +507,10 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setPos(px, 0);
 	}
 	else
-		lables[2]->setText(QString());
+	{
+		lables[2]->setPos(px, 0);
+		lables[2]->setText(QString(" "));
+	}
 
 	descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 	calculateBoundingRect();
@@ -528,18 +533,19 @@ void TableObjectView::calculateBoundingRect(void)
 {
 	double width = 0, height = 0;
 
-	width = descriptor->boundingRect().width();
+	width = descriptor->pos().x() + descriptor->boundingRect().width();
 	height = descriptor->boundingRect().height();
 
 	for(int i = 0; i < 3; i++)
 	{
-		width += lables[i]->boundingRect().width();
+		if(width < lables[i]->pos().x())
+			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
 
 		if(height < lables[i]->boundingRect().height())
 			height = lables[i]->boundingRect().height();
 	}
 
-	bounding_rect = QRectF(QPointF(0,0), QSizeF(width, height));
+	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height));
 }
 
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
@@ -604,14 +610,17 @@ QString TableObjectView::getConstraintString(Column *column)
 
 void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	painter->save();
+	painter->translate(descriptor->pos());
 	descriptor->paint(painter, option, widget);
+	painter->restore();
 
 	for(int i = 0 ; i < 3; i++)
 	{
+		painter->save();
+		painter->translate(lables[i]->pos());
 		lables[i]->paint(painter, option, widget);
-		/*painter->setFont(lables[i]->font());
-		painter->setPen(lables[i]->brush().color());
-		painter->drawText(lables[i]->pos(), lables[i]->text());*/
+		painter->restore();
 	}
 }
 

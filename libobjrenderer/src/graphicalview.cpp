@@ -128,7 +128,7 @@ void GraphicalView::configureObject(void)
 				col_item->setSourceObject(tab_obj);
 				col_item->configureObject();
 				col_item->moveBy(-col_item->scenePos().x(),
-								 -col_item->scenePos().y());
+												 -col_item->scenePos().y());
 			}
 			else
 				col_item=new TableObjectView(tab_obj);
@@ -140,7 +140,7 @@ void GraphicalView::configureObject(void)
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
 			width=col_item->getChildObject(0)->boundingRect().width() +
-				  col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
+						col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position

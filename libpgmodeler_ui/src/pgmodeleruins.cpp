@@ -104,6 +104,9 @@ namespace PgModelerUiNs {
 
 			object->setSQLDisabled(disable);
 
+			if(TableObject::isTableObject(object->getObjectType()))
+				dynamic_cast<TableObject *>(object)->getParentTable()->setModified(true);
+
 			if(obj_type!=ObjectType::Database && curr_val!=disable)
 			{
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
@@ -114,7 +117,7 @@ namespace PgModelerUiNs {
 			}
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
-	   codes when the code of parent table is disabled too in order to avoid export errors */
+			 * codes when the code of parent table is disabled too in order to avoid export errors */
 			if(object->getObjectType()==ObjectType::Table)
 			{
 				Constraint *constr = nullptr;
@@ -125,7 +128,7 @@ namespace PgModelerUiNs {
 					constr=dynamic_cast<Constraint *>(obj);
 
 					/* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
-		   The constraint is FK and the reference table is disabled the FK will not be enabled */
+					 * The constraint is FK and the reference table is disabled the FK will not be enabled */
 					if((constr->getConstraintType()!=ConstraintType::ForeignKey && !constr->isDeclaredInTable()) ||
 							(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							 (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
