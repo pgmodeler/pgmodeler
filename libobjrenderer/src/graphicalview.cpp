@@ -212,8 +212,7 @@ void GraphicalView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
-			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
+			col_item->setChildObjectXPos(3, width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
 		}
 	}
 
