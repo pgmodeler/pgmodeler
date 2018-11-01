@@ -47,11 +47,8 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
 
-	tag_name=new QGraphicsSimpleTextItem;
-	tag_name->setZValue(3);
-
-	tag_body=new QGraphicsPolygonItem;
-	tag_body->setZValue(2);
+	tag_item = new TextPolygonItem;
+	tag_item->setZValue(3);
 
 	obj_shadow=new RoundedRectItem;
 	obj_shadow->setZValue(-1);
@@ -65,8 +62,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	this->addToGroup(columns);
 	this->addToGroup(body);
 	this->addToGroup(title);
-	this->addToGroup(tag_name);
-	this->addToGroup(tag_body);
+	this->addToGroup(tag_item);
 	this->addToGroup(ext_attribs);
 	this->addToGroup(ext_attribs_body);
 	this->addToGroup(ext_attribs_toggler);
@@ -86,8 +82,7 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(ext_attribs_tog_arrow);
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
-	this->removeFromGroup(tag_name);
-	this->removeFromGroup(tag_body);
+	this->removeFromGroup(tag_item);
 	delete(ext_attribs_tog_arrow);
 	delete(ext_attribs_toggler);
 	delete(ext_attribs_body);
@@ -95,8 +90,7 @@ BaseTableView::~BaseTableView(void)
 	delete(body);
 	delete(title);
 	delete(columns);
-	delete(tag_name);
-	delete(tag_body);
+	delete(tag_item);
 }
 
 void BaseTableView::setHideExtAttributes(bool value)
@@ -254,7 +248,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			//Sets the selection position as same as item's position
 			rect1=this->mapRectToItem(item, item->boundingRect());
 			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing,-rect1.top()));
+			obj_selection->setPos(QPointF(title->pos().x(), -rect1.top()));
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
@@ -312,8 +306,7 @@ void BaseTableView::configureTag(void)
 	BaseTable *tab=dynamic_cast<BaseTable *>(this->getSourceObject());
 	Tag *tag=tab->getTag();
 
-	tag_body->setVisible(tag!=nullptr && !hide_tags);
-	tag_name->setVisible(tag!=nullptr && !hide_tags);
+	tag_item->setVisible(tag!=nullptr && !hide_tags);
 
 	if(!hide_tags && tag)
 	{
@@ -323,12 +316,12 @@ void BaseTableView::configureTag(void)
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
 		fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
-		tag_name->setFont(fnt);
-		tag_name->setText(tag->getName());
-		tag_name->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
+		tag_item->setFont(fnt);
+		tag_item->setText(tag->getName());
+		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
 
-		p1=tag_name->boundingRect().topLeft();
-		p2=tag_name->boundingRect().bottomRight();
+		p1=tag_item->getTextBoundingRect().topLeft();
+		p2=tag_item->getTextBoundingRect().bottomRight();
 		bottom=this->boundingRect().bottom();
 
 		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p1.y() - BaseObjectView::VertSpacing));
@@ -338,12 +331,11 @@ void BaseTableView::configureTag(void)
 		pol.append(QPointF(p1.x(), p2.y() + BaseObjectView::VertSpacing));
 		pol.append(QPointF(p1.x()-BaseObjectView::HorizSpacing, p2.y() + BaseObjectView::VertSpacing));
 
-		tag_body->setPolygon(pol);
-		tag_body->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
-		tag_body->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
-
-		tag_name->setPos(-5, bottom - 1.5f);
-		tag_body->setPos(-5, bottom - 1.5f);
+		tag_item->setPolygon(pol);
+		tag_item->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
+		tag_item->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
+		tag_item->setPos(-5, bottom - 1.5f);
+		tag_item->setTextPos(-5, bottom - 1.5f);
 	}
 }
 
@@ -453,7 +445,7 @@ float BaseTableView::calculateWidth(void)
 	if(!columns->childItems().isEmpty() &&
 			(columns->boundingRect().width() > title->boundingRect().width() &&
 			 (hide_ext_attribs || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
-				(columns->boundingRect().width() > ext_attribs->boundingRect().width()))))
+				(columns->boundingRect().width() >= ext_attribs->boundingRect().width()))))
 		return(columns->boundingRect().width() + (2 * HorizSpacing));
 
 	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&

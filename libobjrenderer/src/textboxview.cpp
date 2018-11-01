@@ -109,8 +109,8 @@ void TextboxView::__configureObject(void)
 	else
 		text->setPos(HorizSpacing, VertSpacing);
 
-	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HorizSpacing)),
-						roundf(text->boundingRect().height() + (1.5 * VertSpacing)));
+	TextPolygonItem::resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HorizSpacing)),
+																					roundf(text->boundingRect().height() + (1.5 * VertSpacing)));
 
 	box->setPos(0,0);
 	box->setPolygon(polygon);

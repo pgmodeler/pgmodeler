@@ -1332,9 +1332,9 @@ void RelationshipView::configureDescriptor(void)
 
 	//Resizes the polygon according the font factor
 	if(factor!=1.0f)
-		this->resizePolygon(pol,
-							pol.boundingRect().width() * factor ,
-							pol.boundingRect().height() * factor);
+		TextPolygonItem::resizePolygon(pol,
+																	 pol.boundingRect().width() * factor ,
+																	 pol.boundingRect().height() * factor);
 
 	if(base_rel->isSelfRelationship())
 		pnt=points.at(points.size()/2);

@@ -138,9 +138,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 
 			if(factor!=1.0f)
-				this->resizePolygon(pol,
-									pol.boundingRect().width() * factor,
-									pol.boundingRect().height()  * factor);
+				TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
+																						pol.boundingRect().height()  * factor);
 
 			desc->setPolygon(pol);
 			desc->setBrush(this->getFillStyle(attrib));
@@ -160,9 +159,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		pol.append(QPointF(9,9)); pol.append(QPointF(9,4));
 
 		if(factor!=1.0f)
-			this->resizePolygon(pol,
-								pol.boundingRect().width() * factor ,
-								pol.boundingRect().height() * factor);
+			TextPolygonItem::resizePolygon(pol,	pol.boundingRect().width() * factor ,	pol.boundingRect().height() * factor);
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));

@@ -139,7 +139,7 @@ void TableTitleView::resizeTitle(double width, double height)
 		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), py);
 	}
 
-	this->bounding_rect.setTopLeft(this->pos());
+	this->bounding_rect.setTopLeft(QPointF(0,0));
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
 }
 

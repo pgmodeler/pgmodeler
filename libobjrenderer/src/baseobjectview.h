@@ -30,6 +30,7 @@
 #include "baserelationship.h"
 #include "xmlparser.h"
 #include "roundedrectitem.h"
+#include "textpolygonitem.h"
 
 class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
@@ -90,9 +91,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Stores the object colors configuration
 		static map<QString, vector<QColor>> color_config;
-
-		//! \brief Resizes to the specified dimension the passed polygon
-		void resizePolygon(QPolygonF &pol, double width, double height);
 
 		//! \brief Configures the objects shadow polygon
 		void configureObjectShadow(void);

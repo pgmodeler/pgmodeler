@@ -179,27 +179,6 @@ BaseObject *BaseObjectView::getSourceObject(void)
 	return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
 }
 
-void BaseObjectView::resizePolygon(QPolygonF &pol, double width, double height)
-{
-	QVector<QPointF>::iterator itr,itr_end;
-	double coef_a, coef_b;
-
-	itr=pol.begin();
-	itr_end=pol.end();
-
-	//Calculates the resize factor
-	coef_a=width / pol.boundingRect().width();
-	coef_b=height / pol.boundingRect().height();
-
-	//Applies the resize factor to all the polygon points
-	while(itr!=itr_end)
-	{
-		itr->setX(itr->x() * coef_a);
-		itr->setY(itr->y() * coef_b);
-		itr++;
-	}
-}
-
 void BaseObjectView::loadObjectsStyle(void)
 {
 	QTextCharFormat font_fmt;
@@ -557,8 +536,8 @@ void BaseObjectView::configureProtectedIcon(void)
 		pol.append(QPointF(4,3)); pol.append(QPointF(4,5));
 
 		if(factor!=1.0f)
-			this->resizePolygon(pol, pol.boundingRect().width() * factor,
-								pol.boundingRect().height() * factor);
+			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
+																					pol.boundingRect().height() * factor);
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(0));
 		pol_item->setPolygon(pol);
@@ -572,8 +551,8 @@ void BaseObjectView::configureProtectedIcon(void)
 		pol.append(QPointF(0,9)); pol.append(QPointF(0,6));
 
 		if(factor!=1.0f)
-			this->resizePolygon(pol, pol.boundingRect().width() * factor,
-								pol.boundingRect().height() * factor);
+			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
+																					pol.boundingRect().height() * factor);
 
 		pol_item=dynamic_cast<QGraphicsPolygonItem *>(protected_icon->childItems().at(1));
 		pol_item->setPolygon(pol);

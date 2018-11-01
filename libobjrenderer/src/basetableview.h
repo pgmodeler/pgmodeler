@@ -31,6 +31,7 @@
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
 #include "baserelationship.h"
+#include "textpolygonitem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -56,9 +57,9 @@ class BaseTableView: public BaseObjectView {
 
 		*ext_attribs_toggler;
 
-		QGraphicsPolygonItem *tag_body, *ext_attribs_tog_arrow;
+		QGraphicsPolygonItem *ext_attribs_tog_arrow;
 
-		QGraphicsSimpleTextItem *tag_name;
+		TextPolygonItem *tag_item;
 
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
