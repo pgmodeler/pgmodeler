@@ -57,6 +57,8 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 		//! \brief Sets the font used by the text item
 		void setFont(const QFont &fnt);
 
+		QFont getFont(void);
+
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 		//! \brief Resizes to the specified dimension the passed polygon

@@ -63,6 +63,11 @@ void TextPolygonItem::setFont(const QFont &fnt)
 	text_item->setFont(fnt);
 }
 
+QFont TextPolygonItem::getFont()
+{
+	return(text_item->font());
+}
+
 void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	QGraphicsPolygonItem::paint(painter, option, widget);
