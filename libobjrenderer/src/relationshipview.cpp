@@ -1402,7 +1402,6 @@ void RelationshipView::configureDescriptor(void)
 	x1+=6 * HorizSpacing;
 	y1-=3 * VertSpacing;
 	sql_disabled_item->setPos(x1, y1);
-	//sql_disabled_item->setTextPos(x1 + HorizSpacing, y1 + VertSpacing);
 
 	descriptor->setPolygon(pol);
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());

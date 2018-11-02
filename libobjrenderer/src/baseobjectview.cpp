@@ -33,8 +33,6 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	obj_shadow=nullptr;
 	obj_selection=nullptr;
 	pos_info_item=nullptr;
-	//sql_disabled_txt=nullptr;
-	//sql_disabled_box=nullptr;
 	sql_disabled_item=nullptr;
 	placeholder=nullptr;
 	setSourceObject(object);
