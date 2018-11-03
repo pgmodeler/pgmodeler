@@ -1304,6 +1304,8 @@ void MainWindow::applyConfigurations(void)
 		tmpmodel_save_timer.setInterval(model_save_timer.interval() != 0 ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		//Force the update of all opened models
 		count=models_tbw->count();
 		for(i=0; i < count; i++)
@@ -1311,11 +1313,12 @@ void MainWindow::applyConfigurations(void)
 			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 			model->updateObjectsOpacity();
 			model->db_model->setObjectsModified();
-			model->update();
 		}
 
 		updateConnections();
-		sql_tool_wgt->configureSnippets();		
+		sql_tool_wgt->configureSnippets();
+
+		QApplication::restoreOverrideCursor();
 	}
 
 	sql_tool_wgt->updateTabs();

@@ -154,8 +154,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	viewport->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewport->setCacheMode(QGraphicsView::CacheBackground);
+	viewport->setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
 
