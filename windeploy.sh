@@ -7,7 +7,7 @@ INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 
@@ -131,7 +131,7 @@ echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER=`$QMAKE_ROOT/qmake --version | grep '[0-9].[0-9].[0-9]'`
+  QT_VER=`$QMAKE_ROOT/qmake --version | grep -E '[0-9]\.[0-9]+\.[0-9]+'`
   QT_VER=${QT_VER:0:5}
 fi
 
