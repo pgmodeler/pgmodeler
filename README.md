@@ -17,7 +17,7 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 Donate to pgModeler
 -------------------
 
-Much effort, coffee, chocolate, time and knowledge has been devoted to this project so that a usable and constantly improved product could be delivered to the community. If you liked pgModeler and think it deserves a contribution please donate any amount (via PayPal) at [project's official site](http://pgmodeler.com.br).
+Much effort, coffee, chocolate, time and knowledge is being devoted to this project so that a reliable and constantly improved product can be delivered to the community. If you liked pgModeler and think it deserves a contribution please donate any amount (via PayPal) at [project's official site](https://pgmodeler.io).
 
 Developers and Reviewers wanted!
 --------------------------------
@@ -27,12 +27,12 @@ pgModeler grown bigger and reached a state that its lonely developer cannot hand
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code visit the [Installation](http://www.pgmodeler.com.br/support/installation) section. If you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.com.br/download).
+For details about installation process from source code visit the [Installation](https://www.pgmodeler.io/support/installation) section. If you don't want to compile pgModeler there are binaries available for purchase at [official site](http://www.pgmodeler.io/purchase).
 
 Known Issues
 -----------
 
-* Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created due causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
+* Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
 * The diff process still presents false-positive results due its limitations. Sometimes, there is the need to run the process twice to get the full changes.
 * pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space.
 * pgModeler is unusable in sandboxed Mac OS X installations. To workaround this issue you'll need to deactivate sandbox usage to run pgModeler properly. There is no planning to adapt this tool for sandbox feature in Mac OS X.
