@@ -120,7 +120,7 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 	if(change==ItemSelectedHasChanged)
 	{
 		this->setToolTip(this->table_tooltip);
-		BaseObjectView::configureObjectSelection();
+		configureObjectSelection();
 	}
 
 	if(change==ItemPositionHasChanged)
@@ -176,9 +176,6 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		}
 
 		BaseObjectView::mousePressEvent(event);
-
-		if(this->isSelected() && obj_selection->boundingRect().height() < this->boundingRect().height())
-			configureObjectSelection();
 	}
 }
 
@@ -487,15 +484,4 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setBrush(QColor(50,50,50,60));
 	rect_item->setRect(this->boundingRect());
 	rect_item->setPos(3.5, 4.5);
-}
-
-void BaseTableView::configureObjectSelection(void)
-{
-	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
-
-	rect_item->setRect(this->boundingRect());
-	rect_item->setPos(0, 0);
-	rect_item->setBorderRadius(5);
-	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
-	rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 }

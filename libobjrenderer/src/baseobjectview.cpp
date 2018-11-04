@@ -429,6 +429,20 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 		obj_graf->setModified(true);
 }
 
+void BaseObjectView::configureObjectSelection(void)
+{
+	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
+
+	if(rect_item)
+	{
+		rect_item->setRect(this->boundingRect());
+		rect_item->setPos(0, 0);
+		rect_item->setBorderRadius(5);
+		rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+		rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+	}
+}
+
 void BaseObjectView::configurePositionInfo(QPointF pos)
 {
 	if(this->isSelected())

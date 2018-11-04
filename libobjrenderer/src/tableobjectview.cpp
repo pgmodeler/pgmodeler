@@ -528,14 +528,16 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 
 void TableObjectView::calculateBoundingRect(void)
 {
-	double width = 0, height = 0;
+	double width = 0, height = 0, curr_w = 0;
 
 	width = descriptor->pos().x() + descriptor->boundingRect().width();
 	height = descriptor->boundingRect().height();
 
 	for(int i = 0; i < 3; i++)
 	{
-		if(width < lables[i]->pos().x())
+		curr_w = lables[i]->pos().x() + lables[i]->boundingRect().width();
+
+		if(width < curr_w)
 			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
 
 		if(height < lables[i]->boundingRect().height())

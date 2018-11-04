@@ -96,7 +96,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void configureObjectShadow(void) {}
 
 		//! \brief Configures the object selection polygon
-		void configureObjectSelection(void) {}
+		void configureObjectSelection(void);
 
 		//! \brief Configures the polygons used to show the current object position
 		void configurePositionInfo(QPointF pos);

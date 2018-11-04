@@ -76,7 +76,7 @@ void GraphicalView::configureObject(void)
 
 			//Moves the reference to the origin to be moved latter
 			graph_ref->moveBy(-graph_ref->scenePos().x(),
-							  -graph_ref->scenePos().y());
+												-graph_ref->scenePos().y());
 		}
 		else
 			graph_ref=new TableObjectView;
@@ -203,8 +203,8 @@ void GraphicalView::configureObject(void)
 			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
 			bodies[idx]->setPos(title->pos().x(),
-								title->boundingRect().height() +
-								bodies[0]->boundingRect().height() - 2);
+													title->boundingRect().height() +
+													bodies[0]->boundingRect().height() - 2);
 		groups[idx]->setPos(bodies[idx]->pos());
 
 		subitems=groups[idx]->childItems();

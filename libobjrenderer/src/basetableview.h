@@ -125,9 +125,6 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
 
-		//! \brief Configures the selection for the table
-		void configureObjectSelection(void);
-
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);

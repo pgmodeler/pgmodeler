@@ -49,6 +49,8 @@ void StyledTextboxView::configureObject(void)
 	fold->setPos(rect.width() - fold->boundingRect().width(),
 							 rect.height() - fold->boundingRect().height());
 
+	bounding_rect = text_item->boundingRect();
+
 	this->configureObjectShadow();
 	this->configureObjectSelection();
 }
