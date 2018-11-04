@@ -535,10 +535,12 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			object == viewport->verticalScrollBar())
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
+		double zoom_inc = roundf(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
+
 		if(w_event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - ZoomIncrement);
+			this->applyZoom(this->current_zoom - zoom_inc);
 		else
-			this->applyZoom(this->current_zoom + ZoomIncrement);
+			this->applyZoom(this->current_zoom + zoom_inc);
 
 		return(true);
 	}

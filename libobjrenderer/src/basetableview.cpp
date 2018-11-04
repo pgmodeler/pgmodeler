@@ -40,12 +40,14 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	ext_attribs=new QGraphicsItemGroup;
 	ext_attribs->setZValue(1);
+	ext_attribs->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	ext_attribs_tog_arrow=new QGraphicsPolygonItem;
 	ext_attribs_tog_arrow->setZValue(2);
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
+	columns->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 
 	tag_item = new TextPolygonItem;
 	tag_item->setZValue(3);
@@ -411,8 +413,7 @@ void BaseTableView::__configureObject(float width)
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + (2 * HorizSpacing), title->boundingRect().height() * 0.25);
 
-	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
-	this->bounding_rect.setWidth(title->boundingRect().width());
+	this->bounding_rect = title->boundingRect();
 
 	if(!ext_attribs->isVisible())
 	{
@@ -428,7 +429,7 @@ void BaseTableView::__configureObject(float width)
 		this->bounding_rect.setHeight(title->boundingRect().height() +
 																	body->boundingRect().height() +
 																	(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() : 0) +
-										ext_attribs_toggler->boundingRect().height() - VertSpacing - 1);
+																	ext_attribs_toggler->boundingRect().height() - VertSpacing - 1);
 
 		body->setRoundedCorners(RoundedRectItem::NoCorners);
 	}

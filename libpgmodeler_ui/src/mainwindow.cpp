@@ -1315,6 +1315,9 @@ void MainWindow::applyConfigurations(void)
 			model->db_model->setObjectsModified();
 		}
 
+		if(current_model)
+			current_model->update();
+
 		updateConnections();
 		sql_tool_wgt->configureSnippets();
 
@@ -2047,6 +2050,9 @@ void MainWindow::toggleCompactView(void)
 		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
 		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
 	}
+
+	if(current_model)
+		current_model->update();
 
 	QApplication::restoreOverrideCursor();
 }
