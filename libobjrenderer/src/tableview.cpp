@@ -211,8 +211,6 @@ void TableView::configureObject(void)
 		table_tooltip += QString("\n---\n%1").arg(table->getComment());
 
 	BaseObjectView::__configureObject();
-	BaseObjectView::configureObjectShadow();
-	BaseObjectView::configureObjectSelection();
 	configureTag();
 	configureSQLDisabledInfo();
 

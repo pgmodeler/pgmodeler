@@ -158,17 +158,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			this->addToGroup(pos_info_item);
 		}
 
-	 /*	if(!sql_disabled_box && object->getObjectType()!=ObjectType::Textbox)
-		{
-			sql_disabled_txt=new QGraphicsSimpleTextItem;
-			sql_disabled_box=new QGraphicsRectItem;
-			sql_disabled_txt->setZValue(100);
-			sql_disabled_box->setZValue(99);
-
-			this->addToGroup(sql_disabled_box);
-			this->addToGroup(sql_disabled_txt);
-		} */
-
 		if(!sql_disabled_item && object->getObjectType()!=ObjectType::Textbox)
 		{
 			sql_disabled_item=new TextPolygonItem;
@@ -487,33 +476,6 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_item->setPos(px, py);
 			sql_disabled_item->setTextPos(HorizSpacing * 0.75, VertSpacing * 0.75);
 		}
-	}
-}
-
-void BaseObjectView::configureObjectShadow(void)
-{
-	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
-
-	if(rect_item)
-	{
-		rect_item->setPen(Qt::NoPen);
-		rect_item->setBrush(QColor(50,50,50,60));
-		rect_item->setRect(this->boundingRect());
-		rect_item->setPos(3.5,3.5);
-	}
-}
-
-void BaseObjectView::configureObjectSelection(void)
-{
-	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
-
-	if(rect_item)
-	{
-		rect_item->setRect(this->boundingRect());
-		rect_item->setPos(0,0);
-		rect_item->setBorderRadius(5);
-		rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
-		rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 	}
 }
 

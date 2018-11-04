@@ -122,6 +122,12 @@ class BaseTableView: public BaseObjectView {
 
 		unsigned getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab);
 
+		//! \brief Configures the shadow for the table
+		void configureObjectShadow(void);
+
+		//! \brief Configures the selection for the table
+		void configureObjectSelection(void);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);

@@ -149,7 +149,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 		//If the user clicks the extended attributes toggler
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
-			 this->ext_attribs_toggler->boundingRect().contains(pnt))
+			 this->ext_attribs_toggler->boundingRect().contains(pnt) )
 		{
 			Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
 
@@ -174,6 +174,9 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		}
 
 		BaseObjectView::mousePressEvent(event);
+
+		if(this->isSelected() && obj_selection->boundingRect().height() < this->boundingRect().height())
+			configureObjectSelection();
 	}
 }
 
@@ -241,8 +244,8 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			{
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
-																			   title->boundingRect().width() - (2.5 * HorizSpacing),
-																			   item->boundingRect().height()));
+																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
+																																			 item->boundingRect().height()));
 			}
 
 			//Sets the selection position as same as item's position
@@ -423,8 +426,8 @@ void BaseTableView::__configureObject(float width)
 		ext_attribs_body->setVisible(!tab->isExtAttribsHidden());
 
 		this->bounding_rect.setHeight(title->boundingRect().height() +
-										body->boundingRect().height() +
-										(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() : 0) +
+																	body->boundingRect().height() +
+																	(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() : 0) +
 										ext_attribs_toggler->boundingRect().height() - VertSpacing - 1);
 
 		body->setRoundedCorners(RoundedRectItem::NoCorners);
@@ -436,6 +439,9 @@ void BaseTableView::__configureObject(float width)
 						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount());
 
 	this->setToolTip(this->table_tooltip);
+
+	configureObjectSelection();
+	configureObjectShadow();
 }
 
 float BaseTableView::calculateWidth(void)
@@ -472,3 +478,23 @@ void BaseTableView::togglePlaceholder(bool value)
 	BaseObjectView::togglePlaceholder(!connected_rels.empty() && value);
 }
 
+void BaseTableView::configureObjectShadow(void)
+{
+	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
+
+	rect_item->setPen(Qt::NoPen);
+	rect_item->setBrush(QColor(50,50,50,60));
+	rect_item->setRect(this->boundingRect());
+	rect_item->setPos(3.5, 4.5);
+}
+
+void BaseTableView::configureObjectSelection(void)
+{
+	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
+
+	rect_item->setRect(this->boundingRect());
+	rect_item->setPos(0, 0);
+	rect_item->setBorderRadius(5);
+	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+}

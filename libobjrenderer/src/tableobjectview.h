@@ -87,6 +87,9 @@ class TableObjectView: public BaseObjectView
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 		virtual QRectF boundingRect(void) const;
+
+		void configureObjectShadow(void) = delete;
+		void configureObjectSelection(void) = delete;
 };
 
 #endif
