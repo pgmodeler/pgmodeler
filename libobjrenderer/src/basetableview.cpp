@@ -406,7 +406,7 @@ void BaseTableView::__configureObject(float width)
 	}
 
 	//Set the protected icon position to the top-right on the title
-	protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.90f, 2 * VertSpacing);
+	protected_icon->setPos(title->pos().x() + (2 * HorizSpacing), title->boundingRect().height() * 0.25);
 
 	this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
 	this->bounding_rect.setWidth(title->boundingRect().width());

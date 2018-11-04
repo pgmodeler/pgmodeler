@@ -128,7 +128,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
 void TableTitleView::resizeTitle(double width, double height)
 {
-	double py = (height / 1.5);
+	double py = height / 1.5;
+
+	box->setPos(0,0);
 	box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==QString(" "))
@@ -139,7 +141,6 @@ void TableTitleView::resizeTitle(double width, double height)
 		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), py);
 	}
 
-	this->bounding_rect.setTopLeft(QPointF(0,0));
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
 }
 
