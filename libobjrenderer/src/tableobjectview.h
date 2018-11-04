@@ -65,6 +65,11 @@ class TableObjectView: public BaseObjectView
 		TextCheck,
 		TextExclude;
 
+		static constexpr unsigned ObjDescriptor = 0,
+		NameLabel = 1,
+		TypeLabel = 2,
+		ConstrAliasLabel = 3;
+
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);
 

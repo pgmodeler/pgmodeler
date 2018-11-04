@@ -549,13 +549,13 @@ void TableObjectView::calculateBoundingRect(void)
 
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 {
-	if(obj_idx >= 4)
+	if(obj_idx > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx==0)
+	if(obj_idx == ObjDescriptor)
 		return(descriptor);
 	else
-		return(lables[obj_idx-1]);
+		return(lables[obj_idx - 1]);
 }
 
 QString TableObjectView::getConstraintString(Column *column)

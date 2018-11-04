@@ -139,13 +139,13 @@ void GraphicalView::configureObject(void)
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
-			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
+			width=col_item->getChildObject(TableObjectView::ObjDescriptor)->boundingRect().width() +
+						col_item->getChildObject(TableObjectView::NameLabel)->boundingRect().width() + (3 * HorizSpacing);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
-			if(type_width < col_item->getChildObject(2)->boundingRect().width())
-				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HorizSpacing);
+			if(type_width < col_item->getChildObject(TableObjectView::TypeLabel)->boundingRect().width())
+				type_width=col_item->getChildObject(TableObjectView::TypeLabel)->boundingRect().width() + (3 * HorizSpacing);
 
 			col_items.push_back(col_item);
 		}
@@ -168,10 +168,10 @@ void GraphicalView::configureObject(void)
 			col_items.pop_front();
 
 			//Positioning the type label
-			col_item->setChildObjectXPos(2, px);
+			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
 
 			//Positioning the constraints label
-			col_item->setChildObjectXPos(3, px + type_width);
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel, px + type_width);
 			ext_attribs->addToGroup(col_item);
 		}
 	}
@@ -212,7 +212,8 @@ void GraphicalView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
-			col_item->setChildObjectXPos(3, width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
+																	 width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
 		}
 	}
 

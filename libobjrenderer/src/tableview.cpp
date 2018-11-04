@@ -109,8 +109,8 @@ void TableView::configureObject(void)
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
-			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (5 * HorizSpacing);
+			width=col_item->getChildObject(TableObjectView::ObjDescriptor)->boundingRect().width() +
+						col_item->getChildObject(TableObjectView::NameLabel)->boundingRect().width() + (5 * HorizSpacing);
 
 			if(px < width)
 				px=width;
@@ -136,10 +136,11 @@ void TableView::configureObject(void)
 			col_items.pop_front();
 
 			//Positioning the type label
-			col_item->setChildObjectXPos(2, px);
+			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
 
 			//Positioning the constraints label
-			col_item->setChildObjectXPos(3, px + (col_item->getChildObject(2)->boundingRect().width() * 1.05));
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
+																	 px + (col_item->getChildObject(TableObjectView::TypeLabel)->boundingRect().width() * 1.05));
 
 			groups[obj_idx]->addToGroup(col_item);
 		}
@@ -182,7 +183,8 @@ void TableView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
-			col_item->setChildObjectXPos(3, width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing) - 1);
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
+																	 width - col_item->getChildObject(TableObjectView::ConstrAliasLabel)->boundingRect().width() - (2 * HorizSpacing) - 1);
 
 			//Generating the connection points of the columns
 			if(obj_idx==0)
