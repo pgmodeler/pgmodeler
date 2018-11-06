@@ -95,6 +95,7 @@ namespace PgModelerUiNs {
 			Messagebox msgbox;
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
+			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
 
 			if(object->isSystemObject())
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
@@ -104,8 +105,8 @@ namespace PgModelerUiNs {
 
 			object->setSQLDisabled(disable);
 
-			if(TableObject::isTableObject(object->getObjectType()))
-				dynamic_cast<TableObject *>(object)->getParentTable()->setModified(true);
+			if(tab_obj && tab_obj->getParentTable())
+				tab_obj->getParentTable()->setModified(true);
 
 			if(obj_type!=ObjectType::Database && curr_val!=disable)
 			{
