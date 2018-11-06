@@ -32,7 +32,8 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
-	moving_objs=move_scene=false;
+    moving_objs=move_scene=false;
+    table_being_resized=nullptr;
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
@@ -512,58 +513,81 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
 	bool is_deselection = !this->selectedItems().isEmpty() && !this->itemAt(event->scenePos(), QTransform());
 
-	if(selectedItems().empty())
-		emit s_objectsScenePressed(event->buttons());
+    if(item)
+    {
+        BaseTableView * aTable;
+        //If table height resize grip pressed, start a "drag" event, and disable other signals
+        try {
+                aTable=dynamic_cast<BaseTableView *>(item->parentItem());
+            }
+        catch (BaseTableView const& aTable){}
 
-	/* If the relationship line is visible, indicates that the user is in the middle of
-	 a relationship creation, thus is needed to inform to the scene to activate the
-	 the multiselection to be able to select two tables and link them. By default,
-	 the multiselection modifier is the Control key */
-	if(rel_line->isVisible())
-		event->setModifiers(Qt::ControlModifier);
-
-	if(is_deselection)
-		this->blockItemsSignals(true);
-
-	QGraphicsScene::mousePressEvent(event);
-
-	if(is_deselection)
+            if(aTable && aTable->tab_resize_grip->boundingRect().contains(aTable->tab_resize_grip->mapFromScene(event->scenePos())))
+            {
+                aTable->setFlag(QGraphicsItem::ItemIsMovable, false);
+                table_being_resized=aTable;
+                //this->blockItemsSignals(true);
+                aTable->mousePressEvent(event);
+                return;
+            }
+    }
+        //else
 	{
-		this->blockItemsSignals(false);
-		emit s_objectSelected(nullptr, false);
-	}
+		if(selectedItems().empty())
+			emit s_objectsScenePressed(event->buttons());
 
-	if(event->buttons()==Qt::LeftButton)
-	{
-		sel_ini_pnt=event->scenePos();
+		/* If the relationship line is visible, indicates that the user is in the middle of
+		 a relationship creation, thus is needed to inform to the scene to activate the
+		 the multiselection to be able to select two tables and link them. By default,
+		 the multiselection modifier is the Control key */
+		if(rel_line->isVisible())
+			event->setModifiers(Qt::ControlModifier);
 
-		if((!invert_rangesel_trigger && event->modifiers()==Qt::ShiftModifier) ||
-				(invert_rangesel_trigger && event->modifiers()==Qt::NoModifier))
+		if(is_deselection)
+			this->blockItemsSignals(true);
+
+		QGraphicsScene::mousePressEvent(event);
+
+		if(is_deselection)
 		{
-			if(enable_range_sel && this->selectedItems().isEmpty())
+			this->blockItemsSignals(false);
+			emit s_objectSelected(nullptr, false);
+		}
+
+		if(event->buttons()==Qt::LeftButton)
+		{
+			sel_ini_pnt=event->scenePos();
+
+			if((!invert_rangesel_trigger && event->modifiers()==Qt::ShiftModifier) ||
+					(invert_rangesel_trigger && event->modifiers()==Qt::NoModifier))
 			{
-				selection_rect->setVisible(true);
-				emit s_objectSelected(nullptr,false);
+				if(enable_range_sel && this->selectedItems().isEmpty())
+				{
+					selection_rect->setVisible(true);
+					emit s_objectSelected(nullptr,false);
+				}
+			}
+			else
+			{
+				//Selects the object (without press control) if the user is creating a relationship
+				if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
+					item->setSelected(true);
 			}
 		}
-		else
+		else if(event->buttons()==Qt::RightButton)
 		{
-			//Selects the object (without press control) if the user is creating a relationship
-			if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
-				item->setSelected(true);
-		}
-	}
-	else if(event->buttons()==Qt::RightButton)
-	{
-		//Case there is no item at the mouse position clears the selection on the scene
-		if(!item)
-		{
-			this->clearSelection();
-			emit s_objectSelected(nullptr,false);
+			//Case there is no item at the mouse position clears the selection on the scene
+			if(!item)
+			{
+				this->clearSelection();
+				emit s_objectSelected(nullptr,false);
+			}
+
+			emit s_popupMenuRequested();
 		}
 
-		emit s_popupMenuRequested();
 	}
+
 }
 
 bool ObjectsScene::mouseIsAtCorner(void)
@@ -778,6 +802,7 @@ void ObjectsScene::keyReleaseEvent(QKeyEvent *event)
 
 void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(table_being_resized) return;
 	if(event->buttons()==Qt::LeftButton || rel_line->isVisible())
 	{
 		if(corner_move)
@@ -840,6 +865,13 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseReleaseEvent(event);
+
+    if(table_being_resized)
+    {
+        table_being_resized->mouseReleaseEvent(event);
+        table_being_resized=nullptr;
+        return;
+    }
 
 	if(event->button()==Qt::LeftButton && corner_move)
 		enableSceneMove(false);

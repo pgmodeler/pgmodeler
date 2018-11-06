@@ -30,6 +30,7 @@
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
+#include "QGraphicsLineItem"
 #include "baserelationship.h"
 
 class BaseTableView: public BaseObjectView {
@@ -40,11 +41,12 @@ class BaseTableView: public BaseObjectView {
 		vector<BaseRelationship *> connected_rels;
 
 	protected:
-		//! \brief Item groups that stores columns and extended attributes, respectively
+		//! \brief Item groups that stores columns, table height resize grip,
+		// and extended attributes, respectively
 		QGraphicsItemGroup *columns,
 		*ext_attribs;
 
-		static bool hide_ext_attribs, hide_tags;
+		static bool hide_ext_attribs, hide_tags, hide_tab_resize;
 
 		//! \brief Polygonal object that defines the table body
 		RoundedRectItem *body,
@@ -60,6 +62,8 @@ class BaseTableView: public BaseObjectView {
 
 		QGraphicsSimpleTextItem *tag_name;
 
+		QGraphicsLineItem *bottom_LGrip, *top_LGrip;
+
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
 
@@ -68,6 +72,19 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Stores the original table's tool tip
 		QString table_tooltip;
+
+        //! \brief Flag for a drag and drop "event" occurring on body height grip
+        bool body_height_being_resized;
+
+        //! \brief Stores the nominal height of the column section
+        int max_body_idx;
+
+        //! \brief Stores the customized height of the column section
+        int resized_body_idx;
+
+        double col_height;
+
+
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
@@ -91,12 +108,15 @@ class BaseTableView: public BaseObjectView {
 		static const unsigned LEFT_CONN_POINT=0,
 		RIGHT_CONN_POINT=1;
 
+		RoundedRectItem *tab_resize_grip;
+
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);
 
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void setHideExtAttributes(bool value);

@@ -105,6 +105,8 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Line used as a guide when inserting new relationship
 		QGraphicsLineItem *rel_line;
 
+        BaseTableView * table_being_resized;
+
 		//! \brief Aligns the specified point in relation to the grid
 		static QPointF alignPointToGrid(const QPointF &pnt);
 

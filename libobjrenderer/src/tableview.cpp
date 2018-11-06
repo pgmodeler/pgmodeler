@@ -40,8 +40,12 @@ void TableView::configureObject(void)
 	QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 	Tag *tag=table->getTag();
 
+	float factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f;
+	float pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
+
 	//Configures the table title
 	title->configureObject(table);
+    title->setPos(0,0);
 	px=0;
 
 	old_width=this->bounding_rect.width();
@@ -74,53 +78,63 @@ void TableView::configureObject(void)
 							table->getObjectList(OBJ_POLICY)->end());
 		}
 
-		//Gets the subitems of the current group
+		//Gets the old subitems of the current group
 		subitems=groups[obj_idx]->childItems();
+		//Reset all groups to origin to start with
 		groups[obj_idx]->moveBy(-groups[obj_idx]->scenePos().x(),
 								-groups[obj_idx]->scenePos().y());
 		count=tab_objs.size();
-
+        if(obj_idx==0)
+        {
+            max_body_idx= count;
+            if(resized_body_idx>-1) count=min(count,resized_body_idx);
+        }
 		//Special case: if there is no item on extended attributes, the extended body is hidden
-		if(obj_idx==1)
+        else if(obj_idx==1)
 		{
-			groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
-			bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
+            groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs && !table->isExtAttribsHidden());
+            bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs && !table->isExtAttribsHidden());
 		}
 
-		for(i=0; i < count; i++)
-		{
-			tab_obj=tab_objs.at(i);
+        if(count!=0)
+        {
+            for(i=0; i < count; i++)
+            {
+                tab_obj=tab_objs.at(i);
 
-			//Reusing the subitem if it was allocated before
-			if(!subitems.isEmpty() && i < subitems.size())
-			{
-				col_item=dynamic_cast<TableObjectView *>(subitems[i]);
-				col_item->setSourceObject(tab_obj);
-				col_item->configureObject();
-				col_item->moveBy(-col_item->scenePos().x(),
-								 -col_item->scenePos().y());
-			}
-			else
-				col_item=new TableObjectView(tab_obj);
+                //Reusing the subitem if it was allocated before
+                if(!subitems.isEmpty() && i < subitems.size())
+                {
+                    col_item=dynamic_cast<TableObjectView *>(subitems[i]);
+                    col_item->setSourceObject(tab_obj);
+                    col_item->configureObject();
+                    //Reset all subitems to origin
+                    col_item->moveBy(-col_item->scenePos().x(),
+                                     -col_item->scenePos().y());
+                }
+                else
+                    col_item=new TableObjectView(tab_obj);
 
-			//Configures the item and set its position
-			col_item->configureObject();
-			col_item->moveBy(HORIZ_SPACING, (i * col_item->boundingRect().height()) + VERT_SPACING);
+                //Configures the item and set its position
+                col_item->configureObject(); //?
+                col_item->moveBy(HORIZ_SPACING, (i * col_item->boundingRect().height()) + VERT_SPACING);
 
-			/* Calculates the width of the name + type of the object. This is used to align all
-			the constraint labels on table */
-			width=col_item->getChildObject(0)->boundingRect().width() +
-						col_item->getChildObject(1)->boundingRect().width() + (6 * HORIZ_SPACING);
+                /* Calculates the width of the name + type of the object. This is used to align all
+                the constraint labels on table */
+                width=col_item->getChildObject(0)->boundingRect().width() +
+                            col_item->getChildObject(1)->boundingRect().width() + (6 * HORIZ_SPACING);
 
-			if(px < width)
-				px=width;
+                if(px < width)
+                    px=width;
 
-			col_items.push_back(col_item);
-		}
+                col_items.push_back(col_item);
+            }
+
+        }
 
 		//Destroy the unused items
 		i=subitems.size()-1;
-		while(i > count-1)
+        while(i > count-1)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 			groups[obj_idx]->removeFromGroup(col_item);
@@ -128,7 +142,6 @@ void TableView::configureObject(void)
 			i--;
 		}
 
-		//Set all items position
 		while(!col_items.isEmpty())
 		{
 			col_item=dynamic_cast<TableObjectView *>(col_items.front());
@@ -140,8 +153,8 @@ void TableView::configureObject(void)
 
 			//Positioning the constraints label
 			col_item->setChildObjectXPos(3, px +
-																			((col_item->getChildObject(2)->boundingRect().width() +
-																				col_item->getChildObject(3)->boundingRect().width()) * 0.90));
+                    ((col_item->getChildObject(2)->boundingRect().width() +
+                        col_item->getChildObject(3)->boundingRect().width()) * 0.90));
 
 			groups[obj_idx]->addToGroup(col_item);
 		}
@@ -155,7 +168,14 @@ void TableView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(obj_idx=0; obj_idx < 2; obj_idx++)
 	{
-		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
+        groups[obj_idx]->boundingRect().setRect(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING));
+        if(obj_idx==0)
+        {
+          if(groups[obj_idx]->childItems().size())
+                col_height=groups[obj_idx]->boundingRect().height()/groups[obj_idx]->childItems().size();
+        }
+        bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VERT_SPACING)));
+
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
 		if(!tag)
@@ -170,10 +190,19 @@ void TableView::configureObject(void)
 
 		if(obj_idx==0)
 			bodies[obj_idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
-		else
+		else if (obj_idx==1 && !hide_tab_resize)
+		{
 			bodies[obj_idx]->setPos(title->pos().x(),
 									title->boundingRect().height() +
-									bodies[0]->boundingRect().height() - 2);
+									bodies[0]->boundingRect().height() +
+									this->DEFAULT_FONT_SIZE * factor * pixel_ratio);
+		}
+		else if (obj_idx==1 && hide_tab_resize)
+		{
+			bodies[obj_idx]->setPos(title->pos().x(),
+									title->boundingRect().height() +
+									bodies[0]->boundingRect().height());
+		}
 		groups[obj_idx]->setPos(bodies[obj_idx]->pos());
 
 		subitems=groups[obj_idx]->childItems();
@@ -183,19 +212,31 @@ void TableView::configureObject(void)
 			subitems.pop_front();
 			col_item->setChildObjectXPos(3, width -
 										 col_item->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
-
-
-			//Generating the connection points of the columns
-			if(obj_idx==0)
-			{
-				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
-				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
-				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(col_item->pos().x() - 1.5f, cy);
-				conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
-			}
 		}
 	}
+
+    //Generating the connection points of the columns
+    tab_objs.clear();
+    tab_objs.assign(table->getObjectList(OBJ_COLUMN)->begin(),
+                    table->getObjectList(OBJ_COLUMN)->end());
+    for(i=0; i < tab_objs.size(); i++)
+    {
+        tab_obj=tab_objs.at(i);
+
+        if(resized_body_idx==0)
+            cy=title->boundingRect().height();
+        else if(0<resized_body_idx && resized_body_idx<max_body_idx)
+        {
+            cy=title->boundingRect().height() +
+                min( col_height * resized_body_idx , col_height * (i + .5) );
+        }
+        else if(resized_body_idx==-1 || resized_body_idx==max_body_idx)
+            cy=title->boundingRect().height() + col_height * (i + .5);
+
+        conn_points[tab_obj].resize(2);
+        conn_points[tab_obj][LEFT_CONN_POINT]=QPointF(body->pos().x(), cy);
+        conn_points[tab_obj][RIGHT_CONN_POINT]=QPointF(body->pos().x() + width , cy);
+    }
 
 	BaseTableView::__configureObject(width);
 	BaseObjectView::__configureObject();
@@ -204,10 +245,14 @@ void TableView::configureObject(void)
 	configureTag();
 	configureSQLDisabledInfo();
 
+    if(resized_body_idx==0) top_LGrip->setVisible(false);
+    if(resized_body_idx==-1 || resized_body_idx==max_body_idx) bottom_LGrip->setVisible(false);
+
+
 	if((old_width!=0 && this->bounding_rect.width()!=old_width) ||
-			(old_height!=0 && this->bounding_rect.height()!=old_height))
+            (old_height!=0 && this->bounding_rect.height()!=old_height))
 		emit s_objectDimensionChanged();
-	else
+    //else
 		requestRelationshipsUpdate();
 }
 
