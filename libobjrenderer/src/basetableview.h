@@ -32,6 +32,7 @@
 #include "roundedrectitem.h"
 #include "baserelationship.h"
 #include "textpolygonitem.h"
+#include "attributestoggleritem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -53,11 +54,9 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
 		*ext_attribs_body,
 
-		*placeholder,
+		*placeholder;
 
-		*ext_attribs_toggler;
-
-		QGraphicsPolygonItem *ext_attribs_tog_arrow;
+		AttributesTogglerItem *attribs_toggler;
 
 		TextPolygonItem *tag_item;
 
@@ -124,6 +123,10 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
+
+	private slots:
+		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
+		void configureCollapsedSections(CollapseMode coll_mode);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

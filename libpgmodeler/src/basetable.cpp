@@ -67,3 +67,13 @@ void BaseTable::operator = (BaseTable &tab)
 	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
 	this->tag=tab.tag;
 }
+
+CollapseMode BaseTable::getCollapseMode(void)
+{
+	return(collapse_mode);
+}
+
+void BaseTable::setCollapseMode(CollapseMode coll_mode)
+{
+	collapse_mode = coll_mode;
+}

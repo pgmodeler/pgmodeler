@@ -156,7 +156,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	viewport->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewport->setCacheMode(QGraphicsView::CacheBackground);
-	viewport->setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
+	//viewport->setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
 

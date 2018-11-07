@@ -29,12 +29,23 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
+//! \brief This enum is used to control the collapsing of the tables
+enum class CollapseMode: unsigned {
+	NotCollapsed, //Table is fully expanded (columns and extended attributes)
+	ExtAttribsCollapsed, //Extended attributes are collapsed
+	AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
+};
+
 class BaseTable: public BaseGraphicObject {
 	private:
 		bool hide_ext_attribs;
 
+		CollapseMode collapse_mode;
+
 	protected:
 		Tag *tag;
+
+		void setCollapseMode(CollapseMode coll_mode);
 
 	public:
 		BaseTable(void);
@@ -91,7 +102,10 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Copy the attributes between two tables
 		void operator = (BaseTable &tab);
 
+		CollapseMode getCollapseMode(void);
+
 		friend class DatabaseModel;
+		friend class BaseTableView;
 };
 
 #endif
