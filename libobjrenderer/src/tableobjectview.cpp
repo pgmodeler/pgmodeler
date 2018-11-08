@@ -531,7 +531,7 @@ void TableObjectView::calculateBoundingRect(void)
 	double width = 0, height = 0, curr_w = 0;
 
 	width = descriptor->pos().x() + descriptor->boundingRect().width();
-	height = descriptor->boundingRect().height();
+	height = lables[0]->boundingRect().height();
 
 	for(int i = 0; i < 3; i++)
 	{
@@ -539,9 +539,6 @@ void TableObjectView::calculateBoundingRect(void)
 
 		if(width < curr_w)
 			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
-
-		if(height < lables[i]->boundingRect().height())
-			height = lables[i]->boundingRect().height();
 	}
 
 	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height));

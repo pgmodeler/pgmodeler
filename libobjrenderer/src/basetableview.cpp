@@ -174,13 +174,12 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		QList<QGraphicsItem *> items;
 		double cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
-		//QPointF pnt = this->ext_attribs_toggler->mapFromScene(event->scenePos());
 		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
 
 		items.append(columns->childItems());
 
 		if(!hide_ext_attribs &&
-			 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden())
+			 dynamic_cast<BaseTable *>(this->getSourceObject())->getCollapseMode() == CollapseMode::NotCollapsed)
 		{
 			items.append(ext_attribs->childItems());
 			ext_height=ext_attribs->boundingRect().height();

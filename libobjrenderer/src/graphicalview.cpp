@@ -37,7 +37,7 @@ void GraphicalView::configureObject(void)
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
-	vector<TableObject *> tab_objs;
+	vector<TableObject *> tab_objs, ext_view_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
@@ -51,6 +51,11 @@ void GraphicalView::configureObject(void)
 	//Configures the view's title
 	title->configureObject(view);
 
+	for(auto &obj : view->getObjects())
+		ext_view_objs.push_back(dynamic_cast<TableObject *>(obj));
+
+	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_view_objs.empty());
+
 	//Gets the reference count on SELECT part of the SQL definition
 	count=view->getReferenceCount(Reference::SqlReferSelect);
 
@@ -59,64 +64,76 @@ void GraphicalView::configureObject(void)
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
+	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed);
+	ext_attribs->setVisible(!ext_view_objs.empty() && view->getCollapseMode() == CollapseMode::NotCollapsed);
+	body->setVisible(columns->isVisible());
+	ext_attribs_body->setVisible(ext_attribs->isVisible());
 
-	subitems=columns->childItems();
-
-	for(i=0; i < count; i++)
+	if(!columns->isVisible())
 	{
-		if(count1==0)
-			ref=view->getReference(i, Reference::SqlReferSelect);
-		else
-			ref=view->getReference(i, Reference::SqlViewDefinition);
+		for(auto &item : columns->childItems())
+		{
+			columns->removeFromGroup(item);
+			delete(item);
+		}
+	}
+	else
+	{
+		subitems=columns->childItems();
+		for(i=0; i < count; i++)
+		{
+			if(count1==0)
+				ref=view->getReference(i, Reference::SqlReferSelect);
+			else
+				ref=view->getReference(i, Reference::SqlViewDefinition);
 
-		//Reuses the subitem if it was allocated before
-		if(!subitems.isEmpty() && i < subitems.size())
+			//Reuses the subitem if it was allocated before
+			if(!subitems.isEmpty() && i < subitems.size())
+			{
+				graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
+
+				//Moves the reference to the origin to be moved latter
+				graph_ref->moveBy(-graph_ref->scenePos().x(),
+													-graph_ref->scenePos().y());
+			}
+			else
+				graph_ref=new TableObjectView;
+
+			columns->removeFromGroup(graph_ref);
+			graph_ref->configureObject(ref);
+			graph_ref->moveBy(HorizSpacing, i * graph_ref->boundingRect().height());
+			columns->addToGroup(graph_ref);
+		}
+
+		//Destroy the graphical references not used
+		i=subitems.size()-1;
+		while(i > count-1)
 		{
 			graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
-
-			//Moves the reference to the origin to be moved latter
-			graph_ref->moveBy(-graph_ref->scenePos().x(),
-												-graph_ref->scenePos().y());
+			columns->removeFromGroup(graph_ref);
+			delete(graph_ref);
+			i--;
 		}
-		else
-			graph_ref=new TableObjectView;
-
-		columns->removeFromGroup(graph_ref);
-		graph_ref->configureObject(ref);
-		graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
-		columns->addToGroup(graph_ref);
 	}
 
-	//Destroy the graphical references not used
-	i=subitems.size()-1;
-	while(i > count-1)
+	if(!hide_ext_attribs && view->getCollapseMode() == CollapseMode::NotCollapsed)
+		tab_objs.assign(ext_view_objs.begin(), ext_view_objs.end());
+
+	if(tab_objs.empty())
 	{
-		graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
-		columns->removeFromGroup(graph_ref);
-		delete(graph_ref);
-		i--;
+		for(auto &item : ext_attribs->childItems())
+		{
+			ext_attribs->removeFromGroup(item);
+			delete(item);
+		}
 	}
-
-	tab_objs.assign(view->getObjectList(ObjectType::Rule)->begin(),
-					view->getObjectList(ObjectType::Rule)->end());
-	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::Trigger)->begin(),
-					view->getObjectList(ObjectType::Trigger)->end());
-	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::Index)->begin(),
-					view->getObjectList(ObjectType::Index)->end());
-
-	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
-	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
-
-	if(!tab_objs.empty())
+	else
 	{
 		count=tab_objs.size();
 
 		//Gets the subitems of the current group
 		subitems=ext_attribs->childItems();
-		ext_attribs->moveBy(-ext_attribs->scenePos().x(),
-							-ext_attribs->scenePos().y());
+		ext_attribs->moveBy(-ext_attribs->scenePos().x(), -ext_attribs->scenePos().y());
 		for(i=0; i < count; i++)
 		{
 			tab_obj=tab_objs.at(i);
@@ -184,8 +201,10 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
+		if(!groups[idx]->isVisible())
+			continue;
 
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
 		pen=this->getBorderStyle(attribs[idx]);
 		pen.setStyle(Qt::DashLine);
 
