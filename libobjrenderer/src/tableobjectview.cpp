@@ -82,8 +82,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			descriptor=new QGraphicsEllipseItem;
 		else
 			descriptor=new QGraphicsPolygonItem;
-
-		//this->addToGroup(descriptor);
 	}
 
 	if(column)
@@ -186,7 +184,7 @@ void TableObjectView::configureObject(void)
 	if(this->getSourceObject())
 	{
 		QTextCharFormat fmt;
-		double px;
+		double px = 0;
 		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
@@ -256,9 +254,8 @@ void TableObjectView::configureObject(void)
 
 		configureDescriptor(constr_type);
 
-		//Set the descriptor position as the first item on the view
 		descriptor->setPos(HorizSpacing, 0);
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
+		px=HorizSpacing + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
@@ -419,7 +416,6 @@ void TableObjectView::configureObject(void)
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
 
-		descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 		calculateBoundingRect();
 		this->setToolTip(tooltip + atribs_tip);
 	}
@@ -509,7 +505,6 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setText(QString(" "));
 	}
 
-	descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
 	calculateBoundingRect();
 }
 
@@ -528,7 +523,7 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 
 void TableObjectView::calculateBoundingRect(void)
 {
-	double width = 0, height = 0, curr_w = 0;
+	double width = 0, height = 0, curr_w = 0, py = 0;
 
 	width = descriptor->pos().x() + descriptor->boundingRect().width();
 	height = lables[0]->boundingRect().height();
@@ -541,7 +536,16 @@ void TableObjectView::calculateBoundingRect(void)
 			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
 	}
 
-	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height));
+	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height + (1.5 * VertSpacing)));
+
+	//Adjusting the Y position of the objects in order to center them on the new bouding rect
+	descriptor->setPos(descriptor->pos().x(),
+										 (bounding_rect.height() - descriptor->boundingRect().height() + (VertSpacing * 0.75))/2);
+
+	py = (bounding_rect.height() - lables[0]->boundingRect().height())/2;
+
+	for(unsigned i = 0; i < 3; i++)
+		lables[i]->setPos(lables[i]->pos().x(), py);
 }
 
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)

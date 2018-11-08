@@ -211,15 +211,15 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
 			{
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0,0,
+				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
 																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
-																																			 item->boundingRect().height()));
+																																			 item->boundingRect().height() - VertSpacing));
 			}
 
 			//Sets the selection position as same as item's position
 			rect1=this->mapRectToItem(item, item->boundingRect());
 			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top()));
+			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top() + VertSpacing/2));
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
