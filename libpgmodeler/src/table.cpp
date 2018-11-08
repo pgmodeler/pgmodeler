@@ -1828,26 +1828,23 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	}
 }
 
-vector<BaseObject *> Table::getObjects(bool excl_cols_constr)
+
+vector<BaseObject *> Table::getObjects(const vector<ObjectType> &excl_types)
 {
 	vector<BaseObject *> list;
 	vector<ObjectType> types={ ObjectType::Column, ObjectType::Constraint,
-														 ObjectType::Trigger, ObjectType::Index, ObjectType::Rule, ObjectType::Policy };
+														 ObjectType::Trigger, ObjectType::Index,
+														 ObjectType::Rule, ObjectType::Policy };
 
 	for(auto type : types)
 	{
-		if(excl_cols_constr && (type == ObjectType::Column || type == ObjectType::Constraint))
+		if(std::find(excl_types.begin(), excl_types.end(), type) != excl_types.end())
 			continue;
 
 		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
 	}
 
 	return(list);
-}
-
-vector<BaseObject *> Table::getObjects(void)
-{
-  return(getObjects(false));
 }
 
 vector<PartitionKey> Table::getPartitionKeys(void)
@@ -1858,7 +1855,8 @@ vector<PartitionKey> Table::getPartitionKeys(void)
 void Table::setCodeInvalidated(bool value)
 {
 	vector<ObjectType> types={ ObjectType::Column, ObjectType::Constraint,
-														 ObjectType::Trigger, ObjectType::Index, ObjectType::Rule, ObjectType::Policy };
+														 ObjectType::Trigger, ObjectType::Index,
+														 ObjectType::Rule, ObjectType::Policy };
 
 	for(auto type : types)
 	{

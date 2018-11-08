@@ -36,15 +36,19 @@ void TableView::configureObject(void)
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
-	vector<TableObject *> tab_objs;
+	vector<TableObject *> tab_objs, ext_tab_objs;
 	QString atribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
 
 	//Configures the table title
 	title->configureObject(table);
 
-	px=0;
+	for(auto &obj : table->getObjects({ ObjectType::Column }))
+		ext_tab_objs.push_back(dynamic_cast<TableObject *>(obj));
 
+	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
+
+	px=0;
 	old_width=this->bounding_rect.width();
 	old_height=this->bounding_rect.height();
 
@@ -54,25 +58,14 @@ void TableView::configureObject(void)
 
 		if(obj_idx==0)
 		{
-			tab_objs.assign(table->getObjectList(ObjectType::Column)->begin(),
-							table->getObjectList(ObjectType::Column)->end());
+			if(table->getCollapseMode() != CollapseMode::AllAttribsCollapsed)
+				tab_objs.assign(table->getObjectList(ObjectType::Column)->begin(),
+												table->getObjectList(ObjectType::Column)->end());
 		}
 		else
 		{
-			tab_objs.assign(table->getObjectList(ObjectType::Constraint)->begin(),
-											table->getObjectList(ObjectType::Constraint)->end());
-			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjectType::Trigger)->begin(),
-							table->getObjectList(ObjectType::Trigger)->end());
-			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjectType::Index)->begin(),
-							table->getObjectList(ObjectType::Index)->end());
-			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjectType::Rule)->begin(),
-							table->getObjectList(ObjectType::Rule)->end());
-			tab_objs.insert(tab_objs.end(),
-							table->getObjectList(ObjectType::Policy)->begin(),
-							table->getObjectList(ObjectType::Policy)->end());
+			if(!hide_ext_attribs && table->getCollapseMode() == CollapseMode::NotCollapsed)
+				tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
 		}
 
 		//Gets the subitems of the current group
@@ -80,13 +73,8 @@ void TableView::configureObject(void)
 		groups[obj_idx]->moveBy(-groups[obj_idx]->scenePos().x(),
 														-groups[obj_idx]->scenePos().y());
 		count=tab_objs.size();
-
-		//Special case: if there is no item on extended attributes, the extended body is hidden
-		if(obj_idx==1)
-		{
-			groups[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
-			bodies[obj_idx]->setVisible(count > 0 && !hide_ext_attribs);
-		}
+		groups[obj_idx]->setVisible(count > 0);
+		bodies[obj_idx]->setVisible(count > 0);
 
 		for(i=0; i < count; i++)
 		{

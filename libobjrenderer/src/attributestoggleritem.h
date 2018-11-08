@@ -38,9 +38,13 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		QGraphicsPolygonItem *arrows[3];
 
-		bool arrows_selected[3];
+		bool arrows_selected[3],
 
-		bool toggler_inverted;
+		arrow_inverted,
+
+		has_ext_attribs;
+
+		double arrows_width;
 
 		static constexpr unsigned AttribsToggler=0,
 		NextAttribsArrow=1,
@@ -56,7 +60,9 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void setRect(const QRectF &rect);
 		void setCollapseMode(CollapseMode coll_mode);
 		void setArrowSelected(const QPointF &pnt, bool clicked = false);
+		void setHasExtAttributes(bool value);
 		void clearArrowSelection(void);
+		double getArrowsWidth(void);
 
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 

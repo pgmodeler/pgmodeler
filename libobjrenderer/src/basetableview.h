@@ -85,7 +85,7 @@ class BaseTableView: public BaseObjectView {
 		void __configureObject(float width);
 
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
-		float calculateWidth(void);
+		double calculateWidth(void);
 
 	public:
 		static constexpr unsigned LeftConnPoint=0,

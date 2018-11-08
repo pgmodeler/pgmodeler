@@ -84,8 +84,8 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns the index for the specified table object
 		virtual int getObjectIndex(BaseObject *obj)=0;
 
-		//! \brief Returns all child objects of the table
-		virtual vector<BaseObject *> getObjects(void)=0;
+		//! \brief Returns all children objects of the table but excluding the ones of the provided type
+		virtual vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {})=0;
 
 		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 

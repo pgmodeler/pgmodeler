@@ -35,7 +35,9 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	arrows[AttribsToggler]->setToolTip(trUtf8("Toggles the display of columns and extended attributes"));
 	arrows[NextAttribsArrow]->setToolTip(trUtf8("Display the next columns page"));
 	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Display the previous columns page"));
-	toggler_inverted = false;
+	arrow_inverted = has_ext_attribs = false;
+	collapse_mode = CollapseMode::NotCollapsed;
+	arrows_width = 0;
 }
 
 void AttributesTogglerItem::setArrowsBrush(const QBrush &brush)
@@ -78,12 +80,20 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 		{
 			this->setToolTip(arrows[arr_id]->toolTip());
 
-			if(clicked)
+			if(clicked && arr_id == AttribsToggler)
 			{
 				if(collapse_mode == CollapseMode::NotCollapsed)
-					collapse_mode = CollapseMode::ExtAttribsCollapsed;
+				{
+					collapse_mode = (has_ext_attribs ? CollapseMode::ExtAttribsCollapsed : CollapseMode::AllAttribsCollapsed);
+					arrow_inverted = false;
+				}
 				else if(collapse_mode == CollapseMode::ExtAttribsCollapsed)
-					collapse_mode = CollapseMode::AllAttribsCollapsed;
+					collapse_mode = (arrow_inverted ?  CollapseMode::NotCollapsed : CollapseMode::AllAttribsCollapsed);
+				else if(collapse_mode == CollapseMode::AllAttribsCollapsed)
+				{
+					collapse_mode = (has_ext_attribs ? CollapseMode::ExtAttribsCollapsed : CollapseMode::NotCollapsed);
+					arrow_inverted = true;
+				}
 				else
 					collapse_mode = CollapseMode::NotCollapsed;
 
@@ -96,12 +106,22 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 	this->update();
 }
 
+void AttributesTogglerItem::setHasExtAttributes(bool value)
+{
+	has_ext_attribs = value;
+}
+
 void AttributesTogglerItem::clearArrowSelection(void)
 {
 	for(unsigned arr_id = 0; arr_id < 3; arr_id++)
 		arrows_selected[arr_id] = false;
 
 	this->update();
+}
+
+double AttributesTogglerItem::getArrowsWidth(void)
+{
+	return(arrows_width);
 }
 
 void AttributesTogglerItem::configureButtons(const QRectF &rect)
@@ -129,7 +149,8 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	arr_width += pol.boundingRect().width() + h_spacing;
 
 	pol.clear();
-	if(collapse_mode == CollapseMode::NotCollapsed)
+	if(collapse_mode == CollapseMode::NotCollapsed ||
+		 (!arrow_inverted && collapse_mode == CollapseMode::ExtAttribsCollapsed))
 	{
 		pol.append(QPointF(5 * factor, 0));
 		pol.append(QPointF(0, 8 * factor));
@@ -144,6 +165,7 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 	arrows[AttribsToggler]->setPolygon(pol);
 	arr_width += pol.boundingRect().width();
+	arrows_width = arr_width + h_spacing;
 
 	new_rect.setHeight(height);
 	RoundedRectItem::setRect(new_rect);

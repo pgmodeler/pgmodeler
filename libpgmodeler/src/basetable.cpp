@@ -26,6 +26,7 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::HideExtAttribs]=QString();
 	attributes[Attributes::MaxObjCount]=QString();
 	hide_ext_attribs=false;
+	collapse_mode = CollapseMode::NotCollapsed;
 }
 
 void BaseTable::setExtAttribsHidden(bool value)

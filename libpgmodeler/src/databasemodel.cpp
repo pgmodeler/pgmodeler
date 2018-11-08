@@ -7074,7 +7074,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				fkeys.push_back(constr);
 		}
 
-		for(auto obj : table->getObjects(true))
+		for(auto obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
 			objects_map[obj->getObjectId()]=obj;
 	}
 

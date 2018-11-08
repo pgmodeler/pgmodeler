@@ -999,13 +999,18 @@ void View::operator = (View &view)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-vector<BaseObject *> View::getObjects(void)
+vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 {
 	vector<BaseObject *> list;
+	vector<ObjectType> types={ ObjectType::Trigger, ObjectType::Index, ObjectType::Rule };
 
-	list.assign(triggers.begin(), triggers.end());
-	list.insert(list.end(), rules.begin(), rules.end());
-	list.insert(list.end(), indexes.begin(), indexes.end());
+	for(auto type : types)
+	{
+		if(std::find(excl_types.begin(), excl_types.end(), type) != excl_types.end())
+			continue;
+
+		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
+	}
 
 	return(list);
 }

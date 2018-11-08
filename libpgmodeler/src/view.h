@@ -137,8 +137,8 @@ class View: public BaseTable {
 		//! \brief Returns the object index searching by its index and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-		//! \brief Returns all child objects of the view (does not include references)
-		vector<BaseObject *> getObjects(void);
+		//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
+		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns the view's child object using its index and type
 		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);

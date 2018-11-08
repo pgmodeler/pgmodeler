@@ -30,6 +30,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 
 	title=new TableTitleView;
+	title->setZValue(2);
 
 	ext_attribs_body=new RoundedRectItem;
 	ext_attribs_body->setRoundedCorners(RoundedRectItem::NoCorners);
@@ -53,7 +54,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	obj_selection->setZValue(4);
 
 	attribs_toggler = new AttributesTogglerItem;
-	attribs_toggler->setZValue(2);
+	attribs_toggler->setZValue(1);
 
 	this->addToGroup(obj_selection);
 	this->addToGroup(obj_shadow);
@@ -116,6 +117,7 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 	{
 		this->setToolTip(this->table_tooltip);
 		configureObjectSelection();
+		attribs_toggler->clearArrowSelection();
 	}
 
 	if(change==ItemPositionHasChanged)
@@ -148,9 +150,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//If the user clicks the extended attributes toggler
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
 			 attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
-		{
 			attribs_toggler->setArrowSelected(pnt, true);
-		}
 
 		BaseObjectView::mousePressEvent(event);
 	}
@@ -313,20 +313,9 @@ void BaseTableView::configureTag(void)
 
 void BaseTableView::__configureObject(float width)
 {
-	BaseTable *tab = dynamic_cast<BaseTable *>(this->getSourceObject());
-	double py = 0, v_spacing = 1.5 * VertSpacing,
+	double height = 0,
 			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f,
 			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
-
-	py = title->boundingRect().height() +
-			 body->boundingRect().height() - 2;
-
-	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs && !tab->isExtAttribsHidden())
-	{
-		py = title->boundingRect().height() +
-				 body->boundingRect().height() +
-				 ext_attribs_body->boundingRect().height() - v_spacing;
-	}
 
 	QPen pen = body->pen();
 	attribs_toggler->setBrush(body->brush());
@@ -341,32 +330,21 @@ void BaseTableView::__configureObject(float width)
 	attribs_toggler->setArrowsBrush(grad);
 	attribs_toggler->setArrowsPen(body->pen());
 	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
-	attribs_toggler->setPos(title->pos().x(), py);
-	attribs_toggler->setVisible(!columns->childItems().isEmpty());
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + (2 * HorizSpacing), title->boundingRect().height() * 0.25);
 	this->bounding_rect = title->boundingRect();
 
-	if(!ext_attribs->isVisible())
-	{
-		this->bounding_rect.setHeight(title->boundingRect().height() + body->boundingRect().height());
-		body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
-	}
-	else
-	{
-		ext_attribs->setVisible(!tab->isExtAttribsHidden());
-		ext_attribs_body->setVisible(!tab->isExtAttribsHidden());
+	body->setRoundedCorners(RoundedRectItem::NoCorners);
 
-		this->bounding_rect.setHeight(title->boundingRect().height() +
-																	body->boundingRect().height() +
-																	(!tab->isExtAttribsHidden() ? ext_attribs_body->boundingRect().height() - v_spacing : - v_spacing));
+	height = title->boundingRect().height() + attribs_toggler->boundingRect().height() - VertSpacing;
+	height += (body->isVisible() ? body->boundingRect().height() : 1);
+	height += (ext_attribs_body->isVisible() ? ext_attribs_body->boundingRect().height() - VertSpacing + 1 : 0);
 
-		body->setRoundedCorners(RoundedRectItem::NoCorners);
-	}
+	this->bounding_rect.setHeight(height);
 
-	this->bounding_rect.setHeight(this->bounding_rect.height() +
-																attribs_toggler->boundingRect().height());
+	attribs_toggler->setPos(title->pos().x(),
+													height - attribs_toggler->boundingRect().height());
 
 	this->table_tooltip=this->getSourceObject()->getName(true) +
 						QString(" (") + this->getSourceObject()->getTypeName() + QString(") \n") +
@@ -379,23 +357,30 @@ void BaseTableView::__configureObject(float width)
 	configureObjectShadow();
 }
 
-float BaseTableView::calculateWidth(void)
+double BaseTableView::calculateWidth(void)
 {
-	/* Calculating the maximum width between the title, columns and extended attributes.
-		This width is used to set the uniform width of table */
-	if(!columns->childItems().isEmpty() &&
-			(columns->boundingRect().width() > title->boundingRect().width() &&
-			 (hide_ext_attribs || dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() ||
-				(columns->boundingRect().width() >= ext_attribs->boundingRect().width()))))
-		return(columns->boundingRect().width() + (2 * HorizSpacing));
+	double spacing = (2 * HorizSpacing);
 
-	if(!ext_attribs->childItems().isEmpty() && !hide_ext_attribs &&
-		 !dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden() &&
+	/* Calculating the maximum width between the title, columns and extended attributes.
+	 * This width is used to set the uniform width of table */
+
+	if(columns->isVisible() &&
+			(columns->boundingRect().width() > title->boundingRect().width() &&
+			 (hide_ext_attribs ||
+				dynamic_cast<BaseTable *>(this->getSourceObject())->getCollapseMode() == CollapseMode::ExtAttribsCollapsed ||
+				(columns->boundingRect().width() >= ext_attribs->boundingRect().width()))))
+		return(columns->boundingRect().width() + spacing);
+
+	if(ext_attribs->isVisible() &&
 			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
 			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
-		return(ext_attribs->boundingRect().width() + (2 * HorizSpacing));
+		return(ext_attribs->boundingRect().width() + spacing);
 
-	return(title->boundingRect().width() + (2 * HorizSpacing));
+	if(attribs_toggler->isVisible() && !columns->isVisible() &&
+		 attribs_toggler->getArrowsWidth() > title->boundingRect().width())
+		return(attribs_toggler->getArrowsWidth() + spacing);
+
+	return(title->boundingRect().width() + spacing);
 }
 
 int BaseTableView::getConnectRelsCount(void)
@@ -433,8 +418,6 @@ void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 	dynamic_cast<BaseTable *>(this->getSourceObject())
 			->setExtAttribsHidden(!dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden());
 
-	QTextStream out(stdout);
-	out << static_cast<unsigned>(coll_mode) << endl;
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
 
 	//Updating the object geometry to show/hide the extended attributes
