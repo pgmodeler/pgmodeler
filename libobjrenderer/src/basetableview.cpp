@@ -186,7 +186,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 
 		//Calculates the default item height
-		cols_height=roundf((columns->boundingRect().height() + ext_height) / static_cast<double>(items.size()));
+		cols_height=(columns->boundingRect().height() + ext_height + (2*VertSpacing)) / static_cast<double>(items.size());
 
 		//Calculates the item index based upon the mouse position
 		rect=this->mapRectToItem(title, title->boundingRect());
@@ -204,7 +204,6 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-			//QPolygonF pol;
 			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
 
 			//Configures the selection with the item's dimension
@@ -413,9 +412,6 @@ void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 
 	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
-
-	dynamic_cast<BaseTable *>(this->getSourceObject())
-			->setExtAttribsHidden(!dynamic_cast<BaseTable *>(this->getSourceObject())->isExtAttribsHidden());
 
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
 

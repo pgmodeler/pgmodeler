@@ -26,6 +26,8 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 {
 	this->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 
+	sel_rect = new QGraphicsRectItem;
+
 	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
 	{
 		arrows[arr_id] = new QGraphicsPolygonItem;
@@ -34,11 +36,22 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 	arrows[AttribsExpandArrow]->setToolTip(trUtf8("Expands the currently collapsed section of the object"));
 	arrows[AttribsCollapseArrow]->setToolTip(trUtf8("Collapses the currently expanded section of the object"));
-	arrows[NextAttribsArrow]->setToolTip(trUtf8("Display the next columns page"));
-	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Display the previous columns page"));
+	arrows[NextAttribsArrow]->setToolTip(trUtf8("Display the next attributes page"));
+	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Display the previous attributes page"));
 	has_ext_attribs = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	arrows_width = 0;
+	curr_attribs_page = 0;
+	max_attribs_pages = 5;
+	configureButtonsState();
+}
+
+AttributesTogglerItem::~AttributesTogglerItem(void)
+{
+	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+		delete(arrows[arr_id]);
+
+	delete(sel_rect);
 }
 
 void AttributesTogglerItem::setArrowsBrush(const QBrush &brush)
@@ -85,25 +98,76 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 
 			if(clicked)
 			{
-				if(arr_id == AttribsExpandArrow)
-					coll_mode++;
-				else if(arr_id == AttribsCollapseArrow)
-					coll_mode--;
+				if(arr_id == AttribsExpandArrow || arr_id == AttribsCollapseArrow)
+				{
+					if(arr_id == AttribsExpandArrow)
+						coll_mode++;
+					else if(arr_id == AttribsCollapseArrow)
+						coll_mode--;
 
-				if(coll_mode > enum_cast(CollapseMode::NotCollapsed))
-					collapse_mode = (arr_id == AttribsExpandArrow ? CollapseMode::NotCollapsed : CollapseMode::AllAttribsCollapsed);
-				else
-					collapse_mode = static_cast<CollapseMode>(coll_mode);
+					if(!has_ext_attribs && static_cast<CollapseMode>(coll_mode) == CollapseMode::ExtAttribsCollapsed)
+						coll_mode += (arr_id == AttribsExpandArrow ? 1 : -1);
 
+					if(coll_mode > enum_cast(CollapseMode::NotCollapsed))
+						collapse_mode = (arr_id == AttribsExpandArrow ? CollapseMode::NotCollapsed : CollapseMode::AllAttribsCollapsed);
+					else
+						collapse_mode = static_cast<CollapseMode>(coll_mode);
+
+					emit s_collapseModeChanged(collapse_mode);
+				}
+				else if(max_attribs_pages != 0)
+				{
+					if(arr_id == PrevAttribsArrow)
+						curr_attribs_page--;
+					else if(arr_id == NextAttribsArrow)
+						curr_attribs_page++;
+
+					if(curr_attribs_page >= max_attribs_pages)
+						curr_attribs_page = (arr_id == PrevAttribsArrow ? 0 : max_attribs_pages - 1);
+
+					#warning "Just a test! The signal emitted here is for page change"
+					emit s_collapseModeChanged(collapse_mode);
+				}
+
+				clearArrowSelection();
 				configureButtons(this->rect());
-				emit s_collapseModeChanged(collapse_mode);
+			}
+			else
+			{
+				//Configuring the selection rectangle if the arrows isn't clicked
+				QRectF rect;
+				QSizeF size = QSizeF(arrows[AttribsExpandArrow]->boundingRect().size().width() + (2 * BaseObjectView::HorizSpacing),
+														 arrows[PrevAttribsArrow]->boundingRect().size().height() + BaseObjectView::HorizSpacing);
+				double px = 0, py = 0, arr_x = arrows[arr_id]->pos().x();
+
+				rect.setSize(size);
+				px = arr_x - (((arr_x + size.width()) - (arr_x + arrows[arr_id]->boundingRect().width()))/2);
+				py = (this->boundingRect().size().height() - size.height())/2.5;
+
+				sel_rect->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
+				sel_rect->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
+				sel_rect->setRect(rect);
+				sel_rect->setPos(px, py);
 			}
 
 			break;
 		}
 	}
 
+	configureButtonsState();
 	this->update();
+}
+
+void AttributesTogglerItem::configureButtonsState(void)
+{
+	arrows[AttribsExpandArrow]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
+																				 collapse_mode == CollapseMode::AllAttribsCollapsed? 1 : 0.40);
+
+	arrows[AttribsCollapseArrow]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
+																					 collapse_mode == CollapseMode::NotCollapsed ? 1 : 0.40);
+
+	arrows[PrevAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page > 0 ? 1 : 0.40);
+	arrows[NextAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page < max_attribs_pages - 1 ? 1 : 0.40);
 }
 
 void AttributesTogglerItem::setHasExtAttributes(bool value)
@@ -183,40 +247,21 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	double p_opacity = 1;
 	RoundedRectItem::paint(painter, option, widget);
 
 	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
 	{
 		painter->save();
 		painter->translate(arrows[arr_id]->pos());
-
-		if((collapse_mode == CollapseMode::NotCollapsed && arr_id == AttribsExpandArrow) ||
-			 (collapse_mode == CollapseMode::AllAttribsCollapsed && arr_id == AttribsCollapseArrow))
-			p_opacity = 0.40;
-		else
-			p_opacity = 1;
-
-		painter->setOpacity(p_opacity);
+		painter->setOpacity(arrows[arr_id]->opacity());
 		arrows[arr_id]->paint(painter, option, widget);
 		painter->restore();
 
-		if(arrows_selected[arr_id] && p_opacity > 0.40)
+		if(arrows_selected[arr_id] && arrows[arr_id]->opacity() > 0.40)
 		{
-			QRectF sel_rect;
-			QSizeF size = QSizeF(arrows[AttribsExpandArrow]->boundingRect().size().width() + (2 * BaseObjectView::HorizSpacing),
-													 arrows[PrevAttribsArrow]->boundingRect().size().height() + BaseObjectView::HorizSpacing);
-			double tx = 0, ty = 0, arr_x = arrows[arr_id]->pos().x();
-
-			sel_rect.setSize(size);
-			tx = arr_x - (((arr_x + size.width()) - (arr_x + arrows[arr_id]->boundingRect().width()))/2);
-			ty = (this->boundingRect().size().height() - size.height())/2.5;
-
 			painter->save();
-			painter->translate(tx, ty);
-			painter->setBrush(BaseObjectView::getFillStyle(Attributes::ObjSelection));
-			painter->setPen(BaseObjectView::getBorderStyle(Attributes::ObjSelection));
-			painter->drawRect(sel_rect);
+			painter->translate(sel_rect->pos());
+			sel_rect->paint(painter, option, widget);
 			painter->restore();
 		}
 	}

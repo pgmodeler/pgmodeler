@@ -34,6 +34,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 	private:
 		Q_OBJECT
 
+		QGraphicsRectItem *sel_rect;
+
 		CollapseMode collapse_mode;
 
 		QGraphicsPolygonItem *arrows[4];
@@ -44,15 +46,21 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		double arrows_width;
 
+		unsigned curr_attribs_page,
+
+		max_attribs_pages;
+
 		static constexpr unsigned AttribsExpandArrow=0,
 		AttribsCollapseArrow=1,
 		NextAttribsArrow=2,
 		PrevAttribsArrow=3;
 
 		void configureButtons(const QRectF &rect);
+		void configureButtonsState(void);
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
+		~AttributesTogglerItem(void);
 
 		void setArrowsBrush(const QBrush &brush);
 		void setArrowsPen(const QPen &pen);
@@ -67,6 +75,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	signals:
 		void s_collapseModeChanged(CollapseMode);
+		void s_currentAttribsPageChanged(unsigned);
 };
 
 #endif
