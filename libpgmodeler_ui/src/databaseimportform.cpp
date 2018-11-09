@@ -643,7 +643,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			{
 				task_prog_wgt.setWindowTitle(trUtf8("Retrieving objects from database..."));
 				task_prog_wgt.show();
-				task_prog_wgt.updateProgress(1, trUtf8("Retrieving cluster level objects..."), ~ObjectType::Database);
+				task_prog_wgt.updateProgress(1, trUtf8("Retrieving cluster level objects..."), enum_cast(ObjectType::Database));
 			}
 
 			tree_wgt->clear();
@@ -661,7 +661,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				attribs=catalog.getObjectsAttributes(ObjectType::Database, QString(), QString(), {}, {{Attributes::Name, import_helper.getCurrentDatabase()}});
 
 				db_item->setData(ObjectId, Qt::UserRole, attribs[0].at(Attributes::Oid).toUInt());
-				db_item->setData(ObjectTypeId, Qt::UserRole, ~ObjectType::Database);
+				db_item->setData(ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::Database));
 
 				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(Attributes::Oid)));
 				tree_wgt->addTopLevelItem(db_item);
@@ -690,7 +690,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 
 				while(!sch_items.empty())
 				{
-					task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of schema `%1'...").arg(sch_items.back()->text(0)), ~ObjectType::Schema);
+					task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of schema `%1'...").arg(sch_items.back()->text(0)), enum_cast(ObjectType::Schema));
 
 					//Retrieving and listing the schema scoped objects
 					tab_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
@@ -704,7 +704,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 						if(aux_prog > 99)	aux_prog=99;
 
 						obj_type = static_cast<ObjectType>(tab_items.back()->data(ObjectTypeId, Qt::UserRole).toUInt());
-						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), ~obj_type);
+						task_prog_wgt.updateProgress(static_cast<int>(aux_prog), trUtf8("Retrieving objects of `%1' (%2)...").arg(tab_items.back()->text(0)).arg(BaseObject::getTypeName(obj_type)), enum_cast(obj_type));
 						DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
 																									BaseObject::getChildObjectTypes(obj_type), checkable_items, disable_empty_grps,
 																									tab_items.back(), sch_items.back()->text(0), tab_items.back()->text(0));
@@ -774,7 +774,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
 				//Group items does contains a zero valued id to indicate that is not a valide object
 				group->setData(ObjectId, Qt::UserRole, 0);
-				group->setData(ObjectTypeId, Qt::UserRole, ~grp_type);
+				group->setData(ObjectTypeId, Qt::UserRole, enum_cast(grp_type));
 				group->setData(ObjectCount, Qt::UserRole, 0);
 				group->setData(ObjectSchema, Qt::UserRole, schema);
 				group->setData(ObjectTable, Qt::UserRole, table);
@@ -855,7 +855,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 					item->setToolTip(0,tooltip.arg(oid));
 
 				//Stores the object's type as the second data of the item
-				item->setData(ObjectTypeId, Qt::UserRole, ~obj_type);
+				item->setData(ObjectTypeId, Qt::UserRole, enum_cast(obj_type));
 
 				//Stores the schema and the table's name of the object
 				item->setData(ObjectSchema, Qt::UserRole, schema);

@@ -35,6 +35,13 @@
 
 using namespace std;
 
+//! \brief This function causes the provided enum to be converted to its underlying datatype
+template<typename Enum>
+constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
+{
+	return(static_cast<typename std::underlying_type_t<Enum>>(obj_type));
+}
+
 //! \brief This enum defines the global error codes used throughout the application
 enum class ErrorCode: unsigned {
 	Custom,
@@ -280,15 +287,9 @@ enum class ErrorCode: unsigned {
 	RemColumnRefByPartitionKey
 };
 
-//! \brief This unary operator overloading causes the provided enum to be converted to its underlying datatype
-constexpr std::underlying_type<ErrorCode>::type operator ~ (ErrorCode err_code) noexcept
-{
-	return(static_cast<typename std::underlying_type<ErrorCode>::type>(err_code));
-}
-
 class Exception {
 	private:
-		static constexpr int ErrorCount=241;
+		static constexpr unsigned ErrorCount=241;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

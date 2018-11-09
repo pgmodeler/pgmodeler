@@ -364,7 +364,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	for(i=0; i < obj_cnt; i++)
 	{
 		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNs::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
-		actions_new_objects[types[i]]->setData(QVariant(~types[i]));
+		actions_new_objects[types[i]]->setData(QVariant(enum_cast(types[i])));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
@@ -380,7 +380,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
-		action->setData(QVariant(~ObjectType::Relationship + rel_types_id[i]));
+		action->setData(QVariant(enum_cast(ObjectType::Relationship) + rel_types_id[i]));
 
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 		rels_menu->addAction(action);
@@ -409,7 +409,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 			select_all_menu.addAction(action);
 		}
 
-		action->setData(QVariant(~obj_type));
+		action->setData(QVariant(enum_cast(obj_type)));
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
@@ -1663,7 +1663,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		 to the BaseRelationship::RELATIONSHIP_??? constant. */
 		if(obj_type > ObjectType::BaseTable)
 		{
-			rel_type=~obj_type - ~ObjectType::Relationship;
+			rel_type=enum_cast(obj_type) - enum_cast(ObjectType::Relationship);
 			obj_type=ObjectType::Relationship;
 		}
 
@@ -2369,7 +2369,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 									 trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 ~object->getObjectType());
+									 enum_cast(object->getObjectType()));
 
 		if(!tab_obj || ((sel_table || sel_view) && tab_obj))
 		{
@@ -2471,7 +2471,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 									 trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 ~object->getObjectType());
+									 enum_cast(object->getObjectType()));
 
 		if(!tab_obj)
 		{
@@ -2575,7 +2575,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 											 trUtf8("Pasting object: `%1' (%2)").arg(object->getName())
 											 .arg(object->getTypeName()),
-											 ~object->getObjectType());
+											 enum_cast(object->getObjectType()));
 
 				//Creates the object from the XML
 				object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
@@ -3294,13 +3294,13 @@ void ModelWidget::configureFadeMenu(void)
 			{
 				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_in_menu);
-				action->setData(~type);
+				action->setData(enum_cast(type));
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
 				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_out_menu);
-				action->setData(~type);
+				action->setData(enum_cast(type));
 				fade_out_menu.addAction(action);
 
 				id++;
@@ -3308,13 +3308,13 @@ void ModelWidget::configureFadeMenu(void)
 			}
 
 			action = new QAction(trUtf8("All objects"), &fade_in_menu);
-			action->setData(~ObjectType::BaseObject);
+			action->setData(enum_cast(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 			fade_in_menu.addSeparator();
 			fade_in_menu.addAction(action);
 
 			action = new QAction(trUtf8("All objects"), &fade_out_menu);
-			action->setData(~ObjectType::BaseObject);
+			action->setData(enum_cast(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			fade_out_menu.addSeparator();
 			fade_out_menu.addAction(action);

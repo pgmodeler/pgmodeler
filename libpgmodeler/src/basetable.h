@@ -31,9 +31,9 @@
 
 //! \brief This enum is used to control the collapsing of the tables
 enum class CollapseMode: unsigned {
-	NotCollapsed, //Table is fully expanded (columns and extended attributes)
-	ExtAttribsCollapsed, //Extended attributes are collapsed
 	AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
+	ExtAttribsCollapsed, //Extended attributes are collapsed
+	NotCollapsed //Table is fully expanded (columns and extended attributes)
 };
 
 class BaseTable: public BaseGraphicObject {

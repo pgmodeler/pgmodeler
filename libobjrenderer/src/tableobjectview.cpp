@@ -536,11 +536,11 @@ void TableObjectView::calculateBoundingRect(void)
 			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
 	}
 
-	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height + (1.5 * VertSpacing)));
+	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height + VertSpacing * 0.80));
 
 	//Adjusting the Y position of the objects in order to center them on the new bouding rect
 	descriptor->setPos(descriptor->pos().x(),
-										 (bounding_rect.height() - descriptor->boundingRect().height() + (VertSpacing * 0.75))/2);
+										 (bounding_rect.height() - descriptor->boundingRect().height() + (VertSpacing * 0.4))/2);
 
 	py = (bounding_rect.height() - lables[0]->boundingRect().height())/2;
 
