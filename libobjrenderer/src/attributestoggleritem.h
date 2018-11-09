@@ -36,19 +36,18 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		CollapseMode collapse_mode;
 
-		QGraphicsPolygonItem *arrows[3];
+		QGraphicsPolygonItem *arrows[4];
 
-		bool arrows_selected[3],
-
-		arrow_inverted,
+		bool arrows_selected[4],
 
 		has_ext_attribs;
 
 		double arrows_width;
 
-		static constexpr unsigned AttribsToggler=0,
-		NextAttribsArrow=1,
-		PrevAttribsArrow=2;
+		static constexpr unsigned AttribsExpandArrow=0,
+		AttribsCollapseArrow=1,
+		NextAttribsArrow=2,
+		PrevAttribsArrow=3;
 
 		void configureButtons(const QRectF &rect);
 
