@@ -71,7 +71,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	configurePlaceholder();
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
-	connect(attribs_toggler, SIGNAL(s_paginationToggled()), this, SLOT(toggleAttribsPaginaiton()));
+	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(toggleAttribsPaginaiton(bool)));
 }
 
 BaseTableView::~BaseTableView(void)
@@ -327,6 +327,7 @@ void BaseTableView::__configureObject(float width)
 	pen.setStyle(Qt::SolidLine);
 
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
+	attribs_toggler->setPaginationEnabled(tab->isPaginationEnabled());
 	attribs_toggler->setArrowsBrush(grad);
 	attribs_toggler->setArrowsPen(body->pen());
 	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
@@ -418,15 +419,14 @@ void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 	emit s_collapseModeChanged();
 }
 
-void BaseTableView::toggleAttribsPaginaiton(void)
+void BaseTableView::toggleAttribsPaginaiton(bool enabled)
 {
 	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
 
 	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 
-	#warning "Mark the pagination toggled on base table here!"
-	//dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
+	dynamic_cast<BaseTable *>(this->getSourceObject())->setPaginationEnabled(enabled);
 
 	//Updating the object geometry to show/hide the extended attributes
 	this->configureObject();
@@ -438,4 +438,6 @@ void BaseTableView::toggleAttribsPaginaiton(void)
 
 	//Updating the schema box that holds the object (if visible)
 	schema->setModified(true);
+
+	emit s_paginationToggled();
 }

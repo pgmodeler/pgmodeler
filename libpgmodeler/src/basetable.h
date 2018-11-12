@@ -38,7 +38,7 @@ enum class CollapseMode: unsigned {
 
 class BaseTable: public BaseGraphicObject {
 	private:
-		bool hide_ext_attribs;
+		bool pagination_enabled;
 
 		CollapseMode collapse_mode;
 
@@ -99,6 +99,9 @@ class BaseTable: public BaseGraphicObject {
 
 		void setCollapseMode(CollapseMode coll_mode);
 		CollapseMode getCollapseMode(void);
+
+		void setPaginationEnabled(bool value);
+		bool isPaginationEnabled(void);
 
 		friend class DatabaseModel;
 };

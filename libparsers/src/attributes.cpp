@@ -348,6 +348,7 @@ namespace Attributes {
 	OutputFunc=QString("output"),
 	OwnerColumn=QString("owner-col"),
 	Owner=QString("owner"),
+	Pagination=QString("pagination"),
 	PaperCustomSize=QString("paper-custom-size"),
 	PaperMargin=QString("paper-margin"),
 	PaperOrientation=QString("paper-orientation"),

@@ -360,6 +360,7 @@ namespace Attributes {
 	OutputFunc,
 	OwnerColumn,
 	Owner,
+	Pagination,
 	PaperCustomSize,
 	PaperMargin,
 	PaperOrientation,

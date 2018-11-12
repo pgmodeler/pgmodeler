@@ -4680,6 +4680,7 @@ Table *DatabaseModel::createTable(void)
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
 		table->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5886,6 +5887,7 @@ View *DatabaseModel::createView(void)
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
 		view->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))

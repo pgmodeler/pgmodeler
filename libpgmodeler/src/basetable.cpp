@@ -23,24 +23,12 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
 	attributes[Attributes::Tag]=QString();
-	//attributes[Attributes::HideExtAttribs]=QString();
 	attributes[Attributes::MaxObjCount]=QString();
 	attributes[Attributes::CollapseMode]=QString();
-
-	//hide_ext_attribs=false;
+	attributes[Attributes::Pagination]=QString();
+	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 }
-
-/* void BaseTable::setExtAttribsHidden(bool value)
-{
-	setCodeInvalidated(hide_ext_attribs != value);
-	hide_ext_attribs = value;
-} */
-
-/* bool BaseTable::isExtAttribsHidden(void)
-{
-	return(hide_ext_attribs);
-} */
 
 void BaseTable::setTag(Tag *tag)
 {
@@ -74,6 +62,17 @@ void BaseTable::operator = (BaseTable &tab)
 CollapseMode BaseTable::getCollapseMode(void)
 {
 	return(collapse_mode);
+}
+
+void BaseTable::setPaginationEnabled(bool value)
+{
+	setCodeInvalidated(pagination_enabled != value);
+	pagination_enabled = value;
+}
+
+bool BaseTable::isPaginationEnabled(void)
+{
+	return(pagination_enabled);
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)

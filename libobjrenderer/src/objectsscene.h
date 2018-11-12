@@ -205,6 +205,9 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Handles and redirects the signal emitted by the tables/views when the collapse mode changed
 		void emitCollapseModeChanged(void);
 
+		//! \brief Handles and redirects the signal emitted by the tables/views when the pagination of attributes is toggled
+		void emitPaginationToggled(void);
+
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
 		void s_objectsMoved(bool end_moviment);
@@ -214,6 +217,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Signal emitted when the user toggles a table's collapse mode in the scene
 		void s_collapseModeChanged(void);
+
+		//! \brief Signal emitted when the user toggles a table's attributes pagination
+		void s_paginationToggled(void);
 
 		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);

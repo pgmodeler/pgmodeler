@@ -40,7 +40,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Displays the previous attributes page"));
 	arrows[TogglePaginationBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
 	has_ext_attribs = false;
-	enable_pagination = false;
+	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	arrows_width = arrows_height = 0;
 	curr_attribs_page = 0;
@@ -122,7 +122,7 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 				}
 				else if(arr_id == TogglePaginationBtn)
 				{
-					enable_pagination = !enable_pagination;
+					pagination_enabled = !pagination_enabled;
 				}
 				else if(max_attribs_pages != 0)
 				{
@@ -140,7 +140,7 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 				configureButtonsState();
 
 				if(arr_id == TogglePaginationBtn)
-					emit s_paginationToggled();
+					emit s_paginationToggled(pagination_enabled);
 				else if(arr_id == AttribsExpandArrow || arr_id == AttribsCollapseArrow)
 					emit s_collapseModeChanged(collapse_mode);
 				else
@@ -181,13 +181,20 @@ void AttributesTogglerItem::configureButtonsState(void)
 	arrows[PrevAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page > 0 ? 1 : 0.40);
 	arrows[NextAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page < max_attribs_pages - 1 ? 1 : 0.40);
 
-	arrows[PrevAttribsArrow]->setVisible(enable_pagination);
-	arrows[NextAttribsArrow]->setVisible(enable_pagination);
+	arrows[PrevAttribsArrow]->setVisible(pagination_enabled);
+	arrows[NextAttribsArrow]->setVisible(pagination_enabled);
 }
 
 void AttributesTogglerItem::setHasExtAttributes(bool value)
 {
 	has_ext_attribs = value;
+	configureButtonsState();
+}
+
+void AttributesTogglerItem::setPaginationEnabled(bool value)
+{
+	pagination_enabled = value;
+	configureButtons(this->boundingRect());
 	configureButtonsState();
 }
 
@@ -221,7 +228,7 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	arrows_height = pol.boundingRect().height();
 	height += arrows_height;
 
-	if(enable_pagination)
+	if(pagination_enabled)
 	{
 		arrows[PrevAttribsArrow]->setPolygon(pol);
 		arr_width = pol.boundingRect().width() + h_spacing;
@@ -264,7 +271,7 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	arrows[TogglePaginationBtn]->setPos(px, (new_rect.height() - arrows[TogglePaginationBtn]->boundingRect().height())/2);
 	px += arrows[TogglePaginationBtn]->boundingRect().width() + h_spacing;
 
-	if(enable_pagination)
+	if(pagination_enabled)
 	{
 		arrows[PrevAttribsArrow]->setPos(px, (new_rect.height() - arrows[PrevAttribsArrow]->boundingRect().height())/2);
 		px += arrows[PrevAttribsArrow]->boundingRect().width() + h_spacing;

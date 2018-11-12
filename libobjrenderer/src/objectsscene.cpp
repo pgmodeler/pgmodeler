@@ -410,6 +410,11 @@ void ObjectsScene::emitCollapseModeChanged(void)
 	emit s_collapseModeChanged();
 }
 
+void ObjectsScene::emitPaginationToggled(void)
+{
+	emit s_paginationToggled();
+}
+
 void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 {
 	/* Treats the TableView::s_childObjectSelect() only when there is no
@@ -437,9 +442,9 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 					this, SLOT(emitObjectModification(BaseGraphicObject*)));
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
-							this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)), this, SLOT(emitChildObjectSelection(TableObject*)));
 			connect(tab, SIGNAL(s_collapseModeChanged()), this, SLOT(emitCollapseModeChanged()));
+			connect(tab, SIGNAL(s_paginationToggled()), this, SLOT(emitPaginationToggled()));
 		}
 
 		if(obj)
