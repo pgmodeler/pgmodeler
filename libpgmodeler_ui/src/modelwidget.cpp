@@ -299,16 +299,21 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 	action_duplicate->setMenuRole(QAction::NoRole);
 
-	action_extended_attribs=new QAction(QIcon(PgModelerUiNs::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
-	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
-	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
+	action_collapse_mode=new QAction(QIcon(PgModelerUiNs::getIconPath("collapse")), trUtf8("Collapse"), this);
+	action_no_collapse_attribs=new QAction(trUtf8("Not collapsed"), this);
+	action_no_collapse_attribs->setData(enum_cast(CollapseMode::NotCollapsed));
+	action_collapse_ext_attribs=new QAction(trUtf8("Extended attributes"), this);
+	action_collapse_ext_attribs->setData(enum_cast(CollapseMode::ExtAttribsCollapsed));
+	action_collpase_all_attribs=new QAction(trUtf8("All attributes"), this);
+	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
 
 	action_jump_to_table=new QAction(QIcon(PgModelerUiNs::getIconPath("jumptotable")), trUtf8("Jump to table"), this);
 	action_jump_to_table->setMenu(&jump_to_tab_menu);
 
-	toggle_attrs_menu.addAction(action_show_ext_attribs);
-	toggle_attrs_menu.addAction(action_hide_ext_attribs);
-	action_extended_attribs->setMenu(&toggle_attrs_menu);
+	toggle_attrs_menu.addAction(action_no_collapse_attribs);
+	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
+	toggle_attrs_menu.addAction(action_collpase_all_attribs);
+	action_collapse_mode->setMenu(&toggle_attrs_menu);
 
 	action_schemas_rects=new QAction(QIcon(PgModelerUiNs::getIconPath("schemarect")), trUtf8("Schemas rectangles"), this);
 	action_show_schemas_rects=new QAction(trUtf8("Show"), this);
@@ -444,8 +449,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
-	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+	connect(action_collapse_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
+	connect(action_collpase_all_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
+	connect(action_no_collapse_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
 	connect(action_show_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
@@ -457,7 +463,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 	connect(scene, SIGNAL(s_objectsSelectedInRange(void)), this, SLOT(configureObjectSelection(void)));
-	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -3476,7 +3482,7 @@ void ModelWidget::fadeObjectsOut(void)
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
-void ModelWidget::toggleAllExtendedAttributes(bool value)
+void ModelWidget::setAllCollapseMode(CollapseMode mode)
 {
 	BaseTable *base_tab = nullptr;
 	vector<BaseObject *> objects;
@@ -3490,15 +3496,15 @@ void ModelWidget::toggleAllExtendedAttributes(bool value)
 		base_tab = dynamic_cast<BaseTable *>(obj);
 
 		if(base_tab)
-			base_tab->setExtAttribsHidden(value);
+			base_tab->setCollapseMode(mode);
 	}
 
 	this->setModified(true);
 }
 
-void ModelWidget::toggleExtendedAttributes(void)
+void ModelWidget::setCollapseMode(void)
 {
-	bool hide = sender() == action_hide_ext_attribs;
+	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
 	BaseTable *base_tab = nullptr;
 	vector<BaseObject *> objects;
 
@@ -3514,9 +3520,9 @@ void ModelWidget::toggleExtendedAttributes(void)
 	{
 		base_tab = dynamic_cast<BaseTable *>(obj);
 
-		if(base_tab && base_tab->isExtAttribsHidden() != hide)
+		if(base_tab && base_tab->getCollapseMode() != mode)
 		{
-			base_tab->setExtAttribsHidden(hide);
+			base_tab->setCollapseMode(mode);
 			base_tab->setModified(true);
 		}
 	}
@@ -3811,7 +3817,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		}
 
 		if(tab_or_view ||  objects.empty() || objects.size() == 1)
-			popup_menu.addAction(action_extended_attribs);
+			popup_menu.addAction(action_collapse_mode);
 
 		if(objects.empty() || (objects.size() == 1 && objects[0]->getObjectType() == ObjectType::Database))
 			popup_menu.addAction(action_schemas_rects);

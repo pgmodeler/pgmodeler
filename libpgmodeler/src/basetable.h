@@ -45,13 +45,8 @@ class BaseTable: public BaseGraphicObject {
 	protected:
 		Tag *tag;
 
-		void setCollapseMode(CollapseMode coll_mode);
-
 	public:
 		BaseTable(void);
-
-		virtual void setExtAttribsHidden(bool value);
-		virtual bool isExtAttribsHidden(void);
 
 		virtual void setTag(Tag *tag);
 		virtual Tag *getTag(void);
@@ -102,10 +97,10 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Copy the attributes between two tables
 		void operator = (BaseTable &tab);
 
+		void setCollapseMode(CollapseMode coll_mode);
 		CollapseMode getCollapseMode(void);
 
 		friend class DatabaseModel;
-		friend class BaseTableView;
 };
 
 #endif

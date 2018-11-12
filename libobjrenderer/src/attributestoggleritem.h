@@ -38,13 +38,15 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		CollapseMode collapse_mode;
 
-		QGraphicsPolygonItem *arrows[4];
+		QGraphicsPolygonItem *arrows[5];
 
-		bool arrows_selected[4],
+		bool arrows_selected[5],
 
-		has_ext_attribs;
+		has_ext_attribs,
 
-		double arrows_width;
+		enable_pagination;
+
+		double arrows_width, arrows_height;
 
 		unsigned curr_attribs_page,
 
@@ -53,7 +55,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		static constexpr unsigned AttribsExpandArrow=0,
 		AttribsCollapseArrow=1,
 		NextAttribsArrow=2,
-		PrevAttribsArrow=3;
+		PrevAttribsArrow=3,
+		TogglePaginationBtn=4;
 
 		void configureButtons(const QRectF &rect);
 		void configureButtonsState(void);
@@ -76,6 +79,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 	signals:
 		void s_collapseModeChanged(CollapseMode);
 		void s_currentAttribsPageChanged(unsigned);
+		void s_paginationToggled(void);
 };
 
 #endif

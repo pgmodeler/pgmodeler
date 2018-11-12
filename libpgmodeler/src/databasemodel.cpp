@@ -4679,7 +4679,7 @@ Table *DatabaseModel::createTable(void)
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
-		table->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		table->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5885,7 +5885,7 @@ View *DatabaseModel::createView(void)
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
-		view->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		view->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -9501,7 +9501,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
-			save_extattribs=false, save_genericsqls=false, save_objs_aliases=false;
+			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false;
 	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
@@ -9515,7 +9515,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
 	save_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
 	save_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
-	save_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	save_collapsemode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
@@ -9634,9 +9634,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
 			attribs[Attributes::Tag]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
-			attribs[Attributes::PrependedSql]=object->getPrependedSQL();
-			attribs[Attributes::HideExtAttribs]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
+			attribs[Attributes::PrependedSql]=object->getPrependedSQL();			
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
+			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : QString());
 
 			if(TableObject::isTableObject(obj_type))
 			{
@@ -9775,7 +9775,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
 															!attribs[Attributes::PrependedSql].isEmpty())) ||
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
-				 (save_extattribs && !attribs[Attributes::HideExtAttribs].isEmpty()) ||
+				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
@@ -9841,7 +9841,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
-			load_extattribs=false, load_genericsqls=false, load_objs_aliases=false;
+			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -9852,7 +9852,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
 	load_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
 	load_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
-	load_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	load_collapse_mode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
@@ -10080,8 +10080,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(load_fadeout)
 									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
-								if(load_extattribs && base_tab)
-									base_tab->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+								if(load_collapse_mode && base_tab)
+									base_tab->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 							}
 
 							points.clear();

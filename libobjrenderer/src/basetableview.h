@@ -128,6 +128,8 @@ class BaseTableView: public BaseObjectView {
 		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		void configureCollapsedSections(CollapseMode coll_mode);
 
+		void toggleAttribsPaginaiton(void);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
@@ -138,8 +140,8 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
 
-		//! \brief Signal emitted when the user toggles the table's extended attributes area
-		void s_extAttributesToggled(void);
+		//! \brief Signal emitted when the user toggles the table's collapse mode
+		void s_collapseModeChanged(void);
 
 		friend class RelationshipView;
 };

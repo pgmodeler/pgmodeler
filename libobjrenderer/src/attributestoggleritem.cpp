@@ -28,7 +28,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 	sel_rect = new QGraphicsRectItem;
 
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 	{
 		arrows[arr_id] = new QGraphicsPolygonItem;
 		arrows_selected[arr_id] = false;
@@ -36,11 +36,13 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 	arrows[AttribsExpandArrow]->setToolTip(trUtf8("Expands the currently collapsed section of the object"));
 	arrows[AttribsCollapseArrow]->setToolTip(trUtf8("Collapses the currently expanded section of the object"));
-	arrows[NextAttribsArrow]->setToolTip(trUtf8("Display the next attributes page"));
-	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Display the previous attributes page"));
+	arrows[NextAttribsArrow]->setToolTip(trUtf8("Displays the next attributes page"));
+	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Displays the previous attributes page"));
+	arrows[TogglePaginationBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
 	has_ext_attribs = false;
+	enable_pagination = false;
 	collapse_mode = CollapseMode::NotCollapsed;
-	arrows_width = 0;
+	arrows_width = arrows_height = 0;
 	curr_attribs_page = 0;
 	max_attribs_pages = 5;
 	configureButtonsState();
@@ -48,7 +50,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 AttributesTogglerItem::~AttributesTogglerItem(void)
 {
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 		delete(arrows[arr_id]);
 
 	delete(sel_rect);
@@ -56,13 +58,13 @@ AttributesTogglerItem::~AttributesTogglerItem(void)
 
 void AttributesTogglerItem::setArrowsBrush(const QBrush &brush)
 {
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 		arrows[arr_id]->setBrush(brush);
 }
 
 void AttributesTogglerItem::setArrowsPen(const QPen &pen)
 {
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 		arrows[arr_id]->setPen(pen);
 }
 
@@ -73,8 +75,13 @@ void AttributesTogglerItem::setRect(const QRectF &rect)
 
 void AttributesTogglerItem::setCollapseMode(CollapseMode coll_mode)
 {
-	collapse_mode = coll_mode;
-	configureButtons(this->rect());
+	//Avoiding setting up Extended attribs collapsed when the toggler is configured to not having extended attribs
+	if(!has_ext_attribs && coll_mode == CollapseMode::ExtAttribsCollapsed)
+		collapse_mode = CollapseMode::NotCollapsed;
+	else
+		collapse_mode = coll_mode;
+
+	configureButtonsState();
 }
 
 void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
@@ -86,11 +93,11 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 	this->setToolTip(QString());
 	clearArrowSelection();
 
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 	{
 		rect.setSize(QSizeF(arrows[arr_id]->boundingRect().width() + h_spacing, this->boundingRect().height()));
 		rect.moveTo(arrows[arr_id]->pos().x() - (h_spacing/2), 0);
-		arrows_selected[arr_id] = rect.contains(pnt);
+		arrows_selected[arr_id] = rect.contains(pnt) && arrows[arr_id]->isVisible();
 
 		if(arrows_selected[arr_id])
 		{
@@ -112,8 +119,10 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 						collapse_mode = (arr_id == AttribsExpandArrow ? CollapseMode::NotCollapsed : CollapseMode::AllAttribsCollapsed);
 					else
 						collapse_mode = static_cast<CollapseMode>(coll_mode);
-
-					emit s_collapseModeChanged(collapse_mode);
+				}
+				else if(arr_id == TogglePaginationBtn)
+				{
+					enable_pagination = !enable_pagination;
 				}
 				else if(max_attribs_pages != 0)
 				{
@@ -124,20 +133,26 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 
 					if(curr_attribs_page >= max_attribs_pages)
 						curr_attribs_page = (arr_id == PrevAttribsArrow ? 0 : max_attribs_pages - 1);
-
-					#warning "Just a test! The signal emitted here is for page change"
-					emit s_collapseModeChanged(collapse_mode);
 				}
 
-				clearArrowSelection();
 				configureButtons(this->rect());
+				clearArrowSelection();
+				configureButtonsState();
+
+				if(arr_id == TogglePaginationBtn)
+					emit s_paginationToggled();
+				else if(arr_id == AttribsExpandArrow || arr_id == AttribsCollapseArrow)
+					emit s_collapseModeChanged(collapse_mode);
+				else
+					#warning "Just a test! The signal emitted here is for page change"
+					emit s_collapseModeChanged(collapse_mode);
 			}
 			else
 			{
 				//Configuring the selection rectangle if the arrows isn't clicked
 				QRectF rect;
 				QSizeF size = QSizeF(arrows[AttribsExpandArrow]->boundingRect().size().width() + (2 * BaseObjectView::HorizSpacing),
-														 arrows[PrevAttribsArrow]->boundingRect().size().height() + BaseObjectView::HorizSpacing);
+														 arrows_height + BaseObjectView::VertSpacing);
 				double px = 0, py = 0, arr_x = arrows[arr_id]->pos().x();
 
 				rect.setSize(size);
@@ -153,9 +168,6 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 			break;
 		}
 	}
-
-	configureButtonsState();
-	this->update();
 }
 
 void AttributesTogglerItem::configureButtonsState(void)
@@ -168,16 +180,20 @@ void AttributesTogglerItem::configureButtonsState(void)
 
 	arrows[PrevAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page > 0 ? 1 : 0.40);
 	arrows[NextAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page < max_attribs_pages - 1 ? 1 : 0.40);
+
+	arrows[PrevAttribsArrow]->setVisible(enable_pagination);
+	arrows[NextAttribsArrow]->setVisible(enable_pagination);
 }
 
 void AttributesTogglerItem::setHasExtAttributes(bool value)
 {
 	has_ext_attribs = value;
+	configureButtonsState();
 }
 
 void AttributesTogglerItem::clearArrowSelection(void)
 {
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 		arrows_selected[arr_id] = false;
 
 	this->update();
@@ -202,15 +218,19 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	pol.append(QPointF(0, 5 * factor));
 	pol.append(QPointF(8 * factor, 0));
 	pol.append(QPointF(8 * factor, 10 * factor));
-	height += pol.boundingRect().height();
-	arr_width = pol.boundingRect().width() + h_spacing;
-	arrows[PrevAttribsArrow]->setPolygon(pol);
+	arrows_height = pol.boundingRect().height();
+	height += arrows_height;
 
-	pol.remove(0);
-	pol.translate(-8 * factor, 0);
-	pol.append(QPointF(8 * factor, 5 * factor));
-	arrows[NextAttribsArrow]->setPolygon(pol);
-	arr_width += pol.boundingRect().width() + h_spacing;
+	if(enable_pagination)
+	{
+		arrows[PrevAttribsArrow]->setPolygon(pol);
+		arr_width = pol.boundingRect().width() + h_spacing;
+		pol.remove(0);
+		pol.translate(-8 * factor, 0);
+		pol.append(QPointF(8 * factor, 5 * factor));
+		arrows[NextAttribsArrow]->setPolygon(pol);
+		arr_width += pol.boundingRect().width() + h_spacing;
+	}
 
 	pol.clear();
 	pol.append(QPointF(5 * factor, 0));
@@ -226,6 +246,14 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	arrows[AttribsExpandArrow]->setPolygon(pol);
 	arr_width += pol.boundingRect().width() + h_spacing;
 
+	pol.clear();
+	pol.append(QPointF(4 * factor, 0));
+	pol.append(QPointF(8 * factor, 4 * factor));
+	pol.append(QPointF(4 * factor, 8 * factor));
+	pol.append(QPointF(0, 4 * factor));
+	arrows[TogglePaginationBtn]->setPolygon(pol);
+	arr_width += pol.boundingRect().width() + h_spacing;
+
 	arrows_width = arr_width;
 
 	new_rect.setHeight(height);
@@ -233,11 +261,17 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 	px = (new_rect.width() - arr_width + h_spacing)/2;
 
-	arrows[PrevAttribsArrow]->setPos(px, (new_rect.height() - arrows[PrevAttribsArrow]->boundingRect().height())/2);
-	px += arrows[PrevAttribsArrow]->boundingRect().width() + h_spacing;
+	arrows[TogglePaginationBtn]->setPos(px, (new_rect.height() - arrows[TogglePaginationBtn]->boundingRect().height())/2);
+	px += arrows[TogglePaginationBtn]->boundingRect().width() + h_spacing;
 
-	arrows[NextAttribsArrow]->setPos(px, (new_rect.height() - arrows[NextAttribsArrow]->boundingRect().height())/2);
-	px += arrows[NextAttribsArrow]->boundingRect().width() + h_spacing;
+	if(enable_pagination)
+	{
+		arrows[PrevAttribsArrow]->setPos(px, (new_rect.height() - arrows[PrevAttribsArrow]->boundingRect().height())/2);
+		px += arrows[PrevAttribsArrow]->boundingRect().width() + h_spacing;
+
+		arrows[NextAttribsArrow]->setPos(px, (new_rect.height() - arrows[NextAttribsArrow]->boundingRect().height())/2);
+		px += arrows[NextAttribsArrow]->boundingRect().width() + h_spacing;
+	}
 
 	arrows[AttribsCollapseArrow]->setPos(px, (new_rect.height() - arrows[AttribsCollapseArrow]->boundingRect().height())/2);
 	px += arrows[AttribsCollapseArrow]->boundingRect().width() + h_spacing * 0.80;
@@ -249,8 +283,11 @@ void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 {
 	RoundedRectItem::paint(painter, option, widget);
 
-	for(unsigned arr_id = 0; arr_id < 4; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
 	{
+		if(!arrows[arr_id]->isVisible())
+			continue;
+
 		painter->save();
 		painter->translate(arrows[arr_id]->pos());
 		painter->setOpacity(arrows[arr_id]->opacity());

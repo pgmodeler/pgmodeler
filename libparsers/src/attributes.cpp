@@ -77,6 +77,7 @@ namespace Attributes {
 	CodeFont=QString("code-font"),
 	CodeTabWidth=QString("code-tab-width"),
 	ColIndexes=QString("col-indexes"),
+	CollapseMode=QString("collapse-mode"),
 	Collatable=QString("collatable"),
 	Collation=QString("collation"),
 	Collations=QString("collations"),

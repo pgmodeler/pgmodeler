@@ -187,7 +187,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		MetaObjsCustomSql=16,	//! \brief Handle object's custom sql when save/load metadata file
 		MetaObjsCustomColors=32,	//! \brief Handle object's custom colors when save/load metadata file
 		MetaObjsFadeOut=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
-		MetaObjsExtAttribs=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
+		MetaObjsCollapseMode=128,	//! \brief Handle tables and views collapse mode when save/load metadata file
 		MetaTextboxObjs=256,	//! \brief Handle textboxes object when save/load metadata file
 		MetaTagObjs=512,	//! \brief Handle tags object when save/load metadata file
 		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file

@@ -23,22 +23,24 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::HideExtAttribs]=QString();
+	//attributes[Attributes::HideExtAttribs]=QString();
 	attributes[Attributes::MaxObjCount]=QString();
-	hide_ext_attribs=false;
+	attributes[Attributes::CollapseMode]=QString();
+
+	//hide_ext_attribs=false;
 	collapse_mode = CollapseMode::NotCollapsed;
 }
 
-void BaseTable::setExtAttribsHidden(bool value)
+/* void BaseTable::setExtAttribsHidden(bool value)
 {
 	setCodeInvalidated(hide_ext_attribs != value);
 	hide_ext_attribs = value;
-}
+} */
 
-bool BaseTable::isExtAttribsHidden(void)
+/* bool BaseTable::isExtAttribsHidden(void)
 {
 	return(hide_ext_attribs);
-}
+} */
 
 void BaseTable::setTag(Tag *tag)
 {
@@ -76,5 +78,6 @@ CollapseMode BaseTable::getCollapseMode(void)
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
 {
+	setCodeInvalidated(collapse_mode != coll_mode);
 	collapse_mode = coll_mode;
 }

@@ -92,6 +92,7 @@ namespace Attributes {
 	CodeFont,
 	CodeTabWidth,
 	ColIndexes,
+	CollapseMode,
 	Collatable,
 	Collation,
 	Collations,

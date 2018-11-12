@@ -1059,7 +1059,7 @@ void MainWindow::setCurrentModel(void)
 		more_actions_menu.clear();
 		more_actions_menu.addAction(current_model->action_select_all);
 		more_actions_menu.addAction(current_model->action_fade);
-		more_actions_menu.addAction(current_model->action_extended_attribs);
+		more_actions_menu.addAction(current_model->action_collapse_mode);
 		more_actions_menu.addAction(current_model->action_edit_creation_order);
 		general_tb->addAction(action_other_actions);
 		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_other_actions));
@@ -2047,7 +2047,10 @@ void MainWindow::toggleCompactView(void)
 	for(int idx = 0; idx < models_tbw->count(); idx++)
 	{
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
-		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
+
+		if(action_compact_view->isChecked())
+			model_wgt->setAllCollapseMode(CollapseMode::ExtAttribsCollapsed);
+
 		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
 	}
 

@@ -1,7 +1,7 @@
 # XML definition for tables
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<table name=] "{name}" 
+[<table name=] "{name}"
   
   %if {alias} %then $sp alias="{alias}" %end
   %if {oids} %then [ oids="true"] %end
@@ -9,7 +9,7 @@
   %if {unlogged} %then [ unlogged="true"] %end
   %if {protected} %then [ protected=] "true"  %end
   %if {sql-disabled} %then [ sql-disabled=] "true" %end
-  %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
+  %if {collapse-mode} %then [ collapse-mode=] "{collapse-mode}" %end
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end

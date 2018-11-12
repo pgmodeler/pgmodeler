@@ -405,9 +405,9 @@ void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
 	emit s_objectModified(object);
 }
 
-void ObjectsScene::emitExtAttributesToggled(void)
+void ObjectsScene::emitCollapseModeChanged(void)
 {
-	emit s_extAttributesToggled();
+	emit s_collapseModeChanged();
 }
 
 void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
@@ -439,8 +439,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		{
 			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
 							this, SLOT(emitChildObjectSelection(TableObject*)));
-			connect(tab, SIGNAL(s_extAttributesToggled()),
-							this, SLOT(emitExtAttributesToggled()));
+			connect(tab, SIGNAL(s_collapseModeChanged()), this, SLOT(emitCollapseModeChanged()));
 		}
 
 		if(obj)

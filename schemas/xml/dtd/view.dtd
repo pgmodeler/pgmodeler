@@ -10,7 +10,7 @@
 <!ATTLIST view recursive (false|true) "false">
 <!ATTLIST view with-no-data (false|true) "true">
 <!ATTLIST view sql-disabled (false|true) "false">
-<!ATTLIST view hide-ext-attribs (false|true) "false">
+<!ATTLIST view collapse-mode CDATA #IMPLIED>
 <!ATTLIST view faded-out (false|true) "false">
 <!ATTLIST view max-obj-count CDATA #IMPLIED>
 

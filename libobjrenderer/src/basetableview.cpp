@@ -71,6 +71,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	configurePlaceholder();
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
+	connect(attribs_toggler, SIGNAL(s_paginationToggled()), this, SLOT(toggleAttribsPaginaiton()));
 }
 
 BaseTableView::~BaseTableView(void)
@@ -144,7 +145,6 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 	else
 	{
-		//QPointF pnt = this->ext_attribs_toggler->mapFromScene(event->scenePos());
 		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
 
 		//If the user clicks the extended attributes toggler
@@ -311,6 +311,7 @@ void BaseTableView::configureTag(void)
 
 void BaseTableView::__configureObject(float width)
 {
+	BaseTable *tab = dynamic_cast<BaseTable *>(getSourceObject());
 	double height = 0,
 			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f,
 			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
@@ -325,6 +326,7 @@ void BaseTableView::__configureObject(float width)
 	grad.setColorAt(1, body->pen().color().lighter());
 	pen.setStyle(Qt::SolidLine);
 
+	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 	attribs_toggler->setArrowsBrush(grad);
 	attribs_toggler->setArrowsPen(body->pen());
 	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
@@ -357,28 +359,15 @@ void BaseTableView::__configureObject(float width)
 
 double BaseTableView::calculateWidth(void)
 {
-	double spacing = (2 * HorizSpacing);
-
-	/* Calculating the maximum width between the title, columns and extended attributes.
+	/* Calculating the maximum width between the title, columns, extended attributes and the attribs toggler.
 	 * This width is used to set the uniform width of table */
+	vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
+														ext_attribs->isVisible() ? ext_attribs->boundingRect().width() : 0,
+														attribs_toggler->isVisible() ? attribs_toggler->getArrowsWidth() : 0,
+														title->boundingRect().width() };
 
-	if(columns->isVisible() &&
-			(columns->boundingRect().width() > title->boundingRect().width() &&
-			 (hide_ext_attribs ||
-				dynamic_cast<BaseTable *>(this->getSourceObject())->getCollapseMode() == CollapseMode::ExtAttribsCollapsed ||
-				(columns->boundingRect().width() >= ext_attribs->boundingRect().width()))))
-		return(columns->boundingRect().width() + spacing);
-
-	if(ext_attribs->isVisible() &&
-			(ext_attribs->boundingRect().width() > title->boundingRect().width() &&
-			 ext_attribs->boundingRect().width() > columns->boundingRect().width()))
-		return(ext_attribs->boundingRect().width() + spacing);
-
-	if(attribs_toggler->isVisible() && !columns->isVisible() &&
-		 attribs_toggler->getArrowsWidth() > title->boundingRect().width())
-		return(attribs_toggler->getArrowsWidth() + spacing);
-
-	return(title->boundingRect().width() + spacing);
+	std::sort(widths.begin(), widths.end());
+	return (widths.back() + (2 * HorizSpacing));
 }
 
 int BaseTableView::getConnectRelsCount(void)
@@ -426,5 +415,27 @@ void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 	//Updating the schema box that holds the object (if visible)
 	schema->setModified(true);
 
-	emit s_extAttributesToggled();
+	emit s_collapseModeChanged();
+}
+
+void BaseTableView::toggleAttribsPaginaiton(void)
+{
+	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
+
+	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
+	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+	#warning "Mark the pagination toggled on base table here!"
+	//dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
+
+	//Updating the object geometry to show/hide the extended attributes
+	this->configureObject();
+
+	obj_selection->setVisible(false);
+
+	// Using a single shot time to restore the selectable flag
+	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+	//Updating the schema box that holds the object (if visible)
+	schema->setModified(true);
 }

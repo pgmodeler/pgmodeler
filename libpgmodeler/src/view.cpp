@@ -579,7 +579,8 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
+	//attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
+	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
 
 	setSQLObjectAttribute();
 

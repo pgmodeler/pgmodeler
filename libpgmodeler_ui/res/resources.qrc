@@ -246,6 +246,7 @@
         <file>icones/newtab.png</file>
         <file>icones/relationshippart.png</file>
         <file>icones/resizecols.png</file>
+        <file>icones/collapse.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

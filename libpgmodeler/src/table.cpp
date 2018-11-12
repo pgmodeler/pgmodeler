@@ -1601,10 +1601,10 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]=QString();
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
+	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);

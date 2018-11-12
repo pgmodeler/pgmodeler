@@ -201,22 +201,28 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		if(!groups[idx]->isVisible())
-			continue;
-
-		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
-		pen=this->getBorderStyle(attribs[idx]);
-		pen.setStyle(Qt::DashLine);
-
+		/* Configuring the brush and pen of the bodies even if they aren't visible
+		 * the attributes toggler at the bottom of the view uses the color of the attributes body
+		 * this will avoid the creation of a transparent toggler */
 		if(!tag)
+		{
 			bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
+			pen=this->getBorderStyle(attribs[idx]);
+		}
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
 			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
 		}
 
+		pen.setStyle(Qt::DashLine);
 		bodies[idx]->setPen(pen);
+
+		// We avoid the construction of the rect related to the current body item if the related group isn't visible
+		if(!groups[idx]->isVisible())
+			continue;
+
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
 
 		if(idx==0)
 			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);

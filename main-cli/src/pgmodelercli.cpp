@@ -1106,6 +1106,8 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
+
+	#warning "TODO: Add a fix to remove hide-ext-attribs on tables/views"
 }
 
 void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
