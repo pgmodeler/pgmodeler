@@ -326,6 +326,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 									Attributes::FillColor,
 									Attributes::FadedOut,
 									Attributes::CollapseMode,
+									Attributes::CurrentPage,
 									Attributes::Pagination},
 								{ Attributes::Role,
 									Attributes::Tablespace,

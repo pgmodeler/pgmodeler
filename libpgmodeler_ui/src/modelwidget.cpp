@@ -154,9 +154,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	viewport->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+	viewport->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	viewport->setCacheMode(QGraphicsView::CacheBackground);
-	//viewport->setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
 	viewport->centerOn(0,0);
 	viewport->setMouseTracking(true);
 
@@ -298,6 +297,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate=new QAction(QIcon(PgModelerUiNs::getIconPath("duplicate")), trUtf8("Duplicate"), this);
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 	action_duplicate->setMenuRole(QAction::NoRole);
+
+	action_pagination=new QAction(QIcon(PgModelerUiNs::getIconPath("pagination")), trUtf8("Pagination"), this);
+	action_pagination->setMenu(&pagination_menu);
+
+	action = pagination_menu.addAction(trUtf8("Enable"));
+	action->setData(true);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
+
+	action = pagination_menu.addAction(trUtf8("Disable"));
+	action->setData(false);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
 
 	action_collapse_mode=new QAction(QIcon(PgModelerUiNs::getIconPath("collapse")), trUtf8("Collapse"), this);
 	action_no_collapse_attribs=new QAction(trUtf8("Not collapsed"), this);
@@ -3534,6 +3544,35 @@ void ModelWidget::setCollapseMode(void)
 	this->setModified(true);
 }
 
+void ModelWidget::togglePagination(void)
+{
+	bool enable = dynamic_cast<QAction *>(sender())->data().toBool();
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
+
+	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
+	{
+		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
+	}
+	else
+		objects = selected_objects;
+
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab && base_tab->isPaginationEnabled() != enable)
+		{
+			base_tab->setPaginationEnabled(enable);
+			base_tab->setModified(true);
+		}
+	}
+
+	db_model->setObjectsModified({ ObjectType::Schema });
+	this->setModified(true);
+}
+
 void ModelWidget::toggleSchemasRectangles(void)
 {
 	bool visible = sender() == action_show_schemas_rects;
@@ -3820,7 +3859,10 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		}
 
 		if(tab_or_view ||  objects.empty() || objects.size() == 1)
+		{
 			popup_menu.addAction(action_collapse_mode);
+			popup_menu.addAction(action_pagination);
+		}
 
 		if(objects.empty() || (objects.size() == 1 && objects[0]->getObjectType() == ObjectType::Database))
 			popup_menu.addAction(action_schemas_rects);

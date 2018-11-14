@@ -114,6 +114,8 @@ class ModelWidget: public QWidget {
 
 		toggle_attrs_menu,
 
+		pagination_menu,
+
 		select_all_menu,
 
 		jump_to_tab_menu,
@@ -236,6 +238,7 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
+		*action_pagination,
 		*action_collapse_mode,
 		*action_collapse_ext_attribs,
 		*action_collpase_all_attribs,
@@ -473,6 +476,8 @@ class ModelWidget: public QWidget {
 		void fadeObjectsOut(void);
 
 		void setCollapseMode(void);
+
+		void togglePagination(void);
 
 		void toggleSchemasRectangles(void);
 

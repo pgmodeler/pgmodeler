@@ -70,6 +70,9 @@ void BaseTable::setPaginationEnabled(bool value)
 {
 	setCodeInvalidated(pagination_enabled != value);
 	pagination_enabled = value;
+
+	if(!pagination_enabled)
+		curr_page = 0;
 }
 
 bool BaseTable::isPaginationEnabled(void)

@@ -339,11 +339,10 @@ void BaseTableView::__configureObject(float width)
 	grad.setColorAt(1, body->pen().color().lighter());
 	pen.setStyle(Qt::SolidLine);
 
-	attribs_toggler->setCollapseMode(tab->getCollapseMode());
-	attribs_toggler->setPaginationEnabled(tab->isPaginationEnabled());
 	attribs_toggler->setButtonsBrush(grad);
 	attribs_toggler->setButtonsPen(body->pen());
 	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
+	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 
 	//Set the protected icon position to the top-right on the title
 	protected_icon->setPos(title->pos().x() + (2 * HorizSpacing), title->boundingRect().height() * 0.25);

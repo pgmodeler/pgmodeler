@@ -67,6 +67,8 @@ void TableView::configureObject(void)
 	if(collapse_mode != CollapseMode::AllAttribsCollapsed)
 		total_objs_cnt = columns.size() + (collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0);
 
+	attribs_toggler->setPaginationEnabled(table->isPaginationEnabled());
+
 	/* If the pagination is enabled for the table and the amount of objects is greater than the
 	 * number of objects per page we configure the pagination parameter */
 	if(table->isPaginationEnabled() && total_objs_cnt > attribs_per_page)
