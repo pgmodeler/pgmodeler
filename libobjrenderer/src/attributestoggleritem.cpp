@@ -38,7 +38,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	arrows[AttribsCollapseArrow]->setToolTip(trUtf8("Collapses the currently expanded section of the object"));
 	arrows[NextAttribsArrow]->setToolTip(trUtf8("Displays the next attributes page"));
 	arrows[PrevAttribsArrow]->setToolTip(trUtf8("Displays the previous attributes page"));
-	arrows[TogglePaginationBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
+	arrows[PaginationTogglerBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
 	has_ext_attribs = false;
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
@@ -119,7 +119,7 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 					else
 						collapse_mode = static_cast<CollapseMode>(coll_mode);
 				}
-				else if(arr_id == TogglePaginationBtn)
+				else if(arr_id == PaginationTogglerBtn)
 				{
 					pagination_enabled = !pagination_enabled;
 				}
@@ -138,7 +138,7 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 				clearArrowSelection();
 				configureButtonsState();
 
-				if(arr_id == TogglePaginationBtn)
+				if(arr_id == PaginationTogglerBtn)
 					emit s_paginationToggled(pagination_enabled);
 				else if(arr_id == AttribsExpandArrow || arr_id == AttribsCollapseArrow)
 					emit s_collapseModeChanged(collapse_mode);
@@ -189,8 +189,9 @@ void AttributesTogglerItem::setHasExtAttributes(bool value)
 	configureButtonsState();
 }
 
-void AttributesTogglerItem::setPaginationEnabled(bool value)
+void AttributesTogglerItem::setPaginationEnabled(bool value, bool hide_pag_toggler)
 {
+	arrows[PaginationTogglerBtn]->setVisible(!hide_pag_toggler);
 	pagination_enabled = value;
 	configureButtons(this->boundingRect());
 	configureButtonsState();
@@ -265,13 +266,16 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 	arrows[AttribsExpandArrow]->setPolygon(pol);
 	arr_width += pol.boundingRect().width() + h_spacing;
 
-	pol.clear();
-	pol.append(QPointF(4 * factor, 0));
-	pol.append(QPointF(8 * factor, 4 * factor));
-	pol.append(QPointF(4 * factor, 8 * factor));
-	pol.append(QPointF(0, 4 * factor));
-	arrows[TogglePaginationBtn]->setPolygon(pol);
-	arr_width += pol.boundingRect().width() + h_spacing;
+	if(arrows[PaginationTogglerBtn]->isVisible())
+	{
+		pol.clear();
+		pol.append(QPointF(4 * factor, 0));
+		pol.append(QPointF(8 * factor, 4 * factor));
+		pol.append(QPointF(4 * factor, 8 * factor));
+		pol.append(QPointF(0, 4 * factor));
+		arrows[PaginationTogglerBtn]->setPolygon(pol);
+		arr_width += pol.boundingRect().width() + h_spacing;
+	}
 
 	arrows_width = arr_width;
 
@@ -280,16 +284,19 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 	px = (new_rect.width() - arr_width + h_spacing)/2;
 
-	arrows[TogglePaginationBtn]->setPos(px, (new_rect.height() - arrows[TogglePaginationBtn]->boundingRect().height())/2);
-	px += arrows[TogglePaginationBtn]->boundingRect().width() + h_spacing;
-
-	if(pagination_enabled)
+	if(arrows[PaginationTogglerBtn]->isVisible())
 	{
-		arrows[PrevAttribsArrow]->setPos(px, (new_rect.height() - arrows[PrevAttribsArrow]->boundingRect().height())/2);
-		px += arrows[PrevAttribsArrow]->boundingRect().width() + h_spacing;
+		arrows[PaginationTogglerBtn]->setPos(px, (new_rect.height() - arrows[PaginationTogglerBtn]->boundingRect().height())/2);
+		px += arrows[PaginationTogglerBtn]->boundingRect().width() + h_spacing;
 
-		arrows[NextAttribsArrow]->setPos(px, (new_rect.height() - arrows[NextAttribsArrow]->boundingRect().height())/2);
-		px += arrows[NextAttribsArrow]->boundingRect().width() + h_spacing;
+		if(pagination_enabled)
+		{
+			arrows[PrevAttribsArrow]->setPos(px, (new_rect.height() - arrows[PrevAttribsArrow]->boundingRect().height())/2);
+			px += arrows[PrevAttribsArrow]->boundingRect().width() + h_spacing;
+
+			arrows[NextAttribsArrow]->setPos(px, (new_rect.height() - arrows[NextAttribsArrow]->boundingRect().height())/2);
+			px += arrows[NextAttribsArrow]->boundingRect().width() + h_spacing;
+		}
 	}
 
 	arrows[AttribsCollapseArrow]->setPos(px, (new_rect.height() - arrows[AttribsCollapseArrow]->boundingRect().height())/2);

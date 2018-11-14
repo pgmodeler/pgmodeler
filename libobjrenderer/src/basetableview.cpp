@@ -398,71 +398,45 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setPos(3.5, 4.5);
 }
 
-void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
+void BaseTableView::startGeometryUpdate(void)
 {
-	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
-
 	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+}
 
-	dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
-
-	//Updating the object geometry to show/hide the extended attributes
+void BaseTableView::finishGeometryUpdate(void)
+{
+	//Updating the object's geometry to reflect the geometry change
 	this->configureObject();
-
 	obj_selection->setVisible(false);
 
 	// Using a single shot time to restore the selectable flag
 	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
 
 	//Updating the schema box that holds the object (if visible)
-	schema->setModified(true);
+	 dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
+}
 
+void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
+{
+	startGeometryUpdate();
+	dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
+	finishGeometryUpdate();
 	emit s_collapseModeChanged();
 }
 
 void BaseTableView::toggleAttribsPaginaiton(bool enabled)
 {
-	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
-
-	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
-	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
-
+	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setPaginationEnabled(enabled);
-
-	//Updating the object geometry to show/hide the extended attributes
-	this->configureObject();
-
-	obj_selection->setVisible(false);
-
-	// Using a single shot time to restore the selectable flag
-	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
-
-	//Updating the schema box that holds the object (if visible)
-	schema->setModified(true);
-
+	finishGeometryUpdate();
 	emit s_paginationToggled();
 }
 
 void BaseTableView::configureCurrentPage(unsigned page)
 {
-	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
-
-	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
-	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
-
+	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(page);
-
-	//Updating the object geometry to show/hide the extended attributes
-	this->configureObject();
-
-	obj_selection->setVisible(false);
-
-	// Using a single shot time to restore the selectable flag
-	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
-
-	//Updating the schema box that holds the object (if visible)
-	schema->setModified(true);
-
-	//emit s_paginationToggled();
+	finishGeometryUpdate();
+	emit s_currentPageChanged();
 }

@@ -246,6 +246,7 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	BaseTableView::__configureObject(width);
+	attribs_toggler->setPaginationEnabled(false, true);
 
 	if(!view->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(view->getAlias());

@@ -89,6 +89,9 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
 		double calculateWidth(void);
 
+		void startGeometryUpdate(void);
+		void finishGeometryUpdate(void);
+
 	public:
 		static constexpr unsigned LeftConnPoint=0,
 		RightConnPoint=1;
@@ -149,6 +152,9 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Signal emitted when the user toggles the table's attributes pagination
 		void s_paginationToggled(void);
+
+		//! \brief Signal emitted when the user changes the current table's attributes page
+		void s_currentPageChanged(void);
 
 		friend class RelationshipView;
 };
