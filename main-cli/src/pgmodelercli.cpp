@@ -1104,10 +1104,15 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 		obj_xml.insert(end_idx + EndTagExpr.arg(Attributes::Expression).length() + 1, QString("\n\t</constraint>\n"));
 	}
 
+	//Remove the deprecated attribute hide-ext-attribs from <table> and <views>
+	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Table))) ||
+		 obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::View))))
+	{
+		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), QString());
+	}
+
 	//Fix the references to op. classes and families if needed
 	fixOpClassesFamiliesReferences(obj_xml);
-
-	#warning "TODO: Add a fix to remove hide-ext-attribs on tables/views"
 }
 
 void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
