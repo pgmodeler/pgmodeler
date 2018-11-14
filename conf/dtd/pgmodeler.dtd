@@ -39,6 +39,7 @@
 <!ATTLIST configuration show-page-delimiters (false|true) "true">
 <!ATTLIST configuration align-objs-to-grid (false|true) "true">
 <!ATTLIST configuration min-object-opacity CDATA #IMPLIED>
+<!ATTLIST configuration attribs-per-page CDATA #IMPLIED>
 <!ATTLIST configuration history-max-length CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-app CDATA #IMPLIED>
 <!ATTLIST configuration source-editor-args CDATA #IMPLIED>

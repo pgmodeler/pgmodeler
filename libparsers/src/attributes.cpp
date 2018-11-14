@@ -47,6 +47,7 @@ namespace Attributes {
 	AscOrder=QString("asc-order"),
 	Assignment=QString("assignment"),
 	Attribute=QString("attribute"),
+	AttribsPerPage=QString("attribs-per-page"),
 	AutoBrowseDb=QString("auto-browse-db"),
 	AutoSaveInterval=QString("autosave-interval"),
 	BackgroundColor=QString("background-color"),

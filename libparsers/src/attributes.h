@@ -62,6 +62,7 @@ namespace Attributes {
 	AscOrder,
 	Assignment,
 	Attribute,
+	AttribsPerPage,
 	AutoBrowseDb,
 	AutoSaveInterval,
 	BackgroundColor,
