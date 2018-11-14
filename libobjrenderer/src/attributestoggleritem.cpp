@@ -43,8 +43,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	arrows_width = arrows_height = 0;
-	curr_attribs_page = 0;
-	max_attribs_pages = 5;
+	current_page = max_pages = 0;
 	configureButtonsState();
 }
 
@@ -124,15 +123,15 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 				{
 					pagination_enabled = !pagination_enabled;
 				}
-				else if(max_attribs_pages != 0)
+				else if(max_pages != 0)
 				{
 					if(arr_id == PrevAttribsArrow)
-						curr_attribs_page--;
+						current_page--;
 					else if(arr_id == NextAttribsArrow)
-						curr_attribs_page++;
+						current_page++;
 
-					if(curr_attribs_page >= max_attribs_pages)
-						curr_attribs_page = (arr_id == PrevAttribsArrow ? 0 : max_attribs_pages - 1);
+					if(current_page >= max_pages)
+						current_page = (arr_id == PrevAttribsArrow ? 0 : max_pages - 1);
 				}
 
 				configureButtons(this->rect());
@@ -144,8 +143,7 @@ void AttributesTogglerItem::setArrowSelected(const QPointF &pnt, bool clicked)
 				else if(arr_id == AttribsExpandArrow || arr_id == AttribsCollapseArrow)
 					emit s_collapseModeChanged(collapse_mode);
 				else
-					#warning "Just a test! The signal emitted here is for page change"
-					emit s_collapseModeChanged(collapse_mode);
+					emit s_currentPageChanged(current_page);
 			}
 			else
 			{
@@ -178,8 +176,8 @@ void AttributesTogglerItem::configureButtonsState(void)
 	arrows[AttribsCollapseArrow]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
 																					 collapse_mode == CollapseMode::NotCollapsed ? 1 : 0.40);
 
-	arrows[PrevAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page > 0 ? 1 : 0.40);
-	arrows[NextAttribsArrow]->setOpacity(max_attribs_pages != 0 && curr_attribs_page < max_attribs_pages - 1 ? 1 : 0.40);
+	arrows[PrevAttribsArrow]->setOpacity(max_pages != 0 && current_page > 0 ? 1 : 0.40);
+	arrows[NextAttribsArrow]->setOpacity(max_pages != 0 && current_page < max_pages - 1 ? 1 : 0.40);
 
 	arrows[PrevAttribsArrow]->setVisible(pagination_enabled);
 	arrows[NextAttribsArrow]->setVisible(pagination_enabled);
@@ -196,6 +194,20 @@ void AttributesTogglerItem::setPaginationEnabled(bool value)
 	pagination_enabled = value;
 	configureButtons(this->boundingRect());
 	configureButtonsState();
+}
+
+void AttributesTogglerItem::setPaginationValues(unsigned curr_page, unsigned max_page)
+{
+	if(!pagination_enabled)
+		return;
+
+	if(curr_page > max_page)
+		current_page = max_pages = max_page;
+	else
+	{
+		current_page = curr_page;
+		max_pages = max_page;
+	}
 }
 
 void AttributesTogglerItem::clearArrowSelection(void)

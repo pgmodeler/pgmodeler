@@ -28,6 +28,7 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::Pagination]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
+	curr_page = 0;
 }
 
 void BaseTable::setTag(Tag *tag)
@@ -73,6 +74,16 @@ void BaseTable::setPaginationEnabled(bool value)
 bool BaseTable::isPaginationEnabled(void)
 {
 	return(pagination_enabled);
+}
+
+void BaseTable::setCurrentPage(unsigned page)
+{
+	curr_page = page;
+}
+
+unsigned BaseTable::getCurrentPage(void)
+{
+	return(curr_page);
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)

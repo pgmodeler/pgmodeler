@@ -48,9 +48,9 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		double arrows_width, arrows_height;
 
-		unsigned curr_attribs_page,
+		unsigned current_page,
 
-		max_attribs_pages;
+		max_pages;
 
 		static constexpr unsigned AttribsExpandArrow=0,
 		AttribsCollapseArrow=1,
@@ -72,6 +72,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void setArrowSelected(const QPointF &pnt, bool clicked = false);
 		void setHasExtAttributes(bool value);
 		void setPaginationEnabled(bool value);
+		void setPaginationValues(unsigned curr_page, unsigned max_page);
 		void clearArrowSelection(void);
 		double getArrowsWidth(void);
 
@@ -79,7 +80,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	signals:
 		void s_collapseModeChanged(CollapseMode);
-		void s_currentAttribsPageChanged(unsigned);
+		void s_currentPageChanged(unsigned);
 		void s_paginationToggled(bool);
 };
 

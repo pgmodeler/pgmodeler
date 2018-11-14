@@ -525,6 +525,7 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
+	model_wgt->getDatabaseModel()->setObjectsModified();
 	model_wgt->rearrangeSchemasInGrid();
 
 	model_wgt->getDatabaseModel()->setInvalidated(false);

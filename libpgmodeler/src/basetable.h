@@ -42,6 +42,8 @@ class BaseTable: public BaseGraphicObject {
 
 		CollapseMode collapse_mode;
 
+		unsigned curr_page;
+
 	protected:
 		Tag *tag;
 
@@ -102,6 +104,9 @@ class BaseTable: public BaseGraphicObject {
 
 		void setPaginationEnabled(bool value);
 		bool isPaginationEnabled(void);
+
+		void setCurrentPage(unsigned page);
+		unsigned getCurrentPage(void);
 
 		friend class DatabaseModel;
 };

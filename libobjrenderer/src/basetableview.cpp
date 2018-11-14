@@ -18,8 +18,9 @@
 
 #include "basetableview.h"
 
-bool BaseTableView::hide_ext_attribs=false;
-bool BaseTableView::hide_tags=false;
+bool BaseTableView::hide_ext_attribs = false;
+bool BaseTableView::hide_tags = false;
+unsigned BaseTableView::attribs_per_page = 20;
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
@@ -72,6 +73,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
 	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(toggleAttribsPaginaiton(bool)));
+	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned)), this, SLOT(configureCurrentPage(uint)));
 }
 
 BaseTableView::~BaseTableView(void)
@@ -440,4 +442,27 @@ void BaseTableView::toggleAttribsPaginaiton(bool enabled)
 	schema->setModified(true);
 
 	emit s_paginationToggled();
+}
+
+void BaseTableView::configureCurrentPage(unsigned page)
+{
+	Schema *schema = dynamic_cast<Schema *>(this->getSourceObject()->getSchema());
+
+	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
+	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+
+	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(page);
+
+	//Updating the object geometry to show/hide the extended attributes
+	this->configureObject();
+
+	obj_selection->setVisible(false);
+
+	// Using a single shot time to restore the selectable flag
+	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
+
+	//Updating the schema box that holds the object (if visible)
+	schema->setModified(true);
+
+	//emit s_paginationToggled();
 }

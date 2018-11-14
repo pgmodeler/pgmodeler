@@ -29,6 +29,8 @@ void TableView::configureObject(void)
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
+	unsigned col_cnt = 0, ext_attr_cnt = 0, total_objs_cnt = 0,
+			start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -36,15 +38,70 @@ void TableView::configureObject(void)
 	TableObject *tab_obj=nullptr;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
-	vector<TableObject *> tab_objs, ext_tab_objs;
+	vector<TableObject *> tab_objs, columns, ext_tab_objs;
 	QString atribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
+	CollapseMode collapse_mode = table->getCollapseMode();
+	ObjectType ext_types[5] = { ObjectType::Constraint,
+															ObjectType::Trigger, ObjectType::Index,
+															ObjectType::Rule, ObjectType::Policy };
 
 	//Configures the table title
 	title->configureObject(table);
 
-	for(auto &obj : table->getObjects({ ObjectType::Column }))
-		ext_tab_objs.push_back(dynamic_cast<TableObject *>(obj));
+	columns.assign(table->getObjectList(ObjectType::Column)->begin(),
+								 table->getObjectList(ObjectType::Column)->end());
+
+	for(unsigned idx = 0; idx < 5; idx++)
+	{
+		ext_tab_objs.insert(ext_tab_objs.end(),
+												table->getObjectList(ext_types[idx])->begin(),
+												table->getObjectList(ext_types[idx])->end());
+	}
+
+	if(collapse_mode != CollapseMode::AllAttribsCollapsed)
+		total_objs_cnt = columns.size() + (collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0);
+
+	if(table->isPaginationEnabled() && total_objs_cnt > attribs_per_page)
+	{
+		double col_factor = columns.size() / static_cast<double>(total_objs_cnt),
+				ext_factor = 1 - col_factor;
+		unsigned max_pages = 0, res = 0;
+
+		col_cnt = floor(col_factor * attribs_per_page);
+		ext_attr_cnt = hide_ext_attribs ? 0 : floor(ext_factor * attribs_per_page);
+		res = attribs_per_page - (col_cnt + ext_attr_cnt);
+		if(res > 0) col_cnt += res;
+
+		max_pages = ceil(total_objs_cnt / static_cast<double>(attribs_per_page));
+
+		start_col = table->getCurrentPage() * col_cnt;
+		end_col = start_col + col_cnt;
+
+		start_ext = table->getCurrentPage() * ext_attr_cnt;
+		end_ext = start_ext + ext_attr_cnt;
+
+		attribs_toggler->setPaginationValues(table->getCurrentPage(), max_pages);
+
+		if(start_col > columns.size())
+			start_col = columns.size();
+
+		if(start_ext > ext_tab_objs.size())
+			start_ext = ext_tab_objs.size();
+
+		if(end_col > columns.size() || table->getCurrentPage() == max_pages - 1)
+			end_col = columns.size();
+
+		if(end_ext > ext_tab_objs.size() || table->getCurrentPage() == max_pages - 1)
+			end_ext = ext_tab_objs.size();
+	}
+	else
+	{
+		total_objs_cnt = 0;
+		col_cnt = columns.size();
+		ext_attr_cnt = ext_tab_objs.size();
+		attribs_toggler->setPaginationValues(0, 0);
+	}
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
 
@@ -58,14 +115,23 @@ void TableView::configureObject(void)
 
 		if(obj_idx==0)
 		{
-			if(table->getCollapseMode() != CollapseMode::AllAttribsCollapsed)
-				tab_objs.assign(table->getObjectList(ObjectType::Column)->begin(),
-												table->getObjectList(ObjectType::Column)->end());
+			if(collapse_mode != CollapseMode::AllAttribsCollapsed)
+			{
+				if(table->isPaginationEnabled() && total_objs_cnt != 0)
+					tab_objs.assign(columns.begin() + start_col, columns.begin() + end_col);
+				else
+					tab_objs.assign(columns.begin(), columns.end());
+			}
 		}
 		else
 		{
-			if(!hide_ext_attribs && table->getCollapseMode() == CollapseMode::NotCollapsed)
-				tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
+			if(!hide_ext_attribs && collapse_mode == CollapseMode::NotCollapsed)
+			{
+				if(table->isPaginationEnabled() && total_objs_cnt != 0)
+					tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
+				else
+					tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
+			}
 		}
 
 		//Gets the subitems of the current group
@@ -161,9 +227,15 @@ void TableView::configureObject(void)
 		if(obj_idx==0)
 			bodies[obj_idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
 		else
-			bodies[obj_idx]->setPos(title->pos().x(),
-									title->boundingRect().height() +
-									bodies[0]->boundingRect().height() - 2);
+		{
+			if(bodies[0]->isVisible())
+				bodies[obj_idx]->setPos(title->pos().x(),
+										title->boundingRect().height() +
+										bodies[0]->boundingRect().height() - 2);
+			else
+				bodies[obj_idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+		}
+
 		groups[obj_idx]->setPos(bodies[obj_idx]->pos());
 
 		subitems=groups[obj_idx]->childItems();

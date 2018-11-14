@@ -3127,9 +3127,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			}
 
 			this->setInvalidated(false);
-
 			emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
-			this->setObjectsModified({ObjectType::Relationship, ObjectType::BaseRelationship});
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			if(found_inh_rel)
@@ -3138,6 +3136,9 @@ void DatabaseModel::loadModel(const QString &filename)
 				validateRelationships();
 				updateTablesFKRelationships();
 			}
+
+			emit s_objectLoaded(100, trUtf8("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			this->setObjectsModified();
 		}
 		catch(Exception &e)
 		{
@@ -4679,7 +4680,7 @@ Table *DatabaseModel::createTable(void)
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
-		table->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
@@ -5067,8 +5068,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 			{
 				table->addConstraint(constr);
+
 				if(this->getObjectIndex(table) >= 0)
-					table->setModified(true);
+					table->setModified(!loading_model);
 			}
 		}
 	}
@@ -5354,7 +5356,7 @@ Index *DatabaseModel::createIndex(void)
 		}
 
 		table->addObject(index);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5434,7 +5436,7 @@ Rule *DatabaseModel::createRule(void)
 		}
 
 		table->addObject(rule);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5592,7 +5594,7 @@ Trigger *DatabaseModel::createTrigger(void)
 		}
 
 		table->addObject(trigger);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5684,7 +5686,7 @@ Policy *DatabaseModel::createPolicy(void)
 		}
 
 		table->addObject(policy);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5886,7 +5888,7 @@ View *DatabaseModel::createView(void)
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
-		view->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 

@@ -48,6 +48,8 @@ class BaseTableView: public BaseObjectView {
 
 		static bool hide_ext_attribs, hide_tags;
 
+		static unsigned attribs_per_page;
+
 		//! \brief Polygonal object that defines the table body
 		RoundedRectItem *body,
 
@@ -129,6 +131,8 @@ class BaseTableView: public BaseObjectView {
 		void configureCollapsedSections(CollapseMode coll_mode);
 
 		void toggleAttribsPaginaiton(bool enabled);
+
+		void configureCurrentPage(unsigned page);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

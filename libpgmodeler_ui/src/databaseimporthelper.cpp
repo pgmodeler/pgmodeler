@@ -631,9 +631,6 @@ void DatabaseImportHelper::importDatabase(void)
 					}
 				}
 			}
-
-			//Forcing the update of tables and views in order to correctly draw their titles without the schema's name
-			dbmodel->setObjectsModified({ ObjectType::Table, ObjectType::View });
 		}
 
 		resetImportParameters();
