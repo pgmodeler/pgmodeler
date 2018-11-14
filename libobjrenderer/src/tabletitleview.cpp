@@ -100,7 +100,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	font=fmt.font();
 
 	obj_name->setFont(font);
-	obj_name->setText(compact_view && !object->getAlias().isEmpty() ? object->getAlias() : object->getName());
+	obj_name->setText(compact_view ? object->getName() + " - " + object->getComment() : object->getName());
 
 	if(!tag)
 	{
@@ -147,4 +147,3 @@ void TableTitleView::resizeTitle(double width, double height)
 	this->bounding_rect.setTopLeft(this->pos());
 	this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
 }
-

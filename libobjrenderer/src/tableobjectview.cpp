@@ -264,7 +264,7 @@ void TableObjectView::configureObject(void)
 		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
-		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
+		lables[0]->setText(compact_view ? tab_obj->getName() + " - " + tab_obj->getComment() : tab_obj->getName());
 
 		//Strikeout the column name when its SQL is disabled
 		QFont font=fmt.font();
@@ -592,4 +592,3 @@ QString TableObjectView::getConstraintString(Column *column)
 	}
 	else return(QString());
 }
-
