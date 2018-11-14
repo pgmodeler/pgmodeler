@@ -44,10 +44,16 @@ class BaseTableView: public BaseObjectView {
 	protected:
 		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns,
+
 		*ext_attribs;
 
-		static bool hide_ext_attribs, hide_tags;
+		//! brief Indicates if the extended attributes body should be hidden
+		static bool hide_ext_attribs,
 
+		//! brief Indicates if the tag object should be hidden
+		hide_tags;
+
+		//! brief Controls the maximum amount of attributes visible per page (columns/references + extended attributes)
 		static unsigned attribs_per_page;
 
 		//! \brief Polygonal object that defines the table body
@@ -89,7 +95,13 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
 		double calculateWidth(void);
 
+		/*! \brief This as an auxiliary method called before the object changes its dimensions and it causes
+		 * the object to not being selectable. This method is called whenever one of the signals are captured
+		 * from the attributes toggler: s_paginationToggled s_currentPageChanged s_collapseModeChanged */
 		void startGeometryUpdate(void);
+
+		/*! \brief This auxiliary method is called after any geometry change finishes forcing the update of the object
+		 * and in some cases the schema box which contains it */
 		void finishGeometryUpdate(void);
 
 	public:
@@ -102,6 +114,12 @@ class BaseTableView: public BaseObjectView {
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+		//! brief Defines the amount of attributes per page to be displayed
+		static void setAttributesPerPage(unsigned value);
+
+		//! brief Returns the current amount of attributes per page to be displayed
+		static unsigned getAttributesPerPage(void);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void setHideExtAttributes(bool value);
@@ -130,11 +148,15 @@ class BaseTableView: public BaseObjectView {
 		void configureObjectShadow(void);
 
 	private slots:
-		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
+		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
+		 * hiding or exposing the sections related to the current collapse mode */
 		void configureCollapsedSections(CollapseMode coll_mode);
 
-		void toggleAttribsPaginaiton(bool enabled);
+		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_paginationToggled
+		void togglePagination(bool enabled);
 
+		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_currentPageChanged
+		 * causing the the attributes of the current page to be displayed */
 		void configureCurrentPage(unsigned page);
 
 	signals:

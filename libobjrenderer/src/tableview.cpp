@@ -49,9 +49,11 @@ void TableView::configureObject(void)
 	//Configures the table title
 	title->configureObject(table);
 
+	// We store the columns in a separated vector in order to paginate them (if enabled)
 	columns.assign(table->getObjectList(ObjectType::Column)->begin(),
 								 table->getObjectList(ObjectType::Column)->end());
 
+	// We store the extended attributes in a separated vector in order to paginate them (if enabled)
 	for(unsigned idx = 0; idx < 5; idx++)
 	{
 		ext_tab_objs.insert(ext_tab_objs.end(),
@@ -59,29 +61,43 @@ void TableView::configureObject(void)
 												table->getObjectList(ext_types[idx])->end());
 	}
 
+	/* Calculating the amount of objects visible on the table.
+	 * If the extended attributes are hidden somehow the amount of these objects is discarded and
+	 * only columns will be visible on the pagination */
 	if(collapse_mode != CollapseMode::AllAttribsCollapsed)
 		total_objs_cnt = columns.size() + (collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0);
 
+	/* If the pagination is enabled for the table and the amount of objects is greater than the
+	 * number of objects per page we configure the pagination parameter */
 	if(table->isPaginationEnabled() && total_objs_cnt > attribs_per_page)
 	{
+		// Calculating the proportions of columns and extended attributes displayed per page
 		double col_factor = columns.size() / static_cast<double>(total_objs_cnt),
-				ext_factor = 1 - col_factor;
-		unsigned max_pages = 0, res = 0;
+					ext_factor = 1 - col_factor;
+		unsigned max_pages = 0, res = 0, curr_page = table->getCurrentPage();
 
+		/* Determining the amount of columns and extended attribs to be displayed based upon
+		 * the proportions of columns/ext. attribs and the total of these objects */
 		col_cnt = floor(col_factor * attribs_per_page);
 		ext_attr_cnt = hide_ext_attribs ? 0 : floor(ext_factor * attribs_per_page);
+
+		/* In certain situations the calculation aren't exact so we include to the column amount
+		 * the remaining number of elements (generally this ins't greater than 1) */
 		res = attribs_per_page - (col_cnt + ext_attr_cnt);
 		if(res > 0) col_cnt += res;
 
+		// Determining the maximum amount of pages
 		max_pages = ceil(total_objs_cnt / static_cast<double>(attribs_per_page));
 
-		start_col = table->getCurrentPage() * col_cnt;
+		// Validating the current page related to the maximum determined
+		if(curr_page >= max_pages)
+			curr_page = max_pages - 1;
+
+		// Calculating the start and end columns/ext. attributes for the current page
+		start_col = curr_page * col_cnt;
 		end_col = start_col + col_cnt;
-
-		start_ext = table->getCurrentPage() * ext_attr_cnt;
+		start_ext = curr_page * ext_attr_cnt;
 		end_ext = start_ext + ext_attr_cnt;
-
-		attribs_toggler->setPaginationValues(table->getCurrentPage(), max_pages);
 
 		if(start_col > columns.size())
 			start_col = columns.size();
@@ -89,11 +105,14 @@ void TableView::configureObject(void)
 		if(start_ext > ext_tab_objs.size())
 			start_ext = ext_tab_objs.size();
 
-		if(end_col > columns.size() || table->getCurrentPage() == max_pages - 1)
+		if(end_col > columns.size() || curr_page == max_pages - 1)
 			end_col = columns.size();
 
-		if(end_ext > ext_tab_objs.size() || table->getCurrentPage() == max_pages - 1)
+		if(end_ext > ext_tab_objs.size() || curr_page == max_pages - 1)
 			end_ext = ext_tab_objs.size();
+
+		// Configure the attributes toggler item withe the calculated pagination parameters
+		attribs_toggler->setPaginationValues(curr_page, max_pages);
 	}
 	else
 	{

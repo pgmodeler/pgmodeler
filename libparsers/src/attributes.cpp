@@ -125,6 +125,7 @@ namespace Attributes {
 	CreateRole=QString("createrole"),
 	CrowsFoot=QString("crows-foot"),
 	CteExpression=QString("cte-exp"),
+	CurrentPage=QString("current-page"),
 	CurVersion=QString("cur-version"),
 	CurIdentityType=QString("cur-identity-type"),
 	CustomColor=QString("custom-color"),

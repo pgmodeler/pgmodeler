@@ -140,6 +140,7 @@ namespace Attributes {
 	CreateRole,
 	CrowsFoot,
 	CteExpression,
+	CurrentPage,
 	CurVersion,
 	CurIdentityType,
 	CustomColor,

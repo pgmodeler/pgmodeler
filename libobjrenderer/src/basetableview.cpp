@@ -20,7 +20,7 @@
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
-unsigned BaseTableView::attribs_per_page = 20;
+unsigned BaseTableView::attribs_per_page = 5;
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
@@ -72,7 +72,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	configurePlaceholder();
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
-	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(toggleAttribsPaginaiton(bool)));
+	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(togglePagination(bool)));
 	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned)), this, SLOT(configureCurrentPage(uint)));
 }
 
@@ -120,7 +120,7 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 	{
 		this->setToolTip(this->table_tooltip);
 		configureObjectSelection();
-		attribs_toggler->clearArrowSelection();
+		attribs_toggler->clearButtonsSelection();
 	}
 
 	if(change==ItemPositionHasChanged)
@@ -152,10 +152,21 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//If the user clicks the extended attributes toggler
 		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
 			 attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
-			attribs_toggler->setArrowSelected(pnt, true);
+			attribs_toggler->setButtonSelected(pnt, true);
 
 		BaseObjectView::mousePressEvent(event);
 	}
+}
+
+void BaseTableView::setAttributesPerPage(unsigned value)
+{
+	if(value > 0)
+		attribs_per_page = value;
+}
+
+unsigned BaseTableView::getAttributesPerPage(void)
+{
+	return(attribs_per_page);
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -163,7 +174,7 @@ void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 	if(!this->isSelected() && obj_selection->isVisible())
 		obj_selection->setVisible(false);
 
-	attribs_toggler->clearArrowSelection();
+	attribs_toggler->clearButtonsSelection();
 	sel_child_obj=nullptr;
 }
 
@@ -196,7 +207,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 		if(attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
 		{
-			attribs_toggler->setArrowSelected(pnt);
+			attribs_toggler->setButtonSelected(pnt);
 		}
 		//If the index is invalid clears the selection
 		else if(item_idx < 0 || item_idx >= items.size())
@@ -330,8 +341,8 @@ void BaseTableView::__configureObject(float width)
 
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 	attribs_toggler->setPaginationEnabled(tab->isPaginationEnabled());
-	attribs_toggler->setArrowsBrush(grad);
-	attribs_toggler->setArrowsPen(body->pen());
+	attribs_toggler->setButtonsBrush(grad);
+	attribs_toggler->setButtonsPen(body->pen());
 	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
 
 	//Set the protected icon position to the top-right on the title
@@ -366,7 +377,7 @@ double BaseTableView::calculateWidth(void)
 	 * This width is used to set the uniform width of table */
 	vector<double> widths = { columns->isVisible() ? columns->boundingRect().width() : 0,
 														ext_attribs->isVisible() ? ext_attribs->boundingRect().width() : 0,
-														attribs_toggler->isVisible() ? attribs_toggler->getArrowsWidth() : 0,
+														attribs_toggler->isVisible() ? attribs_toggler->getButtonsWidth() : 0,
 														title->boundingRect().width() };
 
 	std::sort(widths.begin(), widths.end());
@@ -425,10 +436,13 @@ void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 	emit s_collapseModeChanged();
 }
 
-void BaseTableView::toggleAttribsPaginaiton(bool enabled)
+void BaseTableView::togglePagination(bool enabled)
 {
+	BaseTable *tab = dynamic_cast<BaseTable *>(this->getSourceObject());
+
 	startGeometryUpdate();
-	dynamic_cast<BaseTable *>(this->getSourceObject())->setPaginationEnabled(enabled);
+	tab->setPaginationEnabled(enabled);
+	tab->setCurrentPage(0);
 	finishGeometryUpdate();
 	emit s_paginationToggled();
 }

@@ -581,6 +581,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Tag]=QString();
 	attributes[Attributes::Pagination]=(isPaginationEnabled() ? Attributes::True : QString());
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
+	attributes[Attributes::CurrentPage]=(isPaginationEnabled() ? QString::number(getCurrentPage()) : QString());
 
 	setSQLObjectAttribute();
 

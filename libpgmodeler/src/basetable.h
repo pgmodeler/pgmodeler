@@ -38,10 +38,14 @@ enum class CollapseMode: unsigned {
 
 class BaseTable: public BaseGraphicObject {
 	private:
+
+		//! \brief Indicates if the pagination is enabled for the table
 		bool pagination_enabled;
 
+		//! \brief Stores the current collpase mode for the table
 		CollapseMode collapse_mode;
 
+		//! \brief Stores the current page visible on the table
 		unsigned curr_page;
 
 	protected:
@@ -99,13 +103,25 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Copy the attributes between two tables
 		void operator = (BaseTable &tab);
 
+		/*! \brief Defines the current collapse mode for the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
 		void setCollapseMode(CollapseMode coll_mode);
+
 		CollapseMode getCollapseMode(void);
 
+		/*! \brief Defines the pagination enabling for the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
 		void setPaginationEnabled(bool value);
+
 		bool isPaginationEnabled(void);
 
+		/*! \brief Defines the current page visible on the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
 		void setCurrentPage(unsigned page);
+
 		unsigned getCurrentPage(void);
 
 		friend class DatabaseModel;

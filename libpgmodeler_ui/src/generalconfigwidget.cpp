@@ -29,6 +29,8 @@
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
+#warning "Create a configuration entry for attributes pagination"
+
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPrinter::PaperSize paper_ids[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,

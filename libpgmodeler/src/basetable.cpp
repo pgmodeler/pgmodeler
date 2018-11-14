@@ -26,6 +26,7 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::MaxObjCount]=QString();
 	attributes[Attributes::CollapseMode]=QString();
 	attributes[Attributes::Pagination]=QString();
+	attributes[Attributes::CurrentPage]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	curr_page = 0;
@@ -78,6 +79,7 @@ bool BaseTable::isPaginationEnabled(void)
 
 void BaseTable::setCurrentPage(unsigned page)
 {
+	setCodeInvalidated(curr_page != page);
 	curr_page = page;
 }
 
