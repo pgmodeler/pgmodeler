@@ -274,7 +274,7 @@ void TableObjectView::configureObject(void)
 		fmt=font_config[Attributes::ObjectType];
 
 		if(compact_view)
-			lables[1]->setText(" ");
+			lables[1]->setText(QString());
 		else
 		{
 			if(column)
@@ -291,7 +291,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
-			lables[2]->setText(QString(" "));
+			lables[2]->setText(QString());
 		else if(column)
 			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
 		else
@@ -396,7 +396,7 @@ void TableObjectView::configureObject(void)
 								   str_constr + QString(" ") +
 								   ConstrDelimEnd);
 			else
-				lables[2]->setText(QString(" "));
+				lables[2]->setText(QString());
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -448,7 +448,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[Attributes::RefColumn];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString(" "));
+			lables[1]->setText(QString());
 		else
 		{
 			if(reference.getColumn())
@@ -477,7 +477,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText(QString(" "));
+		lables[1]->setText(QString());
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
@@ -500,10 +500,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setPos(px, 0);
 	}
 	else
-	{
-		lables[2]->setPos(px, 0);
-		lables[2]->setText(QString(" "));
-	}
+		lables[2]->setText(QString());
 
 	calculateBoundingRect();
 }
@@ -573,6 +570,9 @@ void TableObjectView::calculateBoundingRect(void)
 
 	for(int i = 0; i < 3; i++)
 	{
+		if(lables[i]->text().isEmpty())
+			continue;
+
 		curr_w = lables[i]->pos().x() + lables[i]->boundingRect().width();
 
 		if(width < curr_w)
@@ -660,6 +660,9 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 	for(int i = 0 ; i < 3; i++)
 	{
+		if(lables[i]->text().isEmpty())
+			continue;
+
 		painter->save();
 		painter->translate(lables[i]->pos());
 		lables[i]->paint(painter, option, widget);

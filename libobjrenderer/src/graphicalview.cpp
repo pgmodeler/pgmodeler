@@ -32,8 +32,7 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
-	int i, count, count1=0;
-	Reference ref;
+	int i, count;
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -47,8 +46,7 @@ void GraphicalView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
-	QStringList col_names = view->getColumnNames(),
-			col_types = view->getColumnTypes();
+	QStringList col_names, col_types;
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -58,12 +56,8 @@ void GraphicalView::configureObject(void)
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_view_objs.empty());
 
-	//Gets the reference count on SELECT part of the SQL definition
-	//count=view->getReferenceCount(Reference::SqlReferSelect);
-
-	//if(count==0)
-	//	count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
-
+	col_names = (!compact_view ? view->getColumnNames() : view->getColumnAliases());
+	col_types = view->getColumnTypes();
 	count = col_names.size();
 
 	//Moves the references group to the origin to be moved latter
@@ -86,11 +80,6 @@ void GraphicalView::configureObject(void)
 		subitems=columns->childItems();
 		for(i=0; i < count; i++)
 		{
-			//if(count1==0)
-			//	ref=view->getReference(i, Reference::SqlReferSelect);
-			//else
-			//	ref=view->getReference(i, Reference::SqlViewDefinition);
-
 			//Reuses the subitem if it was allocated before
 			if(!subitems.isEmpty() && i < subitems.size())
 			{
@@ -103,10 +92,8 @@ void GraphicalView::configureObject(void)
 			else
 				graph_ref=new TableObjectView;
 
-			//columns->removeFromGroup(graph_ref);
-			graph_ref->configureObject(col_names[i], col_types[i], QString("----"));
-			graph_ref->moveBy(HorizSpacing, i * graph_ref->boundingRect().height());
-			//columns->addToGroup(graph_ref);
+			graph_ref->configureObject(col_names[i], col_types[i], QString());
+			graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
@@ -141,7 +128,7 @@ void GraphicalView::configureObject(void)
 			//Positioning the type label
 			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
 
-			//Positioning the constraints label
+			//Positioning the constraints label			
 			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel, px + type_width);
 			columns->addToGroup(col_item);
 		}
@@ -256,7 +243,7 @@ void GraphicalView::configureObject(void)
 		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
 
 		if(idx==0)
-			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height() - 1);
 		else
 			bodies[idx]->setPos(title->pos().x(),
 													title->boundingRect().height() +

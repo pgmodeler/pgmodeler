@@ -33,6 +33,9 @@ class View: public BaseTable {
 		//! \brief Deduced column names
 		QStringList col_names,
 
+		//! \brief Deduced columns aliases (used in compact view)
+		col_aliases,
+
 		//! \brief Deduces column types
 		col_types;
 
@@ -78,6 +81,10 @@ class View: public BaseTable {
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
 		void setSQLObjectAttribute(void);
+
+		/*! \brief Adds the provided names as a view's column name. In case of duplicated name
+		 * the most recent one will receive a numeric suffix */
+		void addColumnName(const QString &name);
 
 	public:
 		View(void);
@@ -244,6 +251,9 @@ class View: public BaseTable {
 
 		//! \brief Returns the deduced types of the view's columns
 		QStringList getColumnTypes(void);
+
+		//! \brief Returns the deduced aliases of the view's columns (for using on the compact view as column names)
+		QStringList getColumnAliases(void);
 
 		/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
 		 *	The names are retrieved, first, from columns aliases and lastly from table's columns

@@ -191,60 +191,65 @@ void View::generateColumnNamesTypes(void)
 	Table *tab = nullptr;
 	Reference ref;
 	Column *col = nullptr;
-	QStringList names;
-	QString fmt_name;
+	QString name;
 
+	col_aliases.clear();
 	col_names.clear();
 	col_types.clear();
 
-	for(auto ref_id : exp_select)
+	if(hasDefinitionExpression())
 	{
-		ref = references[ref_id];
-
-		if(!ref.getExpression().isEmpty())
+		col_names.push_back(QString("%1...").arg(references[0].getExpression().mid(0, 20)).remove(QChar::LineFeed));
+		col_aliases.push_back(!references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : col_names.at(0));
+		col_types.push_back(Attributes::Expression);
+	}
+	else
+	{
+		for(auto ref_id : exp_select)
 		{
-			if(!ref.getAlias().isEmpty())
-				names.push_back(ref.getAlias());
-			else
-				names.push_back(QString("_expr%1_").arg(expr_idx++));
+			ref = references[ref_id];
 
-			col_types.push_back(Attributes::Expression);
-		}
-		else if(!ref.getColumn())
-		{
-			tab=ref.getTable();
-			col_count=tab->getColumnCount();
-
-			for(col_id=0; col_id < col_count; col_id++)
+			if(!ref.getExpression().isEmpty())
 			{
-				col = tab->getColumn(col_id);
-				names.push_back(col->getName());
+				if(!ref.getAlias().isEmpty())
+					name = ref.getAlias();
+				else
+					name = QString("_expr%1_").arg(expr_idx++);
+
+				addColumnName(name);
+				col_types.push_back(Attributes::Expression);
+				col_aliases.push_back(!ref.getReferenceAlias().isEmpty() ? ref.getReferenceAlias() : name);
+			}
+			else if(!ref.getColumn())
+			{
+				tab=ref.getTable();
+				col_count=tab->getColumnCount();
+
+				for(col_id=0; col_id < col_count; col_id++)
+				{
+					col = tab->getColumn(col_id);
+					addColumnName(col->getName());
+					col_types.push_back(*col->getType());
+					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+				}
+			}
+			else
+			{
+				col = ref.getColumn();
+
+				if(!ref.getColumnAlias().isEmpty())
+					addColumnName(ref.getColumnAlias());
+				else
+					addColumnName(col->getName());
+
 				col_types.push_back(*col->getType());
+
+				if(!ref.getReferenceAlias().isEmpty())
+					col_aliases.push_back(ref.getReferenceAlias());
+				else
+					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
 			}
 		}
-		else
-		{
-			if(!ref.getColumnAlias().isEmpty())
-				names.push_back(ref.getColumnAlias());
-			else
-				names.push_back(ref.getColumn()->getName());
-
-			col_types.push_back(*ref.getColumn()->getType());
-		}
-	}
-
-	for(auto &name : names)
-	{
-		col_id = 1;
-		fmt_name = name;
-
-		while(col_names.indexOf(BaseObject::formatName(fmt_name)) >= 0)
-		{
-			fmt_name = name + QString::number(col_id);
-			col_id++;
-		}
-
-		col_names.push_back(fmt_name);
 	}
 }
 
@@ -256,6 +261,11 @@ QStringList View::getColumnNames(void)
 QStringList View::getColumnTypes(void)
 {
 	return(col_types);
+}
+
+QStringList View::getColumnAliases(void)
+{
+	return(col_aliases);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
@@ -632,8 +642,16 @@ QString View::getCodeDefinition(unsigned def_type)
 
 	setSQLObjectAttribute();
 
-	if(recursive)
-		attributes[Attributes::Columns]=col_names.join(',');
+	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDefinition)
+	if(recursive && !hasDefinitionExpression())
+	{
+		QStringList fmt_names;
+
+		for(auto &name : col_names)
+			fmt_names.push_back(formatName(name));
+
+		attributes[Attributes::Columns]=fmt_names.join(',');
+	}
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
 		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
@@ -654,7 +672,21 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-	  attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+		attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+}
+
+void View::addColumnName(const QString &name)
+{
+	unsigned col_id = 1;
+	QString fmt_name = name;
+
+	while(col_names.indexOf(fmt_name) >= 0)
+	{
+		fmt_name = name + QString::number(col_id);
+		col_id++;
+	}
+
+	col_names.push_back(fmt_name);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)
