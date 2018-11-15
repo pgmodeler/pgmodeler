@@ -30,6 +30,12 @@
 
 class View: public BaseTable {
 	private:
+		//! \brief Deduced column names
+		QStringList col_names,
+
+		//! \brief Deduces column types
+		col_types;
+
 		//! \brief Stores the references to expressions and objects
 		vector<Reference> references;
 
@@ -71,12 +77,13 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
-		/*! \brief Returns a list of deduced names for view's colums for recursive views.
-	The names are retrieved, first, from columns aliases and lastly from table's columns
-	when TABLE.* syntax is used */
-		QStringList getColumnsList(void);
-
 		void setSQLObjectAttribute(void);
+
+		/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
+		 *	The names are retrieved, first, from columns aliases and lastly from table's columns
+		 * 	when TABLE.* syntax is used. For expressions, if aliases aren't defined, a column name in the
+		 *  for _expr#_ is used. */
+		void generateColumnNamesTypes(void);
 
 	public:
 		View(void);
@@ -237,6 +244,12 @@ class View: public BaseTable {
 		void setObjectListsCapacity(unsigned capacity);
 
 		unsigned getMaxObjectCount(void);
+
+		//! \brief Returns the deduced names of the view's columns
+		QStringList getColumnNames(void);
+
+		//! \brief Returns the deduced types of the view's columns
+		QStringList getColumnTypes(void);
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);
