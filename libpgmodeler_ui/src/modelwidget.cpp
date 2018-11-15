@@ -2964,6 +2964,9 @@ void ModelWidget::removeObjects(bool cascade)
 
 								if(aux_table)
 									db_model->validateRelationships(tab_obj, aux_table);
+
+								if(obj_type == ObjectType::Column)
+									db_model->updateViewsReferTable(aux_table);
 							}
 							catch(Exception &e)
 							{

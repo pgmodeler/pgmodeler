@@ -76,6 +76,9 @@ class TableObjectView: public BaseObjectView
 		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);
 
+		//! \brief Configures a generic item containing a name, datatype and alias
+		void configureObject(const QString &name, const QString &type, const QString &alias = QString());
+
 		//! \brief Configures the object as a table object
 		void configureObject(void);
 

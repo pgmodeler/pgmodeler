@@ -47,6 +47,8 @@ void GraphicalView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
+	QStringList col_names = view->getColumnNames(),
+			col_types = view->getColumnTypes();
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -57,10 +59,12 @@ void GraphicalView::configureObject(void)
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_view_objs.empty());
 
 	//Gets the reference count on SELECT part of the SQL definition
-	count=view->getReferenceCount(Reference::SqlReferSelect);
+	//count=view->getReferenceCount(Reference::SqlReferSelect);
 
-	if(count==0)
-		count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
+	//if(count==0)
+	//	count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
+
+	count = col_names.size();
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
@@ -82,10 +86,10 @@ void GraphicalView::configureObject(void)
 		subitems=columns->childItems();
 		for(i=0; i < count; i++)
 		{
-			if(count1==0)
-				ref=view->getReference(i, Reference::SqlReferSelect);
-			else
-				ref=view->getReference(i, Reference::SqlViewDefinition);
+			//if(count1==0)
+			//	ref=view->getReference(i, Reference::SqlReferSelect);
+			//else
+			//	ref=view->getReference(i, Reference::SqlViewDefinition);
 
 			//Reuses the subitem if it was allocated before
 			if(!subitems.isEmpty() && i < subitems.size())
@@ -99,10 +103,22 @@ void GraphicalView::configureObject(void)
 			else
 				graph_ref=new TableObjectView;
 
-			columns->removeFromGroup(graph_ref);
-			graph_ref->configureObject(ref);
+			//columns->removeFromGroup(graph_ref);
+			graph_ref->configureObject(col_names[i], col_types[i], QString("----"));
 			graph_ref->moveBy(HorizSpacing, i * graph_ref->boundingRect().height());
-			columns->addToGroup(graph_ref);
+			//columns->addToGroup(graph_ref);
+
+			/* Calculates the width of the name + type of the object. This is used to align all
+			the constraint labels on table */
+			width=graph_ref->getChildObject(TableObjectView::ObjDescriptor)->boundingRect().width() +
+						graph_ref->getChildObject(TableObjectView::NameLabel)->boundingRect().width() + (8 * HorizSpacing);
+			if(px < width)  px=width;
+
+			//Gets the maximum width of the column type label to align all at same horizontal position
+			if(type_width < graph_ref->getChildObject(TableObjectView::TypeLabel)->boundingRect().width())
+				type_width=graph_ref->getChildObject(TableObjectView::TypeLabel)->boundingRect().width() + (3 * HorizSpacing);
+
+			col_items.push_back(graph_ref);
 		}
 
 		//Destroy the graphical references not used
@@ -113,6 +129,21 @@ void GraphicalView::configureObject(void)
 			columns->removeFromGroup(graph_ref);
 			delete(graph_ref);
 			i--;
+		}
+
+		//Set all items position
+		while(!col_items.isEmpty())
+		{
+			col_item=dynamic_cast<TableObjectView *>(col_items.front());
+			columns->removeFromGroup(col_item);
+			col_items.pop_front();
+
+			//Positioning the type label
+			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
+
+			//Positioning the constraints label
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel, px + type_width);
+			columns->addToGroup(col_item);
 		}
 	}
 

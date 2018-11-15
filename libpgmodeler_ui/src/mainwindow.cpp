@@ -2050,8 +2050,11 @@ void MainWindow::toggleCompactView(void)
 
 		if(action_compact_view->isChecked())
 			model_wgt->setAllCollapseMode(CollapseMode::ExtAttribsCollapsed);
+		else
+			model_wgt->setAllCollapseMode(CollapseMode::NotCollapsed);
 
-		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
+		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship,
+																												ObjectType::BaseRelationship, ObjectType::Schema});
 	}
 
 	if(current_model)

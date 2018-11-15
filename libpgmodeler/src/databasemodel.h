@@ -534,6 +534,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 
+		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
+		void updateViewsReferTable(Table *table);
+
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);
 

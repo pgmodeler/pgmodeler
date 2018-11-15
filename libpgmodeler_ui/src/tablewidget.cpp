@@ -906,6 +906,7 @@ void TableWidget::applyConfiguration(void)
 				model->validateRelationships();
 
 			model->updateTableFKRelationships(table);
+			model->updateViewsReferTable(table);
 		}
 		catch(Exception &e)
 		{

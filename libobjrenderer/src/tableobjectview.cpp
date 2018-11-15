@@ -508,6 +508,49 @@ void TableObjectView::configureObject(Reference reference)
 	calculateBoundingRect();
 }
 
+void TableObjectView::configureObject(const QString &name, const QString &type, const QString &alias)
+{
+	QTextCharFormat fmt;
+	double px;
+
+	configureDescriptor();
+	descriptor->setPos(HorizSpacing, 0);
+	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
+
+	fmt = font_config[Attributes::Column];
+	lables[0]->setText(name);
+	lables[0]->setFont(fmt.font());
+	lables[0]->setBrush(fmt.foreground());
+	lables[0]->setPos(px, 0);
+	px+=lables[0]->boundingRect().width() + (4 * HorizSpacing);
+
+	if(!compact_view && !type.isEmpty())
+	{
+		fmt=font_config[Attributes::ObjectType];
+		lables[1]->setText(type);
+		lables[1]->setFont(fmt.font());
+		lables[1]->setBrush(fmt.foreground());
+		lables[1]->setPos(px, 0);
+		px+=lables[1]->boundingRect().width() + (4 * HorizSpacing);
+	}
+	else
+		lables[1]->setText(QString());
+
+	//Configures a label for the alias (if there is one)
+	if(!compact_view && !alias.isEmpty())
+	{
+		fmt=font_config[Attributes::Alias];
+		lables[2]->setText(QString(" (") + alias + QString(") "));
+		lables[2]->setFont(fmt.font());
+		lables[2]->setBrush(fmt.foreground());
+		lables[2]->setPos(px, 0);
+	}
+	else
+		lables[2]->setText(QString());
+
+	calculateBoundingRect();
+}
+
 void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 {
 	if(obj_idx >= 4)

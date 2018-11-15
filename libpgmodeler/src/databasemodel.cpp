@@ -5786,6 +5786,34 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	return(genericsql);
 }
 
+void DatabaseModel::updateViewsReferTable(Table *table)
+{
+	BaseRelationship *rel = nullptr;
+	View *view = nullptr;
+	Table *tab = nullptr;
+
+	if(!table) return;
+
+	for(auto obj : base_relationships)
+	{
+		rel = dynamic_cast<BaseRelationship *>(obj);
+
+		if(rel->getRelationshipType() != BaseRelationship::RelationshipDep)
+			continue;
+
+		view = dynamic_cast<View *>(rel->getTable(BaseRelationship::SrcTable));
+		tab = dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
+
+		if(view && tab == table)
+		{
+			view->generateColumnNamesTypes();
+			view->setCodeInvalidated(true);
+			view->setModified(true);
+			dynamic_cast<Schema *>(view->getSchema())->setModified(true);
+		}
+	}
+}
+
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 {
 	attribs_map attribs;
