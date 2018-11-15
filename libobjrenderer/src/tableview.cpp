@@ -83,6 +83,11 @@ void TableView::configureObject(void)
 		col_cnt = floor(col_factor * attribs_per_page);
 		ext_attr_cnt = hide_ext_attribs ? 0 : floor(ext_factor * attribs_per_page);
 
+		/* If the extended attributes factor is too small so the counter related to it
+		 * is zero we force it to have at least one visible extended attribute */
+		if(ext_attr_cnt == 0 && !hide_ext_attribs && !ext_tab_objs.empty())
+			ext_attr_cnt = 1;
+
 		/* In certain situations the calculation aren't exact so we include to the column amount
 		 * the remaining number of elements (generally this ins't greater than 1) */
 		res = attribs_per_page - (col_cnt + ext_attr_cnt);

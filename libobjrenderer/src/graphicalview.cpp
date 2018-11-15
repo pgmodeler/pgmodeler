@@ -36,7 +36,7 @@ void GraphicalView::configureObject(void)
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
-	vector<TableObject *> tab_objs, ext_view_objs;
+	vector<TableObject *> tab_objs, ext_tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
@@ -47,25 +47,93 @@ void GraphicalView::configureObject(void)
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
 	QStringList col_names, col_types;
+	unsigned col_cnt = 0, ext_attr_cnt = 0, total_objs_cnt = 0,
+			start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
+	CollapseMode collapse_mode = view->getCollapseMode();
 
 	//Configures the view's title
 	title->configureObject(view);
 
 	for(auto &obj : view->getObjects())
-		ext_view_objs.push_back(dynamic_cast<TableObject *>(obj));
+		ext_tab_objs.push_back(dynamic_cast<TableObject *>(obj));
 
-	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_view_objs.empty());
+	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
 
 	col_names = (!compact_view ? view->getColumnNames() : view->getColumnAliases());
 	col_types = view->getColumnTypes();
-	count = col_names.size();
+
+	/* Calculating the amount of objects visible on the table.
+	 * If the extended attributes are hidden somehow the amount of these objects is discarded and
+	 * only columns will be visible on the pagination */
+	if(collapse_mode != CollapseMode::AllAttribsCollapsed)
+		total_objs_cnt = col_names.size() + (collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0);
+
+	attribs_toggler->setPaginationEnabled(view->isPaginationEnabled());
+
+	/* If the pagination is enabled for the table and the amount of objects is greater than the
+	 * number of objects per page we configure the pagination parameter */
+	if(view->isPaginationEnabled() && total_objs_cnt > attribs_per_page)
+	{
+		// Calculating the proportions of columns and extended attributes displayed per page
+		double col_factor = col_names.size() / static_cast<double>(total_objs_cnt),
+					ext_factor = 1 - col_factor;
+		unsigned max_pages = 0, res = 0, curr_page = view->getCurrentPage();
+
+		/* Determining the amount of columns and extended attribs to be displayed based upon
+		 * the proportions of columns/ext. attribs and the total of these objects */
+		col_cnt = floor(col_factor * attribs_per_page);
+		ext_attr_cnt = hide_ext_attribs ? 0 : floor(ext_factor * attribs_per_page);
+
+		/* If the extended attributes factor is too small so the counter related to it
+		 * is zero we force it to have at least one visible extended attribute */
+		if(ext_attr_cnt == 0 && !hide_ext_attribs && !ext_tab_objs.empty())
+			ext_attr_cnt = 1;
+
+		/* In certain situations the calculation aren't exact so we include to the column amount
+		 * the remaining number of elements (generally this ins't greater than 1) */
+		res = attribs_per_page - (col_cnt + ext_attr_cnt);
+		if(res > 0) col_cnt += res;
+
+		// Determining the maximum amount of pages
+		max_pages = ceil(total_objs_cnt / static_cast<double>(attribs_per_page));
+
+		// Validating the current page related to the maximum determined
+		if(curr_page >= max_pages)
+			curr_page = max_pages - 1;
+
+		// Calculating the start and end columns/ext. attributes for the current page
+		start_col = curr_page * col_cnt;
+		end_col = start_col + col_cnt;
+		start_ext = curr_page * ext_attr_cnt;
+		end_ext = start_ext + ext_attr_cnt;
+
+		if(start_col > static_cast<unsigned>(col_names.size()))
+			start_col = col_names.size();
+
+		if(start_ext > ext_tab_objs.size())
+			start_ext = ext_tab_objs.size();
+
+		if(end_col >  static_cast<unsigned>(col_names.size()) || curr_page == max_pages - 1)
+			end_col = col_names.size();
+
+		if(end_ext > ext_tab_objs.size() || curr_page == max_pages - 1)
+			end_ext = ext_tab_objs.size();
+
+		// Configure the attributes toggler item withe the calculated pagination parameters
+		attribs_toggler->setPaginationValues(curr_page, max_pages);
+	}
+	else
+	{
+		total_objs_cnt = 0;
+		col_cnt = col_names.size();
+		ext_attr_cnt = ext_tab_objs.size();
+		attribs_toggler->setPaginationValues(0, 0);
+	}
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
-	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed);
-	ext_attribs->setVisible(!ext_view_objs.empty() && view->getCollapseMode() == CollapseMode::NotCollapsed);
+	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed && start_col < static_cast<unsigned>(col_names.size()));
 	body->setVisible(columns->isVisible());
-	ext_attribs_body->setVisible(ext_attribs->isVisible());
 
 	if(!columns->isVisible())
 	{
@@ -77,6 +145,12 @@ void GraphicalView::configureObject(void)
 	}
 	else
 	{
+		QStringList aux_col_names, aux_col_types;
+
+		aux_col_names = col_names.mid(start_col, col_cnt);
+		aux_col_types = col_types.mid(start_col, col_cnt);
+		count = aux_col_names.size();
+
 		subitems=columns->childItems();
 		for(i=0; i < count; i++)
 		{
@@ -92,7 +166,7 @@ void GraphicalView::configureObject(void)
 			else
 				graph_ref=new TableObjectView;
 
-			graph_ref->configureObject(col_names[i], col_types[i], QString());
+			graph_ref->configureObject(aux_col_names[i], aux_col_types[i], QString());
 			graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all
@@ -135,7 +209,15 @@ void GraphicalView::configureObject(void)
 	}
 
 	if(!hide_ext_attribs && view->getCollapseMode() == CollapseMode::NotCollapsed)
-		tab_objs.assign(ext_view_objs.begin(), ext_view_objs.end());
+	{
+		if(view->isPaginationEnabled() && total_objs_cnt != 0)
+			tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
+		else
+			tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
+	}
+
+	ext_attribs->setVisible(!tab_objs.empty() && view->getCollapseMode() == CollapseMode::NotCollapsed);
+	ext_attribs_body->setVisible(ext_attribs->isVisible());
 
 	if(tab_objs.empty())
 	{
@@ -245,9 +327,15 @@ void GraphicalView::configureObject(void)
 		if(idx==0)
 			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height() - 1);
 		else
-			bodies[idx]->setPos(title->pos().x(),
-													title->boundingRect().height() +
-													bodies[0]->boundingRect().height() - 2);
+		{
+			if(bodies[0]->isVisible())
+				bodies[idx]->setPos(title->pos().x(),
+														title->boundingRect().height() +
+														bodies[0]->boundingRect().height() - 2);
+			else
+				bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+		}
+
 		groups[idx]->setPos(bodies[idx]->pos());
 
 		subitems=groups[idx]->childItems();
@@ -264,7 +352,6 @@ void GraphicalView::configureObject(void)
 	this->bounding_rect.setWidth(title->boundingRect().width());
 
 	BaseTableView::__configureObject(width);
-	attribs_toggler->setPaginationEnabled(false, true);
 
 	if(!view->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(view->getAlias());

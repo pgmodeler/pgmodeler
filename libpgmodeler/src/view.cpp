@@ -199,7 +199,7 @@ void View::generateColumnNamesTypes(void)
 
 	if(hasDefinitionExpression())
 	{
-		col_names.push_back(QString("%1...").arg(references[0].getExpression().mid(0, 20)).remove(QChar::LineFeed));
+		col_names.push_back(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)));
 		col_aliases.push_back(!references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : col_names.at(0));
 		col_types.push_back(Attributes::Expression);
 	}
