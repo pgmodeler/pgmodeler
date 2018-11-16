@@ -23,20 +23,20 @@ BaseTable::BaseTable(void)
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::HideExtAttribs]=QString();
 	attributes[Attributes::MaxObjCount]=QString();
-	hide_ext_attribs=false;
+	attributes[Attributes::CollapseMode]=QString();
+	attributes[Attributes::Pagination]=QString();
+	attributes[Attributes::AttribsPage]=QString();
+	attributes[Attributes::ExtAttribsPage]=QString();
+	pagination_enabled = false;
+	collapse_mode = CollapseMode::NotCollapsed;
+	resetCurrentPages();
 }
 
-void BaseTable::setExtAttribsHidden(bool value)
+void BaseTable::resetCurrentPages(void)
 {
-	setCodeInvalidated(hide_ext_attribs != value);
-	hide_ext_attribs = value;
-}
-
-bool BaseTable::isExtAttribsHidden(void)
-{
-	return(hide_ext_attribs);
+	curr_page[AttribsSection] = 0;
+	curr_page[ExtAttribsSection] = 0;
 }
 
 void BaseTable::setTag(Tag *tag)
@@ -66,4 +66,46 @@ void BaseTable::operator = (BaseTable &tab)
 {
 	(*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
 	this->tag=tab.tag;
+}
+
+CollapseMode BaseTable::getCollapseMode(void)
+{
+	return(collapse_mode);
+}
+
+void BaseTable::setPaginationEnabled(bool value)
+{
+	setCodeInvalidated(pagination_enabled != value);
+	pagination_enabled = value;
+
+	if(!pagination_enabled)
+		resetCurrentPages();
+}
+
+bool BaseTable::isPaginationEnabled(void)
+{
+	return(pagination_enabled);
+}
+
+void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
+{
+	if(section_id > ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(curr_page[section_id] != value);
+	curr_page[section_id] = value;
+}
+
+unsigned BaseTable::getCurrentPage(unsigned section_id)
+{
+	if(section_id > ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(curr_page[section_id]);
+}
+
+void BaseTable::setCollapseMode(CollapseMode coll_mode)
+{
+	setCodeInvalidated(collapse_mode != coll_mode);
+	collapse_mode = coll_mode;
 }

@@ -400,16 +400,6 @@ void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size
 	custom_paper_size=orig_custom_sz;
 }
 
-void ObjectsScene::emitObjectModification(BaseGraphicObject *object)
-{
-	emit s_objectModified(object);
-}
-
-void ObjectsScene::emitExtAttributesToggled(void)
-{
-	emit s_extAttributesToggled();
-}
-
 void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 {
 	/* Treats the TableView::s_childObjectSelect() only when there is no
@@ -434,13 +424,13 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(rel)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
-					this, SLOT(emitObjectModification(BaseGraphicObject*)));
+							this, SIGNAL(s_objectModified(BaseGraphicObject*)));
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
-							this, SLOT(emitChildObjectSelection(TableObject*)));
-			connect(tab, SIGNAL(s_extAttributesToggled()),
-							this, SLOT(emitExtAttributesToggled()));
+			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)), this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
+			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
+			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
 		}
 
 		if(obj)

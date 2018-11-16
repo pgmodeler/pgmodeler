@@ -130,7 +130,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::SourceEditorApp]=QString();
 	config_params[Attributes::Configuration][Attributes::UiLanguage]=QString();
 	config_params[Attributes::Configuration][Attributes::UseCurvedLines]=QString();
-	config_params[Attributes::Configuration][Attributes::	SaveRestoreGeometry]=QString();
+	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=QString();
+	config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString();
+	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -182,6 +184,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	use_curved_lines_ht=new HintTextWidget(use_curved_lines_hint, this);
 	use_curved_lines_ht->setText(use_curved_lines_chk->statusTip());
+
+	attribs_per_page_ht=new HintTextWidget(attributes_per_page_hint, this);
+	attribs_per_page_ht->setText(attribs_per_page_spb->statusTip());
 
 	selectPaperSize();
 
@@ -305,6 +310,8 @@ void GeneralConfigWidget::loadConfiguration(void)
 		landscape_rb->setChecked(config_params[Attributes::Configuration][Attributes::PaperOrientation]==Attributes::Landscape);
 
 		min_obj_opacity_spb->setValue(config_params[Attributes::Configuration][Attributes::MinObjectOpacity].toUInt());
+		attribs_per_page_spb->setValue(config_params[Attributes::Configuration][Attributes::AttribsPerPage].toUInt());
+		ext_attribs_per_page_spb->setValue(config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage].toUInt());
 
 		margin=config_params[Attributes::Configuration][Attributes::PaperMargin].split(',');
 		custom_size=config_params[Attributes::Configuration][Attributes::PaperCustomSize].split(',');
@@ -344,15 +351,15 @@ void GeneralConfigWidget::loadConfiguration(void)
 		widgets_geom.clear();
 		for(auto itr : config_params)
 		{
-		  if(itr.second.count(Attributes::XPos))
-		  {
-			x = itr.second[Attributes::XPos].toInt();
-			y = itr.second[Attributes::YPos].toInt();
-			w = itr.second[Attributes::Width].toInt();
-			h = itr.second[Attributes::Height].toInt();
-			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
-			widgets_geom[itr.first].maximized = itr.second[Attributes::Maximized] == Attributes::True;
-		  }
+			if(itr.second.count(Attributes::XPos))
+			{
+				x = itr.second[Attributes::XPos].toInt();
+				y = itr.second[Attributes::YPos].toInt();
+				w = itr.second[Attributes::Width].toInt();
+				h = itr.second[Attributes::Height].toInt();
+				widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
+				widgets_geom[itr.first].maximized = itr.second[Attributes::Maximized] == Attributes::True;
+			}
 		}
 
 		updateFontPreview();
@@ -484,6 +491,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::UsePlaceholders]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
 		config_params[Attributes::Configuration][Attributes::UseCurvedLines]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
+		config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
 
 		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
 		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(show_grid ? Attributes::True : QString());
@@ -619,6 +628,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 	OperationList::setMaximumSize(oplist_size_spb->value());
 	BaseTableView::setHideExtAttributes(hide_ext_attribs_chk->isChecked());
 	BaseTableView::setHideTags(hide_table_tags_chk->isChecked());
+	BaseTableView::setAttributesPerPage(BaseTable::AttribsSection, attribs_per_page_spb->value());
+	BaseTableView::setAttributesPerPage(BaseTable::ExtAttribsSection, ext_attribs_per_page_spb->value());
 	RelationshipView::setHideNameLabel(hide_rel_name_chk->isChecked());
 	RelationshipView::setCurvedLines(use_curved_lines_chk->isChecked());
 	ModelWidget::setSaveLastCanvasPosition(save_last_pos_chk->isChecked());

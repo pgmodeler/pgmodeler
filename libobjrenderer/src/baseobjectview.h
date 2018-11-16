@@ -30,6 +30,7 @@
 #include "baserelationship.h"
 #include "xmlparser.h"
 #include "roundedrectitem.h"
+#include "textpolygonitem.h"
 
 class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	private:
@@ -58,11 +59,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		 mainly when creating relationships between tables. */
 		unsigned sel_order;
 
-		//! \brief Graphical text for the position info
-		QGraphicsSimpleTextItem *pos_info_txt;
-
-		//! \brief Graphical object (rectangle) of the position info
-		QGraphicsRectItem *pos_info_rect;
+		//! \brief This item display the current object position on the scene
+		TextPolygonItem *pos_info_item;
 
 		//! \brief Stores the objects bounding rect
 		QRectF bounding_rect;
@@ -85,17 +83,17 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Graphical text for the sql disabled info
 		QGraphicsSimpleTextItem *sql_disabled_txt;
 
+		//! \brief This items is used to display the sql disabled status of the object
+		TextPolygonItem *sql_disabled_item;
+
 		//! \brief Stores the object font configuration
 		static map<QString, QTextCharFormat> font_config;
 
 		//! \brief Stores the object colors configuration
 		static map<QString, vector<QColor>> color_config;
 
-		//! \brief Resizes to the specified dimension the passed polygon
-		void resizePolygon(QPolygonF &pol, double width, double height);
-
 		//! \brief Configures the objects shadow polygon
-		void configureObjectShadow(void);
+		void configureObjectShadow(void) {}
 
 		//! \brief Configures the object selection polygon
 		void configureObjectSelection(void);

@@ -107,7 +107,7 @@ void ObjectRenameWidget::applyRenaming(void)
 				if(tab_obj)
 				{
 					parent_obj=tab_obj->getParentTable();
-					aux_obj=dynamic_cast<Table *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
+					aux_obj=dynamic_cast<BaseTable *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
 				}
 				//For database child object, check if there is another object with the same new name
 				else
@@ -143,17 +143,23 @@ void ObjectRenameWidget::applyRenaming(void)
 			}
 			else if(tab_obj)
 			{
-				Table *tab=dynamic_cast<Table *>(tab_obj->getParentTable());
+				BaseTable *base_tab = tab_obj->getParentTable();
+				Table *tab = dynamic_cast<Table *>(base_tab);
 				Column *col=dynamic_cast<Column *>(tab_obj);
 
 				/* If the object is a column and some primary key on table is referencing it
-			 the model relationship will be revalidated */
-				if(col && tab->isConstraintRefColumn(col, ConstraintType::PrimaryKey))
-					model->validateRelationships();
+				 * the model relationship will be revalidated */
+				if(col && tab)
+				{
+					if(tab->isConstraintRefColumn(col, ConstraintType::PrimaryKey))
+						model->validateRelationships();
+					else
+						model->updateViewsReferTable(tab);
+				}
 
-				tab->setModified(true);
-				tab->setCodeInvalidated(true);
-				dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
+				base_tab->setModified(true);
+				base_tab->setCodeInvalidated(true);
+				dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 			}
 			else if(object->getObjectType()==ObjectType::Schema)
 			{

@@ -30,6 +30,15 @@
 
 class View: public BaseTable {
 	private:
+		//! \brief Deduced column names
+		QStringList col_names,
+
+		//! \brief Deduced columns aliases (used in compact view)
+		col_aliases,
+
+		//! \brief Deduces column types
+		col_types;
+
 		//! \brief Stores the references to expressions and objects
 		vector<Reference> references;
 
@@ -71,12 +80,11 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
-		/*! \brief Returns a list of deduced names for view's colums for recursive views.
-	The names are retrieved, first, from columns aliases and lastly from table's columns
-	when TABLE.* syntax is used */
-		QStringList getColumnsList(void);
-
 		void setSQLObjectAttribute(void);
+
+		/*! \brief Adds the provided names as a view's column name. In case of duplicated name
+		 * the most recent one will receive a numeric suffix */
+		void addColumnName(const QString &name);
 
 	public:
 		View(void);
@@ -137,8 +145,8 @@ class View: public BaseTable {
 		//! \brief Returns the object index searching by its index and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-		//! \brief Returns all child objects of the view (does not include references)
-		vector<BaseObject *> getObjects(void);
+		//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
+		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns the view's child object using its index and type
 		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -237,6 +245,21 @@ class View: public BaseTable {
 		void setObjectListsCapacity(unsigned capacity);
 
 		unsigned getMaxObjectCount(void);
+
+		//! \brief Returns the deduced names of the view's columns
+		QStringList getColumnNames(void);
+
+		//! \brief Returns the deduced types of the view's columns
+		QStringList getColumnTypes(void);
+
+		//! \brief Returns the deduced aliases of the view's columns (for using on the compact view as column names)
+		QStringList getColumnAliases(void);
+
+		/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
+		 *	The names are retrieved, first, from columns aliases and lastly from table's columns
+		 * 	when TABLE.* syntax is used. For expressions, if aliases aren't defined, a column name in the
+		 *  for _expr#_ is used. */
+		void generateColumnNamesTypes(void);
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

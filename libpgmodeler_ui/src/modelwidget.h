@@ -114,6 +114,8 @@ class ModelWidget: public QWidget {
 
 		toggle_attrs_menu,
 
+		pagination_menu,
+
 		select_all_menu,
 
 		jump_to_tab_menu,
@@ -236,9 +238,11 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
-		*action_extended_attribs,
-		*action_show_ext_attribs,
-		*action_hide_ext_attribs,
+		*action_pagination,
+		*action_collapse_mode,
+		*action_collapse_ext_attribs,
+		*action_collpase_all_attribs,
+		*action_no_collapse_attribs,
 		*action_edit_creation_order,
 		*action_jump_to_table,
 		*action_schemas_rects,
@@ -274,7 +278,7 @@ class ModelWidget: public QWidget {
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
-		void toggleAllExtendedAttributes(bool value);
+		void setAllCollapseMode(CollapseMode mode);
 
 	public:
 		static constexpr double MinimumZoom=0.050000,
@@ -471,7 +475,9 @@ class ModelWidget: public QWidget {
 
 		void fadeObjectsOut(void);
 
-		void toggleExtendedAttributes(void);
+		void setCollapseMode(void);
+
+		void togglePagination(void);
 
 		void toggleSchemasRectangles(void);
 

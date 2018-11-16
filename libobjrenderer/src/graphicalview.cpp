@@ -32,12 +32,12 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
-	int i, count, count1=0;
-	Reference ref;
+	int i = 0, count = 0;
+	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
-	vector<TableObject *> tab_objs;
+	vector<TableObject *> tab_objs, ext_tab_objs;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
@@ -47,76 +47,141 @@ void GraphicalView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
+	QStringList col_names, col_types;
+	CollapseMode collapse_mode = view->getCollapseMode();
+	bool has_col_pag = false, has_ext_pag = false;
 
 	//Configures the view's title
 	title->configureObject(view);
 
-	//Gets the reference count on SELECT part of the SQL definition
-	count=view->getReferenceCount(Reference::SqlReferSelect);
+	for(auto &obj : view->getObjects())
+		ext_tab_objs.push_back(dynamic_cast<TableObject *>(obj));
 
-	if(count==0)
-		count=count1=view->getReferenceCount(Reference::SqlViewDefinition);
+	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
+
+	col_names = (!compact_view ? view->getColumnNames() : view->getColumnAliases());
+	col_types = view->getColumnTypes();
+
+	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, col_names.size(), start_col, end_col);
+
+	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
+																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						start_ext, end_ext);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
+	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed && start_col < static_cast<unsigned>(col_names.size()));
+	body->setVisible(columns->isVisible());
 
-	subitems=columns->childItems();
-
-	for(i=0; i < count; i++)
+	if(!columns->isVisible())
 	{
-		if(count1==0)
-			ref=view->getReference(i, Reference::SqlReferSelect);
-		else
-			ref=view->getReference(i, Reference::SqlViewDefinition);
-
-		//Reuses the subitem if it was allocated before
-		if(!subitems.isEmpty() && i < subitems.size())
+		for(auto &item : columns->childItems())
 		{
-			graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
+			columns->removeFromGroup(item);
+			delete(item);
+		}
+	}
+	else
+	{
+		QStringList aux_col_names, aux_col_types;
+		int col_cnt = end_col - start_col;
 
-			//Moves the reference to the origin to be moved latter
-			graph_ref->moveBy(-graph_ref->scenePos().x(),
-							  -graph_ref->scenePos().y());
+		if(has_col_pag)
+		{
+			aux_col_names = col_names.mid(start_col, col_cnt);
+			aux_col_types = col_types.mid(start_col, col_cnt);
 		}
 		else
-			graph_ref=new TableObjectView;
+		{
+			aux_col_names = col_names;
+			aux_col_types = col_types;
+		}
 
-		columns->removeFromGroup(graph_ref);
-		graph_ref->configureObject(ref);
-		graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
-		columns->addToGroup(graph_ref);
+		count = aux_col_names.size();
+		subitems=columns->childItems();
+
+		for(i=0; i < count; i++)
+		{
+			//Reuses the subitem if it was allocated before
+			if(!subitems.isEmpty() && i < subitems.size())
+			{
+				graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
+
+				//Moves the reference to the origin to be moved latter
+				graph_ref->moveBy(-graph_ref->scenePos().x(),
+													-graph_ref->scenePos().y());
+			}
+			else
+				graph_ref=new TableObjectView;
+
+			graph_ref->configureObject(aux_col_names[i], aux_col_types[i], QString());
+			graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
+
+			/* Calculates the width of the name + type of the object. This is used to align all
+			the constraint labels on table */
+			width=graph_ref->getChildObject(TableObjectView::ObjDescriptor)->boundingRect().width() +
+						graph_ref->getChildObject(TableObjectView::NameLabel)->boundingRect().width() + (8 * HorizSpacing);
+			if(px < width)  px=width;
+
+			//Gets the maximum width of the column type label to align all at same horizontal position
+			if(type_width < graph_ref->getChildObject(TableObjectView::TypeLabel)->boundingRect().width())
+				type_width=graph_ref->getChildObject(TableObjectView::TypeLabel)->boundingRect().width() + (3 * HorizSpacing);
+
+			col_items.push_back(graph_ref);
+		}
+
+		//Destroy the graphical references not used
+		i=subitems.size()-1;
+		while(i > count-1)
+		{
+			graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
+			columns->removeFromGroup(graph_ref);
+			delete(graph_ref);
+			i--;
+		}
+
+		//Set all items position
+		while(!col_items.isEmpty())
+		{
+			col_item=dynamic_cast<TableObjectView *>(col_items.front());
+			columns->removeFromGroup(col_item);
+			col_items.pop_front();
+
+			//Positioning the type label
+			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
+
+			//Positioning the constraints label			
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel, px + type_width);
+			columns->addToGroup(col_item);
+		}
 	}
 
-	//Destroy the graphical references not used
-	i=subitems.size()-1;
-	while(i > count-1)
+	if(!hide_ext_attribs && view->getCollapseMode() == CollapseMode::NotCollapsed)
 	{
-		graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
-		columns->removeFromGroup(graph_ref);
-		delete(graph_ref);
-		i--;
+		if(view->isPaginationEnabled() && has_ext_pag)
+			tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
+		else
+			tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());
 	}
 
-	tab_objs.assign(view->getObjectList(ObjectType::Rule)->begin(),
-					view->getObjectList(ObjectType::Rule)->end());
-	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::Trigger)->begin(),
-					view->getObjectList(ObjectType::Trigger)->end());
-	tab_objs.insert(tab_objs.end(),
-					view->getObjectList(ObjectType::Index)->begin(),
-					view->getObjectList(ObjectType::Index)->end());
+	ext_attribs->setVisible(!tab_objs.empty() && view->getCollapseMode() == CollapseMode::NotCollapsed);
+	ext_attribs_body->setVisible(ext_attribs->isVisible());
 
-	ext_attribs->setVisible(!tab_objs.empty() && !hide_ext_attribs);
-	ext_attribs_body->setVisible(!tab_objs.empty() && !hide_ext_attribs);
-
-	if(!tab_objs.empty())
+	if(tab_objs.empty())
+	{
+		for(auto &item : ext_attribs->childItems())
+		{
+			ext_attribs->removeFromGroup(item);
+			delete(item);
+		}
+	}
+	else
 	{
 		count=tab_objs.size();
 
 		//Gets the subitems of the current group
 		subitems=ext_attribs->childItems();
-		ext_attribs->moveBy(-ext_attribs->scenePos().x(),
-							-ext_attribs->scenePos().y());
+		ext_attribs->moveBy(-ext_attribs->scenePos().x(), -ext_attribs->scenePos().y());
 		for(i=0; i < count; i++)
 		{
 			tab_obj=tab_objs.at(i);
@@ -128,7 +193,7 @@ void GraphicalView::configureObject(void)
 				col_item->setSourceObject(tab_obj);
 				col_item->configureObject();
 				col_item->moveBy(-col_item->scenePos().x(),
-								 -col_item->scenePos().y());
+												 -col_item->scenePos().y());
 			}
 			else
 				col_item=new TableObjectView(tab_obj);
@@ -139,13 +204,13 @@ void GraphicalView::configureObject(void)
 
 			/* Calculates the width of the name + type of the object. This is used to align all
 			the constraint labels on table */
-			width=col_item->getChildObject(0)->boundingRect().width() +
-				  col_item->getChildObject(1)->boundingRect().width() + (3 * HorizSpacing);
+			width=col_item->getChildObject(TableObjectView::ObjDescriptor)->boundingRect().width() +
+						col_item->getChildObject(TableObjectView::NameLabel)->boundingRect().width() + (3 * HorizSpacing);
 			if(px < width)  px=width;
 
 			//Gets the maximum width of the column type label to align all at same horizontal position
-			if(type_width < col_item->getChildObject(2)->boundingRect().width())
-				type_width=col_item->getChildObject(2)->boundingRect().width() + (3 * HorizSpacing);
+			if(type_width < col_item->getChildObject(TableObjectView::TypeLabel)->boundingRect().width())
+				type_width=col_item->getChildObject(TableObjectView::TypeLabel)->boundingRect().width() + (3 * HorizSpacing);
 
 			col_items.push_back(col_item);
 		}
@@ -168,10 +233,10 @@ void GraphicalView::configureObject(void)
 			col_items.pop_front();
 
 			//Positioning the type label
-			col_item->setChildObjectXPos(2, px);
+			col_item->setChildObjectXPos(TableObjectView::TypeLabel, px);
 
 			//Positioning the constraints label
-			col_item->setChildObjectXPos(3, px + type_width);
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel, px + type_width);
 			ext_attribs->addToGroup(col_item);
 		}
 	}
@@ -184,27 +249,41 @@ void GraphicalView::configureObject(void)
 	//Resizes the columns/extended attributes using the new width
 	for(int idx=0; idx < 2; idx++)
 	{
-		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
-
-		pen=this->getBorderStyle(attribs[idx]);
-		pen.setStyle(Qt::DashLine);
-
+		/* Configuring the brush and pen of the bodies even if they aren't visible
+		 * the attributes toggler at the bottom of the view uses the color of the attributes body
+		 * this will avoid the creation of a transparent toggler */
 		if(!tag)
+		{
 			bodies[idx]->setBrush(this->getFillStyle(attribs[idx]));
+			pen=this->getBorderStyle(attribs[idx]);
+		}
 		else
 		{
 			bodies[idx]->setBrush(tag->getFillStyle(tag_attribs[idx]));
 			pen.setColor(tag->getElementColor(tag_attribs[idx], Tag::BorderColor));
 		}
 
+		pen.setStyle(Qt::DashLine);
 		bodies[idx]->setPen(pen);
 
+		// We avoid the construction of the rect related to the current body item if the related group isn't visible
+		if(!groups[idx]->isVisible())
+			continue;
+
+		bodies[idx]->setRect(QRectF(0,0, width, groups[idx]->boundingRect().height() + (2 * VertSpacing)));
+
 		if(idx==0)
-			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+			bodies[idx]->setPos(title->pos().x(), title->boundingRect().height() - 1);
 		else
-			bodies[idx]->setPos(title->pos().x(),
-								title->boundingRect().height() +
-								bodies[0]->boundingRect().height() - 2);
+		{
+			if(bodies[0]->isVisible())
+				bodies[idx]->setPos(title->pos().x(),
+														title->boundingRect().height() +
+														bodies[0]->boundingRect().height() - 2);
+			else
+				bodies[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
+		}
+
 		groups[idx]->setPos(bodies[idx]->pos());
 
 		subitems=groups[idx]->childItems();
@@ -212,8 +291,8 @@ void GraphicalView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems.front());
 			subitems.pop_front();
-			col_item->setChildObjectXPos(3, width -
-										 col_item->boundingRect().width() - (2 * HorizSpacing) - 1);
+			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
+																	 width - col_item->getChildObject(3)->boundingRect().width() - (2 * HorizSpacing));
 		}
 	}
 

@@ -193,17 +193,11 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Moves the scene when the user puts the mouse cursor on one of scene's edges
 		void moveObjectScene(void);
 
-		//! \brief Handles and redirects the signal emitted by the modified object
-		void emitObjectModification(BaseGraphicObject *object);
-
 		//! \brief Handles and redirects the signal emitted by the selected child object
 		void emitChildObjectSelection(TableObject *child_obj);
 
 		//! \brief Handles and redirects the signal emitted by the selected object
 		void emitObjectSelection(BaseGraphicObject *object, bool selected);
-
-		//! \brief Handles and redirects the signal emitted by the tables/views when the extended attributes are toggled
-		void emitExtAttributesToggled(void);
 
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
@@ -212,8 +206,14 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when a object is modified on scene
 		void s_objectModified(BaseGraphicObject *objeto);
 
-		//! \brief Signal emitted when the user toggles a table's extended attributes in the scene
-		void s_extAttributesToggled(void);
+		//! \brief Signal emitted when the user toggles a table's collapse mode in the scene
+		void s_collapseModeChanged(void);
+
+		//! \brief Signal emitted when the user toggles a table's attributes pagination
+		void s_paginationToggled(void);
+
+		//! \brief Signal emitted when the user changes a table's attributes page
+		void s_currentPageChanged(void);
 
 		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);

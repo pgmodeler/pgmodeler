@@ -1059,7 +1059,7 @@ void MainWindow::setCurrentModel(void)
 		more_actions_menu.clear();
 		more_actions_menu.addAction(current_model->action_select_all);
 		more_actions_menu.addAction(current_model->action_fade);
-		more_actions_menu.addAction(current_model->action_extended_attribs);
+		more_actions_menu.addAction(current_model->action_collapse_mode);
 		more_actions_menu.addAction(current_model->action_edit_creation_order);
 		general_tb->addAction(action_other_actions);
 		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_other_actions));
@@ -1304,6 +1304,8 @@ void MainWindow::applyConfigurations(void)
 		tmpmodel_save_timer.setInterval(model_save_timer.interval() != 0 ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		//Force the update of all opened models
 		count=models_tbw->count();
 		for(i=0; i < count; i++)
@@ -1311,11 +1313,15 @@ void MainWindow::applyConfigurations(void)
 			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 			model->updateObjectsOpacity();
 			model->db_model->setObjectsModified();
-			model->update();
 		}
 
+		if(current_model)
+			current_model->update();
+
 		updateConnections();
-		sql_tool_wgt->configureSnippets();		
+		sql_tool_wgt->configureSnippets();
+
+		QApplication::restoreOverrideCursor();
 	}
 
 	sql_tool_wgt->updateTabs();
@@ -2041,9 +2047,18 @@ void MainWindow::toggleCompactView(void)
 	for(int idx = 0; idx < models_tbw->count(); idx++)
 	{
 		model_wgt = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
-		model_wgt->toggleAllExtendedAttributes(action_compact_view->isChecked());
-		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema});
+
+		if(action_compact_view->isChecked())
+			model_wgt->setAllCollapseMode(CollapseMode::ExtAttribsCollapsed);
+		else
+			model_wgt->setAllCollapseMode(CollapseMode::NotCollapsed);
+
+		model_wgt->getDatabaseModel()->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Relationship,
+																												ObjectType::BaseRelationship, ObjectType::Schema});
 	}
+
+	if(current_model)
+		current_model->update();
 
 	QApplication::restoreOverrideCursor();
 }

@@ -185,34 +185,87 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 		return(nullptr);
 }
 
-QStringList View::getColumnsList(void)
+void View::generateColumnNamesTypes(void)
 {
-	QStringList col_list;
-	unsigned i=0, count=exp_select.size(), col_id=0, col_count=0;
-	Table *tab=nullptr;
+	unsigned col_id = 0, col_count = 0, expr_idx = 0;
+	Table *tab = nullptr;
+	Reference ref;
+	Column *col = nullptr;
+	QString name;
 
-	for(i=0; i < count; i++)
+	col_aliases.clear();
+	col_names.clear();
+	col_types.clear();
+
+	if(hasDefinitionExpression())
 	{
-		if(!references[i].getColumn())
+		col_names.push_back(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)));
+		col_aliases.push_back(!references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : col_names.at(0));
+		col_types.push_back(Attributes::Expression);
+	}
+	else
+	{
+		for(auto ref_id : exp_select)
 		{
-			tab=references[i].getTable();
+			ref = references[ref_id];
 
-			if(!tab) continue;
-			col_count=tab->getColumnCount();
+			if(!ref.getExpression().isEmpty())
+			{
+				if(!ref.getAlias().isEmpty())
+					name = ref.getAlias();
+				else
+					name = QString("_expr%1_").arg(expr_idx++);
 
-			for(col_id=0; col_id < col_count; col_id++)
-				col_list.push_back(tab->getColumn(col_id)->getName(true));
-		}
-		else
-		{
-			if(!references[i].getColumnAlias().isEmpty())
-				col_list.push_back(references[i].getColumnAlias());
+				addColumnName(name);
+				col_types.push_back(Attributes::Expression);
+				col_aliases.push_back(!ref.getReferenceAlias().isEmpty() ? ref.getReferenceAlias() : name);
+			}
+			else if(!ref.getColumn())
+			{
+				tab=ref.getTable();
+				col_count=tab->getColumnCount();
+
+				for(col_id=0; col_id < col_count; col_id++)
+				{
+					col = tab->getColumn(col_id);
+					addColumnName(col->getName());
+					col_types.push_back(*col->getType());
+					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+				}
+			}
 			else
-				col_list.push_back(references[i].getColumn()->getName(true));
+			{
+				col = ref.getColumn();
+
+				if(!ref.getColumnAlias().isEmpty())
+					addColumnName(ref.getColumnAlias());
+				else
+					addColumnName(col->getName());
+
+				col_types.push_back(*col->getType());
+
+				if(!ref.getReferenceAlias().isEmpty())
+					col_aliases.push_back(ref.getReferenceAlias());
+				else
+					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+			}
 		}
 	}
+}
 
-	return(col_list);
+QStringList View::getColumnNames(void)
+{
+	return(col_names);
+}
+
+QStringList View::getColumnTypes(void)
+{
+	return(col_types);
+}
+
+QStringList View::getColumnAliases(void)
+{
+	return(col_aliases);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
@@ -274,6 +327,7 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
 
+	generateColumnNamesTypes();
 	setCodeInvalidated(true);
 }
 
@@ -366,6 +420,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Removes the reference from the view
 	references.erase(references.begin() + ref_id);
+	generateColumnNamesTypes();
 	setCodeInvalidated(true);
 }
 
@@ -376,6 +431,8 @@ void View::removeReferences(void)
 	exp_from.clear();
 	exp_where.clear();
 	exp_end.clear();
+	col_names.clear();
+	col_types.clear();
 	setCodeInvalidated(true);
 }
 
@@ -579,12 +636,23 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::HideExtAttribs]=(isExtAttribsHidden() ? Attributes::True : QString());
+	attributes[Attributes::Pagination]=(isPaginationEnabled() ? Attributes::True : QString());
+	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
+	attributes[Attributes::AttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(AttribsSection)) : QString());
+	attributes[Attributes::ExtAttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(ExtAttribsSection)) : QString());
 
 	setSQLObjectAttribute();
 
-	if(recursive)
-		attributes[Attributes::Columns]=getColumnsList().join(',');
+	// We use column names only if the view has references that aren't its whole definition (Reference::SqlViewDefinition)
+	if(recursive && !hasDefinitionExpression())
+	{
+		QStringList fmt_names;
+
+		for(auto &name : col_names)
+			fmt_names.push_back(formatName(name));
+
+		attributes[Attributes::Columns]=fmt_names.join(',');
+	}
 
 	if(tag && def_type==SchemaParser::XmlDefinition)
 		attributes[Attributes::Tag]=tag->getCodeDefinition(def_type, true);
@@ -605,7 +673,21 @@ QString View::getCodeDefinition(unsigned def_type)
 void View::setSQLObjectAttribute(void)
 {
 	if(materialized)
-	  attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+		attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
+}
+
+void View::addColumnName(const QString &name)
+{
+	unsigned col_id = 1;
+	QString fmt_name = name;
+
+	while(col_names.indexOf(fmt_name) >= 0)
+	{
+		fmt_name = name + QString::number(col_id);
+		col_id++;
+	}
+
+	col_names.push_back(fmt_name);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)
@@ -999,13 +1081,18 @@ void View::operator = (View &view)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-vector<BaseObject *> View::getObjects(void)
+vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 {
 	vector<BaseObject *> list;
+	vector<ObjectType> types={ ObjectType::Trigger, ObjectType::Index, ObjectType::Rule };
 
-	list.assign(triggers.begin(), triggers.end());
-	list.insert(list.end(), rules.begin(), rules.end());
-	list.insert(list.end(), indexes.begin(), indexes.end());
+	for(auto type : types)
+	{
+		if(std::find(excl_types.begin(), excl_types.end(), type) != excl_types.end())
+			continue;
+
+		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
+	}
 
 	return(list);
 }

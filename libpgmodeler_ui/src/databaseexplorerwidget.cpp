@@ -993,7 +993,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		root->setText(0, connection.getConnectionId(true));
 		root->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("server")));
 		root->setData(DatabaseImportForm::ObjectId, Qt::UserRole, -1);
-		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, ~ObjectType::BaseObject);
+		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::BaseObject));
 		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
@@ -1097,7 +1097,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 		{
 			openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 									 item->text(0),
-									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != ~ObjectType::View);
+									 item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt() != enum_cast(ObjectType::View));
 		}
 		else if(exec_action)
 			handleSelectedSnippet(exec_action->text());

@@ -817,7 +817,7 @@
              <item row="1" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_19">
                <item>
-                <widget class="QCheckBox" name="objs_extattribs_chk">
+                <widget class="QCheckBox" name="objs_collapse_mode_chk">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -828,10 +828,10 @@
                   <string/>
                  </property>
                  <property name="statusTip">
-                  <string>Handles the tables' and views' extended attributes display status in the metadata file.</string>
+                  <string>Handles the tables' and views' collapsing mode in the metadata file.</string>
                  </property>
                  <property name="text">
-                  <string>Tables' extended attributes display</string>
+                  <string>Tables and views collpsing mode</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -839,7 +839,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="objs_extattribs_hint" native="true">
+                <widget class="QWidget" name="objs_collapse_mode_hint" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

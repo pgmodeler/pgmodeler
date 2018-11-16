@@ -203,6 +203,9 @@ class RelationshipView: public BaseObjectView {
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);
 
+		void configureObjectShadow(void) = delete;
+		void configureObjectSelection(void) = delete;
+
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);
 

@@ -9,9 +9,9 @@ StyledTextboxView::StyledTextboxView(Textbox *txtbox, bool override_style) : Tex
 	pol.append(QPointF(0,20));
 
 	fold=new QGraphicsPolygonItem;
-	this->addToGroup(fold);
 	fold->setPolygon(pol);
 
+	this->addToGroup(fold);
 	this->configureObject();
 }
 
@@ -28,26 +28,28 @@ void StyledTextboxView::configureObject(void)
 	QPointF pnt;
 
 	this->__configureObject();
-	fold->setBrush(box->brush());
-	fold->setPen(box->pen());
+	fold->setBrush(text_item->brush());
+	fold->setPen(text_item->pen());
 
-	rect=box->boundingRect();
-	pol=box->polygon();
+	rect = text_item->boundingRect();
+	pol = text_item->polygon();
 
 	if(rect.height() < fold->boundingRect().height())
 		rect.setHeight(fold->boundingRect().height() + (2 * VertSpacing));
 
-	this->resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());
+	TextPolygonItem::resizePolygon(pol, rect.width() + fold->boundingRect().width(), rect.height());
 
 	pnt=pol.at(2);
 	pol.remove(2);
 	pol.insert(2, QPointF(pnt.x(), roundf(pnt.y() - fold->boundingRect().height())));
 	pol.insert(3, QPointF(roundf(pnt.x() - fold->boundingRect().width()), pnt.y()));
-	box->setPolygon(pol);
 
-	rect=box->boundingRect();
+	text_item->setPolygon(pol);
+	rect = text_item->boundingRect();
 	fold->setPos(rect.width() - fold->boundingRect().width(),
-				 rect.height() - fold->boundingRect().height());
+							 rect.height() - fold->boundingRect().height());
+
+	bounding_rect = text_item->boundingRect();
 
 	this->configureObjectShadow();
 	this->configureObjectSelection();

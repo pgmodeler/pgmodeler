@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		out << endl;
 		out << e.getExceptionsText();
 		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
-		return(e.getErrorType()==ErrorCode::Custom ? -1 : ~e.getErrorType());
+		return(e.getErrorType()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorType()));
 	}
 #endif
 }
