@@ -28,7 +28,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 
 	sel_rect = new QGraphicsRectItem;
 
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 	{
 		buttons[arr_id] = new QGraphicsPolygonItem;
 		btns_selected[arr_id] = false;
@@ -44,13 +44,16 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	btns_width = btns_height = 0;
-	current_page = max_pages = 0;
+
+	for(unsigned idx = 0; idx < 2; idx++)
+		current_page[idx] = max_pages[idx] = 0;
+
 	configureButtonsState();
 }
 
 AttributesTogglerItem::~AttributesTogglerItem(void)
 {
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		delete(buttons[arr_id]);
 
 	delete(sel_rect);
@@ -58,13 +61,13 @@ AttributesTogglerItem::~AttributesTogglerItem(void)
 
 void AttributesTogglerItem::setButtonsBrush(const QBrush &brush)
 {
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		buttons[arr_id]->setBrush(brush);
 }
 
 void AttributesTogglerItem::setButtonsPen(const QPen &pen)
 {
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		buttons[arr_id]->setPen(pen);
 }
 
@@ -88,12 +91,12 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 {
 	QRectF rect;
 	double h_spacing = 4 * BaseObjectView::HorizSpacing;
-	unsigned coll_mode = static_cast<unsigned>(collapse_mode);
+	unsigned coll_mode = static_cast<unsigned>(collapse_mode), section_id = 0;
 
 	this->setToolTip(QString());
 	clearButtonsSelection();
 
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 	{
 		rect.setSize(QSizeF(buttons[arr_id]->boundingRect().width() + h_spacing, this->boundingRect().height()));
 		rect.moveTo(buttons[arr_id]->pos().x() - (h_spacing/2), 0);
@@ -124,15 +127,23 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 				{
 					pagination_enabled = !pagination_enabled;
 				}
-				else if(max_pages != 0)
+				else
 				{
-					if(arr_id == PrevAttribsPageBtn)
-						current_page--;
-					else if(arr_id == NextAttribsPageBtn)
-						current_page++;
+					if(arr_id == PrevAttribsPageBtn || arr_id == NextAttribsPageBtn)
+						section_id = BaseTable::AttribsSection;
+					else
+						section_id = BaseTable::ExtAttribsSection;
 
-					if(current_page >= max_pages)
-						current_page = (arr_id == PrevAttribsPageBtn ? 0 : max_pages - 1);
+					if(max_pages[section_id] != 0)
+					{
+						if(arr_id == PrevAttribsPageBtn || arr_id == PrevExtAttribsPageBtn)
+							current_page[section_id]--;
+						else
+							current_page[section_id]++;
+
+						if(current_page[section_id] >= max_pages[section_id])
+							current_page[section_id] = (arr_id == PrevAttribsPageBtn || arr_id == PrevExtAttribsPageBtn ? 0 : max_pages[section_id] - 1);
+					}
 				}
 
 				configureButtons(this->rect());
@@ -144,7 +155,7 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 				else if(arr_id == AttribsExpandBtn || arr_id == AttribsCollapseBtn)
 					emit s_collapseModeChanged(collapse_mode);
 				else
-					emit s_currentPageChanged(current_page);
+					emit s_currentPageChanged(section_id, current_page[section_id]);
 			}
 			else
 			{
@@ -177,11 +188,18 @@ void AttributesTogglerItem::configureButtonsState(void)
 	buttons[AttribsCollapseBtn]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
 																					 collapse_mode == CollapseMode::NotCollapsed ? 1 : ButtonMinOpacity);
 
-	buttons[PrevAttribsPageBtn]->setOpacity(max_pages != 0 && current_page > 0 ? 1 : ButtonMinOpacity);
-	buttons[NextAttribsPageBtn]->setOpacity(max_pages != 0 && current_page < max_pages - 1 ? 1 : ButtonMinOpacity);
+	buttons[PrevAttribsPageBtn]->setOpacity(max_pages[BaseTable::AttribsSection] != 0 && current_page[BaseTable::AttribsSection] > 0 ? 1 : ButtonMinOpacity);
+	buttons[NextAttribsPageBtn]->setOpacity(max_pages[BaseTable::AttribsSection] != 0 &&
+																					current_page[BaseTable::AttribsSection] < max_pages[BaseTable::AttribsSection] - 1 ? 1 : ButtonMinOpacity);
+
+	buttons[PrevExtAttribsPageBtn]->setOpacity(max_pages[BaseTable::ExtAttribsSection] != 0 && current_page[BaseTable::ExtAttribsSection] > 0 ? 1 : ButtonMinOpacity);
+	buttons[NextExtAttribsPageBtn]->setOpacity(max_pages[BaseTable::ExtAttribsSection] != 0 &&
+																						 current_page[BaseTable::ExtAttribsSection] < max_pages[BaseTable::ExtAttribsSection] - 1 ? 1 : ButtonMinOpacity);
 
 	buttons[PrevAttribsPageBtn]->setVisible(pagination_enabled);
 	buttons[NextAttribsPageBtn]->setVisible(pagination_enabled);
+	buttons[PrevExtAttribsPageBtn]->setVisible(pagination_enabled);
+	buttons[NextExtAttribsPageBtn]->setVisible(pagination_enabled);
 }
 
 void AttributesTogglerItem::setHasExtAttributes(bool value)
@@ -198,23 +216,23 @@ void AttributesTogglerItem::setPaginationEnabled(bool value, bool hide_pag_toggl
 	configureButtonsState();
 }
 
-void AttributesTogglerItem::setPaginationValues(unsigned curr_page, unsigned max_page)
+void AttributesTogglerItem::setPaginationValues(unsigned section_id, unsigned curr_page, unsigned max_page)
 {
-	if(!pagination_enabled)
+	if(!pagination_enabled || section_id > BaseTable::ExtAttribsSection)
 		return;
 
 	if(curr_page > max_page)
-		current_page = max_pages = max_page;
+		current_page[section_id] = max_pages[section_id] = max_page;
 	else
 	{
-		current_page = curr_page;
-		max_pages = max_page;
+		current_page[section_id] = curr_page;
+		max_pages[section_id] = max_page;
 	}
 }
 
 void AttributesTogglerItem::clearButtonsSelection(void)
 {
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		btns_selected[arr_id] = false;
 
 	this->update();
@@ -258,6 +276,30 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 		pol.translate(-8 * factor, 0);
 		pol.append(QPointF(8 * factor, 5 * factor));
 		buttons[NextAttribsPageBtn]->setPolygon(pol);
+		arr_width += pol.boundingRect().width() + h_spacing;
+
+		pol.clear();
+		pol.append(QPointF(0, 5 * factor));
+		pol.append(QPointF(5 * factor, 0)); pol.append(QPointF(8 * factor, 0));
+		pol.append(QPointF(8 * factor, 3 * factor)); pol.append(QPointF(6 * factor, 3 * factor));
+		pol.append(QPointF(4 * factor, 5 * factor));
+		pol.append(QPointF(6 * factor, 7 * factor)); pol.append(QPointF(8 * factor, 7 * factor));
+		pol.append(QPointF(8 * factor, 10 * factor)); pol.append(QPointF(5 * factor, 10 * factor));
+		buttons[PrevExtAttribsPageBtn]->setPolygon(pol);
+		arr_width += pol.boundingRect().width() + h_spacing;
+
+		pol.clear();
+		pol.append(QPointF(0, 0));
+		pol.append(QPointF(3 * factor, 0));
+		pol.append(QPointF(8 * factor, 5 * factor));
+		pol.append(QPointF(3 * factor, 10 * factor));
+		pol.append(QPointF(0, 10 * factor));
+		pol.append(QPointF(0, 7 * factor));
+		pol.append(QPointF(2 * factor, 7 * factor));
+		pol.append(QPointF(4 * factor, 5 * factor));
+		pol.append(QPointF(2 * factor, 3 * factor));
+		pol.append(QPointF(0, 3 * factor));
+		buttons[NextExtAttribsPageBtn]->setPolygon(pol);
 		arr_width += pol.boundingRect().width() + h_spacing;
 	}
 
@@ -307,6 +349,12 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 			buttons[NextAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[NextAttribsPageBtn]->boundingRect().height())/2);
 			px += buttons[NextAttribsPageBtn]->boundingRect().width() + h_spacing;
+
+			buttons[PrevExtAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[PrevExtAttribsPageBtn]->boundingRect().height())/2);
+			px += buttons[PrevExtAttribsPageBtn]->boundingRect().width() + h_spacing;
+
+			buttons[NextExtAttribsPageBtn]->setPos(px, (new_rect.height() - buttons[NextExtAttribsPageBtn]->boundingRect().height())/2);
+			px += buttons[NextExtAttribsPageBtn]->boundingRect().width() + h_spacing;
 		}
 	}
 
@@ -320,7 +368,7 @@ void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 {
 	RoundedRectItem::paint(painter, option, widget);
 
-	for(unsigned arr_id = 0; arr_id < 5; arr_id++)
+	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 	{
 		if(!buttons[arr_id]->isVisible())
 			continue;

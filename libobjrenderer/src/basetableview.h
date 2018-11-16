@@ -166,7 +166,7 @@ class BaseTableView: public BaseObjectView {
 
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_currentPageChanged
 		 * causing the the attributes of the current page to be displayed */
-		void configureCurrentPage(unsigned page);
+		void configureCurrentPage(unsigned section_id, unsigned page);
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene

@@ -63,7 +63,13 @@ void TableView::configureObject(void)
 
 /*	configurePaginationParams(columns.size(), ext_tab_objs.size(),
 														start_col, end_col, start_ext, end_ext, total_objs_cnt); */
-	has_col_pag = __configurePaginationParams(BaseTable::AttribsPage, columns.size(), start_col, end_col);
+
+
+	has_col_pag = __configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);
+
+	has_ext_pag = __configurePaginationParams(BaseTable::ExtAttribsSection,
+																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						start_ext, end_ext);
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
 

@@ -52,8 +52,8 @@ class BaseTable: public BaseGraphicObject {
 		Tag *tag;
 
 	public:
-		static constexpr unsigned AttribsPage = 0,
-		ExtAttribsPage = 1;
+		static constexpr unsigned AttribsSection = 0,
+		ExtAttribsSection = 1;
 
 		BaseTable(void);
 
@@ -123,9 +123,9 @@ class BaseTable: public BaseGraphicObject {
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
-		void setCurrentPage(unsigned page_id, unsigned value);
+		void setCurrentPage(unsigned section_id, unsigned value);
 		void resetCurrentPages(void);
-		unsigned getCurrentPage(unsigned page_id);
+		unsigned getCurrentPage(unsigned section_id);
 
 		friend class DatabaseModel;
 };

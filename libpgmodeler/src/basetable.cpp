@@ -34,8 +34,8 @@ BaseTable::BaseTable(void)
 
 void BaseTable::resetCurrentPages(void)
 {
-	curr_page[AttribsPage] = 0;
-	curr_page[ExtAttribsPage] = 0;
+	curr_page[AttribsSection] = 0;
+	curr_page[ExtAttribsSection] = 0;
 }
 
 void BaseTable::setTag(Tag *tag)
@@ -86,21 +86,21 @@ bool BaseTable::isPaginationEnabled(void)
 	return(pagination_enabled);
 }
 
-void BaseTable::setCurrentPage(unsigned page_id, unsigned value)
+void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
 {
-	if(page_id > ExtAttribsPage)
+	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	setCodeInvalidated(curr_page[page_id] != value);
-	curr_page[page_id] = value;
+	setCodeInvalidated(curr_page[section_id] != value);
+	curr_page[section_id] = value;
 }
 
-unsigned BaseTable::getCurrentPage(unsigned page_id)
+unsigned BaseTable::getCurrentPage(unsigned section_id)
 {
-	if(page_id > ExtAttribsPage)
+	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_page[page_id]);
+	return(curr_page[section_id]);
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
