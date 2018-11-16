@@ -73,6 +73,16 @@ bool Reference::isDefinitionExpression(void)
 	return(is_def_expr);
 }
 
+void Reference::addColumn(const QString &name, const QString &type, const QString &alias)
+{
+
+}
+
+void Reference::removeColumns(void)
+{
+	columns.clear();
+}
+
 Table *Reference::getTable(void)
 {
 	return(table);

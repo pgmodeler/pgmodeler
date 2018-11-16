@@ -38,6 +38,7 @@ void GraphicalView::configureObject(void)
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
 	vector<TableObject *> tab_objs, ext_tab_objs;
+	vector<SimpleColumn> view_cols;
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	QString attribs[]={ Attributes::ViewBody, Attributes::ViewExtBody },
@@ -47,7 +48,6 @@ void GraphicalView::configureObject(void)
 	QList<TableObjectView *> col_items;
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
-	QStringList col_names, col_types;
 	CollapseMode collapse_mode = view->getCollapseMode();
 	bool has_col_pag = false, has_ext_pag = false;
 
@@ -59,18 +59,15 @@ void GraphicalView::configureObject(void)
 
 	attribs_toggler->setHasExtAttributes(!hide_ext_attribs && !ext_tab_objs.empty());
 
-	col_names = (!compact_view ? view->getColumnNames() : view->getColumnAliases());
-	col_types = view->getColumnTypes();
-
-	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, col_names.size(), start_col, end_col);
-
+	view_cols = view->getColumns();
+	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, view_cols.size(), start_col, end_col);
 	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
 																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
 																						start_ext, end_ext);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
-	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed && start_col < static_cast<unsigned>(col_names.size()));
+	columns->setVisible(view->getCollapseMode() != CollapseMode::AllAttribsCollapsed && start_col < static_cast<unsigned>(view_cols.size()));
 	body->setVisible(columns->isVisible());
 
 	if(!columns->isVisible())
@@ -83,21 +80,14 @@ void GraphicalView::configureObject(void)
 	}
 	else
 	{
-		QStringList aux_col_names, aux_col_types;
-		int col_cnt = end_col - start_col;
+		vector<SimpleColumn> aux_view_cols;
 
 		if(has_col_pag)
-		{
-			aux_col_names = col_names.mid(start_col, col_cnt);
-			aux_col_types = col_types.mid(start_col, col_cnt);
-		}
+			aux_view_cols.assign(view_cols.begin() + start_col, view_cols.begin() + end_col);
 		else
-		{
-			aux_col_names = col_names;
-			aux_col_types = col_types;
-		}
+			aux_view_cols = view_cols;
 
-		count = aux_col_names.size();
+		count = aux_view_cols.size();
 		subitems=columns->childItems();
 
 		for(i=0; i < count; i++)
@@ -114,7 +104,7 @@ void GraphicalView::configureObject(void)
 			else
 				graph_ref=new TableObjectView;
 
-			graph_ref->configureObject(aux_col_names[i], aux_col_types[i], QString());
+			graph_ref->configureObject(aux_view_cols[i]);
 			graph_ref->moveBy(HorizSpacing, (i * graph_ref->boundingRect().height()) + VertSpacing);
 
 			/* Calculates the width of the name + type of the object. This is used to align all

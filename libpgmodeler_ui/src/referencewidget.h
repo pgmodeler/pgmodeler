@@ -26,6 +26,8 @@
 #include "codecompletionwidget.h"
 #include "objectselectorwidget.h"
 #include "hinttextwidget.h"
+#include "pgsqltypewidget.h"
+#include "objectstablewidget.h"
 
 class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
@@ -40,6 +42,10 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		CodeCompletionWidget *expression_cp;
 
 		ObjectSelectorWidget *ref_object_sel;
+
+		PgSQLTypeWidget *pgsqltype_wgt;
+
+		ObjectsTableWidget *columns_tab;
 
 		unsigned ref_flags;
 

@@ -41,11 +41,25 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_object_sel->enableObjectCreation(false);
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 
-	reference_grid->addWidget(ref_object_sel, 3, 1, 1, 3);
-	reference_grid->addWidget(expression_txt, 5, 1, 1, 4);
+	QGridLayout *grid = dynamic_cast<QGridLayout *>(properties_tbw->widget(0)->layout());
+	grid->addWidget(ref_object_sel, 2, 1, 1, 3);
+	grid->addWidget(expression_txt, 4, 1, 1, 4);
+
+	properties_tbw->setTabEnabled(1, false);
+	pgsqltype_wgt = new PgSQLTypeWidget(this);
+	columns_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
+
+	QFrame *info_frm=BaseObjectWidget::generateInformationFrame(trUtf8("This tab can be used to inform the columns that the view owns. This is just a convenience to make the visualization of this kind of object more intuitive. If no column is specified here the columns of the view displayed in the canvas will be a fragment of the expression defined in the previous tab."));
+	QVBoxLayout *vbox =  dynamic_cast<QVBoxLayout *>(properties_tbw->widget(1)->layout());
+
+	vbox->addWidget(pgsqltype_wgt);
+	vbox->addWidget(columns_tab);
+
+	info_frm->setParent(this);
+	vbox->addWidget(info_frm);
 
 	selectReferenceType();
-	setMinimumSize(630, 380);
+	setMinimumSize(640, 480);
 
 	connect(view_def_chk, SIGNAL(toggled(bool)), select_from_chk, SLOT(setDisabled(bool)));
 	connect(view_def_chk, SIGNAL(toggled(bool)), from_where_chk, SLOT(setDisabled(bool)));
@@ -66,6 +80,9 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 {
 	this->ref_flags = ref_flags;
 	this->reference = ref;
+
+	pgsqltype_wgt->setAttributes(PgSqlType(), model,
+															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
 
 	expression_cp->configureCompletion(model, expression_hl);
 	ref_object_sel->setModel(model);
@@ -171,4 +188,5 @@ void ReferenceWidget::selectReferenceType(void)
 	expression_txt->setEnabled(!ref_obj);
 	expr_alias_edt->setEnabled(!ref_obj);
 	view_def_chk->setVisible(!ref_obj);
+	properties_tbw->setTabEnabled(1, !ref_obj);
 }

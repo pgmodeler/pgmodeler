@@ -30,15 +30,6 @@
 
 class View: public BaseTable {
 	private:
-		//! \brief Deduced column names
-		QStringList col_names,
-
-		//! \brief Deduced columns aliases (used in compact view)
-		col_aliases,
-
-		//! \brief Deduces column types
-		col_types;
-
 		//! \brief Stores the references to expressions and objects
 		vector<Reference> references;
 
@@ -52,6 +43,8 @@ class View: public BaseTable {
 		vector<TableObject *> triggers;
 		vector<TableObject *> rules;
 		vector<TableObject *> indexes;
+
+		vector<SimpleColumn> columns;
 
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
@@ -82,9 +75,8 @@ class View: public BaseTable {
 
 		void setSQLObjectAttribute(void);
 
-		/*! \brief Adds the provided names as a view's column name. In case of duplicated name
-		 * the most recent one will receive a numeric suffix */
-		void addColumnName(const QString &name);
+		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
+		QString getUniqueColumnName(const QString &name);
 
 	public:
 		View(void);
@@ -246,20 +238,14 @@ class View: public BaseTable {
 
 		unsigned getMaxObjectCount(void);
 
-		//! \brief Returns the deduced names of the view's columns
-		QStringList getColumnNames(void);
-
-		//! \brief Returns the deduced types of the view's columns
-		QStringList getColumnTypes(void);
-
-		//! \brief Returns the deduced aliases of the view's columns (for using on the compact view as column names)
-		QStringList getColumnAliases(void);
-
 		/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
 		 *	The names are retrieved, first, from columns aliases and lastly from table's columns
 		 * 	when TABLE.* syntax is used. For expressions, if aliases aren't defined, a column name in the
 		 *  for _expr#_ is used. */
 		void generateColumnNamesTypes(void);
+
+		//! \brief Returns the deduced columns of the view
+		vector<SimpleColumn> getColumns(void);
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

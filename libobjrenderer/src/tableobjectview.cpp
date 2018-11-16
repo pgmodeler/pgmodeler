@@ -505,7 +505,7 @@ void TableObjectView::configureObject(Reference reference)
 	calculateBoundingRect();
 }
 
-void TableObjectView::configureObject(const QString &name, const QString &type, const QString &alias)
+void TableObjectView::configureObject(const SimpleColumn &col)
 {
 	QTextCharFormat fmt;
 	double px;
@@ -515,16 +515,21 @@ void TableObjectView::configureObject(const QString &name, const QString &type, 
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	fmt = font_config[Attributes::Column];
-	lables[0]->setText(name);
+
+	if(compact_view && !col.alias.isEmpty())
+		lables[0]->setText(col.alias);
+	else
+		lables[0]->setText(col.name);
+
 	lables[0]->setFont(fmt.font());
 	lables[0]->setBrush(fmt.foreground());
 	lables[0]->setPos(px, 0);
 	px+=lables[0]->boundingRect().width() + (4 * HorizSpacing);
 
-	if(!compact_view && !type.isEmpty())
+	if(!compact_view && !col.type.isEmpty())
 	{
 		fmt=font_config[Attributes::ObjectType];
-		lables[1]->setText(type);
+		lables[1]->setText(col.type);
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
 		lables[1]->setPos(px, 0);
@@ -533,18 +538,7 @@ void TableObjectView::configureObject(const QString &name, const QString &type, 
 	else
 		lables[1]->setText(QString());
 
-	//Configures a label for the alias (if there is one)
-	if(!compact_view && !alias.isEmpty())
-	{
-		fmt=font_config[Attributes::Alias];
-		lables[2]->setText(QString(" (") + alias + QString(") "));
-		lables[2]->setFont(fmt.font());
-		lables[2]->setBrush(fmt.foreground());
-		lables[2]->setPos(px, 0);
-	}
-	else
-		lables[2]->setText(QString());
-
+	lables[2]->setText(QString());
 	calculateBoundingRect();
 }
 
