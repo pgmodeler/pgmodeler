@@ -34,6 +34,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 	private:
 		Q_OBJECT
 
+		static QPolygonF btn_polygons[7];
+
 		//! \brief Stores the selection rectangle of the item's internal elements
 		QGraphicsRectItem *sel_rect;
 
@@ -41,10 +43,10 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		CollapseMode collapse_mode;
 
 		//! \brief Stores the polygonal items denoting the control buttons of the toggler
-		QGraphicsPolygonItem *buttons[5];
+		QGraphicsPolygonItem *buttons[7];
 
 		//! \brief Stores the selected status of the buttons
-		bool btns_selected[5],
+		bool btns_selected[7],
 
 		/*! \brief Indicates if the table associated to this toggler has extended attributes
 		 * This attribute changes the way some buttons are rendered */
@@ -60,10 +62,10 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		btns_height;
 
 		//! \brief Store the current page visible on the table associated to this toggler
-		unsigned current_page,
+		unsigned current_page[2],
 
 		//! \brief Store the maximum pages allowed for the table associated to this toggler
-		max_pages;
+		max_pages[2];
 
 		//! \brief The minimum opacity factor used to fade buttons
 		static constexpr double ButtonMinOpacity = 0.40;
@@ -80,8 +82,14 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		//! \brief Constant used to reference the previous page button
 		PrevAttribsPageBtn=3,
 
+		//! \brief Constant used to reference the next page button
+		NextExtAttribsPageBtn=4,
+
+		//! \brief Constant used to reference the previous page button
+		PrevExtAttribsPageBtn=5,
+
 		//! \brief Constant used to reference the pagination toggler button
-		PaginationTogglerBtn=4;
+		PaginationTogglerBtn=6;
 
 		/*! \brief Configures the postion and dimensions of the buttons based on the provided bounding rect
 		 * If the provided rect is smaller than the total width/height of the buttons it will be assumed
@@ -91,6 +99,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
 		void configureButtonsState(void);
+
+		static void createButtonPolygons(void);
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
@@ -122,7 +132,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 		/*! \brief Defines the current values of the pagination (current page and maximum allowed pages)
 		 * Thes values are used to control the buttons fading when the page navigation reaches one of the limits (min/max) */
-		void setPaginationValues(unsigned curr_page, unsigned max_page);
+		void setPaginationValues(unsigned page_id, unsigned curr_page, unsigned max_page);
 
 		//! \brief Clears the selection status of the buttons
 		void clearButtonsSelection(void);
@@ -141,7 +151,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		void s_collapseModeChanged(CollapseMode);
 
 		//! \brief Signal emitted when the current page changes (the user clicks the page navigation buttons)
-		void s_currentPageChanged(unsigned);
+		void s_currentPageChanged(unsigned, unsigned);
 
 		//! \brief Signal emitted when the user clicks the pagination toggler buttons
 		void s_paginationToggled(bool);

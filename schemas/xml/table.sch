@@ -11,7 +11,8 @@
   %if {sql-disabled} %then [ sql-disabled=] "true" %end
   %if {collapse-mode} %then [ collapse-mode=] "{collapse-mode}" %end
   %if {pagination} %then [ pagination=] "true"  %end
-  %if {current-page} %then [ current-page=] "{current-page}"  %end
+  %if {attribs-page} %then [ attribs-page=] "{attribs-page}"  %end
+  %if {ext-attribs-page} %then [ ext-attribs-page=] "{ext-attribs-page}"  %end
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end

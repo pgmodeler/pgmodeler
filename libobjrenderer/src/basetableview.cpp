@@ -20,7 +20,7 @@
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
-unsigned BaseTableView::attribs_per_page = 5;
+unsigned BaseTableView::attribs_per_page[2] = { 10, 5 };
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
@@ -73,7 +73,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
 	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(togglePagination(bool)));
-	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned)), this, SLOT(configureCurrentPage(uint)));
+	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned,unsigned)), this, SLOT(configureCurrentPage(unsigned,unsigned)));
 }
 
 BaseTableView::~BaseTableView(void)
@@ -158,15 +158,21 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void BaseTableView::setAttributesPerPage(unsigned value)
+void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
 {
+	if(section_id > BaseTable::ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	if(value > 0)
-		attribs_per_page = value;
+		attribs_per_page[section_id] = value;
 }
 
-unsigned BaseTableView::getAttributesPerPage(void)
+unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
 {
-	return(attribs_per_page);
+	if(section_id > BaseTable::ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(attribs_per_page[section_id]);
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -424,7 +430,54 @@ void BaseTableView::finishGeometryUpdate(void)
 	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
 
 	//Updating the schema box that holds the object (if visible)
-	 dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
+	dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
+}
+
+bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
+{
+	if(section_id > BaseTable::ExtAttribsSection)
+		return false;
+
+	BaseTable *table = dynamic_cast<BaseTable *>(getSourceObject());
+	unsigned attr_per_page = attribs_per_page[section_id];
+
+	start_attr = end_attr = 0;
+	attribs_toggler->setPaginationEnabled(table->isPaginationEnabled());
+
+	/* If the pagination is enabled for the table and the amount of objects is greater than the
+	 * number of objects per page we configure the pagination parameter */
+	if(table->isPaginationEnabled() && total_attrs > attr_per_page)
+	{
+		// Calculating the proportions of columns and extended attributes displayed per page
+		unsigned max_pages = 0, curr_page = table->getCurrentPage(section_id);
+
+		// Determining the maximum amount of pages
+		max_pages = ceil(total_attrs / static_cast<double>(attr_per_page));
+
+		// Validating the current page related to the maximum determined
+		if(curr_page >= max_pages)
+			curr_page = max_pages - 1;
+
+		// Calculating the start and end columns/ext. attributes for the current page
+		start_attr = curr_page * attr_per_page;
+		end_attr = start_attr + attr_per_page;
+
+		// Validating the determined start/end indexes avoiding the extrapolation of limits
+		if(start_attr > total_attrs)
+			start_attr = total_attrs;
+
+		if(end_attr > total_attrs)
+			end_attr = total_attrs;
+
+		// Configure the attributes toggler item withe the calculated pagination parameters
+		attribs_toggler->setPaginationValues(section_id, curr_page, max_pages);
+		return(true);
+	}
+	else
+	{
+		attribs_toggler->setPaginationValues(section_id, 0, 0);
+		return(false);
+	}
 }
 
 void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
@@ -441,15 +494,15 @@ void BaseTableView::togglePagination(bool enabled)
 
 	startGeometryUpdate();
 	tab->setPaginationEnabled(enabled);
-	tab->setCurrentPage(0);
+	tab->resetCurrentPages();
 	finishGeometryUpdate();
 	emit s_paginationToggled();
 }
 
-void BaseTableView::configureCurrentPage(unsigned page)
+void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
 {
 	startGeometryUpdate();
-	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(page);
+	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(section_id, page);
 	finishGeometryUpdate();
 	emit s_currentPageChanged();
 }

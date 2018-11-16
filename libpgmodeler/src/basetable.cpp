@@ -26,10 +26,17 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::MaxObjCount]=QString();
 	attributes[Attributes::CollapseMode]=QString();
 	attributes[Attributes::Pagination]=QString();
-	attributes[Attributes::CurrentPage]=QString();
+	attributes[Attributes::AttribsPage]=QString();
+	attributes[Attributes::ExtAttribsPage]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
-	curr_page = 0;
+	resetCurrentPages();
+}
+
+void BaseTable::resetCurrentPages(void)
+{
+	curr_page[AttribsSection] = 0;
+	curr_page[ExtAttribsSection] = 0;
 }
 
 void BaseTable::setTag(Tag *tag)
@@ -72,7 +79,7 @@ void BaseTable::setPaginationEnabled(bool value)
 	pagination_enabled = value;
 
 	if(!pagination_enabled)
-		curr_page = 0;
+		resetCurrentPages();
 }
 
 bool BaseTable::isPaginationEnabled(void)
@@ -80,15 +87,21 @@ bool BaseTable::isPaginationEnabled(void)
 	return(pagination_enabled);
 }
 
-void BaseTable::setCurrentPage(unsigned page)
+void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
 {
-	setCodeInvalidated(curr_page != page);
-	curr_page = page;
+	if(section_id > ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(curr_page[section_id] != value);
+	curr_page[section_id] = value;
 }
 
-unsigned BaseTable::getCurrentPage(void)
+unsigned BaseTable::getCurrentPage(unsigned section_id)
 {
-	return(curr_page);
+	if(section_id > ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(curr_page[section_id]);
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)

@@ -13,7 +13,8 @@
 <!ATTLIST view collapse-mode CDATA #IMPLIED>
 <!ATTLIST view faded-out (false|true) "false">
 <!ATTLIST view pagination (false|true) "false">
-<!ATTLIST view current-page CDATA #IMPLIED>
+<!ATTLIST view attribs-page CDATA #IMPLIED>
+<!ATTLIST view ext-attribs-page CDATA #IMPLIED>
 <!ATTLIST view max-obj-count CDATA #IMPLIED>
 
 <!ELEMENT reference (expression?)>
