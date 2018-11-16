@@ -104,6 +104,15 @@ class BaseTableView: public BaseObjectView {
 		 * and in some cases the schema box which contains it */
 		void finishGeometryUpdate(void);
 
+		/*! \brief Determines the pagination paramenters for the table. The input parameters are the total amount of columns and
+		 * the total amount of extended attributes. The other paramenters (start_col, end_col, start_ext, end_ext) are reference
+		 * parameters that will hold the indexes of columns and extended paramenters to be displayed in the current page.
+		 * See configureObject() on TableView and GraphicalView */
+		//void configurePaginationParams(unsigned total_cols, unsigned total_ext_attr, unsigned &start_col, unsigned &end_col,
+		//															 unsigned &start_ext, unsigned &end_ext, unsigned &total_objs_cnt);
+
+		bool __configurePaginationParams(unsigned page_id, unsigned total_cols, unsigned &start_col, unsigned &end_col);
+
 	public:
 		static constexpr unsigned LeftConnPoint=0,
 		RightConnPoint=1;

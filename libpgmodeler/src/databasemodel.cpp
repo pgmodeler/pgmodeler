@@ -4682,7 +4682,7 @@ Table *DatabaseModel::createTable(void)
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
 		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
-		table->setCurrentPage(attribs[Attributes::CurrentPage].toUInt());
+		//table->setCurrentPage(attribs[Attributes::CurrentPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -5919,7 +5919,7 @@ View *DatabaseModel::createView(void)
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
 		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
-		view->setCurrentPage(attribs[Attributes::CurrentPage].toUInt());
+		//view->setCurrentPage(attribs[Attributes::CurrentPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))

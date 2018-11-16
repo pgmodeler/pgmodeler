@@ -46,12 +46,15 @@ class BaseTable: public BaseGraphicObject {
 		CollapseMode collapse_mode;
 
 		//! \brief Stores the current page visible on the table
-		unsigned curr_page;
+		unsigned curr_page[2];
 
 	protected:
 		Tag *tag;
 
 	public:
+		static constexpr unsigned AttribsPage = 0,
+		ExtAttribsPage = 1;
+
 		BaseTable(void);
 
 		virtual void setTag(Tag *tag);
@@ -120,9 +123,9 @@ class BaseTable: public BaseGraphicObject {
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
-		void setCurrentPage(unsigned page);
-
-		unsigned getCurrentPage(void);
+		void setCurrentPage(unsigned page_id, unsigned value);
+		void resetCurrentPages(void);
+		unsigned getCurrentPage(unsigned page_id);
 
 		friend class DatabaseModel;
 };

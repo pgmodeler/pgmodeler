@@ -424,7 +424,50 @@ void BaseTableView::finishGeometryUpdate(void)
 	QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true); });
 
 	//Updating the schema box that holds the object (if visible)
-	 dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
+	dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
+}
+
+bool BaseTableView::__configurePaginationParams(unsigned page_id, unsigned total_cols, unsigned &start_col, unsigned &end_col)
+{
+	BaseTable *table = dynamic_cast<BaseTable *>(getSourceObject());
+
+	start_col = end_col = 0;
+	attribs_toggler->setPaginationEnabled(table->isPaginationEnabled());
+
+	/* If the pagination is enabled for the table and the amount of objects is greater than the
+	 * number of objects per page we configure the pagination parameter */
+	if(table->isPaginationEnabled() && total_cols > attribs_per_page)
+	{
+		// Calculating the proportions of columns and extended attributes displayed per page
+		unsigned max_pages = 0, curr_page = table->getCurrentPage(page_id);
+
+		// Determining the maximum amount of pages
+		max_pages = ceil(total_cols / static_cast<double>(attribs_per_page));
+
+		// Validating the current page related to the maximum determined
+		if(curr_page >= max_pages)
+			curr_page = max_pages - 1;
+
+		// Calculating the start and end columns/ext. attributes for the current page
+		start_col = curr_page * attribs_per_page;
+		end_col = start_col + attribs_per_page;
+
+		// Validating the determined start/end indexes avoiding the extrapolation of limits
+		if(start_col > total_cols)
+			start_col = total_cols;
+
+		if(end_col > total_cols /*|| curr_page == max_pages - 1*/)
+			end_col = total_cols;
+
+		// Configure the attributes toggler item withe the calculated pagination parameters
+		attribs_toggler->setPaginationValues(curr_page, max_pages);
+		return(true);
+	}
+	else
+	{
+		attribs_toggler->setPaginationValues(0, 0);
+		return(false);
+	}
 }
 
 void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
@@ -441,7 +484,7 @@ void BaseTableView::togglePagination(bool enabled)
 
 	startGeometryUpdate();
 	tab->setPaginationEnabled(enabled);
-	tab->setCurrentPage(0);
+	tab->resetCurrentPages();
 	finishGeometryUpdate();
 	emit s_paginationToggled();
 }
@@ -449,7 +492,8 @@ void BaseTableView::togglePagination(bool enabled)
 void BaseTableView::configureCurrentPage(unsigned page)
 {
 	startGeometryUpdate();
-	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(page);
+	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(BaseTable::AttribsPage, page);
+	//dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(BaseTable::AttribsPage, page);
 	finishGeometryUpdate();
 	emit s_currentPageChanged();
 }

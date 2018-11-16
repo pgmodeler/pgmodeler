@@ -29,7 +29,13 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::CurrentPage]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
-	curr_page = 0;
+	resetCurrentPages();
+}
+
+void BaseTable::resetCurrentPages(void)
+{
+	curr_page[AttribsPage] = 0;
+	curr_page[ExtAttribsPage] = 0;
 }
 
 void BaseTable::setTag(Tag *tag)
@@ -72,7 +78,7 @@ void BaseTable::setPaginationEnabled(bool value)
 	pagination_enabled = value;
 
 	if(!pagination_enabled)
-		curr_page = 0;
+		resetCurrentPages();
 }
 
 bool BaseTable::isPaginationEnabled(void)
@@ -80,15 +86,21 @@ bool BaseTable::isPaginationEnabled(void)
 	return(pagination_enabled);
 }
 
-void BaseTable::setCurrentPage(unsigned page)
+void BaseTable::setCurrentPage(unsigned page_id, unsigned value)
 {
-	setCodeInvalidated(curr_page != page);
-	curr_page = page;
+	if(page_id > ExtAttribsPage)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	setCodeInvalidated(curr_page[page_id] != value);
+	curr_page[page_id] = value;
 }
 
-unsigned BaseTable::getCurrentPage(void)
+unsigned BaseTable::getCurrentPage(unsigned page_id)
 {
-	return(curr_page);
+	if(page_id > ExtAttribsPage)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(curr_page[page_id]);
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)
