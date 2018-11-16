@@ -54,7 +54,7 @@ class BaseTableView: public BaseObjectView {
 		hide_tags;
 
 		//! brief Controls the maximum amount of attributes visible per page (columns/references + extended attributes)
-		static unsigned attribs_per_page;
+		static unsigned attribs_per_page[2];
 
 		//! \brief Polygonal object that defines the table body
 		RoundedRectItem *body,
@@ -122,10 +122,10 @@ class BaseTableView: public BaseObjectView {
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 		//! brief Defines the amount of attributes per page to be displayed
-		static void setAttributesPerPage(unsigned value);
+		static void setAttributesPerPage(unsigned section_id, unsigned value);
 
 		//! brief Returns the current amount of attributes per page to be displayed
-		static unsigned getAttributesPerPage(void);
+		static unsigned getAttributesPerPage(unsigned section_id);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void setHideExtAttributes(bool value);

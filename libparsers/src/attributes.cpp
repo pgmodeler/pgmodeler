@@ -199,6 +199,7 @@ namespace Attributes {
 	Expression=QString("expression"),
 	Expressions=QString("expressions"),
 	ExtAttribsPage=QString("ext-attribs-page"),
+	ExtAttribsPerPage=QString("ext-attribs-per-page"),
 	ExtObjOids=QString("ext-obj-oids"),
 	Factor=QString("factor"),
 	FadeInObjects=QString("fadein-objects"),

@@ -20,7 +20,7 @@
 
 bool BaseTableView::hide_ext_attribs = false;
 bool BaseTableView::hide_tags = false;
-unsigned BaseTableView::attribs_per_page = 5;
+unsigned BaseTableView::attribs_per_page[2] = { 10, 5 };
 
 BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 {
@@ -158,15 +158,21 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void BaseTableView::setAttributesPerPage(unsigned value)
+void BaseTableView::setAttributesPerPage(unsigned section_id, unsigned value)
 {
+	if(section_id > BaseTable::ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	if(value > 0)
-		attribs_per_page = value;
+		attribs_per_page[section_id] = value;
 }
 
-unsigned BaseTableView::getAttributesPerPage(void)
+unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
 {
-	return(attribs_per_page);
+	if(section_id > BaseTable::ExtAttribsSection)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(attribs_per_page[section_id]);
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -429,28 +435,32 @@ void BaseTableView::finishGeometryUpdate(void)
 
 bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
 {
+	if(section_id > BaseTable::ExtAttribsSection)
+		return false;
+
 	BaseTable *table = dynamic_cast<BaseTable *>(getSourceObject());
+	unsigned attr_per_page = attribs_per_page[section_id];
 
 	start_attr = end_attr = 0;
 	attribs_toggler->setPaginationEnabled(table->isPaginationEnabled());
 
 	/* If the pagination is enabled for the table and the amount of objects is greater than the
 	 * number of objects per page we configure the pagination parameter */
-	if(table->isPaginationEnabled() && total_attrs > attribs_per_page)
+	if(table->isPaginationEnabled() && total_attrs > attr_per_page)
 	{
 		// Calculating the proportions of columns and extended attributes displayed per page
 		unsigned max_pages = 0, curr_page = table->getCurrentPage(section_id);
 
 		// Determining the maximum amount of pages
-		max_pages = ceil(total_attrs / static_cast<double>(attribs_per_page));
+		max_pages = ceil(total_attrs / static_cast<double>(attr_per_page));
 
 		// Validating the current page related to the maximum determined
 		if(curr_page >= max_pages)
 			curr_page = max_pages - 1;
 
 		// Calculating the start and end columns/ext. attributes for the current page
-		start_attr = curr_page * attribs_per_page;
-		end_attr = start_attr + attribs_per_page;
+		start_attr = curr_page * attr_per_page;
+		end_attr = start_attr + attr_per_page;
 
 		// Validating the determined start/end indexes avoiding the extrapolation of limits
 		if(start_attr > total_attrs)

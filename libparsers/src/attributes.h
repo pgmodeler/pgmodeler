@@ -214,6 +214,7 @@ namespace Attributes {
 	Expression,
 	Expressions,
 	ExtAttribsPage,
+	ExtAttribsPerPage,
 	ExtObjOids,
 	Factor,
 	FadeInObjects,

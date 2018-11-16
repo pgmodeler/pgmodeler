@@ -46,6 +46,7 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
 [               min-object-opacity="] {min-object-opacity} ["] $br
 [               attribs-per-page="] {attribs-per-page} ["] $br
+[               ext-attribs-per-page="] {ext-attribs-per-page} ["] $br
 [               history-max-length="] {history-max-length} ["] $br
 [               use-curved-lines="] %if {use-curved-lines} %then true %else false %end ["] $br
 [               compact-view="] %if {compact-view} %then true %else false %end ["] $br
