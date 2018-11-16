@@ -427,37 +427,37 @@ void BaseTableView::finishGeometryUpdate(void)
 	dynamic_cast<Schema *>(this->getSourceObject()->getSchema())->setModified(true);
 }
 
-bool BaseTableView::__configurePaginationParams(unsigned section_id, unsigned total_cols, unsigned &start_col, unsigned &end_col)
+bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr)
 {
 	BaseTable *table = dynamic_cast<BaseTable *>(getSourceObject());
 
-	start_col = end_col = 0;
+	start_attr = end_attr = 0;
 	attribs_toggler->setPaginationEnabled(table->isPaginationEnabled());
 
 	/* If the pagination is enabled for the table and the amount of objects is greater than the
 	 * number of objects per page we configure the pagination parameter */
-	if(table->isPaginationEnabled() && total_cols > attribs_per_page)
+	if(table->isPaginationEnabled() && total_attrs > attribs_per_page)
 	{
 		// Calculating the proportions of columns and extended attributes displayed per page
 		unsigned max_pages = 0, curr_page = table->getCurrentPage(section_id);
 
 		// Determining the maximum amount of pages
-		max_pages = ceil(total_cols / static_cast<double>(attribs_per_page));
+		max_pages = ceil(total_attrs / static_cast<double>(attribs_per_page));
 
 		// Validating the current page related to the maximum determined
 		if(curr_page >= max_pages)
 			curr_page = max_pages - 1;
 
 		// Calculating the start and end columns/ext. attributes for the current page
-		start_col = curr_page * attribs_per_page;
-		end_col = start_col + attribs_per_page;
+		start_attr = curr_page * attribs_per_page;
+		end_attr = start_attr + attribs_per_page;
 
 		// Validating the determined start/end indexes avoiding the extrapolation of limits
-		if(start_col > total_cols)
-			start_col = total_cols;
+		if(start_attr > total_attrs)
+			start_attr = total_attrs;
 
-		if(end_col > total_cols /*|| curr_page == max_pages - 1*/)
-			end_col = total_cols;
+		if(end_attr > total_attrs)
+			end_attr = total_attrs;
 
 		// Configure the attributes toggler item withe the calculated pagination parameters
 		attribs_toggler->setPaginationValues(section_id, curr_page, max_pages);

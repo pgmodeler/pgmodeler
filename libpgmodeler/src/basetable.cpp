@@ -26,7 +26,8 @@ BaseTable::BaseTable(void)
 	attributes[Attributes::MaxObjCount]=QString();
 	attributes[Attributes::CollapseMode]=QString();
 	attributes[Attributes::Pagination]=QString();
-	attributes[Attributes::CurrentPage]=QString();
+	attributes[Attributes::AttribsPage]=QString();
+	attributes[Attributes::ExtAttribsPage]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	resetCurrentPages();

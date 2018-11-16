@@ -23,7 +23,8 @@
 <!ATTLIST table sql-disabled (false|true) "false">
 <!ATTLIST table collapse-mode CDATA #IMPLIED>
 <!ATTLIST table pagination (false|true) "false">
-<!ATTLIST table current-page CDATA #IMPLIED>
+<!ATTLIST table attribs-page CDATA #IMPLIED>
+<!ATTLIST table ext-attribs-page CDATA #IMPLIED>
 <!ATTLIST table col-indexes CDATA #IMPLIED>
 <!ATTLIST table constr-indexes CDATA #IMPLIED>
 <!ATTLIST table faded-out (false|true) "false">

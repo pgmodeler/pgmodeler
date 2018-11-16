@@ -1606,7 +1606,8 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
 	attributes[Attributes::Pagination]=(isPaginationEnabled() ? Attributes::True : QString());
-	//attributes[Attributes::CurrentPage]=(isPaginationEnabled() ? QString::number(getCurrentPage()) : QString());
+	attributes[Attributes::AttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(AttribsSection)) : QString());
+	attributes[Attributes::ExtAttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(ExtAttribsSection)) : QString());
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);

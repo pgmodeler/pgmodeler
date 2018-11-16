@@ -29,7 +29,7 @@ void TableView::configureObject(void)
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
-	unsigned total_objs_cnt = 0, start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
+	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;
 	TableObjectView *col_item=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -61,13 +61,9 @@ void TableView::configureObject(void)
 												table->getObjectList(ext_types[idx])->end());
 	}
 
-/*	configurePaginationParams(columns.size(), ext_tab_objs.size(),
-														start_col, end_col, start_ext, end_ext, total_objs_cnt); */
+	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);
 
-
-	has_col_pag = __configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);
-
-	has_ext_pag = __configurePaginationParams(BaseTable::ExtAttribsSection,
+	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
 																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
 																						start_ext, end_ext);
 

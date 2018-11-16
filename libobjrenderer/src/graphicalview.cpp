@@ -33,7 +33,7 @@ void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
 	int i = 0, count = 0;
-	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0, total_objs_cnt = 0;
+	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;
 	TableObjectView *graph_ref=nullptr;
 	QList<QGraphicsItem *> subitems;
@@ -48,6 +48,8 @@ void GraphicalView::configureObject(void)
 	TableObject *tab_obj=nullptr;
 	Tag *tag=view->getTag();
 	QStringList col_names, col_types;
+	CollapseMode collapse_mode = view->getCollapseMode();
+	bool has_col_pag = false, has_ext_pag = false;
 
 	//Configures the view's title
 	title->configureObject(view);
@@ -59,8 +61,12 @@ void GraphicalView::configureObject(void)
 
 	col_names = (!compact_view ? view->getColumnNames() : view->getColumnAliases());
 	col_types = view->getColumnTypes();
-#warning "Disabled!"
-	//configurePaginationParams(col_names.size(), ext_tab_objs.size(), start_col, end_col, start_ext, end_ext, total_objs_cnt);
+
+	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, col_names.size(), start_col, end_col);
+
+	has_ext_pag = configurePaginationParams(BaseTable::ExtAttribsSection,
+																						collapse_mode != CollapseMode::ExtAttribsCollapsed ? ext_tab_objs.size() : 0,
+																						start_ext, end_ext);
 
 	//Moves the references group to the origin to be moved latter
 	columns->moveBy(-columns->scenePos().x(),	-columns->scenePos().y());
@@ -80,15 +86,15 @@ void GraphicalView::configureObject(void)
 		QStringList aux_col_names, aux_col_types;
 		int col_cnt = end_col - start_col;
 
-		if(total_objs_cnt == 0)
-		{
-			aux_col_names = col_names;
-			aux_col_types = col_types;
-		}
-		else
+		if(has_col_pag)
 		{
 			aux_col_names = col_names.mid(start_col, col_cnt);
 			aux_col_types = col_types.mid(start_col, col_cnt);
+		}
+		else
+		{
+			aux_col_names = col_names;
+			aux_col_types = col_types;
 		}
 
 		count = aux_col_names.size();
@@ -152,7 +158,7 @@ void GraphicalView::configureObject(void)
 
 	if(!hide_ext_attribs && view->getCollapseMode() == CollapseMode::NotCollapsed)
 	{
-		if(view->isPaginationEnabled() && total_objs_cnt != 0)
+		if(view->isPaginationEnabled() && has_ext_pag)
 			tab_objs.assign(ext_tab_objs.begin() + start_ext, ext_tab_objs.begin() + end_ext);
 		else
 			tab_objs.assign(ext_tab_objs.begin(), ext_tab_objs.end());

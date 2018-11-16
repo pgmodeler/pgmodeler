@@ -34,6 +34,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 	private:
 		Q_OBJECT
 
+		static QPolygonF btn_polygons[7];
+
 		//! \brief Stores the selection rectangle of the item's internal elements
 		QGraphicsRectItem *sel_rect;
 
@@ -97,6 +99,8 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 		/*! \brief Configure the buttons visibility and opacity based upon the current values
 		 * of pagination and collapse mode */
 		void configureButtonsState(void);
+
+		static void createButtonPolygons(void);
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
