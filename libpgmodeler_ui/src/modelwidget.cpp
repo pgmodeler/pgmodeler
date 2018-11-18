@@ -392,7 +392,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		str_ico=BaseObject::getSchemaName(ObjectType::Relationship) + rel_types_cod[i];
 
 		action=new QAction(QIcon(PgModelerUiNs::getIconPath(str_ico)),
-						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
+							 BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(enum_cast(ObjectType::Relationship) + rel_types_id[i]));
@@ -1823,7 +1823,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			emit s_objectManipulated();
 		}
 		else
-		  emit s_manipulationCanceled();
+			emit s_manipulationCanceled();
 
 		this->setFocus();
 	}
@@ -2300,7 +2300,7 @@ void ModelWidget::copyObjects(bool duplicate_mode)
 						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
 						this type of constraint is treated separetely by relationships */
 						if(duplicate_mode ||
-						   (!duplicate_mode &&
+							 (!duplicate_mode &&
 							!tab_obj->isAddedByRelationship() &&
 							 (!constr ||
 								(((constr &&
@@ -2500,7 +2500,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			if(duplicate_mode && aux_table)
 			{
 				xml_objs[object] = aux_table->__getCodeDefinition(SchemaParser::XmlDefinition, true);
-			  object->setCodeInvalidated(true);
+				object->setCodeInvalidated(true);
 			}
 			else
 				xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
@@ -2534,7 +2534,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				if(constr)
 				{
 					xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
-				  tab_obj->setCodeInvalidated(true);
+					tab_obj->setCodeInvalidated(true);
 				}
 				else
 					xml_objs[object]=object->getCodeDefinition(SchemaParser::XmlDefinition);
@@ -2551,7 +2551,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			if(constr)
 			{
 				xml_objs[object]=constr->getCodeDefinition(SchemaParser::XmlDefinition, duplicate_mode);
-			  tab_obj->setCodeInvalidated(true);
+				tab_obj->setCodeInvalidated(true);
 			}
 			else
 				xml_objs[object]=tab_obj->getCodeDefinition(SchemaParser::XmlDefinition);
@@ -2623,8 +2623,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 							constr->getConstraintType() == ConstraintType::PrimaryKey &&
 							constr->getParentTable()->getObjectIndex(constr) < 0)
 					{
-					  constr->getParentTable()->addObject(constr);
-					  constr->getParentTable()->setModified(true);
+						constr->getParentTable()->addObject(constr);
+						constr->getParentTable()->setModified(true);
 					}
 
 					//Updates the fk relationships if the constraint is a foreign-key
@@ -2716,10 +2716,10 @@ void ModelWidget::duplicateObject(void)
 			table->setModified(true);
 
 			if(obj_type == ObjectType::Column)
-			  db_model->validateRelationships();
+				db_model->validateRelationships();
 			else if(obj_type == ObjectType::Constraint &&
 					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::ForeignKey)
-			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
+				db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
 
 			emit s_objectCreated();
 		}
@@ -3392,9 +3392,9 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 
 	for(auto obj : objects)
 	{
-	  schema = dynamic_cast<Schema *>(obj);
+		schema = dynamic_cast<Schema *>(obj);
 
-	  if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()) ||
+		if(!BaseGraphicObject::isGraphicObject(obj->getObjectType()) ||
 		 (schema && !schema->isRectVisible()))
 			continue;
 
@@ -4916,6 +4916,186 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 	db_model->setObjectsModified({ ObjectType::Table, ObjectType::View, ObjectType::Schema, ObjectType::Relationship, ObjectType::BaseRelationship });
 	adjustSceneSize();
 	viewport->updateScene({ scene->sceneRect() });
+}
+
+void ModelWidget::alignTabTop(void)
+{
+	double ty=-1;
+	BaseObjectView *tab;
+
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( ty<0 || ty > tab->pos().y() )
+			ty=tab->pos().y();
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(QPointF(tab->pos().x(),ty));
+	}
+}
+
+void ModelWidget::alignTabVertCenter(void)
+{
+	double ty=-1, by=-1;
+	BaseObjectView *tab;
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( ty<0 || ty > tab->pos().y() )
+			ty=tab->pos().y();
+		if( by < tab->pos().y() + tab->boundingRect().height() )
+			by=tab->pos().y() + tab->boundingRect().height();
+	}
+	for(auto &tab : tabs)
+	{
+			//qDebug() << tab->pos().x() << (by+ty-tab->boundingRect().height())/2 ;
+			//qDebug() << tab->boundingRect().height();
+			tab->setPos(tab->pos().x(),(by+ty-tab->boundingRect().height())/2);
+	}
+}
+
+void ModelWidget::alignTabBottom(void)
+{
+	double by=-1;
+	BaseObjectView *tab;
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( by < tab->pos().y() + tab->boundingRect().height() )
+				by = tab->pos().y() + tab->boundingRect().height();
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(QPointF(tab->pos().x(),by-tab->boundingRect().height()));
+	}
+}
+
+void ModelWidget::distribTabVert(void)
+{
+	double ty=-1, by=-1, hy=0, sy=0;
+	BaseObjectView *tab;
+	multimap<double, BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.insert(pair<double, BaseObjectView*>(tab->pos().y() + tab->boundingRect().height(), tab));
+		if( ty<0 || ty > tab->pos().y() )
+				ty=tab->pos().y();
+		if( by < tab->pos().y() + tab->boundingRect().height() )
+				by=tab->pos().y() + tab->boundingRect().height();
+		hy+=tab->boundingRect().height();
+	}
+
+	sy=(by-ty-hy)/(selected_objects.size()-1);
+
+	for(multimap<double,BaseObjectView*>::iterator ii=tabs.begin(), prev=tabs.end(); ii!=tabs.end(); prev=ii, ++ii)
+	{
+		if(!(ii->second==tabs.begin()->second) && !(ii->second==tabs.rbegin()->second))
+		{
+			ii->second->setPos( ii->second->pos().x(),
+								prev->second->pos().y() + prev->second->boundingRect().height() + sy );
+		}
+	}
+}
+
+void ModelWidget::alignTabLeft(void)
+{
+	double lx=-1;
+	BaseObjectView *tab;
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( lx<0 || lx > tab->pos().x() )
+			lx=tab->pos().x();
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(lx, tab->pos().y());
+	}
+}
+
+void ModelWidget::alignTabHorizCenter(void)
+{
+	double lx=-1, rx=-1;
+	BaseObjectView *tab;
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( lx<0 || lx > tab->pos().x() )
+				lx = tab->pos().x();
+		if( rx < tab->pos().x() + tab->boundingRect().width() )
+				rx = tab->pos().x() + tab->boundingRect().width();
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos( ( rx + lx - tab->boundingRect().width() )/2 , tab->pos().y() );
+	}
+}
+
+void ModelWidget::alignTabRight(void)
+{
+	double rx=-1;
+	BaseObjectView *tab;
+	vector<BaseObjectView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.push_back(tab);
+		if( rx < tab->pos().x() + tab->boundingRect().width() )
+				rx = tab->pos().x() + tab->boundingRect().width();
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos( rx-tab->boundingRect().width(), tab->pos().y() );
+	}
+}
+
+void ModelWidget::distribTabHoriz(void)
+{
+	double lx=-1, rx=-1, wx=0, sx=0;
+	BaseObjectView *tab;
+	multimap<double, BaseObjectView*> tabs;
+
+
+	for(auto &obj : selected_objects)
+	{
+		tab=dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		tabs.insert(pair<double, BaseObjectView*>(tab->pos().x() + tab->boundingRect().width(), tab));
+		if( lx<0 || lx > tab->pos().x() )
+			lx=tab->pos().x();
+		if( rx < tab->pos().x() + tab->boundingRect().width() )
+			rx=tab->pos().x() + tab->boundingRect().width();
+		wx+=tab->boundingRect().width();
+	}
+
+	sx=(rx-lx-wx)/(selected_objects.size()-1);
+
+	for(multimap<double,BaseObjectView*>::iterator ii=tabs.begin(), prev=tabs.end(); ii!=tabs.end(); prev=ii, ++ii)
+	{
+		if(!(ii->second==tabs.begin()->second) && !(ii->second==tabs.rbegin()->second))
+		{
+			ii->second->setPos( prev->second->pos().x() + prev->second->boundingRect().width() + sx,
+													ii->second->pos().y() );
+		}
+	}
 }
 
 void ModelWidget::updateMagnifierArea(void)

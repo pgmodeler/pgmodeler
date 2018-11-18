@@ -191,6 +191,30 @@ class ModelWidget: public QWidget {
 		 * overlaping. This method causes the schema rectangle to be enabled. */
 		void rearrangeTablesInSchema(Schema *schema, QPointF start);
 
+		/*! \brief Align selected tables at the upper point of the selection. */
+		void alignTabTop();
+
+		/*! \brief Align selected tables at the vertical center point of the selection. */
+		void alignTabVertCenter();
+
+		/*! \brief Align selected tables at the lowest point of the selection. */
+		void alignTabBottom();
+
+		/*! \brief Distribute selected tables vertically, with equal spaces between them. */
+		void distribTabVert();
+
+		/*! \brief Align selected tables at the most left point of the selection. */
+		void alignTabLeft();
+
+		/*! \brief Align selected tables at the horizontal center point of the selection. */
+		void alignTabHorizCenter();
+
+		/*! \brief Align selected tables at the most right point of the selection. */
+		void alignTabRight();
+
+		/*! \brief Distribute selected tables horizontally, with equal spaces between them. */
+		void distribTabHoriz();
+
 		void updateMagnifierArea(void);
 
 		void showMagnifierArea(bool show);
