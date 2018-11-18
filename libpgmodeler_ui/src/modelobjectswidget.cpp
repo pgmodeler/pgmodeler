@@ -120,7 +120,7 @@ void ModelObjectsWidget::editObject(void)
 	{
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
-				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == ~ObjectType::Permission)
+				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
 			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
 		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
@@ -171,7 +171,7 @@ void ModelObjectsWidget::selectObject(void)
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
 			if(obj_type!=ObjectType::Relationship)
 			{
-				act.setData(QVariant(~obj_type));
+				act.setData(QVariant(enum_cast(obj_type)));
 				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
@@ -479,7 +479,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		count=(db_model->getObjectCount(ObjectType::Schema));
 		item=new QTreeWidgetItem(root);
 		item->setIcon(0,group_icon);
-		item->setData(1, Qt::UserRole, QVariant(~ObjectType::Schema));
+		item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Schema)));
 
 		//Create the schema group item
 		item->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(ObjectType::Schema)).arg(count));
@@ -523,7 +523,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 						count2=obj_list.size();
 						item3->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(type)).arg(count2));
-						item3->setData(1, Qt::UserRole, QVariant(~type));
+						item3->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
 
 						font=item3->font(0);
 						font.setItalic(true);
@@ -563,7 +563,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 			item->setIcon(0,group_icon);
 			item->setText(0,BaseObject::getTypeName(ObjectType::Table) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant(~ObjectType::Table));
+			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Table)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -623,7 +623,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 			item->setIcon(0,group_icon);
 			item->setText(0,BaseObject::getTypeName(ObjectType::View) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant(~ObjectType::View));
+			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::View)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -736,7 +736,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						str_aux=QString(BaseObject::getSchemaName(types[i]));
 
 						item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux + QString("_grp"))));
-						item1->setData(1, Qt::UserRole, QVariant(~types[i]));
+						item1->setData(1, Qt::UserRole, QVariant(enum_cast(types[i])));
 
 						obj_list=(*db_model->getObjectList(types[i]));
 

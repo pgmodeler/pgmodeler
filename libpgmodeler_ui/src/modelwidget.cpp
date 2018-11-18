@@ -298,16 +298,32 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_duplicate->setShortcut(QKeySequence(trUtf8("Ctrl+D")));
 	action_duplicate->setMenuRole(QAction::NoRole);
 
-	action_extended_attribs=new QAction(QIcon(PgModelerUiNs::getIconPath("toggleattribs")), trUtf8("Extended attributes"), this);
-	action_show_ext_attribs=new QAction(trUtf8("Show"), this);
-	action_hide_ext_attribs=new QAction(trUtf8("Hide"), this);
+	action_pagination=new QAction(QIcon(PgModelerUiNs::getIconPath("pagination")), trUtf8("Pagination"), this);
+	action_pagination->setMenu(&pagination_menu);
+
+	action = pagination_menu.addAction(trUtf8("Enable"));
+	action->setData(true);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
+
+	action = pagination_menu.addAction(trUtf8("Disable"));
+	action->setData(false);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(togglePagination()));
+
+	action_collapse_mode=new QAction(QIcon(PgModelerUiNs::getIconPath("collapse")), trUtf8("Collapse"), this);
+	action_no_collapse_attribs=new QAction(trUtf8("Not collapsed"), this);
+	action_no_collapse_attribs->setData(enum_cast(CollapseMode::NotCollapsed));
+	action_collapse_ext_attribs=new QAction(trUtf8("Extended attributes"), this);
+	action_collapse_ext_attribs->setData(enum_cast(CollapseMode::ExtAttribsCollapsed));
+	action_collpase_all_attribs=new QAction(trUtf8("All attributes"), this);
+	action_collpase_all_attribs->setData(enum_cast(CollapseMode::AllAttribsCollapsed));
 
 	action_jump_to_table=new QAction(QIcon(PgModelerUiNs::getIconPath("jumptotable")), trUtf8("Jump to table"), this);
 	action_jump_to_table->setMenu(&jump_to_tab_menu);
 
-	toggle_attrs_menu.addAction(action_show_ext_attribs);
-	toggle_attrs_menu.addAction(action_hide_ext_attribs);
-	action_extended_attribs->setMenu(&toggle_attrs_menu);
+	toggle_attrs_menu.addAction(action_no_collapse_attribs);
+	toggle_attrs_menu.addAction(action_collapse_ext_attribs);
+	toggle_attrs_menu.addAction(action_collpase_all_attribs);
+	action_collapse_mode->setMenu(&toggle_attrs_menu);
 
 	action_schemas_rects=new QAction(QIcon(PgModelerUiNs::getIconPath("schemarect")), trUtf8("Schemas rectangles"), this);
 	action_show_schemas_rects=new QAction(trUtf8("Show"), this);
@@ -363,7 +379,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	for(i=0; i < obj_cnt; i++)
 	{
 		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNs::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
-		actions_new_objects[types[i]]->setData(QVariant(~types[i]));
+		actions_new_objects[types[i]]->setData(QVariant(enum_cast(types[i])));
 		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
@@ -379,7 +395,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 						   BaseRelationship::getRelationshipTypeName(rel_types_id[i], false), this);
 
 		//Storing a unique identifier for the relationship type
-		action->setData(QVariant(~ObjectType::Relationship + rel_types_id[i]));
+		action->setData(QVariant(enum_cast(ObjectType::Relationship) + rel_types_id[i]));
 
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 		rels_menu->addAction(action);
@@ -408,7 +424,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 			select_all_menu.addAction(action);
 		}
 
-		action->setData(QVariant(~obj_type));
+		action->setData(QVariant(enum_cast(obj_type)));
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
@@ -443,8 +459,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 	connect(action_fade_rels_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_rels_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
-	connect(action_show_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
-	connect(action_hide_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(toggleExtendedAttributes()));
+	connect(action_collapse_ext_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
+	connect(action_collpase_all_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
+	connect(action_no_collapse_attribs, SIGNAL(triggered(bool)), this, SLOT(setCollapseMode()));
 	connect(action_show_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
@@ -456,7 +473,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
 	connect(scene, SIGNAL(s_objectsSelectedInRange(void)), this, SLOT(configureObjectSelection(void)));
-	connect(scene, &ObjectsScene::s_extAttributesToggled, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ modified = true; });
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -534,10 +553,12 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			object == viewport->verticalScrollBar())
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
+		double zoom_inc = roundf(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
+
 		if(w_event->angleDelta().y() < 0)
-			this->applyZoom(this->current_zoom - ZoomIncrement);
+			this->applyZoom(this->current_zoom - zoom_inc);
 		else
-			this->applyZoom(this->current_zoom + ZoomIncrement);
+			this->applyZoom(this->current_zoom + zoom_inc);
 
 		return(true);
 	}
@@ -1348,6 +1369,7 @@ void ModelWidget::loadModel(const QString &filename)
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt.addIcon(enum_cast(ObjectType::BaseObject), QPixmap(PgModelerUiNs::getIconPath("design")));
 		task_prog_wgt.setWindowTitle(trUtf8("Loading database model"));
 		task_prog_wgt.show();
 
@@ -1660,7 +1682,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		 to the BaseRelationship::RELATIONSHIP_??? constant. */
 		if(obj_type > ObjectType::BaseTable)
 		{
-			rel_type=~obj_type - ~ObjectType::Relationship;
+			rel_type=enum_cast(obj_type) - enum_cast(ObjectType::Relationship);
 			obj_type=ObjectType::Relationship;
 		}
 
@@ -2366,7 +2388,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 									 trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 ~object->getObjectType());
+									 enum_cast(object->getObjectType()));
 
 		if(!tab_obj || ((sel_table || sel_view) && tab_obj))
 		{
@@ -2468,7 +2490,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 									 trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
-									 ~object->getObjectType());
+									 enum_cast(object->getObjectType()));
 
 		if(!tab_obj)
 		{
@@ -2572,7 +2594,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 											 trUtf8("Pasting object: `%1' (%2)").arg(object->getName())
 											 .arg(object->getTypeName()),
-											 ~object->getObjectType());
+											 enum_cast(object->getObjectType()));
 
 				//Creates the object from the XML
 				object=db_model->createObject(BaseObject::getObjectType(xmlparser->getElementName()));
@@ -2942,6 +2964,9 @@ void ModelWidget::removeObjects(bool cascade)
 
 								if(aux_table)
 									db_model->validateRelationships(tab_obj, aux_table);
+
+								if(obj_type == ObjectType::Column)
+									db_model->updateViewsReferTable(aux_table);
 							}
 							catch(Exception &e)
 							{
@@ -3291,13 +3316,13 @@ void ModelWidget::configureFadeMenu(void)
 			{
 				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_in_menu);
-				action->setData(~type);
+				action->setData(enum_cast(type));
 				fade_in_menu.addAction(action);
 				connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 
 				action = new QAction(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))),
 																		 labels[id], &fade_out_menu);
-				action->setData(~type);
+				action->setData(enum_cast(type));
 				fade_out_menu.addAction(action);
 
 				id++;
@@ -3305,13 +3330,13 @@ void ModelWidget::configureFadeMenu(void)
 			}
 
 			action = new QAction(trUtf8("All objects"), &fade_in_menu);
-			action->setData(~ObjectType::BaseObject);
+			action->setData(enum_cast(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 			fade_in_menu.addSeparator();
 			fade_in_menu.addAction(action);
 
 			action = new QAction(trUtf8("All objects"), &fade_out_menu);
-			action->setData(~ObjectType::BaseObject);
+			action->setData(enum_cast(ObjectType::BaseObject));
 			connect(action, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));
 			fade_out_menu.addSeparator();
 			fade_out_menu.addAction(action);
@@ -3473,7 +3498,7 @@ void ModelWidget::fadeObjectsOut(void)
 	fadeObjects(qobject_cast<QAction *>(sender()), false);
 }
 
-void ModelWidget::toggleAllExtendedAttributes(bool value)
+void ModelWidget::setAllCollapseMode(CollapseMode mode)
 {
 	BaseTable *base_tab = nullptr;
 	vector<BaseObject *> objects;
@@ -3487,15 +3512,15 @@ void ModelWidget::toggleAllExtendedAttributes(bool value)
 		base_tab = dynamic_cast<BaseTable *>(obj);
 
 		if(base_tab)
-			base_tab->setExtAttribsHidden(value);
+			base_tab->setCollapseMode(mode);
 	}
 
 	this->setModified(true);
 }
 
-void ModelWidget::toggleExtendedAttributes(void)
+void ModelWidget::setCollapseMode(void)
 {
-	bool hide = sender() == action_hide_ext_attribs;
+	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
 	BaseTable *base_tab = nullptr;
 	vector<BaseObject *> objects;
 
@@ -3511,9 +3536,38 @@ void ModelWidget::toggleExtendedAttributes(void)
 	{
 		base_tab = dynamic_cast<BaseTable *>(obj);
 
-		if(base_tab && base_tab->isExtAttribsHidden() != hide)
+		if(base_tab && base_tab->getCollapseMode() != mode)
 		{
-			base_tab->setExtAttribsHidden(hide);
+			base_tab->setCollapseMode(mode);
+			base_tab->setModified(true);
+		}
+	}
+
+	db_model->setObjectsModified({ ObjectType::Schema });
+	this->setModified(true);
+}
+
+void ModelWidget::togglePagination(void)
+{
+	bool enable = dynamic_cast<QAction *>(sender())->data().toBool();
+	BaseTable *base_tab = nullptr;
+	vector<BaseObject *> objects;
+
+	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
+	{
+		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
+	}
+	else
+		objects = selected_objects;
+
+	for(auto obj : objects)
+	{
+		base_tab = dynamic_cast<BaseTable *>(obj);
+
+		if(base_tab && base_tab->isPaginationEnabled() != enable)
+		{
+			base_tab->setPaginationEnabled(enable);
 			base_tab->setModified(true);
 		}
 	}
@@ -3808,7 +3862,10 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		}
 
 		if(tab_or_view ||  objects.empty() || objects.size() == 1)
-			popup_menu.addAction(action_extended_attribs);
+		{
+			popup_menu.addAction(action_collapse_mode);
+			popup_menu.addAction(action_pagination);
+		}
 
 		if(objects.empty() || (objects.size() == 1 && objects[0]->getObjectType() == ObjectType::Database))
 			popup_menu.addAction(action_schemas_rects);

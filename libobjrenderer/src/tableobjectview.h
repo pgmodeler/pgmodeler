@@ -51,6 +51,8 @@ class TableObjectView: public BaseObjectView
 			return(value);
 		}
 
+		void calculateBoundingRect(void);
+
 	public:
 		static const QString	ConstrDelimEnd,
 		ConstrDelimStart,
@@ -63,11 +65,19 @@ class TableObjectView: public BaseObjectView
 		TextCheck,
 		TextExclude;
 
+		static constexpr unsigned ObjDescriptor = 0,
+		NameLabel = 1,
+		TypeLabel = 2,
+		ConstrAliasLabel = 3;
+
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);
 
 		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);
+
+		//! \brief Configures a generic item containing a name, datatype and alias
+		void configureObject(const QString &name, const QString &type, const QString &alias = QString());
 
 		//! \brief Configures the object as a table object
 		void configureObject(void);
@@ -81,6 +91,13 @@ class TableObjectView: public BaseObjectView
 		/*! \brief Returns a formatted string containing the keywords indicating the constraints
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+
+		virtual QRectF boundingRect(void) const;
+
+		void configureObjectShadow(void) = delete;
+		void configureObjectSelection(void) = delete;
 };
 
 #endif

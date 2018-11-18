@@ -28,6 +28,7 @@
 #include "textbox.h"
 #include "baseobjectview.h"
 #include "roundedrectitem.h"
+#include "textpolygonitem.h"
 
 class TextboxView: public BaseObjectView {
 	private:
@@ -44,6 +45,8 @@ class TextboxView: public BaseObjectView {
 
 		//! \brief Graphical item that represent the text
 		QGraphicsSimpleTextItem *text;
+
+		TextPolygonItem *text_item;
 
 		//! \brief Configures the shadow for the textbox
 		void configureObjectShadow(void);

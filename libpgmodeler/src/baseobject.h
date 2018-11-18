@@ -75,12 +75,6 @@ enum class ObjectType: unsigned {
 	BaseTable
 };
 
-//! \brief This unary operator overloading causes the provided ObjectType enum to be converted to its underlying datatype
-constexpr std::underlying_type<ObjectType>::type operator ~ (ObjectType obj_type) noexcept
-{
-	return(static_cast<typename std::underlying_type<ObjectType>::type>(obj_type));
-}
-
 class BaseObject {
 	private:
 		//! \brief Current PostgreSQL version used in SQL code generation

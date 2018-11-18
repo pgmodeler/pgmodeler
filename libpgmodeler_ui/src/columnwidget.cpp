@@ -198,6 +198,8 @@ void ColumnWidget::applyConfiguration(void)
 		}
 
 		BaseObjectWidget::applyConfiguration();
+		model->updateViewsReferTable(dynamic_cast<Table *>(table));
+
 		finishConfiguration();
 	}
 	catch(Exception &e)

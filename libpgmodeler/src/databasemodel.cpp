@@ -3076,7 +3076,7 @@ void DatabaseModel::loadModel(const QString &filename)
 														trUtf8("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
-														~obj_type);
+														enum_cast(obj_type));
 								}
 
 								xmlparser.restorePosition();
@@ -3120,24 +3120,25 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::Relationship);
+				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}
 
 			this->setInvalidated(false);
-
-			emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::Relationship);
-			this->setObjectsModified({ObjectType::Relationship, ObjectType::BaseRelationship});
+			emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			if(found_inh_rel)
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), ~ObjectType::Relationship);
+				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
 				updateTablesFKRelationships();
 			}
+
+			emit s_objectLoaded(100, trUtf8("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			this->setObjectsModified();
 		}
 		catch(Exception &e)
 		{
@@ -4386,7 +4387,7 @@ Operator *DatabaseModel::createOperator(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[~ObjectType::Operator])
+					if(elem==objs_schemas[enum_cast(ObjectType::Operator)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						oper_aux=getObject(attribs[Attributes::Signature], ObjectType::Operator);
@@ -4478,7 +4479,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 				{
 					elem=xmlparser.getElementName();
 
-					if(elem==objs_schemas[~ObjectType::OpFamily])
+					if(elem==objs_schemas[enum_cast(ObjectType::OpFamily)])
 					{
 						xmlparser.getElementAttributes(attribs);
 						object=getObject(attribs[Attributes::Signature], ObjectType::OpFamily);
@@ -4679,7 +4680,10 @@ Table *DatabaseModel::createTable(void)
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
-		table->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
+		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
+		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -4692,11 +4696,11 @@ Table *DatabaseModel::createTable(void)
 					xmlparser.savePosition();
 					object=nullptr;
 
-					if(elem==BaseObject::objs_schemas[~ObjectType::Column])
+					if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Column)])
 						object=createColumn();
-					else if(elem==BaseObject::objs_schemas[~ObjectType::Constraint])
+					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Constraint)])
 						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[~ObjectType::Tag])
+					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Tag)])
 					{
 						xmlparser.getElementAttributes(aux_attribs);
 						tag=getObject(aux_attribs[Attributes::Name], ObjectType::Tag);
@@ -5066,8 +5070,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(constr->getConstraintType()!=ConstraintType::PrimaryKey)
 			{
 				table->addConstraint(constr);
+
 				if(this->getObjectIndex(table) >= 0)
-					table->setModified(true);
+					table->setModified(!loading_model);
 			}
 		}
 	}
@@ -5353,7 +5358,7 @@ Index *DatabaseModel::createIndex(void)
 		}
 
 		table->addObject(index);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5433,7 +5438,7 @@ Rule *DatabaseModel::createRule(void)
 		}
 
 		table->addObject(rule);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5591,7 +5596,7 @@ Trigger *DatabaseModel::createTrigger(void)
 		}
 
 		table->addObject(trigger);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5683,7 +5688,7 @@ Policy *DatabaseModel::createPolicy(void)
 		}
 
 		table->addObject(policy);
-		table->setModified(true);
+		table->setModified(!loading_model);
 	}
 	catch(Exception &e)
 	{
@@ -5780,6 +5785,34 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	}
 
 	return(genericsql);
+}
+
+void DatabaseModel::updateViewsReferTable(Table *table)
+{
+	BaseRelationship *rel = nullptr;
+	View *view = nullptr;
+	Table *tab = nullptr;
+
+	if(!table) return;
+
+	for(auto obj : base_relationships)
+	{
+		rel = dynamic_cast<BaseRelationship *>(obj);
+
+		if(rel->getRelationshipType() != BaseRelationship::RelationshipDep)
+			continue;
+
+		view = dynamic_cast<View *>(rel->getTable(BaseRelationship::SrcTable));
+		tab = dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
+
+		if(view && tab == table)
+		{
+			view->generateColumnNamesTypes();
+			view->setCodeInvalidated(true);
+			view->setModified(true);
+			dynamic_cast<Schema *>(view->getSchema())->setModified(true);
+		}
+	}
 }
 
 Sequence *DatabaseModel::createSequence(bool ignore_onwer)
@@ -5885,7 +5918,10 @@ View *DatabaseModel::createView(void)
 		view->setMaterialized(attribs[Attributes::Materialized]==Attributes::True);
 		view->setRecursive(attribs[Attributes::Recursive]==Attributes::True);
 		view->setWithNoData(attribs[Attributes::WithNoData]==Attributes::True);
-		view->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+		view->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		view->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
+		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
+		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
@@ -6919,7 +6955,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 									msg.arg(def_type_str)
 									.arg(object->getName())
 									.arg(object->getTypeName()),
-									~object->getObjectType());
+									enum_cast(object->getObjectType()));
 			}
 		}
 
@@ -7074,7 +7110,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				fkeys.push_back(constr);
 		}
 
-		for(auto obj : table->getObjects(true))
+		for(auto obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
 			objects_map[obj->getObjectId()]=obj;
 	}
 
@@ -9501,7 +9537,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
-			save_extattribs=false, save_genericsqls=false, save_objs_aliases=false;
+			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false;
 	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
@@ -9515,7 +9551,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
 	save_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
 	save_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
-	save_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	save_collapsemode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
@@ -9614,7 +9650,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving object `%1' (%2)")
-														.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
+														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
 				continue;
@@ -9634,9 +9670,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
 			attribs[Attributes::Tag]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
-			attribs[Attributes::PrependedSql]=object->getPrependedSQL();
-			attribs[Attributes::HideExtAttribs]=(save_extattribs && base_tab && base_tab->isExtAttribsHidden() ? Attributes::True : QString());
+			attribs[Attributes::PrependedSql]=object->getPrependedSQL();			
 			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
+			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : QString());
 
 			if(TableObject::isTableObject(obj_type))
 			{
@@ -9775,12 +9811,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_custom_sql && (!attribs[Attributes::AppendedSql].isEmpty() ||
 															!attribs[Attributes::PrependedSql].isEmpty())) ||
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
-				 (save_extattribs && !attribs[Attributes::HideExtAttribs].isEmpty()) ||
+				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
-														.arg(object->getSignature()).arg(object->getTypeName()), ~obj_type);
+														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=schparser.convertCharsToXMLEntities(
@@ -9803,10 +9839,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 																						 Attributes::Metadata + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), ~ObjectType::BaseObject);
+			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
 		}
 		else
-			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), ~ObjectType::BaseObject);
+			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
 
 		output.close();
 	}
@@ -9841,7 +9877,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
-			load_extattribs=false, load_genericsqls=false, load_objs_aliases=false;
+			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -9852,7 +9888,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_custom_sql=(MetaObjsCustomSql & options) == MetaObjsCustomSql;
 	load_custom_colors=(MetaObjsCustomColors & options) == MetaObjsCustomColors;
 	load_fadeout=(MetaObjsFadeOut & options) == MetaObjsFadeOut;
-	load_extattribs=(MetaObjsExtAttribs & options) == MetaObjsExtAttribs;
+	load_collapse_mode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
 
@@ -9889,13 +9925,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(getObjectIndex(new_object->getName(), obj_type) < 0)
 						{
 							emit s_objectLoaded(progress, trUtf8("Creating object `%1' (%2)")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), ~obj_type);
+																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
 							addObject(new_object);
 						}
 						else
 						{
 							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) already exists. Ignoring.")
-																	.arg(new_object->getName()).arg(new_object->getTypeName()), ~ObjectType::BaseObject);
+																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
 							delete(new_object);
 						}
 
@@ -9961,7 +9997,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						if(object)
 						{
 							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
-																	.arg(object->getName()).arg(object->getTypeName()), ~obj_type);
+																	.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 							if(!object->isSystemObject() &&
 								 ((!attribs[Attributes::Protected].isEmpty() && load_objs_prot) ||
@@ -10080,8 +10116,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(load_fadeout)
 									dynamic_cast<BaseGraphicObject *>(object)->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
 
-								if(load_extattribs && base_tab)
-									base_tab->setExtAttribsHidden(attribs[Attributes::HideExtAttribs]==Attributes::True);
+								if(load_collapse_mode && base_tab)
+									base_tab->setCollapseMode(static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 							}
 
 							points.clear();
@@ -10090,7 +10126,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						else if(!object)
 						{
 							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
-																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), ~ObjectType::BaseObject);
+																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
 						}
 
 						xmlparser.restorePosition();
@@ -10101,7 +10137,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), ~ObjectType::BaseObject);
+		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
 		setObjectsModified();
 	}
 	catch(Exception &e)

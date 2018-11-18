@@ -36,18 +36,18 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 	for(unsigned i=0; i < 3; i++)
 	{
 		lables[i]=new QGraphicsSimpleTextItem;
-		this->addToGroup(lables[i]);
+		//this->addToGroup(lables[i]);
 	}
 }
 
 TableObjectView::~TableObjectView(void)
 {
-	this->removeFromGroup(descriptor);
+	//this->removeFromGroup(descriptor);
 	delete(descriptor);
 
 	for(unsigned i=0; i < 3; i++)
 	{
-		this->removeFromGroup(lables[i]);
+		//this->removeFromGroup(lables[i]);
 		delete(lables[i]);
 	}
 }
@@ -71,7 +71,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		this->removeFromGroup(descriptor);
+		//this->removeFromGroup(descriptor);
 		delete(descriptor);
 		descriptor=nullptr;
 	}
@@ -82,8 +82,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			descriptor=new QGraphicsEllipseItem;
 		else
 			descriptor=new QGraphicsPolygonItem;
-
-		this->addToGroup(descriptor);
 	}
 
 	if(column)
@@ -138,9 +136,8 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			}
 
 			if(factor!=1.0f)
-				this->resizePolygon(pol,
-									pol.boundingRect().width() * factor,
-									pol.boundingRect().height()  * factor);
+				TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
+																						pol.boundingRect().height()  * factor);
 
 			desc->setPolygon(pol);
 			desc->setBrush(this->getFillStyle(attrib));
@@ -160,9 +157,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		pol.append(QPointF(9,9)); pol.append(QPointF(9,4));
 
 		if(factor!=1.0f)
-			this->resizePolygon(pol,
-								pol.boundingRect().width() * factor ,
-								pol.boundingRect().height() * factor);
+			TextPolygonItem::resizePolygon(pol,	pol.boundingRect().width() * factor ,	pol.boundingRect().height() * factor);
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
@@ -189,7 +184,7 @@ void TableObjectView::configureObject(void)
 	if(this->getSourceObject())
 	{
 		QTextCharFormat fmt;
-		double px;
+		double px = 0;
 		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
@@ -259,9 +254,8 @@ void TableObjectView::configureObject(void)
 
 		configureDescriptor(constr_type);
 
-		//Set the descriptor position as the first item on the view
-		descriptor->setPos(HorizSpacing, 1);
-		px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
+		descriptor->setPos(HorizSpacing, 0);
+		px=HorizSpacing + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		lables[0]->setText(compact_view && !tab_obj->getAlias().isEmpty() ? tab_obj->getAlias() : tab_obj->getName());
@@ -280,7 +274,7 @@ void TableObjectView::configureObject(void)
 		fmt=font_config[Attributes::ObjectType];
 
 		if(compact_view)
-			lables[1]->setText(" ");
+			lables[1]->setText(QString());
 		else
 		{
 			if(column)
@@ -297,9 +291,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
-			lables[2]->setText(" ");
+			lables[2]->setText(QString());
 		else if(column)
-			lables[2]->setText(str_constr);
+			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -401,6 +395,8 @@ void TableObjectView::configureObject(void)
 				lables[2]->setText(ConstrDelimStart + QString(" ") +
 								   str_constr + QString(" ") +
 								   ConstrDelimEnd);
+			else
+				lables[2]->setText(QString());
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -409,7 +405,7 @@ void TableObjectView::configureObject(void)
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
 			atribs_tip=QString("\n") + ConstrDelimStart +
-					   QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
+								 QString(" ") + atribs_tip + QString(" ") + ConstrDelimEnd;
 
 		}
 
@@ -420,16 +416,7 @@ void TableObjectView::configureObject(void)
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);
 
-		//Calculating the object bounding rect that is composed by the join of the all object's child dimensions
-		descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
-		bounding_rect.setTopLeft(QPointF(descriptor->boundingRect().left(), lables[0]->boundingRect().top()));
-
-		//Special case: when the constraint label has no text use the type label dimension
-		if(lables[2]->boundingRect().width()==0)
-			bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
-		else
-			bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
-
+		calculateBoundingRect();
 		this->setToolTip(tooltip + atribs_tip);
 	}
 }
@@ -441,7 +428,7 @@ void TableObjectView::configureObject(Reference reference)
 	QString str_aux;
 
 	configureDescriptor();
-	descriptor->setPos(HorizSpacing, 1);
+	descriptor->setPos(HorizSpacing, 0);
 	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
 
 	if(reference.getReferenceType()==Reference::ReferColumn)
@@ -461,7 +448,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[Attributes::RefColumn];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString(" "));
+			lables[1]->setText(QString());
 		else
 		{
 			if(reference.getColumn())
@@ -515,13 +502,50 @@ void TableObjectView::configureObject(Reference reference)
 	else
 		lables[2]->setText(QString());
 
-	descriptor->setPos(HorizSpacing, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
-	bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));
+	calculateBoundingRect();
+}
 
-	if(lables[2]->text().isEmpty())
-		bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
+void TableObjectView::configureObject(const QString &name, const QString &type, const QString &alias)
+{
+	QTextCharFormat fmt;
+	double px;
+
+	configureDescriptor();
+	descriptor->setPos(HorizSpacing, 0);
+	px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HorizSpacing);
+
+	fmt = font_config[Attributes::Column];
+	lables[0]->setText(name);
+	lables[0]->setFont(fmt.font());
+	lables[0]->setBrush(fmt.foreground());
+	lables[0]->setPos(px, 0);
+	px+=lables[0]->boundingRect().width() + (4 * HorizSpacing);
+
+	if(!compact_view && !type.isEmpty())
+	{
+		fmt=font_config[Attributes::ObjectType];
+		lables[1]->setText(type);
+		lables[1]->setFont(fmt.font());
+		lables[1]->setBrush(fmt.foreground());
+		lables[1]->setPos(px, 0);
+		px+=lables[1]->boundingRect().width() + (4 * HorizSpacing);
+	}
 	else
-		bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
+		lables[1]->setText(QString());
+
+	//Configures a label for the alias (if there is one)
+	if(!compact_view && !alias.isEmpty())
+	{
+		fmt=font_config[Attributes::Alias];
+		lables[2]->setText(QString(" (") + alias + QString(") "));
+		lables[2]->setFont(fmt.font());
+		lables[2]->setBrush(fmt.foreground());
+		lables[2]->setPos(px, 0);
+	}
+	else
+		lables[2]->setText(QString());
+
+	calculateBoundingRect();
 }
 
 void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
@@ -533,17 +557,49 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 		descriptor->setPos(px, descriptor->pos().y());
 	else
 		lables[obj_idx-1]->setPos(px, lables[obj_idx-1]->pos().y());
+
+	calculateBoundingRect();
+}
+
+void TableObjectView::calculateBoundingRect(void)
+{
+	double width = 0, height = 0, curr_w = 0, py = 0;
+
+	width = descriptor->pos().x() + descriptor->boundingRect().width();
+	height = lables[0]->boundingRect().height();
+
+	for(int i = 0; i < 3; i++)
+	{
+		if(lables[i]->text().isEmpty())
+			continue;
+
+		curr_w = lables[i]->pos().x() + lables[i]->boundingRect().width();
+
+		if(width < curr_w)
+			width = lables[i]->pos().x() + lables[i]->boundingRect().width();
+	}
+
+	bounding_rect = QRectF(QPointF(0,0), QSizeF(width + (4 * HorizSpacing), height + VertSpacing * 0.80));
+
+	//Adjusting the Y position of the objects in order to center them on the new bouding rect
+	descriptor->setPos(descriptor->pos().x(),
+										 (bounding_rect.height() - descriptor->boundingRect().height() + (VertSpacing * 0.4))/2);
+
+	py = (bounding_rect.height() - lables[0]->boundingRect().height())/2;
+
+	for(unsigned i = 0; i < 3; i++)
+		lables[i]->setPos(lables[i]->pos().x(), py);
 }
 
 QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 {
-	if(obj_idx >= 4)
+	if(obj_idx > ConstrAliasLabel)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(obj_idx==0)
+	if(obj_idx == ObjDescriptor)
 		return(descriptor);
 	else
-		return(lables[obj_idx-1]);
+		return(lables[obj_idx - 1]);
 }
 
 QString TableObjectView::getConstraintString(Column *column)
@@ -588,12 +644,34 @@ QString TableObjectView::getConstraintString(Column *column)
 			str_constr+=TextNotNull + ConstrSeparator;
 
 		if(!str_constr.isEmpty())
-			str_constr= ConstrDelimStart +
-						ConstrSeparator + str_constr +
-						ConstrDelimEnd;
+			str_constr= ConstrDelimStart + ConstrSeparator + str_constr + ConstrDelimEnd;
 
 		return(str_constr);
 	}
 	else return(QString());
+}
+
+void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	painter->save();
+	painter->translate(descriptor->pos());
+	descriptor->paint(painter, option, widget);
+	painter->restore();
+
+	for(int i = 0 ; i < 3; i++)
+	{
+		if(lables[i]->text().isEmpty())
+			continue;
+
+		painter->save();
+		painter->translate(lables[i]->pos());
+		lables[i]->paint(painter, option, widget);
+		painter->restore();
+	}
+}
+
+QRectF TableObjectView::boundingRect(void) const
+{
+	return(bounding_rect);
 }
 

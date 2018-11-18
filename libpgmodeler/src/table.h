@@ -359,12 +359,8 @@ class Table: public BaseTable {
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
 		Constraint *getPrimaryKey(void);
 
-		/*! \brief Returns all child objects of the table. If the excl_cols_contr is true
-		then the method will return all objects except columns and constraint */
-		vector<BaseObject *> getObjects(bool excl_cols_constr);
-
-		//! \brief Returns all child objects of the table. This is the same as call getObjects(false)
-		vector<BaseObject *> getObjects(void);
+		//! \brief Returns the children objects of the table excluding the provided children types
+		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns all the partition keys used by the table
 		vector<PartitionKey> getPartitionKeys(void);

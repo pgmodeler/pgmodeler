@@ -388,12 +388,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::Table)
+		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()== ~ObjectType::Table)
+		if(table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -407,10 +407,10 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == ~ObjectType::Table &&
+												 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == ~ObjectType::Table &&
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
@@ -476,7 +476,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	duplicate_tb->setEnabled(cols_selected);
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == ~ObjectType::Table  &&
+											 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table)  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -690,7 +690,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 			for(; idx < count; idx++)
 			{
 				combo->setItemIcon(idx, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
-				combo->setItemData(idx, ~obj_type);
+				combo->setItemData(idx, enum_cast(obj_type));
 			}
 
 			idx=count;

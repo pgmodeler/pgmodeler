@@ -231,8 +231,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
-		pos_info_rect->setVisible(value.toBool());
-		pos_info_txt->setVisible(value.toBool());
+		pos_info_item->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool() && descriptor->isVisible());
 		this->configurePositionInfo();
 
@@ -567,10 +566,8 @@ void RelationshipView::configurePositionInfo(void)
 	if(this->isSelected())
 	{
 		BaseObjectView::configurePositionInfo(descriptor->pos());
-		pos_info_txt->setPos(descriptor->pos().x(),
-							 descriptor->pos().y() - pos_info_txt->boundingRect().height());
-		pos_info_rect->setPos(descriptor->pos().x(),
-								descriptor->pos().y() - pos_info_rect->boundingRect().height());
+		pos_info_item->setPos(descriptor->pos().x(),
+													descriptor->pos().y() - pos_info_item->boundingRect().height());
 	}
 }
 
@@ -1332,9 +1329,9 @@ void RelationshipView::configureDescriptor(void)
 
 	//Resizes the polygon according the font factor
 	if(factor!=1.0f)
-		this->resizePolygon(pol,
-							pol.boundingRect().width() * factor ,
-							pol.boundingRect().height() * factor);
+		TextPolygonItem::resizePolygon(pol,
+																	 pol.boundingRect().width() * factor ,
+																	 pol.boundingRect().height() * factor);
 
 	if(base_rel->isSelfRelationship())
 		pnt=points.at(points.size()/2);
@@ -1404,8 +1401,7 @@ void RelationshipView::configureDescriptor(void)
 	configureSQLDisabledInfo();
 	x1+=6 * HorizSpacing;
 	y1-=3 * VertSpacing;
-	sql_disabled_box->setPos(x1, y1);
-	sql_disabled_txt->setPos(x1 + HorizSpacing, y1 + VertSpacing);
+	sql_disabled_item->setPos(x1, y1);
 
 	descriptor->setPolygon(pol);
 	descriptor->setTransformOriginPoint(descriptor->boundingRect().center());

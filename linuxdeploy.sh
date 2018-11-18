@@ -39,7 +39,7 @@ QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
   
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
@@ -154,13 +154,13 @@ echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o -E '[0-9].[0-9]+\.[0-9]+'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
 if [ -e "$FALLBACK_QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o -E '[0-9].[0-9]+\.[0-9]+'`
   QT_VER_2=${QT_VER_2:0:5}
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi

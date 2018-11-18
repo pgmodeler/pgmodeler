@@ -1,13 +1,13 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/10.1
-QT_ROOT=/Users/$USR/Qt5.9.3/5.9.3/clang_64
+PGSQL_ROOT=/Library/PostgreSQL/10
+QT_ROOT=/Users/$USR/Qt5.11.2/5.11.2/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
 BUILD_NUM=$(date '+%Y%m%d')
 
 WITH_BUILD_NUM='-with-build-num'
@@ -45,7 +45,7 @@ echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
-  QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o -E '[0-9]\.[0-9]+\.[0-9]+'`
   QT_VER=${QT_VER:0:5}
 fi
 

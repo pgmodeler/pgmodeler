@@ -95,6 +95,7 @@ namespace PgModelerUiNs {
 			Messagebox msgbox;
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
+			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
 
 			if(object->isSystemObject())
 				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
@@ -103,6 +104,9 @@ namespace PgModelerUiNs {
 								ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			object->setSQLDisabled(disable);
+
+			if(tab_obj && tab_obj->getParentTable())
+				tab_obj->getParentTable()->setModified(true);
 
 			if(obj_type!=ObjectType::Database && curr_val!=disable)
 			{
@@ -114,7 +118,7 @@ namespace PgModelerUiNs {
 			}
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
-	   codes when the code of parent table is disabled too in order to avoid export errors */
+			 * codes when the code of parent table is disabled too in order to avoid export errors */
 			if(object->getObjectType()==ObjectType::Table)
 			{
 				Constraint *constr = nullptr;
@@ -125,7 +129,7 @@ namespace PgModelerUiNs {
 					constr=dynamic_cast<Constraint *>(obj);
 
 					/* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
-		   The constraint is FK and the reference table is disabled the FK will not be enabled */
+					 * The constraint is FK and the reference table is disabled the FK will not be enabled */
 					if((constr->getConstraintType()!=ConstraintType::ForeignKey && !constr->isDeclaredInTable()) ||
 							(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							 (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
@@ -259,7 +263,7 @@ namespace PgModelerUiNs {
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(~ex.getErrorType());
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(enum_cast(ex.getErrorType()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);

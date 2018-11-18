@@ -43,8 +43,8 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	objs_fadedout_ht=new HintTextWidget(objs_fadedout_hint, this);
 	objs_fadedout_ht->setText(objs_fadedout_chk->statusTip());
 
-	objs_extattribs_ht=new HintTextWidget(objs_extattribs_hint, this);
-	objs_extattribs_ht->setText(objs_extattribs_chk->statusTip());
+	objs_collapse_mode_ht=new HintTextWidget(objs_collapse_mode_hint, this);
+	objs_collapse_mode_ht->setText(objs_collapse_mode_chk->statusTip());
 
 	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
 	custom_sql_ht->setText(custom_sql_chk->statusTip());
@@ -175,7 +175,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		options+=(tag_objs_chk->isChecked() ? DatabaseModel::MetaTagObjs : 0);
 		options+=(textbox_objs_chk->isChecked() ? DatabaseModel::MetaTextboxObjs : 0);
 		options+=(objs_fadedout_chk->isChecked() ? DatabaseModel::MetaObjsFadeOut : 0);
-		options+=(objs_extattribs_chk->isChecked() ? DatabaseModel::MetaObjsExtAttribs : 0);
+		options+=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : 0);
 		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
 		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
 

@@ -512,7 +512,7 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	}
 	else
 	{
-		references_tab->setCellText(refer.getExpression(),row,0);
+		references_tab->setCellText(refer.getExpression().simplified(),row,0);
 		references_tab->setCellText(refer.getAlias(),row,1);
 	}
 
