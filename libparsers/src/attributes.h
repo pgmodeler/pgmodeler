@@ -467,6 +467,7 @@ namespace Attributes {
 	SaveLastPosition,
 	SaveRestoreGeometry,
 	Schema,
+	SchemaOid,
 	SearchPath,
 	SecurityType,
 	SelectExp,
