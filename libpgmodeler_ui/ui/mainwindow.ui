@@ -933,6 +933,7 @@
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
    <addaction name="separator"/>
+   <addaction name="action_align_distrib_tables"/>
   </widget>
   <action name="action_new_model">
    <property name="icon">
@@ -1601,6 +1602,27 @@
    </property>
    <property name="toolTip">
     <string>Addition action over the model</string>
+   </property>
+  </action>
+  <action name="action_align_distrib_tables">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/align_top.png</normaloff>:/icones/icones/align_top.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align / distribute tables</string>
+   </property>
+   <property name="toolTip">
+    <string>Align or distribute tables</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

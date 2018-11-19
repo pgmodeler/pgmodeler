@@ -5016,6 +5016,223 @@ void ModelWidget::updateMagnifierArea(void)
 	scene->blockSignals(false);
 }
 
+void ModelWidget::alignTabTop(void)
+{
+	double ty=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( ty<0 || ty > tab->pos().y() )
+				ty=tab->pos().y();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(QPointF(tab->pos().x(),ty));
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::alignTabVertCenter(void)
+{
+	double ty=-1, by=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( ty<0 || ty > tab->pos().y() )
+				ty=tab->pos().y();
+			if( by < tab->pos().y() + tab->boundingRect().height() )
+				by=tab->pos().y() + tab->boundingRect().height();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(tab->pos().x(),(by+ty-tab->boundingRect().height())/2);
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::alignTabBottom(void)
+{
+	double by=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( by < tab->pos().y() + tab->boundingRect().height() )
+				by = tab->pos().y() + tab->boundingRect().height();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(QPointF(tab->pos().x(),by-tab->boundingRect().height()));
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::distribTabVert(void)
+{
+	double ty=-1, by=-1, hy=0, sy=0;
+	BaseTableView *tab;
+	multimap<double, BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.insert(pair<double, BaseTableView*>(tab->pos().y() + tab->boundingRect().height(), tab));
+			if( ty<0 || ty > tab->pos().y() )
+				ty=tab->pos().y();
+			if( by < tab->pos().y() + tab->boundingRect().height() )
+				by=tab->pos().y() + tab->boundingRect().height();
+			hy+=tab->boundingRect().height();
+		}
+	}
+
+	sy=(by-ty-hy)/(selected_objects.size()-1);
+
+	for(multimap<double,BaseTableView*>::iterator ii=tabs.begin(), prev=tabs.end(); ii!=tabs.end(); prev=ii, ++ii)
+	{
+		if(!(ii->second==tabs.begin()->second) && !(ii->second==tabs.rbegin()->second))
+		{
+			ii->second->setPos( ii->second->pos().x(),
+								prev->second->pos().y() + prev->second->boundingRect().height() + sy );
+			ii->second->configureObject();
+			dynamic_cast<Schema *>(ii->second->getSourceObject()->getSchema())->setModified(true);
+		}
+	}
+}
+
+void ModelWidget::alignTabLeft(void)
+{
+	double lx=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( lx<0 || lx > tab->pos().x() )
+				lx=tab->pos().x();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos(lx, tab->pos().y());
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::alignTabHorizCenter(void)
+{
+	double lx=-1, rx=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( lx<0 || lx > tab->pos().x() )
+				lx = tab->pos().x();
+			if( rx < tab->pos().x() + tab->boundingRect().width() )
+				rx = tab->pos().x() + tab->boundingRect().width();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos( ( rx + lx - tab->boundingRect().width() )/2 , tab->pos().y() );
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::alignTabRight(void)
+{
+	double rx=-1;
+	BaseTableView *tab;
+	vector<BaseTableView*> tabs;
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.push_back(tab);
+			if( rx < tab->pos().x() + tab->boundingRect().width() )
+				rx = tab->pos().x() + tab->boundingRect().width();
+		}
+	}
+	for(auto &tab : tabs)
+	{
+		tab->setPos( rx-tab->boundingRect().width(), tab->pos().y() );
+		tab->configureObject();
+		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
+	}
+}
+
+void ModelWidget::distribTabHoriz(void)
+{
+	double lx=-1, rx=-1, wx=0, sx=0;
+	BaseTableView *tab;
+	multimap<double, BaseTableView*> tabs;
+
+
+	for(auto &obj : selected_objects)
+	{
+		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		{
+			tab=dynamic_cast<BaseTableView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			tabs.insert(pair<double, BaseTableView*>(tab->pos().x() + tab->boundingRect().width(), tab));
+			if( lx<0 || lx > tab->pos().x() )
+				lx=tab->pos().x();
+			if( rx < tab->pos().x() + tab->boundingRect().width() )
+				rx=tab->pos().x() + tab->boundingRect().width();
+			wx+=tab->boundingRect().width();
+		}
+	}
+
+	sx=(rx-lx-wx)/(selected_objects.size()-1);
+
+	for(multimap<double,BaseTableView*>::iterator ii=tabs.begin(), prev=tabs.end(); ii!=tabs.end(); prev=ii, ++ii)
+	{
+		if(!(ii->second==tabs.begin()->second) && !(ii->second==tabs.rbegin()->second))
+		{
+			ii->second->setPos( prev->second->pos().x() + prev->second->boundingRect().width() + sx,
+													ii->second->pos().y() );
+			ii->second->configureObject();
+			dynamic_cast<Schema *>(ii->second->getSourceObject()->getSchema())->setModified(true);
+		}
+	}
+}
+
 void ModelWidget::showMagnifierArea(bool show)
 {
 	if(show)

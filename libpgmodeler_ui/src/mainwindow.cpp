@@ -53,6 +53,44 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	arrange_menu.addAction(trUtf8("Hierarchical"), this, SLOT(arrangeObjects()));
 	arrange_menu.addAction(trUtf8("Scattered"), this, SLOT(arrangeObjects()));
 
+	QToolButton *tool_btn2 = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_align_distrib_tables));
+	tool_btn2->setMenu(&align_menu);
+	tool_btn2->setPopupMode(QToolButton::InstantPopup);
+
+	align_menu.addAction(trUtf8("Align top"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(0)->setIcon(QIcon(QString(":icones/icones/align_top.png")));
+	align_menu.actions().at(0)->setToolTip(QString("Align tables top"));
+
+	align_menu.addAction(trUtf8("Align at vertical center"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(1)->setIcon(QIcon(QString(":icones/icones/align_vert_center.png")));
+	align_menu.actions().at(1)->setToolTip(QString("Align tables at vertical center"));
+
+	align_menu.addAction(trUtf8("Align bottom"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(2)->setIcon(QIcon(QString(":icones/icones/align_bottom.png")));
+	align_menu.actions().at(2)->setToolTip(QString("Align tables bottom"));
+
+	align_menu.addAction(trUtf8("Distribute vertically"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(3)->setIcon(QIcon(QString(":icones/icones/distrib_vert.png")));
+	align_menu.actions().at(3)->setToolTip(QString("Distribute tables vertically"));
+
+	align_menu.addSeparator();
+
+	align_menu.addAction(trUtf8("Align left"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(5)->setIcon(QIcon(QString(":icones/icones/align_left.png")));
+	align_menu.actions().at(5)->setToolTip(QString("Align tables left"));
+
+	align_menu.addAction(trUtf8("Align at horizontal center"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(6)->setIcon(QIcon(QString(":icones/icones/align_horiz_center.png")));
+	align_menu.actions().at(6)->setToolTip(QString("Align tables at horizontal center"));
+
+	align_menu.addAction(trUtf8("Align right"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(7)->setIcon(QIcon(QString(":icones/icones/align_right.png")));
+	align_menu.actions().at(7)->setToolTip(QString("Align tables right"));
+
+	align_menu.addAction(trUtf8("Distribute horizontally"), this, SLOT(alignDistribObjects()));
+	align_menu.actions().at(8)->setIcon(QIcon(QString(":icones/icones/distrib_horiz.png")));
+	align_menu.actions().at(8)->setToolTip(QString("Distribute tables horizontally"));
+
 	try
 	{
 		models_tbw->tabBar()->setVisible(false);
@@ -1036,6 +1074,7 @@ void MainWindow::setCurrentModel(void)
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 	action_arrange_objects->setEnabled(current_model != nullptr);
+	action_align_distrib_tables->setEnabled(current_model != nullptr);
 
 	if(current_model)
 	{
@@ -2047,6 +2086,33 @@ void MainWindow::arrangeObjects(void)
 
 		QApplication::restoreOverrideCursor();
 	}
+}
+
+void MainWindow::alignDistribObjects(void)
+{
+	if(!current_model || current_model->selected_objects.size()<2)
+			return;
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	if(sender() == align_menu.actions().at(0))
+		current_model->alignTabTop();
+	else if(sender() == align_menu.actions().at(1))
+		current_model->alignTabVertCenter();
+	else if(sender() == align_menu.actions().at(2))
+		current_model->alignTabBottom();
+	else if(sender() == align_menu.actions().at(3))
+		current_model->distribTabVert();
+	else if(sender() == align_menu.actions().at(5))
+		current_model->alignTabLeft();
+	else if(sender() == align_menu.actions().at(6))
+		current_model->alignTabHorizCenter();
+	else if(sender() == align_menu.actions().at(7))
+		current_model->alignTabRight();
+	else if(sender() == align_menu.actions().at(8))
+		current_model->distribTabHoriz();
+
+	QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::toggleCompactView(void)
