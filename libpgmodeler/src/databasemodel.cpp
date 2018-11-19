@@ -5807,7 +5807,7 @@ void DatabaseModel::updateViewsReferTable(Table *table)
 
 		if(view && tab == table)
 		{
-			view->generateColumnNamesTypes();
+			view->generateColumns();
 			view->setCodeInvalidated(true);
 			view->setModified(true);
 			dynamic_cast<Schema *>(view->getSchema())->setModified(true);
@@ -5987,13 +5987,31 @@ View *DatabaseModel::createView(void)
 							xmlparser.savePosition();
 							str_aux=attribs[Attributes::Alias];
 
+							// Retrieving the reference expression
 							xmlparser.accessElement(XmlParser::ChildElement);
+							xmlparser.savePosition();
 							xmlparser.accessElement(XmlParser::ChildElement);
-
 							reference = Reference(xmlparser.getElementContent(),str_aux);
 							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
-							refs.push_back(reference);
+							xmlparser.restorePosition();
 
+							// Creating the columns related to the expression
+							if(xmlparser.accessElement(XmlParser::NextElement))
+							{
+								elem = xmlparser.getElementName();
+
+								do
+								{
+									xmlparser.savePosition();
+									column = createColumn();
+									reference.addColumn(column);
+									delete(column);
+									xmlparser.restorePosition();
+								}
+								while(xmlparser.accessElement(XmlParser::NextElement));
+							}
+
+							refs.push_back(reference);
 							xmlparser.restorePosition();
 						}
 					}

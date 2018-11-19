@@ -185,7 +185,7 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 		return(nullptr);
 }
 
-void View::generateColumnNamesTypes(void)
+void View::generateColumns(void)
 {
 	unsigned col_id = 0, col_count = 0, expr_idx = 0;
 	Table *tab = nullptr;
@@ -197,9 +197,14 @@ void View::generateColumnNamesTypes(void)
 
 	if(hasDefinitionExpression())
 	{
-		columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
-																	 Attributes::Expression,
-																	 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : QString()));
+		vector<SimpleColumn> ref_cols = references[0].getColumns();
+
+		if(ref_cols.empty())
+			columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
+																		 Attributes::Expression,
+																		 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : QString()));
+		else
+			columns = ref_cols;
 	}
 	else
 	{
@@ -315,7 +320,7 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
 
-	generateColumnNamesTypes();
+	generateColumns();
 	setCodeInvalidated(true);
 }
 
@@ -408,7 +413,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Removes the reference from the view
 	references.erase(references.begin() + ref_id);
-	generateColumnNamesTypes();
+	generateColumns();
 	setCodeInvalidated(true);
 }
 

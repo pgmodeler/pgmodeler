@@ -33,7 +33,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
 		Q_OBJECT
 
-		HintTextWidget *ref_alias_ht, *used_in_ht, *ref_object_ht;
+		HintTextWidget *ref_alias_ht, *used_in_ht, *ref_object_ht, *alias_ht;
 
 		NumberedTextEditor *expression_txt;
 
@@ -51,13 +51,15 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 
 		Reference reference;
 
+		DatabaseModel *model;
+
+		void handleColumn(int row);
+
 	public:
 		explicit ReferenceWidget(QWidget *parent = 0);
 
 		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
-
 		Reference getReference(void);
-
 		unsigned getReferenceFlags(void);
 
 	public slots:
@@ -65,6 +67,10 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 
 	private slots:
 		void selectReferenceType(void);
+		void addColumn(int row);
+		void updateColumn(int row);
+		void editColumn(int row);
+		void duplicateColumn(int src_row, int new_row);
 
 	signals:
 		void s_closeRequested(void);

@@ -17,7 +17,7 @@
 <!ATTLIST view ext-attribs-page CDATA #IMPLIED>
 <!ATTLIST view max-obj-count CDATA #IMPLIED>
 
-<!ELEMENT reference (expression?)>
+<!ELEMENT reference (expression?, column*)>
 <!ATTLIST reference ref-alias CDATA #IMPLIED>
 <!ATTLIST reference alias CDATA #IMPLIED>
 <!ATTLIST reference column-alias CDATA #IMPLIED>

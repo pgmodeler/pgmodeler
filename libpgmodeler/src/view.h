@@ -242,7 +242,7 @@ class View: public BaseTable {
 		 *	The names are retrieved, first, from columns aliases and lastly from table's columns
 		 * 	when TABLE.* syntax is used. For expressions, if aliases aren't defined, a column name in the
 		 *  for _expr#_ is used. */
-		void generateColumnNamesTypes(void);
+		void generateColumns(void);
 
 		//! \brief Returns the deduced columns of the view
 		vector<SimpleColumn> getColumns(void);

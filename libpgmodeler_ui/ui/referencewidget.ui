@@ -497,34 +497,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="name_edt">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="statusTip">
-            <string>This is the name of the object in the PostgreSQL database.</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="logical_name_lbl">
            <property name="sizePolicy">
@@ -565,7 +537,84 @@
             </size>
            </property>
            <property name="statusTip">
-            <string>This is a more friendly name for the object. When displaying the model in compact view this is the name shown for the object instead of its real name. If this field is empty the real name will be displayed anyway.</string>
+            <string>This is a more friendly name for the column. When displaying the model in compact view this is the name shown for the column instead of its real name. If this field is empty the real name will be displayed anyway.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QWidget" name="alias_hint_wgt" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QWidget" name="alias_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="name_edt">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="statusTip">
+            <string>This is the name of the object in the PostgreSQL database.</string>
            </property>
            <property name="text">
             <string/>
@@ -580,6 +629,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>properties_tbw</tabstop>
+  <tabstop>ref_type_cmb</tabstop>
+  <tabstop>ref_alias_edt</tabstop>
+  <tabstop>select_from_chk</tabstop>
+  <tabstop>from_where_chk</tabstop>
+  <tabstop>after_where_chk</tabstop>
+  <tabstop>end_expr_chk</tabstop>
+  <tabstop>view_def_chk</tabstop>
+  <tabstop>tab_alias_edt</tabstop>
+  <tabstop>col_alias_edt</tabstop>
+  <tabstop>expr_alias_edt</tabstop>
+  <tabstop>name_edt</tabstop>
+  <tabstop>alias_edt</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
