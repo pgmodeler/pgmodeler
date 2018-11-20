@@ -314,7 +314,7 @@ END
 	<role name="postgres"/>
 </sequence>
 
-<table name="country" hide-ext-attribs="true">
+<table name="country">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2220" y="540"/>
