@@ -185,23 +185,26 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 		return(nullptr);
 }
 
-void View::generateColumnNamesTypes(void)
+void View::generateColumns(void)
 {
 	unsigned col_id = 0, col_count = 0, expr_idx = 0;
 	Table *tab = nullptr;
 	Reference ref;
 	Column *col = nullptr;
-	QString name;
+	QString name, alias;
 
-	col_aliases.clear();
-	col_names.clear();
-	col_types.clear();
+	columns.clear();
 
 	if(hasDefinitionExpression())
 	{
-		col_names.push_back(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)));
-		col_aliases.push_back(!references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : col_names.at(0));
-		col_types.push_back(Attributes::Expression);
+		vector<SimpleColumn> ref_cols = references[0].getColumns();
+
+		if(ref_cols.empty())
+			columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
+																		 Attributes::Expression,
+																		 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : QString()));
+		else
+			columns = ref_cols;
 	}
 	else
 	{
@@ -216,9 +219,9 @@ void View::generateColumnNamesTypes(void)
 				else
 					name = QString("_expr%1_").arg(expr_idx++);
 
-				addColumnName(name);
-				col_types.push_back(Attributes::Expression);
-				col_aliases.push_back(!ref.getReferenceAlias().isEmpty() ? ref.getReferenceAlias() : name);
+				name = getUniqueColumnName(name);
+				columns.push_back(SimpleColumn(name,  Attributes::Expression,
+																			 !ref.getReferenceAlias().isEmpty() ? ref.getReferenceAlias() : name));
 			}
 			else if(!ref.getColumn())
 			{
@@ -228,9 +231,9 @@ void View::generateColumnNamesTypes(void)
 				for(col_id=0; col_id < col_count; col_id++)
 				{
 					col = tab->getColumn(col_id);
-					addColumnName(col->getName());
-					col_types.push_back(*col->getType());
-					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+					name = getUniqueColumnName(col->getName());
+					columns.push_back(SimpleColumn(name, *col->getType(),
+																				 !col->getAlias().isEmpty() ? col->getAlias() : col->getName()));
 				}
 			}
 			else
@@ -238,34 +241,24 @@ void View::generateColumnNamesTypes(void)
 				col = ref.getColumn();
 
 				if(!ref.getColumnAlias().isEmpty())
-					addColumnName(ref.getColumnAlias());
+					name = getUniqueColumnName(ref.getColumnAlias());
 				else
-					addColumnName(col->getName());
-
-				col_types.push_back(*col->getType());
+					name = getUniqueColumnName(col->getName());
 
 				if(!ref.getReferenceAlias().isEmpty())
-					col_aliases.push_back(ref.getReferenceAlias());
+					alias = ref.getReferenceAlias();
 				else
-					col_aliases.push_back(!col->getAlias().isEmpty() ? col->getAlias() : col->getName());
+					alias = !col->getAlias().isEmpty() ? col->getAlias() : col->getName();
+
+				columns.push_back(SimpleColumn(name, *col->getType(), alias));
 			}
 		}
 	}
 }
 
-QStringList View::getColumnNames(void)
+vector<SimpleColumn> View::getColumns(void)
 {
-	return(col_names);
-}
-
-QStringList View::getColumnTypes(void)
-{
-	return(col_types);
-}
-
-QStringList View::getColumnAliases(void)
-{
-	return(col_aliases);
+	return(columns);
 }
 
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
@@ -327,7 +320,7 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 			this->object_id=BaseObject::getGlobalId();
 	}
 
-	generateColumnNamesTypes();
+	generateColumns();
 	setCodeInvalidated(true);
 }
 
@@ -420,7 +413,7 @@ void View::removeReference(unsigned ref_id)
 
 	//Removes the reference from the view
 	references.erase(references.begin() + ref_id);
-	generateColumnNamesTypes();
+	generateColumns();
 	setCodeInvalidated(true);
 }
 
@@ -431,8 +424,7 @@ void View::removeReferences(void)
 	exp_from.clear();
 	exp_where.clear();
 	exp_end.clear();
-	col_names.clear();
-	col_types.clear();
+	columns.clear();
 	setCodeInvalidated(true);
 }
 
@@ -648,8 +640,11 @@ QString View::getCodeDefinition(unsigned def_type)
 	{
 		QStringList fmt_names;
 
-		for(auto &name : col_names)
-			fmt_names.push_back(formatName(name));
+		//for(auto &name : col_names)
+		//	fmt_names.push_back(formatName(name));
+
+		for(auto &col : columns)
+			fmt_names.push_back(formatName(col.name));
 
 		attributes[Attributes::Columns]=fmt_names.join(',');
 	}
@@ -676,18 +671,28 @@ void View::setSQLObjectAttribute(void)
 		attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
 }
 
-void View::addColumnName(const QString &name)
+QString View::getUniqueColumnName(const QString &name)
 {
-	unsigned col_id = 1;
+	unsigned idx = 1;
 	QString fmt_name = name;
+	vector<SimpleColumn>::iterator itr, itr_end;
 
-	while(col_names.indexOf(fmt_name) >= 0)
+	itr = columns.begin();
+	itr_end = columns.end();
+
+	while(itr != itr_end)
 	{
-		fmt_name = name + QString::number(col_id);
-		col_id++;
+		if(itr->name == fmt_name)
+		{
+			fmt_name = name + QString::number(idx);
+			idx++;
+			itr = columns.begin();
+		}
+		else
+			itr++;
 	}
 
-	col_names.push_back(fmt_name);
+	return(fmt_name);
 }
 
 void View::setObjectListsCapacity(unsigned capacity)

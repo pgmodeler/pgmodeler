@@ -73,6 +73,56 @@ bool Reference::isDefinitionExpression(void)
 	return(is_def_expr);
 }
 
+void Reference::addColumn(const QString &name, PgSqlType type, const QString &alias)
+{
+	QString aux_name = name;
+
+	if(aux_name.startsWith(QChar('\"')) &&
+		 aux_name.endsWith(QChar('\"')))
+	{
+		aux_name.remove(0, 1);
+		aux_name.remove(aux_name.length(), 1);
+	}
+
+	// Validating the column name
+	if(!BaseObject::isValidName(name))
+	{
+		if(aux_name.isEmpty())
+			throw Exception(ErrorCode::AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(aux_name.size() > BaseObject::ObjectNameMaxLength)
+			throw Exception(ErrorCode::AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else
+			throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// Checking if the column already exists
+	for(auto &col : columns)
+	{
+		if(col.name == name)
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	columns.push_back(SimpleColumn(name, *type, alias));
+}
+
+void Reference::addColumn(Column *col)
+{
+	if(!col)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	addColumn(col->getName(), col->getType(), col->getAlias());
+}
+
+void Reference::removeColumns(void)
+{
+	columns.clear();
+}
+
+vector<SimpleColumn> Reference::getColumns(void)
+{
+	return(columns);
+}
+
 Table *Reference::getTable(void)
 {
 	return(table);
@@ -216,6 +266,7 @@ QString Reference::getXMLDefinition(void)
 {
 	attribs_map attribs;
 	SchemaParser schparser;
+	Column col_aux;
 
 	attribs[Attributes::Table]=QString();
 	attribs[Attributes::Column]=QString();
@@ -230,6 +281,15 @@ QString Reference::getXMLDefinition(void)
 	attribs[Attributes::Expression]=expression;
 	attribs[Attributes::Alias]=alias;
 	attribs[Attributes::ColumnAlias]=column_alias;
+	attribs[Attributes::Columns]=QString();
+
+	for(auto &col : columns)
+	{
+		col_aux.setName(col.name);
+		col_aux.setType(PgSqlType::parseString(col.type));
+		col_aux.setAlias(col.alias);
+		attribs[Attributes::Columns]+=col_aux.getCodeDefinition(SchemaParser::XmlDefinition);
+	}
 
 	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
 }

@@ -458,6 +458,7 @@ namespace Attributes {
 	SaveLastPosition=QString("save-last-position"),
 	SaveRestoreGeometry=QString("save-restore-geometry"),
 	Schema=QString("schema"),
+	SchemaOid=QString("schema-oid"),
 	SearchPath=QString("search-path"),
 	SecurityType=QString("security-type"),
 	SelectExp=QString("select-exp"),

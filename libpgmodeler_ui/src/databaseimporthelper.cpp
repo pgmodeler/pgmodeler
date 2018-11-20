@@ -633,6 +633,7 @@ void DatabaseImportHelper::importDatabase(void)
 			}
 		}
 
+		dbmodel->setObjectsModified();
 		resetImportParameters();
 	}
 	catch(Exception &e)
@@ -687,7 +688,11 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				attribs[Attributes::Tablespace]=getDependencyObject(attribs[Attributes::Tablespace], ObjectType::Tablespace, false, auto_resolve_deps);
 
 			if(attribs.count(Attributes::Schema))
+			{
+				//Here we preserve the schema oid for latter usage in certain methods
+				attribs[Attributes::SchemaOid]=attribs[Attributes::Schema];
 				attribs[Attributes::Schema]=getDependencyObject(attribs[Attributes::Schema], ObjectType::Schema, false, auto_resolve_deps);
+			}
 
 			/* Due to the object recreation mechanism there are some situations when pgModeler fails to recreate
 			them due to the duplication of permissions. So, to avoid this problem we need to check if the OID of the
@@ -1645,13 +1650,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		//Retrieving columns if they were not retrieved yet
 		if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
 		{
-			/* Since the schema name sometimes comes in form os <schema name="public"/> tag
-		 it is needed extract only the name from before retrieve the columns of the table */
-			QString sch_name=attribs[Attributes::Schema];
-			sch_name.replace(QRegExp(QString("(\\t)*(<)(schema)( )+(name)( )*(=)")), QString());
-			sch_name.replace(QRegExp(QString("(/)(>)(\n)*")), QString());
-			sch_name.replace('"', QString());
-			sch_name=sch_name.trimmed();
+			QString sch_name;
+			sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 			retrieveTableColumns(sch_name, attribs[Attributes::Name]);
 		}
 
@@ -1868,6 +1868,10 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 {
 	View *view=nullptr;
 	Reference ref;
+	Column col;
+	unsigned type_oid = 0;
+	QString type_name, type_def, unknown_obj_xml, sch_name;
+	bool is_type_registered = false;
 
 	try
 	{
@@ -1877,14 +1881,69 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
 		ref=Reference(attribs[Attributes::Definition], QString());
-		ref.setDefinitionExpression(true);
+		ref.setDefinitionExpression(true);	
+
+		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
+		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
+
+		//Creating columns
+		for(auto &itr : columns[attribs[Attributes::Oid].toUInt()])
+		{
+			col.setName(itr.second[Attributes::Name]);
+			type_oid=itr.second[Attributes::TypeOid].toUInt();
+
+			/* If the type has an entry on the types map and its OID is greater than system object oids,
+			 * means that it's a user defined type, thus, there is the need to check if the type
+			 * is registered. */
+			if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+			{
+				/* Building the type name prepending the schema name in order to search it on
+				 * the user defined types list at PgSQLType class */
+				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
+				type_name+=QString(".");
+
+				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+				{
+					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
+					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					type_name+=BaseObject::formatName(aux_name, false);
+					type_name+=QString("[]").repeated(dim);
+				}
+				else
+					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+
+				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+			}
+			else
+			{
+				is_type_registered=(types.count(type_oid)!=0);
+				type_name=itr.second[Attributes::Type];
+			}
+
+			/* Checking if the type used by the column exists (is registered),
+			 * if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+			 * array types [] that will not be automatically created because they are derivated from
+			 * the non-array type, this way, if the original type is created there is no need to create the array form */
+			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
+			{
+				type_def = getDependencyObject(itr.second[Attributes::TypeOid], ObjectType::Type);
+				unknown_obj_xml = UnkownObjectOidXml.arg(type_oid);
+
+				/* If the type still doesn't exists means that the column maybe is referencing a domain
+				 * this way pgModeler will try to retrieve the mentionend object */
+				if(type_def==unknown_obj_xml)
+					type_def=getDependencyObject(itr.second[Attributes::TypeOid], ObjectType::Domain);
+			}
+
+			col.setType(PgSqlType::parseString(type_name));
+			ref.addColumn(&col);
+		}
+
 		attribs[Attributes::References]=ref.getXMLDefinition();
 
 		loadObjectXML(ObjectType::View, attribs);
-		view=dbmodel->createView();
+		view = dbmodel->createView();
 		dbmodel->addView(view);
-
-		retrieveTableColumns(view->getSchema()->getName(), view->getName());
 	}
 	catch(Exception &e)
 	{

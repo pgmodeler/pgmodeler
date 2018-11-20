@@ -1042,9 +1042,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="__coluna_Teste3">
 		<type name="integer" length="1"/>
 	</column>
-	<constraint name="relacao_teste_6_pk" type="pk-constr" factor="100">
-		<columns names="__coluna_Teste3" ref-type="src-columns"/>
-	</constraint>
 </relationship>
 
 <relationship name="table_A2_has_many_tabela_B_4c" type="rel1n"
@@ -1068,9 +1065,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste3">
 		<type name="integer" length="1"/>
 	</column>
-	<constraint name="relacao_teste_7_pk" type="pk-constr" factor="100">
-		<columns names="coluna_Teste3" ref-type="src-columns"/>
-	</constraint>
 </relationship>
 
 <relationship name="tabela_B_4c_has_many_tabela_B_4a" type="rel1n"

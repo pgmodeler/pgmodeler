@@ -23,6 +23,8 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
+	model = nullptr;
+
 	ref_flags = 0;
 	ref_alias_ht=new HintTextWidget(ref_alias_hint, this);
 	ref_alias_ht->setText(ref_alias_edt->statusTip());
@@ -33,6 +35,9 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_object_ht=new HintTextWidget(ref_object_hint, this);
 	ref_object_ht->setText(trUtf8("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 
+	alias_ht=new HintTextWidget(alias_hint, this);
+	alias_ht->setText(alias_edt->statusTip());
+
 	expression_txt=new NumberedTextEditor(this, true);
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
@@ -41,16 +46,47 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_object_sel->enableObjectCreation(false);
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 
-	reference_grid->addWidget(ref_object_sel, 3, 1, 1, 3);
-	reference_grid->addWidget(expression_txt, 5, 1, 1, 4);
+	QGridLayout *grid = dynamic_cast<QGridLayout *>(properties_tbw->widget(0)->layout());
+	grid->addWidget(ref_object_sel, 2, 1, 1, 3);
+	grid->addWidget(expression_txt, 4, 1, 1, 4);
+
+	properties_tbw->setTabEnabled(1, false);
+	pgsqltype_wgt = new PgSQLTypeWidget(this);
+
+	columns_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
+	columns_tab->setColumnCount(3);
+	columns_tab->setHeaderLabel(trUtf8("Name"), 0);
+	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+	columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
+	columns_tab->setHeaderLabel(trUtf8("Alias"), 2);
+
+	QFrame *info_frm=BaseObjectWidget::generateInformationFrame(trUtf8("This tab can be used to inform the columns that the view owns. This is just a convenience to make the visualization of this kind of object more intuitive. If no column is specified here the columns of the view displayed in the canvas will be a fragment of the expression defined in the previous tab."));
+	QVBoxLayout *vbox =  dynamic_cast<QVBoxLayout *>(properties_tbw->widget(1)->layout());
+
+	vbox->addWidget(pgsqltype_wgt);
+	vbox->addWidget(columns_tab);
+
+	info_frm->setParent(this);
+	vbox->addWidget(info_frm);
 
 	selectReferenceType();
-	setMinimumSize(630, 380);
+	setMinimumSize(640, 480);
+
+	connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
+	connect(columns_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateColumn(int)));
+	connect(columns_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editColumn(int)));
+	connect(columns_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateColumn(int,int)));
 
 	connect(view_def_chk, SIGNAL(toggled(bool)), select_from_chk, SLOT(setDisabled(bool)));
 	connect(view_def_chk, SIGNAL(toggled(bool)), from_where_chk, SLOT(setDisabled(bool)));
 	connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
 	connect(view_def_chk, SIGNAL(toggled(bool)), end_expr_chk, SLOT(setDisabled(bool)));
+
+	connect(view_def_chk, &QCheckBox::toggled, [&](bool checked){
+		properties_tbw->setTabEnabled(1, checked);
+	});
+
 	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
 
 	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
@@ -66,6 +102,10 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 {
 	this->ref_flags = ref_flags;
 	this->reference = ref;
+	this->model = model;
+
+	pgsqltype_wgt->setAttributes(PgSqlType(), model,
+															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
 
 	expression_cp->configureCompletion(model, expression_hl);
 	ref_object_sel->setModel(model);
@@ -90,7 +130,23 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	}
 
 	if(ref_flags == Reference::SqlViewDefinition)
+	{
+		int row = 0;
 		view_def_chk->setChecked(true);
+		columns_tab->blockSignals(true);
+
+		for(auto &col : ref.getColumns())
+		{
+			columns_tab->addRow();
+			columns_tab->setCellText(col.name, row, 0);
+			columns_tab->setCellText(col.type, row, 1);
+			columns_tab->setCellText(col.alias, row, 2);
+			columns_tab->setRowData(QVariant::fromValue<PgSqlType>(PgSqlType::parseString(col.type)), row);
+			row++;
+		}
+
+		columns_tab->blockSignals(false);
+	}
 	else
 	{
 		select_from_chk->setChecked((ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect);
@@ -138,7 +194,15 @@ void ReferenceWidget::applyConfiguration(void)
 		ref_flags = 0;
 
 		if(view_def_chk->isChecked())
+		{
 			ref_flags = Reference::SqlViewDefinition;
+			reference.removeColumns();
+
+			for(unsigned row = 0; row < columns_tab->getRowCount(); row++)
+				reference.addColumn(columns_tab->getCellText(row, 0),
+														columns_tab->getRowData(row).value<PgSqlType>(),
+														columns_tab->getCellText(row, 2));
+		}
 
 		if(select_from_chk->isChecked())
 			ref_flags |= Reference::SqlReferSelect;
@@ -152,12 +216,52 @@ void ReferenceWidget::applyConfiguration(void)
 		if(end_expr_chk->isChecked())
 			ref_flags |= Reference::SqlReferEndExpr;
 
+
 		emit s_closeRequested();
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ReferenceWidget::handleColumn(int row)
+{
+	PgSqlType type = pgsqltype_wgt->getPgSQLType();
+	columns_tab->setCellText(name_edt->text(), row, 0);
+	columns_tab->setCellText(*type, row, 1);
+	columns_tab->setCellText(alias_edt->text(), row, 2);
+	columns_tab->setRowData(QVariant::fromValue<PgSqlType>(type), row);
+	name_edt->clear();
+	alias_edt->clear();
+	name_edt->setFocus();
+}
+
+void ReferenceWidget::addColumn(int row)
+{
+	if(!name_edt->text().isEmpty())
+		handleColumn(row);
+	else
+		columns_tab->removeRow(row);
+}
+
+void ReferenceWidget::updateColumn(int row)
+{
+	if(!name_edt->text().isEmpty())
+		handleColumn(row);
+}
+
+void ReferenceWidget::editColumn(int row)
+{
+	name_edt->setText(columns_tab->getCellText(row, 0));
+	alias_edt->setText(columns_tab->getCellText(row, 2));
+	pgsqltype_wgt->setAttributes(columns_tab->getRowData(row).value<PgSqlType>(), model,
+															 UserTypeConfig::AllUserTypes ^ UserTypeConfig::SequenceType, true, false);
+}
+
+void ReferenceWidget::duplicateColumn(int src_row, int new_row)
+{
+	columns_tab->setRowData(columns_tab->getRowData(src_row), new_row);
 }
 
 void ReferenceWidget::selectReferenceType(void)
@@ -171,4 +275,5 @@ void ReferenceWidget::selectReferenceType(void)
 	expression_txt->setEnabled(!ref_obj);
 	expr_alias_edt->setEnabled(!ref_obj);
 	view_def_chk->setVisible(!ref_obj);
+	properties_tbw->setTabEnabled(1, !ref_obj && view_def_chk->isChecked());
 }
