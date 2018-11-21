@@ -5035,8 +5035,8 @@ void ModelWidget::alignTabTop(void)
 	for(auto &tab : tabs)
 	{
 		tab->setPos(QPointF(tab->pos().x(),ty));
+		//This is currently needed (a lazzy way though) to update relationship connection points
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5062,7 +5062,6 @@ void ModelWidget::alignTabVertCenter(void)
 	{
 		tab->setPos(tab->pos().x(),(by+ty-tab->boundingRect().height())/2);
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5086,7 +5085,6 @@ void ModelWidget::alignTabBottom(void)
 	{
 		tab->setPos(QPointF(tab->pos().x(),by-tab->boundingRect().height()));
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5119,7 +5117,6 @@ void ModelWidget::distribTabVert(void)
 			ii->second->setPos( ii->second->pos().x(),
 								prev->second->pos().y() + prev->second->boundingRect().height() + sy );
 			ii->second->configureObject();
-			dynamic_cast<Schema *>(ii->second->getSourceObject()->getSchema())->setModified(true);
 		}
 	}
 }
@@ -5144,7 +5141,6 @@ void ModelWidget::alignTabLeft(void)
 	{
 		tab->setPos(lx, tab->pos().y());
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5170,7 +5166,6 @@ void ModelWidget::alignTabHorizCenter(void)
 	{
 		tab->setPos( ( rx + lx - tab->boundingRect().width() )/2 , tab->pos().y() );
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5194,7 +5189,6 @@ void ModelWidget::alignTabRight(void)
 	{
 		tab->setPos( rx-tab->boundingRect().width(), tab->pos().y() );
 		tab->configureObject();
-		dynamic_cast<Schema *>(tab->getSourceObject()->getSchema())->setModified(true);
 	}
 }
 
@@ -5228,7 +5222,6 @@ void ModelWidget::distribTabHoriz(void)
 			ii->second->setPos( prev->second->pos().x() + prev->second->boundingRect().width() + sx,
 													ii->second->pos().y() );
 			ii->second->configureObject();
-			dynamic_cast<Schema *>(ii->second->getSourceObject()->getSchema())->setModified(true);
 		}
 	}
 }

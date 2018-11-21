@@ -2093,6 +2093,7 @@ void MainWindow::alignDistribObjects(void)
 	if(!current_model || current_model->selected_objects.size()<2)
 			return;
 
+    current_model->scene->emit s_objectsMoved(false);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	if(sender() == align_menu.actions().at(0))
@@ -2113,6 +2114,8 @@ void MainWindow::alignDistribObjects(void)
 		current_model->distribTabHoriz();
 
 	QApplication::restoreOverrideCursor();
+    // This will, among others, update the operation history and the schemas.
+    current_model->scene->emit s_objectsMoved(true);
 }
 
 void MainWindow::toggleCompactView(void)
