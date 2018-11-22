@@ -149,7 +149,8 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
 		return (QString());
 
-	layers[idx] = formatLayerName(name);
+	if(name != layers[idx])
+		layers[idx] = formatLayerName(name);
 
 	return(layers[idx]);
 }
