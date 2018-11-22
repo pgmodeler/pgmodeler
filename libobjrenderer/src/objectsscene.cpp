@@ -32,6 +32,9 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
+	layers.push_back(trUtf8("Default layer"));
+	active_layers.push_back(layers[0]);
+
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
@@ -117,6 +120,163 @@ ObjectsScene::~ObjectsScene(void)
 		delete(removed_objs.back());
 		removed_objs.pop_back();
 	}
+}
+
+QString ObjectsScene::formatLayerName(const QString &name)
+{
+	QString fmt_name = name;
+	unsigned idx = 1;
+
+	while(layers.contains(fmt_name))
+		fmt_name = QString("%1 %2").arg(name).arg(QString::number(idx++));
+
+	return(fmt_name);
+}
+
+QString ObjectsScene::addLayer(const QString &name)
+{
+	if(name.isEmpty())
+		return(QString());
+
+	QString fmt_name = formatLayerName(name);
+	layers.push_back(fmt_name);
+
+	return(fmt_name);
+}
+
+QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
+{
+	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
+		return (QString());
+
+	layers[idx] = formatLayerName(name);
+
+	return(layers[idx]);
+}
+
+void ObjectsScene::removeLayer(const QString &name)
+{
+	int idx = layers.indexOf(name);
+
+	if(idx > 0)
+	{
+		layers.removeAll(name);
+		active_layers.removeAll(name);
+		moveObjectsToLayer(static_cast<unsigned>(idx), DefaultLayer);
+	}
+}
+
+void ObjectsScene::removeLayers(void)
+{
+	QString def_layer = layers.at(DefaultLayer);
+
+	layers.clear();
+	layers.push_back(def_layer);
+	active_layers.clear();
+	active_layers.push_back(def_layer);
+
+	updateActiveLayers();
+}
+
+void ObjectsScene::setActiveLayers(QStringList act_layers)
+{
+	BaseObjectView *obj_view = nullptr;
+	QList<int> layers_idxs;
+	int idx = -1;
+
+	active_layers.clear();
+
+	for(auto &layer : act_layers)
+	{
+		idx = layers.indexOf(layer);
+
+		if(idx >= 0)
+		{
+			layers_idxs.push_back(idx);
+			active_layers.push_back(layer);
+		}
+	}
+
+	if(!layers_idxs.isEmpty())
+	{
+		bool is_in_layer = false;
+
+		for(auto &item : this->items())
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(item);
+
+			if(obj_view && !obj_view->parentItem())
+			{
+				unsigned l =  obj_view->getLayer();
+				is_in_layer = layers_idxs.contains(obj_view->getLayer());
+
+				if(!obj_view->isVisible() && is_in_layer)
+					obj_view->setVisible(true);
+				else if(obj_view->isVisible() && !is_in_layer)
+					obj_view->setVisible(false);
+			}
+		}
+	}
+	else
+	{
+		for(auto &item : this->items())
+		{
+			obj_view = dynamic_cast<BaseObjectView *>(item);
+
+			if(obj_view && !obj_view->parentItem())
+				obj_view->setVisible(false);
+		}
+	}
+}
+
+void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
+{
+	BaseObjectView *obj_view = nullptr;
+	unsigned total_layers = static_cast<unsigned>(layers.size());
+
+	if(old_layer == new_layer || old_layer >= total_layers || new_layer >= total_layers)
+		return;
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+
+		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() == old_layer)
+		{
+			obj_view->setLayer(new_layer);
+			obj_view->setVisible(isLayerActive(layers[new_layer]));
+		}
+	}
+}
+
+bool ObjectsScene::isLayerActive(const QString &name)
+{
+	return(active_layers.contains(name));
+}
+
+QStringList ObjectsScene::getActiveLayers(void)
+{
+	return(active_layers);
+}
+
+QStringList ObjectsScene::getLayers(void)
+{
+	return(layers);
+}
+
+unsigned ObjectsScene::getLayerId(const QString &name)
+{
+	int idx = layers.contains(name);
+
+	if(idx < 0)
+		return(DefaultLayer);
+
+	return(static_cast<unsigned>(idx));
+}
+
+void ObjectsScene::updateActiveLayers(void)
+{
+	setActiveLayers(active_layers);
 }
 
 void ObjectsScene::setEnableCornerMove(bool enable)
@@ -423,8 +583,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
 
 		if(rel)
-			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
-							this, SIGNAL(s_objectModified(BaseGraphicObject*)));
+			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
 		else if(tab)
 		{
 			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)), this, SLOT(emitChildObjectSelection(TableObject*)));
@@ -435,8 +594,8 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{
-			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)),
-					this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+			obj->setLayer(DefaultLayer);
 		}
 
 		QGraphicsScene::addItem(item);

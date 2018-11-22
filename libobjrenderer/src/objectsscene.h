@@ -37,6 +37,9 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
+		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
+		QStringList layers, active_layers;
+
 		vector<BaseObjectView *> removed_objs;
 
 		//! \brief Indicates if the corner move is enabled for the scene
@@ -122,6 +125,8 @@ class ObjectsScene: public QGraphicsScene {
 		exceeds the scene's size limits */
 		void adjustScenePositionOnKeyEvent(int key);
 
+		QString formatLayerName(const QString &name);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
@@ -139,8 +144,22 @@ class ObjectsScene: public QGraphicsScene {
 		void blockItemsSignals(bool block);
 
 	public:
+		static constexpr unsigned DefaultLayer = 0;
+
 		ObjectsScene(void);
 		~ObjectsScene(void);
+
+		QString addLayer(const QString &name);
+		QString renameLayer(unsigned idx, const QString &name);
+		void removeLayer(const QString &name);
+		void removeLayers(void);
+		void setActiveLayers(QStringList act_layers);
+		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
+		bool isLayerActive(const QString &name);
+		QStringList getActiveLayers(void);
+		QStringList getLayers(void);
+		unsigned getLayerId(const QString &name);
+		void updateActiveLayers(void);
 
 		static void setEnableCornerMove(bool enable);
 		static void setInvertRangeSelectionTrigger(bool invert);

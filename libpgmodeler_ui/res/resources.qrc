@@ -248,6 +248,11 @@
         <file>icones/resizecols.png</file>
         <file>icones/collapse.png</file>
         <file>icones/pagination.png</file>
+        <file>icones/layers.png</file>
+        <file>icones/addlayer.png</file>
+        <file>icones/dellayer.png</file>
+        <file>icones/clearlayers.png</file>
+        <file>icones/movetolayer.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

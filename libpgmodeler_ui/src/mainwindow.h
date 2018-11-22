@@ -50,6 +50,7 @@
 #include "configurationform.h"
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
+#include "layerswidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
@@ -79,7 +80,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		DonateWidget *donate_wgt;
 
-		SceneInfoWidget *canvas_info_wgt;
+		SceneInfoWidget *scene_info_wgt;
+
+		LayersWidget *layers_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -291,6 +294,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void restoreTemporaryModels(void);
 		void arrangeObjects(void);
 		void toggleCompactView(void);
+		void toggleLayersWidget(bool show);
 };
 
 #endif

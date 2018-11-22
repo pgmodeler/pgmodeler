@@ -102,6 +102,9 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
+		//! \brief Stores the layers used by the "move to layer" operation
+		layers_menu,
+
 		break_rel_menu,
 
 		fade_menu,
@@ -229,6 +232,7 @@ class ModelWidget: public QWidget {
 		*action_break_rel_line,
 		*action_remove_rel_points,
 		*action_set_tag,
+		*action_moveto_layer,
 		*action_disable_sql,
 		*action_enable_sql,
 		*action_duplicate,
@@ -396,6 +400,9 @@ class ModelWidget: public QWidget {
 		//! \brief Move the selected object to a schema (selectable via menu)
 		void moveToSchema(void);
 
+		//! \brief Move the selected object to a layer (selectable via menu)
+		void moveToLayer(void);
+
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
 
@@ -523,6 +530,7 @@ class ModelWidget: public QWidget {
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
+		friend class LayersWidget;
 };
 
 #endif

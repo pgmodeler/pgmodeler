@@ -266,6 +266,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), trUtf8("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
+	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), trUtf8("Move to layer"), this);
+	action_moveto_layer->setMenu(&layers_menu);
+
 	action_set_tag=new QAction(QIcon(PgModelerUiNs::getIconPath("tag")), trUtf8("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
 
@@ -1968,6 +1971,20 @@ void ModelWidget::moveToSchema(void)
 	}
 }
 
+void ModelWidget::moveToLayer(void)
+{
+	QAction *act = dynamic_cast<QAction *>(sender());
+	BaseGraphicObject *graph_obj = nullptr;
+
+	for(auto &obj : selected_objects)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		graph_obj->setLayer(scene->getLayerId(act->text()));
+	}
+
+	scene->updateActiveLayers();
+}
+
 void ModelWidget::changeOwner(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
@@ -3136,9 +3153,10 @@ void ModelWidget::enableModelActions(bool value)
 
 void ModelWidget::configureSubmenu(BaseObject *object)
 {
+	QAction *act=nullptr;
 	vector<BaseObject *> sel_objs;
 	ObjectType obj_type=ObjectType::BaseObject;
-	bool tab_or_view=false, accepts_owner=false, accepts_schema=false;
+	bool tab_or_view=false, is_graph_obj = false, accepts_owner=false, accepts_schema=false;
 
 	if(object)
 		sel_objs.push_back(object);
@@ -3154,6 +3172,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(!tab_or_view)
 			tab_or_view=(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 
+		if(!is_graph_obj)
+			is_graph_obj = BaseGraphicObject::isGraphicObject(obj_type);
+
 		if(!accepts_owner)
 			accepts_owner=obj->acceptsOwner();
 
@@ -3168,7 +3189,6 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 	{
 		if(accepts_owner || accepts_schema)
 		{
-			QAction *act=nullptr;
 			vector<BaseObject *> obj_list;
 			map<QString, QAction *> act_map;
 			QStringList name_list;
@@ -3240,6 +3260,21 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 			}
 		}
 
+		// Configuring the layers menu
+		if(is_graph_obj)
+		{
+			layers_menu.clear();
+
+			for(auto &layer : scene->getLayers())
+			{
+				act = layers_menu.addAction(layer);
+				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
+
+				//if(sel_objs.size() == 1 && scene->getLayer())
+				//act->setEnabled();
+			}
+		}
+
 		//Display the quick rename action is a single object is selected
 		if(object && obj_type!=ObjectType::Cast)
 		{
@@ -3255,6 +3290,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
+
+		if(is_graph_obj)
+			quick_actions_menu.addAction(action_moveto_layer);
 
 		if(object && Permission::acceptsPermission(obj_type))
 		{

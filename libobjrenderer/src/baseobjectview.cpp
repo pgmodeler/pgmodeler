@@ -603,6 +603,24 @@ double BaseObjectView::getFontFactor(void)
 	return(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize);
 }
 
+void BaseObjectView::setLayer(unsigned layer)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+
+	if(graph_obj)
+		graph_obj->setLayer(layer);
+}
+
+unsigned BaseObjectView::getLayer(void)
+{
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+
+	if(graph_obj)
+		return(graph_obj->getLayer());
+
+	return(0);
+}
+
 double BaseObjectView::getScreenDpiFactor(void)
 {
 	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));

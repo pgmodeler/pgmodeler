@@ -55,6 +55,9 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 it in the QGraphcisScene) */
 		QObject *receiver_object;
 
+		//! \brief This attributes holds the layer in which the object is visible.
+		unsigned layer;
+
 	protected:
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
@@ -111,6 +114,12 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);
+
+		//! \brief Defines in which layer the object is visible
+		void setLayer(unsigned layer);
+
+		//! \brief Returns the layer in which the object is visible
+		unsigned getLayer(void);
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method
