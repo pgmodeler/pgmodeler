@@ -24,7 +24,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	setModel(nullptr);
 	curr_item = nullptr;
-
+	curr_row = -1;
 	layers_lst->installEventFilter(this);
 
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
@@ -42,13 +42,12 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 void LayersWidget::setLayers(const QStringList &layers)
 {
 	QListWidgetItem *item = nullptr;
-	QStringList active_layers = model->scene->getActiveLayers();
 
 	for(auto &layer : layers)
 	{
 		item = new QListWidgetItem(layer);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setCheckState(active_layers.contains(layer) ? Qt::Checked : Qt::Unchecked);
+		item->setCheckState(model->scene->isLayerActive(layer) ? Qt::Checked : Qt::Unchecked);
 		layers_lst->addItem(item);
 	}
 }
@@ -61,6 +60,8 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 
 		if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
 			finishLayerRenaming();
+		else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
+			startLayerRenaming(layers_lst->currentItem());
 	}
 
 	return(false);
@@ -150,9 +151,16 @@ QListWidgetItem *LayersWidget::addLayer(const QString &name)
 
 	aux_name = model->scene->addLayer(aux_name);
 	item = new QListWidgetItem(aux_name);
-	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+	item->setFlags((item->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsEditable);
 	item->setCheckState(Qt::Unchecked);
+
 	layers_lst->addItem(item);
+
+	/* Reconfigure the model's menu if we have selected items so the new layer can
+	 * appear in the "Move to layer" quick action */
+	if(!model->scene->selectedItems().isEmpty())
+		model->configureObjectSelection();
+
 	enableButtons();
 
 	return(item);
@@ -164,6 +172,7 @@ void LayersWidget::startLayerRenaming(QListWidgetItem *item)
 	{
 		curr_item = item;
 		curr_text = item->text();
+		curr_row = layers_lst->currentRow();
 		layers_lst->openPersistentEditor(item);
 	}
 }
@@ -177,10 +186,16 @@ void LayersWidget::finishLayerRenaming(void)
 		if(curr_item->text().isEmpty())
 			curr_item->setText(curr_text);
 		else
-			curr_item->setText(model->scene->renameLayer(layers_lst->currentRow(), curr_item->text()));
+			curr_item->setText(model->scene->renameLayer(curr_row, curr_item->text()));
 
 		curr_item = nullptr;
 		curr_text.clear();
+		curr_row = -1;
+
+		/* Reconfigure the model's menu if we have selected items so the renamed layer can
+		 * appear in the "Move to layer" quick action */
+		if(!model->scene->selectedItems().isEmpty())
+			model->configureObjectSelection();
 	}
 }
 

@@ -5787,7 +5787,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	return(genericsql);
 }
 
-void DatabaseModel::updateViewsReferTable(Table *table)
+void DatabaseModel::updateViewsReferencingTable(Table *table)
 {
 	BaseRelationship *rel = nullptr;
 	View *view = nullptr;

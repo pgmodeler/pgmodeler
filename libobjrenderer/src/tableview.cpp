@@ -26,6 +26,15 @@ TableView::TableView(Table *table) : BaseTableView(table)
 
 void TableView::configureObject(void)
 {
+	/* If the table isn't visible we abort the current configuration
+	 * and mark its geometry update as pending so in the next call to
+	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
+	if(!this->isVisible())
+	{
+		pending_geom_update = true;
+		return;
+	}
+
 	Table *table=dynamic_cast<Table *>(this->getSourceObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;

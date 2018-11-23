@@ -39,6 +39,8 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 		QString curr_text;
 
+		int curr_row;
+
 		void setLayers(const QStringList &layers);
 
 		bool eventFilter(QObject *watched, QEvent *event);

@@ -1428,7 +1428,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QRectF margins, page_rect;
+		QRectF margins;
 		QPrinter::PaperSize paper_size_id;
 		QPrinter::Orientation orient;
 		QSizeF paper_size, custom_p_size;
@@ -1975,14 +1975,17 @@ void ModelWidget::moveToLayer(void)
 {
 	QAction *act = dynamic_cast<QAction *>(sender());
 	BaseGraphicObject *graph_obj = nullptr;
+	unsigned layer_id = act->data().toUInt();
 
 	for(auto &obj : selected_objects)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-		graph_obj->setLayer(scene->getLayerId(act->text()));
+		graph_obj->setLayer(layer_id);
 	}
 
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	scene->updateActiveLayers();
+	QApplication::restoreOverrideCursor();
 }
 
 void ModelWidget::changeOwner(void)
@@ -2731,9 +2734,13 @@ void ModelWidget::duplicateObject(void)
 			op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
 			table->addObject(dup_object);
 			table->setModified(true);
+			dynamic_cast<Schema *>(table->getSchema())->setModified(true);
 
 			if(obj_type == ObjectType::Column)
+			{
 			  db_model->validateRelationships();
+				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
+			}
 			else if(obj_type == ObjectType::Constraint &&
 					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::ForeignKey)
 			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
@@ -2983,7 +2990,7 @@ void ModelWidget::removeObjects(bool cascade)
 									db_model->validateRelationships(tab_obj, aux_table);
 
 								if(obj_type == ObjectType::Column)
-									db_model->updateViewsReferTable(aux_table);
+									db_model->updateViewsReferencingTable(aux_table);
 							}
 							catch(Exception &e)
 							{
@@ -3263,15 +3270,14 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		// Configuring the layers menu
 		if(is_graph_obj)
 		{
+			unsigned layer_id = ObjectsScene::DefaultLayer;
 			layers_menu.clear();
 
 			for(auto &layer : scene->getLayers())
 			{
 				act = layers_menu.addAction(layer);
+				act->setData(layer_id++);
 				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
-
-				//if(sel_objs.size() == 1 && scene->getLayer())
-				//act->setEnabled();
 			}
 		}
 
@@ -3285,14 +3291,14 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(accepts_schema)
 			quick_actions_menu.addAction(action_moveto_schema);
 
+		if(is_graph_obj)
+			quick_actions_menu.addAction(action_moveto_layer);
+
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);
 
 		if(tab_or_view)
 			quick_actions_menu.addAction(action_set_tag);
-
-		if(is_graph_obj)
-			quick_actions_menu.addAction(action_moveto_layer);
 
 		if(object && Permission::acceptsPermission(obj_type))
 		{

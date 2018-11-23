@@ -27,6 +27,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	if(!base_tab)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	pending_geom_update = false;
 	body=new RoundedRectItem;
 	body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 
@@ -121,6 +122,14 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 		this->setToolTip(this->table_tooltip);
 		configureObjectSelection();
 		attribs_toggler->clearButtonsSelection();
+	}
+	else if(change == ItemVisibleHasChanged)
+	{
+		if(value.toBool() && pending_geom_update)
+		{
+			this->configureObject();
+			pending_geom_update = false;
+		}
 	}
 
 	if(change==ItemPositionHasChanged)

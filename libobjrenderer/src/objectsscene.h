@@ -144,7 +144,8 @@ class ObjectsScene: public QGraphicsScene {
 		void blockItemsSignals(bool block);
 
 	public:
-		static constexpr unsigned DefaultLayer = 0;
+		static constexpr unsigned DefaultLayer = 0,
+		InvalidLayer = UINT_MAX;
 
 		ObjectsScene(void);
 		~ObjectsScene(void);
@@ -156,6 +157,7 @@ class ObjectsScene: public QGraphicsScene {
 		void setActiveLayers(QStringList act_layers);
 		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
 		bool isLayerActive(const QString &name);
+		bool isLayerActive(unsigned layer_id);
 		QStringList getActiveLayers(void);
 		QStringList getLayers(void);
 		unsigned getLayerId(const QString &name);

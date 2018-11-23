@@ -535,7 +535,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		GenericSQL *createGenericSQL(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
-		void updateViewsReferTable(Table *table);
+		void updateViewsReferencingTable(Table *table);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);

@@ -33,7 +33,7 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 ObjectsScene::ObjectsScene(void)
 {
 	layers.push_back(trUtf8("Default layer"));
-	active_layers.push_back(layers[0]);
+	active_layers.push_back(layers.at(0));
 
 	moving_objs=move_scene=false;
 	enable_range_sel=true;
@@ -161,20 +161,35 @@ void ObjectsScene::removeLayer(const QString &name)
 
 	if(idx > 0)
 	{
+		moveObjectsToLayer(idx, DefaultLayer);
 		layers.removeAll(name);
 		active_layers.removeAll(name);
-		moveObjectsToLayer(static_cast<unsigned>(idx), DefaultLayer);
 	}
 }
 
 void ObjectsScene::removeLayers(void)
 {
-	QString def_layer = layers.at(DefaultLayer);
+	BaseObjectView *obj_view = nullptr;
+	QString def_layer = layers[DefaultLayer];
+	bool is_active = active_layers.contains(def_layer);
 
 	layers.clear();
-	layers.push_back(def_layer);
 	active_layers.clear();
-	active_layers.push_back(def_layer);
+	layers.push_back(def_layer);
+
+	if(is_active)
+		active_layers.push_back(def_layer);
+
+	for(auto &item : this->items())
+	{
+		obj_view = dynamic_cast<BaseObjectView *>(item);
+
+		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() != DefaultLayer)
+		{
+			obj_view->setLayer(DefaultLayer);
+			obj_view->setVisible(is_active);
+		}
+	}
 
 	updateActiveLayers();
 }
@@ -208,7 +223,6 @@ void ObjectsScene::setActiveLayers(QStringList act_layers)
 
 			if(obj_view && !obj_view->parentItem())
 			{
-				unsigned l =  obj_view->getLayer();
 				is_in_layer = layers_idxs.contains(obj_view->getLayer());
 
 				if(!obj_view->isVisible() && is_in_layer)
@@ -233,7 +247,7 @@ void ObjectsScene::setActiveLayers(QStringList act_layers)
 void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
 {
 	BaseObjectView *obj_view = nullptr;
-	unsigned total_layers = static_cast<unsigned>(layers.size());
+	unsigned total_layers = layers.size();
 
 	if(old_layer == new_layer || old_layer >= total_layers || new_layer >= total_layers)
 		return;
@@ -255,6 +269,14 @@ bool ObjectsScene::isLayerActive(const QString &name)
 	return(active_layers.contains(name));
 }
 
+bool ObjectsScene::isLayerActive(unsigned layer_id)
+{
+	if(layer_id >= static_cast<unsigned>(layers.size()))
+		return(false);
+
+	return(active_layers.contains(layers[layer_id]));
+}
+
 QStringList ObjectsScene::getActiveLayers(void)
 {
 	return(active_layers);
@@ -268,11 +290,7 @@ QStringList ObjectsScene::getLayers(void)
 unsigned ObjectsScene::getLayerId(const QString &name)
 {
 	int idx = layers.contains(name);
-
-	if(idx < 0)
-		return(DefaultLayer);
-
-	return(static_cast<unsigned>(idx));
+	return(idx < 0 ? InvalidLayer : static_cast<unsigned>(idx));
 }
 
 void ObjectsScene::updateActiveLayers(void)
@@ -595,8 +613,11 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{
+			if(obj->getLayer() >= static_cast<unsigned>(layers.size()))
+				obj->setLayer(DefaultLayer);
+
+			obj->setVisible(isLayerActive(obj->getLayer()));
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
-			obj->setLayer(DefaultLayer);
 		}
 
 		QGraphicsScene::addItem(item);

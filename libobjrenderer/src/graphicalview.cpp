@@ -31,6 +31,15 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 
 void GraphicalView::configureObject(void)
 {
+	/* If the table isn't visible we abort the current configuration
+	 * and mark its geometry update as pending so in the next call to
+	 * setVisible(true) the geometry can be updated (see BaseObjectView::itemChange()) */
+	if(!this->isVisible())
+	{
+		pending_geom_update = true;
+		return;
+	}
+
 	View *view=dynamic_cast<View *>(this->getSourceObject());
 	int i = 0, count = 0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
