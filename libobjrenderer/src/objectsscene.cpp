@@ -656,9 +656,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{
-			//if(obj->getLayer() >= static_cast<unsigned>(layers.size()))
-			//	obj->setLayer(DefaultLayer);
-			//obj->setVisible(isLayerActive(obj->getLayer()));
+			obj->setVisible(isLayerActive(obj->getLayer()));
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
 		}
 

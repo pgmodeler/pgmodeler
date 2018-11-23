@@ -1,7 +1,9 @@
 # XML definition for relationships
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<relationship name=] "{name}" [ type=] "{type}" [ layer=]"{layer}"
+[<relationship name=] "{name}" [ type=] "{type}" 
+
+  %if {layer} %then [ layer=]"{layer}" %end
   
   %if {alias} %then
    $sp alias="{alias}"

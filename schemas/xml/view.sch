@@ -1,12 +1,10 @@
 # XML definition for views
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<view name=] "{name}" [ layer=]"{layer}"
+[<view name=] "{name}"
 
- %if {alias} %then
-   $sp alias="{alias}"
- %end
-
+ %if {layer} %then [ layer=]"{layer}" %end
+ %if {alias} %then [ alias=]"{alias}" %end
  %if {protected} %then [ protected=] "true" %end
  %if {materialized} %then [ materialized=] "true" %end
  %if {recursive} %then [ recursive=] "true" %end
