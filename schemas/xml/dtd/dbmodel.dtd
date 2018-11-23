@@ -79,3 +79,5 @@
 <!ATTLIST dbmodel default-collation CDATA #IMPLIED>
 <!ATTLIST dbmodel default-tablespace CDATA #IMPLIED>
 <!ATTLIST dbmodel max-obj-count CDATA #IMPLIED>
+<!ATTLIST dbmodel layers CDATA #IMPLIED>
+<!ATTLIST dbmodel active-layers CDATA #IMPLIED>

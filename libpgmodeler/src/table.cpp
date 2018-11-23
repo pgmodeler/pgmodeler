@@ -1604,10 +1604,11 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]=QString();
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
-	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
-	attributes[Attributes::Pagination]=(isPaginationEnabled() ? Attributes::True : QString());
-	attributes[Attributes::AttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(AttribsSection)) : QString());
-	attributes[Attributes::ExtAttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(ExtAttribsSection)) : QString());
+	attributes[Attributes::Layer]=QString::number(layer);
+	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
+	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
+	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());
+	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : QString());
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);
@@ -1660,6 +1661,7 @@ void Table::operator = (Table &tab)
 
 	(*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
 
+	this->layer = tab.layer;
 	this->with_oid=tab.with_oid;
 	this->col_indexes=tab.col_indexes;
 	this->constr_indexes=tab.constr_indexes;

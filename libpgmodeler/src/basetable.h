@@ -37,7 +37,8 @@ enum class CollapseMode: unsigned {
 };
 
 class BaseTable: public BaseGraphicObject {
-	private:
+	protected:
+		Tag *tag;
 
 		//! \brief Indicates if the pagination is enabled for the table
 		bool pagination_enabled;
@@ -47,9 +48,6 @@ class BaseTable: public BaseGraphicObject {
 
 		//! \brief Stores the current page visible on the table
 		unsigned curr_page[2];
-
-	protected:
-		Tag *tag;
 
 	public:
 		static constexpr unsigned AttribsSection = 0,

@@ -74,7 +74,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Remove All</string>
+         <string>Remove all layers</string>
         </property>
         <property name="text">
          <string>Delete all</string>
@@ -170,7 +170,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Add Item</string>
+         <string>Add a new layer</string>
         </property>
         <property name="text">
          <string>Add</string>
@@ -214,7 +214,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Remove All</string>
+         <string>Remove the selected layer</string>
         </property>
         <property name="text">
          <string>Delete</string>

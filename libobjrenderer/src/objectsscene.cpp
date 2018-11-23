@@ -124,9 +124,19 @@ ObjectsScene::~ObjectsScene(void)
 
 QString ObjectsScene::formatLayerName(const QString &name)
 {
-	QString fmt_name = name;
+	QString fmt_name;
 	unsigned idx = 1;
 
+	//Removing invalid chars
+	for(auto &chr : name)
+	{
+		if(chr.isLetterOrNumber() || chr == ' ' || chr == '_')
+			fmt_name.append(chr);
+		else
+			fmt_name.append('_');
+	}
+
+	//Doing the desambiguation (if needed)
 	while(layers.contains(fmt_name))
 		fmt_name = QString("%1 %2").arg(name).arg(QString::number(idx++));
 
@@ -141,6 +151,7 @@ QString ObjectsScene::addLayer(const QString &name)
 	QString fmt_name = formatLayerName(name);
 	layers.push_back(fmt_name);
 
+	emit s_layersChanged();
 	return(fmt_name);
 }
 
@@ -152,6 +163,7 @@ QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 	if(name != layers[idx])
 		layers[idx] = formatLayerName(name);
 
+	emit s_layersChanged();
 	return(layers[idx]);
 }
 
@@ -164,6 +176,7 @@ void ObjectsScene::removeLayer(const QString &name)
 		moveObjectsToLayer(idx, DefaultLayer);
 		layers.removeAll(name);
 		active_layers.removeAll(name);
+		emit s_layersChanged();
 	}
 }
 
@@ -191,45 +204,61 @@ void ObjectsScene::removeLayers(void)
 		}
 	}
 
+	emit s_layersChanged();
 	updateActiveLayers();
 }
 
 void ObjectsScene::setActiveLayers(QStringList act_layers)
 {
-	BaseObjectView *obj_view = nullptr;
-	QList<int> layers_idxs;
+	QList<unsigned> layers_idxs;
 	int idx = -1;
-
-	active_layers.clear();
 
 	for(auto &layer : act_layers)
 	{
 		idx = layers.indexOf(layer);
 
 		if(idx >= 0)
-		{
 			layers_idxs.push_back(idx);
-			active_layers.push_back(layer);
-		}
 	}
+
+	setActiveLayers(layers_idxs);
+}
+
+void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
+{
+	BaseObjectView *obj_view = nullptr;
+	active_layers.clear();
 
 	if(!layers_idxs.isEmpty())
 	{
 		bool is_in_layer = false;
+		unsigned layer_cnt = static_cast<unsigned>(layers.size());
+		SchemaView *sch_view = nullptr;
 
 		for(auto &item : this->items())
 		{
 			obj_view = dynamic_cast<BaseObjectView *>(item);
 
-			if(obj_view && !obj_view->parentItem())
+			if(obj_view && !obj_view->parentItem() && obj_view->getLayer() < layer_cnt)
 			{
+				sch_view = dynamic_cast<SchemaView *>(obj_view);
 				is_in_layer = layers_idxs.contains(obj_view->getLayer());
 
 				if(!obj_view->isVisible() && is_in_layer)
-					obj_view->setVisible(true);
+				{
+					if(!sch_view ||
+						 (sch_view && dynamic_cast<Schema *>(sch_view->getSourceObject())->isRectVisible()))
+					 obj_view->setVisible(true);
+				}
 				else if(obj_view->isVisible() && !is_in_layer)
 					obj_view->setVisible(false);
 			}
+		}
+
+		for(auto &idx : layers_idxs)
+		{
+			if(idx < layer_cnt)
+				active_layers.push_back(layers[idx]);
 		}
 	}
 	else
@@ -242,6 +271,8 @@ void ObjectsScene::setActiveLayers(QStringList act_layers)
 				obj_view->setVisible(false);
 		}
 	}
+
+	emit s_activeLayersChanged();
 }
 
 void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
@@ -262,6 +293,8 @@ void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
 			obj_view->setVisible(isLayerActive(layers[new_layer]));
 		}
 	}
+
+	emit s_objectsMovedLayer();
 }
 
 bool ObjectsScene::isLayerActive(const QString &name)
@@ -280,6 +313,16 @@ bool ObjectsScene::isLayerActive(unsigned layer_id)
 QStringList ObjectsScene::getActiveLayers(void)
 {
 	return(active_layers);
+}
+
+QList<unsigned> ObjectsScene::getActiveLayersIds(void)
+{
+	QList<unsigned> list;
+
+	for(auto &layer : active_layers)
+		list.push_back(layers.indexOf(layer));
+
+	return(list);
 }
 
 QStringList ObjectsScene::getLayers(void)
@@ -613,10 +656,9 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{
-			if(obj->getLayer() >= static_cast<unsigned>(layers.size()))
-				obj->setLayer(DefaultLayer);
-
-			obj->setVisible(isLayerActive(obj->getLayer()));
+			//if(obj->getLayer() >= static_cast<unsigned>(layers.size()))
+			//	obj->setLayer(DefaultLayer);
+			//obj->setVisible(isLayerActive(obj->getLayer()));
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
 		}
 

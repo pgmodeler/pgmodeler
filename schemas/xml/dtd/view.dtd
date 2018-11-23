@@ -4,6 +4,7 @@
 -->
 <!ELEMENT view (schema,role?,tablespace?,comment?,tag?, appended-sql?,prepended-sql?,position,reference+,expression*)>
 <!ATTLIST view name CDATA #REQUIRED>
+<!ATTLIST view layer CDATA #IMPLIED>
 <!ATTLIST view alias CDATA #IMPLIED>
 <!ATTLIST view protected (false|true) "false">
 <!ATTLIST view materialized (false|true) "false">

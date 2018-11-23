@@ -55,10 +55,10 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 it in the QGraphcisScene) */
 		QObject *receiver_object;
 
+	protected:
 		//! \brief This attributes holds the layer in which the object is visible.
 		unsigned layer;
 
-	protected:
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
 		void setPositionAttribute(void);

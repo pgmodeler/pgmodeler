@@ -1041,10 +1041,10 @@ void MainWindow::setCurrentModel(void)
 		QToolButton *tool_btn=nullptr;
 		QList<QToolButton *> btns;
 		QFont font;
+
 		layers_wgt->setModel(current_model);
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
-
 		general_tb->addSeparator();
 
 		general_tb->addAction(current_model->action_new_object);

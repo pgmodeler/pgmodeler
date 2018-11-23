@@ -1,7 +1,7 @@
 # XML definition for tables
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<table name=] "{name}"
+[<table name=] "{name}" [ layer=]"{layer}"
   
   %if {alias} %then $sp alias="{alias}" %end
   %if {oids} %then [ oids="true"] %end

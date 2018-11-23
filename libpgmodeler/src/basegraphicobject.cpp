@@ -26,6 +26,7 @@ BaseGraphicObject::BaseGraphicObject(void)
 	attributes[Attributes::YPos]=QString();
 	attributes[Attributes::Position]=QString();
 	attributes[Attributes::FadedOut]=QString();
+	attributes[Attributes::Layer]=QString();
 	receiver_object=nullptr;
 	layer = 0;
 }

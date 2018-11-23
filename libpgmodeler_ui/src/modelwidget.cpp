@@ -479,6 +479,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
 	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ modified = true; });
 	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ modified = true; });
+	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayers()));
+	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayers()));
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -1380,6 +1383,14 @@ void ModelWidget::loadModel(const QString &filename)
 		this->filename=filename;
 		this->adjustSceneSize();
 		this->updateObjectsOpacity();
+
+		scene->blockSignals(true);
+
+		for(auto &layer : db_model->getLayers())
+			scene->addLayer(layer);
+
+		scene->setActiveLayers(db_model->getActiveLayers());
+		scene->blockSignals(false);
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
@@ -4518,6 +4529,16 @@ void ModelWidget::editTableData(void)
 	openEditingForm(tab_data_wgt);
 	this->setModified(true);
 	emit s_objectManipulated();
+}
+
+void ModelWidget::updateModelLayers(void)
+{
+	QStringList layers = scene->getLayers();
+
+	layers.removeAt(0);
+	db_model->setLayers(layers);
+	db_model->setActiveLayers(scene->getActiveLayersIds());
+	modified = true;
 }
 
 void ModelWidget::rearrangeTablesHierarchically(void)

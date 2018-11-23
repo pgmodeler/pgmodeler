@@ -50,6 +50,18 @@
     %end
 
  %end
+ 
+ %if {layers} %then
+    $br $tb
+    [ layers]="{layers}"
+    
+    [ active-layers]=
+    %if {active-layers} %then 
+        "{active-layers}" 
+    %else
+        "" 
+    %end 
+ %end
 
  > $br
  %if {objects} %then {objects} %end

@@ -117,14 +117,15 @@ class ObjectsScene: public QGraphicsScene {
 
 		QGraphicsView *getActiveViewport(void);
 
-		//! brief Performs the final steps when moving the objects like adjusting position to grid, moving children object, etc
+		//! \brief Performs the final steps when moving the objects like adjusting position to grid, moving children object, etc
 		void finishObjectsMove(const QPointF &pnt_end);
 
-		/*! brief Performs the scene position adjustment when pressing/releasing the arrow keys to avoid objects to be hidden in the corners.
+		/*! \brief Performs the scene position adjustment when pressing/releasing the arrow keys to avoid objects to be hidden in the corners.
 		This method will adjust the scene size automatically when moving objects right or down if the selected items bounding rects
 		exceeds the scene's size limits */
 		void adjustScenePositionOnKeyEvent(int key);
 
+		//! \brief Formats the name of the layer removing any invalid chars and doing the desambiguation in case the name already exists
 		QString formatLayerName(const QString &name);
 
 	protected:
@@ -150,17 +151,49 @@ class ObjectsScene: public QGraphicsScene {
 		ObjectsScene(void);
 		~ObjectsScene(void);
 
+		/*! \brief Add a new layer to the scene. In case of duplicated name this method
+		 * automatically does the desambiguation. The name of the new layer is returned. */
 		QString addLayer(const QString &name);
+
+		/*! \brief Rename the layer of the provided index. In case of duplicated name this method
+		 * 	automatically does the desambiguation. */
 		QString renameLayer(unsigned idx, const QString &name);
+
+		//! \brief Remove the named layer. Objects in the destroyed layer are automatically moved to the default one
 		void removeLayer(const QString &name);
+
+		//! \brief Destroy all layers (except the default one) moving all objects from the destroyed layers to the default one
 		void removeLayers(void);
+
+		//! \brief Set the named layers as active. Activating a layer causes objects attached to it to be visible
 		void setActiveLayers(QStringList act_layers);
+
+		//! \brief Set the layers with the provided indexes as active. Activating a layer causes objects attached to it to be visible
+		void setActiveLayers(QList<unsigned> ids);
+
+		/*! \brief Move the objects from a layer to another. This method automatically hides/show the objects in the new layer
+		 * according to the activation status of the destination layer */
 		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
+
+		//! \brief Returns true when the named layer is currenctly activated
 		bool isLayerActive(const QString &name);
+
+		//! \brief Returns true when the layer with the provided id is currenctly activated
 		bool isLayerActive(unsigned layer_id);
+
+		//! \brief Returns a list containing the names of the active layers
 		QStringList getActiveLayers(void);
+
+		//! \brief Returns a list containing the ids of the active layers
+		QList<unsigned> getActiveLayersIds(void);
+
+		//! \brief Returns a list containing the names of all layers in the scene
 		QStringList getLayers(void);
+
+		//! \brief Returns the id of the named layer. If the layer does not exist the constant ObjectsScene::InvalidLayer is returned
 		unsigned getLayerId(const QString &name);
+
+		//! \brief This method causes objects in the active layers to have their visibility state updated.
 		void updateActiveLayers(void);
 
 		static void setEnableCornerMove(bool enable);
@@ -251,8 +284,17 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when objects are selected via range selection
 		void s_objectsSelectedInRange(void);
 
-		//! \brief Signal emtted when a blank area of the canvas is pressed
+		//! \brief Signal emitted when a blank area of the canvas is pressed
 		void s_objectsScenePressed(Qt::MouseButtons);
+
+		//! \brief Signal emitted when the active layers change
+		void s_activeLayersChanged(void);
+
+		//! \brief Signal emitted when the layers change (add, remove, rename)
+		void s_layersChanged(void);
+
+		//! \brief Signal emitted when objects are moved from a layer to another
+		void s_objectsMovedLayer(void);
 
 		friend class ModelWidget;
 };

@@ -628,10 +628,11 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::Pagination]=(isPaginationEnabled() ? Attributes::True : QString());
-	attributes[Attributes::CollapseMode]=QString::number(enum_cast(getCollapseMode()));
-	attributes[Attributes::AttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(AttribsSection)) : QString());
-	attributes[Attributes::ExtAttribsPage]=(isPaginationEnabled() ? QString::number(getCurrentPage(ExtAttribsSection)) : QString());
+	attributes[Attributes::Layer]=QString::number(layer);
+	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
+	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
+	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());
+	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : QString());
 
 	setSQLObjectAttribute();
 
@@ -1074,6 +1075,8 @@ void View::operator = (View &view)
 
 	(*dynamic_cast<BaseTable *>(this))=reinterpret_cast<BaseTable &>(view);
 
+	this->pagination_enabled = view.pagination_enabled;
+	this->layer = view.layer;
 	this->references=view.references;
 	this->exp_select=view.exp_select;
 	this->exp_from=view.exp_from;
