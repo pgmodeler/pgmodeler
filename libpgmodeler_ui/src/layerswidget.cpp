@@ -39,11 +39,11 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	});
 }
 
-void LayersWidget::setLayers(const QStringList &layers)
+void LayersWidget::updateLayers(void)
 {
 	QListWidgetItem *item = nullptr;
 
-	for(auto &layer : layers)
+	for(auto &layer : model->scene->getLayers())
 	{
 		item = new QListWidgetItem(layer);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
@@ -81,6 +81,7 @@ void LayersWidget::updateActiveLayers(void)
 	}
 
 	model->scene->setActiveLayers(active_layers);
+	emit s_activeLayersChanged();
 }
 
 void LayersWidget::removeLayer(bool clear)
@@ -141,7 +142,7 @@ void LayersWidget::setModel(ModelWidget *model)
 	add_tb->setEnabled(enable);
 
 	if(model)
-		setLayers(model->scene->getLayers());
+		updateLayers();
 }
 
 QListWidgetItem *LayersWidget::addLayer(const QString &name)

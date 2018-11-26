@@ -223,6 +223,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	});
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
+	connect(layers_wgt, SIGNAL(s_activeLayersChanged(void)), overview_wgt, SLOT(updateOverview(void)));
 
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));

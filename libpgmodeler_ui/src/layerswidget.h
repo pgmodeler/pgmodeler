@@ -33,36 +33,58 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Model in which the layer widget will operate on
 		ModelWidget *model;
 
+		/*! \brief The current selected item in the layers list. We need to store it in a separated attribute
+		 * for renaming purposes */
 		QListWidgetItem *curr_item;
 
+		//! \brief Stores the current's item text (layer name) to revert the renaming if the user aborts it
 		QString curr_text;
 
+		//! \brief Stores the current's item row
 		int curr_row;
 
-		void setLayers(const QStringList &layers);
+		//! \brief Configures the layers listing
+		void updateLayers(void);
 
 		bool eventFilter(QObject *watched, QEvent *event);
 
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
 
+		//! \brief Defines the model in which the widget will work
 		void setModel(ModelWidget *model);
 
 	private slots:
+		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
 		QListWidgetItem *addLayer(const QString &name = QString());
+
+		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming(QListWidgetItem *item);
+
+		//! \brief Finishes the renaming operation over a item
 		void finishLayerRenaming(void);
+
+		//! \brief Updates the active layeres on the scene causing a redraw of the items
 		void updateActiveLayers(void);
+
+		//! \brief Remove a layer from the listing. If 'clear' is true them all layers (except the default) are removed
 		void removeLayer(bool clear = false);
+
+		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons(void);
 
 	public slots:
 		void setVisible(bool value);
 
 	signals:
+		//! \brief Signal emitted whenever the widget changes its visibility
 		void s_visibilityChanged(bool);
+
+		//! \brief Signal emitted whenever the current active layers change
+		void s_activeLayersChanged(void);
 };
 
 #endif
