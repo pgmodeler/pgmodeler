@@ -12,7 +12,7 @@ The overall performance of the reverse engineering was improved which, in conseq
 
 In the new features side, we added scene layers which goals is to introduce a new level of visual segmentation of graphical objects. Another new feature created is the support to view columns that are deduced from the relationships between these objects and the tables. <br/>
 
-Also, still in the design view, tables and views can have their attributes paginated or even collapsed to minimize the area occupied by these objects making big objects easier to visualize. <br/>
+Still in the design view in order to be more close to PostgreSQL 10+ new features pgModeler is now capable of handling declarative table partitioning (this includes code generation, reverse engineering and models comparison). Also, tables and views can have their attributes paginated or even collapsed to minimize the area occupied by these objects making big objects easier to visualize. <br/>
 
 Now, about the bug fixes, several crashes were eliminated making the tool more stable for different usages, the reverse engineering received some patches so it can import correctly user-defined type in form of arrays and many others <br/>
 
