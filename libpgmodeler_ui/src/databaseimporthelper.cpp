@@ -2617,6 +2617,8 @@ void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
 	try
 	{
 		attribs[Attributes::AppendAtEod]=QString();
+		attribs[Attributes::Layers]=QString();
+		attribs[Attributes::ActiveLayers]=QString();
 		loadObjectXML(ObjectType::Database, attribs);
 		dbmodel->configureDatabase(attribs);
 	}

@@ -37,11 +37,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	pending_op=NoPendingOp;
 	central_wgt=nullptr;
 
-	canvas_info_wgt = new SceneInfoWidget(this);
-	QHBoxLayout *hbox = new QHBoxLayout(canvas_info_parent);
-	hbox->addWidget(canvas_info_wgt);
+	layers_wgt = new LayersWidget(this);
+	layers_wgt->setVisible(false);
+
+	scene_info_wgt = new SceneInfoWidget(this);
+	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
+	hbox->addWidget(scene_info_wgt);
 	hbox->setContentsMargins(4,4,4,4);
-	canvas_info_parent->setLayout(hbox);
+	scene_info_parent->setLayout(hbox);
 
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
@@ -220,6 +223,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	});
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
+	connect(layers_wgt, SIGNAL(s_activeLayersChanged(void)), overview_wgt, SLOT(updateOverview(void)));
 
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));
@@ -322,6 +326,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
 	connect(model_valid_wgt, SIGNAL(s_fixApplied()), this, SLOT(removeOperations()), Qt::QueuedConnection);
 	connect(model_valid_wgt, SIGNAL(s_graphicalObjectsUpdated()), model_objs_wgt, SLOT(updateObjectsView()), Qt::QueuedConnection);
+
+	connect(layers_btn, SIGNAL(toggled(bool)), this, SLOT(toggleLayersWidget(bool)));
+	connect(layers_wgt, SIGNAL(s_visibilityChanged(bool)), layers_btn, SLOT(setChecked(bool)));
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), this, SLOT(saveTemporaryModels()));
 
@@ -593,6 +600,8 @@ void MainWindow::resizeEvent(QResizeEvent *)
 	action_about->setChecked(false);
 	action_donate->setChecked(false);
 	action_update_found->setChecked(false);
+
+	toggleLayersWidget(layers_wgt->isVisible());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -761,7 +770,7 @@ void MainWindow::saveTemporaryModels(void)
 		if(count > 0)
 		{
 			QApplication::setOverrideCursor(Qt::WaitCursor);
-			canvas_info_parent->setVisible(false);
+			scene_info_parent->setVisible(false);
 			bg_saving_wgt->setVisible(true);
 			bg_saving_pb->setValue(0);
 			bg_saving_wgt->repaint();
@@ -777,7 +786,7 @@ void MainWindow::saveTemporaryModels(void)
 
 			bg_saving_pb->setValue(100);
 			bg_saving_wgt->setVisible(false);
-			canvas_info_parent->setVisible(true);
+			scene_info_parent->setVisible(true);
 			QApplication::restoreOverrideCursor();
 		}
 
@@ -1001,6 +1010,7 @@ void MainWindow::showMainMenu(void)
 
 void MainWindow::setCurrentModel(void)
 {
+	layers_wgt->setVisible(false);
 	models_tbw->setVisible(models_tbw->count() > 0);
 	action_design->setEnabled(models_tbw->count() > 0);
 
@@ -1033,9 +1043,9 @@ void MainWindow::setCurrentModel(void)
 		QList<QToolButton *> btns;
 		QFont font;
 
+		layers_wgt->setModel(current_model);
 		current_model->setFocus(Qt::OtherFocusReason);
 		current_model->cancelObjectAddition();
-
 		general_tb->addSeparator();
 
 		general_tb->addAction(current_model->action_new_object);
@@ -1098,10 +1108,10 @@ void MainWindow::setCurrentModel(void)
 		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState(void)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified(void)), this, SLOT(updateModelTabName(void)), Qt::UniqueConnection);
 
-		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), canvas_info_wgt, SLOT(updateSelectedObject(BaseObjectView*)), Qt::UniqueConnection);
-		connect(current_model, SIGNAL(s_sceneInteracted(int,QRectF)), canvas_info_wgt, SLOT(updateSelectedObjects(int,QRectF)), Qt::UniqueConnection);
-		connect(current_model, SIGNAL(s_sceneInteracted(QPointF)), canvas_info_wgt, SLOT(updateMousePosition(QPointF)), Qt::UniqueConnection);
-		connect(current_model, SIGNAL(s_zoomModified(double)), canvas_info_wgt, SLOT(updateSceneZoom(double)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), scene_info_wgt, SLOT(updateSelectedObject(BaseObjectView*)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(int,QRectF)), scene_info_wgt, SLOT(updateSelectedObjects(int,QRectF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_sceneInteracted(QPointF)), scene_info_wgt, SLOT(updateMousePosition(QPointF)), Qt::UniqueConnection);
+		connect(current_model, SIGNAL(s_zoomModified(double)), scene_info_wgt, SLOT(updateSceneZoom(double)), Qt::UniqueConnection);
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
 		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)), Qt::UniqueConnection);
@@ -1113,8 +1123,8 @@ void MainWindow::setCurrentModel(void)
 		if(action_overview->isChecked())
 			overview_wgt->show(current_model);
 
-		canvas_info_wgt->updateMousePosition(QPointF(0,0));
-		canvas_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
+		scene_info_wgt->updateMousePosition(QPointF(0,0));
+		scene_info_wgt->updateSceneZoom(current_model->getCurrentZoom());
 		current_model->emitSceneInteracted();
 	}
 	else
@@ -1926,6 +1936,8 @@ void MainWindow::changeCurrentView(bool checked)
 {
 	QAction *curr_act=qobject_cast<QAction *>(sender());
 
+	layers_wgt->setVisible(false);
+
 	if(checked)
 	{
 		bool enable=(curr_act==action_design);
@@ -2061,4 +2073,14 @@ void MainWindow::toggleCompactView(void)
 		current_model->update();
 
 	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::toggleLayersWidget(bool show)
+{
+	QPoint tb_pos = mapTo(this, tool_btns_bar_wgt->pos()),
+			btn_pos = mapTo(this, layers_btn->pos());
+
+	layers_wgt->move(btn_pos.x() + general_tb->width(),
+									 tb_pos.y() - layers_wgt->height() * 0.80);
+	layers_wgt->setVisible(show);
 }

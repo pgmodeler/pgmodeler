@@ -55,6 +55,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Color]=text_color.name();
 
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
+		attributes[Attributes::Layer]=QString::number(layer);
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}
@@ -69,6 +70,7 @@ void Textbox::operator = (Textbox &txtbox)
 	this->text_attributes[2]=txtbox.text_attributes[2];
 	this->text_color=txtbox.text_color;
 	this->font_size=txtbox.font_size;
+	this->layer = txtbox.layer;
 }
 
 void Textbox::setTextAttribute(unsigned attrib, bool value)

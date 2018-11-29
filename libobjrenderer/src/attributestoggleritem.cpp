@@ -313,6 +313,7 @@ void AttributesTogglerItem::configureButtons(const QRectF &rect)
 
 void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	QGraphicsItem *parent = this->parentItem();
 	RoundedRectItem::paint(painter, option, widget);
 
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
@@ -322,7 +323,7 @@ void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 		painter->save();
 		painter->translate(buttons[arr_id]->pos());
-		painter->setOpacity(buttons[arr_id]->opacity());
+		painter->setOpacity(buttons[arr_id]->opacity() * (parent ? parent->opacity() : 1));
 		buttons[arr_id]->paint(painter, option, widget);
 		painter->restore();
 

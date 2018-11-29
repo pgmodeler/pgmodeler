@@ -3030,6 +3030,20 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
+			layers = attribs[Attributes::Layers].split(';', QString::SkipEmptyParts);
+
+			active_layers.clear();
+
+			/* Compatibility with models created prior the layers features:
+			 * If the "active-layers" is absent we make the default layer always visible */
+			if(!attribs.count(Attributes::ActiveLayers))
+				active_layers.push_back(0);
+			else
+			{
+				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QString::SkipEmptyParts))
+					active_layers.push_back(layer_id.toInt());
+			}
+
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
 			def_objs[ObjectType::Schema]=attribs[Attributes::DefaultSchema];
@@ -3579,6 +3593,7 @@ Schema *DatabaseModel::createSchema(void)
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		schema->setLayer(attribs[Attributes::Layer].toUInt());
 	}
 	catch(Exception &e)
 	{
@@ -4685,6 +4700,7 @@ Table *DatabaseModel::createTable(void)
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		table->setLayer(attribs[Attributes::Layer].toUInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -5787,7 +5803,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	return(genericsql);
 }
 
-void DatabaseModel::updateViewsReferTable(Table *table)
+void DatabaseModel::updateViewsReferencingTable(Table *table)
 {
 	BaseRelationship *rel = nullptr;
 	View *view = nullptr;
@@ -5923,6 +5939,7 @@ View *DatabaseModel::createView(void)
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		view->setLayer(attribs[Attributes::Layer].toUInt());
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6232,6 +6249,7 @@ Textbox *DatabaseModel::createTextbox(void)
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		txtbox->setLayer(attribs[Attributes::Layer].toUInt());
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
@@ -6262,7 +6280,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i;
+	unsigned rel_type=0, i = 0, layer = 0;
 	ObjectType table_types[2]={ObjectType::View, ObjectType::Table}, obj_rel_type;
 	QString str_aux, elem,
 			tab_attribs[2]={ Attributes::SrcTable,
@@ -6277,8 +6295,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		labels_id[Attributes::DstLabel]=BaseRelationship::DstCardLabel;
 
 		xmlparser.getElementAttributes(attribs);
+
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
+		layer = attribs[Attributes::Layer].toUInt();
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -6541,6 +6561,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
+	base_rel->setLayer(layer);
 
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
@@ -6983,6 +7004,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		if(def_type==SchemaParser::XmlDefinition)
 		{
+			QStringList act_layers;
+
+			for(auto &layer_id : active_layers)
+				act_layers.push_back(QString::number(layer_id));
+
+			attribs_aux[Attributes::Layers]=layers.join(';');
+			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : QString());
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
@@ -10167,4 +10195,24 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
+}
+
+void DatabaseModel::setLayers(const QStringList &layers)
+{
+	this->layers = layers;
+}
+
+QStringList DatabaseModel::getLayers(void)
+{
+	return(layers);
+}
+
+void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
+{
+	active_layers = layers;
+}
+
+QList<unsigned> DatabaseModel::getActiveLayers(void)
+{
+	return(active_layers);
 }

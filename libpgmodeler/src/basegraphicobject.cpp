@@ -26,7 +26,9 @@ BaseGraphicObject::BaseGraphicObject(void)
 	attributes[Attributes::YPos]=QString();
 	attributes[Attributes::Position]=QString();
 	attributes[Attributes::FadedOut]=QString();
+	attributes[Attributes::Layer]=QString();
 	receiver_object=nullptr;
+	layer = 0;
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -120,4 +122,15 @@ bool BaseGraphicObject::isGraphicObject(ObjectType type)
 {
 	return(type==ObjectType::Table || type==ObjectType::View || type==ObjectType::Relationship ||
 				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema);
+}
+
+void BaseGraphicObject::setLayer(unsigned layer)
+{
+	setCodeInvalidated(this->layer != layer);
+	this->layer = layer;
+}
+
+unsigned BaseGraphicObject::getLayer(void)
+{
+	return(layer);
 }

@@ -7,6 +7,7 @@
 
 <!ELEMENT relationship (line*,label*,column*,constraint*,special-pk-cols?,expression?)>
 <!ATTLIST relationship name CDATA #REQUIRED>
+<!ATTLIST relationship layer CDATA #IMPLIED>
 <!ATTLIST relationship alias CDATA #IMPLIED>
 <!ATTLIST relationship src-required (false|true) "false">
 <!ATTLIST relationship dst-required (false|true) "false">

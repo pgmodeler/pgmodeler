@@ -154,7 +154,7 @@ void ObjectRenameWidget::applyRenaming(void)
 					if(tab->isConstraintRefColumn(col, ConstraintType::PrimaryKey))
 						model->validateRelationships();
 					else
-						model->updateViewsReferTable(tab);
+						model->updateViewsReferencingTable(tab);
 				}
 
 				base_tab->setModified(true);

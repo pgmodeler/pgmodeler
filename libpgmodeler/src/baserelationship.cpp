@@ -332,7 +332,7 @@ void BaseRelationship::setRelationshipAttributes(void)
 							   Attributes::DstLabel,
 							   Attributes::NameLabel};
 
-
+	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::Type]=getRelTypeAttribute();
 	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : QString());
 	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : QString());
@@ -420,7 +420,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 		setRelationshipAttributes();
 		reduced_form=(attributes[Attributes::Points].isEmpty() &&
-					 attributes[Attributes::LabelsPos].isEmpty());
+								 attributes[Attributes::LabelsPos].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();

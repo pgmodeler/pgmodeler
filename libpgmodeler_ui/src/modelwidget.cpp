@@ -266,6 +266,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema=new QAction(QIcon(PgModelerUiNs::getIconPath("movetoschema")), trUtf8("Move to schema"), this);
 	action_moveto_schema->setMenu(&schemas_menu);
 
+	action_moveto_layer=new QAction(QIcon(PgModelerUiNs::getIconPath("movetolayer")), trUtf8("Move to layer"), this);
+	action_moveto_layer->setMenu(&layers_menu);
+
 	action_set_tag=new QAction(QIcon(PgModelerUiNs::getIconPath("tag")), trUtf8("Set tag"), this);
 	action_set_tag->setMenu(&tags_menu);
 
@@ -476,6 +479,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
 	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ modified = true; });
 	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ modified = true; });
+	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayers()));
+	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayers()));
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
@@ -1378,6 +1384,14 @@ void ModelWidget::loadModel(const QString &filename)
 		this->adjustSceneSize();
 		this->updateObjectsOpacity();
 
+		scene->blockSignals(true);
+
+		for(auto &layer : db_model->getLayers())
+			scene->addLayer(layer);
+
+		scene->setActiveLayers(db_model->getActiveLayers());
+		scene->blockSignals(false);
+
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
 		this->modified=false;
@@ -1425,7 +1439,7 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		bool show_grid, align_objs, show_delims;
 		unsigned page_cnt, page, h_page_cnt, v_page_cnt, h_pg_id, v_pg_id;
 		vector<QRectF> pages;
-		QRectF margins, page_rect;
+		QRectF margins;
 		QPrinter::PaperSize paper_size_id;
 		QPrinter::Orientation orient;
 		QSizeF paper_size, custom_p_size;
@@ -1966,6 +1980,23 @@ void ModelWidget::moveToSchema(void)
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ModelWidget::moveToLayer(void)
+{
+	QAction *act = dynamic_cast<QAction *>(sender());
+	BaseGraphicObject *graph_obj = nullptr;
+	unsigned layer_id = act->data().toUInt();
+
+	for(auto &obj : selected_objects)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		graph_obj->setLayer(layer_id);
+	}
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	scene->updateActiveLayers();
+	QApplication::restoreOverrideCursor();
 }
 
 void ModelWidget::changeOwner(void)
@@ -2714,9 +2745,13 @@ void ModelWidget::duplicateObject(void)
 			op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
 			table->addObject(dup_object);
 			table->setModified(true);
+			dynamic_cast<Schema *>(table->getSchema())->setModified(true);
 
 			if(obj_type == ObjectType::Column)
+			{
 			  db_model->validateRelationships();
+				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
+			}
 			else if(obj_type == ObjectType::Constraint &&
 					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::ForeignKey)
 			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
@@ -2966,7 +3001,7 @@ void ModelWidget::removeObjects(bool cascade)
 									db_model->validateRelationships(tab_obj, aux_table);
 
 								if(obj_type == ObjectType::Column)
-									db_model->updateViewsReferTable(aux_table);
+									db_model->updateViewsReferencingTable(aux_table);
 							}
 							catch(Exception &e)
 							{
@@ -3136,9 +3171,10 @@ void ModelWidget::enableModelActions(bool value)
 
 void ModelWidget::configureSubmenu(BaseObject *object)
 {
+	QAction *act=nullptr;
 	vector<BaseObject *> sel_objs;
 	ObjectType obj_type=ObjectType::BaseObject;
-	bool tab_or_view=false, accepts_owner=false, accepts_schema=false;
+	bool tab_or_view=false, is_graph_obj = false, accepts_owner=false, accepts_schema=false;
 
 	if(object)
 		sel_objs.push_back(object);
@@ -3154,6 +3190,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		if(!tab_or_view)
 			tab_or_view=(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 
+		if(!is_graph_obj)
+			is_graph_obj = BaseGraphicObject::isGraphicObject(obj_type);
+
 		if(!accepts_owner)
 			accepts_owner=obj->acceptsOwner();
 
@@ -3168,7 +3207,6 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 	{
 		if(accepts_owner || accepts_schema)
 		{
-			QAction *act=nullptr;
 			vector<BaseObject *> obj_list;
 			map<QString, QAction *> act_map;
 			QStringList name_list;
@@ -3240,6 +3278,20 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 			}
 		}
 
+		// Configuring the layers menu
+		if(is_graph_obj)
+		{
+			unsigned layer_id = ObjectsScene::DefaultLayer;
+			layers_menu.clear();
+
+			for(auto &layer : scene->getLayers())
+			{
+				act = layers_menu.addAction(layer);
+				act->setData(layer_id++);
+				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
+			}
+		}
+
 		//Display the quick rename action is a single object is selected
 		if(object && obj_type!=ObjectType::Cast)
 		{
@@ -3249,6 +3301,9 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 
 		if(accepts_schema)
 			quick_actions_menu.addAction(action_moveto_schema);
+
+		if(is_graph_obj)
+			quick_actions_menu.addAction(action_moveto_layer);
 
 		if(accepts_owner)
 			quick_actions_menu.addAction(action_change_owner);
@@ -4474,6 +4529,16 @@ void ModelWidget::editTableData(void)
 	openEditingForm(tab_data_wgt);
 	this->setModified(true);
 	emit s_objectManipulated();
+}
+
+void ModelWidget::updateModelLayers(void)
+{
+	QStringList layers = scene->getLayers();
+
+	layers.removeAt(0);
+	db_model->setLayers(layers);
+	db_model->setActiveLayers(scene->getActiveLayersIds());
+	modified = true;
 }
 
 void ModelWidget::rearrangeTablesHierarchically(void)

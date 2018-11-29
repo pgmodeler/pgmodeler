@@ -844,8 +844,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 					model->validateRelationships(dynamic_cast<TableObject *>(object), dynamic_cast<Table *>(parent_tab));
 
 					if(object->getObjectType()==ObjectType::Constraint &&
-							dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
+						 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
 						model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
+					else if(object->getObjectType() == ObjectType::Column)
+						model->updateViewsReferencingTable(dynamic_cast<Table *>(parent_tab));
 				}
 			}
 			else if(parent_rel)

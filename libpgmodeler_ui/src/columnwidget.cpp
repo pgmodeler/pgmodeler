@@ -198,7 +198,7 @@ void ColumnWidget::applyConfiguration(void)
 		}
 
 		BaseObjectWidget::applyConfiguration();
-		model->updateViewsReferTable(dynamic_cast<Table *>(table));
+		model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
 
 		finishConfiguration();
 	}

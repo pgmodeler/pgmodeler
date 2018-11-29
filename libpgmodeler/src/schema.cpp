@@ -67,6 +67,7 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
+	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::FillColor]=fill_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
 	setFadedOutAttribute();

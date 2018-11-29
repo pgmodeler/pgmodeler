@@ -17,6 +17,7 @@
 */
 
 #include "schemaview.h"
+#include "objectsscene.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
@@ -166,7 +167,6 @@ void SchemaView::moveTo(QPointF new_pos)
 void SchemaView::configureObject(void)
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getSourceObject());
-
 	this->fetchChildren();
 
 	/* Only configures the schema view if the rectangle is visible and there are
@@ -240,7 +240,9 @@ void SchemaView::configureObject(void)
 		box->setPen(QPen(color, 1, Qt::SolidLine));
 
 		this->bounding_rect=rect;
-		this->setVisible(true);
+
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		this->setVisible(scene && scene->isLayerActive(schema->getLayer()));
 
 		this->setToolTip(schema->getName(true) +
 										 QString(" (") + schema->getTypeName() + QString(")") +

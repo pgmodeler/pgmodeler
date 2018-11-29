@@ -42,6 +42,12 @@ class BaseTableView: public BaseObjectView {
 		vector<BaseRelationship *> connected_rels;
 
 	protected:
+		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
+		 * call to configureObject(). This attribute is set to true only when the objects is invisible
+		 * the the configureObject is called. Once the object gets visible again this attribute is set
+		 * to false and the geometry updated immediately (see BaseTableView::itemChange()) */
+		bool pending_geom_update;
+
 		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns,
 

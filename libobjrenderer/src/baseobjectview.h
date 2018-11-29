@@ -113,6 +113,12 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void setSelectionOrder(bool selected);
 
+		//! \brief Defines in which layer the object is visible
+		void setLayer(unsigned layer);
+
+		//! \brief Returns the layer in which the object is visible
+		unsigned getLayer(void);
+
 	public:
 		static constexpr double VertSpacing=2.0f,
 		HorizSpacing=2.0f,
@@ -203,6 +209,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		//! \brief Signal emmited whenever the width or height of the table changes
 		void s_objectDimensionChanged(void);
+
+	friend class ObjectsScene;
 };
 
 #endif
