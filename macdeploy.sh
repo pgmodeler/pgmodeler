@@ -2,7 +2,7 @@
 
 USR=`whoami`
 PGSQL_ROOT=/Library/PostgreSQL/10
-QT_ROOT=/Users/$USR/Qt5.11.2/5.11.2/clang_64
+QT_ROOT=/Users/$USR/Qt5.9.3/5.9.3/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 

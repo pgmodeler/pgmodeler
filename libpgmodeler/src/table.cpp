@@ -360,10 +360,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: table children objects creation limit."
-		vector<TableObject *> *obj_list=(obj_type!=ObjectType::ObjTable ? getObjectList(obj_type) : nullptr);
+		vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==ObjectType::ObjTable && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
+				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
 							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
