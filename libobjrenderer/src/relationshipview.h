@@ -34,6 +34,8 @@ class RelationshipView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
+		QRectF rel_brect;
+
 		//! \brief Graphical point radius
 		static constexpr double GraphicPointRadius=6.0f;
 
@@ -146,6 +148,9 @@ class RelationshipView: public BaseObjectView {
 		//! \brief Disconnects the signal handled by the relationship which senders are the tables
 		void disconnectTables(void);
 
+		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
+		void calculateBoundingRect(void);
+
 	public slots:
 		//! \brief Configures the relationship line
 		void configureLine(void);
@@ -165,7 +170,6 @@ class RelationshipView: public BaseObjectView {
 		RelationshipView(BaseRelationship *rel);
 		~RelationshipView(void);
 
-		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
 		QRectF __boundingRect(void);
 
 		//! \brief Returns the relationship that generates the graphical representation

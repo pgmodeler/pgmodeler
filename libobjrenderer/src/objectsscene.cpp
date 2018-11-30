@@ -378,18 +378,18 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 		return(QGraphicsScene::itemsBoundingRect());
 	else
 	{
-		QRectF rect=QGraphicsScene::itemsBoundingRect();
 		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
-		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
+		double x=1000000, y=1000000, x2 = -1000000, y2 = -1000000;
 		BaseObjectView *obj_view=nullptr;
-		QPointF pnt;
+		QPointF pnt, pos;
 		BaseGraphicObject *graph_obj=nullptr;
+		QSizeF sz;
 
 		for(auto &item : items)
 		{
 			obj_view=dynamic_cast<BaseObjectView *>(item);
 
-			if(obj_view && obj_view->isVisible())
+			if(obj_view && obj_view->isVisible() && (!selected_only || (selected_only && obj_view->isSelected())))
 			{
 				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
 
@@ -397,38 +397,38 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 				{
 					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
 							graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-						pnt=graph_obj->getPosition();
+						pos = graph_obj->getPosition();
 					else
-						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+						pos = dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
 
-					if(pnt.x() < x)
-						x=pnt.x();
+					if(pos.x() < x)
+						x = pos.x();
 
-					if(pnt.y() < y)
-						y=pnt.y();
+					if(pos.y() < y)
+						y = pos.y();
 
-					if(selected_only)
+					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
+						 graph_obj->getObjectType()!=ObjectType::BaseRelationship)
 					{
-						if(graph_obj->getObjectType()!=ObjectType::Relationship &&
-							 graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
-						else
-							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
-
-						if(pnt.x() > x2)
-							x2 = pnt.x();
-
-						if(pnt.y() > y2)
-							y2 = pnt.y();
+						sz = dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().size();
+						pnt = pos + QPointF(sz.width(), sz.height());
 					}
+					else
+					{
+						sz = dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().size();
+						pnt = pos + QPointF(sz.width(), sz.height());
+					}
+
+					if(pnt.x() > x2)
+						x2 = pnt.x();
+
+					if(pnt.y() > y2)
+						y2 = pnt.y();
 				}
 			}
 		}
 
-		if(selected_only)
-			return(QRectF(QPointF(x, y), QPointF(x2, y2)));
-		else
-			return(QRectF(QPointF(x, y), rect.bottomRight()));
+		return(QRectF(QPointF(x, y), QPointF(x2, y2)));
 	}
 }
 
@@ -1212,7 +1212,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	//If the new rect is greater than the scene bounding rect, this latter is resized
 	if(rect!=this->sceneRect())
 	{
-		rect=this->itemsBoundingRect();
+		rect=this->itemsBoundingRect(true);
 		rect.setTopLeft(QPointF(0,0));
 		rect.setWidth(rect.width() * 1.05f);
 		rect.setHeight(rect.height() * 1.05f);
