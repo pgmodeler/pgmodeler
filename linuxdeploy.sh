@@ -6,25 +6,24 @@ case `uname -m` in
     ARCH="linux64"
     FALLBACK_QT_ROOT=/opt/qt-5.9.6/5.9.6/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
+    QT_IFW_ROOT=/opt/qt-ifw-3.0.4
     ;;
 
   *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
+    FALLBACK_QT_ROOT=/usr/bin
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
+    QT_IFW_ROOT=/opt/qt-ifw-2.0.3
     ;;
 esac
 
 # Uncomment this line if you want to compile using LLVM (clang) compiler tools
 # QMAKE_ARGS="-r -spec linux-clang"
-
 # Comment this one if you've decided to use LLVM
 QMAKE_ARGS="-r -spec linux-g++"
-
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
@@ -140,10 +139,19 @@ else
            libQt5Gui.so.5 \
            libQt5Core.so.5 \
            libQt5XcbQpa.so.5 \
-           libQt5Svg.so.5 \
-           libicui18n.so.5* \
-           libicuuc.so.5* \
-           libicudata.so.5*"
+           libQt5Svg.so.5 "
+           
+  if [ $ARCH = "linux64" ]; then  
+    QT_LIBS="$QT_LIBS \
+           libicui18n.so.56 \
+           libicuuc.so.56 \
+           libicudata.so.56"
+  else
+    QT_LIBS="$QT_LIBS \
+           libicui18n.so.60 \
+           libicuuc.so.60 \
+           libicudata.so.60"   
+  fi
 fi
 
 clear 
