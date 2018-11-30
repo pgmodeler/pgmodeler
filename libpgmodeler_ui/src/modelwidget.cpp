@@ -1412,7 +1412,7 @@ void ModelWidget::adjustSceneSize(void)
 	ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
 
 	scene_rect=scene->sceneRect();
-	objs_rect=scene->itemsBoundingRect();
+	objs_rect=scene->itemsBoundingRect(true);
 
 	if(scene_rect.width() < objs_rect.left() + objs_rect.width())
 		scene_rect.setWidth(objs_rect.left() + objs_rect.width());
