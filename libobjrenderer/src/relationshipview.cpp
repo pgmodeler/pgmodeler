@@ -1217,6 +1217,8 @@ void RelationshipView::configureLine(void)
 
 		this->configureProtectedIcon();
 
+		this->calculateBoundingRect();
+
 		configuring_line=false;
 
 		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
@@ -2011,6 +2013,14 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 
 QRectF RelationshipView::__boundingRect(void)
 {
+	return(rel_brect);
+}
+
+void RelationshipView::calculateBoundingRect(void)
+{
+	QTextStream out(stdout);
+	out <<  "RelationshipView::calculateBoundingRect" << endl;
+
 	double x1=0, y1=0, x2=0, y2=0;
 	unsigned i, count;
 	QPointF p;
@@ -2037,7 +2047,8 @@ QRectF RelationshipView::__boundingRect(void)
 	//Checks if some label is out of reference dimension
 	for(i=0; i < 3; i++)
 	{
-		if(labels[i] && labels[i]->isVisible())
+		if(labels[i] && labels[i]->isVisible() &&
+			 !isnan(labels[i]->scenePos().x()) && !isnan(labels[i]->scenePos().y()))
 		{
 			rect.setTopLeft(labels[i]->scenePos());
 			rect.setSize(labels[i]->boundingRect().size());
@@ -2048,5 +2059,5 @@ QRectF RelationshipView::__boundingRect(void)
 		}
 	}
 
-	return(QRectF(x1, y1, x2, y2));
+	rel_brect = QRectF(x1, y1, x2, y2);
 }
