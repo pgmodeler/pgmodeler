@@ -379,9 +379,9 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 	else
 	{
 		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
-		double x=1000000/*rect.width()*/, y=1000000/*rect.height()*/, x2 = -1000000, y2 = -1000000;
+		double x=1000000, y=1000000, x2 = -1000000, y2 = -1000000;
 		BaseObjectView *obj_view=nullptr;
-		QPointF pnt;
+		QPointF pnt, pos;
 		BaseGraphicObject *graph_obj=nullptr;
 		QSizeF sz;
 
@@ -397,26 +397,26 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 				{
 					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
 							graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-						pnt=graph_obj->getPosition();
+						pos = graph_obj->getPosition();
 					else
-						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
+						pos = dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
 
-					if(pnt.x() < x)
-						x=pnt.x();
+					if(pos.x() < x)
+						x = pos.x();
 
-					if(pnt.y() < y)
-						y=pnt.y();
+					if(pos.y() < y)
+						y = pos.y();
 
 					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
 						 graph_obj->getObjectType()!=ObjectType::BaseRelationship)
 					{
 						sz = dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().size();
-						pnt = pnt + QPointF(sz.width(), sz.height());
+						pnt = pos + QPointF(sz.width(), sz.height());
 					}
 					else
 					{
 						sz = dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().size();
-						pnt = pnt + QPointF(sz.width(), sz.height());
+						pnt = pos + QPointF(sz.width(), sz.height());
 					}
 
 					if(pnt.x() > x2)

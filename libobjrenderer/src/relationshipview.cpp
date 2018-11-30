@@ -2018,12 +2018,8 @@ QRectF RelationshipView::__boundingRect(void)
 
 void RelationshipView::calculateBoundingRect(void)
 {
-	QTextStream out(stdout);
-	out <<  "RelationshipView::calculateBoundingRect" << endl;
-
 	double x1=0, y1=0, x2=0, y2=0;
-	unsigned i, count;
-	QPointF p;
+	unsigned i = 0;
 	QRectF rect;
 	vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getSourceObject())->getPoints();
 
@@ -2034,21 +2030,18 @@ void RelationshipView::calculateBoundingRect(void)
 	y2=descriptor->pos().y() + descriptor->boundingRect().height();
 
 	//Checks if some point is out of reference dimension
-	count=points.size();
-	for(i=0; i < count; i++)
+	for(auto &pnt : points)
 	{
-		p=points[i];
-		if(x1 > p.x()) x1=p.x() - GraphicPointRadius;
-		if(y1 > p.y()) y1=p.y() - GraphicPointRadius;
-		if(x2 < p.x()) x2=p.x() + GraphicPointRadius;
-		if(y2 < p.y()) y2=p.y() + GraphicPointRadius;
+		if(x1 > pnt.x()) x1 = pnt.x() - GraphicPointRadius;
+		if(y1 > pnt.y()) y1 = pnt.y() - GraphicPointRadius;
+		if(x2 < pnt.x()) x2 = pnt.x() + GraphicPointRadius;
+		if(y2 < pnt.y()) y2 = pnt.y() + GraphicPointRadius;
 	}
 
 	//Checks if some label is out of reference dimension
 	for(i=0; i < 3; i++)
 	{
-		if(labels[i] && labels[i]->isVisible() &&
-			 !isnan(labels[i]->scenePos().x()) && !isnan(labels[i]->scenePos().y()))
+		if(labels[i] && labels[i]->isVisible() && !isnan(labels[i]->scenePos().x()) && !isnan(labels[i]->scenePos().y()))
 		{
 			rect.setTopLeft(labels[i]->scenePos());
 			rect.setSize(labels[i]->boundingRect().size());
@@ -2059,5 +2052,5 @@ void RelationshipView::calculateBoundingRect(void)
 		}
 	}
 
-	rel_brect = QRectF(x1, y1, x2, y2);
+	rel_brect = QRectF(QPointF(x1, y1), QPointF(x2, y2));
 }
