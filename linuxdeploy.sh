@@ -154,13 +154,13 @@ echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9]*\.[0-9]*\.[0-9]*'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
 if [ -e "$FALLBACK_QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9]*\.[0-9]*\.[0-9]*'`
   QT_VER_2=${QT_VER_2:0:5}
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
