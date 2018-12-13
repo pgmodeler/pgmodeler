@@ -192,6 +192,7 @@ void View::generateColumns(void)
 	Reference ref;
 	Column *col = nullptr;
 	QString name, alias;
+	PgSqlType type;
 
 	columns.clear();
 
@@ -231,14 +232,16 @@ void View::generateColumns(void)
 				for(col_id=0; col_id < col_count; col_id++)
 				{
 					col = tab->getColumn(col_id);
+					type = col->getType();
 					name = getUniqueColumnName(col->getName());
-					columns.push_back(SimpleColumn(name, *col->getType(),
+					columns.push_back(SimpleColumn(name, type.isSerialType() ? *type.getAliasType() : *col->getType(),
 																				 !col->getAlias().isEmpty() ? col->getAlias() : col->getName()));
 				}
 			}
 			else
 			{
 				col = ref.getColumn();
+				type = col->getType();
 
 				if(!ref.getColumnAlias().isEmpty())
 					name = getUniqueColumnName(ref.getColumnAlias());
@@ -250,7 +253,7 @@ void View::generateColumns(void)
 				else
 					alias = !col->getAlias().isEmpty() ? col->getAlias() : col->getName();
 
-				columns.push_back(SimpleColumn(name, *col->getType(), alias));
+				columns.push_back(SimpleColumn(name, type.isSerialType() ? *type.getAliasType() : *col->getType(), alias));
 			}
 		}
 	}
