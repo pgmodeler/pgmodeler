@@ -124,6 +124,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	else
 		this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HorizSpacing),
 											schema_name->boundingRect().height() + (2 * VertSpacing));
+
+	/* Forcing the redrawn of the object after configuring it.
+	 * This is done because when using a cached background on the QGraphicsView
+	 * if the table owning a title view is selected and has the name changed the
+	 * update of the title will only occur when the table is deselected */
+	this->update();
 }
 
 void TableTitleView::resizeTitle(double width, double height)
