@@ -21,6 +21,10 @@
  %if {last-zoom} %then
   [ last-zoom=] "{last-zoom}"
  %end
+ 
+ %if {max-obj-count} %then
+  [ max-obj-count=] "{max-obj-count}"
+ %end
 
  %if {default-schema} %or {default-owner}  %then
     $br $tb
@@ -45,6 +49,18 @@
       [ default-tablespace=] "{default-tablespace}"
     %end
 
+ %end
+ 
+ %if {layers} %then
+    $br $tb
+    [ layers]="{layers}"
+    
+    [ active-layers]=
+    %if {active-layers} %then 
+        "{active-layers}" 
+    %else
+        "" 
+    %end 
  %end
 
  > $br

@@ -28,5 +28,5 @@ to store objects attributes and used by SchemaParser, XMLParser and several othe
 
 #include <map>
 #include <QString>
-typedef std::map<QString, QString> attribs_map;
+using attribs_map = std::map<QString, QString>;
 #endif

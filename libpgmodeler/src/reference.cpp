@@ -29,16 +29,16 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 {
 	//Raises an error if the table is not allocated
 	if(!table)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the table/column alias has an invalid name
 	else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
 					(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the column parent table differs from the passed table
 	else if(column && column->getParentTable()!=table)
-		throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgObjectBelongsAnotherTable ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->table=table;
 	this->column=column;
@@ -51,10 +51,10 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
 {
 	//Raises an error if the user try to create an reference using an empty expression
 	if(expression.isEmpty())
-		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the expression alias has an invalid name
 	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
-		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	table=nullptr;
 	column=nullptr;
@@ -71,6 +71,56 @@ void Reference::setDefinitionExpression(bool value)
 bool Reference::isDefinitionExpression(void)
 {
 	return(is_def_expr);
+}
+
+void Reference::addColumn(const QString &name, PgSqlType type, const QString &alias)
+{
+	QString aux_name = name;
+
+	if(aux_name.startsWith(QChar('\"')) &&
+		 aux_name.endsWith(QChar('\"')))
+	{
+		aux_name.remove(0, 1);
+		aux_name.remove(aux_name.length(), 1);
+	}
+
+	// Validating the column name
+	if(!BaseObject::isValidName(name))
+	{
+		if(aux_name.isEmpty())
+			throw Exception(ErrorCode::AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(aux_name.size() > BaseObject::ObjectNameMaxLength)
+			throw Exception(ErrorCode::AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else
+			throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// Checking if the column already exists
+	for(auto &col : columns)
+	{
+		if(col.name == name)
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	columns.push_back(SimpleColumn(name, *type, alias));
+}
+
+void Reference::addColumn(Column *col)
+{
+	if(!col)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	addColumn(col->getName(), col->getType(), col->getAlias());
+}
+
+void Reference::removeColumns(void)
+{
+	columns.clear();
+}
+
+vector<SimpleColumn> Reference::getColumns(void)
+{
+	return(columns);
 }
 
 Table *Reference::getTable(void)
@@ -101,15 +151,15 @@ QString Reference::getExpression(void)
 unsigned Reference::getReferenceType(void)
 {
 	if(expression.isEmpty())
-		return(REFER_COLUMN);
+		return(ReferColumn);
 	else
-		return(REFER_EXPRESSION);
+		return(ReferExpression);
 }
 
 void Reference::setReferenceAlias(const QString &alias)
 {
-	if(alias.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(alias.size() > BaseObject::ObjectNameMaxLength)
+		throw Exception(ErrorCode::AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	ref_alias = alias;
 }
@@ -127,10 +177,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	refer_type=getReferenceType();
 
 	//Case the reference is between the SELECT-FROM keywords
-	if(sql_type==SQL_REFER_SELECT)
+	if(sql_type==SqlReferSelect)
 	{
 		//Case the reference is linked to a column
-		if(refer_type==REFER_COLUMN)
+		if(refer_type==ReferColumn)
 		{
 			/* Generated SQL definition:
 			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
@@ -166,14 +216,14 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		sql_def+=QString(",\n");
 	}
 	//Case the reference is between the FROM-[JOIN | WHERE] keywords
-	else if(sql_type==SQL_REFER_FROM)
+	else if(sql_type==SqlReferFrom)
 	{
 		/* Case the reference is linked to a column only the table name is used.
 		 For expression the complete code is used thus the generated code is:
 
 		 ... FROM {TABLE_NAME} [AS ALIAS] or
 		 ... FROM {EXPRESSION} */
-		if(refer_type==REFER_COLUMN)
+		if(refer_type==ReferColumn)
 		{
 			sql_def+=table->getName(true);
 
@@ -189,7 +239,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	else
 	{
 		//Case the column is allocated
-		if(refer_type==REFER_COLUMN && column)
+		if(refer_type==ReferColumn && column)
 		{
 			/* Generated SQL definition:
 			... WHERE {TABLE_NAME | ALIAS}.{COLUMN_NAME} */
@@ -204,7 +254,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 			if(column)
 				sql_def+=column->getName(true);
 		}
-		else if(refer_type==REFER_EXPRESSION)
+		else if(refer_type==ReferExpression)
 			sql_def=expression;
 	}
 
@@ -216,22 +266,32 @@ QString Reference::getXMLDefinition(void)
 {
 	attribs_map attribs;
 	SchemaParser schparser;
+	Column col_aux;
 
-	attribs[ParsersAttributes::TABLE]=QString();
-	attribs[ParsersAttributes::COLUMN]=QString();
+	attribs[Attributes::Table]=QString();
+	attribs[Attributes::Column]=QString();
 
 	if(table)
-		attribs[ParsersAttributes::TABLE]=table->getName(true);
+		attribs[Attributes::Table]=table->getName(true);
 
 	if(column)
-		attribs[ParsersAttributes::COLUMN]=column->getName();
+		attribs[Attributes::Column]=column->getName();
 
-	attribs[ParsersAttributes::REF_ALIAS]=ref_alias;
-	attribs[ParsersAttributes::EXPRESSION]=expression;
-	attribs[ParsersAttributes::ALIAS]=alias;
-	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
+	attribs[Attributes::RefAlias]=ref_alias;
+	attribs[Attributes::Expression]=expression;
+	attribs[Attributes::Alias]=alias;
+	attribs[Attributes::ColumnAlias]=column_alias;
+	attribs[Attributes::Columns]=QString();
 
-	return(schparser.getCodeDefinition(ParsersAttributes::REFERENCE, attribs, SchemaParser::XML_DEFINITION));
+	for(auto &col : columns)
+	{
+		col_aux.setName(col.name);
+		col_aux.setType(PgSqlType::parseString(col.type));
+		col_aux.setAlias(col.alias);
+		attribs[Attributes::Columns]+=col_aux.getCodeDefinition(SchemaParser::XmlDefinition);
+	}
+
+	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
 }
 
 bool Reference::operator == (Reference &refer)
@@ -242,7 +302,7 @@ bool Reference::operator == (Reference &refer)
 
 	if(ref_type==refer.getReferenceType())
 	{
-		if(ref_type==REFER_COLUMN)
+		if(ref_type==ReferColumn)
 		{
 			return(this->table==refer.table &&
 				   this->column==refer.column &&

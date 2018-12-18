@@ -40,8 +40,8 @@ class Extension: public BaseObject {
 		QString versions[2];
 
 	public:
-		static const unsigned CUR_VERSION=0,
-		OLD_VERSION=1;
+		static constexpr unsigned CurVersion=0,
+		OldVersion=1;
 		Extension(void);
 
 		void setName(const QString &name);

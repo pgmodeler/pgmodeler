@@ -65,7 +65,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
-		XMLParser xmlparser;
+		XmlParser xmlparser;
+
+		//! \brief Stores the layers names and active layer to write them on XML code
+		QStringList layers;
+
+		QList<unsigned> active_layers;
 
 		//! \brief Stores the model widget that is managing this database model instance
 		ModelWidget *model_wgt;
@@ -161,7 +166,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns the object on the model that represents the base pgsql type. The possible
 		 returned object can be: table, sequence, domain or type */
-		BaseObject *getObjectPgSQLType(PgSQLType type);
+		BaseObject *getObjectPgSQLType(PgSqlType type);
 
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
@@ -169,20 +174,36 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns extra error info when loading database models
 		QString getErrorExtraInfo(void);
 
+		/*! \brief This method forces the indication that the model is being loaded or not by setting the attribute loading_model.
+		 * The attribute loading_model causes the model perform certain operations only when model starts/ends the loading process,
+		 * for instance, if loading_model = true graphical objects will be rendered only when the loading process finishes (loading_model =false)
+		 * otherwise the objects are rendered as they are added to the model. The drawback of this approach is, depending on the operation being used after
+		 * calling this method, the user is obligated to call the methdo setObjectsModified() to force the graphical objects rendering. */
+		void setLoadingModel(bool value);
+
+		//! \brief Set the initial capacity of the objects list for a optimized memory usage
+		void setObjectListsCapacity(unsigned capacity);
+
+	protected:
+		void setLayers(const QStringList &layers);
+		void setActiveLayers(const QList<unsigned> &layers);
+		QStringList getLayers(void);
+		QList<unsigned> getActiveLayers(void);
+
 	public:
-		static const unsigned META_DB_ATTRIBUTES=1,	//! \brief Handle database model attribute when save/load metadata file
-		META_OBJS_POSITIONING=2,	//! \brief Handle objects' positioning when save/load metadata file
-		META_OBJS_PROTECTION=4,	//! \brief Handle objects' protection status when save/load metadata file
-		META_OBJS_SQLDISABLED=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
-		META_OBJS_CUSTOMSQL=16,	//! \brief Handle object's custom sql when save/load metadata file
-		META_OBJS_CUSTOMCOLORS=32,	//! \brief Handle object's custom colors when save/load metadata file
-		META_OBJS_FADEDOUT=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
-		META_OBJS_EXTATTRIBS=128,	//! \brief Handle tables and views extended attributes display when save/load metadata file
-		META_TEXTBOX_OBJS=256,	//! \brief Handle textboxes object when save/load metadata file
-		META_TAG_OBJS=512,	//! \brief Handle tags object when save/load metadata file
-		META_GENERIC_SQL_OBJS=1024,	//! \brief Handle generic sql object when save/load metadata file
-		META_OBJS_ALIASES=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
-		META_ALL_INFO=4095;	//! \brief Handle all metadata information about objects when save/load metadata file
+		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
+		MetaObjsPositioning=2,	//! \brief Handle objects' positioning when save/load metadata file
+		MetaObjsProtection=4,	//! \brief Handle objects' protection status when save/load metadata file
+		MetaObjsSqlDisabled=8,	//! \brief Handle objects' sql disabled status when save/load metadata file
+		MetaObjsCustomSql=16,	//! \brief Handle object's custom sql when save/load metadata file
+		MetaObjsCustomColors=32,	//! \brief Handle object's custom colors when save/load metadata file
+		MetaObjsFadeOut=64,	//! \brief Handle graphical object's fade out status when save/load metadata file
+		MetaObjsCollapseMode=128,	//! \brief Handle tables and views collapse mode when save/load metadata file
+		MetaTextboxObjs=256,	//! \brief Handle textboxes object when save/load metadata file
+		MetaTagObjs=512,	//! \brief Handle tags object when save/load metadata file
+		MetaGenericSqlObjs=1024,	//! \brief Handle generic sql object when save/load metadata file
+		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
+		MetaAllInfo=4095;	//! \brief Handle all metadata information about objects when save/load metadata file
 
 		DatabaseModel(void);
 
@@ -260,7 +281,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Sets the sql prepeding at beginning of entire model definition
 		void setPrependAtBOD(bool value);
 
-		void setDefaultObject(BaseObject *object, ObjectType obj_type=BASE_OBJECT);
+		void setDefaultObject(BaseObject *object, ObjectType obj_type=ObjectType::BaseObject);
 
 		void setIsTemplate(bool value);
 
@@ -282,8 +303,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the object count for the specified type
 		unsigned getObjectCount(ObjectType obj_type);
 
-		//! \brief Returns the object count for all object types
+		//! \brief Returns the object count for all object types.
 		unsigned getObjectCount(void);
+
+		unsigned getMaxObjectCount(void);
 
 		//! \brief Retuns the specified localization value
 		QString getLocalization(unsigned localiz_id);
@@ -487,7 +510,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
-		PgSQLType createPgSQLType(void);
+		PgSqlType createPgSQLType(void);
 		BaseObject *createObject(ObjectType obj_type);
 		Role *createRole(void);
 		Tablespace *createTablespace(void);
@@ -521,6 +544,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
+
+		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
+		void updateViewsReferencingTable(Table *table);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);
@@ -598,17 +624,17 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 the create* method.
 
 		\note: This is not the better approach and certainly will be changed in future releases */
-		XMLParser *getXMLParser(void);
+		XmlParser *getXMLParser(void);
 
 		//! \brief Returns the ALTER definition between the current model and the provided one
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
-		void saveObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
+		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename, unsigned options=META_ALL_INFO);
+		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
@@ -619,6 +645,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
+
+	friend class DatabaseImportHelper;
+	friend class ModelWidget;
 };
 
 #endif

@@ -66,7 +66,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/pgmodelerplugin.cpp \
 	   src/pluginsconfigwidget.cpp \
 	   src/collationwidget.cpp \
-	   src/elementswidget.cpp \
 	   src/modelexporthelper.cpp \
 	   src/modelvalidationwidget.cpp \
 	   src/modelvalidationhelper.cpp \
@@ -115,7 +114,10 @@ SOURCES += src/mainwindow.cpp \
     src/objectstablewidget.cpp \
     src/resultsetmodel.cpp \
     src/referencewidget.cpp \
-    src/sqlexecutionhelper.cpp
+    src/sqlexecutionhelper.cpp \
+    src/elementstablewidget.cpp \
+    src/elementwidget.cpp \
+    src/layerswidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -169,7 +171,6 @@ HEADERS += src/mainwindow.h \
 	   src/objectrenamewidget.h \
 	   src/pluginsconfigwidget.h \
 	   src/collationwidget.h \
-	   src/elementswidget.h \
 	   src/modelexporthelper.h \
 	   src/modelvalidationwidget.h \
 	   src/modelvalidationhelper.h \
@@ -218,7 +219,10 @@ HEADERS += src/mainwindow.h \
     src/objectstablewidget.h \
     src/resultsetmodel.h \
     src/referencewidget.h \
-    src/sqlexecutionhelper.h
+    src/sqlexecutionhelper.h \
+    src/elementstablewidget.h \
+    src/elementwidget.h \
+    src/layerswidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -267,7 +271,6 @@ FORMS += ui/mainwindow.ui \
 	 ui/pluginsconfigwidget.ui \
 	 ui/schemawidget.ui \
 	 ui/collationwidget.ui \
-	 ui/elementswidget.ui \
 	 ui/modelvalidationwidget.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
@@ -302,7 +305,9 @@ FORMS += ui/mainwindow.ui \
     ui/bulkdataeditwidget.ui \
     ui/policywidget.ui \
     ui/objectstablewidget.ui \
-    ui/referencewidget.ui
+    ui/referencewidget.ui \
+    ui/elementwidget.ui \
+    ui/layerswidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

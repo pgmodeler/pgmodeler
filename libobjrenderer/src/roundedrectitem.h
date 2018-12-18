@@ -51,22 +51,22 @@ class RoundedRectItem: public QGraphicsRectItem {
 
 	public:
 		//! \brief Implies a normal rectangle (no rounded corner)
-		static const unsigned NO_CORNERS=0,
+		static constexpr unsigned NoCorners=0,
 
 		//! \brief The top-left corner will be rounded
-		TOPLEFT_CORNER=2,
+		TopLeftCorner=2,
 
 		//! \brief The top-right corner will be rounded
-		TOPRIGHT_CORNER=4,
+		TopRightCorner=4,
 
 		//! \brief The Bottom-left corner will be rounded
-		BOTTOMLEFT_CORNER=8,
+		BottomLeftCorner=8,
 
 		//! \brief The Bottom-right corner will be rounded
-		BOTTOMRIGHT_CORNER=16,
+		BottomRightCorner=16,
 
 		//! \brief All corners will be rounded
-		ALL_CORNERS=32;
+		AllCorners=32;
 
 		explicit RoundedRectItem(QGraphicsItem *parent = 0);
 

@@ -23,12 +23,12 @@
 #include "baseform.h"
 #include "referencewidget.h"
 
-ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
+ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::View)
 {
 	try
 	{
 		ObjectsTableWidget *tab=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
+		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 		QGridLayout *grid=nullptr;
 		QVBoxLayout *vbox=nullptr;
 
@@ -40,22 +40,22 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		code_txt=new NumberedTextEditor(this);
 		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
-		code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
 		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		cte_expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		vbox=new QVBoxLayout(cte_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(cte_expression_txt);
 
-		tag_sel=new ObjectSelectorWidget(OBJ_TAG, false, this);
+		tag_sel=new ObjectSelectorWidget(ObjectType::Tag, false, this);
 		dynamic_cast<QGridLayout *>(options_gb->layout())->addWidget(tag_sel, 0, 1, 1, 4);
 
-		references_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ ObjectsTableWidget::UPDATE_BUTTON, true, this);
+		references_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::UpdateButton, true, this);
 		references_tab->setColumnCount(5);
 		references_tab->setHeaderLabel(trUtf8("Col./Expr."), 0);
 		references_tab->setHeaderLabel(trUtf8("Table alias"), 1);
@@ -72,8 +72,8 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		//Configuring the table objects that stores the triggers and rules
 		for(unsigned i=0, tab_id=1; i < sizeof(types)/sizeof(ObjectType); i++, tab_id++)
 		{
-			tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-									  (ObjectsTableWidget::UPDATE_BUTTON  | ObjectsTableWidget::MOVE_BUTTONS), true, this);
+			tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+									  (ObjectsTableWidget::UpdateButton  | ObjectsTableWidget::MoveButtons), true, this);
 
 			objects_tab_map[types[i]]=tab;
 
@@ -89,33 +89,33 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
-		objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("table")),1);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("trigger")),2);
-		objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setColumnCount(4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
 
-		objects_tab_map[OBJ_INDEX]->setColumnCount(2);
-		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
-		objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setColumnCount(2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
 
-		objects_tab_map[OBJ_RULE]->setColumnCount(3);
-		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-		objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
-		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
-		objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setColumnCount(3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
 
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
-		configureFormLayout(view_grid, OBJ_VIEW);
+		configureFormLayout(view_grid, ObjectType::View);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(recursive_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(materialized_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_93)].push_back(with_no_data_chk);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
+		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
 		frame=generateVersionWarningFrame(fields_map);
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);
@@ -169,7 +169,7 @@ int ViewWidget::openEditingForm(TableObject *object)
 
 void ViewWidget::handleObject(void)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 
@@ -181,9 +181,9 @@ void ViewWidget::handleObject(void)
 		if(obj_table->getSelectedRow()>=0)
 			object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
 
-		if(obj_type==OBJ_TRIGGER)
+		if(obj_type==ObjectType::Trigger)
 			openEditingForm<Trigger,TriggerWidget>(object);
-		else if(obj_type==OBJ_INDEX)
+		else if(obj_type==ObjectType::Index)
 			openEditingForm<Index,IndexWidget>(object);
 		else
 			openEditingForm<Rule,RuleWidget>(object);
@@ -199,7 +199,7 @@ void ViewWidget::handleObject(void)
 
 void ViewWidget::duplicateObject(int curr_row, int new_row)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
 	View *view = dynamic_cast<View *>(this->object);
@@ -216,10 +216,10 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		if(curr_row >= 0)
 			object = reinterpret_cast<BaseObject *>(obj_table->getRowData(curr_row).value<void *>());
 
-		PgModelerNS::copyObject(&dup_object, object, obj_type);
-		dup_object->setName(PgModelerNS::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
+		PgModelerNs::copyObject(&dup_object, object, obj_type);
+		dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *view->getObjectList(obj_type), false, QString("_cp")));
 
-		op_id=op_list->registerObject(dup_object, Operation::OBJECT_CREATED, new_row, this->object);
+		op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, new_row, this->object);
 
 		view->addObject(dup_object);
 		view->setModified(true);
@@ -256,7 +256,7 @@ void ViewWidget::removeObjects(void)
 		{
 			object=view->getObject(0, obj_type);
 			view->removeObject(object);
-			op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
+			op_list->registerObject(object, Operation::ObjectRemoved, 0, this->object);
 		}
 	}
 	catch(Exception &e)
@@ -302,7 +302,7 @@ void ViewWidget::removeObject(int row)
 		view=dynamic_cast<View *>(this->object);
 		object=view->getObject(row, obj_type);
 		view->removeObject(object);
-		op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
+		op_list->registerObject(object, Operation::ObjectRemoved, row, this->object);
 	}
 	catch(Exception &e)
 	{
@@ -313,7 +313,7 @@ void ViewWidget::removeObject(int row)
 
 ObjectType ViewWidget::getObjectType(QObject *sender)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 
 	if(sender)
 	{
@@ -322,7 +322,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
 
-		while(itr!=itr_end && obj_type==BASE_OBJECT)
+		while(itr!=itr_end && obj_type==ObjectType::BaseObject)
 		{
 			if(itr->second==sender)
 				obj_type=itr->first;
@@ -343,8 +343,8 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	ObjectType obj_type;
 	QString str_aux;
 	unsigned i;
-	EventType events[]={ EventType::on_insert, EventType::on_delete,
-						 EventType::on_truncate,	EventType::on_update };
+	EventType events[]={ EventType::OnInsert, EventType::OnDelete,
+						 EventType::OnTruncate,	EventType::OnUpdate };
 
 	obj_type=object->getObjectType();
 	tab=objects_tab_map[obj_type];
@@ -352,7 +352,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 	//Column 0: Object name
 	tab->setCellText(object->getName(),row,0);
 
-	if(obj_type==OBJ_TRIGGER)
+	if(obj_type==ObjectType::Trigger)
 	{
 		trigger=dynamic_cast<Trigger *>(object);
 
@@ -374,7 +374,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);
 	}
-	else if(obj_type==OBJ_RULE)
+	else if(obj_type==ObjectType::Rule)
 	{
 		rule=dynamic_cast<Rule *>(object);
 
@@ -432,7 +432,7 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	int result = 0;
 
 	editing_form.setMainWidget(ref_wgt);
-	editing_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	editing_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 
 	disconnect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), &editing_form, SLOT(accept()));
 	connect(editing_form.apply_ok_btn, SIGNAL(clicked(bool)), ref_wgt, SLOT(applyConfiguration()));
@@ -456,20 +456,20 @@ unsigned ViewWidget::getReferenceFlag(int row)
 	unsigned ref_flags = 0;
 
 	if(flags_str[4] == '1')
-		ref_flags = Reference::SQL_VIEW_DEFINITION;
+		ref_flags = Reference::SqlViewDefinition;
 	else
 	{
 		if(flags_str[0] == '1')
-			ref_flags |= Reference::SQL_REFER_SELECT;
+			ref_flags |= Reference::SqlReferSelect;
 
 		if(flags_str[1] == '1')
-			ref_flags |= Reference::SQL_REFER_FROM;
+			ref_flags |= Reference::SqlReferFrom;
 
 		if(flags_str[2] == '1')
-			ref_flags |= Reference::SQL_REFER_WHERE;
+			ref_flags |= Reference::SqlReferWhere;
 
 		if(flags_str[3] == '1')
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
+			ref_flags |= Reference::SqlReferEndExpr;
 	}
 
 	return(ref_flags);
@@ -485,13 +485,13 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	Table *tab=nullptr;
 	Column *col=nullptr;
 	QString str_aux;
-	bool	selec_from = (ref_flags & Reference::SQL_REFER_SELECT) == Reference::SQL_REFER_SELECT,
-				from_where = (ref_flags & Reference::SQL_REFER_FROM) == Reference::SQL_REFER_FROM,
-				after_where = (ref_flags & Reference::SQL_REFER_WHERE) == Reference::SQL_REFER_WHERE,
-				end_expr = (ref_flags & Reference::SQL_REFER_END_EXPR) == Reference::SQL_REFER_END_EXPR,
-				view_def = (ref_flags & Reference::SQL_VIEW_DEFINITION) == Reference::SQL_VIEW_DEFINITION;
+	bool	selec_from = (ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect,
+				from_where = (ref_flags & Reference::SqlReferFrom) == Reference::SqlReferFrom,
+				after_where = (ref_flags & Reference::SqlReferWhere) == Reference::SqlReferWhere,
+				end_expr = (ref_flags & Reference::SqlReferEndExpr) == Reference::SqlReferEndExpr,
+				view_def = (ref_flags & Reference::SqlViewDefinition) == Reference::SqlViewDefinition;
 
-	if(refer.getReferenceType()==Reference::REFER_COLUMN)
+	if(refer.getReferenceType()==Reference::ReferColumn)
 	{
 		tab=refer.getTable();
 		col=refer.getColumn();
@@ -512,7 +512,7 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	}
 	else
 	{
-		references_tab->setCellText(refer.getExpression(),row,0);
+		references_tab->setCellText(refer.getExpression().simplified(),row,0);
 		references_tab->setCellText(refer.getAlias(),row,1);
 	}
 
@@ -542,11 +542,11 @@ void ViewWidget::updateCodePreview(void)
 			TableObject *tab_obj=nullptr;
 			map<ObjectType, ObjectsTableWidget *>::iterator itr, itr_end;
 			unsigned i, count, i1, expr_type[]={
-												Reference::SQL_REFER_SELECT,
-												Reference::SQL_REFER_FROM,
-												Reference::SQL_REFER_WHERE,
-												Reference::SQL_REFER_END_EXPR,
-												Reference::SQL_VIEW_DEFINITION};
+												Reference::SqlReferSelect,
+												Reference::SqlReferFrom,
+												Reference::SqlReferWhere,
+												Reference::SqlReferEndExpr,
+												Reference::SqlViewDefinition};
 
 			aux_view.BaseObject::setName(name_edt->text().toUtf8());
 			aux_view.BaseObject::setSchema(schema_sel->getSelectedObject());
@@ -583,7 +583,7 @@ void ViewWidget::updateCodePreview(void)
 				//Make a copy of each view objects (rule/trigger) to the auxiliary view
 				for(i=0; i < count; i++)
 				{
-					if(itr->first==OBJ_TRIGGER)
+					if(itr->first==ObjectType::Trigger)
 					{
 						tab_obj=new Trigger;
 						(*dynamic_cast<Trigger *>(tab_obj))=
@@ -600,7 +600,7 @@ void ViewWidget::updateCodePreview(void)
 
 				itr++;
 			}
-			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+			code_txt->setPlainText(aux_view.getCodeDefinition(SchemaParser::SqlDefinition));
 		}
 	}
 	catch(Exception &e)
@@ -656,20 +656,20 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 		ref_flags = 0;
 		refer=view->getReference(i);
 
-		if(view->getReferenceIndex(refer, Reference::SQL_VIEW_DEFINITION) >= 0)
-			ref_flags = Reference::SQL_VIEW_DEFINITION;
+		if(view->getReferenceIndex(refer, Reference::SqlViewDefinition) >= 0)
+			ref_flags = Reference::SqlViewDefinition;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_SELECT) >= 0)
-			ref_flags |= Reference::SQL_REFER_SELECT;
+		if(view->getReferenceIndex(refer, Reference::SqlReferSelect) >= 0)
+			ref_flags |= Reference::SqlReferSelect;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_FROM) >= 0)
-			ref_flags |= Reference::SQL_REFER_FROM;
+		if(view->getReferenceIndex(refer, Reference::SqlReferFrom) >= 0)
+			ref_flags |= Reference::SqlReferFrom;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_WHERE) >= 0)
-			ref_flags |= Reference::SQL_REFER_WHERE;
+		if(view->getReferenceIndex(refer, Reference::SqlReferWhere) >= 0)
+			ref_flags |= Reference::SqlReferWhere;
 
-		if(view->getReferenceIndex(refer, Reference::SQL_REFER_END_EXPR) >= 0)
-			ref_flags |= Reference::SQL_REFER_END_EXPR;
+		if(view->getReferenceIndex(refer, Reference::SqlReferEndExpr) >= 0)
+			ref_flags |= Reference::SqlReferEndExpr;
 
 		showReferenceData(refer, ref_flags, i);
 	}
@@ -677,9 +677,9 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	references_tab->blockSignals(false);
 	references_tab->clearSelection();
 
-	listObjects(OBJ_TRIGGER);
-	listObjects(OBJ_RULE);
-	listObjects(OBJ_INDEX);
+	listObjects(ObjectType::Trigger);
+	listObjects(ObjectType::Rule);
+	listObjects(ObjectType::Index);
 }
 
 void ViewWidget::applyConfiguration(void)
@@ -687,17 +687,17 @@ void ViewWidget::applyConfiguration(void)
 	try
 	{
 		View *view=nullptr;
-		ObjectType types[]={ OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
-		unsigned expr_type[]={ Reference::SQL_REFER_SELECT,
-													 Reference::SQL_REFER_FROM,
-													 Reference::SQL_REFER_WHERE,
-													 Reference::SQL_REFER_END_EXPR,
-													 Reference::SQL_VIEW_DEFINITION};
+		ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
+		unsigned expr_type[]={ Reference::SqlReferSelect,
+													 Reference::SqlReferFrom,
+													 Reference::SqlReferWhere,
+													 Reference::SqlReferEndExpr,
+													 Reference::SqlViewDefinition};
 		Reference refer;
 		QString str_aux;
 
 		if(!this->new_object)
-			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
+			op_list->registerObject(this->object, Operation::ObjectModified);
 		else
 			registerNewObject();
 

@@ -20,11 +20,11 @@
 
 Schema::Schema(void)
 {
-	obj_type=OBJ_SCHEMA;
+	obj_type=ObjectType::Schema;
 	fill_color=QColor(225,225,225, 80);
 	rect_visible=false;
-	attributes[ParsersAttributes::FILL_COLOR]=QString();
-	attributes[ParsersAttributes::RECT_VISIBLE]=QString();
+	attributes[Attributes::FillColor]=QString();
+	attributes[Attributes::RectVisible]=QString();
 }
 
 void Schema::setName(const QString &name)
@@ -32,10 +32,10 @@ void Schema::setName(const QString &name)
 	/* Schema names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
 	if(name.mid(0,3)==QString("pg_"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_SCHEMA)),
-						ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Schema)),
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -67,8 +67,9 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
-	attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? ParsersAttributes::_TRUE_ : QString());
+	attributes[Attributes::Layer]=QString::number(layer);
+	attributes[Attributes::FillColor]=fill_color.name();
+	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
 	setFadedOutAttribute();
 
 	return(BaseObject::__getCodeDefinition(def_type));

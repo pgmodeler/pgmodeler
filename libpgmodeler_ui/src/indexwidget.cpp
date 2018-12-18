@@ -18,7 +18,7 @@
 
 #include "indexwidget.h"
 
-IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
+IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Index)
 {
 	try
 	{
@@ -31,23 +31,23 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		Ui_IndexWidget::setupUi(this);
 
 		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-		predicate_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		predicate_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		elements_wgt = new ElementsWidget(this);
+		elements_tab = new ElementsTableWidget(this);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
-		grid->addWidget(elements_wgt,0,0);
+		grid->addWidget(elements_tab,0,0);
 		tabWidget->widget(1)->setLayout(grid);
 
-		configureFormLayout(index_grid, OBJ_INDEX);
+		configureFormLayout(index_grid, ObjectType::Index);
 
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_92)].push_back(buffering_chk);
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
-		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
+		values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 		frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 		frame->setParent(this);
@@ -56,7 +56,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
-		connect(elements_wgt, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
+		//connect(elements_tab, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
 		configureTabOrder();
 		selectIndexingType();
@@ -71,32 +71,32 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 void IndexWidget::selectIndexingType(void)
 {
-	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
-	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gist);
+	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gin);
+	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
-	enableSortingOptions();
+	//enableSortingOptions();
 }
 
-void IndexWidget::enableSortingOptions(void)
+/*void IndexWidget::enableSortingOptions(void)
 {
-	elements_wgt->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
-	elements_wgt->ascending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-	elements_wgt->descending_rb->setEnabled(elements_wgt->sorting_chk->isEnabled());
-	elements_wgt->nulls_first_chk->setEnabled(elements_wgt->sorting_chk->isEnabled());
+	elements_tab->sorting_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+	elements_tab->ascending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
+	elements_tab->descending_rb->setEnabled(elements_tab->sorting_chk->isEnabled());
+	elements_tab->nulls_first_chk->setEnabled(elements_tab->sorting_chk->isEnabled());
 
-	if(!elements_wgt->sorting_chk->isEnabled())
+	if(!elements_tab->sorting_chk->isEnabled())
 	{
-		elements_wgt->sorting_chk->setChecked(false);
-		elements_wgt->nulls_first_chk->setChecked(false);
+		elements_tab->sorting_chk->setChecked(false);
+		elements_tab->nulls_first_chk->setChecked(false);
 	}
-}
+}*/
 
 void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index)
 {
 	vector<IndexElement> idx_elems;
 
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
@@ -113,16 +113,17 @@ void IndexWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Ba
 		else
 			fill_factor_sb->setValue(90);
 
-		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
-		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
-		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
-		buffering_chk->setChecked(index->getIndexAttribute(Index::BUFFERING));
+		concurrent_chk->setChecked(index->getIndexAttribute(Index::Concurrent));
+		fast_update_chk->setChecked(index->getIndexAttribute(Index::FastUpdate));
+		unique_chk->setChecked(index->getIndexAttribute(Index::Unique));
+		buffering_chk->setChecked(index->getIndexAttribute(Index::Buffering));
 		predicate_txt->setPlainText(index->getPredicate());
 
 		selectIndexingType();
 	}
 
-	elements_wgt->setAttributes(model, parent_obj, idx_elems);
+	elements_tab->setAttributes<IndexElement>(model, parent_obj);
+	elements_tab->setElements<IndexElement>(idx_elems);
 }
 
 void IndexWidget::applyConfiguration(void)
@@ -138,10 +139,10 @@ void IndexWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
-		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
-		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
-		index->setIndexAttribute(Index::BUFFERING, buffering_chk->isChecked());
+		index->setIndexAttribute(Index::FastUpdate, fast_update_chk->isChecked());
+		index->setIndexAttribute(Index::Concurrent, concurrent_chk->isChecked());
+		index->setIndexAttribute(Index::Unique, unique_chk->isChecked());
+		index->setIndexAttribute(Index::Buffering, buffering_chk->isChecked());
 		index->setPredicate(predicate_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 
@@ -150,7 +151,7 @@ void IndexWidget::applyConfiguration(void)
 		else
 			index->setFillFactor(0);
 
-		elements_wgt->getElements(idx_elems);
+		elements_tab->getElements<IndexElement>(idx_elems);
 		index->addIndexElements(idx_elems);
 
 		finishConfiguration();

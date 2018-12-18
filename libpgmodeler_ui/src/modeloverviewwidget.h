@@ -34,6 +34,8 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 
+		QScrollArea *scrollarea;
+
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 
@@ -52,7 +54,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QSize pixmap_size;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-		static constexpr double RESIZE_FACTOR=0.20f;
+		static constexpr double ResizeFactor=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);

@@ -18,7 +18,7 @@
 
 #include "conversionwidget.h"
 
-ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CONVERSION)
+ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Conversion)
 {
 	try
 	{
@@ -28,7 +28,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		Ui_ConversionWidget::setupUi(this);
 
 		conv_func_sel=nullptr;
-		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		conv_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
 		setRequiredField(src_encoding_lbl);
@@ -36,7 +36,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		setRequiredField(conv_func_lbl);
 		setRequiredField(conv_func_sel);
 
-		configureFormLayout(convcod_grid, OBJ_CONVERSION);
+		configureFormLayout(convcod_grid, ObjectType::Conversion);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
 		convcod_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), convcod_grid->count()+1, 0, 1, 0);
 		convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);
@@ -65,8 +65,8 @@ void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		conv_func_sel->setSelectedObject(conv->getConversionFunction());
 		default_conv_chk->setChecked(conv->isDefault());
-		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SRC_ENCODING))));
-		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DST_ENCODING))));
+		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SrcEncoding))));
+		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DstEncoding))));
 	}
 }
 
@@ -81,8 +81,8 @@ void ConversionWidget::applyConfiguration(void)
 
 		BaseObjectWidget::applyConfiguration();
 
-		conv->setEncoding(Conversion::SRC_ENCODING, src_encoding_cmb->currentText());
-		conv->setEncoding(Conversion::DST_ENCODING, trg_encoding_cmb->currentText());
+		conv->setEncoding(Conversion::SrcEncoding, src_encoding_cmb->currentText());
+		conv->setEncoding(Conversion::DstEncoding, trg_encoding_cmb->currentText());
 		conv->setDefault(default_conv_chk->isChecked());
 		conv->setConversionFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 

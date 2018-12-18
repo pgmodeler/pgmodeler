@@ -27,10 +27,10 @@ Dummy::Dummy(void)
 						getPluginAuthor(),
 						getPluginDescription(),
 
-						GlobalAttributes::PLUGINS_DIR +
-						GlobalAttributes::DIR_SEPARATOR +
+						GlobalAttributes::PluginsDir +
+						GlobalAttributes::DirSeparator +
 						QString("dummy") +
-						GlobalAttributes::DIR_SEPARATOR + QString("dummy.png"));
+						GlobalAttributes::DirSeparator + QString("dummy.png"));
 }
 
 QString Dummy::getPluginTitle(void)
@@ -64,7 +64,7 @@ void Dummy::executePlugin(ModelWidget *)
 	Messagebox msgbox;
 	msgbox.show(trUtf8("Plugin successfully loaded!"),
 				trUtf8("Plugin successfully loaded! Check the <a href='http://www.pgmodeler.com.br/wiki/doku.php?id=plugins'>plugins wiki page</a> to know how to create your own plugins."),
-				Messagebox::INFO_ICON);
+				Messagebox::InfoIcon);
 }
 
 QKeySequence Dummy::getPluginShortcut(void)

@@ -44,23 +44,27 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 	public:
 		//! \brief Constants used to configure the table buttons
-		static const unsigned ADD_BUTTON=1,
-		REMOVE_BUTTON=2,
-		UPDATE_BUTTON=4,
-		MOVE_BUTTONS=8,
-		EDIT_BUTTON=16,
-		DUPLICATE_BUTTON=32,
-		REMOVE_ALL_BUTTON=64,
-		ALL_BUTTONS=127,
-		NO_BUTTONS=0;
+		static constexpr unsigned AddButton=1,
+		RemoveButton=2,
+		UpdateButton=4,
+		MoveButtons=8,
+		EditButton=16,
+		DuplicateButton=32,
+		RemoveAllButton=64,
+		ResizeColsButton=128,
+		AllButtons=255,
+		NoButtons=0;
 
-		ObjectsTableWidget(unsigned button_conf=ALL_BUTTONS, bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = 0);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
 
 		//! \brief Sets the specified column header label
 		void setHeaderLabel(const QString &label, unsigned col_idx);
+
+		//! \brief Sets the specified column header to be visible or not
+		void setHeaderVisible(unsigned col_idx, bool visible);
 
 		//! \brief Sets the specified column header icon
 		void setHeaderIcon(const QIcon &icon, unsigned col_idx);

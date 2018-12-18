@@ -50,28 +50,29 @@
 #include "configurationform.h"
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
+#include "layerswidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
 		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=15;
+		static constexpr int MaxRecentModels=15;
 
-		const static int GENERAL_ACTIONS_COUNT=8;
+		static constexpr int GeneralActionsCount=8;
 
-		const static int WELCOME_VIEW=0,
-		DESIGN_VIEW=1,
-		MANAGE_VIEW=2;
+		static constexpr int WelcomeView=0,
+		DesignView=1,
+		ManageView=2;
 
 		static bool confirm_validation;
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
-		const static unsigned NO_PENDING_OPER=0,
-		PENDING_SAVE_OPER=1,
-		PENDING_SAVE_AS_OPER=2,
-		PENDING_EXPORT_OPER=3,
-		PENDING_DIFF_OPER=4;
+		static constexpr unsigned NoPendingOp=0,
+		PendingSaveOp=1,
+		PendingSaveAsOp=2,
+		PendingExportOp=3,
+		PendingDiffOp=4;
 
 		unsigned pending_op;
 
@@ -79,7 +80,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		DonateWidget *donate_wgt;
 
-		SceneInfoWidget *canvas_info_wgt;
+		SceneInfoWidget *scene_info_wgt;
+
+		LayersWidget *layers_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -87,9 +90,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Widget used to navigate through the opened models.
 		ModelNavigationWidget *model_nav_wgt;
-
-		//! \brief Thread that controls temporary model file savings
-		QThread tmpmodel_thread;
 
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
@@ -294,6 +294,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void restoreTemporaryModels(void);
 		void arrangeObjects(void);
 		void toggleCompactView(void);
+		void toggleLayersWidget(bool show);
 };
 
 #endif

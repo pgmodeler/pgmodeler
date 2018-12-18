@@ -75,6 +75,13 @@
                 regexp_replace(regexp_replace(pg_get_triggerdef(tg.oid), '(.)+((INSERT|DELETE|UPDATE)|( OF))', ''), '( ON)(.)*','')
 	      ELSE NULL
 	    END AS columns, ]
+	    
+	    
+     %if ({pgsql-ver} >=f "10.0") %then
+        [ tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
+     %else
+        [ NULL AS old_table_name, NULL AS new_table_name, ]
+     %end
 
          ({comment}) [ AS comment ] 
 	    

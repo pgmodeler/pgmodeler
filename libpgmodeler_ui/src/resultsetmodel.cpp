@@ -40,7 +40,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 			type_ids.push_back(res.getColumnTypeId(col));
 		}
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -53,19 +53,19 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 						item_data.push_back(res.getColumnValue(col));
 				}
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
-		aux_cat.setFilter(Catalog::LIST_ALL_OBJS);
+		aux_cat.setFilter(Catalog::ListAllObjects);
 		std::sort(type_ids.begin(), type_ids.end());
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types = aux_cat.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
+		types = aux_cat.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
 		col = 0;
 
 		for(auto &tp : types)
-			type_names[tp[ParsersAttributes::OID].toInt()]=tp[ParsersAttributes::NAME];
+			type_names[tp[Attributes::Oid].toInt()]=tp[Attributes::Name];
 
 		for(col=0; col < col_count; col++)
 			tooltip_data.push_back(type_names[res.getColumnTypeId(col)]);
@@ -141,7 +141,7 @@ void ResultSetModel::append(ResultSet &res)
 	{
 		if(res.isValid() && !res.isEmpty())
 		{
-			if(res.accessTuple(ResultSet::FIRST_TUPLE))
+			if(res.accessTuple(ResultSet::FirstTuple))
 			{
 				do
 				{
@@ -160,7 +160,7 @@ void ResultSetModel::append(ResultSet &res)
 						}
 					}
 				}
-				while(res.accessTuple(ResultSet::NEXT_TUPLE));
+				while(res.accessTuple(ResultSet::NextTuple));
 			}
 
 			row_count += res.getTupleCount();

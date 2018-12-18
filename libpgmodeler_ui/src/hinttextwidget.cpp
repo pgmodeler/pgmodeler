@@ -24,7 +24,7 @@
 HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(parent)
 {
 	if(!btn_parent)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QHBoxLayout *layout=new QHBoxLayout(btn_parent);
 	QGraphicsDropShadowEffect *shadow=nullptr;
@@ -36,7 +36,7 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 	hint_tb=new QToolButton(this);
 	hint_tb->setCheckable(true);
 	hint_tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	hint_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("help")));
+	hint_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("help")));
 
 	shadow=new QGraphicsDropShadowEffect(this);
 	shadow->setOffset(5,5);
@@ -49,11 +49,11 @@ HintTextWidget::HintTextWidget(QWidget *btn_parent, QWidget *parent): QWidget(pa
 
 	this->setVisible(false);
 	text_lbl->installEventFilter(this);
-	PgModelerUiNS::configureWidgetFont(text_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(text_lbl, PgModelerUiNs::MediumFontFactor);
 
 	parent->installEventFilter(this);
 
-	setIconSize(SMALL_ICON);
+	setIconSize(SmallIcon);
 	connect(hint_tb, SIGNAL(toggled(bool)), this, SLOT(setVisible(bool)));
 }
 
@@ -95,17 +95,20 @@ void HintTextWidget::setText(const QString &text)
 	QFontMetrics f=text_lbl->fontMetrics();
 	QString txt=text;
 	QRect ret;
-	QSize txt_size;
+	QSize txt_size, max_size;
 
 	txt.replace(QRegExp(QString("(<)(br)(/)?(>)")), QString("\n"));
 	txt.remove(QRegExp(QString("(<)(/)?([a-z]|[A-Z])+(>)")));
 	ret=f.boundingRect(0,0, this->maximumWidth(), this->maximumHeight(), Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignTop , txt);
 	txt_size=QSize(ret.size().width() + 15, ret.size().height() + 15);
+	max_size=txt_size;
+	max_size.setWidth(max_size.width() * 1.025);
+	max_size.setHeight(max_size.height() * 1.05);
 
 	text_lbl->setMargin(5);
 	text_lbl->setText(text);
-	text_lbl->setMaximumSize(txt_size);
-	text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+	text_lbl->setMaximumSize(max_size);
+	text_lbl->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);
 	this->setMinimumSize(txt_size);
 	this->adjustSize();
 }
@@ -113,9 +116,9 @@ void HintTextWidget::setText(const QString &text)
 void HintTextWidget::setIconSize(unsigned icon_sz)
 {
 	if(icon_sz==0)
-		icon_sz=SMALL_ICON;
-	else if(icon_sz > LARGE_ICON)
-		icon_sz=LARGE_ICON;
+		icon_sz=SmallIcon;
+	else if(icon_sz > LargeIcon)
+		icon_sz=LargeIcon;
 
 	hint_tb->setMaximumSize(icon_sz + 8, icon_sz + 8);
 	hint_tb->setIconSize(QSize(icon_sz, icon_sz));
@@ -129,7 +132,7 @@ QString HintTextWidget::getText(void)
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 {
 	//Close the hint when it text lost its focus
-	if(object==text_lbl && (event->type()==QEvent::MouseButtonPress || event->type()==QEvent::FocusOut))
+	if(object==text_lbl && (event->type()==QEvent::MouseButtonDblClick || event->type()==QEvent::FocusOut))
 	{
 		hint_tb->setChecked(false);
 		return(true);

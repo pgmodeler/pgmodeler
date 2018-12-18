@@ -1,40 +1,64 @@
-v0.9.2-alpha
+v0.9.2-alpha1
 ------
 
-<em>Release date: August 20, 2018</em><br/>
-<em>Changes since: <strong>v0.9.1</strong></em><br/>
+<em>Release date: December 17, 2018</em><br/>
+<em>Changes since: <strong>v0.9.2-alpha</strong></em><br/>
 
-<strong>Summary:</strong> this release does not have an extensive change log but brings some long desired features as well important fixes. The first feature to talk about is the long awaited SQL execution cancelling which enables the user to abort the execution of any command issued to the server in the SQL execution field (Manage view) without the need to kill the application in order to interrupt the running SQL (like on previous releases). <br/>
+<strong>Summary:</strong> finally, after four months, we have a new version out of the oven! This one has A LOT of changes that range from several code refactoring and performance improvements to the introduction of new interesting features like table partitioning and canvas layers.<br/>
 
-Another feature introduced is the compact view of the model. This one makes the tables and views smaller by hiding the columns' data types and other informations. This feature came as a support to those developers who need to present their models to an audience without database specific knowledge. The trick here is to replace the original names of graphical objects by more friendly ones so the audience can understand the essence of the model being worked without worry about the tech details. <br/>
+First, let's talk about the changes and improvements. The objects drawing operations received a good set of patches making it a bit faster and less memory consuming. Putting these improvements in numbers, we have reduced in ~40% the internal size of a database model which means less objects to keep in memory as well to be drawn giving a good performance gain. You can see more details here: https://bit.ly/2Q3XMT5<br/>
 
-Also I decided to include a functionality to save and restore the majority of dialogs sizes and their positions, another long requested feature. This one can be useful for those who don't want pgModeler to resize the forms automatically everytime (specially when working in high resolution screens or dual monitors environments). This feature comes activated by default on new installations and can be deactivated at general settings. <br/>
+The overall performance of the reverse engineering was improved which, in consequence, have enhanced the diff process performance as well. The diff process received some fixes and changes and now it is generating less false-positive changes. <br/>
 
-More features were implemented in this release too, being some of them: the support to sequence options on indentity columns, the support to bulk data edition on data manipulation dialog, the support to paste CSV text from clipboard into the dialog where initial data can be specified for tables (in design view) and some other. <br/>
+In the new features side, we added scene layers which goals is to introduce a new level of visual segmentation of graphical objects. Another new feature created is the support to view columns that are deduced from the relationships between these objects and the tables. <br/>
 
-One important change done was a partial refactoring of the View editing form by moving the fields related to view's references to a dedicated dialog making the whole form a bit less complicated to use. I have plans to keep improving that dialog in special but in future releases a full UX/UI remodeling will be done in the application. <br/>
+Still in the design view in order to be more close to PostgreSQL 10+ new features pgModeler is now capable of handling declarative table partitioning (this includes code generation, reverse engineering and models comparison). Also, tables and views can have their attributes paginated or even collapsed to minimize the area occupied by these objects making big objects easier to visualize. <br/>
 
-Below some of the changes of this release, for the complete list of changes, please, take a look into the CHANGELOG.md. <br/>
+Now, about the bug fixes, several crashes were eliminated making the tool more stable for different usages, the reverse engineering received some patches so it can import correctly user-defined type in form of arrays and many others <br/>
 
-* [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
-* [New] Added support to save/restore the dialogs sizes and positions.
-* [New] Added support to truncate tables in DataManipulationForm.
-* [New] Added support to aliases on some graphical objects to be is used in the compact view mode.
-* [New] Added support to save/load object's metadata containing aliases information.
-* [New] Added support to compact view of the model where graphical objects can have a more friendly name for a reduced view as well for those who don't need to see details about tables (clients of the business, for instance).
-* [New] Added support to sequence options for identity columns.
-* [New] Added the ability to paste CSV text from clipboard into the TableDataWidget.
-* [New] Added support to bulk data edit in TableDataWidget.
-* [Change] Changed the behaviour of the fade in/out of relationships linked to a table by applying the effect on the other tables that are related to the selected one.
-* [Change] Refactored the view editing dialog by moving the references handling form to a dedicated modal dialog.
-* [Change] Improved the model loading from file by blocking signals of relationships avoiding excessive/repetive rendering of objects. The whole model is fully rendered when the file was completely loaded.
-* [Change] Minor adjustment on constraints rendering at extended attributes section of tables.
-* [Fix] Minor fix on stylesheet in order to display the extended button on general toolbar.
-* [Fix] Fix a shortcut conflict in DataManipulationform.
-* [Fix] Fixed the offset of strings composing the StorageType.
-* [Fix] Minor fix in SQLExecutionWidget allowing the output widget to be resized to a size lower than the default one.
-* [Fix] Fixed the generation of Database object source in DatabaseExplorerWidget.
-* [Fix] Minor fix in HintTextWidget to stay on top of all widget when being displayed.
-* [Fix] Fixed a bug that was not quoting extension name when needed.
-* [Fix] Fixed a crash when trying to remove a fk relationship when it was created from a foreign key which references protected columns (added by relationship).
-* [Fix] Fix a crash when importing CSV files into DataManipulationForm.
+Finally, some of the key changes of this release are listed below. For the complete list of changes, fixes and new feautures, please, read the CHANGELOG.md. <br/>
+
+* [New] Added support to scene layers.
+* [New] Added support to view's columns importing in DatabaseImportHelper. 
+* [New] Added the ability to load view columns from database model file in DatabaseModel::createView.
+* [New] Added a tab "Columns" in ReferenceWidget where the user will be able to insert columns to be used as view columns.
+* [New] Added support to pagination of tables and views columns pagination.
+* [New] Added a fix step on CLI to remove the deprecated attribute hide-ext-attribs from tables and views xml code.
+* [New] Added a configuration option to control attributes per pages in tables and views.
+* [New] Added support to save collapsing states and current attributes pages to the database model file.
+* [New] Added support to OLD/NEW tables aliases on triggers.
+* [New] Added support for partition attaching/detaching detection in diff process.
+* [New] Added support to importing partitioned/partition tables on DatabaseImportHelper.
+* [New] Added support to resize grid cells to fit contents on ObjectsTableWidget.
+* [New] Added support to hide columns on data manipulation dialog.
+* [Change] Minor fixes in OperationList in order to force views to be updated correctly when operating over a table which is referenced by those objects.
+* [Change] Minor adjustments on SchemaView and BaseTableView (and its children classes) to update the geometry when they switch from invisble to visible state.
+* [Change] Improved the update of views when referenced columns and tables change their structure.
+* [Change] Improved database model loading times by avoiding the rendering of tables while the children objects (indexes, trigger, rules, etc) are being added.
+* [Change] The zoom in/out level is now sensible on how much the user rolls the mouse wheel.
+* [Change] Code refactoring done in order to make it more close to C++14 in order to take advantage of new features introduced by that standard.
+* [Change] Improved the diff process in such way to avoid generating unnecessary/noise commands related to changing types of columns to integer and setting nextval() call as default value.
+* [Change] Move the FK settings, copy options and name patterns group boxes to a dedicated tab on RelationshipWidget.
+* [Change] Improved the models destruction when closing the application.
+* [Change] Improved the Index/Exclude/ParitionKey elements handling by creating a generic form/grid that handles these kinds of objects (ElementsTableWidget).
+* [Change] Modified the RelationshipWidget in order to handle partitioning relationships.
+* [Change] Modified RelationshipConfigWidget in order to write name partterns for partitioning relationships.
+* [Change] Improved the reverse engineering performance by avoiding update relationships as they are being imported.
+* [Change] Improved the object duplication feature in ModelWidget.
+* [Change] When the model is loaded it is copied to the temporary models storage as a first version of the temporary dbm file.
+* [Change] pgModeler will now use the official docs url in the help buttons.
+* [Fix] Fixed a crash while renaming view's children objects.
+* [Fix] Fixed the rendering of views which contain only a single reference that is the whole object's defintion.
+* [Fix] Fixed the column name deduction for recursive views.
+* [Fix] Fixed a bug that was causing crashes while configure new constraints on tables.
+* [Fix] Fixed a regression in schema's rectangle selection.
+* [Fix] Fixed an artifact when user switched on and off the compact view.
+* [Fix] Fixed a bug in DatabaseModel::destroyObjects that could lead to segfault when the destroyed model had permissions on it.
+* [Fix] Fixed a bug when importing columns which data types is some user defined type in form of array, e.g., custom_type[].
+* [Fix] Fixed a bug that was causing special primary key configured on a relationship to make the original primary key of the table to disappear after disconnect the relationship. Now pgModeler stores in memory the original PK prior the connection of relationship and creation of the special PK. When disconnected the relationship, the original primary key is restored on its parent table.
+* [Fix] Fixed the class Relationship to reuse compatible columns when handling partitioning relationships.
+* [Fix] Fixed the diff process in such way to create new columns with their respective COMMENT ON statement when present.
+* [Fix] Fixed the detection of comment changes for columns on diff process.
+* [Fix] Making pgModeler honor the columns arrangement in primary keys.
+* [Fix] Fixed a bug that was causing FK relationship deletion to crash the application sometimes.
+* [Fix] Some fixes were done in the ModelOverviewWidget in order to support large models without exceed the screen size when configuring the size of the overall widget.

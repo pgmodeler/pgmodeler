@@ -6,11 +6,11 @@
 %if {decl-in-table} %then
  $tb
 %else
-[-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-[-- ] {drop}
- %if {table} %then
-  [ALTER TABLE ] {table} [ ADD COLUMN ]
-  %end
+    [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
+    [-- ] {drop}
+    %if {table} %then
+        [ALTER TABLE ] {table} [ ADD COLUMN ]
+    %end
 %end
 
 {name} $sp {type}
@@ -68,6 +68,10 @@
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 $br [-- ddl-end --] $br 
 $br
+%end
+
+%if %not {decl-in-table} %and {comment} %then
+ {comment} $br 
 %end
 
 $br

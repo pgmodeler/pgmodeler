@@ -34,10 +34,10 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private:
 		Q_OBJECT
 		
-		static const QString DEP_NOT_DEFINED,
-		DEP_NOT_FOUND,
-		ELEM_SEPARATOR,
-		DEFAULT_SOURCE_CODE;
+		static const QString DepNotDefined,
+		DepNotFound,
+		ElemSeparator,
+		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;

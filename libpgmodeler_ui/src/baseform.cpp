@@ -26,7 +26,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
 {
-	if(button_conf==Messagebox::OK_CANCEL_BUTTONS)
+	if(button_conf==Messagebox::OkCancelButtons)
 	{
 		apply_ok_btn->setText(trUtf8("&Apply"));
 		cancel_btn->setVisible(true);
@@ -127,14 +127,14 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 {
 	if(!widget)	return;
 
-	if(widget->getHandledObjectType()!=BASE_OBJECT && widget->windowTitle().isEmpty())
+	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
 		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
 	else
 		setWindowTitle(widget->windowTitle());
 
 	apply_ok_btn->setDisabled(widget->isHandledObjectProtected());
 	resizeForm(widget);
-	setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+	setButtonConfiguration(Messagebox::OkCancelButtons);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), widget, SLOT(cancelConfiguration()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
@@ -148,7 +148,7 @@ void BaseForm::setMainWidget(QWidget *widget)
 
 	setWindowTitle(widget->windowTitle());
 	resizeForm(widget);
-	setButtonConfiguration(Messagebox::OK_BUTTON);
+	setButtonConfiguration(Messagebox::OkButton);
 
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
 	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));

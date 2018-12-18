@@ -36,18 +36,18 @@ class Catalog {
 	private:
 		SchemaParser schparser;
 
-		static const QString QUERY_LIST,	//! \brief Executes a list command on catalog
-		QUERY_ATTRIBS, //! \brief Executes a attribute retrieving command on catalog
-		CATALOG_SCH_DIR, //! \brief Default catalog schemas directory
-		PGSQL_TRUE, //! \brief Replacement for true 't' boolean value
-		PGSQL_FALSE, //! \brief Replacement for false 'f' boolean value
-		BOOL_FIELD,     //! \brief Suffix for boolean fields.
+		static const QString QueryList,	//! \brief Executes a list command on catalog
+		QueryAttribs, //! \brief Executes a attribute retrieving command on catalog
+		CatalogSchemasDir, //! \brief Default catalog schemas directory
+		PgSqlTrue, //! \brief Replacement for true 't' boolean value
+		PgSqlFalse, //! \brief Replacement for false 'f' boolean value
+		BoolField,     //! \brief Suffix for boolean fields.
 
 		//! \brief Query used to retrieve extension objects.
-		GET_EXT_OBJS_SQL,
+		GetExtensionObjsSql,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		ARRAY_PATTERN;
+		ArrayPattern;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
@@ -65,10 +65,7 @@ class Catalog {
 		there are different fields that tells if the object (or its parent) is part of extension. */
 		static map<ObjectType, QString> ext_oid_fields;
 
-		//! \brief Indicates is the use of cached catalog queries is enabled
-		static bool use_cached_queries;
-
-		//! \brief Store the cached catalog queries (only when use_cached_queries=true)
+		//! \brief Store the cached catalog queries
 		static attribs_map catalog_queries;
 
 		//! \brief Connection used to query the pg_catalog
@@ -129,23 +126,23 @@ class Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PGMODELER_TEMP_DB_OBJ;
+		static const QString PgModelerTempDbObj;
 
 		//! \brief Excludes the system objects from listing
-		static const unsigned EXCL_SYSTEM_OBJS=1,
+		static constexpr unsigned ExclSystemObjs=1,
 
 		//! \brief Excludes the extension generated objects from listing
-		EXCL_EXTENSION_OBJS=2,
+		ExclExtensionObjs=2,
 
 		//! \brief Excludes the builtin array types.
-		EXCL_BUILTIN_ARRAY_TYPES=4,
+		ExclBuiltinArrayTypes=4,
 
 		/*! \brief Shows only system objects. Using this filter will disable the other two filters.
 		Using this filter implies the listing of extension objects */
-		LIST_ONLY_SYS_OBJS=8,
+		ListOnlySystemObjs=8,
 
 		//! \brief Shows all objects including system objects and extension object.
-		LIST_ALL_OBJS=16;
+		ListAllObjects=16;
 
 		//! \brief Changes the current connection used by the catalog
 		void setConnection(Connection &conn);
@@ -187,6 +184,12 @@ class Catalog {
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
+
+		/*! \brief Returns a set of multiple attributes (several tuples) for the specified catalog schema file.
+		 * This version of the method differs from the one in which the user need to provide the object type.
+		 * This one, the user is responsible to provide all attributes that will be parsed together with the
+		 * catalog file. */
+		vector<attribs_map> getMultipleAttributes(const QString &catalog_sch, attribs_map attribs=attribs_map());
 
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)

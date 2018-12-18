@@ -20,30 +20,30 @@
 
 Aggregate::Aggregate(void)
 {
-	obj_type=OBJ_AGGREGATE;
+	obj_type=ObjectType::Aggregate;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[ParsersAttributes::TYPES]=QString();
-	attributes[ParsersAttributes::TRANSITION_FUNC]=QString();
-	attributes[ParsersAttributes::STATE_TYPE]=QString();
-	attributes[ParsersAttributes::BASE_TYPE]=QString();
-	attributes[ParsersAttributes::FINAL_FUNC]=QString();
-	attributes[ParsersAttributes::INITIAL_COND]=QString();
-	attributes[ParsersAttributes::SORT_OP]=QString();
+	attributes[Attributes::Types]=QString();
+	attributes[Attributes::TransitionFunc]=QString();
+	attributes[Attributes::StateType]=QString();
+	attributes[Attributes::BaseType]=QString();
+	attributes[Attributes::FinalFunc]=QString();
+	attributes[Attributes::InitialCond]=QString();
+	attributes[Attributes::SortOp]=QString();
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)
 {
 	//Case the function index is invalid raises an error
-	if(func_idx!=FINAL_FUNC && func_idx!=TRANSITION_FUNC)
-		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Checks if the function is valid, if not the case raises an error
 	if(!isValidFunction(func_idx, func))
-		throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidConfiguration)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
-						ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Aggregate)),
+						ErrorCode::AsgFunctionInvalidConfiguration,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(functions[func_idx]!=func);
 	functions[func_idx]=func;
@@ -53,7 +53,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 {
 	if(func)
 	{
-		if(func_idx==FINAL_FUNC)
+		if(func_idx==FinalFunc)
 		{
 			/* According to docs the final function to be valid must have 1 parameter which type is the
 					same as the state_type attribute. BUT when importing system aggregates some functions has
@@ -97,7 +97,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 	else return(true);
 }
 
-void Aggregate::setStateType(PgSQLType state_type)
+void Aggregate::setStateType(PgSqlType state_type)
 {
 	setCodeInvalidated(this->state_type != state_type);
 	this->state_type=state_type;
@@ -124,11 +124,11 @@ void Aggregate::setSortOperator(Operator *sort_op)
 		func=sort_op->getFunction(Operator::FUNC_OPERATOR);
 		//Validating the condition 1
 		if(data_types.size()!=1)
-			throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidOperatorArguments,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//Validating the condition 2
 		else if(func->getParameter(0).getType()!=data_types[0] ||
 				(func->getParameterCount()==2 && func->getParameter(1).getType()!=data_types[0]))
-			throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidOperatorTypes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	setCodeInvalidated(sort_operator != sort_op);
@@ -143,9 +143,9 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 	count=data_types.size();
 	for(i=0; i < count; i++)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		if(def_type==SchemaParser::SqlDefinition)
 		{
-			str_types+=data_types[i].getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			str_types+=data_types[i].getCodeDefinition(SchemaParser::SqlDefinition);
 			if(i < (count-1)) str_types+=',';
 		}
 		else str_types+=data_types[i].getCodeDefinition(def_type);
@@ -153,12 +153,12 @@ void Aggregate::setTypesAttribute(unsigned def_type)
 
 	/* Case none data type is specified for the aggregate creates
 		an aggregate that accepts any possible data '*' e.g. function(*) */
-	if(def_type == SchemaParser::SQL_DEFINITION && str_types.isEmpty()) str_types='*';
+	if(def_type == SchemaParser::SqlDefinition && str_types.isEmpty()) str_types='*';
 
-	attributes[ParsersAttributes::TYPES]=str_types;
+	attributes[Attributes::Types]=str_types;
 }
 
-void Aggregate::addDataType(PgSQLType type)
+void Aggregate::addDataType(PgSqlType type)
 {
 	data_types.push_back(type);
 	setCodeInvalidated(true);
@@ -168,7 +168,7 @@ void Aggregate::removeDataType(unsigned type_idx)
 {
 	//Raises an exception if the type index is out of bound
 	if(type_idx >= data_types.size())
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Removes the type at the specified position
 	data_types.erase(data_types.begin() + type_idx);
@@ -189,13 +189,13 @@ unsigned Aggregate::getDataTypeCount(void)
 Function *Aggregate::getFunction(unsigned func_idx)
 {
 	//Raises an exception if the function index is invalid
-	if(func_idx!=FINAL_FUNC && func_idx!=TRANSITION_FUNC)
-		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
+		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_idx]);
 }
 
-PgSQLType Aggregate::getStateType(void)
+PgSqlType Aggregate::getStateType(void)
 {
 	return(state_type);
 }
@@ -210,11 +210,11 @@ Operator *Aggregate::getSortOperator(void)
 	return(sort_operator);
 }
 
-PgSQLType Aggregate::getDataType(unsigned type_idx)
+PgSqlType Aggregate::getDataType(unsigned type_idx)
 {
 	//Raises an exception if the type index is out of bound
 	if(type_idx >= data_types.size())
-		throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(data_types[type_idx]);
 }
@@ -226,52 +226,52 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 
 	setTypesAttribute(def_type);
 
-	if(functions[TRANSITION_FUNC])
+	if(functions[TransitionFunc])
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getSignature();
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getSignature();
 		else
 		{
-			functions[TRANSITION_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
-													 ParsersAttributes::TRANSITION_FUNC);
-			attributes[ParsersAttributes::TRANSITION_FUNC]=functions[TRANSITION_FUNC]->getCodeDefinition(def_type,true);
+			functions[TransitionFunc]->setAttribute(Attributes::RefType,
+													 Attributes::TransitionFunc);
+			attributes[Attributes::TransitionFunc]=functions[TransitionFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
-	if(functions[FINAL_FUNC])
+	if(functions[FinalFunc])
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getSignature();
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getSignature();
 		else
 		{
-			functions[FINAL_FUNC]->setAttribute(ParsersAttributes::REF_TYPE,
-												ParsersAttributes::FINAL_FUNC);
-			attributes[ParsersAttributes::FINAL_FUNC]=functions[FINAL_FUNC]->getCodeDefinition(def_type,true);
+			functions[FinalFunc]->setAttribute(Attributes::RefType,
+												Attributes::FinalFunc);
+			attributes[Attributes::FinalFunc]=functions[FinalFunc]->getCodeDefinition(def_type,true);
 		}
 	}
 
 	if(sort_operator)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::SORT_OP]=sort_operator->getName(true);
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::SortOp]=sort_operator->getName(true);
 		else
-			attributes[ParsersAttributes::SORT_OP]=sort_operator->getCodeDefinition(def_type,true);
+			attributes[Attributes::SortOp]=sort_operator->getCodeDefinition(def_type,true);
 	}
 
 	if(!initial_condition.isEmpty())
-		attributes[ParsersAttributes::INITIAL_COND]=initial_condition;
+		attributes[Attributes::InitialCond]=initial_condition;
 
-	if(def_type==SchemaParser::SQL_DEFINITION)
-		attributes[ParsersAttributes::STATE_TYPE]=*(state_type);
+	if(def_type==SchemaParser::SqlDefinition)
+		attributes[Attributes::StateType]=*(state_type);
 	else
-		attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
+		attributes[Attributes::StateType]=state_type.getCodeDefinition(def_type,Attributes::StateType);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Aggregate::getDropDefinition(bool cascade)
 {
-	setTypesAttribute(SchemaParser::SQL_DEFINITION);
+	setTypesAttribute(SchemaParser::SqlDefinition);
 	return(BaseObject::getDropDefinition(cascade));
 }
 
@@ -279,7 +279,7 @@ QString Aggregate::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		setTypesAttribute(SchemaParser::SQL_DEFINITION);
+		setTypesAttribute(SchemaParser::SqlDefinition);
 		return(BaseObject::getAlterDefinition(object));
 	}
 	catch(Exception &e)
@@ -297,7 +297,7 @@ QString Aggregate::getSignature(bool format)
 	else
 	{
 		for(auto &tp : data_types)
-			types.push_back(tp.getCodeDefinition(SchemaParser::SQL_DEFINITION));
+			types.push_back(tp.getCodeDefinition(SchemaParser::SqlDefinition));
 	}
 
 	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));

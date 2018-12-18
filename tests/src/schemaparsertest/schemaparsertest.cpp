@@ -25,6 +25,7 @@ class SchemaParserTest: public QObject {
 
   private slots:
 		void testExpressionEvaluationWithCasts(void);
+		void testSetOperationInIf(void);
 };
 
 void SchemaParserTest::testExpressionEvaluationWithCasts(void)
@@ -44,6 +45,33 @@ void SchemaParserTest::testExpressionEvaluationWithCasts(void)
 	{
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getCodeDefinition(attribs) == "10.0", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testSetOperationInIf(void)
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	buffer = "%set {ver} 10.0\n";
+	buffer += "\n%if ({ver} <=f \"9.3\") %then";
+	buffer += "\n %set {variable1} [don't ]";
+	buffer += "\n %set {variable2} [extract]";
+	buffer += "\n%else";
+	buffer += "\n %set {variable3} [extract ]";
+	buffer += "\n %set {variable4} [in else]";
+	buffer +=	"\n{variable3}{variable4}";
+	buffer += "\n%end";
+
+	try
+	{
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getCodeDefinition(attribs) == "extract in else", true);
 	}
 	catch(Exception &e)
 	{

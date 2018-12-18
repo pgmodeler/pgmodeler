@@ -44,6 +44,8 @@ class View: public BaseTable {
 		vector<TableObject *> rules;
 		vector<TableObject *> indexes;
 
+		vector<SimpleColumn> columns;
+
 		/*! \brief Commom table expression. This is prepend on the views definition.
 		CTE's are available since PostgreSQL 8.4:
 			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
@@ -71,12 +73,10 @@ class View: public BaseTable {
 		//! \brief Returns the reference to internal expression list according to the SQL expression type
 		vector<unsigned> *getExpressionList(unsigned sql_type);
 
-		/*! \brief Returns a list of deduced names for view's colums for recursive views.
-	The names are retrieved, first, from columns aliases and lastly from table's columns
-	when TABLE.* syntax is used */
-		QStringList getColumnsList(void);
-
 		void setSQLObjectAttribute(void);
+
+		//! \brief Returns a unique name for a columns comparing it to the existent columns. In case of duplication the name receives a suffix
+		QString getUniqueColumnName(const QString &name);
 
 	public:
 		View(void);
@@ -137,8 +137,8 @@ class View: public BaseTable {
 		//! \brief Returns the object index searching by its index and type
 		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-		//! \brief Returns all child objects of the view (does not include references)
-		vector<BaseObject *> getObjects(void);
+		//! \brief Returns the children objects of the view excluding the provided children types (does not include references)
+		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns the view's child object using its index and type
 		TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -233,6 +233,19 @@ class View: public BaseTable {
 
 		//! \brief Returns if the view has an reference expression that is used as view definition
 		bool hasDefinitionExpression(void);
+
+		void setObjectListsCapacity(unsigned capacity);
+
+		unsigned getMaxObjectCount(void);
+
+		/*! \brief Returns a list of deduced names for view's colums (useful for recursive views).
+		 *	The names are retrieved, first, from columns aliases and lastly from table's columns
+		 * 	when TABLE.* syntax is used. For expressions, if aliases aren't defined, a column name in the
+		 *  for _expr#_ is used. */
+		void generateColumns(void);
+
+		//! \brief Returns the deduced columns of the view
+		vector<SimpleColumn> getColumns(void);
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

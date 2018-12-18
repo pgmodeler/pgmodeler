@@ -44,30 +44,40 @@ class TableObjectView: public BaseObjectView
 		 The constraint type parameter is only used when the source object is a
 		 column  and is used to format the descriptor indication that the column
 		 has a constraint */
-		void configureDescriptor(ConstraintType constr_type=BaseType::null);
+		void configureDescriptor(ConstraintType constr_type=BaseType::Null);
 
 		QVariant itemChange(GraphicsItemChange, const QVariant &value)
 		{
 			return(value);
 		}
 
+		void calculateBoundingRect(void);
+
 	public:
-		static const QString	CONSTR_DELIM_END,
-		CONSTR_DELIM_START,
-		TYPE_SEPARATOR,
-		CONSTR_SEPARATOR,
-		TXT_FOREIGN_KEY,
-		TXT_NOT_NULL,
-		TXT_PRIMARY_KEY,
-		TXT_UNIQUE,
-		TXT_CHECK,
-		TXT_EXCLUDE;
+		static const QString	ConstrDelimEnd,
+		ConstrDelimStart,
+		TypeSeparator,
+		ConstrSeparator,
+		TextForeignKey,
+		TextNotNull,
+		TextPrimaryKey,
+		TextUnique,
+		TextCheck,
+		TextExclude;
+
+		static constexpr unsigned ObjDescriptor = 0,
+		NameLabel = 1,
+		TypeLabel = 2,
+		ConstrAliasLabel = 3;
 
 		TableObjectView(TableObject *object=nullptr);
 		~TableObjectView(void);
 
 		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);
+
+		//! \brief Configures a item from a SimpleColumn instance
+		void configureObject(const SimpleColumn &col);
 
 		//! \brief Configures the object as a table object
 		void configureObject(void);
@@ -81,6 +91,13 @@ class TableObjectView: public BaseObjectView
 		/*! \brief Returns a formatted string containing the keywords indicating the constraints
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+
+		virtual QRectF boundingRect(void) const;
+
+		void configureObjectShadow(void) = delete;
+		void configureObjectSelection(void) = delete;
 };
 
 #endif

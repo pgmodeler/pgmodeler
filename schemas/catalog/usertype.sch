@@ -16,7 +16,7 @@
 
   #Excluding types related to tables/views/sequeces/materialized views
   %if {filter-tab-types} %then
-   [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m'))=0 ]
+   [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p'))=0 ]
   %end
 
   %if {exc-builtin-arrays} %then
@@ -134,7 +134,7 @@
 
     #Excluding types related to tables/views/sequeces/materialized views
     %if {filter-tab-types} %then
-     [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m'))=0 ]
+     [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p'))=0 ]
     %end
 
     %if {exc-builtin-arrays}  %then

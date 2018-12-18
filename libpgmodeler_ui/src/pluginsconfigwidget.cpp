@@ -23,14 +23,14 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::PLUGINS_DIR);
+	QDir dir=QDir(GlobalAttributes::PluginsDir);
 
 	root_dir_edt->setText(dir.absolutePath());
 
-	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EDIT_BUTTON, false, this);
+	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
 	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
-	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("plugins")),0);
+	plugins_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("plugins")),0);
 	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
 	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 
@@ -65,8 +65,8 @@ void PluginsConfigWidget::loadConfiguration(void)
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::PLUGINS_DIR +
-						GlobalAttributes::DIR_SEPARATOR;
+			dir_plugins=GlobalAttributes::PluginsDir +
+						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
@@ -90,16 +90,16 @@ void PluginsConfigWidget::loadConfiguration(void)
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DIR_SEPARATOR  +
+            GlobalAttributes::DirSeparator  +
 			plugin_name + QString(".dll");
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DIR_SEPARATOR  +
+            GlobalAttributes::DirSeparator  +
 			QString("lib") + plugin_name + QString(".dylib");
 #else
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DIR_SEPARATOR  +
+			GlobalAttributes::DirSeparator  +
 			QString("lib") + plugin_name + QString(".so");
 #endif
 #endif
@@ -121,7 +121,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 			plugin_action->setShortcut(plugin->getPluginShortcut());
 
 			icon.load(dir_plugins + plugin_name +
-					  GlobalAttributes::DIR_SEPARATOR  +
+					  GlobalAttributes::DirSeparator  +
 					  plugin_name + QString(".png"));
 			plugin_action->setIcon(icon);
 
@@ -133,18 +133,18 @@ void PluginsConfigWidget::loadConfiguration(void)
 		}
 		else
 		{
-			errors.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
-									   .arg(dir_list.front())
-									   .arg(lib)
-									   .arg(plugin_loader.errorString()),
-									   ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			errors.push_back(Exception(Exception::getErrorMessage(ErrorCode::PluginNotLoaded)
+																 .arg(dir_list.front())
+																 .arg(lib)
+																 .arg(plugin_loader.errorString()),
+																 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 		dir_list.pop_front();
 		plugins_tab->clearSelection();
 	}
 
 	if(!errors.empty())
-		throw Exception(ERR_PLUGINS_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
+		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
 void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot)

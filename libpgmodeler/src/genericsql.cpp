@@ -20,8 +20,8 @@
 
 GenericSQL::GenericSQL(void)
 {
-	obj_type=OBJ_GENERIC_SQL;
-	attributes[ParsersAttributes::DEFINITION] = QString();
+	obj_type=ObjectType::GenericSql;
+	attributes[Attributes::Definition] = QString();
 }
 
 void GenericSQL::setDefinition(const QString &def)
@@ -40,7 +40,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[ParsersAttributes::DEFINITION] = definition;
+	attributes[Attributes::Definition] = definition;
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 

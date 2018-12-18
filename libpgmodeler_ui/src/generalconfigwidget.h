@@ -54,17 +54,17 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		static map<QString, attribs_map> config_params;
 
-		static const unsigned UNIT_MILIMETERS=0,
-		UNIT_POINT=1,
-		UNIT_INCHS=2,
-		UNIT_CENTIMETERS=3;
+		static constexpr unsigned UnitMilimeters=0,
+		UnitPoint=1,
+		UnitInches=2,
+		UnitCentimeters=3;
 
 		HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
 		*save_last_pos_ht, *invert_rangesel_ht, *disable_smooth_ht,
 		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
 		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht,
 		*autosave_ht, *op_history_ht, *ui_language_ht, *grid_size_ht,
-		*use_curved_lines_ht, *max_result_rows_ht;
+		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht;
 
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 

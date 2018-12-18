@@ -33,7 +33,7 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 	private:
 		Q_OBJECT
 
-		static const QString ID_LABEL;
+		static const QString IdLabel;
 
 		//! \brief Reference database model
 		DatabaseModel *model;

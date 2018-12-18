@@ -19,35 +19,31 @@
 /**
 \ingroup libpgmodeler_ui
 \class ElementWidget
-\brief Implements the operations to create/edit constraints (exclude) and indexes elements via form.
+\brief Implements the operations to create/edit constraints (exclude) and indexes elements, and partition keys via form.
 */
 
 #ifndef ELEMENT_WIDGET_H
 #define ELEMENT_WIDGET_H
 
 #include <QtWidgets>
-#include "ui_elementswidget.h"
+#include "ui_elementwidget.h"
 #include "objectstablewidget.h"
 #include "objectselectorwidget.h"
-#include "baseobjectwidget.h"
+#include "partitionkey.h"
 
-/* Declaring the IndexElement and ExcludeElement class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(IndexElement)
-Q_DECLARE_METATYPE(ExcludeElement)
-
-class ElementsWidget: public QWidget, public Ui::ElementsWidget {
+class ElementWidget: public QWidget, public Ui::ElementWidget {
 	private:
 		Q_OBJECT
+
+		QFrame *warning_frame;
+
+		Element *element;
+
 		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements
 		BaseObject *parent_obj;
 		
 		//! \brief Syntax highlighter for element expression
-		SyntaxHighlighter	*elem_expr_hl;
-		
-		//! \brief Table widget used to control the index elements
-		ObjectsTableWidget *elements_tab;
+		SyntaxHighlighter *elem_expr_hl;
 		
 		//! \brief Operator class selector
 		ObjectSelectorWidget *op_class_sel,
@@ -61,37 +57,35 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		//! \brief Updates the column combobox with the existent columns on parent table
 		void updateColumnsCombo(void);
 		
-		//! \brief Shows the element data on the elements table at the specified line
-		void showElementData(Element *elem, int elem_idx);
-		void showElementData(IndexElement elem, int elem_idx);
-		void showElementData(ExcludeElement elem, int elem_idx);
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj);
+
+		//! \brief Enables the widget to handle index elements
+		void setIndexElement(IndexElement *elem);
+
+		//! \brief Enables the widget to handle exclude constraint elements
+		void setExcludeElement(ExcludeElement *elem);
+
+		//! \brief Enables the widget to handle partition key elements
+		void setPartitionKey(PartitionKey *elem);
+
+		//! \brief Allocates the handled element based upon the provided Class (should be child of Element)
+		template<class Class>
+		void createElement(Class *elem);
 		
 	public:
-		ElementsWidget(QWidget *parent = 0);
+		ElementWidget(QWidget *parent = 0);
 		
-		//! \brief Enables the widget to handle index elements
-		void setAttributes(DatabaseModel *model, BaseTable *table, vector<IndexElement> &elems);
-		
-		//! \brief Enables the widget to handle exclude constraint elements
-		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems);
-		
-		//! \brief Copy the current elements into the list
-		void getElements(vector<IndexElement> &elems);
-		
-		//! \brief Copy the current elements into the list
-		void getElements(vector<ExcludeElement> &elems);
-		
+		//! \brief Configures the widget to handle the element considering its type (IndexElement, ExcludeElement, PartitionKey)
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem);
+
+		//! \brief Returns the configured element
+		Element *getElement(void);
+
 	public slots:
-		void clear(void);
-		
+		void applyConfiguration(void);
+				
 	private slots:
 		void selectElementObject(void);
-		void handleElement(int elem_idx);
-		void editElement(int elem_idx);
-		
-	signals:
-		void s_elementHandled(int elem_idx);
 };
 
 #endif

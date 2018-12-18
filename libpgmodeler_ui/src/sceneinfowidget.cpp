@@ -38,7 +38,7 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 {
 	if(!object)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("fechar1")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("fechar1")));
 		obj_name_lbl->setText(trUtf8("No selection"));
 		obj_pos_info_lbl->setText(trUtf8("N/A"));
 	}
@@ -51,7 +51,7 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 																		object->boundingRect().width(),
 																		object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(PgModelerUiNS::getIconPath(object->getSourceObject()->getSchemaName()));
+		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getSourceObject()->getSchemaName()));
 		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getSourceObject()->getSignature()).arg(object->getSourceObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 															.arg(roundf(rect.left()))
@@ -65,7 +65,7 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 {
 	QRect rect = objs_rect.toRect();
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("seltodos")));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 	obj_name_lbl->setText(trUtf8("Sel. objects: %1").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 														.arg(rect.left())

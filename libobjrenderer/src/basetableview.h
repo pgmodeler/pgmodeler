@@ -31,6 +31,8 @@
 #include "tableobjectview.h"
 #include "roundedrectitem.h"
 #include "baserelationship.h"
+#include "textpolygonitem.h"
+#include "attributestoggleritem.h"
 
 class BaseTableView: public BaseObjectView {
 	private:
@@ -40,11 +42,25 @@ class BaseTableView: public BaseObjectView {
 		vector<BaseRelationship *> connected_rels;
 
 	protected:
+		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
+		 * call to configureObject(). This attribute is set to true only when the objects is invisible
+		 * the the configureObject is called. Once the object gets visible again this attribute is set
+		 * to false and the geometry updated immediately (see BaseTableView::itemChange()) */
+		bool pending_geom_update;
+
 		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns,
+
 		*ext_attribs;
 
-		static bool hide_ext_attribs, hide_tags;
+		//! brief Indicates if the extended attributes body should be hidden
+		static bool hide_ext_attribs,
+
+		//! brief Indicates if the tag object should be hidden
+		hide_tags;
+
+		//! brief Controls the maximum amount of attributes visible per page (columns/references + extended attributes)
+		static unsigned attribs_per_page[2];
 
 		//! \brief Polygonal object that defines the table body
 		RoundedRectItem *body,
@@ -52,13 +68,11 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
 		*ext_attribs_body,
 
-		*placeholder,
+		*placeholder;
 
-		*ext_attribs_toggler;
+		AttributesTogglerItem *attribs_toggler;
 
-		QGraphicsPolygonItem *tag_body, *ext_attribs_tog_arrow;
-
-		QGraphicsSimpleTextItem *tag_name;
+		TextPolygonItem *tag_item;
 
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
@@ -85,11 +99,26 @@ class BaseTableView: public BaseObjectView {
 		void __configureObject(float width);
 
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
-		float calculateWidth(void);
+		double calculateWidth(void);
+
+		/*! \brief This as an auxiliary method called before the object changes its dimensions and it causes
+		 * the object to not being selectable. This method is called whenever one of the signals are captured
+		 * from the attributes toggler: s_paginationToggled s_currentPageChanged s_collapseModeChanged */
+		void startGeometryUpdate(void);
+
+		/*! \brief This auxiliary method is called after any geometry change finishes forcing the update of the object
+		 * and in some cases the schema box which contains it */
+		void finishGeometryUpdate(void);
+
+		/*! \brief Determines the pagination paramenters for a section of the table. The input parameters are
+		 * the section (BaseTable::AttribsSection | ExtAttribsSection) and the total amount of attributes in the section.
+		 * The other paramenters start_attr and end_attr are reference parameters that will hold the indexes of items
+		 * to be displayed in the current page. See configureObject() on TableView and GraphicalView */
+		bool configurePaginationParams(unsigned page_id, unsigned total_attrs, unsigned &start_attr, unsigned &end_attr);
 
 	public:
-		static const unsigned LEFT_CONN_POINT=0,
-		RIGHT_CONN_POINT=1;
+		static constexpr unsigned LeftConnPoint=0,
+		RightConnPoint=1;
 
 		BaseTableView(BaseTable *base_tab);
 		virtual ~BaseTableView(void);
@@ -97,6 +126,12 @@ class BaseTableView: public BaseObjectView {
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+		//! brief Defines the amount of attributes per page to be displayed
+		static void setAttributesPerPage(unsigned section_id, unsigned value);
+
+		//! brief Returns the current amount of attributes per page to be displayed
+		static unsigned getAttributesPerPage(unsigned section_id);
 
 		//! \brief Hides the table's extended attributes (rules, triggers, indexes). This applies to all table/view instances
 		static void setHideExtAttributes(bool value);
@@ -121,6 +156,21 @@ class BaseTableView: public BaseObjectView {
 
 		unsigned getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab);
 
+		//! \brief Configures the shadow for the table
+		void configureObjectShadow(void);
+
+	private slots:
+		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
+		 * hiding or exposing the sections related to the current collapse mode */
+		void configureCollapsedSections(CollapseMode coll_mode);
+
+		//! \brief This slot reconfigures the table when the attributes toggler emits the signal s_paginationToggled
+		void togglePagination(bool enabled);
+
+		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_currentPageChanged
+		 * causing the the attributes of the current page to be displayed */
+		void configureCurrentPage(unsigned section_id, unsigned page);
+
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
 		void s_objectMoved(void);
@@ -131,8 +181,14 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
 
-		//! \brief Signal emitted when the user toggles the table's extended attributes area
-		void s_extAttributesToggled(void);
+		//! \brief Signal emitted when the user toggles the table's collapse mode
+		void s_collapseModeChanged(void);
+
+		//! \brief Signal emitted when the user toggles the table's attributes pagination
+		void s_paginationToggled(void);
+
+		//! \brief Signal emitted when the user changes the current table's attributes page
+		void s_currentPageChanged(void);
 
 		friend class RelationshipView;
 };

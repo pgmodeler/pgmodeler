@@ -24,7 +24,7 @@ QFont SyntaxHighlighter::default_font=QFont(QString("Source Code Pro"), 10);
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mode, bool use_custom_tab_width) : QSyntaxHighlighter(parent)
 {
 	if(!parent)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->setDocument(parent->document());
 	this->single_line_mode=single_line_mode;
@@ -100,18 +100,18 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		//Reset the block's info to permit the rehighlighting
 		info=dynamic_cast<BlockInfo *>(currentBlockUserData());
 		info->resetBlockInfo();
-		setCurrentBlockState(SIMPLE_BLOCK);
+		setCurrentBlockState(SimpleBlock);
 	}
 
 	/* If the previous block info is a open multiline expression the current block will inherit this settings
 	 to force the same text formatting */
-	if(prev_info && currentBlock().previous().userState()==OPEN_EXPR_BLOCK &&
-		 currentBlockState() == OPEN_EXPR_BLOCK)
+	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
+		 currentBlockState() == OpenExprBlock)
 	{
 		info->group=prev_info->group;
 		info->has_exprs=prev_info->has_exprs;
 		info->is_expr_closed=false;
-		setCurrentBlockState(OPEN_EXPR_BLOCK);
+		setCurrentBlockState(OpenExprBlock);
 	}
 
 	if(!txt.isEmpty())
@@ -220,9 +220,9 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				}
 
 				if(info->has_exprs && !info->is_expr_closed && hasInitialAndFinalExprs(group))
-					setCurrentBlockState(OPEN_EXPR_BLOCK);
+					setCurrentBlockState(OpenExprBlock);
 				else
-					setCurrentBlockState(SIMPLE_BLOCK);
+					setCurrentBlockState(SimpleBlock);
 
 				aux_len=(match_idx + match_len);
 				if(match_idx >=0 &&  aux_len != word.length())
@@ -372,17 +372,17 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		{
 			clearConfiguration();
 			xmlparser.restartParser();
-			xmlparser.setDTDFile(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-								 GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::OBJECT_DTD_DIR +
-								 GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::CODE_HIGHLIGHT_CONF +
-								 GlobalAttributes::OBJECT_DTD_EXT,
-								 GlobalAttributes::CODE_HIGHLIGHT_CONF);
+			xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+								 GlobalAttributes::DirSeparator +
+								 GlobalAttributes::ObjectDTDDir +
+								 GlobalAttributes::DirSeparator +
+								 GlobalAttributes::CodeHighlightConf +
+								 GlobalAttributes::ObjectDTDExt,
+								 GlobalAttributes::CodeHighlightConf);
 
 			xmlparser.loadXMLFile(filename);
 
-			if(xmlparser.accessElement(XMLParser::CHILD_ELEMENT))
+			if(xmlparser.accessElement(XmlParser::ChildElement))
 			{
 				do
 				{
@@ -390,27 +390,27 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 					{
 						elem=xmlparser.getElementName();
 
-						if(elem==ParsersAttributes::WORD_SEPARATORS)
+						if(elem==Attributes::WordSeparators)
 						{
 							xmlparser.getElementAttributes(attribs);
-							word_separators=attribs[ParsersAttributes::VALUE];
+							word_separators=attribs[Attributes::Value];
 						}
-						else if(elem==ParsersAttributes::WORD_DELIMITERS)
+						else if(elem==Attributes::WordDelimiters)
 						{
 							xmlparser.getElementAttributes(attribs);
-							word_delimiters=attribs[ParsersAttributes::VALUE];
+							word_delimiters=attribs[Attributes::Value];
 						}
-						else if(elem==ParsersAttributes::IGNORED_CHARS)
+						else if(elem==Attributes::IgnoredChars)
 						{
 							xmlparser.getElementAttributes(attribs);
-							ignored_chars=attribs[ParsersAttributes::VALUE];
+							ignored_chars=attribs[Attributes::Value];
 						}
-						else if(elem==ParsersAttributes::COMPLETION_TRIGGER)
+						else if(elem==Attributes::CompletionTrigger)
 						{
 							xmlparser.getElementAttributes(attribs);
 
-							if(attribs[ParsersAttributes::VALUE].size() >= 1)
-								completion_trigger=attribs[ParsersAttributes::VALUE].at(0);
+							if(attribs[Attributes::Value].size() >= 1)
+								completion_trigger=attribs[Attributes::Value].at(0);
 						}
 
 						/*	If the element is what defines the order of application of the groups
@@ -418,19 +418,19 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								the groups used to highlight the source code. ALL groups
 								in this block must be declared before they are built
 								otherwise an error will be triggered. */
-						else if(elem==ParsersAttributes::HIGHLIGHT_ORDER)
+						else if(elem==Attributes::HighlightOrder)
 						{
 							//Marks a flag indication that groups are being declared
 							groups_decl=true;
 							xmlparser.savePosition();
-							xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+							xmlparser.accessElement(XmlParser::ChildElement);
 							elem=xmlparser.getElementName();
 						}
 
-						if(elem==ParsersAttributes::GROUP)
+						if(elem==Attributes::Group)
 						{
 							xmlparser.getElementAttributes(attribs);
-							group=attribs[ParsersAttributes::NAME];
+							group=attribs[Attributes::Name];
 
 							/* If the parser is on the group declaration block and not in the build block
 								 some validations are made. */
@@ -439,15 +439,15 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group was declared before
 								if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(ERR_REDECL_HL_GROUP).arg(group),
-													ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvRedeclarationGroup).arg(group),
+																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being declared and build at the declaration statment (not permitted)
-								else if(attribs.size() > 1 || xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
+								else if(attribs.size() > 1 || xmlparser.hasElement(XmlParser::ChildElement))
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_INV_GROUP_DECL)
-													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclaration)
+																	.arg(group).arg(Attributes::HighlightOrder),
+																	ErrorCode::InvRedeclarationGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
 								groups_order.push_back(group);
@@ -458,38 +458,38 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								//Raises an error if the group is being constructed by a second time
 								if(initial_exprs.count(group)!=0)
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_DUPLIC_GROUP).arg(group),
-													ERR_DEF_DUPLIC_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefDuplicatedGroup).arg(group),
+																	ErrorCode::DefDuplicatedGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group is being constructed without being declared
 								else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_NOT_DECL_GROUP)
-													.arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-													ERR_DEF_NOT_DECL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefNotDeclaredGroup)
+																	.arg(group).arg(Attributes::HighlightOrder),
+																	ErrorCode::DefNotDeclaredGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 								//Raises an error if the group does not have children element
-								else if(!xmlparser.hasElement(XMLParser::CHILD_ELEMENT))
+								else if(!xmlparser.hasElement(XmlParser::ChildElement))
 								{
-									throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(group),
-													ERR_DEF_EMPTY_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									throw Exception(Exception::getErrorMessage(ErrorCode::DefEmptyGroup).arg(group),
+																	ErrorCode::DefEmptyGroup,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 								}
 
-								chr_sensitive=(attribs[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
-								italic=(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-								bold=(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-								underline=(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
-								partial_match=(attribs[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
-								fg_color.setNamedColor(attribs[ParsersAttributes::FOREGROUND_COLOR]);
+								chr_sensitive=(attribs[Attributes::CaseSensitive]==Attributes::True);
+								italic=(attribs[Attributes::Italic]==Attributes::True);
+								bold=(attribs[Attributes::Bold]==Attributes::True);
+								underline=(attribs[Attributes::Underline]==Attributes::True);
+								partial_match=(attribs[Attributes::PartialMatch]==Attributes::True);
+								fg_color.setNamedColor(attribs[Attributes::ForegroundColor]);
 
 								//If the attribute isn't defined the bg color will be transparent
-								if(attribs[ParsersAttributes::BACKGROUND_COLOR].isEmpty())
+								if(attribs[Attributes::BackgroundColor].isEmpty())
 									bg_color.setRgb(0,0,0,0);
 								else
-									bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
+									bg_color.setNamedColor(attribs[Attributes::BackgroundColor]);
 
-								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
-									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
+								if(!attribs[Attributes::LookaheadChar].isEmpty())
+									lookahead_char[group]=attribs[Attributes::LookaheadChar][0];
 
 								format.setFontFamily(default_font.family());
 								format.setFontPointSize(default_font.pointSizeF());
@@ -507,7 +507,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 
 								xmlparser.savePosition();
-								xmlparser.accessElement(XMLParser::CHILD_ELEMENT);
+								xmlparser.accessElement(XmlParser::ChildElement);
 
 								if(chr_sensitive)
 									regexp.setCaseSensitivity(Qt::CaseSensitive);
@@ -521,25 +521,25 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 									if(xmlparser.getElementType()==XML_ELEMENT_NODE)
 									{
 										xmlparser.getElementAttributes(attribs);
-										expr_type=attribs[ParsersAttributes::TYPE];
-										regexp.setPattern(attribs[ParsersAttributes::VALUE]);
+										expr_type=attribs[Attributes::Type];
+										regexp.setPattern(attribs[Attributes::Value]);
 
-										if(attribs[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
+										if(attribs[Attributes::RegularExp]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::RegExp2);
-										else if(attribs[ParsersAttributes::WILDCARD]==ParsersAttributes::_TRUE_)
+										else if(attribs[Attributes::Wildcard]==Attributes::True)
 											regexp.setPatternSyntax(QRegExp::Wildcard);
 										else
 											regexp.setPatternSyntax(QRegExp::FixedString);
 
 										if(expr_type.isEmpty() ||
-												expr_type==ParsersAttributes::SIMPLE_EXP ||
-												expr_type==ParsersAttributes::INITIAL_EXP)
+												expr_type==Attributes::SimpleExp ||
+												expr_type==Attributes::InitialExp)
 											initial_exprs[group].push_back(regexp);
 										else
 											final_exprs[group].push_back(regexp);
 									}
 								}
-								while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+								while(xmlparser.accessElement(XmlParser::NextElement));
 								xmlparser.restorePosition();
 							}
 						}
@@ -547,14 +547,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 
 					/* Check if there are some other groups to be declared, if not,
 							continues to reading to the other part of configuration */
-					if(groups_decl && !xmlparser.hasElement(XMLParser::NEXT_ELEMENT))
+					if(groups_decl && !xmlparser.hasElement(XmlParser::NextElement))
 					{
 						groups_decl=false;
 						xmlparser.restorePosition();
 					}
 
 				}
-				while(xmlparser.accessElement(XMLParser::NEXT_ELEMENT));
+				while(xmlparser.accessElement(XmlParser::NextElement));
 			}
 
 			itr=groups_order.begin();
@@ -568,8 +568,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 				if(initial_exprs[group].size()==0)
 				{
 					//Raises an error if the group was declared but not constructed
-					throw Exception(Exception::getErrorMessage(ERR_GROUP_DECL_NOT_DEFINED).arg(group),
-									ERR_GROUP_DECL_NOT_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ErrorCode::InvGroupDeclarationNotDefined).arg(group),
+													ErrorCode::InvGroupDeclarationNotDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 

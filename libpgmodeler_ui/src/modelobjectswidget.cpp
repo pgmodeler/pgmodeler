@@ -120,8 +120,8 @@ void ModelObjectsWidget::editObject(void)
 	{
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
-				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt()==OBJ_PERMISSION)
-			model_wgt->showObjectForm(OBJ_PERMISSION, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
+				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
+			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
 		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
 		{
@@ -129,7 +129,7 @@ void ModelObjectsWidget::editObject(void)
 			Permission *perm=dynamic_cast<Permission *>(obj);
 
 			if(perm)
-			  model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+				model_wgt->showObjectForm(ObjectType::Permission, perm->getObject());
 			else
 			  model_wgt->editObject();
 		}
@@ -140,7 +140,7 @@ void ModelObjectsWidget::editObject(void)
 
 void ModelObjectsWidget::selectObject(void)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 	ModelWidget *model_wgt=nullptr;
 
 	if(!simplified_view && this->model_wgt)
@@ -161,17 +161,17 @@ void ModelObjectsWidget::selectObject(void)
 		//If user select a group item popups a "New [OBJECT]" menu
 		if((!simplified_view || (simplified_view && enable_obj_creation)) &&
 				!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
-				obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
-				obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER && obj_type!=OBJ_PERMISSION)
+				obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint && obj_type!=ObjectType::Rule &&
+				obj_type!=ObjectType::Index && obj_type!=ObjectType::Trigger && obj_type!=ObjectType::Permission)
 		{
-			QAction act(QPixmap(PgModelerUiNS::getIconPath(obj_type)),
+			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
-			if(obj_type!=OBJ_RELATIONSHIP)
+			if(obj_type!=ObjectType::Relationship)
 			{
-				act.setData(QVariant(obj_type));
+				act.setData(QVariant(enum_cast(obj_type)));
 				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
 			}
 			//Case is a relationship, insert the relationship menu of the model wiget into the action
@@ -198,7 +198,7 @@ void ModelObjectsWidget::selectObject(void)
 		}
 	}
 
-	if(obj_type!=OBJ_PERMISSION && selected_object && !simplified_view)
+	if(obj_type!=ObjectType::Permission && selected_object && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
 		model_wgt->configureObjectMenu(selected_object);
@@ -223,13 +223,13 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	QString obj_name;
 
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	obj_type=object->getObjectType();
 	tab_obj=dynamic_cast<TableObject *>(object);
 	item=new QTreeWidgetItem(root);
 
-	if(obj_type==OBJ_FUNCTION)
+	if(obj_type==ObjectType::Function)
 	{
 		Function *func=dynamic_cast<Function *>(object);
 		func->createSignature(false);
@@ -237,13 +237,13 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 		obj_name=func->getSignature();
 		func->createSignature(true);
 	}
-	else if(obj_type==OBJ_OPERATOR)
+	else if(obj_type==ObjectType::Operator)
 	{
 		Operator *oper=dynamic_cast<Operator *>(object);
 		item->setText(0, oper->getSignature(false));
 		obj_name=oper->getSignature(false);
 	}
-	else if(obj_type==OBJ_OPCLASS || obj_type == OBJ_OPFAMILY)
+	else if(obj_type==ObjectType::OpClass || obj_type == ObjectType::OpFamily)
 	{
 		obj_name=object->getSignature(false);
 		obj_name.replace(QRegExp("( )+(USING)( )+"), QString(" ["));
@@ -269,74 +269,74 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 	if(tab_obj && tab_obj->isAddedByRelationship())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
+		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
 	}
 	else if(object->isProtected() || object->isSystemObject())
 	{
 		font.setItalic(true);
-		item->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
+		item->setForeground(0,BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
 	}
 
 	item->setFont(0,font);
 
-	if(obj_type==BASE_RELATIONSHIP || obj_type==OBJ_RELATIONSHIP)
+	if(obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Relationship)
 	{
 		rel_type=dynamic_cast<BaseRelationship *>(object)->getRelationshipType();
 
-		if(obj_type==BASE_RELATIONSHIP)
+		if(obj_type==ObjectType::BaseRelationship)
 		{
-			if(rel_type==BaseRelationship::RELATIONSHIP_FK)
+			if(rel_type==BaseRelationship::RelationshipFk)
 				str_aux=QString("fk");
 			else
 				str_aux=QString("tv");
 		}
-		else if(rel_type==BaseRelationship::RELATIONSHIP_11)
+		else if(rel_type==BaseRelationship::Relationship11)
 			str_aux=QString("11");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_1N)
+		else if(rel_type==BaseRelationship::Relationship1n)
 			str_aux=QString("1n");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
+		else if(rel_type==BaseRelationship::RelationshipNn)
 			str_aux=QString("nn");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
+		else if(rel_type==BaseRelationship::RelationshipDep)
 			str_aux=QString("dep");
-		else if(rel_type==BaseRelationship::RELATIONSHIP_GEN)
+		else if(rel_type==BaseRelationship::RelationshipGen)
 			str_aux=QString("gen");
 	}
-	else if(obj_type==OBJ_CONSTRAINT)
+	else if(obj_type==ObjectType::Constraint)
 	{
 		constr_type=dynamic_cast<Constraint *>(object)->getConstraintType();
 
-		if(constr_type==ConstraintType::primary_key)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_PRIMARY_KEY);
-		else if(constr_type==ConstraintType::foreign_key)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_FOREIGN_KEY);
-		else if(constr_type==ConstraintType::check)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_CHECK);
-		else if(constr_type==ConstraintType::unique)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_UNIQUE);
-		else if(constr_type==ConstraintType::exclude)
-			str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE);
+		if(constr_type==ConstraintType::PrimaryKey)
+			str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey);
+		else if(constr_type==ConstraintType::ForeignKey)
+			str_aux=QString("_%1").arg(TableObjectView::TextForeignKey);
+		else if(constr_type==ConstraintType::Check)
+			str_aux=QString("_%1").arg(TableObjectView::TextCheck);
+		else if(constr_type==ConstraintType::Unique)
+			str_aux=QString("_%1").arg(TableObjectView::TextUnique);
+		else if(constr_type==ConstraintType::Exclude)
+			str_aux=QString("_%1").arg(TableObjectView::TextExclude);
 	}
 
-	item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
+	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
 	return(item);
 }
 
 void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 {
-	if(obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE)
+	if(obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::BaseTable)
 		visible_objs_map[obj_type]=visible;
 
 	if(visible && simplified_view)
 	{
-		if(obj_type!=OBJ_DATABASE)
-			visible_objs_map[OBJ_DATABASE]=true;
+		if(obj_type!=ObjectType::Database)
+			visible_objs_map[ObjectType::Database]=true;
 
 		if(TableObject::isTableObject(obj_type))
-			visible_objs_map[OBJ_TABLE]=visible_objs_map[OBJ_SCHEMA]=true;
+			visible_objs_map[ObjectType::Table]=visible_objs_map[ObjectType::Schema]=true;
 
 		if(BaseObject::acceptsSchema(obj_type))
-			visible_objs_map[OBJ_SCHEMA]=true;
+			visible_objs_map[ObjectType::Schema]=true;
 	}
 }
 
@@ -461,28 +461,28 @@ void ModelObjectsWidget::updateObjectsList(void)
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 {
-	if(db_model && visible_objs_map[OBJ_SCHEMA])
+	if(db_model && visible_objs_map[ObjectType::Schema])
 	{
 		BaseObject *schema=nullptr;
 		vector<BaseObject *> obj_list;
 		QFont font;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(OBJ_SCHEMA);
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
 		int count, count2, i;
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_SCHEMA)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::Schema)) + QString("_grp")));
 
-		//Removing the OBJ_TABLE and OBJ_VIEW types since they are handled separetedly
-		types.erase(std::find(types.begin(), types.end(), OBJ_TABLE));
-		types.erase(std::find(types.begin(), types.end(), OBJ_VIEW));
+		//Removing the ObjectType::ObjTable and ObjectType::ObjView types since they are handled separetedly
+		types.erase(std::find(types.begin(), types.end(), ObjectType::Table));
+		types.erase(std::find(types.begin(), types.end(), ObjectType::View));
 
 		//Get the current schema count on database
-		count=(db_model->getObjectCount(OBJ_SCHEMA));
+		count=(db_model->getObjectCount(ObjectType::Schema));
 		item=new QTreeWidgetItem(root);
 		item->setIcon(0,group_icon);
-		item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_SCHEMA));
+		item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Schema)));
 
 		//Create the schema group item
-		item->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(OBJ_SCHEMA)).arg(count));
+		item->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(ObjectType::Schema)).arg(count));
 		font=item->font(0);
 		font.setItalic(true);
 		item->setFont(0, font);
@@ -500,7 +500,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 				}
 				else
 				{
-					schema=db_model->getObject(i, OBJ_SCHEMA);
+					schema=db_model->getObject(i, ObjectType::Schema);
 					item2=createItemForObject(schema, item);
 				}
 
@@ -516,14 +516,14 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 					if(visible_objs_map[type])
 					{
 						item3=new QTreeWidgetItem(item2);
-						item3->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item3->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 
 						//Get the objects that belongs to the current schema
 						obj_list=db_model->getObjects(type, schema);
 
 						count2=obj_list.size();
 						item3->setText(0, QString("%1 (%2)").arg(BaseObject::getTypeName(type)).arg(count2));
-						item3->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(type));
+						item3->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
 
 						font=item3->font(0);
 						font.setItalic(true);
@@ -544,26 +544,26 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *schema)
 {
-	if(db_model && visible_objs_map[OBJ_TABLE])
+	if(db_model && visible_objs_map[ObjectType::Table])
 	{
 		vector<BaseObject *> obj_list;
 		Table *table=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(OBJ_TABLE);
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(OBJ_TABLE) + QString("_grp")));
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table) + QString("_grp")));
 
 		try
 		{
 			//Get all tables that belongs to the specified schema
-			obj_list=db_model->getObjects(OBJ_TABLE, schema);
+			obj_list=db_model->getObjects(ObjectType::Table, schema);
 
 			//Create a table group item
 			item=new QTreeWidgetItem(root);
 			item->setIcon(0,group_icon);
-			item->setText(0,BaseObject::getTypeName(OBJ_TABLE) +
+			item->setText(0,BaseObject::getTypeName(ObjectType::Table) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_TABLE));
+			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Table)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -580,7 +580,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -602,28 +602,28 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 
 void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schema)
 {
-	if(db_model && visible_objs_map[OBJ_VIEW])
+	if(db_model && visible_objs_map[ObjectType::View])
 	{
 		BaseObject *object=nullptr;
 		vector<BaseObject *> obj_list;
 		View *view=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		ObjectType types[]={ OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX };
+		ObjectType types[]={ ObjectType::Rule, ObjectType::Trigger, ObjectType::Index };
 		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
-		QPixmap group_icon=QPixmap(PgModelerUiNS::getIconPath(QString(BaseObject::getSchemaName(OBJ_VIEW)) + QString("_grp")));
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::View)) + QString("_grp")));
 
 		try
 		{
 			//Get all views that belongs to the specified schema
-			obj_list=db_model->getObjects(OBJ_VIEW, schema);
+			obj_list=db_model->getObjects(ObjectType::View, schema);
 
 			//Create a table group item
 			item=new QTreeWidgetItem(root);
 			item->setIcon(0,group_icon);
-			item->setText(0,BaseObject::getTypeName(OBJ_VIEW) +
+			item->setText(0,BaseObject::getTypeName(ObjectType::View) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_VIEW));
+			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::View)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -641,7 +641,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 					if(visible_objs_map[types[i1]])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
@@ -670,7 +670,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 {
 	try
 	{
-		if(db_model && visible_objs_map[OBJ_PERMISSION] &&
+		if(db_model && visible_objs_map[ObjectType::Permission] &&
 				Permission::acceptsPermission(object->getObjectType()))
 		{
 			vector<Permission *> perms;
@@ -678,16 +678,16 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 			QFont font=item->font(0);
 
 			db_model->getPermissions(object, perms);
-			item->setIcon(0,QPixmap(PgModelerUiNS::getIconPath("permission_grp")));
+			item->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("permission_grp")));
 
 			font.setItalic(true);
 			item->setFont(0, font);
 			item->setText(0, QString("%1 (%2)")
-						  .arg(BaseObject::getTypeName(OBJ_PERMISSION))
+							.arg(BaseObject::getTypeName(ObjectType::Permission))
 						  .arg(perms.size()));
 
 			item->setData(0, Qt::UserRole, generateItemValue(object));
-			item->setData(1, Qt::UserRole, static_cast<unsigned>(OBJ_PERMISSION));
+			item->setData(1, Qt::UserRole, static_cast<unsigned>(ObjectType::Permission));
 		}
 	}
 	catch(Exception &e)
@@ -707,10 +707,10 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font;
 		vector<BaseObject *> ref_list, tree_state, obj_list;
-		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
-							 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-							 OBJ_RELATIONSHIP, OBJ_EVENT_TRIGGER,
-							 OBJ_TAG, OBJ_GENERIC_SQL, OBJ_EXTENSION };
+		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace,
+							 ObjectType::Language, ObjectType::Cast, ObjectType::Textbox,
+							 ObjectType::Relationship, ObjectType::EventTrigger,
+							 ObjectType::Tag, ObjectType::GenericSql, ObjectType::Extension };
 		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try
@@ -721,7 +721,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 			objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
-			if(visible_objs_map[OBJ_DATABASE])
+			if(visible_objs_map[ObjectType::Database])
 			{
 				root=createItemForObject(db_model);
 				objectstree_tw->insertTopLevelItem(0,root);
@@ -735,16 +735,16 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						item1=new QTreeWidgetItem(root);
 						str_aux=QString(BaseObject::getSchemaName(types[i]));
 
-						item1->setIcon(0,QPixmap(PgModelerUiNS::getIconPath(str_aux + QString("_grp"))));
-						item1->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i]));
+						item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux + QString("_grp"))));
+						item1->setData(1, Qt::UserRole, QVariant(enum_cast(types[i])));
 
 						obj_list=(*db_model->getObjectList(types[i]));
 
 						//Special case for relationship, merging the base relationship list to the relationship list
-						if(types[i]==OBJ_RELATIONSHIP)
+						if(types[i]==ObjectType::Relationship)
 						{
 							vector<BaseObject *> obj_list_aux;
-							obj_list_aux=(*db_model->getObjectList(BASE_RELATIONSHIP));
+							obj_list_aux=(*db_model->getObjectList(ObjectType::BaseRelationship));
 							obj_list.insert(obj_list.end(), obj_list_aux.begin(), obj_list_aux.end());
 						}
 
@@ -760,7 +760,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 							object=obj_list.at(i1);
 							item2=createItemForObject(object, item1);
 
-							if(types[i]==OBJ_TAG)
+							if(types[i]==ObjectType::Tag)
 							{
 								db_model->getObjectReferences(object, ref_list);
 

@@ -37,7 +37,7 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
 
@@ -102,6 +102,9 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
+		//! \brief Stores the layers used by the "move to layer" operation
+		layers_menu,
+
 		break_rel_menu,
 
 		fade_menu,
@@ -113,6 +116,8 @@ class ModelWidget: public QWidget {
 		fade_rels_menu,
 
 		toggle_attrs_menu,
+
+		pagination_menu,
 
 		select_all_menu,
 
@@ -150,7 +155,7 @@ class ModelWidget: public QWidget {
 		QTimer zoom_info_timer;
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
 
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
@@ -194,10 +199,10 @@ class ModelWidget: public QWidget {
 		void showMagnifierArea(bool show);
 
 	protected:
-		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
-		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
-		BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
-		BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
+		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
+		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
+		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
 
 		QAction *action_source_code,
 		*action_edit,
@@ -227,6 +232,7 @@ class ModelWidget: public QWidget {
 		*action_break_rel_line,
 		*action_remove_rel_points,
 		*action_set_tag,
+		*action_moveto_layer,
 		*action_disable_sql,
 		*action_enable_sql,
 		*action_duplicate,
@@ -236,9 +242,11 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
-		*action_extended_attribs,
-		*action_show_ext_attribs,
-		*action_hide_ext_attribs,
+		*action_pagination,
+		*action_collapse_mode,
+		*action_collapse_ext_attribs,
+		*action_collpase_all_attribs,
+		*action_no_collapse_attribs,
 		*action_edit_creation_order,
 		*action_jump_to_table,
 		*action_schemas_rects,
@@ -274,12 +282,12 @@ class ModelWidget: public QWidget {
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
-		void toggleAllExtendedAttributes(bool value);
+		void setAllCollapseMode(CollapseMode mode);
 
 	public:
-		static constexpr double MINIMUM_ZOOM=0.050000,
-		MAXIMUM_ZOOM=5.000001,
-		ZOOM_INCREMENT=0.050000;
+		static constexpr double MinimumZoom=0.050000,
+		MaximumZoom=5.000001,
+		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = 0);
 		~ModelWidget(void);
@@ -392,6 +400,9 @@ class ModelWidget: public QWidget {
 		//! \brief Move the selected object to a schema (selectable via menu)
 		void moveToSchema(void);
 
+		//! \brief Move the selected object to a layer (selectable via menu)
+		void moveToLayer(void);
+
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
 
@@ -420,7 +431,7 @@ class ModelWidget: public QWidget {
 		void copyObjects(bool duplicate_mode = false);
 
 		//! \brief Paste all the objects copied previously
-		void pasteObjects(void);
+		void pasteObjects(bool duplicate_mode = false);
 
 		//! \brief Duplicate the selected table object in its parent table
 		void duplicateObject(void);
@@ -471,7 +482,9 @@ class ModelWidget: public QWidget {
 
 		void fadeObjectsOut(void);
 
-		void toggleExtendedAttributes(void);
+		void setCollapseMode(void);
+
+		void togglePagination(void);
 
 		void toggleSchemasRectangles(void);
 
@@ -480,6 +493,8 @@ class ModelWidget: public QWidget {
 		void jumpToTable(void);
 
 		void editTableData(void);
+
+		void updateModelLayers(void);
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -517,6 +532,7 @@ class ModelWidget: public QWidget {
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
+		friend class LayersWidget;
 };
 
 #endif

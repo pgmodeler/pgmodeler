@@ -29,18 +29,31 @@
 #include "basegraphicobject.h"
 #include "tag.h"
 
-class BaseTable: public BaseGraphicObject {
-	private:
-		bool hide_ext_attribs;
+//! \brief This enum is used to control the collapsing of the tables
+enum class CollapseMode: unsigned {
+	AllAttribsCollapsed, //Columns (attributes) and extended attributes are collapsed
+	ExtAttribsCollapsed, //Extended attributes are collapsed
+	NotCollapsed //Table is fully expanded (columns and extended attributes)
+};
 
+class BaseTable: public BaseGraphicObject {
 	protected:
 		Tag *tag;
 
-	public:
-		BaseTable(void);
+		//! \brief Indicates if the pagination is enabled for the table
+		bool pagination_enabled;
 
-		virtual void setExtAttribsHidden(bool value);
-		virtual bool isExtAttribsHidden(void);
+		//! \brief Stores the current collpase mode for the table
+		CollapseMode collapse_mode;
+
+		//! \brief Stores the current page visible on the table
+		unsigned curr_page[2];
+
+	public:
+		static constexpr unsigned AttribsSection = 0,
+		ExtAttribsSection = 1;
+
+		BaseTable(void);
 
 		virtual void setTag(Tag *tag);
 		virtual Tag *getTag(void);
@@ -73,15 +86,44 @@ class BaseTable: public BaseGraphicObject {
 		//! \brief Returns the index for the specified table object
 		virtual int getObjectIndex(BaseObject *obj)=0;
 
-		//! \brief Returns all child objects of the table
-		virtual vector<BaseObject *> getObjects(void)=0;
+		//! \brief Returns all children objects of the table but excluding the ones of the provided type
+		virtual vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {})=0;
 
 		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
 		virtual QString getAlterDefinition(BaseObject *object);
 
+		/*! \brief Set the initial capacity of the objects list for a optimized memory usage.
+		 * This method should be called prior to adding the first object to the table because, depending o the capacity,
+		 * there'll be memory reallocations which can degradate the performance */
+		virtual void setObjectListsCapacity(unsigned capacity) = 0;
+
+		//! \brief Returns the maximum item count from all of the objects lists
+		virtual unsigned getMaxObjectCount(void) = 0;
+
 		//! \brief Copy the attributes between two tables
 		void operator = (BaseTable &tab);
+
+		/*! \brief Defines the current collapse mode for the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
+		void setCollapseMode(CollapseMode coll_mode);
+
+		CollapseMode getCollapseMode(void);
+
+		/*! \brief Defines the pagination enabling for the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
+		void setPaginationEnabled(bool value);
+
+		bool isPaginationEnabled(void);
+
+		/*! \brief Defines the current page visible on the table. Calling this method direclty
+		 * will not update the geometry of the graphical representation of this object. For that,
+		 * the setModified(true) should be called */
+		void setCurrentPage(unsigned section_id, unsigned value);
+		void resetCurrentPages(void);
+		unsigned getCurrentPage(unsigned section_id);
 
 		friend class DatabaseModel;
 };

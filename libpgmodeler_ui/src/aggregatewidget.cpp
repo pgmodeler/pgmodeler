@@ -18,7 +18,7 @@
 
 #include "aggregatewidget.h"
 
-AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_AGGREGATE)
+AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Aggregate)
 {
 	try
 	{
@@ -28,17 +28,17 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		QFrame *frame=nullptr;
 
 		initial_cond_hl=new SyntaxHighlighter(initial_cond_txt);
-		initial_cond_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		initial_cond_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		final_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		final_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		transition_func_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+		sort_op_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
 
 		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
 		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
-		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-											  ObjectsTableWidget::EDIT_BUTTON, true, this);
+		input_types_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+											  ObjectsTableWidget::EditButton, true, this);
 		input_types_tab->setColumnCount(1);
 
 		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
@@ -66,7 +66,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
 		frame->setParent(this);
 
-		configureFormLayout(funcaoagregacao_grid, OBJ_AGGREGATE);
+		configureFormLayout(funcaoagregacao_grid, ObjectType::Aggregate);
 
 		setRequiredField(state_type);
 		setRequiredField(input_type);
@@ -86,7 +86,7 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)
 {
 	unsigned count, i;
-	PgSQLType type;
+	PgSqlType type;
 
 	BaseObjectWidget::setAttributes(model,op_list, aggregate, schema);
 
@@ -98,8 +98,8 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 	if(aggregate)
 	{
-		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FINAL_FUNC));
-		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TRANSITION_FUNC));
+		final_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::FinalFunc));
+		transition_func_sel->setSelectedObject(aggregate->getFunction(Aggregate::TransitionFunc));
 		sort_op_sel->setSelectedObject(aggregate->getSortOperator());
 		initial_cond_txt->setPlainText(aggregate->getInitialCondition());
 
@@ -110,7 +110,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		{
 			input_types_tab->addRow();
 			type=aggregate->getDataType(i);
-			input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), i);
+			input_types_tab->setRowData(QVariant::fromValue<PgSqlType>(type), i);
 			input_types_tab->setCellText(*type,i,0);
 		}
 		input_types_tab->blockSignals(false);
@@ -124,10 +124,10 @@ void AggregateWidget::handleDataType(int row)
 {
 	try
 	{
-		PgSQLType type;
+		PgSqlType type;
 
 		type=input_type->getPgSQLType();
-		input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), row);
+		input_types_tab->setRowData(QVariant::fromValue<PgSqlType>(type), row);
 		input_types_tab->setCellText(*type,row,0);
 	}
 	catch(Exception &e)
@@ -156,10 +156,10 @@ void AggregateWidget::applyConfiguration(void)
 		count=input_types_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSQLType>());
+			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSqlType>());
 
-		aggregate->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
-		aggregate->setFunction(Aggregate::FINAL_FUNC, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));
+		aggregate->setFunction(Aggregate::TransitionFunc, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
+		aggregate->setFunction(Aggregate::FinalFunc, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));
 		aggregate->setSortOperator(dynamic_cast<Operator *>(sort_op_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();

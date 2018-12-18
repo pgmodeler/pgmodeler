@@ -38,7 +38,7 @@ class Domain: public BaseObject{
 		bool not_null;
 
 		//! \brief Domain data type
-		PgSQLType type;
+		PgSqlType type;
 
 		//! \brief Store the check constraint expressions (key:name value:expression)
 		attribs_map chk_constrs;
@@ -59,7 +59,7 @@ class Domain: public BaseObject{
 		void setNotNull(bool value);
 
 		//! \brief Defines the domain data type
-		void setType(PgSQLType type);
+		void setType(PgSqlType type);
 
 		/*! \brief Overloaded BaseObject name definition method.
 		 Updates the reference of the domain as a PostgreSQL data type */
@@ -74,7 +74,7 @@ class Domain: public BaseObject{
 		QString getExpression(void);
 		QString getDefaultValue(void);
 		bool isNotNull(void);
-		PgSQLType getType(void);
+		PgSqlType getType(void);
 
 		//! \brief Returns the SQL / XML code definition for the domain
 		virtual QString getCodeDefinition(unsigned def_type) final;

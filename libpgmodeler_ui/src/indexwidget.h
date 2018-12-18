@@ -27,8 +27,8 @@
 
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
-#include "objectstablewidget.h"
-#include "elementswidget.h"
+//#include "objectstablewidget.h"
+#include "elementstablewidget.h"
 
 class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
@@ -37,7 +37,8 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		//! \brief Syntax highlighter for predicate
 		SyntaxHighlighter *predicate_hl;
 
-		ElementsWidget *elements_wgt;
+		//ElementWidget *elements_wgt;
+		ElementsTableWidget *elements_tab;
 
 	public:
 		IndexWidget(QWidget * parent = 0);
@@ -45,7 +46,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 
 	private slots:
 		void selectIndexingType(void);
-		void enableSortingOptions(void);
+		//void enableSortingOptions(void);
 
 	public slots:
 		void applyConfiguration(void);

@@ -18,38 +18,38 @@
 
 #include "policywidget.h"
 
-PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY)
+PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Policy)
 {
 	try
 	{
 		Ui_PolicyWidget::setupUi(this);
 
 		model_objs_wgt = new ModelObjectsWidget(true, this);
-		model_objs_wgt->setObjectVisible(OBJ_ROLE, true);
+		model_objs_wgt->setObjectVisible(ObjectType::Role, true);
 
-		using_edt = PgModelerUiNS::createNumberedTextEditor(using_wgt);
+		using_edt = PgModelerUiNs::createNumberedTextEditor(using_wgt);
 		using_edt->setTabChangesFocus(true);
 		using_hl = new SyntaxHighlighter(using_edt);
-		using_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		using_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		check_edt = PgModelerUiNS::createNumberedTextEditor(check_wgt);
+		check_edt = PgModelerUiNs::createNumberedTextEditor(check_wgt);
 		check_edt->setTabChangesFocus(true);
 		check_hl = new SyntaxHighlighter(check_edt);
-		check_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		check_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																			 (ObjectsTableWidget::DUPLICATE_BUTTON |
-																				ObjectsTableWidget::UPDATE_BUTTON |
-																				ObjectsTableWidget::EDIT_BUTTON), true, this);
+		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::DuplicateButton |
+																				ObjectsTableWidget::UpdateButton |
+																				ObjectsTableWidget::EditButton), true, this);
 		roles_tab->setColumnCount(1);
 		roles_tab->setHeaderLabel(trUtf8("Name"), 0);
-		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")), 0);
+		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")), 0);
 
 		QVBoxLayout *vbox = new QVBoxLayout;
 		vbox->addWidget(roles_tab);
 
 		QFrame *frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
-																					 .arg(BaseObject::getTypeName(OBJ_POLICY).toLower()));
+																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
 		vbox->addWidget(frame);
 		frame->setParent(this);
 		vbox->setContentsMargins(4,4,4,4);
@@ -59,7 +59,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 		PolicyCmdType::getTypes(cmds);
 		command_cmb->addItems(cmds);
 
-		configureFormLayout(policy_grid, OBJ_POLICY);
+		configureFormLayout(policy_grid, ObjectType::Policy);
 		configureTabOrder({ basics_grp, attribs_tbw });
 
 		connect(roles_tab, SIGNAL(s_rowAdded(int)), model_objs_wgt, SLOT(show()));
@@ -74,7 +74,7 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_POLICY
 void PolicyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy)
 {
 	if(!parent_obj)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, policy, parent_obj);
 	model_objs_wgt->setModel(model);

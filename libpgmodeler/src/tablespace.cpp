@@ -22,8 +22,8 @@ unsigned Tablespace::tabspace_id=1000;
 
 Tablespace::Tablespace(void)
 {
-	obj_type=OBJ_TABLESPACE;
-	attributes[ParsersAttributes::DIRECTORY]=QString();
+	obj_type=ObjectType::Tablespace;
+	attributes[Attributes::Directory]=QString();
 	object_id=Tablespace::tabspace_id++;
 }
 
@@ -32,10 +32,10 @@ void Tablespace::setName(const QString &name)
 	/* Tablespace names starting with pg_ is reserved to PostgreSQL if its the case
 		raises an error */
 	if(name.mid(0,3)==QString("pg_"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
-						ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Tablespace)),
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -47,7 +47,7 @@ void Tablespace::setDirectory(const QString &dir)
 
 	//Raises an error if the directory is an empty path
 	if(dir_aux.isEmpty())
-		throw Exception(ERR_ASG_EMPTY_DIR_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyDirectoryName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->directory != dir_aux);
 	this->directory=dir_aux;
@@ -64,7 +64,7 @@ QString Tablespace::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	if(!directory.isEmpty())
-		attributes[ParsersAttributes::DIRECTORY]=QString("'") + directory + QString("'");
+		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

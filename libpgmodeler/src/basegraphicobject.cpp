@@ -22,11 +22,13 @@ BaseGraphicObject::BaseGraphicObject(void)
 {
 	is_modified=true;
 	is_faded_out=false;
-	attributes[ParsersAttributes::X_POS]=QString();
-	attributes[ParsersAttributes::Y_POS]=QString();
-	attributes[ParsersAttributes::POSITION]=QString();
-	attributes[ParsersAttributes::FADED_OUT]=QString();
+	attributes[Attributes::XPos]=QString();
+	attributes[Attributes::YPos]=QString();
+	attributes[Attributes::Position]=QString();
+	attributes[Attributes::FadedOut]=QString();
+	attributes[Attributes::Layer]=QString();
 	receiver_object=nullptr;
+	layer = 0;
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -76,14 +78,14 @@ bool BaseGraphicObject::isFadedOut(void)
 
 void BaseGraphicObject::setFadedOutAttribute(void)
 {
-	attributes[ParsersAttributes::FADED_OUT]=(is_faded_out ? ParsersAttributes::_TRUE_ : QString());
+	attributes[Attributes::FadedOut]=(is_faded_out ? Attributes::True : QString());
 }
 
 void BaseGraphicObject::setPositionAttribute(void)
 {
-	attributes[ParsersAttributes::X_POS]=QString("%1").arg(position.x());
-	attributes[ParsersAttributes::Y_POS]=QString("%1").arg(position.y());
-	attributes[ParsersAttributes::POSITION]=schparser.getCodeDefinition(ParsersAttributes::POSITION, attributes, SchemaParser::XML_DEFINITION);
+	attributes[Attributes::XPos]=QString("%1").arg(position.x());
+	attributes[Attributes::YPos]=QString("%1").arg(position.y());
+	attributes[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, attributes, SchemaParser::XmlDefinition);
 }
 
 void  BaseGraphicObject::setPosition(QPointF pos)
@@ -118,6 +120,17 @@ QObject *BaseGraphicObject::getReceiverObject(void)
 
 bool BaseGraphicObject::isGraphicObject(ObjectType type)
 {
-	return(type==OBJ_TABLE || type==OBJ_VIEW || type==OBJ_RELATIONSHIP ||
-				 type==BASE_RELATIONSHIP || type==OBJ_TEXTBOX || type==OBJ_SCHEMA);
+	return(type==ObjectType::Table || type==ObjectType::View || type==ObjectType::Relationship ||
+				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema);
+}
+
+void BaseGraphicObject::setLayer(unsigned layer)
+{
+	setCodeInvalidated(this->layer != layer);
+	this->layer = layer;
+}
+
+unsigned BaseGraphicObject::getLayer(void)
+{
+	return(layer);
 }

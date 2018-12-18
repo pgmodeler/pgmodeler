@@ -31,6 +31,9 @@
 
 class Trigger: public TableObject{
 	private:
+		//! \brief Stores the transtion tables names (OLD and NEW) [REFERENCING { OLD | NEW } TABLE name]
+		QString transition_tabs_names[2];
+
 		//! \brief Arguments passed to the function that trigger executes
 		vector<QString> arguments;
 
@@ -73,6 +76,8 @@ class Trigger: public TableObject{
 		void setArgumentAttribute(unsigned tipo_def);
 
 	public:
+		static constexpr unsigned OldTableName=0, NewTableName=1;
+
 		Trigger(void);
 
 		/*! \brief Adds a column as a firing condition (only when the event UPDATE is used).
@@ -111,6 +116,12 @@ class Trigger: public TableObject{
 
 		//! \brief Defines if the trigger is constraint
 		void setConstraint(bool value);
+
+		//! \brief Defines the transition table name (OLD|NEW) referenced by the trigger
+		void setTransitionTableName(unsigned tab_idx, const QString &name);
+
+		//! \brief Returns the transition table name (OLD|NEW) referenced by the trigger
+		QString getTransitionTableName(unsigned tab_idx);
 
 		//! \brief Returns true if the trigger executes on the passed event
 		bool isExecuteOnEvent(EventType event);

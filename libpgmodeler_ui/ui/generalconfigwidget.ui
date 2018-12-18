@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>743</width>
-    <height>587</height>
+    <width>794</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -81,7 +81,143 @@
           <property name="horizontalSpacing">
            <number>10</number>
           </property>
-          <item row="2" column="0">
+          <item row="5" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_22">
+            <item>
+             <widget class="QLabel" name="attributes_per_page_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>210</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Attributes per page:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="attribs_per_page_spb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="statusTip">
+               <string>These spinners define the minimum amount of attributes visible per page in each section of tables and views when the pagination is enabled on them. The first one controls the amount of columns per page. The second defines the amount of extended attributes (constraints, indexes, trigger, rules, policies) displayed per page.</string>
+              </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="ext_attribs_per_page_spb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="statusTip">
+               <string>Defines the minimum amount of attributes visible per page on tables and view when the pagination is enabled on these objects.</string>
+              </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QWidget" name="attributes_per_page_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_17">
             <item>
              <widget class="QLabel" name="min_obj_opacity_lbl">
@@ -93,7 +229,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -171,6 +307,178 @@
            </layout>
           </item>
           <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="autosave_interv_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>210</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Defines the period when the opened models will be saved automatically. The temporary models saving period will be defined as the half of the value defined here. If the autosave is disabled the temporary models saving will occur in a period of 5 minutes.</string>
+              </property>
+              <property name="text">
+               <string>Autosave interval (minutes):</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="autosave_interv_spb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>30</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QWidget" name="autosave_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="oplist_size_lbl">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>210</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Operation history size:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="oplist_size_spb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="statusTip">
+               <string>Defines the maximum amount of elements held in the operation history. Once reached the maximum number the history is automatically cleaned.</string>
+              </property>
+              <property name="minimum">
+               <number>500</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QWidget" name="op_history_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLabel" name="grid_size_lbl">
@@ -182,7 +490,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>210</width>
                 <height>0</height>
                </size>
               </property>
@@ -209,7 +517,7 @@
                </size>
               </property>
               <property name="statusTip">
-               <string>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using object grid alignment feature.</string>
+               <string>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using the feature that aligns the objects on the grid. </string>
               </property>
               <property name="minimum">
                <number>10</number>
@@ -263,11 +571,11 @@
            </layout>
           </item>
           <item row="7" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QCheckBox" name="corner_move_chk">
+             <widget class="QCheckBox" name="simple_obj_creation_chk">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -276,10 +584,10 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Start move the canvas when the cursor is on the canvas edges</string>
+               <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
               </property>
               <property name="text">
-               <string>Move canvas by keep mouse on corners</string>
+               <string>Simplify the creation of graphical objects</string>
               </property>
               <property name="checked">
                <bool>false</bool>
@@ -287,7 +595,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="corner_move_hint" native="true">
+             <widget class="QWidget" name="simp_obj_creation_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -310,7 +618,52 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="1">
+          <item row="8" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QCheckBox" name="use_placeholders_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).</string>
+              </property>
+              <property name="text">
+               <string>Use placeholders when moving tables</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="use_placeholders_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_13">
             <item>
              <widget class="QCheckBox" name="save_last_pos_chk">
@@ -417,7 +770,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Hide the portion of table which represent triggers, indexes and rules</string>
+               <string>Hide the portion of table which represents triggers, indexes and rules.</string>
               </property>
               <property name="text">
                <string>Hide table extended attributes</string>
@@ -493,67 +846,29 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item row="5" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QLabel" name="oplist_size_lbl">
+             <widget class="QCheckBox" name="hide_rel_name_chk">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Operation history:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="oplist_size_spb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
+              <property name="toolTip">
+               <string/>
               </property>
               <property name="statusTip">
-               <string>Defines the maximum amount of elements held in the operation history. Once reached the maximum number the history is automatically cleaned.</string>
+               <string>Hide the object that represents the relationship name</string>
               </property>
-              <property name="minimum">
-               <number>500</number>
-              </property>
-              <property name="maximum">
-               <number>1000</number>
+              <property name="text">
+               <string>Hide relationship name</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QWidget" name="op_history_hint" native="true">
+             <widget class="QWidget" name="hide_rel_name_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -618,96 +933,10 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item row="9" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="QCheckBox" name="autosave_interv_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Defines the period when the opened models will be saved automatically.</string>
-              </property>
-              <property name="text">
-               <string>Autosave interval (minutes):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="autosave_interv_spb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>30</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QWidget" name="autosave_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QCheckBox" name="disable_smooth_chk">
+             <widget class="QCheckBox" name="corner_move_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -718,15 +947,18 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Disable antialiasing for lines and texts improving performance when handling huge models.</string>
+               <string>Start move the canvas when the cursor is on the canvas edges</string>
               </property>
               <property name="text">
-               <string>Disable render smoothness</string>
+               <string>Move canvas by keeping the mouse on corners</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="disable_smooth_hint" native="true">
+             <widget class="QWidget" name="corner_move_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -749,10 +981,10 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item row="6" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_20">
             <item>
-             <widget class="QCheckBox" name="simple_obj_creation_chk">
+             <widget class="QCheckBox" name="use_curved_lines_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -763,18 +995,15 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Graphical objects (table, views and textboxes) will be created in a single step without the need to click on canvas </string>
+               <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
               </property>
               <property name="text">
-               <string>Simplify creation of graphical objects</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
+               <string>Use curved lines for relationships</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="simp_obj_creation_hint" native="true">
+             <widget class="QWidget" name="use_curved_lines_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -842,10 +1071,10 @@
             </item>
            </layout>
           </item>
-          <item row="5" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item row="8" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <widget class="QCheckBox" name="use_placeholders_chk">
+             <widget class="QCheckBox" name="disable_smooth_chk">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -856,105 +1085,15 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>When enabled this option creates a placeholder object at the previous table's position when starting to move it. This will cause graphical updates on relationship lines to be performed only when the drag &amp; drop action is done improving the performance. Disabling placeholders will cause those updates to be executed every time the table's position changes a single pixel (classical behavior).</string>
+               <string> Disable the antialiasing for lines and texts improving performance when handling huge models.</string>
               </property>
               <property name="text">
-               <string>Use placeholders when moving tables</string>
+               <string>Disable render smoothness</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="use_placeholders_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="5" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QCheckBox" name="hide_rel_name_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Hide the object that represents the relationship name</string>
-              </property>
-              <property name="text">
-               <string>Hide relationship name</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="hide_rel_name_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="6" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_20">
-            <item>
-             <widget class="QCheckBox" name="use_curved_lines_chk">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="statusTip">
-               <string>Replaces any straight line in relationship by curved ones in order to improve the model's visualization.</string>
-              </property>
-              <property name="text">
-               <string>Use curved lines for relationships</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="use_curved_lines_hint" native="true">
+             <widget class="QWidget" name="disable_smooth_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>

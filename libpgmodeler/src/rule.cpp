@@ -20,13 +20,13 @@
 
 Rule::Rule(void)
 {
-	execution_type=BaseType::null;
-	obj_type=OBJ_RULE;
-	attributes[ParsersAttributes::EVENT_TYPE]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::CONDITION]=QString();
-	attributes[ParsersAttributes::EXEC_TYPE]=QString();
-	attributes[ParsersAttributes::COMMANDS]=QString();
+	execution_type=BaseType::Null;
+	obj_type=ObjectType::Rule;
+	attributes[Attributes::EventType]=QString();
+	attributes[Attributes::Table]=QString();
+	attributes[Attributes::Condition]=QString();
+	attributes[Attributes::ExecType]=QString();
+	attributes[Attributes::Commands]=QString();
 }
 
 void Rule::setCommandsAttribute(void)
@@ -41,7 +41,7 @@ void Rule::setCommandsAttribute(void)
 		if(i < (qtd-1)) str_cmds+=QString(";");
 	}
 
-	attributes[ParsersAttributes::COMMANDS]=str_cmds;
+	attributes[Attributes::Commands]=str_cmds;
 }
 
 void Rule::setEventType(EventType type)
@@ -66,7 +66,7 @@ void Rule::addCommand(const QString &cmd)
 {
 	//Raises an error if the command is empty
 	if(cmd.isEmpty())
-		throw Exception(ERR_INS_EMPTY_RULE_COMMAND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InsEmptyRuleCommand,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		QString cmd_aux=cmd;
@@ -95,7 +95,7 @@ QString Rule::getCommand(unsigned cmd_idx)
 {
 	//Raises an error if the command index is out of bound
 	if(cmd_idx >= commands.size())
-		throw Exception(ERR_REF_RULE_CMD_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefRuleCommandInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(commands[cmd_idx]);
 }
@@ -109,7 +109,7 @@ void Rule::removeCommand(unsigned cmd_idx)
 {
 	//Raises an error if the command index is out of bound
 	if(cmd_idx>=commands.size())
-		throw Exception(ERR_REF_RULE_CMD_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefRuleCommandInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	commands.erase(commands.begin() + cmd_idx);
 	setCodeInvalidated(true);
@@ -127,12 +127,12 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setCommandsAttribute();
-	attributes[ParsersAttributes::CONDITION]=conditional_expr;
-	attributes[ParsersAttributes::EXEC_TYPE]=(~execution_type);
-	attributes[ParsersAttributes::EVENT_TYPE]=(~event_type);
+	attributes[Attributes::Condition]=conditional_expr;
+	attributes[Attributes::ExecType]=(~execution_type);
+	attributes[Attributes::EventType]=(~event_type);
 
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

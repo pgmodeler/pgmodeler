@@ -18,7 +18,7 @@
 
 #include "operatorfamilywidget.h"
 
-OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPFAMILY)
+OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::OpFamily)
 {
 	QStringList types;
 	map<QString, vector<QWidget *> > fields_map;
@@ -26,14 +26,14 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	QFrame *frame=nullptr;
 
 	Ui_OperatorFamilyWidget::setupUi(this);
-	configureFormLayout(opfamily_grid, OBJ_OPFAMILY);
+	configureFormLayout(opfamily_grid, ObjectType::OpFamily);
 
 	IndexingType::getTypes(types);
 	indexing_cmb->addItems(types);
 
 	setRequiredField(indexing_lbl);
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(indexing_lbl);
-	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::brin));
+	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
+	values_map[indexing_lbl].push_back(~IndexingType(IndexingType::Brin));
 
 	opfamily_grid->addItem(new QSpacerItem(10,10,QSizePolicy::Minimum,QSizePolicy::Expanding), opfamily_grid->count()+1, 0, 1, 0);
 

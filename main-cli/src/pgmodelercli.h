@@ -18,7 +18,7 @@
 
 /**
 \ingroup pgmodeler-cli
-\class PgModelerCLI
+\class PgModelerCli
 \brief Implements the operations export models whitout use the graphical interface
 */
 
@@ -39,11 +39,11 @@
 #include "databaseimporthelper.h"
 #include "modelsdiffhelper.h"
 
-class PgModelerCLI: public QApplication {
+class PgModelerCli: public QApplication {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		//! \brief Export helper object
 		ModelExportHelper export_hlp;
@@ -98,69 +98,69 @@ class PgModelerCLI: public QApplication {
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
 
-		static const QRegExp PASSWORD_REGEXP;
+		static const QRegExp PasswordRegExp;
 
-		static const QString PASSWORD_PLACEHOLDER;
+		static const QString PasswordPlaceholder;
 
 		//! \brief Option names constants
-		static const QString INPUT,
-		OUTPUT,
-		INPUT_DB,
-		EXPORT_TO_FILE,
-		EXPORT_TO_PNG,
-		EXPORT_TO_SVG,
-		EXPORT_TO_DBMS,
-		IMPORT_DB,
-		DIFF,
-		DROP_DATABASE,
-		DROP_OBJECTS,
-		PGSQL_VER,
-		HELP,
-		SHOW_GRID,
-		SHOW_DELIMITERS,
-		PAGE_BY_PAGE,
-		IGNORE_DUPLICATES,
-		IGNORE_ERROR_CODES,
-		CONN_ALIAS,
-		HOST,
-		PORT,
-		USER,
-		PASSWD,
-		INITIAL_DB,
-		SILENT,
-		LIST_CONNS,
-		SIMULATE,
-		FIX_MODEL,
-		FIX_TRIES,
-		ZOOM_FACTOR,
-		USE_TMP_NAMES,
-		DBM_MIME_TYPE,
-		INSTALL,
-		UNINSTALL,
+		static const QString Input,
+		Output,
+		InputDb,
+		ExportToFile,
+		ExportToPng,
+		ExportToSvg,
+		ExportToDbms,
+		ImportDb,
+		Diff,
+		DropDatabase,
+		DropObjects,
+		PgSqlVer,
+		Help,
+		ShowGrid,
+		ShowDelimiters,
+		PageByPage,
+		IgnoreDuplicates,
+		IgnoreErrorCodes,
+		ConnAlias,
+		Host,
+		Port,
+		User,
+		Passwd,
+		InitialDb,
+		Silent,
+		ListConns,
+		Simulate,
+		FixModel,
+		FixTries,
+		ZoomFactor,
+		UseTmpNames,
+		DbmMimeType,
+		Install,
+		Uninstall,
 
-		IGNORE_IMPORT_ERRORS,
-		IMPORT_SYSTEM_OBJS,
-		IMPORT_EXTENSION_OBJS,
-		DEBUG_MODE,
+		IgnoreImportErrors,
+		ImportSystemObjs,
+		ImportExtensionObjs,
+		DebugMode,
 
-		COMPARE_TO,
-		SAVE_DIFF,
-		APPLY_DIFF,
-		NO_DIFF_PREVIEW,
-		DROP_CLUSTER_OBJS,
-		REVOKE_PERMISSIONS,
-		DROP_MISSING_OBJS,
-		FORCE_DROP_COLS_CONSTRS,
-		RENAME_DB,
-		TRUNC_ON_COLS_TYPE_CHANGE,
-		NO_SEQUENCE_REUSE,
-		NO_CASCADE_DROP_TRUNC,
-		NO_FORCE_OBJ_RECREATION,
-		NO_UNMOD_OBJ_RECREATION,
+		CompareTo,
+		SaveDiff,
+		ApplyDiff,
+		NoDiffPreview,
+		DropClusterObjs,
+		RevokePermissions,
+		DropMissingObjs,
+		ForceDropColsConstrs,
+		RenameDb,
+		TruncOnColsTypeChange,
+		NoSequenceReuse,
+		NoCascadeDropTrunc,
+		NoForceObjRecreation,
+		NoUnmodObjRecreation,
 
-		TAG_EXPR,
-		END_TAG_EXPR,
-		ATTRIBUTE_EXPR;
+		TagExpr,
+		EndTagExpr,
+		AttributeExpr;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
@@ -212,13 +212,13 @@ class PgModelerCLI: public QApplication {
 		void printMessage(const QString &msg);
 
 	public:
-		PgModelerCLI(int argc, char **argv);
-		~PgModelerCLI(void);
+		PgModelerCli(int argc, char **argv);
+		~PgModelerCli(void);
 		int exec(void);
 
 	private slots:
 		void handleObjectAddition(BaseObject *);
-		void updateProgress(int progress, QString msg, ObjectType = BASE_OBJECT);
+		void updateProgress(int progress, QString msg, ObjectType = ObjectType::BaseObject);
 		void printIgnoredError(QString err_cod, QString err_msg, QString cmd);
 		void handleObjectRemoval(BaseObject *object);
 };

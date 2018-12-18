@@ -18,8 +18,12 @@ $tb <reference
 
 %if {expression} %then
  > $br
+ 
  $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
-$tb </reference> $br
+ 
+ %if {columns} %then {columns} %end
+  
+ $tb </reference> $br
 %else
  /> $br
 %end

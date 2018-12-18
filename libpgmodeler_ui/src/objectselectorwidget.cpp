@@ -58,7 +58,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		if(install_highlighter)
 		{
 			obj_name_hl=new SyntaxHighlighter(obj_name_txt, true);
-			obj_name_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+			obj_name_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		}
 		else
 		{
@@ -129,7 +129,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 
-		if(object->getObjectType()!=OBJ_CONSTRAINT)
+		if(object->getObjectType()!=ObjectType::Constraint)
 			obj_name_txt->setPlainText(selected_obj->getSignature());
 		else
 			obj_name_txt->setPlainText(QString("%1.%2")
