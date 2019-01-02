@@ -25,7 +25,7 @@ namespace GlobalAttributes {
 	PgModelerAppName=QString("pgmodeler"),
 	PgModelerURI=QString("pgmodeler.io"),
 	PGMODELER_REVERSE_URI=QString("io.pgmodeler"),
-	PgModelerVersion=QString("0.9.2-alpha1"),
+	PgModelerVersion=QString("0.9.2-beta"),
 	PgModelerBuildNumber=QString(BUILDNUM),
 	PgModelerSite=QString("https://pgmodeler.io"),
 	PgModelerSupport=QString("https://pgmodeler.io/support/docs"),
