@@ -679,7 +679,6 @@ void PgModelerCli::extractObjectXML(void)
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
-			default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)")),
 
 			//[schema].[func_name](...OUT [type]...)
 			func_signature=QRegExp(QString("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")")),
@@ -708,9 +707,37 @@ void PgModelerCli::extractObjectXML(void)
 		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
+		//Extracting layers informations from the tag <dbmodel>
+		QRegExp dbm_regexp = QRegExp(TagExpr.arg(Attributes::DbModel)),
+				db_end_regexp =  QRegExp(EndTagExpr.arg(Attributes::Database));
+		int attr_start =-1, attr_end = -1, dbm_start = dbm_regexp.indexIn(buf);
+		QString aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start),
+				layers, active_layers, attr_expr = QString("(%1)( )*(=)(\")");
+		QList<unsigned> act_layers_ids;
+
+		//Layers names
+		attr_start = aux_buf.indexOf(Attributes::Layers);
+		attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
+		layers = aux_buf.mid(attr_start, attr_end - attr_start);
+		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
+		layers.remove('"');
+		model->setLayers(layers.trimmed().split(';', QString::SkipEmptyParts));
+
+		//Active layers
+		attr_start = attr_end;
+		attr_end = aux_buf.indexOf('>', attr_start);
+		active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
+		active_layers.remove(QRegExp(attr_expr.arg(Attributes::ActiveLayers)));
+		active_layers.remove('"');
+
+		for(auto id : active_layers.trimmed().split(';', QString::SkipEmptyParts))
+			act_layers_ids.push_back(id.toUInt());
+
+		model->setActiveLayers(act_layers_ids);
+
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
-		buf.remove(0, buf.indexOf(QString("\n")));
+		buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
 		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
 		ts.setString(&buf);
 
@@ -739,14 +766,9 @@ void PgModelerCli::extractObjectXML(void)
 			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
 						   (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
-			else if(lin.contains(default_obj))
-			{
-				lin.clear();
-			}
 			else
 			{
 				//If the line contains an objects open tag
-				//if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
 				if(lin.contains(QRegExp("^(((\n)|(\t))*(<))")) && !open_tag)
 				{
 					//Check the flag indicating an open tag
