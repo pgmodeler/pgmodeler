@@ -132,7 +132,6 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	sql_exec_hlp.moveToThread(&sql_exec_thread);
 
 	connect(&sql_exec_thread, SIGNAL(started()), &sql_exec_hlp, SLOT(executeCommand()));
-	connect(&sql_exec_hlp, SIGNAL(s_executionCancelled()), this, SLOT(finishExecution()));
 	connect(&sql_exec_hlp, SIGNAL(s_executionFinished(int)), this, SLOT(finishExecution(int)));
 	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), &sql_exec_thread, SLOT(quit()));
 	connect(&sql_exec_hlp, SIGNAL(s_executionAborted(Exception)), this, SLOT(handleExecutionAborted(Exception)));
@@ -145,6 +144,7 @@ SQLExecutionWidget::~SQLExecutionWidget(void)
 	{
 		sql_exec_hlp.cancelCommand();
 		sql_exec_thread.quit();
+		sql_exec_thread.wait();
 	}
 
 	destroyResultModel();

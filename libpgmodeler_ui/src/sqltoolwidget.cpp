@@ -311,7 +311,10 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
 
 	//Closing sql execution tabs related to the database to be closed
 	for(QWidget *wgt : sql_exec_wgts[db_explorer])
+	{
 		sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+		delete(wgt);
+	}
 
 	sql_exec_wgts.remove(db_explorer);
 	databases_tbw->removeTab(idx);
@@ -344,6 +347,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx)
 
 	if(sql_exec_wgt)
 		delete(sql_exec_wgt);
+
 }
 
 void SQLToolWidget::showSnippet(const QString &snip)

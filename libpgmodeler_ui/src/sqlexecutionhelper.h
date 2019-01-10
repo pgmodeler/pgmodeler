@@ -67,7 +67,6 @@ class SQLExecutionHelper : public QObject {
 
 	signals:
 		void s_executionFinished(int rows_affected);
-		void s_executionCancelled(void);
 		void s_executionAborted(Exception e);
 };
 
