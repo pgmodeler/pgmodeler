@@ -54,7 +54,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void updateConnectionsCombo(void);
 		
 	public:
-		ConnectionsConfigWidget(QWidget * parent=0);
+		ConnectionsConfigWidget(QWidget * parent = nullptr);
 		~ConnectionsConfigWidget(void);
 		
 		void saveConfiguration(void);

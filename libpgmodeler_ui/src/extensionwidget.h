@@ -33,7 +33,7 @@ class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 		Q_OBJECT
 		
 	public:
-		ExtensionWidget(QWidget * parent = 0);
+		ExtensionWidget(QWidget * parent = nullptr);
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext);
 		

@@ -41,7 +41,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		ElementsTableWidget *elements_tab;
 
 	public:
-		IndexWidget(QWidget * parent = 0);
+		IndexWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index);
 
 	private slots:

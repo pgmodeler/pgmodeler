@@ -41,7 +41,7 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 		void hideEvent(QHideEvent *);
 
 	public:
-		ModelFixForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelFixForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 
 	public slots:
 		int exec(void);

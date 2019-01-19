@@ -39,7 +39,7 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 		Sequence ident_col_seq;
 
 	public:
-		ColumnWidget(QWidget * parent = 0);
+		ColumnWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column);
 		
 	private slots:

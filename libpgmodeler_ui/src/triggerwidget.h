@@ -48,7 +48,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 		void addColumn(Column *column, int row);
 
 	public:
-		TriggerWidget(QWidget * parent = 0);
+		TriggerWidget(QWidget * parent  = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_table, Trigger *trigger);
 

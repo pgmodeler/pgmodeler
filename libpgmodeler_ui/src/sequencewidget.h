@@ -43,7 +43,7 @@ class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 		void setAttributesReadonly(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence, Column *column);
 
 	public:
-		SequenceWidget(QWidget * parent = 0);
+		SequenceWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence);
 
 	public slots:

@@ -69,7 +69,7 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
 	public:
-		GeneralConfigWidget(QWidget * parent=0);
+		GeneralConfigWidget(QWidget * parent = nullptr);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);

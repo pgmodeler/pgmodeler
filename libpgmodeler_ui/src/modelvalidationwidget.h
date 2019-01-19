@@ -74,7 +74,7 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void resizeEvent(QResizeEvent *event);
 
 	public:
-		ModelValidationWidget(QWidget * parent = 0);
+		ModelValidationWidget(QWidget * parent = nullptr);
 
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);

@@ -39,7 +39,7 @@ class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 		ObjectsTableWidget *constr_tab;
 		
 	public:
-		DomainWidget(QWidget * parent = 0);
+		DomainWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain);
 		
 	private slots:

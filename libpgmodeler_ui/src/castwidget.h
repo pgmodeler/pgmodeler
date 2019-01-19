@@ -40,7 +40,7 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 		ObjectSelectorWidget *conv_func_sel;
 		
 	public:
-		CastWidget(QWidget * parent = 0);
+		CastWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);
 		
 	public slots:

@@ -144,7 +144,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		VERSIONS_INTERVAL=1,
 		AFTER_VERSION=2;
 		
-		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=ObjectType::BaseObject);
+		BaseObjectWidget(QWidget * parent = nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
 		virtual ~BaseObjectWidget(void);
 		

@@ -33,7 +33,7 @@ class TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
 		Q_OBJECT
 
 	public:
-		TablespaceWidget(QWidget * parent = 0);
+		TablespaceWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc);
 
 	public slots:

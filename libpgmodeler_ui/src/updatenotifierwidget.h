@@ -75,7 +75,7 @@ class UpdateNotifierWidget: public QWidget, public Ui::UpdateNotifierWidget {
 		void activateLink(const QString &link);
 
 	public:
-		UpdateNotifierWidget(QWidget * parent = 0);
+		UpdateNotifierWidget(QWidget * parent = nullptr);
 
 	public slots:
 		void checkForUpdate(void);

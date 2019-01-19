@@ -33,7 +33,7 @@ class OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWi
 		Q_OBJECT
 
 	public:
-		OperatorFamilyWidget(QWidget * parent = 0);
+		OperatorFamilyWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family);
 
 	public slots:

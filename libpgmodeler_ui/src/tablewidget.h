@@ -62,7 +62,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		int openEditingForm(TableObject *object);
 
 	public:
-		TableWidget(QWidget * parent = 0);
+		TableWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 

@@ -38,7 +38,7 @@ class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget
 		ObjectSelectorWidget *function_sel;
 		
 	public:
-		EventTriggerWidget(QWidget * parent = 0);
+		EventTriggerWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, EventTrigger *event_trig);
 		
 	public slots:

@@ -33,7 +33,7 @@ class SceneInfoWidget: public QWidget, public Ui::SceneInfoWidget {
 		Q_OBJECT
 
 	public:
-		SceneInfoWidget(QWidget * parent = 0);
+		SceneInfoWidget(QWidget * parent = nullptr);
 
 	public slots:
 		void updateSelectedObject(BaseObjectView *object);

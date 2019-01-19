@@ -38,7 +38,7 @@ class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 		*def_tablespace_sel;
 		
 	public:
-		DatabaseWidget(QWidget * parent = 0);
+		DatabaseWidget(QWidget * parent = nullptr);
 		
 		void setAttributes(DatabaseModel *model);
 		

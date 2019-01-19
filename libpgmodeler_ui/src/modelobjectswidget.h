@@ -98,7 +98,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
+		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = nullptr);
 
 		BaseObject *getSelectedObject(void);
 

@@ -45,7 +45,7 @@ class BaseForm: public QDialog, public Ui::BaseForm {
 		void closeEvent(QCloseEvent *);
 
 	public:
-		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		BaseForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 
 		void setButtonConfiguration(unsigned button_conf=Messagebox::OkCancelButtons);
 

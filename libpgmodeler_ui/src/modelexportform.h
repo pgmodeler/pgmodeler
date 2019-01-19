@@ -59,7 +59,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		int exec(void){ return(QDialog::Rejected); }
 
 	public:
-		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelExportForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 
 	public slots:
 		void exec(ModelWidget *model);

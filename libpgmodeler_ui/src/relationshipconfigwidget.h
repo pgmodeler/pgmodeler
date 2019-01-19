@@ -45,7 +45,7 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 		void hideEvent(QHideEvent *);
 
 	public:
-		RelationshipConfigWidget(QWidget * parent=0);
+		RelationshipConfigWidget(QWidget * parent = nullptr);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);

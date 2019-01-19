@@ -53,7 +53,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		bool perms_changed;
 
 	public:
-		PermissionWidget(QWidget * parent = 0);
+		PermissionWidget(QWidget * parent = nullptr);
 		~PermissionWidget(void);
 
 		void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);

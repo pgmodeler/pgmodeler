@@ -38,7 +38,7 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 		void enableNavigationButtons(void);
 
 	public:
-		ModelNavigationWidget(QWidget * parent = 0);
+		ModelNavigationWidget(QWidget * parent = nullptr);
 
 		//! \brief Returns the combo's current index
 		int getCurrentIndex(void);

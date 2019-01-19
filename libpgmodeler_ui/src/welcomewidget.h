@@ -31,7 +31,7 @@ class WelcomeWidget: public QWidget, public Ui::WelcomeWidget {
 		Q_OBJECT
 		
 	public:
-		WelcomeWidget(QWidget * parent = 0);
+		WelcomeWidget(QWidget * parent = nullptr);
 		
 	public slots:
 };

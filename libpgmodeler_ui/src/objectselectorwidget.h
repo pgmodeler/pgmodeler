@@ -56,8 +56,8 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
+		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = nullptr);
+		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = nullptr);
 		~ObjectSelectorWidget(void);
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog

@@ -61,7 +61,7 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		PgSQLTypeWidget *attrib_type_wgt;
 
 	public:
-		TypeWidget(QWidget * parent = 0);
+		TypeWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *type);
 

@@ -36,7 +36,7 @@ class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 		ColorPickerWidget *color_picker;
 
 	public:
-		SchemaWidget(QWidget * parent = 0);
+		SchemaWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema);
 
 	public slots:

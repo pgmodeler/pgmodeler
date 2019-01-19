@@ -37,7 +37,7 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 		*func_inline_sel;
 
 	public:
-		LanguageWidget(QWidget * parent = 0);
+		LanguageWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *language);
 

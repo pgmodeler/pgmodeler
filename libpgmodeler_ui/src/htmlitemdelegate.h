@@ -34,7 +34,7 @@ class HtmlItemDelegate : public PlainTextItemDelegate {
 		Q_OBJECT
 
 	public:
-		HtmlItemDelegate(QObject * parent = 0);
+		HtmlItemDelegate(QObject * parent = nullptr);
 		~HtmlItemDelegate(void);
 
 	protected:

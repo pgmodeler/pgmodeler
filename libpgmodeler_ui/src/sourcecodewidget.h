@@ -47,7 +47,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		HintTextWidget *code_options_ht;
 
 	public:
-		SourceCodeWidget(QWidget * parent = 0);
+		SourceCodeWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 

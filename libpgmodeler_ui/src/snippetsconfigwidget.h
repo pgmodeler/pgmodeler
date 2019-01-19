@@ -66,7 +66,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		attribs_map getSnippetAttributes(void);
 
 	public:
-		SnippetsConfigWidget(QWidget * parent=0);
+		SnippetsConfigWidget(QWidget * parent = nullptr);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);

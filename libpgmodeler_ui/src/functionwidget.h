@@ -64,7 +64,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void validateConfiguredFunction(void);
 
 	public:
-		FunctionWidget(QWidget * parent = 0);
+		FunctionWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func);
 

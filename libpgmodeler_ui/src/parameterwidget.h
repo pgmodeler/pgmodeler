@@ -37,7 +37,7 @@ class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 		Parameter parameter;
 
 	public:
-		ParameterWidget(QWidget * parent = 0);
+		ParameterWidget(QWidget * parent = nullptr);
 		void setAttributes(Parameter parameter, DatabaseModel *model);
 		Parameter getParameter(void);
 

@@ -61,7 +61,7 @@ class CrashHandlerForm: public BugReportForm {
 		//! \brief Analysis mode argument
 		static const QString AnalysisMode;
 
-		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
+		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 
 	private slots:
 		void loadReport(void);

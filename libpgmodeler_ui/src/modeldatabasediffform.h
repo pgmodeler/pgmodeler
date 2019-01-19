@@ -116,7 +116,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		ExportThread=3;
 
 	public:
-		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 		~ModelDatabaseDiffForm(void);
 
 		void setModelWidget(ModelWidget *model_wgt);

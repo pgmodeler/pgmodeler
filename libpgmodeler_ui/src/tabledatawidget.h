@@ -61,7 +61,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 	public:
 		static const QString PlaceholderColumn;
 
-		TableDataWidget(QWidget * parent = 0);
+		TableDataWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, Table *table);
 

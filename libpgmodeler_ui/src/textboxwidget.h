@@ -33,7 +33,7 @@ class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
 		Q_OBJECT
 
 	public:
-		TextboxWidget(QWidget * parent = 0);
+		TextboxWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=nullptr, double obj_px=NAN, double obj_py=NAN);
 

@@ -48,7 +48,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 		void selectFile(bool is_output);
 
 	public:
-		MetadataHandlingForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		MetadataHandlingForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
 		void setModelWidget(ModelWidget *model_wgt);
 		void setModelWidgets(QList<ModelWidget *> models);
 

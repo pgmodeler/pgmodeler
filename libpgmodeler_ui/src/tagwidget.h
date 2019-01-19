@@ -38,7 +38,7 @@ class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 		map<QString, ColorPickerWidget *> color_pickers;
 
 	public:
-		TagWidget(QWidget * parent = 0);
+		TagWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag);
 

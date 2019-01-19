@@ -34,7 +34,7 @@ class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
 		ObjectSelectorWidget *conv_func_sel;
 		
 	public:
-		ConversionWidget(QWidget * parent = 0);
+		ConversionWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv);
 		
 	private slots:

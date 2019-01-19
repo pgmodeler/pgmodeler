@@ -42,7 +42,7 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 		QList<QStringList> csv_rows;
 
 	public:
-		CsvLoadWidget(QWidget * parent = 0, bool cols_in_first_row = true);
+		CsvLoadWidget(QWidget * parent = nullptr, bool cols_in_first_row = true);
 
 		//! \brief Returns the extracted columns
 		QStringList getCsvColumns(void);

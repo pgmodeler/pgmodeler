@@ -52,7 +52,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		ObjectsTableWidget *elements_tab;
 
 	public:
-		OperatorClassWidget(QWidget * parent = 0);
+		OperatorClassWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class);
 
 	private slots:

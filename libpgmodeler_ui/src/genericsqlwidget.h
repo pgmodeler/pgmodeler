@@ -40,7 +40,7 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		CodeCompletionWidget *definition_cp;
 
 	public:
-		GenericSQLWidget(QWidget * parent = 0);
+		GenericSQLWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
 

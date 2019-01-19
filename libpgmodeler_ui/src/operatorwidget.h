@@ -39,7 +39,7 @@ class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 		*operators_sel[2];
 
 	public:
-		OperatorWidget(QWidget * parent = 0);
+		OperatorWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper);
 

@@ -56,7 +56,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		void addColumn(Column *column, unsigned col_id, int row);
 		
 	public:
-		ConstraintWidget(QWidget * parent = 0);
+		ConstraintWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Constraint *constr);
 		
 	private slots:

@@ -46,7 +46,7 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		void showRoleData(Role *role, unsigned table_id, unsigned row);
 
 	public:
-		RoleWidget(QWidget * parent = 0);
+		RoleWidget(QWidget * parent = nullptr);
 		~RoleWidget(void);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *role);

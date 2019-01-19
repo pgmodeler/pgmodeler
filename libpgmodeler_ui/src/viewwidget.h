@@ -76,7 +76,7 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		unsigned getReferenceFlag(int row);
 
 	public:
-		ViewWidget(QWidget * parent = 0);
+		ViewWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py);
 

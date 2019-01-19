@@ -40,7 +40,7 @@ class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 		void notifyUpdateOnModel(void);
 
 	public:
-		OperationListWidget(QWidget * parent = 0);
+		OperationListWidget(QWidget * parent = nullptr);
 
 	public slots:
 		void updateOperationList(void);

@@ -73,7 +73,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		void updatePlaceholderItem(void);
 		
 	public:
-		AppearanceConfigWidget(QWidget * parent=0);
+		AppearanceConfigWidget(QWidget * parent = nullptr);
 		~AppearanceConfigWidget(void);
 		
 		void saveConfiguration(void);

@@ -144,7 +144,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
 	public:
-		DatabaseExplorerWidget(QWidget * parent = 0);
+		DatabaseExplorerWidget(QWidget * parent = nullptr);
 		
 		//! \brief Configures the connection used to retrieve and manipulate objects on database
 		void setConnection(Connection conn, const QString &default_db);

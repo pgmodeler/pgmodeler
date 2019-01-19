@@ -55,7 +55,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		*transition_func_sel;
 		
 	public:
-		AggregateWidget(QWidget * parent = 0);
+		AggregateWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate);
 		
 	private slots:

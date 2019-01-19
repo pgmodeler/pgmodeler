@@ -85,7 +85,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		void keyPressEvent(QKeyEvent *event);
 
 	public:
-		NumberedTextEditor(QWidget * parent = 0, bool handle_ext_files = false);
+		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false);
 		~NumberedTextEditor(void);
 
 		static void setDefaultFont(const QFont &font);

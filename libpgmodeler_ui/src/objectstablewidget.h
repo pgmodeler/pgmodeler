@@ -55,7 +55,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		AllButtons=255,
 		NoButtons=0;
 
-		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);

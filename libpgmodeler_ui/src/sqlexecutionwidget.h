@@ -104,7 +104,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	public:
 		static const QString ColumnNullValue;
 
-		SQLExecutionWidget(QWidget * parent = 0);
+		SQLExecutionWidget(QWidget * parent = nullptr);
 		~SQLExecutionWidget(void);
 
 		//! \brief Configures the connection to query the server
