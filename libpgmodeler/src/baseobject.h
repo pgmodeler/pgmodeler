@@ -479,7 +479,7 @@ class BaseObject {
 		/*! \brief Returns the valid object types that are child or grouped under the specified type.
 	This method works a litte different from getObjectTypes() since this latter returns all valid types
 	and this one returns only the valid types for the current specified type. For now the only accepted
-	types are ObjectType::ObjDatabase, ObjectType::ObjSchema and ObjectType::ObjTable */
+	types are ObjectType::Database, ObjectType::Schema and ObjectType::Table */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that

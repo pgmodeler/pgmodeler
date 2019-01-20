@@ -698,7 +698,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		obj_idx=oper->getObjectIndex();
 
 		/* Converting the parent object, if any, to the correct class according
-			to the type of the parent object. If ObjectType::ObjTable|ObjectType::ObjView, the pointer
+			to the type of the parent object. If ObjectType::Table|ObjectType::View, the pointer
 			'parent_tab' get the reference to table/view and will be used as referential
 			in the operations below. If the parent object is a relationship, the pointer
 					'parent_rel' get the reference to the relationship */
