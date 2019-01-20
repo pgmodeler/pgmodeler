@@ -771,7 +771,7 @@ void DatabaseModel::destroyObjects(void)
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlDefinition, true);
-	ritr = objects.rbegin(),
+	ritr = objects.rbegin();
 	ritr_end = objects.rend();
 
 	while(ritr != ritr_end)
@@ -9245,31 +9245,24 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 	{
 		case UserTypeConfig::BaseType:
 		return(this->getObject(*type, ObjectType::Type));
-		break;
 
 		case UserTypeConfig::DomainType:
 		return(this->getObject(*type, ObjectType::Domain));
-		break;
 
 		case UserTypeConfig::TableType:
 		return(this->getObject(*type, ObjectType::Table));
-		break;
 
 		case UserTypeConfig::ViewType:
 		return(this->getObject(*type, ObjectType::View));
-		break;
 
 		case UserTypeConfig::SequenceType:
 		return(this->getObject(*type, ObjectType::Sequence));
-		break;
 
 		case UserTypeConfig::ExtensionType:
 		return(this->getObject(*type, ObjectType::Extension));
-		break;
 
 		default:
 		return(nullptr);
-		break;
 	}
 }
 
