@@ -66,9 +66,9 @@ if [ $X64_BUILD = 1 ]; then
 			$MINGW_ROOT/zlib1.dll \
 		    $MINGW_ROOT/libxml2-2.dll \
 		    $MINGW_ROOT/libpq.dll \
-		    $MINGW_ROOT/libeay32.dll \
-		    $MINGW_ROOT/ssleay32.dll \
-			$MINGW_ROOT/liblzma-5.dll"
+			$MINGW_ROOT/liblzma-5.dll \
+			$MINGW_ROOT/libcrypto-1_1-x64.dll \
+			$MINGW_ROOT/libssl-1_1-x64.dll"
 else
   # Default setting for x86 build
   QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw53_32/"
