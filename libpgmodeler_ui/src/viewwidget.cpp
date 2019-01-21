@@ -89,7 +89,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
-		objects_tab_map[ObjectType::Trigger]->setColumnCount(4);
+		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
@@ -97,17 +97,24 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Alias"), 4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Comment"), 5);
 
-		objects_tab_map[ObjectType::Index]->setColumnCount(2);
+		objects_tab_map[ObjectType::Index]->setColumnCount(4);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Alias"), 2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Comment"), 3);
 
-		objects_tab_map[ObjectType::Rule]->setColumnCount(3);
+		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Alias"), 3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Comment"), 4);
+
 
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
@@ -373,6 +380,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);
+		tab->setCellText(trigger->getAlias(), row, 4);
 	}
 	else if(obj_type==ObjectType::Rule)
 	{
@@ -383,6 +391,8 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
+
+		tab->setCellText(rule->getAlias(), row, 3);
 	}
 	else
 	{
@@ -390,8 +400,10 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 1: Indexing type
 		tab->setCellText(~index->getIndexingType(),row,1);
+		tab->setCellText(index->getAlias(), row, 2);
 	}
 
+	tab->setCellText(object->getComment(), row, tab->getColumnCount() - 1);
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
