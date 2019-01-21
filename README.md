@@ -1,3 +1,11 @@
+[![](https://img.shields.io/github/license/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE)
+[![](https://img.shields.io/github/issues-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues)
+[![](https://img.shields.io/github/issues-closed-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues?q=is%3Aissue+is%3Aclosed)
+<br/>
+![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
+[![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
+[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/0.9.2-beta.svg)](https://github.com/pgmodeler/pgmodeler/commits/0.9.2-beta)
+
 Introduction
 ------------
 
