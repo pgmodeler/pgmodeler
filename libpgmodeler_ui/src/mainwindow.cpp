@@ -165,6 +165,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
+		gqb_core_wgt=new GqbCoreWidget;
 	}
 	catch(Exception &e)
 	{
@@ -260,6 +261,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	oper_list_parent->setVisible(false);
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
+	gqbc_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
 	donate_wgt->setVisible(false);
@@ -288,6 +290,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hlayout->addWidget(obj_finder_wgt);
 	obj_finder_parent->setLayout(hlayout);
 
+	hlayout=new QHBoxLayout;
+	hlayout->setContentsMargins(0,0,0,0);
+	hlayout->addWidget(gqb_core_wgt);
+	gqbc_parent->setLayout(hlayout);
+
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_parent, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), model_objs_wgt, SLOT(setVisible(bool)));
 	connect(objects_btn, SIGNAL(toggled(bool)), this, SLOT(showRightWidgetsBar(void)));
@@ -312,6 +319,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), find_obj_btn, SLOT(setChecked(bool)));
 	connect(obj_finder_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
 
+	connect(gqbc_btn, SIGNAL(toggled(bool)), gqbc_parent, SLOT(setVisible(bool)));
+	connect(gqbc_btn, SIGNAL(toggled(bool)), gqb_core_wgt, SLOT(setVisible(bool)));
+	connect(gqbc_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar(void)));
+	connect(gqb_core_wgt, SIGNAL(s_visibilityChanged(bool)), gqbc_btn, SLOT(setChecked(bool)));
+	connect(gqb_core_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showBottomWidgetsBar()));
+
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this->main_menu_mb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), control_tb, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), general_tb, SLOT(setDisabled(bool)));
@@ -319,6 +332,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), oper_list_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_objs_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), gqb_core_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
@@ -520,7 +534,7 @@ void MainWindow::showRightWidgetsBar(void)
 
 void MainWindow::showBottomWidgetsBar(void)
 {
-	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
+	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked() || gqbc_btn->isChecked());
 }
 
 void MainWindow::restoreLastSession(void)
@@ -1139,9 +1153,13 @@ void MainWindow::setCurrentModel(void)
 	model_objs_wgt->setModel(current_model);
 	model_valid_wgt->setModel(current_model);
 	obj_finder_wgt->setModel(current_model);
+	gqb_core_wgt->setModel(current_model);
 
 	if(current_model)
+	{
+		connect(gqb_core_wgt, SIGNAL(s_gqbSqlRequested(QString)), gqb_core_wgt->getModel(), SLOT(showGqbSql(QString)));
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
+	}
 
 	model_objs_wgt->saveTreeState(true);
 }
@@ -1855,6 +1873,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params.clear();
 
 	params[Attributes::ObjectFinder]=Attributes::True;
+	params[Attributes::GraphicalQueryBuilder]=Attributes::True;
 	params[Attributes::SelectObjects]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
 	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());

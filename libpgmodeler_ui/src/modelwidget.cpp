@@ -1004,19 +1004,14 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 
 void ModelWidget::emitSceneInteracted(void)
 {
-	if(selected_objects.empty())
+	if(scene->selectedItems().empty())
 		emit s_sceneInteracted(nullptr);
-	else if(selected_objects.size() == 1)
+	else if(scene->selectedItems().size() == 1)
 	{
-		BaseGraphicObject *base_obj = dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
-
-		if(base_obj)
-			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject()));
-		else
-			emit s_sceneInteracted(nullptr);
+			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(scene->selectedItems()[0]));
 	}
 	else
-		emit s_sceneInteracted(selected_objects.size(), scene->itemsBoundingRect(true, true));
+		emit s_sceneInteracted(scene->selectedItems().size(), scene->itemsBoundingRect(true, true));
 }
 
 void ModelWidget::configureObjectSelection(void)
@@ -1880,6 +1875,13 @@ void ModelWidget::showSourceCode(void)
 			openEditingForm(sourcecode_wgt, Messagebox::OkButton);
 		}
 	}
+}
+
+void ModelWidget::showGqbSql(QString query_txt)
+{
+	SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
+	sourcecode_wgt->displayQuery(query_txt);
+	openEditingForm(sourcecode_wgt, Messagebox::OkButton);
 }
 
 void ModelWidget::cancelObjectAddition(void)

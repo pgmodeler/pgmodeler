@@ -179,6 +179,7 @@ class BaseRelationship: public BaseGraphicObject  {
 		friend class DatabaseModel;
 		friend class RelationshipWidget;
 		friend class ModelWidget;
+		friend class GqbCoreWidget;
 };
 
 #endif

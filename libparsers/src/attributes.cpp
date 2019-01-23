@@ -228,6 +228,7 @@ namespace Attributes {
 	GenAlterCmds=QString("gen-alter-cmds"),
 	Global=QString("global"),
 	GrantOp=QString("grant-op"),
+	GraphicalQueryBuilder=QString("qraphical-query-builder"),
 	GridSize=QString("grid-size"),
 	Group=QString("group"),
 	HandlerFunc=QString("handler"),

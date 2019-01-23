@@ -46,10 +46,7 @@ class TableObjectView: public BaseObjectView
 		 has a constraint */
 		void configureDescriptor(ConstraintType constr_type=BaseType::Null);
 
-		QVariant itemChange(GraphicsItemChange, const QVariant &value)
-		{
-			return(value);
-		}
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 		void calculateBoundingRect(void);
 
@@ -92,7 +89,7 @@ class TableObjectView: public BaseObjectView
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
 
-		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 		virtual QRectF boundingRect(void) const;
 

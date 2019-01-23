@@ -559,6 +559,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 			}
 			else if(itr->first==Attributes::Validator ||
 					itr->first==Attributes::ObjectFinder ||
+                    itr->first==Attributes::GraphicalQueryBuilder ||
 					itr->first==Attributes::SqlTool)
 			{
 				schparser.ignoreUnkownAttributes(true);

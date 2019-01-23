@@ -48,10 +48,16 @@ class BaseTableView: public BaseObjectView {
 		 * to false and the geometry updated immediately (see BaseTableView::itemChange()) */
 		bool pending_geom_update;
 
+		//! \brief Flag up if a subitem multiselection is happening and cols are ungrouped.
+		bool is_ungrouped;
+
 		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns,
 
 		*ext_attribs;
+
+		//! \brief Container holding track of the temporary top-level ungrouped tableObjectViews
+		QList<TableObjectView *> ungrouped_cols;
 
 		//! brief Indicates if the extended attributes body should be hidden
 		static bool hide_ext_attribs,
@@ -158,6 +164,13 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
+		//! \brief Set the columns top-level for subitem multiselection.
+		void ungroupCols(void);
+
+		//! \brief Regroup columns if ungrouped.
+		void checkRegroupCols(void);
+
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged

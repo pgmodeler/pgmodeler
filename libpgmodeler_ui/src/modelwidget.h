@@ -323,6 +323,8 @@ class ModelWidget: public QWidget {
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
 
+		ObjectsScene *getScene(void){return scene;}
+
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
 
@@ -502,6 +504,7 @@ class ModelWidget: public QWidget {
 		void saveModel(void);
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
 		void update(void);
+		void showGqbSql(QString query_txt);
 
 	signals:
 		void s_objectModified(void);
@@ -510,6 +513,7 @@ class ModelWidget: public QWidget {
 		void s_objectRemoved(void);
 		void s_zoomModified(double);
 		void s_modelResized(void);
+		//void s_gqbSqlRequested(QString &query_txt);
 
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);

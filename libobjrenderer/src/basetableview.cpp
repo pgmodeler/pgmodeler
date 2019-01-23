@@ -28,6 +28,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 		throw Exception(ErrorCode::AsgNotAllocattedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	pending_geom_update = false;
+	is_ungrouped=false;
 	body=new RoundedRectItem;
 	body->setRoundedCorners(RoundedRectItem::BottomLeftCorner | RoundedRectItem::BottomRightCorner);
 
@@ -154,6 +155,23 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 		emit s_childObjectSelected(sel_child_obj);
 	}
+
+	//If intended selection of a subitem
+	else if(this->isSelected() && event->buttons()==Qt::LeftButton && sel_child_obj &&
+			!is_ungrouped && QGuiApplication::queryKeyboardModifiers() & Qt::AltModifier)
+	{
+		this->ungroupCols();
+
+		//Get a grip on the tableobjectview item that was just hovered :
+		//we match on baseobject names within the columns of this table.
+		//Then select it.
+		for(int i=0;i< this->ungrouped_cols.size();i++)
+		{
+			if(sel_child_obj->getName()==
+						dynamic_cast<BaseObjectView *>(this->ungrouped_cols[i])->getSourceObject()->getName())
+				this->ungrouped_cols[i]->setSelected(true);
+		}
+	}
 	else
 	{
 		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
@@ -197,7 +215,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 	/* Case the table itself is not selected shows the child selector
 		at mouse position */
-	if(!this->isSelected())
+	if(!this->is_ungrouped)
 	{
 		QList<QGraphicsItem *> items;
 		double cols_height, item_idx, ext_height=0;
@@ -234,19 +252,22 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		{
 			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
 
-			//Configures the selection with the item's dimension
-			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
+			if(!this->isSelected())
 			{
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
-				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
-																																			 title->boundingRect().width() - (2.5 * HorizSpacing),
-																																			 item->boundingRect().height() - VertSpacing));
-			}
+				//Configures the selection with the item's dimension
+				if(obj_selection->boundingRect().height()!=item->boundingRect().height())
+				{
+					dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
+					dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
+																																				 title->boundingRect().width() - (2.5 * HorizSpacing),
+																																				 item->boundingRect().height() - VertSpacing));
+				}
 
-			//Sets the selection position as same as item's position
-			rect1=this->mapRectToItem(item, item->boundingRect());
-			obj_selection->setVisible(true);
-			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top() + VertSpacing/2));
+				//Sets the selection position as same as item's position
+				rect1=this->mapRectToItem(item, item->boundingRect());
+				obj_selection->setVisible(true);
+				obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top() + VertSpacing/2));
+			}
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
@@ -491,16 +512,33 @@ bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned tota
 
 void BaseTableView::configureCollapsedSections(CollapseMode coll_mode)
 {
+	if(is_ungrouped)
+	{
+		this->scene()->clearSelection();
+		this->checkRegroupCols();
+	}
+
 	startGeometryUpdate();
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setCollapseMode(coll_mode);
 	finishGeometryUpdate();
 	emit s_collapseModeChanged();
+
+	// Using a single shot time to restore the selectable flag
+	QTimer::singleShot(500, [&]{
+		this->scene()->clearSelection();
+		QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+		QCoreApplication::postEvent(scene(), event);});
 }
 
 void BaseTableView::togglePagination(bool enabled)
 {
 	BaseTable *tab = dynamic_cast<BaseTable *>(this->getSourceObject());
 
+	if(is_ungrouped)
+	{
+		this->scene()->clearSelection();
+		this->checkRegroupCols();
+	}
 	startGeometryUpdate();
 	tab->setPaginationEnabled(enabled);
 	tab->resetCurrentPages();
@@ -514,4 +552,50 @@ void BaseTableView::configureCurrentPage(unsigned section_id, unsigned page)
 	dynamic_cast<BaseTable *>(this->getSourceObject())->setCurrentPage(section_id, page);
 	finishGeometryUpdate();
 	emit s_currentPageChanged();
+}
+
+void BaseTableView::ungroupCols()
+{
+	QList<QGraphicsItem *> cols = this->columns->childItems();
+	ungrouped_cols.clear();
+
+	this->setFlag(QGraphicsItem::ItemIsMovable, false);
+	for(auto & col : cols)
+	{
+		auto * subitem = dynamic_cast<TableObjectView *>(col);
+		subitem->setFlag(QGraphicsItem::ItemIsMovable, false);
+		this->columns->removeFromGroup(subitem);
+		this->removeFromGroup(subitem);
+		ungrouped_cols.append(subitem);
+	}
+	this->is_ungrouped=true;
+	this->setSelected(false);
+}
+
+void BaseTableView::checkRegroupCols()
+{
+	if(!is_ungrouped) return;
+
+	for(auto & ungrouped_col : ungrouped_cols)
+	{
+		if(ungrouped_col->isSelected()) return;
+	}
+
+	for (auto subitem : ungrouped_cols)
+	{
+		this->columns->addToGroup(subitem);
+		subitem->setFlag(QGraphicsItem::ItemIsMovable, true);
+	}
+
+	ungrouped_cols.clear();
+	this->is_ungrouped=false;
+	this->setSelected(false);
+	this->setFlag(QGraphicsItem::ItemIsMovable, true);
+}
+
+void BaseTableView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget)
+{
+	painter->setPen(Qt::NoPen);
+	painter->setBrush(Qt::NoBrush);
+	QGraphicsItemGroup::paint(painter,option,widget);
 }

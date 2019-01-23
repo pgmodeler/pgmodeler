@@ -243,6 +243,7 @@ namespace Attributes {
 	GenAlterCmds,
 	Global,
 	GrantOp,
+	GraphicalQueryBuilder,
 	GridSize,
 	Group,
 	HandlerFunc,

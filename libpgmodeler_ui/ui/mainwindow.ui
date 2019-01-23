@@ -264,6 +264,14 @@
                       </sizepolicy>
                      </property>
                     </widget>
+                    <widget class="QWidget" name="gqbc_parent" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
                    </widget>
                   </item>
                  </layout>
@@ -466,6 +474,22 @@
                  </property>
                  <property name="autoRaise">
                   <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="gqbc_btn">
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the graphical query builder</string>
+                 </property>
+                 <property name="text">
+                  <string>GQB</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>

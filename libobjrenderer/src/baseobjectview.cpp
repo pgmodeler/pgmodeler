@@ -395,10 +395,19 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 	else if(change == ItemSelectedHasChanged && obj_selection)
 	{
 		this->setSelectionOrder(value.toBool());
-		pos_info_item->setVisible(value.toBool());
-		obj_selection->setVisible(value.toBool());
 
-		this->configurePositionInfo(this->pos());
+		obj_selection->setVisible(value.toBool());
+		if(pos_info_item)
+		{
+			pos_info_item->setVisible(value.toBool());
+			this->configurePositionInfo(this->pos());
+		}
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
+	}
+
+	else if(change == ItemSelectedHasChanged && this->getSourceObject()->getObjectType()==ObjectType::Column && value.toBool()==false)
+	{
+		this->setSelectionOrder(value.toBool());
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
 	}
 
