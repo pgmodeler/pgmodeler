@@ -3148,9 +3148,9 @@ void DatabaseModel::loadModel(const QString &filename)
 			{
 				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
-				updateTablesFKRelationships();
 			}
 
+			updateTablesFKRelationships();
 			emit s_objectLoaded(100, trUtf8("Rendering database model..."), enum_cast(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}

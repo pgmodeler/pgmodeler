@@ -273,12 +273,28 @@ void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
 	connected_rels.erase(std::find(connected_rels.begin(), connected_rels.end(), base_rel));
 }
 
-int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel)
+int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels)
 {
-	vector<BaseRelationship *>::iterator itr = std::find(connected_rels.begin(), connected_rels.end(), base_rel);
+	vector<BaseRelationship *>::iterator itr;
+	vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
 
-	if(itr != connected_rels.end())
-		return(itr - connected_rels.begin());
+	if(!only_self_rels)
+		vet_rels = &connected_rels;
+	else
+	{
+		for(auto &rel : connected_rels)
+		{
+			if(rel->isSelfRelationship())
+				self_rels.push_back(rel);
+		}
+
+		vet_rels = &self_rels;
+	}
+
+	itr = std::find(vet_rels->begin(), vet_rels->end(), base_rel);
+
+	if(itr != vet_rels->end())
+		return(itr - vet_rels->begin());
 
 	return(-1);
 }

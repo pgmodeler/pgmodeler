@@ -622,7 +622,7 @@ void RelationshipView::configureLine(void)
 
 			if(rel_cnt > 1)
 			{
-				int idx = tables[0]->getConnectedRelationshipIndex(base_rel);
+				int idx = tables[0]->getConnectedRelationshipIndex(base_rel, true);
 				double min_val = min<double>(rect.width(), rect.height());
 
 				if(idx < 0) idx =0;
