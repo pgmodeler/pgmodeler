@@ -1,8 +1,5 @@
 #!/bin/bash
 
-QT_INSTALL_VERSION='5.12.0'
-QT_BASE_VERSION='5.12.0'
-PGSQL_VERSION='11'
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
@@ -49,10 +46,12 @@ fi
 
 if [ $X64_BUILD = 1 ]; then
   # Settings for x64 build
-  QT_ROOT="/c/Qt${QT_INSTALL_VERSION}/"
+  QT_INSTALL_VERSION='5.12.0'
+  QT_BASE_VERSION='5.12.0'
+  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/"
   QMAKE_ROOT=$QT_ROOT/bin
-  MINGW_ROOT="/c/msys64/mingw64/bin"
-  PGSQL_ROOT="/c/msys64/mingw64/bin"  
+  MINGW_ROOT="/c/msys_64/mingw64/bin"
+  PGSQL_ROOT="/c/msys_64/mingw64/bin"  
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
               XML_INC+=$MINGW_ROOT/../include/libxml2 \
 			  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
@@ -71,6 +70,9 @@ if [ $X64_BUILD = 1 ]; then
 			$MINGW_ROOT/zlib1.dll"
 else
   # Default setting for x86 build
+  QT_INSTALL_VERSION='5.9.3'
+  QT_BASE_VERSION='5.9.3'
+  PGSQL_VERSION='10.1'
   QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw53_32/"
   QMAKE_ROOT=$QT_ROOT/bin
   QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
