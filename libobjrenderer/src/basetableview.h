@@ -89,7 +89,9 @@ class BaseTableView: public BaseObjectView {
 
 		void removeConnectedRelationship(BaseRelationship *base_rel);
 
-		int getConnectedRelationshipIndex(BaseRelationship *base_rel);
+		/*! \brief Returns the index of the relationship in the list of the connected relationships
+		 * If 'only_self_rels' is true then only self relationship are searched */
+		int getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels = false);
 
 		//! \brief Configures the tag object when the source object has one.
 		void configureTag(void);
