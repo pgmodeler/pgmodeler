@@ -4,7 +4,7 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.9.6/5.9.6/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.12.0/5.12.0/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 
@@ -26,20 +26,29 @@ QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
 ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
 INSTALL_ROOT="/opt/pgmodeler"
-INSTALLER_CONF_DIR="$PWD/installer/linux/config"
-INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
-INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/br.com.pgmodeler/data"
+FMT_PREFIX="\/opt\/pgmodeler"
+INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
+INSTALLER_CONF_DIR="$PWD/installer/template/config"
+INSTALLER_PKG_DIR="$PWD/installer/template/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/data"
+INSTALLER_META_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/meta"
+INSTALLER_TMPL_CONFIG="config.xml.tmpl"
+INSTALLER_CONFIG="config.xml"
+INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
+INSTALLER_PKG_CONFIG="package.xml"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
+BUILD_DATE=`date '+%Y-%m-%d'`
   
-# Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
@@ -150,7 +159,7 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
@@ -373,6 +382,26 @@ if [ $GEN_INST_PKG = 1 ]; then
     exit 1
   fi   
  
+  # Configuing installer scripts before packaging
+  cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
+  
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create the installer config file!"
+    echo
+    exit 1
+  fi 
+  
+  cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" | sed -e "s/{os}/linux/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
+   
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create the package info file!"
+    echo
+    exit 1
+  fi  
+   
+  # Packaging installation
   $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
