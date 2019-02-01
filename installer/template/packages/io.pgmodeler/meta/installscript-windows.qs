@@ -19,12 +19,7 @@ Component.prototype.createOperations = function()
 
         var installdir=installer.value("TargetDir");
 
-            start_script=installdir + "/" + "start-pgmodeler.sh";
-            mime_update=installdir + "/" + "dbm-mime-type.sh";
-            
-            component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
-            component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
-            
+		mime_update=installdir + "/" + "pgmodeler-cli.exe";    
 	    component.addOperation("Execute", "{0,255}", mime_update, "uninstall");
 	    component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
 	    
@@ -33,7 +28,7 @@ Component.prototype.createOperations = function()
     }
 }
 
-// called after everything is set up, but before any fie is written
+// called after everything is set up, but before any file is written
 Component.prototype.beginInstallation = function()
 {
     // call default implementation which is necessary for most hooks
