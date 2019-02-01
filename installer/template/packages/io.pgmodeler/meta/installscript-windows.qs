@@ -19,7 +19,7 @@ Component.prototype.createOperations = function()
 
         var installdir=installer.value("TargetDir");
 
-		mime_update=installdir + "/" + "pgmodeler-cli.exe";    
+		mime_update=installdir + "/" + "pgmodeler-cli.exe -mt";    
 	    component.addOperation("Execute", "{0,255}", mime_update, "uninstall");
 	    component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
 	    
@@ -44,7 +44,7 @@ finishInstall = function()
     if(installer.status == QInstaller.Success)
     {
         var page = gui.pageWidgetByObjectName( "FinishedPage" );
-        var info_txt=page.FinishMessageWidget.textEdit.html.replace("{installdir}",installer.value("TargetDir"))
-        page.FinishMessageWidget.textEdit.html=info_txt
+		page.FinishMessageWidget.textEdit.visible=false;
+        page.FinishMessageWidget.label.visible=false;
     }
 }

@@ -19,7 +19,7 @@ BUILD_ALL_OPT='-build-all'
 BUILD_ALL=0
 
 # Installer settings
-FMT_PREFIX="C:\\pgmodeler"
+FMT_PREFIX="C:\/pgmodeler"
 INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
 INSTALLER_CONF_DIR="$PWD/installer/template/config"
 INSTALLER_PKG_DIR="$PWD/installer/template/packages"
@@ -277,7 +277,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi 
 
-cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" | sed -e "s/{os}/windows/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
+cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
    
 if [ $? -ne 0 ]; then
    echo
