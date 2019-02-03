@@ -36,6 +36,8 @@ class GqbCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 	private:
 		Q_OBJECT
 
+		QMenu reset_menu;
+
 		QMap<int, BaseObjectView *> ord_query_data, ord_query_rels;
 
 		QVector <BaseTable *> required_vertices, visited_vertices, disconnected_vertices;
@@ -68,6 +70,9 @@ class GqbCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 		//! \brief Captures the ENTER press to execute search
 		bool eventFilter(QObject *object, QEvent *event);
 
+		void resizeEvent(QResizeEvent *event);
+		void customDepthFirstSearch(BaseTable * current_vertex);
+
 	public:
 
 		//! \brief Constants for the table widget line numbers
@@ -90,16 +95,13 @@ class GqbCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 
 		QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >  getQueryPath(void);
 
-	private:
-		void customDFS(BaseTable * current_vertex);
-
 	signals:
 		void s_visibilityChanged(bool);
 		void s_gqbSqlRequested(QString query_txt);
 
 	public slots:
 		void hide(void);
-		void insertObjects(void);
+		void insertSelection(void);
 		void produceSQL(void);
 		void resetQuery(void);
 };

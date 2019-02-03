@@ -479,6 +479,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="gqbc_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="focusPolicy">
                   <enum>Qt::TabFocus</enum>
                  </property>
@@ -486,7 +492,17 @@
                   <string>Toggle the graphical query builder</string>
                  </property>
                  <property name="text">
-                  <string>GQB</string>
+                  <string>Query builder</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/visaoarvore.png</normaloff>:/icones/icones/visaoarvore.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -532,19 +548,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item row="0" column="4">
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
              </item>
              <item row="0" column="13">
               <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -731,6 +734,19 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="4">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
             </layout>
            </widget>
           </item>
@@ -752,7 +768,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="autoFillBackground">
