@@ -165,7 +165,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		overview_wgt=new ModelOverviewWidget;
 		model_valid_wgt=new ModelValidationWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
-		gqb_core_wgt=new GqbCoreWidget;
+		gqb_core_wgt=new QueryBuilderCoreWidget;
 	}
 	catch(Exception &e)
 	{

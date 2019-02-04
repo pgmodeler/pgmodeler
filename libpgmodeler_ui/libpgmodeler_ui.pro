@@ -118,7 +118,7 @@ SOURCES += src/mainwindow.cpp \
     src/elementstablewidget.cpp \
     src/elementwidget.cpp \
     src/layerswidget.cpp \
-    src/gqbcorewidget.cpp
+    src/querybuildercorewidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -224,7 +224,7 @@ HEADERS += src/mainwindow.h \
     src/elementstablewidget.h \
     src/elementwidget.h \
     src/layerswidget.h \
-    src/gqbcorewidget.h
+    src/querybuildercorewidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -310,7 +310,7 @@ FORMS += ui/mainwindow.ui \
     ui/referencewidget.ui \
     ui/elementwidget.ui \
     ui/layerswidget.ui \
-    ui/gqbcorewidget.ui
+    ui/querybuildercorewidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

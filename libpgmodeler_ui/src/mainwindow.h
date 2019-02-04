@@ -39,7 +39,7 @@
 #include "modeloverviewwidget.h"
 #include "modelvalidationwidget.h"
 #include "objectfinderwidget.h"
-#include "gqbcorewidget.h"
+#include "querybuildercorewidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
 #include "modeldatabasediffform.h"
@@ -117,7 +117,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		ObjectFinderWidget *obj_finder_wgt;
 
 		//! \brief Graphical query builder (GQB) widget
-		GqbCoreWidget *gqb_core_wgt;
+		QueryBuilderCoreWidget *gqb_core_wgt;
 
 		//! \brief Update notifier popup widget
 		UpdateNotifierWidget *update_notifier_wgt;

@@ -16,10 +16,10 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "gqbcorewidget.h"
+#include "querybuildercorewidget.h"
 #include "pgmodeleruins.h"
 
-GqbCoreWidget::GqbCoreWidget(QWidget *parent) : QWidget(parent)
+QueryBuilderCoreWidget::QueryBuilderCoreWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 
@@ -39,7 +39,7 @@ GqbCoreWidget::GqbCoreWidget(QWidget *parent) : QWidget(parent)
 	rel_cnt_lbl->setVisible(false);
 }
 
-bool GqbCoreWidget::eventFilter(QObject *object, QEvent *event)
+bool QueryBuilderCoreWidget::eventFilter(QObject *object, QEvent *event)
 {
 	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
@@ -54,13 +54,13 @@ bool GqbCoreWidget::eventFilter(QObject *object, QEvent *event)
 		return(QWidget::eventFilter(object, event));
 }
 
-void GqbCoreWidget::hide(void)
+void QueryBuilderCoreWidget::hide(void)
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
 }
 
-void GqbCoreWidget::resizeEvent(QResizeEvent *event)
+void QueryBuilderCoreWidget::resizeEvent(QResizeEvent *event)
 {
 	Qt::ToolButtonStyle style=Qt::ToolButtonTextBesideIcon;
 
@@ -79,7 +79,7 @@ void GqbCoreWidget::resizeEvent(QResizeEvent *event)
 	path_btn->setToolButtonStyle(style);
 }
 
-void GqbCoreWidget::setModel(ModelWidget *model_wgt)
+void QueryBuilderCoreWidget::setModel(ModelWidget *model_wgt)
 {
 	bool enable=model_wgt!=nullptr;
 	this->model_wgt=model_wgt;
@@ -89,7 +89,7 @@ void GqbCoreWidget::setModel(ModelWidget *model_wgt)
 	tab_wgt->setEnabled(enable);
 }
 
-void GqbCoreWidget::resetQuery(void)
+void QueryBuilderCoreWidget::resetQuery(void)
 {
 	if(!reset_menu.actions().contains(qobject_cast<QAction *>(sender())))
 		return;
@@ -108,7 +108,7 @@ void GqbCoreWidget::resetQuery(void)
 
 }
 
-void GqbCoreWidget::insertSelection(void)
+void QueryBuilderCoreWidget::insertSelection(void)
 {
 	if(!model_wgt)
 		return;
@@ -277,7 +277,7 @@ void GqbCoreWidget::insertSelection(void)
 	this->reset_btn->setEnabled(!ord_query_data.empty() || !ord_query_rels.empty());
 }
 
-void GqbCoreWidget::produceSQL(void)
+void QueryBuilderCoreWidget::produceSQL(void)
 {
 	QString select_cl="SELECT ", from_cl="FROM ", where_cl="WHERE ", group_cl="GROUP BY ", having_cl="HAVING ",
 			order_cl="ORDER BY ", result;
@@ -427,7 +427,7 @@ void GqbCoreWidget::produceSQL(void)
 }
 
 QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >
-	GqbCoreWidget::getQueryPath(void)
+	QueryBuilderCoreWidget::getQueryPath(void)
 {
 	//The path returned consists of a nested container : first 'FROM' table,
 	//and following 'JOIN' clauses, which are a table and its 'ON' statements : a vector of pairs of columns.
@@ -541,7 +541,7 @@ QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >
 	return result;
 }
 
-void GqbCoreWidget::customDepthFirstSearch(BaseTable * current_vertex)
+void QueryBuilderCoreWidget::customDepthFirstSearch(BaseTable * current_vertex)
 {
 	//This function is recursive so it would need to be reentrant=stack-only,
 	//but we manipulate data cross-calls :

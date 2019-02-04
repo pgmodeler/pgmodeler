@@ -158,7 +158,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 	//If intended selection of a subitem
 	else if(this->isSelected() && event->buttons()==Qt::LeftButton && sel_child_obj &&
-			!is_ungrouped && QGuiApplication::queryKeyboardModifiers() & Qt::AltModifier)
+			!is_ungrouped && QGuiApplication::queryKeyboardModifiers() & Qt::ShiftModifier)
 	{
 		this->ungroupCols();
 

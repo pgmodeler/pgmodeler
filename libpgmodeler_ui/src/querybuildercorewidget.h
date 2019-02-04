@@ -25,14 +25,14 @@
 #ifndef GQBCOREWIDGET_H
 #define GQBCOREWIDGET_H
 
-#include "ui_gqbcorewidget.h"
+#include "ui_querybuildercorewidget.h"
 #include "pgmodelerns.h"
 #include "modelwidget.h"
 #include "sourcecodewidget.h"
 #include "basetable.h"
 #include <QWidget>
 
-class GqbCoreWidget: public QWidget, public Ui::GqbCoreWidget {
+class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 	private:
 		Q_OBJECT
 
@@ -86,7 +86,7 @@ class GqbCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 		tW_Having=7,
 		tW_Order=8;
 
-		GqbCoreWidget(QWidget *parent = nullptr);
+		QueryBuilderCoreWidget(QWidget *parent = nullptr);
 
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);
