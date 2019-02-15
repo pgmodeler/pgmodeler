@@ -936,7 +936,7 @@ void SQLExecutionWidget::destroySQLHistory(void)
 
 void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 {
-	if(len < 100 || len > 2000)
+	if(len < 1000 || len > 20000)
 		len = 1000;
 
 	SQLExecutionWidget::cmd_history_max_len = len;

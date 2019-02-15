@@ -1263,13 +1263,13 @@
                </size>
               </property>
               <property name="minimum">
-               <number>100</number>
+               <number>1000</number>
               </property>
               <property name="maximum">
-               <number>10000</number>
+               <number>20000</number>
               </property>
               <property name="singleStep">
-               <number>100</number>
+               <number>500</number>
               </property>
               <property name="value">
                <number>1000</number>
