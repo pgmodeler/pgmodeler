@@ -2714,6 +2714,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
+	attributes[Attributes::Partitioning]=QString();
 
 	if(rel_type == RelationshipGen)
 	{
