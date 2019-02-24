@@ -24,24 +24,30 @@ QueryBuilderCoreWidget::QueryBuilderCoreWidget(QWidget *parent) : QWidget(parent
 	setupUi(this);
 
 	reset_menu.addAction(trUtf8("All"), this, SLOT(resetQuery()));
-	reset_menu.addAction(trUtf8("Data"), this, SLOT(resetQuery()));
-	reset_menu.addAction(trUtf8("Relationships"), this, SLOT(resetQuery()));
+	reset_menu.addAction(trUtf8("Data : selected"), this, SLOT(resetQuery()));
+	reset_menu.addAction(trUtf8("Data : all"), this, SLOT(resetQuery()));
+	reset_menu.addAction(trUtf8("Join path"), this, SLOT(resetQuery()));
 	reset_btn->setMenu(&reset_menu);
 
 	connect(insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertSelection(void)));
+	connect(this->tab_wgt->horizontalHeader(), SIGNAL(sectionMoved(int , int , int )), this, SLOT(rearrangeTabSections(int, int , int )));
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
 	connect(show_sql_btn, SIGNAL(clicked(bool)), this, SLOT(produceSQL(void)));
 
 	this->setModel(nullptr);
 	this->installEventFilter(this);
-	//this->tab_wgt->resizeRowsToContents();
+
+	this->tab_wgt->horizontalHeader()->setSectionsMovable(true);
+	this->tab_wgt->verticalHeader()->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectColumns);
 
 	rel_cnt_lbl->setVisible(false);
+
+	tab_wgt->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 bool QueryBuilderCoreWidget::eventFilter(QObject *object, QEvent *event)
 {
-	QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
+	auto *k_event=dynamic_cast<QKeyEvent *>(event);
 
 	//Show sql when user presses enter/return on the pattern field
 	if(event->type() == QEvent::KeyPress &&
@@ -94,15 +100,26 @@ void QueryBuilderCoreWidget::resetQuery(void)
 	if(!reset_menu.actions().contains(qobject_cast<QAction *>(sender())))
 		return;
 
-	if(qobject_cast<QAction *>(sender()) != reset_menu.actions().at(2))
+	if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(0))
+	{
 		tab_wgt->setColumnCount(0);
-
-	if(qobject_cast<QAction *>(sender()) != reset_menu.actions().at(1))
+		ord_query_rels.clear();
+		rel_cnt_lbl->setVisible(false);
+	}
+	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(1))
+	{
+		for(auto sel_item:tab_wgt->selectedItems())
+			tab_wgt->removeColumn(tab_wgt->column(sel_item));
+	}
+	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(2))
+	{
+		tab_wgt->setColumnCount(0);
+	}
+	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(3))
 	{
 		ord_query_rels.clear();
 		rel_cnt_lbl->setVisible(false);
 	}
-
 	if(tab_wgt->columnCount()==0 && ord_query_rels.empty())
 		reset_btn->setEnabled(false);
 
@@ -145,114 +162,7 @@ void QueryBuilderCoreWidget::insertSelection(void)
 	for(map_itr=ord_query_data.begin() ; map_itr!=ord_query_data.end() ; map_itr++)
 	{
 		int col_nb=tab_wgt->columnCount();
-		QTableWidgetItem *tab_item;
-		tab_wgt->insertColumn(col_nb);
-
-
-		//Initialize select checkbox
-		auto * w1 = new QWidget;
-		auto *chb_wgt1=new QCheckBox;
-		auto * l1 = new QHBoxLayout(w1);
-		l1->addWidget(chb_wgt1);
-		l1->setAlignment(Qt::AlignCenter);
-		l1->setContentsMargins(0,0,0,0);
-		chb_wgt1->setToolTip("Include this column in the select clause");
-		tab_wgt->setCellWidget(0,col_nb,w1);
-		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(0,col_nb)->children().last())->setCheckState(Qt::Checked);
-
-		//Initialize group-by checkbox
-		auto *w2 = new QWidget;
-		auto *chb_wgt2 =new QCheckBox;
-		auto *l2 = new QHBoxLayout(w2);
-		l2->addWidget(chb_wgt2);
-		l2->setAlignment(Qt::AlignCenter);
-		l2->setContentsMargins(0,0,0,0);
-		chb_wgt2->setToolTip("Include this column in the group clause");
-		tab_wgt->setCellWidget(tW_Group,col_nb,w2);
-		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col_nb)->children().last())->setCheckState(Qt::Unchecked);
-
-		//Initialize order-by combobox
-		auto *w3 = new QWidget;
-		auto *cb_wgt3=new QComboBox;
-		cb_wgt3->insertItem(0,"");
-		cb_wgt3->insertItem(1,"ASC");
-		cb_wgt3->insertItem(2,"DESC");
-		auto *l3 = new QHBoxLayout(w3);
-		l3->addWidget(cb_wgt3);
-		l3->setContentsMargins(0,0,0,0);
-		tab_wgt->setCellWidget(tW_Order,col_nb,w3);
-
-		//Two cases : the item selected is a table/view or a column
-		if(map_itr.value()->getSourceObject()->getObjectType()==ObjectType::Table ||
-				map_itr.value()->getSourceObject()->getObjectType()==ObjectType::View  )
-		{
-			//Initialize schema
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(map_itr.value()->getSourceObject()->getSchema()->getName());
-			tab_wgt->setItem(tW_Schema, col_nb, tab_item);
-
-			//Initialize table/view
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(map_itr.value()->getSourceObject()->getName());
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(
-								  dynamic_cast<BaseTable *>(map_itr.value()->getSourceObject())));
-			tab_wgt->setItem(tW_Table, col_nb, tab_item);
-
-			//Initialize column
-			tab_item=new QTableWidgetItem;
-			tab_item->setText("*");
-			tab_wgt->setItem(tW_Column, col_nb, tab_item);
-
-			//Initialize where and having, then disable them + group & order
-			tab_item=new QTableWidgetItem;
-			tab_wgt->setItem(tW_Where, col_nb, tab_item);
-			auto currentFlags = tab_wgt->item(tW_Where,col_nb)->flags();
-			tab_wgt->item(tW_Where,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
-
-			tab_item=new QTableWidgetItem;
-			tab_wgt->setItem(tW_Having, col_nb, tab_item);
-			currentFlags = tab_wgt->item(tW_Having,col_nb)->flags();
-			tab_wgt->item(tW_Having,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
-
-			qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Group,col_nb))->setEnabled(false);
-			qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Order,col_nb))->setEnabled(false);
-		}
-
-		else if(map_itr.value()->getSourceObject()->getObjectType()==ObjectType::Column)
-		{
-			//Initialize schema
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(dynamic_cast<TableObject *>(map_itr.value()->getSourceObject())->getParentTable()->getSchema()->getName());
-			tab_wgt->setItem(tW_Schema, col_nb, tab_item);
-
-			//Initialize table/view
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(dynamic_cast<TableObject *>(map_itr.value()->getSourceObject())->getParentTable()->getName());
-			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(
-									  dynamic_cast<BaseTable *>(
-									  dynamic_cast<TableObject *>(map_itr.value()->getSourceObject())->getParentTable())));
-			tab_wgt->setItem(tW_Table, col_nb, tab_item);
-
-			//Initialize column
-			tab_item=new QTableWidgetItem;
-			tab_item->setText(map_itr.value()->getSourceObject()->getName());
-			tab_wgt->setItem(tW_Column, col_nb, tab_item);
-
-		}
-
-		//Disable editing on schema/table/column
-		auto currentFlags = tab_wgt->item(tW_Schema,col_nb)->flags();
-		tab_wgt->item(tW_Schema,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
-		currentFlags = tab_wgt->item(tW_Table,col_nb)->flags();
-		tab_wgt->item(tW_Table,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
-		currentFlags = tab_wgt->item(tW_Column,col_nb)->flags();
-		tab_wgt->item(tW_Column,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
-
-		//Initialize alias, and disable for now
-		tab_item=new QTableWidgetItem;
-		tab_wgt->setItem(tW_Alias, col_nb, tab_item);
-		currentFlags = tab_wgt->item(tW_Alias,col_nb)->flags();
-		tab_wgt->item(tW_Alias,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+		initializeColumn(col_nb, map_itr.value()->getSourceObject());
 	}
 
 	tab_wgt->setUpdatesEnabled(true);
@@ -571,4 +481,164 @@ void QueryBuilderCoreWidget::customDepthFirstSearch(BaseTable * current_vertex)
 								 dfs_rel_itr->second->getTable(BaseRelationship::SrcTable)) );
 		}
 	}
+}
+
+void QueryBuilderCoreWidget::initializeColumn(int col_nb, BaseObject *bObj)
+{
+	QTableWidgetItem *tab_item;
+	tab_wgt->insertColumn(col_nb);
+
+	//Initialize select checkbox
+	auto * w1 = new QWidget;
+	auto *chb_wgt1=new QCheckBox;
+	auto * l1 = new QHBoxLayout(w1);
+	l1->addWidget(chb_wgt1);
+	l1->setAlignment(Qt::AlignCenter);
+	l1->setContentsMargins(0,0,0,0);
+	chb_wgt1->setToolTip("Include this column in the select clause");
+	tab_wgt->setCellWidget(0,col_nb,w1);
+	qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Selection,col_nb)->
+							  children().last())->setCheckState(Qt::Checked);
+
+	//Initialize group-by checkbox
+	auto *w2 = new QWidget;
+	auto *chb_wgt2 =new QCheckBox;
+	auto *l2 = new QHBoxLayout(w2);
+	l2->addWidget(chb_wgt2);
+	l2->setAlignment(Qt::AlignCenter);
+	l2->setContentsMargins(0,0,0,0);
+	chb_wgt2->setToolTip("Include this column in the group clause");
+	tab_wgt->setCellWidget(tW_Group,col_nb,w2);
+	qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col_nb)->children().last())->setCheckState(Qt::Unchecked);
+
+	//Initialize order-by combobox
+	auto *w3 = new QWidget;
+	auto *cb_wgt3=new QComboBox;
+	cb_wgt3->insertItem(0,"");
+	cb_wgt3->insertItem(1,"ASC");
+	cb_wgt3->insertItem(2,"DESC");
+	auto *l3 = new QHBoxLayout(w3);
+	l3->addWidget(cb_wgt3);
+	l3->setContentsMargins(0,0,0,0);
+	tab_wgt->setCellWidget(tW_Order,col_nb,w3);
+
+	//Two cases : the item selected is a table/view or a column
+	if(bObj->getObjectType()==ObjectType::Table ||
+			bObj->getObjectType()==ObjectType::View  )
+	{
+		//Initialize schema
+		tab_item=new QTableWidgetItem;
+		tab_item->setText(bObj->getSchema()->getName());
+		tab_wgt->setItem(tW_Schema, col_nb, tab_item);
+
+		//Initialize table/view
+		tab_item=new QTableWidgetItem;
+		tab_item->setText(bObj->getName());
+		tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(
+							  dynamic_cast<BaseTable *>(bObj)));
+		tab_wgt->setItem(tW_Table, col_nb, tab_item);
+
+		//Initialize column
+		tab_item=new QTableWidgetItem;
+		tab_item->setText("*");
+		tab_wgt->setItem(tW_Column, col_nb, tab_item);
+
+		//Initialize where and having, then disable them + group & order
+		tab_item=new QTableWidgetItem;
+		tab_wgt->setItem(tW_Where, col_nb, tab_item);
+		auto currentFlags = tab_wgt->item(tW_Where,col_nb)->flags();
+		tab_wgt->item(tW_Where,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+
+		tab_item=new QTableWidgetItem;
+		tab_wgt->setItem(tW_Having, col_nb, tab_item);
+		currentFlags = tab_wgt->item(tW_Having,col_nb)->flags();
+		tab_wgt->item(tW_Having,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+
+		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Group,col_nb))->setEnabled(false);
+		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Order,col_nb))->setEnabled(false);
+	}
+
+	else if(bObj->getObjectType()==ObjectType::Column)
+	{
+		//Initialize schema
+		tab_item=new QTableWidgetItem;
+		tab_item->setText(dynamic_cast<TableObject *>(bObj)->getParentTable()->getSchema()->getName());
+		tab_wgt->setItem(tW_Schema, col_nb, tab_item);
+
+		//Initialize table/view
+		tab_item=new QTableWidgetItem;
+		tab_item->setText(dynamic_cast<TableObject *>(bObj)->getParentTable()->getName());
+		tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(
+								  dynamic_cast<BaseTable *>(
+								  dynamic_cast<TableObject *>(bObj)->getParentTable())));
+		tab_wgt->setItem(tW_Table, col_nb, tab_item);
+
+		//Initialize column
+		tab_item=new QTableWidgetItem;
+		tab_item->setText(bObj->getName());
+		tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(
+								  dynamic_cast<TableObject *>(bObj)));
+		tab_wgt->setItem(tW_Column, col_nb, tab_item);
+
+		//Initialize where and having
+		tab_item=new QTableWidgetItem;
+		tab_wgt->setItem(tW_Where, col_nb, tab_item);
+
+		tab_item=new QTableWidgetItem;
+		tab_wgt->setItem(tW_Having, col_nb, tab_item);
+
+	}
+
+	//Disable editing on schema/table/column
+	auto currentFlags = tab_wgt->item(tW_Schema,col_nb)->flags();
+	tab_wgt->item(tW_Schema,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+	currentFlags = tab_wgt->item(tW_Table,col_nb)->flags();
+	tab_wgt->item(tW_Table,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+	currentFlags = tab_wgt->item(tW_Column,col_nb)->flags();
+	tab_wgt->item(tW_Column,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+
+	//Initialize alias, and disable for now
+	tab_item=new QTableWidgetItem;
+	tab_wgt->setItem(tW_Alias, col_nb, tab_item);
+	currentFlags = tab_wgt->item(tW_Alias,col_nb)->flags();
+	tab_wgt->item(tW_Alias,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+}
+
+void QueryBuilderCoreWidget::rearrangeTabSections(int log, int oldV, int newV)
+{
+	log+=1; //avoid compiler 'unused var' warning...
+
+	/*
+	 * The virtual functions QAbstractItemModel::moveRow and moveColumn are currently not implemented by Qt
+	 * in convenience classes like QTableWidget. Ticket ongoing : https://bugreports.qt.io/browse/QTBUG-74013.
+	 * For now, we manually propagate a column move, in the view (sectionsMovable), to the model.
+	*/
+	BaseObject *bObjTmp;
+	if(tab_wgt->item(tW_Column,oldV)->text()=="*")
+	{
+		bObjTmp= dynamic_cast<BaseObject *>(
+				reinterpret_cast<BaseTable *>(
+						tab_wgt->item(tW_Table,oldV)->data(Qt::UserRole).value<void *>()));
+		this->initializeColumn(oldV<newV?newV+1:newV, bObjTmp);
+	}
+	else
+	{
+		bObjTmp= dynamic_cast<BaseObject *>(
+				reinterpret_cast<TableObject *>(
+						tab_wgt->item(tW_Column,oldV)->data(Qt::UserRole).value<void *>()));
+		this->initializeColumn(oldV<newV?newV+1:newV, bObjTmp);
+
+		//The column has been initialized : now copy data from old to new.
+		for(auto rowN:{tW_Alias, tW_Where, tW_Having})
+			tab_wgt->item(rowN, oldV<newV?newV+1:newV)->setText(tab_wgt->item(rowN,oldV<newV?oldV:oldV+1)->text());
+		for(auto rowN:{tW_Selection, tW_Group})
+			qobject_cast<QCheckBox *>(tab_wgt->cellWidget(rowN,oldV<newV?newV+1:newV)->children().last())->setCheckState(
+						qobject_cast<QCheckBox *>(tab_wgt->cellWidget(rowN,oldV<newV?oldV:oldV+1)->children().last())->checkState());
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children().last())->setCurrentIndex(
+				qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children().last())->currentIndex());
+
+	}
+
+	this->tab_wgt->removeColumn(oldV<newV?oldV:oldV+1);
+	this->tab_wgt->resizeColumnsToContents();
 }

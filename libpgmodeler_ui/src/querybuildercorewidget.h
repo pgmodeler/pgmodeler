@@ -68,10 +68,12 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 		ModelWidget *model_wgt;
 
 		//! \brief Captures the ENTER press to execute search
-		bool eventFilter(QObject *object, QEvent *event);
+		bool eventFilter(QObject *object, QEvent *event) override;
 
-		void resizeEvent(QResizeEvent *event);
+		void resizeEvent(QResizeEvent *event) override;
 		void customDepthFirstSearch(BaseTable * current_vertex);
+
+		void initializeColumn(int col_nb, BaseObject *bObj);
 
 	public:
 
@@ -104,6 +106,10 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 		void insertSelection(void);
 		void produceSQL(void);
 		void resetQuery(void);
+
+	private slots:
+		void rearrangeTabSections(int log, int oldV, int newV);
+
 };
 
 #endif // GQBCOREWIDGET_H
