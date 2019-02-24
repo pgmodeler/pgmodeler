@@ -95,6 +95,8 @@ class TableObjectView: public BaseObjectView
 
 		void configureObjectShadow(void) = delete;
 		void configureObjectSelection(void) = delete;
+
+		friend class TableView;
 };
 
 #endif

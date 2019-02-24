@@ -218,6 +218,7 @@ void TableView::configureObject(void)
 			subitems.pop_front();
 			col_item->setChildObjectXPos(TableObjectView::ConstrAliasLabel,
 																	 width - col_item->getChildObject(TableObjectView::ConstrAliasLabel)->boundingRect().width() - (2 * HorizSpacing) - 1);
+			col_item->bounding_rect.setWidth(width - 2*HorizSpacing);
 
 			//Generating the connection points of the columns
 			if(obj_idx==0)
