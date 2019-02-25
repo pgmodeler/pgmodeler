@@ -564,6 +564,7 @@ void BaseTableView::ungroupCols()
 	{
 		auto * subitem = dynamic_cast<TableObjectView *>(col);
 		subitem->setFlag(QGraphicsItem::ItemIsMovable, false);
+		subitem->setFlag(QGraphicsItem::ItemIsSelectable, true);
 		this->columns->removeFromGroup(subitem);
 		this->removeFromGroup(subitem);
 		ungrouped_cols.append(subitem);
