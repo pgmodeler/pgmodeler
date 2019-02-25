@@ -19,15 +19,23 @@ Component.prototype.createOperations = function()
 
         var installdir=installer.value("TargetDir");
 
+        if(systemInfo.productType == "osx") {
+            return;
+        }
+        else if(systemInfo.productType == "windows") {
+            mime_update=installdir + "/" + "pgmodeler-cli.exe -mt";    
+        }
+        else {
             start_script=installdir + "/" + "start-pgmodeler.sh";
             mime_update=installdir + "/" + "dbm-mime-type.sh";
             
             component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
             component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
+        }
             
-	    component.addOperation("Execute", "{0,255}", mime_update, "uninstall");
-	    component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
-	    
+        component.addOperation("Execute", "{0,255}", mime_update, "uninstall");
+        component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
+        
     } catch (e) {
         print(e);
     }
@@ -49,7 +57,16 @@ finishInstall = function()
     if(installer.status == QInstaller.Success)
     {
         var page = gui.pageWidgetByObjectName( "FinishedPage" );
-        var info_txt=page.FinishMessageWidget.textEdit.html.replace("{installdir}",installer.value("TargetDir"))
-        page.FinishMessageWidget.textEdit.html=info_txt
+     
+     
+        if(systemInfo.productType == "windows" || systemInfo.productType == "osx") {
+            var page = gui.pageWidgetByObjectName( "FinishedPage" );
+            page.FinishMessageWidget.textEdit.visible=false;
+            page.FinishMessageWidget.label.visible=false;
+        }
+        else {
+            var info_txt=page.FinishMessageWidget.textEdit.html.replace("{installdir}",installer.value("TargetDir"))
+            page.FinishMessageWidget.textEdit.html=info_txt
+        }
     }
 }

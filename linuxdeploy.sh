@@ -391,15 +391,6 @@ if [ $GEN_INST_PKG = 1 ]; then
     echo
     exit 1
   fi 
-  
-  cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" | sed -e "s/{os}/linux/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
-   
-  if [ $? -ne 0 ]; then
-    echo
-    echo "** Failed to create the package info file!"
-    echo
-    exit 1
-  fi  
    
   # Packaging installation
   $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
