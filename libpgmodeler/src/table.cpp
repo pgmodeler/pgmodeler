@@ -244,9 +244,19 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 	{
 		if(!str_cols.isEmpty())
 		{
-			count=str_cols.size();
-			if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
-				str_cols.remove(count-2,2);
+			count = str_cols.size();
+
+			// Removing the last comma from the columns SQL
+			if(str_cols[count-2] == ',' || str_cols[count-2] == '\n')
+				str_cols.remove(count - 2, 2);
+
+			/* Special case: if we have the last column's SQL disabled we need to remove
+			 * the comma from the last line (the enabled one) in order to avoid syntax error */
+			int disabled_col_idx = str_cols.lastIndexOf(QString("-- ")),
+					last_comma_idx = str_cols.lastIndexOf(',', disabled_col_idx);
+
+			if(last_comma_idx >= 0 && last_comma_idx < disabled_col_idx)
+				str_cols.remove(last_comma_idx, 1);
 		}
 
 		attributes[Attributes::InhColumns]=inh_cols;
