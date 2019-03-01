@@ -1158,12 +1158,18 @@
             <property name="readOnly">
              <bool>false</bool>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="2">
            <widget class="QLineEdit" name="confs_dir_edt">
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1472,6 +1478,9 @@
             </property>
             <property name="readOnly">
              <bool>false</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

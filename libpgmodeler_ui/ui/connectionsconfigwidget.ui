@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>562</width>
-    <height>442</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -405,6 +405,9 @@
               <property name="placeholderText">
                <string/>
               </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
@@ -450,7 +453,7 @@
              <string/>
             </property>
             <property name="clearButtonEnabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -499,7 +502,7 @@
              <enum>QLineEdit::Password</enum>
             </property>
             <property name="clearButtonEnabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -535,6 +538,9 @@
              <widget class="QLineEdit" name="other_params_edt">
               <property name="statusTip">
                <string>Specify additional connection parameters in the form [param]=[value]. These parameters are described in the &lt;strong&gt;libpq&lt;/strong&gt; chapter at PostgreSQL docs.</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -596,6 +602,9 @@
             </property>
             <property name="placeholderText">
              <string/>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -681,6 +690,9 @@
               </property>
               <property name="placeholderText">
                <string/>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -777,6 +789,9 @@
             <property name="placeholderText">
              <string/>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -842,6 +857,9 @@
             <property name="placeholderText">
              <string/>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="5" column="1">
@@ -849,6 +867,9 @@
             <item>
              <widget class="QLineEdit" name="krb_server_edt">
               <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="clearButtonEnabled">
                <bool>true</bool>
               </property>
              </widget>
@@ -907,6 +928,9 @@
             </property>
             <property name="placeholderText">
              <string/>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -968,6 +992,9 @@
             </property>
             <property name="placeholderText">
              <string/>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
