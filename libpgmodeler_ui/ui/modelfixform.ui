@@ -252,7 +252,11 @@ p, li { white-space: pre-wrap; }
       <item row="3" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLineEdit" name="output_file_edt"/>
+         <widget class="QLineEdit" name="output_file_edt">
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QToolButton" name="sel_out_file_tb">
@@ -472,7 +476,11 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLineEdit" name="pgmodeler_cli_edt"/>
+         <widget class="QLineEdit" name="pgmodeler_cli_edt">
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item row="0" column="1">
          <widget class="QToolButton" name="sel_cli_exe_tb">
@@ -571,7 +579,11 @@ p, li { white-space: pre-wrap; }
       <item row="2" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QLineEdit" name="input_file_edt"/>
+         <widget class="QLineEdit" name="input_file_edt">
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QToolButton" name="sel_in_file_tb">
