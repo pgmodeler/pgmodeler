@@ -453,7 +453,7 @@
         <string>Filter the retrived results</string>
        </property>
        <property name="text">
-        <string>Filter</string>
+        <string>F&amp;ilter</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -466,7 +466,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Alt+X</string>
+        <string>Alt+I</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
