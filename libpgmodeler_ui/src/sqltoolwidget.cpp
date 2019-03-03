@@ -368,3 +368,19 @@ void SQLToolWidget::showSnippet(const QString &snip)
 		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
 	}
 }
+
+bool SQLToolWidget::isAnyDbOpened(void)
+{
+	return databases_tbw->count()>0;
+}
+
+void SQLToolWidget::insertQuery(const QString &query)
+{
+	SQLExecutionWidget *sql_exec_wgt=nullptr;
+	addSQLExecutionTab();
+
+	sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
+
+	if(sql_exec_wgt->sql_cmd_txt->isEnabled())
+		sql_exec_wgt->sql_cmd_txt->appendPlainText(query);
+}

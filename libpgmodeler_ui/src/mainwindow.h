@@ -101,7 +101,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
 
-		//! \brief SQL tool widget widget
+		//! \brief SQL tool widget
 		SQLToolWidget *sql_tool_wgt;
 
 		//! \brief Temporary model restoration form
@@ -116,7 +116,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
 
-		//! \brief Graphical query builder (GQB) widget
+		//! \brief Graphical query builder (GQB) dock widget
 		QueryBuilderCoreWidget *gqb_core_wgt;
 
 		//! \brief Update notifier popup widget
@@ -183,6 +183,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Indicates if model must be validated before save, diff or export
 		static void setConfirmValidation(bool value);
+
+		QPair<bool,SQLToolWidget *> isAnyManageDbOpened();
+
+		void showManage(void);
 
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,

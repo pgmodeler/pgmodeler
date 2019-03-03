@@ -16,9 +16,11 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
+#include "mainwindow.h"
 #include "baseform.h"
 #include "modelwidget.h"
 #include "sourcecodewidget.h"
+#include "querybuildersqlwidget.h"
 #include "databasewidget.h"
 #include "schemawidget.h"
 #include "rolewidget.h"
@@ -1871,6 +1873,8 @@ void ModelWidget::showSourceCode(void)
 		if(object)
 		{
 			SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
+			Qt::WindowFlags flags = sourcecode_wgt->windowFlags();
+			sourcecode_wgt->setWindowFlags(flags	| Qt::Tool);
 			sourcecode_wgt->setAttributes(this->db_model, object);
 			openEditingForm(sourcecode_wgt, Messagebox::OkButton);
 		}
@@ -1879,9 +1883,26 @@ void ModelWidget::showSourceCode(void)
 
 void ModelWidget::showGqbSql(QString query_txt)
 {
-	SourceCodeWidget *sourcecode_wgt=new SourceCodeWidget;
-	sourcecode_wgt->displayQuery(query_txt);
-	openEditingForm(sourcecode_wgt, Messagebox::OkButton);
+	auto *querybuilder_sql_wgt=new QueryBuilderSQLWidget;
+	querybuilder_sql_wgt->displayQuery(query_txt);
+
+	/*
+	 * This is an ugly way, we traverse the whole widget hierarchy (~10 layers).
+	 * Improvements are to be done, maybe with static functions or singleton pattern in sqltoolwidget class...
+	 */
+	QWidget * parent_wgt=this->parentWidget();
+	while (dynamic_cast<MainWindow *>(parent_wgt)==nullptr)
+		parent_wgt=parent_wgt->parentWidget();
+
+	QPair <bool, SQLToolWidget *> sql_tw_pair=dynamic_cast<MainWindow *>(parent_wgt)->isAnyManageDbOpened();
+	if (sql_tw_pair.first)
+	{
+		querybuilder_sql_wgt->enableManageBtn();
+		connect(querybuilder_sql_wgt, SIGNAL(s_sendToManage(QString)) ,sql_tw_pair.second, SLOT(insertQuery(QString)));
+	}
+
+	if (openEditingForm(querybuilder_sql_wgt, Messagebox::OkButton)==2)
+		dynamic_cast<MainWindow *>(parent_wgt)->showManage();
 }
 
 void ModelWidget::cancelObjectAddition(void)

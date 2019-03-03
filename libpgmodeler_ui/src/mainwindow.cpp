@@ -1687,6 +1687,11 @@ void MainWindow::setConfirmValidation(bool value)
 	confirm_validation=value;
 }
 
+QPair <bool, SQLToolWidget *> MainWindow::isAnyManageDbOpened(void)
+{
+	return qMakePair(sql_tool_wgt->isAnyDbOpened(), sql_tool_wgt);
+}
+
 void MainWindow::__updateToolsState(void)
 {
 	updateToolsState(false);
@@ -2102,4 +2107,9 @@ void MainWindow::toggleLayersWidget(bool show)
 	layers_wgt->move(btn_pos.x() + general_tb->width(),
 									 tb_pos.y() - layers_wgt->height() * 0.80);
 	layers_wgt->setVisible(show);
+}
+
+void MainWindow::showManage(void)
+{
+	this->action_manage->toggle();
 }

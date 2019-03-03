@@ -18,19 +18,19 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class SourceCodeWidget
-\brief Implements the operation to visualize object's source code.
+\class QueryBuilderSqlWidget
+\brief Implements the operation to visualize the sql of the graphical query.
 */
 
-#ifndef SOURCE_CODE_WIDGET_H
-#define SOURCE_CODE_WIDGET_H
+#ifndef QUERY_BUILDER_SQL_WIDGET_H
+#define QUERY_BUILDER_SQL_WIDGET_H
 
-#include "ui_sourcecodewidget.h"
+#include "ui_querybuildersqlwidget.h"
 #include "baseobjectwidget.h"
 #include "hinttextwidget.h"
 #include "numberedtexteditor.h"
 
-class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
+class QueryBuilderSQLWidget: public BaseObjectWidget, public Ui::QueryBuilderSqlWidget {
 	private:
 		Q_OBJECT
 
@@ -38,18 +38,18 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		DependenciesSql=1,
 		ChildrenSql=2;
 
-		NumberedTextEditor *sqlcode_txt,
-		*xmlcode_txt;
+		NumberedTextEditor *sqlcode_txt;
 
-		SyntaxHighlighter *hl_sqlcode,
-		*hl_xmlcode;
-
-		HintTextWidget *code_options_ht;
+		SyntaxHighlighter *hl_sqlcode;
 
 	public:
-		SourceCodeWidget(QWidget * parent = nullptr);
+		QueryBuilderSQLWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
+
+		void enableManageBtn(void);
+
+		void displayQuery(QString query_txt);
 
 		/* Forcing the widget to indicate that the handled object is not protected
 		even if it IS protected. This will avoid the ok button of the parent dialog
@@ -60,9 +60,11 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		void applyConfiguration(void);
 
 	private slots:
-		void generateSourceCode(int=0);
-		void setSourceCodeTab(int=0);
+		//void generateSourceCode(int=0);
 		void saveSQLCode(void);
+
+	signals:
+		void s_sendToManage(QString query);
 };
 
 #endif

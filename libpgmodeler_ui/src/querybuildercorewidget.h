@@ -18,12 +18,12 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class GqbCoreWidget
+\class QueryBuilderCoreWidget
 \brief Implements a graphical query builder.
 */
 
-#ifndef GQBCOREWIDGET_H
-#define GQBCOREWIDGET_H
+#ifndef QUERYBUILDERCOREWIDGET_H
+#define QUERYBUILDERCOREWIDGET_H
 
 #include "ui_querybuildercorewidget.h"
 #include "pgmodelerns.h"
@@ -97,10 +97,6 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 
 		QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >  getQueryPath(void);
 
-	signals:
-		void s_visibilityChanged(bool);
-		void s_gqbSqlRequested(QString query_txt);
-
 	public slots:
 		void hide(void);
 		void insertSelection(void);
@@ -110,6 +106,9 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 	private slots:
 		void rearrangeTabSections(int log, int oldV, int newV);
 
+signals:
+	void s_visibilityChanged(bool);
+	void s_gqbSqlRequested(QString query_txt);
 };
 
-#endif // GQBCOREWIDGET_H
+#endif // QUERYBUILDERCOREWIDGET_H
