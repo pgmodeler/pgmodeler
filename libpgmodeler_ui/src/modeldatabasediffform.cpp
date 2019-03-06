@@ -618,10 +618,10 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 	if(!sqlcode_txt->toPlainText().isEmpty())
 	{
 		QFile output;
-        	QString laravel_migration,
+		QString laravel_migration,
 			up,
 			down;
-		if (store_as_migration_rb->isChecked() != "")
+		if (store_as_migration_rb->isChecked())
 			{
 				laravel_migration = "<?php\n\
 \n\
