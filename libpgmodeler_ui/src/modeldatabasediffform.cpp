@@ -1027,7 +1027,7 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 void ModelDatabaseDiffForm::selectOutputMigrationFolder(void)
 {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-							"/home",
+							QProcessEnvironment::systemEnvironment().value("HOME", "/home"),
 							QFileDialog::ShowDirsOnly);
 	migration_folder_edt->setText(dir);
 }
