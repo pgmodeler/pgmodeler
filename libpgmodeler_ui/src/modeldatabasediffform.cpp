@@ -110,11 +110,16 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 		connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 		connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+		connect(store_as_migration_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
+		connect(migration_class_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+		connect(migration_folder_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
 		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
 		connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
 		connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
+		connect(store_as_migration_rb, SIGNAL(clicked(bool)), store_as_migration_wgt, SLOT(setEnabled(bool)));
 		connect(store_in_file_rb, SIGNAL(clicked(bool)), store_in_file_wgt, SLOT(setEnabled(bool)));
 		connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+		connect(select_migration_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputMigrationFolder()));
 		connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
 		connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
 		connect(dont_drop_missing_objs_chk, SIGNAL(toggled(bool)), drop_missing_cols_constr_chk, SLOT(setEnabled(bool)));
@@ -385,12 +390,14 @@ void ModelDatabaseDiffForm::listDatabases(void)
 void ModelDatabaseDiffForm::enableDiffMode(void)
 {
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
+	store_as_migration_wgt->setEnabled(store_as_migration_rb->isChecked());
 
 	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
-													 ((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
-														(src_model_rb->isChecked() && loaded_model)) &&
-													 ((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-														(apply_on_server_rb->isChecked())));
+						((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
+							(src_model_rb->isChecked() && loaded_model)) &&
+						((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
+							(store_as_migration_rb->isChecked() && !migration_class_edt->text().isEmpty() && !migration_folder_edt->text().isEmpty()) ||
+							(apply_on_server_rb->isChecked())));
 }
 
 void ModelDatabaseDiffForm::generateDiff(void)
@@ -611,6 +618,69 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 	if(!sqlcode_txt->toPlainText().isEmpty())
 	{
 		QFile output;
+        	QString laravel_migration,
+			up,
+			down;
+		if (store_as_migration_rb->isChecked() != "")
+			{
+				laravel_migration = "<?php\n\
+\n\
+use Illuminate\\Support\\Facades\\Schema;\n\
+use Illuminate\\Database\\Schema\\Blueprint;\n\
+use Illuminate\\Database\\Migrations\\Migration;\n\
+\n\
+class $$class$$ extends Migration\n\
+{\n\
+    /**\n\
+     * Run the migrations.\n\
+     *\n\
+     * @return void\n\
+     */\n\
+    public function up()\n\
+    {\n\
+        try\n\
+        {\n\
+            DB::transaction(function() {\n\
+                DB::unprepared(<<<EOS\n\
+$$up$$\n\
+EOS\n\
+                );\n\
+            });\n\
+            DB::commit();\n\
+        }\n\
+        catch (Exception $e)\n\
+        {\n\
+            DB::rollBack();\n\
+            throw new Exception($e->getMessage());\n\
+        }\n\
+    }\n\
+\n\
+    /**\n\
+     * Reverse the migrations.\n\
+     *\n\
+     * @return void\n\
+     */\n\
+    public function down()\n\
+    {\n\
+        try\n\
+        {\n\
+            DB::transaction(function() {\n\
+                DB::unprepared(<<<EOS\n\
+$$down$$\n\
+EOS\n\
+                );\n\
+            });\n\
+            DB::commit();\n\
+        }\n\
+        catch (Exception $e)\n\
+        {\n\
+            DB::rollBack();\n\
+            throw new Exception($e->getMessage());\n\
+        }\n\
+    }\n\
+}\n";
+			up = sqlcode_txt->toPlainText().toUtf8();
+		}
 
 		step_lbl->setText(trUtf8("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("salvar")));
@@ -618,14 +688,73 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
-		output.setFileName(file_edt->text());
+		if (store_in_file_rb->isChecked())
+		{
+			output.setFileName(file_edt->text());
 
-		if(!output.open(QFile::WriteOnly))
-			captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_edt->text()),
-																	 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			if(!output.open(QFile::WriteOnly))
+				captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_edt->text()),
+						                                 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 
-		output.write(sqlcode_txt->toPlainText().toUtf8());
-		output.close();
+			output.write(sqlcode_txt->toPlainText().toUtf8());
+			output.close();
+		}
+		else if (store_as_migration_rb->isChecked() && !migration_folder_edt->text().isEmpty())
+		{
+			destroy(diff_helper);
+
+			diff_helper=new ModelsDiffHelper;
+
+			diff_helper->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, keep_cluster_objs_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptTruncateTables, trunc_tables_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, recreate_unmod_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptReuseSequences, reuse_sequences_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, dont_drop_missing_objs_chk->isChecked());
+			diff_helper->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, drop_missing_cols_constr_chk->isChecked());
+
+			diff_helper->setModels(imported_model, source_model);
+
+			if(pgsql_ver_chk->isChecked())
+				diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
+			else
+				diff_helper->setPgSQLVersion(pgsql_ver);
+
+			diff_helper->diffModels();
+
+			sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
+
+			down = sqlcode_txt->toPlainText().toUtf8();
+
+			QString class_name = migration_class_edt->text().replace(" ", "_");
+
+			laravel_migration.replace("$$class$$", class_name);
+			laravel_migration.replace("$$up$$", up);
+			laravel_migration.replace("$$down$$", down);
+
+			static QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
+			static QRegularExpression regExp2 {"([a-z0-9])([A-Z])"};
+
+			QString result = class_name;
+			result.replace(regExp1, "\\1_\\2");
+			result.replace(regExp2, "\\1_\\2");
+
+			result = result.toLower();
+
+			QDateTime current_date = QDateTime::currentDateTime();
+			QString filename = migration_folder_edt->text()+'/'+current_date.toString("yyyy_MM_dd_HHmmss") + "_" + result + ".php";
+			output.setFileName(filename);
+
+			if(!output.open(QFile::WriteOnly))
+				captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
+								ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+
+			output.write(laravel_migration.toUtf8());
+			output.close();
+		}
 	}
 
 	finishDiff();
@@ -741,14 +870,15 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
 #endif
 
 	settings_tbw->setTabEnabled(2, true);
-	diff_thread->quit();
 
-	if(store_in_file_rb->isChecked())
+	if(store_in_file_rb->isChecked() || store_as_migration_rb->isChecked())
 		saveDiffToFile();
 	else if(!sqlcode_txt->toPlainText().isEmpty())
 		exportDiff();
 	else
 		finishDiff();
+
+	diff_thread->quit();
 
 	if(sqlcode_txt->toPlainText().isEmpty())
 		sqlcode_txt->setPlainText(trUtf8("-- No differences were detected between model and database. --"));
@@ -892,4 +1022,12 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 
 		file_edt->setText(file);
 	}
+}
+
+void ModelDatabaseDiffForm::selectOutputMigrationFolder(void)
+{
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+							"/home",
+							QFileDialog::ShowDirsOnly);
+	migration_folder_edt->setText(dir);
 }

@@ -134,6 +134,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void handleExportFinished(void);
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
 		void selectOutputFile(void);
+		void selectOutputMigrationFolder(void);
 		void importDatabase(unsigned thread_id);
 		void diffModels(void);
 		void exportDiff(bool confirm=true);
