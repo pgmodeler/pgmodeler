@@ -392,6 +392,8 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
 	store_as_migration_wgt->setEnabled(store_as_migration_rb->isChecked());
 
+	migration_folder_edt->setText(laravelMigrationFolderSetting());
+
 	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
 						((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
 							(src_model_rb->isChecked() && loaded_model)) &&
@@ -1024,10 +1026,32 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 	}
 }
 
+QString ModelDatabaseDiffForm::laravelMigrationFolderSetting(QString value)
+{
+	QString home_folder = QProcessEnvironment::systemEnvironment().value("HOME", "/home");
+	QString config_file_path = home_folder + "/.config/pgmodeler/laravel_migration.conf";
+	QString setting_key = "previous_directory";
+	QSettings settings(config_file_path, QSettings::NativeFormat);
+	if (value == "")
+	{
+		QString past_folder = settings.value(setting_key, "").toString();
+		if (past_folder == "")
+			past_folder = home_folder;
+
+		return past_folder;
+	}
+	else
+	{
+		settings.setValue(setting_key, value);
+		return "";
+	}
+}
+
 void ModelDatabaseDiffForm::selectOutputMigrationFolder(void)
 {
 	QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-							QProcessEnvironment::systemEnvironment().value("HOME", "/home"),
+							laravelMigrationFolderSetting(),
 							QFileDialog::ShowDirsOnly);
+	laravelMigrationFolderSetting(dir);
 	migration_folder_edt->setText(dir);
 }
