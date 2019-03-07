@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,6 +82,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	file_tb->setToolTip(file_tb->toolTip() + QString(" (%1)").arg(file_tb->shortcut().toString()));
 	output_tb->setToolTip(output_tb->toolTip() + QString(" (%1)").arg(output_tb->shortcut().toString()));
 	find_tb->setToolTip(find_tb->toolTip() + QString(" (%1)").arg(find_tb->shortcut().toString()));
+	filter_tb->setToolTip(filter_tb->toolTip() + QString(" (%1)").arg(filter_tb->shortcut().toString()));
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
@@ -93,6 +94,24 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	file_menu.addAction(action_save);
 	file_menu.addAction(action_save_as);
 	file_tb->setMenu(&file_menu);
+
+	filter_wgt->setVisible(false);
+
+	connect(columns_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterResults()));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterResults()));
+	connect(hide_tb, SIGNAL(clicked(bool)), filter_tb, SLOT(click()));
+	connect(filter_tb, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
+
+	connect(exact_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
+	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
+		regexp_chk->setChecked(false);
+		regexp_chk->setEnabled(!checked);
+		case_sensitive_chk->setChecked(false);
+		case_sensitive_chk->setEnabled(!checked);
+	});
+
+	connect(regexp_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
+	connect(case_sensitive_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
 
 	connect(action_load, SIGNAL(triggered(bool)), this, SLOT(loadCommands()));
 	connect(action_save, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
@@ -200,11 +219,6 @@ void SQLExecutionWidget::enableCommandButtons(void)
 	clear_btn->setEnabled(run_sql_tb->isEnabled());
 }
 
-void SQLExecutionWidget::fillResultsTable(void)
-{
-
-}
-
 void SQLExecutionWidget::showEvent(QShowEvent *)
 {
 	sql_cmd_txt->setFocus();
@@ -228,6 +242,7 @@ void SQLExecutionWidget::resizeEvent(QResizeEvent *event)
 		export_tb->setToolButtonStyle(style);
 		output_tb->setToolButtonStyle(style);
 		stop_tb->setToolButtonStyle(style);
+		filter_tb->setToolButtonStyle(style);
 	}
 }
 
@@ -353,6 +368,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	msgoutput_lst->setVisible(true);
 	results_parent->setVisible(false);
 	export_tb->setEnabled(false);
+	filter_tb->setEnabled(false);
+	filter_tb->setChecked(false);
 
 	output_tbw->setTabText(0, trUtf8("Results"));
 	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
@@ -374,11 +391,25 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		results_tbw->setSortingEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->setUpdatesEnabled(false);
+
 		destroyResultModel();
+
 		results_tbw->setModel(res_model);
 		results_tbw->resizeColumnsToContents();
 		results_tbw->setUpdatesEnabled(true);
 		results_tbw->blockSignals(false);
+
+		filter_edt->blockSignals(true);
+		filter_edt->clear();
+		filter_edt->blockSignals(false);
+
+		columns_cmb->blockSignals(true);
+		columns_cmb->clear();
+
+		for(int col = 0; col < res_model->columnCount(QModelIndex()); col++)
+			columns_cmb->addItem(res_model->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString());
+
+		columns_cmb->blockSignals(false);
 
 		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
 		total_exec = end_exec - start_exec;
@@ -389,6 +420,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		output_tbw->setTabEnabled(0, !empty);
 		results_parent->setVisible(!empty);
 		export_tb->setEnabled(!empty);
+		filter_tb->setEnabled(!empty);
 
 		if(!empty)
 		{
@@ -423,6 +455,40 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 	switchToExecutionMode(false);
 	sql_exec_thread.quit();
+}
+
+void SQLExecutionWidget::filterResults(void)
+{
+	QModelIndexList list;
+	Qt::MatchFlags flags = Qt::MatchStartsWith;
+	int rows_cnt = results_tbw->model()->rowCount();
+
+	if(exact_chk->isChecked())
+		flags = Qt::MatchExactly;
+	else if(regexp_chk->isChecked())
+			flags = Qt::MatchRegExp;
+
+	if(case_sensitive_chk->isChecked())
+		flags |= Qt::MatchCaseSensitive;
+
+	list = results_tbw->model()->match(results_tbw->model()->index(0, columns_cmb->currentIndex()),
+																		 Qt::DisplayRole, filter_edt->text(), -1, flags);
+
+	results_tbw->blockSignals(true);
+	results_tbw->setUpdatesEnabled(false);
+
+	for(int row = 0; row < rows_cnt; row++)
+		results_tbw->hideRow(row);
+
+	if(!list.isEmpty())
+	{
+		for(auto &idx : list)
+			results_tbw->showRow(idx.row());
+	}
+
+	results_tbw->blockSignals(false);
+	results_tbw->setUpdatesEnabled(true);
+	results_tbw->update();
 }
 
 void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, const QString &error)
@@ -497,6 +563,7 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	sql_cmd_txt->setEnabled(!value);
 	cmd_history_parent->setEnabled(!value);
 	find_history_parent->setEnabled(!value);
+	filter_tb->setEnabled(!value);
 
 	if(value)
 	{
@@ -936,7 +1003,7 @@ void SQLExecutionWidget::destroySQLHistory(void)
 
 void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 {
-	if(len < 100 || len > 2000)
+	if(len < 1000 || len > 20000)
 		len = 1000;
 
 	SQLExecutionWidget::cmd_history_max_len = len;

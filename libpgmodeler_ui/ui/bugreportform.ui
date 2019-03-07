@@ -350,7 +350,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="output_edt"/>
+           <widget class="QLineEdit" name="output_edt">
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QToolButton" name="output_tb">

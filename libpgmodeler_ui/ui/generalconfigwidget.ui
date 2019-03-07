@@ -1158,12 +1158,18 @@
             <property name="readOnly">
              <bool>false</bool>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="2">
            <widget class="QLineEdit" name="confs_dir_edt">
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1263,13 +1269,13 @@
                </size>
               </property>
               <property name="minimum">
-               <number>100</number>
+               <number>1000</number>
               </property>
               <property name="maximum">
-               <number>10000</number>
+               <number>20000</number>
               </property>
               <property name="singleStep">
-               <number>100</number>
+               <number>500</number>
               </property>
               <property name="value">
                <number>1000</number>
@@ -1472,6 +1478,9 @@
             </property>
             <property name="readOnly">
              <bool>false</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

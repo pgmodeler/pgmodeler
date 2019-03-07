@@ -80,6 +80,9 @@
    <property name="text">
     <string/>
    </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="comment_lbl">
    <property name="geometry">
@@ -540,6 +543,9 @@ This will disable the code of all child and referrer objects.</string>
    </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="logical_name_lbl">

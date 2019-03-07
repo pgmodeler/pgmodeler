@@ -990,7 +990,11 @@
           <item row="6" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLineEdit" name="backup_file_edt"/>
+             <widget class="QLineEdit" name="backup_file_edt">
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QToolButton" name="select_file_tb">
@@ -1207,6 +1211,9 @@
            <widget class="QLineEdit" name="apply_to_edt">
             <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
             </property>
            </widget>
           </item>

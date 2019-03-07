@@ -107,6 +107,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -664,6 +667,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="0">
@@ -687,6 +693,9 @@
           <width>180</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

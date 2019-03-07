@@ -240,6 +240,9 @@
          <property name="maxLength">
           <number>1</number>
          </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="3" column="2">
@@ -250,7 +253,11 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QLineEdit" name="default_value_edt"/>
+        <widget class="QLineEdit" name="default_value_edt">
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="alignment_lbl">
@@ -414,7 +421,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="enum_name_edt"/>
+       <widget class="QLineEdit" name="enum_name_edt">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -460,7 +471,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="attrib_name_edt"/>
+       <widget class="QLineEdit" name="attrib_name_edt">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="atrib_collation_lbl">

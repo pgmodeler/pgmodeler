@@ -1,6 +1,7 @@
 #!/bin/bash
 
 INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
+QT_IFW_ROOT='/c/Qt/QtIFW-3.0.6'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
@@ -13,6 +14,19 @@ DEMO_VERSION=0
 
 BUILD_ALL_OPT='-build-all'
 BUILD_ALL=0
+
+# Installer settings
+FMT_PREFIX="C:\/pgmodeler"
+INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
+INSTALLER_CONF_DIR="$PWD/installer/template/config"
+INSTALLER_PKG_DIR="$PWD/installer/template/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/data"
+INSTALLER_META_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/meta"
+INSTALLER_TMPL_CONFIG="config.xml.tmpl"
+INSTALLER_CONFIG="config.xml"
+INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
+INSTALLER_PKG_CONFIG="package.xml"
+BUILD_DATE=`date '+%Y-%m-%d'`
 
 # Setting key paths according to the arch build (x86|x64)
 # If none of the build type parameter is specified, the default is tu use x86
@@ -129,7 +143,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -245,36 +259,45 @@ fi
 
 echo "Packaging installation..."
 
-"$INNOSETUP_CMD" $ISSFILE >> $LOG 2>&1
+rm -r $INSTALLER_DATA_DIR >> $LOG 2>&1
+ln -sf "$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
-  echo
-  echo "** Failed to create installer package!"
-  echo "** Proceeding with basic deployment."
+    echo
+    echo "** Failed to configure installer data dir!"
+    echo
+    exit 1
+fi   
+
+# Configuing installer scripts before packaging
+cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
   
-  mkdir $PKGNAME >> $LOG 2>&1
-  mv $INSTALL_ROOT/* $PKGNAME >> $LOG 2>&1
-  mv $PKGNAME $INSTALL_ROOT >> $LOG 2>&1
-
-  if [ $? -ne 0 ]; then
-	echo "** Failed to execute basic deployment!"
-	exit 1
-  fi
-
+if [ $? -ne 0 ]; then
   echo
-  echo "Directory created: $PKGNAME"
-else
-  mv $GENINSTALLER build/$PKGFILE >> $LOG 2>&1
-  echo "File created: $PKGFILE"
-fi
+  echo "** Failed to create the installer config file!"
+  echo
+  exit 1
+fi 
 
-mkdir -p $DIST_ROOT >> $LOG 2>&1
-mv $INSTALL_ROOT/$PKGFILE $DIST_ROOT >> $LOG 2>&1
+cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
+   
+if [ $? -ne 0 ]; then
+   echo
+   echo "** Failed to create the package info file!"
+   echo
+   exit 1
+fi  
+
+$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
-	echo "** Failed to move $PKGFILE to $DIST_ROOT!"
-	exit 1
+  echo
+  echo "** Failed to create installer!"
+  echo
+  exit 1
 fi
+
+echo "File created: dist/$PKGNAME.exe"
 
 echo "pgModeler successfully deployed!"
 echo

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2714,6 +2714,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
+	attributes[Attributes::Partitioning]=QString();
 
 	if(rel_type == RelationshipGen)
 	{
