@@ -761,33 +761,33 @@ PgSqlType::PgSqlType(void *ptype) : PgSqlType()
 	(*this) << ptype;
 }
 
-PgSqlType::PgSqlType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
+PgSqlType::PgSqlType(void *ptype, unsigned dimension, unsigned length, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this) << ptype;
-	setLength(length);
 	setDimension(dimension);
+	setLength(length);
 	setPrecision(precision);
 	setWithTimezone(with_timezone);
 	setIntervalType(interv_type);
 	setSpatialType(spatial_type);
 }
 
-PgSqlType::PgSqlType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
+PgSqlType::PgSqlType(const QString &type_name, unsigned dimension, unsigned length, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this)=type_name;
-	setLength(length);
 	setDimension(dimension);
+	setLength(length);
 	setPrecision(precision);
 	setWithTimezone(with_timezone);
 	setIntervalType(interv_type);
 	setSpatialType(spatial_type);
 }
 
-PgSqlType::PgSqlType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
+PgSqlType::PgSqlType(unsigned type_id, unsigned dimension, unsigned length, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type) : PgSqlType()
 {
 	(*this)=type_id;
-	setLength(length);
 	setDimension(dimension);
+	setLength(length);
 	setPrecision(precision);
 	setWithTimezone(with_timezone);
 	setIntervalType(interv_type);

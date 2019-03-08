@@ -382,20 +382,32 @@ class PgSqlType: public BaseType{
 		//! \brief Creates a type from a pointer that references an user defined type (Type class)
 		PgSqlType(void *ptype);
 
-		PgSqlType(const QString &type_name, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type name and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_name and dimension which can be used to quicly create
+		 * array of a certain type. */
+		PgSqlType(const QString &type_name, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(void *ptipo, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a pointer to a data type (generally a user defined type, see UserTypeConfig class)
+		 * and a series of data like dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except ptype and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(void *ptype, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(unsigned type_id, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type id and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_id and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(unsigned type_id, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
 		/*! \brief Creates a configured instance of PgSQLType from a string
 		in SQL canonical form, e.g, varchar(255), timestamp with timezone, smallint[] and so on.
