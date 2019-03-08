@@ -637,15 +637,15 @@ void PgModelerCli::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
+				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
-				item=new SchemaView(dynamic_cast<Schema *>(graph_obj)); break;
+				item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
@@ -737,7 +737,17 @@ void PgModelerCli::extractObjectXML(void)
 
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
-		buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
+
+		//Checking if the header ends on a role declaration
+		end = buf.indexOf(QString("<%1").arg(Attributes::Role));
+
+		// If we found role declarations we clear the header until there
+		if(end >= 0)
+			buf.remove(0, end);
+		else
+			// Instead, we clear the header until the starting of database declaration
+			buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
+
 		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
 		ts.setString(&buf);
 
@@ -1060,7 +1070,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replacing attribute owner by onwer-col for sequences
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
-		obj_xml.replace(Attributes::Owner, Attributes::OwnerColumn);
+		obj_xml.replace(QRegExp(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
 	//Remove sysid attribute from <role> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
