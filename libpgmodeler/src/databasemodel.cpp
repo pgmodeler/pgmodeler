@@ -3986,7 +3986,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	type_idx=PgSqlType::getBaseTypeIndex(name);
 	if(type_idx!=PgSqlType::Null)
 	{
-		return(PgSqlType(name,length,dimension,precision,with_timezone,interv_type, spatial_type));
+		return(PgSqlType(name, dimension, length, precision, with_timezone, interv_type, spatial_type));
 	}
 	else
 	{
@@ -3995,7 +3995,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
-		return(PgSqlType(type_idx,length,dimension,precision,with_timezone,interv_type,spatial_type));
+		return(PgSqlType(type_idx, dimension, length, precision, with_timezone, interv_type, spatial_type));
 	}
 }
 
@@ -4387,12 +4387,12 @@ Operator *DatabaseModel::createOperator(void)
 		oper->setMerges(attribs[Attributes::Merges]==Attributes::True);
 		oper->setHashes(attribs[Attributes::Hashes]==Attributes::True);
 
-		func_types[Attributes::OperatorFunc]=Operator::FUNC_OPERATOR;
-		func_types[Attributes::JoinFunc]=Operator::FUNC_JOIN;
-		func_types[Attributes::RestrictionFunc]=Operator::FUNC_RESTRICT;
+		func_types[Attributes::OperatorFunc]=Operator::FuncOperator;
+		func_types[Attributes::JoinFunc]=Operator::FuncJoin;
+		func_types[Attributes::RestrictionFunc]=Operator::FuncRestrict;
 
-		oper_types[Attributes::CommutatorOp]=Operator::OPER_COMMUTATOR;
-		oper_types[Attributes::NegatorOp]=Operator::OPER_NEGATOR;
+		oper_types[Attributes::CommutatorOp]=Operator::OperCommutator;
+		oper_types[Attributes::NegatorOp]=Operator::OperNegator;
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -4424,9 +4424,9 @@ Operator *DatabaseModel::createOperator(void)
 						xmlparser.getElementAttributes(attribs);
 
 						if(attribs[Attributes::RefType]!=Attributes::RightType)
-							arg_type=Operator::LEFT_ARG;
+							arg_type=Operator::LeftArg;
 						else
-							arg_type=Operator::RIGHT_ARG;
+							arg_type=Operator::RightArg;
 
 						type=createPgSQLType();
 						oper->setArgumentType(type, arg_type);
@@ -7679,13 +7679,13 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *usr_type=nullptr;
 				unsigned i;
 
-				for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
+				for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 				{
 					if(oper->getFunction(i))
 						getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
 				}
 
-				for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
+				for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 				{
 					usr_type=getObjectPgSQLType(oper->getArgumentType(i));
 
@@ -7693,7 +7693,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(usr_type, deps, inc_indirect_deps);
 				}
 
-				for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_NEGATOR; i++)
+				for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 				{
 					if(oper->getOperator(i))
 						getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
@@ -8223,9 +8223,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					{
 						oper=dynamic_cast<Operator *>(*itr);
 
-						if(oper->getFunction(Operator::FUNC_OPERATOR)==func ||
-								oper->getFunction(Operator::FUNC_JOIN)==func  ||
-								oper->getFunction(Operator::FUNC_RESTRICT)==func)
+						if(oper->getFunction(Operator::FuncOperator)==func ||
+								oper->getFunction(Operator::FuncJoin)==func  ||
+								oper->getFunction(Operator::FuncRestrict)==func)
 						{
 							refer=true;
 							refs.push_back(oper);
@@ -8528,8 +8528,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						oper=dynamic_cast<Operator *>(*itr);
 						itr++;
 
-						if(oper->getArgumentType(Operator::LEFT_ARG)==ptr_pgsqltype ||
-								oper->getArgumentType(Operator::RIGHT_ARG)==ptr_pgsqltype)
+						if(oper->getArgumentType(Operator::LeftArg)==ptr_pgsqltype ||
+								oper->getArgumentType(Operator::RightArg)==ptr_pgsqltype)
 						{
 							refer=true;
 							refs.push_back(oper);
@@ -8852,7 +8852,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						oper_aux=dynamic_cast<Operator *>(*itr);
 						itr++;
 
-						for(i1=Operator::OPER_COMMUTATOR; i1 <= Operator::OPER_NEGATOR &&
+						for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
 							(!exclusion_mode || (exclusion_mode && !refer)); i1++)
 						{
 							if(oper_aux->getOperator(i1)==oper)

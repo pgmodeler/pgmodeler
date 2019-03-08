@@ -495,7 +495,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		QFrame *frame=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
@@ -519,11 +519,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
-	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
+	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
 		return(XmlParser::CharLt + QString("= ") + ini_ver);
-	else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
+	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
 		return(XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
-	else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
+	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
 		return(XmlParser::CharGt + QString("= ") + ini_ver);
 	else
 		return(QString());

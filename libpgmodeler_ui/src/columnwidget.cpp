@@ -54,7 +54,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		configureTabOrder({ data_type });
 
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
 		highlightVersionSpecificFields(fields_map);
 
 		connect(sequence_rb, &QRadioButton::clicked,

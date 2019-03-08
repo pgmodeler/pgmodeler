@@ -40,7 +40,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(op_class_sel, 4,1,1,2);
 		element_grid->addWidget(operator_sel, 5,1,1,2);
 
-		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
+		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		warning_frame=BaseObjectWidget::generateVersionWarningFrame(fields_map);
 		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
 		warning_frame->setParent(this);

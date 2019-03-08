@@ -121,7 +121,7 @@ void Aggregate::setSortOperator(Operator *sort_op)
 		 1) The aggregate accepts only one data type
 		 2) The function that defines the operator has the parameter types identical
 				as the input data type of the aggregate  */
-		func=sort_op->getFunction(Operator::FUNC_OPERATOR);
+		func=sort_op->getFunction(Operator::FuncOperator);
 		//Validating the condition 1
 		if(data_types.size()!=1)
 			throw Exception(ErrorCode::AsgInvalidOperatorArguments,__PRETTY_FUNCTION__,__FILE__,__LINE__);

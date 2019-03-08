@@ -80,7 +80,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		ret_table_gb->setLayout(grid1);
 		ret_table_gb->setVisible(false);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(leakproof_chk);
 		frame=generateVersionWarningFrame(fields_map, &value_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
@@ -457,7 +457,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 			else if(obj_type==ObjectType::Operator)
 			{
 				oper=dynamic_cast<Operator *>(object);
-				for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
+				for(i1=Operator::FuncOperator; i1 <= Operator::FuncRestrict; i1++)
 				{
 					if(oper->getFunction(i1)==func)
 						oper->setFunction(func, i1);

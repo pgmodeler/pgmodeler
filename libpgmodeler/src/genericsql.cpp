@@ -44,7 +44,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 
-void GenericSQL::operator = (GenericSQL &genericsql)
+/*void GenericSQL::operator = (GenericSQL &genericsql)
 {
 	(*dynamic_cast<BaseObject *>(this))=reinterpret_cast<BaseObject &>(genericsql);
-}
+}*/

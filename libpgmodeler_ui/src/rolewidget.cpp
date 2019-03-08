@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(can_replicate_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(bypass_rls_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);

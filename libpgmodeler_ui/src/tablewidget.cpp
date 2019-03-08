@@ -51,10 +51,10 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
 	frame=generateVersionWarningFrame(fields_map);
 	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
 	frame->setParent(this);
