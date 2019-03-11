@@ -331,6 +331,25 @@
           </spacer>
          </item>
          <item>
+          <widget class="QWidget" name="use_existing_wgt" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QCheckBox" name="use_existing_chk">
+              <property name="statusTip">
+               <string>Use existing columns when linking.</string>
+              </property>
+              <property name="text">
+               <string>Use Existing</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QWidget" name="identifier_wgt" native="true">
            <property name="minimumSize">
             <size>

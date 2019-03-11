@@ -300,6 +300,8 @@ class Relationship: public BaseRelationship {
 		GenTabToken, //{gt}
 		SrcColToken; //{sc}
 
+		bool useExisting;
+
 		//! \brief Patterns ids
 		static constexpr unsigned SrcColPattern=0,
 		DstColPattern=1,
