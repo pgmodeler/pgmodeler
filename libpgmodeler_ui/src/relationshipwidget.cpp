@@ -406,6 +406,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	table2_mand_chk->setVisible(rel1n);
 
 	identifier_wgt->setVisible(rel1n && !base_rel->isSelfRelationship());
+	use_existing_wgt->setVisible(rel1n && !base_rel->isSelfRelationship());
 	foreign_key_gb->setVisible(rel1n || relnn);
 	single_pk_wgt->setVisible(relnn);
 
@@ -1087,7 +1088,17 @@ void RelationshipWidget::applyConfiguration(void)
 
 			rel=dynamic_cast<Relationship *>(base_rel);
 
-			if(name_patterns_grp->isVisible())
+			if (use_existing_chk->isChecked())
+			{
+				rel->useExisting = use_existing_chk->isChecked();
+			}
+			else
+			{
+				rel->useExisting = false;
+			}
+
+			// shemgp: apply defaults even if name_patterns_grp is not visible
+			// if(name_patterns_grp->isVisible())
 			{
 				count=sizeof(pattern_ids)/sizeof(unsigned);
 				for(i=0; i < count; i++)

@@ -1374,6 +1374,8 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 {
 	Constraint *pk=nullptr, *pk_aux=nullptr, *fk=nullptr;
 	unsigned i, i1, qty;
+	unsigned col_cnt = 0;
+	bool found_column;
 	Column *column=nullptr, *column_aux=nullptr;
 	QString name, aux, fk_alias;
 
@@ -1449,7 +1451,24 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 		while(i < qty)
 		{
-			column=gen_columns[i];
+			found_column = false;
+			if (useExisting)
+			{
+				// Search for existing column and use that
+				col_cnt = 0;
+				while(col_cnt < recv_tab->getColumnCount())
+				{
+					if (recv_tab->getColumn(col_cnt)->getName() == gen_columns[i]->getName())
+					{
+						found_column = true;
+						column = recv_tab->getColumn(col_cnt);
+						break;
+					}
+					col_cnt++;
+				}
+			}
+			if (!found_column)
+				column=gen_columns[i];
 			column_aux=pk->getColumn(i1, Constraint::SourceCols);
 
 			//Link the two columns on the foreign key
@@ -1615,7 +1634,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 				column->setType(PgSqlType(QString("smallint")));
 
 			column->setName(name);
-			name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
+
+			if (!useExisting)
+				name=PgModelerNs::generateUniqueName(column, (*recv_tab->getObjectList(ObjectType::Column)));
 			column->setName(name);
 
 			if(!prev_name.isEmpty())
@@ -1634,7 +1655,8 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 			if(prev_name!=name && (rel_type==Relationship11 || rel_type==Relationship1n))
 				prev_ref_col_names[column_aux->getObjectId()]=column->getName();
 
-			recv_tab->addColumn(column);
+			if (!useExisting)
+				recv_tab->addColumn(column);
 		}
 	}
 	catch(Exception &e)
@@ -2252,15 +2274,27 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			itr_end=gen_columns.end();
 
 			//Destroy the columns created by the relationship
+			bool dont_delete;
 			while(itr!=itr_end)
 			{
+				dont_delete = false;
 				column=(*itr);
 
 				//Before the destruction the column is removed from table
-				table->removeColumn(column->getName());
+				try
+				{
+					table->removeColumn(column->getName());
+				}
+				catch (Exception &e)
+				{
+					if (e.getErrorMessage().contains("referenced") && useExisting)
+						dont_delete = true;
+					else
+						throw e;
+				}
 				itr++;
-
-				delete(column);
+				if (!dont_delete)
+					delete(column);
 			}
 
 			gen_columns.clear();
