@@ -7070,6 +7070,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	vector<BaseObject *> *obj_list=nullptr;
 	vector<BaseObject *>::iterator itr, itr_end;
 	map<unsigned, BaseObject *> objects_map;
+	map<unsigned, bool> used_objects;
 	Table *table=nullptr;
 	Constraint *constr=nullptr;
 	View *view=nullptr;
@@ -7081,6 +7082,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 							ObjectType::Aggregate, ObjectType::Domain, ObjectType::Textbox, ObjectType::BaseRelationship,
 							ObjectType::Relationship, ObjectType::Table, ObjectType::View, ObjectType::Sequence, ObjectType::GenericSql };
 	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType), count=sizeof(obj_types)/sizeof(ObjectType);
+	unsigned type_divider = 0, current_largest = 0;
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(i=0; i < aux_obj_cnt; i++)
@@ -7090,13 +7092,26 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 			obj_list=getObjectList(aux_obj_types[i]);
 
 			for(auto &object : (*obj_list))
-				objects_map[object->getObjectId()]=object;
+			{
+				if (object->getObjectId() > current_largest)
+					current_largest = object->getObjectId();
+				if (!used_objects[object->getObjectId()])
+				{
+					used_objects[object->getObjectId()] = true;
+					objects_map[object->getObjectId()]=object;
+				}
+			}
 		}
 	}
+	type_divider = current_largest;
+	current_largest = 0;
 
 	//Includes the database model on the objects map permitting to create the code in a correct order
-	objects_map[this->getObjectId()]=this;
-
+	if (!used_objects[this->getObjectId()])
+	{
+		used_objects[this->getObjectId()] = true;
+		objects_map[type_divider+this->getObjectId()]=this;
+	}
 	for(i=0; i < count; i++)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
@@ -7120,7 +7135,15 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 				else
 				{
 					if(def_type==SchemaParser::XmlDefinition || !incl_relnn_objs)
-						objects_map[object->getObjectId()]=object;
+					{
+						if (object->getObjectId() > current_largest)
+							current_largest = object->getObjectId();
+						if (!used_objects[object->getObjectId()] && object->getObjectType() != ObjectType::View)
+						{
+							used_objects[object->getObjectId()] = true;
+							objects_map[object->getObjectId()]=object;
+						}
+					}
 					else
 					{
 						rel=dynamic_cast<Relationship *>(object);
@@ -7129,12 +7152,22 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 			 They are treated in a separated way below, because on the diff process (ModelsDiffHelper) the generated table
 			 need to be compared to other tables not the relationship itself */
 						if(!incl_relnn_objs || !rel || (rel && rel->getRelationshipType()!=BaseRelationship::RelationshipNn))
-							objects_map[object->getObjectId()]=object;
+						{
+							if (object->getObjectId() > current_largest)
+								current_largest = object->getObjectId();
+							if (!used_objects[object->getObjectId()] && object->getObjectType() != ObjectType::View)
+							{
+								used_objects[object->getObjectId()] = true;
+								objects_map[type_divider + object->getObjectId()]=object;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
+	type_divider = type_divider + current_largest;
+	current_largest = 0;
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
 	  on the map of objects. */
@@ -7151,24 +7184,51 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		they have the definition generated */
 			if(constr->getConstraintType()!=ConstraintType::ForeignKey &&  !constr->isAddedByLinking() &&
 					((constr->getConstraintType()!=ConstraintType::PrimaryKey && constr->isReferRelationshipAddedColumn())))
-				objects_map[constr->getObjectId()]=constr;
+			{
+				if (constr->getObjectId() > current_largest)
+					current_largest = constr->getObjectId();
+				if (!used_objects[constr->getObjectId()])
+				{
+					used_objects[constr->getObjectId()] = true;
+					objects_map[type_divider + constr->getObjectId()]=constr;
+				}
+			}
 			else if(constr->getConstraintType()==ConstraintType::ForeignKey && !constr->isAddedByLinking())
 				fkeys.push_back(constr);
 		}
 
 		for(auto obj : table->getObjects({ ObjectType::Column, ObjectType::Constraint }))
-			objects_map[obj->getObjectId()]=obj;
+		{
+			if (obj->getObjectId() > current_largest)
+				current_largest = obj->getObjectId();
+			if (!used_objects[obj->getObjectId()])
+			{
+				used_objects[obj->getObjectId()] = true;
+				objects_map[type_divider + obj->getObjectId()]=obj;
+			}
+		}
 	}
+	type_divider = type_divider + current_largest;
+	current_largest = 0;
 
 	/* Getting and storing the special objects (which reference columns of tables added for relationships)
 			on the map of objects. */
 	for(auto &obj : views)
 	{
 		view=dynamic_cast<View *>(obj);
-
 		for(auto obj : view->getObjects())
-			objects_map[obj->getObjectId()]=obj;
+		{
+			if (obj->getObjectId() > current_largest)
+				current_largest = obj->getObjectId();
+			if (!used_objects[obj->getObjectId()])
+			{
+				used_objects[obj->getObjectId()] = true;
+				objects_map[type_divider + obj->getObjectId()]=obj;
+			}
+		}
 	}
+	type_divider = type_divider + current_largest;
+	current_largest = 0;
 
 	/* SPECIAL CASE: Generating the correct order for tables, views, relationships and sequences
 
@@ -7233,19 +7293,34 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
 				for(i=0; i < 3; i++)
 				{
-					if(objs[i] && objects_map.count(objs[i]->getObjectId())==0)
-						objects_map[objs[i]->getObjectId()]=objs[i];
+					if(objs[i])
+					{
+						if (objs[i]->getObjectId() > current_largest)
+							current_largest = objs[i]->getObjectId();
+						if (!used_objects[objs[i]->getObjectId()])
+						{
+							used_objects[objs[i]->getObjectId()] = true;
+							objects_map[type_divider + objs[i]->getObjectId()]=objs[i];
+						}
+					}
 				}
 			}
 			else
 			{
-				if(objects_map.count(object->getObjectId())==0)
-					objects_map[object->getObjectId()]=object;
+				if (object->getObjectId() > current_largest)
+					current_largest = object->getObjectId();
+				if (!used_objects[object->getObjectId()])
+				{
+					used_objects[object->getObjectId()] = true;
+					objects_map[type_divider + object->getObjectId()]=object;
+				}
 			}
 		}
 
 		fkeys.insert(fkeys.end(), rel_constrs.begin(), rel_constrs.end());
 	}
+	type_divider = type_divider + current_largest;
+	current_largest = 0;
 
 	//Adding fk relationships and foreign keys at end of objects map
 	i=BaseObject::getGlobalId() + 1;
@@ -7253,16 +7328,28 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 
 	for(auto &obj : fkeys)
 	{
-		objects_map[i]=obj;
+		if (obj->getObjectId() > current_largest)
+			current_largest = obj->getObjectId();
+		if (!used_objects[obj->getObjectId()])
+		{
+			used_objects[obj->getObjectId()] = true;
+			objects_map[type_divider + i]=obj;
+		}
 		i++;
 	}
+	type_divider = type_divider + current_largest;
+	current_largest = 0;
 
 	//Adding permissions at the very end of object map
 	i=BaseObject::getGlobalId() + fkeys.size() + 1;
 
 	for(auto &obj : permissions)
 	{
-		objects_map[i]=obj;
+		if (!used_objects[obj->getObjectId()])
+		{
+			used_objects[obj->getObjectId()] = true;
+			objects_map[type_divider + i]=obj;
+		}
 		i++;
 	}
 
