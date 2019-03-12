@@ -596,8 +596,13 @@ bool View::isReferencingTable(Table *tab)
 
 	for(i=0; i < count && !found; i++)
 	{
-		aux_tab=references[i].getTable();
-		found=(aux_tab && (aux_tab == tab));
+		if(references[i].isDefinitionExpression())
+			found = references[i].getReferencedTableIndex(tab);
+		else
+		{
+			aux_tab = references[i].getTable();
+			found = (aux_tab && (aux_tab == tab));
+		}
 	}
 
 	return(found);

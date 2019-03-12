@@ -1872,6 +1872,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	unsigned type_oid = 0;
 	QString type_name, type_def, unknown_obj_xml, sch_name;
 	bool is_type_registered = false;
+	QStringList ref_tab_oids;
+	Table *ref_tab = nullptr;
 
 	try
 	{
@@ -1937,6 +1939,13 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 
 			col.setType(PgSqlType::parseString(type_name));
 			ref.addColumn(&col);
+		}
+
+		// Configuring the reference tables
+		for(auto &tab_oid : Catalog::parseArrayValues(attribs[Attributes::RefTables]))
+		{
+			ref_tab = dbmodel->getTable(getDependencyObject(tab_oid, ObjectType::Table, true, true, false));
+			ref.addReferencedTable(ref_tab);
 		}
 
 		attribs[Attributes::References]=ref.getXMLDefinition();

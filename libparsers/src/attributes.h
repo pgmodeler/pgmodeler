@@ -433,6 +433,8 @@ namespace Attributes {
 	RefColumn,
 	RefRoles,
 	RefTable,
+	RefTables,
+	RefTableTag,
 	RefType,
 	Refer,
 	Reference,
