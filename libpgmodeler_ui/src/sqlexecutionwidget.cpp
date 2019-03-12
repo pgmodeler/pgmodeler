@@ -406,7 +406,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		columns_cmb->blockSignals(true);
 		columns_cmb->clear();
 
-		for(int col = 0; col < res_model->columnCount(QModelIndex()); col++)
+		for(int col = 0; res_model && col < res_model->columnCount(QModelIndex()); col++)
 			columns_cmb->addItem(res_model->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString());
 
 		columns_cmb->blockSignals(false);
