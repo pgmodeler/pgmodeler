@@ -137,6 +137,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 									   .arg(selected_obj->getName(true)));
 
 		emit s_objectSelected();
+		emit s_selectorChanged(true);
 	}
 	else
 		clearSelector();
@@ -176,6 +177,7 @@ void ObjectSelectorWidget::clearSelector(void)
 	obj_name_txt->clear();
 	rem_object_tb->setEnabled(false);
 	emit s_selectorCleared();
+	emit s_selectorChanged(false);
 }
 
 void ObjectSelectorWidget::showObjectView(void)

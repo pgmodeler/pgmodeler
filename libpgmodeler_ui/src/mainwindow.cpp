@@ -321,6 +321,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), layers_btn, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), layers_wgt, SLOT(close()));
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NoPendingOp; });
 	connect(model_valid_wgt, SIGNAL(s_validationFinished(bool)), this, SLOT(executePendingOperation(bool)));
