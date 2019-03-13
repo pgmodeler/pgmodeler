@@ -597,7 +597,7 @@ bool View::isReferencingTable(Table *tab)
 	for(i=0; i < count && !found; i++)
 	{
 		if(references[i].isDefinitionExpression())
-			found = references[i].getReferencedTableIndex(tab);
+			found = references[i].getReferencedTableIndex(tab) >= 0;
 		else
 		{
 			aux_tab = references[i].getTable();
