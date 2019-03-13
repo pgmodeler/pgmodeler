@@ -214,7 +214,7 @@ class DatabaseImportHelper: public QObject {
 		QStringList parseIndexExpressions(const QString &expr);
 
 	public:
-		DatabaseImportHelper(QObject *parent=0);
+		DatabaseImportHelper(QObject *parent = nullptr);
 		
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);

@@ -22,7 +22,8 @@ $tb <reference
  $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
  
  %if {columns} %then {columns} %end
-  
+ %if {ref-tables} %then {ref-tables} %end
+   
  $tb </reference> $br
 %else
  /> $br

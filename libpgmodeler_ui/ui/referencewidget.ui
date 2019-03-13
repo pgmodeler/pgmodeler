@@ -643,6 +643,24 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Referenced tables</string>
+      </attribute>
+      <widget class="QLabel" name="ref_table_lbl">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>61</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Table:</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>

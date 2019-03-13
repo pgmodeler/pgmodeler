@@ -1214,15 +1214,17 @@ void DatabaseModel::updateTablesFKRelationships(void)
 
 void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
-	Table *tab=nullptr;
+	Table *table=nullptr;
 	BaseRelationship *rel=nullptr;
 	Reference ref;
 	unsigned i, ref_count, idx;
 	vector<BaseObject *>::iterator itr, itr_end;
+	vector<Table *> tables;
 
 	if(!view)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(getObjectIndex(view) < 0 || force_rel_removal)
+
+	if(getObjectIndex(view) < 0 || force_rel_removal)
 	{
 		//Remove all the relationship related to the view when this latter no longer exists
 		itr=base_relationships.begin();
@@ -1262,11 +1264,11 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 					rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				if(rel->getTable(BaseRelationship::SrcTable)->getObjectType()==ObjectType::Table)
-					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
+					table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
 				else
-					tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
+					table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
 
-				if(!view->isReferencingTable(tab))
+				if(!view->isReferencingTable(table))
 				{
 					removeRelationship(rel);
 					itr=base_relationships.begin() + idx;
@@ -1283,16 +1285,27 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 			}
 		}
 
-		//Creates the relationships from the view references
+		/* Creates the relationships from the view references
+		 * First we try to create relationship from referecences in SELECT portion of view's definition */
 		ref_count=view->getReferenceCount(Reference::SqlReferSelect);
-
 		for(i=0; i < ref_count; i++)
 		{
-			ref = view->getReference(i, Reference::SqlReferSelect);
-			tab = ref.getTable();
+			table = view->getReference(i, Reference::SqlReferSelect).getTable();
+			if(table) tables.push_back(table);
+		}
 
-			rel=getRelationship(view,tab);
-			if(tab && !rel)
+		/* If the view does have tables referenced from SELECT portion we check if
+		 * the table was constructed from a single reference (Reference::SqlViewDefinition). In
+		 * that case we use the list of referenced tables configured in that view reference object */
+		if(tables.empty() && view->getReferenceCount(Reference::SqlViewDefinition) > 0)
+			tables = view->getReference(0, Reference::SqlViewDefinition).getReferencedTables();
+
+		// Effectively creating the relationships
+		for(auto &tab : tables)
+		{
+			rel = getRelationship(view, tab);
+
+			if(!rel)
 			{
 				rel=new BaseRelationship(BaseRelationship::RelationshipDep, view, tab, false, false);
 				rel->setName(PgModelerNs::generateUniqueName(rel, base_relationships));
@@ -6008,21 +6021,31 @@ View *DatabaseModel::createView(void)
 							xmlparser.accessElement(XmlParser::ChildElement);
 							xmlparser.savePosition();
 							xmlparser.accessElement(XmlParser::ChildElement);
-							reference = Reference(xmlparser.getElementContent(),str_aux);
+							reference = Reference(xmlparser.getElementContent(), str_aux);
 							reference.setReferenceAlias(attribs[Attributes::RefAlias]);
 							xmlparser.restorePosition();
 
 							// Creating the columns related to the expression
 							if(xmlparser.accessElement(XmlParser::NextElement))
 							{
-								elem = xmlparser.getElementName();
-
 								do
 								{
+									elem = xmlparser.getElementName();
 									xmlparser.savePosition();
-									column = createColumn();
-									reference.addColumn(column);
-									delete(column);
+
+									if(elem == Attributes::Column)
+									{
+										column = createColumn();
+										reference.addColumn(column);
+										delete(column);
+									}
+									else if(elem == Attributes::RefTableTag)
+									{
+										xmlparser.getElementAttributes(aux_attribs);
+										table = getTable(aux_attribs[Attributes::Name]);
+										reference.addReferencedTable(table);
+									}
+
 									xmlparser.restorePosition();
 								}
 								while(xmlparser.accessElement(XmlParser::NextElement));

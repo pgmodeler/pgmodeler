@@ -41,11 +41,11 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 
 		CodeCompletionWidget *expression_cp;
 
-		ObjectSelectorWidget *ref_object_sel;
+		ObjectSelectorWidget *ref_object_sel, *ref_table_sel;
 
 		PgSQLTypeWidget *pgsqltype_wgt;
 
-		ObjectsTableWidget *columns_tab;
+		ObjectsTableWidget *columns_tab, *ref_tables_tab;
 
 		unsigned ref_flags;
 
@@ -68,6 +68,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private slots:
 		void selectReferenceType(void);
 		void addColumn(int row);
+		void addRefTable(int row);
 		void updateColumn(int row);
 		void editColumn(int row);
 		void duplicateColumn(int src_row, int new_row);

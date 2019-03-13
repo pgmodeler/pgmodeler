@@ -421,6 +421,8 @@ namespace Attributes {
 	RefColumn=QString("ref-column"),
 	RefRoles=QString("ref-roles"),
 	RefTable=QString("ref-table"),
+	RefTables=QString("ref-tables"),
+	RefTableTag=QString("reftable"),
 	RefType=QString("ref-type"),
 	Refer=QString("refer"),
 	Reference=QString("reference"),
