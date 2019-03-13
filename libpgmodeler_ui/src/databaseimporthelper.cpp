@@ -2052,6 +2052,8 @@ QStringList DatabaseImportHelper::parseIndexExpressions(const QString &expr)
 
 					if(word.contains('(') && word.contains(')'))
 						expressions.push_back(word.trimmed());
+					else
+						expressions.push_back(word);
 
 					word.clear();
 					open_paren = close_paren = 0;
