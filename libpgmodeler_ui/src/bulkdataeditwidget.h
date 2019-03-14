@@ -29,7 +29,7 @@ class BulkDataEditWidget: public QWidget, public Ui::BulkDataEditWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		BulkDataEditWidget(QWidget *parent = 0);
+		BulkDataEditWidget(QWidget *parent = nullptr);
 };
 
 #endif

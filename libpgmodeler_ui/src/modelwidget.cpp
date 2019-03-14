@@ -4083,7 +4083,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		actions.pop_back();
 	}
 
-	if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+	if(objects.size() <= 2)
 	{
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
@@ -4495,6 +4495,9 @@ void ModelWidget::editCreationOrder(void)
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
+
+	if(!selected_objects.empty())
+		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
 			this->op_list->removeOperations();

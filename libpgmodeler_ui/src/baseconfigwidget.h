@@ -65,7 +65,7 @@ class BaseConfigWidget: public QWidget {
 		void showEvent(QShowEvent *);
 		
 	public:
-		BaseConfigWidget(QWidget *parent = 0);
+		BaseConfigWidget(QWidget *parent = nullptr);
 		~BaseConfigWidget(void){}
 		
 		bool isConfigurationChanged(void);

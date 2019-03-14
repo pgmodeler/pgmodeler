@@ -112,6 +112,12 @@ void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 	fillCreationOrderGrid();
 }
 
+void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct)
+{
+	src_object_sel->setSelectedObject(src_object);
+	dst_object_sel->setSelectedObject(dst_objct);
+}
+
 void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 {
 	objects_tbw->clearContents();

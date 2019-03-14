@@ -40,7 +40,7 @@ class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 		map<unsigned, QIcon> icons;
 
 	public:
-		TaskProgressWidget(QWidget *parent=0, Qt::WindowFlags f=0);
+		TaskProgressWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		void addIcon(unsigned id, const QIcon &ico);
 
 	public slots:

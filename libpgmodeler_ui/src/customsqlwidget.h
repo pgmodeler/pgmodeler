@@ -58,7 +58,7 @@ class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 		void configureMenus(void);
 		
 	public:
-		CustomSQLWidget(QWidget *parent=0);
+		CustomSQLWidget(QWidget *parent = nullptr);
 		
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		

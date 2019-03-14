@@ -56,7 +56,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		void handleColumn(int row);
 
 	public:
-		explicit ReferenceWidget(QWidget *parent = 0);
+		explicit ReferenceWidget(QWidget *parent = nullptr);
 
 		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
 		Reference getReference(void);

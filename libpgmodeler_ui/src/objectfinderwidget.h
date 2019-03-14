@@ -52,7 +52,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void resizeEvent(QResizeEvent *event);
 
 	public:
-		ObjectFinderWidget(QWidget *parent = 0);
+		ObjectFinderWidget(QWidget *parent = nullptr);
 
 		//! \brief Lists all valid types in a QListWidget
 		static void updateObjectTypeList(QListWidget *list_wgt);

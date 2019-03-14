@@ -73,7 +73,7 @@ class ElementWidget: public QWidget, public Ui::ElementWidget {
 		void createElement(Class *elem);
 		
 	public:
-		ElementWidget(QWidget *parent = 0);
+		ElementWidget(QWidget *parent = nullptr);
 		
 		//! \brief Configures the widget to handle the element considering its type (IndexElement, ExcludeElement, PartitionKey)
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem);

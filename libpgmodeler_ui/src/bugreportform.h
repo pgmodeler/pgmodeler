@@ -47,7 +47,7 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		void generateReport(const QByteArray &buf);
 		
 	public:
-		BugReportForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
+		BugReportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 	public slots:
 		void generateReport(void);

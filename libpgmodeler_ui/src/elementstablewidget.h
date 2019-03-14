@@ -70,7 +70,7 @@ class ElementsTableWidget: public QWidget {
 		int openElementForm(Element *elem);
 
 	public:
-		ElementsTableWidget(QWidget *parent = 0);
+		ElementsTableWidget(QWidget *parent = nullptr);
 		~ElementsTableWidget(void);
 
 		//! \brief Configures the grid based upon the template Class in use

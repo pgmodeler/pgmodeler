@@ -70,8 +70,11 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		void configureValidation(void);
 
+		void selectObject(void);
+
 	protected:
 		void resizeEvent(QResizeEvent *event);
+		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
 		ModelValidationWidget(QWidget * parent = nullptr);
