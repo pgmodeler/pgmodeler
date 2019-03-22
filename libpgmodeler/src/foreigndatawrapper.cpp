@@ -22,13 +22,17 @@ ForeignDataWrapper::ForeignDataWrapper(void)
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
+
+	attributes[Attributes::HandlerFunc] = QString();
+	attributes[Attributes::ValidatorFunc] = QString();
+	attributes[Attributes::Options] = QString();
 }
 
 void ForeignDataWrapper::setHandlerFunction(Function *func)
 {
 	if(func)
 	{
-		if(func->getReturnType() != PgSqlType("fwd_handler"))
+		if(func->getReturnType() != PgSqlType("fdw_handler"))
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 											.arg(this->getName(true))
 											.arg(this->getTypeName()),
@@ -59,7 +63,7 @@ void ForeignDataWrapper::setValidatorFunction(Function *func)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 											.arg(this->getName(true))
 											.arg(this->getTypeName()),
-											ErrorCode::AsgFunctionInvalidParamCount, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+											ErrorCode::AsgFunctionInvalidParameters, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	}
 

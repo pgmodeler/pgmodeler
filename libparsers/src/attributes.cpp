@@ -351,6 +351,7 @@ namespace Attributes {
 	OperatorFunc=QString("operfunc"),
 	Operator=QString("operator"),
 	Operators=QString("operators"),
+	Options=QString("options"),
 	OriginalPk=QString("original-pk"),
 	OutputFunc=QString("output"),
 	OwnerColumn=QString("owner-col"),

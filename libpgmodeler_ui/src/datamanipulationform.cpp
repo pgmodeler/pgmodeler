@@ -247,7 +247,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -314,7 +314,7 @@ void DataManipulationForm::listColumns(void)
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 }
@@ -438,7 +438,7 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -710,7 +710,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -774,7 +774,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -902,7 +902,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

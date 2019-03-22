@@ -858,13 +858,13 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			schparser.restartParser();
 			clearAttributes();
 
-			if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+			if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 								.arg(this->getName(true))
 								.arg(this->getTypeName()),
 								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 	}
 
@@ -1089,7 +1089,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1140,7 +1140,7 @@ QString BaseObject::getDropDefinition(bool cascade)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1160,7 +1160,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1222,7 +1222,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 	return(alter);
@@ -1248,6 +1248,6 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

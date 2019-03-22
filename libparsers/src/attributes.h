@@ -363,6 +363,7 @@ namespace Attributes {
 	OperatorFunc,
 	Operator,
 	Operators,
+	Options,
 	OriginalPk,
 	OutputFunc,
 	OwnerColumn,

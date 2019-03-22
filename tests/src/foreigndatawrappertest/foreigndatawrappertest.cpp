@@ -24,18 +24,137 @@ class ForeignDataWrapperTest: public QObject {
 		Q_OBJECT
 
 	private slots:
+		void assignValidFunctionDoesntRaiseException(void);
 		void assignInvalidFunctionRaisesException(void);
 		void codeGeneratedIsWellFormed(void);
 };
 
+void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
+{
+	ForeignDataWrapper fdw;
+	Function func_handler, func_validator;
+
+	fdw.setName("fdw");
+
+	try
+	{
+		func_handler.setName("func_handler");
+		func_handler.setReturnType(PgSqlType("fdw_handler"));
+		fdw.setHandlerFunction(&func_handler);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+
+	try
+	{
+		func_validator.setName("func_validator");
+		func_validator.addParameter(Parameter("param1", PgSqlType("text")));
+		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
+		fdw.setValidatorFunction(&func_validator);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+}
+
 void ForeignDataWrapperTest::assignInvalidFunctionRaisesException(void)
 {
-	QCOMPARE(true, true);
+	ForeignDataWrapper fdw;
+	Function func_handler, func_validator;
+
+	fdw.setName("fdw");
+	func_handler.setName("func_handler");
+	func_validator.setName("func_validator");
+
+	try
+	{
+		func_handler.setReturnType(PgSqlType("fdw_handler"));
+		func_handler.addParameter(Parameter("param1", PgSqlType("integer")));
+		fdw.setHandlerFunction(&func_handler);
+		QFAIL("Expected exception(s) not raised!");
+	}
+	catch(Exception &e)
+	{
+		QVERIFY(e.getErrorCode() == ErrorCode::AsgFunctionInvalidParamCount);
+	}
+
+	try
+	{
+		func_handler.removeParameters();
+		func_handler.setReturnType(PgSqlType("trigger"));
+		fdw.setHandlerFunction(&func_handler);
+		QFAIL("Expected exception(s) not raised!");
+	}
+	catch(Exception &e)
+	{
+		QVERIFY(e.getErrorCode() == ErrorCode::AsgFunctionInvalidReturnType);
+	}
+
+	try
+	{
+		func_validator.addParameter(Parameter("param1", PgSqlType("integer")));
+		func_validator.addParameter(Parameter("param2", PgSqlType("varchar")));
+		fdw.setValidatorFunction(&func_validator);
+		QFAIL("Expected exception(s) not raised!");
+	}
+	catch(Exception &e)
+	{
+		QVERIFY(e.getErrorCode() == ErrorCode::AsgFunctionInvalidParameters);
+	}
+
+	try
+	{
+		func_validator.removeParameters();
+		func_validator.addParameter(Parameter("param1", PgSqlType("text")));
+		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
+		func_validator.addParameter(Parameter("param3", PgSqlType("smallint")));
+		fdw.setValidatorFunction(&func_validator);
+		QFAIL("Expected exception(s) not raised!");
+	}
+	catch(Exception &e)
+	{
+		QVERIFY(e.getErrorCode() == ErrorCode::AsgFunctionInvalidParamCount);
+	}
 }
 
 void ForeignDataWrapperTest::codeGeneratedIsWellFormed(void)
 {
-	QCOMPARE(true, true);
+	ForeignDataWrapper fdw;
+	Schema public_sch;
+	Function func_handler, func_validator;
+	QString sql_code =QString(
+"-- object: fdw | type: FOREIGN DATA WRAPPER -- \
+-- DROP FOREIGN DATA WRAPPER IF EXISTS fdw CASCADE; \
+CREATE FOREIGN DATA WRAPPER fdw \
+HANDLER public.func_handler \
+VALIDATOR public.func_validator \
+OPTIONS ('opt1' 'value1', 'opt2' 'value2');").simplified();
+
+	public_sch.setName("public");
+
+	fdw.setName("fdw");
+	func_handler.setName("func_handler");
+	func_handler.setReturnType(PgSqlType("fdw_handler"));
+	func_handler.setSchema(&public_sch);
+	fdw.setHandlerFunction(&func_handler);
+
+	func_validator.setName("func_validator");
+	func_validator.addParameter(Parameter("param1", PgSqlType("text")));
+	func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
+	func_validator.setSchema(&public_sch);
+	fdw.setValidatorFunction(&func_validator);
+
+	try
+	{
+		QCOMPARE(sql_code, fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified());
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
 }
 
 QTEST_MAIN(ForeignDataWrapperTest)

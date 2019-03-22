@@ -159,7 +159,7 @@ void Application::createUserConfiguration(void)
 	{
 		Messagebox msg_box;
 		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 

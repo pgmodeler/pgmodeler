@@ -550,7 +550,7 @@ bool SchemaParser::evaluateComparisonExpr(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 	if(error)
@@ -634,7 +634,7 @@ void SchemaParser::defineAttribute(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 	if(!error)
@@ -708,7 +708,7 @@ void SchemaParser::unsetAttribute(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 bool SchemaParser::evaluateExpression(void)
@@ -839,7 +839,7 @@ bool SchemaParser::evaluateExpression(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),	__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),	__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	if(error)
@@ -907,7 +907,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),	__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),	__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1436,6 +1436,6 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

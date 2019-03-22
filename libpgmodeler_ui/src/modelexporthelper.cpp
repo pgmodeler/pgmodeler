@@ -26,9 +26,9 @@ void ModelExportHelper::abortExport(Exception &e)
 
 	//When running in a separated thread (other than the main application thread) redirects the error in form of signal
 	if(this->thread() && this->thread()!=qApp->thread())
-		emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+		emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 	else
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
 void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, bool ignore_dup)
@@ -39,7 +39,7 @@ void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, boo
 		emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
 	//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
 	else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 	else
 		errors.push_back(e);
 }
@@ -82,7 +82,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	catch(Exception &e)
 	{
 		disconnect(db_model, nullptr, this, nullptr);
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	disconnect(db_model, nullptr, this, nullptr);
@@ -236,7 +236,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -560,13 +560,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
 			errors.push_back(e);
-			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
+			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
 		}
 		else
 		{
 			//Redirects any error to terrorsr
 			if(errors.empty())
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 			{
 				errors.push_back(e);

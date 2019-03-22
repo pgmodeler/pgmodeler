@@ -342,7 +342,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -357,8 +357,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
 										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), false);
 
-	if(e.getErrorType()==ErrorCode::ConnectionTimeout ||
-		 e.getErrorType()==ErrorCode::ConnectionBroken)
+	if(e.getErrorCode()==ErrorCode::ConnectionTimeout ||
+		 e.getErrorCode()==ErrorCode::ConnectionBroken)
 	{
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
 											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
@@ -933,7 +933,7 @@ void SQLExecutionWidget::saveSQLHistory(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -979,7 +979,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1027,7 +1027,7 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

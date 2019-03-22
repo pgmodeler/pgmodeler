@@ -102,7 +102,7 @@ void Xml2ObjectWidget::generateObject(void)
 
 		op_list->undoOperation();
 		op_list->removeLastOperation();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

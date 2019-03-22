@@ -150,6 +150,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(enum_cast(e.getErrorType()));
+		return(enum_cast(e.getErrorCode()));
 	}
 }

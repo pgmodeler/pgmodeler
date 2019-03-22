@@ -182,7 +182,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -491,7 +491,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			removeFromPool(object_pool.size()-1);
 			delete(operation);
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -617,7 +617,7 @@ void OperationList::undoOperation(void)
 		while(!ignore_chain && isUndoAvailable() &&
 			  operation->getChainType()!=Operation::NoChain);
 
-		if(error.getErrorType()!=ErrorCode::Custom)
+		if(error.getErrorCode()!=ErrorCode::Custom)
 			throw Exception(ErrorCode::UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
@@ -672,7 +672,7 @@ void OperationList::redoOperation(void)
 		while(!ignore_chain && isRedoAvailable() &&
 			  operation->getChainType()!=Operation::NoChain);
 
-		if(error.getErrorType()!=ErrorCode::Custom)
+		if(error.getErrorCode()!=ErrorCode::Custom)
 			throw Exception(ErrorCode::UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }

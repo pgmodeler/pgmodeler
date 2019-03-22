@@ -169,13 +169,13 @@ void OperationListWidget::undoOperation(void)
 		QApplication::restoreOverrideCursor();
 		this->updateOperationList();
 
-		if(e.getErrorType()==ErrorCode::UndoRedoOperationInvalidObject)
+		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
 			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -193,13 +193,13 @@ void OperationListWidget::redoOperation(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ErrorCode::UndoRedoOperationInvalidObject)
+		if(e.getErrorCode()==ErrorCode::UndoRedoOperationInvalidObject)
 		{
 			Messagebox msg_box;
 			msg_box.show(e, "", Messagebox::AlertIcon);
 		}
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

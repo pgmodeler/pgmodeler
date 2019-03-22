@@ -1361,7 +1361,7 @@ void ModelWidget::convertRelationshipNN(void)
 						op_list->ignoreOperationChain(false);
 					}
 
-					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 				}
 			}
 		}
@@ -1400,7 +1400,7 @@ void ModelWidget::loadModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		this->modified=false;
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1617,7 +1617,7 @@ void ModelWidget::saveModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1978,7 +1978,7 @@ void ModelWidget::moveToSchema(void)
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2041,7 +2041,7 @@ void ModelWidget::changeOwner(void)
 		if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2078,7 +2078,7 @@ void ModelWidget::setTag(void)
 		if(op_id >=0 &&  op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2247,7 +2247,7 @@ void ModelWidget::protectObject(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2770,7 +2770,7 @@ void ModelWidget::duplicateObject(void)
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -3005,14 +3005,14 @@ void ModelWidget::removeObjects(bool cascade)
 							}
 							catch(Exception &e)
 							{
-								if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-															 e.getErrorType()==ErrorCode::RemDirectReference ||
-															 e.getErrorType()==ErrorCode::RemInderectReference ||
-															 e.getErrorType()==ErrorCode::RemProtectedObject ||
-															 e.getErrorType()==ErrorCode::OprReservedObject))
+								if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+															 e.getErrorCode()==ErrorCode::RemDirectReference ||
+															 e.getErrorCode()==ErrorCode::RemInderectReference ||
+															 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+															 e.getErrorCode()==ErrorCode::OprReservedObject))
 									errors.push_back(e);
 								else
-									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+									throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 							}
 						}
 						else
@@ -3035,14 +3035,14 @@ void ModelWidget::removeObjects(bool cascade)
 								}
 								catch(Exception &e)
 								{
-									if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-																 e.getErrorType()==ErrorCode::RemDirectReference ||
-																 e.getErrorType()==ErrorCode::RemInderectReference ||
-																 e.getErrorType()==ErrorCode::RemProtectedObject ||
-																 e.getErrorType()==ErrorCode::OprReservedObject))
+									if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+																 e.getErrorCode()==ErrorCode::RemDirectReference ||
+																 e.getErrorCode()==ErrorCode::RemInderectReference ||
+																 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+																 e.getErrorCode()==ErrorCode::OprReservedObject))
 										errors.push_back(e);
 									else
-										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+										throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 								}
 
 								if(rel)
@@ -4225,7 +4225,7 @@ void ModelWidget::createSequenceFromColumn(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4265,7 +4265,7 @@ void ModelWidget::convertIntegerToSerial(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4285,7 +4285,7 @@ void ModelWidget::breakRelationshipLine(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4325,7 +4325,7 @@ void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_ty
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4371,7 +4371,7 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

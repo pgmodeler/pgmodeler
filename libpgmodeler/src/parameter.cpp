@@ -24,6 +24,15 @@ Parameter::Parameter(void)
 	is_in=is_out=is_variadic=false;
 }
 
+Parameter::Parameter(const QString &name, PgSqlType type, bool in, bool out, bool variadic) : Parameter()
+{
+	setName(name);
+	setType(type);
+	setIn(in);
+	setOut(out);
+	setVariadic(variadic);
+}
+
 void Parameter::setType(PgSqlType type)
 {
 	if(!type.isArrayType() && !type.isPolymorphicType() && is_variadic)

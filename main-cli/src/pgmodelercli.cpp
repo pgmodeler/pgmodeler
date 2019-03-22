@@ -968,7 +968,7 @@ void PgModelerCli::recreateObjects(void)
 			if(obj_type!=ObjectType::Database)
 				fail_objs.push_back(xml_def);
 			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
 		if(objs_xml.isEmpty() && (!fail_objs.isEmpty() || !constr.isEmpty()))
@@ -1337,7 +1337,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1694,7 +1694,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 #else
 #ifdef Q_OS_WIN

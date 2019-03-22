@@ -14,23 +14,23 @@
 
 $br $tb
 
-%if %not {handler_func} %then
+%if %not {handler} %then
     [NO HANDLER]
 %else
-    [HANDLER ] {handler_func} 
-%endif
+    [HANDLER ] {handler} 
+%end
 
 $br $tb
 
-%if %not {validator_func} %then
+%if %not {validator} %then
     [NO VALIDATOR]
 %else
-    [VALIDATOR ] {validator_func}
-%endif
+    [VALIDATOR ] {validator}
+%end
 
 %if {options} %then
     $br $tb [OPTIONS (] {options} )
-%endif
+%end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!

@@ -97,7 +97,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -797,7 +797,7 @@ void BaseObjectWidget::applyConfiguration(void)
 		catch(Exception &e)
 		{
 			QApplication::restoreOverrideCursor();
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -891,12 +891,12 @@ void BaseObjectWidget::finishConfiguration(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ErrorCode::AsgObjectInvalidDefinition)
+		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)
 							.arg(this->object->getName()).arg(this->object->getTypeName()),
 							ErrorCode::RequiredFieldsNotFilled,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -965,6 +965,6 @@ void BaseObjectWidget::registerNewObject(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

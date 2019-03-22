@@ -344,7 +344,7 @@ class Exception {
 		QString getMethod(void);
 		QString getFile(void);
 		QString getLine(void);
-		ErrorCode getErrorType(void);
+		ErrorCode getErrorCode(void);
 		QString getExtraInfo(void);
 
 		//! \brief Gets the full exception stack

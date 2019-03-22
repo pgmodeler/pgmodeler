@@ -138,7 +138,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 	catch(Exception &e)
 	{
 		//Capture and redirect any generated exception
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -247,7 +247,7 @@ bool ResultSet::isColumnBinaryFormat(const QString &column_name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 
 	/* Returns the column format in the current tuple.
