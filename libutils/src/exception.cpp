@@ -137,7 +137,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"PermissionRefInexistObject", QT_TR_NOOP("A permission is referencing the object `%1' (%2) which was not found in the model!")},
 	{"InvObjectAllocationNoSchema", QT_TR_NOOP("The object `%1' (%2) can not be created because its not being assigned to any schema!")},
 	{"AsgTablespaceDuplicatedDirectory", QT_TR_NOOP("The tablespace `%1' can not be inserted into the model because it points to the same directory as the tablespace `%2'!")},
-	{"AsgInvalidDomainArray", QT_TR_NOOP("It is not possible to create arrays of domains or sequences (dimension >= 1)! PostgreSQL does not yet implement this feature!")},
+	{"AsgInvalidSequenceTypeArray", QT_TR_NOOP("It is not possible to create arrays sequences (dimension >= 1)! PostgreSQL does not yet implement this feature!")},
 	{"AsgSourceCodeFuncCLanguage", QT_TR_NOOP("The function `%1' can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!")},
 	{"AsgRefLibraryFuncLanguageNotC", QT_TR_NOOP("The function `%1' can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!")},
 	{"AsgInvalidCommutatorOperator", QT_TR_NOOP("The operator `%1' can not be assigned as a commutator of operator `%2' because it has incompatible settings!")},
@@ -259,7 +259,8 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvPartitionKeyCount", QT_TR_NOOP("Invalid amount of partition keys being assinged to the table `%1'! Multiples partition keys are allowed only on `HASH' and `RANGE' partitioning strategies.")},
 	{"PartKeyObjectInexistsModel", QT_TR_NOOP("A partition key of the table `%1' is referencing the object `%3' (%4) which was not found in the model!")},
 	{"AsgInvalidColumnPartitionKey", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
-	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")}
+	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
+	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")}
 };
 
 Exception::Exception(void)

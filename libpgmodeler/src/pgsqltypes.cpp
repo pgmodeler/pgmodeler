@@ -1509,7 +1509,18 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 
 	return(this_idx < types.size() && type_idx < types.size() &&
 		   this_idx==type_idx &&
-		   this->isArrayType()==type.isArrayType());
+				 this->isArrayType()==type.isArrayType());
+}
+
+bool PgSqlType::isExactTo(PgSqlType type)
+{
+	return(this->type_idx == type.type_idx &&
+				 this->dimension == type.dimension &&
+				 this->length == type.length &&
+				 this->precision == type.precision &&
+				 this->with_timezone == type.with_timezone &&
+				 this->interval_type == type.interval_type &&
+				 this->spatial_type == type.spatial_type);
 }
 
 PgSqlType PgSqlType::getAliasType(void)
@@ -1535,9 +1546,8 @@ void PgSqlType::setDimension(unsigned dim)
 	{
 		int idx=getUserTypeIndex(~(*this), nullptr) - (PseudoEnd + 1);
 		if(static_cast<unsigned>(idx) < user_types.size() &&
-				(user_types[idx].type_conf==UserTypeConfig::DomainType ||
-				 user_types[idx].type_conf==UserTypeConfig::SequenceType))
-			throw Exception(ErrorCode::AsgInvalidDomainArray,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				user_types[idx].type_conf==UserTypeConfig::SequenceType)
+			throw Exception(ErrorCode::AsgInvalidSequenceTypeArray,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	dimension=dim;

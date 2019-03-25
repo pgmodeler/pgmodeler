@@ -162,7 +162,7 @@ enum class ErrorCode: unsigned {
 	PermissionRefInexistObject,
 	InvObjectAllocationNoSchema,
 	AsgTablespaceDuplicatedDirectory,
-	AsgInvalidDomainArray,
+	AsgInvalidSequenceTypeArray,
 	AsgSourceCodeFuncCLanguage,
 	AsgRefLibraryFuncLanguageNotC,
 	AsgInvalidCommutatorOperator,
@@ -284,12 +284,13 @@ enum class ErrorCode: unsigned {
 	InvPartitionKeyCount,
 	PartKeyObjectInexistsModel,
 	AsgInvalidColumnPartitionKey,
-	RemColumnRefByPartitionKey
+	RemColumnRefByPartitionKey,
+	AsgOptionInvalidName
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=241;
+		static constexpr unsigned ErrorCount=242;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

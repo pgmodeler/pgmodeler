@@ -58,8 +58,8 @@ void ForeignDataWrapper::setValidatorFunction(Function *func)
 											.arg(this->getTypeName()),
 											ErrorCode::AsgFunctionInvalidParamCount, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-		if(func->getParameter(0).getType() != PgSqlType("text", 1) ||
-			 func->getParameter(1).getType() != PgSqlType("oid", 1))
+		if(!func->getParameter(0).getType().isExactTo(PgSqlType("text", 1)) ||
+			 !func->getParameter(1).getType().isExactTo(PgSqlType("oid")))
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidParameters)
 											.arg(this->getName(true))
 											.arg(this->getTypeName()),
@@ -80,9 +80,33 @@ Function *ForeignDataWrapper::getValidatorFunction(void)
 	return(validator_func);
 }
 
+void ForeignDataWrapper::setOption(const QString &opt, const QString &value)
+{
+	if(opt.isEmpty())
+		throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	options[opt] = value;
+}
+
 void ForeignDataWrapper::setOptions(const attribs_map &options)
 {
+	for(auto &itr : options)
+	{
+		if(itr.first.isEmpty())
+			throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
 	this->options = options;
+}
+
+void ForeignDataWrapper::removeOption(const QString &opt)
+{
+	options.erase(opt);
+}
+
+void ForeignDataWrapper::removeOptions(void)
+{
+	options.clear();
 }
 
 attribs_map ForeignDataWrapper::getOptions(void)
@@ -94,6 +118,26 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
+
+	QStringList fmt_options;
+
+	if(def_type == SchemaParser::SqlDefinition)
+	{
+		if(handler_func)
+			attributes[Attributes::HandlerFunc] = handler_func->getSignature();
+
+		if(validator_func)
+			attributes[Attributes::ValidatorFunc] = validator_func->getSignature();
+
+		for(auto &itr : options)
+			fmt_options += QString("%1 '%2'").arg(itr.first).arg(itr.second);
+
+		attributes[Attributes::Options] = fmt_options.join(',');
+	}
+	else
+	{
+
+	}
 
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }

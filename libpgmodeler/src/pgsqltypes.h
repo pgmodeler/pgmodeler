@@ -465,6 +465,12 @@ class PgSqlType: public BaseType{
 		smallint is compatible with int2, and so on. */
 		bool isEquivalentTo(PgSqlType type);
 
+		/*! \brief Returns true if the provided type is exactly the same as the "this".
+		 * This method compares ALL attributes of the type. Note that this method is
+		 * different from the operatores == (PgSqlType) because this latter compares only
+		 * the indexes of the types. This method is useful if one need to fully compare the types */
+		bool isExactTo(PgSqlType type);
+
 		PgSqlType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
@@ -475,12 +481,22 @@ class PgSqlType: public BaseType{
 		unsigned operator << (void *ptype);
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type index. If an exact match is needed use isExactTo()
 		bool operator == (unsigned type_idx);
+
+		//! \brief Compares the index of the "this" with the provided type. If an exact match is needed use isExactTo()
 		bool operator == (PgSqlType type);
+
+		//! \brief Compares the index of the "this" with the provided type name index. If an exact match is needed use isExactTo()
 		bool operator == (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type reference. If an exact match is needed use isExactTo()
 		bool operator == (void *ptype);
+
+		// The methods below are just the oposite of the == versions
 		bool operator != (const QString &type_name);
-		bool operator != (PgSqlType type);
+		bool operator != (PgSqlType type);		
 		bool operator != (unsigned type_idx);
 
 		/*! \brief Returns the pointer to the user defined type which denotes the

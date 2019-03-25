@@ -47,7 +47,10 @@ class ForeignDataWrapper: public BaseObject{
 		Function *getHandlerFunction(void);
 		Function *getValidatorFunction(void);
 
+		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);
+		void removeOption(const QString &opt);
+		void removeOptions(void);
 		attribs_map getOptions(void);
 
 		virtual QString getCodeDefinition(unsigned def_type);

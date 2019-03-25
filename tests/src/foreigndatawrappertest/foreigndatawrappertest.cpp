@@ -50,7 +50,7 @@ void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
 	try
 	{
 		func_validator.setName("func_validator");
-		func_validator.addParameter(Parameter("param1", PgSqlType("text")));
+		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
 		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
 		fdw.setValidatorFunction(&func_validator);
 	}
@@ -129,27 +129,32 @@ void ForeignDataWrapperTest::codeGeneratedIsWellFormed(void)
 "-- object: fdw | type: FOREIGN DATA WRAPPER -- \
 -- DROP FOREIGN DATA WRAPPER IF EXISTS fdw CASCADE; \
 CREATE FOREIGN DATA WRAPPER fdw \
-HANDLER public.func_handler \
-VALIDATOR public.func_validator \
-OPTIONS ('opt1' 'value1', 'opt2' 'value2');").simplified();
-
-	public_sch.setName("public");
-
-	fdw.setName("fdw");
-	func_handler.setName("func_handler");
-	func_handler.setReturnType(PgSqlType("fdw_handler"));
-	func_handler.setSchema(&public_sch);
-	fdw.setHandlerFunction(&func_handler);
-
-	func_validator.setName("func_validator");
-	func_validator.addParameter(Parameter("param1", PgSqlType("text")));
-	func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
-	func_validator.setSchema(&public_sch);
-	fdw.setValidatorFunction(&func_validator);
+HANDLER public.func_handler() \
+VALIDATOR public.func_validator(text[],oid) \
+OPTIONS (opt1 'value1',opt2 'value2'); \
+-- ddl-end --").simplified();
 
 	try
 	{
-		QCOMPARE(sql_code, fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified());
+		public_sch.setName("public");
+
+		fdw.setName("fdw");
+		func_handler.setName("func_handler");
+		func_handler.setReturnType(PgSqlType("fdw_handler"));
+		func_handler.setSchema(&public_sch);
+		fdw.setHandlerFunction(&func_handler);
+
+		func_validator.setName("func_validator");
+		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
+		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
+		func_validator.setSchema(&public_sch);
+		fdw.setValidatorFunction(&func_validator);
+
+		fdw.setOption("opt1", "value1");
+		fdw.setOption("opt2", "value2");
+
+		QString res_sql_code = fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
+		QCOMPARE(sql_code, res_sql_code);
 	}
 	catch (Exception &e)
 	{
