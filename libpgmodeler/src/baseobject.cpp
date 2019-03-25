@@ -404,7 +404,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::Tablespace || obj_type==ObjectType::Database ||
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
-			 obj_type==ObjectType::EventTrigger);
+			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper);
 }
 
 bool BaseObject::acceptsOwner(void)

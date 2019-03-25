@@ -123,6 +123,7 @@ void ForeignDataWrapperTest::assignInvalidFunctionRaisesException(void)
 void ForeignDataWrapperTest::codeGeneratedIsWellFormed(void)
 {
 	ForeignDataWrapper fdw;
+	Role owner;
 	Schema public_sch;
 	Function func_handler, func_validator;
 	QString sql_code =QString(
@@ -132,13 +133,19 @@ CREATE FOREIGN DATA WRAPPER fdw \
 HANDLER public.func_handler() \
 VALIDATOR public.func_validator(text[],oid) \
 OPTIONS (opt1 'value1',opt2 'value2'); \
--- ddl-end --").simplified();
+-- ddl-end -- \
+COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
+-- ddl-end -- \
+ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
+-- ddl-end -- ").simplified();
 
 	try
 	{
 		public_sch.setName("public");
+		owner.setName("postgres");
 
 		fdw.setName("fdw");
+		fdw.setOwner(&owner);
 		func_handler.setName("func_handler");
 		func_handler.setReturnType(PgSqlType("fdw_handler"));
 		func_handler.setSchema(&public_sch);
@@ -152,6 +159,7 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 
 		fdw.setOption("opt1", "value1");
 		fdw.setOption("opt2", "value2");
+		fdw.setComment("This is a test comment on FDW");
 
 		QString res_sql_code = fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
 		QCOMPARE(sql_code, res_sql_code);
