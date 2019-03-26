@@ -8197,7 +8197,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *>::iterator itr, itr_end;
 			ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
 									ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
-									ObjectType::Table, ObjectType::Type, ObjectType::Language };
+									ObjectType::Table, ObjectType::Type, ObjectType::Language, ObjectType::ForeignDataWrapper };
 			unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
 			Table *tab=nullptr;
 			Aggregate *aggreg=nullptr;
@@ -8206,6 +8206,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Type *type=nullptr;
 			Language *lang=nullptr;
 			OperatorClass *opclass=nullptr;
+			ForeignDataWrapper *fdw=nullptr;
 
 			for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
@@ -8348,6 +8349,20 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						{
 							refer=true;
 							refs.push_back(lang);
+						}
+					}
+				}
+				else if(obj_types[i]==ObjectType::ForeignDataWrapper)
+				{
+					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						fdw=dynamic_cast<ForeignDataWrapper *>(*itr);
+						itr++;
+
+						if(fdw->getHandlerFunction() == func || fdw->getValidatorFunction() == func)
+						{
+							refer=true;
+							refs.push_back(fdw);
 						}
 					}
 				}

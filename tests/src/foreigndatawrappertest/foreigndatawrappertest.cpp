@@ -27,7 +27,7 @@ class ForeignDataWrapperTest: public QObject {
 		void assignValidFunctionDoesntRaiseException(void);
 		void assignInvalidFunctionRaisesException(void);
 		void codeGeneratedIsWellFormed(void);
-		void modelReturnsFDWasFunctionsReferences(void);
+		void modelReturnsDepsAndRefsForFDW(void);
 };
 
 void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
@@ -182,11 +182,68 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 	}
 }
 
-void ForeignDataWrapperTest::modelReturnsFDWasFunctionsReferences(void)
+void ForeignDataWrapperTest::modelReturnsDepsAndRefsForFDW(void)
 {
+	DatabaseModel model;
+	ForeignDataWrapper fdw;
+	Role owner;
+	Schema public_sch;
+	Function func_handler, func_validator;
+	Language lang;
+
 	try
 	{
-		DatabaseModel model;
+		public_sch.setName("public");
+		owner.setName("postgres");
+
+		model.addSchema(&public_sch);
+		model.addRole(&owner);
+
+		fdw.setName("fdw");
+		fdw.setOwner(&owner);
+		func_handler.setName("func_handler");
+		func_handler.setReturnType(PgSqlType("fdw_handler"));
+		func_handler.setSchema(&public_sch);
+		func_handler.setSourceCode("foo");
+		func_handler.setOwner(&owner);
+		func_handler.setLanguage(&lang);
+		fdw.setHandlerFunction(&func_handler);
+
+		func_validator.setName("func_validator");
+		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
+		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
+		func_validator.setSchema(&public_sch);
+		func_validator.setSourceCode("foo");
+		func_validator.setOwner(&owner);
+		func_validator.setLanguage(&lang);
+		fdw.setValidatorFunction(&func_validator);
+
+		fdw.setOption("opt1", "value1");
+		fdw.setOption("opt2", "value2");
+		fdw.setComment("This is a test comment on FDW");
+
+		model.addFunction(&func_handler);
+		model.addFunction(&func_validator);
+		model.addForeignDataWrapper(&fdw);
+
+		vector<BaseObject *> deps;
+		model.getObjectDependecies(&fdw, deps);
+
+		QVERIFY(deps.size() >= 3);
+
+		deps.clear();
+		model.getObjectReferences(&func_validator, deps);
+		QVERIFY(deps.size() == 1);
+
+		deps.clear();
+		model.getObjectReferences(&func_handler, deps);
+		QVERIFY(deps.size() == 1);
+
+		model.removeForeignDataWrapper(&fdw);
+		model.removeFunction(&func_handler);
+		model.removeFunction(&func_validator);
+		model.removeSchema(&public_sch);
+		model.removeRole(&owner);
 	}
 	catch (Exception &e)
 	{
