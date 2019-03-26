@@ -66,7 +66,6 @@ void ForeignDataWrapper::setValidatorFunction(Function *func)
 											.arg(this->getName(true))
 											.arg(this->getTypeName()),
 											ErrorCode::AsgFunctionInvalidParameters, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-
 	}
 
 	validator_func = func;

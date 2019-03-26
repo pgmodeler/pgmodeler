@@ -343,18 +343,23 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
 		return(&columns);
-	else if(obj_type==ObjectType::Constraint)
+
+	if(obj_type==ObjectType::Constraint)
 		return(&constraints);
-	else if(obj_type==ObjectType::Rule)
+
+	if(obj_type==ObjectType::Rule)
 		return(&rules);
-	else if(obj_type==ObjectType::Trigger)
+
+	if(obj_type==ObjectType::Trigger)
 		return(&triggers);
-	else if(obj_type==ObjectType::Index)
+
+	if(obj_type==ObjectType::Index)
 		return(&indexes);
-	else if(obj_type==ObjectType::Policy)
+
+	if(obj_type==ObjectType::Policy)
 		return(&policies);
-	else
-		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Table::addObject(BaseObject *obj, int obj_idx)

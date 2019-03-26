@@ -17,7 +17,7 @@
 */
 
 #include <QtTest/QtTest>
-#include "foreigndatawrapper.h"
+#include "databasemodel.h"
 
 class ForeignDataWrapperTest: public QObject {
 	private:
@@ -27,6 +27,7 @@ class ForeignDataWrapperTest: public QObject {
 		void assignValidFunctionDoesntRaiseException(void);
 		void assignInvalidFunctionRaisesException(void);
 		void codeGeneratedIsWellFormed(void);
+		void modelReturnsFDWasFunctionsReferences(void);
 };
 
 void ForeignDataWrapperTest::assignValidFunctionDoesntRaiseException(void)
@@ -174,6 +175,18 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 
 		QString res_xml_code = fdw.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		QCOMPARE(xml_code, res_xml_code);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+}
+
+void ForeignDataWrapperTest::modelReturnsFDWasFunctionsReferences(void)
+{
+	try
+	{
+		DatabaseModel model;
 	}
 	catch (Exception &e)
 	{

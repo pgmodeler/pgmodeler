@@ -39,6 +39,7 @@ class ForeignDataWrapper: public BaseObject{
 		attribs_map options;
 
 	public:
+		//! \brief Store the character used to separate options/values in the XML code
 		static const QString OptionSeparator;
 
 		ForeignDataWrapper(void);

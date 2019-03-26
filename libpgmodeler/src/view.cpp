@@ -1045,12 +1045,14 @@ vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Trigger)
 		return(&triggers);
-	else if(obj_type==ObjectType::Rule)
+
+	if(obj_type==ObjectType::Rule)
 		return(&rules);
-	else if(obj_type==ObjectType::Index)
+
+	if(obj_type==ObjectType::Index)
 		return(&indexes);
-	else
-		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void View::removeObjects(void)
