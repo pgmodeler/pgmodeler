@@ -39,6 +39,8 @@ class ForeignDataWrapper: public BaseObject{
 		attribs_map options;
 
 	public:
+		static const QString OptionSeparator;
+
 		ForeignDataWrapper(void);
 
 		void setHandlerFunction(Function *func);

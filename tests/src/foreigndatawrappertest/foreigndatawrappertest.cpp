@@ -139,6 +139,14 @@ COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
 ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 -- ddl-end -- ").simplified();
 
+	QString xml_code =QString(
+"<foreigndatawrapper name=\"fdw\" options=\"opt1*value1*opt2*value2\"> \
+<role name=\"postgres\"/> \
+<comment><![CDATA[This is a test comment on FDW]]></comment> \
+<function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
+<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
+</foreigndatawrapper>").replace("*", ForeignDataWrapper::OptionSeparator).simplified();
+
 	try
 	{
 		public_sch.setName("public");
@@ -163,6 +171,9 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 
 		QString res_sql_code = fdw.getCodeDefinition(SchemaParser::SqlDefinition).simplified();
 		QCOMPARE(sql_code, res_sql_code);
+
+		QString res_xml_code = fdw.getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
 	{

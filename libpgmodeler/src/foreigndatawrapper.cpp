@@ -18,6 +18,8 @@
 
 #include "foreigndatawrapper.h"
 
+const QString ForeignDataWrapper::OptionSeparator = QString("•");
+
 ForeignDataWrapper::ForeignDataWrapper(void)
 {
 	obj_type=ObjectType::ForeignDataWrapper;
@@ -120,24 +122,25 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	QStringList fmt_options;
+	bool is_sql_def = (def_type == SchemaParser::SqlDefinition);
 
-	if(def_type == SchemaParser::SqlDefinition)
+	if(handler_func)
 	{
-		if(handler_func)
-			attributes[Attributes::HandlerFunc] = handler_func->getSignature();
-
-		if(validator_func)
-			attributes[Attributes::ValidatorFunc] = validator_func->getSignature();
-
-		for(auto &itr : options)
-			fmt_options += QString("%1 '%2'").arg(itr.first).arg(itr.second);
-
-		attributes[Attributes::Options] = fmt_options.join(',');
+		handler_func->setAttribute(Attributes::RefType, Attributes::HandlerFunc);
+		attributes[Attributes::HandlerFunc] = is_sql_def ? handler_func->getSignature() : handler_func->getCodeDefinition(def_type, true);
 	}
-	else
+
+	if(validator_func)
 	{
-
+		validator_func->setAttribute(Attributes::RefType, Attributes::ValidatorFunc);
+		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getSignature() : validator_func->getCodeDefinition(def_type, true);
 	}
+
+	for(auto &itr : options)
+		fmt_options += is_sql_def ? QString("%1 '%2'").arg(itr.first).arg(itr.second) :
+																QString("%1%2%3").arg(itr.first).arg(OptionSeparator).arg(itr.second);
+
+	attributes[Attributes::Options] = fmt_options.join(is_sql_def ? QChar(',') : OptionSeparator);
 
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
