@@ -710,7 +710,8 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace,
 							 ObjectType::Language, ObjectType::Cast, ObjectType::Textbox,
 							 ObjectType::Relationship, ObjectType::EventTrigger,
-							 ObjectType::Tag, ObjectType::GenericSql, ObjectType::Extension };
+							 ObjectType::Tag, ObjectType::GenericSql, ObjectType::Extension,
+							 ObjectType::ForeignDataWrapper };
 		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
 
 		try
