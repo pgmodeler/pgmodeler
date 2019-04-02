@@ -18,7 +18,8 @@
 
 #include "foreigndatawrapper.h"
 
-const QString ForeignDataWrapper::OptionSeparator = QString("•");
+const QString ForeignDataWrapper::OptionsSeparator = QString(",");
+const QString ForeignDataWrapper::OptionValueSeparator = QString("•");
 
 ForeignDataWrapper::ForeignDataWrapper(void)
 {
@@ -137,9 +138,9 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 
 	for(auto &itr : options)
 		fmt_options += is_sql_def ? QString("%1 '%2'").arg(itr.first).arg(itr.second) :
-																QString("%1%2%3").arg(itr.first).arg(OptionSeparator).arg(itr.second);
+																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
 
-	attributes[Attributes::Options] = fmt_options.join(is_sql_def ? QChar(',') : OptionSeparator);
+	attributes[Attributes::Options] = fmt_options.join(OptionsSeparator);
 
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }

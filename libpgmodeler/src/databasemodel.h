@@ -556,6 +556,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
+		ForeignDataWrapper *createForeignDataWrapper(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

@@ -727,6 +727,7 @@ void DatabaseModel::destroyObjects(void)
 	map<unsigned, BaseObject *> objects;
 	map<unsigned, BaseObject *>::reverse_iterator ritr, ritr_end;
 	vector<ObjectType> rem_obj_types;
+	BaseGraphicObject *graph_obj = nullptr;
 
 	//Blocking signals of all graphical objects to avoid uneeded updates in the destruction
 	this->blockSignals(true);
@@ -734,7 +735,12 @@ void DatabaseModel::destroyObjects(void)
 	for(unsigned i=0; i < 5; i++)
 	{
 		for(auto &object : *this->getObjectList(graph_types[i]))
-			dynamic_cast<BaseGraphicObject *>(object)->blockSignals(true);
+		{
+			graph_obj = dynamic_cast<BaseGraphicObject *>(object);
+
+			if(graph_obj)
+				dynamic_cast<BaseGraphicObject *>(object)->blockSignals(true);
+		}
 	}
 
 	try
@@ -3270,6 +3276,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createGenericSQL();
 		else if(obj_type==ObjectType::Policy)
 			object=createPolicy();
+		else if(obj_type==ObjectType::ForeignDataWrapper)
+			object=createForeignDataWrapper();
 	}
 
 	return(object);
@@ -5833,6 +5841,91 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	return(genericsql);
 }
 
+ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
+{
+	attribs_map attribs;
+	ForeignDataWrapper *fdw=nullptr;
+	BaseObject *func=nullptr;
+	QString signature, ref_type;
+	ObjectType obj_type;
+	QStringList options, opt_val;
+	int count = 0;
+
+	try
+	{
+		fdw = new ForeignDataWrapper;
+
+		xmlparser.getElementAttributes(attribs);
+		setBasicAttributes(fdw);
+
+		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
+
+		for(auto &option : options)
+		{
+			opt_val = option.split(ForeignDataWrapper::OptionValueSeparator);
+
+			if(opt_val.size() < 2)
+				continue;
+
+			fdw->setOption(opt_val[0], opt_val[1]);
+		}
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					obj_type = BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type == ObjectType::Function)
+					{
+						xmlparser.getElementAttributes(attribs);
+
+						//Gets the function reference type
+						ref_type = attribs[Attributes::RefType];
+
+						//Try to retrieve one the functions of the fdw
+						if(ref_type == Attributes::ValidatorFunc || ref_type == Attributes::HandlerFunc)
+						{
+							//Gets the function signature and tries to retrieve it from the model
+							signature = attribs[Attributes::Signature];
+							func = getObject(signature, ObjectType::Function);
+
+							//Raises an error if the function doesn't exists
+							if(!func)
+								throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+												.arg(fdw->getName())
+												.arg(fdw->getTypeName())
+												.arg(signature)
+												.arg(BaseObject::getTypeName(ObjectType::Function)),
+												ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+							if(ref_type == Attributes::ValidatorFunc)
+								fdw->setValidatorFunction(dynamic_cast<Function *>(func));
+							else if(ref_type == Attributes::HandlerFunc)
+								fdw->setHandlerFunction(dynamic_cast<Function *>(func));
+						}
+						else
+							//Raises an error if the function type is invalid
+							throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		if(fdw)
+			delete(fdw);
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(fdw);
+}
+
 void DatabaseModel::updateViewsReferencingTable(Table *table)
 {
 	BaseRelationship *rel = nullptr;
@@ -7114,13 +7207,12 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	Constraint *constr=nullptr;
 	View *view=nullptr;
 	Relationship *rel=nullptr;
-	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag },
-			obj_types[]={ ObjectType::EventTrigger, ObjectType::Collation, ObjectType::Language, ObjectType::Function, ObjectType::Type,
-							ObjectType::Cast, ObjectType::Conversion, ObjectType::Extension,
-							ObjectType::Operator, ObjectType::OpFamily, ObjectType::OpClass,
-							ObjectType::Aggregate, ObjectType::Domain, ObjectType::Textbox, ObjectType::BaseRelationship,
-							ObjectType::Relationship, ObjectType::Table, ObjectType::View, ObjectType::Sequence, ObjectType::GenericSql };
-	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType), count=sizeof(obj_types)/sizeof(ObjectType);
+	ObjectType aux_obj_types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Tag };
+
+	vector<ObjectType> obj_types_vect = getObjectTypes(false, { ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema,
+																															ObjectType::Tag, ObjectType::Database, ObjectType::Permission });
+
+	unsigned i=0, aux_obj_cnt=sizeof(aux_obj_types)/sizeof(ObjectType);
 
 	//The first objects on the map will be roles, tablespaces, schemas and tags
 	for(i=0; i < aux_obj_cnt; i++)
@@ -7137,14 +7229,14 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	//Includes the database model on the objects map permitting to create the code in a correct order
 	objects_map[this->getObjectId()]=this;
 
-	for(i=0; i < count; i++)
+	for(auto &obj_type : obj_types_vect)
 	{
 		//For SQL definition, only the textbox and base relationship does not enters to the code generation list
 		if(def_type==SchemaParser::SqlDefinition &&
-				(obj_types[i]==ObjectType::Textbox || obj_types[i]==ObjectType::BaseRelationship))
+			 (obj_type==ObjectType::Textbox || obj_type==ObjectType::BaseRelationship))
 			obj_list=nullptr;
 		else
-			obj_list=getObjectList(obj_types[i]);
+			obj_list=getObjectList(obj_type);
 
 		if(obj_list)
 		{
@@ -7180,11 +7272,14 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 	  on the map of objects. */
 	for(auto &obj : tables)
 	{
-		table=dynamic_cast<Table *>(obj);
-		count=table->getConstraintCount();
-		for(i=0; i < count; i++)
+		table = dynamic_cast<Table *>(obj);
+		//count = table->getConstraintCount();
+
+		//for(i=0; i < count; i++)
+		for(auto &obj : *table->getObjectList(ObjectType::Constraint))
 		{
-			constr=table->getConstraint(i);
+			//table->getConstraint(i);
+			constr = dynamic_cast<Constraint *>(obj);
 
 			/* Case the constraint is a special object stores it on the objects map. Independently to the
 		configuration, foreign keys are discarded in this iteration because on the end of the method

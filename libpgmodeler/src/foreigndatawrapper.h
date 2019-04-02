@@ -40,7 +40,8 @@ class ForeignDataWrapper: public BaseObject{
 
 	public:
 		//! \brief Store the character used to separate options/values in the XML code
-		static const QString OptionSeparator;
+		static const QString OptionsSeparator;
+		static const QString OptionValueSeparator;
 
 		ForeignDataWrapper(void);
 
