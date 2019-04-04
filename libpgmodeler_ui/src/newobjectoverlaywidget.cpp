@@ -56,7 +56,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 																	{ rule_tb,         std::make_tuple(trUtf8("V"), ObjectType::Rule)         },
 																	{ trigger_tb,      std::make_tuple(trUtf8("B"), ObjectType::Trigger)      },
 																	{ policy_tb,       std::make_tuple(trUtf8("9"), ObjectType::Policy)       },
-																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjectType::GenericSql)  } };
+																	{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjectType::GenericSql)   },
+																	{ fdw_tb,          std::make_tuple(trUtf8("7"), ObjectType::ForeignDataWrapper) } };
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={ { rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
 															{ rel1n_tb,  std::make_tuple(trUtf8("2"), 1) },
@@ -114,19 +115,19 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 	else if(sel_objs.empty())
 		obj_type=ObjectType::Database;
 
-    db_objs_grp->setVisible(obj_type==ObjectType::Database);
-    sch_objs_grp->setVisible(obj_type==ObjectType::Database || obj_type==ObjectType::Schema);
+	db_objs_grp->setVisible(obj_type==ObjectType::Database);
+	sch_objs_grp->setVisible(obj_type==ObjectType::Database || obj_type==ObjectType::Schema);
 
-    tab_objs_grp->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship);
+	tab_objs_grp->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship);
 	column_tb->setDisabled(obj_type==ObjectType::View);
 	constraint_tb->setDisabled(obj_type==ObjectType::View);
 	index_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	rule_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	trigger_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-    policy_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
+	policy_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	tab_perms_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-    rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==ObjectType::Table) ||
-                         (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==ObjectType::Table && sel_objs.at(1)->getObjectType()==ObjectType::Table));
+	rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==ObjectType::Table) ||
+											 (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==ObjectType::Table && sel_objs.at(1)->getObjectType()==ObjectType::Table));
 
 	overlay_frm->adjustSize();
 	this->adjustSize();
