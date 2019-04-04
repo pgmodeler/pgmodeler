@@ -18,28 +18,34 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class LanguageWidget
-\brief Implements the operations to create/edit languages via form.
+\class ForeignDataWrapperWidget
+\brief Implements the operations to create/edit foreign data wrappers via form.
 */
 
-#ifndef LANGUAGE_WIDGET_H
-#define LANGUAGE_WIDGET_H
+#ifndef FOREIGN_DATA_WRAPPER_WIDGET_H
+#define FOREIGN_DATA_WRAPPER_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_languagewidget.h"
+#include "ui_foreigndatawrapperwidget.h"
+#include "hinttextwidget.h"
+#include "objectstablewidget.h"
 
-class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
+class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
 	private:
 		Q_OBJECT
 
 		ObjectSelectorWidget *func_handler_sel,
-		*func_validator_sel,
-		*func_inline_sel;
+		*func_validator_sel;
+
+		HintTextWidget *func_handler_ht,
+		*func_validator_ht;
+
+		ObjectsTableWidget *options_tab;
 
 	public:
-		LanguageWidget(QWidget * parent = nullptr);
+		ForeignDataWrapperWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *language);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignDataWrapper *fdw);
 
 	public slots:
 		void applyConfiguration(void);
