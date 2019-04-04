@@ -253,6 +253,8 @@
         <file>icones/dellayer.png</file>
         <file>icones/clearlayers.png</file>
         <file>icones/movetolayer.png</file>
+        <file>icones/foreigndatawrapper_grp.png</file>
+        <file>icones/foreigndatawrapper.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

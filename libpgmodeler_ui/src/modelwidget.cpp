@@ -58,6 +58,7 @@
 #include "policywidget.h"
 #include "tabledatawidget.h"
 #include "generalconfigwidget.h"
+#include "foreigndatawrapperwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -81,18 +82,21 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
+	/*ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
 						 ObjectType::Cast, ObjectType::Conversion, ObjectType::Domain,
 						 ObjectType::Function, ObjectType::Aggregate, ObjectType::Language,
 						 ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily,
 						 ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Type,
 						 ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
 						 ObjectType::Tablespace, ObjectType::Collation, ObjectType::Extension, ObjectType::EventTrigger, ObjectType::Tag,
-						 ObjectType::GenericSql };
-	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
+						 ObjectType::GenericSql }; */
+	unsigned i, /*obj_cnt=sizeof(types)/sizeof(ObjectType),*/
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
+
+	vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
+																																		 ObjectType::BaseRelationship});
 
 	current_zoom=1;
 	modified=panning_mode=false;
@@ -379,11 +383,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_break_rel_line->setMenu(&break_rel_menu);
 
 	//Alocatting the object creation actions
-	for(i=0; i < obj_cnt; i++)
+	for(auto &type : types_vect)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNs::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
-		actions_new_objects[types[i]]->setData(QVariant(enum_cast(types[i])));
-		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
+		actions_new_objects[type]=new QAction(QIcon(PgModelerUiNs::getIconPath(type)), BaseObject::getTypeName(type), this);
+		actions_new_objects[type]->setData(QVariant(enum_cast(type)));
+		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
 	//Creating the relationship submenu
@@ -1823,6 +1827,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			genericsql_wgt->setAttributes(db_model, op_list, dynamic_cast<GenericSQL *>(object));
 			res=openEditingForm(genericsql_wgt);
 		}
+		else if(obj_type==ObjectType::ForeignDataWrapper)
+			res = openEditingForm<ForeignDataWrapper, ForeignDataWrapperWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
@@ -3701,15 +3707,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ ObjectType::Aggregate, ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Collation, ObjectType::Conversion, ObjectType::Domain,
-								 ObjectType::Extension, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass, ObjectType::Operator,
-								 ObjectType::OpFamily, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence,
-								 ObjectType::Table, ObjectType::Tablespace, ObjectType::Textbox, ObjectType::Type, ObjectType::View, ObjectType::Tag };
-			unsigned cnt = sizeof(types)/sizeof(ObjectType);
+			vector<ObjectType> types_vect = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::Permission, ObjectType::BaseRelationship });
 
 			//Configures the "New object" menu with the types at database level
-			for(i=0; i < cnt; i++)
-				new_object_menu.addAction(actions_new_objects[types[i]]);
+			for(auto &type : types_vect)
+				new_object_menu.addAction(actions_new_objects[type]);
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);

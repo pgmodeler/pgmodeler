@@ -5849,7 +5849,6 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	QString signature, ref_type;
 	ObjectType obj_type;
 	QStringList options, opt_val;
-	int count = 0;
 
 	try
 	{
