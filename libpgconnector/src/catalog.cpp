@@ -38,7 +38,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Sequence, "sq.oid"}, {ObjectType::Domain, "dm.oid"}, {ObjectType::Type, "tp.oid"},
 	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
 	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
-	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}
+	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
@@ -58,7 +58,7 @@ map<ObjectType, QString> Catalog::name_fields=
 	{ObjectType::Sequence, "relname"}, {ObjectType::Domain, "typname"}, {ObjectType::Type, "typname"},
 	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
 	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "relname"},
-	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}
+	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"}
 };
 
 Catalog::Catalog(void)

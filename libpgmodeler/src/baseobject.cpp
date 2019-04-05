@@ -969,16 +969,24 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Database)
-		return(vector<ObjectType>()={ObjectType::Cast, ObjectType::Role, ObjectType::Language, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension, ObjectType::EventTrigger});
-	else if(obj_type==ObjectType::Schema)
-		return(vector<ObjectType>()={ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation, ObjectType::Domain, ObjectType::Function,
-									ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence, ObjectType::Type, ObjectType::Table, ObjectType::View});
-	else if(obj_type==ObjectType::Table)
-		return(vector<ObjectType>()={ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy});
-	else if(obj_type==ObjectType::View)
+		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
+																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper });
+
+	if(obj_type==ObjectType::Schema)
+		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+																	ObjectType::Domain, ObjectType::Function, ObjectType::OpClass,
+																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
+																	ObjectType::Type, ObjectType::Table, ObjectType::View });
+
+	if(obj_type==ObjectType::Table)
+		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
+
+	if(obj_type==ObjectType::View)
 		return(vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index});
-	else
-		return(vector<ObjectType>()={});
+
+	return(vector<ObjectType>()={});
 }
 
 void BaseObject::setPgSQLVersion(const QString &ver)
