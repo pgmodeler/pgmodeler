@@ -40,6 +40,10 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
 
+		/*! \brief Indicates that cells' texts can be edited by the user. When changing the text of a cell
+		 * the signal s_cellTextChanged(int,int) is emitted */
+		bool cells_editable;
+
 		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
 
 	public:
@@ -172,6 +176,8 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Controls the enable state of each button
 		void setButtonsEnabled(unsigned button_conf, bool value);
 
+		void setCellsEditable(bool value);
+
 	signals:
 		//! \brief Signal emitted when a new row is added. The new row index is send with the signal
 		void s_rowAdded(int);
@@ -203,7 +209,11 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Signal emitted when a column is added. The column index is sent together with the signal
 		void s_columnAdded(int);
 
+		//! \brief Signal emitted when a specific cell is clicked. The column and rows indexes are sent together with the signal
 		void s_cellClicked(int, int);
+
+		//! \brief Signal emitted when a specific cell has its text changed. The column and rows indexes are sent together with the signal
+		void s_cellTextChanged(int, int);
 
 	protected:
 		void resizeEvent(QResizeEvent *);

@@ -48,7 +48,13 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 		hbox->addWidget(func_validator_sel);
 		func_validator_wgt->setLayout(hbox);
 
-		options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
+		options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+		options_tab->setCellsEditable(true);
+		options_tab->setColumnCount(2);
+		options_tab->setHeaderLabel(trUtf8("Option"), 0);
+		options_tab->setHeaderLabel(trUtf8("Value"), 1);
+
 		fdw_grid->addWidget(options_tab, 2, 0, 1, 3);
 
 		configureFormLayout(fdw_grid, ObjectType::ForeignDataWrapper);
@@ -75,6 +81,18 @@ void ForeignDataWrapperWidget::setAttributes(DatabaseModel *model, OperationList
 	{
 		func_handler_sel->setSelectedObject(fdw->getHandlerFunction());
 		func_validator_sel->setSelectedObject(fdw->getValidatorFunction());
+
+		options_tab->blockSignals(true);
+
+		for(auto &itr : fdw->getOptions())
+		{
+			options_tab->addRow();
+			options_tab->setCellText(itr.first, options_tab->getRowCount() - 1, 0);
+			options_tab->setCellText(itr.second, options_tab->getRowCount() - 1, 1);
+		}
+
+		options_tab->clearSelection();
+		options_tab->blockSignals(false);
 	}
 }
 
@@ -89,6 +107,10 @@ void ForeignDataWrapperWidget::applyConfiguration(void)
 		fdw=dynamic_cast<ForeignDataWrapper *>(this->object);
 		fdw->setHandlerFunction(dynamic_cast<Function *>(func_handler_sel->getSelectedObject()));
 		fdw->setValidatorFunction(dynamic_cast<Function *>(func_validator_sel->getSelectedObject()));
+
+		fdw->removeOptions();
+		for(unsigned row = 0; row < options_tab->getRowCount(); row++)
+			fdw->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

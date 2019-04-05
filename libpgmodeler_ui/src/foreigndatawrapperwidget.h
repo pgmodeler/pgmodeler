@@ -44,7 +44,6 @@ class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataW
 
 	public:
 		ForeignDataWrapperWidget(QWidget * parent = nullptr);
-
 		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignDataWrapper *fdw);
 
 	public slots:

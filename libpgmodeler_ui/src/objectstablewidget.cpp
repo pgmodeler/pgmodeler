@@ -48,6 +48,7 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 	});
 
 	this->conf_exclusion=conf_exclusion;
+	cells_editable = false;
 
 	setButtonConfiguration(button_conf);
 	setColumnCount(1);
@@ -345,7 +346,7 @@ void ObjectsTableWidget::addRow(unsigned lin_idx)
 
 	for(col_idx=0; col_idx < col_cont; col_idx++)
 	{
-		item=new QTableWidgetItem;
+		item=new QTableWidgetItem;		
 		table_tbw->setItem(lin_idx,col_idx,item);
 	}
 
@@ -612,6 +613,12 @@ void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 	if((button_conf & ResizeColsButton) == ResizeColsButton)
 		resize_cols_tb->setEnabled(value && table_tbw->rowCount() > 0);
+}
+
+void ObjectsTableWidget::setCellsEditable(bool value)
+{
+	table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
+	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
 }
 
 void ObjectsTableWidget::setButtonsEnabled(void)
