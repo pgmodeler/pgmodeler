@@ -59,7 +59,8 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 	result=(obj_type==ObjectType::Table || obj_type==ObjectType::Column || obj_type==ObjectType::View ||
 			obj_type==ObjectType::Sequence || obj_type==ObjectType::Database || obj_type==ObjectType::Function ||
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
-			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type);
+			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
+			obj_type==ObjectType::ForeignDataWrapper);
 
 
 	//Validating privilege
@@ -81,19 +82,19 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			Linguage: USAGE
 			Schema: CREATE | USAGE
 			Tablespace: CREATE
-			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER */
+			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER
+			Foreign Data Wrapper: USAGE */
 		result=result &&
-
-			   (((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
-				 (priv_id==PrivSelect || priv_id==PrivInsert ||
-				  priv_id==PrivUpdate || priv_id==PrivDelete ||
-				  priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
+				(((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
+					(priv_id==PrivSelect || priv_id==PrivInsert ||
+					 priv_id==PrivUpdate || priv_id==PrivDelete ||
+					 priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
 
 				((obj_type==ObjectType::Table || obj_type==ObjectType::View) && priv_id==PrivTruncate) ||
 
 				(obj_type==ObjectType::Column &&
 				 (priv_id==PrivSelect ||priv_id==PrivInsert ||
-				  priv_id==PrivUpdate || priv_id==PrivReferences)) ||
+					priv_id==PrivUpdate || priv_id==PrivReferences)) ||
 
 				(obj_type==ObjectType::Sequence &&
 				 (priv_id==PrivUsage || priv_id==PrivSelect ||	priv_id==PrivUpdate)) ||
@@ -107,7 +108,9 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 
 				(obj_type==ObjectType::Schema && (priv_id==PrivUsage || priv_id==PrivCreate)) ||
 
-				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate));
+				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate) ||
+
+				(obj_type==ObjectType::ForeignDataWrapper && priv_id==PrivUsage));
 	}
 
 	return(result);
