@@ -734,6 +734,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::Constraint: createConstraint(attribs); break;
 				case ObjectType::Policy: createPolicy(attribs); break;
 				case ObjectType::EventTrigger: createEventTrigger(attribs); break;
+				case ObjectType::ForeignDataWrapper: createForeignDataWrapper(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -2298,6 +2299,32 @@ void DatabaseImportHelper::createEventTrigger(attribs_map &attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
+}
+
+void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
+{
+	ForeignDataWrapper *fdw=nullptr;
+
+	try
+	{
+		QStringList func_types={ Attributes::ValidatorFunc, Attributes::HandlerFunc };
+
+		for(auto &func_tp : func_types)
+			attribs[func_tp] = getDependencyObject(attribs[func_tp], ObjectType::Function, true , true, true, {{Attributes::RefType, func_tp}});
+
+		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
+
+		loadObjectXML(ObjectType::ForeignDataWrapper, attribs);
+		fdw = dbmodel->createForeignDataWrapper();
+		dbmodel->addForeignDataWrapper(fdw);
+	}
+	catch(Exception &e)
+	{
+		if(fdw) delete(fdw);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+
 }
 
 void DatabaseImportHelper::createPermission(attribs_map &attribs)

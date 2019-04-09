@@ -754,9 +754,8 @@ void DatabaseModel::destroyObjects(void)
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		QTextStream out(stdout);
-		out << trUtf8("** FAIL TO DESTROY ALL OBJECTS **") << endl;
-		out << e.getExceptionsText() << endl;
+		qDebug("** FAIL TO DESTROY ALL OBJECTS **");
+		qDebug(e.getExceptionsText().toStdString().c_str());
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlDefinition, true);

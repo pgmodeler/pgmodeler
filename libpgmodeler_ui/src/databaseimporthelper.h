@@ -160,6 +160,7 @@ class DatabaseImportHelper: public QObject {
 		void createPolicy(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createEventTrigger(attribs_map &attribs);
+		void createForeignDataWrapper(attribs_map &attribs);
 		void __createTableInheritances(void);
 		void createTableInheritances(void);
 		void createTablePartitionings(void);

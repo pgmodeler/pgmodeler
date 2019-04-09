@@ -19,7 +19,7 @@
 #include "foreigndatawrapper.h"
 
 const QString ForeignDataWrapper::OptionsSeparator = QString(",");
-const QString ForeignDataWrapper::OptionValueSeparator = QString("•");
+const QString ForeignDataWrapper::OptionValueSeparator = QString("=");
 
 ForeignDataWrapper::ForeignDataWrapper(void)
 {
@@ -127,13 +127,13 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 	if(handler_func)
 	{
 		handler_func->setAttribute(Attributes::RefType, Attributes::HandlerFunc);
-		attributes[Attributes::HandlerFunc] = is_sql_def ? handler_func->getSignature() : handler_func->getCodeDefinition(def_type, true);
+		attributes[Attributes::HandlerFunc] = is_sql_def ? handler_func->getName(true) : handler_func->getCodeDefinition(def_type, true);
 	}
 
 	if(validator_func)
 	{
 		validator_func->setAttribute(Attributes::RefType, Attributes::ValidatorFunc);
-		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getSignature() : validator_func->getCodeDefinition(def_type, true);
+		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getCodeDefinition(def_type, true);
 	}
 
 	for(auto &itr : options)

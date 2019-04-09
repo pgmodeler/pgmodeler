@@ -198,7 +198,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
 			emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
-								   trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
+														 trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
 			//Render the entire viewport onto the pixmap
 			view->render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -776,14 +776,13 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
 
-	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
-								   ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
-								   ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
-								   ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
-								   ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
-								   ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
-								   ObjectType::EventTrigger, ObjectType::Database };
-
+	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
+																 ObjectType::Policy, ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
+																 ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
+																 ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
+																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
+																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
+																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::Database };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
