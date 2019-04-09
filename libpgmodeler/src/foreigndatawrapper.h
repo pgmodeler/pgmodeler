@@ -58,6 +58,7 @@ class ForeignDataWrapper: public BaseObject{
 		attribs_map getOptions(void);
 
 		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

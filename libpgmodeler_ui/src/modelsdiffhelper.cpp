@@ -219,8 +219,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			aux_model=source_model;
 			factor=25;
 		}
-		else if(diff_type==ObjectsDiffInfo::CreateObject ||
-				diff_type==ObjectsDiffInfo::AlterObject)
+		else if(diff_type==ObjectsDiffInfo::CreateObject || diff_type==ObjectsDiffInfo::AlterObject)
 		{
 			/* For creation or modification of objects the order followed is the same
 		 as the creation order on the source model */
@@ -246,22 +245,22 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					 (diff_type!=ObjectsDiffInfo::DropObject)))
 			{
 				emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-									   trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-									   object->getObjectType());
+															 trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+															 object->getObjectType());
 
 				//Processing objects that are not database, table child object (they are processed further)
 				if(obj_type!=ObjectType::Database && !TableObject::isTableObject(obj_type))
 				{
 					/* Processing permissions. If the operation is DROP and keep_obj_perms is true the
-			 the permission is ignored */
+					 * the permission is ignored */
 					if(obj_type==ObjectType::Permission &&
 
 							((diff_type==ObjectsDiffInfo::DropObject &&
-							  !diff_opts[OptKeepObjectPerms]) ||
+								!diff_opts[OptKeepObjectPerms]) ||
 
 							 (diff_type==ObjectsDiffInfo::CreateObject &&
-							  (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
-							   !diff_opts[OptKeepObjectPerms]))))
+								(aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
+								 !diff_opts[OptKeepObjectPerms]))))
 						generateDiffInfo(diff_type, object);
 
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
@@ -312,8 +311,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						if(diff_type != ObjectsDiffInfo::DropObject && aux_object)
 						{
 							/* Try to get a diff from the retrieve object and the current object,
-				 comparing only basic attributes like schema, tablespace and owner
-				 this is why the BaseObject::getAlterDefinition is called */
+							 * comparing only basic attributes like schema, tablespace and owner
+							 * this is why the BaseObject::getAlterDefinition is called */
 							objs_differs=!aux_object->BaseObject::getAlterDefinition(object).isEmpty();
 
 							//If the objects does not differ, try to compare their XML definition

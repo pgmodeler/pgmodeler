@@ -2324,7 +2324,6 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
-
 }
 
 void DatabaseImportHelper::createPermission(attribs_map &attribs)

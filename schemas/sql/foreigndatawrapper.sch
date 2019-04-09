@@ -12,12 +12,14 @@
 
 [CREATE ] {sql-object} $sp {name} 
 
-$br $tb
+%if ({pgsql-ver} >=f "9.1") %then
+    $br $tb
 
-%if %not {handler} %then
-    [NO HANDLER]
-%else
-    [HANDLER ] {handler} 
+    %if %not {handler} %then
+        [NO HANDLER]
+    %else
+        [HANDLER ] {handler} 
+    %end
 %end
 
 $br $tb

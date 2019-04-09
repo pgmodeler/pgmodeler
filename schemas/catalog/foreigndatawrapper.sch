@@ -23,9 +23,16 @@
     %end
 %else 
     %if {attribs} %then
-        [SELECT oid, fdwname AS name,
-            fdwhandler AS handler, fdwvalidator AS validator, 
-            fdwacl AS permission, fdwowner AS owner, fdwoptions AS options, ]
+        [SELECT oid, fdwname AS name, ]
+            
+        %if ({pgsql-ver} >=f "9.1") %then
+            [ fdwhandler AS handler, ]
+        %else
+            [ NULL AS handler, ]
+        %end            
+            
+        [ fdwvalidator AS validator, 
+          fdwacl AS permission, fdwowner AS owner, fdwoptions AS options, ]
 
         ({comment}) [ AS comment ]
 

@@ -144,3 +144,44 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
+
+QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
+{
+	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
+
+	if(!fdw)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+		attribs_map attribs;
+		QStringList func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
+		Function *this_funcs[2] = { this->getValidatorFunction(), this->getHandlerFunction() },
+				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
+				*this_func = nullptr, *fdw_func = nullptr;
+
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+
+		for(int i = 0; i < 2; i++)
+		{
+			this_func = this_funcs[i];
+			fdw_func = fdw_funcs[i];
+
+			if(!fdw_func)
+				attribs[func_attribs[i]] = Attributes::Unset;
+			else if(fdw_func &&
+							(!this_func ||
+							 (this_func && this_func->getSignature() != fdw_func->getSignature())))
+				attribs[func_attribs[i]] = fdw_func->getName(true);
+		}
+
+		// Comparing the options
+
+		copyAttributes(attribs);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}

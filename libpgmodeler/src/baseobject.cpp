@@ -450,12 +450,13 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
 	return(obj_type==ObjectType::Collation || obj_type==ObjectType::Column ||
-			 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
-			 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
-			 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
-			 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
-			 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
-			 obj_type==ObjectType::Type || obj_type==ObjectType::Policy);
+				 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
+				 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
+				 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
+				 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
+				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
+				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignDataWrapper);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
