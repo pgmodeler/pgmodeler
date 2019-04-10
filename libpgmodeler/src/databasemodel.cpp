@@ -1948,8 +1948,8 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 
 		//Making a copy of the permissions list to avoid iterator invalidation when removing an object
 		rem_objects.assign(permissions.begin(), permissions.end());
-		itr=permissions.begin();
-		itr_end=permissions.end();
+		itr=rem_objects.begin();
+		itr_end=rem_objects.end();
 
 		while(itr!=itr_end)
 		{
