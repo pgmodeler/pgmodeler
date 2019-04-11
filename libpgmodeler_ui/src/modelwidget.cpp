@@ -58,6 +58,7 @@
 #include "policywidget.h"
 #include "tabledatawidget.h"
 #include "generalconfigwidget.h"
+#include "foreigndatawrapperwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -81,18 +82,21 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
+	/*ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
 						 ObjectType::Cast, ObjectType::Conversion, ObjectType::Domain,
 						 ObjectType::Function, ObjectType::Aggregate, ObjectType::Language,
 						 ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily,
 						 ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Type,
 						 ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
 						 ObjectType::Tablespace, ObjectType::Collation, ObjectType::Extension, ObjectType::EventTrigger, ObjectType::Tag,
-						 ObjectType::GenericSql };
-	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
+						 ObjectType::GenericSql }; */
+	unsigned i, /*obj_cnt=sizeof(types)/sizeof(ObjectType),*/
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
+
+	vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
+																																		 ObjectType::BaseRelationship});
 
 	current_zoom=1;
 	modified=panning_mode=false;
@@ -379,11 +383,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_break_rel_line->setMenu(&break_rel_menu);
 
 	//Alocatting the object creation actions
-	for(i=0; i < obj_cnt; i++)
+	for(auto &type : types_vect)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNs::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
-		actions_new_objects[types[i]]->setData(QVariant(enum_cast(types[i])));
-		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
+		actions_new_objects[type]=new QAction(QIcon(PgModelerUiNs::getIconPath(type)), BaseObject::getTypeName(type), this);
+		actions_new_objects[type]->setData(QVariant(enum_cast(type)));
+		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
 	//Creating the relationship submenu
@@ -1361,7 +1365,7 @@ void ModelWidget::convertRelationshipNN(void)
 						op_list->ignoreOperationChain(false);
 					}
 
-					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 				}
 			}
 		}
@@ -1400,7 +1404,7 @@ void ModelWidget::loadModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		this->modified=false;
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1617,7 +1621,7 @@ void ModelWidget::saveModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1823,6 +1827,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			genericsql_wgt->setAttributes(db_model, op_list, dynamic_cast<GenericSQL *>(object));
 			res=openEditingForm(genericsql_wgt);
 		}
+		else if(obj_type==ObjectType::ForeignDataWrapper)
+			res = openEditingForm<ForeignDataWrapper, ForeignDataWrapperWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
@@ -1978,7 +1984,7 @@ void ModelWidget::moveToSchema(void)
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2041,7 +2047,7 @@ void ModelWidget::changeOwner(void)
 		if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2078,7 +2084,7 @@ void ModelWidget::setTag(void)
 		if(op_id >=0 &&  op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2247,7 +2253,7 @@ void ModelWidget::protectObject(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2770,7 +2776,7 @@ void ModelWidget::duplicateObject(void)
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -3005,14 +3011,14 @@ void ModelWidget::removeObjects(bool cascade)
 							}
 							catch(Exception &e)
 							{
-								if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-															 e.getErrorType()==ErrorCode::RemDirectReference ||
-															 e.getErrorType()==ErrorCode::RemInderectReference ||
-															 e.getErrorType()==ErrorCode::RemProtectedObject ||
-															 e.getErrorType()==ErrorCode::OprReservedObject))
+								if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+															 e.getErrorCode()==ErrorCode::RemDirectReference ||
+															 e.getErrorCode()==ErrorCode::RemInderectReference ||
+															 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+															 e.getErrorCode()==ErrorCode::OprReservedObject))
 									errors.push_back(e);
 								else
-									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+									throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 							}
 						}
 						else
@@ -3035,14 +3041,14 @@ void ModelWidget::removeObjects(bool cascade)
 								}
 								catch(Exception &e)
 								{
-									if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-																 e.getErrorType()==ErrorCode::RemDirectReference ||
-																 e.getErrorType()==ErrorCode::RemInderectReference ||
-																 e.getErrorType()==ErrorCode::RemProtectedObject ||
-																 e.getErrorType()==ErrorCode::OprReservedObject))
+									if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+																 e.getErrorCode()==ErrorCode::RemDirectReference ||
+																 e.getErrorCode()==ErrorCode::RemInderectReference ||
+																 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+																 e.getErrorCode()==ErrorCode::OprReservedObject))
 										errors.push_back(e);
 									else
-										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+										throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 								}
 
 								if(rel)
@@ -3701,15 +3707,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ ObjectType::Aggregate, ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Collation, ObjectType::Conversion, ObjectType::Domain,
-								 ObjectType::Extension, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass, ObjectType::Operator,
-								 ObjectType::OpFamily, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence,
-								 ObjectType::Table, ObjectType::Tablespace, ObjectType::Textbox, ObjectType::Type, ObjectType::View, ObjectType::Tag };
-			unsigned cnt = sizeof(types)/sizeof(ObjectType);
+			vector<ObjectType> types_vect = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::Permission, ObjectType::BaseRelationship });
 
 			//Configures the "New object" menu with the types at database level
-			for(i=0; i < cnt; i++)
-				new_object_menu.addAction(actions_new_objects[types[i]]);
+			for(auto &type : types_vect)
+				new_object_menu.addAction(actions_new_objects[type]);
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
@@ -4083,7 +4085,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		actions.pop_back();
 	}
 
-	if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+	if(objects.size() <= 2)
 	{
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
@@ -4225,7 +4227,7 @@ void ModelWidget::createSequenceFromColumn(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4265,7 +4267,7 @@ void ModelWidget::convertIntegerToSerial(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4285,7 +4287,7 @@ void ModelWidget::breakRelationshipLine(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4325,7 +4327,7 @@ void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_ty
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4371,7 +4373,7 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4495,6 +4497,9 @@ void ModelWidget::editCreationOrder(void)
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
+
+	if(!selected_objects.empty())
+		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
 			this->op_list->removeOperations();

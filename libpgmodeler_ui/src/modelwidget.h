@@ -289,7 +289,7 @@ class ModelWidget: public QWidget {
 		MaximumZoom=5.000001,
 		ZoomIncrement=0.050000;
 
-		ModelWidget(QWidget *parent = 0);
+		ModelWidget(QWidget *parent = nullptr);
 		~ModelWidget(void);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene

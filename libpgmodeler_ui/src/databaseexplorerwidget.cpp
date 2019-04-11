@@ -130,7 +130,7 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::TuplesIns, QT_TR_NOOP("Tuples inserted")},	{Attributes::IsPartitioned, QT_TR_NOOP("Partitioned")},
 	{Attributes::PartitionedTable, QT_TR_NOOP("Partition of")},	{Attributes::PartitionBoundExpr, QT_TR_NOOP("Partition bound expr.")},
 	{Attributes::DeadRowsAmount, QT_TR_NOOP("Dead rows amount")},	{Attributes::PartitionKey, QT_TR_NOOP("Partition keys")},
-	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}
+	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -343,6 +343,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case ObjectType::Constraint: formatConstraintAttribs(attribs); break;
 			case ObjectType::Index: formatIndexAttribs(attribs); break;
 			case ObjectType::Policy: formatPolicyAttribs(attribs); break;
+			case ObjectType::ForeignDataWrapper: formatForeignDataWrapperAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -430,7 +431,7 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -468,10 +469,9 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { Attributes::Trusted });
-
 	formatOidAttribs(attribs, { Attributes::ValidatorFunc,
-								Attributes::HandlerFunc,
-								Attributes::InlineFunc }, ObjectType::Function, false);
+															Attributes::HandlerFunc,
+															Attributes::InlineFunc }, ObjectType::Function, false);
 }
 
 void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
@@ -610,7 +610,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -823,6 +823,12 @@ void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
 	attribs[Attributes::Roles] = getObjectsNames(ObjectType::Role, Catalog::parseArrayValues(attribs[Attributes::Roles])).join(ElemSeparator);
 }
 
+void DatabaseExplorerWidget::formatForeignDataWrapperAttribs(attribs_map &attribs)
+{
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::ValidatorFunc, Attributes::HandlerFunc }, ObjectType::Function, false);
+}
+
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 {
 	try
@@ -892,7 +898,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -927,7 +933,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -945,7 +951,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1010,7 +1016,7 @@ void DatabaseExplorerWidget::listObjects(void)
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1348,7 +1354,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -1537,7 +1543,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1693,7 +1699,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -2002,7 +2008,7 @@ void DatabaseExplorerWidget::dropDatabase(void)
 												.arg(dbname).arg(connection.getConnectionParam(Connection::ParamAlias)),
 												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }

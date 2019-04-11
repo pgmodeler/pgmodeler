@@ -14,7 +14,7 @@ class Xml2ObjectWidget: public QDialog, public Ui::Xml2ObjectWidget {
 		OperationList *op_list;
 
 	public:
-		Xml2ObjectWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		Xml2ObjectWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 	public slots:
 		void show(DatabaseModel *model, OperationList *op_list);

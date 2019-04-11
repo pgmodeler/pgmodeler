@@ -34,7 +34,7 @@ class DonateWidget: public QWidget, public Ui::DonateWidget {
 		Q_OBJECT
 		
 	public:
-		DonateWidget(QWidget *parent = 0);
+		DonateWidget(QWidget *parent = nullptr);
 		
 	signals:
 		void s_visibilityChanged(bool value);

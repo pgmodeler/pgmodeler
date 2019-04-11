@@ -38,7 +38,7 @@ class GenericSQL: public BaseObject{
 		QString getDefinition(void);
 
 		//! \brief Copies the attributes between generic sql objects
-		void operator = (GenericSQL &genericsql);
+		// void operator = (GenericSQL &genericsql);
 
 		virtual QString getCodeDefinition(unsigned def_type);
 };

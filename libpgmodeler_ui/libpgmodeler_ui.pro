@@ -117,7 +117,8 @@ SOURCES += src/mainwindow.cpp \
     src/sqlexecutionhelper.cpp \
     src/elementstablewidget.cpp \
     src/elementwidget.cpp \
-    src/layerswidget.cpp
+    src/layerswidget.cpp \
+    src/foreigndatawrapperwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -222,7 +223,8 @@ HEADERS += src/mainwindow.h \
     src/sqlexecutionhelper.h \
     src/elementstablewidget.h \
     src/elementwidget.h \
-    src/layerswidget.h
+    src/layerswidget.h \
+    src/foreigndatawrapperwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -307,7 +309,8 @@ FORMS += ui/mainwindow.ui \
     ui/objectstablewidget.ui \
     ui/referencewidget.ui \
     ui/elementwidget.ui \
-    ui/layerswidget.ui
+    ui/layerswidget.ui \
+    ui/foreigndatawrapperwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

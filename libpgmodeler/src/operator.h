@@ -45,13 +45,13 @@ class Operator: public BaseObject {
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
 	public:
-		static constexpr unsigned FUNC_OPERATOR=0,
-		FUNC_JOIN=1,
-		FUNC_RESTRICT=2,
-		LEFT_ARG=0,
-		RIGHT_ARG=1,
-		OPER_COMMUTATOR=0,
-		OPER_NEGATOR=1;
+		static constexpr unsigned FuncOperator=0,
+		FuncJoin=1,
+		FuncRestrict=2,
+		LeftArg=0,
+		RightArg=1,
+		OperCommutator=0,
+		OperNegator=1;
 
 		Operator(void);
 

@@ -44,9 +44,10 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 		void fillCreationOrderGrid(void);
 
 	public:
-		SwapObjectsIdsWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		~SwapObjectsIdsWidget(void);
 		void setModel(DatabaseModel *model);
+		void setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct);
 
 	private slots:
 		void showObjectId(void);

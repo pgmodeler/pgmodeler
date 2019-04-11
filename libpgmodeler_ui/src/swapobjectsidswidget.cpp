@@ -90,7 +90,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -110,6 +110,12 @@ void SwapObjectsIdsWidget::setModel(DatabaseModel *model)
 	dst_object_sel->clearSelector();
 
 	fillCreationOrderGrid();
+}
+
+void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct)
+{
+	src_object_sel->setSelectedObject(src_object);
+	dst_object_sel->setSelectedObject(dst_objct);
 }
 
 void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
@@ -226,7 +232,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

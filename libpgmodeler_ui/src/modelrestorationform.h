@@ -37,7 +37,7 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 		HintTextWidget * keep_models_ht;
 
 	public:
-		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
+		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		//! \brief Returns the list of temporary files existant on tmp/ dir
 		QStringList getTemporaryModels(void);

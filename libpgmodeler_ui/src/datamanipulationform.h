@@ -112,7 +112,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void setColumnsCheckState(Qt::CheckState state);
 
 	public:
-		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = 0);
+		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());

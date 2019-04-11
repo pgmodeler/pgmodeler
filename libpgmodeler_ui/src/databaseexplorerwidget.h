@@ -132,6 +132,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatConstraintAttribs(attribs_map &attribs);
 		void formatIndexAttribs(attribs_map &attribs);
 		void formatPolicyAttribs(attribs_map &attribs);
+		void formatForeignDataWrapperAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands

@@ -35,7 +35,7 @@ class AboutWidget: public QWidget, public Ui::AboutWidget {
 		Q_OBJECT
 		
 	public:
-		AboutWidget(QWidget *parent = 0);
+		AboutWidget(QWidget *parent = nullptr);
 		
 	signals:
 		void s_visibilityChanged(bool value);

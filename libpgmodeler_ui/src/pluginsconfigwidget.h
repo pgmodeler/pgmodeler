@@ -50,7 +50,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		void addConfigurationParam(const QString &, const attribs_map &){}
 
 	public:
-		PluginsConfigWidget(QWidget *parent = 0);
+		PluginsConfigWidget(QWidget *parent = nullptr);
 		~PluginsConfigWidget(void);
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead

@@ -263,7 +263,7 @@ namespace PgModelerUiNs {
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(enum_cast(ex.getErrorType()));
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorCode())).arg(enum_cast(ex.getErrorCode()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);

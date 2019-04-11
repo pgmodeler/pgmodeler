@@ -93,6 +93,10 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 
 		//! \brief Signal emitted when the user clears the selector
 		void s_selectorCleared(void);
+
+		/*! \brief Signal emitted when the user clears the selector or selects and object
+		 * The boolean param indicates if there's an object selected or not */
+		void s_selectorChanged(bool);
 };
 
 #endif

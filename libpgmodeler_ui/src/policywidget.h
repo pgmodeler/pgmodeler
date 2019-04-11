@@ -39,7 +39,7 @@ class PolicyWidget : public BaseObjectWidget, Ui::PolicyWidget {
 		NumberedTextEditor *using_edt, *check_edt;
 
 	public:
-		PolicyWidget(QWidget *parent = 0);
+		PolicyWidget(QWidget *parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Policy *policy);
 

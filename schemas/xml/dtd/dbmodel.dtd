@@ -66,6 +66,8 @@
 %genericsql;
 <!ENTITY % policy SYSTEM "policy.dtd">
 %policy;
+<!ENTITY % foreigndatawrapper SYSTEM "foreigndatawrapper.dtd">
+%foreigndatawrapper;
 
 <!ELEMENT dbmodel ANY>
 

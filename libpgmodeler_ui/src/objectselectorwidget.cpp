@@ -27,7 +27,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -40,7 +40,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, boo
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -76,7 +76,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -137,6 +137,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 									   .arg(selected_obj->getName(true)));
 
 		emit s_objectSelected();
+		emit s_selectorChanged(true);
 	}
 	else
 		clearSelector();
@@ -155,7 +156,7 @@ void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -176,6 +177,7 @@ void ObjectSelectorWidget::clearSelector(void)
 	obj_name_txt->clear();
 	rem_object_tb->setEnabled(false);
 	emit s_selectorCleared();
+	emit s_selectorChanged(false);
 }
 
 void ObjectSelectorWidget::showObjectView(void)

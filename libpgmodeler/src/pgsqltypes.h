@@ -382,20 +382,32 @@ class PgSqlType: public BaseType{
 		//! \brief Creates a type from a pointer that references an user defined type (Type class)
 		PgSqlType(void *ptype);
 
-		PgSqlType(const QString &type_name, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type name and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_name and dimension which can be used to quicly create
+		 * array of a certain type. */
+		PgSqlType(const QString &type_name, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(void *ptipo, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a pointer to a data type (generally a user defined type, see UserTypeConfig class)
+		 * and a series of data like dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except ptype and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(void *ptype, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(unsigned type_id, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type id and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_id and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(unsigned type_id, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
 		/*! \brief Creates a configured instance of PgSQLType from a string
 		in SQL canonical form, e.g, varchar(255), timestamp with timezone, smallint[] and so on.
@@ -453,6 +465,12 @@ class PgSqlType: public BaseType{
 		smallint is compatible with int2, and so on. */
 		bool isEquivalentTo(PgSqlType type);
 
+		/*! \brief Returns true if the provided type is exactly the same as the "this".
+		 * This method compares ALL attributes of the type. Note that this method is
+		 * different from the operatores == (PgSqlType) because this latter compares only
+		 * the indexes of the types. This method is useful if one need to fully compare the types */
+		bool isExactTo(PgSqlType type);
+
 		PgSqlType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
@@ -463,12 +481,22 @@ class PgSqlType: public BaseType{
 		unsigned operator << (void *ptype);
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type index. If an exact match is needed use isExactTo()
 		bool operator == (unsigned type_idx);
+
+		//! \brief Compares the index of the "this" with the provided type. If an exact match is needed use isExactTo()
 		bool operator == (PgSqlType type);
+
+		//! \brief Compares the index of the "this" with the provided type name index. If an exact match is needed use isExactTo()
 		bool operator == (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type reference. If an exact match is needed use isExactTo()
 		bool operator == (void *ptype);
+
+		// The methods below are just the oposite of the == versions
 		bool operator != (const QString &type_name);
-		bool operator != (PgSqlType type);
+		bool operator != (PgSqlType type);		
 		bool operator != (unsigned type_idx);
 
 		/*! \brief Returns the pointer to the user defined type which denotes the

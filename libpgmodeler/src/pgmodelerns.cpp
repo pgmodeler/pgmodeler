@@ -150,9 +150,11 @@ namespace PgModelerNs {
 			case ObjectType::GenericSql:
 				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
 			break;
+			case ObjectType::ForeignDataWrapper:
+				copyObject(psrc_obj, dynamic_cast<ForeignDataWrapper *>(copy_obj));
+			break;
 			default:
 				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			break;
 		}
 	}
 

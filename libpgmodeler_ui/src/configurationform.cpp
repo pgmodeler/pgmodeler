@@ -115,7 +115,7 @@ void ConfigurationForm::loadConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			if(e.getErrorType()==ErrorCode::PluginsNotLoaded)
+			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
 				msg_box.show(e);
 			}

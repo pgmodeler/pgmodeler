@@ -351,6 +351,7 @@ namespace Attributes {
 	OperatorFunc=QString("operfunc"),
 	Operator=QString("operator"),
 	Operators=QString("operators"),
+	Options=QString("options"),
 	OriginalPk=QString("original-pk"),
 	OutputFunc=QString("output"),
 	OwnerColumn=QString("owner-col"),
@@ -421,6 +422,8 @@ namespace Attributes {
 	RefColumn=QString("ref-column"),
 	RefRoles=QString("ref-roles"),
 	RefTable=QString("ref-table"),
+	RefTables=QString("ref-tables"),
+	RefTableTag=QString("reftable"),
 	RefType=QString("ref-type"),
 	Refer=QString("refer"),
 	Reference=QString("reference"),
@@ -598,6 +601,6 @@ namespace Attributes {
 	WordSeparators=QString("word-separators"),
 	WorkingDir=QString("working-dir"),
 	XPos=QString("x"),
-		YPos=QString("y");
+	YPos=QString("y");
 }
 

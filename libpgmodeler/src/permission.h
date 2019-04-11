@@ -43,7 +43,7 @@ class Permission: public BaseObject {
 				* view
 				* sequence
 				* database
-				* foreign-data wrapper (not implemented)
+				* foreign-data wrapper
 				* foreign server (not implemented)
 				* large objects (not implemented)
 				* function

@@ -473,6 +473,12 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
 			attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
 		}
+
+		if(language->getName()==~LanguageType(LanguageType::C))
+		{
+			attributes[Attributes::Symbol]=symbol;
+			attributes[Attributes::Library]=library;
+		}
 	}
 
 	setTableReturnTypeAttribute(def_type);
@@ -483,12 +489,6 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::SecurityType]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
 	attributes[Attributes::Definition]=source_code;
-
-	if(language->getName()==~LanguageType(LanguageType::C))
-	{
-		attributes[Attributes::Symbol]=symbol;
-		attributes[Attributes::Library]=library;
-	}
 
 	attributes[Attributes::Signature]=signature;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
@@ -547,6 +547,6 @@ QString Function::getAlterDefinition(BaseObject *object)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

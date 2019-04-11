@@ -54,6 +54,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "tag.h"
 #include "eventtrigger.h"
 #include "genericsql.h"
+#include "foreigndatawrapper.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -62,6 +63,10 @@ class ModelWidget;
 class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
+
+		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
+		 * to return the list according to the provided type */
+		map<ObjectType, vector<BaseObject *> *> obj_lists;
 
 		static unsigned dbmodel_id;
 
@@ -87,6 +92,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
 		localizations[2];
 
+		//! \brief Stores the objects of each type that are considered the default ones associated to new objects
 		map<ObjectType, BaseObject *> default_objs;
 
 		//! \brief Maximum number of connections
@@ -124,6 +130,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		vector<BaseObject *> tags;
 		vector<BaseObject *> eventtriggers;
 		vector<BaseObject *> genericsqls;
+		vector<BaseObject *> fdata_wrappers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -486,6 +493,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		GenericSQL *getGenericSQL(unsigned obj_idx);
 		GenericSQL *getGenericSQL(const QString &name);
 
+		void addForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx=-1);
+		void removeForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx=-1);
+		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
+		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -544,6 +556,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
+		ForeignDataWrapper *createForeignDataWrapper(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

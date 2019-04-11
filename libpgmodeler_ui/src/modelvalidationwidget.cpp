@@ -61,8 +61,31 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)
+{
+	QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+	//Executes the search when user press enter/return on the pattern field
+	if(m_event && m_event->buttons() == Qt::RightButton)
+	{
+		QLabel *label = dynamic_cast<QLabel *>(object);
+
+		if(label->hasSelectedText())
+		{
+			label->setContextMenuPolicy(Qt::DefaultContextMenu);
+		}
+		else
+		{
+			label->setContextMenuPolicy(Qt::NoContextMenu);
+			selectObject();
+		}
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void ModelValidationWidget::createThread(void)
@@ -217,8 +240,11 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	BaseTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString ref_name;
+	BaseObject *ref_obj=nullptr;
 
+	label->installEventFilter(this);
 	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
 	if(val_info.getValidationType()==ValidationInfo::BrokenReference)
 		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
@@ -279,6 +305,9 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	else
 		label->setText(val_info.getErrors().at(0));
 
+	/* Store the reference of the object in order to allow opening the editing form when the user clicks the item on the output
+	 * So the needed fixes can be done manually */
+	item->setData(1, Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(val_info.getObject())));
 
 	if(val_info.getValidationType()==ValidationInfo::SqlValidationError ||
 			val_info.getValidationType()==ValidationInfo::ValidationAborted)
@@ -323,16 +352,24 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			refs=val_info.getReferences();
 			while(!refs.empty())
 			{
+				ref_obj = refs.back();
+
 				item1=new QTreeWidgetItem(item);
 				label1=new QLabel;
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-				item1->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(refs.back()->getSchemaName())));
 
-				tab_obj=dynamic_cast<TableObject *>(refs.back());
-				ref_name=refs.back()->getName(true);
+				label1->installEventFilter(this);
+				item1->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(ref_obj->getSchemaName())));
+
+				/* Store the reference of the referrer object in order to allow opening the editing form when the user clicks the item on the output
+				 * So the needed fixes can be done manually */
+				item1->setData(1, Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(ref_obj)));
+
+				tab_obj=dynamic_cast<TableObject *>(ref_obj);
+				ref_name=ref_obj->getName(true);
 
 				if(tab_obj)
-					ref_name=dynamic_cast<TableObject *>(refs.back())->getParentTable()->getName(true) + QString(".") + ref_name;
+					ref_name=dynamic_cast<TableObject *>(ref_obj)->getParentTable()->getName(true) + QString(".") + ref_name;
 
 				if(val_info.getValidationType()==ValidationInfo::NoUniqueName)
 				{
@@ -355,20 +392,20 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 					label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
 									.arg(ref_name.remove('"'))
-									.arg(refs.back()->getTypeName()));
+									.arg(ref_obj->getTypeName()));
 				}
 				else
 				{
 					if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
 						label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
 										.arg(ref_name.remove('"'))
-										.arg(refs.back()->getObjectId()));
+										.arg(ref_obj->getObjectId()));
 					else
 					{
 						label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
 										.arg(ref_name.remove('"'))
-										.arg(refs.back()->getTypeName())
-										.arg(refs.back()->getObjectId()));
+										.arg(ref_obj->getTypeName())
+										.arg(ref_obj->getObjectId()));
 					}
 				}
 
@@ -575,4 +612,20 @@ void ModelValidationWidget::swapObjectsIds(void)
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, this->metaObject()->className());
 	parent_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, this->metaObject()->className());
+}
+
+void ModelValidationWidget::selectObject(void)
+{
+	QTreeWidgetItem *item = output_trw->currentItem();
+
+	if(item && !validation_thread->isRunning())
+	{
+		BaseObject *selected_obj=reinterpret_cast<BaseObject *>(item->data(1, Qt::UserRole).value<void *>());
+
+		if(selected_obj && QApplication::mouseButtons() == Qt::RightButton)
+		{
+			model_wgt->configureObjectMenu(selected_obj);
+			model_wgt->showObjectMenu();
+		}
+	}
 }

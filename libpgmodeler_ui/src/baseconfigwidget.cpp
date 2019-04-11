@@ -196,7 +196,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, filename);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, filename);
 	}
 }
 

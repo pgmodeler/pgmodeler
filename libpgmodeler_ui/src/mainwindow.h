@@ -171,7 +171,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void showFixMessage(Exception &e, const QString &filename);
 
 	public:
-		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list

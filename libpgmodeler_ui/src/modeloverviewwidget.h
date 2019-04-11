@@ -69,7 +69,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void updateOverview(bool force_update);
 
 	public:
-		ModelOverviewWidget(QWidget *parent = 0);
+		ModelOverviewWidget(QWidget *parent = nullptr);
 
 	public slots:
 		//! \brief Updates the overview (only if the widget is visible)
