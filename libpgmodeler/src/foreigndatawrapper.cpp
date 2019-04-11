@@ -155,13 +155,14 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attribs_map attribs;
-		QStringList func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
+		QStringList opts, func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
 		Function *this_funcs[2] = { this->getValidatorFunction(), this->getHandlerFunction() },
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
 
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
+		// Comparing FDW functions
 		for(int i = 0; i < 2; i++)
 		{
 			this_func = this_funcs[i];
@@ -175,9 +176,25 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 				attribs[func_attribs[i]] = fdw_func->getName(true);
 		}
 
-		// Comparing the options
+		// Comparing FDW options (to be modified or added)
+		for(auto &opt : fdw->options)
+		{
+			if(this->options.count(opt.first) == 0)
+				opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
+			else if(this->options[opt.first] != opt.second)
+				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
+		}
 
+		// Comparing FDW options (to be removed)
+		for(auto &opt : this->options)
+		{
+			if(fdw->options.count(opt.first) == 0)
+				opts.push_back(QString("DROP %1").arg(opt.first));
+		}
+
+		attribs[Attributes::Options] = opts.join(OptionsSeparator);
 		copyAttributes(attribs);
+
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

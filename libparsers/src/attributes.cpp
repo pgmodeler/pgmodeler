@@ -601,6 +601,6 @@ namespace Attributes {
 	WordSeparators=QString("word-separators"),
 	WorkingDir=QString("working-dir"),
 	XPos=QString("x"),
-		YPos=QString("y");
+	YPos=QString("y");
 }
 

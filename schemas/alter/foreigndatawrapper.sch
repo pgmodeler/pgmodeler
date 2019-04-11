@@ -26,6 +26,11 @@
             [ VALIDATOR ] {validator}
         %end 
     %end
+    
+    %if {options} %then
+        $br $tb 
+        [ OPTIONS (] {options} [)]
+    %end
 
 ; $br
 
