@@ -64,6 +64,7 @@ enum class ObjectType: unsigned {
 	EventTrigger,
 	Policy,
 	ForeignDataWrapper,
+	Server,
 	Relationship,
 	Textbox,
 	Permission,
@@ -72,8 +73,8 @@ enum class ObjectType: unsigned {
 	Tag,
 	GenericSql,
 	BaseRelationship,
-	BaseObject,
-	BaseTable
+	BaseTable,
+	BaseObject
 };
 
 class BaseObject {
@@ -107,7 +108,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static constexpr int ObjectTypeCount=38;
+		static constexpr unsigned ObjectTypeCount=enum_cast(ObjectType::BaseObject) + 1;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

@@ -105,32 +105,33 @@ class DatabaseModel:  public QObject, public BaseObject {
 		allow_conns;
 
 		//! \brief Vectors that stores all the objects types
-		vector<BaseObject *> textboxes;
-		vector<BaseObject *> relationships;
-		vector<BaseObject *> base_relationships;
-		vector<BaseObject *> functions;
-		vector<BaseObject *> schemas;
-		vector<BaseObject *> views;
-		vector<BaseObject *> tables;
-		vector<BaseObject *> types;
-		vector<BaseObject *> roles;
-		vector<BaseObject *> tablespaces;
-		vector<BaseObject *> languages;
-		vector<BaseObject *> aggregates;
-		vector<BaseObject *> casts;
-		vector<BaseObject *> conversions;
-		vector<BaseObject *> operators;
-		vector<BaseObject *> op_classes;
-		vector<BaseObject *> op_families;
-		vector<BaseObject *> domains;
-		vector<BaseObject *> sequences;
-		vector<BaseObject *> permissions;
-		vector<BaseObject *> collations;
-		vector<BaseObject *> extensions;
-		vector<BaseObject *> tags;
-		vector<BaseObject *> eventtriggers;
-		vector<BaseObject *> genericsqls;
-		vector<BaseObject *> fdata_wrappers;
+		vector<BaseObject *> textboxes,
+		relationships,
+		base_relationships,
+		functions,
+		schemas,
+		views,
+		tables,
+		types,
+		roles,
+		tablespaces,
+		languages,
+		aggregates,
+		casts,
+		conversions,
+		operators,
+		op_classes,
+		op_families,
+		domains,
+		sequences,
+		permissions,
+		collations,
+		extensions,
+		tags,
+		eventtriggers,
+		genericsqls,
+		fdata_wrappers,
+		servers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */

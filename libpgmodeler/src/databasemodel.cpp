@@ -77,7 +77,8 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::Tag, &tags },
 		{ ObjectType::EventTrigger, &eventtriggers },
 		{ ObjectType::GenericSql, &genericsqls },
-		{ ObjectType::ForeignDataWrapper, &fdata_wrappers }
+		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
+		{ ObjectType::Server, &servers }
 	};
 }
 

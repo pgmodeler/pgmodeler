@@ -18,17 +18,13 @@
 
 #include "foreigndatawrapper.h"
 
-const QString ForeignDataWrapper::OptionsSeparator = QString(",");
-const QString ForeignDataWrapper::OptionValueSeparator = QString("=");
-
-ForeignDataWrapper::ForeignDataWrapper(void)
+ForeignDataWrapper::ForeignDataWrapper(void) : ForeignObject()
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
 
 	attributes[Attributes::HandlerFunc] = QString();
 	attributes[Attributes::ValidatorFunc] = QString();
-	attributes[Attributes::Options] = QString();
 }
 
 void ForeignDataWrapper::setHandlerFunction(Function *func)
@@ -80,40 +76,6 @@ Function *ForeignDataWrapper::getHandlerFunction(void)
 Function *ForeignDataWrapper::getValidatorFunction(void)
 {
 	return(validator_func);
-}
-
-void ForeignDataWrapper::setOption(const QString &opt, const QString &value)
-{
-	if(opt.isEmpty())
-		throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	options[opt] = value;
-}
-
-void ForeignDataWrapper::setOptions(const attribs_map &options)
-{
-	for(auto &itr : options)
-	{
-		if(itr.first.isEmpty())
-			throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-
-	this->options = options;
-}
-
-void ForeignDataWrapper::removeOption(const QString &opt)
-{
-	options.erase(opt);
-}
-
-void ForeignDataWrapper::removeOptions(void)
-{
-	options.clear();
-}
-
-attribs_map ForeignDataWrapper::getOptions(void)
-{
-	return(options);
 }
 
 QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)

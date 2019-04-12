@@ -18,35 +18,22 @@
 
 /**
 \ingroup libpgmodeler
-\class ForeignDataWrapper
-\brief Implements the operations to manipulate foreign data wrappers on the database.
+\class Server
+\brief Implements the operations to manipulate foreign servers on the database.
 */
 
-#ifndef FOREIGN_DATA_WRAPPER_H
-#define FOREIGN_DATA_WRAPPER_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #include "baseobject.h"
-#include "function.h"
-#include "foreignobject.h"
+#include "foreigndatawrapper.h"
 
-class ForeignDataWrapper: public ForeignObject {
-		//! \brief Function that executes the functions related to the foreign data wrapper
-		Function *handler_func,
-
-		//! \brief Function that validates the options passed to the foreign data wrapper
-		*validator_func;
+class Server: public ForeignObject{
 
 	public:
-		ForeignDataWrapper(void);
-
-		void setHandlerFunction(Function *func);
-		void setValidatorFunction(Function *func);
-
-		Function *getHandlerFunction(void);
-		Function *getValidatorFunction(void);
+		Server(void);
 
 		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

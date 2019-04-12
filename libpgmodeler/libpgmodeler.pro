@@ -62,7 +62,9 @@ HEADERS += src/textbox.h \
 	   src/genericsql.h \
 	   src/policy.h \
 	   src/partitionkey.h \
-	   src/foreigndatawrapper.h
+	   src/foreigndatawrapper.h \
+    src/server.h \
+    src/foreignobject.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -113,7 +115,9 @@ SOURCES +=  src/textbox.cpp \
 	    src/genericsql.cpp \
 	    src/policy.cpp \
 	    src/partitionkey.cpp \
-	    src/foreigndatawrapper.cpp
+	    src/foreigndatawrapper.cpp \
+    src/server.cpp \
+    src/foreignobject.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
