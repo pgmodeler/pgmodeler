@@ -98,12 +98,7 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getCodeDefinition(def_type, true);
 	}
 
-	for(auto &itr : options)
-		fmt_options += is_sql_def ? QString("%1 '%2'").arg(itr.first).arg(itr.second) :
-																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
-
-	attributes[Attributes::Options] = fmt_options.join(OptionsSeparator);
-
+	setOptionsAttribute(def_type);
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 

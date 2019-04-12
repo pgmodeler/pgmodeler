@@ -36,8 +36,6 @@ $br $tb
 
 ;
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
 $br [-- ddl-end --] $br
 
 %if {comment} %then {comment} %end

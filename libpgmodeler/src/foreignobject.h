@@ -32,6 +32,8 @@ class ForeignObject: public BaseObject {
 		//! \brief A set of key/value options associated to the foreign object
 		attribs_map options;
 
+		void setOptionsAttribute(unsigned def_type);
+
 	public:
 		//! \brief Store the character used to separate options/values in the XML code
 		static const QString OptionsSeparator;

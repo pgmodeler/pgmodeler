@@ -28,10 +28,22 @@
 #include "baseobject.h"
 #include "foreigndatawrapper.h"
 
-class Server: public ForeignObject{
+class Server: public ForeignObject {
+	private:
+		ForeignDataWrapper *fdata_wrapper;
+
+		QString type, version;
 
 	public:
 		Server(void);
+
+		void setType(const QString &type);
+		void setVersion(const QString &version);
+		void setForeignDataWrapper(ForeignDataWrapper *fdw);
+
+		QString getType(void);
+		QString getVersion(void);
+		ForeignDataWrapper *getForeignDataWrapper(void);
 
 		virtual QString getCodeDefinition(unsigned def_type);
 };

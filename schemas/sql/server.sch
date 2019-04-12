@@ -11,10 +11,19 @@
     $br [-- ddl-end --] $br $br
 %end
 
-[CREATE SERVER ] {name}; $br
+[CREATE SERVER ] {name} 
+$br $tb 
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+%if {type} %then
+    [ TYPE ] ${type} 
+%end
+
+%if {version} %then
+    [ VERSION ] ${version} 
+%end
+
+$br $tb [FOREIGN DATA WRAPPER ] {fdw}
+
 [-- ddl-end --] $br
 
 %if {owner} %then {owner} %end

@@ -20,8 +20,43 @@
 
 Server::Server(void) : ForeignObject()
 {
-	obj_type=ObjectType::ForeignDataWrapper;
+	obj_type = ObjectType::Server;
+	fdata_wrapper = nullptr;
+
 	attributes[Attributes::Options] = QString();
+	attributes[Attributes::Version] = QString();
+	attributes[Attributes::Type] = QString();
+	attributes[Attributes::Object] = QString();
+}
+
+void Server::setType(const QString &type)
+{
+	this->type = type;
+}
+
+void Server::setVersion(const QString &version)
+{
+	this->version = version;
+}
+
+void Server::setForeignDataWrapper(ForeignDataWrapper *fdw)
+{
+	fdata_wrapper = fdw;
+}
+
+QString Server::getType(void)
+{
+	return(type);
+}
+
+QString Server::getVersion(void)
+{
+	return(version);
+}
+
+ForeignDataWrapper *Server::getForeignDataWrapper(void)
+{
+	return(fdata_wrapper);
 }
 
 QString Server::getCodeDefinition(unsigned def_type)
@@ -29,5 +64,10 @@ QString Server::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
+	attributes[Attributes::Version] = version;
+	attributes[Attributes::Type] = type;
+	attributes[Attributes::Fdw] = fdata_wrapper ? fdata_wrapper->getName(true) : QString();
+
+	setOptionsAttribute(def_type);
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }

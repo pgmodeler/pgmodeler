@@ -55,6 +55,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "eventtrigger.h"
 #include "genericsql.h"
 #include "foreigndatawrapper.h"
+#include "server.h"
 #include <algorithm>
 #include <locale.h>
 

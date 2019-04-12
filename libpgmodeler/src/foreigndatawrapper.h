@@ -30,6 +30,7 @@
 #include "foreignobject.h"
 
 class ForeignDataWrapper: public ForeignObject {
+	private:
 		//! \brief Function that executes the functions related to the foreign data wrapper
 		Function *handler_func,
 

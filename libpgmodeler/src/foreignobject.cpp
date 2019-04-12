@@ -59,3 +59,15 @@ attribs_map ForeignObject::getOptions(void)
 {
 	return(options);
 }
+
+void ForeignObject::setOptionsAttribute(unsigned def_type)
+{
+	QStringList fmt_options;
+
+	for(auto &itr : options)
+		fmt_options += def_type == SchemaParser::SqlDefinition ?
+																QString("%1 '%2'").arg(itr.first).arg(itr.second) :
+																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
+
+	attributes[Attributes::Options] = fmt_options.join(OptionsSeparator);
+}
