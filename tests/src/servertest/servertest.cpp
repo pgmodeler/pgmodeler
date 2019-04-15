@@ -103,20 +103,19 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 
 		server.setName("server_test");
 		server.setForeignDataWrapper(&fdw);
+		model.addServer(&server);
 
-		vector<BaseObject *> deps;
+		vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&server, deps);
 
-		QVERIFY(deps.size() >= 3);
-
-		deps.clear();
-		model.getObjectReferences(&fdw, deps);
-		QVERIFY(deps.size() == 1);
-
+		model.getObjectReferences(&fdw, refs);
 		model.removeServer(&server);
 		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);
 		model.removeRole(&owner);
+
+		QVERIFY(deps.size() >= 2);
+		QVERIFY(refs.size() == 1);
 	}
 	catch (Exception &e)
 	{

@@ -199,6 +199,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
+		else if(obj_type==ObjectType::Server)
+			addServer(dynamic_cast<Server *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -267,6 +269,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
+		else if(obj_type==ObjectType::Server)
+			removeServer(dynamic_cast<Server *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -8126,6 +8130,12 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				ForeignDataWrapper *fdw = dynamic_cast<ForeignDataWrapper *>(object);
 				getObjectDependecies(fdw->getHandlerFunction(), deps, inc_indirect_deps);
 				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
+			}
+			//** Getting the dependecies for server **
+			else if(obj_type == ObjectType::Server)
+			{
+				Server *server = dynamic_cast<Server *>(object);
+				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
 			}
 
 			if(obj_type == ObjectType::Table || obj_type == ObjectType::View)
