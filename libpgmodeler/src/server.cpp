@@ -66,7 +66,14 @@ QString Server::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Version] = version;
 	attributes[Attributes::Type] = type;
-	attributes[Attributes::Fdw] = fdata_wrapper ? fdata_wrapper->getName(true) : QString();
+	attributes[Attributes::Fdw] = QString();
+
+	if(fdata_wrapper)
+	{
+		attributes[Attributes::Fdw] = def_type == SchemaParser::SqlDefinition ?
+																		fdata_wrapper->getName(true) :
+																		fdata_wrapper->getCodeDefinition(def_type, true);
+	}
 
 	setOptionsAttribute(def_type);
 	return(this->BaseObject::__getCodeDefinition(def_type));

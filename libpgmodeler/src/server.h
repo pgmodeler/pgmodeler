@@ -30,6 +30,7 @@
 
 class Server: public ForeignObject {
 	private:
+		//! \brief The foreign data wrapper which manages the server
 		ForeignDataWrapper *fdata_wrapper;
 
 		QString type, version;

@@ -262,8 +262,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
 		/*! \brief Loads a database model from a file. In case of loading errors
-	the objects in the model will not be destroyed automatically. The user need to call
-	destroyObjects() or delete the entire model */
+		the objects in the model will not be destroyed automatically. The user need to call
+		destroyObjects() or delete the entire model */
 		void loadModel(const QString &filename);
 
 		//! \brief Sets the database encoding
@@ -499,6 +499,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removeForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx=-1);
 		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
 		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
+
+		void addServer(Server *server, int obj_idx=-1);
+		void removeServer(Server *server, int obj_idx=-1);
+		Server *getServer(unsigned obj_idx);
+		Server *getServer(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);

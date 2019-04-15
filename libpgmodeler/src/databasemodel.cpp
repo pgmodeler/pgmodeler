@@ -1082,6 +1082,40 @@ ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(const QString &name)
 	return(dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper)));
 }
 
+void DatabaseModel::addServer(Server *server, int obj_idx)
+{
+	try
+	{
+		__addObject(server, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeServer(Server *server, int obj_idx)
+{
+	try
+	{
+		__removeObject(server, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+Server *DatabaseModel::getServer(unsigned obj_idx)
+{
+	return(dynamic_cast<Server *>(getObject(obj_idx, ObjectType::Server)));
+}
+
+Server *DatabaseModel::getServer(const QString &name)
+{
+	return(dynamic_cast<Server *>(getObject(name, ObjectType::Server)));
+}
+
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
 	try

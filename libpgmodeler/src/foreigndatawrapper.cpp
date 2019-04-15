@@ -80,6 +80,11 @@ Function *ForeignDataWrapper::getValidatorFunction(void)
 
 QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 {
+	return(getCodeDefinition(def_type, false));
+}
+
+QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_form)
+{
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
@@ -99,7 +104,7 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 	}
 
 	setOptionsAttribute(def_type);
-	return(this->BaseObject::__getCodeDefinition(def_type));
+	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)

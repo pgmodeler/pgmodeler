@@ -15,16 +15,22 @@
 $br $tb 
 
 %if {type} %then
-    [ TYPE ] ${type} 
+    [ TYPE ] '{type}'
 %end
 
 %if {version} %then
-    [ VERSION ] ${version} 
+    [ VERSION ] '{version}'
 %end
 
 $br $tb [FOREIGN DATA WRAPPER ] {fdw}
 
-[-- ddl-end --] $br
+%if {options} %then
+    $br $tb [OPTIONS (] {options} )
+%end
+
+;
+
+$br [-- ddl-end --] $br
 
 %if {owner} %then {owner} %end
 %if {comment} %then {comment} %end

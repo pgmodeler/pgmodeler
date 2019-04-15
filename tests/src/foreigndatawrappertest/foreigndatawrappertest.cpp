@@ -132,13 +132,13 @@ void ForeignDataWrapperTest::codeGeneratedIsWellFormed(void)
 "-- object: fdw | type: FOREIGN DATA WRAPPER -- \
 -- DROP FOREIGN DATA WRAPPER IF EXISTS fdw CASCADE; \
 CREATE FOREIGN DATA WRAPPER fdw \
-HANDLER public.func_handler() \
-VALIDATOR public.func_validator(text[],oid) \
+HANDLER public.func_handler \
+VALIDATOR public.func_validator \
 OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- \
-COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
--- ddl-end -- \
 ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
+	-- ddl-end -- \
+	COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(

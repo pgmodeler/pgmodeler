@@ -47,6 +47,7 @@ class ForeignDataWrapper: public ForeignObject {
 		Function *getValidatorFunction(void);
 
 		virtual QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 		virtual QString getAlterDefinition(BaseObject *object);
 };
 
