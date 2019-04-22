@@ -130,7 +130,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::TuplesIns, QT_TR_NOOP("Tuples inserted")},	{Attributes::IsPartitioned, QT_TR_NOOP("Partitioned")},
 	{Attributes::PartitionedTable, QT_TR_NOOP("Partition of")},	{Attributes::PartitionBoundExpr, QT_TR_NOOP("Partition bound expr.")},
 	{Attributes::DeadRowsAmount, QT_TR_NOOP("Dead rows amount")},	{Attributes::PartitionKey, QT_TR_NOOP("Partition keys")},
-	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")}
+	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")},
+	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -344,6 +345,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case ObjectType::Index: formatIndexAttribs(attribs); break;
 			case ObjectType::Policy: formatPolicyAttribs(attribs); break;
 			case ObjectType::ForeignDataWrapper: formatForeignDataWrapperAttribs(attribs); break;
+			case ObjectType::Server: formatServerAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -827,6 +829,12 @@ void DatabaseExplorerWidget::formatForeignDataWrapperAttribs(attribs_map &attrib
 {
 	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
 	formatOidAttribs(attribs, { Attributes::ValidatorFunc, Attributes::HandlerFunc }, ObjectType::Function, false);
+}
+
+void DatabaseExplorerWidget::formatServerAttribs(attribs_map &attribs)
+{
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::Fdw }, ObjectType::ForeignDataWrapper, false);
 }
 
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
