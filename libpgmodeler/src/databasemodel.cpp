@@ -3316,6 +3316,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createPolicy();
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			object=createForeignDataWrapper();
+		else if(obj_type==ObjectType::Server)
+			object=createServer();
 	}
 
 	return(object);
@@ -5961,6 +5963,73 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	}
 
 	return(fdw);
+}
+
+Server *DatabaseModel::createServer(void)
+{
+	attribs_map attribs;
+	Server *server = nullptr;
+	BaseObject *fdw = nullptr;
+	ObjectType obj_type;
+	QStringList options, opt_val;
+
+	try
+	{
+		server = new Server;
+
+		xmlparser.getElementAttributes(attribs);
+		setBasicAttributes(server);
+
+		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
+
+		for(auto &option : options)
+		{
+			opt_val = option.split(ForeignDataWrapper::OptionValueSeparator);
+
+			if(opt_val.size() < 2)
+				continue;
+
+			server->setOption(opt_val[0], opt_val[1]);
+		}
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					obj_type = BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type == ObjectType::ForeignDataWrapper)
+					{
+						xmlparser.getElementAttributes(attribs);
+						fdw = getObject(attribs[Attributes::Name], ObjectType::ForeignDataWrapper);
+
+						//Raises an error if the fdw doesn't exists
+						if(!fdw)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(server->getName())
+															.arg(server->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::ForeignDataWrapper)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						server->setForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(fdw));
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		if(server)
+			delete(server);
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(server);
 }
 
 void DatabaseModel::updateViewsReferencingTable(Table *table)
@@ -9336,6 +9405,26 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					}
 					itr++;
 				}
+			}
+		}
+
+		if(obj_type==ObjectType::ForeignDataWrapper && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			vector<BaseObject *>::iterator itr, itr_end;
+			vector<BaseObject *> list;
+			ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
+
+			itr=servers.begin();
+			itr_end=servers.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<Server *>(*itr)->getForeignDataWrapper() == fdw)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
 			}
 		}
 	}

@@ -973,7 +973,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 	if(obj_type==ObjectType::Database)
 		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
-																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper });
+																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::Server });
 
 	if(obj_type==ObjectType::Schema)
 		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,

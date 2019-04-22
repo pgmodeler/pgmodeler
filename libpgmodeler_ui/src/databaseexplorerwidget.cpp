@@ -997,7 +997,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		curr_root = objects_trw->topLevelItem(0);
 		objects_trw->takeTopLevelItem(0);
 		root->setText(0, connection.getConnectionId(true));
-		root->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("server")));
+		root->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("connserver")));
 		root->setData(DatabaseImportForm::ObjectId, Qt::UserRole, -1);
 		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::BaseObject));
 		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));

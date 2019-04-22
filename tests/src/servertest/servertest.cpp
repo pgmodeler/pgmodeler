@@ -125,12 +125,11 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 
 void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 {
-	/*DatabaseModel model;
+	DatabaseModel model;
 	Role owner;
 	Schema public_sch;
-	Language lang;
-	Function func_handler, func_validator;
-	ForeignDataWrapper *fdw = nullptr;
+	ForeignDataWrapper fdw;
+	Server *server = nullptr;
 	QString xml_code, res_xml_code;
 
 	try
@@ -141,56 +140,38 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		model.addSchema(&public_sch);
 		model.addRole(&owner);
 
-		func_handler.setName("func_handler");
-		func_handler.setReturnType(PgSqlType("fdw_handler"));
-		func_handler.setSchema(&public_sch);
-		func_handler.setSourceCode("foo");
-		func_handler.setOwner(&owner);
-		func_handler.setLanguage(&lang);
+		fdw.setName("fdw");
+		model.addForeignDataWrapper(&fdw);
 
-		func_validator.setName("func_validator");
-		func_validator.addParameter(Parameter("param1", PgSqlType("text", 1)));
-		func_validator.addParameter(Parameter("param2", PgSqlType("oid")));
-		func_validator.setSchema(&public_sch);
-		func_validator.setSourceCode("foo");
-		func_validator.setOwner(&owner);
-		func_validator.setLanguage(&lang);
-
-		model.addFunction(&func_handler);
-		model.addFunction(&func_validator);
-
-		xml_code=QString("<foreigndatawrapper name=\"fdw\" options=\"opt1#value1*opt2#value2\"> \
+		xml_code=QString("<server name=\"server_test\" options=\"opt1#value1*opt2#value2\"> \
 <role name=\"postgres\"/> \
-<comment><![CDATA[This is a test comment on FDW]]></comment> \
-<function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
-<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
-</foreigndatawrapper>").replace("#", ForeignDataWrapper::OptionValueSeparator)
-										.replace("*", ForeignDataWrapper::OptionsSeparator);
+<comment><![CDATA[This is a test comment on server]]></comment> \
+<foreigndatawrapper name=\"fdw\"/> \
+</server>").replace("#", ForeignDataWrapper::OptionValueSeparator)
+											 .replace("*", ForeignDataWrapper::OptionsSeparator);
 
 		model.getXMLParser()->loadXMLBuffer(xml_code);
-		fdw = dynamic_cast<ForeignDataWrapper *>(model.createObject(ObjectType::ForeignDataWrapper));
+		server = dynamic_cast<Server *>(model.createObject(ObjectType::Server));
 
-		model.removeForeignDataWrapper(fdw);
-		model.removeFunction(&func_handler);
-		model.removeFunction(&func_validator);
-		model.removeLanguage(&lang);
+		QVERIFY(server != nullptr);
+
+		res_xml_code = server->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		xml_code = xml_code.simplified();
+
+		model.removeServer(server);
+		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);
 		model.removeRole(&owner);
 
-		QVERIFY(fdw != nullptr);
-
-		res_xml_code = fdw->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
-		xml_code = xml_code.simplified();
-
-		if(fdw)
-			delete(fdw);
+		if(server)
+			delete(server);
 
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
 	{
 		QFAIL(e.getErrorMessage().toStdString().c_str());
-	} */
+	}
 }
 
 QTEST_MAIN(ServerTest)

@@ -60,13 +60,12 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			obj_type==ObjectType::Sequence || obj_type==ObjectType::Database || obj_type==ObjectType::Function ||
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
 			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
-			obj_type==ObjectType::ForeignDataWrapper);
+			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::Server);
 
 
 	//Validating privilege
 	if(result && priv_id <= PrivUsage)
 	{
-
 		/* Some privileges are valid only for certain types
 			of objects. If the user try to assign a privilege P
 			for an object that does not accept this privilege the same
@@ -110,7 +109,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 
 				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate) ||
 
-				(obj_type==ObjectType::ForeignDataWrapper && priv_id==PrivUsage));
+				((obj_type==ObjectType::ForeignDataWrapper ||  obj_type==ObjectType::Server) && priv_id==PrivUsage));
 	}
 
 	return(result);

@@ -1,26 +1,58 @@
-# Catalog queries for server attributes
+# Catalog queries for foreign server
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[SELECT name AS attribute, setting AS value FROM pg_settings WHERE name 
-IN (
-    'client_encoding', 
-    'config_file', 
-    'data_directory', 
-    'dynamic_library_path', 
-    'dynamic_shared_memory_type', 
-    'hba_file', 
-    'lc_collate', 
-    'lc_ctype', 
-    'listen_addresses',
-    'max_connections',
-    'port',
-    'server_encoding',
-    'ssl',
-    'ssl_ca_file',
-    'ssl_cert_file',
-    'ssl_crl_file',
-    'ssl_key_file',
-    'password_encryption',
-    'ident_file'
-);]
+%if {list} %then
+    [ SELECT sv.oid, srvname AS name FROM pg_foreign_server AS sv ]
+
+    %if {last-sys-oid} %or {not-ext-object} %then  
+        [ WHERE ]
+        
+        %if {last-sys-oid} %then
+            [ sv.oid ] {oid-filter-op} $sp {last-sys-oid}
+        %end
+
+        %if {not-ext-object} %then
+            
+            %if {last-sys-oid} %then
+                [ AND ] 
+            %end
+            
+            ( {not-ext-object} ) 
+        %end
+    %end
+%else 
+    %if {attribs} %then
+        [SELECT oid, srvname AS name, srvversion AS version, srvtype AS type,        
+         srvfdw AS foreigndatawrapper, srvacl AS permission, srvowner AS owner, 
+         srvoptions AS options, ]
+
+        ({comment}) [ AS comment ]
+
+        [ FROM pg_foreign_server AS sv ]
+        
+        %if {last-sys-oid} %then
+            [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}
+        %end
+
+        %if {not-ext-object} %then
+            %if {last-sys-oid} %then
+                [ AND ]
+            %else
+                [ WHERE ]
+            %end
+	 
+            ( {not-ext-object} )
+        %end
+
+        %if {filter-oids} %then
+            %if {last-sys-oid} %or {not-ext-object} %then
+                [ AND ]
+            %else
+                [ WHERE ]
+            %end
+            
+            [ oid IN (] {filter-oids} )
+        %end
+    %end
+%end
