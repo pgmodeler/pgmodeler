@@ -12,7 +12,6 @@
 %end
 
 [CREATE SERVER ] {name} 
-$br $tb 
 
 %if {type} %then
     [ TYPE ] '{type}'
@@ -22,10 +21,10 @@ $br $tb
     [ VERSION ] '{version}'
 %end
 
-$br $tb [FOREIGN DATA WRAPPER ] {fdw}
+$br [FOREIGN DATA WRAPPER ] {fdw}
 
 %if {options} %then
-    $br $tb [OPTIONS (] {options} )
+    $br [OPTIONS (] {options} )
 %end
 
 ;

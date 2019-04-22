@@ -13,7 +13,7 @@
 [CREATE ] {sql-object} $sp {name} 
 
 %if ({pgsql-ver} >=f "9.1") %then
-    $br $tb
+    $br
 
     %if %not {handler} %then
         [NO HANDLER]
@@ -22,7 +22,7 @@
     %end
 %end
 
-$br $tb
+$br
 
 %if %not {validator} %then
     [NO VALIDATOR]
@@ -31,7 +31,7 @@ $br $tb
 %end
 
 %if {options} %then
-    $br $tb [OPTIONS (] {options} )
+    $br [OPTIONS (] {options} )
 %end
 
 ;

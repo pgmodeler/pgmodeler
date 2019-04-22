@@ -24,11 +24,11 @@
 %end
 
 %if {validator} %then
- $br $tb [VALIDATOR ] {validator}
+ $br [VALIDATOR ] {validator}
 %end
 
 %if {inline} %then
- $br $tb [INLINE ] {inline}
+ $br [INLINE ] {inline}
 %end
 
 ; $br

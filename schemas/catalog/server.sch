@@ -24,7 +24,7 @@
 %else 
     %if {attribs} %then
         [SELECT oid, srvname AS name, srvversion AS version, srvtype AS type,        
-         srvfdw AS foreigndatawrapper, srvacl AS permission, srvowner AS owner, 
+         srvfdw AS fdw, srvacl AS permission, srvowner AS owner, 
          srvoptions AS options, ]
 
         ({comment}) [ AS comment ]

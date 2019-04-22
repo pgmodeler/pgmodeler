@@ -427,12 +427,16 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		//Views and Tables uses the same key word when setting permission (TABLE)
-		attributes[Attributes::Type]=
-				(object->getObjectType()==ObjectType::View ? BaseObject::getSQLName(ObjectType::Table): BaseObject::getSQLName(object->getObjectType()));
+		if(obj_type == ObjectType::View)
+			//Views and Tables uses the same key word when setting permission (TABLE)
+			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
+		else if(obj_type == ObjectType::Server)
+			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();
+		else
+			attributes[Attributes::Type] = BaseObject::getSQLName(obj_type);
 	}
 	else
-		attributes[Attributes::Type]=BaseObject::getSchemaName(object->getObjectType());
+		attributes[Attributes::Type]=BaseObject::getSchemaName(obj_type);
 
 	if(obj_type==ObjectType::Column)
 	{

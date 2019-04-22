@@ -1829,8 +1829,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
-				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
-																		toggle_disp_menu.actions().at(1)->isChecked(),
+
+				import_hlp.setImportOptions(show_sys_objs->isChecked(),
+																		show_ext_objs->isChecked(),
 																		true, false, false, false, false);
 
 				import_hlp.setSelectedOIDs(&dbmodel, {{ObjectType::Database, {db_oid}}, {obj_type,{oid}}}, {});
