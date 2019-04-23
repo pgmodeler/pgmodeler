@@ -735,7 +735,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::Policy: createPolicy(attribs); break;
 				case ObjectType::EventTrigger: createEventTrigger(attribs); break;
 				case ObjectType::ForeignDataWrapper: createForeignDataWrapper(attribs); break;
-				case ObjectType::Server: createServer(attribs); break;
+				case ObjectType::ForeignServer: createServer(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -2329,14 +2329,14 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 
 void DatabaseImportHelper::createServer(attribs_map &attribs)
 {
-	Server *server=nullptr;
+	ForeignServer *server=nullptr;
 
 	try
 	{
 		attribs[Attributes::Fdw] = getDependencyObject(attribs[Attributes::Fdw], ObjectType::ForeignDataWrapper, true , true, true);
 		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
 
-		loadObjectXML(ObjectType::Server, attribs);
+		loadObjectXML(ObjectType::ForeignServer, attribs);
 		server = dbmodel->createServer();
 		dbmodel->addServer(server);
 	}

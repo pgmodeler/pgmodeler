@@ -39,7 +39,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
 	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
 	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
-	{ObjectType::Server, "sv.oid"}
+	{ObjectType::ForeignServer, "sv.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
@@ -60,7 +60,7 @@ map<ObjectType, QString> Catalog::name_fields=
 	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
 	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "relname"},
 	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"},
-	{ObjectType::Server, "srvname"}
+	{ObjectType::ForeignServer, "srvname"}
 };
 
 Catalog::Catalog(void)
@@ -669,7 +669,7 @@ attribs_map Catalog::getServerAttributes(void)
 		QString sql, attr_name;
 		attribs_map tuple, attribs_aux;
 
-		loadCatalogQuery(QString("serverinfo"));
+		loadCatalogQuery(QString("server"));
 		schparser.ignoreUnkownAttributes(true);
 		schparser.ignoreEmptyAttributes(true);
 		sql = schparser.getCodeDefinition(attribs).simplified();

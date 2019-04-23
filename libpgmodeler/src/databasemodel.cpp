@@ -78,7 +78,7 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::EventTrigger, &eventtriggers },
 		{ ObjectType::GenericSql, &genericsqls },
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
-		{ ObjectType::Server, &servers }
+		{ ObjectType::ForeignServer, &servers }
 	};
 }
 
@@ -199,8 +199,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
-		else if(obj_type==ObjectType::Server)
-			addServer(dynamic_cast<Server *>(object));
+		else if(obj_type==ObjectType::ForeignServer)
+			addServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -269,8 +269,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
-		else if(obj_type==ObjectType::Server)
-			removeServer(dynamic_cast<Server *>(object));
+		else if(obj_type==ObjectType::ForeignServer)
+			removeServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -1086,7 +1086,7 @@ ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(const QString &name)
 	return(dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper)));
 }
 
-void DatabaseModel::addServer(Server *server, int obj_idx)
+void DatabaseModel::addServer(ForeignServer *server, int obj_idx)
 {
 	try
 	{
@@ -1098,7 +1098,7 @@ void DatabaseModel::addServer(Server *server, int obj_idx)
 	}
 }
 
-void DatabaseModel::removeServer(Server *server, int obj_idx)
+void DatabaseModel::removeServer(ForeignServer *server, int obj_idx)
 {
 	try
 	{
@@ -1110,14 +1110,14 @@ void DatabaseModel::removeServer(Server *server, int obj_idx)
 	}
 }
 
-Server *DatabaseModel::getServer(unsigned obj_idx)
+ForeignServer *DatabaseModel::getServer(unsigned obj_idx)
 {
-	return(dynamic_cast<Server *>(getObject(obj_idx, ObjectType::Server)));
+	return(dynamic_cast<ForeignServer *>(getObject(obj_idx, ObjectType::ForeignServer)));
 }
 
-Server *DatabaseModel::getServer(const QString &name)
+ForeignServer *DatabaseModel::getServer(const QString &name)
 {
-	return(dynamic_cast<Server *>(getObject(name, ObjectType::Server)));
+	return(dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -3316,7 +3316,7 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createPolicy();
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			object=createForeignDataWrapper();
-		else if(obj_type==ObjectType::Server)
+		else if(obj_type==ObjectType::ForeignServer)
 			object=createServer();
 	}
 
@@ -5965,17 +5965,17 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	return(fdw);
 }
 
-Server *DatabaseModel::createServer(void)
+ForeignServer *DatabaseModel::createServer(void)
 {
 	attribs_map attribs;
-	Server *server = nullptr;
+	ForeignServer *server = nullptr;
 	BaseObject *fdw = nullptr;
 	ObjectType obj_type;
 	QStringList options, opt_val;
 
 	try
 	{
-		server = new Server;
+		server = new ForeignServer;
 
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(server);
@@ -8201,9 +8201,9 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
 			}
 			//** Getting the dependecies for server **
-			else if(obj_type == ObjectType::Server)
+			else if(obj_type == ObjectType::ForeignServer)
 			{
-				Server *server = dynamic_cast<Server *>(object);
+				ForeignServer *server = dynamic_cast<ForeignServer *>(object);
 				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
 			}
 
@@ -9419,7 +9419,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				if(dynamic_cast<Server *>(*itr)->getForeignDataWrapper() == fdw)
+				if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
 				{
 					refer=true;
 					refs.push_back(*itr);

@@ -32,7 +32,7 @@ class ServerTest: public QObject {
 void ServerTest::codeGeneratedIsWellFormed(void)
 {
 	ForeignDataWrapper fdw;
-	Server server;
+	ForeignServer server;
 	Role owner;
 	QString sql_code =QString(
 "-- object: server_test | type: SERVER -- \
@@ -53,8 +53,8 @@ COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on server]]></comment> \
 <foreigndatawrapper name=\"fdw\"/> \
-</server>").replace("#", Server::OptionValueSeparator)
-											 .replace("*", Server::OptionsSeparator).simplified();
+</server>").replace("#", ForeignServer::OptionValueSeparator)
+											 .replace("*", ForeignServer::OptionsSeparator).simplified();
 
 	try
 	{
@@ -88,7 +88,7 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 	Role owner;
 	Schema public_sch;
 	ForeignDataWrapper fdw;
-	Server server;
+	ForeignServer server;
 
 	try
 	{
@@ -129,7 +129,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 	Role owner;
 	Schema public_sch;
 	ForeignDataWrapper fdw;
-	Server *server = nullptr;
+	ForeignServer *server = nullptr;
 	QString xml_code, res_xml_code;
 
 	try
@@ -151,7 +151,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 											 .replace("*", ForeignDataWrapper::OptionsSeparator);
 
 		model.getXMLParser()->loadXMLBuffer(xml_code);
-		server = dynamic_cast<Server *>(model.createObject(ObjectType::Server));
+		server = dynamic_cast<ForeignServer *>(model.createObject(ObjectType::ForeignServer));
 
 		QVERIFY(server != nullptr);
 

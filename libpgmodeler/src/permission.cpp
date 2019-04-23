@@ -60,7 +60,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			obj_type==ObjectType::Sequence || obj_type==ObjectType::Database || obj_type==ObjectType::Function ||
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
 			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
-			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::Server);
+			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer);
 
 
 	//Validating privilege
@@ -109,7 +109,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 
 				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate) ||
 
-				((obj_type==ObjectType::ForeignDataWrapper ||  obj_type==ObjectType::Server) && priv_id==PrivUsage));
+				((obj_type==ObjectType::ForeignDataWrapper ||  obj_type==ObjectType::ForeignServer) && priv_id==PrivUsage));
 	}
 
 	return(result);
@@ -430,7 +430,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		if(obj_type == ObjectType::View)
 			//Views and Tables uses the same key word when setting permission (TABLE)
 			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
-		else if(obj_type == ObjectType::Server)
+		else if(obj_type == ObjectType::ForeignServer)
 			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();
 		else
 			attributes[Attributes::Type] = BaseObject::getSQLName(obj_type);

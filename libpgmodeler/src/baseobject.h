@@ -64,7 +64,7 @@ enum class ObjectType: unsigned {
 	EventTrigger,
 	Policy,
 	ForeignDataWrapper,
-	Server,
+	ForeignServer,
 	Relationship,
 	Textbox,
 	Permission,

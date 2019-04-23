@@ -55,7 +55,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "eventtrigger.h"
 #include "genericsql.h"
 #include "foreigndatawrapper.h"
-#include "server.h"
+#include "foreignserver.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -500,10 +500,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
 		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
 
-		void addServer(Server *server, int obj_idx=-1);
-		void removeServer(Server *server, int obj_idx=-1);
-		Server *getServer(unsigned obj_idx);
-		Server *getServer(const QString &name);
+		void addServer(ForeignServer *server, int obj_idx=-1);
+		void removeServer(ForeignServer *server, int obj_idx=-1);
+		ForeignServer *getServer(unsigned obj_idx);
+		ForeignServer *getServer(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
@@ -564,7 +564,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 		ForeignDataWrapper *createForeignDataWrapper(void);
-		Server *createServer(void);
+		ForeignServer *createServer(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

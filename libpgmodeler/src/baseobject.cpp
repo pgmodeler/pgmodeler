@@ -33,7 +33,7 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
-	"server", "relationship", "textbox",	"permission", "parameter",
+	"foreignserver", "relationship", "textbox",	"permission", "parameter",
 	"typeattribute", "tag", "genericsql", "relationship"
 };
 
@@ -47,7 +47,7 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
-	QT_TR_NOOP("Server"), QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
+	QT_TR_NOOP("Foreign Server"), QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
 	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
 	QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
 };
@@ -405,7 +405,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
-			 obj_type==ObjectType::Server);
+			 obj_type==ObjectType::ForeignServer);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -944,7 +944,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
 									 ObjectType::ForeignDataWrapper, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
 									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
-									 ObjectType::Sequence, ObjectType::Server, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
+									 ObjectType::Sequence, ObjectType::ForeignServer, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
 									 ObjectType::Type, ObjectType::View };
 	vector<ObjectType>::iterator itr;
 
@@ -973,7 +973,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 	if(obj_type==ObjectType::Database)
 		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
-																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::Server });
+																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer });
 
 	if(obj_type==ObjectType::Schema)
 		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,

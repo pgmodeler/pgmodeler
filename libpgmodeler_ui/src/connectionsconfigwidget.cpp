@@ -81,7 +81,7 @@ void ConnectionsConfigWidget::updateConnectionsCombo(void)
 	connections_cmb->clear();
 
 	for(auto &conn : connections)
-		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("connserver")), conn->getConnectionId());
+		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("server")), conn->getConnectionId());
 }
 
 void ConnectionsConfigWidget::destroyConnections(void)
@@ -576,7 +576,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 
 	for(auto &itr : connections)
 	{
-		combo->addItem(QIcon(PgModelerUiNs::getIconPath("connserver")), itr.first, QVariant::fromValue<void *>(itr.second));
+		combo->addItem(QIcon(PgModelerUiNs::getIconPath("server")), itr.first, QVariant::fromValue<void *>(itr.second));
 
 		if(!def_conn && itr.second->isDefaultForOperation(check_def_for))
 			def_conn=itr.second;

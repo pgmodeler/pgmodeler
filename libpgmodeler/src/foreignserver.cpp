@@ -16,11 +16,11 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "server.h"
+#include "foreignserver.h"
 
-Server::Server(void) : ForeignObject()
+ForeignServer::ForeignServer(void) : ForeignObject()
 {
-	obj_type = ObjectType::Server;
+	obj_type = ObjectType::ForeignServer;
 	fdata_wrapper = nullptr;
 
 	attributes[Attributes::Options] = QString();
@@ -29,37 +29,37 @@ Server::Server(void) : ForeignObject()
 	attributes[Attributes::Object] = QString();
 }
 
-void Server::setType(const QString &type)
+void ForeignServer::setType(const QString &type)
 {
 	this->type = type;
 }
 
-void Server::setVersion(const QString &version)
+void ForeignServer::setVersion(const QString &version)
 {
 	this->version = version;
 }
 
-void Server::setForeignDataWrapper(ForeignDataWrapper *fdw)
+void ForeignServer::setForeignDataWrapper(ForeignDataWrapper *fdw)
 {
 	fdata_wrapper = fdw;
 }
 
-QString Server::getType(void)
+QString ForeignServer::getType(void)
 {
 	return(type);
 }
 
-QString Server::getVersion(void)
+QString ForeignServer::getVersion(void)
 {
 	return(version);
 }
 
-ForeignDataWrapper *Server::getForeignDataWrapper(void)
+ForeignDataWrapper *ForeignServer::getForeignDataWrapper(void)
 {
 	return(fdata_wrapper);
 }
 
-QString Server::getCodeDefinition(unsigned def_type)
+QString ForeignServer::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);

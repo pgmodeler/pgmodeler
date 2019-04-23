@@ -59,6 +59,7 @@
 #include "tabledatawidget.h"
 #include "generalconfigwidget.h"
 #include "foreigndatawrapperwidget.h"
+#include "foreignserverwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -1829,6 +1830,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			res = openEditingForm<ForeignDataWrapper, ForeignDataWrapperWidget>(object);
+		else if(obj_type==ObjectType::ForeignServer)
+			res = openEditingForm<ForeignServer, ForeignServerWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;

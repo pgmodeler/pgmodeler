@@ -17,36 +17,32 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class Server
-\brief Implements the operations to manipulate foreign servers on the database.
+\ingroup libpgmodeler_ui
+\class ServerWidget
+\brief Implements the operations to create/edit foreign servers via form.
 */
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef SERVER_WIDGET_H
+#define SERVER_WIDGET_H
 
-#include "baseobject.h"
-#include "foreigndatawrapper.h"
+#include "baseobjectwidget.h"
+#include "ui_foreignserverwidget.h"
+#include "objectstablewidget.h"
 
-class Server: public ForeignObject {
+class ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
 	private:
-		//! \brief The foreign data wrapper which manages the server
-		ForeignDataWrapper *fdata_wrapper;
+		Q_OBJECT
 
-		QString type, version;
+		ObjectSelectorWidget *fdw_sel;
+
+		ObjectsTableWidget *options_tab;
 
 	public:
-		Server(void);
+		ForeignServerWidget(QWidget * parent = nullptr);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignServer *server);
 
-		void setType(const QString &type);
-		void setVersion(const QString &version);
-		void setForeignDataWrapper(ForeignDataWrapper *fdw);
-
-		QString getType(void);
-		QString getVersion(void);
-		ForeignDataWrapper *getForeignDataWrapper(void);
-
-		virtual QString getCodeDefinition(unsigned def_type);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif
