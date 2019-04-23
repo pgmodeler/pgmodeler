@@ -73,8 +73,8 @@ enum class ObjectType: unsigned {
 	Tag,
 	GenericSql,
 	BaseRelationship,
-	BaseTable,
-	BaseObject
+	BaseObject,
+	BaseTable
 };
 
 class BaseObject {
@@ -108,7 +108,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static constexpr unsigned ObjectTypeCount=enum_cast(ObjectType::BaseObject) + 1;
+		static constexpr unsigned ObjectTypeCount=enum_cast(ObjectType::BaseTable) + 1;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position

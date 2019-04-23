@@ -798,7 +798,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
+				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
@@ -810,7 +810,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
@@ -2601,7 +2601,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 	while(itr!=itr_end)
 	{
-		object=(*itr);
+		object = (*itr);
+		obj_type = object->getObjectType();
 		itr++;
 
 		if(orig_obj_names[object].count() && obj_type!=ObjectType::Cast)
