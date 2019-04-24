@@ -18,7 +18,7 @@
 
 #include "foreignserverwidget.h"
 
-ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignDataWrapper)
+ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::ForeignServer)
 {
 	try
 	{
@@ -41,13 +41,18 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 		options_tab->setHeaderLabel(trUtf8("Option"), 0);
 		options_tab->setHeaderLabel(trUtf8("Value"), 1);
 
-		server_grid->addWidget(options_tab, 2, 0, 1, 3);
+		hbox = new QHBoxLayout;
+		hbox->setContentsMargins(4,4,4,4);
+		hbox->addWidget(options_tab);
+		options_gb->setLayout(hbox);
 
 		configureFormLayout(server_grid, ObjectType::ForeignServer);
 
-		configureTabOrder({ fdw_sel });
+		setRequiredField(fdw_sel);
+		setRequiredField(fdw_lbl);
+		configureTabOrder({ fdw_sel, options_tab });
 
-		setMinimumSize(600, 400);
+		setMinimumSize(600, 420);
 	}
 	catch(Exception &e)
 	{
@@ -57,19 +62,16 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 
 void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, ForeignServer *server)
 {
-	/*BaseObjectWidget::setAttributes(model, op_list, fdw);
+	BaseObjectWidget::setAttributes(model, op_list, server);
 
-	func_handler_sel->setModel(model);
-	func_validator_sel->setModel(model);
+	fdw_sel->setModel(model);
 
-	if(fdw)
+	if(server)
 	{
-		func_handler_sel->setSelectedObject(fdw->getHandlerFunction());
-		func_validator_sel->setSelectedObject(fdw->getValidatorFunction());
-
+		fdw_sel->setSelectedObject(server->getForeignDataWrapper());
 		options_tab->blockSignals(true);
 
-		for(auto &itr : fdw->getOptions())
+		for(auto &itr : server->getOptions())
 		{
 			options_tab->addRow();
 			options_tab->setCellText(itr.first, options_tab->getRowCount() - 1, 0);
@@ -78,27 +80,26 @@ void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_
 
 		options_tab->clearSelection();
 		options_tab->blockSignals(false);
-	}*/
+	}
 }
 
 void ForeignServerWidget::applyConfiguration(void)
 {
 	try
 	{
-		/*ForeignDataWrapper *fdw=nullptr;
+		ForeignServer *server = nullptr;
 
-		startConfiguration<ForeignDataWrapper>();
+		startConfiguration<ForeignServer>();
 
-		fdw=dynamic_cast<ForeignDataWrapper *>(this->object);
-		fdw->setHandlerFunction(dynamic_cast<Function *>(func_handler_sel->getSelectedObject()));
-		fdw->setValidatorFunction(dynamic_cast<Function *>(func_validator_sel->getSelectedObject()));
+		server = dynamic_cast<ForeignServer *>(this->object);
+		server->setForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(fdw_sel->getSelectedObject()));
 
-		fdw->removeOptions();
+		server->removeOptions();
 		for(unsigned row = 0; row < options_tab->getRowCount(); row++)
-			fdw->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
+			server->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 
 		BaseObjectWidget::applyConfiguration();
-		finishConfiguration();*/
+		finishConfiguration();
 	}
 	catch(Exception &e)
 	{

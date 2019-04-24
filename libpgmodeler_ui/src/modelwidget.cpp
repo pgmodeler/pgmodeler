@@ -83,15 +83,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	/*ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
-						 ObjectType::Cast, ObjectType::Conversion, ObjectType::Domain,
-						 ObjectType::Function, ObjectType::Aggregate, ObjectType::Language,
-						 ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily,
-						 ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Type,
-						 ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
-						 ObjectType::Tablespace, ObjectType::Collation, ObjectType::Extension, ObjectType::EventTrigger, ObjectType::Tag,
-						 ObjectType::GenericSql }; */
-	unsigned i, /*obj_cnt=sizeof(types)/sizeof(ObjectType),*/
+	unsigned i,
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};

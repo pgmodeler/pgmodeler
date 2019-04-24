@@ -942,9 +942,9 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 {
 	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
-									 ObjectType::ForeignDataWrapper, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
+									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
 									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
-									 ObjectType::Sequence, ObjectType::ForeignServer, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
+									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
 									 ObjectType::Type, ObjectType::View };
 	vector<ObjectType>::iterator itr;
 

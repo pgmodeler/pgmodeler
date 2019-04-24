@@ -55,14 +55,18 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 		options_tab->setHeaderLabel(trUtf8("Option"), 0);
 		options_tab->setHeaderLabel(trUtf8("Value"), 1);
 
-		fdw_grid->addWidget(options_tab, 2, 0, 1, 3);
+		hbox = new QHBoxLayout;
+		hbox->setContentsMargins(4,4,4,4);
+		hbox->addWidget(options_tab);
+		options_gb->setLayout(hbox);
 
 		configureFormLayout(fdw_grid, ObjectType::ForeignDataWrapper);
 
 		configureTabOrder({ func_handler_sel, func_handler_ht,
-												func_validator_sel, func_validator_ht });
+												func_validator_sel, func_validator_ht,
+												options_tab });
 
-		setMinimumSize(600, 400);
+		setMinimumSize(600, 420);
 	}
 	catch(Exception &e)
 	{
