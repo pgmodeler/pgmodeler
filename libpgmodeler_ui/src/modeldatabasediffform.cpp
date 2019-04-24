@@ -445,26 +445,26 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		DatabaseModel *db_model = nullptr;
 
 		conn1=conn;
+		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("import")));
+
+		conn.switchToDatabase(db_cmb->currentText());
+
 		step_lbl->setText(trUtf8("Step %1/%2: Importing database <strong>%3</strong>...")
 											.arg(curr_step)
 											.arg(total_steps)
-											.arg(db_cmb->currentText()));
-
-		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("import")));
+											.arg(conn.getConnectionId(true, true)));
 
 		if(thread_id == SrcImportThread)
 			src_import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 		else
 			import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-		conn.switchToDatabase(db_cmb->currentText());
 		pgsql_ver=conn.getPgSQLVersion(true);
-
 		catalog.setConnection(conn);
 
 		//The import process will exclude built-in array array types, system and extension objects
 		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-						  Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
@@ -485,7 +485,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		import_hlp->setSelectedOIDs(db_model, obj_oids, col_oids);
 		import_hlp->setCurrentDatabase(db_cmb->currentText());
 		import_hlp->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
-										ignore_errors_chk->isChecked(), false, false, false);
+																 ignore_errors_chk->isChecked(), false, false, false);
 		thread->start();
 	}
 	catch(Exception &e)
@@ -504,6 +504,9 @@ void ModelDatabaseDiffForm::diffModels(void)
 					  .arg(source_model->getName())
 					  .arg(imported_model->getName()));
 	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("diff")));
+
+	if(src_import_item)
+		output_trw->collapseItem(src_import_item);
 
 	output_trw->collapseItem(import_item);
 	diff_progress=step_pb->value();
@@ -546,21 +549,23 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
 	{
+		export_conn=new Connection;
+		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
 		settings_tbw->setCurrentIndex(1);
 		apply_on_server_btn->setEnabled(true);
 
-		step_lbl->setText(trUtf8("Step %1/%2: Exporting diff to database <strong>%3</strong>...")
+		step_lbl->setText(trUtf8("Step %1/%2: Exporting diff to database <strong>%3@%4</strong>...")
 											.arg(curr_step)
 											.arg(total_steps)
-											.arg(imported_model->getName()));
+											.arg(imported_model->getName())
+											.arg(export_conn->getConnectionId(true)));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("exportar")));
 
 		output_trw->collapseItem(diff_item);
 		diff_progress=step_pb->value();
 		export_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 
-		export_conn=new Connection;
-		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 		export_helper->setExportToDBMSParams(sqlcode_txt->toPlainText(), export_conn,
 																				 database_cmb->currentText(), ignore_duplic_chk->isChecked());
 		if(ignore_error_codes_chk->isChecked())
@@ -784,7 +789,6 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	int progress_aux = 0;
 
 	msg=PgModelerUiNs::formatMessage(msg);
-
 
 	if(src_import_thread && src_import_thread->isRunning())
 	{
