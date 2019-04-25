@@ -33,5 +33,5 @@
     %if {handler} %then {handler} %end
     %if {validator} %then {validator} %end
 
-    </foreigndatawrapper>
+    </foreigndatawrapper> $br $br
 %end

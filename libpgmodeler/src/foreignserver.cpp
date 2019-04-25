@@ -70,9 +70,10 @@ QString ForeignServer::getCodeDefinition(unsigned def_type)
 
 	if(fdata_wrapper)
 	{
-		attributes[Attributes::Fdw] = def_type == SchemaParser::SqlDefinition ?
-																		fdata_wrapper->getName(true) :
-																		fdata_wrapper->getCodeDefinition(def_type, true);
+		if(def_type == SchemaParser::SqlDefinition)
+			attributes[Attributes::Fdw] = fdata_wrapper->getName(true);
+		else
+			attributes[Attributes::Fdw] = fdata_wrapper->getCodeDefinition(def_type, true);
 	}
 
 	setOptionsAttribute(def_type);

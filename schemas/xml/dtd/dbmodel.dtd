@@ -68,8 +68,8 @@
 %policy;
 <!ENTITY % foreigndatawrapper SYSTEM "foreigndatawrapper.dtd">
 %foreigndatawrapper;
-<!ENTITY % server SYSTEM "server.dtd">
-%server;
+<!ENTITY % foreignserver SYSTEM "foreignserver.dtd">
+%foreignserver;
 
 <!ELEMENT dbmodel ANY>
 

@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[<server name=] "{name}" 
+[<foreignserver name=] "{name}" 
 
 %if {type} %then
     [ type=] "{type}"
@@ -32,4 +32,4 @@
 %if {prepended-sql} %then {prepended-sql} %end
 %if {fdw} %then {fdw} %end
 
-</server>
+</foreignserver>  $br $br

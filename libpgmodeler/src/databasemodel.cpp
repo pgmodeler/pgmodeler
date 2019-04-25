@@ -6825,7 +6825,7 @@ Permission *DatabaseModel::createPermission(void)
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
-	unsigned i, len, priv_type=Permission::PrivSelect;
+	unsigned priv_type=Permission::PrivSelect;
 	bool priv_value, grant_op, revoke, cascade;
 
 	try
@@ -6873,19 +6873,17 @@ Permission *DatabaseModel::createPermission(void)
 			if(xmlparser.getElementName()==Attributes::Roles)
 			{
 				xmlparser.getElementAttributes(attribs);
+				list = attribs[Attributes::Names].split(',');
 
-				list=attribs[Attributes::Names].split(',');
-				len=list.size();
-
-				for(i=0; i < len; i++)
+				for(auto &name : list)
 				{
-					role=dynamic_cast<Role *>(getObject(list[i].trimmed(),ObjectType::Role));
+					role=dynamic_cast<Role *>(getObject(name.trimmed(), ObjectType::Role));
 
 					//Raises an error if the referenced role doesn't exists
 					if(!role)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::PermissionRefInexistObject)
-										.arg(list[i])
+										.arg(name)
 										.arg(BaseObject::getTypeName(ObjectType::Role)),
 										ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
