@@ -60,6 +60,44 @@ attribs_map ForeignObject::getOptions(void)
 	return(options);
 }
 
+QString ForeignObject::getAlterDefinition(BaseObject *object)
+{
+	try
+	{
+		attribs_map attribs;
+		ForeignObject *fobj = dynamic_cast<ForeignObject *>(object);
+		QStringList opts;
+
+		if(!fobj)
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		// Comparing FDW options (to be modified or added)
+		for(auto &opt : fobj->options)
+		{
+			if(this->options.count(opt.first) == 0)
+				opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
+			else if(this->options[opt.first] != opt.second)
+				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
+		}
+
+		// Comparing FDW options (to be removed)
+		for(auto &opt : this->options)
+		{
+			if(fobj->options.count(opt.first) == 0)
+				opts.push_back(QString("DROP %1").arg(opt.first));
+		}
+
+		attribs[Attributes::Options] = opts.join(OptionsSeparator);
+		copyAttributes(attribs);
+
+		return(BaseObject::getAlterDefinition(object));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
 void ForeignObject::setOptionsAttribute(unsigned def_type)
 {
 	QStringList fmt_options;

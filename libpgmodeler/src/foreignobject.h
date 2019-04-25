@@ -48,6 +48,7 @@ class ForeignObject: public BaseObject {
 		attribs_map getOptions(void);
 
 		virtual QString getCodeDefinition(unsigned) = 0;
+		virtual QString getAlterDefinition(BaseObject *object);
 };
 
 #endif

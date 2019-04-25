@@ -109,20 +109,16 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_fo
 
 QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 {
-	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
-
-	if(!fdw)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	try
 	{
+		ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
 		attribs_map attribs;
 		QStringList opts, func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
 		Function *this_funcs[2] = { this->getValidatorFunction(), this->getHandlerFunction() },
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(fdw);
 
 		// Comparing FDW functions
 		for(int i = 0; i < 2; i++)
@@ -130,7 +126,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 			this_func = this_funcs[i];
 			fdw_func = fdw_funcs[i];
 
-			if(!fdw_func)
+			if(!fdw_func && this_func)
 				attribs[func_attribs[i]] = Attributes::Unset;
 			else if(fdw_func &&
 							(!this_func ||
@@ -138,25 +134,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 				attribs[func_attribs[i]] = fdw_func->getName(true);
 		}
 
-		// Comparing FDW options (to be modified or added)
-		for(auto &opt : fdw->options)
-		{
-			if(this->options.count(opt.first) == 0)
-				opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
-			else if(this->options[opt.first] != opt.second)
-				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
-		}
-
-		// Comparing FDW options (to be removed)
-		for(auto &opt : this->options)
-		{
-			if(fdw->options.count(opt.first) == 0)
-				opts.push_back(QString("DROP %1").arg(opt.first));
-		}
-
-		attribs[Attributes::Options] = opts.join(OptionsSeparator);
 		copyAttributes(attribs);
-
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)
