@@ -26,19 +26,23 @@
 #define QUERYBUILDERCOREWIDGET_H
 
 #include "ui_querybuildercorewidget.h"
+#include "querybuilderpathwidget.h"
 #include "pgmodelerns.h"
 #include "modelwidget.h"
 #include "sourcecodewidget.h"
 #include "basetable.h"
 #include <QWidget>
 
-class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
+class QueryBuilderCoreWidget: public QWidget, public Ui::QueryBuilderCoreWidget {
 	private:
 		Q_OBJECT
 
+		QueryBuilderPathWidget * gqb_j;
+
 		QMenu reset_menu;
 
-		QMap<int, BaseObjectView *> ord_query_data, ord_query_rels;
+		//! \brief Reference model widget
+		ModelWidget *model_wgt;
 
 		QVector <BaseTable *> required_vertices, visited_vertices, disconnected_vertices;
 
@@ -64,19 +68,22 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 
 		QString msg;
 
-		//! \brief Reference model widget
-		ModelWidget *model_wgt;
-
 		//! \brief Captures the ENTER press to execute search
 		bool eventFilter(QObject *object, QEvent *event) override;
 
 		void resizeEvent(QResizeEvent *event) override;
+
+		//! \brief A custom algorithm that does topological ordering and connected components
 		void customDepthFirstSearch(BaseTable * current_vertex);
 
+		//! \brief Create a new query builder "data" column
 		void initializeColumn(int col_nb, BaseObject *bObj);
 
-	public:
+		void configureOrderBySpinBoxes(vector<int> ob_cols, int ob_col, int state);
+		void swapOrderBySpins(int col, int new_value);
+		void columnSelectChecked(int col, int state);
 
+	public:
 		//! \brief Constants for the table widget line numbers
 		static constexpr unsigned tW_Selection=0,
 		tW_Schema=1,
@@ -97,18 +104,31 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::GqbCoreWidget {
 
 		QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >  getQueryPath(void);
 
+		void setFriendWidget(QueryBuilderPathWidget *friend_wgt){gqb_j=friend_wgt;}
+
+		void updateRelLabel(void);
+
+
 	public slots:
 		void hide(void);
 		void insertSelection(void);
 		void produceSQL(void);
-		void resetQuery(void);
+		void resetQuery();
+		void gqbPathWidgetToggled(bool change);
 
 	private slots:
+		void selectAllItemsFromQuery(void);
+		void highlightQueryColumn(int col);
 		void rearrangeTabSections(int log, int oldV, int newV);
+		void orderByCountChanged(int ob_col, int state);
 
-signals:
-	void s_visibilityChanged(bool);
-	void s_gqbSqlRequested(QString query_txt);
+	signals:
+		void s_visibilityChanged(bool);
+		void s_gqbSqlRequested(QString query_txt);
+		void s_joinPathToggled(bool);
+		void s_selectItems(QList<BaseObjectView *>);
+
+	friend class QueryBuilderPathWidget;
 };
 
 #endif // QUERYBUILDERCOREWIDGET_H

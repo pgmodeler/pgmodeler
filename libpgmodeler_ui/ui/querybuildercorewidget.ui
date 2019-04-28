@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GqbCoreWidget</class>
- <widget class="QWidget" name="GqbCoreWidget">
+ <class>QueryBuilderCoreWidget</class>
+ <widget class="QWidget" name="QueryBuilderCoreWidget">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -27,7 +27,7 @@
   </property>
   <property name="baseSize">
    <size>
-    <width>450</width>
+    <width>550</width>
     <height>0</height>
    </size>
   </property>
@@ -80,47 +80,6 @@
      </property>
      <property name="checked">
       <bool>false</bool>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QToolButton" name="isolate_btn">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Hide temporarily items that are not part of the current query.</string>
-     </property>
-     <property name="text">
-      <string>Isolate query</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/fade.png</normaloff>:/icones/icones/fade.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
      </property>
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -420,19 +379,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="5" colspan="2">
     <widget class="QLabel" name="rel_cnt_lbl">
      <property name="sizePolicy">
@@ -462,7 +408,64 @@
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
+     <property name="indent">
+      <number>10</number>
+     </property>
     </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QToolButton" name="isolate_btn">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Hide temporarily items that are not part of the current query.</string>
+     </property>
+     <property name="text">
+      <string>Select all</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res/resources.qrc">
+       <normaloff>:/icones/icones/selecionar.png</normaloff>:/icones/icones/selecionar.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

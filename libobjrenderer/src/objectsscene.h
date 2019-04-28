@@ -239,6 +239,9 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Toggles the object range selection
 		void enableRangeSelection(bool value);
 
+		//! \brief Select a given list of items
+		void selectItems(QList<BaseObjectView *> items);
+
 	private slots:
 		/*! \brief Start/stop the timer responsible to move the scene. This method is called with true param
 		whenever the user stay with the cursor at corner in a certain amount of time */

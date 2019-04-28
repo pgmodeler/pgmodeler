@@ -4,11 +4,16 @@
 ui_*.h
 moc_*.cpp
 obj/*
-moc/*
+*/moc/*
 Makefile
 build/*
+.qmake.stash
+*/pgmodeler*
+pgmodeler*
 *.pro.user
 *.directory
 *.run
 .vscode/*
 cquery*
+*test
+*tests

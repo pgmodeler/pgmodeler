@@ -458,7 +458,11 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_remove_rel_points, SIGNAL(triggered(bool)), this, SLOT(removeRelationshipPoints(void)));
 	connect(action_enable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
 	connect(action_disable_sql, SIGNAL(triggered(bool)), this, SLOT(toggleObjectSQL(void)));
-	connect(action_remove, &QAction::triggered, [&](){ removeObjects(false); });
+	//This works around a possible QKeyEvent shortcut-override bug.
+	connect(action_remove, &QAction::triggered, [&](){
+		if(QApplication::focusWidget()->accessibleName()!="manual_path_tw" &&
+			QApplication::focusWidget()->accessibleName()!="gqbc_tw")
+				removeObjects(false);});
 	connect(action_cascade_del, &QAction::triggered, [&](){ removeObjects(true); });
 	connect(action_fade_in, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsIn()));
 	connect(action_fade_out, SIGNAL(triggered(bool)), this, SLOT(fadeObjectsOut()));

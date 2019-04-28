@@ -22,27 +22,34 @@
 QueryBuilderCoreWidget::QueryBuilderCoreWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
+	tab_wgt->setAccessibleName("gqbc_tw"); //solves 'del' shortcut override in mainwindow
+
+	connect(insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertSelection(void)));
+	connect(show_sql_btn, SIGNAL(clicked(bool)), this, SLOT(produceSQL(void)));
 
 	reset_menu.addAction(trUtf8("All"), this, SLOT(resetQuery()));
-	reset_menu.addAction(trUtf8("Data : selected"), this, SLOT(resetQuery()));
-	reset_menu.addAction(trUtf8("Data : all"), this, SLOT(resetQuery()));
+	reset_menu.addAction(trUtf8("Data"), this, SLOT(resetQuery()));
 	reset_menu.addAction(trUtf8("Join path"), this, SLOT(resetQuery()));
 	reset_btn->setMenu(&reset_menu);
 
-	connect(insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertSelection(void)));
-	connect(this->tab_wgt->horizontalHeader(), SIGNAL(sectionMoved(int , int , int )), this, SLOT(rearrangeTabSections(int, int , int )));
+	connect(isolate_btn, SIGNAL(clicked(void)), this, SLOT(selectAllItemsFromQuery()));
+	connect(path_btn, &QToolButton::clicked, [&](){emit s_joinPathToggled(path_btn->isChecked());});
 	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-	connect(show_sql_btn, SIGNAL(clicked(bool)), this, SLOT(produceSQL(void)));
+	connect(this->tab_wgt->horizontalHeader(), SIGNAL(sectionMoved(int , int , int )),
+			this, SLOT(rearrangeTabSections(int, int , int )));
 
 	this->setModel(nullptr);
 	this->installEventFilter(this);
 
 	this->tab_wgt->horizontalHeader()->setSectionsMovable(true);
 	this->tab_wgt->verticalHeader()->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectColumns);
+	this->tab_wgt->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+	connect(tab_wgt, &QTableWidget::itemDoubleClicked, [&](QTableWidgetItem *item){
+		if(!(item->flags() & Qt::ItemIsEditable))
+			highlightQueryColumn(item->column());});
 
 	rel_cnt_lbl->setVisible(false);
-
-	tab_wgt->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 bool QueryBuilderCoreWidget::eventFilter(QObject *object, QEvent *event)
@@ -53,11 +60,40 @@ bool QueryBuilderCoreWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::KeyPress &&
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
-		show_sql_btn->click();
+		produceSQL();
 		return(true);
 	}
 
-		return(QWidget::eventFilter(object, event));
+	//Delete query items with del key
+	if(k_event!=nullptr && k_event->key()==Qt::Key_Delete)
+	{
+		QMap<int, int> ord_sel_cols;
+		for(auto sel_item:tab_wgt->selectedItems())
+			ord_sel_cols.insert(tab_wgt->column(sel_item), tab_wgt->column(sel_item));
+		QMapIterator<int, int> ord_sel_cols_itr(ord_sel_cols);
+		ord_sel_cols_itr.toBack();
+		while (ord_sel_cols_itr.hasPrevious())
+		{
+			ord_sel_cols_itr.previous();
+
+			bool order_spin_vis=false;
+			int order_spin_value;
+			if( (order_spin_vis=qobject_cast<QSpinBox *>(
+						tab_wgt->cellWidget(tW_Order,ord_sel_cols_itr.value())->children()[2])->isVisible()) )
+			{
+				order_spin_value = qobject_cast<QSpinBox *>(
+						tab_wgt->cellWidget(tW_Order,ord_sel_cols_itr.value())->children()[2])->value();
+			}
+
+			tab_wgt->removeColumn(ord_sel_cols_itr.value());
+
+			if(order_spin_vis)
+				orderByCountChanged(order_spin_value,-1);
+		}
+		return true;
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void QueryBuilderCoreWidget::hide(void)
@@ -88,45 +124,43 @@ void QueryBuilderCoreWidget::resizeEvent(QResizeEvent *event)
 void QueryBuilderCoreWidget::setModel(ModelWidget *model_wgt)
 {
 	bool enable=model_wgt!=nullptr;
+
+	if(this->model_wgt!=nullptr && enable)
+		this->resetQuery();
+
 	this->model_wgt=model_wgt;
-	this->resetQuery();
+
 	insert_btn->setEnabled(enable);
 	show_sql_btn->setEnabled(enable);
 	tab_wgt->setEnabled(enable);
 }
 
-void QueryBuilderCoreWidget::resetQuery(void)
+void QueryBuilderCoreWidget::resetQuery()
 {
-	if(!reset_menu.actions().contains(qobject_cast<QAction *>(sender())))
-		return;
-
-	if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(0))
+	if(!reset_menu.actions().contains(qobject_cast<QAction *>(sender())) ||
+			qobject_cast<QAction *>(sender()) == reset_menu.actions().at(0))
 	{
 		tab_wgt->setColumnCount(0);
-		ord_query_rels.clear();
+		gqb_j->clearManualPath();
 		rel_cnt_lbl->setVisible(false);
 	}
 	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(1))
 	{
-		for(auto sel_item:tab_wgt->selectedItems())
-			tab_wgt->removeColumn(tab_wgt->column(sel_item));
+		tab_wgt->setColumnCount(0);
 	}
 	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(2))
 	{
-		tab_wgt->setColumnCount(0);
-	}
-	else if(qobject_cast<QAction *>(sender()) == reset_menu.actions().at(3))
-	{
-		ord_query_rels.clear();
+		gqb_j->clearManualPath();
 		rel_cnt_lbl->setVisible(false);
 	}
-	if(tab_wgt->columnCount()==0 && ord_query_rels.empty())
+	if(tab_wgt->columnCount()==0 && gqb_j->manualPathSize()==0)
 		reset_btn->setEnabled(false);
-
 }
 
 void QueryBuilderCoreWidget::insertSelection(void)
 {
+	QMap<int, BaseObjectView *> ord_query_data, ord_query_rels;
+
 	if(!model_wgt)
 		return;
 
@@ -169,19 +203,9 @@ void QueryBuilderCoreWidget::insertSelection(void)
 	tab_wgt->setSortingEnabled(false);
 	this->tab_wgt->resizeColumnsToContents();
 
-	//Update the relation count indicator
-	int cnt=ord_query_rels.size();
-	if(cnt==0)
-		rel_cnt_lbl->setVisible(false);
-	else
-	{
-		rel_cnt_lbl->setVisible(true);
-		if(cnt==1)
-			rel_cnt_lbl->setText(trUtf8("<strong>%1</strong> rel").arg(cnt));
-		else
-			rel_cnt_lbl->setText(trUtf8("<strong>%1</strong> rels").arg(ord_query_rels.size()));
-
-	}
+	//Update the relation part: send the data to the secondary widget, change label
+	gqb_j->insertManualRels(ord_query_rels);
+	updateRelLabel();
 
 	//Enable the reset button if there is something
 	this->reset_btn->setEnabled(!ord_query_data.empty() || !ord_query_rels.empty());
@@ -232,7 +256,7 @@ void QueryBuilderCoreWidget::produceSQL(void)
 				if (join_in_where)
 				{
 					if(path_itr->first!=nullptr)
-						from_cl+=", " + path_itr->first->getSchema()->getName() + "." + path_itr->first->getName();
+						from_cl+=",\n\t\t" + path_itr->first->getSchema()->getName() + "." + path_itr->first->getName();
 
 					for(col_itr=path_itr->second.begin(); col_itr!=path_itr->second.end(); col_itr++)
 					{
@@ -252,7 +276,7 @@ void QueryBuilderCoreWidget::produceSQL(void)
 
 					for(col_itr=path_itr->second.begin(); col_itr!=path_itr->second.end(); col_itr++)
 					{
-						from_cl+=(col_itr==path_itr->second.begin() ? "\t\tON " : "\t\tAND ");
+						from_cl+=(col_itr==path_itr->second.begin() ? "\t\tON " : "\n\t\tAND ");
 
 						if(col_itr->first->getName()!=col_itr->second->getName())
 							from_cl+=col_itr->first->getName() + "=" + col_itr->second->getName();
@@ -275,11 +299,14 @@ void QueryBuilderCoreWidget::produceSQL(void)
 
 			for(int k=0;k<disconnected_vertices.size();k++)
 			{
-				from_cl+=disconnected_vertices[k]->getName() + (k==disconnected_vertices.size()-1 ? "\n": ", ");
+				if(k==0 && !path.empty())
+					from_cl+="\t\t";
+				from_cl+=disconnected_vertices[k]->getName() + (k==disconnected_vertices.size()-1 ? "\n": ",\n\t\t");
 			}
 		}
 	}
 
+	map<int,int> group_by_cols,order_by_cols;
 	for (int i=0; i<tab_wgt->columnCount();i++)
 	{
 		//'SELECT' clause
@@ -292,26 +319,35 @@ void QueryBuilderCoreWidget::produceSQL(void)
 		if (tab_wgt->item(tW_Where,i) && tab_wgt->item(tW_Where,i)->text()!="")
 				where_cl+= (where_cl=="WHERE "? "" : "\n\t\tAND ") + tab_wgt->item(tW_Column,i)->text() +
 							   tab_wgt->item(tW_Where,i)->text();
+
 		//'GROUP BY' clause
-		if(qobject_cast<QCheckBox *>(tab_wgt->cellWidget(6,i)->children().last())->checkState()==Qt::Checked)
-				group_cl+= (group_cl=="GROUP BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,i)->text();
+		if(qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,i)->children()[1])->checkState()==Qt::Checked)
+			group_cl+= (group_cl=="GROUP BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,i)->text();
+
 		//'HAVING' clause
-		if (tab_wgt->item(7,i) && tab_wgt->item(7,i)->text()!="")
+		if (tab_wgt->item(7,i) && tab_wgt->item(tW_Having,i)->text()!="")
 				having_cl+= (having_cl=="HAVING "? "" : " AND\n\t\t") + tab_wgt->item(tW_Column,i)->text() +
 							   tab_wgt->item(7,i)->text();
+
 		//'ORDER BY' clause
-		switch(qobject_cast<QComboBox *>(tab_wgt->cellWidget(8,i)->children().last())->currentIndex())
-		{
-			case 1:
-				order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,i)->text() + " ASC";
-				break;
-			case 2:
-				order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,i)->text() + " DESC";
-				break;
-			default:
-				break;
-		}
+		if(qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,i)->children()[1])->currentIndex()>0)
+			order_by_cols.insert(make_pair(
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,i)->children()[2])->value(), i));
 	}
+
+	for(const auto &order : order_by_cols)
+	switch(qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,order.second)->children()[1])->currentIndex())
+	{
+		case 1:
+			order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,order.second)->text() + " ASC";
+			break;
+		case 2:
+			order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,order.second)->text() + " DESC";
+			break;
+		default:
+			break;
+	}
+
 
 	//Clean the dust in the optional clauses
 	where_cl=="WHERE "      ? where_cl=nullptr  : where_cl+="\n";
@@ -357,8 +393,9 @@ QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >
 	dfs_result.clear();
 
 	//Set root vertex at first table in the gqb widget :
-	//For now the DFS is done from only one root.
-	BaseTable * root_vertex = reinterpret_cast<BaseTable *>(tab_wgt->item(tW_Table,0)->data(Qt::UserRole).value<void *>());
+	//For now the DFS is done from only one root and does not support forests.
+	BaseTable * root_vertex = reinterpret_cast<BaseTable *>(
+				tab_wgt->item(tW_Table,0)->data(Qt::UserRole).value<void *>());
 
 	//Populate the list of required (selected - graphically not in tablewidget) vertices (tables)
 	bool already_in;
@@ -375,28 +412,28 @@ QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >
 		}
 		if(!already_in)
 		{
-			required_vertices.push_back(reinterpret_cast<BaseTable *>(tab_wgt->item(tW_Table,i)->data(Qt::UserRole).value<void *>()));
+			required_vertices.push_back(reinterpret_cast<BaseTable *>(
+											tab_wgt->item(tW_Table,i)->data(Qt::UserRole).value<void *>()));
 		}
 	}
 
 	// Populate the relation container used for DFS : a vector of pairs (visited flag + rel)
-	for(const auto &rel_itr:ord_query_rels)
+	bool non_supported_rels=false;
+	QMap<int, BaseRelationship *> rel_map = gqb_j->getRelPath();
+	for(const auto &base_rel:rel_map)
 	{
-		auto * base_rel = dynamic_cast<BaseRelationship *>(rel_itr->getSourceObject());
 		if( base_rel->getRelTypeAttribute()==Attributes::RelationshipFk ||
 			base_rel->getRelTypeAttribute()==Attributes::Relationship11 ||
 			base_rel->getRelTypeAttribute()==Attributes::Relationship1n )
 		{
-				dfs_rels.append(qMakePair(false,
-									 dynamic_cast<BaseRelationship *>(rel_itr->getSourceObject())));
+				dfs_rels.append(qMakePair(false,base_rel));
 		}
-
 		else
-		{
-			msg+="Relationships with <strong>types</strong> other than fk, 1-to-1 and 1-to-many are "
-				 "<strong>discarded</strong> for now!<br/><br/>";
-		}
+			non_supported_rels=true;
 	}
+	if (non_supported_rels)
+		msg+="Relationships with <strong>types</strong> other than fk, 1-to-1 and 1-to-many are "
+			 "<strong>discarded</strong> for now!<br/><br/>";
 
 	customDepthFirstSearch(root_vertex);
 
@@ -424,7 +461,7 @@ QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >
 		switch(dfs_res_itr->first)
 		{
 			case DFS_flowRel:
-			join_tb= dfs_res_itr->second->getTable(BaseRelationship::DstTable);
+				join_tb= dfs_res_itr->second->getTable(BaseRelationship::DstTable);
 				break;
 			case DFS_reverseRel:
 				join_tb= dfs_res_itr->second->getTable(BaseRelationship::SrcTable);
@@ -490,37 +527,60 @@ void QueryBuilderCoreWidget::initializeColumn(int col_nb, BaseObject *bObj)
 
 	//Initialize select checkbox
 	auto * w1 = new QWidget;
-	auto *chb_wgt1=new QCheckBox;
+	auto *w1_cb=new QCheckBox;
 	auto * l1 = new QHBoxLayout(w1);
-	l1->addWidget(chb_wgt1);
+	l1->addWidget(w1_cb);
 	l1->setAlignment(Qt::AlignCenter);
 	l1->setContentsMargins(0,0,0,0);
-	chb_wgt1->setToolTip("Include this column in the select clause");
+	w1_cb->setToolTip("Include this column in the select clause");
 	tab_wgt->setCellWidget(0,col_nb,w1);
 	qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Selection,col_nb)->
 							  children().last())->setCheckState(Qt::Checked);
 
-	//Initialize group-by checkbox
+	//Initialize group-by
 	auto *w2 = new QWidget;
-	auto *chb_wgt2 =new QCheckBox;
+	auto *w2_cb =new QCheckBox;
 	auto *l2 = new QHBoxLayout(w2);
-	l2->addWidget(chb_wgt2);
+	l2->addWidget(w2_cb);
 	l2->setAlignment(Qt::AlignCenter);
 	l2->setContentsMargins(0,0,0,0);
-	chb_wgt2->setToolTip("Include this column in the group clause");
+	w2_cb->setToolTip("Include this column in the group-by clause");
+	w2_cb->setCheckState(Qt::Unchecked);
 	tab_wgt->setCellWidget(tW_Group,col_nb,w2);
-	qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col_nb)->children().last())->setCheckState(Qt::Unchecked);
 
-	//Initialize order-by combobox
+	//Initialize order-by : combobox and spinbox
 	auto *w3 = new QWidget;
-	auto *cb_wgt3=new QComboBox;
-	cb_wgt3->insertItem(0,"");
-	cb_wgt3->insertItem(1,"ASC");
-	cb_wgt3->insertItem(2,"DESC");
+	auto *w3_cb=new QComboBox;
+	auto *w3_sb =new QSpinBox;
+	w3->setObjectName("ob_wgt"); //prevents color propagation to children in columnSelectChecked
+	w3_sb->setMinimum(1);
+	w3_cb->insertItem(0,"");
+	w3_cb->insertItem(1,"ASC");
+	w3_cb->insertItem(2,"DESC");
 	auto *l3 = new QHBoxLayout(w3);
-	l3->addWidget(cb_wgt3);
+	l3->addWidget(w3_cb);
+	l3->addWidget(w3_sb);
 	l3->setContentsMargins(0,0,0,0);
+	w3_cb->setToolTip("Include this column in the order-by clause");
+	w3_sb->hide();
 	tab_wgt->setCellWidget(tW_Order,col_nb,w3);
+
+	connect(w3_cb, QOverload<int>::of(&QComboBox::currentIndexChanged),[ &, w3](int index){
+		int wgt_col;
+		for (int col=0;col<tab_wgt->columnCount();col++)
+			if(tab_wgt->cellWidget(tW_Order,col)==w3)
+				wgt_col=col;
+		orderByCountChanged(wgt_col, index);
+		tab_wgt->resizeColumnsToContents();
+	});
+
+	connect(w3_sb, QOverload<int>::of(&QSpinBox::valueChanged), [&, w3](int new_value){
+		int wgt_col;
+		for (int col=0;col<tab_wgt->columnCount();col++)
+			if(tab_wgt->cellWidget(tW_Order,col)==w3)
+				wgt_col=col;
+		swapOrderBySpins(wgt_col, new_value);
+	});
 
 	//Two cases : the item selected is a table/view or a column
 	if(bObj->getObjectType()==ObjectType::Table ||
@@ -548,18 +608,34 @@ void QueryBuilderCoreWidget::initializeColumn(int col_nb, BaseObject *bObj)
 		tab_wgt->setItem(tW_Where, col_nb, tab_item);
 		auto currentFlags = tab_wgt->item(tW_Where,col_nb)->flags();
 		tab_wgt->item(tW_Where,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+		tab_wgt->item(tW_Where,col_nb)->setBackgroundColor(Qt::lightGray);
 
 		tab_item=new QTableWidgetItem;
 		tab_wgt->setItem(tW_Having, col_nb, tab_item);
 		currentFlags = tab_wgt->item(tW_Having,col_nb)->flags();
 		tab_wgt->item(tW_Having,col_nb)->setFlags(currentFlags & (~Qt::ItemIsEditable));
+		tab_wgt->item(tW_Having,col_nb)->setBackgroundColor(QColor(195,195,195));
 
 		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Group,col_nb))->setEnabled(false);
 		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Order,col_nb))->setEnabled(false);
+
+		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Group,col_nb)->children()[1])->hide();
+		tab_wgt->cellWidget(tW_Group,col_nb)->setStyleSheet("background-color:rgb(195,195,195);");
+		qobject_cast<QWidget *>(tab_wgt->cellWidget(tW_Order,col_nb)->children()[1])->hide();
+		tab_wgt->cellWidget(tW_Order,col_nb)->setStyleSheet("background-color:rgb(195,195,195);");
 	}
 
 	else if(bObj->getObjectType()==ObjectType::Column)
 	{
+		//A column not selected cannot be grouped nor odered.
+		connect(w1_cb, &QCheckBox::stateChanged, [&, w1, w1_cb](int state){
+			int wgt_col;
+			for (int col=0;col<tab_wgt->columnCount();col++)
+				if(tab_wgt->cellWidget(tW_Selection,col)==w1)
+					wgt_col=col;
+			columnSelectChecked(wgt_col, state);
+		});
+
 		//Initialize schema
 		tab_item=new QTableWidgetItem;
 		tab_item->setText(dynamic_cast<TableObject *>(bObj)->getParentTable()->getSchema()->getName());
@@ -588,6 +664,11 @@ void QueryBuilderCoreWidget::initializeColumn(int col_nb, BaseObject *bObj)
 		tab_wgt->setItem(tW_Having, col_nb, tab_item);
 
 	}
+
+	//Paint the schema, table and column cells in a specific color
+	tab_wgt->item(tW_Schema,col_nb)->setBackgroundColor(QColor(225,255,255));
+	tab_wgt->item(tW_Table,col_nb)->setBackgroundColor(QColor(225,255,255));
+	tab_wgt->item(tW_Column,col_nb)->setBackgroundColor(QColor(225,255,255));
 
 	//Disable editing on schema/table/column
 	auto currentFlags = tab_wgt->item(tW_Schema,col_nb)->flags();
@@ -631,14 +712,243 @@ void QueryBuilderCoreWidget::rearrangeTabSections(int log, int oldV, int newV)
 		//The column has been initialized : now copy data from old to new.
 		for(auto rowN:{tW_Alias, tW_Where, tW_Having})
 			tab_wgt->item(rowN, oldV<newV?newV+1:newV)->setText(tab_wgt->item(rowN,oldV<newV?oldV:oldV+1)->text());
-		for(auto rowN:{tW_Selection, tW_Group})
-			qobject_cast<QCheckBox *>(tab_wgt->cellWidget(rowN,oldV<newV?newV+1:newV)->children().last())->setCheckState(
-						qobject_cast<QCheckBox *>(tab_wgt->cellWidget(rowN,oldV<newV?oldV:oldV+1)->children().last())->checkState());
-		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children().last())->setCurrentIndex(
-				qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children().last())->currentIndex());
 
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Selection,oldV<newV?newV+1:newV)->children().last())->setCheckState(
+			qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Selection,oldV<newV?oldV:oldV+1)->children().last())->checkState());
+
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,oldV<newV?newV+1:newV)->children()[1])->blockSignals(true);
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,oldV<newV?newV+1:newV)->children()[1])->setCheckState(
+			qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,oldV<newV?oldV:oldV+1)->children()[1])->checkState());
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,oldV<newV?newV+1:newV)->children()[1])->blockSignals(false);
+
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[1])->blockSignals(true);
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[1])->setCurrentIndex(
+				qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children()[1])->currentIndex());
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[1])->blockSignals(false);
+
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[2])->blockSignals(true);
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[2])->setValue(
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children()[2])->value());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[2])->setVisible(
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children()[2])->isVisible());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[2])->setMaximum(
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children()[2])->maximum());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,oldV<newV?newV+1:newV)->children()[2])->blockSignals(false);
 	}
 
+	for(auto child:tab_wgt->cellWidget(tW_Order,oldV<newV?oldV:oldV+1)->children())
+		child->blockSignals(true);
 	this->tab_wgt->removeColumn(oldV<newV?oldV:oldV+1);
+
 	this->tab_wgt->resizeColumnsToContents();
+}
+
+void QueryBuilderCoreWidget::gqbPathWidgetToggled(bool change)
+{
+	if(path_btn->isChecked()!=change)
+		path_btn->setChecked(change);
+}
+
+void QueryBuilderCoreWidget::updateRelLabel(void)
+{
+	int cnt=gqb_j->manualPathSize();
+	if(cnt==0)
+		rel_cnt_lbl->setVisible(false);
+	else
+	{
+		rel_cnt_lbl->setVisible(true);
+
+		if(cnt==1)
+			rel_cnt_lbl->setText(trUtf8("<strong>%1</strong> rel").arg(cnt));
+		else
+			rel_cnt_lbl->setText(trUtf8("<strong>%1</strong> rels").arg(cnt));
+	}
+}
+
+void QueryBuilderCoreWidget::selectAllItemsFromQuery(void)
+{
+	QList<BaseObjectView *> query_elements;
+
+	//redundant with ObjScene selectItems, need it for subitem checkRegroupCols
+	model_wgt->scene->clearSelection();
+
+	for(int col=0; col<tab_wgt->columnCount();col++)
+	{
+		if(tab_wgt->item(tW_Column, col)->text()=="*")
+			query_elements.append(
+				dynamic_cast<BaseObjectView *>(
+					reinterpret_cast<BaseGraphicObject *>(tab_wgt->item(tW_Table,col)->data(Qt::UserRole).value<void *>())
+					->getReceiverObject()));
+		else
+		{
+			//Get the BaseObjectView of the query column.
+			auto parent_table = dynamic_cast<BaseTableView *>(reinterpret_cast<BaseGraphicObject *>(
+				tab_wgt->item(tW_Table,col)->data(Qt::UserRole).value<void *>())->getReceiverObject());
+			if(!parent_table->isUngrouped())
+				parent_table->ungroupCols();
+			for(const auto &subitem:parent_table->getUngroupedColumns())
+			{
+				if(tab_wgt->item(tW_Column, col)->text()==
+						dynamic_cast<BaseObject *>(subitem->getSourceObject())->getName())
+					query_elements.append(
+								dynamic_cast<BaseObjectView *>(subitem));
+			}
+		}
+	}
+
+	for(const auto &rel:gqb_j->getRelPath())
+		query_elements.append(dynamic_cast<BaseObjectView *>(rel->getReceiverObject()));
+
+	emit s_selectItems(query_elements);
+}
+
+void QueryBuilderCoreWidget::highlightQueryColumn(int col)
+{
+	QList<BaseObjectView *> obj;
+
+	//redundant with ObjScene selectItems, need it for subitem checkRegroupCols
+	model_wgt->scene->clearSelection();
+
+	if(tab_wgt->item(tW_Column, col)->text()=="*")
+		obj.push_back(dynamic_cast<BaseObjectView *>(
+			reinterpret_cast<BaseGraphicObject *>(tab_wgt->item(tW_Table,col)->data(Qt::UserRole).value<void *>())
+			->getReceiverObject()));
+	else
+	{
+		//Get the BaseObjectView of the query column.
+		auto parent_table = dynamic_cast<BaseTableView *>(reinterpret_cast<BaseGraphicObject *>(
+			tab_wgt->item(tW_Table,col)->data(Qt::UserRole).value<void *>())->getReceiverObject());
+		if(!parent_table->isUngrouped())
+			parent_table->ungroupCols();
+		for(const auto &subitem:parent_table->getUngroupedColumns())
+		{
+			if(tab_wgt->item(tW_Column, col)->text()==
+					dynamic_cast<BaseObject *>(subitem->getSourceObject())->getName())
+				obj.push_back(dynamic_cast<BaseObjectView *>(subitem));
+		}
+	}
+	model_wgt->viewport->centerOn(obj.front());
+	emit s_selectItems(obj);
+}
+
+
+//Set visibility of order-by spinboxes, and if needed,
+//call to configure/reconfigure spinboxes further
+void QueryBuilderCoreWidget::orderByCountChanged(int ob_col, int state)
+{
+	vector<int> ob_cols;
+	for(int col=0; col<tab_wgt->columnCount(); col++)
+		if(tW_Order==tW_Group ?
+				qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->isChecked() :
+				qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->currentIndex()!=0)
+			ob_cols.push_back(col);
+
+
+	if(state>0 &&ob_cols.size()>1)
+			for(const auto &col:ob_cols)
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->setVisible(true);
+	else if(state==0)
+	{
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->setVisible(false);
+		if(ob_cols.size()==1)
+			qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_cols.front())->children()[2])->setVisible(false);
+	}
+	else if(state<0 and ob_cols.size()==1)
+		qobject_cast<QSpinBox *>(
+			tab_wgt->cellWidget(tW_Order,ob_cols.front())->children()[2])->setVisible(false);
+
+	if(!ob_cols.empty())
+		configureOrderBySpinBoxes(ob_cols, ob_col, state);
+}
+
+void QueryBuilderCoreWidget::configureOrderBySpinBoxes(vector<int> ob_cols, int ob_col, int state)
+{
+	if(state>0)
+	{
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->blockSignals(true);
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->setMaximum(ob_cols.size());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->setValue(ob_cols.size());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->blockSignals(false);
+	}
+	else
+	{
+		//map - key : value of the spinbox, value : number of the column
+		map<int, int> spin_values;
+		for(const auto &col:ob_cols)
+			spin_values.insert(std::pair<int, int>(
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->value(), col));
+
+		int deleted_value = state<0 ? ob_col :
+				qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,ob_col)->children()[2])->value();
+
+		for(auto itr=spin_values.upper_bound(deleted_value); itr!=spin_values.end()--;++itr)
+		{
+			qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,itr->second)->children()[2])->blockSignals(true);
+			qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,itr->second)->children()[2])
+					->setValue(itr->first-1);
+			qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,itr->second)->children()[2])->blockSignals(false);
+		}
+	}
+
+	for(const auto &col:ob_cols)
+	{
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->blockSignals(true);
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->setMaximum(ob_cols.size());
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->blockSignals(false);
+	}
+}
+
+void QueryBuilderCoreWidget::swapOrderBySpins(int ob_col, int new_value)
+{
+	vector<int> ob_cols;
+	for(int col=0; col<tab_wgt->columnCount(); col++)
+		if(col!=ob_col &&
+					qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->currentIndex()!=0)
+				ob_cols.push_back(col);
+
+	map<int, int> spin_values;
+	for(const auto &col:ob_cols)
+	{
+		spin_values.insert(std::pair<int, int>(
+			qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[2])->value(), col));
+	}
+
+	int spin_value_to_swap=1;
+	for(auto & spin_value : spin_values)
+	{
+		if(spin_value.first!=spin_value_to_swap)
+			continue;
+		spin_value_to_swap+=1;
+	}
+	int col_to_swap=spin_values.find(new_value)->second;
+
+	qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col_to_swap)->children()[2])->blockSignals(true);
+	qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col_to_swap)->children()[2])->setValue(spin_value_to_swap);
+	qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Order,col_to_swap)->children()[2])->blockSignals(false);
+}
+
+void QueryBuilderCoreWidget::columnSelectChecked(int col, int state)
+{
+	if(state==Qt::Checked)
+	{
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col)->children()[1])->setVisible(true);
+		tab_wgt->cellWidget(tW_Group,col)->setStyleSheet("background-color:rgb(255,255,255);");
+		tab_wgt->item(tW_Having,col)->setFlags(tab_wgt->item(tW_Having,col)->flags() | Qt::ItemIsEditable);
+		tab_wgt->item(tW_Having,col)->setBackgroundColor(Qt::white);
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->setVisible(true);
+		tab_wgt->cellWidget(tW_Order,col)->setStyleSheet("QWidget#ob_wgt { background-color:rgb(255,255,255) }");
+	}
+	else if (state==Qt::Unchecked)
+	{
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col)->children()[1])->setChecked(Qt::Unchecked);
+		qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,col)->children()[1])->setVisible(false);
+		qobject_cast<QSpinBox *>(tab_wgt->cellWidget(tW_Group,col)->children()[2])->setVisible(false);
+		tab_wgt->cellWidget(tW_Group,col)->setStyleSheet("background-color:rgb(195,195,195);");
+
+		tab_wgt->item(tW_Having,col)->setFlags(tab_wgt->item(tW_Having,col)->flags() & ~Qt::ItemIsEditable);
+		tab_wgt->item(tW_Having,col)->setBackgroundColor(QColor(195,195,195));
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->setCurrentIndex(0);
+		qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,col)->children()[1])->setVisible(false);
+		tab_wgt->cellWidget(tW_Order,col)->setStyleSheet("QWidget#ob_wgt { background-color:rgb(195,195,195) }");
+	}
 }

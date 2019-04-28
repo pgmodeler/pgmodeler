@@ -40,6 +40,7 @@
 #include "modelvalidationwidget.h"
 #include "objectfinderwidget.h"
 #include "querybuildercorewidget.h"
+#include "querybuilderpathwidget.h"
 #include "modelexportform.h"
 #include "databaseimportform.h"
 #include "modeldatabasediffform.h"
@@ -118,6 +119,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Graphical query builder (GQB) dock widget
 		QueryBuilderCoreWidget *gqb_core_wgt;
+
+		//! \brief Query builder path widget
+		QueryBuilderPathWidget * gqb_path_wgt;
 
 		//! \brief Update notifier popup widget
 		UpdateNotifierWidget *update_notifier_wgt;
@@ -303,6 +307,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void arrangeObjects(void);
 		void toggleCompactView(void);
 		void toggleLayersWidget(bool show);
+		void toggleGqbPathBtn(bool show);
 };
 
 #endif

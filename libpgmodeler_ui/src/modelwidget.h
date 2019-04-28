@@ -513,7 +513,6 @@ class ModelWidget: public QWidget {
 		void s_objectRemoved(void);
 		void s_zoomModified(double);
 		void s_modelResized(void);
-		//void s_gqbSqlRequested(QString &query_txt);
 
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated(void);
@@ -537,6 +536,8 @@ class ModelWidget: public QWidget {
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
 		friend class LayersWidget;
+		friend class QueryBuilderCoreWidget;
+		friend class QueryBuilderPathWidget;
 };
 
 #endif

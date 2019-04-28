@@ -166,6 +166,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		model_valid_wgt=new ModelValidationWidget;
 		obj_finder_wgt=new ObjectFinderWidget;
 		gqb_core_wgt=new QueryBuilderCoreWidget;
+		gqb_path_wgt=new QueryBuilderPathWidget;
 	}
 	catch(Exception &e)
 	{
@@ -262,6 +263,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	obj_finder_parent->setVisible(false);
 	model_valid_parent->setVisible(false);
 	gqbc_parent->setVisible(false);
+	gqbj_parent->setVisible(false);
 	bg_saving_wgt->setVisible(false);
 	about_wgt->setVisible(false);
 	donate_wgt->setVisible(false);
@@ -279,6 +281,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	vlayout->setContentsMargins(0,0,0,0);
 	vlayout->addWidget(oper_list_wgt);
 	oper_list_parent->setLayout(vlayout);
+
+	vlayout=new QVBoxLayout;
+	vlayout->setContentsMargins(0,0,0,0);
+	vlayout->addWidget(gqb_path_wgt);
+	gqbj_parent->setLayout(vlayout);
 
 	QHBoxLayout * hlayout=new QHBoxLayout;
 	hlayout->setContentsMargins(0,0,0,0);
@@ -307,6 +314,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), operations_btn, SLOT(setChecked(bool)));
 	connect(oper_list_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showRightWidgetsBar()));
 
+	connect(gqbj_btn, SIGNAL(toggled(bool)), gqbj_parent, SLOT(setVisible(bool)));
+	connect(gqbj_btn, SIGNAL(toggled(bool)), gqb_path_wgt, SLOT(setVisible(bool)));
+	connect(gqbj_btn, SIGNAL(toggled(bool)), this, SLOT(showRightWidgetsBar(void)));
+	connect(gqb_path_wgt, SIGNAL(s_visibilityChanged(bool)), gqbj_btn, SLOT(setChecked(bool)));
+	connect(gqb_path_wgt, SIGNAL(s_visibilityChanged(bool)), this, SLOT(showRightWidgetsBar()));
+
 	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_parent, SLOT(setVisible(bool)));
 	connect(validation_btn, SIGNAL(toggled(bool)), model_valid_wgt, SLOT(setVisible(bool)));
 	connect(validation_btn, SIGNAL(toggled(bool)), this, SLOT(showBottomWidgetsBar(void)));
@@ -333,7 +346,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), model_objs_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), obj_finder_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), gqb_core_wgt, SLOT(setDisabled(bool)));
-	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), models_tbw, SLOT(setDisabled(bool)));
+	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), gqb_path_wgt, SLOT(setDisabled(bool)));
 	connect(model_valid_wgt, SIGNAL(s_validationInProgress(bool)), this, SLOT(stopTimers(bool)));
 
 	connect(model_valid_wgt, &ModelValidationWidget::s_validationCanceled, [&](){ pending_op=NoPendingOp; });
@@ -345,6 +358,18 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(layers_wgt, SIGNAL(s_visibilityChanged(bool)), layers_btn, SLOT(setChecked(bool)));
 
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), this, SLOT(saveTemporaryModels()));
+
+	/*
+	 * There _seems_ to not exist bidirectional binding, even with the Qt property system
+	 * https://bugreports.qt.io/browse/QTBUG-19892
+	 * These three signals synchronize the visibility states between widgets of the query-builder "module".
+	 */
+	//Could probably use a lambda slot on this first one, not enough skill here.
+	connect(gqb_core_wgt, SIGNAL(s_joinPathToggled(bool)), this, SLOT(toggleGqbPathBtn(bool)));
+	connect(gqb_path_wgt, SIGNAL(s_visibilityChanged(bool)), gqb_core_wgt, SLOT(gqbPathWidgetToggled(bool)));
+
+	gqb_core_wgt->setFriendWidget(gqb_path_wgt);
+	gqb_path_wgt->setFriendWidget(gqb_core_wgt);
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
 
@@ -529,7 +554,7 @@ void MainWindow::restoreTemporaryModels(void)
 
 void MainWindow::showRightWidgetsBar(void)
 {
-	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
+	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked() || gqbj_btn->isChecked());
 }
 
 void MainWindow::showBottomWidgetsBar(void)
@@ -1154,10 +1179,13 @@ void MainWindow::setCurrentModel(void)
 	model_valid_wgt->setModel(current_model);
 	obj_finder_wgt->setModel(current_model);
 	gqb_core_wgt->setModel(current_model);
+	gqb_path_wgt->setModel(current_model);
 
 	if(current_model)
 	{
-		connect(gqb_core_wgt, SIGNAL(s_gqbSqlRequested(QString)), gqb_core_wgt->getModel(), SLOT(showGqbSql(QString)));
+		connect(gqb_core_wgt, SIGNAL(s_gqbSqlRequested(QString)), current_model, SLOT(showGqbSql(QString)));
+		connect(gqb_core_wgt, SIGNAL(s_selectItems(QList<BaseObjectView *>)),
+				current_model->getScene(), SLOT(selectItems(QList<BaseObjectView *>)));
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 	}
 
@@ -2112,4 +2140,9 @@ void MainWindow::toggleLayersWidget(bool show)
 void MainWindow::showManage(void)
 {
 	this->action_manage->toggle();
+}
+
+void MainWindow::toggleGqbPathBtn(bool show)
+{
+	gqbj_btn->setChecked(show);
 }

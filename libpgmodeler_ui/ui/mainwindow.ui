@@ -354,6 +354,20 @@
                   </size>
                  </property>
                 </widget>
+                <widget class="QWidget" name="gqbj_parent" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>270</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
                </widget>
               </item>
              </layout>
@@ -478,7 +492,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="gqbc_btn">
+                <widget class="QToolButton" name="gqbc_btn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -492,7 +506,7 @@
                   <string>Toggle the graphical query builder</string>
                  </property>
                  <property name="text">
-                  <string>Query builder</string>
+                  <string>Que&amp;ry builder</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -504,8 +518,14 @@
                    <height>22</height>
                   </size>
                  </property>
+                 <property name="shortcut">
+                  <string>Alt+R</string>
+                 </property>
                  <property name="checkable">
                   <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                 </widget>
                </item>
@@ -521,7 +541,7 @@
                   <string>Toggle the object finder</string>
                  </property>
                  <property name="text">
-                  <string>Layers</string>
+                  <string>&amp;Layers</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -534,7 +554,7 @@
                   </size>
                  </property>
                  <property name="shortcut">
-                  <string>Ctrl+F</string>
+                  <string>Alt+L</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -640,6 +660,60 @@
                  </property>
                  <property name="shortcut">
                   <string>Alt+O</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>6</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QToolButton" name="gqbj_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the query builder path manager</string>
+                 </property>
+                 <property name="text">
+                  <string>GQB &amp;Path</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/visaoarvore.png</normaloff>:/icones/icones/visaoarvore.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+P</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>

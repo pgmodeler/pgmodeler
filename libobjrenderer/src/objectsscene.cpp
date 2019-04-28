@@ -1388,3 +1388,15 @@ bool ObjectsScene::isMovingObjects(void)
 {
 	return(moving_objs);
 }
+
+void ObjectsScene::selectItems(QList<BaseObjectView *> items)
+{
+	this->clearSelection();
+	for(const auto & item:items)
+	{
+		item->blockSignals(true);
+		item->setSelected(true);
+		item->blockSignals(false);
+	}
+	emit s_objectSelected(nullptr, true);
+}

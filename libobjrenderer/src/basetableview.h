@@ -164,8 +164,15 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
+
 		//! \brief Set the columns top-level for subitem multiselection.
 		void ungroupCols(void);
+
+		//! \brief Get columns when ungrouped.
+		QList<TableObjectView *> getUngroupedColumns(void){return ungrouped_cols;};
+
+		//! \brief Get if columns are ungrouped.
+		bool isUngrouped(void){return is_ungrouped;};
 
 		//! \brief Regroup columns if ungrouped.
 		void checkRegroupCols(void);

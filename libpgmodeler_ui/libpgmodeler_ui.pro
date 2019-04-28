@@ -119,7 +119,8 @@ SOURCES += src/mainwindow.cpp \
     src/elementwidget.cpp \
     src/layerswidget.cpp \
     src/querybuildercorewidget.cpp \
-    src/querybuildersqlwidget.cpp
+    src/querybuildersqlwidget.cpp \
+    src/querybuilderpathwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -226,7 +227,8 @@ HEADERS += src/mainwindow.h \
     src/elementwidget.h \
     src/layerswidget.h \
     src/querybuildercorewidget.h \
-    src/querybuildersqlwidget.h
+    src/querybuildersqlwidget.h \
+    src/querybuilderpathwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -313,7 +315,8 @@ FORMS += ui/mainwindow.ui \
     ui/elementwidget.ui \
     ui/layerswidget.ui \
     ui/querybuildercorewidget.ui \
-    ui/querybuildersqlwidget.ui
+    ui/querybuildersqlwidget.ui \
+    ui/querybuilderpathwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \
