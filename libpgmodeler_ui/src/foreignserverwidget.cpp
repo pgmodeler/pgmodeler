@@ -50,7 +50,7 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 
 		setRequiredField(fdw_sel);
 		setRequiredField(fdw_lbl);
-		configureTabOrder({ fdw_sel, options_tab });
+		configureTabOrder({ type_edt, version_edt, fdw_sel, options_tab });
 
 		setMinimumSize(600, 420);
 	}
@@ -68,6 +68,8 @@ void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_
 
 	if(server)
 	{
+		version_edt->setText(server->getVersion());
+		type_edt->setText(server->getType());
 		fdw_sel->setSelectedObject(server->getForeignDataWrapper());
 		options_tab->blockSignals(true);
 
@@ -97,6 +99,9 @@ void ForeignServerWidget::applyConfiguration(void)
 		server->removeOptions();
 		for(unsigned row = 0; row < options_tab->getRowCount(); row++)
 			server->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
+
+		server->setVersion(version_edt->text());
+		server->setType(type_edt->text());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

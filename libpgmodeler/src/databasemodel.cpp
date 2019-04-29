@@ -5980,6 +5980,8 @@ ForeignServer *DatabaseModel::createServer(void)
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(server);
 
+		server->setType(attribs[Attributes::Type]);
+		server->setVersion(attribs[Attributes::Version]);
 		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
 
 		for(auto &option : options)

@@ -79,3 +79,24 @@ QString ForeignServer::getCodeDefinition(unsigned def_type)
 	setOptionsAttribute(def_type);
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
+
+QString ForeignServer::getAlterDefinition(BaseObject *object)
+{
+	try
+	{
+		ForeignServer *server=dynamic_cast<ForeignServer *>(object);
+		attribs_map attribs;
+
+		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(server);
+
+		if(this->version != server->version)
+			attribs[Attributes::Version] = server->version;
+
+		copyAttributes(attribs);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}

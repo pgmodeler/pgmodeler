@@ -457,7 +457,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 				 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
 				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
-				 obj_type==ObjectType::ForeignDataWrapper);
+				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)

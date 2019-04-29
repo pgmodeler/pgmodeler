@@ -113,7 +113,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 	{
 		ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
 		attribs_map attribs;
-		QStringList opts, func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
+		QStringList func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
 		Function *this_funcs[2] = { this->getValidatorFunction(), this->getHandlerFunction() },
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
