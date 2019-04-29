@@ -739,7 +739,8 @@ void PgModelerCli::extractObjectXML(void)
 		buf.remove(start, regexp.matchedLength()+1);
 
 		//Checking if the header ends on a role declaration
-		end = buf.indexOf(QString("<%1").arg(Attributes::Role));
+		QRegExp role_regexp = QRegExp(QString("(<%1)(.)*(<\\/%2>)").arg(Attributes::Role).arg(Attributes::Role));
+		end = buf.indexOf(role_regexp);
 
 		// If we found role declarations we clear the header until there
 		if(end >= 0)
@@ -774,7 +775,7 @@ void PgModelerCli::extractObjectXML(void)
 
 
 			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
-						   (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
+										 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
 			else
 			{
