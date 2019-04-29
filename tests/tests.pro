@@ -15,6 +15,7 @@ src/databasemodeltest \
 src/schemaparsertest \
 src/linenumberstest \
 src/partrelationshiptest \
-src/foreigndatawrappertest
+src/foreigndatawrappertest \
+src/servertest
 
 

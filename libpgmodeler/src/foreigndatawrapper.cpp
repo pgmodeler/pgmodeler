@@ -18,17 +18,13 @@
 
 #include "foreigndatawrapper.h"
 
-const QString ForeignDataWrapper::OptionsSeparator = QString(",");
-const QString ForeignDataWrapper::OptionValueSeparator = QString("=");
-
-ForeignDataWrapper::ForeignDataWrapper(void)
+ForeignDataWrapper::ForeignDataWrapper(void) : ForeignObject()
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
 
 	attributes[Attributes::HandlerFunc] = QString();
 	attributes[Attributes::ValidatorFunc] = QString();
-	attributes[Attributes::Options] = QString();
 }
 
 void ForeignDataWrapper::setHandlerFunction(Function *func)
@@ -82,43 +78,14 @@ Function *ForeignDataWrapper::getValidatorFunction(void)
 	return(validator_func);
 }
 
-void ForeignDataWrapper::setOption(const QString &opt, const QString &value)
-{
-	if(opt.isEmpty())
-		throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	options[opt] = value;
-}
-
-void ForeignDataWrapper::setOptions(const attribs_map &options)
-{
-	for(auto &itr : options)
-	{
-		if(itr.first.isEmpty())
-			throw Exception(ErrorCode::AsgOptionInvalidName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-
-	this->options = options;
-}
-
-void ForeignDataWrapper::removeOption(const QString &opt)
-{
-	options.erase(opt);
-}
-
-void ForeignDataWrapper::removeOptions(void)
-{
-	options.clear();
-}
-
-attribs_map ForeignDataWrapper::getOptions(void)
-{
-	return(options);
-}
-
 QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 {
-	QString code_def=getCachedCode(def_type, false);
+	return(getCodeDefinition(def_type, false));
+}
+
+QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_form)
+{
+	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
 	QStringList fmt_options;
@@ -136,31 +103,22 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getCodeDefinition(def_type, true);
 	}
 
-	for(auto &itr : options)
-		fmt_options += is_sql_def ? QString("%1 '%2'").arg(itr.first).arg(itr.second) :
-																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
-
-	attributes[Attributes::Options] = fmt_options.join(OptionsSeparator);
-
-	return(this->BaseObject::__getCodeDefinition(def_type));
+	setOptionsAttribute(def_type);
+	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 {
-	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
-
-	if(!fdw)
-		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	try
 	{
+		ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
 		attribs_map attribs;
-		QStringList opts, func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
+		QStringList func_attribs = { Attributes::ValidatorFunc, Attributes::HandlerFunc };
 		Function *this_funcs[2] = { this->getValidatorFunction(), this->getHandlerFunction() },
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
 
-		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(fdw);
 
 		// Comparing FDW functions
 		for(int i = 0; i < 2; i++)
@@ -168,7 +126,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 			this_func = this_funcs[i];
 			fdw_func = fdw_funcs[i];
 
-			if(!fdw_func)
+			if(!fdw_func && this_func)
 				attribs[func_attribs[i]] = Attributes::Unset;
 			else if(fdw_func &&
 							(!this_func ||
@@ -176,25 +134,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 				attribs[func_attribs[i]] = fdw_func->getName(true);
 		}
 
-		// Comparing FDW options (to be modified or added)
-		for(auto &opt : fdw->options)
-		{
-			if(this->options.count(opt.first) == 0)
-				opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
-			else if(this->options[opt.first] != opt.second)
-				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
-		}
-
-		// Comparing FDW options (to be removed)
-		for(auto &opt : this->options)
-		{
-			if(fdw->options.count(opt.first) == 0)
-				opts.push_back(QString("DROP %1").arg(opt.first));
-		}
-
-		attribs[Attributes::Options] = opts.join(OptionsSeparator);
 		copyAttributes(attribs);
-
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

@@ -59,6 +59,7 @@
 #include "tabledatawidget.h"
 #include "generalconfigwidget.h"
 #include "foreigndatawrapperwidget.h"
+#include "foreignserverwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -82,15 +83,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	/*ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
-						 ObjectType::Cast, ObjectType::Conversion, ObjectType::Domain,
-						 ObjectType::Function, ObjectType::Aggregate, ObjectType::Language,
-						 ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily,
-						 ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Type,
-						 ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
-						 ObjectType::Tablespace, ObjectType::Collation, ObjectType::Extension, ObjectType::EventTrigger, ObjectType::Tag,
-						 ObjectType::GenericSql }; */
-	unsigned i, /*obj_cnt=sizeof(types)/sizeof(ObjectType),*/
+	unsigned i,
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
@@ -798,7 +791,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
+				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
@@ -810,7 +803,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
@@ -1829,6 +1822,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		}
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			res = openEditingForm<ForeignDataWrapper, ForeignDataWrapperWidget>(object);
+		else if(obj_type==ObjectType::ForeignServer)
+			res = openEditingForm<ForeignServer, ForeignServerWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
@@ -2601,7 +2596,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 	while(itr!=itr_end)
 	{
-		object=(*itr);
+		object = (*itr);
+		obj_type = object->getObjectType();
 		itr++;
 
 		if(orig_obj_names[object].count() && obj_type!=ObjectType::Cast)

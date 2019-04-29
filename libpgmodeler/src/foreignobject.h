@@ -18,36 +18,36 @@
 
 /**
 \ingroup libpgmodeler
-\class ForeignDataWrapper
-\brief Implements the operations to manipulate foreign data wrappers on the database.
+\class ForeignObject
+\brief Implements the basic operations to handle common attributes of foreign data wrapper, foreign servers and foreign tables.
 */
 
-#ifndef FOREIGN_DATA_WRAPPER_H
-#define FOREIGN_DATA_WRAPPER_H
+#ifndef FOREIGN_OBJECT_H
+#define FOREIGN_OBJECT_H
 
 #include "baseobject.h"
-#include "function.h"
-#include "foreignobject.h"
 
-class ForeignDataWrapper: public ForeignObject {
-	private:
-		//! \brief Function that executes the functions related to the foreign data wrapper
-		Function *handler_func,
+class ForeignObject: public BaseObject {
+	protected:
+		//! \brief A set of key/value options associated to the foreign object
+		attribs_map options;
 
-		//! \brief Function that validates the options passed to the foreign data wrapper
-		*validator_func;
+		void setOptionsAttribute(unsigned def_type);
 
 	public:
-		ForeignDataWrapper(void);
+		//! \brief Store the character used to separate options/values in the XML code
+		static const QString OptionsSeparator;
+		static const QString OptionValueSeparator;
 
-		void setHandlerFunction(Function *func);
-		void setValidatorFunction(Function *func);
+		ForeignObject(void);
 
-		Function *getHandlerFunction(void);
-		Function *getValidatorFunction(void);
+		void setOption(const QString &opt, const QString &value);
+		void setOptions(const attribs_map &options);
+		void removeOption(const QString &opt);
+		void removeOptions(void);
+		attribs_map getOptions(void);
 
-		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		virtual QString getCodeDefinition(unsigned) = 0;
 		virtual QString getAlterDefinition(BaseObject *object);
 };
 

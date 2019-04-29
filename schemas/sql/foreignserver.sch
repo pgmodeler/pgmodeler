@@ -1,34 +1,27 @@
-# SQL definition for foreign data wrappers
+# SQL definition for schemas
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
+
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
 
-[-- ] {drop} 
+[-- ] {drop}
 
 %if {prepended-sql} %then
     {prepended-sql}
     $br [-- ddl-end --] $br $br
 %end
 
-[CREATE ] {sql-object} $sp {name} 
+[CREATE SERVER ] {name} 
 
-%if ({pgsql-ver} >=f "9.1") %then
-    $br
-
-    %if %not {handler} %then
-        [NO HANDLER]
-    %else
-        [HANDLER ] {handler} 
-    %end
+%if {type} %then
+    [ TYPE ] '{type}'
 %end
 
-$br
-
-%if %not {validator} %then
-    [NO VALIDATOR]
-%else
-    [VALIDATOR ] {validator}
+%if {version} %then
+    [ VERSION ] '{version}'
 %end
+
+$br [FOREIGN DATA WRAPPER ] {fdw}
 
 %if {options} %then
     $br [OPTIONS (] {options} )

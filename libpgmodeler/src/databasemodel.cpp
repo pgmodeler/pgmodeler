@@ -77,7 +77,8 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::Tag, &tags },
 		{ ObjectType::EventTrigger, &eventtriggers },
 		{ ObjectType::GenericSql, &genericsqls },
-		{ ObjectType::ForeignDataWrapper, &fdata_wrappers }
+		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
+		{ ObjectType::ForeignServer, &servers }
 	};
 }
 
@@ -198,6 +199,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
+		else if(obj_type==ObjectType::ForeignServer)
+			addServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -266,6 +269,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeGenericSQL(dynamic_cast<GenericSQL *>(object));
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
+		else if(obj_type==ObjectType::ForeignServer)
+			removeServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -1079,6 +1084,40 @@ ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(unsigned obj_idx)
 ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(const QString &name)
 {
 	return(dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper)));
+}
+
+void DatabaseModel::addServer(ForeignServer *server, int obj_idx)
+{
+	try
+	{
+		__addObject(server, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeServer(ForeignServer *server, int obj_idx)
+{
+	try
+	{
+		__removeObject(server, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+ForeignServer *DatabaseModel::getServer(unsigned obj_idx)
+{
+	return(dynamic_cast<ForeignServer *>(getObject(obj_idx, ObjectType::ForeignServer)));
+}
+
+ForeignServer *DatabaseModel::getServer(const QString &name)
+{
+	return(dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer)));
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -3277,6 +3316,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createPolicy();
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			object=createForeignDataWrapper();
+		else if(obj_type==ObjectType::ForeignServer)
+			object=createServer();
 	}
 
 	return(object);
@@ -5924,6 +5965,75 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	return(fdw);
 }
 
+ForeignServer *DatabaseModel::createServer(void)
+{
+	attribs_map attribs;
+	ForeignServer *server = nullptr;
+	BaseObject *fdw = nullptr;
+	ObjectType obj_type;
+	QStringList options, opt_val;
+
+	try
+	{
+		server = new ForeignServer;
+
+		xmlparser.getElementAttributes(attribs);
+		setBasicAttributes(server);
+
+		server->setType(attribs[Attributes::Type]);
+		server->setVersion(attribs[Attributes::Version]);
+		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
+
+		for(auto &option : options)
+		{
+			opt_val = option.split(ForeignDataWrapper::OptionValueSeparator);
+
+			if(opt_val.size() < 2)
+				continue;
+
+			server->setOption(opt_val[0], opt_val[1]);
+		}
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					obj_type = BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type == ObjectType::ForeignDataWrapper)
+					{
+						xmlparser.getElementAttributes(attribs);
+						fdw = getObject(attribs[Attributes::Name], ObjectType::ForeignDataWrapper);
+
+						//Raises an error if the fdw doesn't exists
+						if(!fdw)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(server->getName())
+															.arg(server->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::ForeignDataWrapper)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						server->setForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(fdw));
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		if(server)
+			delete(server);
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(server);
+}
+
 void DatabaseModel::updateViewsReferencingTable(Table *table)
 {
 	BaseRelationship *rel = nullptr;
@@ -6717,7 +6827,7 @@ Permission *DatabaseModel::createPermission(void)
 	ObjectType obj_type;
 	QString parent_name, obj_name;
 	QStringList list;
-	unsigned i, len, priv_type=Permission::PrivSelect;
+	unsigned priv_type=Permission::PrivSelect;
 	bool priv_value, grant_op, revoke, cascade;
 
 	try
@@ -6765,19 +6875,17 @@ Permission *DatabaseModel::createPermission(void)
 			if(xmlparser.getElementName()==Attributes::Roles)
 			{
 				xmlparser.getElementAttributes(attribs);
+				list = attribs[Attributes::Names].split(',');
 
-				list=attribs[Attributes::Names].split(',');
-				len=list.size();
-
-				for(i=0; i < len; i++)
+				for(auto &name : list)
 				{
-					role=dynamic_cast<Role *>(getObject(list[i].trimmed(),ObjectType::Role));
+					role=dynamic_cast<Role *>(getObject(name.trimmed(), ObjectType::Role));
 
 					//Raises an error if the referenced role doesn't exists
 					if(!role)
 					{
 						throw Exception(Exception::getErrorMessage(ErrorCode::PermissionRefInexistObject)
-										.arg(list[i])
+										.arg(name)
 										.arg(BaseObject::getTypeName(ObjectType::Role)),
 										ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -8092,6 +8200,12 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				getObjectDependecies(fdw->getHandlerFunction(), deps, inc_indirect_deps);
 				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
 			}
+			//** Getting the dependecies for server **
+			else if(obj_type == ObjectType::ForeignServer)
+			{
+				ForeignServer *server = dynamic_cast<ForeignServer *>(object);
+				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
+			}
 
 			if(obj_type == ObjectType::Table || obj_type == ObjectType::View)
 			{
@@ -9291,6 +9405,26 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 					}
 					itr++;
 				}
+			}
+		}
+
+		if(obj_type==ObjectType::ForeignDataWrapper && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			vector<BaseObject *>::iterator itr, itr_end;
+			vector<BaseObject *> list;
+			ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
+
+			itr=servers.begin();
+			itr_end=servers.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
 			}
 		}
 	}

@@ -782,7 +782,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
-																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::Database };
+																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																 ObjectType::Database };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -889,7 +890,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						obj_type=obj_tp;
 
-						//Appeding special tokens when the object is an index or view
+
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
 							if(obj_tp==ObjectType::Index)

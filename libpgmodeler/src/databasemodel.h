@@ -55,6 +55,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "eventtrigger.h"
 #include "genericsql.h"
 #include "foreigndatawrapper.h"
+#include "foreignserver.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -105,32 +106,33 @@ class DatabaseModel:  public QObject, public BaseObject {
 		allow_conns;
 
 		//! \brief Vectors that stores all the objects types
-		vector<BaseObject *> textboxes;
-		vector<BaseObject *> relationships;
-		vector<BaseObject *> base_relationships;
-		vector<BaseObject *> functions;
-		vector<BaseObject *> schemas;
-		vector<BaseObject *> views;
-		vector<BaseObject *> tables;
-		vector<BaseObject *> types;
-		vector<BaseObject *> roles;
-		vector<BaseObject *> tablespaces;
-		vector<BaseObject *> languages;
-		vector<BaseObject *> aggregates;
-		vector<BaseObject *> casts;
-		vector<BaseObject *> conversions;
-		vector<BaseObject *> operators;
-		vector<BaseObject *> op_classes;
-		vector<BaseObject *> op_families;
-		vector<BaseObject *> domains;
-		vector<BaseObject *> sequences;
-		vector<BaseObject *> permissions;
-		vector<BaseObject *> collations;
-		vector<BaseObject *> extensions;
-		vector<BaseObject *> tags;
-		vector<BaseObject *> eventtriggers;
-		vector<BaseObject *> genericsqls;
-		vector<BaseObject *> fdata_wrappers;
+		vector<BaseObject *> textboxes,
+		relationships,
+		base_relationships,
+		functions,
+		schemas,
+		views,
+		tables,
+		types,
+		roles,
+		tablespaces,
+		languages,
+		aggregates,
+		casts,
+		conversions,
+		operators,
+		op_classes,
+		op_families,
+		domains,
+		sequences,
+		permissions,
+		collations,
+		extensions,
+		tags,
+		eventtriggers,
+		genericsqls,
+		fdata_wrappers,
+		servers;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -260,8 +262,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
 		/*! \brief Loads a database model from a file. In case of loading errors
-	the objects in the model will not be destroyed automatically. The user need to call
-	destroyObjects() or delete the entire model */
+		the objects in the model will not be destroyed automatically. The user need to call
+		destroyObjects() or delete the entire model */
 		void loadModel(const QString &filename);
 
 		//! \brief Sets the database encoding
@@ -498,6 +500,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
 		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
 
+		void addServer(ForeignServer *server, int obj_idx=-1);
+		void removeServer(ForeignServer *server, int obj_idx=-1);
+		ForeignServer *getServer(unsigned obj_idx);
+		ForeignServer *getServer(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -557,6 +564,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 		ForeignDataWrapper *createForeignDataWrapper(void);
+		ForeignServer *createServer(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

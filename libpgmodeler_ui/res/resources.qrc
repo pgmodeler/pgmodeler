@@ -255,6 +255,8 @@
         <file>icones/movetolayer.png</file>
         <file>icones/foreigndatawrapper_grp.png</file>
         <file>icones/foreigndatawrapper.png</file>
+        <file>icones/foreignserver.png</file>
+        <file>icones/foreignserver_grp.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
