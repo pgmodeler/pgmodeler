@@ -26,10 +26,24 @@
 #define GENERIC_SQL_H
 
 #include "baseobject.h"
+#include <unordered_map>
 
 class GenericSQL: public BaseObject{
-	private:
+	private:		
+
+		struct RefConfig {
+			QString ref_name;
+			BaseObject *object;
+			bool use_signature, format_name;
+			RefConfig(const QString &_ref_name, BaseObject *_object, bool _use_signature, bool _format_name) :
+				ref_name(_ref_name), object(_object), use_signature(_use_signature), format_name(_format_name) {}
+		};
+
 		QString definition;
+
+		vector<RefConfig> objects_refs;
+
+		bool isObjectRefNameExists(const QString &ref_name);
 
 	public:
 		GenericSQL(void);
@@ -37,8 +51,13 @@ class GenericSQL: public BaseObject{
 		void setDefinition(const QString &def);
 		QString getDefinition(void);
 
-		//! \brief Copies the attributes between generic sql objects
-		// void operator = (GenericSQL &genericsql);
+		void setParseable(bool value);
+		bool isParseable(void);
+
+		void addObjectReference(const QString &ref_name, BaseObject *object, bool use_signature, bool format_name);
+		map<QString, BaseObject *> getObjectReferences(void);
+		void removeObjectReferences(void);
+		bool isObjectReferenced(BaseObject *object);
 
 		virtual QString getCodeDefinition(unsigned def_type);
 };

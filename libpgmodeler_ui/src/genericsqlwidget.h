@@ -28,16 +28,25 @@
 #include "ui_genericsqlwidget.h"
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
+#include "objectstablewidget.h"
+#include "objectselectorwidget.h"
+#include "hinttextwidget.h"
 
 class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
 
-		NumberedTextEditor *definition_txt;
+		HintTextWidget *ref_name_ht, *use_signature_ht, *format_name_ht;
 
-		SyntaxHighlighter *definition_hl;
+		NumberedTextEditor *definition_txt, *preview_txt;
+
+		SyntaxHighlighter *definition_hl, *preview_hl;
 
 		CodeCompletionWidget *definition_cp;
+
+		ObjectsTableWidget *objects_refs_tab;
+
+		ObjectSelectorWidget *object_sel;
 
 	public:
 		GenericSQLWidget(QWidget * parent = nullptr);
