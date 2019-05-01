@@ -473,6 +473,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_hide_schemas_rects, SIGNAL(triggered(bool)), this, SLOT(toggleSchemasRectangles()));
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
+	connect(db_model, SIGNAL(s_layersLoaded()), this, SLOT(updateLayersFromModel()));
 	connect(scene, SIGNAL(s_objectsMoved(bool)), this, SLOT(handleObjectsMovement(bool)));
 	connect(scene, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(handleObjectModification(BaseGraphicObject*)));
 	connect(scene, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(handleObjectDoubleClick(BaseGraphicObject*)));
@@ -1389,10 +1390,6 @@ void ModelWidget::loadModel(const QString &filename)
 		this->updateObjectsOpacity();
 
 		scene->blockSignals(true);
-
-		for(auto &layer : db_model->getLayers())
-			scene->addLayer(layer);
-
 		scene->setActiveLayers(db_model->getActiveLayers());
 		scene->blockSignals(false);
 
@@ -1992,12 +1989,19 @@ void ModelWidget::moveToLayer(void)
 {
 	QAction *act = dynamic_cast<QAction *>(sender());
 	BaseGraphicObject *graph_obj = nullptr;
-	unsigned layer_id = act->data().toUInt();
+	auto tmp_data = act->data().value<QPoint>();
+	int dim = tmp_data.x();
+	int layer_id = tmp_data.y();
 
 	for(auto &obj : selected_objects)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
-		graph_obj->setLayer(layer_id);
+		if(graph_obj)
+		{
+			auto tmp_layer= graph_obj->getLayer();
+			tmp_layer[dim]=layer_id;
+			graph_obj->setLayer(tmp_layer);
+		}
 	}
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -3288,15 +3292,29 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		// Configuring the layers menu
 		if(is_graph_obj)
 		{
-			unsigned layer_id = ObjectsScene::DefaultLayer;
 			layers_menu.clear();
 
-			for(auto &layer : scene->getLayers())
+			vector<QStringList> tmp_layers=scene->getLayers();
+			for(unsigned dim=0; dim<(unsigned)tmp_layers.size();dim++)
 			{
-				act = layers_menu.addAction(layer);
-				act->setData(layer_id++);
-				connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
+				for(unsigned layer_id=ObjectsScene::DefaultLayer ; layer_id<(unsigned)tmp_layers[dim].size() ; layer_id++)
+				{
+					act = layers_menu.addAction(tmp_layers[dim][layer_id]);
+					auto act_data= QPoint(dim, layer_id);
+					act->setData(QVariant::fromValue<QPoint>(act_data));
+					if(sel_objs.size()==1 && dynamic_cast<BaseGraphicObject *>(object)->getLayer()[dim]==layer_id)
+					{
+						act->setEnabled(false);
+					}
+					else
+					{
+						connect(act, SIGNAL(triggered(bool)), this, SLOT(moveToLayer()));
+					}
+				}
+				if(dim<(unsigned)tmp_layers.size()-1)
+					layers_menu.addSeparator();
 			}
+
 		}
 
 		//Display the quick rename action is a single object is selected
@@ -3469,7 +3487,7 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 			obj_view->setOpacity(fade_in ? 1 : min_object_opacity);
 
 			//If the minimum opacity is zero the object hidden
-			obj_view->setVisible(scene->isLayerActive(obj_view->getLayer()) && (fade_in || (!fade_in && min_object_opacity > 0)));
+			obj_view->setVisible(scene->areLayersActive(obj_view->getDimensionalLayers()) && (fade_in || (!fade_in && min_object_opacity > 0)));
 
 			this->modified = true;
 		}
@@ -4539,13 +4557,17 @@ void ModelWidget::editTableData(void)
 
 void ModelWidget::updateModelLayers(void)
 {
-	QStringList layers = scene->getLayers();
-
-	layers.removeAt(0);
-	db_model->setLayers(layers);
+	db_model->setLayers(scene->getLayers());
 	db_model->setActiveLayers(scene->getActiveLayersIds());
 	modified = true;
 }
+
+void ModelWidget::updateLayersFromModel(void)
+{
+	scene->setLayersFromModel(db_model->getLayers());
+	scene->setActiveLayersFromModel(db_model->getActiveLayers());
+}
+
 
 void ModelWidget::rearrangeTablesHierarchically(void)
 {

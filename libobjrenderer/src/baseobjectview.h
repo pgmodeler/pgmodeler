@@ -113,8 +113,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void setSelectionOrder(bool selected);
 
-		//! \brief Defines in which layer the object is visible
-		void setLayer(unsigned layer);
+		//! \brief Defines in which layers the object is visible
+		void setLayer(vector<unsigned> layer);
 
 	public:
 		static constexpr double VertSpacing=2.0f,
@@ -193,8 +193,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Returns the current factor between the default font size and the current defined one
 		static double getFontFactor(void);
 
-		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer(void);
+		//! \brief Returns the layers in which the object is visible
+		vector<unsigned> getDimensionalLayers(void);
 
 	protected slots:
 		//! \brief Make the basic object operations

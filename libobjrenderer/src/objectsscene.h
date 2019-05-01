@@ -37,8 +37,8 @@ class ObjectsScene: public QGraphicsScene {
 	private:
 		Q_OBJECT
 
-		//! \brief Holds the names of the layers on the scene used to separate in the objects on the canvas
-		QStringList layers, active_layers;
+		//! \brief Holds the names of the layers on the scene used to separate objects on the canvas
+		vector<QStringList> layers, active_layers;
 
 		vector<BaseObjectView *> removed_objs;
 
@@ -126,7 +126,7 @@ class ObjectsScene: public QGraphicsScene {
 		void adjustScenePositionOnKeyEvent(int key);
 
 		//! \brief Formats the name of the layer removing any invalid chars and doing the desambiguation in case the name already exists
-		QString formatLayerName(const QString &name);
+		QString formatLayerName(const unsigned &l_dim, const QString &name);
 
 	protected:
 		//! \brief Brush used to draw the grid over the scene
@@ -145,7 +145,7 @@ class ObjectsScene: public QGraphicsScene {
 		void blockItemsSignals(bool block);
 
 	public:
-		static constexpr unsigned DefaultLayer = 0,
+		static constexpr unsigned DefaultLayer = 0, DefaultDimension = 0,
 		InvalidLayer = UINT_MAX;
 
 		ObjectsScene(void);
@@ -153,45 +153,60 @@ class ObjectsScene: public QGraphicsScene {
 
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
-		QString addLayer(const QString &name);
+		QString addLayer(const unsigned &l_dim, const QString &name);
 
 		/*! \brief Rename the layer of the provided index. In case of duplicated name this method
 		 * 	automatically does the desambiguation. */
-		QString renameLayer(unsigned idx, const QString &name);
+		QString renameLayer(const unsigned &l_dim, unsigned idx, const QString &name);
 
 		//! \brief Remove the named layer. Objects in the destroyed layer are automatically moved to the default one
-		void removeLayer(const QString &name);
+		void removeLayer(const unsigned &l_dim, const QString &name);
 
 		//! \brief Destroy all layers (except the default one) moving all objects from the destroyed layers to the default one
 		void removeLayers(void);
 
+		//! \brief Add a new dimension of layers.
+		void addDimension(void);
+
+		//! \brief Remove this dimension of layers
+		void removeDimension(int d_idx);
+
+		//! \brief Set the scene layers from the model
+		void setLayersFromModel(const vector<QStringList> &layers);
+
 		//! \brief Set the named layers as active. Activating a layer causes objects attached to it to be visible
-		void setActiveLayers(QStringList act_layers);
+		void setActiveLayers(vector<QStringList> act_layers);
 
 		//! \brief Set the layers with the provided indexes as active. Activating a layer causes objects attached to it to be visible
-		void setActiveLayers(QList<unsigned> ids);
+		void setActiveLayers(const vector<QList<unsigned>> &dims_layers_idxs);
+
+		//! \brief Set the layers with the provided indexes from the model as active. Happens during loading.
+		void setActiveLayersFromModel(const vector<QList<unsigned>> &dims_layers_idxs);
 
 		/*! \brief Move the objects from a layer to another. This method automatically hides/show the objects in the new layer
 		 * according to the activation status of the destination layer */
-		void moveObjectsToLayer(unsigned old_layer, unsigned new_layer);
+		void moveObjectsToLayer(unsigned dim, unsigned old_layer, unsigned new_layer);
 
 		//! \brief Returns true when the named layer is currenctly activated
-		bool isLayerActive(const QString &name);
+		bool isLayerActive(const unsigned &l_dim, const QString &name);
 
 		//! \brief Returns true when the layer with the provided id is currenctly activated
-		bool isLayerActive(unsigned layer_id);
+		bool isLayerActive(const unsigned &l_dim, unsigned layer_id);
+
+		//! \brief Returns true if, for the passed parameter, every layer in every dimension is active
+		bool areLayersActive(vector<unsigned> ids);
 
 		//! \brief Returns a list containing the names of the active layers
-		QStringList getActiveLayers(void);
+		vector<QStringList> getActiveLayers(void);
 
 		//! \brief Returns a list containing the ids of the active layers
-		QList<unsigned> getActiveLayersIds(void);
+		vector<QList<unsigned>> getActiveLayersIds(void);
 
 		//! \brief Returns a list containing the names of all layers in the scene
-		QStringList getLayers(void);
+		vector<QStringList> getLayers(void);
 
 		//! \brief Returns the id of the named layer. If the layer does not exist the constant ObjectsScene::InvalidLayer is returned
-		unsigned getLayerId(const QString &name);
+		unsigned getLayerId(const unsigned &l_dim, const QString &name);
 
 		//! \brief This method causes objects in the active layers to have their visibility state updated.
 		void updateActiveLayers(void);

@@ -55,7 +55,15 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Color]=text_color.name();
 
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
-		attributes[Attributes::Layer]=QString::number(layer);
+
+		QString tmp_lay=nullptr;
+		for (size_t l_dim=0; l_dim<layer.size();l_dim++)
+		{
+			tmp_lay+=QString::number(layer[l_dim]);
+			if(l_dim< layer.size()-1)
+					tmp_lay+="|";
+		}
+		attributes[Attributes::Layer]=tmp_lay;
 
 		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
 	}

@@ -721,7 +721,12 @@ void PgModelerCli::extractObjectXML(void)
 		layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
 		layers.remove('"');
-		model->setLayers(layers.trimmed().split(';', QString::SkipEmptyParts));
+
+		vector<QStringList> tmp_layers;
+		QStringList dims_layers_names=layers.trimmed().split('|', QString::SkipEmptyParts);
+		for(const auto &list:dims_layers_names)
+			tmp_layers.push_back(list.split(';'));
+		model->setLayers(tmp_layers);
 
 		//Active layers
 		attr_start = attr_end;
@@ -730,10 +735,18 @@ void PgModelerCli::extractObjectXML(void)
 		active_layers.remove(QRegExp(attr_expr.arg(Attributes::ActiveLayers)));
 		active_layers.remove('"');
 
-		for(auto id : active_layers.trimmed().split(';', QString::SkipEmptyParts))
-			act_layers_ids.push_back(id.toUInt());
+		vector<QList<unsigned>> tmp_act_layers;
+		QStringList dim_list=active_layers.trimmed().split('|', QString::SkipEmptyParts);
+		QList<unsigned> dim_layers_ids;
+		for(const auto &list:dim_list)
+		{
+			QStringList layers_strings=list.split(';');
+			for(const auto &item:layers_strings)
+				dim_layers_ids.push_back(item.toUInt());
+			tmp_act_layers.push_back(dim_layers_ids);
+		}
 
-		model->setActiveLayers(act_layers_ids);
+		model->setActiveLayers(tmp_act_layers);
 
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);

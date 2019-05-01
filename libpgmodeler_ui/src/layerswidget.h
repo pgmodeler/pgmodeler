@@ -38,13 +38,16 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 		/*! \brief The current selected item in the layers list. We need to store it in a separated attribute
 		 * for renaming purposes */
-		QListWidgetItem *curr_item;
+		QTreeWidgetItem *curr_item;
 
 		//! \brief Stores the current's item text (layer name) to revert the renaming if the user aborts it
 		QString curr_text;
 
 		//! \brief Stores the current's item row
 		int curr_row;
+
+		//! \brief Stores the current's item dimension
+		int curr_dim;
 
 		//! \brief Configures the layers listing
 		void updateLayers(void);
@@ -59,10 +62,10 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 	private slots:
 		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
-		QListWidgetItem *addLayer(const QString &name = QString());
+		QTreeWidgetItem *addLayer(const QString &name = QString());
 
 		//! \brief Triggers the renaming operation over a item
-		void startLayerRenaming(QListWidgetItem *item);
+		void startLayerRenaming(QTreeWidgetItem *item);
 
 		//! \brief Finishes the renaming operation over a item
 		void finishLayerRenaming(void);
@@ -73,8 +76,14 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		//! \brief Remove a layer from the listing. If 'clear' is true them all layers (except the default) are removed
 		void removeLayer(bool clear = false);
 
+		void addDimension(bool begin, int d_idx, QStringList dim);
+
+		void removeDimension(void);
+
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons(void);
+
+		void updateSelection();
 
 	public slots:
 		void setVisible(bool value);

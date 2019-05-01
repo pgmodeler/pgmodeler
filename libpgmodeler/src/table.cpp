@@ -1619,7 +1619,16 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]=QString();
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
-	attributes[Attributes::Layer]=QString::number(layer);
+
+	QString tmp_lay=nullptr;
+	for (size_t l_dim=0; l_dim<layer.size();l_dim++)
+	{
+		tmp_lay+=QString::number(layer[l_dim]);
+		if(l_dim< layer.size()-1)
+				tmp_lay+="|";
+	}
+	attributes[Attributes::Layer]=tmp_lay;
+
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());

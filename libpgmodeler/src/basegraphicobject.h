@@ -56,8 +56,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *receiver_object;
 
 	protected:
-		//! \brief This attributes holds the layer in which the object is visible.
-		unsigned layer;
+		//! \brief This attributes holds the layers in which the object is visible.
+		vector<unsigned> layer;
 
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
@@ -116,10 +116,10 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		static bool isGraphicObject(ObjectType type);
 
 		//! \brief Defines in which layer the object is visible
-		void setLayer(unsigned layer);
+		void setLayer(const vector<unsigned> &layer);
 
 		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer(void);
+		vector<unsigned> getLayer(void);
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method

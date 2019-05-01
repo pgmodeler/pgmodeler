@@ -332,7 +332,14 @@ void BaseRelationship::setRelationshipAttributes(void)
 							   Attributes::DstLabel,
 							   Attributes::NameLabel};
 
-	attributes[Attributes::Layer]=QString::number(layer);
+	QString tmp_lay=nullptr;
+	for (size_t l_dim=0; l_dim<layer.size();l_dim++)
+	{
+		tmp_lay+=QString::number(layer[l_dim]);
+		if(l_dim< layer.size()-1)
+				tmp_lay+="|";
+	}
+	attributes[Attributes::Layer]=tmp_lay;
 	attributes[Attributes::Type]=getRelTypeAttribute();
 	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : QString());
 	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : QString());

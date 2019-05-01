@@ -28,7 +28,6 @@ BaseGraphicObject::BaseGraphicObject(void)
 	attributes[Attributes::FadedOut]=QString();
 	attributes[Attributes::Layer]=QString();
 	receiver_object=nullptr;
-	layer = 0;
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -124,13 +123,13 @@ bool BaseGraphicObject::isGraphicObject(ObjectType type)
 				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema);
 }
 
-void BaseGraphicObject::setLayer(unsigned layer)
+void BaseGraphicObject::setLayer(const vector<unsigned> &layer)
 {
 	setCodeInvalidated(this->layer != layer);
 	this->layer = layer;
 }
 
-unsigned BaseGraphicObject::getLayer(void)
+vector<unsigned> BaseGraphicObject::getLayer(void)
 {
 	return(layer);
 }

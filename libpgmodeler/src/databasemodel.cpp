@@ -79,6 +79,9 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::GenericSql, &genericsqls },
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers }
 	};
+
+	layers.push_back({trUtf8("Default layer")});
+	active_layers.push_back({0});
 }
 
 DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
@@ -440,6 +443,11 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	}
 
 	object->setDatabase(this);
+
+	auto graph_obj=dynamic_cast<BaseGraphicObject *>(object);
+	if(graph_obj && graph_obj->getLayer().size()!=this->layers.size())
+		graph_obj->setLayer(vector<unsigned>(layers.size(), 0));
+
 	emit s_objectAdded(object);
 	this->setInvalidated(true);
 }
@@ -3065,19 +3073,40 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
-			layers = attribs[Attributes::Layers].split(';', QString::SkipEmptyParts);
+			/* Compatibility with models created prior the layers features:
+			 * If it is absent we make the default layer always visible */
+
+			QStringList dims_layers_names=attribs[Attributes::Layers].split('|', QString::SkipEmptyParts);
+			if(!dims_layers_names.empty())
+			{
+				layers.clear();
+				for(auto &list:dims_layers_names)
+				{
+					if(!list.contains("Default layer"))
+						list="Default layer;" + list;
+					layers.push_back(list.split(';'));
+				}
+			}
 
 			active_layers.clear();
-
-			/* Compatibility with models created prior the layers features:
-			 * If the "active-layers" is absent we make the default layer always visible */
 			if(!attribs.count(Attributes::ActiveLayers))
-				active_layers.push_back(0);
+				active_layers.push_back({0});
 			else
 			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QString::SkipEmptyParts))
-					active_layers.push_back(layer_id.toInt());
+				QStringList dim_list=
+						attribs[Attributes::ActiveLayers].split('|', QString::SkipEmptyParts);
+				QList<unsigned> dim_layers_ids;
+				for(const auto &list:dim_list)
+				{
+					QStringList layers_strings=list.split(';');
+					for(const auto &item:layers_strings)
+						dim_layers_ids.push_back(item.toUInt());
+					active_layers.push_back(dim_layers_ids);
+					dim_layers_ids.clear();
+				}
 			}
+
+			emit s_layersLoaded();
 
 			protected_model=(attribs[Attributes::Protected]==Attributes::True);
 
@@ -3630,7 +3659,12 @@ Schema *DatabaseModel::createSchema(void)
 		schema->setFillColor(QColor(attribs[Attributes::FillColor]));
 		schema->setRectVisible(attribs[Attributes::RectVisible]==Attributes::True);
 		schema->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		schema->setLayer(attribs[Attributes::Layer].toUInt());
+
+		QStringList l_string = attribs[Attributes::Layer].split("|");
+		vector<unsigned> lays;
+		for(const auto &l_id:l_string)
+			lays.push_back(l_id.toUInt());
+		schema->setLayer(lays);
 	}
 	catch(Exception &e)
 	{
@@ -4737,7 +4771,12 @@ Table *DatabaseModel::createTable(void)
 		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		table->setLayer(attribs[Attributes::Layer].toUInt());
+
+		QStringList l_string = attribs[Attributes::Layer].split("|");
+		vector<unsigned> lays;
+		for(const auto &l_id:l_string)
+			lays.push_back(l_id.toUInt());
+		table->setLayer(lays);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6060,7 +6099,12 @@ View *DatabaseModel::createView(void)
 		view->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
 		view->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
 		view->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		view->setLayer(attribs[Attributes::Layer].toUInt());
+
+		QStringList l_string = attribs[Attributes::Layer].split("|");
+		vector<unsigned> lays;
+		for(const auto &l_id:l_string)
+			lays.push_back(l_id.toUInt());
+		view->setLayer(lays);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6380,7 +6424,13 @@ Textbox *DatabaseModel::createTextbox(void)
 		xmlparser.getElementAttributes(attribs);
 
 		txtbox->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		txtbox->setLayer(attribs[Attributes::Layer].toUInt());
+
+		QStringList l_string = attribs[Attributes::Layer].split("|");
+		vector<unsigned> lays;
+		for(const auto &l_id:l_string)
+			lays.push_back(l_id.toUInt());
+		txtbox->setLayer(lays);
+
 		txtbox->setTextAttribute(Textbox::ItalicText, attribs[Attributes::Italic]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::BoldText, attribs[Attributes::Bold]==Attributes::True);
 		txtbox->setTextAttribute(Textbox::UnderlineText, attribs[Attributes::Underline]==Attributes::True);
@@ -6411,7 +6461,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	bool src_mand, dst_mand, identifier, protect, deferrable, sql_disabled, single_pk_col, faded_out;
 	DeferralType defer_type;
 	ActionType del_action, upd_action;
-	unsigned rel_type=0, i = 0, layer = 0;
+	unsigned rel_type=0, i = 0;
+	vector<unsigned> lays;
 	ObjectType table_types[2]={ObjectType::View, ObjectType::Table}, obj_rel_type;
 	QString str_aux, elem,
 			tab_attribs[2]={ Attributes::SrcTable,
@@ -6429,7 +6480,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
-		layer = attribs[Attributes::Layer].toUInt();
+
+		QStringList l_string = attribs[Attributes::Layer].split("|");
+		for(const auto &l_id:l_string)
+			lays.push_back(l_id.toUInt());
+
 
 		if(!attribs[Attributes::CustomColor].isEmpty())
 			custom_color=QColor(attribs[Attributes::CustomColor]);
@@ -6692,7 +6747,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	base_rel->setFadedOut(faded_out);
 	base_rel->setProtected(protect);
 	base_rel->setCustomColor(custom_color);
-	base_rel->setLayer(layer);
+	base_rel->setLayer(lays);
 
 	/* If the FK relationship does not reference a foreign key (models generated in older versions)
 	 * we need to assign them to the respective relationships */
@@ -7135,13 +7190,32 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		if(def_type==SchemaParser::XmlDefinition)
 		{
-			QStringList act_layers;
+			QStringList layer_names, act_layers;
 
-			for(auto &layer_id : active_layers)
-				act_layers.push_back(QString::number(layer_id));
+			for(size_t d_idx=0; d_idx<layers.size();d_idx++)
+			{
+				for (auto &layer_name : layers[d_idx])
+					layer_names.push_back(layer_name);
 
-			attribs_aux[Attributes::Layers]=layers.join(';');
-			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
+				attribs_aux[Attributes::Layers]+=layer_names.join(';');
+				if(d_idx<layers.size()-1)
+					attribs_aux[Attributes::Layers]+='|';
+
+				layer_names.clear();
+			}
+
+			for(size_t d_idx=0; d_idx<active_layers.size();d_idx++)
+			{
+				for (auto &layer_id : active_layers[d_idx])
+					act_layers.push_back(QString::number(layer_id));
+
+				attribs_aux[Attributes::ActiveLayers]+=act_layers.join(';');
+				if(d_idx<active_layers.size()-1)
+					attribs_aux[Attributes::ActiveLayers]+='|';
+
+				act_layers.clear();
+			}
+
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : QString());
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
@@ -10345,22 +10419,22 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	}
 }
 
-void DatabaseModel::setLayers(const QStringList &layers)
+void DatabaseModel::setLayers(const vector<QStringList> &layers)
 {
 	this->layers = layers;
 }
 
-QStringList DatabaseModel::getLayers(void)
+vector<QStringList> DatabaseModel::getLayers(void)
 {
 	return(layers);
 }
 
-void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
+void DatabaseModel::setActiveLayers(const vector<QList<unsigned>> &layers)
 {
 	active_layers = layers;
 }
 
-QList<unsigned> DatabaseModel::getActiveLayers(void)
+vector<QList<unsigned>> DatabaseModel::getActiveLayers(void)
 {
 	return(active_layers);
 }

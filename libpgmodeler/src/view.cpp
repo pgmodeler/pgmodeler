@@ -633,7 +633,16 @@ QString View::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::Layer]=QString::number(layer);
+
+	QString tmp_lay=nullptr;
+	for (size_t l_dim=0; l_dim<layer.size();l_dim++)
+	{
+		tmp_lay+=QString::number(layer[l_dim]);
+		if(l_dim< layer.size()-1)
+				tmp_lay+="|";
+	}
+	attributes[Attributes::Layer]=tmp_lay;
+
 	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
 	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());

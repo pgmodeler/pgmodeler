@@ -32,7 +32,7 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
-	layers.push_back(trUtf8("Default layer"));
+	layers.push_back({trUtf8("Default layer")});
 	active_layers.push_back(layers.at(0));
 
 	moving_objs=move_scene=false;
@@ -122,7 +122,7 @@ ObjectsScene::~ObjectsScene(void)
 	}
 }
 
-QString ObjectsScene::formatLayerName(const QString &name)
+QString ObjectsScene::formatLayerName(const unsigned &l_dim, const QString &name)
 {
 	QString fmt_name;
 	unsigned idx = 1;
@@ -137,45 +137,53 @@ QString ObjectsScene::formatLayerName(const QString &name)
 	}
 
 	//Doing the desambiguation (if needed)
-	while(layers.contains(fmt_name))
-		fmt_name = QString("%1 %2").arg(name).arg(QString::number(idx++));
+	if (layers[l_dim].size()>1)
+	{
+		auto str_list = layers[l_dim];
+		while(str_list.contains(fmt_name))
+			fmt_name = QString("%1 %2").arg(name).arg(QString::number(idx++));
+	}
 
 	return(fmt_name);
 }
 
-QString ObjectsScene::addLayer(const QString &name)
+QString ObjectsScene::addLayer(const unsigned &l_dim, const QString &name)
 {
 	if(name.isEmpty())
 		return(QString());
 
-	QString fmt_name = formatLayerName(name);
-	layers.push_back(fmt_name);
+	QString fmt_name = formatLayerName(l_dim, name);
+	layers[l_dim].push_back(fmt_name);
 
 	emit s_layersChanged();
 	return(fmt_name);
 }
 
-QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
+QString ObjectsScene::renameLayer(const unsigned &l_dim, unsigned idx, const QString &name)
 {
-	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
+	if(name.isEmpty() || idx >= static_cast<unsigned>(layers[l_dim].size()))
 		return (QString());
 
-	if(name != layers[idx])
-		layers[idx] = formatLayerName(name);
+	if(name != layers[l_dim][idx])
+		layers[l_dim][idx] = formatLayerName(l_dim, name);
 
 	emit s_layersChanged();
-	return(layers[idx]);
+	return(layers[l_dim][idx]);
 }
 
-void ObjectsScene::removeLayer(const QString &name)
+void ObjectsScene::removeLayer(const unsigned &l_dim, const QString &name)
 {
-	int idx = layers.indexOf(name);
+	int idx = layers[l_dim].indexOf(name);
 
 	if(idx > 0)
 	{
-		moveObjectsToLayer(idx, DefaultLayer);
-		layers.removeAll(name);
-		active_layers.removeAll(name);
+		moveObjectsToLayer(l_dim, idx, DefaultLayer);
+		layers[l_dim].removeAll(name);
+		active_layers[l_dim].removeAll(name);
+
+		for (int upper_layer=idx+1;upper_layer<layers[l_dim].size()+1;upper_layer++)
+			moveObjectsToLayer(l_dim, upper_layer,upper_layer-1);
+
 		emit s_layersChanged();
 	}
 }
@@ -183,156 +191,260 @@ void ObjectsScene::removeLayer(const QString &name)
 void ObjectsScene::removeLayers(void)
 {
 	BaseObjectView *obj_view = nullptr;
-	QString def_layer = layers[DefaultLayer];
-	bool is_active = active_layers.contains(def_layer);
+	QString def_layer = layers[DefaultDimension][DefaultLayer];
+	bool is_active = active_layers[DefaultDimension].contains(def_layer);
 
 	layers.clear();
 	active_layers.clear();
-	layers.push_back(def_layer);
+	layers.push_back({def_layer});
 
 	if(is_active)
-		active_layers.push_back(def_layer);
+		active_layers.push_back({def_layer});
 
 	for(auto &item : this->items())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() != DefaultLayer)
+		if(obj_view && !obj_view->parentItem() &&
+				(obj_view->getDimensionalLayers().size()>1 || obj_view->getDimensionalLayers()[DefaultDimension]!= DefaultLayer))
 		{
-			obj_view->setLayer(DefaultLayer);
-			obj_view->setVisible(is_active);
+			obj_view->setLayer({DefaultLayer});
+			//? obj_view->setVisible(is_active);
 		}
 	}
 
 	emit s_layersChanged();
-	updateActiveLayers();
+	//updateActiveLayers();//??
 }
 
-void ObjectsScene::setActiveLayers(QStringList act_layers)
+void ObjectsScene::addDimension(void)
 {
-	QList<unsigned> layers_idxs;
-	int idx = -1;
-
-	for(auto &layer : act_layers)
+	layers.push_back({"Default layer"});
+	active_layers.push_back({"Default layer"});
+	for(const auto &item : this->items())
 	{
-		idx = layers.indexOf(layer);
+		auto obj_view = dynamic_cast<BaseObjectView *>(item);
+		if(obj_view && !obj_view->parentItem())
+		{
+			auto base_graph_obj = dynamic_cast<BaseGraphicObject * >(obj_view->getSourceObject());
+			if(base_graph_obj)
+			{
+				auto lays=base_graph_obj->getLayer();
+				lays.push_back({0});
+				base_graph_obj->setLayer(lays);
+			}
+		}
+	}
+	emit s_layersChanged();
+}
 
-		if(idx >= 0)
-			layers_idxs.push_back(idx);
+void ObjectsScene::removeDimension(int d_idx)
+{
+	layers.erase(layers.begin()+d_idx);
+	active_layers.erase(active_layers.begin()+d_idx);
+
+	for(const auto &item : this->items())
+	{
+		auto obj_view = dynamic_cast<BaseObjectView *>(item);
+		if(obj_view && !obj_view->parentItem())
+		{
+			auto base_graph_obj = dynamic_cast<BaseGraphicObject * >(obj_view->getSourceObject());
+			if(base_graph_obj)
+			{
+				auto lays=base_graph_obj->getLayer();
+				lays.erase(lays.begin()+d_idx);
+				base_graph_obj->setLayer(lays);
+			}
+		}
 	}
 
-	setActiveLayers(layers_idxs);
+	updateActiveLayers();
+	emit s_layersChanged();
 }
 
-void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
+void ObjectsScene::setLayersFromModel(const vector<QStringList> &layers)
+{
+	this->layers=layers;
+}
+
+void ObjectsScene::setActiveLayers(vector<QStringList> act_layers)
+{
+	QList<unsigned> layers_idxs;
+	vector<QList<unsigned>> dims_layers_idxs;
+	int d_idx=0;
+
+	for(auto &dim : act_layers)
+	{
+		int l_idx = -1;
+		for(auto &layer : dim)
+		{
+			l_idx = layers[d_idx].indexOf(layer);
+
+			if(l_idx >= 0)
+				layers_idxs.push_back(l_idx);
+		}
+		dims_layers_idxs.push_back(layers_idxs);
+		layers_idxs.clear();
+		d_idx++;
+	}
+
+	setActiveLayers(dims_layers_idxs);
+}
+
+void ObjectsScene::setActiveLayers(const vector<QList<unsigned>> &idxs)
 {
 	BaseObjectView *obj_view = nullptr;
 	active_layers.clear();
+	int d_idx;
+	QStringList dim_active_layers;
 
-	if(!layers_idxs.isEmpty())
+	bool is_in_layers = true;
+	vector<unsigned> layer_cnt;
+
+	for(const auto &dim : layers)
+		layer_cnt.push_back(static_cast<unsigned>(dim.size()));
+
+	SchemaView *sch_view = nullptr;
+
+	for(const auto &item : this->items())
 	{
-		bool is_in_layer = false;
-		unsigned layer_cnt = static_cast<unsigned>(layers.size());
-		SchemaView *sch_view = nullptr;
+		d_idx=0;
+		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		for(auto &item : this->items())
+		if(obj_view && !obj_view->parentItem())
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(item);
-
-			if(obj_view && !obj_view->parentItem() && obj_view->getLayer() < layer_cnt)
+			sch_view = dynamic_cast<SchemaView *>(obj_view);
+			for(const auto &dim : idxs)
 			{
-				sch_view = dynamic_cast<SchemaView *>(obj_view);
-				is_in_layer = layers_idxs.contains(obj_view->getLayer());
-
-				if(!obj_view->isVisible() && is_in_layer)
-				{
-					if(!sch_view ||
-						 (sch_view && dynamic_cast<Schema *>(sch_view->getSourceObject())->isRectVisible()))
-					 obj_view->setVisible(true);
-				}
-				else if(obj_view->isVisible() && !is_in_layer)
-					obj_view->setVisible(false);
+					if(!dim.contains(obj_view->getDimensionalLayers()[d_idx]))
+					is_in_layers = false;
+				d_idx++;
 			}
-		}
 
-		for(auto &idx : layers_idxs)
-		{
-			if(idx < layer_cnt)
-				active_layers.push_back(layers[idx]);
-		}
-	}
-	else
-	{
-		for(auto &item : this->items())
-		{
-			obj_view = dynamic_cast<BaseObjectView *>(item);
-
-			if(obj_view && !obj_view->parentItem())
+			if(!obj_view->isVisible() && is_in_layers)
+			{
+				if(!sch_view ||
+					 (sch_view && dynamic_cast<Schema *>(sch_view->getSourceObject())->isRectVisible()))
+				 obj_view->setVisible(true);
+			}
+			else if(obj_view->isVisible() && !is_in_layers)
 				obj_view->setVisible(false);
 		}
+		is_in_layers=true;
 	}
+
+		d_idx=0;
+		for(const auto & dim : idxs)
+		{
+			for(const auto &idx : dim)
+			{
+				if(idx < layer_cnt[d_idx])
+					dim_active_layers.push_back(layers[d_idx][idx]);
+			}
+			active_layers.push_back(dim_active_layers);
+			dim_active_layers.clear();
+			d_idx++;
+		}
+
 
 	emit s_activeLayersChanged();
 }
 
-void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
+void ObjectsScene::setActiveLayersFromModel(const vector<QList<unsigned>> &dims_layers_idxs)
+{
+	active_layers.clear();
+	int d_idx=0;
+	QStringList dim_active_layers;
+	for(const auto & dim : dims_layers_idxs)
+	{
+		for(const auto &idx : dim)
+		{
+			dim_active_layers.push_back(layers[d_idx][idx]);
+		}
+		active_layers.push_back(dim_active_layers);
+		dim_active_layers.clear();
+		d_idx++;
+	}
+}
+
+void ObjectsScene::moveObjectsToLayer(unsigned dim, unsigned old_layer, unsigned new_layer)
 {
 	BaseObjectView *obj_view = nullptr;
-	unsigned total_layers = layers.size();
+	unsigned total_layers = layers[dim].size();
 
-	if(old_layer == new_layer || old_layer >= total_layers || new_layer >= total_layers)
+	if(old_layer == new_layer || new_layer >= total_layers)
 		return;
 
 	for(auto &item : this->items())
 	{
 		obj_view = dynamic_cast<BaseObjectView *>(item);
 
-		if(obj_view && !obj_view->parentItem() && obj_view->getLayer() == old_layer)
+		if(obj_view && !obj_view->parentItem() && obj_view->getDimensionalLayers()[dim] == old_layer)
 		{
-			obj_view->setLayer(new_layer);
-			obj_view->setVisible(isLayerActive(layers[new_layer]));
+			auto obj_view_layers=obj_view->getDimensionalLayers();
+			obj_view_layers[dim]=new_layer;
+			obj_view->setLayer(obj_view_layers);
+			obj_view->setVisible(isLayerActive(dim, new_layer));
 		}
 	}
 
 	emit s_objectsMovedLayer();
 }
 
-bool ObjectsScene::isLayerActive(const QString &name)
+bool ObjectsScene::isLayerActive(const unsigned &l_dim, const QString &name)
 {
-	return(active_layers.contains(name));
+	return(active_layers[l_dim].contains(name));
 }
 
-bool ObjectsScene::isLayerActive(unsigned layer_id)
+bool ObjectsScene::isLayerActive(const unsigned &l_dim, unsigned layer_id)
 {
-	if(layer_id >= static_cast<unsigned>(layers.size()))
+	if(layer_id >= static_cast<unsigned>(layers[l_dim].size()))
 		return(false);
 
-	return(active_layers.contains(layers[layer_id]));
+	return(active_layers[l_dim].contains(layers[l_dim][layer_id]));
 }
 
-QStringList ObjectsScene::getActiveLayers(void)
+bool ObjectsScene::areLayersActive(vector<unsigned> ids)
+{
+	bool result = true;
+	for(size_t dim=0; dim<ids.size(); dim++)
+	{
+		if(!isLayerActive(dim, ids[dim]))
+			result=false;
+	}
+	return result;
+}
+
+
+vector<QStringList> ObjectsScene::getActiveLayers(void)
 {
 	return(active_layers);
 }
 
-QList<unsigned> ObjectsScene::getActiveLayersIds(void)
+vector<QList<unsigned>> ObjectsScene::getActiveLayersIds(void)
 {
 	QList<unsigned> list;
+	vector<QList<unsigned>> dim_layer_list;
+	for(size_t d_idx=0; d_idx<active_layers.size(); d_idx++)
+	{
+		for(auto &layer : active_layers[d_idx])
+			list.push_back(layers[d_idx].indexOf(layer));
 
-	for(auto &layer : active_layers)
-		list.push_back(layers.indexOf(layer));
+		dim_layer_list.push_back(list);
+		list.clear();
+	}
 
-	return(list);
+	return(dim_layer_list);
 }
 
-QStringList ObjectsScene::getLayers(void)
+vector<QStringList> ObjectsScene::getLayers(void)
 {
 	return(layers);
 }
 
-unsigned ObjectsScene::getLayerId(const QString &name)
+unsigned ObjectsScene::getLayerId(const unsigned &l_dim, const QString &name)
 {
-	int idx = layers.contains(name);
+	int idx = layers[l_dim].contains(name);
 	return(idx < 0 ? InvalidLayer : static_cast<unsigned>(idx));
 }
 
@@ -656,7 +768,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 
 		if(obj)
 		{
-			obj->setVisible(isLayerActive(obj->getLayer()));
+			obj->setVisible(areLayersActive(obj->getDimensionalLayers()));
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
 		}
 

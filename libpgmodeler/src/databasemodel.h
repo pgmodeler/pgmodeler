@@ -72,10 +72,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		XmlParser xmlparser;
 
-		//! \brief Stores the layers names and active layer to write them on XML code
-		QStringList layers;
+		//! \brief Stores the dimensions, layers names and active layers to write them on XML code
+		vector<QStringList> layers;
 
-		QList<unsigned> active_layers;
+		vector<QList<unsigned>> active_layers;
 
 		//! \brief Stores the model widget that is managing this database model instance
 		ModelWidget *model_wgt;
@@ -192,10 +192,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setObjectListsCapacity(unsigned capacity);
 
 	protected:
-		void setLayers(const QStringList &layers);
-		void setActiveLayers(const QList<unsigned> &layers);
-		QStringList getLayers(void);
-		QList<unsigned> getActiveLayers(void);
+		void setLayers(const vector<QStringList> &layers);
+		void setActiveLayers(const vector<QList<unsigned>> &layers);
+		vector<QStringList> getLayers(void);
+		vector<QList<unsigned>> getActiveLayers(void);
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
@@ -659,7 +659,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Signal emitted when an object is created from a xml code
 		void s_objectLoaded(int progress, QString object_id, unsigned obj_type);
 
-	friend class DatabaseImportHelper;
+		//! \brief Signal emitted when a model is being loaded and layers are done, to update the scene
+		void s_layersLoaded(void);
+
+		friend class DatabaseImportHelper;
 	friend class ModelWidget;
 	friend class PgModelerCli;
 };

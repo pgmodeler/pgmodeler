@@ -67,7 +67,15 @@ QString Schema::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::Layer]=QString::number(layer);
+	QString tmp_lay=nullptr;
+	for (size_t l_dim=0; l_dim<layer.size();l_dim++)
+	{
+		tmp_lay+=QString::number(layer[l_dim]);
+		if(l_dim< layer.size()-1)
+				tmp_lay+="|";
+	}
+	attributes[Attributes::Layer]=tmp_lay;
+
 	attributes[Attributes::FillColor]=fill_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
 	setFadedOutAttribute();

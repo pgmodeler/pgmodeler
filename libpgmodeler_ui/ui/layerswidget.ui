@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>165</height>
+    <width>767</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,70 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
+      <item row="0" column="7">
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Dimensions :</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Layers :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="10">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="9">
+       <widget class="QToolButton" name="remove_dim_tb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Delete</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/dellayer.png</normaloff>:/icones/icones/dellayer.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="11">
        <widget class="QToolButton" name="remove_all_tb">
         <property name="enabled">
          <bool>false</bool>
@@ -77,7 +140,7 @@
          <string>Remove all layers</string>
         </property>
         <property name="text">
-         <string>Delete all</string>
+         <string>Reset all</string>
         </property>
         <property name="icon">
          <iconset resource="../res/resources.qrc">
@@ -100,14 +163,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="6">
-       <widget class="QListWidget" name="layers_lst">
-        <property name="alternatingRowColors">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
+      <item row="0" column="15">
        <widget class="QToolButton" name="hide_tb">
         <property name="minimumSize">
          <size>
@@ -136,23 +192,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3" colspan="2">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0">
+      <item row="0" column="4">
        <widget class="QToolButton" name="add_tb">
         <property name="enabled">
          <bool>true</bool>
@@ -196,7 +236,34 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1" colspan="15">
+       <widget class="QTableWidget" name="layers_tw">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="8">
+       <widget class="QToolButton" name="add_dim_tb">
+        <property name="text">
+         <string>Add</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../res/resources.qrc">
+          <normaloff>:/icones/icones/addlayer.png</normaloff>:/icones/icones/addlayer.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
        <widget class="QToolButton" name="remove_tb">
         <property name="enabled">
          <bool>false</bool>
@@ -239,6 +306,19 @@
          <bool>false</bool>
         </property>
        </widget>
+      </item>
+      <item row="0" column="14">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
