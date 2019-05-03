@@ -260,7 +260,10 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"PartKeyObjectInexistsModel", QT_TR_NOOP("A partition key of the table `%1' is referencing the object `%3' (%4) which was not found in the model!")},
 	{"AsgInvalidColumnPartitionKey", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
 	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
-	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")}
+	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")},
+	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
+	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
+	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
 };
 
 Exception::Exception(void)

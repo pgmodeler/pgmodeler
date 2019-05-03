@@ -35,29 +35,34 @@ QString GenericSQL::getDefinition(void)
 	return(definition);
 }
 
-bool GenericSQL::isObjectRefNameExists(const QString &ref_name)
+int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
-	bool found = false;
+	int idx = -1;
 	vector<RefConfig>::iterator itr = objects_refs.begin(),
-			itr_end = objects_refs.begin();
+			itr_end = objects_refs.end();
 
-	if(!ref_name.isEmpty())
-		return(false);
+	if(ref_name.isEmpty())
+		return(-1);
 
-	while(itr != itr_end && !found)
+	while(itr != itr_end)
 	{
-		found = ((*itr).ref_name == ref_name);
+		if((*itr).ref_name == ref_name)
+		{
+			idx = itr - objects_refs.begin();
+			break;
+		}
+
 		itr++;
 	}
 
-	return(found);
+	return(idx);
 }
 
 bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
 	vector<RefConfig>::iterator itr = objects_refs.begin(),
-			itr_end = objects_refs.begin();
+			itr_end = objects_refs.end();
 
 	if(!object)
 		return(false);
@@ -71,18 +76,29 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 	return(found);
 }
 
-void GenericSQL::addObjectReference(const QString &ref_name, BaseObject *object, bool use_signature, bool format_name)
+void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
 {
-	if(BaseObject::isValidName(ref_name))
-		throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	if(!object)
-		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(isObjectRefNameExists(ref_name))
-		throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(!BaseObject::isValidName(ref_name))
+		throw Exception(ErrorCode::AsgInvalidNameObjReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(getObjectRefNameIndex(ref_name) >= 0)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(ref_name),
+										ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	objects_refs.push_back(RefConfig(ref_name, object, use_signature, format_name));
+	setCodeInvalidated(true);
+}
+
+void GenericSQL::removeObjectReference(const QString &ref_name)
+{
+	int idx = getObjectRefNameIndex(ref_name);
+
+	if(idx >= 0)
+		objects_refs.erase(objects_refs.begin() + idx);
+
 	setCodeInvalidated(true);
 }
 
@@ -101,7 +117,7 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Definition] = definition;
 	else
 	{
-		QString fmt_definition, ref_name, ref_value;
+		QString fmt_definition = definition, ref_name, ref_value;
 
 		for(auto &ref : objects_refs)
 		{

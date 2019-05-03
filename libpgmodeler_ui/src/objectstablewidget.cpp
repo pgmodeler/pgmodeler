@@ -407,10 +407,14 @@ void ObjectsTableWidget::removeRow(void)
 			{
 				setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
 				item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
-				emit s_rowRemoved(row_idx);
+
+				emit s_rowAboutToRemove(row_idx);
+
 				table_tbw->removeRow(row_idx);
 				table_tbw->setCurrentItem(nullptr);
 				setButtonsEnabled();
+
+				emit s_rowRemoved(row_idx);
 			}
 		}
 	}

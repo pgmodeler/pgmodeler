@@ -28,7 +28,7 @@
 const QString DatabaseExplorerWidget::DepNotDefined=QString();
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ElemSeparator=QString("•");
-const QString DatabaseExplorerWidget::DefaultSourceCode=QT_TR_NOOP("-- Source code not generated! Hit F7 or middle-click the item to load it. --");
+const QString DatabaseExplorerWidget::DefaultSourceCode=QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."));
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::AdminRoles, QT_TR_NOOP("Admin. roles")},	{Attributes::Alignment, QT_TR_NOOP("Alignment")},
@@ -1850,7 +1850,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				if(obj_type==ObjectType::Type &&
 					 (oid <= sys_oid || attribs[Attributes::Configuration]==Attributes::BaseType))
 				{
-					source=trUtf8("-- Source code genaration for buil-in and base types currently unavailable --");
+					source=QString("-- %1 --").arg(trUtf8("Source code genaration for built-in and base types currently unavailable."));
 					emit s_sourceCodeShowRequested(source);
 				}
 				else
@@ -1904,7 +1904,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						if(object)
 							source=getObjectSource(object, &dbmodel);
 						else
-							source=trUtf8("-- Source code unavailable for the object %1 (%2). --").arg(name).arg(BaseObject::getTypeName(obj_type));
+							source=QString("-- %1 --").arg(trUtf8("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
 					}
 				}
 

@@ -43,7 +43,7 @@ class GenericSQL: public BaseObject{
 
 		vector<RefConfig> objects_refs;
 
-		bool isObjectRefNameExists(const QString &ref_name);
+		int getObjectRefNameIndex(const QString &ref_name);
 
 	public:
 		GenericSQL(void);
@@ -51,11 +51,8 @@ class GenericSQL: public BaseObject{
 		void setDefinition(const QString &def);
 		QString getDefinition(void);
 
-		void setParseable(bool value);
-		bool isParseable(void);
-
-		void addObjectReference(const QString &ref_name, BaseObject *object, bool use_signature, bool format_name);
-		map<QString, BaseObject *> getObjectReferences(void);
+		void addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
+		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences(void);
 		bool isObjectReferenced(BaseObject *object);
 
