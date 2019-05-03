@@ -72,7 +72,6 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	objects_refs_tab->setHeaderLabel(trUtf8("Format name"), 4);
 
 	setMinimumSize(700, 500);
-	updateCodePreview();
 
 	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
 			sel_obj_icon_lbl->setPixmap(selected ? PgModelerUiNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
@@ -80,17 +79,19 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	});
 
 	connect(objects_refs_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObjectReference(int)));
+	connect(objects_refs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObjectReference(int)));
+	connect(objects_refs_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(updateObjectReference(int)));
 
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowAboutToRemove, [&](int row){
 		QString ref_name = objects_refs_tab->getCellText(row, 0);
 		dummy_gsql.removeObjectReference(ref_name);
-		updateCodePreview();
 	});
 
 	connect(objects_refs_tab, &ObjectsTableWidget::s_rowsRemoved, [&](){
 		dummy_gsql.removeObjectReferences();
-		updateCodePreview();
 	});
+
+	connect(attribs_tbw, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview()));
 }
 
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)
@@ -134,19 +135,41 @@ void GenericSQLWidget::addObjectReference(int row)
 				format_name = format_name_chk->isChecked();
 
 		dummy_gsql.addObjectReference(object, ref_name, use_signature, format_name);
-		objects_refs_tab->setCellText(ref_name, row, 0);
-		objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
-		objects_refs_tab->setCellText(object->getTypeName(), row, 2);
-		objects_refs_tab->setCellText(use_signature ? trUtf8("Yes") : trUtf8("No"), row, 3);
-		objects_refs_tab->setCellText(use_signature ? trUtf8("Yes") : trUtf8("No"), row, 4);
-
+		showObjectReferenceData(row, object, ref_name, use_signature, format_name);
 		clearObjectReferenceForm();
-		updateCodePreview();
 	}
 	catch(Exception &e)
 	{
 		objects_refs_tab->removeRow(row);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void GenericSQLWidget::editObjectReference(int row)
+{
+	ref_name_edt->setText(objects_refs_tab->getCellText(row, 0));
+	use_signature_chk->setChecked(objects_refs_tab->getCellText(row, 3) == trUtf8("Yes"));
+	format_name_chk->setChecked(objects_refs_tab->getCellText(row, 4) == trUtf8("Yes"));
+	object_sel->setSelectedObject(reinterpret_cast<BaseObject *>(objects_refs_tab->getRowData(row).value<void *>()));
+}
+
+void GenericSQLWidget::updateObjectReference(int row)
+{
+	QString ref_name = objects_refs_tab->getCellText(row, 0),
+			new_ref_name = ref_name_edt->text();
+	BaseObject *object = object_sel->getSelectedObject();
+	bool use_signature = use_signature_chk->isChecked(),
+			format_name = format_name_chk->isChecked();
+
+	try
+	{
+		dummy_gsql.updateObjectReference(ref_name, object, new_ref_name, use_signature, format_name);
+		showObjectReferenceData(row, object, new_ref_name, use_signature, format_name);
+		clearObjectReferenceForm();
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -174,5 +197,15 @@ void GenericSQLWidget::updateCodePreview(void)
 	{
 		preview_txt->setPlainText(QString("/* %1 */").arg(e.getExceptionsText()));
 	}
+}
+
+void GenericSQLWidget::showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
+{
+	objects_refs_tab->setCellText(ref_name, row, 0);
+	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
+	objects_refs_tab->setCellText(object->getTypeName(), row, 2);
+	objects_refs_tab->setCellText(use_signature ? trUtf8("Yes") : trUtf8("No"), row, 3);
+	objects_refs_tab->setCellText(format_name ? trUtf8("Yes") : trUtf8("No"), row, 4);
+	objects_refs_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(object)), row);
 }
 

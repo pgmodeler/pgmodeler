@@ -50,8 +50,7 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 
 		GenericSQL dummy_gsql;
 
-		void clearObjectReferenceForm(void);
-		void updateCodePreview(void);
+		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
 
 	public:
 		GenericSQLWidget(QWidget * parent = nullptr);
@@ -61,7 +60,11 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		void applyConfiguration(void);
 
 	private slots:
+		void updateCodePreview(void);
 		void addObjectReference(int row);
+		void editObjectReference(int row);
+		void updateObjectReference(int row);
+		void clearObjectReferenceForm(void);
 };
 
 #endif

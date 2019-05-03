@@ -44,6 +44,7 @@ class GenericSQL: public BaseObject{
 		vector<RefConfig> objects_refs;
 
 		int getObjectRefNameIndex(const QString &ref_name);
+		void validateObjectReference(RefConfig ref);
 
 	public:
 		GenericSQL(void);
@@ -52,6 +53,7 @@ class GenericSQL: public BaseObject{
 		QString getDefinition(void);
 
 		void addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
+		void updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature, bool format_name);
 		void removeObjectReference(const QString &ref_name);
 		void removeObjectReferences(void);
 		bool isObjectReferenced(BaseObject *object);

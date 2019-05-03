@@ -76,20 +76,54 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 	return(found);
 }
 
-void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
+void GenericSQL::validateObjectReference(GenericSQL::RefConfig ref)
 {
-	if(!object)
+	if(!ref.object)
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(!BaseObject::isValidName(ref_name))
+	if(!BaseObject::isValidName(ref.ref_name))
 		throw Exception(ErrorCode::AsgInvalidNameObjReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(getObjectRefNameIndex(ref_name) >= 0)
-		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(ref_name),
+	if(getObjectRefNameIndex(ref.ref_name) >= 0)
+		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(ref.ref_name),
 										ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+}
 
-	objects_refs.push_back(RefConfig(ref_name, object, use_signature, format_name));
-	setCodeInvalidated(true);
+void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name)
+{
+	try
+	{
+		RefConfig ref = RefConfig(ref_name, object, use_signature, format_name);
+		validateObjectReference(ref);
+		objects_refs.push_back(ref);
+		setCodeInvalidated(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature, bool format_name)
+{
+	int idx = getObjectRefNameIndex(ref_name);
+
+	if(idx < 0)
+		return;
+
+	try
+	{
+		RefConfig ref = RefConfig(new_ref_name, object, use_signature, format_name);
+		vector<RefConfig>::iterator itr = objects_refs.begin() + idx;
+
+		validateObjectReference(ref);
+		(*itr) = ref;
+		setCodeInvalidated(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void GenericSQL::removeObjectReference(const QString &ref_name)
