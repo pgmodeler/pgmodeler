@@ -140,7 +140,9 @@ void GenericSQLWidget::addObjectReference(int row)
 	}
 	catch(Exception &e)
 	{
+		objects_refs_tab->blockSignals(true);
 		objects_refs_tab->removeRow(row);
+		objects_refs_tab->blockSignals(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -179,6 +181,7 @@ void GenericSQLWidget::clearObjectReferenceForm(void)
 	ref_name_edt->clear();
 	use_signature_chk->setChecked(false);
 	format_name_chk->setChecked(false);
+	objects_refs_tab->clearSelection();
 }
 
 void GenericSQLWidget::updateCodePreview(void)

@@ -76,7 +76,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 	return(found);
 }
 
-void GenericSQL::validateObjectReference(GenericSQL::RefConfig ref)
+void GenericSQL::validateObjectReference(GenericSQL::RefConfig ref, bool ignore_duplic)
 {
 	if(!ref.object)
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -84,7 +84,7 @@ void GenericSQL::validateObjectReference(GenericSQL::RefConfig ref)
 	if(!BaseObject::isValidName(ref.ref_name))
 		throw Exception(ErrorCode::AsgInvalidNameObjReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	if(getObjectRefNameIndex(ref.ref_name) >= 0)
+	if(!ignore_duplic && getObjectRefNameIndex(ref.ref_name) >= 0)
 		throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(ref.ref_name),
 										ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -94,7 +94,7 @@ void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name,
 	try
 	{
 		RefConfig ref = RefConfig(ref_name, object, use_signature, format_name);
-		validateObjectReference(ref);
+		validateObjectReference(ref, false);
 		objects_refs.push_back(ref);
 		setCodeInvalidated(true);
 	}
@@ -115,8 +115,13 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 	{
 		RefConfig ref = RefConfig(new_ref_name, object, use_signature, format_name);
 		vector<RefConfig>::iterator itr = objects_refs.begin() + idx;
+		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
-		validateObjectReference(ref);
+		if(idx_aux != idx)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedObjectReference).arg(new_ref_name),
+											ErrorCode::InsDuplicatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		validateObjectReference(ref, true);
 		(*itr) = ref;
 		setCodeInvalidated(true);
 	}

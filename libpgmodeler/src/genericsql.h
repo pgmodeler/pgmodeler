@@ -44,7 +44,7 @@ class GenericSQL: public BaseObject{
 		vector<RefConfig> objects_refs;
 
 		int getObjectRefNameIndex(const QString &ref_name);
-		void validateObjectReference(RefConfig ref);
+		void validateObjectReference(RefConfig ref, bool ignore_duplic);
 
 	public:
 		GenericSQL(void);
