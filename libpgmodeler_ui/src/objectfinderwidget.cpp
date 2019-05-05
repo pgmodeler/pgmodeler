@@ -227,7 +227,7 @@ void ObjectFinderWidget::findObjects(void)
 
 		//Search the objects on model
 		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
-														case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
+			case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked(), comment_chk->isChecked());
 
 		//Show the found objects on the result table
 		updateObjectTable(result_tbw, found_objs);
@@ -437,6 +437,15 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				tab_item->setFont(fnt);
 				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
 				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
+			}
+
+			//Sixth column: object comment
+			if(tab_wgt->columnCount() > 5)
+			{
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
+				tab_item->setFont(fnt);
+				tab_item->setText(objs[i]->getComment().size()>0 ? objs[i]->getComment() : QString("-"));
+				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
 			}
 
 			lin_idx++;
