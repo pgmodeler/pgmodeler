@@ -191,6 +191,9 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Signal emitted when a single row is removed. The row index is sent together with the signal
 		void s_rowRemoved(int);
 
+		//! \brief Signal emitted when a single row is about to be removed. The row index is sent together with the signal
+		void s_rowAboutToRemove(int);
+
 		//! \brief Signal emitted when a row is selected. The row index is sent together with the signal
 		void s_rowSelected(int);
 

@@ -264,8 +264,9 @@ void ModelValidationHelper::validateModel(void)
 	try
 	{
 		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
-							 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
-							 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View, ObjectType::Relationship },
+												 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
+												 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
+												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql },
 				aux_types[]={ ObjectType::Table, ObjectType::View },
 				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
 				obj_type;
@@ -308,7 +309,7 @@ void ModelValidationHelper::validateModel(void)
 					emit s_objectProcessed(signal_msg.arg(object->getName()).arg(object->getTypeName()), object->getObjectType());
 
 					/* Special validation case: For generalization and copy relationships validates the ids of participant tables.
-		   * Reference table cannot own an id greater thant receiver table */
+						 Reference table cannot own an id greater thant receiver table */
 					if(obj_type==ObjectType::Relationship)
 					{
 						rel=dynamic_cast<Relationship *>(object);
@@ -337,14 +338,13 @@ void ModelValidationHelper::validateModel(void)
 							col=dynamic_cast<Column *>(tab_obj);
 
 							/* If the current referrer object has an id less than reference object's id
-				then it will be pushed into the list of invalid references. The only exception is
-				for foreign keys that are discarded from any validation since they are always created
-				at end of code defintion being free of any reference breaking. */
+							 * then it will be pushed into the list of invalid references. The only exception is
+							 * for foreign keys that are discarded from any validation since they are always created
+							 * at end of code defintion being free of any reference breaking. */
 							if(object != refs.back() &&
 									(
 										((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
-										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId()))
-										||
+										 (tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
 										(!constr && refs.back()->getObjectId() <= object->getObjectId()))
 									)
 							{
@@ -360,9 +360,9 @@ void ModelValidationHelper::validateModel(void)
 						}
 
 						/* Validating a special object. The validation made here is to check if the special object
-				(constraint/index/trigger/view) references a column added by a relationship and
-				 that relationship is being created after the creation of the special object */
-						if(obj_type==ObjectType::Table || obj_type==ObjectType::View /* || obj_type==ObjectType::ObjSequence */)
+						 * (constraint/index/trigger/view) references a column added by a relationship and
+						 *  that relationship is being created after the creation of the special object */
+						if(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type == ObjectType::GenericSql)
 						{
 							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 							vector<TableObject *> *tab_objs;
@@ -370,16 +370,18 @@ void ModelValidationHelper::validateModel(void)
 							vector<BaseObject *> rels;
 							BaseObject *rel=nullptr;
 							View *view=nullptr;
+							GenericSQL *gen_sql=nullptr;
 							Constraint *constr=nullptr;
 
 							table=dynamic_cast<Table *>(object);
 							view=dynamic_cast<View *>(object);
+							gen_sql = dynamic_cast<GenericSQL *>(object);
 
 							if(table)
 							{
 								/* Checking the table children objects if they references some columns added by relationship.
-				If so, the id of the relationships are swapped with the child object if the first is created
-				after the latter. */
+								 * If so, the id of the relationships are swapped with the child object if the first is created
+								 * after the latter. */
 								for(auto &obj_tp : tab_aux_types)
 								{
 									tab_objs = table->getObjectList(obj_tp);
@@ -416,7 +418,7 @@ void ModelValidationHelper::validateModel(void)
 									}
 								}
 							}
-							else
+							else if(view)
 							{
 								ref_cols=view->getRelationshipAddedColumns();
 
@@ -425,6 +427,23 @@ void ModelValidationHelper::validateModel(void)
 								{
 									rel=ref_col->getParentRelationship();
 									if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel)==rels.end())
+										rels.push_back(rel);
+								}
+
+								generateValidationInfo(ValidationInfo::SpObjBrokenReference, object, rels);
+							}
+							else
+							{
+								Column *col = nullptr;
+
+								for(auto &ref_obj : gen_sql->getReferencedObjects())
+								{
+									col = dynamic_cast<Column *>(ref_obj);
+									if(!col) continue;
+
+									rel = col->getParentRelationship();
+
+									if(rel->getObjectId() > object->getObjectId() && std::find(rels.begin(), rels.end(), rel) == rels.end())
 										rels.push_back(rel);
 								}
 

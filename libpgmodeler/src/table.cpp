@@ -205,6 +205,8 @@ void Table::setRelObjectsIndexesAttribute(void)
 			{
 				aux_attribs[Attributes::Name]=obj_idx.first;
 				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
+
+				schparser.ignoreUnkownAttributes(true);
 				aux_attribs[Attributes::Objects]+=schparser.getCodeDefinition(Attributes::Object, aux_attribs, SchemaParser::XmlDefinition);
 			}
 

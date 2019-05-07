@@ -45,50 +45,6 @@ class SchemaParser {
 		 attributes avoiding raising exceptions */
 		bool ignore_empty_atribs;
 
-		static const char CharComment,	//! \brief Character that starts a comment
-		CharLineEnd,	//! \brief Character that indicates end of line
-		CharSpace,		//! \brief Character that indicates spacing
-		CharTabulation,	//! \brief Character that indicates tabulation
-		CharIniAttribute,	//! \brief Character that indicates a reference to an attribute
-		CharEndAttribute,	//! \brief Character that delimits on the right the attribute name
-		CharIniConditional,	//! \brief Character that starts a conditional instruction
-		CharIniMetachar,	//! \brief Character that starts a metacharacter
-		CharIniPlainText,	//! \brief Character that starts a plain text
-		CharEndPlainText,	//! \brief Character that ends a plain text
-		CharIniCompExpr,	//! \brief Character that starts a comparison expression
-		CharEndCompExpr,	//! \brief Character that ends a comparison expression
-		CharValueDelim,	//! \brief Character that delimiters a value (string)
-		CharValueOf;	/*! \brief Character that is used on %set instructions to
-										create an attribute name based upon another attribute value */
-
-		//! \brief Tokens related to conditional instructions and operators
-		static const QString	TokenIf,  // %if
-		TokenThen,// %then
-		TokenElse,// %else
-		TokenEnd, // %end
-		TokenOr,  // %or
-		TokenNot, // %not
-		TokenAnd, // %and
-		TokenSet, //%set
-		TokenUnset; //%unset
-
-		//! \brief Tokens related to metacharacters
-		static const QString	TokenMetaSp,// $sp (space)
-		TokenMetaBr,// $br (line break)
-		TokenMetaTb,// $tb (tabulation)
-		TokenMetaOb,// $ob (open square bracket '[')
-		TokenMetaCb,// $cb (close square bracket ']')
-		TokenMetaOc,// $ob (open curly bracket '{')
-		TokenMetaCc;// $cb (close curly bracket '}')
-
-		//! \brief Tokens related to comparison expressions
-		static const QString	TokenEqOper,// == (equal)
-		TokenNeOper,// != (not equal)
-		TokenGtOper,// > (greater than)
-		TokenLtOper,// < (less than)
-		TokenGtEqOper,// >= (greater or equal to)
-		TokenLtEqOper;// <= (less or equal to)
-
 		//! \brief RegExp used to validate attribute names
 		static const QRegExp AttribRegExp;
 
@@ -185,6 +141,50 @@ class SchemaParser {
 		QString pgsql_version;
 
 	public:
+		static const char CharComment,	//! \brief Character that starts a comment
+		CharLineEnd,	//! \brief Character that indicates end of line
+		CharSpace,		//! \brief Character that indicates spacing
+		CharTabulation,	//! \brief Character that indicates tabulation
+		CharIniAttribute,	//! \brief Character that indicates a reference to an attribute
+		CharEndAttribute,	//! \brief Character that delimits on the right the attribute name
+		CharIniConditional,	//! \brief Character that starts a conditional instruction
+		CharIniMetachar,	//! \brief Character that starts a metacharacter
+		CharIniPlainText,	//! \brief Character that starts a plain text
+		CharEndPlainText,	//! \brief Character that ends a plain text
+		CharIniCompExpr,	//! \brief Character that starts a comparison expression
+		CharEndCompExpr,	//! \brief Character that ends a comparison expression
+		CharValueDelim,	//! \brief Character that delimiters a value (string)
+		CharValueOf;	/*! \brief Character that is used on %set instructions to
+										create an attribute name based upon another attribute value */
+
+		//! \brief Tokens related to conditional instructions and operators
+		static const QString	TokenIf,  // %if
+		TokenThen,// %then
+		TokenElse,// %else
+		TokenEnd, // %end
+		TokenOr,  // %or
+		TokenNot, // %not
+		TokenAnd, // %and
+		TokenSet, //%set
+		TokenUnset; //%unset
+
+		//! \brief Tokens related to metacharacters
+		static const QString	TokenMetaSp,// $sp (space)
+		TokenMetaBr,// $br (line break)
+		TokenMetaTb,// $tb (tabulation)
+		TokenMetaOb,// $ob (open square bracket '[')
+		TokenMetaCb,// $cb (close square bracket ']')
+		TokenMetaOc,// $ob (open curly bracket '{')
+		TokenMetaCc;// $cb (close curly bracket '}')
+
+		//! \brief Tokens related to comparison expressions
+		static const QString	TokenEqOper,// == (equal)
+		TokenNeOper,// != (not equal)
+		TokenGtOper,// > (greater than)
+		TokenLtOper,// < (less than)
+		TokenGtEqOper,// >= (greater or equal to)
+		TokenLtEqOper;// <= (less or equal to)
+
 		//! \brief Constants used to get a specific object definition
 		static constexpr unsigned SqlDefinition=0,
 		XmlDefinition=1;
@@ -234,7 +234,7 @@ class SchemaParser {
 		QStringList extractAttributes(void);
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
-	called when generating XML code and only tag attributes are treated.*/
+		 * 	called when generating XML code and only tag attributes are treated.*/
 		static QString convertCharsToXMLEntities(QString buf);
 };
 

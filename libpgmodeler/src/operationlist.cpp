@@ -462,7 +462,8 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		else
 		{
 			if((obj_type==ObjectType::Sequence && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
-					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()))
+					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()) ||
+					(obj_type==ObjectType::GenericSql && dynamic_cast<GenericSQL *>(object)->isReferRelationshipAddedObject()))
 				operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
 
 			//Case a specific index wasn't specified
@@ -734,12 +735,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				aux_obj=model->createView();
 			else if(obj_type==ObjectType::Column)
 				aux_obj=model->createColumn();
+			else if(obj_type==ObjectType::GenericSql)
+				aux_obj=model->createGenericSQL();
 		}
 
 		/* If the operation is a modified/moved object, the object copy
 			stored in the pool will be restored */
-		if(op_type==Operation::ObjectModified ||
-				op_type==Operation::ObjectMoved)
+		if(op_type==Operation::ObjectModified || op_type==Operation::ObjectMoved)
 		{
 			if(obj_type==ObjectType::Relationship)
 			{

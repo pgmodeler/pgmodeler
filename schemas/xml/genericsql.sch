@@ -15,4 +15,6 @@
 
  $tb <definition><! $ob CDATA $ob {definition} $cb $cb ></definition> $br
  
+ %if {objects} %then {objects} %end
+ 
 </genericsql>  $br $br

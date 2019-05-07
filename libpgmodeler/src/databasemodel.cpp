@@ -1819,6 +1819,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Trigger *trigger=nullptr;
 	View *view=nullptr;
 	BaseRelationship *rel=nullptr;
+	GenericSQL *generic_sql=nullptr;
 	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
@@ -2001,6 +2002,24 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
 				removePermission(permission);
 				delete(permission);
+			}
+		}
+
+		//Making a copy of the generic SQL objects list to avoid iterator invalidation when removing an object
+		rem_objects.assign(genericsqls.begin(), genericsqls.end());
+		itr=rem_objects.begin();
+		itr_end=rem_objects.end();
+
+		while(itr!=itr_end)
+		{
+			generic_sql = dynamic_cast<GenericSQL *>(*itr);
+			itr++;
+
+			if(generic_sql->isReferRelationshipAddedObject())
+			{
+				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
+				removeGenericSQL(generic_sql);
+				delete(generic_sql);
 			}
 		}
 	}
@@ -5857,19 +5876,66 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 {
 	GenericSQL *genericsql=nullptr;
 	attribs_map attribs;
+	QString elem, parent_name, obj_name;
+	ObjectType obj_type;
+	Table *parent_table = nullptr;
+	BaseObject *object = nullptr;
 
 	try
 	{
-		genericsql=new GenericSQL;
+		genericsql = new GenericSQL;
 		setBasicAttributes(genericsql);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
-			if(xmlparser.getElementType()==XML_ELEMENT_NODE && xmlparser.getElementName() == Attributes::Definition)
+			do
 			{
-				xmlparser.accessElement(XmlParser::ChildElement);
-				genericsql->setDefinition(xmlparser.getElementContent());
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem = xmlparser.getElementName();
+
+					if(elem == Attributes::Definition)
+					{
+						xmlparser.savePosition();
+						xmlparser.accessElement(XmlParser::ChildElement);
+						genericsql->setDefinition(xmlparser.getElementContent());
+						xmlparser.restorePosition();
+					}
+					else if(elem == Attributes::Object)
+					{
+						xmlparser.getElementAttributes(attribs);
+
+						obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
+						obj_name = attribs[Attributes::Name];
+						parent_name = attribs[Attributes::Parent];
+
+						//If the object is a column its needed to get the parent table
+						if(obj_type == ObjectType::Column)
+						{
+							parent_table = dynamic_cast<Table *>(getObject(parent_name, ObjectType::Table));
+
+							if(parent_table)
+								object = parent_table->getColumn(obj_name);
+						}
+						else
+							object = getObject(obj_name, obj_type);
+
+						//Raises an error if the generic object references an object that does not exist
+						if(!object)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(genericsql->getName())
+															.arg(genericsql->getTypeName())
+															.arg(obj_name)
+															.arg(BaseObject::getTypeName(obj_type)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						genericsql->addObjectReference(object, attribs[Attributes::RefName],
+																					 attribs[Attributes::UseSignature] == Attributes::True,
+																					 attribs[Attributes::FormatName] == Attributes::True);
+					}
+				}
 			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 	}
 	catch(Exception &e)
@@ -8206,6 +8272,14 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				ForeignServer *server = dynamic_cast<ForeignServer *>(object);
 				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
 			}
+			//** Getting the dependecies for generic sql **
+			else if(obj_type==ObjectType::GenericSql)
+			{
+				GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
+				vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
+				for(auto &obj : ref_objs)
+					getObjectDependecies(obj, deps, inc_indirect_deps);
+			}
 
 			if(obj_type == ObjectType::Table || obj_type == ObjectType::View)
 			{
@@ -9358,7 +9432,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 		}
 
-
 		if(obj_type==ObjectType::Tag && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -9426,6 +9499,21 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				}
 				itr++;
 			}
+		}
+
+		// Checking if any generic SQL object is referencing the object passed
+		vector<BaseObject *>::iterator itr = genericsqls.begin(),
+				itr_end = genericsqls.end();
+
+		while(itr != itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if(dynamic_cast<GenericSQL *>(*itr)->isObjectReferenced(object))
+			{
+				refer = true;
+				refs.push_back(*itr);
+			}
+
+			itr++;
 		}
 	}
 }
