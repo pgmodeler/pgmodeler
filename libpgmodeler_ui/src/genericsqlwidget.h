@@ -50,6 +50,8 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 
 		GenericSQL dummy_gsql;
 
+		static const QRegExp AttrDelimRegexp;
+
 		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
 
 	public:

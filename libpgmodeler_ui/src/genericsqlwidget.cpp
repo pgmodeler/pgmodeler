@@ -18,8 +18,14 @@
 
 #include "genericsqlwidget.h"
 
+const QRegExp GenericSQLWidget::AttrDelimRegexp = QRegExp(QString("(\\%1)+|(\\%2)+")
+																													.arg(SchemaParser::CharIniAttribute)
+																													.arg(SchemaParser::CharEndAttribute));
+
 GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::GenericSql)
 {
+	vector<ObjectType> types;
+
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
 
@@ -51,9 +57,13 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	attribs_tbw->widget(2)->layout()->setContentsMargins(4,4,4,4);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
-	object_sel = new ObjectSelectorWidget(BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::GenericSql,
-																																						ObjectType::Permission, ObjectType::Relationship,
-																																						ObjectType::Tag, ObjectType::Textbox }), true, this);
+	types = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::GenericSql,
+																							ObjectType::Permission, ObjectType::Relationship,
+																							ObjectType::Tag, ObjectType::Textbox });
+	types.push_back(ObjectType::Column);
+
+	object_sel = new ObjectSelectorWidget(types, true, this);
+
 	objects_refs_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	references_grid->addWidget(object_sel, 0, 1, 1, 1);
 	references_grid->addWidget(objects_refs_tab, 2, 0, 1, 2);
@@ -96,40 +106,33 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)
 {
-	if(genericsql)
-		definition_txt->setPlainText(genericsql->getDefinition());
-
 	BaseObjectWidget::setAttributes(model, op_list, genericsql);
+
+	if(genericsql)
+	{
+		dummy_gsql = *genericsql;
+		definition_txt->setPlainText(genericsql->getDefinition());
+		objects_refs_tab->blockSignals(true);
+
+		for(auto &ref : genericsql->getObjectsReferences())
+		{
+			objects_refs_tab->addRow();
+			showObjectReferenceData(objects_refs_tab->getRowCount() - 1,
+															ref.object, ref.ref_name, ref.use_signature, ref.format_name);
+		}
+
+		objects_refs_tab->blockSignals(false);
+	}
 
 	object_sel->setModel(model);
 	definition_cp->configureCompletion(model, definition_hl);
-}
-
-void GenericSQLWidget::applyConfiguration(void)
-{
-	try
-	{
-		GenericSQL *genericsql=nullptr;
-
-		startConfiguration<GenericSQL>();
-		genericsql=dynamic_cast<GenericSQL *>(this->object);
-		genericsql->setDefinition(definition_txt->toPlainText());
-
-		BaseObjectWidget::applyConfiguration();
-		finishConfiguration();
-	}
-	catch(Exception &e)
-	{
-		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
 }
 
 void GenericSQLWidget::addObjectReference(int row)
 {
 	try
 	{
-		QString ref_name = ref_name_edt->text();
+		QString ref_name = ref_name_edt->text().remove(AttrDelimRegexp);
 		BaseObject *object = object_sel->getSelectedObject();
 		bool use_signature = use_signature_chk->isChecked(),
 				format_name = format_name_chk->isChecked();
@@ -158,7 +161,7 @@ void GenericSQLWidget::editObjectReference(int row)
 void GenericSQLWidget::updateObjectReference(int row)
 {
 	QString ref_name = objects_refs_tab->getCellText(row, 0),
-			new_ref_name = ref_name_edt->text();
+			new_ref_name = ref_name_edt->text().remove(AttrDelimRegexp);
 	BaseObject *object = object_sel->getSelectedObject();
 	bool use_signature = use_signature_chk->isChecked(),
 			format_name = format_name_chk->isChecked();
@@ -188,13 +191,17 @@ void GenericSQLWidget::updateCodePreview(void)
 {
 	try
 	{
-		if(objects_refs_tab->getRowCount() > 0 && !definition_txt->toPlainText().isEmpty())
+		if(!name_edt->text().isEmpty() && !definition_txt->toPlainText().isEmpty())
 		{
+			if(!name_edt->text().isEmpty())
+				dummy_gsql.setName(name_edt->text());
+
 			dummy_gsql.setDefinition(definition_txt->toPlainText());
+			dummy_gsql.setCodeInvalidated(true);
 			preview_txt->setPlainText(dummy_gsql.getCodeDefinition(SchemaParser::SqlDefinition));
 		}
 		else
-			preview_txt->setPlainText(QString("-- %1 --").arg(trUtf8("No definition SQL code or references defined! Preview unavailable.")));
+			preview_txt->setPlainText(QString("-- %1 --").arg(trUtf8("No object name, SQL code or references defined! Preview unavailable.")));
 	}
 	catch(Exception &e)
 	{
@@ -212,3 +219,22 @@ void GenericSQLWidget::showObjectReferenceData(int row, BaseObject *object, cons
 	objects_refs_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(object)), row);
 }
 
+void GenericSQLWidget::applyConfiguration(void)
+{
+	try
+	{
+		GenericSQL *genericsql=nullptr;
+
+		startConfiguration<GenericSQL>();
+		genericsql=dynamic_cast<GenericSQL *>(this->object);
+		*genericsql = dummy_gsql;
+
+		BaseObjectWidget::applyConfiguration();
+		finishConfiguration();
+	}
+	catch(Exception &e)
+	{
+		cancelConfiguration();
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}

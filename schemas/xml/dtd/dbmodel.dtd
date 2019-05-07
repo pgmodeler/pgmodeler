@@ -6,6 +6,8 @@
 %baseelements;
 <!ENTITY % basetype SYSTEM "basetype.dtd">
 %basetype;
+<!ENTITY % object SYSTEM "object.dtd">
+%object;
 <!ENTITY % role SYSTEM "role.dtd">
 %role;
 <!ENTITY % tablespace SYSTEM "tablespace.dtd">
@@ -72,7 +74,6 @@
 %foreignserver;
 
 <!ELEMENT dbmodel ANY>
-
 <!ATTLIST dbmodel author CDATA #IMPLIED>
 <!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST dbmodel protected (false|true) "false">

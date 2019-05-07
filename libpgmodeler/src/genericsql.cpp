@@ -17,11 +17,13 @@
 */
 
 #include "genericsql.h"
+#include "tableobject.h"
 
 GenericSQL::GenericSQL(void)
 {
 	obj_type = ObjectType::GenericSql;
 	attributes[Attributes::Definition] = QString();
+	attributes[Attributes::Objects] = QString();
 }
 
 void GenericSQL::setDefinition(const QString &def)
@@ -35,10 +37,15 @@ QString GenericSQL::getDefinition(void)
 	return(definition);
 }
 
+vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences(void)
+{
+	return(objects_refs);
+}
+
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 {
 	int idx = -1;
-	vector<RefConfig>::iterator itr = objects_refs.begin(),
+	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(ref_name.isEmpty())
@@ -61,7 +68,7 @@ int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
-	vector<RefConfig>::iterator itr = objects_refs.begin(),
+	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
 	if(!object)
@@ -76,7 +83,34 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 	return(found);
 }
 
-void GenericSQL::validateObjectReference(GenericSQL::RefConfig ref, bool ignore_duplic)
+bool GenericSQL::isReferRelationshipAddedObject(void)
+{
+	bool found = false;
+	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
+			itr_end = objects_refs.end();
+	TableObject *tab_obj = nullptr;
+
+	while(itr != itr_end && !found)
+	{
+		tab_obj = dynamic_cast<TableObject *>(itr->object);
+		found = (tab_obj && tab_obj->isAddedByRelationship());
+		itr++;
+	}
+
+	return(found);
+}
+
+vector<BaseObject *> GenericSQL::getReferencedObjects(void)
+{
+	vector<BaseObject *> ref_objs;
+
+	for(auto &ref : objects_refs)
+		ref_objs.push_back(ref.object);
+
+	return(ref_objs);
+}
+
+void GenericSQL::validateObjectReference(ObjectRefConfig ref, bool ignore_duplic)
 {
 	if(!ref.object)
 		throw Exception(ErrorCode::AsgNotAllocatedObjectReference,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -93,7 +127,7 @@ void GenericSQL::addObjectReference(BaseObject *object, const QString &ref_name,
 {
 	try
 	{
-		RefConfig ref = RefConfig(ref_name, object, use_signature, format_name);
+		ObjectRefConfig ref = ObjectRefConfig(ref_name, object, use_signature, format_name);
 		validateObjectReference(ref, false);
 		objects_refs.push_back(ref);
 		setCodeInvalidated(true);
@@ -113,8 +147,8 @@ void GenericSQL::updateObjectReference(const QString &ref_name, BaseObject *obje
 
 	try
 	{
-		RefConfig ref = RefConfig(new_ref_name, object, use_signature, format_name);
-		vector<RefConfig>::iterator itr = objects_refs.begin() + idx;
+		ObjectRefConfig ref = ObjectRefConfig(new_ref_name, object, use_signature, format_name);
+		vector<ObjectRefConfig>::iterator itr = objects_refs.begin() + idx;
 		int idx_aux = getObjectRefNameIndex(new_ref_name);
 
 		if(idx_aux != idx)
@@ -152,24 +186,48 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	if(objects_refs.empty())
-		attributes[Attributes::Definition] = definition;
-	else
+	QString fmt_definition = definition,
+			name_attr = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
+																	 .arg(Attributes::Name)
+																	 .arg(SchemaParser::CharEndAttribute);
+
+	if(!objects_refs.empty())
 	{
-		QString fmt_definition = definition, ref_name, ref_value;
+		QString ref_name, ref_value;
+		attribs_map obj_attrs;
 
 		for(auto &ref : objects_refs)
 		{
-			ref_name = QString("{%1}").arg(ref.ref_name);
-			ref_value = ref.use_signature ?
+			if(def_type == SchemaParser::XmlDefinition)
+			{
+				obj_attrs[Attributes::Name] = ref.object->getSignature();
+				obj_attrs[Attributes::Type] = ref.object->getSchemaName();
+				obj_attrs[Attributes::RefName] = ref.ref_name;
+				obj_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : QString();
+				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : QString();
+
+				schparser.ignoreUnkownAttributes(true);
+				attributes[Attributes::Objects] += schparser.getCodeDefinition(Attributes::Object, obj_attrs, SchemaParser::XmlDefinition);
+			}
+			else
+			{
+				ref_name = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
+									 .arg(ref.ref_name)
+									 .arg(SchemaParser::CharEndAttribute);
+				ref_value = ref.use_signature ?
 										ref.object->getSignature(ref.format_name) :
 										ref.object->getName(ref.format_name);
-
-			fmt_definition = fmt_definition.replace(ref_name, ref_value);
+				fmt_definition = fmt_definition.replace(ref_name, ref_value);
+			}
 		}
-
-		attributes[Attributes::Definition] = fmt_definition;
 	}
+
+	// Special case for the {name} attribute which is created automatically when there's no one defined by the user
+	if(def_type == SchemaParser::SqlDefinition &&
+		 fmt_definition.contains(name_attr) && getObjectRefNameIndex(Attributes::Name) < 0)
+		fmt_definition = fmt_definition.replace(name_attr, this->getName(true));
+
+	attributes[Attributes::Definition] = fmt_definition;
 
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
