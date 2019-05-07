@@ -204,3 +204,13 @@ QString Cast::getSignature(bool)
 	return(BaseObject::getSignature(false));
 }
 
+void Cast::configureSearchAttributes(void)
+{
+	QStringList arg_types;
+
+	BaseObject::configureSearchAttributes();
+
+	arg_types += *types[0];
+	arg_types += *types[1];
+	search_attribs[Attributes::Type] = arg_types.join("; ");
+}

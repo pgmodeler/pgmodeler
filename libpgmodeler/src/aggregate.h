@@ -63,6 +63,9 @@ class Aggregate: public BaseObject {
 		//! \brief Checks if the passed function is valid according to the rule of aggregate definition
 		bool isValidFunction(unsigned func_idx, Function *func);
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		//! \brief Constants used to reference the functions used by the aggregate
 		static constexpr unsigned FinalFunc=0,

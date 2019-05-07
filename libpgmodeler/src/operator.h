@@ -44,6 +44,9 @@ class Operator: public BaseObject {
 		bool	hashes, //! \brief Indicates that the operator can execute a hash join
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		static constexpr unsigned FuncOperator=0,
 		FuncJoin=1,

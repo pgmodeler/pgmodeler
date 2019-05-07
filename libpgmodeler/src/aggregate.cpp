@@ -303,3 +303,14 @@ QString Aggregate::getSignature(bool format)
 	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 
+void Aggregate::configureSearchAttributes(void)
+{
+	QStringList list;
+
+	BaseObject::configureSearchAttributes();
+
+	for(auto &type : data_types)
+		list += *type;
+
+	search_attribs[Attributes::Type] = list.join("; ");
+}

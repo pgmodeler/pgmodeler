@@ -382,6 +382,12 @@ QString Column::getAlterDefinition(BaseObject *object)
 	}
 }
 
+void Column::configureSearchAttributes(void)
+{
+	BaseObject::configureSearchAttributes();
+	search_attribs[Attributes::Type] = *type;
+}
+
 void Column::operator = (Column &col)
 {
 	this->comment=col.comment;

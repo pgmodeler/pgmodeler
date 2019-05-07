@@ -1001,6 +1001,11 @@ QString BaseObject::getPgSQLVersion(void)
 	return(pgsql_ver);
 }
 
+attribs_map BaseObject::getSearchAttributes(void)
+{
+	return(search_attribs);
+}
+
 void BaseObject::enableCachedCode(bool value)
 {
 	use_cached_code=value;
@@ -1035,6 +1040,16 @@ void BaseObject::setCodeInvalidated(bool value)
 
 		code_invalidated=value;
 	}
+}
+
+void BaseObject::configureSearchAttributes(void)
+{
+	search_attribs[Attributes::Name] = this->getName(false);
+	search_attribs[Attributes::Signature] = this->getSignature(false);
+	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : QString();
+	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : QString();
+	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : QString();
+	search_attribs[Attributes::Comment] = comment;
 }
 
 bool BaseObject::isCodeInvalidated(void)

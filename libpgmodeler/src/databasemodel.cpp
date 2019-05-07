@@ -9760,7 +9760,7 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
 }
 
-vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names, bool case_sensitive, bool is_regexp, bool exact_match, bool search_comments)
+vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match, const QString &search_attr)
 {
 	vector<BaseObject *> list, objs;
 	vector<BaseObject *>::iterator end;
@@ -9769,7 +9769,8 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	bool inc_tabs=false, inc_views=false;
 	ObjectType obj_type;
 	QRegExp regexp;
-	QString obj_name, obj_comment;
+	BaseObject *object = nullptr;
+	attribs_map srch_attribs;
 
 	//Configuring the regex style
 	regexp.setPattern(pattern);
@@ -9838,43 +9839,16 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	//Try to find  the objects on the configured list
 	while(!objs.empty())
 	{
-		//Quotes are removed from the name by default
-		if(format_obj_names && !exact_match)
-		{
-			if(TableObject::isTableObject(objs.back()->getObjectType()))
-			{
-				TableObject *tab_obj=dynamic_cast<TableObject *>(objs.back());
+		object = objs.back();
+		object->configureSearchAttributes();
+		srch_attribs = object->getSearchAttributes();
 
-				if(tab_obj->getParentTable())
-					obj_name=tab_obj->getParentTable()->getName(true);
-			}
-
-			obj_name+=objs.back()->getName(true, true);
-			obj_name.remove('"');
-			obj_comment=objs.back()->getComment();
-		}
-		else
-		{
-			obj_name=objs.back()->getName();
-			obj_comment=objs.back()->getComment();
-		}
-
-		//Try to match on the configured regexp the name...
-		if((exact_match && pattern==obj_name) ||
-				(exact_match && regexp.exactMatch(obj_name)) ||
-				(!exact_match && regexp.indexIn(obj_name) >= 0))
-			list.push_back(objs.back());
-
-		//...or the comment.
-		if(search_comments && (
-					(exact_match && pattern==obj_comment) ||
-					(exact_match && regexp.exactMatch(obj_comment)) ||
-					(!exact_match && regexp.indexIn(obj_comment) >= 0)))
-			list.push_back(objs.back());
+		if((exact_match && pattern == srch_attribs[search_attr]) ||
+			 (exact_match && regexp.exactMatch(srch_attribs[search_attr])) ||
+			 (!exact_match && regexp.indexIn(srch_attribs[search_attr]) >= 0))
+			list.push_back(object);
 
 		objs.pop_back();
-		obj_name.clear();
-		obj_comment.clear();
 	}
 
 	//Removing the duplicate items on the list

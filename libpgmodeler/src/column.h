@@ -77,6 +77,8 @@ class Column: public TableObject{
 		//! \brief Underlying sequence's cache value (only for identity column)
 		seq_cache;
 
+		virtual void configureSearchAttributes(void);
+
 	public:
 		Column(void);
 

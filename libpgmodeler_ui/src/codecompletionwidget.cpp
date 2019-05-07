@@ -373,7 +373,7 @@ void CodeCompletionWidget::updateList(void)
 			word.remove(completion_trigger);
 			word.remove('"');
 
-			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::View }, false, false, false, true, false);
+			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::View }, false, false, true);
 
 			if(objects.size()==1)
 				setQualifyingLevel(objects[0]);
@@ -392,7 +392,7 @@ void CodeCompletionWidget::updateList(void)
 		//Negative qualifying level means that user called the completion before a space (empty word)
 		if(qualifying_level < 0)
 			//The default behavior for this is to search all the objects on the model
-			objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered, false);
+			objects=db_model->findObjects(pattern, types, false, !auto_triggered, auto_triggered);
 		else
 		{
 			QString left_word;
@@ -425,7 +425,7 @@ void CodeCompletionWidget::updateList(void)
 		 we try to find any object in the model and reset the qualifying level */
 			else
 			{
-				objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered, false);
+				objects=db_model->findObjects(pattern, types, false, !auto_triggered, auto_triggered);
 				setQualifyingLevel(nullptr);
 			}
 

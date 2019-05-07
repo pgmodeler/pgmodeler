@@ -87,6 +87,9 @@ class Function: public BaseObject {
 		//! \brief Formats the function return type to be used by the SchemaParser
 		void setTableReturnTypeAttribute(unsigned def_type);
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		Function(void);
 

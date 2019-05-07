@@ -550,3 +550,16 @@ QString Function::getAlterDefinition(BaseObject *object)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
+
+void Function::configureSearchAttributes(void)
+{
+	QStringList param_types;
+
+	BaseObject::configureSearchAttributes();
+	search_attribs[Attributes::ReturnType] = ret_table_columns.empty() ? *return_type : QString();
+
+	for(auto &param : parameters)
+		param_types += *param.getType();
+
+	search_attribs[Attributes::Type] = param_types.join("; ");
+}

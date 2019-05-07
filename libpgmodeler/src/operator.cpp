@@ -337,3 +337,13 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+void Operator::configureSearchAttributes(void)
+{
+	QStringList arg_types;
+
+	BaseObject::configureSearchAttributes();
+
+	arg_types += *argument_types[0];
+	arg_types += *argument_types[1];
+	search_attribs[Attributes::Type] = arg_types.join("; ");
+}

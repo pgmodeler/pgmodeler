@@ -34,6 +34,14 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 	private:
 		Q_OBJECT
 
+		/*! \brief Store in a unordered list the attributes in order to allow the user
+		 * select which attribute will be used to search objects */
+		static const QStringList search_attribs,
+
+		/*! \brief Store in a unordered list the attributes in a translated way in order to
+		 * populate the combo box used to select which attribute will be used to search objects */
+		search_attribs_i18n;
+
 		vector<BaseObject *> found_objs;
 
 		QMenu select_menu, fade_menu;
@@ -59,7 +67,7 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 
 		/*! \brief Lists the objects of a vector in a QTableWidget. Any row of table contains the
 		reference to the object on the first column */
-		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects);
+		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name);
 		
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);

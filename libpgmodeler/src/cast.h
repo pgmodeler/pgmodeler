@@ -47,6 +47,9 @@ class Cast: public BaseObject {
 		 function of the source data type */
 		bool is_in_out;
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
 		static constexpr unsigned SrcType=0,
