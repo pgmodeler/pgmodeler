@@ -57,6 +57,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	attribs_tbw->widget(2)->layout()->setContentsMargins(4,4,4,4);
 	attribs_tbw->widget(2)->layout()->addWidget(preview_txt);
 
+	// Configuring the object types accepted by object references
 	types = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::GenericSql,
 																							ObjectType::Permission, ObjectType::Relationship,
 																							ObjectType::Tag, ObjectType::Textbox });
@@ -101,7 +102,10 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		dummy_gsql.removeObjectReferences();
 	});
 
-	connect(attribs_tbw, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview()));
+	connect(attribs_tbw, &QTabWidget::currentChanged, [&](int idx){
+		if(idx == attribs_tbw->count() - 1)
+			updateCodePreview();
+	});
 }
 
 void GenericSQLWidget::setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql)

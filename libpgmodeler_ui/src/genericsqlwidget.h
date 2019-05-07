@@ -48,8 +48,11 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 
 		ObjectSelectorWidget *object_sel;
 
+		/*! \brief This dummy object is used to generated the code preview while the user changes the fields
+		 * in form. Once the dummy is configure it is copied to the real object being handled by the form (this->object) */
 		GenericSQL dummy_gsql;
 
+		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
 		static const QRegExp AttrDelimRegexp;
 
 		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);

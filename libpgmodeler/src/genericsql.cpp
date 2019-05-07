@@ -211,12 +211,17 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 			}
 			else
 			{
+				/* In order to use a reference name in the object's SQL code, the reference should be writter in the for
+				 * {ref_name} so it can be replaced by the corresponding value in the SQL code */
 				ref_name = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
 									 .arg(ref.ref_name)
 									 .arg(SchemaParser::CharEndAttribute);
+
+				// Configuring the value of the reference
 				ref_value = ref.use_signature ?
 										ref.object->getSignature(ref.format_name) :
 										ref.object->getName(ref.format_name);
+
 				fmt_definition = fmt_definition.replace(ref_name, ref_value);
 			}
 		}
