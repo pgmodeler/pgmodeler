@@ -492,6 +492,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		tab_wgt->setUpdatesEnabled(true);
 		tab_wgt->setSortingEnabled(true);
 		tab_wgt->resizeColumnsToContents();
+		tab_wgt->resizeRowsToContents();
 	}
 }
 

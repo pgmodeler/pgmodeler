@@ -710,7 +710,11 @@
     </spacer>
    </item>
    <item row="0" column="2">
-    <widget class="QComboBox" name="search_attrs_cmb"/>
+    <widget class="QComboBox" name="search_attrs_cmb">
+     <property name="toolTip">
+      <string>The attribute of the objects in which the search will occur</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
