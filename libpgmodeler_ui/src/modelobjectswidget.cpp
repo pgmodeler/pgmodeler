@@ -452,7 +452,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 				visible_types.push_back(tp.first);
 		}
 
-		objects=db_model->findObjects(QString(), visible_types,true, false, false, false);
+		objects=db_model->findObjects(QString(), visible_types,true, false, false, false, false);
 
 	}
 

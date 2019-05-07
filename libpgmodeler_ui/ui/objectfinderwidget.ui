@@ -306,32 +306,6 @@
           <property name="horizontalSpacing">
            <number>4</number>
           </property>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="regexp_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Regular Expression</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="exact_match_chk">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Exact Match</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" rowspan="5">
            <layout class="QGridLayout" name="gridLayout">
             <property name="leftMargin">
@@ -473,6 +447,19 @@
             </item>
            </layout>
           </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="regexp_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Regular Expression</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <widget class="QCheckBox" name="case_sensitive_chk">
             <property name="sizePolicy">
@@ -483,6 +470,19 @@
             </property>
             <property name="text">
              <string>Case Sensitive</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="exact_match_chk">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Exact Match</string>
             </property>
            </widget>
           </item>
@@ -498,6 +498,13 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="comment_chk">
+            <property name="text">
+             <string>Search comments</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -620,6 +627,15 @@
        <property name="icon">
         <iconset resource="../res/resources.qrc">
          <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Comment</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
        </property>
       </column>
      </widget>
