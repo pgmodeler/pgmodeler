@@ -123,7 +123,11 @@ class ModelWidget: public QWidget {
 
 		jump_to_tab_menu,
 
-		toggle_sch_rects_menu;
+		toggle_sch_rects_menu,
+
+		database_category_menu,
+
+		schema_category_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -252,7 +256,9 @@ class ModelWidget: public QWidget {
 		*action_schemas_rects,
 		*action_show_schemas_rects,
 		*action_hide_schemas_rects,
-		*action_edit_data;
+		*action_edit_data,
+		*action_database_category,
+		*action_schema_category;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;

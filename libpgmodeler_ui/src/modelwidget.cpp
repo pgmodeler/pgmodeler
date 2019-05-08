@@ -383,6 +383,22 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
+	// Configuring the submenu of database level objects
+	action_database_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Database)), trUtf8("Database object"), this);
+	action_database_category->setMenu(&database_category_menu);
+	types_vect = BaseObject::getChildObjectTypes(ObjectType::Database);
+
+	for(auto &type : types_vect)
+		database_category_menu.addAction(actions_new_objects[type]);
+
+	// Configuring the submenu of schema level objects
+	action_schema_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Schema)), trUtf8("Schema object"), this);
+	action_schema_category->setMenu(&schema_category_menu);
+	types_vect = BaseObject::getChildObjectTypes(ObjectType::Schema);
+
+	for(auto &type : types_vect)
+		schema_category_menu.addAction(actions_new_objects[type]);
+
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
 	actions_new_objects[ObjectType::Relationship]->setMenu(rels_menu);
@@ -3703,12 +3719,12 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			vector<ObjectType> types_vect = BaseObject::getObjectTypes(false, { ObjectType::Database, ObjectType::Permission, ObjectType::BaseRelationship });
-
-			//Configures the "New object" menu with the types at database level
-			for(auto &type : types_vect)
-				new_object_menu.addAction(actions_new_objects[type]);
-
+			new_object_menu.addAction(action_database_category);
+			new_object_menu.addAction(action_schema_category);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
 
