@@ -279,14 +279,16 @@ void ConstraintWidget::selectReferencedTable(void)
 {
 	Table *table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
 
-	if(!table)
+	if(!table || dynamic_cast<Constraint *>(this->object)->getReferencedTable() != table)
 	{
-		ref_column_cmb->clear();
 		ref_columns_tab->blockSignals(true);
 		ref_columns_tab->removeRows();
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->blockSignals(false);
 	}
+
+	if(!table)
+		ref_column_cmb->clear();
 	else
 	{
 		ref_columns_tab->setEnabled(true);

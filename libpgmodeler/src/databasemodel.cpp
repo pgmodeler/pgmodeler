@@ -1210,13 +1210,21 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 					 rel->getTable(BaseRelationship::DstTable)==table))
 			{
 				Constraint *fk = rel->getReferenceForeignKey();
+
 				if(rel->getTable(BaseRelationship::SrcTable)==table)
 					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
 				else
 					ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
 
-				//Removes the relationship if the table does'nt references the 'ref_tab'
-				if(fk->getReferencedTable() == ref_tab && table->getObjectIndex(fk) < 0)
+				/* Removes the relationship if the following cases happen:
+				 * 1) The foreign key references a table different from ref_tab, which means, the user
+				 *		have changed the fk manually by setting a new referenced table but the relationship tied to the fk
+				 *		does not reflect the new reference.
+				 *
+				 * 2) The fk references the correct table but the source table does not own the fk anymore, which means,
+				 *		the fk as removed manually by the user. */
+				if(fk->getReferencedTable() != ref_tab ||
+					 (fk->getReferencedTable() == ref_tab && table->getObjectIndex(fk) < 0))
 				{
 					removeRelationship(rel);
 					itr1=base_relationships.begin() + idx;
