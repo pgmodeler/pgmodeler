@@ -1,64 +1,41 @@
-v0.9.2-alpha1
+v0.9.2-beta
 ------
 
-<em>Release date: December 17, 2018</em><br/>
-<em>Changes since: <strong>v0.9.2-alpha</strong></em><br/>
+<em>Release date: May 13, 2019</em><br/>
+<em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
-<strong>Summary:</strong> finally, after four months, we have a new version out of the oven! This one has A LOT of changes that range from several code refactoring and performance improvements to the introduction of new interesting features like table partitioning and canvas layers.<br/>
+<strong>Summary:</strong>
 
-First, let's talk about the changes and improvements. The objects drawing operations received a good set of patches making it a bit faster and less memory consuming. Putting these improvements in numbers, we have reduced in ~40% the internal size of a database model which means less objects to keep in memory as well to be drawn giving a good performance gain. You can see more details here: https://bit.ly/2Q3XMT5<br/>
+Finally, some of the key changes of this release are listed below. For the complete list of changes, fixes and new feautures, please, read the file CHANGELOG.md. <br/>
 
-The overall performance of the reverse engineering was improved which, in consequence, have enhanced the diff process performance as well. The diff process received some fixes and changes and now it is generating less false-positive changes. <br/>
-
-In the new features side, we added scene layers which goals is to introduce a new level of visual segmentation of graphical objects. Another new feature created is the support to view columns that are deduced from the relationships between these objects and the tables. <br/>
-
-Still in the design view in order to be more close to PostgreSQL 10+ new features pgModeler is now capable of handling declarative table partitioning (this includes code generation, reverse engineering and models comparison). Also, tables and views can have their attributes paginated or even collapsed to minimize the area occupied by these objects making big objects easier to visualize. <br/>
-
-Now, about the bug fixes, several crashes were eliminated making the tool more stable for different usages, the reverse engineering received some patches so it can import correctly user-defined type in form of arrays and many others <br/>
-
-Finally, some of the key changes of this release are listed below. For the complete list of changes, fixes and new feautures, please, read the CHANGELOG.md. <br/>
-
-* [New] Added support to scene layers.
-* [New] Added support to view's columns importing in DatabaseImportHelper. 
-* [New] Added the ability to load view columns from database model file in DatabaseModel::createView.
-* [New] Added a tab "Columns" in ReferenceWidget where the user will be able to insert columns to be used as view columns.
-* [New] Added support to pagination of tables and views columns pagination.
-* [New] Added a fix step on CLI to remove the deprecated attribute hide-ext-attribs from tables and views xml code.
-* [New] Added a configuration option to control attributes per pages in tables and views.
-* [New] Added support to save collapsing states and current attributes pages to the database model file.
-* [New] Added support to OLD/NEW tables aliases on triggers.
-* [New] Added support for partition attaching/detaching detection in diff process.
-* [New] Added support to importing partitioned/partition tables on DatabaseImportHelper.
-* [New] Added support to resize grid cells to fit contents on ObjectsTableWidget.
-* [New] Added support to hide columns on data manipulation dialog.
-* [Change] Minor fixes in OperationList in order to force views to be updated correctly when operating over a table which is referenced by those objects.
-* [Change] Minor adjustments on SchemaView and BaseTableView (and its children classes) to update the geometry when they switch from invisble to visible state.
-* [Change] Improved the update of views when referenced columns and tables change their structure.
-* [Change] Improved database model loading times by avoiding the rendering of tables while the children objects (indexes, trigger, rules, etc) are being added.
-* [Change] The zoom in/out level is now sensible on how much the user rolls the mouse wheel.
-* [Change] Code refactoring done in order to make it more close to C++14 in order to take advantage of new features introduced by that standard.
-* [Change] Improved the diff process in such way to avoid generating unnecessary/noise commands related to changing types of columns to integer and setting nextval() call as default value.
-* [Change] Move the FK settings, copy options and name patterns group boxes to a dedicated tab on RelationshipWidget.
-* [Change] Improved the models destruction when closing the application.
-* [Change] Improved the Index/Exclude/ParitionKey elements handling by creating a generic form/grid that handles these kinds of objects (ElementsTableWidget).
-* [Change] Modified the RelationshipWidget in order to handle partitioning relationships.
-* [Change] Modified RelationshipConfigWidget in order to write name partterns for partitioning relationships.
-* [Change] Improved the reverse engineering performance by avoiding update relationships as they are being imported.
-* [Change] Improved the object duplication feature in ModelWidget.
-* [Change] When the model is loaded it is copied to the temporary models storage as a first version of the temporary dbm file.
-* [Change] pgModeler will now use the official docs url in the help buttons.
-* [Fix] Fixed a crash while renaming view's children objects.
-* [Fix] Fixed the rendering of views which contain only a single reference that is the whole object's defintion.
-* [Fix] Fixed the column name deduction for recursive views.
-* [Fix] Fixed a bug that was causing crashes while configure new constraints on tables.
-* [Fix] Fixed a regression in schema's rectangle selection.
-* [Fix] Fixed an artifact when user switched on and off the compact view.
-* [Fix] Fixed a bug in DatabaseModel::destroyObjects that could lead to segfault when the destroyed model had permissions on it.
-* [Fix] Fixed a bug when importing columns which data types is some user defined type in form of array, e.g., custom_type[].
-* [Fix] Fixed a bug that was causing special primary key configured on a relationship to make the original primary key of the table to disappear after disconnect the relationship. Now pgModeler stores in memory the original PK prior the connection of relationship and creation of the special PK. When disconnected the relationship, the original primary key is restored on its parent table.
-* [Fix] Fixed the class Relationship to reuse compatible columns when handling partitioning relationships.
-* [Fix] Fixed the diff process in such way to create new columns with their respective COMMENT ON statement when present.
-* [Fix] Fixed the detection of comment changes for columns on diff process.
-* [Fix] Making pgModeler honor the columns arrangement in primary keys.
-* [Fix] Fixed a bug that was causing FK relationship deletion to crash the application sometimes.
-* [Fix] Some fixes were done in the ModelOverviewWidget in order to support large models without exceed the screen size when configuring the size of the overall widget.
+* [New] Added support to foreign server.
+* [New] Added support to foreign data wrapper.
+* [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
+* [New] Added support to compare foreign servers on diff process.
+* [New] Added support to the reverse engineering foreign server objects.
+* [New] Added code snippets for foreign data wrapper and foreign server.
+* [New] Added support to diff foreign data wrappers
+* [New] Added support to set permissions to foreign data wrapper.
+* [New] Added the WRAPPER and SERVER key words to sql-highlight.conf.
+* [New] Adding the ability to view references to store referenced tables making possible to identify which tables are linked to a view.
+* [New] Added missing data type macaddr8.
+* [New] Added support to result set filtering in the SQL execution widget.
+* [Change] Change "New object" action in popup menu in order categorize object types when clicking the database object diminishing the amount of items displayed on the screen.
+* [Change] Improved the object search mechanism in such way that various attributes of the object can be matched. New searchable attribute may be added in the future.
+* [Change] Minor improvement on ModelDatabaseDiffForm to show the connection id of the databases being imported in the output tree.
+* [Change] Improved the ModelValidationWidget in such way that is possible to operate over objects on the output list through their respective context menu (the same as in the ModelWidget).
+* [Change] Now its possible to trigger the swap ids dialog for two selected objects, causing their ids to be swapped more quickly.
+* [Change] Allowing copied object to be pasted multiple times. This feature works only with copy/paste operation without remove the pasted objects from the clipboard, for cut/paste the behaviour is unchanged.
+* [Change] Increased the maximum limit of SQL history.
+* [Change] Minor improvements in SQLToolWidget and SQLExecutionWidget to avoid segmentation faults when trying to close a execution tab while the command is still running.
+* [Fix] Fixed a bug that was causing a fk relationship not to be deleted if the fk tied to it was changed by the user.
+* [Fix] Fixed a bug on CLI that was not fixing broken models correctly when they had no role declaration.
+* [Fix] Fixed a bug that was causing tables not to be moved on the canvas using mouse.
+* [Fix] Fixed a bug that could crash the application when no language was specified to a funcion and the SQL/XML code was being generated.
+* [Fix] Minor fix a bug on index importing.
+* [Fix] Fixed a crash when a query executed in SQLExecutionWidget was a DDL one or was not returning results.
+* [Fix] Fixed a bug that was causing syntax error if the last column of a table had the SQL code disabled.
+* [Fix] Fixed a bug on diff process due to a missing attribute on the generation of diff code for inheritance relationships.
+* [Fix] Fixed a bug when rendering several self relationships attached to the same table.
+* [Fix] Fixed the CLI in order to restore the layers information when fixing a broken model.
+* [Fix] Fixed a bug in object finder that was causing objects from a hidden layer to be displayed causing inconsistency on the layer state.

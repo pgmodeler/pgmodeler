@@ -82,7 +82,8 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			Schema: CREATE | USAGE
 			Tablespace: CREATE
 			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER
-			Foreign Data Wrapper: USAGE */
+			Foreign Data Wrapper: USAGE
+			Foreign Server: USAGE */
 		result=result &&
 				(((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
 					(priv_id==PrivSelect || priv_id==PrivInsert ||

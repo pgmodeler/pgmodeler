@@ -44,7 +44,7 @@ class Permission: public BaseObject {
 				* sequence
 				* database
 				* foreign-data wrapper
-				* foreign server (not implemented)
+				* foreign server
 				* large objects (not implemented)
 				* function
 				* aggregate
