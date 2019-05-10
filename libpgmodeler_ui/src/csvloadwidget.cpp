@@ -87,21 +87,32 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 	if(!csv_buffer.isEmpty())
 	{
 		QString	double_quote=QString("%1%1").arg(text_delim),
-				placeholder = QString("⁋"), aux_buffer = csv_buffer;
-		QStringList values, rows;
+				placeholder = QString(QChar::ReplacementCharacter),
+				aux_buffer = csv_buffer,
+				win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
+				mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
+		QStringList values, rows, aux_values;
 		QRegExp empty_val;
 
-		//If no custom separator is specified we use the default ';'
-		aux_buffer.replace(QString("\r\n"), placeholder);
-		rows=aux_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
-		rows.replaceInStrings(placeholder, QString("\r\n"));
+		if(aux_buffer.contains(win_line_break))
+			aux_buffer.replace(win_line_break, QString(QChar::LineFeed));
+		else if(aux_buffer.contains(mac_line_break))
+			aux_buffer.replace(mac_line_break, QString(QChar::LineFeed));
 
 		if(cols_in_first_row)
 		{
-			csv_cols=rows[0].split(separator);
+			int lf_idx = aux_buffer.indexOf(QChar::LineFeed);
+
+			if(lf_idx < 0)
+				lf_idx = aux_buffer.size();
+
+			csv_cols=aux_buffer.mid(0, lf_idx).split(separator);
 			csv_cols.replaceInStrings(text_delim, QString());
-			rows.removeAt(0);
+			aux_buffer.replace(0, lf_idx + 1, QString());
 		}
+
+		aux_buffer.replace(QString("%1%2").arg(QChar(QChar::LineFeed)).arg(text_delim), placeholder);
+		rows = aux_buffer.split(placeholder, QString::SkipEmptyParts);
 
 		//Configuring an regexp to remove empty quoted values, e.g, "",
 		if(!text_delim.isEmpty())
@@ -113,12 +124,13 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 				row.replace(empty_val, separator);
 
 			/* In order to preserve double quotes (double delimiters) inside the values,
-			 we first replace them by a placeholder, erase the delimiters and restore the previous value */
+			 * we first replace them by a placeholder, erase the delimiters and restore the previous value */
 			row.replace(double_quote, placeholder);
 			row.replace(text_delim, QString());
 			row.replace(placeholder, double_quote);
 
 			values = row.split(separator);
+
 			for(int i =0; i < values.count(); i++)
 				values[i] = values[i].trimmed();
 
