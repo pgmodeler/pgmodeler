@@ -91,7 +91,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 				aux_buffer = csv_buffer,
 				win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
 				mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
-		QStringList values, rows, aux_values;
+		QStringList values, rows;
 		QRegExp empty_val;
 
 		if(aux_buffer.contains(win_line_break))
