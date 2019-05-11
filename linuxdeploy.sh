@@ -4,7 +4,7 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.12.0/5.12.0/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.12.3/5.12.3/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 

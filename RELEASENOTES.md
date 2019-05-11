@@ -1,12 +1,26 @@
 v0.9.2-beta
 ------
 
-<em>Release date: May 13, 2019</em><br/>
+<em>Release date: May 14, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
-<strong>Summary:</strong>
+<strong>Summary:</strong> a brand new version has come to you after a work of almost five months on it. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
 
-Finally, some of the key changes of this release are listed below. For the complete list of changes, fixes and new feautures, please, read the file CHANGELOG.md. <br/>
+pgModeler now supports foreign datawrappers and foreign servers natively. This means that you can create, export, import and diff these kinds of objects. For now, foreign tables aren't supported but the schedule is to release this support until the end of this development cycle when lauching the stable 0.9.2. <br/>
+
+In order to provide a temporary workaround for the lack of foreign table support the generic SQL objects were improved in such way to store references to another objects in the model which helps to keep track of name changes and giving a touch of dynamicity to this that kind of object.  <br/>
+
+Now its possible, for instance, create a foreign table from a generic SQL which references a foreign server and any name change on the referenced object will cause the code of the generic SQL (in this case, the foreign table) to be automatically updated avoiding export problems.<br/>
+
+In SQL execution widget it's now possible to quickly filter the result set retrieved from a SQL command. This is useful if you need to filter a small set of data without the need of rewrite the the SQL command to get the desired result. The filter basically matches a keyword against a column of the rows on the result grid updating on-the-fly the data visualization. <br/>
+
+This release also brings some changes in the available features: the first is the ability to search for objects in the canvas by matching other attributes not only the name. For instance, you can search items by matching a keyword against object's comments, data types, schemas and some others. <br/> 
+
+A second change is the categorization of the action "New object" in order to diminish the amount of items displayed in the same menu and organizing object types hierarchically. <br/>
+
+Now, for the bug fixes, in this release they fix crashes and broken code generation as well improve the objects handling in the canvas. <br/>
+
+Lastly, some of the key change log entries of this release are listed below. For the complete list of changes/fixes, please, refer to the file CHANGELOG.md. <br/>
 
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
@@ -17,7 +31,7 @@ Finally, some of the key changes of this release are listed below. For the compl
 * [New] Added support to diff foreign data wrappers
 * [New] Added support to set permissions to foreign data wrapper.
 * [New] Added the WRAPPER and SERVER key words to sql-highlight.conf.
-* [New] Adding the ability to view references to store referenced tables making possible to identify which tables are linked to a view.
+* [New] Added the ability to view references to store referenced tables. This feature will cause relationships to be created between the view and the referenced tables. This is useful when we're using reverse engineering feature in which, in previous versions, couldn't determine the tables that were linked to a view. Now, with this feature a relationship is created between the view and all involved tables.
 * [New] Added missing data type macaddr8.
 * [New] Added support to result set filtering in the SQL execution widget.
 * [Change] Change "New object" action in popup menu in order categorize object types when clicking the database object diminishing the amount of items displayed on the screen.
