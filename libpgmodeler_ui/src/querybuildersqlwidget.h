@@ -64,6 +64,7 @@ class QueryBuilderSQLWidget: public BaseObjectWidget, public Ui::QueryBuilderSql
 		void saveSQLCode(void);
 
 	signals:
+		void s_reloadSQL(QueryBuilderSQLWidget * zis, bool schema_qualified, bool compact_sql);
 		void s_sendToManage(QString query);
 };
 

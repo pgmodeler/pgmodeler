@@ -1898,6 +1898,12 @@ void ModelWidget::showGqbSql(QString query_txt)
 	while (dynamic_cast<MainWindow *>(parent_wgt)==nullptr)
 		parent_wgt=parent_wgt->parentWidget();
 
+	connect(querybuilder_sql_wgt, &QueryBuilderSQLWidget::s_reloadSQL,
+		[&, parent_wgt](QueryBuilderSQLWidget * gqbs, bool schema_qualified, bool compact_sql){
+			auto gqbc = dynamic_cast<MainWindow *>(parent_wgt)->getGQBC();
+			gqbc->reloadSQL(gqbs, schema_qualified, compact_sql);
+		});
+
 	QPair <bool, SQLToolWidget *> sql_tw_pair=dynamic_cast<MainWindow *>(parent_wgt)->isAnyManageDbOpened();
 	if (sql_tw_pair.first)
 	{

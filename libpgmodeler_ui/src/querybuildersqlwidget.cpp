@@ -31,20 +31,25 @@ QueryBuilderSQLWidget::QueryBuilderSQLWidget(QWidget *parent): BaseObjectWidget(
 		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath("visaoarvore"));
 		this->name_edt->setText("Query builder output");
 
-
 		comment_lbl->setVisible(false);
 		comment_edt->setVisible(false);
 
 		hl_sqlcode=nullptr;
 		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
-		sqlcode_txt->setReadOnly(true);
+		sqlcode_txt->setReadOnly(false);
 
-		//connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
 		connect(save_sql_tb, SIGNAL(clicked()), this, SLOT(saveSQLCode()));
 		connect(manage_tb, &QToolButton::clicked, [this](){
 			emit s_sendToManage(sqlcode_txt->toPlainText());
 			dynamic_cast<BaseForm *>(this->parentWidget()->parentWidget())->done(2);
 			});
+		connect(schem_qualif_tb, &QToolButton::clicked, [&](bool clicked){
+			emit s_reloadSQL(this,clicked,(bool)this->code_options_cmb->currentIndex());
+		});
+		connect(code_options_cmb, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
+			emit s_reloadSQL(this,this->schem_qualif_tb->isDown(),(bool)index);
+		});
+
 
 		hl_sqlcode=new SyntaxHighlighter(sqlcode_txt);
 
@@ -100,8 +105,8 @@ void QueryBuilderSQLWidget::displayQuery(QString query_txt)
 	try
 	{
 		this->protected_obj_frm->setVisible(false);
-		this->obj_id_lbl->setVisible(false);
-		this->code_options_cmb->setEnabled(false);
+		this->obj_id_lbl->setVisible(true);
+		this->code_options_cmb->setEnabled(true);
 
 		if(!hl_sqlcode->isConfigurationLoaded())
 			hl_sqlcode->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);

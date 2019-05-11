@@ -190,6 +190,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		QPair<bool,SQLToolWidget *> isAnyManageDbOpened();
 
+		QueryBuilderCoreWidget * getGQBC(void){return gqb_core_wgt;};
+
 		void showManage(void);
 
 	public slots:

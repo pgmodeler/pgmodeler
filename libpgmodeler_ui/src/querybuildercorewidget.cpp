@@ -25,7 +25,7 @@ QueryBuilderCoreWidget::QueryBuilderCoreWidget(QWidget *parent) : QWidget(parent
 	tab_wgt->setAccessibleName("gqbc_tw"); //solves 'del' shortcut override in mainwindow
 
 	connect(insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertSelection(void)));
-	connect(show_sql_btn, SIGNAL(clicked(bool)), this, SLOT(produceSQL(void)));
+	connect(show_sql_btn, SIGNAL(clicked(bool)), this, SLOT(showSQL()));
 
 	reset_menu.addAction(trUtf8("All"), this, SLOT(resetQuery()));
 	reset_menu.addAction(trUtf8("Data"), this, SLOT(resetQuery()));
@@ -60,7 +60,7 @@ bool QueryBuilderCoreWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::KeyPress &&
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
-		produceSQL();
+		showSQL();
 		return(true);
 	}
 
@@ -211,7 +211,17 @@ void QueryBuilderCoreWidget::insertSelection(void)
 	this->reset_btn->setEnabled(!ord_query_data.empty() || !ord_query_rels.empty());
 }
 
-void QueryBuilderCoreWidget::produceSQL(void)
+void QueryBuilderCoreWidget::showSQL(void)
+{
+	emit s_gqbSqlRequested(this->produceSQL(true, false));
+}
+
+void QueryBuilderCoreWidget::reloadSQL(QueryBuilderSQLWidget * gqbs, bool schema_qualified, bool compact_sql)
+{
+	gqbs->displayQuery(this->produceSQL(schema_qualified, compact_sql));
+}
+
+QString QueryBuilderCoreWidget::produceSQL(bool schema_qualified, bool compact_sql)
 {
 	QString select_cl="SELECT ", from_cl="FROM ", where_cl="WHERE ", group_cl="GROUP BY ", having_cl="HAVING ",
 			order_cl="ORDER BY ", result;
@@ -220,14 +230,14 @@ void QueryBuilderCoreWidget::produceSQL(void)
 	if(tab_wgt->columnCount()==0)
 	{
 		result=("SELECT v_schema.table.Hello FROM world!");
-		emit s_gqbSqlRequested(result);
-		return;
+		return result;
 	}
 
 	//'FROM' clause
 	if(tab_wgt->columnCount()==1)
 	{
-		from_cl+= tab_wgt->item(tW_Schema,0)->text() + "." + tab_wgt->item(tW_Table,0)->text() + "\n";
+		from_cl+= (schema_qualified ? tab_wgt->item(tW_Schema,0)->text() + "." : "") +
+					tab_wgt->item(tW_Table,0)->text() + "\n";
 	}
 
 	else
@@ -249,34 +259,40 @@ void QueryBuilderCoreWidget::produceSQL(void)
 				break;
 
 			if(path_itr==path.begin())
-				from_cl+=path.front().first->getSchema()->getName() + "." + path.front().first->getName();
+				from_cl+= (schema_qualified ? path.front().first->getSchema()->getName() + "." : "" )
+							+ path.front().first->getName();
 			else
 			{
 
 				if (join_in_where)
 				{
 					if(path_itr->first!=nullptr)
-						from_cl+=",\n\t\t" + path_itr->first->getSchema()->getName() + "." + path_itr->first->getName();
+						from_cl+= (compact_sql ? ",\n\t\t" : ", ") +
+								(schema_qualified ? path_itr->first->getSchema()->getName() + "." : "" ) +
+								path_itr->first->getName();
 
 					for(col_itr=path_itr->second.begin(); col_itr!=path_itr->second.end(); col_itr++)
 					{
 						//TODO manage disambiguation of schema/table/column names globally
 						if(col_itr->first->getName()!=col_itr->second->getName())
-							where_cl+=(where_cl=="WHERE "? "" : "\n\t\tAND ") +
-									col_itr->first->getName() + "=" + col_itr->second->getName();
+							where_cl+=(where_cl=="WHERE "? "" : (schema_qualified? "\n\t\tAND " : "AND ") +
+									col_itr->first->getName() + "=" + col_itr->second->getName());
 						else if(col_itr->first->getParentTable()->getName()!=col_itr->second->getParentTable()->getName())
 							where_cl+=(where_cl=="WHERE "? "" : "\n\t\tAND ") +
 							  col_itr->first->getParentTable()->getName() + "." + col_itr->first->getName() + "=" +
 							  col_itr->second->getParentTable()->getName() + "." + col_itr->second->getName();
+						// /!\ else todo
 					}
 				}
 				else
 				{
-					from_cl+="\nJOIN " + path_itr->first->getSchema()->getName() + "." + path_itr->first->getName() + "\n";
+					from_cl+="\nJOIN " + (schema_qualified ? path_itr->first->getSchema()->getName() + "." : "") +
+								path_itr->first->getName() + (compact_sql ? " " : "\n");
 
 					for(col_itr=path_itr->second.begin(); col_itr!=path_itr->second.end(); col_itr++)
 					{
-						from_cl+=(col_itr==path_itr->second.begin() ? "\t\tON " : "\n\t\tAND ");
+						from_cl+=(col_itr==path_itr->second.begin() ? (compact_sql ? "ON " : "\t\tON ") :
+																	  (compact_sql ? "AND " : "\n\t\tAND "));
 
 						if(col_itr->first->getName()!=col_itr->second->getName())
 							from_cl+=col_itr->first->getName() + "=" + col_itr->second->getName();
@@ -284,6 +300,7 @@ void QueryBuilderCoreWidget::produceSQL(void)
 							from_cl+=
 							  col_itr->first->getParentTable()->getName() + "." + col_itr->first->getName() + "=" +
 							  col_itr->second->getParentTable()->getName() + "." + col_itr->second->getName();
+						// /!\ else todo
 					}
 				}
 			}
@@ -300,8 +317,10 @@ void QueryBuilderCoreWidget::produceSQL(void)
 			for(int k=0;k<disconnected_vertices.size();k++)
 			{
 				if(k==0 && !path.empty())
-					from_cl+="\t\t";
-				from_cl+=disconnected_vertices[k]->getName() + (k==disconnected_vertices.size()-1 ? "\n": ",\n\t\t");
+					from_cl+= compact_sql ? "" : "\t\t";
+				from_cl+= (schema_qualified ? disconnected_vertices[k]->getSchema()->getName() + "." : "") +
+							disconnected_vertices[k]->getName() + (k==disconnected_vertices.size()-1 ? "\n" :
+																	(compact_sql?", ":",\n\t\t"));
 			}
 		}
 	}
@@ -313,20 +332,20 @@ void QueryBuilderCoreWidget::produceSQL(void)
 		if(qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Selection,i)->children().last())->checkState()==Qt::Checked)
 				select_cl+= tab_wgt->item(tW_Table,i)->text() + "." +
 						   tab_wgt->item(tW_Column,i)->text() +
-						   (i==tab_wgt->columnCount()-1?"\n":",\n\t\t");
+						   (i==tab_wgt->columnCount()-1?"\n": (compact_sql? ", " : ",\n\t\t"));
 
 		//'WHERE' clause
 		if (tab_wgt->item(tW_Where,i) && tab_wgt->item(tW_Where,i)->text()!="")
-				where_cl+= (where_cl=="WHERE "? "" : "\n\t\tAND ") + tab_wgt->item(tW_Column,i)->text() +
+				where_cl+= (where_cl=="WHERE "? "" : (compact_sql?" AND ":"\n\t\tAND ")) + tab_wgt->item(tW_Column,i)->text() +
 							   tab_wgt->item(tW_Where,i)->text();
 
 		//'GROUP BY' clause
 		if(qobject_cast<QCheckBox *>(tab_wgt->cellWidget(tW_Group,i)->children()[1])->checkState()==Qt::Checked)
-			group_cl+= (group_cl=="GROUP BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,i)->text();
+			group_cl+= (group_cl=="GROUP BY "? "" : (compact_sql?", ":",\n\t\t")) + tab_wgt->item(tW_Column,i)->text();
 
 		//'HAVING' clause
 		if (tab_wgt->item(7,i) && tab_wgt->item(tW_Having,i)->text()!="")
-				having_cl+= (having_cl=="HAVING "? "" : " AND\n\t\t") + tab_wgt->item(tW_Column,i)->text() +
+				having_cl+= (having_cl=="HAVING "? "" : (compact_sql?" AND ":"\n\t\tAND ")) + tab_wgt->item(tW_Column,i)->text() +
 							   tab_wgt->item(7,i)->text();
 
 		//'ORDER BY' clause
@@ -339,10 +358,12 @@ void QueryBuilderCoreWidget::produceSQL(void)
 	switch(qobject_cast<QComboBox *>(tab_wgt->cellWidget(tW_Order,order.second)->children()[1])->currentIndex())
 	{
 		case 1:
-			order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,order.second)->text() + " ASC";
+			order_cl+= (order_cl=="ORDER BY "? "" : (compact_sql?", ":",\n\t\t")) +
+								tab_wgt->item(tW_Column,order.second)->text() + " ASC";
 			break;
 		case 2:
-			order_cl+= (order_cl=="ORDER BY "? "" : ",\n\t\t") + tab_wgt->item(tW_Column,order.second)->text() + " DESC";
+			order_cl+= (order_cl=="ORDER BY "? "" : (compact_sql?", ":",\n\t\t")) +
+								tab_wgt->item(tW_Column,order.second)->text() + " DESC";
 			break;
 		default:
 			break;
@@ -369,7 +390,8 @@ void QueryBuilderCoreWidget::produceSQL(void)
 		Messagebox msg_box;
 		msg_box.show(msg.toUtf8(), Messagebox::AlertIcon, Messagebox::OkButton);
 	}
-	emit s_gqbSqlRequested(result);
+
+	return result;
 }
 
 QVector < QPair< BaseTable *, QVector < QPair<Column *, Column *> > > >

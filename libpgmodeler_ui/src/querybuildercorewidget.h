@@ -27,6 +27,7 @@
 
 #include "ui_querybuildercorewidget.h"
 #include "querybuilderpathwidget.h"
+#include "querybuildersqlwidget.h"
 #include "pgmodelerns.h"
 #include "modelwidget.h"
 #include "sourcecodewidget.h"
@@ -83,6 +84,8 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::QueryBuilderCoreWidget 
 		void swapOrderBySpins(int col, int new_value);
 		void columnSelectChecked(int col, int state);
 
+		QString produceSQL(bool schema_qualified, bool compact_sql);
+
 	public:
 		//! \brief Constants for the table widget line numbers
 		static constexpr unsigned tW_Selection=0,
@@ -112,7 +115,8 @@ class QueryBuilderCoreWidget: public QWidget, public Ui::QueryBuilderCoreWidget 
 	public slots:
 		void hide(void);
 		void insertSelection(void);
-		void produceSQL(void);
+		void showSQL(void);
+		void reloadSQL(QueryBuilderSQLWidget * gqbs, bool schema_qualified, bool compact_sql);
 		void resetQuery();
 		void gqbPathWidgetToggled(bool change);
 
