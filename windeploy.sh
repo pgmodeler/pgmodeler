@@ -1,7 +1,5 @@
 #!/bin/bash
 
-INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
-QT_IFW_ROOT='/c/Qt/QtIFW-3.0.6'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
@@ -58,51 +56,36 @@ else
   PKGNAME="pgmodeler-$DEPLOY_VER-windows$WIN_BITS"
 fi
 
-if [ $X64_BUILD = 1 ]; then
-  # Settings for x64 build
-  QT_INSTALL_VERSION='5.12.0'
-  QT_BASE_VERSION='5.12.0'
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/"
-  QMAKE_ROOT=$QT_ROOT/bin
-  MINGW_ROOT="/c/msys_64/mingw64/bin"
-  PGSQL_ROOT="/c/msys_64/mingw64/bin"  
-  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
-              XML_INC+=$MINGW_ROOT/../include/libxml2 \
-			  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
-			  PGSQL_INC+=$MINGW_ROOT/../include \
-			  PGSQL_LIB+=$MINGW_ROOT/libpq.dll"
-  DEP_LIBS="$MINGW_ROOT/libcrypto-1_1-x64.dll \
-		    $MINGW_ROOT/libgcc_s_seh-1.dll \
-		    $MINGW_ROOT/libiconv-2.dll \
-			$MINGW_ROOT/libintl-8.dll \
-			$MINGW_ROOT/liblzma-5.dll \
-			$MINGW_ROOT/libpq.dll \
-		    $MINGW_ROOT/libssl-1_1-x64.dll \
-		    $MINGW_ROOT/libstdc++-6.dll \
-			$MINGW_ROOT/libwinpthread-1.dll \
-			$MINGW_ROOT/libxml2-2.dll \
-			$MINGW_ROOT/zlib1.dll"
+# Settings for x64 build
+if [ $X64_BUILD = 1 ]; then		
+	QT_ROOT="/c/msys_64/mingw64"
+	MINGW_ROOT="/c/msys_64/mingw64/bin"
+	DEP_LIBS="$DEP_LIBS \
+			$MINGW_ROOT/libssl-1_1-x64.dll \
+			$MINGW_ROOT/libcrypto-1_1-x64.dll \
+			$MINGW_ROOT/libgcc_s_seh-1.dll"	
+# Settings for x86 build
 else
-  # Default setting for x86 build
-  QT_INSTALL_VERSION='5.9.3'
-  QT_BASE_VERSION='5.9.3'
-  PGSQL_VERSION='10.1'
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw53_32/"
-  QMAKE_ROOT=$QT_ROOT/bin
-  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
-  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw530_32/bin"
-  PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-  DEP_LIBS="$QMAKE_ROOT/libgcc_s_dw2-1.dll \
-		   $QMAKE_ROOT/libstdc++-6.dll \
-		   $QMAKE_ROOT/libwinpthread-1.dll \
-		   $PGSQL_ROOT/libiconv-2.dll \
-		   $PGSQL_ROOT/libintl-8.dll \
- 		   $PGSQL_ROOT/zlib1.dll \
-		   $PGSQL_ROOT/libxml2.dll \
-		   $PGSQL_ROOT/libpq.dll \
-		   $PGSQL_ROOT/libeay32.dll \
-		   $PGSQL_ROOT/ssleay32.dll"
+	QT_ROOT="/c/msys_64/mingw32"
+	MINGW_ROOT="/c/msys_64/mingw32/bin"
+	DEP_LIBS="$DEP_LIBS \
+			$MINGW_ROOT/libssl-1_1.dll \
+			$MINGW_ROOT/libcrypto-1_1.dll \
+			$MINGW_ROOT/libgcc_s_dw2-1.dll"
 fi
+
+# Common settings for both architectures
+QT_INSTALL_VERSION='5.12.3'
+QT_BASE_VERSION='5.12.3'
+QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
+QMAKE_ROOT=$MINGW_ROOT
+QT_IFW_ROOT=$MINGW_ROOT
+PGSQL_ROOT=$MINGW_ROOT  
+QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
+		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
+		  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
+		  PGSQL_INC+=$MINGW_ROOT/../include \
+		  PGSQL_LIB+=$MINGW_ROOT/libpq.dll"
 
 if [ $DEMO_VERSION = 1 ]; then
   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
@@ -112,18 +95,37 @@ PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
 INSTALL_ROOT="$PWD/build"
 DIST_ROOT="$PWD/dist"
-ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF="$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$INSTALL_ROOT/qtplugins"
 PLUGINS="dummy xml2object"
 
 # Common dependency libraries 
-DEP_LIBS+=" $QMAKE_ROOT/Qt5Core.dll \
-		  $QMAKE_ROOT/Qt5Gui.dll \
-		  $QMAKE_ROOT/Qt5Widgets.dll \
-		  $QMAKE_ROOT/Qt5PrintSupport.dll \
-		  $QMAKE_ROOT/Qt5Network.dll \
-		  $QMAKE_ROOT/Qt5Svg.dll "
+DEP_LIBS="$DEP_LIBS \
+		$MINGW_ROOT/libicuin*.dll \
+		$MINGW_ROOT/libicuuc*.dll \
+		$MINGW_ROOT/libicudt*.dll \
+		$MINGW_ROOT/libpcre2-16-0.dll \
+		$MINGW_ROOT/libharfbuzz-0.dll \
+		$MINGW_ROOT/libpng16-16.dll \
+		$MINGW_ROOT/libfreetype-6.dll \
+		$MINGW_ROOT/libgraphite2.dll \
+		$MINGW_ROOT/libglib-2.0-0.dll \
+		$MINGW_ROOT/libpcre-1.dll \
+		$MINGW_ROOT/libbz2-1.dll \
+		$MINGW_ROOT/libstdc++-6.dll \
+		$MINGW_ROOT/libwinpthread-1.dll \
+		$MINGW_ROOT/zlib1.dll \
+		$MINGW_ROOT/libpq.dll \
+		$MINGW_ROOT/libxml2-2.dll \
+		$MINGW_ROOT/liblzma-5.dll \
+		$MINGW_ROOT/libiconv-2.dll \
+		$MINGW_ROOT/libintl-8.dll \
+		$QMAKE_ROOT/Qt5Core.dll \
+		$QMAKE_ROOT/Qt5Gui.dll \
+		$QMAKE_ROOT/Qt5Widgets.dll \
+		$QMAKE_ROOT/Qt5PrintSupport.dll \
+		$QMAKE_ROOT/Qt5Network.dll \
+		$QMAKE_ROOT/Qt5Svg.dll "
 		  
 #Dependency qt plugins copied to build dir
 DEP_PLUGINS="imageformats/qicns.dll \
@@ -197,7 +199,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-$MINGW_ROOT/mingw32-make.exe -j7 >> $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe -j10 >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -238,7 +240,7 @@ echo "Libraries=." >> $QT_CONF
 for plug in $DEP_PLUGINS; do
 	pdir=`dirname $plug`
 	mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-	cp $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+	cp $QT_PLUGINS_ROOT/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 	
 	if [ $? -ne 0 ]; then
 		echo
@@ -248,14 +250,14 @@ for plug in $DEP_PLUGINS; do
 	fi
 done
 
-$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
+#$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
 
-if [ $? -ne 0 ]; then
-  echo
-  echo "** Installation failed!"
-  echo
-  exit 1
-fi
+#if [ $? -ne 0 ]; then
+#  echo
+#  echo "** Installation failed!"
+#  echo
+#  exit 1
+#fi
 
 echo "Packaging installation..."
 
@@ -288,7 +290,7 @@ if [ $? -ne 0 ]; then
    exit 1
 fi  
 
-$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
+$QT_IFW_ROOT/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -304,6 +306,4 @@ echo
 
 if [ $BUILD_ALL -eq 1 ]; then
  sh windeploy.sh -demo-version
- sh windeploy.sh -x64-build
- sh windeploy.sh -x64-build -demo-version
 fi

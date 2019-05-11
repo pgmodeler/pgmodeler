@@ -496,6 +496,11 @@ void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 {
+	QStringList contrs = Catalog::parseArrayValues(attribs[Attributes::Constraints]);
+
+	contrs.replaceInStrings(Table::DataSeparator, QChar(':'));
+	attribs[Attributes::Constraints] =  contrs.join(Table::DataSeparator);
+
 	formatBooleanAttribs(attribs, { Attributes::NotNull });
 	attribs[Attributes::Type]=getObjectName(ObjectType::Type, attribs[Attributes::Type]);
 }

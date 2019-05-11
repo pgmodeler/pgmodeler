@@ -1007,7 +1007,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 		{
 			constr.remove(0, 1);
 			constr.remove(constr.length() - 1, 1);
-			constr_attrs = constr.split(QChar(':'));
+			constr_attrs = constr.split(Table::DataSeparator);
 
 			aux_attribs[Attributes::Name] = constr_attrs.at(0);
 
