@@ -3,7 +3,7 @@ Change Log
 
 v0.9.2-beta
 ------
-<em>Release date: May 13, 2019</em><br/>
+<em>Release date: May 15, 2019</em><br/>
 
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
@@ -48,6 +48,7 @@ v0.9.2-beta
 * [Change] Fixed the windows deploy script to use newer version of the compiler in 64 bits environment.
 * [Change] Minor improvements in SQLToolWidget and SQLExecutionWidget to avoid segmentation faults when trying to close a execution tab while the command is still running.
 * [Change] Adjusted the resize parameters in DataManipulationForm to avoid wrong dialog resizings mainly on Windows.
+* [Fix] Fixed a bug that was causing domain constraints not to be extracted correctly during reverse engineering.
 * [Fix] Fixed a bug that was causing a fk relationship not to be deleted if the fk tied to it was changed by the user.
 * [Fix] Fixed a bug on CLI that was not fixing broken models correctly when they had no role declaration.
 * [Fix] Fixed a bug that was causing tables not to be moved on the canvas using mouse.

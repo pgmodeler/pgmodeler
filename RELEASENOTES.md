@@ -1,7 +1,7 @@
 v0.9.2-beta
 ------
 
-<em>Release date: May 14, 2019</em><br/>
+<em>Release date: May 15, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
 <strong>Summary:</strong> a brand new version has come to you after a work of almost five months on it. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
@@ -42,6 +42,7 @@ Lastly, some of the key change log entries of this release are listed below. For
 * [Change] Allowing copied object to be pasted multiple times. This feature works only with copy/paste operation without remove the pasted objects from the clipboard, for cut/paste the behaviour is unchanged.
 * [Change] Increased the maximum limit of SQL history.
 * [Change] Minor improvements in SQLToolWidget and SQLExecutionWidget to avoid segmentation faults when trying to close a execution tab while the command is still running.
+* [Fix] Fixed a bug that was causing domain constraints not to be extracted correctly during reverse engineering.
 * [Fix] Fixed a bug that was causing a fk relationship not to be deleted if the fk tied to it was changed by the user.
 * [Fix] Fixed a bug on CLI that was not fixing broken models correctly when they had no role declaration.
 * [Fix] Fixed a bug that was causing tables not to be moved on the canvas using mouse.
