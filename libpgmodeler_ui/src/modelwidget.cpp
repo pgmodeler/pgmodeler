@@ -68,7 +68,7 @@ bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
 bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
-float ModelWidget::min_object_opacity=0.10f;
+double ModelWidget::min_object_opacity=0.10;
 
 constexpr unsigned ModelWidget::BreakVertNinetyDegrees;
 constexpr unsigned ModelWidget::BreakHorizNinetyDegrees;
@@ -572,7 +572,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			object == viewport->verticalScrollBar())
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
-		double zoom_inc = roundf(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
+		double zoom_inc = round(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
 
 		if(w_event->angleDelta().y() < 0)
 			this->applyZoom(this->current_zoom - zoom_inc);
@@ -861,8 +861,8 @@ void ModelWidget::addNewObject(void)
 				pos=menu_pos;
 			//Otherwise inserts the new object at the middle of bounding rect
 			else
-				pos=QPointF(sch_graph->pos().x() + (size.width()/2.0f),
-							sch_graph->pos().y() + (size.height()/2.0f));
+				pos=QPointF(sch_graph->pos().x() + (size.width()/2.0),
+							sch_graph->pos().y() + (size.height()/2.0));
 
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
@@ -1302,8 +1302,8 @@ void ModelWidget::convertRelationshipNN(void)
 					op_list->registerObject(rel, Operation::ObjectRemoved);
 
 					//The default position for the table will be the middle point between the relationship participant tables
-					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
-					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
+					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0);
+					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0);
 					tab->setPosition(pnt);
 
 					//Adds the new table to the model
@@ -1420,9 +1420,6 @@ void ModelWidget::loadModel(const QString &filename)
 void ModelWidget::adjustSceneSize(void)
 {
 	QRectF scene_rect, objs_rect;
-	bool align_objs, show_grid, show_delims;
-
-	ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
 
 	scene_rect=scene->sceneRect();
 	objs_rect=scene->itemsBoundingRect();
@@ -1436,7 +1433,7 @@ void ModelWidget::adjustSceneSize(void)
 	scene->setSceneRect(scene_rect);
 	viewport->centerOn(0,0);
 
-	if(align_objs)
+	if(ObjectsScene::isAlignObjectsToGrid())
 	{
 		scene->alignObjectsToGrid();
 		db_model->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
@@ -1463,7 +1460,9 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy, dx1, dy1;
 
 		//Make a backup of the current grid options
-		ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
+		show_grid = ObjectsScene::isShowGrid();
+		align_objs = ObjectsScene::isAlignObjectsToGrid();
+		show_delims = ObjectsScene::isShowPageDelimiters();
 
 		//Reconfigure the grid options based upon the passed settings
 		ObjectsScene::setGridOptions(print_grid, align_objs, false);
@@ -1485,9 +1484,9 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
 		painter.setRenderHint(QPainter::Antialiasing);
-		font.setPointSizeF(7.5f);
+		font.setPointSizeF(7.5);
 		pen.setColor(QColor(120,120,120));
-		pen.setWidthF(1.0f);
+		pen.setWidthF(1.0);
 
 		//Calculates the auxiliary points to draw the page delimiter lines
 		top_left.setX(0); top_left.setY(0);
@@ -2433,7 +2432,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
 									 enum_cast(object->getObjectType()));
@@ -2535,7 +2534,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		itr++;
 
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
 									 enum_cast(object->getObjectType()));
@@ -2640,7 +2639,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			try
 			{
 				pos++;
-				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+				task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 											 trUtf8("Pasting object: `%1' (%2)").arg(object->getName())
 											 .arg(object->getTypeName()),
 											 enum_cast(object->getObjectType()));
@@ -4139,7 +4138,7 @@ void ModelWidget::setMinimumObjectOpacity(unsigned min_opacity)
 	if(min_opacity > 70)
 		min_opacity = 70;
 
-	ModelWidget::min_object_opacity = static_cast<float>(min_opacity)/100.0f;
+	ModelWidget::min_object_opacity = static_cast<double>(min_opacity)/100.0;
 }
 
 void ModelWidget::highlightObject(void)
@@ -4835,13 +4834,13 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 
 			if(tables.size() >= 4)
 			{
-				max_w *= 0.50f;
-				max_h *= 0.50f;
+				max_w *= 0.50;
+				max_h *= 0.50;
 			}
 			else
 			{
-				max_w *= 1.15f;
-				max_h *= 1.15f;
+				max_w *= 1.15;
+				max_h *= 1.15;
 			}
 
 			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),

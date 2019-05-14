@@ -66,9 +66,7 @@ class BaseTableView: public BaseObjectView {
 		RoundedRectItem *body,
 
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
-		*ext_attribs_body,
-
-		*placeholder;
+		*ext_attribs_body;
 
 		AttributesTogglerItem *attribs_toggler;
 
@@ -98,7 +96,7 @@ class BaseTableView: public BaseObjectView {
 
 		/*! \brief Configures basic attributes of the table. A width need to be provided so
 		the extended attributes section can follow the same width as the body and title */
-		void __configureObject(float width);
+		void __configureObject(double width);
 
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
 		double calculateWidth(void);

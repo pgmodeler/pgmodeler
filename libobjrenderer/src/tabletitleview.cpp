@@ -134,10 +134,10 @@ void TableTitleView::resizeTitle(double width, double height)
 	box->setRect(QRectF(0,0, width, height));
 
 	if(schema_name->text()==QString(" "))
-		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, py);
+		obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0, py);
 	else
 	{
-		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, py);
+		schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0, py);
 		obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), py);
 	}
 

@@ -117,7 +117,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		scene->clearSelection();
 
 		//Make a backup of the current scene options
-		ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);
+		shw_grd = ObjectsScene::isShowGrid();
+		align_objs = ObjectsScene::isAlignObjectsToGrid();
+		shw_dlm = ObjectsScene::isShowPageDelimiters();
 
 		//Sets the options passed by the user
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
@@ -197,7 +199,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			painter.setRenderHint(QPainter::TextAntialiasing, true);
 			painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-			emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
+			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
 														 trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
 			//Render the entire viewport onto the pixmap
@@ -251,7 +253,9 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	QFileInfo fi(filename);
 
 	//Making a backup of the current scene options
-	ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);	
+	shw_grd = ObjectsScene::isShowGrid();
+	shw_dlm = ObjectsScene::isShowPageDelimiters();
+	align_objs = ObjectsScene::isAlignObjectsToGrid();
 	scene->setBackgroundBrush(Qt::NoBrush);
 
 	//Disabling grid and delimiters
@@ -414,7 +418,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			for(i=0; i < count && !export_canceled; i++)
 			{
 				object=db_model->getObject(i, types[type_id]);
-				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
+				progress=((10 * (type_id+1)) + ((i/static_cast<double>(count)) * 10));
 
 				try
 				{
@@ -806,7 +810,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			//Cleanup single line comments
 			lin=ts.readLine();
 			curr_size+=lin.size();
-			aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * factor);
+			aux_prog=progress + ((curr_size/static_cast<double>(buf_size)) * factor);
 
 			/* If the simulation mode is off and the drop objects option is checked,
 		 check if the current line matches one of the accepted drop commands

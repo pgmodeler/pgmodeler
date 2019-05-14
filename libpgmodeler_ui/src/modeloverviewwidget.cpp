@@ -207,8 +207,8 @@ void ModelOverviewWidget::resizeOverview(void)
 		curr_size.setHeight(curr_size.height() * ResizeFactor);
 
 		//If the size exceeds the screen's width or height in 90%
-		if(curr_size.width() > screen_rect.width() * 0.90f ||
-			 curr_size.height() > screen_rect.height() * 0.90f)
+		if(curr_size.width() > screen_rect.width() * 0.90 ||
+			 curr_size.height() > screen_rect.height() * 0.90)
 		{
 			int max_val = std::max(scene_rect.width(), scene_rect.height());
 

@@ -108,9 +108,6 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Line used as a guide when inserting new relationship
 		QGraphicsLineItem *rel_line;
 
-		//! \brief Aligns the specified point in relation to the grid
-		static QPointF alignPointToGrid(const QPointF &pnt);
-
 		/*! \brief Indicates if the mouse cursor is under a move spot portion of scene.
 		Additionally this method configures the direction of movement when returning true */
 		bool mouseIsAtCorner(void);
@@ -202,7 +199,10 @@ class ObjectsScene: public QGraphicsScene {
 
 		static void setGridSize(unsigned size);
 		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
-		static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
+
+		static bool isAlignObjectsToGrid(void);
+		static bool isShowGrid(void);
+		static bool isShowPageDelimiters(void);
 
 		static void setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size=QSizeF(0,0));
 		static void getPaperConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins, QSizeF &custom_size);
@@ -213,6 +213,9 @@ class ObjectsScene: public QGraphicsScene {
 		void addItem(QGraphicsItem *item);
 		void removeItem(QGraphicsItem *item);
 		void setSceneRect(const QRectF &rect);
+
+		//! \brief Aligns the specified point in relation to the grid
+		static QPointF alignPointToGrid(const QPointF &pnt);
 
 		/*! \brief Returns the items bounding rect. By default the method returns the same as QGraphicsScene::itemsBoundingRect.
 		If the parameter seek_only_db_objs is true the returned rect will have the origin point calculated based upon the

@@ -255,10 +255,10 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 			QColor cor1=BaseObjectView::getBorderStyle(Attributes::ObjSelection).color(),
 					cor2=line_color;
 
-			color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
-			color.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
-			color.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
-			color.setAlphaF((cor1.alphaF() + cor2.alphaF())/2.0f);
+			color.setRedF((cor1.redF() + cor2.greenF())/2.0);
+			color.setGreenF((cor1.greenF() + cor2.greenF())/2.0);
+			color.setBlueF((cor1.blueF() + cor2.blueF())/2.0);
+			color.setAlphaF((cor1.alphaF() + cor2.alphaF())/2.0);
 		}
 		else
 			color=line_color;
@@ -309,9 +309,9 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 					for(auto &stop : grad_stops)
 					{
 						color = stop.second;
-						color.setRedF((color.redF() + sel_color.greenF())/2.0f);
-						color.setGreenF((color.greenF() + sel_color.greenF())/2.0f);
-						color.setBlueF((color.blueF() + sel_color.blueF())/2.0f);
+						color.setRedF((color.redF() + sel_color.greenF())/2.0);
+						color.setGreenF((color.greenF() + sel_color.greenF())/2.0);
+						color.setBlueF((color.blueF() + sel_color.blueF())/2.0);
 						grad.setColorAt(color_id++, color);
 					}
 
@@ -626,12 +626,12 @@ void RelationshipView::configureLine(void)
 				double min_val = min<double>(rect.width(), rect.height());
 
 				if(idx < 0) idx =0;
-				pos_factor = min_val * 0.08f * idx;
+				pos_factor = min_val * 0.08 * idx;
 			}
 
 			p_central[0].setX(pos.x() + rect.width());
-			p_central[0].setY(pos.y() + (rect.height() / 3.0f) + pos_factor);
-			p_central[1].setX(pos.x() + (rect.width() / 1.5f) - pos_factor);
+			p_central[0].setY(pos.y() + (rect.height() / 3.0) + pos_factor);
+			p_central[1].setX(pos.x() + (rect.width() / 1.5) - pos_factor);
 			p_central[1].setY(pos.y());
 
 			if(p_central[0].y() > pos.y() + rect.height())
@@ -858,7 +858,7 @@ void RelationshipView::configureLine(void)
 			{
 				conn_rels_cnt[tab_idx] = tables[tab_idx]->getConnectedRelsCount(base_rel->getTable(BaseRelationship::SrcTable),
 																																				base_rel->getTable(BaseRelationship::DstTable));
-				conn_rels_factors[tab_idx] = conn_rels_cnt[tab_idx] == 1 ? 1 : 0.08f * (tables[tab_idx]->getConnectedRelationshipIndex(base_rel));
+				conn_rels_factors[tab_idx] = conn_rels_cnt[tab_idx] == 1 ? 1 : 0.08 * (tables[tab_idx]->getConnectedRelationshipIndex(base_rel));
 
 				if(!points.empty())
 				{
@@ -1026,8 +1026,8 @@ void RelationshipView::configureLine(void)
 				p_central[1]=points[idx_lin_desc-1];
 
 			//Calculates the middle point and inserts it on the point vector
-			p_int.setX((p_central[0].x() + p_central[1].x())/2.0f);
-			p_int.setY((p_central[0].y() + p_central[1].y())/2.0f);
+			p_int.setX((p_central[0].x() + p_central[1].x())/2.0);
+			p_int.setY((p_central[0].y() + p_central[1].y())/2.0);
 			points.insert(points.begin() + idx_lin_desc, p_int);
 		}
 
@@ -1059,9 +1059,9 @@ void RelationshipView::configureLine(void)
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
 					if(rel && (rel->isIdentifier() && vet_idx==0))
-						pen.setWidthF(ObjectBorderWidth * 1.90f);
+						pen.setWidthF(ObjectBorderWidth * 1.90);
 					else
-						pen.setWidthF(ObjectBorderWidth * 1.45f);
+						pen.setWidthF(ObjectBorderWidth * 1.45);
 
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
@@ -1096,9 +1096,9 @@ void RelationshipView::configureLine(void)
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
-				pen.setWidthF(ObjectBorderWidth * 1.90f);
+				pen.setWidthF(ObjectBorderWidth * 1.90);
 			else
-				pen.setWidthF(ObjectBorderWidth * 1.45f);
+				pen.setWidthF(ObjectBorderWidth * 1.45);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
@@ -1328,7 +1328,7 @@ void RelationshipView::configureDescriptor(void)
 	}
 
 	//Resizes the polygon according the font factor
-	if(factor!=1.0f)
+	if(factor!=1.0)
 		TextPolygonItem::resizePolygon(pol,
 																	 pol.boundingRect().width() * factor ,
 																	 pol.boundingRect().height() * factor);
@@ -1380,8 +1380,8 @@ void RelationshipView::configureDescriptor(void)
 				pnt=lin.p1();
 			else
 			{
-				pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0f);
-				pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0f);
+				pnt.setX((lin.p1().x() + lin.p2().x()) / 2.0);
+				pnt.setY((lin.p1().y() + lin.p2().y()) / 2.0);
 			}
 
 			angle = -lin.angle();
@@ -1392,11 +1392,11 @@ void RelationshipView::configureDescriptor(void)
 		obj_shadow->setRotation(angle);
 	}
 
-	x=x1=pnt.x() - (pol.boundingRect().width()/2.0f);
-	y=y1=pnt.y() - (pol.boundingRect().height()/2.0f);
+	x=x1=pnt.x() - (pol.boundingRect().width()/2.0);
+	y=y1=pnt.y() - (pol.boundingRect().height()/2.0);
 
-	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
-												 y + ((pol.boundingRect().height()/2.0f) * 0.55f));
+	protected_icon->setPos(x + ((pol.boundingRect().width()/2.0) * 0.60),
+												 y + ((pol.boundingRect().height()/2.0) * 0.55));
 
 	configureSQLDisabledInfo();
 	x1+=6 * HorizSpacing;
@@ -1417,7 +1417,7 @@ void RelationshipView::configureDescriptor(void)
 	pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 	pol_item->setPolygon(pol);
 	pol_item->setTransformOriginPoint(obj_shadow->boundingRect().center());
-	pol_item->setPos(x + 2.5f, y + 3.5f);
+	pol_item->setPos(x + 2.5, y + 3.5);
 	pol_item->setPen(Qt::NoPen);
 	pol_item->setBrush(QColor(50,50,50,60));
 
@@ -1715,7 +1715,7 @@ void RelationshipView::configureAttributes(void)
 
 		fmt=font_config[Attributes::Attribute];
 		font=fmt.font();
-		font.setPointSizeF(font.pointSizeF() * 0.80f);
+		font.setPointSizeF(font.pointSizeF() * 0.80);
 
 		//Configures the rectangle used as base for creation of attribute descriptor
 		rect.setTopLeft(QPointF(0,0));
@@ -1724,7 +1724,7 @@ void RelationshipView::configureAttributes(void)
 		//Calculates the first attribute position based upon the attribute count and descriptor size
 		count=rel->getAttributeCount();
 		px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HorizSpacing) * factor);
-		py=descriptor->pos().y() - (count * rect.height()/(4.0f * factor));
+		py=descriptor->pos().y() - (count * rect.height()/(4.0 * factor));
 
 		for(i=0; i < count; i++)
 		{
@@ -1789,8 +1789,8 @@ void RelationshipView::configureAttributes(void)
 			pol.append(text->boundingRect().bottomLeft());
 			sel_attrib->setPolygon(pol);
 
-			p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0f),
-									descriptor->pos().y() + (descriptor->boundingRect().height()/2.0f));
+			p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0),
+									descriptor->pos().y() + (descriptor->boundingRect().height()/2.0));
 			lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
 
 			py+=desc->boundingRect().height() + (2 * VertSpacing);
@@ -1821,7 +1821,7 @@ void RelationshipView::configureLabels(void)
 	pnt=descriptor->pos();
 	x=pnt.x() -
 		((labels[BaseRelationship::RelNameLabel]->boundingRect().width() -
-		 descriptor->boundingRect().width())/2.0f);
+		 descriptor->boundingRect().width())/2.0);
 
 	if(base_rel->isSelfRelationship())
 		y=pnt.y() -	labels[BaseRelationship::RelNameLabel]->boundingRect().height() - (2 * VertSpacing);
@@ -1873,7 +1873,7 @@ void RelationshipView::configureLabels(void)
 			for(idx=0; idx < 2; idx++)
 			{
 				pos=conn_points[idx];
-				da=labels[idx]->boundingRect().height()/2.0f;
+				da=labels[idx]->boundingRect().height()/2.0;
 
 				if((rel_type!=BaseRelationship::RelationshipFk && pos.x() < tables[idx]->pos().x()) ||
 						(rel_type==BaseRelationship::RelationshipFk && pos.x() >= tables[idx]->pos().x()))
@@ -1938,8 +1938,8 @@ void RelationshipView::configureLabels(void)
 					pf=lins[idx].p1();
 				}
 
-				dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
-				da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
+				dl=labels[label_ids[idx]]->boundingRect().width()/2.0;
+				da=labels[label_ids[idx]]->boundingRect().height()/2.0;
 
 				x=pi.x() - dl;
 				y=pi.y() - da;

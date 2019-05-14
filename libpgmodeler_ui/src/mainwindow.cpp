@@ -780,7 +780,7 @@ void MainWindow::saveTemporaryModels(void)
 			for(int i=0; i < count; i++)
 			{
 				model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
-				bg_saving_pb->setValue(((i+1)/static_cast<float>(count)) * 100);
+				bg_saving_pb->setValue(((i+1)/static_cast<double>(count)) * 100);
 
 				if(model->isModified())
 					model->getDatabaseModel()->saveModel(model->getTempFilename(), SchemaParser::XmlDefinition);

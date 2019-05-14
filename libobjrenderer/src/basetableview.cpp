@@ -329,7 +329,7 @@ void BaseTableView::configureTag(void)
 		double bottom;
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
-		fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.80);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
 		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
@@ -348,16 +348,16 @@ void BaseTableView::configureTag(void)
 		tag_item->setPolygon(pol);
 		tag_item->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
 		tag_item->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
-		tag_item->setPos(-5, bottom - 1.5f);
+		tag_item->setPos(-5, bottom - 1.5);
 		tag_item->setTextPos(HorizSpacing/2, 0);
 	}
 }
 
-void BaseTableView::__configureObject(float width)
+void BaseTableView::__configureObject(double width)
 {
 	BaseTable *tab = dynamic_cast<BaseTable *>(getSourceObject());
 	double height = 0,
-			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f,
+			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0,
 			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
 
 	QPen pen = body->pen();

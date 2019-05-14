@@ -457,7 +457,7 @@ void ModelValidationHelper::validateModel(void)
 			}
 
 			//Emit a signal containing the validation progress
-			progress=((i+1)/static_cast<float>(count))*20;
+			progress=((i+1)/static_cast<double>(count))*20;
 			emit s_progressUpdated(progress, QString());
 		}
 
@@ -530,7 +530,7 @@ void ModelValidationHelper::validateModel(void)
 			}
 
 			//Emit a signal containing the validation progress
-			progress=20 + ((i/static_cast<float>(dup_objects.size()))*20);
+			progress=20 + ((i/static_cast<double>(dup_objects.size()))*20);
 			emit s_progressUpdated(progress, QString());
 
 			i++; mitr++;
@@ -556,7 +556,7 @@ void ModelValidationHelper::validateModel(void)
 						generateValidationInfo(ValidationInfo::MissingExtension, col, {});
 				}
 
-				progress=30 + ((i/static_cast<float>(obj_list->size()))*20);
+				progress=30 + ((i/static_cast<double>(obj_list->size()))*20);
 			}
 		}
 
@@ -571,7 +571,7 @@ void ModelValidationHelper::validateModel(void)
 
 			while(itr!=obj_list->end() && !valid_canceled)
 			{
-				progress=40 + ((i/static_cast<float>(obj_list->size()))*20);
+				progress=40 + ((i/static_cast<double>(obj_list->size()))*20);
 
 				if(dynamic_cast<Relationship *>(*itr)->isInvalidated())
 					generateValidationInfo(ValidationInfo::BrokenRelConfig, *itr, {});

@@ -344,7 +344,7 @@ void AttributesTogglerItem::createButtonPolygons(void)
 		return;
 
 	QPolygonF *pol = nullptr;
-	double fnt_factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f,
+	double fnt_factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0,
 			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio(),
 			factor = fnt_factor * pixel_ratio;
 

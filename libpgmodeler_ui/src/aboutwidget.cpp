@@ -45,7 +45,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 		emit s_visibilityChanged(false);
 	});
 
-	float factor = BaseObjectView::getScreenDpiFactor();
+	double factor = BaseObjectView::getScreenDpiFactor();
 	this->adjustSize();
 	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 }

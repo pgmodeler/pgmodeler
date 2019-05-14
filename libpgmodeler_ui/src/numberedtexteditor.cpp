@@ -45,7 +45,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
-		font.setPointSizeF(font.pointSizeF() * 0.95f);
+		font.setPointSizeF(font.pointSizeF() * 0.95);
 
 		top_widget = new QWidget(this);
 		top_widget->setAutoFillBackground(true);

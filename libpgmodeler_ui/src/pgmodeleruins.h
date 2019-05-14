@@ -39,7 +39,7 @@ namespace PgModelerUiNs {
 	HugeFontFactor = 3;
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
-	extern void __configureWidgetFont(QWidget *widget, float factor);
+	extern void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout

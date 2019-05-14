@@ -494,10 +494,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
 		config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
 
-		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
-		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(show_grid ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(show_delim ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(align_grid ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(ObjectsScene::isAlignObjectsToGrid() ? Attributes::True : QString());
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
 		config_params[Attributes::Configuration][Attributes::PaperMargin]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -604,8 +603,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 	QFont fnt;
 	double fnt_size=config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
 
-	if(fnt_size < 5.0f)
-		fnt_size=5.0f;
+	if(fnt_size < 5.0)
+		fnt_size=5.0;
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
@@ -673,7 +672,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 void GeneralConfigWidget::convertMarginUnity(void)
 {
 	static int prev_unity=UnitMilimeters;
-	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
+	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
 			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];
