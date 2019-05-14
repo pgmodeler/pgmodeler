@@ -10279,7 +10279,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
-	vector<QPointF> labels_pos={ QPointF(NAN,NAN), QPointF(NAN,NAN), QPointF(NAN,NAN) };
+	vector<QPointF> labels_pos={ QPointF(DNaN,DNaN), QPointF(DNaN,DNaN), QPointF(DNaN,DNaN) };
 	BaseRelationship *rel=nullptr;
 	Schema *schema=nullptr;
 	Tag *tag=nullptr;
@@ -10511,7 +10511,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
 											rel->setLabelDistance(id, labels_pos[id]);
-											labels_pos[id]=QPointF(NAN, NAN);
+											labels_pos[id]=QPointF(DNaN, DNaN);
 										}
 									}
 								}

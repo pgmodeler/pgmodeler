@@ -1676,9 +1676,9 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 					 * is between  one of the coordinates of the relationship line used in the operation.
 					 *
 					 * If it matches we'll use the use one of the extremes of the relationship line in the matching coordinate */
-					min_x = qMin<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x()),
-					max_x = qMax<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x()),
-					min_y = qMin<double>(rel_lines[tab_id].p1().y(), rel_lines[tab_id].p2().y()),
+					min_x = qMin<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x());
+					max_x = qMax<double>(rel_lines[tab_id].p1().x(), rel_lines[tab_id].p2().x());
+					min_y = qMin<double>(rel_lines[tab_id].p1().y(), rel_lines[tab_id].p2().y());
 					max_y = qMax<double>(rel_lines[tab_id].p1().y(), rel_lines[tab_id].p2().y());
 
 					if(pi.x() >= min_x && pi.x() <= max_x)

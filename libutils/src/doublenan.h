@@ -17,31 +17,11 @@
 */
 
 /**
-\ingroup libpgmodeler_ui
-\class TextboxWidget
-\brief Implements the operations to create/edit textboxes via form.
+\ingroup libutils
+\brief Definition of a shortcut to double NAN used by some portions of pgModeler mainly when dealing with graphical operations
 */
 
-#ifndef TEXTBOX_WIDGET_H
-#define TEXTBOX_WIDGET_H
-
-#include "ui_textboxwidget.h"
-#include "baseobjectwidget.h"
-
-class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
-	private:
-		Q_OBJECT
-
-	public:
-		TextboxWidget(QWidget * parent = nullptr);
-
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=nullptr, double obj_px=DNaN, double obj_py=DNaN);
-
-	private slots:
-		void selectTextColor(void);
-
-	public slots:
-		void applyConfiguration(void);
-};
-
+#ifndef DOUBLE_NAN_H
+#define DOUBLE_NAN_H
+	# define DNaN	(__builtin_nan (""))
 #endif

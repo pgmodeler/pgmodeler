@@ -124,11 +124,11 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
 						   BaseObject *object, BaseObject *parent_obj=nullptr,
-						   double obj_px=NAN, double obj_py=NAN, bool uses_op_list=true);
+						   double obj_px=DNaN, double obj_py=DNaN, bool uses_op_list=true);
 		
 		/*! \brief This method is a simplification of the original setAttributes. This method must be used
 		only on forms that does not make use of operaton list and not treat graphical objects, since it calls
-		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
+		this original one whit the op_list=nullptr and obj_px=DoubleNaN, obj_py=DoubleNaN */
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 		
 		//! \brief Disable the object's refereces SQL code

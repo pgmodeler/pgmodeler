@@ -87,7 +87,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	main_frm->setLayout(vbox);
 	this->adjustSize();
 
-	curr_h=this->height(),
+	curr_h=this->height();
 	curr_w=min_size.width();
 
 	// If the current height is greater than the widget's minimum height we will use a medium value

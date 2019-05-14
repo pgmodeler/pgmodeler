@@ -81,7 +81,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_tables_tab->setHeaderLabel(trUtf8("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
 
-	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table }, true, this);
+	ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
 	ref_table_sel->enableObjectCreation(false);
 
 	QHBoxLayout *hbox = new QHBoxLayout;

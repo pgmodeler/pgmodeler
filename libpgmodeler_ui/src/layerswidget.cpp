@@ -17,7 +17,6 @@
 */
 
 #include "layerswidget.h"
-#include <QTextStream>
 
 LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 {

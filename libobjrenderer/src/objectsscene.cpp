@@ -39,8 +39,8 @@ ObjectsScene::ObjectsScene(void)
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
-	sel_ini_pnt.setX(NAN);
-	sel_ini_pnt.setY(NAN);
+	sel_ini_pnt.setX(DNaN);
+	sel_ini_pnt.setY(DNaN);
 
 	selection_rect=new QGraphicsPolygonItem;
 	selection_rect->setVisible(false);
@@ -453,8 +453,8 @@ void ObjectsScene::setGridSize(unsigned size)
 		height=aux_size.height()/static_cast<double>(size) * size;
 
 		//Calculates the grid pixmpa size
-		img_w=ceil(width/size)*size;
-		img_h=ceil(height/size)*size;
+		img_w=ceil(width/size) * size;
+		img_h=ceil(height/size) * size;
 
 		grid_size=size;
 		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
@@ -1083,8 +1083,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 		selection_rect->setVisible(false);
 		selection_rect->setPolygon(pol);
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
+		sel_ini_pnt.setX(DNaN);
+		sel_ini_pnt.setY(DNaN);
 
 		if(!this->selectedItems().isEmpty())
 			emit s_objectsSelectedInRange();
@@ -1250,8 +1250,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	emit s_objectsMoved(true);
 	moving_objs=false;
-	sel_ini_pnt.setX(NAN);
-	sel_ini_pnt.setY(NAN);
+	sel_ini_pnt.setX(DNaN);
+	sel_ini_pnt.setY(DNaN);
 }
 
 void ObjectsScene::alignObjectsToGrid(void)

@@ -93,7 +93,7 @@ void RoleWidget::configureRoleSelection(void)
 
 	//Disconnects all signals from the member role tables
 	for(i=0; i < 3; i++)
-		disconnect(members_tab[i],0,this,0);
+		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
 	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole(void)));

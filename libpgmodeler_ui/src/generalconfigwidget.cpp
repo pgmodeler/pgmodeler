@@ -456,7 +456,6 @@ void GeneralConfigWidget::saveConfiguration(void)
 		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir, widget_sch;
-		bool show_grid=false, show_delim=false, align_grid=false;
 
 		root_dir=GlobalAttributes::TmplConfigurationDir +
 				 GlobalAttributes::DirSeparator;
@@ -640,7 +639,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 
 	fnt.setFamily(config_params[Attributes::Configuration][Attributes::CodeFont]);
-	fnt.setPointSize(fnt_size);
+	fnt.setPointSizeF(fnt_size);
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());

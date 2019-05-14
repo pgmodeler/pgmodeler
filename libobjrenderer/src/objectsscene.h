@@ -137,7 +137,7 @@ class ObjectsScene: public QGraphicsScene {
 		void keyReleaseEvent(QKeyEvent *event);
 
 		//! \brief Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
-		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
+		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(DNaN,DNaN));
 
 		void blockItemsSignals(bool block);
 

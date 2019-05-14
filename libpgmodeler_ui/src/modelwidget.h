@@ -312,7 +312,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(DNaN, DNaN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);

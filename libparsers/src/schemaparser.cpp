@@ -702,7 +702,6 @@ void SchemaParser::unsetAttribute(void)
 					throw Exception(Exception::getErrorMessage(ErrorCode::InvalidSyntax)
 									.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
 									ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-				break;
 			}
 		}
 	}

@@ -489,7 +489,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_item->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
 			sql_disabled_item->setBrush(BaseObjectView::getFillStyle(Attributes::PositionInfo));
 
-			px=bounding_rect.width() - sql_disabled_item->boundingRect().width() + (1.5 * HorizSpacing),
+			px=bounding_rect.width() - sql_disabled_item->boundingRect().width() + (1.5 * HorizSpacing);
 			py=-(sql_disabled_item->boundingRect().height()/2);
 
 			sql_disabled_item->setPos(px, py);

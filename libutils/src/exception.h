@@ -27,6 +27,7 @@
 #define EXCEPTION_H
 
 #include <QObject>
+#include "doublenan.h"
 #include <exception>
 #include <signal.h>
 #include <vector>

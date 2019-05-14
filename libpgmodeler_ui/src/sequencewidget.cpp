@@ -49,7 +49,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 void SequenceWidget::setAttributesReadonly(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence, Column *column)
 {
 	setAttributes(model, sequence);
-	BaseObjectWidget::setAttributes(model, op_list, sequence, schema, NAN, NAN, false);
+	BaseObjectWidget::setAttributes(model, op_list, sequence, schema, DNaN, DNaN, false);
 
 	name_edt->setReadOnly(true);
 	comment_edt->setEnabled(false);

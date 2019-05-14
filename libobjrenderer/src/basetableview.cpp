@@ -232,10 +232,10 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
+			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[static_cast<int>(item_idx)]);
 
 			//Configures the selection with the item's dimension
-			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
+			if(obj_selection->boundingRect().height() != item->boundingRect().height())
 			{
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,

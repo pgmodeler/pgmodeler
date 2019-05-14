@@ -307,8 +307,8 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		rect.setBottom(y + height);
 
 		rect1=label->geometry();
-		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
+		this->model->viewport->horizontalScrollBar()->setValue(ceil(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceil(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
 	}
 }
 

@@ -43,14 +43,12 @@ ResultSet::ResultSet(PGresult *sql_result)
 		//Generating an error in case the server returns an incomprehensible response
 		case PGRES_BAD_RESPONSE:
 			throw Exception(ErrorCode::IncomprehensibleDBMSResponse, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
 
 			//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
 			str_aux=Exception::getErrorMessage(ErrorCode::DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
 			throw Exception(str_aux,ErrorCode::DBMSFatalError, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
 
 			//In case of sucess states the result will be created
 		case PGRES_COMMAND_OK:
