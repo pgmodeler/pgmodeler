@@ -21,7 +21,7 @@
 Textbox::Textbox(void)
 {
 	obj_type=ObjectType::Textbox;
-	font_size=9.0f;
+	font_size=9.0;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[Attributes::Italic]=QString();
 	attributes[Attributes::Bold]=QString();

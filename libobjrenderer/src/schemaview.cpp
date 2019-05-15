@@ -204,7 +204,7 @@ void SchemaView::configureObject(void)
 		font=BaseObjectView::getFontStyle(Attributes::Global).font();
 		font.setItalic(true);
 		font.setBold(true);
-		font.setPointSizeF(font.pointSizeF() * 1.3f);
+		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
 		sch_name->setPos(HorizSpacing, VertSpacing);

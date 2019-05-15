@@ -41,8 +41,8 @@ void StyledTextboxView::configureObject(void)
 
 	pnt=pol.at(2);
 	pol.remove(2);
-	pol.insert(2, QPointF(pnt.x(), roundf(pnt.y() - fold->boundingRect().height())));
-	pol.insert(3, QPointF(roundf(pnt.x() - fold->boundingRect().width()), pnt.y()));
+	pol.insert(2, QPointF(pnt.x(), round(pnt.y() - fold->boundingRect().height())));
+	pol.insert(3, QPointF(round(pnt.x() - fold->boundingRect().width()), pnt.y()));
 
 	text_item->setPolygon(pol);
 	rect = text_item->boundingRect();

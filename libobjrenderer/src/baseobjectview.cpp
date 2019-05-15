@@ -19,6 +19,7 @@
 #include "baseobjectview.h"
 #include "textboxview.h"
 #include "roundedrectitem.h"
+#include "objectsscene.h"
 
 map<QString, QTextCharFormat> BaseObjectView::font_config;
 map<QString, vector<QColor>> BaseObjectView::color_config;
@@ -388,6 +389,9 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 
 		if(graph_obj && !graph_obj->isProtected())
 		{
+			if(ObjectsScene::isAlignObjectsToGrid())
+				this->setPos(ObjectsScene::alignPointToGrid(this->scenePos()));
+
 			graph_obj->setPosition(this->scenePos());
 			this->configurePositionInfo(this->pos());
 		}
@@ -456,8 +460,9 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 		pos_info_item->setFont(fnt);
 		pos_info_item->setTextBrush(font_config[Attributes::PositionInfo].foreground());
 
-		pos_info_item->setText(QString(" x:%1 y:%2 ").arg(roundf(pos.x())).arg(roundf(pos.y())));
+		pos_info_item->setText(QString(" x:%1 y:%2 ").arg(round(pos.x())).arg(round(pos.y())));
 		pos_info_item->setPolygon(QPolygonF(pos_info_item->getTextBoundingRect()));
+
 		pos_info_item->setPos(-0.5, -pos_info_item->boundingRect().height()/2);
 	}
 }
@@ -484,7 +489,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			sql_disabled_item->setPen(BaseObjectView::getBorderStyle(Attributes::PositionInfo));
 			sql_disabled_item->setBrush(BaseObjectView::getFillStyle(Attributes::PositionInfo));
 
-			px=bounding_rect.width() - sql_disabled_item->boundingRect().width() + (1.5 * HorizSpacing),
+			px=bounding_rect.width() - sql_disabled_item->boundingRect().width() + (1.5 * HorizSpacing);
 			py=-(sql_disabled_item->boundingRect().height()/2);
 
 			sql_disabled_item->setPos(px, py);
@@ -512,7 +517,7 @@ void BaseObjectView::configureProtectedIcon(void)
 		pol.append(QPointF(6,2)); pol.append(QPointF(5,2));
 		pol.append(QPointF(4,3)); pol.append(QPointF(4,5));
 
-		if(factor!=1.0f)
+		if(factor!=1.0)
 			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
 																					pol.boundingRect().height() * factor);
 
@@ -527,7 +532,7 @@ void BaseObjectView::configureProtectedIcon(void)
 		pol.append(QPointF(10,10)); pol.append(QPointF(1,10));
 		pol.append(QPointF(0,9)); pol.append(QPointF(0,6));
 
-		if(factor!=1.0f)
+		if(factor!=1.0)
 			TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
 																					pol.boundingRect().height() * factor);
 
@@ -572,8 +577,8 @@ unsigned BaseObjectView::getSelectionOrder(void)
 
 QPointF BaseObjectView::getCenter(void)
 {
-	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0f,
-				   this->pos().y() + this->boundingRect().height()/2.0f));
+	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0,
+					 this->pos().y() + this->boundingRect().height()/2.0));
 }
 
 void BaseObjectView::togglePlaceholder(bool visible)
@@ -624,7 +629,7 @@ unsigned BaseObjectView::getLayer(void)
 double BaseObjectView::getScreenDpiFactor(void)
 {
 	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));
-	double factor = screen->logicalDotsPerInch() / 96.0f;
+	double factor = screen->logicalDotsPerInch() / 96.0;
 	double pixel_ratio = screen->devicePixelRatio();
 
 	if(factor < 1)

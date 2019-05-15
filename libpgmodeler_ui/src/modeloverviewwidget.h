@@ -54,7 +54,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QSize pixmap_size;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-		static constexpr double ResizeFactor=0.20f;
+		static constexpr double ResizeFactor=0.20;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);

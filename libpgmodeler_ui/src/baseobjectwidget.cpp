@@ -45,8 +45,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		prev_schema=nullptr;
 		op_list=nullptr;
 		object=nullptr;
-		object_px=NAN;
-		object_py=NAN;
+		object_px=DNaN;
+		object_py=DNaN;
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
@@ -184,7 +184,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
 {
-	setAttributes(model, nullptr, object, parent_obj, NAN, NAN, false);
+	setAttributes(model, nullptr, object, parent_obj, DNaN, DNaN, false);
 }
 
 void BaseObjectWidget::disableReferencesSQL(BaseObject *object)

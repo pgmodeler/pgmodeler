@@ -244,7 +244,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					((diff_type==ObjectsDiffInfo::DropObject && (!diff_opts[OptKeepClusterObjs] || (diff_opts[OptKeepClusterObjs] && obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace))) ||
 					 (diff_type!=ObjectsDiffInfo::DropObject)))
 			{
-				emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
+				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
 															 trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 															 object->getObjectType());
 
@@ -377,7 +377,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			else
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
-				emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
+				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
 									   trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 									   object->getObjectType());
 
@@ -677,7 +677,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			constr=dynamic_cast<Constraint *>(object);
 			col=dynamic_cast<Column *>(object);
 
-			emit s_progressUpdated((idx++/static_cast<float>(diff_infos.size())) * 100,
+			emit s_progressUpdated((idx++/static_cast<double>(diff_infos.size())) * 100,
 								   trUtf8("Processing `%1' info for object `%2' (%3)...")
 								   .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
 								   obj_type);

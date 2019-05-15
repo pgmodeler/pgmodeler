@@ -74,7 +74,6 @@ void IndexWidget::selectIndexingType(void)
 	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gin);
 	buffering_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::Gist);
 	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
-	//enableSortingOptions();
 }
 
 /*void IndexWidget::enableSortingOptions(void)

@@ -1,7 +1,7 @@
 v0.9.2-beta
 ------
 
-<em>Release date: May 15, 2019</em><br/>
+<em>Release date: May 21, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
 <strong>Summary:</strong> a brand new version has come to you after a work of almost five months on it. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>

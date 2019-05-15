@@ -45,16 +45,16 @@ void BaseForm::resizeForm(QWidget *widget)
 	int max_h = 0, max_w = 0, curr_w =0, curr_h = 0,
 			screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 	QScreen *screen=qApp->screens().at(screen_id);
-	float dpi_factor = 0;
-  float pixel_ratio = 0;
+	double dpi_factor = 0;
+  double pixel_ratio = 0;
 
 	max_w = screen->size().width() * 0.70;
 	max_h = screen->size().height() * 0.70;
-	dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+	dpi_factor = screen->logicalDotsPerInch() / 96.0;
   pixel_ratio = screen->devicePixelRatio();
 
-	if(dpi_factor <= 1.01f)
-		dpi_factor = 1.0f;
+	if(dpi_factor <= 1.01)
+		dpi_factor = 1.0;
 
 	vbox->setContentsMargins(2,2,2,2);
 
@@ -87,7 +87,7 @@ void BaseForm::resizeForm(QWidget *widget)
 	main_frm->setLayout(vbox);
 	this->adjustSize();
 
-	curr_h=this->height(),
+	curr_h=this->height();
 	curr_w=min_size.width();
 
 	// If the current height is greater than the widget's minimum height we will use a medium value

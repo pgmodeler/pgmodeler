@@ -218,7 +218,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		this->setMinimumHeight(max_h);
 
-	float factor = BaseObjectView::getScreenDpiFactor();
+	double factor = BaseObjectView::getScreenDpiFactor();
 	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 
 	QDialog::exec();

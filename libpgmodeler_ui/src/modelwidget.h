@@ -63,7 +63,7 @@ class ModelWidget: public QWidget {
 		disable_render_smooth;
 
 		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
-		static float min_object_opacity;
+		static double min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -312,7 +312,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(DNaN, DNaN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);

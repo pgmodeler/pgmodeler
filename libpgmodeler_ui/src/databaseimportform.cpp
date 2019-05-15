@@ -638,7 +638,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 		{
 			QTreeWidgetItem *db_item=nullptr, *item=nullptr;
 			vector<QTreeWidgetItem *> sch_items, tab_items;
-			float inc=0, inc1=0, aux_prog=0;
+			double inc=0, inc1=0, aux_prog=0;
 
 			if(!create_dummy_item)
 			{
@@ -687,7 +687,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			{
 				ObjectType obj_type = ObjectType::BaseObject;
 				aux_prog=task_prog_wgt.progress_pb->value();
-				inc=40/static_cast<float>(sch_items.size());
+				inc=40/static_cast<double>(sch_items.size());
 
 				while(!sch_items.empty())
 				{
@@ -698,7 +698,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 																													BaseObject::getChildObjectTypes(ObjectType::Schema),
 																													checkable_items, disable_empty_grps, sch_items.back(), sch_items.back()->text(0));
 
-					inc1=(60/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
+					inc1=(60/static_cast<double>(tab_items.size()))/static_cast<double>(sch_items.size());
 					while(!tab_items.empty())
 					{
 						aux_prog+=inc1;

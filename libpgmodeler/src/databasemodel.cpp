@@ -606,7 +606,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		if(found)
 		{
 			object=(*itr);
-			obj_idx=(itr-obj_list->begin());
+			obj_idx=(itr - obj_list->begin());
 		}
 		else obj_idx=-1;
 	}
@@ -3187,7 +3187,7 @@ void DatabaseModel::loadModel(const QString &filename)
 											dynamic_cast<Relationship *>(object)->getRelationshipType()==BaseRelationship::RelationshipGen)
 										found_inh_rel=true;
 
-									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()))*100,
+									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
 														trUtf8("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
@@ -6836,8 +6836,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 						xmlparser.restorePosition();
 
 						base_rel->setLabelDistance(labels_id[str_aux],
-													 QPointF(attribs[Attributes::XPos].toFloat(),
-													 attribs[Attributes::YPos].toFloat()));
+													 QPointF(attribs[Attributes::XPos].toDouble(),
+													 attribs[Attributes::YPos].toDouble()));
 					}
 					else if(elem==Attributes::SpecialPkCols && rel)
 					{
@@ -10008,8 +10008,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					dst_tab=rel->getTable(BaseRelationship::DstTable);
 
 					//Since the generated table does not have a position we create one based upon the source tables  positions
-					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
-					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
+					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0);
+					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0);
 					tab_nn->setPosition(pnt);
 
 					objects.push_back(tab_nn);
@@ -10058,7 +10058,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			//When handling a tag , textbox or generic sql we just extract their XML code
 			if(obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag || obj_type == ObjectType::GenericSql)
 			{
-				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
+				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														trUtf8("Saving object `%1' (%2)")
 														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
@@ -10224,7 +10224,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
-				emit s_objectLoaded(((idx++)/static_cast<float>(objects.size()))*100,
+				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														trUtf8("Saving metadata of the object `%1' (%2)")
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
 
@@ -10279,7 +10279,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	vector<QPointF> points;
 	map<QString, unsigned> labels_attrs;
-	vector<QPointF> labels_pos={ QPointF(NAN,NAN), QPointF(NAN,NAN), QPointF(NAN,NAN) };
+	vector<QPointF> labels_pos={ QPointF(DNaN,DNaN), QPointF(DNaN,DNaN), QPointF(DNaN,DNaN) };
 	BaseRelationship *rel=nullptr;
 	Schema *schema=nullptr;
 	Tag *tag=nullptr;
@@ -10355,7 +10355,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						xmlparser.savePosition();
 
 						obj_type=BaseObject::getObjectType(attribs[Attributes::Type]);
-						progress=xmlparser.getCurrentBufferLine()/static_cast<float>(xmlparser.getBufferLineCount()) * 100;
+						progress=xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()) * 100;
 
 						if(obj_type==ObjectType::Database)
 						{
@@ -10368,10 +10368,10 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								default_objs[ObjectType::Collation]=getCollation(attribs[Attributes::DefaultCollation]);
 								default_objs[ObjectType::Tablespace]=getTablespace(attribs[Attributes::DefaultTablespace]);
 								author=attribs[Attributes::ModelAuthor];
-								last_zoom=attribs[Attributes::LastZoom].toFloat();
+								last_zoom=attribs[Attributes::LastZoom].toDouble();
 
 								if(pos.size()>=2)
-									last_pos=QPoint(pos[0].toFloat(), pos[1].toFloat());
+									last_pos=QPoint(pos[0].toInt(), pos[1].toInt());
 							}
 
 							object=this;
@@ -10448,8 +10448,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 									//Retrieving and storing the points
 									if(aux_elem==Attributes::Position)
 									{
-										points.push_back(QPointF(aux_attrib[Attributes::XPos].toFloat(),
-																						 aux_attrib[Attributes::YPos].toFloat()));
+										points.push_back(QPointF(aux_attrib[Attributes::XPos].toDouble(),
+																						 aux_attrib[Attributes::YPos].toDouble()));
 									}
 									//Retrieving and storing the labels' custom positions
 									else if(aux_elem==Attributes::Label)
@@ -10460,8 +10460,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										if(xmlparser.accessElement(XmlParser::ChildElement))
 										{
 											xmlparser.getElementAttributes(aux_attrib);
-											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[Attributes::XPos].toFloat(),
-																																 aux_attrib[Attributes::YPos].toFloat());
+											labels_pos[labels_attrs[ref_type]]=QPointF(aux_attrib[Attributes::XPos].toDouble(),
+																																 aux_attrib[Attributes::YPos].toDouble());
 										}
 
 										xmlparser.restorePosition();
@@ -10511,7 +10511,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 										for(unsigned id=BaseRelationship::SrcCardLabel; id <= BaseRelationship::RelNameLabel; id++)
 										{
 											rel->setLabelDistance(id, labels_pos[id]);
-											labels_pos[id]=QPointF(NAN,NAN);
+											labels_pos[id]=QPointF(DNaN, DNaN);
 										}
 									}
 								}

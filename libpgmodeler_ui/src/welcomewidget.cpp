@@ -36,9 +36,9 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 		btn->setGraphicsEffect(shadow);
 
 #ifdef Q_OS_LINUX
-	PgModelerUiNs::__configureWidgetFont(btn, 1.20f);
+	PgModelerUiNs::__configureWidgetFont(btn, 1.20);
 #else
-    PgModelerUiNs::__configureWidgetFont(btn, 1.50f);
+		PgModelerUiNs::__configureWidgetFont(btn, 1.50);
 #endif
 	}
 }

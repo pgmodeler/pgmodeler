@@ -93,7 +93,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		{
 			QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
+			desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0 * factor, 9.0 * factor)));
 
 			if(column->isNotNull())
 				attrib=Attributes::NnColumn;
@@ -103,7 +103,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15f);
+			pen.setWidthF(ObjectBorderWidth * 1.15);
 			desc->setPen(pen);
 		}
 		else
@@ -135,7 +135,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 				pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
 			}
 
-			if(factor!=1.0f)
+			if(factor!=1.0)
 				TextPolygonItem::resizePolygon(pol, pol.boundingRect().width() * factor,
 																						pol.boundingRect().height()  * factor);
 
@@ -143,7 +143,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15f);
+			pen.setWidthF(ObjectBorderWidth * 1.15);
 			desc->setPen(pen);
 		}
 	}
@@ -156,25 +156,25 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		pol.append(QPointF(5,0)); pol.append(QPointF(0,5)); pol.append(QPointF(4,9));
 		pol.append(QPointF(9,9)); pol.append(QPointF(9,4));
 
-		if(factor!=1.0f)
+		if(factor!=1.0)
 			TextPolygonItem::resizePolygon(pol,	pol.boundingRect().width() * factor ,	pol.boundingRect().height() * factor);
 
 		desc->setPolygon(pol);
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
 
 		pen = this->getBorderStyle(tab_obj->getSchemaName());
-		pen.setWidthF(ObjectBorderWidth * 1.15f);
+		pen.setWidthF(ObjectBorderWidth * 1.15);
 		desc->setPen(pen);
 	}
 	else
 	{
 		QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-		desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0f * factor, 9.0f * factor)));
+		desc->setRect(QRectF(QPointF(0,0), QSizeF(9.0 * factor, 9.0 * factor)));
 		desc->setBrush(this->getFillStyle(Attributes::Reference));
 
 		pen = this->getBorderStyle(Attributes::Reference);
-		pen.setWidthF(ObjectBorderWidth * 1.15f);
+		pen.setWidthF(ObjectBorderWidth * 1.15);
 		desc->setPen(pen);
 	}
 }

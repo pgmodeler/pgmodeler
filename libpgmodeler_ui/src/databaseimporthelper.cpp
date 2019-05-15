@@ -209,7 +209,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 			itr++;
 		}
 
-		progress=(i/static_cast<float>(cnt))*10;
+		progress=(i/static_cast<double>(cnt))*10;
 	}
 }
 
@@ -244,7 +244,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		}
 
 		objects.clear();
-		progress=(i/static_cast<float>(object_oids.size()))*100;
+		progress=(i/static_cast<double>(object_oids.size()))*100;
 		oid_itr++; i++;
 	}
 
@@ -262,7 +262,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		if(names.size() > 1)
 			retrieveTableColumns(names[0], names[1], col_itr->second);
 
-		progress=(i/static_cast<float>(column_oids.size()))*100;
+		progress=(i/static_cast<double>(column_oids.size()))*100;
 		col_itr++; i++;
 	}
 }
@@ -328,7 +328,7 @@ void DatabaseImportHelper::createObjects(void)
 			not_created_objs.push_back(oid);
 		}
 
-		progress=(i/static_cast<float>(creation_order.size())) * 100;
+		progress=(i/static_cast<double>(creation_order.size())) * 100;
 	}
 
 	#ifdef DEMO_VERSION
@@ -378,7 +378,7 @@ void DatabaseImportHelper::createObjects(void)
 					aux_errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
 				}
 
-				progress=(i/static_cast<float>(not_created_objs.size())) * 100;
+				progress=(i/static_cast<double>(not_created_objs.size())) * 100;
 			}
 
 			tries++;
@@ -441,7 +441,7 @@ void DatabaseImportHelper::createConstraints(void)
 				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		progress=(i/static_cast<float>(constr_creation_order.size())) * 100;
+		progress=(i/static_cast<double>(constr_creation_order.size())) * 100;
 	}
 }
 
@@ -469,7 +469,7 @@ void DatabaseImportHelper::createPermissions(void)
 			createPermission(attribs);
 			itr_obj++;
 
-			progress=((i++)/static_cast<float>(obj_perms.size())) * 100;
+			progress=((i++)/static_cast<double>(obj_perms.size())) * 100;
 		}
 
 		emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), ObjectType::Permission);
@@ -492,7 +492,7 @@ void DatabaseImportHelper::createPermissions(void)
 			}
 
 			itr_cols++;
-			progress=((i++)/static_cast<float>(col_perms.size())) * 100;
+			progress=((i++)/static_cast<double>(col_perms.size())) * 100;
 		}
 	}
 	catch(Exception &e)
@@ -530,7 +530,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 
 			dbmodel->updateTableFKRelationships(tab);
 
-			progress=(i/static_cast<float>(count)) * 90;
+			progress=(i/static_cast<double>(count)) * 90;
 			itr_tab++; i++;
 		}
 	}
