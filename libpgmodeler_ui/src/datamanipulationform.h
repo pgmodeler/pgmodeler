@@ -97,7 +97,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(const vector<int> &ins_rows);
+		void removeNewRows(vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);

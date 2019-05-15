@@ -1093,7 +1093,7 @@ void DataManipulationForm::duplicateRows(void)
 	}
 }
 
-void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
+void DataManipulationForm::removeNewRows(vector<int> ins_rows)
 {
 	if(!ins_rows.empty())
 	{
@@ -1106,8 +1106,12 @@ void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 			markOperationOnRow(NoOperation, ins_rows[idx]);
 
 		//Remove the rows
-		for(idx=0; idx < cnt; idx++)
-			results_tbw->removeRow(ins_rows[0]);
+		std::sort(ins_rows.begin(), ins_rows.end());
+		while(!ins_rows.empty())
+		{
+			results_tbw->removeRow(ins_rows.back());
+			ins_rows.pop_back();
+		}
 
 		//Reorganizing the changed rows vector to avoid row index out-of-bound errors
 		row_idx=results_tbw->rowCount() - 1;
