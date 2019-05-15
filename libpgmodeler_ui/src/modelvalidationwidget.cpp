@@ -194,6 +194,8 @@ void ModelValidationWidget::clearOutput(void)
 	prog_info_wgt->setVisible(false);
 	fix_btn->setEnabled(false);
 	validation_prog_pb->setValue(0);
+	warn_lbl->setEnabled(false);
+	error_lbl->setEnabled(false);
 	warn_count_lbl->setText(QString("%1").arg(0));
 	error_count_lbl->setText(QString("%1").arg(0));
 }
@@ -421,6 +423,8 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	//Stores the validatin on the current tree item
 	item->setData(0, Qt::UserRole, QVariant::fromValue<ValidationInfo>(val_info));
+	warn_lbl->setEnabled(validation_helper->getWarningCount() > 0);
+	error_lbl->setEnabled(validation_helper->getErrorCount() > 0);
 	warn_count_lbl->setText(QString("%1").arg(validation_helper->getWarningCount()));
 	error_count_lbl->setText(QString("%1").arg(validation_helper->getErrorCount()));
 	output_trw->setItemHidden(item, false);
@@ -462,18 +466,23 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			validation_helper->getErrorCount()==0 &&
 			validation_helper->getWarningCount()==0)
 	{
+		error_lbl->setEnabled(false);
 		error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
 
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
 		{
+			warn_lbl->setEnabled(true);
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNs::createOutputTreeItem(output_trw,
 												trUtf8("SQL validation not executed! No connection defined."),
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		}		
 		else
+		{
+			warn_lbl->setEnabled(false);
 			warn_count_lbl->setText(QString::number(0));
+		}
 
 		PgModelerUiNs::createOutputTreeItem(output_trw,
 											trUtf8("Database model successfully validated."),
