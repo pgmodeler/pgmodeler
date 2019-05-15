@@ -194,6 +194,8 @@ void ModelValidationWidget::clearOutput(void)
 	prog_info_wgt->setVisible(false);
 	fix_btn->setEnabled(false);
 	validation_prog_pb->setValue(0);
+	warn_lbl->setEnabled(false);
+	error_lbl->setEnabled(false);
 	warn_count_lbl->setText(QString("%1").arg(0));
 	error_count_lbl->setText(QString("%1").arg(0));
 }
@@ -291,7 +293,9 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
-		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
+		label->setText(trUtf8("SQL validation failed due to error%1 below. <strong>NOTE:</strong><em> %2 not invalidate the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>")
+					   .arg(val_info.getErrors().count() == 1 ? "" : "s")
+					   .arg(val_info.getErrors().count() == 1 ? "This error does" : "These errors do"));
 	else if(val_info.getValidationType() == ValidationInfo::MissingExtension)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
@@ -421,6 +425,8 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 	//Stores the validatin on the current tree item
 	item->setData(0, Qt::UserRole, QVariant::fromValue<ValidationInfo>(val_info));
+	warn_lbl->setEnabled(validation_helper->getWarningCount() > 0);
+	error_lbl->setEnabled(validation_helper->getErrorCount() > 0);
 	warn_count_lbl->setText(QString("%1").arg(validation_helper->getWarningCount()));
 	error_count_lbl->setText(QString("%1").arg(validation_helper->getErrorCount()));
 	output_trw->setItemHidden(item, false);
@@ -462,18 +468,23 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			validation_helper->getErrorCount()==0 &&
 			validation_helper->getWarningCount()==0)
 	{
+		error_lbl->setEnabled(false);
 		error_count_lbl->setText(QString::number(0));
 		fix_btn->setEnabled(false);
 
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() <= 0)
 		{
+			warn_lbl->setEnabled(true);
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNs::createOutputTreeItem(output_trw,
 												trUtf8("SQL validation not executed! No connection defined."),
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		}		
 		else
+		{
+			warn_lbl->setEnabled(false);
 			warn_count_lbl->setText(QString::number(0));
+		}
 
 		PgModelerUiNs::createOutputTreeItem(output_trw,
 											trUtf8("Database model successfully validated."),
