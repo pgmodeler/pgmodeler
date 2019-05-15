@@ -1181,19 +1181,16 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 {
 	if(!table)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(table->getDatabase()==this)
+
+	if(table->getDatabase()==this)
 	{
 		Table *ref_tab=nullptr;
 		BaseRelationship *rel=nullptr;
-		Constraint *fk=nullptr;
 		unsigned idx;
 		vector<Constraint *> fks;
-		vector<Constraint *>::iterator itr, itr_end;
 		vector<BaseObject *>::iterator itr1, itr1_end;
 
 		table->getForeignKeys(fks);
-		itr=fks.begin();
-		itr_end=fks.end();
 
 		/* First remove the invalid relationships (the foreign key that generates the
 			relationship no longer exists) */
@@ -1223,8 +1220,8 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 				 *
 				 * 2) The fk references the correct table but the source table does not own the fk anymore, which means,
 				 *		the fk as removed manually by the user. */
-				if(fk->getReferencedTable() != ref_tab ||
-					 (fk->getReferencedTable() == ref_tab && table->getObjectIndex(fk) < 0))
+				if((table->getObjectIndex(fk) >= 0 && fk->getReferencedTable() != ref_tab) ||
+					 (table->getObjectIndex(fk) < 0 && fk->getReferencedTable() == ref_tab))
 				{
 					removeRelationship(rel);
 					itr1=base_relationships.begin() + idx;
@@ -1243,11 +1240,9 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 		}
 
 		//Creating the relationships from the foreign keys
-		while(itr!=itr_end)
+		for(auto &fk : fks)
 		{
-			fk=(*itr);
 			ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
-			itr++;
 
 			//Only creates the relationship if does'nt exist one between the tables
 			rel=getRelationship(table, ref_tab, fk);
