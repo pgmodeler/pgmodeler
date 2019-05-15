@@ -280,7 +280,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		else
 			ref_name=val_info.getObject()->getName(true).remove('"');
 
-		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object's name(s).")
+		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object name(s).")
 					   .arg(ref_name)
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getReferences().size()));
@@ -291,7 +291,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
-		label->setText(trUtf8("SQL validation failed due to error(s) below. <strong>NOTE:</strong><em> These errors does not invalidates the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
+		label->setText(trUtf8("SQL validation failed due to the error(s) below. <strong>NOTE:</strong><em> Errors during SQL validation don't invalidate the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
 	else if(val_info.getValidationType() == ValidationInfo::MissingExtension)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
