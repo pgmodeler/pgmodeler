@@ -22,6 +22,7 @@
 #include "taskprogresswidget.h"
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
+#include <QDateTime>
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -184,6 +185,10 @@ void DatabaseImportForm::importDatabase(void)
 {
 	try
 	{
+		QTextStream out(stdout);
+		out << "Start: " << QDateTime::currentDateTime().toMSecsSinceEpoch() << endl;
+
+
 		Messagebox msg_box;
 
 		map<ObjectType, vector<unsigned>> obj_oids;
@@ -559,6 +564,9 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		if(!create_model)
 			model_wgt->getOperationList()->removeOperations();
 	}
+
+	QTextStream out(stdout);
+	out << "End:    " << QDateTime::currentDateTime().toMSecsSinceEpoch() << endl;
 }
 
 void DatabaseImportForm::showEvent(QShowEvent *)

@@ -420,6 +420,7 @@ namespace Attributes {
 	Recursive=QString("recursive"),
 	RecvFunc=QString("receive"),
 	ReducedForm=QString("reduced-form"),
+	ReduceVerbosity=QString("reduce-verbosity"),
 	RefAlias=QString("ref-alias"),
 	RefName=QString("ref-name"),
 	RefColumn=QString("ref-column"),

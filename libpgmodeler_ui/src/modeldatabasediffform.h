@@ -51,7 +51,7 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		*cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
 		*keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht,
 		*preserve_db_name_ht, *dont_drop_missing_objs_ht,
-		*ignore_error_codes_ht, *drop_missing_cols_constr_ht, *less_verbose_ht;
+		*ignore_error_codes_ht, *drop_missing_cols_constr_ht;
 
 		//! \brief Syntax highlighter used on the diff preview tab
 		SyntaxHighlighter *sqlcode_hl;

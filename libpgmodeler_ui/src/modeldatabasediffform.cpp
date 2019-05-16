@@ -97,9 +97,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
-		less_verbose_ht = new HintTextWidget(less_verbose_hint, this);
-		less_verbose_ht->setText(less_verbose_chk->statusTip());
-
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
 		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
@@ -797,12 +794,13 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	{
 		progress_aux = progress/5;
 
-		if(!less_verbose_chk->isChecked())
-		{
+		#warning "Verbosity reduction point."
+		//if(!less_verbose_chk->isChecked())
+		//{
 			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
 												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 												src_import_item);
-		}
+		//}
 	}
 	else if(import_thread && import_thread->isRunning())
 	{
@@ -811,12 +809,13 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		else
 			progress_aux = 20 + (progress/5);
 
-		if(!less_verbose_chk->isChecked())
-		{
+		#warning "Verbosity reduction point."
+		//if(!less_verbose_chk->isChecked())
+		//{
 			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
 												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 												import_item);
-		}
+		//}
 	}
 	else if(diff_thread && diff_thread->isRunning())
 	{
@@ -836,8 +835,9 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		progress_aux = diff_progress + (progress/3);
 
-		if(!less_verbose_chk->isChecked())
-		{
+		#warning "Verbosity reduction point."
+		//if(!less_verbose_chk->isChecked())
+		//{
 			if(obj_type==ObjectType::BaseObject)
 				ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
 			else
@@ -847,7 +847,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 			if(!cmd.isEmpty())
 				PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
-		}
+		//}
 	}
 
 	if(progress_aux > step_pb->value())
@@ -875,13 +875,14 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 	QToolButton *btn=buttons[diff_type];
 	QTreeWidgetItem *item=nullptr;
 
-	if(!less_verbose_chk->isChecked())
-	{
+	#warning "Verbosity reduction point."
+	//if(!less_verbose_chk->isChecked())
+	//{
 		item=PgModelerUiNs::createOutputTreeItem(output_trw,
 												 PgModelerUiNs::formatMessage(diff_info.getInfoMessage()),
 												 QPixmap(PgModelerUiNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
 		item->setData(0, Qt::UserRole, diff_info.getDiffType());
-	}
+	//}
 
 	if(diff_helper)
 		btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));

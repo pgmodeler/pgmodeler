@@ -432,6 +432,7 @@ namespace Attributes {
 	Recursive,
 	RecvFunc,
 	ReducedForm,
+	ReduceVerbosity,
 	RefAlias,
 	RefName,
 	RefColumn,
