@@ -20,6 +20,18 @@
 #include <QThread>
 #include "pgmodelerns.h"
 
+const vector<QString> ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
+
+const vector<QString> ModelsDiffHelper::ObjectsIgnoredAttribs = {
+	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
+	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
+	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
+	Attributes::Pagination,	Attributes::Alias };
+
+const vector<QString> ModelsDiffHelper::ObjectsIgnoredTags = {
+	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
+	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql };
+
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
 	diff_canceled=false;
@@ -172,7 +184,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 						 (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)))
 				{
 					//If there are some differences on the XML code of the objects
-					if(tab_obj->isCodeDiffersFrom(aux_obj))
+					if(tab_obj->isCodeDiffersFrom(aux_obj, TableObjsIgnoredAttribs))
 						generateDiffInfo(ObjectsDiffInfo::AlterObject, tab_obj, aux_obj);
 
 				}
@@ -317,23 +329,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
-								xml_differs=object->isCodeDiffersFrom(aux_object,
-								{ Attributes::MaxObjCount,
-									Attributes::Protected,
-									Attributes::SqlDisabled,
-									Attributes::RectVisible,
-									Attributes::FillColor,
-									Attributes::FadedOut,
-									Attributes::CollapseMode,
-									Attributes::AttribsPage,
-									Attributes::ExtAttribsPage,
-									Attributes::Pagination},
-								{ Attributes::Role,
-									Attributes::Tablespace,
-									Attributes::Collation,
-									Attributes::Position,
-									Attributes::AppendedSql,
-									Attributes::PrependedSql });
+								xml_differs=object->isCodeDiffersFrom(aux_object,	ObjectsIgnoredAttribs, ObjectsIgnoredTags);
 
 							//If a difference was detected between the objects
 							if(objs_differs || xml_differs)
@@ -440,7 +436,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 		else
 			generateDiffInfo(ObjectsDiffInfo::IgnoreObject, tab_obj);
 	}
-	else if(diff_type!=ObjectsDiffInfo::DropObject && tab_obj->isCodeDiffersFrom(aux_tab_obj))
+	else if(diff_type!=ObjectsDiffInfo::DropObject && tab_obj->isCodeDiffersFrom(aux_tab_obj, TableObjsIgnoredAttribs))
 		generateDiffInfo(ObjectsDiffInfo::AlterObject, tab_obj, aux_tab_obj);
 }
 
