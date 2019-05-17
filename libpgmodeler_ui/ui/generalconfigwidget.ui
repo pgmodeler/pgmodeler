@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
+    <width>795</width>
     <height>712</height>
    </rect>
   </property>
@@ -1577,17 +1577,17 @@
           <item row="11" column="1" colspan="3">
            <layout class="QHBoxLayout" name="horizontalLayout_23">
             <item>
-             <widget class="QCheckBox" name="reduce_verbosity_chk">
+             <widget class="QCheckBox" name="low_verbosity_chk">
               <property name="statusTip">
-               <string>Reduces the verbosity of the export, import and diff process causing less information to be displayed in the output in return of some performance gain on slower systems. This options causes less UI operations to be performed so the processes can run faster.</string>
+               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This options causes less UI operations to be performed to display progress messages and this can benefit slow systems making these processes run faster.</string>
               </property>
               <property name="text">
-               <string>Reduce export, import and diff processes verbosity</string>
+               <string>Use low verbosity for export, import and diff processes</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QWidget" name="reduce_verbosity_hint" native="true">
+             <widget class="QWidget" name="low_verbosity_hint" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>

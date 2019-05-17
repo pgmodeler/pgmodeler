@@ -48,7 +48,7 @@
 <!ATTLIST configuration use-curved-lines (false|true) "false">
 <!ATTLIST configuration compact-view (false|true) "false">
 <!ATTLIST configuration save-restore-geometry (false|true) "false">
-<!ATTLIST configuration reduce-verbosity (false|true) "false">
+<!ATTLIST configuration low-verbosity (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

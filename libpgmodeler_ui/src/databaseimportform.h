@@ -34,6 +34,10 @@
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
+
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
 		
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -94,6 +98,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		~DatabaseImportForm(void);
 		
 		void setModelWidget(ModelWidget *model);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 		
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
