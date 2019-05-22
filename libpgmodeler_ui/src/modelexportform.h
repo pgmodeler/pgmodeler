@@ -36,6 +36,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
+
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
 
@@ -60,6 +64,9 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 	public:
 		ModelExportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 
 	public slots:
 		void exec(ModelWidget *model);

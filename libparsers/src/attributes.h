@@ -318,6 +318,7 @@ namespace Attributes {
 	LockerBody,
 	Login,
 	LookaheadChar,
+	LowVerbosity,
 	Materialized,
 	MaxConnections,
 	MaxObjCount,

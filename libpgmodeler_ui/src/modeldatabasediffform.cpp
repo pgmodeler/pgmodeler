@@ -21,6 +21,8 @@
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
 
+bool ModelDatabaseDiffForm::low_verbosity = false;
+
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	try
@@ -171,6 +173,11 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 		src_database_rb->setChecked(true);
 		src_model_rb->setEnabled(false);
 	}
+}
+
+void ModelDatabaseDiffForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
 }
 
 void ModelDatabaseDiffForm::resetForm(void)
@@ -404,6 +411,10 @@ void ModelDatabaseDiffForm::generateDiff(void)
 
 	clearOutput();
 	curr_step = 1;
+
+	if(low_verbosity)
+		PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																				QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 	if(src_model_rb->isChecked())
 	{
@@ -794,9 +805,12 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	{
 		progress_aux = progress/5;
 
-		PgModelerUiNs::createOutputTreeItem(output_trw, msg,
-											QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-											src_import_item);
+		if(!low_verbosity)
+		{
+			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
+												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
+												src_import_item);
+		}
 	}
 	else if(import_thread && import_thread->isRunning())
 	{
@@ -805,9 +819,12 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		else
 			progress_aux = 20 + (progress/5);
 
-		PgModelerUiNs::createOutputTreeItem(output_trw, msg,
-											QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-											import_item);
+		if(!low_verbosity)
+		{
+			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
+												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
+												import_item);
+		}
 	}
 	else if(diff_thread && diff_thread->isRunning())
 	{
@@ -827,15 +844,18 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		progress_aux = diff_progress + (progress/3);
 
-		if(obj_type==ObjectType::BaseObject)
-			ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
-		else
-			ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
+		if(!low_verbosity)
+		{
+			if(obj_type==ObjectType::BaseObject)
+				ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
+			else
+				ico=QPixmap(PgModelerUiNs::getIconPath(obj_type));
 
-		item=PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico, export_item, false);
+			item=PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico, export_item, false);
 
-		if(!cmd.isEmpty())
-			PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+			if(!cmd.isEmpty())
+				PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
+		}
 	}
 
 	if(progress_aux > step_pb->value())
@@ -849,29 +869,33 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	else
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
-	this->repaint();
+	//this->repaint();
 }
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 {
 	map<unsigned, QToolButton *> buttons={ {ObjectsDiffInfo::CreateObject, create_tb},
-										   {ObjectsDiffInfo::DropObject,   drop_tb},
-										   {ObjectsDiffInfo::AlterObject,  alter_tb},
-										   {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
+																				 {ObjectsDiffInfo::DropObject,   drop_tb},
+																				 {ObjectsDiffInfo::AlterObject,  alter_tb},
+																				 {ObjectsDiffInfo::IgnoreObject, ignore_tb} };
 
 	unsigned diff_type=diff_info.getDiffType();
 	QToolButton *btn=buttons[diff_type];
 	QTreeWidgetItem *item=nullptr;
 
-	item=PgModelerUiNs::createOutputTreeItem(output_trw,
-											 PgModelerUiNs::formatMessage(diff_info.getInfoMessage()),
-											 QPixmap(PgModelerUiNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
-	item->setData(0, Qt::UserRole, diff_info.getDiffType());
+	if(!low_verbosity)
+	{
+		item=PgModelerUiNs::createOutputTreeItem(output_trw,
+												 PgModelerUiNs::formatMessage(diff_info.getInfoMessage()),
+												 QPixmap(PgModelerUiNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
+		item->setData(0, Qt::UserRole, diff_info.getDiffType());
+	}
 
 	if(diff_helper)
 		btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 
-	output_trw->setItemHidden(item, !btn->isChecked());
+	if(item)
+		output_trw->setItemHidden(item, !btn->isChecked());
 }
 
 void ModelDatabaseDiffForm::selectOutputFile(void)

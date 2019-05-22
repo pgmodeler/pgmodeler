@@ -306,6 +306,7 @@ namespace Attributes {
 	LockerBody=QString("locker-body"),
 	Login=QString("login"),
 	LookaheadChar=QString("lookahead-char"),
+	LowVerbosity=QString("low-verbosity"),
 	Materialized=QString("materialized"),
 	MaxConnections=QString("max-connections"),
 	MaxObjCount=QString("max-obj-count"),

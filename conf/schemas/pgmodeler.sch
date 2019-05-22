@@ -51,6 +51,7 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               use-curved-lines="] %if {use-curved-lines} %then true %else false %end ["] $br
 [               compact-view="] %if {compact-view} %then true %else false %end ["] $br
 [               save-restore-geometry="] %if {save-restore-geometry} %then true %else false %end ["] $br
+[               low-verbosity="] %if {low-verbosity} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
 [               source-editor-app="] {source-editor-app} ["] $br
