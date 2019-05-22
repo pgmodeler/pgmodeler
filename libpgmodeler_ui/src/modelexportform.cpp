@@ -21,6 +21,8 @@
 #include "configurationform.h"
 #include "pgmodeleruins.h"
 
+bool ModelExportForm::low_verbosity = false;
+
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	model=nullptr;
@@ -108,6 +110,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	settings_tbw->setTabEnabled(1, false);
 }
 
+void ModelExportForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
+}
+
 void ModelExportForm::exec(ModelWidget *model)
 {
 	if(model)
@@ -150,7 +157,8 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 
 	ico_lbl->setPixmap(ico);
 
-	if(!is_code_gen)
+	// If low_verbosity is set only messages hinted by obj_type == BaseObject are show because they hold key info messages
+	if(!is_code_gen && (!low_verbosity || (low_verbosity && obj_type == ObjectType::BaseObject && cmd.isEmpty())))
 	{
 		item=PgModelerUiNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
 
@@ -202,6 +210,10 @@ void ModelExportForm::exportModel(void)
 			{
 				QString version;
 				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+				if(low_verbosity)
+					PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																							QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())

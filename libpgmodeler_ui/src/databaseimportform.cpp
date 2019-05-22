@@ -22,7 +22,8 @@
 #include "taskprogresswidget.h"
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
-#include <QDateTime>
+
+bool DatabaseImportForm::low_verbosity = false;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -104,6 +105,11 @@ void DatabaseImportForm::setModelWidget(ModelWidget *model)
 	import_to_model_chk->setEnabled(model!=nullptr);
 }
 
+void DatabaseImportForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
+}
+
 void DatabaseImportForm::createThread(void)
 {
 	import_thread=new QThread;
@@ -152,7 +158,9 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 		ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+
+	if(!low_verbosity)
+		PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
@@ -185,10 +193,6 @@ void DatabaseImportForm::importDatabase(void)
 {
 	try
 	{
-		QTextStream out(stdout);
-		out << "Start: " << QDateTime::currentDateTime().toMSecsSinceEpoch() << endl;
-
-
 		Messagebox msg_box;
 
 		map<ObjectType, vector<unsigned>> obj_oids;
@@ -206,6 +210,10 @@ void DatabaseImportForm::importDatabase(void)
 		output_trw->clear();
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
+
+		if(low_verbosity)
+			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[ObjectType::Database].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
@@ -564,9 +572,6 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		if(!create_model)
 			model_wgt->getOperationList()->removeOperations();
 	}
-
-	QTextStream out(stdout);
-	out << "End:    " << QDateTime::currentDateTime().toMSecsSinceEpoch() << endl;
 }
 
 void DatabaseImportForm::showEvent(QShowEvent *)
@@ -891,7 +896,6 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			}
 
 			tree_wgt->addTopLevelItems(groups_list);
-			//tree_wgt->setSortingEnabled(true);
 			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 			tree_wgt->setUpdatesEnabled(true);
 			tree_wgt->blockSignals(false);

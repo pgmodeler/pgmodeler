@@ -21,6 +21,8 @@
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
 
+bool ModelDatabaseDiffForm::low_verbosity = false;
+
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	try
@@ -171,6 +173,11 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 		src_database_rb->setChecked(true);
 		src_model_rb->setEnabled(false);
 	}
+}
+
+void ModelDatabaseDiffForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
 }
 
 void ModelDatabaseDiffForm::resetForm(void)
@@ -404,6 +411,10 @@ void ModelDatabaseDiffForm::generateDiff(void)
 
 	clearOutput();
 	curr_step = 1;
+
+	if(low_verbosity)
+		PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																				QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 	if(src_model_rb->isChecked())
 	{
@@ -794,13 +805,12 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 	{
 		progress_aux = progress/5;
 
-		#warning "Verbosity reduction point."
-		//if(!less_verbose_chk->isChecked())
-		//{
+		if(!low_verbosity)
+		{
 			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
 												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 												src_import_item);
-		//}
+		}
 	}
 	else if(import_thread && import_thread->isRunning())
 	{
@@ -809,13 +819,12 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		else
 			progress_aux = 20 + (progress/5);
 
-		#warning "Verbosity reduction point."
-		//if(!less_verbose_chk->isChecked())
-		//{
+		if(!low_verbosity)
+		{
 			PgModelerUiNs::createOutputTreeItem(output_trw, msg,
 												QPixmap(PgModelerUiNs::getIconPath(obj_type)),
 												import_item);
-		//}
+		}
 	}
 	else if(diff_thread && diff_thread->isRunning())
 	{
@@ -835,9 +844,8 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 		progress_aux = diff_progress + (progress/3);
 
-		#warning "Verbosity reduction point."
-		//if(!less_verbose_chk->isChecked())
-		//{
+		if(!low_verbosity)
+		{
 			if(obj_type==ObjectType::BaseObject)
 				ico=QPixmap(PgModelerUiNs::getIconPath("codigosql"));
 			else
@@ -847,7 +855,7 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 
 			if(!cmd.isEmpty())
 				PgModelerUiNs::createOutputTreeItem(output_trw, cmd, QPixmap(), item, false);
-		//}
+		}
 	}
 
 	if(progress_aux > step_pb->value())
@@ -875,14 +883,13 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 	QToolButton *btn=buttons[diff_type];
 	QTreeWidgetItem *item=nullptr;
 
-	#warning "Verbosity reduction point."
-	//if(!less_verbose_chk->isChecked())
-	//{
+	if(!low_verbosity)
+	{
 		item=PgModelerUiNs::createOutputTreeItem(output_trw,
 												 PgModelerUiNs::formatMessage(diff_info.getInfoMessage()),
 												 QPixmap(PgModelerUiNs::getIconPath(diff_info.getObject()->getSchemaName())), diff_item);
 		item->setData(0, Qt::UserRole, diff_info.getDiffType());
-	//}
+	}
 
 	if(diff_helper)
 		btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));

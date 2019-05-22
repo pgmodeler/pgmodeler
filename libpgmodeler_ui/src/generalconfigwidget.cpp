@@ -25,6 +25,9 @@
 #include "numberedtexteditor.h"
 #include "linenumberswidget.h"
 #include "sqlexecutionwidget.h"
+#include "modeldatabasediffform.h"
+#include "databaseimportform.h"
+#include "modelexportform.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
@@ -133,7 +136,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=QString();
 	config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString();
 	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
-	config_params[Attributes::Configuration][Attributes::ReduceVerbosity]=QString();
+	config_params[Attributes::Configuration][Attributes::LowVerbosity]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -189,8 +192,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	attribs_per_page_ht=new HintTextWidget(attributes_per_page_hint, this);
 	attribs_per_page_ht->setText(attribs_per_page_spb->statusTip());
 
-	reduce_verbosity_ht = new HintTextWidget(reduce_verbosity_hint, this);
-	reduce_verbosity_ht->setText(reduce_verbosity_chk->statusTip());
+	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
+	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
 
 	selectPaperSize();
 
@@ -345,7 +348,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
-		reduce_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::ReduceVerbosity]==Attributes::True);
+		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -535,7 +538,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::ReduceVerbosity]=(reduce_verbosity_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
@@ -657,6 +660,10 @@ void GeneralConfigWidget::applyConfiguration(void)
 	NumberedTextEditor::setSourceEditorAppArgs(source_editor_args_edt->text());
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 	SyntaxHighlighter::setDefaultFont(fnt);
+
+	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 }
 
 void GeneralConfigWidget::restoreDefaults(void)

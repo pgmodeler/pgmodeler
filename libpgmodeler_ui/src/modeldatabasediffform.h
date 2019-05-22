@@ -39,6 +39,10 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
+
 		NumberedTextEditor *sqlcode_txt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
@@ -120,6 +124,9 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		~ModelDatabaseDiffForm(void);
 
 		void setModelWidget(ModelWidget *model_wgt);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 
 	private slots:
 		void listDatabases(void);
