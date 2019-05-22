@@ -3,7 +3,7 @@ Change Log
 
 v0.9.2-beta
 ------
-<em>Release date: May 21, 2019</em><br/>
+<em>Release date: May 26, 2019</em><br/>
 
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
