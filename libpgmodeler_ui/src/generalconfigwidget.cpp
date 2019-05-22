@@ -461,6 +461,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir, widget_sch;
+		int recent_mdl_idx = 0;
 
 		root_dir=GlobalAttributes::TmplConfigurationDir +
 				 GlobalAttributes::DirSeparator;
@@ -556,10 +557,12 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if((itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+
+				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
 					itr->first==Attributes::ObjectFinder ||

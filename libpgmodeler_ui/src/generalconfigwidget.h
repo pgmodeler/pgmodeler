@@ -69,6 +69,9 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
 	public:
+		//! \brief Maximum number of files listed as recent models
+		static constexpr int MaxRecentModels=15;
+
 		GeneralConfigWidget(QWidget * parent = nullptr);
 
 		void saveConfiguration(void);

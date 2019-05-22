@@ -30,8 +30,8 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	plugins_conf=new PluginsConfigWidget(this);
 
 	QWidgetList wgt_list={ general_conf, relationships_conf,
-						   appearance_conf, connections_conf,
-						   snippets_conf, plugins_conf};
+												 appearance_conf, connections_conf,
+												 snippets_conf, plugins_conf};
 
 	for(int i=GeneralConfWgt; i <= PluginsConfWgt; i++)
 		confs_stw->addWidget(wgt_list[i]);
@@ -42,6 +42,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 
 	icons_lst->setCurrentRow(GeneralConfWgt);
+	setMinimumSize(890, 740);
 }
 
 ConfigurationForm::~ConfigurationForm(void)
