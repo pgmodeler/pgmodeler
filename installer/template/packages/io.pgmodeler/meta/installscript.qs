@@ -25,7 +25,7 @@ Component.prototype.createOperations = function()
         else if (systemInfo.productType === "windows") {
 			mime_update=installdir + "/" + "pgmodeler-cli.exe";    
 			component.addOperation("Execute", "{0,127,255}", mime_update, "-mt", "uninstall");
-			component.addOperation("Execute", mime_update, "-mt", "install", "errormessage=** Could not install file association.");
+			component.addOperation("Execute", "{0,127,255}", mime_update, "-mt", "install");
 		}
 		else {			
 			start_script=installdir + "/" + "start-pgmodeler.sh";
@@ -33,7 +33,7 @@ Component.prototype.createOperations = function()
 			component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
 			component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
 			component.addOperation("Execute", "{0,127,255}", mime_update, "uninstall");
-			component.addOperation("Execute", mime_update, "install", "errormessage=** Could not install file association.");
+			component.addOperation("Execute", "{0,127,255}", mime_update, "install");
 		}
     } catch (e) {
         print(e);
