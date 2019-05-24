@@ -42,6 +42,7 @@ for param in $@; do
    X64_BUILD=1
    DEST_ARCH="x64"
    WIN_BITS="64"
+   BUILD_ARCH_PARAM=$X64_BUILD_OPT
  fi
  if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
    BUILD_ALL=1
@@ -79,7 +80,7 @@ QT_INSTALL_VERSION='5.12.3'
 QT_BASE_VERSION='5.12.3'
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
-QT_IFW_ROOT=$MINGW_ROOT
+QT_IFW_ROOT=/c/qt-ifw
 PGSQL_ROOT=$MINGW_ROOT  
 QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
 		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
@@ -250,15 +251,6 @@ for plug in $DEP_PLUGINS; do
 	fi
 done
 
-#$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
-
-#if [ $? -ne 0 ]; then
-#  echo
-#  echo "** Installation failed!"
-#  echo
-#  exit 1
-#fi
-
 echo "Packaging installation..."
 
 rm -r $INSTALLER_DATA_DIR >> $LOG 2>&1
@@ -290,7 +282,7 @@ if [ $? -ne 0 ]; then
    exit 1
 fi  
 
-$QT_IFW_ROOT/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
+$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -305,5 +297,5 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL -eq 1 ]; then
- sh windeploy.sh -demo-version
+ sh windeploy.sh -demo-version $BUILD_ARCH_PARAM
 fi
