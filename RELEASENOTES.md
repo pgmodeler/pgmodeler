@@ -1,10 +1,10 @@
 v0.9.2-beta
 ------
 
-<em>Release date: May 26, 2019</em><br/>
+<em>Release date: May 27, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
-<strong>Summary:</strong> a brand new version has come to you after a work of almost five months on it. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
+<strong>Summary:</strong> a brand new version has come to you after a work of almost five months. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
 
 pgModeler now supports foreign datawrappers and foreign servers natively. This means that you can create, export, import and diff these kinds of objects. For now, foreign tables aren't supported but the schedule is to release this support until the end of this development cycle when lauching the stable 0.9.2. <br/>
 
@@ -12,7 +12,7 @@ In order to provide a temporary workaround for the lack of foreign table support
 
 Now its possible, for instance, create a foreign table from a generic SQL which references a foreign server and any name change on the referenced object will cause the code of the generic SQL (in this case, the foreign table) to be automatically updated avoiding export problems.<br/>
 
-In SQL execution widget it's now possible to quickly filter the result set retrieved from a SQL command. This is useful if you need to filter a small set of data without the need of rewrite the the SQL command to get the desired result. The filter basically matches a keyword against a column of the rows on the result grid updating on-the-fly the data visualization. <br/>
+In the SQL execution widget it's now possible to quickly filter the result set retrieved from a SQL command. This is useful if you need to filter a small set of data without the need of rewrite the SQL command to get the desired result. The filter basically matches a keyword against a column of the rows on the result grid updating on-the-fly the data visualization. <br/>
 
 This release also brings some changes in the available features: the first is the ability to search for objects in the canvas by matching other attributes not only the name. For instance, you can search items by matching a keyword against object's comments, data types, schemas and some others. <br/> 
 
@@ -22,6 +22,7 @@ Now, for the bug fixes, in this release they fix crashes and broken code generat
 
 Lastly, some of the key change log entries of this release are listed below. For the complete list of changes/fixes, please, refer to the file CHANGELOG.md. <br/>
 
+* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
 * [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
@@ -42,6 +43,7 @@ Lastly, some of the key change log entries of this release are listed below. For
 * [Change] Allowing copied object to be pasted multiple times. This feature works only with copy/paste operation without remove the pasted objects from the clipboard, for cut/paste the behaviour is unchanged.
 * [Change] Increased the maximum limit of SQL history.
 * [Change] Minor improvements in SQLToolWidget and SQLExecutionWidget to avoid segmentation faults when trying to close a execution tab while the command is still running.
+* [Fix] Fixed a bug in DataManipulationForm that was deleting new rows wrongly.
 * [Fix] Fixed a bug that was causing domain constraints not to be extracted correctly during reverse engineering.
 * [Fix] Fixed a bug that was causing a fk relationship not to be deleted if the fk tied to it was changed by the user.
 * [Fix] Fixed a bug on CLI that was not fixing broken models correctly when they had no role declaration.
