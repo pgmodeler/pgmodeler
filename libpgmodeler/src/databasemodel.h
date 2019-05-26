@@ -132,7 +132,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		eventtriggers,
 		genericsqls,
 		fdata_wrappers,
-		servers;
+		servers,
+		usermappings;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */

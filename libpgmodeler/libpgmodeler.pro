@@ -41,6 +41,7 @@ HEADERS += src/textbox.h \
 	   src/basegraphicobject.h \
 	   src/relationship.h \
 	   src/table.h \
+	src/usermapping.h \
 	   src/view.h \
 	   src/operatorfamily.h \
 	   src/operatorclasselement.h \
@@ -83,6 +84,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/language.cpp \
 	    src/role.cpp \
 	    src/sequence.cpp \
+	src/usermapping.cpp \
 	    src/view.cpp \
 	    src/conversion.cpp \
 	    src/function.cpp \

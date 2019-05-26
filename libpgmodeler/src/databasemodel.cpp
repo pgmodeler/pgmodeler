@@ -78,7 +78,8 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::EventTrigger, &eventtriggers },
 		{ ObjectType::GenericSql, &genericsqls },
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
-		{ ObjectType::ForeignServer, &servers }
+		{ ObjectType::ForeignServer, &servers },
+		{ ObjectType::UserMapping, &usermappings }
 	};
 }
 

@@ -39,7 +39,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
 	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
 	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
-	{ObjectType::ForeignServer, "sv.oid"}
+	{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
