@@ -476,6 +476,7 @@ namespace Attributes {
 	SelectObjects=QString("select-objects"),
 	SendFunc=QString("send"),
 	Sequence=QString("sequence"),
+	Server=QString("server"),
 	ServerEncoding=QString("server-encoding"),
 	ServerVersion=QString("server-version"),
 	ServerPid=QString("server-pid"),

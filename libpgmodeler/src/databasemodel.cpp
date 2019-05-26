@@ -1121,6 +1121,40 @@ ForeignServer *DatabaseModel::getServer(const QString &name)
 	return(dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer)));
 }
 
+void DatabaseModel::addUserMapping(UserMapping *usrmap, int obj_idx)
+{
+	try
+	{
+		__addObject(usrmap, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void DatabaseModel::removeUserMapping(ForeignServer *usrmap, int obj_idx)
+{
+	try
+	{
+		__removeObject(usrmap, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+UserMapping *DatabaseModel::getUserMapping(unsigned obj_idx)
+{
+	return(dynamic_cast<UserMapping *>(getObject(obj_idx, ObjectType::UserMapping)));
+}
+
+UserMapping *DatabaseModel::getUserMapping(const QString &name)
+{
+	return(dynamic_cast<UserMapping *>(getObject(name, ObjectType::UserMapping)));
+}
+
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
 {
 	try

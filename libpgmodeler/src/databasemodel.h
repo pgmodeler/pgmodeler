@@ -56,6 +56,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "genericsql.h"
 #include "foreigndatawrapper.h"
 #include "foreignserver.h"
+#include "usermapping.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -505,6 +506,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void removeServer(ForeignServer *server, int obj_idx=-1);
 		ForeignServer *getServer(unsigned obj_idx);
 		ForeignServer *getServer(const QString &name);
+
+		void addUserMapping(UserMapping *usrmap, int obj_idx=-1);
+		void removeUserMapping(ForeignServer *usrmap, int obj_idx=-1);
+		UserMapping *getUserMapping(unsigned obj_idx);
+		UserMapping *getUserMapping(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);

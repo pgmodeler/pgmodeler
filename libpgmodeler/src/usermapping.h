@@ -33,12 +33,21 @@ class UserMapping: public ForeignObject {
 		//! \brief The foreign server which is managed by this user mapping the server
 		ForeignServer *foreign_server;
 
+		//! \brief The role mapped to this user mapping (if the roles is null means that the user mapping is for PUBLIC)
+		Role *role;
+
 	public:
 		UserMapping(void);
 
 		void setForeignServer(ForeignServer *server);
 		ForeignServer *getForeignServer(void);
 
+		void setRole(Role *role);
+		Role *getRole(void);
+
+		virtual void setName(const QString &);
+		virtual QString getName(bool = false, bool = false);
+		virtual QString getSignature(bool = false);
 		virtual QString getCodeDefinition(unsigned def_type);
 		virtual QString getAlterDefinition(BaseObject *object);
 

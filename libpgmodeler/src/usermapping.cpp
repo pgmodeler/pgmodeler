@@ -22,14 +22,18 @@ UserMapping::UserMapping(void) : ForeignObject()
 {
 	obj_type = ObjectType::UserMapping;
 	foreign_server = nullptr;
+	role = nullptr;
+	setName("");
 
-	attributes[Attributes::Version] = QString();
-	attributes[Attributes::Object] = QString();
+	attributes[Attributes::Role] = QString();
+	attributes[Attributes::Server] = QString();
 }
 
 void UserMapping::setForeignServer(ForeignServer *server)
 {
+	setCodeInvalidated(foreign_server != server);
 	foreign_server = server;
+	setName("");
 }
 
 ForeignServer *UserMapping::getForeignServer(void)
@@ -37,25 +41,41 @@ ForeignServer *UserMapping::getForeignServer(void)
 	return(foreign_server);
 }
 
+void UserMapping::setRole(Role *role)
+{
+	setCodeInvalidated(this->role != role);
+	this->role = role;
+	setName("");
+}
+
+void UserMapping::setName(const QString &)
+{
+	//Configures a fixed name for the user mapping (in form: role@server)
+	this->obj_name=QString("%1@%2").arg(role ? role->getName() : QString("public"))
+								 .arg(foreign_server ? foreign_server->getName() : QString());
+}
+
+QString UserMapping::getName(bool, bool)
+{
+	return(this->obj_name);
+}
+
+QString UserMapping::getSignature(bool)
+{
+	return(QString("FOR %1 SERVER %2").arg(role ? role->getName() : QString("public"))
+																		.arg(foreign_server ? foreign_server->getName() : QString()));
+}
+
 QString UserMapping::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	/*attributes[Attributes::Version] = version;
-	attributes[Attributes::Type] = type;
-	attributes[Attributes::Fdw] = QString();
-
-	if(fdata_wrapper)
-	{
-		if(def_type == SchemaParser::SqlDefinition)
-			attributes[Attributes::Fdw] = fdata_wrapper->getName(true);
-		else
-			attributes[Attributes::Fdw] = fdata_wrapper->getCodeDefinition(def_type, true);
-	}
-
+	attributes[Attributes::Role] = role ? role->getName(def_type == SchemaParser::SqlDefinition) : QString();
+	attributes[Attributes::Server] = foreign_server ? foreign_server->getName(def_type == SchemaParser::SqlDefinition) : QString();
 	setOptionsAttribute(def_type);
-	return(this->BaseObject::__getCodeDefinition(def_type));*/
+
+	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 
 QString UserMapping::getAlterDefinition(BaseObject *object)
