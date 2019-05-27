@@ -169,6 +169,16 @@
         </item>
         <item>
          <property name="text">
+          <string>Policy: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Policy: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>View: Schema name</string>
          </property>
         </item>

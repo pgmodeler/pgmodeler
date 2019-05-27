@@ -44,24 +44,32 @@ Sequence::Sequence(void)
 	attributes[ParsersAttributes::COL_IS_IDENTITY]=QString();
 }
 
-bool Sequence::isNullValue(const QString &value)
+bool Sequence::isZeroValue(const QString &value)
 {
+	if(value.isEmpty())
+		return(false);
+
 	unsigned i, count;
-	bool is_null;
+	bool is_zero;
 
 	i=0;
-	is_null=true;
+	is_zero=true;
 	count=value.size();
-	while(i < count && is_null)
+
+	while(i < count && is_zero)
 	{
-		is_null=(value[i]=='0' || value[i]=='+' || value[i]=='-');
+		is_zero=(value[i]=='0' || value[i]=='+' || value[i]=='-');
 		i++;
 	}
-	return(is_null);
+
+	return(is_zero);
 }
 
 bool Sequence::isValidValue(const QString &value)
 {
+	if(value.isEmpty())
+		return(false);
+
 	/* To be valid the value can be start with + or -, have only numbers and
 		it's length must not exceed the MAX_POSITIVE_VALUE length */
 	if(value.size() > MAX_BIG_POSITIVE_VALUE.size())
@@ -122,7 +130,7 @@ QString Sequence::formatValue(const QString &value)
 
 int Sequence::compareValues(QString value1, QString value2)
 {
-	if(value1==value2)
+	if(value1==value2 || value1.isEmpty() || value2.isEmpty())
 		return(0);
 	else
 	{
@@ -174,12 +182,14 @@ void Sequence::setDefaultValues(PgSQLType serial_type)
 {
 	QString min, max;
 
-	if(serial_type==QString("smallserial"))
+	if(serial_type==QString("smallserial") ||
+		 serial_type.isEquivalentTo(QString("smallint")))
 	{
 		min=MAX_SMALL_NEGATIVE_VALUE;
 		max=MAX_SMALL_POSITIVE_VALUE;
 	}
-	else if(serial_type==QString("bigserial"))
+	else if(serial_type==QString("bigserial") ||
+					serial_type.isEquivalentTo(QString("bigint")))
 	{
 		min=MAX_BIG_NEGATIVE_VALUE;
 		max=MAX_BIG_POSITIVE_VALUE;
@@ -235,22 +245,16 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	start=formatValue(start);
 	cache=formatValue(cache);
 
-	//Raises an error when some values are empty
-	if(minv.isEmpty()   || maxv.isEmpty() || inc.isEmpty() ||
-			start.isEmpty() ||  cache.isEmpty())
-		throw Exception(ERR_ASG_INV_VALUE_SEQ_ATTRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error when the min value is greater than max value
-	else if(compareValues(minv,maxv) > 0)
+	if(compareValues(minv,maxv) > 0)
 		throw Exception(ERR_ASG_INV_SEQ_MIN_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the start value is less that min value or grater than max value
-	else if(compareValues(start, minv) < 0 ||
-			compareValues(start, maxv) > 0)
+	else if(compareValues(start, minv) < 0 ||	compareValues(start, maxv) > 0)
 		throw Exception(ERR_ASG_INV_SEQ_START_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the increment value is null (0)
-	else if(isNullValue(inc))
+	else if(isZeroValue(inc))
 		throw Exception(ERR_ASG_INV_SEQ_INCR_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the cache value is null (0)
-	else if(isNullValue(cache))
+	else if(isZeroValue(cache))
 		throw Exception(ERR_ASG_INV_SEQ_CACHE_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->min_value=minv;
@@ -442,19 +446,19 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 				attribs[ParsersAttributes::OWNER_COLUMN]=ParsersAttributes::UNSET;
 		}
 
-		if(this->increment!=seq->increment)
+		if(!seq->increment.isEmpty() && this->increment!=seq->increment)
 			attribs[ParsersAttributes::INCREMENT]=seq->increment;
 
-		if(this->min_value!=seq->min_value)
+		if(!seq->min_value.isEmpty() && this->min_value!=seq->min_value)
 			attribs[ParsersAttributes::MIN_VALUE]=seq->min_value;
 
-		if(this->max_value!=seq->max_value)
+		if(!seq->max_value.isEmpty() && this->max_value!=seq->max_value)
 			attribs[ParsersAttributes::MAX_VALUE]=seq->max_value;
 
-		if(this->start!=seq->start)
+		if(!seq->start.isEmpty() && this->start!=seq->start)
 			attribs[ParsersAttributes::START]=seq->start;
 
-		if(this->cache!=seq->cache)
+		if(!seq->cache.isEmpty() && this->cache!=seq->cache)
 			attribs[ParsersAttributes::CACHE]=seq->cache;
 
 		if(this->cycle!=seq->cycle)

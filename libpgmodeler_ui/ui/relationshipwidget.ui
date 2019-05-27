@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
+    <width>858</width>
     <height>1701</height>
    </rect>
   </property>
@@ -998,6 +998,26 @@
             </property>
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="statistics_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>STATISTICS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="identity_chk">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>IDENTITY</string>
             </property>
            </widget>
           </item>

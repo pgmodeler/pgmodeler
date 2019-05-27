@@ -4,9 +4,16 @@
 -->
 <!ELEMENT column (type?, collation?, comment?)>
 <!ATTLIST column name CDATA #REQUIRED>
+<!ATTLIST column alias CDATA #IMPLIED>
 <!ATTLIST column not-null (true | false) "false">
 <!ATTLIST column default-value CDATA #IMPLIED>
 <!ATTLIST column sequence CDATA #IMPLIED>
 <!ATTLIST column protected (false|true) "false">
 <!ATTLIST column sql-disabled (false|true) "false">
 <!ATTLIST column identity-type CDATA #IMPLIED>
+<!ATTLIST column increment CDATA #IMPLIED>
+<!ATTLIST column min-value CDATA #IMPLIED>
+<!ATTLIST column max-value CDATA #IMPLIED>
+<!ATTLIST column start CDATA #IMPLIED>
+<!ATTLIST column cache CDATA #IMPLIED>
+<!ATTLIST column cycle (true|false) "false">

@@ -25,7 +25,7 @@ namespace GlobalAttributes {
 	PGMODELER_APP_NAME=QString("pgmodeler"),
 	PGMODELER_URI=QString("pgmodeler.io"),
 	PGMODELER_REVERSE_URI=QString("io.pgmodeler"),
-	PGMODELER_VERSION=QString("0.9.1"),
+	PGMODELER_VERSION=QString("0.9.2-alpha"),
 	PGMODELER_BUILD_NUMBER=QString(BUILDNUM),
 	PGMODELER_SITE=QString("https://pgmodeler.io"),
 	PGMODELER_SUPPORT=QString("https://github.com/pgmodeler/pgmodeler/issues"),
@@ -141,7 +141,7 @@ namespace GlobalAttributes {
 
 #ifdef DEMO_VERSION
 	//Maximum object creation counter for demo version
-	const unsigned MAX_OBJECT_COUNT=9;
+	const unsigned MAX_OBJECT_COUNT=15;
 #endif
 
 

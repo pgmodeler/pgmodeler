@@ -1370,7 +1370,6 @@ void PgModelerCLI::diffModelDatabase(void)
 			if(!output.open(QFile::WriteOnly))
 				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(parsed_opts[OUTPUT]),
 												ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 			output.write(diff_hlp.getDiffDefinition().toUtf8());
 			output.close();
 		}
@@ -1430,8 +1429,8 @@ void PgModelerCLI::diffModelDatabase(void)
 			{
 				printMessage(trUtf8("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp.setExportToDBMSParams(diff_hlp.getDiffDefinition(),
-																				 &extra_connection,
-																				 parsed_opts[COMPARE_TO], parsed_opts.count(IGNORE_DUPLICATES));
+												 &extra_connection,
+												 parsed_opts[COMPARE_TO], parsed_opts.count(IGNORE_DUPLICATES));
 
 				if(parsed_opts.count(IGNORE_ERROR_CODES))
 					export_hlp.setIgnoredErrors(parsed_opts[IGNORE_ERROR_CODES].split(','));

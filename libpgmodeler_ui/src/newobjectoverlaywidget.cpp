@@ -113,18 +113,19 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 	else if(sel_objs.empty())
 		obj_type=OBJ_DATABASE;
 
-	db_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE);
-	sch_objs_btns_wgt->setVisible(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA);
+    db_objs_grp->setVisible(obj_type==OBJ_DATABASE);
+    sch_objs_grp->setVisible(obj_type==OBJ_DATABASE || obj_type==OBJ_SCHEMA);
 
-	tab_objs_btns_wgt->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP);
+    tab_objs_grp->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP);
 	column_tb->setDisabled(obj_type==OBJ_VIEW);
 	constraint_tb->setDisabled(obj_type==OBJ_VIEW);
 	index_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
 	rule_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
 	trigger_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
+    policy_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
 	tab_perms_tb->setVisible(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW);
-	rel_btns_wgt->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE) ||
-													 (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE));
+    rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==OBJ_TABLE) ||
+                         (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==OBJ_TABLE && sel_objs.at(1)->getObjectType()==OBJ_TABLE));
 
 	overlay_frm->adjustSize();
 	this->adjustSize();

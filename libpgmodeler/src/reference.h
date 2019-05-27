@@ -39,10 +39,15 @@ class Reference {
 
 		//! \brief Stores the expression that defines one reference
 		QString expression,
+
 		//! \brief Stores the alias to the expression or table
 		alias,
+
 		//! \brief Stores only the alias for the column
-		column_alias;
+		column_alias,
+
+		//! \brief Stores the alias for the reference. This text will be displayed when the view is being show in compact mode
+		ref_alias;
 
 		//! \brief Indicates if the expression is used as entire view definition
 		bool is_def_expr;
@@ -53,11 +58,11 @@ class Reference {
 		REFER_EXPRESSION=1; //! \brief The reference is based on an expression
 
 		//! \brief Constants used on the view code generation
-		static const unsigned SQL_REFER_WHERE=10,
-		SQL_REFER_SELECT=20,
-		SQL_REFER_FROM=30,
-		SQL_REFER_END_EXPR=40,
-		SQL_VIEW_DEFINITION=50;
+		static const unsigned SQL_REFER_WHERE=1,
+		SQL_REFER_SELECT=2,
+		SQL_REFER_FROM=4,
+		SQL_REFER_END_EXPR=8,
+		SQL_VIEW_DEFINITION=15;
 
 		Reference(void);
 
@@ -88,6 +93,10 @@ class Reference {
 
 		//! \brief Returns the reference typ (see REFER_??? constants)
 		unsigned getReferenceType(void);
+
+		void setReferenceAlias(const QString &alias);
+
+		QString getReferenceAlias(void);
 
 		//! \brief Returns the SQL code definition
 		QString getSQLDefinition(unsigned sql_type);

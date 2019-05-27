@@ -135,3 +135,45 @@ Qt::ItemFlags ResultSetModel::flags(const QModelIndex &) const
 	return(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled );
 }
 
+void ResultSetModel::append(ResultSet &res)
+{
+	try
+	{
+		if(res.isValid() && !res.isEmpty())
+		{
+			if(res.accessTuple(ResultSet::FIRST_TUPLE))
+			{
+				do
+				{
+					for(int col=0; col < col_count; col++)
+					{
+						if(col < res.getColumnCount())
+						{
+							if(res.isColumnBinaryFormat(col))
+								item_data.push_back(trUtf8("[binary data]"));
+							else
+								item_data.push_back(res.getColumnValue(col));
+						}
+						else
+						{
+							item_data.push_back(QString());
+						}
+					}
+				}
+				while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			}
+
+			row_count += res.getTupleCount();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+bool ResultSetModel::isEmpty(void)
+{
+	return(row_count <= 0);
+}
+

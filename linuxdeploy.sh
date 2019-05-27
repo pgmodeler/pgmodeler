@@ -4,24 +4,27 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.9.3/5.9.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.9.6/5.9.6/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
-    
-   *)
+
+  *)
     ARCH="linux32"
     FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
 
-# Uncomment this line if your system doesn't have LLVM (clang) compiler tools
-#QMAKE_ARGS="-r -spec linux-g++"
-QMAKE_ARGS="-r -spec linux-clang"
+# Uncomment this line if you want to compile using LLVM (clang) compiler tools
+# QMAKE_ARGS="-r -spec linux-clang"
+
+# Comment this one if you've decided to use LLVM
+QMAKE_ARGS="-r -spec linux-g++"
+
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-ifw-1.5.0
+QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"

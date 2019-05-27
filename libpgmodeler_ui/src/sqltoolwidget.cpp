@@ -342,9 +342,12 @@ void SQLToolWidget::showSnippet(const QString &snip)
 
 	sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
 
-	QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
-	cursor.movePosition(QTextCursor::End);
+	if(sql_exec_wgt->sql_cmd_txt->isEnabled())
+	{
+		QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
+		cursor.movePosition(QTextCursor::End);
 
-	sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
-	sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+		sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
+		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+	}
 }

@@ -2,61 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN" sourcelanguage="en_US">
 <context>
-    <name>AboutForm</name>
-    <message>
-        <source>Version %1</source>
-        <translation type="vanished">版本 %1</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">关闭</translation>
-    </message>
-    <message>
-        <source>PostgreSQL Database Modeler</source>
-        <translation type="vanished">PostgreSQL 数据库建模工具</translation>
-    </message>
-    <message>
-        <source>0.0.0.0</source>
-        <translation type="vanished">0.0.0.0</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
-
-Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
-        <translation type="obsolete">版权所有 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-pgModeler 项目是通过使用实体-关系图并结合 PostgreSQL 实现的相关理论概念，对 PostgreSQL DBMS 关系型数据库进行建模的 CASE 工具。
-
-特别感谢巴西托坎廷斯立法大会软件开发团队的朋友们：Michel de Almeida，Felipe Santana，Jonas Nepomuceno，Ricardo Ishibashi 和 Álvaro Nunes。</translation>
-    </message>
-    <message>
-        <source>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</source>
-        <translation type="vanished">本软件是自由软件。你可以遵照自由软件基金会发布的 GNU 通用公共授权协议第三版本 (GPLv3) 所有条文来修改和重新发布这一程序。
-
-发布这一程序的目的是希望它有用，但没有任何担保；亦无对适售性或特定目的适用性所为的默示性担保。详情请参照GNU通用公共授权。
-
-GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 GNU 通用公共授权协议请见&lt;http://www.gnu.org/licenses/&gt; </translation>
-    </message>
-    <message>
-        <source>About pgModeler</source>
-        <translation type="vanished">关于 pgModeler</translation>
-    </message>
-    <message>
-        <source>Design, configure, deploy</source>
-        <translation type="vanished">设计, 配置, 部署</translation>
-    </message>
-</context>
-<context>
     <name>AboutWidget</name>
     <message>
         <source>About pgModeler</source>
@@ -71,19 +16,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Design, configure, deploy</source>
-        <translation type="unfinished">设计, 配置, 部署</translation>
-    </message>
-    <message>
-        <source>&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;http://pgmodeler.com.br&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>pgModeler is proudly a brazilian software!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2016 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -95,18 +28,6 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>0.0.0.0</source>
-        <translation type="unfinished">0.0.0.0</translation>
-    </message>
-    <message>
-        <source>(CODE_NAME)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Build:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>(BUILD_NUM)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -115,139 +36,19 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Contributors</source>
+        <source>0.0.0</source>
+        <translation type="unfinished">0.0.0</translation>
+    </message>
+    <message>
+        <source>build:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This page is dedicated to all contributors who gave a bit of their time in make pgModeler a better software somehow. The complete list of people that helped pgModeler can be found at &lt;a href=&quot;https://github.com/pgmodeler/pgmodeler/graphs/contributors&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you have a great idea to improve pgModeler please submit it &lt;a href=&quot;http://github.com/pgmodeler/pgmodeler/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. No ideas for now but want to help? Why not donate a few bucks &lt;a href=&quot;http://pgmodeler.com.br/#donate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#00a489;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;!?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://pgmodeler.io&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>1</source>
-        <translation type="unfinished">1</translation>
-    </message>
-    <message>
-        <source>2</source>
-        <translation type="unfinished">2</translation>
-    </message>
-    <message>
-        <source>3</source>
-        <translation type="unfinished">3</translation>
-    </message>
-    <message>
-        <source>4</source>
-        <translation type="unfinished">4</translation>
-    </message>
-    <message>
-        <source>5</source>
-        <translation type="unfinished">5</translation>
-    </message>
-    <message>
-        <source>6</source>
-        <translation type="unfinished">6</translation>
-    </message>
-    <message>
-        <source>7</source>
-        <translation type="unfinished">7</translation>
-    </message>
-    <message>
-        <source>8</source>
-        <translation type="unfinished">8</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">名称</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contribution</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Damien Degois</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>France</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>French UI translation and several improvements in auxiliary scripts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ji Bin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>China</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chinese UI translation and small fixes.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pierre-Samuel LE STANG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>French UI translation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lisandro Damián Nicanor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Argentina</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Improvements on build scripts enabling the custom packaging in Linux distros; Per-user settings; pgModeler&apos;s package maintainer in Debian Linux.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pavel Alexeev</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Russia</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Additional work for packaging in Linux distros; pgModeler&apos;s package maintainer in Fedora Linux.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mariusz Fik</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Poland</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom packaging first ideas. Tester of first version of custom packaging patch.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Jonathan DUPRE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gilberto Castillo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cuba</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spanish UI translation.</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2006-2018 - Raphael Araújo e Silva &amp;lt;&lt;a href=&quot;mailto:raphael@pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;raphael@pgmodeler.io&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -258,16 +59,8 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation>最终处理函数：</translation>
     </message>
     <message>
-        <source>Transition Function:</source>
-        <translation type="vanished">状态转换函数：</translation>
-    </message>
-    <message>
         <source>Sort Operator:</source>
         <translation>排序操作符：</translation>
-    </message>
-    <message>
-        <source>Final Condition:</source>
-        <translation type="obsolete">最终条件：</translation>
     </message>
     <message>
         <source>Funtion Inputs</source>
@@ -288,10 +81,6 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     <message>
         <source>An aggregate function that accepts the types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; and &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; as input types and which type of state is &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, must obey the following rules: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Final Function:&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Transition Function:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</source>
         <translation>聚合函数接受类型 &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; 和 &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; 作为输入类型，并且类型状态为 &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, 函数必须遵循如下规则：&lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;•最终处理函数：&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• 过渡处理函数：&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Initial Condition:</source>
@@ -485,18 +274,6 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation>颜色：</translation>
     </message>
     <message>
-        <source>Font color / Fill color 1</source>
-        <translation type="vanished">字体颜色/填充颜色1</translation>
-    </message>
-    <message>
-        <source>Fill color 2</source>
-        <translation type="vanished">填充颜色2</translation>
-    </message>
-    <message>
-        <source>Border color</source>
-        <translation type="vanished">边框颜色</translation>
-    </message>
-    <message>
         <source>Underline</source>
         <translation>下划线</translation>
     </message>
@@ -544,19 +321,30 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <source>Placeholder: Body</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Constraint: Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Constraint: Descriptor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Application</name>
-    <message>
-        <source>Error</source>
-        <translation type="vanished">错误</translation>
-    </message>
     <message>
         <source>Unknown exception caught!</source>
         <translation>捕捉到未知异常！</translation>
     </message>
     <message>
         <source>Failed to create initial configuration in `%1&apos;! Check if the current user has write permission over that path and at least read permission over `%2&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BaseConfigWidget</name>
+    <message>
+        <source>A backup of the previous settings was saved into &lt;strong&gt;%1&lt;/strong&gt;!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -674,10 +462,6 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation>数据库</translation>
     </message>
     <message>
-        <source>Table-Table Relationship</source>
-        <translation type="obsolete">表-表关系</translation>
-    </message>
-    <message>
         <source>Textbox</source>
         <translation>文本框</translation>
     </message>
@@ -688,10 +472,6 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     <message>
         <source>Parameter</source>
         <translation>参数</translation>
-    </message>
-    <message>
-        <source>Table-View Relationship</source>
-        <translation type="obsolete">表-视图关系</translation>
     </message>
     <message>
         <source>Collation</source>
@@ -727,6 +507,14 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <source>Basic Relationship</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Policy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generic SQL</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BaseObjectView</name>
@@ -758,16 +546,8 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation>模式：</translation>
     </message>
     <message>
-        <source>Permissions:</source>
-        <translation type="obsolete">权限：</translation>
-    </message>
-    <message>
         <source>This object is protected thus no change in form will be applied to it.</source>
         <translation>此对象处于受保护状态，无法对它应用任何修改。</translation>
-    </message>
-    <message>
-        <source>Parent Object:</source>
-        <translation type="obsolete">父对象：</translation>
     </message>
     <message>
         <source>Value(s)</source>
@@ -778,24 +558,8 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
         <translation>版本</translation>
     </message>
     <message>
-        <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation type="obsolete">窗口中高亮显示的字段或值只能用于特定版本的 PostgreSQL。在生成高亮字段工具提示中显示的各版本 SQL 代码时可能会发生错误，导致无法完成操作。</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>icone</source>
         <translation>icone</translation>
-    </message>
-    <message>
-        <source>Criate / Edit: </source>
-        <translation type="obsolete">创建/修改：</translation>
-    </message>
-    <message>
-        <source>Edit Permissions</source>
-        <translation type="vanished">修改权限</translation>
     </message>
     <message>
         <source>Edit permissions</source>
@@ -843,6 +607,17 @@ This will disable the code of all child and referrer objects.</source>
     <name>BaseRelationship</name>
     <message>
         <source>rel_%1_%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BaseTableView</name>
+    <message>
+        <source>Toggles the extended attributes display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected rels: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -922,15 +697,14 @@ This will disable the code of all child and referrer objects.</source>
     </message>
 </context>
 <context>
+    <name>BulkDataEditWidget</name>
+    <message>
+        <source>Bulk data edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CastWidget</name>
-    <message>
-        <source>Conversion Type:</source>
-        <translation type="obsolete">转换类型：</translation>
-    </message>
-    <message>
-        <source>Implicit</source>
-        <translation type="vanished">隐式转换</translation>
-    </message>
     <message>
         <source>Assignment</source>
         <translation>强制转换</translation>
@@ -940,16 +714,8 @@ This will disable the code of all child and referrer objects.</source>
         <translation>输入 / 输出</translation>
     </message>
     <message>
-        <source>Conversion Function:</source>
-        <translation type="vanished">转换函数：</translation>
-    </message>
-    <message>
         <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
         <translation>将&lt;em&gt;&lt;strong&gt;类型 A&lt;/strong&gt;&lt;/em&gt;转换成 &lt;em&gt;&lt;strong&gt;类型 B&lt;/strong&gt;&lt;/em&gt;的函数签名：&lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Source data type</source>
@@ -979,10 +745,6 @@ This will disable the code of all child and referrer objects.</source>
 <context>
     <name>CodeCompletionWidget</name>
     <message>
-        <source>Make persistent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Makes the widget closable only by ESC key or mouse click on other controls.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -994,13 +756,13 @@ This will disable the code of all child and referrer objects.</source>
         <source>(no items found.)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Make &amp;persistent</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CollationWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">Form</translation>
-    </message>
     <message>
         <source>Locale:</source>
         <translation type="unfinished"></translation>
@@ -1052,14 +814,6 @@ This will disable the code of all child and referrer objects.</source>
         <translation>默认值：</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>Not Null:</source>
-        <translation type="vanished">非空：</translation>
-    </message>
-    <message>
         <source>E&amp;xpression:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1069,6 +823,18 @@ This will disable the code of all child and referrer objects.</source>
     </message>
     <message>
         <source>Se&amp;quence:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit the underlying sequence&apos;s attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1095,20 +861,8 @@ This will disable the code of all child and referrer objects.</source>
         <translation>常规</translation>
     </message>
     <message>
-        <source>Style</source>
-        <translation type="vanished">样式</translation>
-    </message>
-    <message>
-        <source>Connetions</source>
-        <translation type="vanished">连接</translation>
-    </message>
-    <message>
         <source>Plug-ins</source>
         <translation>插件</translation>
-    </message>
-    <message>
-        <source>Confirmation</source>
-        <translation type="vanished">确认</translation>
     </message>
     <message>
         <source>Any modification made until now in the current section will be lost! Do you really want to restore default settings?</source>
@@ -1128,6 +882,14 @@ This will disable the code of all child and referrer objects.</source>
     </message>
     <message>
         <source>Snippets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In some cases restore the default settings related to it may solve the problem. Would like to do that?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1210,16 +972,8 @@ This will disable the code of all child and referrer objects.</source>
         <translation>已吊销证书：</translation>
     </message>
     <message>
-        <source>Kerberus Server:</source>
-        <translation type="vanished">Kerberus 服务器：</translation>
-    </message>
-    <message>
         <source>Force GSSAPI</source>
         <translation>强制 GSSAPI</translation>
-    </message>
-    <message>
-        <source>Options:</source>
-        <translation type="vanished">选项：</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1232,10 +986,6 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <source>Test</source>
         <translation>测试</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Delete selected connection</source>
@@ -1268,10 +1018,6 @@ This will disable the code of all child and referrer objects.</source>
     <message>
         <source>Success</source>
         <translation>成功</translation>
-    </message>
-    <message>
-        <source>Connection successfuly stablished!</source>
-        <translation type="vanished">成功建立连接！</translation>
     </message>
     <message>
         <source>Edit database connections</source>
@@ -1334,16 +1080,6 @@ This will disable the code of all child and referrer objects.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connection successfuly stablished!
-
-Server details:
-
-PID: `%1&apos;
-Protocol: `%2&apos;
-Version: `%3&apos;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>There is a connection being created or edited! Do you want to save it?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1359,6 +1095,16 @@ Version: `%3&apos;</source>
         <source>Edit connections</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Connection successfully established!
+
+Server details:
+
+PID: `%1&apos;
+Protocol: `%2&apos;
+Version: `%3&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConstraintWidget</name>
@@ -1367,16 +1113,8 @@ Version: `%3&apos;</source>
         <translation>约束类型：</translation>
     </message>
     <message>
-        <source>Check Expr.:</source>
-        <translation type="vanished">检查表达式：</translation>
-    </message>
-    <message>
         <source>Fill Factor:</source>
         <translation>填充因子：</translation>
-    </message>
-    <message>
-        <source>Comparison:</source>
-        <translation type="obsolete">比较：</translation>
     </message>
     <message>
         <source>Deferrable:</source>
@@ -1411,20 +1149,12 @@ Version: `%3&apos;</source>
         <translation>类型</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>ON DELETE:</source>
         <translation>ON DELETE：</translation>
     </message>
     <message>
         <source>ON UPDATE:</source>
         <translation>ON UPDATE：</translation>
-    </message>
-    <message>
-        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
-        <translation type="obsolete">包含在关系中的列不能被手动添加/删除主键。这样的操作会被忽略。要将关系中的列创建为主键，请使用“创建/编辑：关系”窗口中的特征属性和主键约束。</translation>
     </message>
     <message>
         <source>Match:</source>
@@ -1466,10 +1196,6 @@ Version: `%3&apos;</source>
         <translation>目标编码：</translation>
     </message>
     <message>
-        <source>Conversion Function:</source>
-        <translation type="obsolete">转换函数：</translation>
-    </message>
-    <message>
         <source>Default Conversion:</source>
         <translation>默认转换：</translation>
     </message>
@@ -1478,81 +1204,8 @@ Version: `%3&apos;</source>
         <translation>编码转换的函数签名：&lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;。</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>Conversion Func.:</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CrashHandler</name>
-    <message>
-        <source>pgModeler Crash Handler</source>
-        <translation type="vanished">pgModeler 故障处理程序</translation>
-    </message>
-    <message>
-        <source>Oops! pgModeler just crashed!</source>
-        <translation type="vanished">糟糕！pgModeler 崩溃了！</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="vanished">创建</translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="vanished">取消(&amp;C)</translation>
-    </message>
-    <message>
-        <source>We apologize for what happened! It is clear that a nasty bug caused it. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
-        <translation type="vanished">我们为此深表歉意！显然，这是由讨厌的 bug 引起的。请描述一下在 pgModule 意外退出前你所做过的操作，并填写在下面的输入框内。这些将有助于我们错误的消除和软件的改进。</translation>
-    </message>
-    <message>
-        <source>Report</source>
-        <translation type="vanished">报告</translation>
-    </message>
-    <message>
-        <source>Actions made before the crash:</source>
-        <translation type="vanished">崩溃前的操作：</translation>
-    </message>
-    <message>
-        <source>Loaded Model</source>
-        <translation type="vanished">已打开的模型</translation>
-    </message>
-    <message>
-        <source>Attach the below database model file that possibly generates the crash.</source>
-        <translation type="vanished">附上可能导致软件崩溃的数据库模型文件。</translation>
-    </message>
-    <message>
-        <source>Stack trace</source>
-        <translation type="vanished">堆栈跟踪信息</translation>
-    </message>
-    <message>
-        <source>pgModeler crash file analysis</source>
-        <translation type="vanished">pgModeler 崩溃文件分析</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="vanished">错误</translation>
-    </message>
-    <message>
-        <source>File: %1
-Size: %2 bytes
-
-</source>
-        <translation type="vanished">文件： %1
-大小： %2 bytes
-
-</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="vanished">信息</translation>
-    </message>
-    <message>
-        <source>Crash report successfuly generated! Please send the file &apos;%1&apos; to %2 in order be debugged. Thank you for the collaboration!</source>
-        <translation type="vanished">成功生成故障报告！请将文件 ‘%1&apos; 发送到 %2，以便用于调试。感谢您的合作！</translation>
     </message>
 </context>
 <context>
@@ -1607,6 +1260,85 @@ Size: %2 bytes
     </message>
     <message>
         <source>We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CsvLoadWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <source>Load CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSV File:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select output file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Separator: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the first row as column names in the CSV file. By unchecking this option the first row is used as data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns in the first row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">打开</translation>
+    </message>
+    <message>
+        <source>Semicolon (;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comma (,)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Space</source>
+        <translation type="unfinished">Space</translation>
+    </message>
+    <message>
+        <source>Tabulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text delimiter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comma-separted values (*.csv);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1682,10 +1414,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation type="unfinished">类型：</translation>
-    </message>
-    <message>
         <source>Generic INSERT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1733,15 +1461,7 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished">关闭(&amp;C)</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Refresh listing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1753,32 +1473,12 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save</source>
-        <translation type="unfinished">保存</translation>
-    </message>
-    <message>
         <source>Ctrl+S</source>
         <translation type="unfinished">Ctrl+S</translation>
     </message>
     <message>
-        <source>Copy the selection as CSV buffer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation type="unfinished">复制</translation>
-    </message>
-    <message>
-        <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export results to CSV file</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">导出</translation>
     </message>
     <message>
         <source>Ctrl+X</source>
@@ -1789,20 +1489,12 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Undo</source>
-        <translation type="unfinished">撤销</translation>
-    </message>
-    <message>
         <source>Ctrl+Z</source>
         <translation type="unfinished">Ctrl+Z</translation>
     </message>
     <message>
         <source>Add empty rows</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished">新建</translation>
     </message>
     <message>
         <source>Ins</source>
@@ -1813,19 +1505,11 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="unfinished">删除</translation>
-    </message>
-    <message>
         <source>Del</source>
         <translation type="unfinished">Del</translation>
     </message>
     <message>
         <source>Duplicate the selected rows</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1968,28 +1652,92 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
         <source>insert</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in two slashes, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;/value/&lt;/span&gt;. To use a slash as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\/&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy items on the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste items on the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse referenced tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the values of all selected cells at once</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new rows from a CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy as CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy as text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pase items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate row(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete row(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit cell(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column</source>
+        <translation type="unfinished">列</translation>
+    </message>
+    <message>
+        <source>Referenced tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(none)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Referrer tables</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseExplorerWidget</name>
     <message>
         <source>Form</source>
         <translation type="unfinished">Form</translation>
-    </message>
-    <message>
-        <source>Toggles the display of system objects.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>System</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggles the display of extension objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extension</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open the grid to visualize or edit data</source>
@@ -2018,10 +1766,6 @@ Unchecking this will cause the SQL to be appended at the end of CREATE DATABASE 
     <message>
         <source>Update the objects tree</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl+S</source>
-        <translation type="unfinished">Ctrl+S</translation>
     </message>
     <message>
         <source>Drop this database</source>
@@ -2761,17 +2505,169 @@ Ref. column(s): %2</source>
         <source>-- Source code unavailable for the object %1 (%2). --</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Toggle the display of filter widget as well the system/extension objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort items alphabetically. When unchecked, items are sorted by OID.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort alphabetically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Client encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configuration file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic library path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic shared memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hba file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Listen addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max. connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Listen port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SSL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SSL ca file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SSL cert file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SSL crl file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SSL key file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ident file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password encryption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server PID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server protocol</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Referrers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>USING expr.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CHECK expr.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roles</source>
+        <translation type="unfinished">角色</translation>
+    </message>
+    <message>
+        <source>RLS enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RLS forced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show objects filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show system objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show extension objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Source code unavailable for this kind of object --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Also restart sequences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You&apos;re running a demonstration version! The data manipulation feature is available only in the full version!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to drop the entire database &lt;strong&gt;%1&lt;/strong&gt;! All data will be completely wiped out. Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseImportForm</name>
-    <message>
-        <source>Database Import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Database import</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Settings</source>
         <translation type="unfinished"></translation>
@@ -2783,38 +2679,6 @@ Ref. column(s): %2</source>
     <message>
         <source>Connection:</source>
         <translation type="unfinished">连接：</translation>
-    </message>
-    <message>
-        <source>Origin point:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Starting point where objects will be put.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tables per row:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tables per row</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spacing:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Schemas per row</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spacing between objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Schemas per row:</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Resolve some of the object&apos;s dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it&apos;s necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</source>
@@ -2965,15 +2829,19 @@ Ref. column(s): %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Retrieving objects of table `%1&apos;...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This is a PostgreSQL built-in data type and cannot be imported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This is a pgModeler&apos;s built-in object. It will be ignored if checked by user.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retrieving objects of `%1&apos; (%2)...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2989,10 +2857,6 @@ Ref. column(s): %2</source>
     </message>
     <message>
         <source>Creating object `%1&apos; (%2)...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trying to recreate object `%1&apos; (%2)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3031,17 +2895,17 @@ Ref. column(s): %2</source>
         <source>Assigning sequences to columns...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Creating object `%1&apos; (%2), oid `%3&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trying to recreate object `%1&apos; (%2), oid `%3&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseModel</name>
-    <message>
-        <source>Loading object: %1 (%2)</source>
-        <translation type="vanished">正在载入对象：%1 (%2)</translation>
-    </message>
-    <message>
-        <source>Generating %1 of the object: %2 (%3)</source>
-        <translation type="vanished">正在生成对象的 %1：%2 (%3)</translation>
-    </message>
     <message>
         <source>The demonstration version can create only `%1&apos; instances of each object type! You&apos;ve reach this limit for the type: `%2&apos;</source>
         <translation type="unfinished"></translation>
@@ -3052,10 +2916,6 @@ Ref. column(s): %2</source>
     </message>
     <message>
         <source>Validating relationships...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generating %1 of the object `%2&apos; (%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3094,6 +2954,10 @@ Ref. column(s): %2</source>
         <source>Metadata file successfully loaded!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Generating %1 code: `%2&apos; (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DatabaseWidget</name>
@@ -3112,10 +2976,6 @@ Ref. column(s): %2</source>
     <message>
         <source>Default</source>
         <translation>默认</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Template DB:</source>
@@ -3161,6 +3021,18 @@ Ref. column(s): %2</source>
         <source>Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Options:</source>
+        <translation type="unfinished">选项：</translation>
+    </message>
+    <message>
+        <source>Allow connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Is template</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DomainWidget</name>
@@ -3169,32 +3041,32 @@ Ref. column(s): %2</source>
         <translation>默认值：</translation>
     </message>
     <message>
-        <source>Constraint Name:</source>
-        <translation type="obsolete">约束名称：</translation>
-    </message>
-    <message>
-        <source>Check Expression:</source>
-        <translation type="obsolete">检查表达式：</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>Not Null:</source>
-        <translation>非空：</translation>
-    </message>
-    <message>
-        <source>Constraint</source>
-        <translation type="unfinished">约束</translation>
-    </message>
-    <message>
         <source>Name:</source>
         <translation type="unfinished">名称：</translation>
     </message>
     <message>
-        <source>Check Expr.:</source>
-        <translation type="unfinished">检查表达式：</translation>
+        <source>Attributes</source>
+        <translation type="unfinished">属性</translation>
+    </message>
+    <message>
+        <source>Not null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check constraints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expression:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>Expression</source>
+        <translation type="unfinished">表达式</translation>
     </message>
 </context>
 <context>
@@ -3333,16 +3205,8 @@ Ref. column(s): %2</source>
 <context>
     <name>Exception</name>
     <message>
-        <source>Insufficient memory space to allocate the object!</source>
-        <translation type="obsolete">内存不足，无法分配对象！</translation>
-    </message>
-    <message>
         <source>Assignment of a pseudo-type to the type of the column!</source>
         <translation type="unfinished">列类型不能为伪类型！</translation>
-    </message>
-    <message>
-        <source>Zero length assignment!</source>
-        <translation type="unfinished">长度不能为 0！</translation>
     </message>
     <message>
         <source>Assignment of a precision greater than the length of the type!</source>
@@ -3353,36 +3217,12 @@ Ref. column(s): %2</source>
         <translation type="unfinished">类型 time，timestamp 或 interval 的精度设置无效。精度必须小于等于 6！</translation>
     </message>
     <message>
-        <source>Assignment of a not allocated column to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">必须给对象&apos;%1&apos; (%2) 设置列！</translation>
-    </message>
-    <message>
         <source>Reference to a column which index is out of the capacity of the column list!</source>
         <translation type="unfinished">不能引用不在列列表中的列！</translation>
     </message>
     <message>
         <source>Assignment of not allocated object!</source>
         <translation type="unfinished">必须设置对象！</translation>
-    </message>
-    <message>
-        <source>Assignment of a not allocated schema to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">必须给对象 &apos;%1&apos; (%2) 设置模式！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) has inconsistent configuration (invalid SQL/XML definition)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos; (%2) 设置冲突 (无效的 SQL/XML 定义)！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) already exists in the list of elements of the same type in the object &apos;%3&apos; (%4)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos; (%2) 已经存在于对象 &apos;%3&apos; (%4) 的同类型元素列表中！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can&apos;t be assigned because there is already exists in the container object &apos;%3&apos;!</source>
-        <translation type="obsolete">对象 &apos;%1&apos; (%2) 不能被赋值，因其已存在于容器对象 &apos;%3&apos;！</translation>
-    </message>
-    <message>
-        <source>Assignment of object of an invalid type!</source>
-        <translation type="obsolete">设置的对象无效！</translation>
     </message>
     <message>
         <source>Removing an object of an invalid type!</source>
@@ -3397,60 +3237,16 @@ Ref. column(s): %2</source>
         <translation type="unfinished">表的返回值类型的名称不能为空！</translation>
     </message>
     <message>
-        <source>The insertion of the parameter &apos;%1&apos; will not be possible because there is another parameter with same name in the function &apos;%2&apos;!</source>
-        <translation type="obsolete">无法插入参数 &apos;%1&apos;，因为函数 &apos;%2&apos; 中已经存在一个相同名称的参数了！</translation>
-    </message>
-    <message>
-        <source>The insertion of the table return type &apos;%1&apos; will not be possible because there is another return type with the same name in the &apos;%2&apos;!</source>
-        <translation type="obsolete">无法插入表返回类型 &apos;%1&apos;，因为在 &apos;%2&apos; 中已经存在一个相同名称的返回类型！</translation>
-    </message>
-    <message>
-        <source>Reference to a parameter which index is out of the parameter list capacity!</source>
-        <translation type="obsolete">不能引用不在参数列表中的参数！</translation>
-    </message>
-    <message>
         <source>Reference to an event which does not belongs to trigger!</source>
         <translation type="unfinished">不能引用不属于触发器的事件！</translation>
-    </message>
-    <message>
-        <source>The column &apos;%1&apos; can&apos;t be assigned to the trigger &apos;%2&apos; because does not belongs to the trigger parent table!</source>
-        <translation type="obsolete">列 &apos;%1&apos; 无法赋值给触发器 &apos;%2&apos;，因为它不属于触发器父表！</translation>
-    </message>
-    <message>
-        <source>Assignment of a not allocated function to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">必须给对象 &apos;%1&apos; (%2) 设置函数！</translation>
-    </message>
-    <message>
-        <source>Assignment of a function which return type is different from &apos;trigger&apos;!</source>
-        <translation type="obsolete">函数的返回值类型与‘触发器’的不一致！</translation>
-    </message>
-    <message>
-        <source>Assignment of a function which parameter count is invalid to the object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对于对象 &apos;%1&apos; (%2)，函数的参数数目不匹配！</translation>
     </message>
     <message>
         <source>Assignment of a function which language is invalid!</source>
         <translation type="unfinished">语言转换函数无效！</translation>
     </message>
     <message>
-        <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">必须给对象 &apos;%1&apos;(%2) 设置表！</translation>
-    </message>
-    <message>
-        <source>Reference to an argument which index is out of argument list capacity!</source>
-        <translation type="obsolete">引用的参数超出参数列表范围！</translation>
-    </message>
-    <message>
-        <source>Insertion of a column which name is already registered to another column of the object!</source>
-        <translation type="obsolete">要插入的列名称已经被注册给了另一个列的对象！</translation>
-    </message>
-    <message>
         <source>Assignment of empty name to an object!</source>
         <translation type="unfinished">对象名称不能为空！</translation>
-    </message>
-    <message>
-        <source>Assignment of invalid name to an object!</source>
-        <translation type="obsolete">对象名称无效！</translation>
     </message>
     <message>
         <source>Assignment of schema object which type is invalid!</source>
@@ -3489,40 +3285,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">引用了无效的操作符类型！</translation>
     </message>
     <message>
-        <source>Assigment of value to an invalid option type on role!</source>
-        <translation type="obsolete">角色选项值的类型无效！</translation>
-    </message>
-    <message>
         <source>Reference to an invalid role type!</source>
         <translation type="unfinished">引用了无效的角色类型！</translation>
-    </message>
-    <message>
-        <source>The insertion of the role &apos;%1&apos; is not possible because this is already being referenced by role &apos;%2&apos;!</source>
-        <translation type="obsolete">无法插件角色 &apos;%1&apos;，因为它已经被角色 &apos;%2&apos; 引用了！</translation>
-    </message>
-    <message>
-        <source>Reference redundance detected by having the role &apos;%1&apos; referencing the role &apos;%2&apos;!</source>
-        <translation type="obsolete">发现角色 &apos;%1&apos; 到角色 &apos;%2&apos; 的引用冗余！</translation>
-    </message>
-    <message>
-        <source>The role &apos;%1&apos; can not be listed as a member of itself!</source>
-        <translation type="obsolete">角色 &apos;%1&apos; 不能列入自身的成员中！</translation>
-    </message>
-    <message>
-        <source>Reference to a paper which index is out of paper list capacity!</source>
-        <translation type="obsolete">纸型引用超出纸型列表范围！</translation>
-    </message>
-    <message>
-        <source>Insertion of null command to the rule!</source>
-        <translation type="obsolete">不能规则插入空命令！</translation>
-    </message>
-    <message>
-        <source>Reference to a command which index is out of the command list capacity!</source>
-        <translation type="obsolete">引用的命令超出命令列表范围！</translation>
-    </message>
-    <message>
-        <source>Is not possible to create a self generalization/dependecy relationship! The table can not inherit or copy their own attributes!</source>
-        <translation type="obsolete">无法创建自身泛化的关系/自身依赖的关系！表不能继承或复制自身的属性！</translation>
     </message>
     <message>
         <source>Assignment of an object that already belongs to another table!</source>
@@ -3541,10 +3305,6 @@ Ref. column(s): %2</source>
         <translation type="unfinished">序列的最小值大于其最大值！</translation>
     </message>
     <message>
-        <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values​​!</source>
-        <translation type="obsolete">序列的起始值不在序列的最小值与最大值的范围内！</translation>
-    </message>
-    <message>
         <source>Assignment of a null increment value to the sequence!</source>
         <translation type="unfinished">不能给序列设置空的自增值！</translation>
     </message>
@@ -3553,36 +3313,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">序列缓冲值不能为空！</translation>
     </message>
     <message>
-        <source>Assignment of owner table which is not in the same schema as the sequence &apos;%1&apos;!</source>
-        <translation type="obsolete">表与序列 &apos;%1&apos; 不在同一模式中！</translation>
-    </message>
-    <message>
-        <source>Assignment of owner table which does not belong to the same owner of the sequence &apos;%1&apos;!</source>
-        <translation type="obsolete">表与序列 &apos;%1&apos; 的所有者不同！</translation>
-    </message>
-    <message>
-        <source>Assignment of a nonexistent owner column to the sequence &apos;%1&apos;!</source>
-        <translation type="obsolete">序列 &apos;%1&apos; 的列不存在！</translation>
-    </message>
-    <message>
-        <source>Assignment of an owner column to the sequence &apos;%1&apos; that is not related to any table!</source>
-        <translation type="obsolete">序列 &apos;%1&apos; 的列未关联到任何表！</translation>
-    </message>
-    <message>
-        <source>Reference to a label which index is out of labels list capacity!</source>
-        <translation type="obsolete">引用的标签不在标签列表的范围内！</translation>
-    </message>
-    <message>
         <source>Allocation of object with invalid type!</source>
         <translation type="unfinished">不能创建类型无效的对象！</translation>
-    </message>
-    <message>
-        <source>Assignment of a function with invalid return type to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 函数的返回类型无效！</translation>
-    </message>
-    <message>
-        <source>Assignment of a function with invalid parameter(s) type(s) to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 函数的参数类型无效！</translation>
     </message>
     <message>
         <source>Assignment of not allocated language!</source>
@@ -3597,16 +3329,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">引用的数据类型不在数据类型列表的范围内！</translation>
     </message>
     <message>
-        <source>Assignment of a null type to to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 类型不能为空！</translation>
-    </message>
-    <message>
         <source>Assignment of invalid type to the object!</source>
         <translation type="unfinished">对象的类型无效！</translation>
-    </message>
-    <message>
-        <source>Assignment of an empty directory to object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 的目录不能为空！</translation>
     </message>
     <message>
         <source>Obtaining types with invalid quantity!</source>
@@ -3629,40 +3353,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">插入类型枚举列表的项目无效！</translation>
     </message>
     <message>
-        <source>Reference to an attribute which index is out of the attributes list capacity!</source>
-        <translation type="obsolete">引用的属性超出属性列表的范围！</translation>
-    </message>
-    <message>
-        <source>Reference to an enumeration which index is out of the enumerations list capacity!</source>
-        <translation type="obsolete">引用的枚举值超出枚举值列表的范围！</translation>
-    </message>
-    <message>
         <source>Assignment of invalid configuration to the type!</source>
         <translation type="unfinished">类型的配置无效！</translation>
-    </message>
-    <message>
-        <source>The data type &apos;%1&apos; can not be assigned because it already exists in the types list of the aggregate function &apos;%2&apos;!</source>
-        <translation type="obsolete">无法指派数据类型 &apos;%1&apos;，因其已存在于聚合函数 &apos;%2&apos; 的类型列表！</translation>
-    </message>
-    <message>
-        <source>Assignment of an operator which input  type count is invalid to aggregate function!</source>
-        <translation type="obsolete">聚合函数的操作符输入类型的数目无效！</translation>
-    </message>
-    <message>
-        <source>Assigment of an operator which types of arguments is invalid!</source>
-        <translation type="obsolete">操作符的参数类型无效！</translation>
-    </message>
-    <message>
-        <source>Assignment of system reserved name to the object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 使用了系统保留名称！</translation>
-    </message>
-    <message>
-        <source>One function with invalid configuration is been used by the object &apos;%1&apos; (%2)!</source>
-        <translation type="obsolete">用于对象 &apos;%1&apos;(%2) 的函数的配置无效！</translation>
-    </message>
-    <message>
-        <source>Assignment of invalid id to the user!</source>
-        <translation type="obsolete">无效的用户ID！</translation>
     </message>
     <message>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
@@ -3673,24 +3365,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">插入的元素已存在于元素列表！</translation>
     </message>
     <message>
-        <source>Reference to an element which index is out of element list capacity!</source>
-        <translation type="obsolete">引用的元素不在元素列表的范围内！</translation>
-    </message>
-    <message>
-        <source>Reference to an object which index is out of object list capacity!</source>
-        <translation type="obsolete">引用的对象不在对象列表的范围内！</translation>
-    </message>
-    <message>
         <source>Removal of an object not allocated!</source>
         <translation type="unfinished">不能移除未分配的对象！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be removed because it is being referenced by object &apos;%3&apos; (%4)!</source>
-        <translation type="obsolete">无法移除对象 &apos;%1&apos;(%2)，因其被对象 &apos;%3&apos;(%4) 引用了！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be removed because it is being referenced by object &apos;%3&apos; (%4) that belongs to &apos;%5&apos; (%6)!</source>
-        <translation type="obsolete">无法移除对象 &apos;%1&apos;(%2)，因其已被对象 &apos;%5&apos;(%6) 中的对象 &apos;%3&apos;(%4) 引用了！</translation>
     </message>
     <message>
         <source>Operation with object(s) which type(s) is invalid!</source>
@@ -3705,10 +3381,6 @@ Ref. column(s): %2</source>
         <translation type="unfinished">无法操作未分配的对象！</translation>
     </message>
     <message>
-        <source>The creation of the relationship &apos;%1&apos; between the table &apos;%2&apos; and &apos;%3&apos; can not be done because one does not have a primary key. If the relationship is of the type n-n both tables must have primary keys!</source>
-        <translation type="obsolete">无法创建关系 &apos;%1&apos;，因为表 &apos;%2&apos; 或表 &apos;%3&apos; 缺少主键。如果创建的是 N-N 关系，则两个表都必须有主键！</translation>
-    </message>
-    <message>
         <source>The relationship of the type 1-1 where both tables are mandatory participation is not implemented because it requires fusion between the tables that breaks the modeling done by the user!</source>
         <translation type="unfinished">强制执行两表 1-1 关系的功能尚未实现，因为它结合模型中由用户定义的两人互相分离的表！</translation>
     </message>
@@ -3721,28 +3393,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">表的主键已存在！</translation>
     </message>
     <message>
-        <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, dependency or generalization!</source>
-        <translation type="obsolete">不能给自引用关系，Ｎ-Ｎ 类型关系，依赖关系或泛化关系创建标识符关系！</translation>
-    </message>
-    <message>
-        <source>Unable to create a dependency relationship because the column &apos;%1&apos; in table &apos;%2&apos; already exists in table &apos;%3&apos;!</source>
-        <translation type="obsolete">无法创建依赖关系，因为表 &apos;%2&apos;中的列 &apos;%1&apos; 已经存在于表 &apos;%3&apos;！</translation>
-    </message>
-    <message>
-        <source>Unable to create the generalization relationship because the column &apos;%1&apos; in table &apos;%2&apos; can not be merged with the column &apos;%3&apos; of table &apos;%4&apos; because they have incompatible types!</source>
-        <translation type="obsolete">无法创建泛化关系，因为表 &apos;%2&apos; 中的列 &apos;%1&apos; 不能被合并到表 &apos;%4&apos; 中的列 &apos;%3&apos;，因为他们的类型不兼容！</translation>
-    </message>
-    <message>
-        <source>An attribute can not be added to a dependence or generalization relationship!</source>
-        <translation type="obsolete">属性无法添加到依赖关系或者泛化关系中！</translation>
-    </message>
-    <message>
         <source>A foreign key can not be added to a relationship because is created automatically when this is connected!</source>
         <translation type="unfinished">无法给关系添加外键，因为在连接时已经自动添加了！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) is referencing the object &apos;%3&apos; (%4) which was not found in the list of objects of the same type in the model!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 所引用的对象 &apos;%3&apos;(%4) 不存在于模型中同类型的对象列表！</translation>
     </message>
     <message>
         <source>Reference to an user-defined data type that not exists in the model!</source>
@@ -3753,164 +3405,28 @@ Ref. column(s): %2</source>
         <translation type="unfinished">操作列表的最大值无效！</translation>
     </message>
     <message>
-        <source>Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!</source>
-        <translation type="obsolete">无法写入文件 %1！请确保该目录存在，或者检查用户是否具有访问权限！</translation>
-    </message>
-    <message>
-        <source>Unable to write the model in the file %1 due to one or more errors in the definition generation process!</source>
-        <translation type="obsolete">无法保存模式到文件 %1，因为在定义生成过程中出现一个或多个错误！</translation>
-    </message>
-    <message>
-        <source>There is already a relationship between &apos;%1&apos; (%2) and &apos;%3&apos; (%4) in the model!</source>
-        <translation type="obsolete">模型中已存在 &apos;%1&apos;(%2) 和 &apos;%3&apos;(%4) 的关系！</translation>
-    </message>
-    <message>
-        <source>The configuration of the relationship &apos;%1&apos; generates a redundancy between the relationships &apos;%2&apos;. Redundancy on identifier or generalization/dependency relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
-        <translation type="obsolete">关系 “%1”的配置产生了一个在关系&apos;%2&apos; 中的冗余。标识符或者泛化 / 依赖关系不支持冗余，因为他们会生成错误的列从而导致模型错误！</translation>
-    </message>
-    <message>
         <source>One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!</source>
         <translation type="unfinished">一个或者多个对象无效，并自动删除了。因为他们引用的表列所在的关系已经不存在了，由于连接中断或者排除生成的列！</translation>
-    </message>
-    <message>
-        <source>The primary key &apos;%1&apos; can only be allocated if declared within a block of code that defines a table or relationship!</source>
-        <translation type="obsolete">主键 &apos;%1&apos; 只有在表或关系定义的代码块中声明之后才可以被分配！</translation>
     </message>
     <message>
         <source>Reference to an invalid privilege type!</source>
         <translation type="unfinished">引用了无效的权限类型！</translation>
     </message>
     <message>
-        <source>Insertion of an role which already exists in the role list of the permission!</source>
-        <translation type="obsolete">插入的角色已存在于权限角色列表！</translation>
-    </message>
-    <message>
         <source>Assignment of privilege incompatible with the type of object referenced by permission!</source>
         <translation type="unfinished">权限与被允许引用的对象的类型不一致！</translation>
-    </message>
-    <message>
-        <source>There is already a permission on object &apos;%1&apos; (%2) which has one or more equal roles from those present on permission to be assigned to the object!</source>
-        <translation type="obsolete">对象 &apos;%1&apos;(%2) 已经有一个权限，分配给此对象权限的角色中有一个或多个功能相当的角色！</translation>
-    </message>
-    <message>
-        <source>A permission is referencing the object &apos;%1&apos; (%2) which was not found in the model!</source>
-        <translation type="obsolete">权限所引用的对象 &apos;%1&apos;(%2) 不存在模型中！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be created by not being assigned to any schema!</source>
-        <translation type="obsolete">无法创建对象 &apos;%1&apos;(%2)，因为还没有给它指定模式！</translation>
-    </message>
-    <message>
-        <source>The tablespace &apos;%1&apos; can not be inserted into the model because it points to the same directory as the tablespace &apos;%2&apos;!</source>
-        <translation type="obsolete">表空间 &apos;%1&apos; 无法被加到模型中。因为它指向的目录和表空间 &apos;%2&apos; 的相同！</translation>
     </message>
     <message>
         <source>It is not possible to create arrays of domains or sequences (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</source>
         <translation type="unfinished">无法创建维数 &gt; = 1域或序列数组！PostgreSQL 尚未实现此功能！</translation>
     </message>
     <message>
-        <source>The function &apos;%1&apos; can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!</source>
-        <translation type="obsolete">函数 &apos;%1&apos; 无法获取定义的源代码，因为它的语言被设成了 C 语言。请使用属性号和动态库代替！</translation>
-    </message>
-    <message>
-        <source>The function &apos;%1&apos; can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!</source>
-        <translation type="obsolete">函数 &apos;%1&apos;只有当语言被设置成 C 语言时，才需要属性符号和动态库配置。其他情况下，您必须在 DBMS 中定义它的源代码！</translation>
-    </message>
-    <message>
-        <source>The operator &apos;%1&apos; can not be assigned as a comutator of operator &apos;%2&apos; because it has incompatible settings!</source>
-        <translation type="obsolete">操作符 &apos;%1&apos; 不能被设置成操作符 &apos;%2&apos; 的转接器，因为两者的设置不兼容！</translation>
-    </message>
-    <message>
-        <source>The operator &apos;%1&apos; can not be assigned as negator of operator &apos;%2&apos; because it has incompatible settings!</source>
-        <translation type="obsolete">操作符 &apos;%1&apos; 不能被设置成操作符 &apos;%2&apos; 的否定操作符，因为两者的设置不兼容！</translation>
-    </message>
-    <message>
-        <source>The type &apos;%1&apos; can not self refer in the attributes &apos;element&apos; or &apos;copy type&apos; or be used as a data type of an attribute in the configuration of a composite type!</source>
-        <translation type="obsolete">类型 &apos;%1&apos; 不能对&apos;元素’或&apos;复制类型&apos;进行自引用，或被用作组合类型配置中属性的数据类型！</translation>
-    </message>
-    <message>
-        <source>Assignment of invalid element to type &apos;%1&apos;!</source>
-        <translation type="obsolete">指派给类型 &apos;%1&apos; 的元素无效！</translation>
-    </message>
-    <message>
-        <source>Assignment of invalid alignment to type &apos;%1&apos;!</source>
-        <translation type="obsolete">指派了无效的对齐给类型 ‘%1&apos;！</translation>
-    </message>
-    <message>
         <source>Assignment of invalid name to the table generated from N-N relationship!</source>
         <translation type="unfinished">分配无效名称给由 N-N 关系生成的表！</translation>
     </message>
     <message>
-        <source>The relationship &apos;%1&apos; can not make use of the special primary key. Only generalization/dependency relationships have access to this resource!</source>
-        <translation type="obsolete">关系 &apos;%1&apos; 无法使用特殊主键。只有泛化 / 依赖关系才能！</translation>
-    </message>
-    <message>
-        <source>Assignment of invalid suffix to the relationship &apos;%1&apos;!</source>
-        <translation type="obsolete">分配无效前缀给关系 &apos;%1&apos;！</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be edited or deleted because it was automatically included through a relationship! To manipulate the object is necessary to make it from the edit form of the relationship that holds it.</source>
-        <translation type="obsolete">无法修改或删除对象 &apos;%1&apos;(%2)，因为它已经被关系自动包含了！要修改对象请到对应的关系修改窗口中操作。</translation>
-    </message>
-    <message>
-        <source>The object &apos;%1&apos; (%2) can not be deleted because it is protected!</source>
-        <translation type="obsolete">无法删除对象 &apos;%1&apos;(%2)，因为它是被保护的！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; has already been declared earlier!</source>
-        <translation type="obsolete">组 &apos;%1&apos;已经声明过了！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; can not be built in the groups declaration block (&apos;%2&apos;)!</source>
-        <translation type="obsolete">组 &apos;%1&apos;无法在组声明区域 (%2) 中构建！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; was built but not declared in the groups declaration block (&apos;%2&apos;)!</source>
-        <translation type="obsolete">组 &apos;%1&apos;已被构建，但是不是在组声明区域 (%2) 中声明的！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; can not be built without possessing child elements!</source>
-        <translation type="obsolete">无法构建组 &apos;%1&apos;，因为没有子元素！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; can not be built once more because this was done in previous blocks!</source>
-        <translation type="obsolete">无法重新构建组 &apos;%1&apos;，因为之前已经做过了！</translation>
-    </message>
-    <message>
-        <source>The group &apos;%1&apos; has been declared but not built!</source>
-        <translation type="obsolete">组 &apos;%1&apos; 已经声明，但是没构建！</translation>
-    </message>
-    <message>
-        <source>Reference to a column of objects table with invalid index!</source>
-        <translation type="obsolete">请参考索引无效的对象表中的一列！</translation>
-    </message>
-    <message>
-        <source>Reference to a row of objects table with invalid index!</source>
-        <translation type="obsolete">请参考索引无效的对象表中的一行！</translation>
-    </message>
-    <message>
-        <source>The schema public and the languages plpgsql, c and sql can not be manipulated because they are reserved to PostgreSQL! They are present in the model database only as a reference!</source>
-        <translation type="obsolete">模式 public 和语言 plpgsql，Ｃ，SQL 都无法修改，因为它们是系统保留的！它们在模型数据库中只是一个参考！</translation>
-    </message>
-    <message>
-        <source>The new configuration function invalidates the object &apos;%1&apos; (%2)! In this case it is needed to undo the relationship between the affected object and function so that the new configuration of the latter to take effect!</source>
-        <translation type="obsolete">新的配置函数使对象 &apos;%1&apos;(%2) 无效！在这种情况下，需要重新配置下对象与函数的关系，然后，新的配置就会起作用了！</translation>
-    </message>
-    <message>
-        <source>A vision reference must have at least one SQL application : SELECT, FROM, FROM-WHERE or After WHERE!</source>
-        <translation type="obsolete">一个视图引用必须至少有一个 SQL 应用：SELECT，FROM，FROM-WHERE 或者 WHERE 后！</translation>
-    </message>
-    <message>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
         <translation type="unfinished">主键，外键，唯一键等约束必须有至少一列来关联他们！对于外键约束引用列必须被选中！</translation>
-    </message>
-    <message>
-        <source>Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!</source>
-        <translation type="unfinished">无法载入一个或多少配置文件！请检查文件是否存在配置目录中或者文件错误来防止错误继续在下一次启动中发生！</translation>
-    </message>
-    <message>
-        <source>Could not find the default settings file &apos;%1&apos;! To restore default settings check the existence of the file and try again!</source>
-        <translation type="obsolete">没有发现默认的配置文件 &apos;%1&apos;！重新保存默认设置到文件中！</translation>
     </message>
     <message>
         <source>The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!
@@ -3925,40 +3441,12 @@ Ref. column(s): %2</source>
 %1</translation>
     </message>
     <message>
-        <source>Could not load the plugin &apos;%1&apos; from the library &apos;%2&apos;! Message returned by plugin manager: &apos;%3&apos;</source>
-        <translation type="obsolete">无法从库 &apos;%2&apos; 中加载插件 &apos;%1&apos;！插件管理器的返回信息：&apos;%3&apos;</translation>
-    </message>
-    <message>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
         <translation type="unfinished">插件加载发生错误，一个或多个插件没有激活！详情请查看异常信息。</translation>
     </message>
     <message>
-        <source>Invalid syntax in file %1, line %2, column %3!</source>
-        <translation type="unfinished">错误语法位于文件 %1，行 %2，列 %3 有！</translation>
-    </message>
-    <message>
-        <source>Invalid conditional instruction &apos;%1&apos; on file %2, line %3, column %4!</source>
-        <translation type="obsolete">错误的条件结构 &apos;%1&apos; 位于文件 %2，行 %3，列 %4！</translation>
-    </message>
-    <message>
-        <source>Unknown attribute &apos;%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="obsolete">未知属性 &apos;%1&apos; 位于文件 %2，行 %3，列 %4！</translation>
-    </message>
-    <message>
-        <source>Invalid metacharacter &apos;%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="obsolete">错误的字符 &apos;%1&apos; 位于文件 %2，行 %3，列 %4！</translation>
-    </message>
-    <message>
-        <source>Attribute &apos;%1&apos; with an undefined value in file %2, line %3, column %4!</source>
-        <translation type="obsolete">未赋值的属性 &apos;%1&apos; 位于文件 %2，行 %3，列 %4！</translation>
-    </message>
-    <message>
         <source>Assignment of empty XML buffer to parser!</source>
         <translation type="unfinished">分配空白 XML 缓存给解析器！</translation>
-    </message>
-    <message>
-        <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
-        <translation type="unfinished">无法访问文件或目录 %1！请确保它存在，或者检查用户具有访问权限！</translation>
     </message>
     <message>
         <source>Assignment of empty DTD file name!</source>
@@ -3969,17 +3457,8 @@ Ref. column(s): %2</source>
         <translation type="unfinished">分配空白名称给 DTD 声明！</translation>
     </message>
     <message>
-        <source>Error while interpreting XML buffer at line %1 column %2.
-Message generated by the parser: &apos;%3&apos;. %4</source>
-        <translation type="obsolete">解析 XML 缓存发生错误，错误位于行 %1 列 %2。解析器生成的消息：&apos;%3&apos;。%4</translation>
-    </message>
-    <message>
         <source>Operation on unallocated element tree! It is necessary to load the XML parser buffer and interpret it so that the tree is generated!</source>
         <translation type="unfinished">操作在未分配的元素树上！必须要先载入 XML 解析器缓存并执行解析，这样树才能生成！</translation>
-    </message>
-    <message>
-        <source>Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
-        <translation type="unfinished">无法载入文件 %1。它出现了不一致性或其中有的依赖项出现错误或已经丢失！</translation>
     </message>
     <message>
         <source>Operation with unallocated tree element!</source>
@@ -4002,12 +3481,6 @@ Message generated by the parser: &apos;%3&apos;. %4</source>
         <translation type="unfinished">尝试没有定义配置参数的连接！</translation>
     </message>
     <message>
-        <source>Could not connect to the database.
-Message returned: &apos;%1&apos;</source>
-        <translation type="obsolete">无法连接数据库。
-返回的信息：&apos;%1&apos;</translation>
-    </message>
-    <message>
         <source>Assignment of not allocated SQL command result!</source>
         <translation type="unfinished">指定的 SQL 命令结果不存在！</translation>
     </message>
@@ -4016,31 +3489,12 @@ Message returned: &apos;%1&apos;</source>
         <translation type="unfinished">无法获得 SQL 命令结果，因为服务器端的反馈客户端无法识别！</translation>
     </message>
     <message>
-        <source>Unable to allocate command result for the SQL because the server has generated a fatal error!
-Message returned by the DBMS: %1</source>
-        <translation type="obsolete">无法获取 SQL 的命令结果，因为服务端产生了严重错误！数据库服务器返回的信息：%1</translation>
-    </message>
-    <message>
-        <source>Unable to allocate the result of the SQL command because the command passed was an empty SQL!</source>
-        <translation type="obsolete">无法获取 SQL 命令的结果，因为命令是一条空 SQL！</translation>
-    </message>
-    <message>
         <source>Reference to a column of tuple with invalid index!</source>
         <translation type="unfinished">引用的一列元组索引无效！</translation>
     </message>
     <message>
         <source>Reference to a column of tuple with invalid name!</source>
         <translation type="unfinished">引用的一列元组名字无效！</translation>
-    </message>
-    <message>
-        <source>Reference to a tuple with index invalid or the result is empty (no tuples)!</source>
-        <translation type="obsolete">引用的元组索引无效或者结果为空(没有)！</translation>
-    </message>
-    <message>
-        <source>Could not execute the SQL command.
- Message returned: %1</source>
-        <translation type="obsolete">无法执行 SQL 命令。
-返回的信息： %1</translation>
     </message>
     <message>
         <source>Assignment of a not allocated column to object `%1&apos; (%2)!</source>
@@ -4267,10 +3721,6 @@ Message returned by the DBMS: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>There is already a relationship between `%1&apos; (%2) and `%3&apos; (%4) in the model!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The configuration of the relationship `%1&apos; generates a redundancy between the relationships `%2&apos;. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4391,30 +3841,6 @@ Message returned by the DBMS: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid instruction `%1&apos; on file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown attribute `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid metacharacter `%1&apos; in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid operator `%1&apos; in comparison expression, file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attribute `%1&apos; with an undefined value in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attribute `%1&apos; with an invalid name in file %2, line %3, column %4!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error while interpreting XML buffer at line %1 column %2.
 Message generated by the parser: %3. %4</source>
         <translation type="unfinished"></translation>
@@ -4527,10 +3953,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unsupported PostgreSQL version (%1) detected! Valid versions are: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4572,10 +3994,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>The widget already has a parent and cannot be assigned to a different object!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The object `%1&apos; (%2) could not be imported due to one or more errors! Check the exception stack for more details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4658,24 +4076,77 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>The connection was unexpectedly closed by the database server `%1&apos; at port `%2&apos;!</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>ExportHelper</name>
     <message>
-        <source>Creating object &apos;%1&apos; (%2)...</source>
-        <translation type="obsolete">正在创建对象 &apos;%1&apos; (%2)...</translation>
+        <source>There is already a relationship between `%1&apos; (%2) and `%3&apos; (%4) in the model! When using relationships of the type generalization, copy and one-to-one there can&apos;t be other relationships linked to the pair of tables.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Creating database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在创建数据库 &apos;%1&apos;...</translation>
+        <source>Unable to load the configuration file `%1&apos;! Please check if file exists in its folder and/or if it is not corrupted!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connecting to database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在连接数据库 &apos;%1&apos;...</translation>
+        <source>Invalid syntax in file `%1&apos;, line %2, column %3!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Creating objects on database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在对数据库 &apos;%1&apos; 创建对象...</translation>
+        <source>Invalid instruction `%1&apos; on file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown attribute `%1&apos; in file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid metacharacter `%1&apos; in file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid operator `%1&apos; in comparison expression, file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attribute `%1&apos; with an undefined value in file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attribute `%1&apos; with an invalid name in file `%2&apos;, line %3, column %4!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not access the file or directory `%1&apos;! Make sure that it exists or if the user has access permissions on it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not load file `%1&apos;. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsupported PostgreSQL version (%1) detected! Valid versions are between %2 and %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The object `%1&apos; (%2), oid `%3&apos;, could not be imported due to one or more errors! Check the exception stack for more details. `HINT:&apos; if the object somehow references objects in `pg_catalog&apos; or `information_schema&apos; consider enable the importing of system objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to drop the database `%1&apos; because it is defined as the default database for the connection `%2&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The column `%1&apos; must be `NOT NULL&apos; because it composes the primary key of the table `%2&apos;. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL&apos; on it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The identity column `%1&apos; has an invalid data type! The data type must be `smallint&apos;, `integer&apos; or `bigint&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference to an invalid affected command in policy `%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference to an invalid special role in policy `%1&apos;!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4763,6 +4234,14 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>Whole words</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hide this widget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FunctionWidget</name>
@@ -4771,16 +4250,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>属性</translation>
     </message>
     <message>
-        <source>Langague:</source>
-        <translation>语言：</translation>
-    </message>
-    <message>
         <source>Function Type:</source>
         <translation>函数类型：</translation>
-    </message>
-    <message>
-        <source>Window Function:</source>
-        <translation type="vanished">窗口函数：</translation>
     </message>
     <message>
         <source>Execution Cost:</source>
@@ -4803,16 +4274,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>返回方法：</translation>
     </message>
     <message>
-        <source>Simple</source>
-        <translation type="vanished">简单</translation>
-    </message>
-    <message>
         <source>Set</source>
         <translation>集</translation>
-    </message>
-    <message>
-        <source>Table</source>
-        <translation type="vanished">表</translation>
     </message>
     <message>
         <source>Parameters</source>
@@ -4855,16 +4318,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>默认值</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>Return Table</source>
         <translation>返回表</translation>
-    </message>
-    <message>
-        <source>IN/OUT</source>
-        <translation type="vanished">IN/OUT</translation>
     </message>
     <message>
         <source>Si&amp;mple</source>
@@ -4886,40 +4341,16 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GeneralConfigWidget</name>
     <message>
-        <source>Grid size:</source>
-        <translation>网格大小：</translation>
-    </message>
-    <message>
         <source>Operation history:</source>
         <translation>操作记录：</translation>
-    </message>
-    <message>
-        <source>items</source>
-        <translation>条</translation>
-    </message>
-    <message>
-        <source>Autosave interval:</source>
-        <translation>自动保存的时间间隔：</translation>
-    </message>
-    <message>
-        <source>minute(s)</source>
-        <translation>分钟</translation>
-    </message>
-    <message>
-        <source>Save widgets position</source>
-        <translation type="vanished">保存部件位置</translation>
-    </message>
-    <message>
-        <source>Save current session</source>
-        <translation type="vanished">保存当前会话</translation>
-    </message>
-    <message>
-        <source>Printing Options:</source>
-        <translation type="vanished">打印选项：</translation>
     </message>
     <message>
         <source>Print grid</source>
@@ -4934,10 +4365,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>纸型：</translation>
     </message>
     <message>
-        <source>Custom (Based on margins)</source>
-        <translation type="vanished">定制 (基于边框)</translation>
-    </message>
-    <message>
         <source>Orientation:</source>
         <translation>方向：</translation>
     </message>
@@ -4948,10 +4375,6 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <source>Landscape</source>
         <translation>横向</translation>
-    </message>
-    <message>
-        <source>Margins:</source>
-        <translation type="vanished">边距：</translation>
     </message>
     <message>
         <source>Milimeters</source>
@@ -4992,10 +4415,6 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <source>Form</source>
         <translation>Form</translation>
-    </message>
-    <message>
-        <source>pixels</source>
-        <translation>像素</translation>
     </message>
     <message>
         <source>A0 (841 x 1189 mm)</source>
@@ -5138,15 +4557,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished">常规</translation>
     </message>
     <message>
-        <source>The opened models will be saved periodically</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Check if there is a new version on server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check for updates at startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5175,14 +4586,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Move canvas by keep mouse on corners</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>By default panning mode is triggered with left click and range selection with Shift + left click.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Swap panning and range selection triggers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5325,11 +4728,115 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>The little brown fox jumps over the lazy dog</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Minimum object opacity (%): </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defines the minimum opacity percentage applied to the objects when using the fade out feature. A zero opacity causes the object to be completely hidden not being possible to interact with it in the canvas area.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Canvas grid size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defines the vertical and horizontal grid size. This value affects the spacing of objects when using object grid alignment feature.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default the range selection is triggered with Shift + left click. By checking this option range selection will be activated only with a single click and move.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trigger range selection with a single click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defines the maximum amount of elements held in the operation history. Once reached the maximum number the history is automatically cleaned.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defines the period when the opened models will be saved automatically.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Autosave interval (minutes):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replaces any straight line in relationship by curved ones in order to improve the model&apos;s visualization.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use curved lines for relationships</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souce code editor args:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear the entire SQL comand history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in file manager</source>
+        <translation type="unfinished">在文件管理器中打开</translation>
+    </message>
+    <message>
+        <source>Overrides the default user interface language defined by the system. Requires restarting the program. &lt;strong&gt;NOTE:&lt;/strong&gt; UI translations are third party collaborations thus any typo or mistake should be reported directly to their respective maintainers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQL history max. length:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check updates at startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User interface language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse the source code editor application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Souce code editor:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Configurations directory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>GraphicalView</name>
+    <name>GenericSQLWidget</name>
     <message>
-        <source>Connected rels: %1</source>
+        <source>SQL code</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5343,10 +4850,6 @@ Message returned by the DBMS: `%1&apos;</source>
 <context>
     <name>IndexWidget</name>
     <message>
-        <source>Indexing Type:</source>
-        <translation type="obsolete">索引类型：</translation>
-    </message>
-    <message>
         <source>Fill Factor:</source>
         <translation>填充因子：</translation>
     </message>
@@ -5359,84 +4862,12 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>并发</translation>
     </message>
     <message>
-        <source>Check duplicates</source>
-        <translation type="obsolete">检查重复</translation>
-    </message>
-    <message>
         <source>Fast update</source>
         <translation>快速更新</translation>
     </message>
     <message>
-        <source>Conditional Expr.:</source>
-        <translation type="vanished">条件表达式：</translation>
-    </message>
-    <message>
         <source>Elements</source>
         <translation>元素</translation>
-    </message>
-    <message>
-        <source>Column:</source>
-        <translation type="obsolete">列：</translation>
-    </message>
-    <message>
-        <source>Expression:</source>
-        <translation type="obsolete">表达式:</translation>
-    </message>
-    <message>
-        <source>Operator Class:</source>
-        <translation type="obsolete">操作符类：</translation>
-    </message>
-    <message>
-        <source>Sorting:</source>
-        <translation type="obsolete">正在排序：</translation>
-    </message>
-    <message>
-        <source>Ascending</source>
-        <translation type="obsolete">升序</translation>
-    </message>
-    <message>
-        <source>Descending</source>
-        <translation type="obsolete">降序</translation>
-    </message>
-    <message>
-        <source>Nulls first</source>
-        <translation type="obsolete">Null 值优先</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">类型</translation>
-    </message>
-    <message>
-        <source>Operator Class</source>
-        <translation type="obsolete">操作符类</translation>
-    </message>
-    <message>
-        <source>Sorting</source>
-        <translation type="obsolete">排序</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>Element</source>
-        <translation type="obsolete">元素</translation>
-    </message>
-    <message>
-        <source>Nulls First</source>
-        <translation type="obsolete">Null 值优先</translation>
-    </message>
-    <message>
-        <source>Expressão</source>
-        <translation type="obsolete">表达式</translation>
-    </message>
-    <message>
-        <source>Sim</source>
-        <translation type="obsolete">是</translation>
-    </message>
-    <message>
-        <source>Não</source>
-        <translation type="obsolete">否</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -5466,24 +4897,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>可信：</translation>
     </message>
     <message>
-        <source>Handler Function:</source>
-        <translation type="vanished">处理函数：</translation>
-    </message>
-    <message>
-        <source>Validator Function:</source>
-        <translation type="vanished">验证函数：</translation>
-    </message>
-    <message>
-        <source>Inline Function:</source>
-        <translation type="vanished">内联函数：</translation>
-    </message>
-    <message>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
         <translation>语言处理函数的签名分别为：&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;处理函数：&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;验证函数：&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;内联函数：&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Validator Func.:</source>
@@ -5509,132 +4924,28 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <translation type="vanished">帮助(&amp;H)</translation>
-    </message>
-    <message>
         <source>&amp;Show</source>
         <translation>视图(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Tools</source>
-        <translation type="vanished">工具(&amp;T)</translation>
-    </message>
-    <message>
-        <source>&amp;Plugins</source>
-        <translation type="vanished">插件(&amp;P)</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation type="vanished">文件</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="vanished">编辑</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation type="obsolete">帮助</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="obsolete">显示</translation>
     </message>
     <message>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <source>Save</source>
-        <translation type="vanished">保存</translation>
-    </message>
-    <message>
         <source>Zoom -</source>
         <translation>缩小</translation>
-    </message>
-    <message>
-        <source>Load</source>
-        <translation type="vanished">打开</translation>
-    </message>
-    <message>
-        <source>Next</source>
-        <translation type="vanished">下一个</translation>
-    </message>
-    <message>
-        <source>Previous</source>
-        <translation type="vanished">上一个</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation type="vanished">退出</translation>
-    </message>
-    <message>
-        <source>About pgModeler</source>
-        <translation type="vanished">关于 pgModeler</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="vanished">打印</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation type="vanished">撤销</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation type="vanished">重做</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">导出</translation>
     </message>
     <message>
         <source>Show grid</source>
         <translation>显示网格</translation>
     </message>
     <message>
-        <source>Align to grid</source>
-        <translation type="vanished">对齐到网格</translation>
-    </message>
-    <message>
-        <source>Fullscreen</source>
-        <translation type="vanished">全屏</translation>
-    </message>
-    <message>
-        <source>Show the model on fullscreen mode</source>
-        <translation type="vanished">在全屏模式下显示模型</translation>
-    </message>
-    <message>
         <source>Show the page delimiters</source>
         <translation>显示分页符</translation>
     </message>
     <message>
-        <source>Configurations</source>
-        <translation type="vanished">配置</translation>
-    </message>
-    <message>
-        <source>Save all models</source>
-        <translation type="vanished">保存全部模型</translation>
-    </message>
-    <message>
-        <source>Some models were modified! Do you want to save them before finish the pgModeler?</source>
-        <translation type="vanished">模型已被修改！你要在关闭 pgModeler 之前保存它们吗？</translation>
-    </message>
-    <message>
         <source>Save &apos;%1&apos; as...</source>
         <translation>保存 &apos;%1&apos; 为...</translation>
-    </message>
-    <message>
-        <source>Print grid</source>
-        <translation type="obsolete">打印网格</translation>
-    </message>
-    <message>
-        <source>Print page numbers</source>
-        <translation type="obsolete">打印页码</translation>
-    </message>
-    <message>
-        <source>Model Options</source>
-        <translation type="obsolete">模型选项</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -5643,10 +4954,6 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <source>Load model</source>
         <translation>打开模型</translation>
-    </message>
-    <message>
-        <source>Overview</source>
-        <translation type="vanished">概览</translation>
     </message>
     <message>
         <source>Show the model overview</source>
@@ -5689,14 +4996,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <source>Save as</source>
-        <translation type="vanished">另存为</translation>
-    </message>
-    <message>
-        <source>F2</source>
-        <translation type="obsolete">F2</translation>
-    </message>
-    <message>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
@@ -5713,14 +5012,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <source>Close model</source>
-        <translation type="vanished">关闭模型</translation>
-    </message>
-    <message>
-        <source>Normal zoom</source>
-        <translation type="vanished">正常比例</translation>
-    </message>
-    <message>
         <source>Ctrl+0</source>
         <translation>Ctrl+0</translation>
     </message>
@@ -5729,20 +5020,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>对齐对象到网格</translation>
     </message>
     <message>
-        <source>F11</source>
-        <translation type="vanished">F11</translation>
-    </message>
-    <message>
-        <source>Show delimiters</source>
-        <translation type="vanished">显示分页符</translation>
-    </message>
-    <message>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
-    </message>
-    <message>
-        <source>Widgets</source>
-        <translation type="vanished">部件</translation>
     </message>
     <message>
         <source>Save all</source>
@@ -5757,18 +5036,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>模型的纸型/页边距已改变，这可能导致对象打印出错。要使用新的设置继续打印吗？要使用默认设置，请单击“否”或“取消”中止打印。</translation>
     </message>
     <message>
-        <source>Tools</source>
-        <translation type="obsolete">工具</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="vanished">视图</translation>
-    </message>
-    <message>
-        <source>Model</source>
-        <translation type="vanished">模型</translation>
-    </message>
-    <message>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>数据库模型 (*.dbm);; 所有文件 (*.*)</translation>
     </message>
@@ -5777,16 +5044,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>保存模型</translation>
     </message>
     <message>
-        <source>The model were modified! Do you want to save it before close?</source>
-        <translation type="vanished">模型已被修改！要在关闭前保存吗？</translation>
-    </message>
-    <message>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F3</source>
-        <translation type="obsolete">F3</translation>
     </message>
     <message>
         <source>Ctrl+Shift+S</source>
@@ -6089,10 +5348,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Determine the changes between model and database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ctrl+Shift+D</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6256,64 +5511,33 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>Executing pending &lt;strong&gt;%1&lt;/strong&gt; operation...</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>MessageBox</name>
     <message>
-        <source>Show/hide exceptions stack.</source>
-        <translation type="vanished">显示/隐藏异常堆栈。</translation>
+        <source>Determine the changes between model/database and another database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Yes</source>
-        <translation type="vanished">是(&amp;Y)</translation>
+        <source>Arrange objects</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;No</source>
-        <translation type="vanished">否(&amp;N)</translation>
+        <source>Rearrange objects over the canvas</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <source>Grid</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation type="vanished">错误</translation>
+        <source>Hierarchical</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alert</source>
-        <translation type="vanished">警告</translation>
+        <source>Scattered</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation type="vanished">信息</translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="vanished">取消(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="vanished">......</translation>
-    </message>
-    <message>
-        <source>msg</source>
-        <translation type="vanished">信息</translation>
-    </message>
-    <message>
-        <source>&amp;Ok</source>
-        <translation type="vanished">确定(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Exceptions</source>
-        <translation type="vanished">异常</translation>
-    </message>
-    <message>
-        <source>Show excpetion stack in text format (useful to report errors).</source>
-        <translation type="vanished">以文本形式显示异常堆栈(有助于报告错误)。</translation>
+        <source>Rearrange objects over the canvas is an irreversible operation! Would like to proceed?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6462,15 +5686,7 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save textboxes to the output file when extracting metadata. When loading the file textboxes are recreated and duplicated ones are ignored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Textbox objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save tags to the output file when extracting metadata. When loading the file tags are recreated and duplicated ones are ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6495,22 +5711,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Operation:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extracts the objects metadata from one of the loaded models and apply to the current model.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extract from a &amp;model</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reads the objects metadata from a previously saved backup file and apply to the current model.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore a bac&amp;kup file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6549,23 +5749,67 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>Objects metadata file (*.omf);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Handles the objects&apos; fade out status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Objects&apos; fade out status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save tags to the output file when extracting metadata. When loading the file, the tags are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save textboxes to the output file when extracting metadata. When loading the file, the textboxes are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handles the tables&apos; and views&apos; extended attributes display status in the metadata file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tables&apos; extended attributes display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save generic SQL objects to the output file when extracting metadata. When loading the file, the objects are recreated and duplicated ones are ignored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generic SQL objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extracts the objects&apos; metadata from the loaded models and apply to the current focused model. A backup file can be specified to where the focused model&apos;s current metadata will be saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Extract and restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extracts the objects metadata from one of the loaded models saving the info to a backup file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract &amp;only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reads the objects&apos; metadata from a previously saved backup file and apply to the current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Restore a backup file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelDatabaseDiffForm</name>
     <message>
-        <source>Database model diff</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate diff from model</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6574,10 +5818,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Database:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6590,10 +5830,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trucate tables before alter columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6785,14 +6021,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Importing database &lt;strong&gt;%1&lt;/strong&gt;...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comparing the model &lt;strong&gt;%1&lt;/strong&gt; and database &lt;strong&gt;%2&lt;/strong&gt;...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Confirmation</source>
         <translation type="unfinished">确认</translation>
     </message>
@@ -6806,10 +6034,6 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Preview diff</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Exporting diff to database &lt;strong&gt;%1&lt;/strong&gt;...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6858,17 +6082,89 @@ Message returned by the DBMS: `%1&apos;</source>
         <source>SQL code (*.sql);;All files (*.*)</source>
         <translation type="unfinished">SQL 代码 (*.sql);;所有文件 (*.*)</translation>
     </message>
+    <message>
+        <source>Diff tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate diff code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current model:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(model)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compare to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Froce the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop missing columns and constraints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Truncate tables before alter columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import &amp;&amp; Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">导出</translation>
+    </message>
+    <message>
+        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore error codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>model not saved yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(none)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step %1/%2: Importing database &lt;strong&gt;%3&lt;/strong&gt;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step %1/%2: Comparing &lt;strong&gt;%3&lt;/strong&gt; and &lt;strong&gt;%4&lt;/strong&gt;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step %1/%2: Exporting diff to database &lt;strong&gt;%3&lt;/strong&gt;...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelExportForm</name>
-    <message>
-        <source>Model Export</source>
-        <translation>导出模型</translation>
-    </message>
-    <message>
-        <source>Select the export type:</source>
-        <translation type="vanished">选择导出类型：</translation>
-    </message>
     <message>
         <source>File:</source>
         <translation>文件：</translation>
@@ -6882,14 +6178,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>生成 SQL 代码的 PostgreSQL 版本 </translation>
     </message>
     <message>
-        <source>Check if the system user has write permission on target folder.</source>
-        <translation type="vanished">检查系统用户是否具有目标文件夹的写权限。</translation>
-    </message>
-    <message>
-        <source>Options:</source>
-        <translation type="vanished">选项：</translation>
-    </message>
-    <message>
         <source>Show grid</source>
         <translation>显示网格</translation>
     </message>
@@ -6898,20 +6186,8 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>忽略重复对象</translation>
     </message>
     <message>
-        <source>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</source>
-        <translation type="vanished">pgModeler 忽略重复对象的错误，并只会创建数据库中不存在的模型对象。此选项可用在模型导出以后才创建的对象。</translation>
-    </message>
-    <message>
-        <source>Export to DBMS:</source>
-        <translation type="vanished">导出到数据库系统：</translation>
-    </message>
-    <message>
         <source>Connection:</source>
         <translation>连接：</translation>
-    </message>
-    <message>
-        <source>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</source>
-        <translation type="vanished">当无法确定数据库系统的版本或想生成用于测试的特定版本 SQL 代码时，建议选择此项。</translation>
     </message>
     <message>
         <source>&amp;Export</source>
@@ -6922,10 +6198,6 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>关闭(&amp;C)</translation>
     </message>
     <message>
-        <source>Generating source code...</source>
-        <translation type="obsolete">正在生成源代码...</translation>
-    </message>
-    <message>
         <source>Initializing model export...</source>
         <translation>正在初始化模型导出...</translation>
     </message>
@@ -6934,60 +6206,12 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation>正在保存文件 &apos;%1&apos;</translation>
     </message>
     <message>
-        <source>Creating object &apos;%1&apos; (%2)...</source>
-        <translation type="obsolete">正在创建对象 &apos;%1&apos; (%2)...</translation>
-    </message>
-    <message>
-        <source>Creating database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在创建数据库 &apos;%1&apos;...</translation>
-    </message>
-    <message>
-        <source>Connecting to database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在连接数据库 &apos;%1&apos;...</translation>
-    </message>
-    <message>
-        <source>Creating objects on database &apos;%1&apos;...</source>
-        <translation type="obsolete">正在对数据库 &apos;%1&apos; 创建对象...</translation>
-    </message>
-    <message>
         <source>Exporting process sucessfuly ended!</source>
         <translation>成功导出！</translation>
     </message>
     <message>
-        <source>Error on export!</source>
-        <translation type="vanished">导出出错！</translation>
-    </message>
-    <message>
         <source>Export model as...</source>
         <translation>导出模型为...</translation>
-    </message>
-    <message>
-        <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation type="vanished">SQL 代码 (*.sql);;所有文件 (*.*)</translation>
-    </message>
-    <message>
-        <source>PNG image (*.png);;All files (*.*)</source>
-        <translation type="vanished">PNG 图像 (*.png);; 所有文件 (*.*)</translation>
-    </message>
-    <message>
-        <source>Export to SQL file:</source>
-        <translation type="vanished">导出到 SQL 文件：</translation>
-    </message>
-    <message>
-        <source>Export to PNG image:</source>
-        <translation type="vanished">导出到 PNG 图像：</translation>
-    </message>
-    <message>
-        <source>Image:</source>
-        <translation type="vanished">图像：</translation>
-    </message>
-    <message>
-        <source>Show the page delimiters</source>
-        <translation type="vanished">显示分页符</translation>
-    </message>
-    <message>
-        <source>Check if the system user has write permission on image target folder.</source>
-        <translation type="vanished">检查系统用户是否有图像目标文件夹的写权限。</translation>
     </message>
     <message>
         <source>...</source>
@@ -7000,10 +6224,6 @@ Message returned by the DBMS: `%1&apos;</source>
     <message>
         <source>Progress label...</source>
         <translation>处理标签...</translation>
-    </message>
-    <message>
-        <source>ico</source>
-        <translation type="vanished">ico</translation>
     </message>
     <message>
         <source>Export model</source>
@@ -7050,19 +6270,11 @@ Message returned by the DBMS: `%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Image (PNG)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type:</source>
         <translation type="unfinished">类型：</translation>
     </message>
     <message>
         <source>Zoom:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vectorial (SVG)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7111,6 +6323,22 @@ Message returned by the DBMS: `%1&apos;</source>
     </message>
     <message>
         <source>Exporting process canceled by user!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore error codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I&amp;mage (PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Vectorial (SVG)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7378,10 +6606,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">父类型</translation>
     </message>
     <message>
-        <source>Visible Object Types</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select All</source>
         <translation type="unfinished">选择全部</translation>
     </message>
@@ -7449,6 +6673,14 @@ p, li { white-space: pre-wrap; }
         <source>By ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Visible object types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Model objects</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelOverviewWidget</name>
@@ -7456,17 +6688,14 @@ p, li { white-space: pre-wrap; }
         <source>Model overview</source>
         <translation>模型概览</translation>
     </message>
+    <message>
+        <source>Failed to generate the overview image.
+The requested size %1 x %2 was too big and there was not enough memory to allocate!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelRestorationForm</name>
-    <message>
-        <source>Modified: %1</source>
-        <translation type="vanished">修改：%1</translation>
-    </message>
-    <message>
-        <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation type="vanished">yyyy-MM-dd hh:mm:ss</translation>
-    </message>
     <message>
         <source>Model restoration</source>
         <translation>模型恢复</translation>
@@ -7478,10 +6707,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>&amp;Cancel</source>
         <translation>取消(&amp;C)</translation>
-    </message>
-    <message>
-        <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &apos;Restore&apos; to reopen the models or &apos;Cancel&apos; to abort the restoration.</source>
-        <translation type="vanished">pgModeler 在之前运行时没有正常关闭且部分模型还处于编辑状态。单击“恢复”重新打开模型或“取消”放弃恢复。</translation>
     </message>
     <message>
         <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &lt;strong&gt;Restore&lt;/strong&gt; to reopen the models or &lt;strong&gt;Cancel&lt;/strong&gt; to abort the restoration.</source>
@@ -7574,19 +6799,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Apply Fix</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Ctrl+S</source>
         <translation type="unfinished">Ctrl+S</translation>
     </message>
     <message>
         <source>Change the creation order for two objects by swapping their ids</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Swap Ids</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7685,17 +6902,25 @@ p, li { white-space: pre-wrap; }
         <source>Processing object: %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Apply fixes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap ids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The column &lt;strong&gt;%1&lt;/strong&gt; on &lt;strong&gt;%2&lt;/strong&gt; &lt;em&gt;(%3)&lt;/em&gt; is referencing the geospatial data type &lt;strong&gt;%4&lt;/strong&gt; but the &lt;strong&gt;postgis&lt;/strong&gt; extension is not present in the model!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;HINT:&lt;/strong&gt; Create the extension in the model or let it be created by applying the needed fixes.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ModelWidget</name>
-    <message>
-        <source>Generalization</source>
-        <translation type="vanished">泛化</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; The object model is protected! New objects will be inserted only when the protection is removed!</source>
-        <translation type="vanished">&lt;STRONG&gt;警告：&lt;/STRONG&gt;对象模型处于受保护状态！只有在移除保护之后才可以插入对象！</translation>
-    </message>
     <message>
         <source>Source code</source>
         <translation>源代码</translation>
@@ -7721,20 +6946,8 @@ p, li { white-space: pre-wrap; }
         <translation>取消保护</translation>
     </message>
     <message>
-        <source>Pretects the object(s) against modifications</source>
-        <translation type="obsolete">添加修改保护</translation>
-    </message>
-    <message>
-        <source>Removes from the objetc(s) the protection against modifications</source>
-        <translation type="obsolete">移除修改保护</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>删除</translation>
-    </message>
-    <message>
-        <source>Delete the selected object(s)</source>
-        <translation type="vanished">删除选中对象</translation>
     </message>
     <message>
         <source>Select all</source>
@@ -7745,44 +6958,20 @@ p, li { white-space: pre-wrap; }
         <translation>选择模型中的全部图形对象</translation>
     </message>
     <message>
-        <source>Converts the n-n relationship into table</source>
-        <translation type="vanished">将 N-N 关系转换成表</translation>
-    </message>
-    <message>
         <source>Copy</source>
         <translation>复制</translation>
-    </message>
-    <message>
-        <source>Copy the selected objects(s)</source>
-        <translation type="vanished">复制选中对象</translation>
     </message>
     <message>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <source>Paste the previos copied object(s)</source>
-        <translation type="obsolete">粘贴已复制的对象</translation>
-    </message>
-    <message>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <source>Displays objects that reference and that are dependent of the selected object</source>
-        <translation type="vanished">显示选中对象的引用对象和依赖对象</translation>
-    </message>
-    <message>
-        <source>New object</source>
-        <translation type="vanished">新建对象</translation>
-    </message>
-    <message>
         <source>Add a new object in the model</source>
         <translation>添加新对象到模型中</translation>
-    </message>
-    <message>
-        <source>Quick actions</source>
-        <translation type="vanished">快速操作</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -7797,32 +6986,16 @@ p, li { white-space: pre-wrap; }
         <translation>移动到模式</translation>
     </message>
     <message>
-        <source>Move the object to another schema</source>
-        <translation type="vanished">将此对象移动到另一个模式</translation>
-    </message>
-    <message>
         <source>Edit permissions</source>
         <translation>编辑权限</translation>
-    </message>
-    <message>
-        <source>Edit object&apos;s permissions</source>
-        <translation type="vanished">编辑对象的权限</translation>
     </message>
     <message>
         <source>Change owner</source>
         <translation>变更所有者</translation>
     </message>
     <message>
-        <source>Change object&apos;s owner</source>
-        <translation type="vanished">变更对象的所有者</translation>
-    </message>
-    <message>
         <source>Select children</source>
         <translation>选择子对象</translation>
-    </message>
-    <message>
-        <source>Selects all the children graphical objects on the selected schema</source>
-        <translation type="vanished">选择所选定模式的所有子图形对象</translation>
     </message>
     <message>
         <source>Loading database model</source>
@@ -7831,10 +7004,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Saving database model</source>
         <translation>正在保存数据库模型</translation>
-    </message>
-    <message>
-        <source>Confirmation</source>
-        <translation type="vanished">确认</translation>
     </message>
     <message>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
@@ -7857,55 +7026,7 @@ p, li { white-space: pre-wrap; }
         <translation>约束</translation>
     </message>
     <message>
-        <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
-        <translation type="obsolete">转换关系是不可逆操作并会删除所有操作记录！要继续吗？</translation>
-    </message>
-    <message>
-        <source>Dependence</source>
-        <translation type="obsolete">依赖</translation>
-    </message>
-    <message>
-        <source>Convert rel. n-n</source>
-        <translation type="vanished">转换 N-N 关系</translation>
-    </message>
-    <message>
-        <source>Cut the selected object(s)</source>
-        <translation type="vanished">剪切选中的对象</translation>
-    </message>
-    <message>
-        <source>Depend. / Refer.</source>
-        <translation type="obsolete">依赖/引用</translation>
-    </message>
-    <message>
-        <source>Relationship </source>
-        <translation type="obsolete">关系 </translation>
-    </message>
-    <message>
-        <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
-        <translation type="obsolete">注意：同时删除多个对象可能会造成模型中其他对象不可逆的失效。要删除所有选中的对象吗？</translation>
-    </message>
-    <message>
-        <source>Validating object: %1 (%2)</source>
-        <translation type="vanished">正在验证对象：%1 (%2)</translation>
-    </message>
-    <message>
-        <source>Pasting object: %1 (%2)</source>
-        <translation type="vanished">正在粘贴对象：%1 (%2)</translation>
-    </message>
-    <message>
-        <source>Generating XML code of object: %1 (%2)</source>
-        <translation type="vanished">正在生成对象 %1 (%2) 的 XML 代码</translation>
-    </message>
-    <message>
         <source>Protects object(s) from modifications</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dependencies</source>
-        <translation type="obsolete">依赖</translation>
-    </message>
-    <message>
-        <source>Highlight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8102,6 +7223,94 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The cascade deletion found some problems when running! Some objects could not be deleted or registered in the operation&apos;s history! Please, refer to error stack for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select tagged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation type="unfinished">选择</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extended attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation type="unfinished">显示</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jump to table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Schemas rectangles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fade in/out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fade in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fade out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relationships</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap ids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit the objects creation order by swapping their ids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Schemas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tables</source>
+        <translation type="unfinished">表</translation>
+    </message>
+    <message>
+        <source>Views</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textboxes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8394,6 +7603,18 @@ p, li { white-space: pre-wrap; }
         <source>0</source>
         <translation type="unfinished">0</translation>
     </message>
+    <message>
+        <source>Generic SQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Policy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation type="unfinished">8</translation>
+    </message>
 </context>
 <context>
     <name>NumberedTextEditor</name>
@@ -8411,6 +7632,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ident left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">打开</translation>
+    </message>
+    <message>
+        <source>Load the object&apos;s source code from an external file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">编辑</translation>
+    </message>
+    <message>
+        <source>Edit the source code in the preferred external editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQL file (*.sql);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The source editor `%1&apos; is running on `pid: %2&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not start the source code editor application `%1&apos;! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2&apos;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8439,14 +7696,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>References</source>
         <translation>引用</translation>
-    </message>
-    <message>
-        <source>Dependeces / References of Object</source>
-        <translation type="obsolete">对象的依赖/引用</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Object&apos;s dependencies &amp; references</source>
@@ -8493,14 +7742,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Highlight graphical objects when selecting them or their children on the result list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Highlight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8563,6 +7804,30 @@ p, li { white-space: pre-wrap; }
         <source>No objects found.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>(Un)selects the graphical objects in the results grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation type="unfinished">选择</translation>
+    </message>
+    <message>
+        <source>Fades outs all the graphical objects in the results grid (or those not listed). The current fade in/out state of all objects is modified.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fade out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Listed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not listed</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ObjectRenameWidget</name>
@@ -8607,110 +7872,106 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ObjectTableWidget</name>
-    <message>
-        <source>Add Item</source>
-        <translation>添加项目</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>移除项目</translation>
-    </message>
-    <message>
-        <source>Update Item</source>
-        <translation>更新项目</translation>
-    </message>
-    <message>
-        <source>Remove All</source>
-        <translation>删除全部</translation>
-    </message>
-    <message>
-        <source>Edit Item</source>
-        <translation>编辑项目</translation>
-    </message>
-    <message>
-        <source>Move Up</source>
-        <translation>上移</translation>
-    </message>
-    <message>
-        <source>Move Down</source>
-        <translation>下移</translation>
-    </message>
-    <message>
-        <source>Move to start</source>
-        <translation>移至开头</translation>
-    </message>
-    <message>
-        <source>Move to end</source>
-        <translation>移至末尾</translation>
-    </message>
-    <message>
-        <source>Do you really want to remove the selected item?</source>
-        <translation>要移除选中的项目吗？</translation>
-    </message>
-    <message>
-        <source>Do you really want to remove the all items?</source>
-        <translation>要移除全部项目吗？</translation>
-    </message>
+    <name>ObjectsTableWidget</name>
     <message>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <source>Add Item</source>
+        <translation type="unfinished">添加项目</translation>
     </message>
     <message>
         <source>Ins</source>
-        <translation>Ins</translation>
+        <translation type="unfinished">Ins</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished">移除项目</translation>
     </message>
     <message>
         <source>Del</source>
-        <translation>Del</translation>
+        <translation type="unfinished">Del</translation>
+    </message>
+    <message>
+        <source>Update Item</source>
+        <translation type="unfinished">更新项目</translation>
     </message>
     <message>
         <source>Alt+R</source>
-        <translation>Alt+R</translation>
+        <translation type="unfinished">Alt+R</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished">删除全部</translation>
     </message>
     <message>
         <source>Shift+Del</source>
-        <translation>Shift+Del</translation>
+        <translation type="unfinished">Shift+Del</translation>
+    </message>
+    <message>
+        <source>Duplicate item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Item</source>
+        <translation type="unfinished">编辑项目</translation>
     </message>
     <message>
         <source>Space</source>
-        <translation>Space</translation>
+        <translation type="unfinished">Space</translation>
+    </message>
+    <message>
+        <source>Move Up</source>
+        <translation type="unfinished">上移</translation>
     </message>
     <message>
         <source>Ctrl+Up</source>
-        <translation>Ctrl+Up</translation>
+        <translation type="unfinished">Ctrl+Up</translation>
+    </message>
+    <message>
+        <source>Move Down</source>
+        <translation type="unfinished">下移</translation>
     </message>
     <message>
         <source>Ctrl+Down</source>
-        <translation>Ctrl+Down</translation>
+        <translation type="unfinished">Ctrl+Down</translation>
+    </message>
+    <message>
+        <source>Move to start</source>
+        <translation type="unfinished">移至开头</translation>
     </message>
     <message>
         <source>Ctrl+Home</source>
-        <translation>Ctrl+Home</translation>
+        <translation type="unfinished">Ctrl+Home</translation>
+    </message>
+    <message>
+        <source>Move to end</source>
+        <translation type="unfinished">移至末尾</translation>
     </message>
     <message>
         <source>Ctrl+End, Ctrl+S</source>
-        <translation>Ctrl+End, Ctrl+S</translation>
-    </message>
-    <message>
-        <source>Confirmação</source>
-        <translation type="vanished">确认</translation>
+        <translation type="unfinished">Ctrl+End, Ctrl+S</translation>
     </message>
     <message>
         <source>Confirmation</source>
         <translation type="unfinished">确认</translation>
     </message>
+    <message>
+        <source>Do you really want to remove the selected item?</source>
+        <translation type="unfinished">要移除选中的项目吗？</translation>
+    </message>
+    <message>
+        <source>Do you really want to remove all the items?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OperationList</name>
-    <message>
-        <source>Undoing operation on object: %1 (%2)</source>
-        <translation type="vanished">正在撤销对象操作： %1 (%2)</translation>
-    </message>
-    <message>
-        <source>Redoing operation on object:: %1 (%2)</source>
-        <translation type="vanished">正在重做对象操作： %1 (%2)</translation>
-    </message>
     <message>
         <source>(invalid object)</source>
         <translation type="unfinished"></translation>
@@ -8767,14 +8028,6 @@ p, li { white-space: pre-wrap; }
         <translation>操作：%1</translation>
     </message>
     <message>
-        <source>Undoing operations...</source>
-        <translation type="vanished">正在撤销操作...</translation>
-    </message>
-    <message>
-        <source>Redoing operations...</source>
-        <translation type="vanished">正在重做操作...</translation>
-    </message>
-    <message>
         <source>Operation history exclusion</source>
         <translation>不显示操作记录</translation>
     </message>
@@ -8818,10 +8071,6 @@ p, li { white-space: pre-wrap; }
         <translation>元素</translation>
     </message>
     <message>
-        <source>Elemente Type:</source>
-        <translation type="obsolete">元素类型：</translation>
-    </message>
-    <message>
         <source>Operator</source>
         <translation>操作符</translation>
     </message>
@@ -8846,14 +8095,6 @@ p, li { white-space: pre-wrap; }
         <translation>支持/策略：</translation>
     </message>
     <message>
-        <source>Recheck</source>
-        <translation type="obsolete">重新检查</translation>
-    </message>
-    <message>
-        <source>Family:</source>
-        <translation type="obsolete">族：</translation>
-    </message>
-    <message>
         <source>Storage Type</source>
         <translation>存储类型</translation>
     </message>
@@ -8868,18 +8109,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Support/Strategy</source>
         <translation>支持/策略</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="vanished">是</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation type="vanished">否</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Element Type:</source>
@@ -8900,10 +8129,6 @@ p, li { white-space: pre-wrap; }
         <source>Indexing:</source>
         <translation>正在建立索引：</translation>
     </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
 </context>
 <context>
     <name>OperatorWidget</name>
@@ -8916,46 +8141,6 @@ p, li { white-space: pre-wrap; }
         <translation>参数</translation>
     </message>
     <message>
-        <source>Functions</source>
-        <translation type="obsolete">函数</translation>
-    </message>
-    <message>
-        <source>Constraints:</source>
-        <translation type="obsolete">约束：</translation>
-    </message>
-    <message>
-        <source>Operator:</source>
-        <translation type="obsolete">操作符：</translation>
-    </message>
-    <message>
-        <source>Operators</source>
-        <translation type="obsolete">操作符</translation>
-    </message>
-    <message>
-        <source>Commutation:</source>
-        <translation type="obsolete">交换：</translation>
-    </message>
-    <message>
-        <source>Negation:</source>
-        <translation type="obsolete">否定：</translation>
-    </message>
-    <message>
-        <source>Sort (1):</source>
-        <translation type="obsolete">排序 (1)：</translation>
-    </message>
-    <message>
-        <source>Sort (2):</source>
-        <translation type="obsolete">排序 (2)：</translation>
-    </message>
-    <message>
-        <source>Less than:</source>
-        <translation type="obsolete">小于：</translation>
-    </message>
-    <message>
-        <source>Greater then:</source>
-        <translation type="obsolete">大于：</translation>
-    </message>
-    <message>
         <source>Right Argument Type</source>
         <translation>右参数类型</translation>
     </message>
@@ -8966,10 +8151,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
         <translation>在创建单目操作符时必须指定它们参数中的&lt;strong&gt;&lt;em&gt;任何&lt;/em&gt;&lt;/strong&gt;一个。另外，作为操作符的函数必须有且只有一个参数，而且这个参数的类型必须与单目操作符参数的类型相同。</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>MERGES</source>
@@ -9015,10 +8196,6 @@ p, li { white-space: pre-wrap; }
         <translation>模式：</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>IN</source>
         <translation>IN</translation>
     </message>
@@ -9054,18 +8231,6 @@ p, li { white-space: pre-wrap; }
         <translation>添加权限</translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>类型：</translation>
-    </message>
-    <message>
-        <source>Role</source>
-        <translation>角色</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>ID:</source>
         <translation>ID：</translation>
     </message>
@@ -9094,10 +8259,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit permissions</source>
         <translation type="unfinished">编辑权限</translation>
     </message>
@@ -9121,6 +8282,14 @@ p, li { white-space: pre-wrap; }
         <source>/* Could not generate the SQL code preview for permissions!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; grid empty in order to create a %1 applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PgModelerCLI</name>
@@ -9137,10 +8306,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connection aliased as &apos;%1&apos; was not found on configuration file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Usage: pgmodeler-cli [OPTIONS]</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9149,75 +8314,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PostgreSQL Database Modeler Project - pgmodeler.com.br</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Export to a sql script file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Export to a png image.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Export directly to a PostgreSQL server.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Version of generated SQL code. Only for file or dbms export.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2			 Silent execution. Only critical errors are shown during process.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2			 Show this help menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Draws the grid on the exported png image.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2	 Draws the page delimiters on the exported png image.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>DBMS export options: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2	 Ignores errors related to duplicated objects that eventually exists on server side.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[ALIAS]	 Connection configuration alias to be used.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[HOST]		 PostgreSQL host which export will operate.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[PORT]		 PostgreSQL host listening port.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[DBNAME]	 Connection&apos;s initial database.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No export mode specified!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No input file specified!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No output file specified!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9233,61 +8330,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading input file: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export to PNG image: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export to SQL script file: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export to DBMS: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export successfully ended!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copyright 2006-2015 Raphael A. Silva &lt;raphael@pgmodeler.com.br&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This CLI tool provides the operations to export pgModeler&apos;s database models without
-				  the need to load them on graphical interface as well to fix model files to the most recent
-				  accepted structure. All available options are described below.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>General options: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[FILE]		 Input model file (.dbm). Mandatory use when fixing a model or exporting it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[FILE]		 Output file. Mandatory use when fixing model or export to file or png.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Try to fix the structure of the input model file in order to make it loadable again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Model fix tries. When reaching the maximum count the invalid objects will be discard.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Export to a svg file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 List available connections on %3 file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9295,59 +8338,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>   %1, %2		 Each page will be exported on a separated png image. (Only for PNG)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[FACTOR]		 Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Drop the database before execute a export process.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Runs the DROP commands attached to SQL-enabled objects.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Simulates a export process. Actually executes all steps but undoing any modification.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2		 Generates temporary names for database, roles and tablespaces when in simulation mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[USER]		 PostgreSQL username.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>   %1, %2=[PASSWORD]	 PostgreSQL user password.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Miscellaneous options: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>   %1, %2=[ACTION]	 Handles the file association to .dbm files. The ACTION can be [%3 | %4].</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>There are no connections configured.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Available connections (alias : conn. string)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export, fix model and update mime operations can&apos;t be used at the same time!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Multiple export mode specified!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9367,19 +8362,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fixed model file: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Model successfully fixed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mime database successfully updated.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export to SVG file: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9421,6 +8404,427 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Running update-mime-database command...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection aliased as &apos;%1&apos; was not found in the configuration file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PostgreSQL Database Modeler Project - pgmodeler.io</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copyright 2006-2018 Raphael A. Silva &lt;raphael@pgmodeler.io&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This CLI tool provides several operations over models and databases without the need to perform them
+in pgModeler&apos;s graphical interface. All available options are described below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [FILE]		    Input model file (.dbm). This is mandatory for fix, export operations.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [DBNAME]	    Input database name. This is mandatory for import operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [FILE]		    Output file. This is mandatory for fixing model or exporting to file, png or svg.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Try to fix the structure of the input model file in order to make it loadable again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [NUMBER]	    Model fix tries. When reaching the maximum count the invalid objects will be discarded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Export the input model to a sql script file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Export the input model to a png image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Export the input model to a svg file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Export the input model directly to a PostgreSQL server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Import a database to an output file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2			    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Force the PostgreSQL version of generated SQL code.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2			    Silent execution. Only critical messages and errors are shown during process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2			    Show this help menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    List available connections in file %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [ALIAS]	    Connection configuration alias to be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [HOST]		    PostgreSQL host in which a task will operate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [PORT]		    PostgreSQL host listening port.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [USER]		    PostgreSQL username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [PASSWORD]	    PostgreSQL user password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [DBNAME]	    Connection&apos;s initial database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Draws the grid in the exported image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Draws the page delimiters in the exported image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Each page will be exported in a separated png image. (Only for PNG images)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [FACTOR]		    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Ignores errors related to duplicated objects that eventually exist in the server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Drop the database before execute a export process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Runs the DROP commands attached to SQL-enabled objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Simulates an export process by executing all steps but undoing any modification in the end.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Generates temporary names for database, roles and tablespaces when in simulation mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database import options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Ignore all errors and try to create as many as possible objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Run import in debug mode printing all queries executed in the server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diff options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [DBNAME]	    The database used in the comparison. All the SQL code generated is applied to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Save the generated diff code to output file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Apply the generated diff code on the database server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Don&apos;t preview the generated diff code when applying it to the server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Drop cluster level objects like roles and tablespaces.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Revoke permissions already set on the database. New permissions configured in the input model are still applied.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren&apos;t removed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Rename the destination database when the names of the involved databases are different.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2		    Don&apos;t drop or truncate objects in cascade mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn&apos;t compatible to the old one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Don&apos;t reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Don&apos;t force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2	    Don&apos;t recreate the unmodifiable objects. These objects are the ones which can&apos;t be changed via ALTER command.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  %1, %2 [ACTION]	    Handles the file association to .dbm files. The ACTION can be [%3 | %4].</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** The diff process allows the usage of the following options related to import and export operations: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>* Export: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>* Import: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** When running the diff using two databases (%1 and %2) there&apos;s the need to specify two connections/aliases. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available connections (alias : connection string)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No operation mode was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export, fix model, import database, diff and update mime operations can&apos;t be used at the same time!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple export mode was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No input file was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No input database was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No output file was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No input file or database was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The input file and database can&apos;t be used at the same time!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No database to be compared was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No diff action (save or apply) was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No output file for the diff code was specified!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** Error code `%1&apos; found and ignored. Proceeding with export.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** Command: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading input file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed model file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to PNG image: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to SVG file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to SQL script file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to DBMS: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export successfully ended!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starting database import...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input database: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving the imported database to file...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import successfully ended!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Starting diff process...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input model: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compare to: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading input model...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Importing the database `%1&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comparing the generated models...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No differences were detected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving diff to file `%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>** Proceed with the diff applying? (yes/no) &gt; </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diff code not applied to the server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Applying diff to the database `%1&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diff successfully ended!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mime database successfully updated!
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9548,10 +8952,6 @@ p, li { white-space: pre-wrap; }
         <translation>已加载的插件</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Details about plugins development and installation can be found at &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; plugin installation requires pgModeler to be restarted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;关于插件开发和安装的详细信息可以在&lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;中找到。 &lt;span style=&quot; font-weight:600;&quot;&gt;注意：&lt;/span&gt; 安装插件需要重启pgModeler。</translation>
-    </message>
-    <message>
         <source>Plugin</source>
         <translation>插件</translation>
     </message>
@@ -9565,6 +8965,45 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PolicyWidget</name>
+    <message>
+        <source>Basics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roles</source>
+        <translation type="unfinished">角色</translation>
+    </message>
+    <message>
+        <source>Expressions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>USING:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CHECK:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; grid empty in order to create a %1 applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>new_database</source>
@@ -9573,21 +9012,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>%1 (line: %2)</source>
         <translation>%1 (行：%2)</translation>
-    </message>
-</context>
-<context>
-    <name>QuickRenameWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">Form</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation type="obsolete">重命名</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
     </message>
 </context>
 <context>
@@ -9624,15 +9048,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Connect FK to PK columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This mode is the classical one. It connects the relationship to tables through their central points.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9747,16 +9163,36 @@ p, li { white-space: pre-wrap; }
         <source>Default</source>
         <translation type="unfinished">默认</translation>
     </message>
+    <message>
+        <source>This mode renders the relationships in crow&apos;s foot notation which has a better semantics and readability. It also determines the optimal point where the relationship is connected on the tables&apos; edges taking their position into account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crow&apos;s foot notation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This mode determines the optimal point where the relationship is connected on the tables&apos; edges taking their position into account. It implies the usage of the classical ER notation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect tables&apos; edges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This mode is available only for &lt;strong&gt;one-to-one&lt;/strong&gt;, &lt;strong&gt;one-to-many&lt;/strong&gt; and &lt;strong&gt;fk relationships&lt;/strong&gt; but provides a better semantics when linking tables by placing the lines on the exact point where the relationship occurs. It implies the usage of the classical ER notation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This mode is the classical one. It connects the relationship to tables through their central points. It implies the usage of the classical ER notation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RelationshipWidget</name>
     <message>
         <source>General</source>
         <translation>常规</translation>
-    </message>
-    <message>
-        <source>Relationship:</source>
-        <translation type="vanished">关系：</translation>
     </message>
     <message>
         <source>One to one relationship</source>
@@ -9775,44 +9211,16 @@ p, li { white-space: pre-wrap; }
         <translation>泛化关系 (继承)</translation>
     </message>
     <message>
-        <source>Dependency relationship</source>
-        <translation type="obsolete">依赖关系</translation>
-    </message>
-    <message>
         <source>Identifier</source>
         <translation>标识符</translation>
-    </message>
-    <message>
-        <source>Source Table:</source>
-        <translation type="obsolete">原始表：</translation>
-    </message>
-    <message>
-        <source>Target Table:</source>
-        <translation type="obsolete">目标表：</translation>
     </message>
     <message>
         <source>Cardinality:</source>
         <translation>基数：</translation>
     </message>
     <message>
-        <source>Source Required</source>
-        <translation type="obsolete">原始对象是必须的</translation>
-    </message>
-    <message>
-        <source>Target Required</source>
-        <translation type="obsolete">目标对象是必须的</translation>
-    </message>
-    <message>
         <source>Name of the table generated from many to many relationship</source>
         <translation>多对多关系生成表的名称</translation>
-    </message>
-    <message>
-        <source>Table Name:</source>
-        <translation type="vanished">表名称：</translation>
-    </message>
-    <message>
-        <source>Foreign key</source>
-        <translation type="vanished">外键</translation>
     </message>
     <message>
         <source>Deferrable:</source>
@@ -9847,26 +9255,6 @@ p, li { white-space: pre-wrap; }
         <translation>约束</translation>
     </message>
     <message>
-        <source>Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences.</source>
-        <translation type="vanished">编辑现有关系的属性是允许的，但必须小心，因为此操作会导致无效的对象 (如触发器，索引，约束和序列)，进而破坏引用列。</translation>
-    </message>
-    <message>
-        <source>Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / dependency relationships.</source>
-        <translation type="obsolete">如果你想在受方表中包含一个带有继承/复制列的主键，请使用特殊主键。此特性仅适用于泛化/依赖关系。</translation>
-    </message>
-    <message>
-        <source>Automatic Suffix</source>
-        <translation type="vanished">自动补充后缀</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>1-1</source>
-        <translation type="vanished">1-1</translation>
-    </message>
-    <message>
         <source>1-n</source>
         <translation>1-N</translation>
     </message>
@@ -9875,20 +9263,8 @@ p, li { white-space: pre-wrap; }
         <translation>N-N</translation>
     </message>
     <message>
-        <source>gen</source>
-        <translation type="vanished">gen</translation>
-    </message>
-    <message>
         <source>dep</source>
         <translation>dep</translation>
-    </message>
-    <message>
-        <source>Source Suffix:</source>
-        <translation type="vanished">原始后缀：</translation>
-    </message>
-    <message>
-        <source>Target Suffix:</source>
-        <translation type="vanished">目标后缀：</translation>
     </message>
     <message>
         <source>Dependency / Copy relationship</source>
@@ -10144,14 +9520,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ResultSetModel</name>
+    <message>
+        <source>[binary data]</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RoleWidget</name>
     <message>
         <source>Password:</source>
         <translation>密码：</translation>
-    </message>
-    <message>
-        <source>Validity:</source>
-        <translation type="obsolete">合法性：</translation>
     </message>
     <message>
         <source>Connections:</source>
@@ -10164,26 +9543,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Superuser</source>
         <translation>超级用户</translation>
-    </message>
-    <message>
-        <source>Inherit Permissions</source>
-        <translation>继承权限</translation>
-    </message>
-    <message>
-        <source>Create Database</source>
-        <translation type="obsolete">创建数据库</translation>
-    </message>
-    <message>
-        <source>Can Login</source>
-        <translation>允许登录</translation>
-    </message>
-    <message>
-        <source>Create Users/Groups</source>
-        <translation type="obsolete">创建用户/组</translation>
-    </message>
-    <message>
-        <source>Encrypted Password</source>
-        <translation type="obsolete">加密密码</translation>
     </message>
     <message>
         <source>Members</source>
@@ -10202,36 +9561,8 @@ p, li { white-space: pre-wrap; }
         <translation>成员(管理员)</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>SysID:</source>
-        <translation type="obsolete">SysID:</translation>
-    </message>
-    <message>
-        <source>yyyy-MMM-dd hh:mm</source>
-        <translation type="vanished">yyyy-MMM-dd hh:mm</translation>
-    </message>
-    <message>
         <source>Member of</source>
         <translation>成员</translation>
-    </message>
-    <message>
-        <source>SysID</source>
-        <translation type="obsolete">SysID</translation>
-    </message>
-    <message>
-        <source>Can create Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can create Role</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can use Replication</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Encrypted</source>
@@ -10243,6 +9574,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;										  Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inherit permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can create database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bypass RLS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can use replication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can create role</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10261,20 +9616,12 @@ p, li { white-space: pre-wrap; }
         <translation>条件表达式：</translation>
     </message>
     <message>
-        <source>Executed Commands</source>
-        <translation type="vanished">执行的命令</translation>
-    </message>
-    <message>
         <source>SQL Command:</source>
         <translation>SQL 命令：</translation>
     </message>
     <message>
         <source>To create a rule that does not perform any action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) simply do not specify commands in the SQL commands table.</source>
         <translation>创建一个不执行任何操作的规则（&lt;STRONG&gt;DO NOTHING&lt;/STRONG&gt;）简单点说，就是 SQL 命令表中没有的命令。</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>SQL command</source>
@@ -10292,27 +9639,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Form</translation>
     </message>
     <message>
-        <source>Load SQL script</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save SQL commands</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search in SQL code</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Find</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10400,10 +9731,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[%1]: SQL command successfully executed. &lt;em&gt;%2 &lt;strong&gt;%3&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Rows affected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10433,6 +9760,90 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close the current SQL script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SQL script currently handled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(not saved)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handle external SQL script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fi&amp;nd</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current working database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">打开</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">保存</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished">另存为</translation>
+    </message>
+    <message>
+        <source>[%1]: SQL command successfully executed in &lt;em&gt;&lt;strong&gt;%2&lt;/strong&gt;&lt;/em&gt;. &lt;em&gt;%3 &lt;strong&gt;%4&lt;/strong&gt;&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plain format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CVS format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find in history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide find tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10490,21 +9901,48 @@ p, li { white-space: pre-wrap; }
         <source>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>SceneInfoWidget</name>
     <message>
-        <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; You are about to drop the entire database &lt;strong&gt;%1&lt;/strong&gt;! All data will be completely wiped out. Do you really want to proceed?</source>
+        <source>Form</source>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <source>Current position of the mouse in the canvas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You&apos;re running a demonstration version! The data manipulation feature is available only in the full version!</source>
+        <source>-</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current zoom factor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Currently selected object(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dimensions of the selected object(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sel. objects: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SchemaWidget</name>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">Form</translation>
-    </message>
     <message>
         <source>Show rectangle</source>
         <translation type="unfinished"></translation>
@@ -10541,15 +9979,15 @@ p, li { white-space: pre-wrap; }
         <translation>缓存：</translation>
     </message>
     <message>
-        <source>Owner:</source>
-        <translation type="vanished">所有者：</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
         <source>Owner Col.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Defualt values:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User defined</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10689,10 +10127,6 @@ p, li { white-space: pre-wrap; }
         <translation>版本：</translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>类型：</translation>
-    </message>
-    <message>
         <source>Source code visualization</source>
         <translation>查看源代码</translation>
     </message>
@@ -10703,10 +10137,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>-- SQL code unavailable for this type of object --</source>
         <translation>-- 无法生成此对象类型的 SQL 代码 --</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>PostgreSQL</source>
@@ -10804,16 +10234,48 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It&apos;s recommended to use this feature only when the SQL validation fails in cases when a object is being referenced in portions where the ordinary validation couldn&apos;t reach, e.g., inside of a rule command or check constraint expression.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Swap the values of the fields</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Swap values</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the objects creation order is an irreversible operation and cause the operations history to be automatically erased. Note that the creation order configured in this form is not definitive and may change after a model validation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap the object ids changing their creation order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap ids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object</source>
+        <translation type="unfinished">对象</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished">类型</translation>
+    </message>
+    <message>
+        <source>Parent Object</source>
+        <translation type="unfinished">父对象</translation>
+    </message>
+    <message>
+        <source>Parent Type</source>
+        <translation type="unfinished">父类型</translation>
     </message>
 </context>
 <context>
@@ -10838,16 +10300,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add</source>
-        <translation type="unfinished">新建</translation>
-    </message>
-    <message>
         <source>Ins</source>
         <translation type="unfinished">Ins</translation>
-    </message>
-    <message>
-        <source>Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely igored when generating the &lt;strong&gt;INSERT&lt;/strong&gt; commands.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add an empty column</source>
@@ -10855,10 +10309,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove all rows from the grid preserving columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10870,23 +10320,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="unfinished">删除</translation>
-    </message>
-    <message>
         <source>Del</source>
         <translation type="unfinished">Del</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in &lt;span style=&quot; font-weight:600;&quot;&gt;{}&lt;/span&gt;. To use &lt;span style=&quot; font-weight:600;&quot;&gt;{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;}&lt;/span&gt; as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\{&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;\}&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Duplicate the selected rows</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10926,7 +10364,75 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>(no columns)</source>
+        <source>Copy items on the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">复制</translation>
+    </message>
+    <message>
+        <source>Add row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste items on the grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation type="unfinished">粘贴</translation>
+    </message>
+    <message>
+        <source>Ctrl+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fills the grid using a CSV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some invalid or duplicated columns were detected. In order to solve this issue double-click the header of the highlighted ones in order to define the correct name in which the data belongs to or delete the entire column. Note that these columns are completely ignored when generating the &lt;span style=&quot; font-weight:600;&quot;&gt;INSERT&lt;/span&gt; commands.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the values of all selected cells at once</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bulk data edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete all columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Empty values are assumed as &lt;span style=&quot; font-weight:600;&quot;&gt;DEFAULT&lt;/span&gt;. To use special values like &lt;span style=&quot; font-weight:600;&quot;&gt;NULL&lt;/span&gt;, a function call like &lt;span style=&quot; font-weight:600;&quot;&gt;now()&lt;/span&gt; or a specific data escaping, enclose values in two slashes, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;/value/&lt;/span&gt;. To use a slash as part of the value prepend the backslash character, e.g., &lt;span style=&quot; font-weight:600;&quot;&gt;\/&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete all rows</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10939,46 +10445,7 @@ Relationship: %1</source>
     </message>
 </context>
 <context>
-    <name>TableView</name>
-    <message>
-        <source>Connected rels: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>TableWidget</name>
-    <message>
-        <source>Columns</source>
-        <translation type="vanished">列</translation>
-    </message>
-    <message>
-        <source>Constraints</source>
-        <translation type="vanished">约束</translation>
-    </message>
-    <message>
-        <source>Triggers</source>
-        <translation type="vanished">触发器</translation>
-    </message>
-    <message>
-        <source>Rules</source>
-        <translation type="vanished">规则</translation>
-    </message>
-    <message>
-        <source>Indexes</source>
-        <translation type="vanished">索引</translation>
-    </message>
-    <message>
-        <source>Tables</source>
-        <translation type="vanished">表</translation>
-    </message>
-    <message>
-        <source>Ancestor Tables:</source>
-        <translation type="obsolete">祖先表：</translation>
-    </message>
-    <message>
-        <source>Copied Tables:</source>
-        <translation type="obsolete">复制的表：</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>名称</translation>
@@ -11010,18 +10477,6 @@ Relationship: %1</source>
     <message>
         <source>Indexing</source>
         <translation>索引</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>With OIDs:</source>
-        <translation type="vanished">接受 OIDs：</translation>
-    </message>
-    <message>
-        <source>Attribute</source>
-        <translation>属性</translation>
     </message>
     <message>
         <source>ON DELETE</source>
@@ -11099,6 +10554,62 @@ Relationship: %1</source>
         <source>Define initial data for the table</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable row level security</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Force RLS for owner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Policies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attribute(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to mark a column as primary key when the table already has a primary key which was created by a relationship! This action should be done in the section &lt;strong&gt;Primary key&lt;/strong&gt; of the relationship&apos;s editing form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to mark a column created by a relationship as primary key! This action should be done in the section &lt;strong&gt;Primary key&lt;/strong&gt; of the relationship&apos;s editing form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>USING expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CHECK expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roles</source>
+        <translation type="unfinished">角色</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">是</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">否</translation>
+    </message>
 </context>
 <context>
     <name>TablespaceWidget</name>
@@ -11141,10 +10652,6 @@ Relationship: %1</source>
 <context>
     <name>TaskProgressWidget</name>
     <message>
-        <source>Loading object: [object] (type)</source>
-        <translation type="obsolete">载入对象：[对象] (类型)</translation>
-    </message>
-    <message>
         <source>Executing tasks</source>
         <translation>正在执行的任务</translation>
     </message>
@@ -11166,10 +10673,6 @@ Relationship: %1</source>
     <message>
         <source>Select text color</source>
         <translation>选择文本颜色</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -11195,32 +10698,12 @@ Relationship: %1</source>
 <context>
     <name>TriggerWidget</name>
     <message>
-        <source>Triggering Mode:</source>
-        <translation type="obsolete">触发器模式：</translation>
-    </message>
-    <message>
-        <source>Execute per row</source>
-        <translation type="obsolete">逐行执行</translation>
-    </message>
-    <message>
         <source>Event:</source>
         <translation>事件：</translation>
     </message>
     <message>
         <source>Deferrable:</source>
         <translation>可延迟：</translation>
-    </message>
-    <message>
-        <source>Deferral:</source>
-        <translation type="obsolete">延迟：</translation>
-    </message>
-    <message>
-        <source>Referenced Table:</source>
-        <translation type="obsolete">引用表：</translation>
-    </message>
-    <message>
-        <source>Conditional Expr.:</source>
-        <translation type="obsolete">条件表达式：</translation>
     </message>
     <message>
         <source>Columns</source>
@@ -11251,14 +10734,6 @@ Relationship: %1</source>
         <translation>类型</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>INSTEAD OF</source>
-        <translation type="obsolete">INSTEAD OF</translation>
-    </message>
-    <message>
         <source>INSERT</source>
         <translation>INSERT</translation>
     </message>
@@ -11273,10 +10748,6 @@ Relationship: %1</source>
     <message>
         <source>TRUNCATE</source>
         <translation>TRUNCATE</translation>
-    </message>
-    <message>
-        <source>Constraint Trigger:</source>
-        <translation type="obsolete">约束触发器：</translation>
     </message>
     <message>
         <source>Constraint</source>
@@ -11318,10 +10789,6 @@ Relationship: %1</source>
         <translation>枚举</translation>
     </message>
     <message>
-        <source>Composite</source>
-        <translation type="vanished">组合</translation>
-    </message>
-    <message>
         <source>Enumerations</source>
         <translation>枚举</translation>
     </message>
@@ -11342,16 +10809,8 @@ Relationship: %1</source>
         <translation>存储：</translation>
     </message>
     <message>
-        <source>By Value:</source>
-        <translation type="obsolete">按值：</translation>
-    </message>
-    <message>
         <source>Category:</source>
         <translation>类别：</translation>
-    </message>
-    <message>
-        <source>Preferred:</source>
-        <translation type="obsolete">首选：</translation>
     </message>
     <message>
         <source>Delimiter:</source>
@@ -11370,10 +10829,6 @@ Relationship: %1</source>
         <translation>函数</translation>
     </message>
     <message>
-        <source>Copy Type</source>
-        <translation type="obsolete">复制类型</translation>
-    </message>
-    <message>
         <source>Element Type</source>
         <translation>元素类型</translation>
     </message>
@@ -11384,10 +10839,6 @@ Relationship: %1</source>
     <message>
         <source>Type</source>
         <translation>类型</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
     </message>
     <message>
         <source>char</source>
@@ -11553,19 +11004,7 @@ Relationship: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recover a package</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Purchase a new package</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Failed to check updates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: &lt;strong&gt;%1&lt;/strong&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11580,16 +11019,16 @@ Relationship: %1</source>
         <source>The update notifier failed to check for new versions! A HTTP status code was returned: &lt;strong&gt;%1&lt;/strong&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The update notifier failed to check for new versions! Please, verify your internet connectivity and try again! Connection error returned: &lt;em&gt;%1&lt;/em&gt; - &lt;strong&gt;%2&lt;/strong&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ViewWidget</name>
     <message>
         <source>References</source>
         <translation>引用</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="obsolete">类型：</translation>
     </message>
     <message>
         <source>Column</source>
@@ -11602,10 +11041,6 @@ Relationship: %1</source>
     <message>
         <source>Used in:</source>
         <translation>被用在：</translation>
-    </message>
-    <message>
-        <source>After WHERE</source>
-        <translation>WHERE 之后</translation>
     </message>
     <message>
         <source>Table:</source>
@@ -11636,26 +11071,6 @@ Relationship: %1</source>
         <translation>代码预览</translation>
     </message>
     <message>
-        <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation>要引用表中全部列 (*) 保留空的 &lt;strong&gt;Column&lt;/strong&gt; 字段即可，这等同于 &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
-        <translation type="obsolete">-- 无法生成代码。请确认已正确填写全部属性！ --</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="vanished">Form</translation>
-    </message>
-    <message>
-        <source>SELECT-FROM</source>
-        <translation>SELECT-FROM</translation>
-    </message>
-    <message>
-        <source>FROM-WHERE</source>
-        <translation>FROM-WHERE</translation>
-    </message>
-    <message>
         <source>Col./Expr.</source>
         <translation>列/表达式</translation>
     </message>
@@ -11666,10 +11081,6 @@ Relationship: %1</source>
     <message>
         <source>Alias Col.</source>
         <translation>列别名</translation>
-    </message>
-    <message>
-        <source>SF FW AW</source>
-        <translation type="obsolete">SF FW AW</translation>
     </message>
     <message>
         <source>Reference Type:</source>
@@ -11689,10 +11100,6 @@ Relationship: %1</source>
     </message>
     <message>
         <source>Table Expression</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flags: SF FW AW VD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11751,68 +11158,57 @@ Relationship: %1</source>
         <source>With no data</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>VisaoObjetosWidget</name>
     <message>
-        <source>Objects of Model</source>
-        <translation type="obsolete">模型中的对象</translation>
+        <source>The element will be used as part of the SELECT statement to retrieve columns or expressions that will compose the view&apos;s columns</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Visible Objects Type</source>
-        <translation type="obsolete">可见对象类型</translation>
+        <source>SELECT ...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select All</source>
-        <translation type="obsolete">选择全部</translation>
+        <source>The element will be used as part of the WHERE clause in form of conditional expression</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clear All</source>
-        <translation type="obsolete">取消全部</translation>
+        <source>WHERE ...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select</source>
-        <translation type="obsolete">选择</translation>
+        <source>The element is used in the FROM portion of the command in order to reference tables or construct JOIN statements</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <source>FROM ...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Objects view configuration</source>
-        <translation type="obsolete">对象视图配置</translation>
+        <source>The element&apos;s expression is used exclusively as the view&apos;s definition</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tree view</source>
-        <translation type="obsolete">树视图</translation>
+        <source>The element will be appended to the very end of the view&apos;s definition. This is useful when using GROUP BY/HAVING statements</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>List view</source>
-        <translation type="obsolete">列表视图</translation>
+        <source>End expression</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>1</source>
-        <translation type="obsolete">1</translation>
+        <source>Indexes</source>
+        <translation type="unfinished">索引</translation>
     </message>
     <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
+        <source>Flags: SF FW AW EX VD</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Object</source>
-        <translation type="obsolete">对象</translation>
+        <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[table].*&lt;/strong&gt;&lt;/em&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type</source>
-        <translation type="obsolete">类型</translation>
-    </message>
-    <message>
-        <source>Parent Object</source>
-        <translation type="obsolete">父对象</translation>
-    </message>
-    <message>
-        <source>Parent Type</source>
-        <translation type="obsolete">父类型</translation>
+        <source>Indexing</source>
+        <translation type="unfinished">索引</translation>
     </message>
 </context>
 <context>

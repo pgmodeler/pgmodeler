@@ -72,6 +72,7 @@ void OperationListWidget::updateOperationList(void)
 		QFont font=this->font();
 		bool value=false;
 
+		operations_tw->setUpdatesEnabled(false);
 		op_count_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentSize()));
 		current_pos_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentIndex()));
 		redo_tb->setEnabled(model_wgt->op_list->isRedoAvailable());
@@ -139,6 +140,8 @@ void OperationListWidget::updateOperationList(void)
 			if(value)
 				operations_tw->scrollToItem(item1);
 		}
+
+		operations_tw->setUpdatesEnabled(true);
 	}
 
 	emit s_operationListUpdated();

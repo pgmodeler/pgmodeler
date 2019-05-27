@@ -20,6 +20,19 @@ $tb [<widget]
       [ id="sqltool"]
       [ show-attributes-grid="] %if {show-attributes-grid} %then true %else false %end ["]
       [ show-source-pane="] %if {show-source-pane} %then true %else false %end ["]
+    %else
+        %if {id} %then
+            [ id="] {id} ["]
+            [ x="] {x} ["]
+            [ y="] {y} ["]
+            
+            %if {maximized} %then
+                [ maximized="true"]
+            %else
+                [ width="] {width} ["]
+                [ height="] {height} ["]
+            %end
+        %end
     %end
   %end
 %end

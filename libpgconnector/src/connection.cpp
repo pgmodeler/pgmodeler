@@ -519,3 +519,10 @@ void Connection::operator = (const Connection &conn)
 		default_for_oper[idx]=conn.default_for_oper[idx];
 }
 
+void Connection::requestCancel(void)
+{
+	if(!connection)
+		throw Exception(ERR_OPR_NOT_ALOC_CONN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	PQrequestCancel(connection);
+}

@@ -7,6 +7,7 @@
 
 <!ELEMENT relationship (line*,label*,column*,constraint*,special-pk-cols?)>
 <!ATTLIST relationship name CDATA #REQUIRED>
+<!ATTLIST relationship alias CDATA #IMPLIED>
 <!ATTLIST relationship src-required (false|true) "false">
 <!ATTLIST relationship dst-required (false|true) "false">
 <!ATTLIST relationship type (rel11|rel1n|relnn|relgen|reldep|reltv|relfk) "rel11">

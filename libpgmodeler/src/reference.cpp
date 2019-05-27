@@ -33,7 +33,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 
 	//Raises an error if the table/column alias has an invalid name
 	else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
-			(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
+					(!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Raises an error if the column parent table differs from the passed table
@@ -104,6 +104,19 @@ unsigned Reference::getReferenceType(void)
 		return(REFER_COLUMN);
 	else
 		return(REFER_EXPRESSION);
+}
+
+void Reference::setReferenceAlias(const QString &alias)
+{
+	if(alias.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+		throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	ref_alias = alias;
+}
+
+QString Reference::getReferenceAlias(void)
+{
+	return(ref_alias);
 }
 
 QString Reference::getSQLDefinition(unsigned sql_type)
@@ -213,6 +226,7 @@ QString Reference::getXMLDefinition(void)
 	if(column)
 		attribs[ParsersAttributes::COLUMN]=column->getName();
 
+	attribs[ParsersAttributes::REF_ALIAS]=ref_alias;
 	attribs[ParsersAttributes::EXPRESSION]=expression;
 	attribs[ParsersAttributes::ALIAS]=alias;
 	attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;

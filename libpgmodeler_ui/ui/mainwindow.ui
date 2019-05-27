@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>673</height>
+    <height>708</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -503,6 +503,9 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -517,7 +520,7 @@
                   <string>Toggle the object finder</string>
                  </property>
                  <property name="text">
-                  <string>Find Object</string>
+                  <string>Find objects</string>
                  </property>
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
@@ -538,6 +541,9 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -553,6 +559,60 @@
                <property name="bottomMargin">
                 <number>3</number>
                </property>
+               <item>
+                <widget class="QToolButton" name="objects_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Toggle the model objects widget</string>
+                 </property>
+                 <property name="text">
+                  <string>O&amp;bjects</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="shortcut">
+                  <string>Alt+B</string>
+                 </property>
+                 <property name="checkable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>6</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
                <item>
                 <widget class="QToolButton" name="operations_btn">
                  <property name="sizePolicy">
@@ -586,56 +646,8 @@
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>6</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QToolButton" name="objects_btn">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Toggle the model objects widget</string>
-                 </property>
-                 <property name="text">
-                  <string>O&amp;bjects</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/tablespace.png</normaloff>:/icones/icones/tablespace.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>22</width>
-                   <height>22</height>
-                  </size>
-                 </property>
-                 <property name="shortcut">
-                  <string>Alt+B</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 <property name="autoRaise">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -678,7 +690,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -744,6 +756,7 @@
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
+    <addaction name="action_compact_view"/>
     <addaction name="action_overview"/>
    </widget>
    <widget class="QMenu" name="plugins_menu">
@@ -766,6 +779,12 @@
      <width>0</width>
      <height>0</height>
     </size>
+   </property>
+   <property name="font">
+    <font>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="windowTitle">
     <string>General</string>
@@ -800,11 +819,11 @@
    <addaction name="action_welcome"/>
    <addaction name="action_design"/>
    <addaction name="action_manage"/>
+   <addaction name="separator"/>
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
    <addaction name="action_configuration"/>
-   <addaction name="action_support"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
    <property name="enabled">
@@ -873,6 +892,7 @@
    <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
    <addaction name="action_alin_objs_grade"/>
+   <addaction name="action_compact_view"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_new_model">
@@ -1512,6 +1532,36 @@
    </property>
    <property name="toolTip">
     <string>Rearrange objects over the canvas</string>
+   </property>
+  </action>
+  <action name="action_compact_view">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/compactview.png</normaloff>:/icones/icones/compactview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Compact view</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle the compact view on the model(s)</string>
+   </property>
+  </action>
+  <action name="action_other_actions">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/moreactions.png</normaloff>:/icones/icones/moreactions.png</iconset>
+   </property>
+   <property name="text">
+    <string>More</string>
+   </property>
+   <property name="toolTip">
+    <string>Addition action over the model</string>
    </property>
   </action>
  </widget>

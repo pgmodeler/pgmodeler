@@ -113,7 +113,9 @@ SOURCES += src/mainwindow.cpp \
     src/bulkdataeditwidget.cpp \
     src/policywidget.cpp \
     src/objectstablewidget.cpp \
-    src/resultsetmodel.cpp
+    src/resultsetmodel.cpp \
+    src/referencewidget.cpp \
+    src/sqlexecutionhelper.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -214,7 +216,9 @@ HEADERS += src/mainwindow.h \
     src/bulkdataeditwidget.h \
     src/policywidget.h \
     src/objectstablewidget.h \
-    src/resultsetmodel.h
+    src/resultsetmodel.h \
+    src/referencewidget.h \
+    src/sqlexecutionhelper.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -297,7 +301,8 @@ FORMS += ui/mainwindow.ui \
     ui/sceneinfowidget.ui \
     ui/bulkdataeditwidget.ui \
     ui/policywidget.ui \
-    ui/objectstablewidget.ui
+    ui/objectstablewidget.ui \
+    ui/referencewidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

@@ -45,7 +45,7 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 		text.replace(QString("\n"), QString("<br/>"));
 		rect=QRect(QPoint(option.rect.left() + option.decorationSize.width() + 5,
-						  option.rect.top()), option.rect.size());
+							option.rect.top()), option.rect.size());
 
 		//Painting the correct background color according to the item state
 		if((option.state & QStyle::State_Selected) == QStyle::State_Selected)
@@ -63,7 +63,8 @@ void HtmlItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 		//Set the text to a html document instance and draw it to the painter
 		doc.setHtml(text);
-		painter->translate(rect.topLeft());
+		int dy = abs(option.rect.height() - option.decorationSize.height()) / 2;
+		painter->translate(rect.topLeft() - QPoint(0, dy));
 		doc.drawContents(painter);
 	}
 

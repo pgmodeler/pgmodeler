@@ -4,6 +4,7 @@
 -->
 <!ELEMENT policy (comment?,appended-sql?,prepended-sql?,roles?,expression*)>
 <!ATTLIST policy name CDATA #REQUIRED>
+<!ATTLIST policy alias CDATA #IMPLIED>
 <!ATTLIST policy table CDATA #IMPLIED>
 <!ATTLIST policy command CDATA #REQUIRED>
 <!ATTLIST policy permissive (false|true) "true">

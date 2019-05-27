@@ -23,6 +23,8 @@
 #include "plaintextitemdelegate.h"
 #include "baseform.h"
 #include "bulkdataeditwidget.h"
+#include "databaseexplorerwidget.h"
+#include "generalconfigwidget.h"
 
 const QColor DataManipulationForm::ROW_COLORS[3]={ QColor(QString("#C0FFC0")), QColor(QString("#FFFFC0")), QColor(QString("#FFC0C0"))  };
 const unsigned DataManipulationForm::NO_OPERATION=0;
@@ -67,6 +69,10 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(true);
 	});
 
+	truncate_tb->setMenu(&truncate_menu);
+	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(PgModelerUiNS::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()))->setData(QVariant::fromValue<bool>(true));
+
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
 	save_tb->setToolTip(save_tb->toolTip() + QString(" (%1)").arg(save_tb->shortcut().toString()));
@@ -96,7 +102,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(false);
 	});
 
-	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
+	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));	
 	connect(close_btn, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(schema_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listTables()));
 	connect(hide_views_chk, SIGNAL(toggled(bool)), this, SLOT(listTables()));
@@ -116,11 +122,15 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(duplicate_tb, SIGNAL(clicked()), this, SLOT(duplicateRows()));
 	connect(undo_tb, SIGNAL(clicked()), this, SLOT(undoOperations()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveChanges()));
-	connect(bulkedit_tb, SIGNAL(clicked()), this, SLOT(bulkDataEdit()));
 	connect(ord_columns_lst, SIGNAL(currentRowChanged(int)), this, SLOT(enableColumnControlButtons()));
 	connect(move_down_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), v_splitter, SLOT(setVisible(bool)));
+	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
+
+	connect(bulkedit_tb, &QToolButton::clicked, [&](){
+		PgModelerUiNS::bulkDataEdit(results_tbw);
+	});
 
 	connect(filter_tb, &QToolButton::toggled,
 			[&](bool checked){
@@ -164,7 +174,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 							act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
 							act->setEnabled(delete_tb->isEnabled());
 
-							act = item_menu.addAction(bulkedit_tb->icon(), trUtf8("Edit cell(s)"), this, SLOT(bulkDataEdit()), bulkedit_tb->shortcut());
+							act = item_menu.addAction(bulkedit_tb->icon(), trUtf8("Edit cell(s)"), bulkedit_tb, SLOT(click()), bulkedit_tb->shortcut());
 							act->setEnabled(bulkedit_tb->isEnabled());
 						}
 
@@ -224,7 +234,13 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 
 void DataManipulationForm::setHasCsvClipboard(bool value)
 {
-	has_csv_clipboard = value;
+  has_csv_clipboard = value;
+}
+
+void DataManipulationForm::reject(void)
+{
+  GeneralConfigWidget::saveWidgetGeometry(this);
+  QDialog::reject();
 }
 
 void DataManipulationForm::listTables(void)
@@ -375,6 +391,10 @@ void DataManipulationForm::retrieveData(void)
 												 table_cmb->currentData().toUInt() == OBJ_TABLE &&
 												 !col_names.isEmpty());
 
+		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == OBJ_TABLE &&
+														res.getTupleCount() > 0 &&
+														!col_names.isEmpty());
+
 		code_compl_wgt->clearCustomItems();
 		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), OBJ_COLUMN);
 	}
@@ -397,6 +417,8 @@ void DataManipulationForm::disableControlButtons(void)
 	add_tb->setEnabled(false);
 	duplicate_tb->setEnabled(false);
 	export_tb->setEnabled(false);
+	paste_tb->setEnabled(false);
+	truncate_tb->setEnabled(false);
 	csv_load_tb->setEnabled(false);
 	csv_load_tb->setChecked(false);
 	clearChangedRows();
@@ -533,7 +555,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard)
 		addRow();
 		row_id=results_tbw->rowCount() - 1;
 
-		for(int i = 0; i < values.count(); i++)
+		for(int i = 0; i < values.count() && i < cols.count(); i++)
 		{
 			if((!load_from_clipboard && csv_load_wgt->isColumnsInFirstRow()) ||
 				 (load_from_clipboard && !cols.isEmpty()))
@@ -1127,31 +1149,6 @@ void DataManipulationForm::browseReferrerTable(void)
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
 }
 
-void DataManipulationForm::bulkDataEdit(void)
-{
-	BaseForm base_frm;
-	BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
-
-	base_frm.setMainWidget(bulkedit_wgt);
-	base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
-
-	if(base_frm.exec() == QDialog::Accepted)
-	{
-		QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
-
-		for(auto range : sel_ranges)
-		{
-			for(int row = range.topRow(); row <= range.bottomRow(); row++)
-			{
-				for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
-				{
-					results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
-				}
-			}
-		}
-	}
-}
-
 void DataManipulationForm::browseReferencedTable(void)
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), false);
@@ -1222,6 +1219,13 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 
 void DataManipulationForm::saveChanges(void)
 {
+#ifdef DEMO_VERSION
+#warning "DEMO VERSION: data manipulation save feature disabled warning."
+	Messagebox msg_box;
+	msg_box.show(trUtf8("Warning"),
+				 trUtf8("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
+				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
+#else
 	int row=0;
 	Connection conn=Connection(tmpl_conn_params);
 
@@ -1284,6 +1288,7 @@ void DataManipulationForm::saveChanges(void)
 						.arg(op_names[op_type]).arg(tab_name).arg(row + 1).arg(e.getErrorMessage()),
 						ERR_ROW_DATA_NOT_MANIPULATED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+#endif
 }
 
 QString DataManipulationForm::getDMLCommand(int row)
@@ -1396,4 +1401,51 @@ QString DataManipulationForm::getDMLCommand(int row)
 	}
 
 	return(fmt_cmd);
+}
+
+void DataManipulationForm::resizeEvent(QResizeEvent *event)
+{
+	Qt::ToolButtonStyle style = Qt::ToolButtonIconOnly;
+	QToolButton *btn = nullptr;
+
+	if(event->size().width() > this->baseSize().width())
+		style = Qt::ToolButtonTextBesideIcon;
+
+	if(refresh_tb->toolButtonStyle() != style)
+	{
+		for(auto obj : bnts_parent_wgt->children())
+		{
+			btn = qobject_cast<QToolButton *>(obj);
+
+			if(btn)
+				btn->setToolButtonStyle(style);
+		}
+	}
+}
+
+void DataManipulationForm::closeEvent(QCloseEvent *)
+{
+  GeneralConfigWidget::saveWidgetGeometry(this);
+}
+
+void DataManipulationForm::showEvent(QShowEvent *)
+{
+  GeneralConfigWidget::restoreWidgetGeometry(this);
+}
+
+void DataManipulationForm::truncateTable(void)
+{
+	try
+	{
+		QAction *act = dynamic_cast<QAction *>(sender());
+
+		if(DatabaseExplorerWidget::truncateTable(schema_cmb->currentText(), table_cmb->currentText(),
+																						 act->data().toBool(), Connection(tmpl_conn_params)))
+			retrieveData();
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
 }

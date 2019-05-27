@@ -25,6 +25,7 @@
 #include "baseform.h"
 #include "tabledatawidget.h"
 #include "policywidget.h"
+#include "generalconfigwidget.h"
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -33,18 +34,17 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX, OBJ_POLICY };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
-	QToolButton *edt_data_tb=nullptr;
+	QPushButton *edt_data_tb=nullptr;
 
 	Ui_TableWidget::setupUi(this);
 
-	edt_data_tb=new QToolButton(this);
+	edt_data_tb=new QPushButton(this);
 	QPixmap icon=QPixmap(PgModelerUiNS::getIconPath("editdata"));
 	edt_data_tb->setMinimumSize(edt_perms_tb->minimumSize());
 	edt_data_tb->setText(trUtf8("Edit data"));
 	edt_data_tb->setToolTip(trUtf8("Define initial data for the table"));
 	edt_data_tb->setIcon(icon);
 	edt_data_tb->setIconSize(edt_perms_tb->iconSize());
-	edt_data_tb->setToolButtonStyle(edt_perms_tb->toolButtonStyle());
 
 	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
@@ -160,7 +160,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 	configureFormLayout(table_grid, OBJ_TABLE);
 	configureTabOrder({ tag_sel });
 
-	setMinimumSize(600, 610);
+	setMinimumSize(660, 620);
 }
 
 template<class Class, class WidgetClass>
@@ -725,7 +725,10 @@ void TableWidget::editData(void)
 	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
 	base_form.setMainWidget(tab_data_wgt);
 	base_form.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 	base_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 }
 
 void TableWidget::applyConfiguration(void)

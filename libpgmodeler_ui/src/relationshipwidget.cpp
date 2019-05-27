@@ -20,7 +20,9 @@
 #include "constraintwidget.h"
 #include "columnwidget.h"
 #include "tablewidget.h"
-#include "configurationform.h"
+#include "baseform.h"
+#include "relationshipconfigwidget.h"
+#include "generalconfigwidget.h"
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
@@ -333,6 +335,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 				storage_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STORAGE));
 				comments_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::COMMENTS));
 				indexes_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::INDEXES));
+				identity_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::IDENTITY));
+				statistics_chk->setChecked(!all_chk->isChecked() && copy_op.isOptionSet(CopyOptions::STATISTICS));
 			}
 		}
 	}
@@ -658,7 +662,11 @@ void RelationshipWidget::showAdvancedObject(int row)
 														 tab,	tab->getPosition().x(), tab->getPosition().y());
 
 		editing_form.setMainWidget(table_wgt);
+
+		GeneralConfigWidget::restoreWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
 		editing_form.exec();
+		GeneralConfigWidget::saveWidgetGeometry(&editing_form, table_wgt->metaObject()->className());
+
 		tab->setProtected(false);
 	}
 }
@@ -668,11 +676,22 @@ int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 {
 	BaseForm editing_form(this);
 	WidgetClass *object_wgt=new WidgetClass;
+	BaseObject *parent_aux = nullptr;
+	int res = 0;
 
-	object_wgt->setAttributes(this->model, this->op_list, (!parent ? this->object : parent), dynamic_cast<Class *>(object));
+	if(this->object->getObjectType() == BASE_RELATIONSHIP)
+		parent_aux = dynamic_cast<BaseRelationship *>(this->object)->getTable(BaseRelationship::SRC_TABLE);
+	else
+		parent_aux = !parent ? this->object : parent;
+
+	object_wgt->setAttributes(this->model, this->op_list, parent_aux, dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	return(editing_form.exec());
+	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
+	res = editing_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
+
+	return(res);
 }
 
 void RelationshipWidget::addObject(void)
@@ -915,6 +934,8 @@ void RelationshipWidget::selectCopyOptions(void)
 	storage_chk->setEnabled(!all_chk->isChecked() && !defaults_rb->isChecked());
 	comments_chk->setEnabled(!all_chk->isChecked() && !defaults_rb->isChecked());
 	indexes_chk->setEnabled(!all_chk->isChecked() && !defaults_rb->isChecked());
+	identity_chk->setEnabled(!all_chk->isChecked() && !defaults_rb->isChecked());
+	statistics_chk->setEnabled(!all_chk->isChecked() && !defaults_rb->isChecked());
 
 	if(all_chk->isChecked() || defaults_rb->isChecked())
 	{
@@ -926,6 +947,8 @@ void RelationshipWidget::selectCopyOptions(void)
 		storage_chk->setChecked(false);
 		comments_chk->setChecked(false);
 		indexes_chk->setChecked(false);
+		identity_chk->setChecked(false);
+		statistics_chk->setChecked(false);
 	}
 }
 
@@ -1002,11 +1025,11 @@ void RelationshipWidget::applyConfiguration(void)
 		if(this->object->getObjectType()==OBJ_RELATIONSHIP)
 		{
 			QPlainTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
-											   src_fk_pattern_txt, dst_fk_pattern_txt,
-											   pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
+																				 src_fk_pattern_txt, dst_fk_pattern_txt,
+																				 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 			unsigned pattern_ids[]= { Relationship::SRC_COL_PATTERN, Relationship::DST_COL_PATTERN,
-									  Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
-									  Relationship::PK_PATTERN, Relationship::UQ_PATTERN, Relationship::PK_COL_PATTERN };
+																Relationship::SRC_FK_PATTERN, Relationship::DST_FK_PATTERN,
+																Relationship::PK_PATTERN, Relationship::UQ_PATTERN, Relationship::PK_COL_PATTERN };
 
 			rel=dynamic_cast<Relationship *>(base_rel);
 
@@ -1033,6 +1056,8 @@ void RelationshipWidget::applyConfiguration(void)
 				copy_ops+=(comments_chk->isChecked() ? CopyOptions::COMMENTS : 0);
 				copy_ops+=(indexes_chk->isChecked() ? CopyOptions::INDEXES : 0);
 				copy_ops+=(storage_chk->isChecked() ? CopyOptions::STORAGE : 0);
+				copy_ops+=(identity_chk->isChecked() ? CopyOptions::IDENTITY : 0);
+				copy_ops+=(statistics_chk->isChecked() ? CopyOptions::STATISTICS : 0);
 			}
 
 			rel->setCopyOptions(CopyOptions(copy_mode, copy_ops));

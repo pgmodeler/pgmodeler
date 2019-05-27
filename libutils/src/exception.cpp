@@ -159,7 +159,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_LIN_OBJTAB_INV_INDEX", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
 	{"ERR_OPR_RESERVED_OBJECT", QT_TR_NOOP("The object `%1' (%2) can not be manipulated because it is reserved to PostgreSQL! This object is present in the database model only as a reference!")},
 	{"ERR_FUNC_CONFIG_INV_OBJECT", QT_TR_NOOP("The new configuration of the function invalidates the object `%1' (%2)! In this case it is needed to undo the relationship between the affected object and function in order to the new configuration to take effect!")},
-	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!")},
+	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A view reference should be used in at least one these SQL scopes: View Definition, SELECT, FROM, WHERE or GROUP/HAVING!")},
 	{"ERR_CONSTR_NO_COLUMNS", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
 	{"ERR_CONFIG_NOT_LOADED", QT_TR_NOOP("Unable to load the configuration file `%1'! Please check if file exists in its folder and/or if it is not corrupted!")},
 	{"ERR_DEFAULT_CONFIG_NOT_REST", QT_TR_NOOP("Could not find the default settings file `%1'! To restore default settings check the existence of the file and try again!")},
@@ -251,7 +251,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_NULL_PK_COLUMN", QT_TR_NOOP("The column `%1' must be `NOT NULL' because it composes the primary key of the table `%2'. You need to remove the column from the mentioned contraint in order to disable the `NOT NULL' on it!")},
 	{"ERR_ASG_INV_IDENTITY_COLUMN", QT_TR_NOOP("The identity column `%1' has an invalid data type! The data type must be `smallint', `integer' or `bigint'.")},
 	{"ERR_REF_INV_AFFECTED_CMD", QT_TR_NOOP("Reference to an invalid affected command in policy `%1'!")},
-	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")},
+	{"ERR_REF_INV_SPECIAL_ROLE", QT_TR_NOOP("Reference to an invalid special role in policy `%1'!")}
 };
 
 Exception::Exception(void)

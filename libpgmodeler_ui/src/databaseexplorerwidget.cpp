@@ -94,7 +94,12 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{CONNECTION, QT_TR_NOOP("Connection ID")},           {SERVER_PID, QT_TR_NOOP("Server PID")},                {SERVER_PROTOCOL, QT_TR_NOOP("Server protocol")},
 	{REFERRERS, QT_TR_NOOP("Referrers")},                {IDENTITY_TYPE, QT_TR_NOOP("Identity")},               {COMMAND, QT_TR_NOOP("Command")},
 	{USING_EXP, QT_TR_NOOP("USING expr.")},              {CHECK_EXP, QT_TR_NOOP("CHECK expr.")},                {ROLES, QT_TR_NOOP("Roles")},
-	{RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")}
+    {RLS_ENABLED, QT_TR_NOOP("RLS enabled")},            {RLS_FORCED, QT_TR_NOOP("RLS forced")},                {INDEX_SCAN, QT_TR_NOOP("Index scans")},
+    {INDEX_SCAN_READ, QT_TR_NOOP("Index scans tuples")}, {LAST_ANALYZE, QT_TR_NOOP("Last analyze")},            {LAST_AUTOVACUUM, QT_TR_NOOP("Last autovacuum")},
+    {LAST_VACUUM, QT_TR_NOOP("Last vacuum")},            {TUPLES_DEL, QT_TR_NOOP("Tuples deleted")},            {TUPLES_UPD, QT_TR_NOOP("Tuples updated")},
+    {TUPLES_INS, QT_TR_NOOP("Tuples inserted")},         {SEQ_SCAN, QT_TR_NOOP("Sequential scans")},            {SEQ_SCAN_READ, QT_TR_NOOP("Sequential scans tuples")},
+    {VACUUM_COUNT, QT_TR_NOOP("Vacuum count")},          {AUTOVACUUM_COUNT, QT_TR_NOOP("Autovacuum count")},    {ANALYZE_COUNT, QT_TR_NOOP("Analyze count")},
+    {AUTOANALYZE_COUNT, QT_TR_NOOP("Autoanalyze count")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -946,9 +951,10 @@ void DatabaseExplorerWidget::listObjects(void)
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
 		root->setExpanded(true);
+		root->setSelected(true);
+		objects_trw->setCurrentItem(root);
 
 		QApplication::restoreOverrideCursor();
-
 		objects_trw->blockSignals(false);
 
 		import_helper.closeConnection();
@@ -1250,55 +1256,70 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 	}
 }
 
+bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection)
+{
+	try
+	{
+		Messagebox msg_box;
+		QString msg;
+
+		if(!cascade)
+			msg=trUtf8("Do you really want to truncate the table <strong>%1.%2</strong>?").arg(sch_name).arg(obj_name);
+		else
+			msg=trUtf8("Do you really want to truncate in <strong>cascade</strong> mode the table <strong>%1.%2</strong>? This action will truncate all the tables that depends on it?").arg(sch_name).arg(obj_name);
+
+		msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
+		msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+		if(msg_box.result()==QDialog::Accepted)
+		{
+			attribs_map attribs;
+			QString truc_cmd;
+			Connection conn;
+			SchemaParser schparser;
+
+			attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
+			attribs[ParsersAttributes::SIGNATURE]=QString("%1.%2").arg(BaseObject::formatName(sch_name)).arg(BaseObject::formatName(obj_name));
+			attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
+			attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
+
+			//Generate the truncate command
+			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreUnkownAttributes(true);
+			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+																					 ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
+																					 attribs);
+
+			//Executes the truncate cmd
+			conn = connection;
+			conn.connect();
+			conn.executeDDLCommand(truc_cmd);
+		}
+
+		return(msg_box.result()==QDialog::Accepted);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+}
+
 void DatabaseExplorerWidget::truncateTable(QTreeWidgetItem *item, bool cascade)
 {
-	Messagebox msg_box;
-
 	try
 	{
 		if(item && static_cast<ObjectType>(item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt()) > 0)
 		{
-			QString msg, obj_name, sch_name;
-
+			QString obj_name, sch_name;
 			obj_name=item->data(DatabaseImportForm::OBJECT_NAME, Qt::UserRole).toString();
 			sch_name=BaseObject::formatName(item->data(DatabaseImportForm::OBJECT_SCHEMA, Qt::UserRole).toString());
-
-			if(!cascade)
-				msg=trUtf8("Do you really want to truncate the table <strong>%1</strong>?").arg(obj_name);
-			else
-				msg=trUtf8("Do you really want to <strong>cascade</strong> truncate the table <strong>%1</strong>? This action will truncate all the tables that depends on it?").arg(obj_name);
-
-			msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
-			msg_box.show(msg, Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
-
-			if(msg_box.result()==QDialog::Accepted)
-			{
-				attribs_map attribs;
-				QString truc_cmd;
-				Connection conn;
-
-				attribs[ParsersAttributes::SQL_OBJECT]=BaseObject::getSQLName(OBJ_TABLE);
-				attribs[ParsersAttributes::SIGNATURE]=sch_name + QString(".\"%1\"").arg(obj_name);
-				attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : "");
-				attribs[ParsersAttributes::RESTART_SEQ]=(msg_box.isCustomOptionChecked() ? ParsersAttributes::_TRUE_ : "");
-
-				//Generate the truncate command
-				schparser.ignoreEmptyAttributes(true);
-				schparser.ignoreUnkownAttributes(true);
-				truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-													 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-													 ParsersAttributes::TRUNCATE + GlobalAttributes::SCHEMA_EXT,
-													 attribs);
-
-				//Executes the truncate cmd
-				conn=connection;
-				conn.connect();
-				conn.executeDDLCommand(truc_cmd);
-			}
+			truncateTable(sch_name, obj_name, cascade, connection);
 		}
 	}
 	catch(Exception &e)
 	{
+		Messagebox msg_box;
 		msg_box.show(e);
 	}
 }
@@ -1726,7 +1747,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				attribs_map attribs=item->data(DatabaseImportForm::OBJECT_OTHER_DATA, Qt::UserRole).value<attribs_map>();
 				bool is_column=false;
 				unsigned oid=item->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
-						db_oid=objects_trw->topLevelItem(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
+						db_oid=objects_trw->topLevelItem(0)->child(0)->data(DatabaseImportForm::OBJECT_ID, Qt::UserRole).toUInt(),
 						sys_oid=0;
 				int sbar_value=(objects_trw->verticalScrollBar() ? objects_trw->verticalScrollBar()->value() : 0);
 
@@ -1758,7 +1779,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
 																		toggle_disp_menu.actions().at(1)->isChecked(),
 																		true, false, false, false, false);
+
 				import_hlp.setSelectedOIDs(&dbmodel, {{OBJ_DATABASE, {db_oid}}, {obj_type,{oid}}}, {});
+
 				sys_oid=import_hlp.getLastSystemOID();
 
 				//Currently pgModeler does not support the visualization of base types and built-in ones
@@ -1890,13 +1913,6 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 
 void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)
 {
-#ifdef DEMO_VERSION
-#warning "DEMO VERSION: data manipulation feature disabled warning."
-	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The data manipulation feature is available only in the full version!"),
-				 Messagebox::ALERT_ICON, Messagebox::OK_BUTTON);
-#else
 	DataManipulationForm *data_manip=new DataManipulationForm;
 	Connection conn=Connection(this->connection.getConnectionParams());
 
@@ -1908,7 +1924,6 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 
 	PgModelerUiNS::resizeDialog(data_manip);
 	data_manip->show();
-#endif
 }
 
 void DatabaseExplorerWidget::dropDatabase(void)

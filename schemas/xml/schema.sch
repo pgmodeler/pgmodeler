@@ -4,6 +4,10 @@
 %if {reduced-form} %then $tb %end
 [<schema name=] "{name}"
 
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+
 %if {reduced-form} %then
 /> $br
 %else

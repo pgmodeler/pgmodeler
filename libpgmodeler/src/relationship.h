@@ -268,7 +268,7 @@ class Relationship: public BaseRelationship {
 		void removeColumnFromTablePK(Table *table, Column *column);
 
 		//! \brief Generates the object name according to the specified name pattern
-		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr);
+		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr, bool use_alias=false);
 
 	protected:
 		//! \brief Destroy all the relationship attributes and constraints

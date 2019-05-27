@@ -5,6 +5,8 @@
 #include "numberedtexteditor.h"
 #include <QScreen>
 #include <QDesktopWidget>
+#include "baseform.h"
+#include "bulkdataeditwidget.h"
 
 namespace PgModelerUiNS {
 
@@ -40,10 +42,12 @@ namespace PgModelerUiNS {
 		else
 		{
 			QLabel *label=new QLabel;
+			label->setUpdatesEnabled(false);
 			label->setTextFormat(Qt::AutoText);
 			label->setText(text);
 			label->setWordWrap(true);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			label->setUpdatesEnabled(true);
 			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
 			output_trw->setItemWidget(item, 0, label);
@@ -63,6 +67,7 @@ namespace PgModelerUiNS {
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
+
 		item->setIcon(ico);
 		output_lst->addItem(item);
 
@@ -71,6 +76,14 @@ namespace PgModelerUiNS {
 		else
 		{
 			QLabel *label=new QLabel(text);
+			int txt_height = 0;
+
+			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+
+			if(txt_height == 0)
+				txt_height = output_lst->fontMetrics().height();
+
+			item->setSizeHint(QSize(output_lst->width(), txt_height));
 			output_lst->setItemWidget(item, label);
 		}
 	}
@@ -199,7 +212,7 @@ namespace PgModelerUiNS {
 		switch(factor_id)
 		{
 			case SMALL_FONT_FACTOR:
-				factor=0.85f;
+				factor=0.80f;
 			break;
 			case MEDIUM_FONT_FACTOR:
 				factor=0.90f;
@@ -213,10 +226,10 @@ namespace PgModelerUiNS {
 			break;
 		}
 
-		configureWidgetFont(widget, factor);
+		__configureWidgetFont(widget, factor);
 	}
 
-	void configureWidgetFont(QWidget *widget, float factor)
+	void __configureWidgetFont(QWidget *widget, float factor)
 	{
 		if(!widget)
 			return;
@@ -320,5 +333,34 @@ namespace PgModelerUiNS {
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
+		widget->adjustSize();
+	}
+
+	void bulkDataEdit(QTableWidget *results_tbw)
+	{
+		if(!results_tbw)
+			return;
+
+		BaseForm base_frm;
+		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+		base_frm.setMainWidget(bulkedit_wgt);
+		base_frm.setButtonConfiguration(Messagebox::OK_CANCEL_BUTTONS);
+
+		if(base_frm.exec() == QDialog::Accepted)
+		{
+			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+			for(auto range : sel_ranges)
+			{
+				for(int row = range.topRow(); row <= range.bottomRow(); row++)
+				{
+					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
+					{
+						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+					}
+				}
+			}
+		}
 	}
 }

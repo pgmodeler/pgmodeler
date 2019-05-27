@@ -20,6 +20,7 @@
 #include "permissionwidget.h"
 #include "customsqlwidget.h"
 #include "baseform.h"
+#include "generalconfigwidget.h"
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -61,12 +62,18 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
 		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 
+		alias_ht=new HintTextWidget(alias_hint, this);
+		alias_ht->setText(alias_edt->statusTip());
+
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName("objetobase_grid");
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 1);
 		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
+		baseobject_grid->addWidget(logical_name_lbl, 2, 0, 1, 1);
+		baseobject_grid->addWidget(alias_edt, 2, 1, 1, 1);
+		baseobject_grid->addWidget(alias_hint_wgt, 2, 2, 1, 3);
 		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
@@ -156,14 +163,18 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		}
 		else if(edt || txt || sel)
 		{
-			QPalette pal;
-			pal.setColor(QPalette::Base, bgcolor);
-			pal.setColor(QPalette::Text, QColor(0,0,0));
-
 			if(sel)
+			{
 				widget=sel->obj_name_txt;
-
-			widget->setPalette(pal);
+				widget->setStyleSheet(QString("ObjectSelectorWidget > QPlainTextEdit { background-color: %1; }").arg(bgcolor.name()));
+			}
+			else
+			{
+				QPalette pal;
+				pal.setColor(QPalette::Base, bgcolor);
+				pal.setColor(QPalette::Text, QColor(0,0,0));
+				widget->setPalette(pal);
+			}
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
@@ -212,7 +223,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 	int idx=0, cnt=0;
 
 	widgets.insert(widgets.begin(),
-	{ name_edt, schema_sel , collation_sel, owner_sel, tablespace_sel,
+	{ name_edt, alias_edt, alias_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
 	  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
 	for(auto &wgt : widgets)
@@ -284,6 +295,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	if(!model || (uses_op_list && !op_list))
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+	if(op_list)
+	  operation_count = op_list->getCurrentSize();
+
 	this->model=model;
 
 	if(parent_obj)
@@ -344,17 +358,16 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	if(object)
 	{
-		//bool prot = false;
-
 		obj_id_lbl->setVisible(true);
 		obj_id_lbl->setText(QString("ID: %1").arg(object->getObjectId()));
 
-		if(handled_obj_type!=BASE_OBJECT)
+		if(handled_obj_type != BASE_OBJECT)
 			name_edt->setText(object->getName());
 		else
 			name_edt->setText(object->getSignature());
 
 		comment_edt->setPlainText(object->getComment());
+		alias_edt->setText(object->getAlias());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
 	   In order to avoid the selectors to have empty values, we check if the flag is false which means
@@ -432,7 +445,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 															obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TAG &&
 															obj_type!=OBJ_PARAMETER);
 
-	edt_perms_tb->setVisible(Permission::objectAcceptsPermission(obj_type));
+	alias_edt->setVisible(BaseObject::acceptsAlias(obj_type));
+	alias_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
+	logical_name_lbl->setVisible(BaseObject::acceptsAlias(obj_type));
+
+	edt_perms_tb->setVisible(Permission::acceptsPermission(obj_type));
 	append_sql_tb->setVisible(BaseObject::acceptsCustomSQL(obj_type));
 
 	schema_lbl->setVisible(BaseObject::acceptsSchema(obj_type));
@@ -649,17 +666,23 @@ void BaseObjectWidget::editPermissions(void)
 	permission_wgt->setAttributes(this->model, parent_obj, this->object);
 	parent_form.setMainWidget(permission_wgt);
 	parent_form.setButtonConfiguration(Messagebox::OK_BUTTON);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 }
 
 void BaseObjectWidget::editCustomSQL(void)
 {
 	BaseForm parent_form(this);
-  CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
+	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
-  customsql_wgt->setAttributes(this->model, this->object);
-  parent_form.setMainWidget(customsql_wgt);
+	customsql_wgt->setAttributes(this->model, this->object);
+	parent_form.setMainWidget(customsql_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 }
 
 void BaseObjectWidget::applyConfiguration(void)
@@ -735,6 +758,9 @@ void BaseObjectWidget::applyConfiguration(void)
 				prev_name=object->getName();
 				object->setName(name_edt->text().trimmed().toUtf8());
 			}
+
+			if(alias_edt->isVisible())
+				object->setAlias(alias_edt->text().trimmed());
 
 			//Sets the object's comment
 			if(comment_edt->isVisible())
@@ -902,8 +928,8 @@ void BaseObjectWidget::cancelConfiguration(void)
 
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
-			((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION) ||
-			 (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
+	  ((!new_object && obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && operation_count != op_list->getCurrentSize()) ||
+	   (new_object && (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_RELATIONSHIP))))
 	{
 		try
 		{

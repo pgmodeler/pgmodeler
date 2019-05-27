@@ -284,7 +284,6 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			val_info.getValidationType()==ValidationInfo::VALIDATION_ABORTED)
 	{
 		QStringList errors=val_info.getErrors();
-		QFont fnt;
 		item->setIcon(0, QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
 		validation_prog_pb->setValue(validation_prog_pb->maximum());
 		reenableValidation();
@@ -299,9 +298,6 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
 				label1->setText(errors.back());
 				label1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-				fnt=label1->font();
-				fnt.setPointSizeF(8.0f);
-				label1->setFont(fnt);
 				output_trw->setItemWidget(item1, 0, label1);
 				errors.pop_back();
 			}
@@ -575,5 +571,8 @@ void ModelValidationWidget::swapObjectsIds(void)
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
 	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
 	parent_form.setMainWidget(swap_ids_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, this->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, this->metaObject()->className());
 }

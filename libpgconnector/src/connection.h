@@ -168,7 +168,7 @@ class Connection {
 		//! \brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
 		void setAutoBrowseDB(bool value);
 
-		//! \brief Open the connection to the database
+		//! \brief Open the connection to the database.
 		void connect(void);
 
 		//! \brief Resets the database connection
@@ -176,6 +176,9 @@ class Connection {
 
 		//! \brief Close the opened connection
 		void close(void);
+
+		//! \brief Request the cancel of the running command on a opened connection
+		void requestCancel(void);
 
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);

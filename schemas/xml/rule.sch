@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
  [<rule name=] "{name}" [ event-type=] "{event-type}" [ exec-type=] "{exec-type}" $br
 
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+ 
  %if {protected} %then 
   [ protected=] "true"
  %end

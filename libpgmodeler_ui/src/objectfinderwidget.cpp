@@ -216,7 +216,6 @@ void ObjectFinderWidget::findObjects(void)
 	if(model_wgt)
 	{
 		vector<ObjectType> types;
-
 		clearResult();
 
 		//Getting the selected object types
@@ -270,9 +269,13 @@ void ObjectFinderWidget::selectObject(void)
 			if(graph_obj)
 			{
 				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
-				model_wgt->scene->clearSelection();
-				model_wgt->viewport->centerOn(obj);
-				obj->setSelected(true);
+
+				if(obj)
+				{
+				  model_wgt->scene->clearSelection();
+				  model_wgt->viewport->centerOn(obj);
+				  obj->setSelected(true);
+				}
 			}
 		}
 		//Showing the popup menu for the selected object in the result set
@@ -320,10 +323,9 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		BaseObject *parent_obj=nullptr;
 		QFont fnt;
 		QString str_aux;
+		bool new_row = false;
 
-		while(tab_wgt->rowCount() > 0)
-			tab_wgt->removeRow(0);
-
+		tab_wgt->setUpdatesEnabled(false);
 		tab_wgt->setSortingEnabled(false);
 
 		for(lin_idx=0, i=0; i < objs.size(); i++)
@@ -333,26 +335,30 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			else
 				str_aux.clear();
 
-			tab_wgt->insertRow(lin_idx);
+			new_row = false;
+
+			if(static_cast<int>(lin_idx) >= tab_wgt->rowCount())
+			{
+			  tab_wgt->insertRow(lin_idx);
+			  new_row = true;
+			}
 
 			//First column: Object id
-			tab_item=new QTableWidgetItem;
-			//tab_item->setFont(fnt);
+			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
 			tab_item->setText(QString::number(objs[i]->getObjectId()));
 			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
-			tab_wgt->setItem(lin_idx, 0, tab_item);
-
+			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 
 			//Second column: Object name
 			if(tab_wgt->columnCount() > 1)
 			{
-				tab_item=new QTableWidgetItem;
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
 				fnt=tab_item->font();
 
 				tab_item->setText(objs[i]->getName());
 				tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
-				tab_wgt->setItem(lin_idx, 1, tab_item);
+				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
 
 				if(objs[i]->isProtected() || objs[i]->isSystemObject())
 				{
@@ -365,6 +371,12 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 					fnt.setItalic(true);
 					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::INH_COLUMN).foreground());
 				}
+				else
+				{
+					fnt.setItalic(false);
+					tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+				}
+
 
 				fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
 				tab_item->setFont(fnt);
@@ -375,16 +387,16 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			if(tab_wgt->columnCount() > 2)
 			{
 				fnt.setItalic(true);
-				tab_item=new QTableWidgetItem;
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
 				tab_item->setFont(fnt);
 				tab_item->setText(objs[i]->getTypeName());
-				tab_wgt->setItem(lin_idx, 2, tab_item);
+				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
 			}
 
 			//Fourth column: Parent object name
 			if(tab_wgt->columnCount() > 3)
 			{
-				tab_item=new QTableWidgetItem;
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 3));
 
 				if(dynamic_cast<TableObject *>(objs[i]))
 					parent_obj=dynamic_cast<TableObject *>(objs[i])->getParentTable();
@@ -397,18 +409,22 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 				tab_item->setText(parent_obj ? parent_obj->getName() : QString("-"));
 				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(parent_obj)));
-
-				tab_wgt->setItem(lin_idx, 3, tab_item);
+				if(new_row) tab_wgt->setItem(lin_idx, 3, tab_item);
 
 				if(parent_obj)
 				{
 					if(parent_obj->isProtected() || parent_obj->isSystemObject())
 					{
 						fnt.setItalic(true);
-						tab_item->setFont(fnt);
 						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 					}
+					else
+					{
+						fnt.setItalic(false);
+						tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::COLUMN).foreground());
+					}
 
+					tab_item->setFont(fnt);
 					tab_item->setIcon(QPixmap(PgModelerUiNS::getIconPath(parent_obj->getObjectType())));
 				}
 			}
@@ -416,16 +432,20 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			//Fifth column: Parent object type
 			if(tab_wgt->columnCount() > 4)
 			{
-				tab_item=new QTableWidgetItem;
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 4));
 				fnt.setItalic(true);
 				tab_item->setFont(fnt);
 				tab_item->setText(parent_obj ? parent_obj->getTypeName() : QString("-"));
-				tab_wgt->setItem(lin_idx, 4, tab_item);
+				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 
 			lin_idx++;
 		}
 
+		if(static_cast<int>(objs.size()) != tab_wgt->rowCount())
+		  tab_wgt->setRowCount(objs.size());
+
+		tab_wgt->setUpdatesEnabled(true);
 		tab_wgt->setSortingEnabled(true);
 	}
 }

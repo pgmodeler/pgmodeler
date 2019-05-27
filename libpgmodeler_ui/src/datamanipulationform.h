@@ -49,7 +49,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu;
+		QMenu fks_menu, copy_menu, truncate_menu;
 		
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
@@ -102,6 +102,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
+		void resizeEvent(QResizeEvent *event);
+		void closeEvent(QCloseEvent *);
+		void showEvent(QShowEvent *);
+
 	public:
 		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 		
@@ -111,6 +115,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		static void setHasCsvClipboard(bool value);
 
 	private slots:
+		void reject(void);
+
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
 		
@@ -171,14 +177,14 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Add new rows to the grid based upon the CSV loaded
 		void loadDataFromCsv(bool load_from_clipboard = false);
 
-		//! brief Browse the referenced table data using the selected row in the results grid
+		//! \brief Browse the referenced table data using the selected row in the results grid
 		void browseReferencedTable(void);
 
-		//! brief Browse the referencing table data using the selected row in the results grid
+		//! \brief Browse the referencing table data using the selected row in the results grid
 		void browseReferrerTable(void);
 
-		//! brief Changes the values of the grid selection at once
-		void bulkDataEdit(void);
+		//! \brief Truncates the browsed table
+		void truncateTable(void);
 };
 
 #endif

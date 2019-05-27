@@ -27,6 +27,7 @@
 
 #include <QTreeWidget>
 #include <QListWidget>
+#include <QTableWidget>
 #include <QPixmap>
 #include "baseobject.h"
 #include "numberedtexteditor.h"
@@ -38,7 +39,7 @@ namespace PgModelerUiNS {
 	HUGE_FONT_FACTOR = 3;
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
-	extern void configureWidgetFont(QWidget *widget, float factor);
+	extern void __configureWidgetFont(QWidget *widget, float factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
@@ -77,6 +78,9 @@ namespace PgModelerUiNS {
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
 	extern void resizeDialog(QDialog *dialog);
+
+	//! brief Changes the values of the grid selection at once
+	extern void bulkDataEdit(QTableWidget *results_tbw);
 }
 
 #endif

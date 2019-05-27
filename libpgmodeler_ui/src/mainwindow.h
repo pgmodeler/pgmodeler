@@ -143,7 +143,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		sample_mdls_menu,
 
-		arrange_menu;
+		arrange_menu,
+
+		more_actions_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -291,6 +293,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void handleObjectsMetadata(void);
 		void restoreTemporaryModels(void);
 		void arrangeObjects(void);
+		void toggleCompactView(void);
 };
 
 #endif

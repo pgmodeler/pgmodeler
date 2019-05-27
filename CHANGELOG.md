@@ -1,6 +1,58 @@
 Change Log
 ---------
 
+v0.9.2-alpha
+------
+<em>Release date: August 20, 2018</em><br/>
+
+* [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
+* [New] Added support to save/restore the dialogs sizes and positions.
+* [New] Added support to truncate tables in DataManipulationForm.
+* [New] Added support to aliases on some graphical objects that is used in the compact view mode.
+* [New] Added support to save/load object's metadata containing aliases information.
+* [New] Added support to compact view of the model where graphical objects can have a more friendly name for a reduced view as well for those who don't need to see details about tables (clients of the business, for instance).
+* [New] Added support to sequence options for identity columns.
+* [New] Added the ability to paste CSV text from clipboard into the TableDataWidget.
+* [New] Added support to bulk data edit in TableDataWidget.
+* [Change] Added missing copy options on copy relationships.
+* [Change] Minor adjustments on the item delegates in order draw text in the right alignment.
+* [Change] Minor adjustment on buttons style in DatabaseExplorerWidget, DataManipulationForm and SQLExecutionWidget.
+* [Change] Minor adjustment on OperationList::removeFromPool to avoid throw an exception when an invalid index is passed.
+* [Change] Changed the behaviour of the fade in/out of relationships linked to a table by applying the effect on the other tables that are related to the selected one.
+* [Change] Refactored the view editing dialog by moving the references handling form to a dedicated modal dialog.
+* [Change] Improved the model loading from file by blocking signals of relationships avoiding excessive/repetive rendering of objects. The whole model is fully rendered when the file was completely loaded.
+* [Change] Minor adjustment on constraints rendering at extended attributes section of tables.
+* [Change] French translation update.
+* [Change] Updated the other lang dictionaries with the new text brought by new releases.
+* [Change] Removing icons at the top of the dialogs: DatabaseImportForm, MetaDataHandlingForm, ModelDatabaseDiffForm, ModelExportForm, ModelFixForm.
+* [Change] Minor adjustments in the features of the demo version.
+* [Change] Minor adjustments in the UI stylesheet.
+* [Change] In DatabaseExplorerWidget the root item will come automatically selcted when browsing a database.
+* [Change] Minor performance tuning when handling big models.
+* [Change] Added some statistics attributes for tables on DatabaseExplorerWidget.
+* [Change] Minor adjustment in NewObjectOverlayWidget by putting the tool buttons under categories.
+* [Fix] Fixed a bug in ObjectFinderWidget that was forcing schemas rectangles to appear even if the flag indicating them to be visible was set to false.
+* [Fix] Fixed the editing form cancel operation. Now operations done when the form was active are undone correctly.
+* [Fix] Fixed a bug that was preventing to create a view containing the same name as a table but in different schema.
+* [Fix] Fixed a regression that caused notices not to be shown in the output panel at SQLExecutionWidget.
+* [Fix] Fixed the query catalog for policies which was causing syntax error when combining import system objects and extension objects options.
+* [Fix] Fixed the disabling of some actions related to design when switching to manage view.
+* [Fix] Minor fix on stylesheet in order to display the extended button on general toolbar.
+* [Fix] Fix a shortcut conflict in DataManipulationform.
+* [Fix] Fixed the offset of strings composing the StorageType.
+* [Fix] Minor form size adjustments.
+* [Fix] Minor fix in sqlexecutionwidget.ui to force the exhibition of grid headers
+* [Fix] Minor fix in SQLExecutionWidget allowing the output widget to be resized to a size lower than the default one.
+* [Fix] Fixed the tab order in PolicyWidget.
+* [Fix] Fixed the generation of Database object source in DatabaseExplorerWidget.
+* [Fix] Fixed the method BaseObjectWidget::setRequiredField to make object selector fields as required correctly.
+* [Fix] Minor fix in HintTextWidget to stay on top of all widget when being displayed.
+* [Fix] Fixed a bug that was not quoting extension name when needed.
+* [Fix] Fixed a crash when trying to remove a fk relationship when it was created from a foreign key which references protected columns (added by relationship).
+* [Fix] Fix a crash when importing CSV files into DataManipulationForm.
+* [Fix] Minor typo in TableDataWidget.
+* [Fix] Minor fix on schema file sql/table.sch.
+
 v0.9.1
 ------
 <em>Release date: May 14, 2018</em><br/>

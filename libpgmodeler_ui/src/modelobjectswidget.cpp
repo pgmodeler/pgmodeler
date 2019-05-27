@@ -129,7 +129,9 @@ void ModelObjectsWidget::editObject(void)
 			Permission *perm=dynamic_cast<Permission *>(obj);
 
 			if(perm)
-				model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+			  model_wgt->showObjectForm(OBJ_PERMISSION,perm->getObject());
+			else
+			  model_wgt->editObject();
 		}
 		else
 			model_wgt->editObject();
@@ -429,11 +431,11 @@ void ModelObjectsWidget::filterObjects(void)
 
 void ModelObjectsWidget::updateObjectsView(void)
 {
-	updateDatabaseTree();
-	updateObjectsList();
+  updateDatabaseTree();
+  updateObjectsList();
 
-	if(!filter_edt->text().isEmpty())
-		filterObjects();
+  if(!filter_edt->text().isEmpty())
+	filterObjects();
 }
 
 void ModelObjectsWidget::updateObjectsList(void)
@@ -669,7 +671,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 	try
 	{
 		if(db_model && visible_objs_map[OBJ_PERMISSION] &&
-				Permission::objectAcceptsPermission(object->getObjectType()))
+				Permission::acceptsPermission(object->getObjectType()))
 		{
 			vector<Permission *> perms;
 			QTreeWidgetItem *item=new QTreeWidgetItem(root);
@@ -716,6 +718,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 			if(save_tree_state)
 				saveTreeState(tree_state);
 
+			objectstree_tw->setUpdatesEnabled(false);
 			objectstree_tw->clear();
 
 			if(visible_objs_map[OBJ_DATABASE])
@@ -768,6 +771,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 					}
 				}
 
+				objectstree_tw->setUpdatesEnabled(true);
 				objectstree_tw->expandItem(root);
 
 				if(save_tree_state)
@@ -790,7 +794,7 @@ BaseObject *ModelObjectsWidget::getSelectedObject(void)
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
 {
-	enable_obj_creation=value;
+  enable_obj_creation=value;
 }
 
 void ModelObjectsWidget::close(void)
@@ -952,6 +956,8 @@ void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
 {
 	QTreeWidgetItem *item=nullptr, *parent_item=nullptr;
 
+	objectslist_tbw->setUpdatesEnabled(false);
+
 	while(!tree_items.empty())
 	{
 		item=getTreeItem(tree_items.back());
@@ -969,6 +975,8 @@ void ModelObjectsWidget::restoreTreeState(vector<BaseObject *> &tree_items)
 
 		tree_items.pop_back();
 	}
+
+	objectslist_tbw->setUpdatesEnabled(true);
 }
 
 QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)

@@ -89,13 +89,18 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(schema->isRectVisible())
 		schema_name->setText(QString(" "));
 	else
-		schema_name->setText(schema->getName() + QString("."));
+	{
+		if(compact_view && !schema->getAlias().isEmpty())
+			schema_name->setText(schema->getAlias() + QString("."));
+		else
+			schema_name->setText(schema->getName() + QString("."));
+	}
 
 	fmt=font_config[name_attrib];
 	font=fmt.font();
 
 	obj_name->setFont(font);
-	obj_name->setText(object->getName());
+	obj_name->setText(compact_view && !object->getAlias().isEmpty() ? object->getAlias() : object->getName());
 
 	if(!tag)
 	{

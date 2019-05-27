@@ -38,9 +38,11 @@ class CopyOptions {
 		INDEXES=4,
 		STORAGE=8,
 		COMMENTS=16,
-		ALL=31,
-		INCLUDING=64,
-		EXCLUDING=128;
+		IDENTITY=32,
+		STATISTICS=64,
+		ALL=127,
+		INCLUDING=256,
+		EXCLUDING=512;
 
 		CopyOptions(void);
 		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);

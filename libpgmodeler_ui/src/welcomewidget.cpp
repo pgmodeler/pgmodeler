@@ -24,7 +24,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
 
-	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb };
+	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb, support_tb };
 	QGraphicsDropShadowEffect *shadow=nullptr;
 
 	for(auto &btn : btns)
@@ -36,9 +36,9 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 		btn->setGraphicsEffect(shadow);
 
 #ifdef Q_OS_LINUX
-    PgModelerUiNS::configureWidgetFont(btn, 1.20f);
+	PgModelerUiNS::__configureWidgetFont(btn, 1.20f);
 #else
-        PgModelerUiNS::configureWidgetFont(btn, 1.50f);
+		PgModelerUiNS::__configureWidgetFont(btn, 1.50f);
 #endif
 	}
 }

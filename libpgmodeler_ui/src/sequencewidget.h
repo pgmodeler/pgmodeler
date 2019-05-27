@@ -34,13 +34,25 @@ class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 
 		ObjectSelectorWidget *column_sel;
 
+	protected:
+		void setAttributes(DatabaseModel *model, Sequence *sequence);
+
+		/*! \brief This auxiliary method is used in ColumnWidget to enable the user to edit the underlying sequence's attributes
+		 * when handling an indentity column. This method disable almost all fields in the form letting only the ones related to
+		 * sequence's values configuration enabled */
+		void setAttributesReadonly(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence, Column *column);
+
 	public:
 		SequenceWidget(QWidget * parent = 0);
-
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence);
 
 	public slots:
 		void applyConfiguration(void);
+
+	private slots:
+		void setDefaultValues(void);
+
+	friend class ColumnWidget;
 };
 
 #endif

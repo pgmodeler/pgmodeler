@@ -150,7 +150,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			chk1->setChecked(false);
 
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
-			privileges_tbw->setRowHidden(priv, !Permission::objectAcceptsPermission(object->getObjectType(), priv));
+			privileges_tbw->setRowHidden(priv, !Permission::acceptsPermission(object->getObjectType(), priv));
 		}
 
 		listPermissions();

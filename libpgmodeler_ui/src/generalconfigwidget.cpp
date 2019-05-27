@@ -27,6 +27,7 @@
 #include "sqlexecutionwidget.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
+map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -88,6 +89,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
 	connect(select_editor_btn, SIGNAL(clicked(bool)), this, SLOT(selectSourceEditor()));
+	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
+	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString();
@@ -127,6 +130,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=QString();
 	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::USE_CURVED_LINES]=QString();
+	config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::	SAVE_RESTORE_GEOMETRY]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -259,7 +263,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		QStringList margin, custom_size;
 		vector<QString> key_attribs;
 		unsigned interv=0;
-		int tab_width=0;
+		int tab_width=0, x=0, y=0, w=0, h=0;
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(true);
@@ -328,11 +332,28 @@ void GeneralConfigWidget::loadConfiguration(void)
 		source_editor_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_APP]);
 		source_editor_args_edt->setText(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]);
 
+		save_restore_geometry_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY]==ParsersAttributes::_TRUE_);
+		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
+
 		int ui_idx = ui_language_cmb->findData(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
 
 		for(QWidget *wgt : child_wgts)
 			wgt->blockSignals(false);
+
+		widgets_geom.clear();
+		for(auto itr : config_params)
+		{
+		  if(itr.second.count(ParsersAttributes::X_POS))
+		  {
+			x = itr.second[ParsersAttributes::X_POS].toInt();
+			y = itr.second[ParsersAttributes::Y_POS].toInt();
+			w = itr.second[ParsersAttributes::WIDTH].toInt();
+			h = itr.second[ParsersAttributes::HEIGHT].toInt();
+			widgets_geom[itr.first].geometry = QRect(QPoint(x,y), QSize(w, h));
+			widgets_geom[itr.first].maximized = itr.second[ParsersAttributes::MAXIMIZED] == ParsersAttributes::_TRUE_;
+		  }
+		}
 
 		updateFontPreview();
 		this->applyConfiguration();
@@ -350,22 +371,22 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
 
 void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
 {
-	map<QString, attribs_map>::iterator itr, itr_end;
+  map<QString, attribs_map>::iterator itr, itr_end;
 
-	itr=config_params.begin();
-	itr_end=config_params.end();
+  itr=config_params.begin();
+  itr_end=config_params.end();
 
-	while(itr!=itr_end)
+  while(itr!=itr_end)
+  {
+	if(param_reg.exactMatch(itr->first))
 	{
-		if(param_reg.exactMatch(itr->first))
-		{
-			config_params.erase(itr);
-			itr=config_params.begin();
-			itr_end=config_params.end();
-		}
-
-		itr++;
+	  config_params.erase(itr);
+	  itr=config_params.begin();
+	  itr_end=config_params.end();
 	}
+
+	itr++;
+  }
 }
 
 map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
@@ -375,17 +396,57 @@ map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
 {
-	if(config_params.count(section_id) &&
-			config_params[section_id].count(param_name))
-		return(config_params[section_id][param_name]);
-	else
-		return(QString());
+  if(config_params.count(section_id) &&
+	 config_params[section_id].count(param_name))
+	return(config_params[section_id][param_name]);
+  else
+	return(QString());
+}
+
+void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
+{
+	if(!widget ||
+		 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
+		return;
+
+	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
+
+	widgets_geom[dlg_name.toLower()].geometry = widget->geometry();
+	widgets_geom[dlg_name.toLower()].maximized = widget->isMaximized();
+}
+
+bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
+{
+	if(!widget ||
+		 config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY] != ParsersAttributes::_TRUE_)
+		return(false);
+
+	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
+	dlg_name = dlg_name.toLower();
+
+	if(widgets_geom.count(dlg_name) &&
+		 (widgets_geom[dlg_name].maximized ||
+			(widgets_geom[dlg_name].geometry.width() > 0 && widgets_geom[dlg_name].geometry.height() > 0)))
+	{
+		if(widgets_geom[dlg_name].maximized)
+		{
+			widget->move(widgets_geom[dlg_name].geometry.topLeft());
+			widget->setWindowState(Qt::WindowMaximized);
+		}
+		else
+			widget->setGeometry(widgets_geom[dlg_name].geometry);
+
+		return(true);
+	}
+
+	return(false);
 }
 
 void GeneralConfigWidget::saveConfiguration(void)
 {
 	try
 	{
+		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir, widget_sch;
 		bool show_grid=false, show_delim=false, align_grid=false;
@@ -459,6 +520,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SOURCE_EDITOR_ARGS]=source_editor_args_edt->text();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::UI_LANGUAGE]=ui_language_cmb->currentData().toString();
 
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::COMPACT_VIEW]=(BaseObjectView::isCompactViewEnabled() ? ParsersAttributes::_TRUE_ : QString());
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_RESTORE_GEOMETRY]=(save_restore_geometry_chk->isChecked() ? ParsersAttributes::_TRUE_ : QString());
+
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
 
@@ -466,6 +530,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		itr_end=config_params.end();
 
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]=QString();
+		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGETS_GEOMETRY]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::RECENT_MODELS]=QString();
 		config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]=QString();
 
@@ -484,16 +549,36 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			else if(itr->first==ParsersAttributes::VALIDATOR ||
-							itr->first==ParsersAttributes::OBJECT_FINDER ||
-							itr->first==ParsersAttributes::SQL_TOOL)
+					itr->first==ParsersAttributes::OBJECT_FINDER ||
+					itr->first==ParsersAttributes::SQL_TOOL)
 			{
 				schparser.ignoreUnkownAttributes(true);
+                schparser.ignoreEmptyAttributes(true);
 				config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::DOCK_WIDGETS]+=
-						schparser.getCodeDefinition(widget_sch, itr->second);
+					schparser.getCodeDefinition(widget_sch, itr->second);
 				schparser.ignoreUnkownAttributes(false);
+                schparser.ignoreEmptyAttributes(false);
 			}
 
 			itr++;
+		}
+
+		if(save_restore_geometry_chk->isChecked())
+		{
+		  for(auto &itr : widgets_geom)
+		  {
+			attribs[ParsersAttributes::ID] = itr.first;
+			attribs[ParsersAttributes::X_POS] = QString::number(itr.second.geometry.left());
+			attribs[ParsersAttributes::Y_POS] = QString::number(itr.second.geometry.top());
+			attribs[ParsersAttributes::WIDTH] = QString::number(itr.second.geometry.width());
+			attribs[ParsersAttributes::HEIGHT] = QString::number(itr.second.geometry.height());
+			attribs[ParsersAttributes::MAXIMIZED] = itr.second.maximized ? ParsersAttributes::_TRUE_ : QString();
+
+			schparser.ignoreUnkownAttributes(true);
+			config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGETS_GEOMETRY]+=
+				schparser.getCodeDefinition(widget_sch, attribs);
+			schparser.ignoreUnkownAttributes(false);
+		  }
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF, config_params);
@@ -512,6 +597,9 @@ void GeneralConfigWidget::applyConfiguration(void)
 
 	if(fnt_size < 5.0f)
 		fnt_size=5.0f;
+
+	if(!save_restore_geometry_chk->isChecked())
+	  widgets_geom.clear();
 
 	unity_cmb->setCurrentIndex(UNIT_POINT);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
@@ -641,4 +729,14 @@ void GeneralConfigWidget::selectSourceEditor(void)
 
 	if(sel_editor_dlg.result()==QDialog::Accepted)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
+}
+
+void GeneralConfigWidget::resetDialogsSizes(void)
+{
+	Messagebox msg_box;
+	msg_box.show(trUtf8("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
+						Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+
+	if(msg_box.result() == QDialog::Accepted)
+	  widgets_geom.clear();
 }

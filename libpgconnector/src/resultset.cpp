@@ -55,10 +55,11 @@ ResultSet::ResultSet(PGresult *sql_result)
 			//In case of sucess states the result will be created
 		case PGRES_COMMAND_OK:
 		case PGRES_TUPLES_OK:
+		case PGRES_SINGLE_TUPLE:
 		case PGRES_COPY_OUT:
 		case PGRES_COPY_IN:
 		default:
-			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_EMPTY_QUERY);
+			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_SINGLE_TUPLE && res_state!=PGRES_EMPTY_QUERY);
 			current_tuple=-1;
 			is_res_copied=false;
 		break;
@@ -67,10 +68,10 @@ ResultSet::ResultSet(PGresult *sql_result)
 
 ResultSet::~ResultSet(void)
 {
-	destroyResultSet();
+	clearResultSet();
 }
 
-void ResultSet::destroyResultSet(void)
+void ResultSet::clearResultSet(void)
 {
 	/* Destroy the resultset of the object if it was not copied
 		to another class instance (see 'operator =') */
@@ -316,6 +317,11 @@ bool ResultSet::isEmpty(void)
 	return(empty_result);
 }
 
+bool ResultSet::isValid(void)
+{
+	return(sql_result != nullptr);
+}
+
 void ResultSet::operator = (ResultSet &res)
 {
 	/* Mark the result parameter as copied, avoiding
@@ -324,7 +330,7 @@ void ResultSet::operator = (ResultSet &res)
 
 	/* If the resultset 'this' is allocated,
 		it will be deallocated to avoid memory leaks */
-	destroyResultSet();
+	clearResultSet();
 
 	//Copy the parameter restulset attributes to 'this' resultset
 	this->current_tuple=res.current_tuple;

@@ -46,8 +46,6 @@ class ResultSet {
 	 when this flag is marked as false */
 		bool is_res_copied;
 
-		void destroyResultSet(void);
-
 		void validateColumnIndex(int column_idx);
 
 		int validateColumnName(const QString &column_name);
@@ -121,6 +119,11 @@ class ResultSet {
 
 		//! \brief Returns if the result set is empty due a DML command that does not returned any data
 		bool isEmpty(void);
+
+		//! \brief Returns if the result set is valid (created from a valid result set)
+		bool isValid(void);
+
+		void clearResultSet(void);
 
 		//! \brief Make a copy between two resultsets
 		void operator = (ResultSet &res);

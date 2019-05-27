@@ -580,7 +580,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static const unsigned offset=207;
+		static const unsigned offset=205;
 		static const unsigned types_count=4;
 
 	public:
