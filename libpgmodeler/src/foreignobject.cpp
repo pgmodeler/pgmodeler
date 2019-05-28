@@ -71,7 +71,7 @@ QString ForeignObject::getAlterDefinition(BaseObject *object)
 		if(!fobj)
 			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		// Comparing FDW options (to be modified or added)
+		// Comparing options (to be modified or added)
 		for(auto &opt : fobj->options)
 		{
 			if(this->options.count(opt.first) == 0)
@@ -80,7 +80,7 @@ QString ForeignObject::getAlterDefinition(BaseObject *object)
 				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
 		}
 
-		// Comparing FDW options (to be removed)
+		// Comparing options (to be removed)
 		for(auto &opt : this->options)
 		{
 			if(fobj->options.count(opt.first) == 0)
