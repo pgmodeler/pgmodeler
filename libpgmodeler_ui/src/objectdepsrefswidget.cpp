@@ -41,13 +41,15 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 {
 	BaseObjectWidget::setAttributes(model, object, parent_obj);
 
+	if(object->getObjectType() == ObjectType::Constraint ||
+		 object->getObjectType() == ObjectType::UserMapping)
+		name_edt->setText(object->getName());
+
 	this->name_edt->setReadOnly(true);
 	this->protected_obj_frm->setVisible(false);
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
-
 	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
-
 	updateObjectTables();
 }
 
