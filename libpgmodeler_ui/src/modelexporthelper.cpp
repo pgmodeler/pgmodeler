@@ -787,7 +787,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::Database };
+																 ObjectType::UserMapping, ObjectType::Database };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -937,7 +937,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
-							if(obj_tp!=ObjectType::Cast)
+							if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 							{
 								int spc_idx=lin.indexOf(' ');
 								obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
@@ -947,6 +947,11 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 									obj_name=obj_name.remove('(').simplified();
 									obj_name=obj_name.remove(')').simplified();
 								}
+							}
+							else if(obj_tp == ObjectType::UserMapping)
+							{
+#warning "TODO: extract the name of the role and server which composes the user mapping"
+								obj_name="**TODO**";
 							}
 							else
 							{

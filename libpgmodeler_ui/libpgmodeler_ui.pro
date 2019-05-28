@@ -119,7 +119,8 @@ SOURCES += src/mainwindow.cpp \
     src/elementwidget.cpp \
     src/layerswidget.cpp \
     src/foreigndatawrapperwidget.cpp \
-    src/foreignserverwidget.cpp
+    src/foreignserverwidget.cpp \
+    src/usermappingwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -226,7 +227,8 @@ HEADERS += src/mainwindow.h \
     src/elementwidget.h \
     src/layerswidget.h \
     src/foreigndatawrapperwidget.h \
-    src/foreignserverwidget.h
+    src/foreignserverwidget.h \
+    src/usermappingwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -313,7 +315,8 @@ FORMS += ui/mainwindow.ui \
     ui/elementwidget.ui \
     ui/layerswidget.ui \
     ui/foreigndatawrapperwidget.ui \
-    ui/foreignserverwidget.ui
+    ui/foreignserverwidget.ui \
+    ui/usermappingwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

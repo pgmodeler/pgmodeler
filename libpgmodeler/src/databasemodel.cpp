@@ -202,6 +202,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
 		else if(obj_type==ObjectType::ForeignServer)
 			addForeignServer(dynamic_cast<ForeignServer *>(object));
+		else if(obj_type==ObjectType::UserMapping)
+			addUserMapping(dynamic_cast<UserMapping *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -272,6 +274,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
 		else if(obj_type==ObjectType::ForeignServer)
 			removeForeignServer(dynamic_cast<ForeignServer *>(object));
+		else if(obj_type==ObjectType::UserMapping)
+			removeUserMapping(dynamic_cast<UserMapping *>(object));
 	}
 	catch(Exception &e)
 	{

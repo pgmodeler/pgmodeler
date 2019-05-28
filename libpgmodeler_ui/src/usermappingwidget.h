@@ -18,28 +18,28 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ForeignServerWidget
-\brief Implements the operations to create/edit foreign servers via form.
+\class UserMappingWidget
+\brief Implements the operations to create/edit user mappings via form.
 */
 
-#ifndef FOREIGN_SERVER_WIDGET_H
-#define FOREIGN_SERVER_WIDGET_H
+#ifndef USER_MAPPING_WIDGET_H
+#define USER_MAPPING_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_foreignserverwidget.h"
+#include "ui_usermappingwidget.h"
 #include "objectstablewidget.h"
 
-class ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidget {
+class UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 	private:
 		Q_OBJECT
 
-		ObjectSelectorWidget *fdw_sel;
+		ObjectSelectorWidget *server_sel;
 
 		ObjectsTableWidget *options_tab;
 
 	public:
-		ForeignServerWidget(QWidget * parent = nullptr);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignServer *server);
+		UserMappingWidget(QWidget * parent = nullptr);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, UserMapping *user_map);
 
 	public slots:
 		void applyConfiguration(void);
