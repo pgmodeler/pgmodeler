@@ -78,7 +78,7 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::EventTrigger, &eventtriggers },
 		{ ObjectType::GenericSql, &genericsqls },
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
-		{ ObjectType::ForeignServer, &servers },
+		{ ObjectType::ForeignServer, &foreign_servers },
 		{ ObjectType::UserMapping, &usermappings }
 	};
 }
@@ -201,7 +201,7 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			addForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
 		else if(obj_type==ObjectType::ForeignServer)
-			addServer(dynamic_cast<ForeignServer *>(object));
+			addForeignServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -271,7 +271,7 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object));
 		else if(obj_type==ObjectType::ForeignServer)
-			removeServer(dynamic_cast<ForeignServer *>(object));
+			removeForeignServer(dynamic_cast<ForeignServer *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -1087,7 +1087,7 @@ ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(const QString &name)
 	return(dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper)));
 }
 
-void DatabaseModel::addServer(ForeignServer *server, int obj_idx)
+void DatabaseModel::addForeignServer(ForeignServer *server, int obj_idx)
 {
 	try
 	{
@@ -1099,7 +1099,7 @@ void DatabaseModel::addServer(ForeignServer *server, int obj_idx)
 	}
 }
 
-void DatabaseModel::removeServer(ForeignServer *server, int obj_idx)
+void DatabaseModel::removeForeignServer(ForeignServer *server, int obj_idx)
 {
 	try
 	{
@@ -1111,12 +1111,12 @@ void DatabaseModel::removeServer(ForeignServer *server, int obj_idx)
 	}
 }
 
-ForeignServer *DatabaseModel::getServer(unsigned obj_idx)
+ForeignServer *DatabaseModel::getForeignServer(unsigned obj_idx)
 {
 	return(dynamic_cast<ForeignServer *>(getObject(obj_idx, ObjectType::ForeignServer)));
 }
 
-ForeignServer *DatabaseModel::getServer(const QString &name)
+ForeignServer *DatabaseModel::getForeignServer(const QString &name)
 {
 	return(dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer)));
 }
@@ -1133,7 +1133,7 @@ void DatabaseModel::addUserMapping(UserMapping *usrmap, int obj_idx)
 	}
 }
 
-void DatabaseModel::removeUserMapping(ForeignServer *usrmap, int obj_idx)
+void DatabaseModel::removeUserMapping(UserMapping *usrmap, int obj_idx)
 {
 	try
 	{
@@ -3374,7 +3374,9 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 		else if(obj_type==ObjectType::ForeignDataWrapper)
 			object=createForeignDataWrapper();
 		else if(obj_type==ObjectType::ForeignServer)
-			object=createServer();
+			object=createForeignServer();
+		else if(obj_type==ObjectType::UserMapping)
+			object=createUserMapping();
 	}
 
 	return(object);
@@ -3388,6 +3390,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	Schema *schema=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject, obj_type_aux;
 	bool has_error=false, protected_obj=false, sql_disabled=false;
+	ForeignObject *frn_object = dynamic_cast<ForeignObject *>(object);
 
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -3396,7 +3399,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 	obj_type_aux=object->getObjectType();
 
-	if(obj_type_aux!=ObjectType::Cast)
+	if(obj_type_aux!=ObjectType::Cast && obj_type_aux != ObjectType::UserMapping)
 		object->setName(attribs[Attributes::Name]);
 
 	if(BaseObject::acceptsAlias(obj_type_aux))
@@ -3404,6 +3407,21 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 	protected_obj=attribs[Attributes::Protected]==Attributes::True;
 	sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
+
+	if(frn_object)
+	{
+		QStringList opt_val;
+
+		for(auto &option : attribs[Attributes::Options].split(ForeignObject::OptionsSeparator))
+		{
+			opt_val = option.split(UserMapping::OptionValueSeparator);
+
+			if(opt_val.size() < 2)
+				continue;
+
+			frn_object->setOption(opt_val[0], opt_val[1]);
+		}
+	}
 
 	xmlparser.savePosition();
 
@@ -5992,7 +6010,6 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	BaseObject *func=nullptr;
 	QString signature, ref_type;
 	ObjectType obj_type;
-	QStringList options, opt_val;
 
 	try
 	{
@@ -6000,18 +6017,6 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(fdw);
-
-		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
-
-		for(auto &option : options)
-		{
-			opt_val = option.split(ForeignDataWrapper::OptionValueSeparator);
-
-			if(opt_val.size() < 2)
-				continue;
-
-			fdw->setOption(opt_val[0], opt_val[1]);
-		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6069,13 +6074,12 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	return(fdw);
 }
 
-ForeignServer *DatabaseModel::createServer(void)
+ForeignServer *DatabaseModel::createForeignServer(void)
 {
 	attribs_map attribs;
 	ForeignServer *server = nullptr;
 	BaseObject *fdw = nullptr;
 	ObjectType obj_type;
-	QStringList options, opt_val;
 
 	try
 	{
@@ -6083,20 +6087,8 @@ ForeignServer *DatabaseModel::createServer(void)
 
 		xmlparser.getElementAttributes(attribs);
 		setBasicAttributes(server);
-
 		server->setType(attribs[Attributes::Type]);
 		server->setVersion(attribs[Attributes::Version]);
-		options = attribs[Attributes::Options].split(ForeignDataWrapper::OptionsSeparator);
-
-		for(auto &option : options)
-		{
-			opt_val = option.split(ForeignDataWrapper::OptionValueSeparator);
-
-			if(opt_val.size() < 2)
-				continue;
-
-			server->setOption(opt_val[0], opt_val[1]);
-		}
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
 		{
@@ -6136,6 +6128,62 @@ ForeignServer *DatabaseModel::createServer(void)
 	}
 
 	return(server);
+}
+
+UserMapping *DatabaseModel::createUserMapping(void)
+{
+	attribs_map attribs;
+	UserMapping *user_map = nullptr;
+	ForeignServer *server = nullptr;
+	ObjectType obj_type;
+
+	try
+	{
+		user_map = new UserMapping;
+
+		xmlparser.getElementAttributes(attribs);
+		setBasicAttributes(user_map);
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					obj_type = BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type == ObjectType::ForeignServer)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						server = dynamic_cast<ForeignServer *>(getObject(attribs[Attributes::Name], ObjectType::ForeignServer));
+
+						//Raises an error if the server doesn't exists
+						if(!server)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(user_map->getName())
+															.arg(user_map->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::ForeignServer)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						user_map->setForeignServer(server);
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		if(user_map)
+			delete(user_map);
+
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return(user_map);
 }
 
 void DatabaseModel::updateViewsReferencingTable(Table *table)
@@ -8318,6 +8366,12 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				for(auto &obj : ref_objs)
 					getObjectDependecies(obj, deps, inc_indirect_deps);
 			}
+			//** Getting the dependecies for user mapping **
+			else if(obj_type==ObjectType::UserMapping)
+			{
+				UserMapping *usr_map = dynamic_cast<UserMapping *>(object);
+				getObjectDependecies(usr_map->getForeignServer(), deps, inc_indirect_deps);
+			}
 
 			if(obj_type == ObjectType::Table || obj_type == ObjectType::View)
 			{
@@ -8939,11 +8993,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		{
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[13]={ObjectType::Function, ObjectType::Table, ObjectType::Domain,
+			vector<ObjectType> obj_types = {
+										ObjectType::Function, ObjectType::Table, ObjectType::Domain,
 										ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
 										ObjectType::Sequence, ObjectType::Conversion,
 										ObjectType::Language, ObjectType::Tablespace,
-										ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
+										ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
+										ObjectType::UserMapping };
+			vector<ObjectType>::iterator itr_tp, itr_tp_end;
 			unsigned i,i1, count;
 			Role *role_aux=nullptr;
 			Role *role=dynamic_cast<Role *>(object);
@@ -8987,9 +9044,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				}
 			}
 
-			for(i=0; i < 13 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+			itr_tp = obj_types.begin();
+			itr_tp_end = obj_types.end();
+
+			while(itr_tp != itr_tp_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				obj_list=getObjectList(obj_types[i]);
+				obj_list=getObjectList(*itr_tp);
+				itr_tp++;
+
 				itr=obj_list->begin();
 				itr_end=obj_list->end();
 
@@ -9525,12 +9587,32 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *> list;
 			ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
 
-			itr=servers.begin();
-			itr_end=servers.end();
+			itr=foreign_servers.begin();
+			itr_end=foreign_servers.end();
 
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
 				if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+
+		if(obj_type==ObjectType::ForeignServer && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			vector<BaseObject *>::iterator itr, itr_end;
+			vector<BaseObject *> list;
+			ForeignServer *srv=dynamic_cast<ForeignServer *>(object);
+
+			itr=usermappings.begin();
+			itr_end=usermappings.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<UserMapping *>(*itr)->getForeignServer() == srv)
 				{
 					refer=true;
 					refs.push_back(*itr);

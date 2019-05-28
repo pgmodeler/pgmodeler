@@ -49,10 +49,10 @@ void UserMappingTest::generatesNameCorrectly(void)
 	usr_mapping.setForeignServer(&server);
 	QCOMPARE(usr_mapping.getName(), "public@server_test");
 
-	usr_mapping.setRole(&role);
+	usr_mapping.setOwner(&role);
 	QCOMPARE(usr_mapping.getName(), "postgres@server_test");
 
-	usr_mapping.setRole(nullptr);
+	usr_mapping.setOwner(nullptr);
 	usr_mapping.setForeignServer(nullptr);
 	QCOMPARE(usr_mapping.getName(), "public@");
 }
@@ -72,7 +72,10 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- ").simplified();
 
 QString xml_code =QString(
-"<usermapping name=\"postgres@server_test\" role=\"postgres\" server=\"server_test\" options=\"opt1#value1*opt2#value2\"> </usermapping>")
+"<usermapping name=\"postgres@server_test\" options=\"opt1#value1*opt2#value2\"> \
+<role name=\"postgres\"/> \
+<foreignserver name=\"server_test\"/> \
+</usermapping>")
 									.replace("#", ForeignServer::OptionValueSeparator)
 									.replace("*", ForeignServer::OptionsSeparator).simplified();
 
@@ -85,7 +88,7 @@ QString xml_code =QString(
 		server.setOwner(&role);
 		server.setForeignDataWrapper(&fdw);
 		usr_mapping.setForeignServer(&server);
-		usr_mapping.setRole(&role);
+		usr_mapping.setOwner(&role);
 		usr_mapping.setOption("opt1", "value1");
 		usr_mapping.setOption("opt2", "value2");
 
@@ -103,35 +106,37 @@ QString xml_code =QString(
 
 void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
 {
-	/*DatabaseModel model;
-	Role owner;
-	Schema public_sch;
+	DatabaseModel model;
 	ForeignDataWrapper fdw;
 	ForeignServer server;
+	Role role;
+	UserMapping usr_mapping;
 
 	try
 	{
-		public_sch.setName("public");
-		owner.setName("postgres");
-
-		model.addSchema(&public_sch);
-		model.addRole(&owner);
-
+		role.setName("postgres");
 		fdw.setName("fdw");
-		model.addForeignDataWrapper(&fdw);
 
 		server.setName("server_test");
+		server.setOwner(&role);
 		server.setForeignDataWrapper(&fdw);
-		model.addServer(&server);
+		usr_mapping.setForeignServer(&server);
+		usr_mapping.setOwner(&role);
+		usr_mapping.setOption("opt1", "value1");
+		usr_mapping.setOption("opt2", "value2");
+
+		model.addRole(&role);
+		model.addForeignServer(&server);
+		model.addUserMapping(&usr_mapping);
 
 		vector<BaseObject *> refs, deps;
-		model.getObjectDependecies(&server, deps);
+		model.getObjectDependecies(&usr_mapping, deps);
 
-		model.getObjectReferences(&fdw, refs);
-		model.removeServer(&server);
+		model.getObjectReferences(&server, refs);
+		model.removeUserMapping(&usr_mapping);
+		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);
-		model.removeSchema(&public_sch);
-		model.removeRole(&owner);
+		model.removeRole(&role);
 
 		QVERIFY(deps.size() >= 2);
 		QVERIFY(refs.size() == 1);
@@ -139,58 +144,59 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
 	catch (Exception &e)
 	{
 		QFAIL(e.getErrorMessage().toStdString().c_str());
-	}*/
+	}
 }
 
 void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
 {
-	/*DatabaseModel model;
-	Role owner;
-	Schema public_sch;
+	DatabaseModel model;
 	ForeignDataWrapper fdw;
-	ForeignServer *server = nullptr;
+	ForeignServer server;
+	Role role;
+	UserMapping *usr_map = nullptr;
 	QString xml_code, res_xml_code;
 
 	try
 	{
-		public_sch.setName("public");
-		owner.setName("postgres");
-
-		model.addSchema(&public_sch);
-		model.addRole(&owner);
-
+		role.setName("postgres");
 		fdw.setName("fdw");
+
+		server.setName("server_test");
+		server.setOwner(&role);
+		server.setForeignDataWrapper(&fdw);
+
+		model.addRole(&role);
+		model.addForeignServer(&server);
 		model.addForeignDataWrapper(&fdw);
 
-		xml_code=QString("<server name=\"server_test\" options=\"opt1#value1*opt2#value2\"> \
+		xml_code=QString("<usermapping name=\"postgres@server_test\" options=\"opt1#value1*opt2#value2\"> \
 <role name=\"postgres\"/> \
-<comment><![CDATA[This is a test comment on server]]></comment> \
-<foreigndatawrapper name=\"fdw\"/> \
-</server>").replace("#", ForeignDataWrapper::OptionValueSeparator)
-											 .replace("*", ForeignDataWrapper::OptionsSeparator);
+<foreignserver name=\"server_test\"/> \
+</usermapping>").replace("#", ForeignObject::OptionValueSeparator)
+								.replace("*", ForeignObject::OptionsSeparator);
 
 		model.getXMLParser()->loadXMLBuffer(xml_code);
-		server = dynamic_cast<ForeignServer *>(model.createObject(ObjectType::ForeignServer));
+		usr_map = dynamic_cast<UserMapping *>(model.createObject(ObjectType::UserMapping));
 
-		QVERIFY(server != nullptr);
+		QVERIFY(usr_map != nullptr);
 
-		res_xml_code = server->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
+		res_xml_code = usr_map->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		xml_code = xml_code.simplified();
 
-		model.removeServer(server);
+		model.removeUserMapping(usr_map);
+		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);
-		model.removeSchema(&public_sch);
-		model.removeRole(&owner);
+		model.removeRole(&role);
 
-		if(server)
-			delete(server);
+		if(usr_map)
+			delete(usr_map);
 
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)
 	{
 		QFAIL(e.getErrorMessage().toStdString().c_str());
-	}*/
+	}
 }
 
 QTEST_MAIN(UserMappingTest)

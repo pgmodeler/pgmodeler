@@ -22,10 +22,7 @@ UserMapping::UserMapping(void) : ForeignObject()
 {
 	obj_type = ObjectType::UserMapping;
 	foreign_server = nullptr;
-	role = nullptr;
 	setName("");
-
-	attributes[Attributes::Role] = QString();
 	attributes[Attributes::Server] = QString();
 }
 
@@ -41,17 +38,16 @@ ForeignServer *UserMapping::getForeignServer(void)
 	return(foreign_server);
 }
 
-void UserMapping::setRole(Role *role)
+void UserMapping::setOwner(BaseObject *role)
 {
-	setCodeInvalidated(this->role != role);
-	this->role = role;
+	BaseObject::setOwner(role);
 	setName("");
 }
 
 void UserMapping::setName(const QString &)
 {
 	//Configures a fixed name for the user mapping (in form: role@server)
-	this->obj_name=QString("%1@%2").arg(role ? role->getName() : QString("public"))
+	this->obj_name=QString("%1@%2").arg(owner ? owner->getName() : QString("public"))
 								 .arg(foreign_server ? foreign_server->getName() : QString());
 }
 
@@ -62,7 +58,7 @@ QString UserMapping::getName(bool, bool)
 
 QString UserMapping::getSignature(bool)
 {
-	return(QString("FOR %1 SERVER %2").arg(role ? role->getName() : QString("public"))
+	return(QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : QString("public"))
 																		.arg(foreign_server ? foreign_server->getName() : QString()));
 }
 
@@ -71,10 +67,18 @@ QString UserMapping::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	attributes[Attributes::Role] = role ? role->getName(def_type == SchemaParser::SqlDefinition) : QString();
-	attributes[Attributes::Server] = foreign_server ? foreign_server->getName(def_type == SchemaParser::SqlDefinition) : QString();
-	setOptionsAttribute(def_type);
+	attributes[Attributes::Role] = QString();
+	attributes[Attributes::Server] = QString();
 
+	if(foreign_server)
+	{
+		if(def_type == SchemaParser::SqlDefinition)
+			attributes[Attributes::Server] = foreign_server->getName(true);
+		else
+			attributes[Attributes::Server] = foreign_server->getCodeDefinition(def_type, true);
+	}
+
+	setOptionsAttribute(def_type);
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 
@@ -97,4 +101,9 @@ QString UserMapping::getAlterDefinition(BaseObject *object)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}*/
+}
+
+QString UserMapping::getDropDefinition(bool)
+{
+	return(BaseObject::getDropDefinition(false));
 }

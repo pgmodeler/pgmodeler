@@ -735,7 +735,8 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::Policy: createPolicy(attribs); break;
 				case ObjectType::EventTrigger: createEventTrigger(attribs); break;
 				case ObjectType::ForeignDataWrapper: createForeignDataWrapper(attribs); break;
-				case ObjectType::ForeignServer: createServer(attribs); break;
+				case ObjectType::ForeignServer: createForeignServer(attribs); break;
+				case ObjectType::UserMapping: createUserMapping(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -2327,7 +2328,7 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createServer(attribs_map &attribs)
+void DatabaseImportHelper::createForeignServer(attribs_map &attribs)
 {
 	ForeignServer *server=nullptr;
 
@@ -2337,12 +2338,33 @@ void DatabaseImportHelper::createServer(attribs_map &attribs)
 		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
 
 		loadObjectXML(ObjectType::ForeignServer, attribs);
-		server = dbmodel->createServer();
-		dbmodel->addServer(server);
+		server = dbmodel->createForeignServer();
+		dbmodel->addForeignServer(server);
 	}
 	catch(Exception &e)
 	{
 		if(server) delete(server);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
+{
+	UserMapping *usr_map=nullptr;
+
+	try
+	{
+		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
+		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
+
+		loadObjectXML(ObjectType::UserMapping, attribs);
+		usr_map = dbmodel->createUserMapping();
+		dbmodel->addUserMapping(usr_map);
+	}
+	catch(Exception &e)
+	{
+		if(usr_map) delete(usr_map);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}

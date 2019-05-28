@@ -408,7 +408,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
-			 obj_type==ObjectType::ForeignServer);
+			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -755,10 +755,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			{
 				attributes[Attributes::Owner]=owner->getName(format);
 
-				/** Only tablespaces and database do not have an ALTER OWNER SET
+				/* Only tablespaces, database and user mapping do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
-				 with just a command line isolated from the others **/
-				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database)
+				 with just a command line isolated from the others */
+				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +

@@ -13,7 +13,7 @@
 
 [CREATE USER MAPPING FOR ]
 
-%if {role} %then {role} %else PUBLIC %end $br
+%if {owner} %then {owner} %else PUBLIC %end $br
 
 [SERVER ] {server} 
 

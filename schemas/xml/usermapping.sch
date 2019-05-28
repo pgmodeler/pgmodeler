@@ -4,12 +4,6 @@
 
 [<usermapping name=] "{name}"
 
-%if {role} %then
-    [ role=] "{role}"
-%end
-
-[ server=] "{server}"
-
 %if {options} %then
     [ options=] "{options}" 
 %end
@@ -24,6 +18,8 @@
 
 > $br
 
+%if {owner} %then {owner} %end
+%if {server} %then {server} %end
 %if {appended-sql} %then {appended-sql} %end
 %if {prepended-sql} %then {prepended-sql} %end
 

@@ -325,7 +325,12 @@ QString Role::getPassword(void)
 
 QString Role::getCodeDefinition(unsigned def_type)
 {
-	QString code_def=getCachedCode(def_type, false);
+	return(getCodeDefinition(def_type, false));
+}
+
+QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
+{
+	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
@@ -347,7 +352,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
