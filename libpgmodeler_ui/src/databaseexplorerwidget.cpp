@@ -184,7 +184,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
 	refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
-	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
+	refresh_action->setShortcut(QKeySequence(Qt::Key_F6));
 
 	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), trUtf8("Rename"), &handle_menu);
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
@@ -260,7 +260,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 ||
+		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F6 ||
 				k_event->key()==Qt::Key_Space ||  k_event->key()==Qt::Key_F2 ||
 				k_event->key()==Qt::Key_Escape ||  k_event->key()==Qt::Key_Return ||
 				k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_F7)
@@ -282,7 +282,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					}
 				}
 			}
-			else if(k_event->key()==Qt::Key_F5)
+			else if(k_event->key()==Qt::Key_F6)
 				updateItem(objects_trw->currentItem());
 			else if(k_event->key()==Qt::Key_F2)
 				startObjectRename(objects_trw->currentItem());
