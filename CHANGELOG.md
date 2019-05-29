@@ -3,21 +3,24 @@ Change Log
 
 v0.9.2-beta
 ------
-<em>Release date: May 27, 2019</em><br/>
+<em>Release date: May 31, 2019</em><br/>
 
-* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
+* [New] Added support to user mapping.
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
+* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
 * [New] Adding missing tootip on ObjectFinderWidget.
 * [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
 * [New] Added support to compare foreign servers on diff process.
 * [New] Created a generic getAlterDefinition on ForeignObject.
 * [New] Added ForeignServer toolbutton in NewObjectOverlayWidget.
+* [New] Added support to the reverse engineering user mapping objects.
 * [New] Added support to the reverse engineering foreign server objects.
 * [New] Added code snippets for foreign data wrapper and foreign server.
-* [New] Added support to diff foreign data wrappers
+* [New] Added support to diff user mapping.
+* [New] Added support to diff foreign data wrappers.
 * [New] Added support to set permissions to foreign data wrapper.
-* [New] Added the WRAPPER and SERVER key words to sql-highlight.conf.
+* [New] Added the WRAPPER, SERVER and MAPPING key words to sql-highlight.conf.
 * [New] Added the method PgSqlType::isExactTo in order to do a full comparison (all attributes) between two data types.
 * [New] Added the ability to view references to store referenced tables. This feature will cause relationships to be created between the view and the referenced tables. This is useful when we're using reverse engineering feature in which, in previous versions, couldn't determine the tables that were linked to a view. Now, with this feature a relationship is created between the view and all involved tables.
 * [New] Added missing data type macaddr8.
