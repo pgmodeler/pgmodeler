@@ -6,7 +6,7 @@ v0.9.2-beta
 
 <strong>Summary:</strong> a brand new version has come to you after a work of almost five months. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
 
-pgModeler now supports foreign datawrappers and foreign servers natively. This means that you can create, export, import and diff these kinds of objects. For now, foreign tables aren't supported but the schedule is to release this support until the end of this development cycle when lauching the stable 0.9.2. <br/>
+pgModeler now supports foreign datawrappers, foreign servers and user mappings natively. This means that you can create, export, import and diff these kinds of objects. For now, foreign tables aren't supported but the schedule is to release this support until the end of this development cycle when lauching the stable 0.9.2. <br/>
 
 In order to provide a temporary workaround for the lack of foreign table support the generic SQL objects were improved in such way to store references to another objects in the model which helps to keep track of name changes and giving a touch of dynamicity to this that kind of object.  <br/>
 
