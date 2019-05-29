@@ -119,7 +119,7 @@ QString ObjectSelectorWidget::getSelectedObjectName(void)
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 {
-	ObjectType obj_type;
+	ObjectType obj_type = ObjectType::BaseObject;
 
 	if(object)
 		obj_type=object->getObjectType();
@@ -129,8 +129,13 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 
-		if(object->getObjectType()!=ObjectType::Constraint)
-			obj_name_txt->setPlainText(selected_obj->getSignature());
+		if(obj_type != ObjectType::Constraint)
+		{
+			if(obj_type != ObjectType::UserMapping)
+				obj_name_txt->setPlainText(selected_obj->getSignature());
+			else
+				obj_name_txt->setPlainText(selected_obj->getName());
+		}
 		else
 			obj_name_txt->setPlainText(QString("%1.%2")
 									   .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
