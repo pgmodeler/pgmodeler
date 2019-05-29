@@ -27,6 +27,8 @@ v0.9.2-beta
 * [New] Enabling quick clear button on several input fields.
 * [New] Added support to result set filtering in the SQL execution widget.
 * [New] Adding a column labeled "Comment" in TableWidget and ViewWidget to hold comments of children objects.
+* [Change] Changed the shortcut of run SQL action in SQLExecutionWidget to F5.
+* [Change] Changed the shortcut of tree update action in DatabaseExplorerWidget to F6.
 * [Change] Change "New object" action in popup menu in order categorize object types when clicking the database object diminishing the amount of items displayed on the screen.
 * [Change] Improved the object search mechanism in such way that various attributes of the object can be matched. New searchable attribute may be added in the future.
 * [Change] Added missing code documentation.
