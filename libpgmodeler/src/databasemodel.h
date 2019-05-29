@@ -56,6 +56,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "genericsql.h"
 #include "foreigndatawrapper.h"
 #include "foreignserver.h"
+#include "usermapping.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -132,7 +133,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		eventtriggers,
 		genericsqls,
 		fdata_wrappers,
-		servers;
+		foreign_servers,
+		usermappings;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -500,10 +502,15 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
 		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
 
-		void addServer(ForeignServer *server, int obj_idx=-1);
-		void removeServer(ForeignServer *server, int obj_idx=-1);
-		ForeignServer *getServer(unsigned obj_idx);
-		ForeignServer *getServer(const QString &name);
+		void addForeignServer(ForeignServer *server, int obj_idx=-1);
+		void removeForeignServer(ForeignServer *server, int obj_idx=-1);
+		ForeignServer *getForeignServer(unsigned obj_idx);
+		ForeignServer *getForeignServer(const QString &name);
+
+		void addUserMapping(UserMapping *usrmap, int obj_idx=-1);
+		void removeUserMapping(UserMapping *usrmap, int obj_idx=-1);
+		UserMapping *getUserMapping(unsigned obj_idx);
+		UserMapping *getUserMapping(const QString &name);
 
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
@@ -564,7 +571,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
 		ForeignDataWrapper *createForeignDataWrapper(void);
-		ForeignServer *createServer(void);
+		ForeignServer *createForeignServer(void);
+		UserMapping *createUserMapping(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

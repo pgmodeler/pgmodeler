@@ -19,36 +19,33 @@
 /**
 \ingroup libpgmodeler
 \class Server
-\brief Implements the operations to manipulate foreign servers on the database.
+\brief Implements the operations to manipulate user mappings on the database.
 */
 
-#ifndef FOREIGN_SERVER_H
-#define FOREIGN_SERVER_H
+#ifndef USER_MAPPING_H
+#define USER_MAPPING_H
 
 #include "baseobject.h"
-#include "foreigndatawrapper.h"
+#include "foreignserver.h"
 
-class ForeignServer: public ForeignObject {
+class UserMapping: public ForeignObject {
 	private:
-		//! \brief The foreign data wrapper which manages the server
-		ForeignDataWrapper *fdata_wrapper;
-
-		QString type, version;
+		//! \brief The foreign server which is managed by this user mapping the server
+		ForeignServer *foreign_server;
 
 	public:
-		ForeignServer(void);
+		UserMapping(void);
 
-		void setType(const QString &type);
-		void setVersion(const QString &version);
-		void setForeignDataWrapper(ForeignDataWrapper *fdw);
+		void setForeignServer(ForeignServer *server);
+		ForeignServer *getForeignServer(void);
 
-		QString getType(void);
-		QString getVersion(void);
-		ForeignDataWrapper *getForeignDataWrapper(void);
-
+		virtual void setName(const QString &);
+		virtual void setOwner(BaseObject *role);
+		virtual QString getName(bool = false, bool = false);
+		virtual QString getSignature(bool = false);
 		virtual QString getCodeDefinition(unsigned def_type);
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 		virtual QString getAlterDefinition(BaseObject *object);
+		virtual QString getDropDefinition(bool);
 };
 
 #endif

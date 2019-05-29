@@ -61,7 +61,12 @@ ForeignDataWrapper *ForeignServer::getForeignDataWrapper(void)
 
 QString ForeignServer::getCodeDefinition(unsigned def_type)
 {
-	QString code_def=getCachedCode(def_type, false);
+	return(getCodeDefinition(def_type, false));
+}
+
+QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
+{
+	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return(code_def);
 
 	attributes[Attributes::Version] = version;
@@ -77,7 +82,7 @@ QString ForeignServer::getCodeDefinition(unsigned def_type)
 	}
 
 	setOptionsAttribute(def_type);
-	return(this->BaseObject::__getCodeDefinition(def_type));
+	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString ForeignServer::getAlterDefinition(BaseObject *object)

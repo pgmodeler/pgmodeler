@@ -41,10 +41,6 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	configureFormLayout(permission_grid, ObjectType::Permission);
 
-	name_edt->setReadOnly(true);
-	comment_edt->setVisible(false);
-	comment_lbl->setVisible(false);
-
 	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									ObjectsTableWidget::RemoveButton |
 									ObjectsTableWidget::EditButton, false, this);

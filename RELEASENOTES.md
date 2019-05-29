@@ -1,7 +1,7 @@
 v0.9.2-beta
 ------
 
-<em>Release date: May 27, 2019</em><br/>
+<em>Release date: May 31, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-alpha1</strong></em><br/>
 
 <strong>Summary:</strong> a brand new version has come to you after a work of almost five months. This one brings important features requested long ago and several patches to improve the tool's usability. <br/>
@@ -22,16 +22,18 @@ Now, for the bug fixes, in this release they fix crashes and broken code generat
 
 Lastly, some of the key change log entries of this release are listed below. For the complete list of changes/fixes, please, refer to the file CHANGELOG.md. <br/>
 
-* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
+* [New] Added support to user mapping.
 * [New] Added support to foreign server.
 * [New] Added support to foreign data wrapper.
+* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
 * [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
 * [New] Added support to compare foreign servers on diff process.
+* [New] Added support to the reverse engineering user mapping objects.
 * [New] Added support to the reverse engineering foreign server objects.
 * [New] Added code snippets for foreign data wrapper and foreign server.
 * [New] Added support to diff foreign data wrappers
 * [New] Added support to set permissions to foreign data wrapper.
-* [New] Added the WRAPPER and SERVER key words to sql-highlight.conf.
+* [New] Added the WRAPPER, SERVER and MAPPING key words to sql-highlight.conf.
 * [New] Added the ability to view references to store referenced tables. This feature will cause relationships to be created between the view and the referenced tables. This is useful when we're using reverse engineering feature in which, in previous versions, couldn't determine the tables that were linked to a view. Now, with this feature a relationship is created between the view and all involved tables.
 * [New] Added missing data type macaddr8.
 * [New] Added support to result set filtering in the SQL execution widget.

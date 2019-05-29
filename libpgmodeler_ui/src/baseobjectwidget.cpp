@@ -469,7 +469,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
-	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Parameter;
+	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
+							 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+							 obj_type!=ObjectType::Permission;
 	comment_lbl->setVisible(show_comment);
 	comment_edt->setVisible(show_comment);
 
@@ -478,10 +480,17 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast)
+		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast && obj_type!=ObjectType::UserMapping)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
+		}
+		else
+		{
+			QFont font=name_edt->font();
+			name_edt->setReadOnly(true);
+			font.setItalic(true);
+			name_edt->setFont(font);
 		}
 
 		if(obj_type!=ObjectType::Extension)

@@ -49,11 +49,11 @@ COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(
-"<server name=\"server_test\" type=\"dbtype\" version=\"1.0\" options=\"opt1#value1*opt2#value2\"> \
+"<foreignserver name=\"server_test\" type=\"dbtype\" version=\"1.0\" options=\"opt1#value1*opt2#value2\"> \
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on server]]></comment> \
 <foreigndatawrapper name=\"fdw\"/> \
-</server>").replace("#", ForeignServer::OptionValueSeparator)
+</foreignserver>").replace("#", ForeignServer::OptionValueSeparator)
 											 .replace("*", ForeignServer::OptionsSeparator).simplified();
 
 	try
@@ -103,13 +103,13 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 
 		server.setName("server_test");
 		server.setForeignDataWrapper(&fdw);
-		model.addServer(&server);
+		model.addForeignServer(&server);
 
 		vector<BaseObject *> refs, deps;
 		model.getObjectDependecies(&server, deps);
 
 		model.getObjectReferences(&fdw, refs);
-		model.removeServer(&server);
+		model.removeForeignServer(&server);
 		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);
 		model.removeRole(&owner);
@@ -143,11 +143,11 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		fdw.setName("fdw");
 		model.addForeignDataWrapper(&fdw);
 
-		xml_code=QString("<server name=\"server_test\" options=\"opt1#value1*opt2#value2\"> \
+		xml_code=QString("<foreignserver name=\"server_test\" options=\"opt1#value1*opt2#value2\"> \
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on server]]></comment> \
 <foreigndatawrapper name=\"fdw\"/> \
-</server>").replace("#", ForeignDataWrapper::OptionValueSeparator)
+</foreignserver>").replace("#", ForeignDataWrapper::OptionValueSeparator)
 											 .replace("*", ForeignDataWrapper::OptionsSeparator);
 
 		model.getXMLParser()->loadXMLBuffer(xml_code);
@@ -158,7 +158,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		res_xml_code = server->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		xml_code = xml_code.simplified();
 
-		model.removeServer(server);
+		model.removeForeignServer(server);
 		model.removeForeignDataWrapper(&fdw);
 		model.removeSchema(&public_sch);
 		model.removeRole(&owner);

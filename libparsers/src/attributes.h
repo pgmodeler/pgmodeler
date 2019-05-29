@@ -485,6 +485,7 @@ namespace Attributes {
 	SelectObjects,
 	SendFunc,
 	Sequence,
+	Server,
 	ServerEncoding,
 	ServerVersion,
 	ServerPid,

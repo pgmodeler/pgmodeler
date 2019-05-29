@@ -1,4 +1,4 @@
-# SQL definition for foreign server
+# SQL definition for user mapping
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -11,27 +11,20 @@
     $br [-- ddl-end --] $br $br
 %end
 
-[CREATE SERVER ] {name} 
+[CREATE USER MAPPING FOR ]
 
-%if {type} %then
-    [ TYPE ] '{type}'
-%end
+%if {owner} %then {owner} %else PUBLIC %end $br
 
-%if {version} %then
-    [ VERSION ] '{version}'
-%end
-
-$br [FOREIGN DATA WRAPPER ] {fdw}
+[SERVER ] {server} 
 
 %if {options} %then
-    $br [OPTIONS (] {options} )
+ $br [OPTIONS (] {options} ) 
 %end
 
 ;
 
 $br [-- ddl-end --] $br
 
-%if {owner} %then {owner} %end
 %if {comment} %then {comment} %end
 
 %if {appended-sql} %then

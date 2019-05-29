@@ -16,6 +16,7 @@ src/schemaparsertest \
 src/linenumberstest \
 src/partrelationshiptest \
 src/foreigndatawrappertest \
-src/servertest
+src/servertest \
+src/usermappingtest
 
 
