@@ -950,8 +950,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							}
 							else if(obj_tp == ObjectType::UserMapping)
 							{
-#warning "TODO: extract the name of the role and server which composes the user mapping"
-								obj_name="**TODO**";
+								obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
 							}
 							else
 							{
