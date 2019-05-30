@@ -231,6 +231,7 @@ void GenericSQLWidget::applyConfiguration(void)
 
 		startConfiguration<GenericSQL>();
 		genericsql=dynamic_cast<GenericSQL *>(this->object);
+		dummy_gsql.setDefinition(definition_txt->toPlainText());
 		*genericsql = dummy_gsql;
 
 		BaseObjectWidget::applyConfiguration();
