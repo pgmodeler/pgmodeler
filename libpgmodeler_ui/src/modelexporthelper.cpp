@@ -787,7 +787,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::UserMapping, ObjectType::BaseObject };
+																 ObjectType::UserMapping, ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -1000,16 +1000,25 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				//Executes the extracted SQL command
 				if(!sql_cmd.isEmpty())
-					conn.executeDDLCommand(sql_cmd);
+				{
+					if(obj_type != ObjectType::Database)
+						conn.executeDDLCommand(sql_cmd);
+					else
+						db_sql_cmds.push_back(sql_cmd);
+				}
 
 				sql_cmd.clear();
 				ddl_tk_found=false;
 			}
 
-			if(ts.atEnd() && !orig_conn_db_name.isEmpty())
+			if(ts.atEnd() && !db_sql_cmds.empty())
 			{
 				conn.close();
-				conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
+				aux_conn=conn;
+				aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
+				aux_conn.connect();
+				for(QString cmd : db_sql_cmds)
+					aux_conn.executeDDLCommand(cmd);
 			}
 		}
 		catch(Exception &e)
