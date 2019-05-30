@@ -787,7 +787,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::UserMapping, ObjectType::Database };
+																 ObjectType::UserMapping, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -894,7 +894,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						obj_type=obj_tp;
 
-
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
 							if(obj_tp==ObjectType::Index)
@@ -937,36 +936,53 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
-							if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
+							if(obj_tp != ObjectType::BaseObject)
 							{
-								int spc_idx=lin.indexOf(' ');
-								obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
-
-								if(obj_tp!=ObjectType::Function)
+								if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 								{
-									obj_name=obj_name.remove('(').simplified();
-									obj_name=obj_name.remove(')').simplified();
+									int spc_idx=lin.indexOf(' ');
+									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+
+									if(obj_tp!=ObjectType::Function)
+									{
+										obj_name=obj_name.remove('(').simplified();
+										obj_name=obj_name.remove(')').simplified();
+									}
 								}
+								else if(obj_tp == ObjectType::UserMapping)
+								{
+									obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
+								}
+								else
+								{
+									obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+								}
+
+								//Stores the object type name
+								obj_tp_name=BaseObject::getTypeName(obj_tp);
+								obj_name.remove(';');
+
+								if(is_create)
+									msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+								else if(is_drop)
+									msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+								else
+									msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 							}
-							else if(obj_tp == ObjectType::UserMapping)
-							{
-								obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
-							}
+							// If the type of the object being create can't be identified
 							else
 							{
-								obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+								QString aux_cmd_type;
+
+								if(is_create)
+									aux_cmd_type = QString("CREATE");
+								else if(is_drop)
+									aux_cmd_type = QString("DROP");
+								else
+									aux_cmd_type = QString("ALTER");
+
+								msg=trUtf8("Running auxiliary `%1' command...").arg(aux_cmd_type);
 							}
-
-							//Stores the object type name
-							obj_tp_name=BaseObject::getTypeName(obj_tp);
-							obj_name.remove(';');
-
-							if(is_create)
-								msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
-							else if(is_drop)
-								msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
-							else
-								msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 
 							break;
 						}
@@ -984,25 +1000,16 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 				//Executes the extracted SQL command
 				if(!sql_cmd.isEmpty())
-				{
-					if(obj_type!=ObjectType::Database)
-						conn.executeDDLCommand(sql_cmd);
-					else
-						db_sql_cmds.push_back(sql_cmd);
-				}
+					conn.executeDDLCommand(sql_cmd);
 
 				sql_cmd.clear();
 				ddl_tk_found=false;
 			}
 
-			if(ts.atEnd() && !db_sql_cmds.empty())
+			if(ts.atEnd() && !orig_conn_db_name.isEmpty())
 			{
 				conn.close();
-				aux_conn=conn;
-				aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
-				aux_conn.connect();
-				for(QString cmd : db_sql_cmds)
-					aux_conn.executeDDLCommand(cmd);
+				conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
 			}
 		}
 		catch(Exception &e)

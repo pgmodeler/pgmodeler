@@ -14,6 +14,9 @@
 <!ENTITY % tag SYSTEM "tag.dtd">
 %tag;
 
+<!ENTITY % object SYSTEM "object.dtd">
+%object;
+
 <!ENTITY % genericsql SYSTEM "genericsql.dtd">
 %genericsql;
 
