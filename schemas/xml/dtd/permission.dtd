@@ -21,10 +21,3 @@
 <!ATTLIST permission revoke (false|true) "false">
 <!ATTLIST permission cascade (false|true) "false">
 <!ATTLIST permission sql-disabled (false|true) "false">
-
-<!ELEMENT object EMPTY>
-<!ATTLIST object name CDATA #REQUIRED>
-<!ATTLIST object parent CDATA #IMPLIED>
-<!ATTLIST object type (table|column|view|sequence|database|function|aggregate|langage|schema|tablespace|usertype|domain) "table">
-
-<!ATTLIST object index CDATA #IMPLIED>  <!-- Used only on custom column / constraint indexes (see customidxs.dtd) -->

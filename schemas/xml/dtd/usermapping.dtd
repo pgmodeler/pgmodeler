@@ -1,0 +1,9 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT usermapping (role?, foreignserver, appended-sql?, prepended-sql?)>
+<!ATTLIST usermapping name CDATA #REQUIRED>
+<!ATTLIST usermapping options CDATA #IMPLIED>
+<!ATTLIST usermapping protected (false|true) "false">
+<!ATTLIST usermapping sql-disabled (false|true) "false">

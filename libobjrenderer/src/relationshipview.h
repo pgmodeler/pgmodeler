@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-		static constexpr double GraphicPointRadius=6.0f;
+		static constexpr double GraphicPointRadius=6.0;
 
 		//! \brief Length of the lines linked to fk/pk columns
-		static constexpr double ConnLineLength=20.0f;
+		static constexpr double ConnLineLength=20.0;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;

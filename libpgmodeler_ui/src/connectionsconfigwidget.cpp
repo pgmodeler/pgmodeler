@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ void ConnectionsConfigWidget::updateConnectionsCombo(void)
 	connections_cmb->clear();
 
 	for(auto &conn : connections)
-		connections_cmb->addItem(QIcon(QString(":icones/icones/server.png")), conn->getConnectionId());
+		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("server")), conn->getConnectionId());
 }
 
 void ConnectionsConfigWidget::destroyConnections(void)
@@ -165,7 +165,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -253,7 +253,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 		if(new_conn)
 			delete(new_conn);
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -287,7 +287,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 		if(add_tb->isVisible())
 			delete(conn);
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -442,7 +442,7 @@ void ConnectionsConfigWidget::testConnection(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -465,7 +465,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -533,7 +533,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -576,7 +576,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 
 	for(auto &itr : connections)
 	{
-		combo->addItem(QIcon(QString(":icones/icones/server.png")), itr.first, QVariant::fromValue<void *>(itr.second));
+		combo->addItem(QIcon(PgModelerUiNs::getIconPath("server")), itr.first, QVariant::fromValue<void *>(itr.second));
 
 		if(!def_conn && itr.second->isDefaultForOperation(check_def_for))
 			def_conn=itr.second;
@@ -626,7 +626,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		catch(Exception &e)
 		{
 			combo->setCurrentIndex(0);
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 
 		return(conn_saved);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -40,7 +40,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(vector<ObjectType> sel_obj_types, boo
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -76,7 +76,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -119,7 +119,7 @@ QString ObjectSelectorWidget::getSelectedObjectName(void)
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 {
-	ObjectType obj_type;
+	ObjectType obj_type = ObjectType::BaseObject;
 
 	if(object)
 		obj_type=object->getObjectType();
@@ -129,14 +129,20 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 
-		if(object->getObjectType()!=ObjectType::Constraint)
-			obj_name_txt->setPlainText(selected_obj->getSignature());
+		if(obj_type != ObjectType::Constraint)
+		{
+			if(obj_type != ObjectType::UserMapping)
+				obj_name_txt->setPlainText(selected_obj->getSignature());
+			else
+				obj_name_txt->setPlainText(selected_obj->getName());
+		}
 		else
 			obj_name_txt->setPlainText(QString("%1.%2")
 									   .arg(dynamic_cast<TableObject *>(selected_obj)->getParentTable()->getSignature())
 									   .arg(selected_obj->getName(true)));
 
 		emit s_objectSelected();
+		emit s_selectorChanged(true);
 	}
 	else
 		clearSelector();
@@ -155,7 +161,7 @@ void ObjectSelectorWidget::setSelectedObject(const QString &obj_name, ObjectType
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -176,6 +182,7 @@ void ObjectSelectorWidget::clearSelector(void)
 	obj_name_txt->clear();
 	rem_object_tb->setEnabled(false);
 	emit s_selectorCleared();
+	emit s_selectorChanged(false);
 }
 
 void ObjectSelectorWidget::showObjectView(void)

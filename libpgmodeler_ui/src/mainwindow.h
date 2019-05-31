@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,9 +55,6 @@
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
-
-		//! \brief Maximum number of files listed on recent models menu
-		static constexpr int MaxRecentModels=15;
 
 		static constexpr int GeneralActionsCount=8;
 
@@ -171,7 +168,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void showFixMessage(Exception &e, const QString &filename);
 
 	public:
-		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list

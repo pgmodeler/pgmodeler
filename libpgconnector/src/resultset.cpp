@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,14 +43,12 @@ ResultSet::ResultSet(PGresult *sql_result)
 		//Generating an error in case the server returns an incomprehensible response
 		case PGRES_BAD_RESPONSE:
 			throw Exception(ErrorCode::IncomprehensibleDBMSResponse, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
 
 			//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
 			str_aux=Exception::getErrorMessage(ErrorCode::DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
 			throw Exception(str_aux,ErrorCode::DBMSFatalError, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
 
 			//In case of sucess states the result will be created
 		case PGRES_COMMAND_OK:
@@ -138,7 +136,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 	catch(Exception &e)
 	{
 		//Capture and redirect any generated exception
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -247,7 +245,7 @@ bool ResultSet::isColumnBinaryFormat(const QString &column_name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 
 	/* Returns the column format in the current tuple.

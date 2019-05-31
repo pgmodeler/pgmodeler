@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion
 	});
 
 	this->conf_exclusion=conf_exclusion;
+	cells_editable = false;
 
 	setButtonConfiguration(button_conf);
 	setColumnCount(1);
@@ -182,7 +183,7 @@ void ObjectsTableWidget::clearCellText(unsigned row_idx, unsigned col_idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -345,7 +346,7 @@ void ObjectsTableWidget::addRow(unsigned lin_idx)
 
 	for(col_idx=0; col_idx < col_cont; col_idx++)
 	{
-		item=new QTableWidgetItem;
+		item=new QTableWidgetItem;		
 		table_tbw->setItem(lin_idx,col_idx,item);
 	}
 
@@ -406,10 +407,14 @@ void ObjectsTableWidget::removeRow(void)
 			{
 				setRowData(QVariant::fromValue<void *>(nullptr), row_idx);
 				item->setData(Qt::UserRole, QVariant::fromValue<void *>(nullptr));
-				emit s_rowRemoved(row_idx);
+
+				emit s_rowAboutToRemove(row_idx);
+
 				table_tbw->removeRow(row_idx);
 				table_tbw->setCurrentItem(nullptr);
 				setButtonsEnabled();
+
+				emit s_rowRemoved(row_idx);
 			}
 		}
 	}
@@ -612,6 +617,12 @@ void ObjectsTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 
 	if((button_conf & ResizeColsButton) == ResizeColsButton)
 		resize_cols_tb->setEnabled(value && table_tbw->rowCount() > 0);
+}
+
+void ObjectsTableWidget::setCellsEditable(bool value)
+{
+	table_tbw->setSelectionBehavior(value ? QAbstractItemView::SelectItems : QAbstractItemView::SelectRows);
+	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
 }
 
 void ObjectsTableWidget::setButtonsEnabled(void)

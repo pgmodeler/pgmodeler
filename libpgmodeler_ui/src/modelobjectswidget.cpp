@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -452,8 +452,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 				visible_types.push_back(tp.first);
 		}
 
-		objects=db_model->findObjects(QString(), visible_types,true, false, false, false);
-
+		objects=db_model->findObjects(QString(), visible_types, false, false, false);
 	}
 
 	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
@@ -468,10 +467,10 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		QFont font;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr, *item3=nullptr;
 		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Schema);
-		int count, count2, i;
+		int count = 0, count2 = 0, i = 0;
 		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::Schema)) + QString("_grp")));
 
-		//Removing the ObjectType::ObjTable and ObjectType::ObjView types since they are handled separetedly
+		//Removing the ObjectType::Table and ObjectType::View types since they are handled separetedly
 		types.erase(std::find(types.begin(), types.end(), ObjectType::Table));
 		types.erase(std::find(types.begin(), types.end(), ObjectType::View));
 
@@ -537,7 +536,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -595,7 +594,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -609,8 +608,8 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		View *view=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		ObjectType types[]={ ObjectType::Rule, ObjectType::Trigger, ObjectType::Index };
-		int count, count1, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::View);
+		int count = 0, count1 = 0, i = 0, i2 = 0;
 		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(QString(BaseObject::getSchemaName(ObjectType::View)) + QString("_grp")));
 
 		try
@@ -621,8 +620,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 			//Create a table group item
 			item=new QTreeWidgetItem(root);
 			item->setIcon(0,group_icon);
-			item->setText(0,BaseObject::getTypeName(ObjectType::View) +
-						  QString(" (%1)").arg(obj_list.size()));
+			item->setText(0,BaseObject::getTypeName(ObjectType::View) + QString(" (%1)").arg(obj_list.size()));
 			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::View)));
 
 			font=item->font(0);
@@ -630,29 +628,29 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 			item->setFont(0, font);
 
 			count=obj_list.size();
+
 			for(i=0; i < count; i++)
 			{
 				view=dynamic_cast<View *>(obj_list[i]);
 				item1=createItemForObject(view, item);
 
 				//Creating the group for the child objects (rules, triggers)
-				for(i1=0; i1 < type_cnt; i1++)
+				for(auto &type : types)
 				{
-					if(visible_objs_map[types[i1]])
+					if(visible_objs_map[type])
 					{
 						item2=new QTreeWidgetItem(item1);
-						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(types[i1]) + QString("_grp"))));
+						item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(type) + QString("_grp"))));
 						font=item2->font(0);
 						font.setItalic(true);
 						item2->setFont(0, font);
 
-						count1=view->getObjectCount(types[i1]);
-						item2->setText(0,BaseObject::getTypeName(types[i1]) +
-									   QString(" (%1)").arg(count1));
+						count1 = view->getObjectCount(type);
+						item2->setText(0,BaseObject::getTypeName(type) + QString(" (%1)").arg(count1));
 
 						for(i2=0; i2 < count1; i2++)
 						{
-							object=view->getObject(i2,types[i1]);
+							object=view->getObject(i2, type);
 							createItemForObject(object, item2);
 						}
 					}
@@ -661,7 +659,7 @@ void ModelObjectsWidget::updateViewTree(QTreeWidgetItem *root, BaseObject *schem
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -692,7 +690,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -707,11 +705,14 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		QTreeWidgetItem *root=nullptr,*item1=nullptr, *item2=nullptr;
 		QFont font;
 		vector<BaseObject *> ref_list, tree_state, obj_list;
-		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace,
-							 ObjectType::Language, ObjectType::Cast, ObjectType::Textbox,
-							 ObjectType::Relationship, ObjectType::EventTrigger,
-							 ObjectType::Tag, ObjectType::GenericSql, ObjectType::Extension };
-		unsigned count, i, i1, type_cnt=sizeof(types)/sizeof(ObjectType);
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Database);
+		unsigned count = 0, i = 0, i1 = 0;
+
+		types.push_back(ObjectType::Tag);
+		types.push_back(ObjectType::GenericSql);
+		types.push_back(ObjectType::Textbox);
+		types.push_back(ObjectType::Relationship);
+		types.erase(std::find(types.begin(), types.end(), ObjectType::Schema));
 
 		try
 		{
@@ -728,20 +729,20 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 				updateSchemaTree(root);
 
-				for(i=0; i < type_cnt; i++)
+				for(auto &type : types)
 				{
-					if(visible_objs_map[types[i]])
+					if(visible_objs_map[type])
 					{
 						item1=new QTreeWidgetItem(root);
-						str_aux=QString(BaseObject::getSchemaName(types[i]));
+						str_aux=QString(BaseObject::getSchemaName(type));
 
 						item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(str_aux + QString("_grp"))));
-						item1->setData(1, Qt::UserRole, QVariant(enum_cast(types[i])));
+						item1->setData(1, Qt::UserRole, QVariant(enum_cast(type)));
 
-						obj_list=(*db_model->getObjectList(types[i]));
+						obj_list=(*db_model->getObjectList(type));
 
 						//Special case for relationship, merging the base relationship list to the relationship list
-						if(types[i]==ObjectType::Relationship)
+						if(type==ObjectType::Relationship)
 						{
 							vector<BaseObject *> obj_list_aux;
 							obj_list_aux=(*db_model->getObjectList(ObjectType::BaseRelationship));
@@ -749,8 +750,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 						}
 
 						count=obj_list.size();
-						item1->setText(0,BaseObject::getTypeName(types[i]) +
-									   QString(" (%1)").arg(count));
+						item1->setText(0,BaseObject::getTypeName(type) + QString(" (%1)").arg(count));
 						font=item1->font(0);
 						font.setItalic(true);
 						item1->setFont(0, font);
@@ -780,7 +780,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
 		objectstree_tw->sortByColumn(0, Qt::AscendingOrder);

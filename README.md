@@ -1,3 +1,11 @@
+[![](https://img.shields.io/github/license/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE)
+[![](https://img.shields.io/github/issues-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues)
+[![](https://img.shields.io/github/issues-closed-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues?q=is%3Aissue+is%3Aclosed)
+<br/>
+![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
+[![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
+[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/0.9.2-beta.svg)](https://github.com/pgmodeler/pgmodeler/commits/0.9.2-beta)
+
 Introduction
 ------------
 
@@ -32,6 +40,7 @@ For details about installation process from source code visit the [Installation]
 Known Issues
 -----------
 
+* pgModeler can't handle correctly the importing of complex CSV files (multilined cell values) in data manipulation form or pasting CSV content of that complexity on that dialog.
 * Due to the usage of Qt's raster engine to draw objects, the process of handling objects on the canvas tends to get slower as lots of objects are created causing constant CPU usage. A heavy performance degradation can be noticed when dealing with models with ~500+ tables and/or relationships. There're plans to improve the speed of drawing operations for large models for future releases.
 * The diff process still presents false-positive results due its limitations. Sometimes, there is the need to run the process twice to get the full changes.
 * pgModeler does not fully supports the [quoted identifier notation](http://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS). When using quoted identifiers only the following characters are accepted in the middle of names: a-z A-Z 0-9 _ . @ $ - / \ space.

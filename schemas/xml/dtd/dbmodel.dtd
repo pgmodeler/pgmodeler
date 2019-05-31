@@ -6,6 +6,8 @@
 %baseelements;
 <!ENTITY % basetype SYSTEM "basetype.dtd">
 %basetype;
+<!ENTITY % object SYSTEM "object.dtd">
+%object;
 <!ENTITY % role SYSTEM "role.dtd">
 %role;
 <!ENTITY % tablespace SYSTEM "tablespace.dtd">
@@ -66,9 +68,14 @@
 %genericsql;
 <!ENTITY % policy SYSTEM "policy.dtd">
 %policy;
+<!ENTITY % foreigndatawrapper SYSTEM "foreigndatawrapper.dtd">
+%foreigndatawrapper;
+<!ENTITY % foreignserver SYSTEM "foreignserver.dtd">
+%foreignserver;
+<!ENTITY % usermapping SYSTEM "usermapping.dtd">
+%usermapping;
 
 <!ELEMENT dbmodel ANY>
-
 <!ATTLIST dbmodel author CDATA #IMPLIED>
 <!ATTLIST dbmodel pgmodeler-ver CDATA #IMPLIED>
 <!ATTLIST dbmodel protected (false|true) "false">

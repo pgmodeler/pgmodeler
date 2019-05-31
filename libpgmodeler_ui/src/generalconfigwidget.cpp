@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,9 @@
 #include "numberedtexteditor.h"
 #include "linenumberswidget.h"
 #include "sqlexecutionwidget.h"
+#include "modeldatabasediffform.h"
+#include "databaseimportform.h"
+#include "modelexportform.h"
 
 map<QString, attribs_map> GeneralConfigWidget::config_params;
 map<QString, GeneralConfigWidget::WidgetState> GeneralConfigWidget::widgets_geom;
@@ -133,6 +136,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=QString();
 	config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString();
 	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
+	config_params[Attributes::Configuration][Attributes::LowVerbosity]=QString();
 
 	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
 	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
@@ -187,6 +191,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	attribs_per_page_ht=new HintTextWidget(attributes_per_page_hint, this);
 	attribs_per_page_ht->setText(attribs_per_page_spb->statusTip());
+
+	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
+	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
 
 	selectPaperSize();
 
@@ -341,6 +348,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
+		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -367,7 +375,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo());
 	}
 }
 
@@ -456,7 +464,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
 		QString file_sch, root_dir, widget_sch;
-		bool show_grid=false, show_delim=false, align_grid=false;
+		int recent_mdl_idx = 0;
 
 		root_dir=GlobalAttributes::TmplConfigurationDir +
 				 GlobalAttributes::DirSeparator;
@@ -494,10 +502,9 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
 		config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
 
-		ObjectsScene::getGridOptions(show_grid, align_grid, show_delim);
-		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(show_grid ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(show_delim ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(align_grid ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(ObjectsScene::isAlignObjectsToGrid() ? Attributes::True : QString());
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
 		config_params[Attributes::Configuration][Attributes::PaperMargin]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -531,6 +538,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
@@ -552,10 +560,12 @@ void GeneralConfigWidget::saveConfiguration(void)
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
-			else if((itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
+			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
 						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+
+				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
 					itr->first==Attributes::ObjectFinder ||
@@ -594,7 +604,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -604,8 +614,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 	QFont fnt;
 	double fnt_size=config_params[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
 
-	if(fnt_size < 5.0f)
-		fnt_size=5.0f;
+	if(fnt_size < 5.0)
+		fnt_size=5.0;
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
@@ -641,7 +651,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	SQLExecutionWidget::setSQLHistoryMaxLength(history_max_length_spb->value());
 
 	fnt.setFamily(config_params[Attributes::Configuration][Attributes::CodeFont]);
-	fnt.setPointSize(fnt_size);
+	fnt.setPointSizeF(fnt_size);
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
@@ -650,6 +660,10 @@ void GeneralConfigWidget::applyConfiguration(void)
 	NumberedTextEditor::setSourceEditorAppArgs(source_editor_args_edt->text());
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 	SyntaxHighlighter::setDefaultFont(fnt);
+
+	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
+	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 }
 
 void GeneralConfigWidget::restoreDefaults(void)
@@ -666,14 +680,14 @@ void GeneralConfigWidget::restoreDefaults(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void GeneralConfigWidget::convertMarginUnity(void)
 {
 	static int prev_unity=UnitMilimeters;
-	double conv_factor[]={1.0f, 2.83f, 0.04f, 0.1f},
+	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
 			left, right, top, bottom, width, height;
 
 	left=left_marg->value() / conv_factor[prev_unity];

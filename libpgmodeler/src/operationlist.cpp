@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -462,7 +462,8 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		else
 		{
 			if((obj_type==ObjectType::Sequence && dynamic_cast<Sequence *>(object)->isReferRelationshipAddedColumn()) ||
-					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()))
+					(obj_type==ObjectType::View && dynamic_cast<View *>(object)->isReferRelationshipAddedColumn()) ||
+					(obj_type==ObjectType::GenericSql && dynamic_cast<GenericSQL *>(object)->isReferRelationshipAddedObject()))
 				operation->setXMLDefinition(object->getCodeDefinition(SchemaParser::XmlDefinition));
 
 			//Case a specific index wasn't specified
@@ -491,7 +492,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 			removeFromPool(object_pool.size()-1);
 			delete(operation);
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -617,7 +618,7 @@ void OperationList::undoOperation(void)
 		while(!ignore_chain && isUndoAvailable() &&
 			  operation->getChainType()!=Operation::NoChain);
 
-		if(error.getErrorType()!=ErrorCode::Custom)
+		if(error.getErrorCode()!=ErrorCode::Custom)
 			throw Exception(ErrorCode::UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
@@ -672,7 +673,7 @@ void OperationList::redoOperation(void)
 		while(!ignore_chain && isRedoAvailable() &&
 			  operation->getChainType()!=Operation::NoChain);
 
-		if(error.getErrorType()!=ErrorCode::Custom)
+		if(error.getErrorCode()!=ErrorCode::Custom)
 			throw Exception(ErrorCode::UndoRedoOperationInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__, &error);
 	}
 }
@@ -698,7 +699,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		obj_idx=oper->getObjectIndex();
 
 		/* Converting the parent object, if any, to the correct class according
-			to the type of the parent object. If ObjectType::ObjTable|ObjectType::ObjView, the pointer
+			to the type of the parent object. If ObjectType::Table|ObjectType::View, the pointer
 			'parent_tab' get the reference to table/view and will be used as referential
 			in the operations below. If the parent object is a relationship, the pointer
 					'parent_rel' get the reference to the relationship */
@@ -734,12 +735,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 				aux_obj=model->createView();
 			else if(obj_type==ObjectType::Column)
 				aux_obj=model->createColumn();
+			else if(obj_type==ObjectType::GenericSql)
+				aux_obj=model->createGenericSQL();
 		}
 
 		/* If the operation is a modified/moved object, the object copy
 			stored in the pool will be restored */
-		if(op_type==Operation::ObjectModified ||
-				op_type==Operation::ObjectMoved)
+		if(op_type==Operation::ObjectModified || op_type==Operation::ObjectMoved)
 		{
 			if(obj_type==ObjectType::Relationship)
 			{

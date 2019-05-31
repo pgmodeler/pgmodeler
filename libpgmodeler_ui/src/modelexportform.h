@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
+
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
 
@@ -59,7 +63,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		int exec(void){ return(QDialog::Rejected); }
 
 	public:
-		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelExportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 
 	public slots:
 		void exec(ModelWidget *model);

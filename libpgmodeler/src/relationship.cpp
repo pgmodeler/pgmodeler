@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -176,7 +176,7 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -559,13 +559,13 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	}
 	catch(Exception &e)
 	{
-		if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+		if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 							.arg(tab_obj->getName())
 							.arg(tab_obj->getTypeName()),
 							ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -871,7 +871,7 @@ void Relationship::addConstraints(Table *recv_tab)
 			itr++;
 		}
 
-		throw Exception(e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1133,7 +1133,7 @@ void Relationship::addColumnsRelGenPart(void)
 		this->connected=true;
 		this->disconnectRelationship();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1174,7 +1174,7 @@ void Relationship::addConstraintsRelGenPart(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1255,7 +1255,7 @@ void Relationship::connectRelationship(void)
 			delete(table_relnn);
 			table_relnn=nullptr;
 		}
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1323,7 +1323,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 			pk_relident=nullptr;
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1366,7 +1366,7 @@ void Relationship::addUniqueKey(Table *recv_tab)
 			uq_rel11=nullptr;
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1494,7 +1494,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 			fk_rel1n=nullptr;
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1532,7 +1532,7 @@ void Relationship::addAttributes(Table *recv_tab)
 			itr++;
 		}
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1647,7 +1647,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, b
 
 		prev_ref_col_names.clear();
 		pk_columns.clear();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1727,7 +1727,7 @@ void Relationship::addColumnsRel11(void)
 		this->connected=true;
 		this->disconnectRelationship();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1804,7 +1804,7 @@ void Relationship::addColumnsRel1n(void)
 		this->connected=true;
 		this->disconnectRelationship();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1894,7 +1894,7 @@ void Relationship::addColumnsRelNn(void)
 		//Forcing the relationship as connected to perform the disconnection operations
 		this->connected=true;
 		this->disconnectRelationship();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -2278,7 +2278,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2714,6 +2714,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
+	attributes[Attributes::Partitioning]=QString();
 
 	if(rel_type == RelationshipGen)
 	{

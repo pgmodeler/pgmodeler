@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -207,8 +207,8 @@ void ModelOverviewWidget::resizeOverview(void)
 		curr_size.setHeight(curr_size.height() * ResizeFactor);
 
 		//If the size exceeds the screen's width or height in 90%
-		if(curr_size.width() > screen_rect.width() * 0.90f ||
-			 curr_size.height() > screen_rect.height() * 0.90f)
+		if(curr_size.width() > screen_rect.width() * 0.90 ||
+			 curr_size.height() > screen_rect.height() * 0.90)
 		{
 			int max_val = std::max(scene_rect.width(), scene_rect.height());
 
@@ -307,8 +307,8 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		rect.setBottom(y + height);
 
 		rect1=label->geometry();
-		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
+		this->model->viewport->horizontalScrollBar()->setValue(ceil(zoom_factor * scene_rect.width() * (rect.x()/static_cast<double>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceil(zoom_factor * scene_rect.height() * (rect.y()/static_cast<double>(rect1.height()))));
 	}
 }
 

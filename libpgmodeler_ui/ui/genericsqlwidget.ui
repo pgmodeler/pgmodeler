@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>651</width>
-    <height>394</height>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,10 +27,191 @@
     <number>2</number>
    </property>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="sqlcode_grp">
-     <property name="title">
-      <string>SQL code</string>
+    <widget class="QTabWidget" name="attribs_tbw">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>SQL code</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>References</string>
+      </attribute>
+      <layout class="QGridLayout" name="references_grid">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="object_lbl">
+           <property name="text">
+            <string>Object:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="sel_obj_icon_lbl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="ref_name_lbl">
+         <property name="text">
+          <string>Ref. name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLineEdit" name="ref_name_edt">
+           <property name="statusTip">
+            <string>The name of the reference to an object. All occurences of the reference enclosed by &lt;strong&gt;{}&lt;/strong&gt; are replaced by the referenced object's name or signature in the generic SQL object's code.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="ref_name_hint" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="use_signature_chk">
+           <property name="statusTip">
+            <string>Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.</string>
+           </property>
+           <property name="text">
+            <string>Use signature</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="use_signature_hint" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="format_name_chk">
+           <property name="statusTip">
+            <string>The referenced object's name or signature will be automatically quoted when special characters are found. Additionally, for schema qualified objects, the name of the parent schema is prepended to the referenced object's name or signature. This will avoid common SQL syntax errors or loss of semantics.</string>
+           </property>
+           <property name="text">
+            <string>Format name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="format_name_hint" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Preview</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>

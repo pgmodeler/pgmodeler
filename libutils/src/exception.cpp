@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvInheritCopyPartRelationship", QT_TR_NOOP("It's not possible to create a self generalization/copy/partition relationship! The table can not inherit or copy its own attributes or be a partition of itself!")},
 	{"AsgObjectBelongsAnotherTable", QT_TR_NOOP("Assignment of an object that already belongs to another table!")},
 	{"AsgSchemaSequenceDiffersTableSchema", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
-	{"//AsgInvalidValueSequenceAttributes", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
+	{"AsgInvalidValueSequenceAttributes", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
 	{"AsgInvalidSequenceMinValue", QT_TR_NOOP("Assignment of a minimum value to the sequence which is greater than the maximum value!")},
 	{"AsgInvalidSequenceStartValue", QT_TR_NOOP("Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values!")},
 	{"AsgInvalidSequenceIncrementValue", QT_TR_NOOP("Assignment of a null increment value to the sequence!")},
@@ -137,7 +137,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"PermissionRefInexistObject", QT_TR_NOOP("A permission is referencing the object `%1' (%2) which was not found in the model!")},
 	{"InvObjectAllocationNoSchema", QT_TR_NOOP("The object `%1' (%2) can not be created because its not being assigned to any schema!")},
 	{"AsgTablespaceDuplicatedDirectory", QT_TR_NOOP("The tablespace `%1' can not be inserted into the model because it points to the same directory as the tablespace `%2'!")},
-	{"AsgInvalidDomainArray", QT_TR_NOOP("It is not possible to create arrays of domains or sequences (dimension >= 1)! PostgreSQL does not yet implement this feature!")},
+	{"AsgInvalidSequenceTypeArray", QT_TR_NOOP("It is not possible to create arrays sequences (dimension >= 1)! PostgreSQL does not yet implement this feature!")},
 	{"AsgSourceCodeFuncCLanguage", QT_TR_NOOP("The function `%1' can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!")},
 	{"AsgRefLibraryFuncLanguageNotC", QT_TR_NOOP("The function `%1' can have the attributes symbol and dynamic library configured only if the language is set to C. For all other cases you must specify a source code that defines it in the DBMS!")},
 	{"AsgInvalidCommutatorOperator", QT_TR_NOOP("The operator `%1' can not be assigned as a commutator of operator `%2' because it has incompatible settings!")},
@@ -163,7 +163,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvConstratintNoColumns", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
 	{"ConfigurationNotLoaded", QT_TR_NOOP("Unable to load the configuration file `%1'! Please check if file exists in its folder and/or if it is not corrupted!")},
 	{"DefaultConfigNotRestored", QT_TR_NOOP("Could not find the default settings file `%1'! To restore default settings check the existence of the file and try again!")},
-	{"//ExportFailure", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
+	{"ExportFailure", QT_TR_NOOP("The export process failed due to an error triggered by the PostgreSQL server in an attempt to execute a SQL command. For more details about the error check the exception stack!\n\n** Executed SQL command: **\n\n%1")},
 	{"PluginNotLoaded", QT_TR_NOOP("Could not load the plugin `%1' from the library `%2'! Message returned by plugin manager: `%3'")},
 	{"PluginsNotLoaded", QT_TR_NOOP("One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.")},
 	{"InvalidSyntax", QT_TR_NOOP("Invalid syntax in file `%1', line %2, column %3!")},
@@ -218,7 +218,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefInvalidFunctionIdTypeConfig", QT_TR_NOOP("Reference to a function id which is incompatible with the user define type configuration!")},
 	{"AsgInvalidOpClassObject", QT_TR_NOOP("The operator class assigned to the object `%1' (%2) must use `btree' as indexing method!")},
 	{"InvPostgreSQLVersion", QT_TR_NOOP("Unsupported PostgreSQL version (%1) detected! Valid versions are between %2 and %3.")},
-	{"//ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
+	{"ValidationFailure", QT_TR_NOOP("The validation process failed due to an error triggered by the validation helper. For more details about the error check the exception stack!")},
 	{"ExtensionHandlingTypeImmutable", QT_TR_NOOP("The extension `%1' is registered as a data type and cannot have the attribute `handles datatype' modified!")},
 	{"InvAllocationFKRelationship", QT_TR_NOOP("The fk relationship `%1' cannot be created because the foreign-key that represents it was not created on table `%2'!")},
 	{"AsgInvalidNamePattern", QT_TR_NOOP("Assignement of an invalid object name pattern to the relationship `%1'!")},
@@ -260,6 +260,10 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"PartKeyObjectInexistsModel", QT_TR_NOOP("A partition key of the table `%1' is referencing the object `%3' (%4) which was not found in the model!")},
 	{"AsgInvalidColumnPartitionKey", QT_TR_NOOP("The column `%1' can't be assigned to a partition key because it was created by a relatinship and this kind of operation is not yet supported! HINT: create the column manually on the table and then create the partition key using it.")},
 	{"RemColumnRefByPartitionKey", QT_TR_NOOP("The column `%1' on the table `%2' can't be removed because it is being referenced by one or more patition keys!")},
+	{"AsgOptionInvalidName", QT_TR_NOOP("Assignment of an option to the object with an invalid name!")},
+	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
+	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
+	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
 };
 
 Exception::Exception(void)
@@ -386,7 +390,7 @@ QString Exception::getLine(void)
 	return(QString("%1").arg(line));
 }
 
-ErrorCode Exception::getErrorType(void)
+ErrorCode Exception::getErrorCode(void)
 {
 	return(error_code);
 }
@@ -439,7 +443,7 @@ QString Exception::getExceptionsText(void)
 	{
 		exceptions_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
 		exceptions_txt+=QString("  %1\n").arg(itr->getMethod());
-		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorType())).arg(itr->getErrorMessage());
+		exceptions_txt+=QString("    [%1] %2\n").arg(Exception::getErrorCode(itr->getErrorCode())).arg(itr->getErrorMessage());
 
 		if(!itr->getExtraInfo().isEmpty())
 			exceptions_txt+=QString("       ** %1\n\n").arg(itr->getExtraInfo());

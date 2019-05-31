@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -150,9 +150,17 @@ namespace PgModelerNs {
 			case ObjectType::GenericSql:
 				copyObject(psrc_obj, dynamic_cast<GenericSQL *>(copy_obj));
 			break;
+			case ObjectType::ForeignDataWrapper:
+				copyObject(psrc_obj, dynamic_cast<ForeignDataWrapper *>(copy_obj));
+			break;
+			case ObjectType::ForeignServer:
+				copyObject(psrc_obj, dynamic_cast<ForeignServer *>(copy_obj));
+			break;
+			case ObjectType::UserMapping:
+				copyObject(psrc_obj, dynamic_cast<UserMapping *>(copy_obj));
+			break;
 			default:
 				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			break;
 		}
 	}
 
@@ -161,57 +169,57 @@ namespace PgModelerNs {
 	{
 		static QHash<QChar, QStringList> keywords={
 			{QChar('A'), {QString("ALL"), QString("ANALYSE"), QString("ANALYZE"), QString("AND"),
-						  QString("ANY"), QString("AS"),      QString("ASC"),     QString("AUTHORIZATION")}},
+										QString("ANY"), QString("AS"),      QString("ASC"),     QString("AUTHORIZATION")}},
 
 			{QChar('B'), {QString("BETWEEN"), QString("BIGINT"), QString("BINARY"), QString("BIT"),
-						  QString("BOOLEAN"), QString("BOTH")}},
+										QString("BOOLEAN"), QString("BOTH")}},
 
 			{QChar('C'), {QString("CASE"),         QString("CAST"),         QString("CHAR"),    QString("CHARACTER"),
-						  QString("CHECK"),        QString("COALESCE"),     QString("COLLATE"), QString("COLUMN"),
-						  QString("CONSTRAINT"),   QString("CONVERT"),      QString("CREATE"),  QString("CROSS"),
-						  QString("CURRENT_DATE"), QString("CURRENT_TIME"), QString("CURRENT_TIMESTAMP"), QString("CURRENT_USER")}},
+										QString("CHECK"),        QString("COALESCE"),     QString("COLLATE"), QString("COLUMN"),
+										QString("CONSTRAINT"),   QString("CONVERT"),      QString("CREATE"),  QString("CROSS"),
+										QString("CURRENT_DATE"), QString("CURRENT_TIME"), QString("CURRENT_TIMESTAMP"), QString("CURRENT_USER")}},
 
 			{QChar('D'), {QString("DEC"),  QString("DECIMAL"),  QString("DEFAULT"), QString("DEFERRABLE"),
-						  QString("DESC"), QString("DISTINCT"), QString("DO")}},
+										QString("DESC"), QString("DISTINCT"), QString("DO")}},
 
 			{QChar('E'), {QString("ELSE"), QString("END"), QString("EXCEPT"), QString("EXISTS"),
-						  QString("EXTRACT")}},
+										QString("EXTRACT")}},
 
 			{QChar('F'), {QString("FALSE"),  QString("FLOAT"), QString("FOR"), QString("FOREIGN"),
-						  QString("FREEZE"), QString("FROM"),  QString("FULL")}},
+										QString("FREEZE"), QString("FROM"),  QString("FULL")}},
 
 			{QChar('G'), {QString("GRANT"), QString("GROUP")}},
 
 			{QChar('H'), {QString("HAVING")}},
 
 			{QChar('I'), {QString("ILIKE"), QString("IN"),      QString("INITIALLY"), QString("INNER"),
-						  QString("INT"),   QString("INTEGER"), QString("INTERSECT"), QString("INTERVAL"),
-						  QString("INTO"),  QString("IS"),      QString("ISNULL")}},
+										QString("INT"),   QString("INTEGER"), QString("INTERSECT"), QString("INTERVAL"),
+										QString("INTO"),  QString("IS"),      QString("ISNULL")}},
 
 			{QChar('J'), {QString("JOIN")}},
 
 			{QChar('L'), {QString("LEADING"),   QString("LEFT"), QString("LIKE"), QString("LIMIT"),
-						  QString("LOCALTIME"), QString("LOCALTIMESTAMP")}},
+										QString("LOCALTIME"), QString("LOCALTIMESTAMP")}},
 
 			{QChar('N'), {QString("NATURAL"),      QString("NCHAR"),   QString("NEW"), QString("NOCREATEDB"),
-						  QString("NOCREATEUSER"), QString("NONE"),    QString("NOT"), QString("NOTHING"),
-						  QString("NOTIFY"),       QString("NOTNULL"), QString("NULL"), QString("NULLIF"),
-						  QString("NUMERIC")}},
+										QString("NOCREATEUSER"), QString("NONE"),    QString("NOT"), QString("NOTHING"),
+										QString("NOTIFY"),       QString("NOTNULL"), QString("NULL"), QString("NULLIF"),
+										QString("NUMERIC")}},
 
 			{QChar('O'), {QString("OFF"),   QString("OFFSET"),  QString("OLD"),   QString("ON"),
-						  QString("ONLY"),  QString("OR"),      QString("ORDER"), QString("OUTER"),
-						  QString("OVERLAPS"), QString("OVERLAY")}},
+										QString("ONLY"),  QString("OR"),      QString("ORDER"), QString("OUTER"),
+										QString("OVERLAPS"), QString("OVERLAY")}},
 
 			{QChar('P'), {QString("PLACING"), QString("POSITION"), QString("PRIMARY")}},
 
 			{QChar('R'), {QString("REAL"), QString("REFERENCES"), QString("RIGHT"), QString("ROW")}},
 
 			{QChar('S'), {QString("SELECT"),   QString("SESSION_USER"), QString("SETOF"), QString("SIMILAR"),
-						  QString("SMALLINT"), QString("SOME"),         QString("SUBSTRING")}},
+										QString("SMALLINT"), QString("SOME"),         QString("SUBSTRING")}},
 
 			{QChar('T'), {QString("TABLE"), QString("THEN"),  QString("TIME"),  QString("TIMESTAMP"),
-						  QString("TO"), QString("TRAILING"), QString("TREAT"), QString("TRIM"),
-						  QString("TRUE")}},
+										QString("TO"), QString("TRAILING"), QString("TREAT"), QString("TRIM"),
+										QString("TRUE")}},
 
 			{QChar('U'), {QString("UNION"), QString("UNIQUE"), QString("USER"), QString("USING")}},
 

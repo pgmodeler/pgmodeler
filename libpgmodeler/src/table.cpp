@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -205,6 +205,8 @@ void Table::setRelObjectsIndexesAttribute(void)
 			{
 				aux_attribs[Attributes::Name]=obj_idx.first;
 				aux_attribs[Attributes::Index]=QString::number(obj_idx.second);
+
+				schparser.ignoreUnkownAttributes(true);
 				aux_attribs[Attributes::Objects]+=schparser.getCodeDefinition(Attributes::Object, aux_attribs, SchemaParser::XmlDefinition);
 			}
 
@@ -244,9 +246,19 @@ void Table::setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols)
 	{
 		if(!str_cols.isEmpty())
 		{
-			count=str_cols.size();
-			if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
-				str_cols.remove(count-2,2);
+			count = str_cols.size();
+
+			// Removing the last comma from the columns SQL
+			if(str_cols[count-2] == ',' || str_cols[count-2] == '\n')
+				str_cols.remove(count - 2, 2);
+
+			/* Special case: if we have the last column's SQL disabled we need to remove
+			 * the comma from the last line (the enabled one) in order to avoid syntax error */
+			int disabled_col_idx = str_cols.lastIndexOf(QString("-- ")),
+					last_comma_idx = str_cols.lastIndexOf(',', disabled_col_idx);
+
+			if(last_comma_idx >= 0 && last_comma_idx < disabled_col_idx)
+				str_cols.remove(last_comma_idx, 1);
 		}
 
 		attributes[Attributes::InhColumns]=inh_cols;
@@ -333,18 +345,23 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
 		return(&columns);
-	else if(obj_type==ObjectType::Constraint)
+
+	if(obj_type==ObjectType::Constraint)
 		return(&constraints);
-	else if(obj_type==ObjectType::Rule)
+
+	if(obj_type==ObjectType::Rule)
 		return(&rules);
-	else if(obj_type==ObjectType::Trigger)
+
+	if(obj_type==ObjectType::Trigger)
 		return(&triggers);
-	else if(obj_type==ObjectType::Index)
+
+	if(obj_type==ObjectType::Index)
 		return(&indexes);
-	else if(obj_type==ObjectType::Policy)
+
+	if(obj_type==ObjectType::Policy)
 		return(&policies);
-	else
-		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Table::addObject(BaseObject *obj, int obj_idx)
@@ -360,10 +377,10 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: table children objects creation limit."
-		vector<TableObject *> *obj_list=(obj_type!=ObjectType::ObjTable ? getObjectList(obj_type) : nullptr);
+		vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==ObjectType::ObjTable && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
+				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
 							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
@@ -475,13 +492,13 @@ void Table::addObject(BaseObject *obj, int obj_idx)
 		}
 		catch(Exception &e)
 		{
-			if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+			if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 								.arg(obj->getName())
 								.arg(obj->getTypeName()),
 								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -494,7 +511,7 @@ void Table::addColumn(Column *col, int idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -506,7 +523,7 @@ void Table::addTrigger(Trigger *trig, int idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -518,7 +535,7 @@ void Table::addIndex(Index *ind, int idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -530,7 +547,7 @@ void Table::addRule(Rule *reg, int idx_reg)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -542,7 +559,7 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 }
 
@@ -588,7 +605,7 @@ void Table::addConstraint(Constraint *constr, int idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -600,7 +617,7 @@ void Table::addAncestorTable(Table *tab, int idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -724,7 +741,7 @@ void Table::removeObject(BaseObject *obj)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -837,7 +854,7 @@ void Table::removeColumn(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -849,7 +866,7 @@ void Table::removeColumn(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -861,7 +878,7 @@ void Table::removeTrigger(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -873,7 +890,7 @@ void Table::removeTrigger(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -885,7 +902,7 @@ void Table::removeIndex(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -897,7 +914,7 @@ void Table::removeIndex(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -909,7 +926,7 @@ void Table::removeRule(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -921,7 +938,7 @@ void Table::removeRule(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -933,7 +950,7 @@ void Table::removePolicy(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -945,7 +962,7 @@ void Table::removePolicy(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -957,7 +974,7 @@ void Table::removeConstraint(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -969,7 +986,7 @@ void Table::removeConstraint(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -981,7 +998,7 @@ void Table::removeAncestorTable(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -993,7 +1010,7 @@ void Table::removeAncestorTable(unsigned idx)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1756,7 +1773,7 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1911,7 +1928,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1925,7 +1942,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 

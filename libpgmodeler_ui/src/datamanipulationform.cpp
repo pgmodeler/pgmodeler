@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -314,7 +314,7 @@ void DataManipulationForm::listColumns(void)
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 }
@@ -438,7 +438,7 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 		conn_sql.close();
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -710,7 +710,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -774,7 +774,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -902,7 +902,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 	catch(Exception &e)
 	{
 		catalog.closeConnection();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1093,7 +1093,7 @@ void DataManipulationForm::duplicateRows(void)
 	}
 }
 
-void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
+void DataManipulationForm::removeNewRows(vector<int> ins_rows)
 {
 	if(!ins_rows.empty())
 	{
@@ -1106,8 +1106,12 @@ void DataManipulationForm::removeNewRows(const vector<int> &ins_rows)
 			markOperationOnRow(NoOperation, ins_rows[idx]);
 
 		//Remove the rows
-		for(idx=0; idx < cnt; idx++)
-			results_tbw->removeRow(ins_rows[0]);
+		std::sort(ins_rows.begin(), ins_rows.end());
+		while(!ins_rows.empty())
+		{
+			results_tbw->removeRow(ins_rows.back());
+			ins_rows.pop_back();
+		}
 
 		//Reorganizing the changed rows vector to avoid row index out-of-bound errors
 		row_idx=results_tbw->rowCount() - 1;

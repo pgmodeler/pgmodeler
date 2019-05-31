@@ -62,7 +62,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+         <normaloff>:/icones/icones/addrow.png</normaloff>:/icones/icones/addrow.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -100,7 +100,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/remover.png</normaloff>:/icones/icones/remover.png</iconset>
+         <normaloff>:/icones/icones/delrow.png</normaloff>:/icones/icones/delrow.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -110,6 +110,120 @@
        </property>
        <property name="shortcut">
         <string>Del</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="remove_all_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Remove All</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/delrows.png</normaloff>:/icones/icones/delrows.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Shift+Del</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="duplicate_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Duplicate item</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/duprow.png</normaloff>:/icones/icones/duprow.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+D</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="edit_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Edit Item</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/editdata.png</normaloff>:/icones/icones/editdata.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Space</string>
        </property>
       </widget>
      </item>
@@ -148,120 +262,6 @@
        </property>
        <property name="shortcut">
         <string>Alt+R</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="remove_all_tb">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Remove All</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Shift+Del</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="duplicate_tb">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Duplicate item</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/duplicate.png</normaloff>:/icones/icones/duplicate.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Ctrl+D</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="edit_tb">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Edit Item</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Space</string>
        </property>
       </widget>
      </item>
@@ -493,7 +493,7 @@
       <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
-      <number>25</number>
+      <number>26</number>
      </attribute>
      <attribute name="verticalHeaderHighlightSections">
       <bool>true</bool>
@@ -543,7 +543,6 @@
  <tabstops>
   <tabstop>add_tb</tabstop>
   <tabstop>remove_tb</tabstop>
-  <tabstop>update_tb</tabstop>
   <tabstop>remove_all_tb</tabstop>
   <tabstop>edit_tb</tabstop>
   <tabstop>move_up_tb</tabstop>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>704</width>
-    <height>64</height>
+    <height>68</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,7 +46,11 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="find_edt"/>
+    <widget class="QLineEdit" name="find_edt">
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="0" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -215,7 +219,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="replace_edt"/>
+    <widget class="QLineEdit" name="replace_edt">
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="1" column="2">
     <widget class="QWidget" name="replace_btns_parent" native="true">

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		SQLToolWidget(QWidget * parent = 0);
+		SQLToolWidget(QWidget * parent = nullptr);
 		~SQLToolWidget(void);
 
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs

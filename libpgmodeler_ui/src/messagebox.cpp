@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	else if(size.height() >= max_h)
 		this->setMinimumHeight(max_h);
 
-	float factor = BaseObjectView::getScreenDpiFactor();
+	double factor = BaseObjectView::getScreenDpiFactor();
 	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 
 	QDialog::exec();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include "taskprogresswidget.h"
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
+
+bool DatabaseImportForm::low_verbosity = false;
 
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -103,6 +105,11 @@ void DatabaseImportForm::setModelWidget(ModelWidget *model)
 	import_to_model_chk->setEnabled(model!=nullptr);
 }
 
+void DatabaseImportForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
+}
+
 void DatabaseImportForm::createThread(void)
 {
 	import_thread=new QThread;
@@ -151,7 +158,9 @@ void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType ob
 		ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 
 	ico_lbl->setPixmap(ico);
-	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
+
+	if(!low_verbosity)
+		PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
 void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
@@ -202,6 +211,10 @@ void DatabaseImportForm::importDatabase(void)
 		settings_tbw->setTabEnabled(1, true);
 		settings_tbw->setCurrentIndex(1);
 
+		if(low_verbosity)
+			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
+
 		getCheckedItems(obj_oids, col_oids);
 		obj_oids[ObjectType::Database].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
 
@@ -225,7 +238,7 @@ void DatabaseImportForm::importDatabase(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -329,7 +342,7 @@ void DatabaseImportForm::listObjects(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -366,7 +379,7 @@ void DatabaseImportForm::listDatabases(void)
 		db_objects_tw->clear();
 		database_cmb->clear();
 		database_cmb->setEnabled(false);
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -409,7 +422,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	createThread();
 
 	database_cmb->setCurrentIndex(0);
-	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
 void DatabaseImportForm::filterObjects(void)
@@ -622,7 +635,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -638,7 +651,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 		{
 			QTreeWidgetItem *db_item=nullptr, *item=nullptr;
 			vector<QTreeWidgetItem *> sch_items, tab_items;
-			float inc=0, inc1=0, aux_prog=0;
+			double inc=0, inc1=0, aux_prog=0;
 
 			if(!create_dummy_item)
 			{
@@ -687,7 +700,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 			{
 				ObjectType obj_type = ObjectType::BaseObject;
 				aux_prog=task_prog_wgt.progress_pb->value();
-				inc=40/static_cast<float>(sch_items.size());
+				inc=40/static_cast<double>(sch_items.size());
 
 				while(!sch_items.empty())
 				{
@@ -698,7 +711,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 																													BaseObject::getChildObjectTypes(ObjectType::Schema),
 																													checkable_items, disable_empty_grps, sch_items.back(), sch_items.back()->text(0));
 
-					inc1=(60/static_cast<float>(tab_items.size()))/static_cast<float>(sch_items.size());
+					inc1=(60/static_cast<double>(tab_items.size()))/static_cast<double>(sch_items.size());
 					while(!tab_items.empty())
 					{
 						aux_prog+=inc1;
@@ -736,7 +749,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 	{
 		task_prog_wgt.close();
 		tree_wgt->clear();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -883,14 +896,13 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			}
 
 			tree_wgt->addTopLevelItems(groups_list);
-			//tree_wgt->setSortingEnabled(true);
 			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 			tree_wgt->setUpdatesEnabled(true);
 			tree_wgt->blockSignals(false);
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 	return(items_vect);

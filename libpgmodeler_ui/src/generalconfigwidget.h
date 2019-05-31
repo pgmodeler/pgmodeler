@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,12 +64,15 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
 		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht,
 		*autosave_ht, *op_history_ht, *ui_language_ht, *grid_size_ht,
-		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht;
+		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht, *reduce_verbosity_ht;
 
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
 	public:
-		GeneralConfigWidget(QWidget * parent=0);
+		//! \brief Maximum number of files listed as recent models
+		static constexpr int MaxRecentModels=15;
+
+		GeneralConfigWidget(QWidget * parent = nullptr);
 
 		void saveConfiguration(void);
 		void loadConfiguration(void);

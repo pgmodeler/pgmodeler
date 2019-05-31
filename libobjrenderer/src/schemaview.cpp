@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ void SchemaView::configureObject(void)
 		font=BaseObjectView::getFontStyle(Attributes::Global).font();
 		font.setItalic(true);
 		font.setBold(true);
-		font.setPointSizeF(font.pointSizeF() * 1.3f);
+		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
 		sch_name->setPos(HorizSpacing, VertSpacing);

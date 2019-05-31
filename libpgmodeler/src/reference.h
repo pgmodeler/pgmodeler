@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,11 +60,15 @@ class Reference {
 		//! \brief Indicates if the expression is used as entire view definition
 		bool is_def_expr;
 
-		/*! \brief Stores the columns that the reference (when being an expression) generates.
+		/*! \brief Stores the columns that the reference (when being an expression [is_def_expr]) generates.
 		 * These columns are used when drawing a view and that has only on definition expression.
 		 * By having columns, instead of drawing the expression as a column of the view, the ones in
 		 * this vector are displayed */
 		vector<SimpleColumn> columns;
+
+		/*! \brief Stores the tables that the reference object is using within the expression which defines the view
+		 * when is_def_expr is set. These tables are used to hint the user which tables the view is using. */
+		vector<Table *> ref_tables;
 
 	public:
 		//! \brief Constants used to define the reference type
@@ -89,6 +93,11 @@ class Reference {
 		/*! \brief Changes the behavior of the expression. Calling this method will cause the
 		reference to be used as the entire view SQL definition */
 		void setDefinitionExpression(bool value);
+
+		void addReferencedTable(Table *ref_table);
+		int getReferencedTableIndex(Table *ref_table);
+		void clearReferencedTables(void);
+		vector<Table *> getReferencedTables(void);
 
 		//! \brief Gets the referenced table
 		Table *getTable(void);

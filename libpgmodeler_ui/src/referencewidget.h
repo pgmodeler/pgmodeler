@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 
 		CodeCompletionWidget *expression_cp;
 
-		ObjectSelectorWidget *ref_object_sel;
+		ObjectSelectorWidget *ref_object_sel, *ref_table_sel;
 
 		PgSQLTypeWidget *pgsqltype_wgt;
 
-		ObjectsTableWidget *columns_tab;
+		ObjectsTableWidget *columns_tab, *ref_tables_tab;
 
 		unsigned ref_flags;
 
@@ -56,7 +56,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		void handleColumn(int row);
 
 	public:
-		explicit ReferenceWidget(QWidget *parent = 0);
+		explicit ReferenceWidget(QWidget *parent = nullptr);
 
 		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
 		Reference getReference(void);
@@ -68,6 +68,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private slots:
 		void selectReferenceType(void);
 		void addColumn(int row);
+		void addRefTable(int row);
 		void updateColumn(int row);
 		void editColumn(int row);
 		void duplicateColumn(int src_row, int new_row);

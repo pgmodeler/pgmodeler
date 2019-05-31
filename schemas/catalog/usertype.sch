@@ -14,9 +14,9 @@
 
   [ typtype IN ('p','b','c','e','r')  AND typname NOT LIKE 'pg_%' ]
 
-  #Excluding types related to tables/views/sequeces/materialized views
+  #Excluding types related to tables/views/sequeces/materialized views/foreign tables
   %if {filter-tab-types} %then
-   [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p'))=0 ]
+   [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p','f'))=0 ]
   %end
 
   %if {exc-builtin-arrays} %then
@@ -44,6 +44,8 @@
             WHEN relkind = 'v' THEN 'view'
             WHEN relkind = 'm' THEN 'view'
             WHEN typtype = 'd' THEN 'domain'
+	    WHEN typtype = 'p' THEN 'table'
+	    WHEN typtype = 'f' THEN 'foreigntable'
         END AS type_class FROM pg_class WHERE oid=tp.typrelid), tp.typrelid AS object_id, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
@@ -134,7 +136,7 @@
 
     #Excluding types related to tables/views/sequeces/materialized views
     %if {filter-tab-types} %then
-     [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p'))=0 ]
+     [  AND (SELECT count(oid) FROM pg_class WHERE relname=typname AND relkind IN ('r','S','v','m','p','f'))=0 ]
     %end
 
     %if {exc-builtin-arrays}  %then

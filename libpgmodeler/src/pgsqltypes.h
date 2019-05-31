@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 
 class BaseType{
 	protected:
-		static constexpr unsigned TypesCount=261;
+		static constexpr unsigned TypesCount=262;
 		static QString type_list[TypesCount];
 
 		//! \brief Index of the type on the type_list vector
@@ -210,7 +210,7 @@ class IndexingType: public BaseType{
 
 class IntervalType: public BaseType{
 	private:
-		static constexpr unsigned Offset=138;
+		static constexpr unsigned Offset=139;
 		static constexpr unsigned TypesCount=13;
 
 	public:
@@ -280,7 +280,7 @@ class UserTypeConfig {
 class SpatialType: public BaseType{
 	private:
 		unsigned variation;
-		static constexpr unsigned Offset=231;
+		static constexpr unsigned Offset=232;
 		static constexpr unsigned TypesCount=16;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
@@ -319,15 +319,15 @@ class SpatialType: public BaseType{
 class PgSqlType: public BaseType{
 	private:
 		static constexpr unsigned Offset=27;
-		static constexpr unsigned TypesCount=111;
+		static constexpr unsigned TypesCount=112;
 
 		//! \brief Offset for oid types
-		static constexpr unsigned OidStart=108;
-		static constexpr unsigned OidEnd=122;
+		static constexpr unsigned OidStart=109;
+		static constexpr unsigned OidEnd=123;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned PseudoStart=123;
-		static constexpr unsigned PseudoEnd=137;
+		static constexpr unsigned PseudoStart=124;
+		static constexpr unsigned PseudoEnd=138;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -382,20 +382,32 @@ class PgSqlType: public BaseType{
 		//! \brief Creates a type from a pointer that references an user defined type (Type class)
 		PgSqlType(void *ptype);
 
-		PgSqlType(const QString &type_name, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type name and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_name and dimension which can be used to quicly create
+		 * array of a certain type. */
+		PgSqlType(const QString &type_name, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(void *ptipo, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a pointer to a data type (generally a user defined type, see UserTypeConfig class)
+		 * and a series of data like dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except ptype and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(void *ptype, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
-		PgSqlType(unsigned type_id, unsigned length,
-				  unsigned dimension, int precision,
-				  bool with_timezone, IntervalType interv_type,
-				  SpatialType spatial_type);
+		/*! \brief Creates a type from a type id and a series of data like
+		 * dimension, length, precision, timezone option, interval type and spatial type.
+		 * All parameters are optional except type_id and dimension which can be used to quickly create
+		 * array of a certain type. */
+		PgSqlType(unsigned type_id, unsigned dimension,
+							unsigned length = 0, int precision = -1,
+							bool with_timezone = false, IntervalType interv_type = IntervalType::Null,
+							SpatialType spatial_type = SpatialType());
 
 		/*! \brief Creates a configured instance of PgSQLType from a string
 		in SQL canonical form, e.g, varchar(255), timestamp with timezone, smallint[] and so on.
@@ -453,6 +465,12 @@ class PgSqlType: public BaseType{
 		smallint is compatible with int2, and so on. */
 		bool isEquivalentTo(PgSqlType type);
 
+		/*! \brief Returns true if the provided type is exactly the same as the "this".
+		 * This method compares ALL attributes of the type. Note that this method is
+		 * different from the operatores == (PgSqlType) because this latter compares only
+		 * the indexes of the types. This method is useful if one need to fully compare the types */
+		bool isExactTo(PgSqlType type);
+
 		PgSqlType getAliasType(void);
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
 		QString operator ~ (void);
@@ -463,12 +481,22 @@ class PgSqlType: public BaseType{
 		unsigned operator << (void *ptype);
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type index. If an exact match is needed use isExactTo()
 		bool operator == (unsigned type_idx);
+
+		//! \brief Compares the index of the "this" with the provided type. If an exact match is needed use isExactTo()
 		bool operator == (PgSqlType type);
+
+		//! \brief Compares the index of the "this" with the provided type name index. If an exact match is needed use isExactTo()
 		bool operator == (const QString &type_name);
+
+		//! \brief Compares the index of the "this" with the provided type reference. If an exact match is needed use isExactTo()
 		bool operator == (void *ptype);
+
+		// The methods below are just the oposite of the == versions
 		bool operator != (const QString &type_name);
-		bool operator != (PgSqlType type);
+		bool operator != (PgSqlType type);		
 		bool operator != (unsigned type_idx);
 
 		/*! \brief Returns the pointer to the user defined type which denotes the
@@ -500,7 +528,7 @@ class PgSqlType: public BaseType{
 
 class BehaviorType: public BaseType{
 	private:
-		static constexpr unsigned Offset=151;
+		static constexpr unsigned Offset=152;
 		static constexpr unsigned TypesCount=3;
 
 	public:
@@ -519,7 +547,7 @@ class BehaviorType: public BaseType{
 
 class SecurityType: public BaseType{
 	private:
-		static constexpr unsigned Offset=154;
+		static constexpr unsigned Offset=155;
 		static constexpr unsigned TypesCount=2;
 
 	public:
@@ -537,7 +565,7 @@ class SecurityType: public BaseType{
 
 class LanguageType: public BaseType{
 	private:
-		static constexpr unsigned Offset=156;
+		static constexpr unsigned Offset=157;
 		static constexpr unsigned TypesCount=7;
 
 	public:
@@ -560,7 +588,7 @@ class LanguageType: public BaseType{
 
 class EncodingType: public BaseType{
 	private:
-		static constexpr unsigned Offset=163;
+		static constexpr unsigned Offset=164;
 		static constexpr unsigned TypesCount=42;
 
 	public:
@@ -580,7 +608,7 @@ class EncodingType: public BaseType{
 
 class StorageType: public BaseType{
 	private:
-		static constexpr unsigned Offset=205;
+		static constexpr unsigned Offset=206;
 		static constexpr unsigned TypesCount=4;
 
 	public:
@@ -603,7 +631,7 @@ class StorageType: public BaseType{
 
 class MatchType: public BaseType{
 	private:
-		static constexpr unsigned Offset=209;
+		static constexpr unsigned Offset=210;
 		static constexpr unsigned TypesCount=3;
 
 	public:
@@ -622,7 +650,7 @@ class MatchType: public BaseType{
 
 class DeferralType: public BaseType{
 	private:
-		static constexpr unsigned Offset=212;
+		static constexpr unsigned Offset=213;
 		static constexpr unsigned TypesCount=2;
 
 	public:
@@ -640,7 +668,7 @@ class DeferralType: public BaseType{
 
 class CategoryType: public BaseType{
 	private:
-		static constexpr unsigned Offset=214;
+		static constexpr unsigned Offset=215;
 		static constexpr unsigned TypesCount=14;
 
 	public:
@@ -670,7 +698,7 @@ class CategoryType: public BaseType{
 
 class FiringType: public BaseType{
 	private:
-		static constexpr unsigned Offset=228;
+		static constexpr unsigned Offset=229;
 		static constexpr unsigned TypesCount=3;
 
 	public:
@@ -689,7 +717,7 @@ class FiringType: public BaseType{
 
 class EventTriggerType: public BaseType{
 	private:
-		static constexpr unsigned Offset=247;
+		static constexpr unsigned Offset=248;
 		static constexpr unsigned TypesCount=4;
 
 	public:
@@ -709,7 +737,7 @@ class EventTriggerType: public BaseType{
 
 class IdentityType: public BaseType{
 	private:
-		static constexpr unsigned Offset=251;
+		static constexpr unsigned Offset=252;
 		static constexpr unsigned TypesCount=2;
 
 	public:
@@ -727,7 +755,7 @@ class IdentityType: public BaseType{
 
 class PolicyCmdType: public BaseType {
 	private:
-		static constexpr unsigned Offset=253;
+		static constexpr unsigned Offset=254;
 		static constexpr unsigned TypesCount=5;
 
 	public:
@@ -748,7 +776,7 @@ class PolicyCmdType: public BaseType {
 
 class PartitioningType: public BaseType {
 	private:
-		static constexpr unsigned Offset=258;
+		static constexpr unsigned Offset=259;
 		static constexpr unsigned TypesCount=3;
 
 	public:

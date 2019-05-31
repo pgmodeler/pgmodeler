@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
-		objects_tab_map[ObjectType::Trigger]->setColumnCount(4);
+		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
@@ -97,25 +97,32 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Alias"), 4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Comment"), 5);
 
-		objects_tab_map[ObjectType::Index]->setColumnCount(2);
+		objects_tab_map[ObjectType::Index]->setColumnCount(4);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Alias"), 2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Comment"), 3);
 
-		objects_tab_map[ObjectType::Rule]->setColumnCount(3);
+		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
 		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
 		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Alias"), 3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Comment"), 4);
+
 
 		tablespace_sel->setEnabled(false);
 		tablespace_lbl->setEnabled(false);
 		configureFormLayout(view_grid, ObjectType::View);
 
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(recursive_rb);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(materialized_rb);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion93)].push_back(with_no_data_chk);
 		frame=generateVersionWarningFrame(fields_map);
 		view_grid->addWidget(frame, view_grid->count()+1, 0, 1,3);
 		frame->setParent(this);
@@ -142,7 +149,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -193,7 +200,7 @@ void ViewWidget::handleObject(void)
 	catch(Exception &e)
 	{
 		listObjects(obj_type);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -236,7 +243,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 		}
 
 		listObjects(obj_type);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -276,7 +283,7 @@ void ViewWidget::removeObjects(void)
 		}
 
 		listObjects(obj_type);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -307,7 +314,7 @@ void ViewWidget::removeObject(int row)
 	catch(Exception &e)
 	{
 		listObjects(obj_type);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -373,6 +380,7 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		str_aux.remove(str_aux.size()-2, 2);
 		tab->setCellText(str_aux ,row,3);
+		tab->setCellText(trigger->getAlias(), row, 4);
 	}
 	else if(obj_type==ObjectType::Rule)
 	{
@@ -383,6 +391,8 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
+
+		tab->setCellText(rule->getAlias(), row, 3);
 	}
 	else
 	{
@@ -390,8 +400,10 @@ void ViewWidget::showObjectData(TableObject *object, int row)
 
 		//Column 1: Indexing type
 		tab->setCellText(~index->getIndexingType(),row,1);
+		tab->setCellText(index->getAlias(), row, 2);
 	}
 
+	tab->setCellText(object->getComment(), row, tab->getColumnCount() - 1);
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
@@ -421,7 +433,7 @@ void ViewWidget::listObjects(ObjectType obj_type)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -738,7 +750,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

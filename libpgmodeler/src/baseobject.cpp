@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,10 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "eventtrigger", "policy", "relationship",
-	"textbox",	"permission", "parameter", "typeattribute",
-	"tag", "genericsql", "relationship"
+	"extension", "eventtrigger", "policy", "foreigndatawrapper",
+	"foreignserver", "usermapping", "relationship", "textbox",
+	"permission", "parameter", "typeattribute", "tag",
+	"genericsql", "relationship"
 };
 
 const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
@@ -46,9 +47,11 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"), QT_TR_NOOP("Relationship"),
-	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
+	QT_TR_NOOP("Foreign Server"), QT_TR_NOOP("User Mapping"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
+	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
+	QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -58,7 +61,9 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	QString("OPERATOR"), QString("SEQUENCE"), QString("ROLE"), QString("CONVERSION"),
 	QString("CAST"), QString("LANGUAGE"), QString("TYPE"), QString("TABLESPACE"),
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
-	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"), QString("POLICY")
+	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"),
+	QString("POLICY"), QString("FOREIGN DATA WRAPPER"), QString("SERVER"),
+	QString("USER MAPPING")
 };
 
 /* Initializes the global id which is shared between instances
@@ -123,7 +128,7 @@ ObjectType BaseObject::getObjectType(const QString &type_name)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 
-	for(int i=0; i < BaseObject::ObjectTypeCount; i++)
+	for(unsigned i=0; i < BaseObject::ObjectTypeCount; i++)
 	{
 		if(objs_schemas[i]==type_name)
 		{
@@ -402,7 +407,8 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::Tablespace || obj_type==ObjectType::Database ||
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
-			 obj_type==ObjectType::EventTrigger);
+			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
+			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -448,12 +454,14 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
 	return(obj_type==ObjectType::Collation || obj_type==ObjectType::Column ||
-			 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
-			 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
-			 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
-			 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
-			 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
-			 obj_type==ObjectType::Type || obj_type==ObjectType::Policy);
+				 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
+				 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
+				 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
+				 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
+				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
+				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
+				 obj_type==ObjectType::UserMapping);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -748,10 +756,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			{
 				attributes[Attributes::Owner]=owner->getName(format);
 
-				/** Only tablespaces and database do not have an ALTER OWNER SET
+				/* Only tablespaces, database and user mapping do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
-				 with just a command line isolated from the others **/
-				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database)
+				 with just a command line isolated from the others */
+				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
 					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
@@ -856,13 +864,13 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			schparser.restartParser();
 			clearAttributes();
 
-			if(e.getErrorType()==ErrorCode::UndefinedAttributeValue)
+			if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 								.arg(this->getName(true))
 								.arg(this->getTypeName()),
 								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 	}
 
@@ -938,10 +946,10 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 {
 	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
-									 ObjectType::Tag, ObjectType::Function, ObjectType::Language, ObjectType::OpClass, ObjectType::Operator,
-									 ObjectType::OpFamily, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
-									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace, ObjectType::Textbox,
-									 ObjectType::Type, ObjectType::View, ObjectType::Permission, ObjectType::GenericSql };
+									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
+									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
+									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
+									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
@@ -967,16 +975,25 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Database)
-		return(vector<ObjectType>()={ObjectType::Cast, ObjectType::Role, ObjectType::Language, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension, ObjectType::EventTrigger});
-	else if(obj_type==ObjectType::Schema)
-		return(vector<ObjectType>()={ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation, ObjectType::Domain, ObjectType::Function,
-									ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence, ObjectType::Type, ObjectType::Table, ObjectType::View});
-	else if(obj_type==ObjectType::Table)
-		return(vector<ObjectType>()={ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy});
-	else if(obj_type==ObjectType::View)
+		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
+																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																	ObjectType::UserMapping });
+
+	if(obj_type==ObjectType::Schema)
+		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+																	ObjectType::Domain, ObjectType::Function, ObjectType::OpClass,
+																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
+																	ObjectType::Type, ObjectType::Table, ObjectType::View });
+
+	if(obj_type==ObjectType::Table)
+		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
+
+	if(obj_type==ObjectType::View)
 		return(vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index});
-	else
-		return(vector<ObjectType>()={});
+
+	return(vector<ObjectType>()={});
 }
 
 void BaseObject::setPgSQLVersion(const QString &ver)
@@ -987,6 +1004,11 @@ void BaseObject::setPgSQLVersion(const QString &ver)
 QString BaseObject::getPgSQLVersion(void)
 {
 	return(pgsql_ver);
+}
+
+attribs_map BaseObject::getSearchAttributes(void)
+{
+	return(search_attribs);
 }
 
 void BaseObject::enableCachedCode(bool value)
@@ -1023,6 +1045,16 @@ void BaseObject::setCodeInvalidated(bool value)
 
 		code_invalidated=value;
 	}
+}
+
+void BaseObject::configureSearchAttributes(void)
+{
+	search_attribs[Attributes::Name] = this->getName(false);
+	search_attribs[Attributes::Signature] = this->getSignature(false);
+	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : QString();
+	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : QString();
+	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : QString();
+	search_attribs[Attributes::Comment] = comment;
 }
 
 bool BaseObject::isCodeInvalidated(void)
@@ -1087,7 +1119,7 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1138,7 +1170,7 @@ QString BaseObject::getDropDefinition(bool cascade)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1158,7 +1190,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1220,7 +1252,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 	return(alter);
@@ -1246,6 +1278,6 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

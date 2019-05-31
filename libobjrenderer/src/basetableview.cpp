@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -232,10 +232,10 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[item_idx]);
+			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[static_cast<int>(item_idx)]);
 
 			//Configures the selection with the item's dimension
-			if(obj_selection->boundingRect().height()!=item->boundingRect().height())
+			if(obj_selection->boundingRect().height() != item->boundingRect().height())
 			{
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setBorderRadius(2);
 				dynamic_cast<RoundedRectItem *>(obj_selection)->setRect(QRectF(0, 0,
@@ -273,12 +273,28 @@ void BaseTableView::removeConnectedRelationship(BaseRelationship *base_rel)
 	connected_rels.erase(std::find(connected_rels.begin(), connected_rels.end(), base_rel));
 }
 
-int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel)
+int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels)
 {
-	vector<BaseRelationship *>::iterator itr = std::find(connected_rels.begin(), connected_rels.end(), base_rel);
+	vector<BaseRelationship *>::iterator itr;
+	vector<BaseRelationship *> self_rels, *vet_rels = nullptr;
 
-	if(itr != connected_rels.end())
-		return(itr - connected_rels.begin());
+	if(!only_self_rels)
+		vet_rels = &connected_rels;
+	else
+	{
+		for(auto &rel : connected_rels)
+		{
+			if(rel->isSelfRelationship())
+				self_rels.push_back(rel);
+		}
+
+		vet_rels = &self_rels;
+	}
+
+	itr = std::find(vet_rels->begin(), vet_rels->end(), base_rel);
+
+	if(itr != vet_rels->end())
+		return(itr - vet_rels->begin());
 
 	return(-1);
 }
@@ -313,7 +329,7 @@ void BaseTableView::configureTag(void)
 		double bottom;
 		QFont fnt=BaseObjectView::getFontStyle(Attributes::Tag).font();
 
-		fnt.setPointSizeF(fnt.pointSizeF() * 0.80f);
+		fnt.setPointSizeF(fnt.pointSizeF() * 0.80);
 		tag_item->setFont(fnt);
 		tag_item->setText(tag->getName());
 		tag_item->setBrush(BaseObjectView::getFontStyle(Attributes::Tag).foreground());
@@ -332,16 +348,16 @@ void BaseTableView::configureTag(void)
 		tag_item->setPolygon(pol);
 		tag_item->setPen(BaseObjectView::getBorderStyle(Attributes::Tag));
 		tag_item->setBrush(BaseObjectView::getFillStyle(Attributes::Tag));
-		tag_item->setPos(-5, bottom - 1.5f);
+		tag_item->setPos(-5, bottom - 1.5);
 		tag_item->setTextPos(HorizSpacing/2, 0);
 	}
 }
 
-void BaseTableView::__configureObject(float width)
+void BaseTableView::__configureObject(double width)
 {
 	BaseTable *tab = dynamic_cast<BaseTable *>(getSourceObject());
 	double height = 0,
-			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0f,
+			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0,
 			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
 
 	QPen pen = body->pen();

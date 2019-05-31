@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		for(unsigned i=0; i < 3; i++)
 		{
 			lables[i]=nullptr;
-			lables_dist[i]=QPointF(NAN, NAN);
+			lables_dist[i]=QPointF(DNaN, DNaN);
 		}
 
 		configureRelationship();
@@ -69,7 +69,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -177,7 +177,7 @@ void BaseRelationship::setName(const QString &name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -465,7 +465,7 @@ QColor BaseRelationship::getCustomColor(void)
 void BaseRelationship::resetLabelsDistance(void)
 {
 	for(unsigned i=0; i < 3; i++)
-		this->setLabelDistance(i, QPointF(NAN,NAN));
+		this->setLabelDistance(i, QPointF(DNaN,DNaN));
 }
 
 vector<QPointF> BaseRelationship::getPoints(void)
@@ -505,18 +505,19 @@ QString BaseRelationship::getRelTypeAttribute(void)
 {
 	switch(rel_type)
 	{
-		case Relationship11: return(Attributes::Relationship11); break;
-		case Relationship1n: return(Attributes::Relationship1n); break;
-		case RelationshipNn: return(Attributes::RelationshipNn); break;
-		case RelationshipGen: return(Attributes::RelationshipGen); break;
-		case RelationshipPart: return(Attributes::RelationshipPart); break;
-		case RelationshipFk: return(Attributes::RelationshipFk); break;
+		case Relationship11: return(Attributes::Relationship11);
+		case Relationship1n: return(Attributes::Relationship1n);
+		case RelationshipNn: return(Attributes::RelationshipNn);
+		case RelationshipGen: return(Attributes::RelationshipGen);
+		case RelationshipPart: return(Attributes::RelationshipPart);
+		case RelationshipFk: return(Attributes::RelationshipFk);
 		default:
+		{
 			if(src_table->getObjectType()==ObjectType::View)
 				return(Attributes::RelationshipTabView);
 			else
 				return(Attributes::RelationshipDep);
-		break;
+		}
 	}
 }
 
@@ -524,18 +525,19 @@ QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_vie
 {
   switch(rel_type)
   {
-	  case Relationship11: return(trUtf8("One-to-one")); break;
-	  case Relationship1n: return(trUtf8("One-to-many")); break;
-	  case RelationshipNn: return(trUtf8("Many-to-many")); break;
-	  case RelationshipGen: return(trUtf8("Inheritance")); break;
-	  case RelationshipPart: return(trUtf8("Partitioning")); break;
-	  case RelationshipFk: return(trUtf8("FK relationship")); break;
+		case Relationship11: return(trUtf8("One-to-one"));
+		case Relationship1n: return(trUtf8("One-to-many"));
+		case RelationshipNn: return(trUtf8("Many-to-many"));
+		case RelationshipGen: return(trUtf8("Inheritance"));
+		case RelationshipPart: return(trUtf8("Partitioning"));
+		case RelationshipFk: return(trUtf8("FK relationship"));
 	  default:
-		  if(is_view)
-			  return(trUtf8("Dependency"));
-		  else
-			  return(trUtf8("Copy"));
-	  break;
+		{
+			if(is_view)
+				return(trUtf8("Dependency"));
+			else
+				return(trUtf8("Copy"));
+		}
   }
 }
 

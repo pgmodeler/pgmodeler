@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -225,8 +225,8 @@ void TableView::configureObject(void)
 				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
-				conn_points[tab_obj][LeftConnPoint]=QPointF(col_item->pos().x() - 1.5f, cy);
-				conn_points[tab_obj][RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5f  , cy);
+				conn_points[tab_obj][LeftConnPoint]=QPointF(col_item->pos().x() - 1.5, cy);
+				conn_points[tab_obj][RightConnPoint]=QPointF(col_item->pos().x() + width - 1.5  , cy);
 			}
 		}
 	}

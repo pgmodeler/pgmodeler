@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,16 @@
 
 #include "objectfinderwidget.h"
 #include "pgmodeleruins.h"
+
+const QStringList ObjectFinderWidget::search_attribs =
+{ Attributes::Name, Attributes::Comment, Attributes::Signature,
+	Attributes::Schema, Attributes::Owner, Attributes::Tablespace,
+	Attributes::Type, Attributes::ReturnType };
+
+const QStringList ObjectFinderWidget::search_attribs_i18n =
+{ QT_TR_NOOP("Name"), QT_TR_NOOP("Comment"), QT_TR_NOOP("Signature"),
+	QT_TR_NOOP("Schema"), QT_TR_NOOP("Owner"), QT_TR_NOOP("Tablespace"),
+	QT_TR_NOOP("Data type"), QT_TR_NOOP("Return type")};
 
 ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 {
@@ -48,6 +58,9 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
 	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
 	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
+
+	for(auto &attr : search_attribs_i18n)
+		search_attrs_cmb->addItem(attr);
 
 	this->setModel(nullptr);
 	pattern_edt->installEventFilter(this);
@@ -216,6 +229,9 @@ void ObjectFinderWidget::findObjects(void)
 	if(model_wgt)
 	{
 		vector<ObjectType> types;
+		QString search_attr = search_attribs.at(search_attrs_cmb->currentIndex());
+		QTableWidgetItem *item = result_tbw->horizontalHeaderItem(result_tbw->columnCount() - 1);
+
 		clearResult();
 
 		//Getting the selected object types
@@ -226,19 +242,30 @@ void ObjectFinderWidget::findObjects(void)
 		}
 
 		//Search the objects on model
-		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types, true,
-														case_sensitive_chk->isChecked(), regexp_chk->isChecked(), exact_match_chk->isChecked());
+		found_objs=model_wgt->getDatabaseModel()->findObjects(pattern_edt->text(), types,
+																													case_sensitive_chk->isChecked(), regexp_chk->isChecked(),
+																													exact_match_chk->isChecked(),
+																													search_attr);
 
 		//Show the found objects on the result table
-		updateObjectTable(result_tbw, found_objs);
+		updateObjectTable(result_tbw, found_objs, search_attr);
+
+		//Rename the last column of the results grid wth the name of the field used to search objects
+		if(search_attr != Attributes::Name &&
+			 search_attr != Attributes::Schema &&
+			 search_attr != Attributes::Comment)
+			item->setText(search_attrs_cmb->currentText());
+		else
+			item->setText(trUtf8("Comment"));
+
 		found_lbl->setVisible(true);
 
 		//Show a message indicating the number of found objects
 		if(!found_objs.empty())
 		{
 			found_lbl->setText(trUtf8("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
-			result_tbw->resizeColumnsToContents();
 			result_tbw->horizontalHeader()->setStretchLastSection(true);
+			result_tbw->resizeColumnsToContents();
 		}
 		else
 			found_lbl->setText(trUtf8("No objects found."));
@@ -314,7 +341,7 @@ void ObjectFinderWidget::setAllObjectsChecked(void)
 		obj_types_lst->item(i)->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
 }
 
-void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs)
+void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs, const QString &search_attr)
 {
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
@@ -439,6 +466,23 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 				if(new_row) tab_wgt->setItem(lin_idx, 4, tab_item);
 			}
 
+			//Sixth column: object comment
+			if(tab_wgt->columnCount() > 5)
+			{				
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 5));
+				fnt.setItalic(false);
+				tab_item->setFont(fnt);
+
+				if(search_attr != Attributes::Name &&
+					 search_attr != Attributes::Schema &&
+					 search_attr != Attributes::Comment)
+					tab_item->setText(objs[i]->getSearchAttributes().at(search_attr));
+				else
+					tab_item->setText(objs[i]->getComment());
+
+				if(new_row) tab_wgt->setItem(lin_idx, 5, tab_item);
+			}
+
 			lin_idx++;
 		}
 
@@ -447,6 +491,8 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 
 		tab_wgt->setUpdatesEnabled(true);
 		tab_wgt->setSortingEnabled(true);
+		tab_wgt->resizeColumnsToContents();
+		tab_wgt->resizeRowsToContents();
 	}
 }
 

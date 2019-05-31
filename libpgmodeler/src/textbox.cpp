@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 Textbox::Textbox(void)
 {
 	obj_type=ObjectType::Textbox;
-	font_size=9.0f;
+	font_size=9.0;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
 	attributes[Attributes::Italic]=QString();
 	attributes[Attributes::Bold]=QString();

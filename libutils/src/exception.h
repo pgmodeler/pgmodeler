@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #define EXCEPTION_H
 
 #include <QObject>
+#include "doublenan.h"
 #include <exception>
 #include <signal.h>
 #include <vector>
@@ -162,7 +163,7 @@ enum class ErrorCode: unsigned {
 	PermissionRefInexistObject,
 	InvObjectAllocationNoSchema,
 	AsgTablespaceDuplicatedDirectory,
-	AsgInvalidDomainArray,
+	AsgInvalidSequenceTypeArray,
 	AsgSourceCodeFuncCLanguage,
 	AsgRefLibraryFuncLanguageNotC,
 	AsgInvalidCommutatorOperator,
@@ -284,12 +285,16 @@ enum class ErrorCode: unsigned {
 	InvPartitionKeyCount,
 	PartKeyObjectInexistsModel,
 	AsgInvalidColumnPartitionKey,
-	RemColumnRefByPartitionKey
+	RemColumnRefByPartitionKey,
+	AsgOptionInvalidName,
+	AsgInvalidNameObjReference,
+	AsgNotAllocatedObjectReference,
+	InsDuplicatedObjectReference
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=241;
+		static constexpr unsigned ErrorCount=245;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
@@ -344,7 +349,7 @@ class Exception {
 		QString getMethod(void);
 		QString getFile(void);
 		QString getLine(void);
-		ErrorCode getErrorType(void);
+		ErrorCode getErrorCode(void);
 		QString getExtraInfo(void);
 
 		//! \brief Gets the full exception stack

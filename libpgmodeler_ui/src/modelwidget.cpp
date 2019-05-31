@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@
 #include "policywidget.h"
 #include "tabledatawidget.h"
 #include "generalconfigwidget.h"
+#include "foreigndatawrapperwidget.h"
+#include "foreignserverwidget.h"
+#include "usermappingwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -66,7 +69,7 @@ bool ModelWidget::save_restore_pos=true;
 bool ModelWidget::disable_render_smooth=false;
 bool ModelWidget::simple_obj_creation=true;
 ModelWidget *ModelWidget::src_model=nullptr;
-float ModelWidget::min_object_opacity=0.10f;
+double ModelWidget::min_object_opacity=0.10;
 
 constexpr unsigned ModelWidget::BreakVertNinetyDegrees;
 constexpr unsigned ModelWidget::BreakHorizNinetyDegrees;
@@ -81,18 +84,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QAction *action=nullptr;
 	QString str_ico;
 	QStringList rel_types_cod={QString("11"), QString("1n"), QString("nn"), QString("dep"), QString("gen"), QString("part") };
-	ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship,
-						 ObjectType::Cast, ObjectType::Conversion, ObjectType::Domain,
-						 ObjectType::Function, ObjectType::Aggregate, ObjectType::Language,
-						 ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily,
-						 ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Type,
-						 ObjectType::Column, ObjectType::Constraint, ObjectType::Rule, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
-						 ObjectType::Tablespace, ObjectType::Collation, ObjectType::Extension, ObjectType::EventTrigger, ObjectType::Tag,
-						 ObjectType::GenericSql };
-	unsigned i, obj_cnt=sizeof(types)/sizeof(ObjectType),
+	unsigned i,
 			rel_types_id[]={ BaseRelationship::Relationship11, BaseRelationship::Relationship1n,
 							 BaseRelationship::RelationshipNn, BaseRelationship::RelationshipDep,
 							 BaseRelationship::RelationshipGen, BaseRelationship::RelationshipPart};
+
+	vector<ObjectType> types_vect = BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Permission,
+																																		 ObjectType::BaseRelationship});
 
 	current_zoom=1;
 	modified=panning_mode=false;
@@ -379,12 +377,28 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_break_rel_line->setMenu(&break_rel_menu);
 
 	//Alocatting the object creation actions
-	for(i=0; i < obj_cnt; i++)
+	for(auto &type : types_vect)
 	{
-		actions_new_objects[types[i]]=new QAction(QIcon(PgModelerUiNs::getIconPath(types[i])), BaseObject::getTypeName(types[i]), this);
-		actions_new_objects[types[i]]->setData(QVariant(enum_cast(types[i])));
-		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
+		actions_new_objects[type]=new QAction(QIcon(PgModelerUiNs::getIconPath(type)), BaseObject::getTypeName(type), this);
+		actions_new_objects[type]->setData(QVariant(enum_cast(type)));
+		connect(actions_new_objects[type], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
+
+	// Configuring the submenu of database level objects
+	action_database_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Database)), trUtf8("Database object"), this);
+	action_database_category->setMenu(&database_category_menu);
+	types_vect = BaseObject::getChildObjectTypes(ObjectType::Database);
+
+	for(auto &type : types_vect)
+		database_category_menu.addAction(actions_new_objects[type]);
+
+	// Configuring the submenu of schema level objects
+	action_schema_category = new QAction(QIcon(PgModelerUiNs::getIconPath(ObjectType::Schema)), trUtf8("Schema object"), this);
+	action_schema_category->setMenu(&schema_category_menu);
+	types_vect = BaseObject::getChildObjectTypes(ObjectType::Schema);
+
+	for(auto &type : types_vect)
+		schema_category_menu.addAction(actions_new_objects[type]);
 
 	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
@@ -559,7 +573,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			object == viewport->verticalScrollBar())
 		 && event->type() == QEvent::Wheel && w_event->modifiers()==Qt::ControlModifier)
 	{
-		double zoom_inc = roundf(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
+		double zoom_inc = round(fabs(w_event->angleDelta().y())/120) * ZoomIncrement;
 
 		if(w_event->angleDelta().y() < 0)
 			this->applyZoom(this->current_zoom - zoom_inc);
@@ -794,7 +808,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
+				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
@@ -806,7 +820,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
@@ -848,8 +862,8 @@ void ModelWidget::addNewObject(void)
 				pos=menu_pos;
 			//Otherwise inserts the new object at the middle of bounding rect
 			else
-				pos=QPointF(sch_graph->pos().x() + (size.width()/2.0f),
-							sch_graph->pos().y() + (size.height()/2.0f));
+				pos=QPointF(sch_graph->pos().x() + (size.width()/2.0),
+							sch_graph->pos().y() + (size.height()/2.0));
 
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
@@ -1289,8 +1303,8 @@ void ModelWidget::convertRelationshipNN(void)
 					op_list->registerObject(rel, Operation::ObjectRemoved);
 
 					//The default position for the table will be the middle point between the relationship participant tables
-					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
-					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
+					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0);
+					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0);
 					tab->setPosition(pnt);
 
 					//Adds the new table to the model
@@ -1361,7 +1375,7 @@ void ModelWidget::convertRelationshipNN(void)
 						op_list->ignoreOperationChain(false);
 					}
 
-					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+					throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 				}
 			}
 		}
@@ -1400,16 +1414,13 @@ void ModelWidget::loadModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		this->modified=false;
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void ModelWidget::adjustSceneSize(void)
 {
 	QRectF scene_rect, objs_rect;
-	bool align_objs, show_grid, show_delims;
-
-	ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
 
 	scene_rect=scene->sceneRect();
 	objs_rect=scene->itemsBoundingRect();
@@ -1423,7 +1434,7 @@ void ModelWidget::adjustSceneSize(void)
 	scene->setSceneRect(scene_rect);
 	viewport->centerOn(0,0);
 
-	if(align_objs)
+	if(ObjectsScene::isAlignObjectsToGrid())
 	{
 		scene->alignObjectsToGrid();
 		db_model->setObjectsModified({ ObjectType::Relationship, ObjectType::BaseRelationship });
@@ -1450,7 +1461,9 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy, dx1, dy1;
 
 		//Make a backup of the current grid options
-		ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
+		show_grid = ObjectsScene::isShowGrid();
+		align_objs = ObjectsScene::isAlignObjectsToGrid();
+		show_delims = ObjectsScene::isShowPageDelimiters();
 
 		//Reconfigure the grid options based upon the passed settings
 		ObjectsScene::setGridOptions(print_grid, align_objs, false);
@@ -1472,9 +1485,9 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
 		painter.setRenderHint(QPainter::Antialiasing);
-		font.setPointSizeF(7.5f);
+		font.setPointSizeF(7.5);
 		pen.setColor(QColor(120,120,120));
-		pen.setWidthF(1.0f);
+		pen.setWidthF(1.0);
 
 		//Calculates the auxiliary points to draw the page delimiter lines
 		top_left.setX(0); top_left.setY(0);
@@ -1617,7 +1630,7 @@ void ModelWidget::saveModel(const QString &filename)
 	{
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1823,6 +1836,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			genericsql_wgt->setAttributes(db_model, op_list, dynamic_cast<GenericSQL *>(object));
 			res=openEditingForm(genericsql_wgt);
 		}
+		else if(obj_type==ObjectType::ForeignDataWrapper)
+			res = openEditingForm<ForeignDataWrapper, ForeignDataWrapperWidget>(object);
+		else if(obj_type==ObjectType::ForeignServer)
+			res = openEditingForm<ForeignServer, ForeignServerWidget>(object);
+		else if(obj_type==ObjectType::UserMapping)
+			res = openEditingForm<UserMapping, UserMappingWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
@@ -1978,7 +1997,7 @@ void ModelWidget::moveToSchema(void)
 		if(op_id >=0 && op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2041,7 +2060,7 @@ void ModelWidget::changeOwner(void)
 		if(op_id >=0 && op_id >= op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2078,7 +2097,7 @@ void ModelWidget::setTag(void)
 		if(op_id >=0 &&  op_id > op_curr_idx)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2247,7 +2266,7 @@ void ModelWidget::protectObject(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -2416,7 +2435,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		tab_obj=dynamic_cast<TableObject *>(object);
 		itr++;
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 trUtf8("Validating object: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
 									 enum_cast(object->getObjectType()));
@@ -2518,7 +2537,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 		itr++;
 
 		pos++;
-		task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+		task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 									 trUtf8("Generating XML for: `%1' (%2)").arg(object->getName())
 									 .arg(object->getTypeName()),
 									 enum_cast(object->getObjectType()));
@@ -2595,7 +2614,8 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 	while(itr!=itr_end)
 	{
-		object=(*itr);
+		object = (*itr);
+		obj_type = object->getObjectType();
 		itr++;
 
 		if(orig_obj_names[object].count() && obj_type!=ObjectType::Cast)
@@ -2622,7 +2642,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 			try
 			{
 				pos++;
-				task_prog_wgt.updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
+				task_prog_wgt.updateProgress((pos/static_cast<double>(copied_objects.size()))*100,
 											 trUtf8("Pasting object: `%1' (%2)").arg(object->getName())
 											 .arg(object->getTypeName()),
 											 enum_cast(object->getObjectType()));
@@ -2692,7 +2712,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 
 	if(!ModelWidget::cut_operation)
 	{
-		copied_objects.clear();
+		//copied_objects.clear();
 		emit s_objectCreated();
 	}
 	//If its a cut operatoin
@@ -2770,7 +2790,7 @@ void ModelWidget::duplicateObject(void)
 		if(op_id >= 0)
 			op_list->removeLastOperation();
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -3005,14 +3025,14 @@ void ModelWidget::removeObjects(bool cascade)
 							}
 							catch(Exception &e)
 							{
-								if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-															 e.getErrorType()==ErrorCode::RemDirectReference ||
-															 e.getErrorType()==ErrorCode::RemInderectReference ||
-															 e.getErrorType()==ErrorCode::RemProtectedObject ||
-															 e.getErrorType()==ErrorCode::OprReservedObject))
+								if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+															 e.getErrorCode()==ErrorCode::RemDirectReference ||
+															 e.getErrorCode()==ErrorCode::RemInderectReference ||
+															 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+															 e.getErrorCode()==ErrorCode::OprReservedObject))
 									errors.push_back(e);
 								else
-									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+									throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 							}
 						}
 						else
@@ -3035,14 +3055,14 @@ void ModelWidget::removeObjects(bool cascade)
 								}
 								catch(Exception &e)
 								{
-									if(cascade && (e.getErrorType()==ErrorCode::RemInvalidatedObjects ||
-																 e.getErrorType()==ErrorCode::RemDirectReference ||
-																 e.getErrorType()==ErrorCode::RemInderectReference ||
-																 e.getErrorType()==ErrorCode::RemProtectedObject ||
-																 e.getErrorType()==ErrorCode::OprReservedObject))
+									if(cascade && (e.getErrorCode()==ErrorCode::RemInvalidatedObjects ||
+																 e.getErrorCode()==ErrorCode::RemDirectReference ||
+																 e.getErrorCode()==ErrorCode::RemInderectReference ||
+																 e.getErrorCode()==ErrorCode::RemProtectedObject ||
+																 e.getErrorCode()==ErrorCode::OprReservedObject))
 										errors.push_back(e);
 									else
-										throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+										throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 								}
 
 								if(rel)
@@ -3073,9 +3093,6 @@ void ModelWidget::removeObjects(bool cascade)
 			}
 			catch(Exception &e)
 			{
-				//if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-				//  op_list->removeOperations();
-
 				if(op_list->isOperationChainStarted())
 					op_list->finishOperationChain();
 
@@ -3095,6 +3112,10 @@ void ModelWidget::removeObjects(bool cascade)
 				emit s_objectRemoved();
 				msg_box.show(e);
 			}
+
+			/* In case of any object removal we clear the copied objects list in order to avoid
+			 * segfaults when trying to paste an object that was removed previously */
+			copied_objects.clear();
 		}
 	}
 }
@@ -3700,16 +3721,12 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
 		{
-			ObjectType types[]={ ObjectType::Aggregate, ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Collation, ObjectType::Conversion, ObjectType::Domain,
-								 ObjectType::Extension, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass, ObjectType::Operator,
-								 ObjectType::OpFamily, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence,
-								 ObjectType::Table, ObjectType::Tablespace, ObjectType::Textbox, ObjectType::Type, ObjectType::View, ObjectType::Tag };
-			unsigned cnt = sizeof(types)/sizeof(ObjectType);
-
-			//Configures the "New object" menu with the types at database level
-			for(i=0; i < cnt; i++)
-				new_object_menu.addAction(actions_new_objects[types[i]]);
-
+			new_object_menu.addAction(action_database_category);
+			new_object_menu.addAction(action_schema_category);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
+			new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
 
@@ -4082,7 +4099,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		actions.pop_back();
 	}
 
-	if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+	if(objects.size() <= 2)
 	{
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
@@ -4124,7 +4141,7 @@ void ModelWidget::setMinimumObjectOpacity(unsigned min_opacity)
 	if(min_opacity > 70)
 		min_opacity = 70;
 
-	ModelWidget::min_object_opacity = static_cast<float>(min_opacity)/100.0f;
+	ModelWidget::min_object_opacity = static_cast<double>(min_opacity)/100.0;
 }
 
 void ModelWidget::highlightObject(void)
@@ -4224,7 +4241,7 @@ void ModelWidget::createSequenceFromColumn(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4264,7 +4281,7 @@ void ModelWidget::convertIntegerToSerial(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4284,7 +4301,7 @@ void ModelWidget::breakRelationshipLine(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4324,7 +4341,7 @@ void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_ty
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4370,7 +4387,7 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -4494,6 +4511,9 @@ void ModelWidget::editCreationOrder(void)
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
 
 	swap_ids_wgt->setModel(this->getDatabaseModel());
+
+	if(!selected_objects.empty())
+		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
 			this->op_list->removeOperations();
@@ -4817,13 +4837,13 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 
 			if(tables.size() >= 4)
 			{
-				max_w *= 0.50f;
-				max_h *= 0.50f;
+				max_w *= 0.50;
+				max_h *= 0.50;
 			}
 			else
 			{
-				max_w *= 1.15f;
-				max_h *= 1.15f;
+				max_w *= 1.15;
+				max_h *= 1.15;
 			}
 
 			uniform_int_distribution<unsigned> dist_x(start.x(), start.x() + max_w),

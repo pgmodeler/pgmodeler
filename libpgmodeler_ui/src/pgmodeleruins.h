@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace PgModelerUiNs {
 	HugeFontFactor = 3;
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
-	extern void __configureWidgetFont(QWidget *widget, float factor);
+	extern void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class ModelWidget: public QWidget {
 		disable_render_smooth;
 
 		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
-		static float min_object_opacity;
+		static double min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -123,7 +123,11 @@ class ModelWidget: public QWidget {
 
 		jump_to_tab_menu,
 
-		toggle_sch_rects_menu;
+		toggle_sch_rects_menu,
+
+		database_category_menu,
+
+		schema_category_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -252,7 +256,9 @@ class ModelWidget: public QWidget {
 		*action_schemas_rects,
 		*action_show_schemas_rects,
 		*action_hide_schemas_rects,
-		*action_edit_data;
+		*action_edit_data,
+		*action_database_category,
+		*action_schema_category;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -289,7 +295,7 @@ class ModelWidget: public QWidget {
 		MaximumZoom=5.000001,
 		ZoomIncrement=0.050000;
 
-		ModelWidget(QWidget *parent = 0);
+		ModelWidget(QWidget *parent = nullptr);
 		~ModelWidget(void);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
@@ -306,7 +312,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(DNaN, DNaN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);

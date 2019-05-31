@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,13 +59,13 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 	result=(obj_type==ObjectType::Table || obj_type==ObjectType::Column || obj_type==ObjectType::View ||
 			obj_type==ObjectType::Sequence || obj_type==ObjectType::Database || obj_type==ObjectType::Function ||
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
-			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type);
+			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
+			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer);
 
 
 	//Validating privilege
 	if(result && priv_id <= PrivUsage)
 	{
-
 		/* Some privileges are valid only for certain types
 			of objects. If the user try to assign a privilege P
 			for an object that does not accept this privilege the same
@@ -81,19 +81,20 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			Linguage: USAGE
 			Schema: CREATE | USAGE
 			Tablespace: CREATE
-			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER */
+			View: SELECT | INSERT | UPDATE | DELETE | REFERENCES | TRIGGER
+			Foreign Data Wrapper: USAGE
+			Foreign Server: USAGE */
 		result=result &&
-
-			   (((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
-				 (priv_id==PrivSelect || priv_id==PrivInsert ||
-				  priv_id==PrivUpdate || priv_id==PrivDelete ||
-				  priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
+				(((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
+					(priv_id==PrivSelect || priv_id==PrivInsert ||
+					 priv_id==PrivUpdate || priv_id==PrivDelete ||
+					 priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
 
 				((obj_type==ObjectType::Table || obj_type==ObjectType::View) && priv_id==PrivTruncate) ||
 
 				(obj_type==ObjectType::Column &&
 				 (priv_id==PrivSelect ||priv_id==PrivInsert ||
-				  priv_id==PrivUpdate || priv_id==PrivReferences)) ||
+					priv_id==PrivUpdate || priv_id==PrivReferences)) ||
 
 				(obj_type==ObjectType::Sequence &&
 				 (priv_id==PrivUsage || priv_id==PrivSelect ||	priv_id==PrivUpdate)) ||
@@ -107,7 +108,9 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 
 				(obj_type==ObjectType::Schema && (priv_id==PrivUsage || priv_id==PrivCreate)) ||
 
-				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate));
+				(obj_type==ObjectType::Tablespace && priv_id==PrivCreate) ||
+
+				((obj_type==ObjectType::ForeignDataWrapper ||  obj_type==ObjectType::ForeignServer) && priv_id==PrivUsage));
 	}
 
 	return(result);
@@ -425,12 +428,16 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		//Views and Tables uses the same key word when setting permission (TABLE)
-		attributes[Attributes::Type]=
-				(object->getObjectType()==ObjectType::View ? BaseObject::getSQLName(ObjectType::Table): BaseObject::getSQLName(object->getObjectType()));
+		if(obj_type == ObjectType::View)
+			//Views and Tables uses the same key word when setting permission (TABLE)
+			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
+		else if(obj_type == ObjectType::ForeignServer)
+			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();
+		else
+			attributes[Attributes::Type] = BaseObject::getSQLName(obj_type);
 	}
 	else
-		attributes[Attributes::Type]=BaseObject::getSchemaName(object->getObjectType());
+		attributes[Attributes::Type]=BaseObject::getSchemaName(obj_type);
 
 	if(obj_type==ObjectType::Column)
 	{
@@ -515,6 +522,6 @@ QString Permission::getDropDefinition(bool cascade)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

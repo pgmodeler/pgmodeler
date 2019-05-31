@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -207,6 +207,7 @@ namespace Attributes {
 	FadedOut=QString("faded-out"),
 	Family=QString("family"),
 	FastUpdate=QString("fast-update"),
+	Fdw=QString("fdw"),
 	FileAssociated=QString("file-associated"),
 	FillColor=QString("fill-color"),
 	FilterOids=QString("filter-oids"),
@@ -221,6 +222,7 @@ namespace Attributes {
 	Font=QString("font"),
 	ForegroundColor=QString("foreground-color"),
 	ForeignKeys=QString("foreign-keys"),
+	FormatName=QString("format-name"),
 	FromExp=QString("from-exp"),
 	FunctionType=QString("function-type"),
 	Function=QString("function"),
@@ -304,6 +306,7 @@ namespace Attributes {
 	LockerBody=QString("locker-body"),
 	Login=QString("login"),
 	LookaheadChar=QString("lookahead-char"),
+	LowVerbosity=QString("low-verbosity"),
 	Materialized=QString("materialized"),
 	MaxConnections=QString("max-connections"),
 	MaxObjCount=QString("max-obj-count"),
@@ -351,6 +354,7 @@ namespace Attributes {
 	OperatorFunc=QString("operfunc"),
 	Operator=QString("operator"),
 	Operators=QString("operators"),
+	Options=QString("options"),
 	OriginalPk=QString("original-pk"),
 	OutputFunc=QString("output"),
 	OwnerColumn=QString("owner-col"),
@@ -418,9 +422,12 @@ namespace Attributes {
 	RecvFunc=QString("receive"),
 	ReducedForm=QString("reduced-form"),
 	RefAlias=QString("ref-alias"),
+	RefName=QString("ref-name"),
 	RefColumn=QString("ref-column"),
 	RefRoles=QString("ref-roles"),
 	RefTable=QString("ref-table"),
+	RefTables=QString("ref-tables"),
+	RefTableTag=QString("reftable"),
 	RefType=QString("ref-type"),
 	Refer=QString("refer"),
 	Reference=QString("reference"),
@@ -469,6 +476,7 @@ namespace Attributes {
 	SelectObjects=QString("select-objects"),
 	SendFunc=QString("send"),
 	Sequence=QString("sequence"),
+	Server=QString("server"),
 	ServerEncoding=QString("server-encoding"),
 	ServerVersion=QString("server-version"),
 	ServerPid=QString("server-pid"),
@@ -568,6 +576,7 @@ namespace Attributes {
 	UqPattern=QString("uq-pattern"),
 	UsagePriv=QString("usage"),
 	UseCurvedLines=QString("use-curved-lines"),
+	UseSignature=QString("use-signature"),
 	UsePlaceholders=QString("use-placeholders"),
 	UseSorting=QString("use-sorting"),
 	UseUniqueNames=QString("use-unique-names"),
@@ -580,6 +589,7 @@ namespace Attributes {
 	Values=QString("values"),
 	Variable=QString("variable"),
 	Variation=QString("variation"),
+	Version=QString("version"),
 	ViewBody=QString("view-body"),
 	ViewExtBody=QString("view-ext-body"),
 	ViewName=QString("view-name"),
@@ -598,6 +608,6 @@ namespace Attributes {
 	WordSeparators=QString("word-separators"),
 	WorkingDir=QString("working-dir"),
 	XPos=QString("x"),
-		YPos=QString("y");
+	YPos=QString("y");
 }
 

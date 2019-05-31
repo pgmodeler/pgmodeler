@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,6 +46,9 @@ class Cast: public BaseObject {
 		 the function used to cast the types will be the 'output'
 		 function of the source data type */
 		bool is_in_out;
+
+	protected:
+		virtual void configureSearchAttributes(void);
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast

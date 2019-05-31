@@ -471,6 +471,9 @@
          <property name="statusTip">
           <string>Name of the table generated from many to many relationship</string>
          </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="4" column="2">

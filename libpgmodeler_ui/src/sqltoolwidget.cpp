@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ void SQLToolWidget::connectToServer(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -217,7 +217,7 @@ void SQLToolWidget::disconnectFromDatabases(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -239,7 +239,7 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 }
 
@@ -277,7 +277,7 @@ void SQLToolWidget::browseDatabase(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -301,7 +301,7 @@ void SQLToolWidget::addSQLExecutionTab(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -311,7 +311,10 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
 
 	//Closing sql execution tabs related to the database to be closed
 	for(QWidget *wgt : sql_exec_wgts[db_explorer])
+	{
 		sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+		delete(wgt);
+	}
 
 	sql_exec_wgts.remove(db_explorer);
 	databases_tbw->removeTab(idx);
@@ -344,6 +347,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx)
 
 	if(sql_exec_wgt)
 		delete(sql_exec_wgt);
+
 }
 
 void SQLToolWidget::showSnippet(const QString &snip)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,6 +38,10 @@
 class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
+
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
 
 		NumberedTextEditor *sqlcode_txt;
 
@@ -116,10 +120,13 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		ExportThread=3;
 
 	public:
-		ModelDatabaseDiffForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		~ModelDatabaseDiffForm(void);
 
 		void setModelWidget(ModelWidget *model_wgt);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 
 	private slots:
 		void listDatabases(void);

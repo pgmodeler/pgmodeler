@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,10 @@
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 	private:
 		Q_OBJECT
+
+		/*! \brief Indicates if the full output generated during the process should be displayed
+		 * When this attribute is true, only errors and some key info messages are displayed. */
+		static bool low_verbosity;
 		
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -90,10 +94,13 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectCount=8,
 		ObjectSource=9; //Only for gropus
 		
-		DatabaseImportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		DatabaseImportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		~DatabaseImportForm(void);
 		
 		void setModelWidget(ModelWidget *model);
+
+		//! \brief Defines if all the output generated during the import process should be displayed
+		static void setLowVerbosity(bool value);
 		
 		//! \brief Returns the configured model widget
 		ModelWidget *getModelWidget(void);
@@ -116,7 +123,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		/*! \brief Retrieve the specified objects from the database and insert them onto the tree view.
 		The "root" parameter is used to associate the group of objects as child of it.
 		The "schema" and "table" parameter are used to filter objects by schema and/or table.
-		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjectType::ObjSchema or ObjectType::ObjTable or ObjectType::ObjView */
+		This method automatically returns a list of QTreeWidgetItem when the vector "types" contains ObjectType::ObjSchema or ObjectType::Table or ObjectType::View */
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
 																											 const QString &schema=QString(), const QString &table=QString(), unsigned sort_by = 0);

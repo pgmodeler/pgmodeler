@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,6 +54,9 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "tag.h"
 #include "eventtrigger.h"
 #include "genericsql.h"
+#include "foreigndatawrapper.h"
+#include "foreignserver.h"
+#include "usermapping.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -62,6 +65,10 @@ class ModelWidget;
 class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
+
+		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
+		 * to return the list according to the provided type */
+		map<ObjectType, vector<BaseObject *> *> obj_lists;
 
 		static unsigned dbmodel_id;
 
@@ -87,6 +94,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Database localizations (LC_CTYPE, LC_COLLATE)
 		localizations[2];
 
+		//! \brief Stores the objects of each type that are considered the default ones associated to new objects
 		map<ObjectType, BaseObject *> default_objs;
 
 		//! \brief Maximum number of connections
@@ -99,31 +107,34 @@ class DatabaseModel:  public QObject, public BaseObject {
 		allow_conns;
 
 		//! \brief Vectors that stores all the objects types
-		vector<BaseObject *> textboxes;
-		vector<BaseObject *> relationships;
-		vector<BaseObject *> base_relationships;
-		vector<BaseObject *> functions;
-		vector<BaseObject *> schemas;
-		vector<BaseObject *> views;
-		vector<BaseObject *> tables;
-		vector<BaseObject *> types;
-		vector<BaseObject *> roles;
-		vector<BaseObject *> tablespaces;
-		vector<BaseObject *> languages;
-		vector<BaseObject *> aggregates;
-		vector<BaseObject *> casts;
-		vector<BaseObject *> conversions;
-		vector<BaseObject *> operators;
-		vector<BaseObject *> op_classes;
-		vector<BaseObject *> op_families;
-		vector<BaseObject *> domains;
-		vector<BaseObject *> sequences;
-		vector<BaseObject *> permissions;
-		vector<BaseObject *> collations;
-		vector<BaseObject *> extensions;
-		vector<BaseObject *> tags;
-		vector<BaseObject *> eventtriggers;
-		vector<BaseObject *> genericsqls;
+		vector<BaseObject *> textboxes,
+		relationships,
+		base_relationships,
+		functions,
+		schemas,
+		views,
+		tables,
+		types,
+		roles,
+		tablespaces,
+		languages,
+		aggregates,
+		casts,
+		conversions,
+		operators,
+		op_classes,
+		op_families,
+		domains,
+		sequences,
+		permissions,
+		collations,
+		extensions,
+		tags,
+		eventtriggers,
+		genericsqls,
+		fdata_wrappers,
+		foreign_servers,
+		usermappings;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -253,8 +264,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
 		/*! \brief Loads a database model from a file. In case of loading errors
-	the objects in the model will not be destroyed automatically. The user need to call
-	destroyObjects() or delete the entire model */
+		the objects in the model will not be destroyed automatically. The user need to call
+		destroyObjects() or delete the entire model */
 		void loadModel(const QString &filename);
 
 		//! \brief Sets the database encoding
@@ -486,6 +497,21 @@ class DatabaseModel:  public QObject, public BaseObject {
 		GenericSQL *getGenericSQL(unsigned obj_idx);
 		GenericSQL *getGenericSQL(const QString &name);
 
+		void addForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx=-1);
+		void removeForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx=-1);
+		ForeignDataWrapper *getForeignDataWrapper(unsigned obj_idx);
+		ForeignDataWrapper *getForeignDataWrapper(const QString &name);
+
+		void addForeignServer(ForeignServer *server, int obj_idx=-1);
+		void removeForeignServer(ForeignServer *server, int obj_idx=-1);
+		ForeignServer *getForeignServer(unsigned obj_idx);
+		ForeignServer *getForeignServer(const QString &name);
+
+		void addUserMapping(UserMapping *usrmap, int obj_idx=-1);
+		void removeUserMapping(UserMapping *usrmap, int obj_idx=-1);
+		UserMapping *getUserMapping(unsigned obj_idx);
+		UserMapping *getUserMapping(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -544,6 +570,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		Policy *createPolicy(void);
 		EventTrigger *createEventTrigger(void);
 		GenericSQL *createGenericSQL(void);
+		ForeignDataWrapper *createForeignDataWrapper(void);
+		ForeignServer *createForeignServer(void);
+		UserMapping *createUserMapping(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);
@@ -610,8 +639,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns a list of object searching them using the specified pattern. The search can be delimited by filtering the object's types.
 		The additional bool params are: case sensitive name search, name pattern is a regexp, exact match for names. */
-		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types, bool format_obj_names,
-										 bool case_sensitive, bool is_regexp, bool exact_match);
+		vector<BaseObject *> findObjects(const QString &pattern, vector<ObjectType> types,
+																		 bool case_sensitive, bool is_regexp, bool exact_match,
+																		 const QString &search_attr = Attributes::Name);
 
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition(void);
@@ -648,6 +678,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 	friend class DatabaseImportHelper;
 	friend class ModelWidget;
+	friend class PgModelerCli;
 };
 
 #endif

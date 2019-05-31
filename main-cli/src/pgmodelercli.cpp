@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -637,15 +637,15 @@ void PgModelerCli::handleObjectAddition(BaseObject *object)
 
 			case ObjectType::Relationship:
 			case ObjectType::BaseRelationship:
-				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj)); break;
+				item=new RelationshipView(dynamic_cast<BaseRelationship *>(graph_obj));
 			break;
 
 			case ObjectType::Schema:
-				item=new SchemaView(dynamic_cast<Schema *>(graph_obj)); break;
+				item=new SchemaView(dynamic_cast<Schema *>(graph_obj));
 			break;
 
 			default:
-				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj)); break;
+				item=new StyledTextboxView(dynamic_cast<Textbox *>(graph_obj));
 			break;
 		}
 
@@ -679,7 +679,6 @@ void PgModelerCli::extractObjectXML(void)
 	QString buf, lin, def_xml, end_tag;
 	QTextStream ts;
 	QRegExp regexp(QString("^(\\<\\?xml)(.)*(\\<%1)( )*").arg(Attributes::DbModel)),
-			default_obj=QRegExp(QString("(default)(\\-)(schema|owner|collation|tablespace)")),
 
 			//[schema].[func_name](...OUT [type]...)
 			func_signature=QRegExp(QString("(\")(.)+(\\.)(.)+(\\()(.)*(OUT )(.)+(\\))(\")")),
@@ -708,9 +707,48 @@ void PgModelerCli::extractObjectXML(void)
 		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
+		//Extracting layers informations from the tag <dbmodel>
+		QRegExp dbm_regexp = QRegExp(TagExpr.arg(Attributes::DbModel)),
+				db_end_regexp =  QRegExp(EndTagExpr.arg(Attributes::Database));
+		int attr_start =-1, attr_end = -1, dbm_start = dbm_regexp.indexIn(buf);
+		QString aux_buf = buf.mid(dbm_start, buf.indexOf(db_end_regexp) - dbm_start),
+				layers, active_layers, attr_expr = QString("(%1)( )*(=)(\")");
+		QList<unsigned> act_layers_ids;
+
+		//Layers names
+		attr_start = aux_buf.indexOf(Attributes::Layers);
+		attr_end = aux_buf.indexOf(Attributes::ActiveLayers);
+		layers = aux_buf.mid(attr_start, attr_end - attr_start);
+		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
+		layers.remove('"');
+		model->setLayers(layers.trimmed().split(';', QString::SkipEmptyParts));
+
+		//Active layers
+		attr_start = attr_end;
+		attr_end = aux_buf.indexOf('>', attr_start);
+		active_layers = aux_buf.mid(attr_start, attr_end - attr_start);
+		active_layers.remove(QRegExp(attr_expr.arg(Attributes::ActiveLayers)));
+		active_layers.remove('"');
+
+		for(auto id : active_layers.trimmed().split(';', QString::SkipEmptyParts))
+			act_layers_ids.push_back(id.toUInt());
+
+		model->setActiveLayers(act_layers_ids);
+
 		//Remove the header entry from buffer
 		buf.remove(start, regexp.matchedLength()+1);
-		buf.remove(0, buf.indexOf(QString("\n")));
+
+		//Checking if the header ends on a role declaration
+		QRegExp role_regexp = QRegExp(QString("(<%1)(.)*(<\\/%2>)").arg(Attributes::Role).arg(Attributes::Role));
+		end = buf.indexOf(role_regexp);
+
+		// If we found role declarations we clear the header until there
+		if(end >= 0)
+			buf.remove(0, end);
+		else
+			// Instead, we clear the header until the starting of database declaration
+			buf.remove(0, buf.indexOf(QString("<%1").arg(Attributes::Database)));
+
 		buf.remove(QString("<\\%1>").arg(Attributes::DbModel));
 		ts.setString(&buf);
 
@@ -737,16 +775,11 @@ void PgModelerCli::extractObjectXML(void)
 
 
 			if(is_rel && (((short_tag && lin.contains(QString("/>"))) ||
-						   (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
+										 (lin.contains(QString("[a-z]+")) && !containsRelAttributes(lin)))))
 				open_tag=close_tag=true;
-			else if(lin.contains(default_obj))
-			{
-				lin.clear();
-			}
 			else
 			{
 				//If the line contains an objects open tag
-				//if((lin.startsWith('<') || lin.startsWith(QString("\n<"))) && !open_tag)
 				if(lin.contains(QRegExp("^(((\n)|(\t))*(<))")) && !open_tag)
 				{
 					//Check the flag indicating an open tag
@@ -936,7 +969,7 @@ void PgModelerCli::recreateObjects(void)
 			if(obj_type!=ObjectType::Database)
 				fail_objs.push_back(xml_def);
 			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
 		if(objs_xml.isEmpty() && (!fail_objs.isEmpty() || !constr.isEmpty()))
@@ -1038,7 +1071,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 
 	//Replacing attribute owner by onwer-col for sequences
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Sequence))))
-		obj_xml.replace(Attributes::Owner, Attributes::OwnerColumn);
+		obj_xml.replace(QRegExp(QString("(%1)( )*(=)(\")").arg(Attributes::Owner)), QString("%1 = \"").arg(Attributes::OwnerColumn));
 
 	//Remove sysid attribute from <role> tags.
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Role))))
@@ -1305,7 +1338,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1662,7 +1695,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 #else
 #ifdef Q_OS_WIN

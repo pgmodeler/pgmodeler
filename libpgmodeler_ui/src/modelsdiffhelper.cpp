@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,18 @@
 #include "modelsdiffhelper.h"
 #include <QThread>
 #include "pgmodelerns.h"
+
+const vector<QString> ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
+
+const vector<QString> ModelsDiffHelper::ObjectsIgnoredAttribs = {
+	Attributes::MaxObjCount, Attributes::Protected, Attributes::SqlDisabled,
+	Attributes::RectVisible, Attributes::FillColor, Attributes::FadedOut,
+	Attributes::CollapseMode,	Attributes::AttribsPage, Attributes::ExtAttribsPage,
+	Attributes::Pagination,	Attributes::Alias };
+
+const vector<QString> ModelsDiffHelper::ObjectsIgnoredTags = {
+	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
+	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql };
 
 ModelsDiffHelper::ModelsDiffHelper(void)
 {
@@ -109,7 +121,7 @@ void ModelsDiffHelper::diffModels(void)
 	}
 	catch(Exception &e)
 	{
-		emit s_diffAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
+		emit s_diffAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, e.getExtraInfo()));
 	}
 
 	destroyTempObjects();
@@ -172,7 +184,7 @@ void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned d
 						 (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)))
 				{
 					//If there are some differences on the XML code of the objects
-					if(tab_obj->isCodeDiffersFrom(aux_obj))
+					if(tab_obj->isCodeDiffersFrom(aux_obj, TableObjsIgnoredAttribs))
 						generateDiffInfo(ObjectsDiffInfo::AlterObject, tab_obj, aux_obj);
 
 				}
@@ -219,8 +231,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			aux_model=source_model;
 			factor=25;
 		}
-		else if(diff_type==ObjectsDiffInfo::CreateObject ||
-				diff_type==ObjectsDiffInfo::AlterObject)
+		else if(diff_type==ObjectsDiffInfo::CreateObject || diff_type==ObjectsDiffInfo::AlterObject)
 		{
 			/* For creation or modification of objects the order followed is the same
 		 as the creation order on the source model */
@@ -245,23 +256,23 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					((diff_type==ObjectsDiffInfo::DropObject && (!diff_opts[OptKeepClusterObjs] || (diff_opts[OptKeepClusterObjs] && obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace))) ||
 					 (diff_type!=ObjectsDiffInfo::DropObject)))
 			{
-				emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
-									   trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
-									   object->getObjectType());
+				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
+															 trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+															 object->getObjectType());
 
 				//Processing objects that are not database, table child object (they are processed further)
 				if(obj_type!=ObjectType::Database && !TableObject::isTableObject(obj_type))
 				{
 					/* Processing permissions. If the operation is DROP and keep_obj_perms is true the
-			 the permission is ignored */
+					 * the permission is ignored */
 					if(obj_type==ObjectType::Permission &&
 
 							((diff_type==ObjectsDiffInfo::DropObject &&
-							  !diff_opts[OptKeepObjectPerms]) ||
+								!diff_opts[OptKeepObjectPerms]) ||
 
 							 (diff_type==ObjectsDiffInfo::CreateObject &&
-							  (aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
-							   !diff_opts[OptKeepObjectPerms]))))
+								(aux_model->getPermissionIndex(dynamic_cast<Permission *>(object), true) < 0 ||
+								 !diff_opts[OptKeepObjectPerms]))))
 						generateDiffInfo(diff_type, object);
 
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
@@ -312,29 +323,13 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						if(diff_type != ObjectsDiffInfo::DropObject && aux_object)
 						{
 							/* Try to get a diff from the retrieve object and the current object,
-				 comparing only basic attributes like schema, tablespace and owner
-				 this is why the BaseObject::getAlterDefinition is called */
+							 * comparing only basic attributes like schema, tablespace and owner
+							 * this is why the BaseObject::getAlterDefinition is called */
 							objs_differs=!aux_object->BaseObject::getAlterDefinition(object).isEmpty();
 
 							//If the objects does not differ, try to compare their XML definition
 							if(!objs_differs)
-								xml_differs=object->isCodeDiffersFrom(aux_object,
-								{ Attributes::MaxObjCount,
-									Attributes::Protected,
-									Attributes::SqlDisabled,
-									Attributes::RectVisible,
-									Attributes::FillColor,
-									Attributes::FadedOut,
-									Attributes::CollapseMode,
-									Attributes::AttribsPage,
-									Attributes::ExtAttribsPage,
-									Attributes::Pagination},
-								{ Attributes::Role,
-									Attributes::Tablespace,
-									Attributes::Collation,
-									Attributes::Position,
-									Attributes::AppendedSql,
-									Attributes::PrependedSql });
+								xml_differs=object->isCodeDiffersFrom(aux_object,	ObjectsIgnoredAttribs, ObjectsIgnoredTags);
 
 							//If a difference was detected between the objects
 							if(objs_differs || xml_differs)
@@ -378,7 +373,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			else
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
-				emit s_progressUpdated(prog + ((idx/static_cast<float>(obj_order.size())) * factor),
+				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
 									   trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 									   object->getObjectType());
 
@@ -389,7 +384,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -441,7 +436,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 		else
 			generateDiffInfo(ObjectsDiffInfo::IgnoreObject, tab_obj);
 	}
-	else if(diff_type!=ObjectsDiffInfo::DropObject && tab_obj->isCodeDiffersFrom(aux_tab_obj))
+	else if(diff_type!=ObjectsDiffInfo::DropObject && tab_obj->isCodeDiffersFrom(aux_tab_obj, TableObjsIgnoredAttribs))
 		generateDiffInfo(ObjectsDiffInfo::AlterObject, tab_obj, aux_tab_obj);
 }
 
@@ -600,7 +595,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -678,7 +673,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			constr=dynamic_cast<Constraint *>(object);
 			col=dynamic_cast<Column *>(object);
 
-			emit s_progressUpdated((idx++/static_cast<float>(diff_infos.size())) * 100,
+			emit s_progressUpdated((idx++/static_cast<double>(diff_infos.size())) * 100,
 								   trUtf8("Processing `%1' info for object `%2' (%3)...")
 								   .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
 								   obj_type);
@@ -946,7 +941,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		for(Type *type : types)
 			type->convertFunctionParameters(true);
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -986,7 +981,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -222,6 +222,7 @@ namespace Attributes {
 	FadedOut,
 	Family,
 	FastUpdate,
+	Fdw,
 	FileAssociated,
 	FillColor,
 	FilterOids,
@@ -236,6 +237,7 @@ namespace Attributes {
 	Font,
 	ForegroundColor,
 	ForeignKeys,
+	FormatName,
 	FromExp,
 	FunctionType,
 	Function,
@@ -316,6 +318,7 @@ namespace Attributes {
 	LockerBody,
 	Login,
 	LookaheadChar,
+	LowVerbosity,
 	Materialized,
 	MaxConnections,
 	MaxObjCount,
@@ -363,6 +366,7 @@ namespace Attributes {
 	OperatorFunc,
 	Operator,
 	Operators,
+	Options,
 	OriginalPk,
 	OutputFunc,
 	OwnerColumn,
@@ -430,9 +434,12 @@ namespace Attributes {
 	RecvFunc,
 	ReducedForm,
 	RefAlias,
+	RefName,
 	RefColumn,
 	RefRoles,
 	RefTable,
+	RefTables,
+	RefTableTag,
 	RefType,
 	Refer,
 	Reference,
@@ -478,6 +485,7 @@ namespace Attributes {
 	SelectObjects,
 	SendFunc,
 	Sequence,
+	Server,
 	ServerEncoding,
 	ServerVersion,
 	ServerPid,
@@ -575,6 +583,7 @@ namespace Attributes {
 	UsagePriv,
 	UseCurvedLines,
 	UsePlaceholders,
+	UseSignature,
 	UseSorting,
 	UseUniqueNames,
 	UsingExp,
@@ -586,6 +595,7 @@ namespace Attributes {
 	Values,
 	Variable,
 	Variation,
+	Version,
 	ViewBody,
 	ViewExtBody,
 	ViewName,

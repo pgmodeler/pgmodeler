@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@ Operator::Operator(void)
 
 	obj_type=ObjectType::Operator;
 
-	for(i=FUNC_OPERATOR; i <= FUNC_RESTRICT; i++)
+	for(i=FuncOperator; i <= FuncRestrict; i++)
 		functions[i]=nullptr;
 
-	for(i=Operator::OPER_COMMUTATOR; i <= OPER_NEGATOR; i++)
+	for(i=Operator::OperCommutator; i <= OperNegator; i++)
 		operators[i]=nullptr;
 
 	hashes=merges=false;
-	argument_types[LEFT_ARG]=PgSqlType(QString("\"any\""));
-	argument_types[RIGHT_ARG]=PgSqlType(QString("\"any\""));
+	argument_types[LeftArg]=PgSqlType(QString("\"any\""));
+	argument_types[RightArg]=PgSqlType(QString("\"any\""));
 
 	attributes[Attributes::LeftType]=QString();
 	attributes[Attributes::RightType]=QString();
@@ -92,9 +92,9 @@ void Operator::setName(const QString &name)
 void Operator::setFunction(Function *func, unsigned func_type)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FUNC_RESTRICT)
+	if(func_type > FuncRestrict)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(func_type==FUNC_OPERATOR)
+	else if(func_type==FuncOperator)
 	{
 		//Raises an error if the function is not allocated
 		if(!func)
@@ -154,7 +154,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
 void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 {
 	//Raises an error if the argument id is invalid
-	if(arg_id > RIGHT_ARG)
+	if(arg_id > RightArg)
 		throw Exception(ErrorCode::RefOperatorArgumentInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(argument_types[arg_id] != arg_type);
@@ -164,7 +164,7 @@ void Operator::setArgumentType(PgSqlType arg_type, unsigned arg_id)
 void Operator::setOperator(Operator *oper, unsigned op_type)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OPER_NEGATOR)
+	if(op_type > OperNegator)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -174,7 +174,7 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 is being defined and its commutator operator is +*+ then the signature
 		 of the latter should be +*+ (typeB, typeA). Raises an error when this condition
 		 is not satisfied. */
-		if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
+		if(oper && op_type==OperCommutator && argument_types[LeftArg]!=oper->argument_types[RightArg])
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidCommutatorOperator)
 							.arg(oper->getSignature(true))
@@ -186,9 +186,9 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		 operator to be defined. That is, if the operator !!(typeA) is being
 		 set and its negator is !*! then the signature of the latter should be !*! (typeA).
 		 Raises an error when this condition is not satisfied. */
-		else if(oper && op_type==OPER_NEGATOR &&
-				(argument_types[LEFT_ARG]!=oper->argument_types[LEFT_ARG] &&
-				 argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
+		else if(oper && op_type==OperNegator &&
+				(argument_types[LeftArg]!=oper->argument_types[LeftArg] &&
+				 argument_types[RightArg]!=oper->argument_types[RightArg]))
 		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidNegatorOperator)
 							.arg(oper->getSignature(true))
@@ -216,7 +216,7 @@ void Operator::setMerges(bool value)
 Function *Operator::getFunction(unsigned func_type)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FUNC_RESTRICT)
+	if(func_type > FuncRestrict)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_type]);
@@ -225,7 +225,7 @@ Function *Operator::getFunction(unsigned func_type)
 PgSqlType Operator::getArgumentType(unsigned arg_id)
 {
 	//Raises an error if the argument id is invalid
-	if(arg_id > RIGHT_ARG)
+	if(arg_id > RightArg)
 		throw Exception(ErrorCode::RefOperatorArgumentInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	return(argument_types[arg_id]);
 }
@@ -233,7 +233,7 @@ PgSqlType Operator::getArgumentType(unsigned arg_id)
 Operator *Operator::getOperator(unsigned op_type)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OPER_NEGATOR)
+	if(op_type > OperNegator)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(operators[op_type]);
@@ -288,7 +288,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 							Attributes::JoinFunc,
 							Attributes::RestrictionFunc};
 
-	for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
+	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
 		{
@@ -302,7 +302,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_NEGATOR; i++)
+	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
 	{
 		if(operators[i])
 		{
@@ -316,7 +316,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
+	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
 	{
 		if(functions[i])
 		{
@@ -337,3 +337,13 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
+void Operator::configureSearchAttributes(void)
+{
+	QStringList arg_types;
+
+	BaseObject::configureSearchAttributes();
+
+	arg_types += *argument_types[0];
+	arg_types += *argument_types[1];
+	search_attribs[Attributes::Type] = arg_types.join("; ");
+}

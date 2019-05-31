@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(const vector<int> &ins_rows);
+		void removeNewRows(vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
@@ -112,7 +112,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void setColumnsCheckState(Qt::CheckState state);
 
 	public:
-		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());

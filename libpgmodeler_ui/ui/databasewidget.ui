@@ -78,6 +78,9 @@
            <height>25</height>
           </size>
          </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -100,6 +103,9 @@
            <width>0</width>
            <height>25</height>
           </size>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

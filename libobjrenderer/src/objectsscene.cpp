@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ ObjectsScene::ObjectsScene(void)
 	enable_range_sel=true;
 	this->setBackgroundBrush(grid);
 
-	sel_ini_pnt.setX(NAN);
-	sel_ini_pnt.setY(NAN);
+	sel_ini_pnt.setX(DNaN);
+	sel_ini_pnt.setY(DNaN);
 
 	selection_rect=new QGraphicsPolygonItem;
 	selection_rect->setVisible(false);
@@ -358,13 +358,13 @@ bool ObjectsScene::isCornerMoveEnabled(void)
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 {
-	QPointF p(roundf(pnt.x()/grid_size) * grid_size,
-			  roundf(pnt.y()/grid_size) * grid_size);
+	int px = static_cast<int>(round(pnt.x()/static_cast<double>(grid_size))) * grid_size,
+			py = static_cast<int>(round(pnt.y()/static_cast<double>(grid_size))) * grid_size;
 
-	if(p.x() < 0) p.setX(0);
-	if(p.y() < 0) p.setY(0);
+	if(px < 0) px = 0;
+	if(py < 0) py = 0;
 
-	return(p);
+	return(QPointF(px,	py));
 }
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
@@ -453,8 +453,8 @@ void ObjectsScene::setGridSize(unsigned size)
 		height=aux_size.height()/static_cast<double>(size) * size;
 
 		//Calculates the grid pixmpa size
-		img_w=ceil(width/size)*size;
-		img_h=ceil(height/size)*size;
+		img_w=ceil(width/size) * size;
+		img_h=ceil(height/size) * size;
 
 		grid_size=size;
 		grid_img=QImage(img_w, img_h, QImage::Format_ARGB32);
@@ -477,7 +477,7 @@ void ObjectsScene::setGridSize(unsigned size)
 		{
 			pen.setColor(QColor(75,115,195));
 			pen.setStyle(Qt::DashLine);
-			pen.setWidthF(1.0f);
+			pen.setWidthF(1.0);
 			painter.setPen(pen);
 			painter.drawLine(width-1, 0,width-1,img_h-1);
 			painter.drawLine(0, height-1,img_w-1,height-1);
@@ -546,11 +546,19 @@ void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_
 	}
 }
 
-void ObjectsScene::getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm)
+bool ObjectsScene::isAlignObjectsToGrid(void)
 {
-	show_grd=ObjectsScene::show_grid;
-	align_objs_grd=ObjectsScene::align_objs_grid;
-	show_pag_dlm=ObjectsScene::show_page_delim;
+	return(align_objs_grid);
+}
+
+bool ObjectsScene::isShowGrid(void)
+{
+	return(show_grid);
+}
+
+bool ObjectsScene::isShowPageDelimiters(void)
+{
+	return(show_page_delim);
 }
 
 void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
@@ -912,7 +920,7 @@ void ObjectsScene::keyPressEvent(QKeyEvent *event)
 			event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) &&
 		 !selectedItems().isEmpty())
 	{
-		float dx = 0, dy = 0;
+		double dx = 0, dy = 0;
 		BaseObjectView *obj_view=nullptr;
 		QRectF brect = itemsBoundingRect(true, true);
 
@@ -1006,8 +1014,10 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 		if(!rel_line->isVisible())
 		{
+			int sel_items_count = this->selectedItems().size();
+
 			//Case the user starts a object moviment
-			if(!this->selectedItems().isEmpty() && !moving_objs /*&& event->modifiers()==Qt::NoModifier*/)
+			if(sel_items_count != 0 && !moving_objs)
 			{
 				if(BaseObjectView::isPlaceholderEnabled())
 				{
@@ -1026,7 +1036,7 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			}
 
 			//If the alignment to grid is active, adjust the event scene position
-			if(align_objs_grid && !selection_rect->isVisible())
+			if(align_objs_grid && !selection_rect->isVisible() && sel_items_count <= 1)
 				event->setScenePos(this->alignPointToGrid(event->scenePos()));
 			else if(selection_rect->isVisible())
 			{
@@ -1073,8 +1083,8 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 		selection_rect->setVisible(false);
 		selection_rect->setPolygon(pol);
-		sel_ini_pnt.setX(NAN);
-		sel_ini_pnt.setY(NAN);
+		sel_ini_pnt.setX(DNaN);
+		sel_ini_pnt.setY(DNaN);
 
 		if(!this->selectedItems().isEmpty())
 			emit s_objectsSelectedInRange();
@@ -1214,8 +1224,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	{
 		rect=this->itemsBoundingRect();
 		rect.setTopLeft(QPointF(0,0));
-		rect.setWidth(rect.width() * 1.05f);
-		rect.setHeight(rect.height() * 1.05f);
+		rect.setWidth(rect.width() * 1.05);
+		rect.setHeight(rect.height() * 1.05);
 		this->setSceneRect(rect);
 	}
 
@@ -1240,8 +1250,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 	emit s_objectsMoved(true);
 	moving_objs=false;
-	sel_ini_pnt.setX(NAN);
-	sel_ini_pnt.setY(NAN);
+	sel_ini_pnt.setX(DNaN);
+	sel_ini_pnt.setY(DNaN);
 }
 
 void ObjectsScene::alignObjectsToGrid(void)
@@ -1316,12 +1326,12 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 	unsigned h_page=0, v_page=0, start_h=99999, start_v=99999;
 	QList<QGraphicsItem *> list;
 
-	page_width=ceilf(paper_size.width() - margin.width()-1);
-	page_height=ceilf(paper_size.height() - margin.height()-1);
+	page_width=ceil(paper_size.width() - margin.width()-1);
+	page_height=ceil(paper_size.height() - margin.height()-1);
 
 	//Calculates the horizontal and vertical page count based upon the passed paper size
-	h_page_cnt=roundf(this->sceneRect().width()/page_width) + 1;
-	v_page_cnt=roundf(this->sceneRect().height()/page_height) + 1;
+	h_page_cnt=round(this->sceneRect().width()/page_width) + 1;
+	v_page_cnt=round(this->sceneRect().height()/page_height) + 1;
 
 	//Calculates the maximum count of horizontal and vertical pages
 	for(v_page=0; v_page < v_page_cnt; v_page++)
@@ -1351,8 +1361,8 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 	}
 
 	//Re calculates the maximum page count based upon the maximum page size
-	h_page_cnt=roundf(max_rect.width()/page_width);
-	v_page_cnt=roundf(max_rect.height()/page_height);
+	h_page_cnt=round(max_rect.width()/page_width);
+	v_page_cnt=round(max_rect.height()/page_height);
 
 	//Inserts the page rectangles on the list
 	for(v_page=static_cast<unsigned>(start_v); v_page < v_page_cnt; v_page++)

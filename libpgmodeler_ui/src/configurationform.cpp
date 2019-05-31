@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	plugins_conf=new PluginsConfigWidget(this);
 
 	QWidgetList wgt_list={ general_conf, relationships_conf,
-						   appearance_conf, connections_conf,
-						   snippets_conf, plugins_conf};
+												 appearance_conf, connections_conf,
+												 snippets_conf, plugins_conf};
 
 	for(int i=GeneralConfWgt; i <= PluginsConfWgt; i++)
 		confs_stw->addWidget(wgt_list[i]);
@@ -42,6 +42,7 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
 
 	icons_lst->setCurrentRow(GeneralConfWgt);
+	setMinimumSize(890, 740);
 }
 
 ConfigurationForm::~ConfigurationForm(void)
@@ -115,7 +116,7 @@ void ConfigurationForm::loadConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			if(e.getErrorType()==ErrorCode::PluginsNotLoaded)
+			if(e.getErrorCode()==ErrorCode::PluginsNotLoaded)
 			{
 				msg_box.show(e);
 			}

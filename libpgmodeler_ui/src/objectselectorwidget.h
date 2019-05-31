@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		bool eventFilter(QObject *obj, QEvent *evnt);
 
 	public:
-		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = 0);
-		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = 0);
+		ObjectSelectorWidget(ObjectType sel_obj_type, bool install_highlighter, QWidget * parent = nullptr);
+		ObjectSelectorWidget(vector<ObjectType> sel_obj_types, bool install_highlighter, QWidget * parent = nullptr);
 		~ObjectSelectorWidget(void);
 
 		//! \brief Enables the creation of new objects from withing the object selector dialog
@@ -93,6 +93,10 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 
 		//! \brief Signal emitted when the user clears the selector
 		void s_selectorCleared(void);
+
+		/*! \brief Signal emitted when the user clears the selector or selects and object
+		 * The boolean param indicates if there's an object selected or not */
+		void s_selectorChanged(bool);
 };
 
 #endif

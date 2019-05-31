@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,9 +66,7 @@ class BaseTableView: public BaseObjectView {
 		RoundedRectItem *body,
 
 		//! \brief Extended table attributes (indexes, rules, triggers) section body
-		*ext_attribs_body,
-
-		*placeholder;
+		*ext_attribs_body;
 
 		AttributesTogglerItem *attribs_toggler;
 
@@ -89,14 +87,16 @@ class BaseTableView: public BaseObjectView {
 
 		void removeConnectedRelationship(BaseRelationship *base_rel);
 
-		int getConnectedRelationshipIndex(BaseRelationship *base_rel);
+		/*! \brief Returns the index of the relationship in the list of the connected relationships
+		 * If 'only_self_rels' is true then only self relationship are searched */
+		int getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels = false);
 
 		//! \brief Configures the tag object when the source object has one.
 		void configureTag(void);
 
 		/*! \brief Configures basic attributes of the table. A width need to be provided so
 		the extended attributes section can follow the same width as the body and title */
-		void __configureObject(float width);
+		void __configureObject(double width);
 
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
 		double calculateWidth(void);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,10 +40,6 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	permission=nullptr;
 
 	configureFormLayout(permission_grid, ObjectType::Permission);
-
-	name_edt->setReadOnly(true);
-	comment_edt->setVisible(false);
-	comment_lbl->setVisible(false);
 
 	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
 									ObjectsTableWidget::RemoveButton |
@@ -294,7 +290,7 @@ void PermissionWidget::addPermission(void)
 		}
 
 		cancelOperation();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -344,7 +340,7 @@ void PermissionWidget::updatePermission(void)
 		delete(perm_bkp);
 
 		cancelOperation();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

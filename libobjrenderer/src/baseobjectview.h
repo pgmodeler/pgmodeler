@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -117,10 +117,10 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void setLayer(unsigned layer);
 
 	public:
-		static constexpr double VertSpacing=2.0f,
-		HorizSpacing=2.0f,
-		DefaultFontSize=9.0f,
-		ObjectBorderWidth=0.85f;
+		static constexpr double VertSpacing=2.0,
+		HorizSpacing=2.0,
+		DefaultFontSize=9.0,
+		ObjectBorderWidth=0.85;
 
 		static constexpr int ObjectAlphaChannel=128;
 

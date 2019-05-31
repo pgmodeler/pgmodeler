@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		void showRoleData(Role *role, unsigned table_id, unsigned row);
 
 	public:
-		RoleWidget(QWidget * parent = 0);
+		RoleWidget(QWidget * parent = nullptr);
 		~RoleWidget(void);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *role);

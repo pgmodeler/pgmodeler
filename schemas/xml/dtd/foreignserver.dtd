@@ -1,0 +1,11 @@
+﻿<!--
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT foreignserver (role?,comment?, appended-sql?,prepended-sql?, foreigndatawrapper?)>
+<!ATTLIST foreignserver name CDATA #REQUIRED>
+<!ATTLIST foreignserver type CDATA #IMPLIED>
+<!ATTLIST foreignserver version CDATA #IMPLIED>
+<!ATTLIST foreignserver options CDATA #IMPLIED>
+<!ATTLIST foreignserver protected (false|true) "false">
+<!ATTLIST foreignserver sql-disabled (false|true) "false">

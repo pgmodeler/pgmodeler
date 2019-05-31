@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -132,6 +132,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatConstraintAttribs(attribs_map &attribs);
 		void formatIndexAttribs(attribs_map &attribs);
 		void formatPolicyAttribs(attribs_map &attribs);
+		void formatForeignDataWrapperAttribs(attribs_map &attribs);
+		void formatServerAttribs(attribs_map &attribs);
+		void formatUserMappingAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
@@ -144,7 +147,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
 	public:
-		DatabaseExplorerWidget(QWidget * parent = 0);
+		DatabaseExplorerWidget(QWidget * parent = nullptr);
 		
 		//! \brief Configures the connection used to retrieve and manipulate objects on database
 		void setConnection(Connection conn, const QString &default_db);

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,6 +63,9 @@ enum class ObjectType: unsigned {
 	Extension,
 	EventTrigger,
 	Policy,
+	ForeignDataWrapper,
+	ForeignServer,
+	UserMapping,
 	Relationship,
 	Textbox,
 	Permission,
@@ -83,11 +86,11 @@ class BaseObject {
 		//! \brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
-		//! \brief Stores the database wich the object belongs
-		BaseObject *database;
-
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
+
+		//! \brief Stores the database wich the object belongs
+		BaseObject *database;
 
 	protected:
 		SchemaParser schparser;
@@ -106,7 +109,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType
-		static constexpr int ObjectTypeCount=37;
+		static constexpr unsigned ObjectTypeCount=enum_cast(ObjectType::BaseTable) + 1;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -132,6 +135,7 @@ class BaseObject {
 
 		//! \brief Stores the cached xml and sql code
 		QString cached_code[2],
+
 		//! \brief Stores the xml code in reduced form
 		cached_reduced_code;
 
@@ -178,13 +182,16 @@ class BaseObject {
 		//! \brief The set of SQL commands prepended on the objectc's definition
 		prepended_sql;
 
-
 		/*! \brief Stores the attributes and their values ​​shaped in strings to be used
 		 by SchemaParser on the object's code definition creation. The attribute
 		 name related to model objects are defined in ParsersAttributes namespace. */
-		attribs_map attributes;
+		attribs_map attributes,
 
-		/*! \brief Type of object, may have one of the values ​​of the enum ObjectType OBJ_*
+		/*! \brief Stores the attributes and their vales which can be used by the
+		 * searching mechanism to match patters */
+		search_attribs;
+
+		/*! \brief Type of object, may have one of the values ​​of the enum ObjectType
 		 It was used a numeric type to avoid the use excessive of RTTI. */
 		ObjectType obj_type;
 
@@ -458,6 +465,8 @@ class BaseObject {
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
 		virtual void setCodeInvalidated(bool value);
 
+		virtual void configureSearchAttributes(void);
+
 		//! \brief Returns if the code (sql and xml) is invalidated
 		bool isCodeInvalidated(void);
 
@@ -479,7 +488,7 @@ class BaseObject {
 		/*! \brief Returns the valid object types that are child or grouped under the specified type.
 	This method works a litte different from getObjectTypes() since this latter returns all valid types
 	and this one returns only the valid types for the current specified type. For now the only accepted
-	types are ObjectType::ObjDatabase, ObjectType::ObjSchema and ObjectType::ObjTable */
+	types are ObjectType::Database, ObjectType::Schema and ObjectType::Table */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that
@@ -488,6 +497,9 @@ class BaseObject {
 
 		//! \brief Returns the current version for SQL code generation
 		static QString getPgSQLVersion(void);
+
+		//! \brief Returns the set of attributes used by the search mechanism
+		attribs_map getSearchAttributes(void);
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

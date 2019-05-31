@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget
 		ObjectSelectorWidget *function_sel;
 		
 	public:
-		EventTriggerWidget(QWidget * parent = 0);
+		EventTriggerWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, EventTrigger *event_trig);
 		
 	public slots:

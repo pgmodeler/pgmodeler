@@ -1,9 +1,5 @@
 #!/bin/bash
 
-QT_INSTALL_VERSION='5.9.3'
-QT_BASE_VERSION='5.9.3'
-PGSQL_VERSION='10.1'
-INNOSETUP_CMD='/c/Program Files (x86)/Inno Setup 5/ISCC.exe'
 LOG=windeploy.log
 
 # Detecting current pgModeler version
@@ -16,6 +12,19 @@ DEMO_VERSION=0
 
 BUILD_ALL_OPT='-build-all'
 BUILD_ALL=0
+
+# Installer settings
+FMT_PREFIX="C:\/Program Files\/pgmodeler"
+INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
+INSTALLER_CONF_DIR="$PWD/installer/template/config"
+INSTALLER_PKG_DIR="$PWD/installer/template/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/data"
+INSTALLER_META_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/meta"
+INSTALLER_TMPL_CONFIG="config.xml.tmpl"
+INSTALLER_CONFIG="config.xml"
+INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
+INSTALLER_PKG_CONFIG="package.xml"
+BUILD_DATE=`date '+%Y-%m-%d'`
 
 # Setting key paths according to the arch build (x86|x64)
 # If none of the build type parameter is specified, the default is tu use x86
@@ -33,6 +42,7 @@ for param in $@; do
    X64_BUILD=1
    DEST_ARCH="x64"
    WIN_BITS="64"
+   BUILD_ARCH_PARAM=$X64_BUILD_OPT
  fi
  if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
    BUILD_ALL=1
@@ -47,46 +57,36 @@ else
   PKGNAME="pgmodeler-$DEPLOY_VER-windows$WIN_BITS"
 fi
 
-if [ $X64_BUILD = 1 ]; then
-  # Settings for x64 build
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}-x64/"
-  QMAKE_ROOT=$QT_ROOT/bin
-  MINGW_ROOT="/c/msys_64/mingw64/bin"
-  PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}-x64/bin"  
-  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
-              XML_INC+=$MINGW_ROOT/../include/libxml2 \
-			  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
-			  PGSQL_INC+=$MINGW_ROOT/../include \
-			  PGSQL_LIB+=$MINGW_ROOT/libpq.dll"
-  DEP_LIBS="$MINGW_ROOT/libgcc_s_seh-1.dll \
-		    $MINGW_ROOT/libstdc++-6.dll \
-		    $MINGW_ROOT/libwinpthread-1.dll \
-			$MINGW_ROOT/libiconv-2.dll \
-			$MINGW_ROOT/libintl-8.dll \
-			$MINGW_ROOT/zlib1.dll \
-		    $MINGW_ROOT/libxml2-2.dll \
-		    $MINGW_ROOT/libpq.dll \
-		    $MINGW_ROOT/libeay32.dll \
-		    $MINGW_ROOT/ssleay32.dll \
-			$MINGW_ROOT/liblzma-5.dll"
+# Settings for x64 build
+if [ $X64_BUILD = 1 ]; then		
+	QT_ROOT="/c/msys_64/mingw64"
+	MINGW_ROOT="/c/msys_64/mingw64/bin"
+	DEP_LIBS="$DEP_LIBS \
+			$MINGW_ROOT/libssl-1_1-x64.dll \
+			$MINGW_ROOT/libcrypto-1_1-x64.dll \
+			$MINGW_ROOT/libgcc_s_seh-1.dll"	
+# Settings for x86 build
 else
-  # Default setting for x86 build
-  QT_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/${QT_BASE_VERSION}/mingw53_32/"
-  QMAKE_ROOT=$QT_ROOT/bin
-  QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release"
-  MINGW_ROOT="/c/Qt/Qt${QT_INSTALL_VERSION}/Tools/mingw530_32/bin"
-  PGSQL_ROOT="/c/PostgreSQL/${PGSQL_VERSION}/bin"
-  DEP_LIBS="$QMAKE_ROOT/libgcc_s_dw2-1.dll \
-		   $QMAKE_ROOT/libstdc++-6.dll \
-		   $QMAKE_ROOT/libwinpthread-1.dll \
-		   $PGSQL_ROOT/libiconv-2.dll \
-		   $PGSQL_ROOT/libintl-8.dll \
- 		   $PGSQL_ROOT/zlib1.dll \
-		   $PGSQL_ROOT/libxml2.dll \
-		   $PGSQL_ROOT/libpq.dll \
-		   $PGSQL_ROOT/libeay32.dll \
-		   $PGSQL_ROOT/ssleay32.dll"
+	QT_ROOT="/c/msys_64/mingw32"
+	MINGW_ROOT="/c/msys_64/mingw32/bin"
+	DEP_LIBS="$DEP_LIBS \
+			$MINGW_ROOT/libssl-1_1.dll \
+			$MINGW_ROOT/libcrypto-1_1.dll \
+			$MINGW_ROOT/libgcc_s_dw2-1.dll"
 fi
+
+# Common settings for both architectures
+QT_INSTALL_VERSION='5.12.3'
+QT_BASE_VERSION='5.12.3'
+QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
+QMAKE_ROOT=$MINGW_ROOT
+QT_IFW_ROOT=/c/qt-ifw
+PGSQL_ROOT=$MINGW_ROOT  
+QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
+		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
+		  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
+		  PGSQL_INC+=$MINGW_ROOT/../include \
+		  PGSQL_LIB+=$MINGW_ROOT/libpq.dll"
 
 if [ $DEMO_VERSION = 1 ]; then
   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
@@ -96,18 +96,37 @@ PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
 INSTALL_ROOT="$PWD/build"
 DIST_ROOT="$PWD/dist"
-ISSFILE=./installer/windows/pgmodeler.iss
 QT_CONF="$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$INSTALL_ROOT/qtplugins"
 PLUGINS="dummy xml2object"
 
 # Common dependency libraries 
-DEP_LIBS+=" $QMAKE_ROOT/Qt5Core.dll \
-		  $QMAKE_ROOT/Qt5Gui.dll \
-		  $QMAKE_ROOT/Qt5Widgets.dll \
-		  $QMAKE_ROOT/Qt5PrintSupport.dll \
-		  $QMAKE_ROOT/Qt5Network.dll \
-		  $QMAKE_ROOT/Qt5Svg.dll "
+DEP_LIBS="$DEP_LIBS \
+		$MINGW_ROOT/libicuin*.dll \
+		$MINGW_ROOT/libicuuc*.dll \
+		$MINGW_ROOT/libicudt*.dll \
+		$MINGW_ROOT/libpcre2-16-0.dll \
+		$MINGW_ROOT/libharfbuzz-0.dll \
+		$MINGW_ROOT/libpng16-16.dll \
+		$MINGW_ROOT/libfreetype-6.dll \
+		$MINGW_ROOT/libgraphite2.dll \
+		$MINGW_ROOT/libglib-2.0-0.dll \
+		$MINGW_ROOT/libpcre-1.dll \
+		$MINGW_ROOT/libbz2-1.dll \
+		$MINGW_ROOT/libstdc++-6.dll \
+		$MINGW_ROOT/libwinpthread-1.dll \
+		$MINGW_ROOT/zlib1.dll \
+		$MINGW_ROOT/libpq.dll \
+		$MINGW_ROOT/libxml2-2.dll \
+		$MINGW_ROOT/liblzma-5.dll \
+		$MINGW_ROOT/libiconv-2.dll \
+		$MINGW_ROOT/libintl-8.dll \
+		$QMAKE_ROOT/Qt5Core.dll \
+		$QMAKE_ROOT/Qt5Gui.dll \
+		$QMAKE_ROOT/Qt5Widgets.dll \
+		$QMAKE_ROOT/Qt5PrintSupport.dll \
+		$QMAKE_ROOT/Qt5Network.dll \
+		$QMAKE_ROOT/Qt5Svg.dll "
 		  
 #Dependency qt plugins copied to build dir
 DEP_PLUGINS="imageformats/qicns.dll \
@@ -127,7 +146,7 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
@@ -181,7 +200,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Compiling code..."
-$MINGW_ROOT/mingw32-make.exe -j7 >> $LOG 2>&1
+$MINGW_ROOT/mingw32-make.exe -j10 >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -222,7 +241,7 @@ echo "Libraries=." >> $QT_CONF
 for plug in $DEP_PLUGINS; do
 	pdir=`dirname $plug`
 	mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-	cp $QT_ROOT/plugins/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
+	cp $QT_PLUGINS_ROOT/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 	
 	if [ $? -ne 0 ]; then
 		echo
@@ -232,53 +251,51 @@ for plug in $DEP_PLUGINS; do
 	fi
 done
 
-$MINGW_ROOT/mingw32-make.exe install >> $LOG 2>&1
+echo "Packaging installation..."
+
+rm -r $INSTALLER_DATA_DIR >> $LOG 2>&1
+ln -sf "$INSTALL_ROOT" $INSTALLER_DATA_DIR >> $LOG 2>&1
+
+if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to configure installer data dir!"
+    echo
+    exit 1
+fi   
+
+# Configuing installer scripts before packaging
+cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
+  
+if [ $? -ne 0 ]; then
+  echo
+  echo "** Failed to create the installer config file!"
+  echo
+  exit 1
+fi 
+
+cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
+   
+if [ $? -ne 0 ]; then
+   echo
+   echo "** Failed to create the package info file!"
+   echo
+   exit 1
+fi  
+
+$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
-  echo "** Installation failed!"
+  echo "** Failed to create installer!"
   echo
   exit 1
 fi
 
-echo "Packaging installation..."
-
-"$INNOSETUP_CMD" $ISSFILE >> $LOG 2>&1
-
-if [ $? -ne 0 ]; then
-  echo
-  echo "** Failed to create installer package!"
-  echo "** Proceeding with basic deployment."
-  
-  mkdir $PKGNAME >> $LOG 2>&1
-  mv $INSTALL_ROOT/* $PKGNAME >> $LOG 2>&1
-  mv $PKGNAME $INSTALL_ROOT >> $LOG 2>&1
-
-  if [ $? -ne 0 ]; then
-	echo "** Failed to execute basic deployment!"
-	exit 1
-  fi
-
-  echo
-  echo "Directory created: $PKGNAME"
-else
-  mv $GENINSTALLER build/$PKGFILE >> $LOG 2>&1
-  echo "File created: $PKGFILE"
-fi
-
-mkdir -p $DIST_ROOT >> $LOG 2>&1
-mv $INSTALL_ROOT/$PKGFILE $DIST_ROOT >> $LOG 2>&1
-
-if [ $? -ne 0 ]; then
-	echo "** Failed to move $PKGFILE to $DIST_ROOT!"
-	exit 1
-fi
+echo "File created: dist/$PKGNAME.exe"
 
 echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL -eq 1 ]; then
- sh windeploy.sh -demo-version
- sh windeploy.sh -x64-build
- sh windeploy.sh -x64-build -demo-version
+ sh windeploy.sh -demo-version $BUILD_ARCH_PARAM
 fi

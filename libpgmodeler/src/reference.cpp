@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,7 +65,38 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
 
 void Reference::setDefinitionExpression(bool value)
 {
-	is_def_expr=value;
+	is_def_expr = value;
+	if(!value) clearReferencedTables();
+}
+
+void Reference::addReferencedTable(Table *ref_table)
+{
+	if(!ref_table)
+		return;
+
+	if(std::find(ref_tables.begin(), ref_tables.end(), ref_table) == ref_tables.end())
+		ref_tables.push_back(ref_table);
+}
+
+int Reference::getReferencedTableIndex(Table *ref_table)
+{
+	int idx = -1;
+	vector<Table *>::iterator itr = std::find(ref_tables.begin(), ref_tables.end(), ref_table);
+
+	if(itr != ref_tables.end())
+		idx = itr - ref_tables.begin();
+
+	return(idx);
+}
+
+void Reference::clearReferencedTables(void)
+{
+	ref_tables.clear();
+}
+
+vector<Table *> Reference::getReferencedTables(void)
+{
+	return(ref_tables);
 }
 
 bool Reference::isDefinitionExpression(void)
@@ -264,9 +295,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 QString Reference::getXMLDefinition(void)
 {
-	attribs_map attribs;
+	attribs_map attribs, aux_attribs;
 	SchemaParser schparser;
 	Column col_aux;
+	QStringList ref_tab_names;
 
 	attribs[Attributes::Table]=QString();
 	attribs[Attributes::Column]=QString();
@@ -282,6 +314,7 @@ QString Reference::getXMLDefinition(void)
 	attribs[Attributes::Alias]=alias;
 	attribs[Attributes::ColumnAlias]=column_alias;
 	attribs[Attributes::Columns]=QString();
+	attribs[Attributes::RefTables]=QString();
 
 	for(auto &col : columns)
 	{
@@ -289,6 +322,15 @@ QString Reference::getXMLDefinition(void)
 		col_aux.setType(PgSqlType::parseString(col.type));
 		col_aux.setAlias(col.alias);
 		attribs[Attributes::Columns]+=col_aux.getCodeDefinition(SchemaParser::XmlDefinition);
+	}
+
+	if(is_def_expr)
+	{
+		for(auto &tab : ref_tables)
+		{
+			aux_attribs[Attributes::Name] = tab->getSignature();
+			attribs[Attributes::RefTables] += schparser.getCodeDefinition(Attributes::RefTableTag, aux_attribs, SchemaParser::XmlDefinition);
+		}
 	}
 
 	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));

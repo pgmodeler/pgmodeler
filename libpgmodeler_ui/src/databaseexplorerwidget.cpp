@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 const QString DatabaseExplorerWidget::DepNotDefined=QString();
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
 const QString DatabaseExplorerWidget::ElemSeparator=QString("•");
-const QString DatabaseExplorerWidget::DefaultSourceCode=QT_TR_NOOP("-- Source code not generated! Hit F7 or middle-click the item to load it. --");
+const QString DatabaseExplorerWidget::DefaultSourceCode=QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."));
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::AdminRoles, QT_TR_NOOP("Admin. roles")},	{Attributes::Alignment, QT_TR_NOOP("Alignment")},
@@ -130,7 +130,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::TuplesIns, QT_TR_NOOP("Tuples inserted")},	{Attributes::IsPartitioned, QT_TR_NOOP("Partitioned")},
 	{Attributes::PartitionedTable, QT_TR_NOOP("Partition of")},	{Attributes::PartitionBoundExpr, QT_TR_NOOP("Partition bound expr.")},
 	{Attributes::DeadRowsAmount, QT_TR_NOOP("Dead rows amount")},	{Attributes::PartitionKey, QT_TR_NOOP("Partition keys")},
-	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}
+	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")},
+	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -183,7 +184,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
 
 	refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
-	refresh_action->setShortcut(QKeySequence(Qt::Key_F5));
+	refresh_action->setShortcut(QKeySequence(Qt::Key_F6));
 
 	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), trUtf8("Rename"), &handle_menu);
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
@@ -259,7 +260,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		QKeyEvent *k_event=dynamic_cast<QKeyEvent *>(event);
 
-		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F5 ||
+		if(k_event->key()==Qt::Key_Delete || k_event->key()==Qt::Key_F6 ||
 				k_event->key()==Qt::Key_Space ||  k_event->key()==Qt::Key_F2 ||
 				k_event->key()==Qt::Key_Escape ||  k_event->key()==Qt::Key_Return ||
 				k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_F7)
@@ -281,7 +282,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					}
 				}
 			}
-			else if(k_event->key()==Qt::Key_F5)
+			else if(k_event->key()==Qt::Key_F6)
 				updateItem(objects_trw->currentItem());
 			else if(k_event->key()==Qt::Key_F2)
 				startObjectRename(objects_trw->currentItem());
@@ -343,6 +344,9 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case ObjectType::Constraint: formatConstraintAttribs(attribs); break;
 			case ObjectType::Index: formatIndexAttribs(attribs); break;
 			case ObjectType::Policy: formatPolicyAttribs(attribs); break;
+			case ObjectType::ForeignDataWrapper: formatForeignDataWrapperAttribs(attribs); break;
+			case ObjectType::ForeignServer: formatServerAttribs(attribs); break;
+			case ObjectType::UserMapping: formatUserMappingAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -430,7 +434,7 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -468,10 +472,9 @@ void DatabaseExplorerWidget::formatAggregateAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatLanguageAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { Attributes::Trusted });
-
 	formatOidAttribs(attribs, { Attributes::ValidatorFunc,
-								Attributes::HandlerFunc,
-								Attributes::InlineFunc }, ObjectType::Function, false);
+															Attributes::HandlerFunc,
+															Attributes::InlineFunc }, ObjectType::Function, false);
 }
 
 void DatabaseExplorerWidget::formatRoleAttribs(attribs_map &attribs)
@@ -494,6 +497,11 @@ void DatabaseExplorerWidget::formatConversionAttribs(attribs_map &attribs)
 
 void DatabaseExplorerWidget::formatDomainAttribs(attribs_map &attribs)
 {
+	QStringList contrs = Catalog::parseArrayValues(attribs[Attributes::Constraints]);
+
+	contrs.replaceInStrings(Table::DataSeparator, QChar(':'));
+	attribs[Attributes::Constraints] =  contrs.join(Table::DataSeparator);
+
 	formatBooleanAttribs(attribs, { Attributes::NotNull });
 	attribs[Attributes::Type]=getObjectName(ObjectType::Type, attribs[Attributes::Type]);
 }
@@ -610,7 +618,7 @@ void DatabaseExplorerWidget::formatSequenceAttribs(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -823,6 +831,24 @@ void DatabaseExplorerWidget::formatPolicyAttribs(attribs_map &attribs)
 	attribs[Attributes::Roles] = getObjectsNames(ObjectType::Role, Catalog::parseArrayValues(attribs[Attributes::Roles])).join(ElemSeparator);
 }
 
+void DatabaseExplorerWidget::formatForeignDataWrapperAttribs(attribs_map &attribs)
+{
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::ValidatorFunc, Attributes::HandlerFunc }, ObjectType::Function, false);
+}
+
+void DatabaseExplorerWidget::formatServerAttribs(attribs_map &attribs)
+{
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::Fdw }, ObjectType::ForeignDataWrapper, false);
+}
+
+void DatabaseExplorerWidget::formatUserMappingAttribs(attribs_map &attribs)
+{
+	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::Server }, ObjectType::ForeignServer, false);
+}
+
 QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 {
 	try
@@ -892,7 +918,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -927,7 +953,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -945,7 +971,7 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1010,7 +1036,7 @@ void DatabaseExplorerWidget::listObjects(void)
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1348,7 +1374,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -1537,7 +1563,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 	catch(Exception &e)
 	{
 		QApplication::restoreOverrideCursor();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1693,7 +1719,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1823,8 +1849,9 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				dbmodel.createSystemObjects(false);
 				import_hlp.setConnection(connection);
 				import_hlp.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
-				import_hlp.setImportOptions(toggle_disp_menu.actions().at(0)->isChecked(),
-																		toggle_disp_menu.actions().at(1)->isChecked(),
+
+				import_hlp.setImportOptions(show_sys_objs->isChecked(),
+																		show_ext_objs->isChecked(),
 																		true, false, false, false, false);
 
 				import_hlp.setSelectedOIDs(&dbmodel, {{ObjectType::Database, {db_oid}}, {obj_type,{oid}}}, {});
@@ -1835,7 +1862,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				if(obj_type==ObjectType::Type &&
 					 (oid <= sys_oid || attribs[Attributes::Configuration]==Attributes::BaseType))
 				{
-					source=trUtf8("-- Source code genaration for buil-in and base types currently unavailable --");
+					source=QString("-- %1 --").arg(trUtf8("Source code genaration for built-in and base types currently unavailable."));
 					emit s_sourceCodeShowRequested(source);
 				}
 				else
@@ -1889,7 +1916,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						if(object)
 							source=getObjectSource(object, &dbmodel);
 						else
-							source=trUtf8("-- Source code unavailable for the object %1 (%2). --").arg(name).arg(BaseObject::getTypeName(obj_type));
+							source=QString("-- %1 --").arg(trUtf8("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
 					}
 				}
 
@@ -2002,7 +2029,7 @@ void DatabaseExplorerWidget::dropDatabase(void)
 												.arg(dbname).arg(connection.getConnectionParam(Connection::ParamAlias)),
 												ErrorCode::DropCurrentDBDefault,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
-				throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }

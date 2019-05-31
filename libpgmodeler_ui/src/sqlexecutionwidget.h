@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,8 +83,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Stores the command on the sql command history
 		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
-		void fillResultsTable(void);
-
 		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
 
 		void switchToExecutionMode(bool value);
@@ -104,7 +102,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	public:
 		static const QString ColumnNullValue;
 
-		SQLExecutionWidget(QWidget * parent = 0);
+		SQLExecutionWidget(QWidget * parent = nullptr);
 		~SQLExecutionWidget(void);
 
 		//! \brief Configures the connection to query the server
@@ -170,6 +168,8 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void showHistoryContextMenu(void);
 
 		void finishExecution(int rows_affected = 0);
+
+		void filterResults(void);
 
 		friend class SQLToolWidget;
 };

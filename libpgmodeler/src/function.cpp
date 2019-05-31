@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -473,6 +473,12 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
 			attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
 		}
+
+		if(language->getName()==~LanguageType(LanguageType::C))
+		{
+			attributes[Attributes::Symbol]=symbol;
+			attributes[Attributes::Library]=library;
+		}
 	}
 
 	setTableReturnTypeAttribute(def_type);
@@ -483,12 +489,6 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::SecurityType]=(~security_type);
 	attributes[Attributes::BehaviorType]=(~behavior_type);
 	attributes[Attributes::Definition]=source_code;
-
-	if(language->getName()==~LanguageType(LanguageType::C))
-	{
-		attributes[Attributes::Symbol]=symbol;
-		attributes[Attributes::Library]=library;
-	}
 
 	attributes[Attributes::Signature]=signature;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
@@ -547,6 +547,19 @@ QString Function::getAlterDefinition(BaseObject *object)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void Function::configureSearchAttributes(void)
+{
+	QStringList param_types;
+
+	BaseObject::configureSearchAttributes();
+	search_attribs[Attributes::ReturnType] = ret_table_columns.empty() ? *return_type : QString();
+
+	for(auto &param : parameters)
+		param_types += *param.getType();
+
+	search_attribs[Attributes::Type] = param_types.join("; ");
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		prev_schema=nullptr;
 		op_list=nullptr;
 		object=nullptr;
-		object_px=NAN;
-		object_py=NAN;
+		object_px=DNaN;
+		object_py=DNaN;
 		schema_sel=nullptr;
 		owner_sel=nullptr;
 		tablespace_sel=nullptr;
@@ -97,7 +97,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -184,7 +184,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
 {
-	setAttributes(model, nullptr, object, parent_obj, NAN, NAN, false);
+	setAttributes(model, nullptr, object, parent_obj, DNaN, DNaN, false);
 }
 
 void BaseObjectWidget::disableReferencesSQL(BaseObject *object)
@@ -469,7 +469,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
 	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
 
-	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Parameter;
+	show_comment=obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox &&
+							 obj_type!=ObjectType::Parameter && obj_type!=ObjectType::UserMapping &&
+							 obj_type!=ObjectType::Permission;
 	comment_lbl->setVisible(show_comment);
 	comment_edt->setVisible(show_comment);
 
@@ -478,10 +480,17 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast)
+		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast && obj_type!=ObjectType::UserMapping)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
+		}
+		else
+		{
+			QFont font=name_edt->font();
+			name_edt->setReadOnly(true);
+			font.setItalic(true);
+			name_edt->setFont(font);
 		}
 
 		if(obj_type!=ObjectType::Extension)
@@ -495,7 +504,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		QFrame *frame=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
-		fields_map[generateVersionsInterval(AFTER_VERSION, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(collation_lbl);
 		frame=generateVersionWarningFrame(fields_map);
 		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
@@ -519,11 +528,11 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
-	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
+	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
 		return(XmlParser::CharLt + QString("= ") + ini_ver);
-	else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
+	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
 		return(XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
-	else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
+	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
 		return(XmlParser::CharGt + QString("= ") + ini_ver);
 	else
 		return(QString());
@@ -797,7 +806,7 @@ void BaseObjectWidget::applyConfiguration(void)
 		catch(Exception &e)
 		{
 			QApplication::restoreOverrideCursor();
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
 }
@@ -891,12 +900,12 @@ void BaseObjectWidget::finishConfiguration(void)
 	{
 		QApplication::restoreOverrideCursor();
 
-		if(e.getErrorType()==ErrorCode::AsgObjectInvalidDefinition)
+		if(e.getErrorCode()==ErrorCode::AsgObjectInvalidDefinition)
 			throw Exception(Exception::getErrorMessage(ErrorCode::RequiredFieldsNotFilled)
 							.arg(this->object->getName()).arg(this->object->getTypeName()),
 							ErrorCode::RequiredFieldsNotFilled,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		else
-			throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -965,6 +974,6 @@ void BaseObjectWidget::registerNewObject(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

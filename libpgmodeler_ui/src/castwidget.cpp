@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 {
 	try
 	{
-		QFont font;
 		QFrame *frame=nullptr;
 		QSpacerItem *spacer=new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding);
 
@@ -37,11 +36,6 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 		cast_grid->addWidget(trg_datatype,3,0,1,5);
 
 		configureFormLayout(cast_grid, ObjectType::Cast);
-
-		name_edt->setReadOnly(true);
-		font=name_edt->font();
-		font.setItalic(true);
-		name_edt->setFont(font);
 
 		frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
 		cast_grid->addItem(spacer, cast_grid->count()+1, 0, 1, 0);
@@ -58,7 +52,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ca
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -113,7 +107,7 @@ void CastWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

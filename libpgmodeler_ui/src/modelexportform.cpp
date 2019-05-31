@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #include "taskprogresswidget.h"
 #include "configurationform.h"
 #include "pgmodeleruins.h"
+
+bool ModelExportForm::low_verbosity = false;
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -96,7 +98,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	pgsqlvers_cmb->addItems(PgSqlVersions::AllVersions);
 	pgsqlvers1_cmb->addItems(PgSqlVersions::AllVersions);
 
-	double values[]={ ModelWidget::MinimumZoom, 0.10f, 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.50f, 1.75f, 2,
+	double values[]={ ModelWidget::MinimumZoom, 0.10, 0.25, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2,
 										2.25, 2.50, 2.75, 3, 3.25, 3.50, 3.75, ModelWidget::MaximumZoom };
 	unsigned cnt=sizeof(values)/sizeof(double);
 
@@ -106,6 +108,11 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	zoom_cmb->setCurrentText(QString("100%"));
 
 	settings_tbw->setTabEnabled(1, false);
+}
+
+void ModelExportForm::setLowVerbosity(bool value)
+{
+	low_verbosity = value;
 }
 
 void ModelExportForm::exec(ModelWidget *model)
@@ -150,7 +157,8 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 
 	ico_lbl->setPixmap(ico);
 
-	if(!is_code_gen)
+	// If low_verbosity is set only messages hinted by obj_type == BaseObject are show because they hold key info messages
+	if(!is_code_gen && (!low_verbosity || (low_verbosity && obj_type == ObjectType::BaseObject && cmd.isEmpty())))
 	{
 		item=PgModelerUiNs::createOutputTreeItem(output_trw, text, ico, nullptr, false);
 
@@ -202,6 +210,10 @@ void ModelExportForm::exportModel(void)
 			{
 				QString version;
 				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+
+				if(low_verbosity)
+					PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																							QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())
@@ -302,7 +314,7 @@ void ModelExportForm::captureThreadError(Exception e)
 	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 	finishExport(trUtf8("Exporting process aborted!"));
 
-	throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
 void ModelExportForm::cancelExport(void)

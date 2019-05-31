@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,13 +41,15 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 {
 	BaseObjectWidget::setAttributes(model, object, parent_obj);
 
+	if(object->getObjectType() == ObjectType::Constraint ||
+		 object->getObjectType() == ObjectType::UserMapping)
+		name_edt->setText(object->getName());
+
 	this->name_edt->setReadOnly(true);
 	this->protected_obj_frm->setVisible(false);
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);
-
 	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
-
 	updateObjectTables();
 }
 

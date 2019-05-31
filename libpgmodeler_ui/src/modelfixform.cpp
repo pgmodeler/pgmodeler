@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	if(!confs[Attributes::Configuration][Attributes::CodeFont].isEmpty())
 	{
 		double size=confs[Attributes::Configuration][Attributes::CodeFontSize].toDouble();
-		if(size < 5.0f) size=5.0f;
+		if(size < 5.0) size=5.0;
 
 		output_txt->setFontFamily(confs[Attributes::Configuration][Attributes::CodeFont]);
 		output_txt->setFontPointSize(size);

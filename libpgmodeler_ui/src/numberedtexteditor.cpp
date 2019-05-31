@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
-		font.setPointSizeF(font.pointSizeF() * 0.95f);
+		font.setPointSizeF(font.pointSizeF() * 0.95);
 
 		top_widget = new QWidget(this);
 		top_widget->setAutoFillBackground(true);

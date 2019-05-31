@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -124,11 +124,11 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		void setAttributes(DatabaseModel *model, OperationList *op_list,
 						   BaseObject *object, BaseObject *parent_obj=nullptr,
-						   double obj_px=NAN, double obj_py=NAN, bool uses_op_list=true);
+						   double obj_px=DNaN, double obj_py=DNaN, bool uses_op_list=true);
 		
 		/*! \brief This method is a simplification of the original setAttributes. This method must be used
 		only on forms that does not make use of operaton list and not treat graphical objects, since it calls
-		this original one whit the op_list=nullptr and obj_px=NAN, obj_py=NAN */
+		this original one whit the op_list=nullptr and obj_px=DoubleNaN, obj_py=DoubleNaN */
 		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
 		
 		//! \brief Disable the object's refereces SQL code
@@ -140,11 +140,11 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
-		static constexpr unsigned UNTIL_VERSION=0,
-		VERSIONS_INTERVAL=1,
-		AFTER_VERSION=2;
+		static constexpr unsigned UntilVersion=0,
+		VersionsInterval=1,
+		AfterVersion=2;
 		
-		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=ObjectType::BaseObject);
+		BaseObjectWidget(QWidget * parent = nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
 		virtual ~BaseObjectWidget(void);
 		
@@ -225,7 +225,7 @@ void BaseObjectWidget::startConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

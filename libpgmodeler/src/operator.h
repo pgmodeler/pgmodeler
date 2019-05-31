@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,14 +44,17 @@ class Operator: public BaseObject {
 		bool	hashes, //! \brief Indicates that the operator can execute a hash join
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
-		static constexpr unsigned FUNC_OPERATOR=0,
-		FUNC_JOIN=1,
-		FUNC_RESTRICT=2,
-		LEFT_ARG=0,
-		RIGHT_ARG=1,
-		OPER_COMMUTATOR=0,
-		OPER_NEGATOR=1;
+		static constexpr unsigned FuncOperator=0,
+		FuncJoin=1,
+		FuncRestrict=2,
+		LeftArg=0,
+		RightArg=1,
+		OperCommutator=0,
+		OperNegator=1;
 
 		Operator(void);
 

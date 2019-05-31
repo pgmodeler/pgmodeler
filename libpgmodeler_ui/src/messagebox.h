@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class Messagebox: public QDialog, public Ui::Messagebox {
 		OkButton=2,
 		AllButtons=3;
 
-		Messagebox(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		Messagebox(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		/*! \brief Shows the message box defining the icons and available buttons.
 	User can specify custom button labels as well custom icons. The icons can be a path to a local file

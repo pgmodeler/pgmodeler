@@ -26,9 +26,9 @@ void ModelExportHelper::abortExport(Exception &e)
 
 	//When running in a separated thread (other than the main application thread) redirects the error in form of signal
 	if(this->thread() && this->thread()!=qApp->thread())
-		emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
+		emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e));
 	else
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
 void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, bool ignore_dup)
@@ -39,7 +39,7 @@ void ModelExportHelper::handleSQLError(Exception &e, const QString &sql_cmd, boo
 		emit s_errorIgnored(e.getExtraInfo(), e.getErrorMessage(), sql_cmd);
 	//Raises an excpetion if the error returned by the database is not listed in the ignored list of errors
 	else if(ignored_errors.indexOf(e.getExtraInfo()) < 0)
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, sql_cmd);
 	else
 		errors.push_back(e);
 }
@@ -82,7 +82,7 @@ void ModelExportHelper::exportToSQL(DatabaseModel *db_model, const QString &file
 	catch(Exception &e)
 	{
 		disconnect(db_model, nullptr, this, nullptr);
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 	disconnect(db_model, nullptr, this, nullptr);
@@ -117,7 +117,9 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 		scene->clearSelection();
 
 		//Make a backup of the current scene options
-		ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);
+		shw_grd = ObjectsScene::isShowGrid();
+		align_objs = ObjectsScene::isAlignObjectsToGrid();
+		shw_dlm = ObjectsScene::isShowPageDelimiters();
 
 		//Sets the options passed by the user
 		ObjectsScene::setGridOptions(show_grid, false, show_delim);
@@ -197,8 +199,8 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			painter.setRenderHint(QPainter::TextAntialiasing, true);
 			painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-			emit s_progressUpdated((page_idx/static_cast<float>(pages.size())) * 90,
-								   trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
+			emit s_progressUpdated((page_idx/static_cast<double>(pages.size())) * 90,
+														 trUtf8("Rendering objects to page %1/%2.").arg(page_idx).arg(pages.size()), ObjectType::BaseObject);
 
 			//Render the entire viewport onto the pixmap
 			view->render(&painter, QRectF(QPointF(0,0), pix.size()), retv);
@@ -236,7 +238,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -251,7 +253,9 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 	QFileInfo fi(filename);
 
 	//Making a backup of the current scene options
-	ObjectsScene::getGridOptions(shw_grd, align_objs, shw_dlm);	
+	shw_grd = ObjectsScene::isShowGrid();
+	shw_dlm = ObjectsScene::isShowPageDelimiters();
+	align_objs = ObjectsScene::isAlignObjectsToGrid();
 	scene->setBackgroundBrush(Qt::NoBrush);
 
 	//Disabling grid and delimiters
@@ -414,7 +418,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 			for(i=0; i < count && !export_canceled; i++)
 			{
 				object=db_model->getObject(i, types[type_id]);
-				progress=((10 * (type_id+1)) + ((i/static_cast<float>(count)) * 10));
+				progress=((10 * (type_id+1)) + ((i/static_cast<double>(count)) * 10));
 
 				try
 				{
@@ -560,13 +564,13 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
 			errors.push_back(e);
-			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
+			emit s_exportAborted(Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, errors));
 		}
 		else
 		{
 			//Redirects any error to terrorsr
 			if(errors.empty())
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 			{
 				errors.push_back(e);
@@ -776,14 +780,14 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			drop_tab_obj_reg(QString("^((\\-\\-)+( )*)+(%1)(.)+(DROP)(.)+").arg(alter_tab)),
 			reg_aux;
 
-	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index, ObjectType::Policy,
-								   ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
-								   ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
-								   ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
-								   ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
-								   ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
-								   ObjectType::EventTrigger, ObjectType::Database };
-
+	vector<ObjectType> obj_types={ ObjectType::Role, ObjectType::Function, ObjectType::Trigger, ObjectType::Index,
+																 ObjectType::Policy, ObjectType::Rule,	ObjectType::Table, ObjectType::View, ObjectType::Domain,
+																 ObjectType::Schema,	ObjectType::Aggregate, ObjectType::OpFamily,
+																 ObjectType::OpClass, ObjectType::Operator,  ObjectType::Sequence,
+																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
+																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
+																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																 ObjectType::UserMapping, ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -806,7 +810,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			//Cleanup single line comments
 			lin=ts.readLine();
 			curr_size+=lin.size();
-			aux_prog=progress + ((curr_size/static_cast<float>(buf_size)) * factor);
+			aux_prog=progress + ((curr_size/static_cast<double>(buf_size)) * factor);
 
 			/* If the simulation mode is off and the drop objects option is checked,
 		 check if the current line matches one of the accepted drop commands
@@ -890,7 +894,6 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						obj_type=obj_tp;
 
-						//Appeding special tokens when the object is an index or view
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
 							if(obj_tp==ObjectType::Index)
@@ -933,32 +936,53 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							lin=lin.mid(reg_aux.matchedLength(), sql_cmd.indexOf('\n')).simplified();
 							lin.remove('"');
 
-							if(obj_tp!=ObjectType::Cast)
+							if(obj_tp != ObjectType::BaseObject)
 							{
-								int spc_idx=lin.indexOf(' ');
-								obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
-
-								if(obj_tp!=ObjectType::Function)
+								if(obj_tp!=ObjectType::Cast && obj_tp != ObjectType::UserMapping)
 								{
-									obj_name=obj_name.remove('(').simplified();
-									obj_name=obj_name.remove(')').simplified();
+									int spc_idx=lin.indexOf(' ');
+									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
+
+									if(obj_tp!=ObjectType::Function)
+									{
+										obj_name=obj_name.remove('(').simplified();
+										obj_name=obj_name.remove(')').simplified();
+									}
 								}
+								else if(obj_tp == ObjectType::UserMapping)
+								{
+									obj_name.prepend(lin.remove(QString("FOR")).trimmed() + QChar('@'));
+								}
+								else
+								{
+									obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+								}
+
+								//Stores the object type name
+								obj_tp_name=BaseObject::getTypeName(obj_tp);
+								obj_name.remove(';');
+
+								if(is_create)
+									msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+								else if(is_drop)
+									msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
+								else
+									msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 							}
+							// If the type of the object being create can't be identified
 							else
 							{
-								obj_name=QString("cast") + lin.replace(QString(" AS "),QString(","));
+								QString aux_cmd_type;
+
+								if(is_create)
+									aux_cmd_type = QString("CREATE");
+								else if(is_drop)
+									aux_cmd_type = QString("DROP");
+								else
+									aux_cmd_type = QString("ALTER");
+
+								msg=trUtf8("Running auxiliary `%1' command...").arg(aux_cmd_type);
 							}
-
-							//Stores the object type name
-							obj_tp_name=BaseObject::getTypeName(obj_tp);
-							obj_name.remove(';');
-
-							if(is_create)
-								msg=trUtf8("Creating object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
-							else if(is_drop)
-								msg=trUtf8("Dropping object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
-							else
-								msg=trUtf8("Changing object `%1' (%2)").arg(obj_name).arg(obj_tp_name);
 
 							break;
 						}
@@ -977,7 +1001,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 				//Executes the extracted SQL command
 				if(!sql_cmd.isEmpty())
 				{
-					if(obj_type!=ObjectType::Database)
+					if(obj_type != ObjectType::Database)
 						conn.executeDDLCommand(sql_cmd);
 					else
 						db_sql_cmds.push_back(sql_cmd);

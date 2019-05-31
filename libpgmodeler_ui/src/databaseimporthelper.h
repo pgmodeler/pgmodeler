@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -160,6 +160,9 @@ class DatabaseImportHelper: public QObject {
 		void createPolicy(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createEventTrigger(attribs_map &attribs);
+		void createForeignDataWrapper(attribs_map &attribs);
+		void createForeignServer(attribs_map &attribs);
+		void createUserMapping(attribs_map &attribs);
 		void __createTableInheritances(void);
 		void createTableInheritances(void);
 		void createTablePartitionings(void);
@@ -214,7 +217,7 @@ class DatabaseImportHelper: public QObject {
 		QStringList parseIndexExpressions(const QString &expr);
 
 	public:
-		DatabaseImportHelper(QObject *parent=0);
+		DatabaseImportHelper(QObject *parent = nullptr);
 		
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);

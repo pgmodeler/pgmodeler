@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ class Table: public BaseTable {
 		//! \brief The partitioning mode/type used by the table
 		PartitioningType partitioning_type;
 
-		/*! \brief Gets one table ancestor (ObjectType::ObjTable) or copy (ObjectType::ObjBaseTable) using its name and stores
+		/*! \brief Gets one table ancestor (ObjectType::Table) or copy (ObjectType::ObjBaseTable) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 

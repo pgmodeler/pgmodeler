@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -115,7 +115,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!").arg(filename).arg(GlobalAttributes::BugReportEmail),
+		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
+								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
 					Messagebox::InfoIcon);
 	}
 }

@@ -211,29 +211,29 @@ namespace PgModelerUiNs {
 
 	void configureWidgetFont(QWidget *widget, unsigned factor_id)
 	{
-		float factor = 1;
+		double factor = 1;
 
 		switch(factor_id)
 		{
 			case SmallFontFactor:
-				factor=0.80f;
+				factor=0.80;
 			break;
 			case MediumFontFactor:
-				factor=0.90f;
+				factor=0.90;
 			break;
 			case BigFontFactor:
-				factor=1.10f;
+				factor=1.10;
 			break;
 			case HugeFontFactor:
 			default:
-				factor=1.40f;
+				factor=1.40;
 			break;
 		}
 
 		__configureWidgetFont(widget, factor);
 	}
 
-	void __configureWidgetFont(QWidget *widget, float factor)
+	void __configureWidgetFont(QWidget *widget, double factor)
 	{
 		if(!widget)
 			return;
@@ -263,7 +263,7 @@ namespace PgModelerUiNs {
 			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(enum_cast(ex.getErrorType()));
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorCode())).arg(enum_cast(ex.getErrorCode()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
 			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
@@ -295,14 +295,14 @@ namespace PgModelerUiNs {
 		int max_h = 0, curr_w =0, curr_h = 0,
 				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 		QScreen *screen=qApp->screens().at(screen_id);
-		float dpi_factor = 0;
-    float pixel_ratio = 0;
+		double dpi_factor = 0;
+		double pixel_ratio = 0;
 
-		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+		dpi_factor = screen->logicalDotsPerInch() / 96.0;
     pixel_ratio = screen->devicePixelRatio();
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		if(dpi_factor <= 1.01f)
+		if(dpi_factor <= 1.01)
 			return;
 
 		max_h = screen->size().height() * 0.70;

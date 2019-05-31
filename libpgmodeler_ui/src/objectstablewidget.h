@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
 
+		/*! \brief Indicates that cells' texts can be edited by the user. When changing the text of a cell
+		 * the signal s_cellTextChanged(int,int) is emitted */
+		bool cells_editable;
+
 		QTableWidgetItem *getItem(unsigned row_idx, unsigned col_idx);
 
 	public:
@@ -55,7 +59,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		AllButtons=255,
 		NoButtons=0;
 
-		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = 0);
+		ObjectsTableWidget(unsigned button_conf=AllButtons, bool conf_exclusion=false, QWidget * parent = nullptr);
 
 		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
@@ -172,6 +176,8 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Controls the enable state of each button
 		void setButtonsEnabled(unsigned button_conf, bool value);
 
+		void setCellsEditable(bool value);
+
 	signals:
 		//! \brief Signal emitted when a new row is added. The new row index is send with the signal
 		void s_rowAdded(int);
@@ -184,6 +190,9 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 		//! \brief Signal emitted when a single row is removed. The row index is sent together with the signal
 		void s_rowRemoved(int);
+
+		//! \brief Signal emitted when a single row is about to be removed. The row index is sent together with the signal
+		void s_rowAboutToRemove(int);
 
 		//! \brief Signal emitted when a row is selected. The row index is sent together with the signal
 		void s_rowSelected(int);
@@ -203,7 +212,11 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		//! \brief Signal emitted when a column is added. The column index is sent together with the signal
 		void s_columnAdded(int);
 
+		//! \brief Signal emitted when a specific cell is clicked. The column and rows indexes are sent together with the signal
 		void s_cellClicked(int, int);
+
+		//! \brief Signal emitted when a specific cell has its text changed. The column and rows indexes are sent together with the signal
+		void s_cellTextChanged(int, int);
 
 	protected:
 		void resizeEvent(QResizeEvent *);
