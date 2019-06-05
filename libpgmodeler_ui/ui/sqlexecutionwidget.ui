@@ -680,6 +680,9 @@
              <bool>false</bool>
             </property>
             <widget class="QWidget" name="tab">
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
              <attribute name="title">
               <string>Results</string>
              </attribute>
@@ -696,69 +699,6 @@
               <property name="bottomMargin">
                <number>4</number>
               </property>
-              <item row="1" column="0">
-               <widget class="QWidget" name="results_parent" native="true">
-                <layout class="QGridLayout" name="gridLayout_3">
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="horizontalSpacing">
-                  <number>6</number>
-                 </property>
-                 <item row="2" column="0" colspan="5">
-                  <widget class="QTableView" name="results_tbw">
-                   <property name="editTriggers">
-                    <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
-                   </property>
-                   <property name="alternatingRowColors">
-                    <bool>true</bool>
-                   </property>
-                   <property name="selectionMode">
-                    <enum>QAbstractItemView::ContiguousSelection</enum>
-                   </property>
-                   <attribute name="horizontalHeaderCascadingSectionResizes">
-                    <bool>false</bool>
-                   </attribute>
-                   <attribute name="horizontalHeaderStretchLastSection">
-                    <bool>true</bool>
-                   </attribute>
-                   <attribute name="verticalHeaderDefaultSectionSize">
-                    <number>26</number>
-                   </attribute>
-                   <attribute name="verticalHeaderMinimumSectionSize">
-                    <number>25</number>
-                   </attribute>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <spacer name="horizontalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>253</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
               <item row="0" column="0">
                <widget class="QWidget" name="filter_wgt" native="true">
                 <property name="minimumSize">
@@ -875,6 +815,52 @@
                    <property name="autoRaise">
                     <bool>true</bool>
                    </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QWidget" name="results_parent" native="true">
+                <layout class="QGridLayout" name="gridLayout_3">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="horizontalSpacing">
+                  <number>6</number>
+                 </property>
+                 <item row="2" column="0" colspan="5">
+                  <widget class="QTableView" name="results_tbw">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ContiguousSelection</enum>
+                   </property>
+                   <attribute name="horizontalHeaderCascadingSectionResizes">
+                    <bool>false</bool>
+                   </attribute>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>26</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>25</number>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
