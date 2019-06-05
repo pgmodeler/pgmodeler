@@ -786,6 +786,51 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 	return(cmds.mid(start,(end - start) + 1).split(';', QString::SkipEmptyParts));
 }
 
+QStringList Catalog::parseIndexExpressions(const QString &expr)
+{
+	int open_paren = 0, close_paren = 0, pos = 0;
+	QStringList expressions;
+	QChar chr;
+	QString word;
+	bool open_apos = false;
+
+	if(!expr.isEmpty())
+	{
+		while(pos < expr.length())
+		{
+			chr = expr[pos++];
+			word += chr;
+
+			if(chr == QChar('\''))
+				open_apos = !open_apos;
+
+			if(!open_apos && chr == QChar('('))
+				open_paren++;
+			else if(!open_apos && chr == QChar(')'))
+				close_paren++;
+
+			if(chr == QChar(',') || pos == expr.length())
+			{
+				if(open_paren == close_paren)
+				{
+					if(word.endsWith(QChar(',')))
+						word.remove(word.length() - 1, 1);
+
+					if(word.contains('(') && word.contains(')'))
+						expressions.push_back(word.trimmed());
+					else
+						expressions.push_back(word);
+
+					word.clear();
+					open_paren = close_paren = 0;
+				}
+			}
+		}
+	}
+
+	return(expressions);
+}
+
 void Catalog::operator = (const Catalog &catalog)
 {
 	try

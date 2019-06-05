@@ -211,10 +211,6 @@ class DatabaseImportHelper: public QObject {
 		
 		//! \brief Return a string containing all attributes and their values in a formatted way
 		QString dumpObjectAttributes(attribs_map &attribs);
-		
-		/*! \brief Parse a set of expressions related to an index returned by the pg_get_expr(oid) and separates
-		 * them as a string list. */
-		QStringList parseIndexExpressions(const QString &expr);
 
 	public:
 		DatabaseImportHelper(QObject *parent = nullptr);

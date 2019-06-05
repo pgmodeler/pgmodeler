@@ -814,7 +814,7 @@ void DatabaseExplorerWidget::formatIndexAttribs(attribs_map &attribs)
 
 	formatBooleanAttribs(attribs, { Attributes::Unique });
 
-	attribs[Attributes::Expressions]=Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(ElemSeparator);
+	attribs[Attributes::Expressions]=Catalog::parseIndexExpressions(attribs[Attributes::Expressions]).join(ElemSeparator);
 
 	attribs[Attributes::Collations]=getObjectsNames(ObjectType::Collation,
 															 Catalog::parseArrayValues(attribs[Attributes::Collations])).join(ElemSeparator);
