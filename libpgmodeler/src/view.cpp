@@ -520,7 +520,7 @@ void View::setDefinitionAttribute(void)
 	}
 
 	decl=decl.trimmed();
-	if(!decl.endsWith(QChar(';')))
+	if(!decl.isEmpty() && !decl.endsWith(QChar(';')))
 		decl.append(QChar(';'));
 
 	attributes[Attributes::Definition]=decl;
