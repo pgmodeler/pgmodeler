@@ -43,8 +43,12 @@ class XmlParser {
 		//! \brief Stores the xml document (element tree) generated after the buffer reading
 		xmlDoc *xml_doc;
 
+		//! \brief Stores the approximated line position on the current parsed buffer
+		int curr_line;
+
 		//! \brief Stores the reference to the root element of the element tree
 		xmlNode	*root_elem,
+
 		//! \brief Stores the current element that parser is analyzing
 		*curr_elem;
 

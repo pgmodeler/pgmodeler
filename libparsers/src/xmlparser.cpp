@@ -30,6 +30,7 @@ XmlParser::XmlParser(void)
 	root_elem=nullptr;
 	curr_elem=nullptr;
 	xml_doc=nullptr;
+	curr_line = 0;
 	xmlInitParser();
 }
 
@@ -160,7 +161,7 @@ void XmlParser::readBuffer(void)
 		buffer+=xml_decl;
 
 		//Configures the parser, initially, to not validate the document against the dtd
-		parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT );
+		parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_BIG_LINES);
 
 		//If the dtd declarions is setup
 		if(!dtd_decl.isEmpty())
@@ -250,6 +251,7 @@ void XmlParser::restartNavigation(void)
 void XmlParser::restartParser(void)
 {
 	root_elem=curr_elem=nullptr;
+	curr_line = 0;
 
 	if(xml_doc)
 	{
@@ -285,7 +287,21 @@ bool XmlParser::accessElement(unsigned elem_type)
 	has_elem=hasElement(elem_type);
 
 	if(has_elem)
+	{
 		curr_elem=elems[elem_type];
+
+		/* NOTE: Due to XML2 implementation big line numbers are stored in the psvi
+		 * attribute so we need to reinterpret cast the value and return the real value */
+		if(curr_elem->line == 65535 && curr_elem->next && curr_elem->next->psvi != nullptr)
+		{
+			int aux_line  = static_cast<int>(reinterpret_cast<long>(curr_elem->next->psvi));
+
+			if(curr_line < aux_line)
+				curr_line = aux_line;
+		}
+		else if(curr_elem->line > curr_line)
+			curr_line = curr_elem->line;
+	}
 
 	return(has_elem);
 }
@@ -401,7 +417,7 @@ QString XmlParser::getXMLBuffer(void)
 int XmlParser::getCurrentBufferLine(void)
 {
 	if(curr_elem)
-		return(curr_elem->line);
+		return(curr_line);
 	else
 		return(0);
 }
@@ -409,10 +425,18 @@ int XmlParser::getCurrentBufferLine(void)
 int XmlParser::getBufferLineCount(void)
 {
 	if(xml_doc)
+	{
 		/* To get the very last line of the document is necessary to call
 		the last element of the last because xml_doc->last->line stores the
-		last line of the root element */
+		last line of the root element.
+
+		NOTE: Due to XML2 implementation big line numbers are stored in the psvi
+		attribute so we need to reinterpret cast the value and return the real value */
+		if(xml_doc->last->last->line == 65535 && xml_doc->last->last->psvi != nullptr)
+			return(static_cast<int>(reinterpret_cast<long>(xml_doc->last->last->psvi)));
+
 		return(xml_doc->last->last->line);
+	}
 	else
 		return(0);
 }
