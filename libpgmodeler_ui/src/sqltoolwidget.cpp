@@ -260,6 +260,7 @@ void SQLToolWidget::browseDatabase(void)
 			db_explorer_wgt->listObjects();
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
+			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
 			connect(db_explorer_wgt, SIGNAL(s_databaseDropped(QString)), this, SLOT(handleDatabaseDropped(QString)));
@@ -308,6 +309,19 @@ void SQLToolWidget::addSQLExecutionTab(void)
 void SQLToolWidget::closeDatabaseExplorer(int idx)
 {
 	DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
+
+	/* Display a message box confirming the database explorer tab only if the user
+	 * click the close button on the DatabaseExplorerWidget instance */
+	if(sender() == databases_tbw)
+	{
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Warning"),
+					 trUtf8("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
+					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+		if(msg_box.result() != QDialog::Accepted)
+			return;
+	}
 
 	//Closing sql execution tabs related to the database to be closed
 	for(QWidget *wgt : sql_exec_wgts[db_explorer])

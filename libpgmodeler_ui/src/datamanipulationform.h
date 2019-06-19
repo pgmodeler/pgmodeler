@@ -193,6 +193,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		//! \brief Display or hides a column when the related item is interacted in the column list at filter section
 		void toggleColumnDisplay(QListWidgetItem *item);
+
+		//! \brief Opens a new data manipulation windows
+		void openNewWindow(void);
 };
 
 #endif

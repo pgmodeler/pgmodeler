@@ -146,6 +146,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(move_up_tb, SIGNAL(clicked()), this, SLOT(swapColumns()));
 	connect(filter_tb, SIGNAL(toggled(bool)), filter_tbw, SLOT(setVisible(bool)));
 	connect(truncate_tb, SIGNAL(clicked(bool)), this, SLOT(truncateTable()));
+	connect(new_window_tb, SIGNAL(clicked(bool)), this, SLOT(openNewWindow()));
 
 	connect(bulkedit_tb, &QToolButton::clicked, [&](){
 		PgModelerUiNs::bulkDataEdit(results_tbw);
@@ -1515,5 +1516,12 @@ void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 	results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
 	item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
 	item->setData(Qt::UserRole, item->checkState());
-  }
+	}
+}
+
+void DataManipulationForm::openNewWindow(void)
+{
+	DataManipulationForm *data_manip = new DataManipulationForm;
+	data_manip->setAttributes(tmpl_conn_params, QString());
+	data_manip->show();
 }
