@@ -1486,11 +1486,18 @@ void PgModelerCli::diffModelDatabase(void)
 void PgModelerCli::updateMimeType(void)
 {
 #ifndef Q_OS_MAC
+	try
+	{
 		printMessage(trUtf8("Starting mime update..."));
 
 		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall);
 
 		printMessage(trUtf8("Mime database successfully updated!\n"));
+	}
+	catch (Exception &e)
+	{
+		out << e.getExceptionsText() << endl;
+	}
 #endif
 }
 
