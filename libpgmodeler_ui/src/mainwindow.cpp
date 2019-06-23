@@ -565,8 +565,10 @@ void MainWindow::stopTimers(bool value)
 	}
 	else
 	{
-		tmpmodel_save_timer.start();
-		model_save_timer.start();
+        tmpmodel_save_timer.start();
+
+        if(model_save_timer.interval() < InfinityInterval)
+            model_save_timer.start();
 	}
 }
 
@@ -1303,8 +1305,8 @@ void MainWindow::applyConfigurations(void)
 		if(!conf_wgt->autosave_interv_chk->isChecked())
 		{
 			//Stop the save timer
-			model_save_timer.stop();
-			model_save_timer.setInterval(0);
+            model_save_timer.setInterval(InfinityInterval);
+            model_save_timer.stop();
 		}
 		else
 		{
@@ -1313,7 +1315,7 @@ void MainWindow::applyConfigurations(void)
 		}
 
 		//Temporary models are saved every five minutes
-		tmpmodel_save_timer.setInterval(model_save_timer.interval() != 0 ? model_save_timer.interval()/2 : 300000);
+        tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);

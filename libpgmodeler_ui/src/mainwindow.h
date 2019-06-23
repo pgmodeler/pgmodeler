@@ -60,7 +60,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
-		ManageView=2;
+        ManageView=2,
+        InfinityInterval = INT_MAX;
 
 		static bool confirm_validation;
 
