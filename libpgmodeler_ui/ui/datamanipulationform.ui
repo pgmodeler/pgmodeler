@@ -1646,22 +1646,6 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>8</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
           <widget class="QToolButton" name="csv_load_tb">
            <property name="enabled">
             <bool>true</bool>
@@ -1689,7 +1673,7 @@
             </size>
            </property>
            <property name="shortcut">
-            <string/>
+            <string>Ctrl+L</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -1729,6 +1713,9 @@
              <height>22</height>
             </size>
            </property>
+           <property name="shortcut">
+            <string>Ctrl+F</string>
+           </property>
            <property name="checkable">
             <bool>true</bool>
            </property>
@@ -1751,6 +1738,19 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>8</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>235</width>
              <height>20</height>
             </size>
            </property>
@@ -1793,19 +1793,6 @@
             <bool>true</bool>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_7">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>235</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
