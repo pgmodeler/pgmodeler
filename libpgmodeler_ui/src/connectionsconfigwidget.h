@@ -64,6 +64,9 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		//! \brief Fills the passed map with all the loaded connections.
 		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+
+		//! \brief Return a connection with the provided ID. If no connection is found the method returns nullptr
+		static Connection *getConnection(const QString &conn_id);
 		
 		//! \brief Fills the passed combobox with all the loaded connections
 		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OpNone);

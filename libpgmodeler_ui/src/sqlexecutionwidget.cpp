@@ -209,7 +209,13 @@ void SQLExecutionWidget::setConnection(Connection conn)
 						 .arg(conn.getConnectionParam(Connection::ParamDbName))
 						 .arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
 								  conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-						 .arg(conn.getConnectionParam(Connection::ParamPort)));
+											 .arg(conn.getConnectionParam(Connection::ParamPort)));
+}
+
+void SQLExecutionWidget::setSQLCommand(const QString &sql)
+{
+	sql_cmd_txt->clear();
+	sql_cmd_txt->setPlainText(sql);
 }
 
 void SQLExecutionWidget::enableCommandButtons(void)

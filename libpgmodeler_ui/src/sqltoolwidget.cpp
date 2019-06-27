@@ -18,9 +18,7 @@
 
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
-#include "databaseexplorerwidget.h"
 #include "snippetsconfigwidget.h"
-#include "sqlexecutionwidget.h"
 #include "connectionsconfigwidget.h"
 #include "pgmodeleruins.h"
 
@@ -243,7 +241,7 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 		}
 }
 
-void SQLToolWidget::browseDatabase(void)
+DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
 {
 	try
 	{
@@ -274,6 +272,8 @@ void SQLToolWidget::browseDatabase(void)
 			/* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
 			new tab on the map of sql panes related to the database explorer */
 			db_explorer_wgt->runsql_tb->click();
+
+			return(db_explorer_wgt);
 		}
 	}
 	catch(Exception &e)
@@ -282,7 +282,7 @@ void SQLToolWidget::browseDatabase(void)
 	}
 }
 
-void SQLToolWidget::addSQLExecutionTab(void)
+SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(void)
 {
 	try
 	{
@@ -291,7 +291,7 @@ void SQLToolWidget::addSQLExecutionTab(void)
 		Connection conn;
 
 		if(!db_explorer_wgt)
-		  return;
+			return(nullptr);
 
 		conn = db_explorer_wgt->getConnection();
 		sql_exec_wgt->setConnection(conn);
@@ -299,11 +299,50 @@ void SQLToolWidget::addSQLExecutionTab(void)
 		sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
 		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
+
+		return(sql_exec_wgt);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file)
+{
+	map<QString, Connection *> conns;
+	SQLExecutionWidget *sql_exec_wgt = nullptr;
+	DatabaseExplorerWidget *db_explorer_wgt = nullptr;
+	QFile file;
+
+	if(!ConnectionsConfigWidget::getConnection(conn_id))
+	{
+		throw Exception(trUtf8("Failed to load the file `%1' in SQL tool because the connection ID `%2' was not found!")
+										.arg(sql_file).arg(conn_id),
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+	else if(!QFileInfo(sql_file).exists())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(sql_file),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// Connect to the server using the provided connection id
+	connections_cmb->setCurrentText(conn_id);
+	connectToServer();
+
+	// Browse the database and retrive the database explorer instace generated
+	database_cmb->setCurrentText(database);
+	db_explorer_wgt = browseDatabase();
+
+	/* Now we get the sql execution widget created from the previous operation
+	 * in order to load the sql file there */
+	sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_wgts[db_explorer_wgt].at(0));
+
+	file.setFileName(sql_file);
+	file.open(QFile::ReadOnly);
+	sql_exec_wgt->setSQLCommand(file.readAll());
+	file.close();
 }
 
 void SQLToolWidget::closeDatabaseExplorer(int idx)

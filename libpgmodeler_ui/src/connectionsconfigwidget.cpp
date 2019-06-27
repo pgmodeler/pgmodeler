@@ -553,6 +553,17 @@ void ConnectionsConfigWidget::getConnections(map<QString, Connection *> &conns, 
 	}
 }
 
+Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
+{
+	for(Connection *conn : connections)
+	{
+		if(conn->getConnectionId() == conn_id)
+			return(conn);
+	}
+
+	return(nullptr);
+}
+
 void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
 {
 	map<QString, Connection *> connections;

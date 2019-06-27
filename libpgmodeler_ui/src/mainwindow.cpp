@@ -1536,6 +1536,10 @@ void MainWindow::diffModelDatabase(void)
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, [&](QString conn_id, QString database, QString filename){
+			action_manage->toggle();
+			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
+		});
 
 		PgModelerUiNs::resizeDialog(&modeldb_diff_frm);
 		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
@@ -2088,3 +2092,4 @@ void MainWindow::toggleLayersWidget(bool show)
 									 tb_pos.y() - layers_wgt->height() * 0.80);
 	layers_wgt->setVisible(show);
 }
+

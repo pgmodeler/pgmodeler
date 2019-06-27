@@ -33,6 +33,8 @@
 #include "findreplacewidget.h"
 #include "codecompletionwidget.h"
 #include "numberedtexteditor.h"
+#include "databaseexplorerwidget.h"
+#include "sqlexecutionwidget.h"
 
 class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	private:
@@ -66,6 +68,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		void clearDatabases(void);
 
+	protected slots:
+		//! \brief Add a tab by browsing a database in the specified connectio, loads the sql file and put its contents on a SQL execution
+		void addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file);
+
 	private slots:
 		//! \brief Opens a connection to the selected server
 		void connectToServer(void);
@@ -77,10 +83,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void handleDatabaseDropped(const QString &dbname);
 
 		//! \brief Open the current database in a database explorer instance
-		void browseDatabase(void);
+		DatabaseExplorerWidget *browseDatabase(void);
 
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
-		void addSQLExecutionTab(void);
+		SQLExecutionWidget *addSQLExecutionTab(void);
 
 		//! \brief Show the selected snippet on the current opened SQL execution tab
 		void showSnippet(const QString &snip);
@@ -95,6 +101,8 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest(void);
+
+		friend class MainWindow;
 };
 
 #endif

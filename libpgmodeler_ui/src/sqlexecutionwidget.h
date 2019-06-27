@@ -108,6 +108,9 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);
 
+		//! \brief Insert the provided sql commands in the input field. This method clears the current commands before adding new content
+		void setSQLCommand(const QString &sql);
+
 		/*! \brief Fills up the results grid based upon the specified result set.
 				The parameter store_data will make each item store the text as its data */
 		static void fillResultsTable(Catalog &catalog, ResultSet &res, QTableWidget *results_tbw, bool store_data=false);
