@@ -1019,6 +1019,13 @@ void ObjectsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//Case the user starts a object moviment
 			if(sel_items_count != 0 && !moving_objs)
 			{
+                //Cancel the operation if any ungrouped columns is selected
+                for (const auto &item:this->selectedItems())
+                {
+                    if(dynamic_cast<TableObjectView *>(item)!=nullptr)
+                        return;
+                }
+
 				if(BaseObjectView::isPlaceholderEnabled())
 				{
 					QList<QGraphicsItem *> items=this->selectedItems();

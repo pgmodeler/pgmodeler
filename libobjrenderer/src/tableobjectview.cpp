@@ -17,6 +17,7 @@
 */
 
 #include "tableobjectview.h"
+#include "basetableview.h"
 
 const QString TableObjectView::TypeSeparator=QString(" ");
 const QString TableObjectView::ConstrSeparator=QString(" ");
@@ -51,6 +52,37 @@ TableObjectView::~TableObjectView(void)
 		delete(lables[i]);
 	}
 }
+
+QVariant TableObjectView::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if(change==ItemSelectedHasChanged && value.toBool()==false)
+	{
+		/*
+		 * Since this code executes only when the column item is ungrouped from tableview,
+		 * and thus is temporarily a top-level item, we use an ugly hack to recover its parent :
+		 * we get the parenting relation from libpgmodeler classes rather than libobjrenderer.
+		 * Then call regroupCols() on the parent table.
+		 */
+		this->removeFromGroup(obj_selection);
+		delete(obj_selection);
+		obj_selection=nullptr;
+		QObject * parent_tab=dynamic_cast<TableObject *>(this->getSourceObject())->getParentTable()->getReceiverObject();
+		dynamic_cast<BaseTableView *>(parent_tab)->checkRegroupCols();
+		BaseObjectView::itemChange(change, value);
+	}
+	else if (change==ItemSelectedHasChanged && value.toBool()==true)
+	{
+		obj_selection=new RoundedRectItem;
+		obj_selection->setZValue(4);
+		this->addToGroup(obj_selection);
+
+		this->BaseObjectView::configureObjectSelection();
+		BaseObjectView::itemChange(change, value);
+	}
+
+	return(value);
+}
+
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
@@ -647,19 +679,22 @@ QString TableObjectView::getConstraintString(Column *column)
 
 void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	painter->setPen(Qt::NoPen);
+	QStyleOptionGraphicsItem myOption(*option);
+	myOption.state &= ~QStyle::State_Selected;
 	painter->save();
 	painter->translate(descriptor->pos());
-	descriptor->paint(painter, option, widget);
+	descriptor->paint(painter, &myOption, widget);
 	painter->restore();
 
-	for(int i = 0 ; i < 3; i++)
+	for(auto & lable : lables)
 	{
-		if(lables[i]->text().isEmpty())
+		if(lable->text().isEmpty())
 			continue;
 
 		painter->save();
-		painter->translate(lables[i]->pos());
-		lables[i]->paint(painter, option, widget);
+		painter->translate(lable->pos());
+		lable->paint(painter, &myOption, widget);
 		painter->restore();
 	}
 }
