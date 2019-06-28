@@ -489,6 +489,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), this, SLOT(showObjectMenu(void)));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection(void)));
+	connect(scene, SIGNAL(s_childrenSelectionChanged()), this, SLOT(configureObjectSelection(void)));
 	connect(scene, SIGNAL(s_objectsSelectedInRange(void)), this, SLOT(configureObjectSelection(void)));
 	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
 	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ modified = true; });
@@ -499,6 +500,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_popupMenuRequested(void)), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), new_obj_overlay_wgt, SLOT(hide()));
+	connect(scene, SIGNAL(s_childrenSelectionChanged()), new_obj_overlay_wgt, SLOT(hide()));
 	connect(scene, SIGNAL(s_objectsScenePressed(Qt::MouseButtons)), new_obj_overlay_wgt, SLOT(hide()));
 
 	viewport->installEventFilter(this);

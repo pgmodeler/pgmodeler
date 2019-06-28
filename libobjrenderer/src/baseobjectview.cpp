@@ -71,13 +71,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
 	if(!graph_obj)
 	{
-		if(obj_selection)
-		{
-			this->removeFromGroup(obj_selection);
-			delete(obj_selection);
-			obj_selection=nullptr;
-		}
-
 		if(obj_shadow)
 		{
 			this->removeFromGroup(obj_shadow);
@@ -98,17 +91,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 			delete(pos_info_item);
 			pos_info_item=nullptr;
 		}
-
-		/*if(sql_disabled_box)
-		{
-			this->removeFromGroup(sql_disabled_txt);
-			delete(sql_disabled_txt);
-			sql_disabled_txt=nullptr;
-
-			this->removeFromGroup(sql_disabled_box);
-			delete(sql_disabled_box);
-			sql_disabled_box=nullptr;
-		}*/
 
 		if(sql_disabled_item)
 		{

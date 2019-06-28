@@ -69,7 +69,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	this->addToGroup(attribs_toggler);
 
 	this->setAcceptHoverEvents(true);
-	sel_child_obj=nullptr;
+	sel_child_obj_view=nullptr;
 	configurePlaceholder();
 
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
@@ -136,34 +136,61 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 		emit s_objectMoved();
 
 	BaseObjectView::itemChange(change, value);
-
 	return(value);
 }
 
 void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Emit a signal containing the select child object if the user right-click the focused item
-	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj)
+	if(!this->isSelected() && event->buttons()==Qt::RightButton)
 	{
 		if(this->scene())
 			this->scene()->clearSelection();
+
+		clearChildrenSelection();
 
 		/* Deactivate the table in order not to hide the child object selection.
 			 The table object is reativated when the context menu is hidden */
 		this->setEnabled(false);
 
-		emit s_childObjectSelected(sel_child_obj);
+		emit s_popupMenuRequested(dynamic_cast<TableObject *>(sel_child_obj_view->getSourceObject()));
 	}
 	else
 	{
 		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
 
 		//If the user clicks the extended attributes toggler
-		if(!this->isSelected() && event->buttons()==Qt::LeftButton &&
+		if(!this->isSelected() && event->buttons()==Qt::LeftButton && event->modifiers() == Qt::NoModifier &&
 			 attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
 			attribs_toggler->setButtonSelected(pnt, true);
 
-		BaseObjectView::mousePressEvent(event);
+		if(sel_child_obj_view && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+		{
+			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
+			sel_child_obj_view->setFakeSelection(!sel_child_obj_view->hasFakeSelection());
+
+			if(!sel_child_obj_view->hasFakeSelection())
+			{
+				vector<TableObjectView *>::iterator itr =
+						std::find(sel_child_objs.begin(), sel_child_objs.end(), sel_child_obj_view);
+
+				if(itr != sel_child_objs.end())
+					sel_child_objs.erase(itr);
+			}
+			else
+				sel_child_objs.push_back(sel_child_obj_view);
+
+			sel_child_obj_view = nullptr;
+			event->ignore();
+			emit s_childrenSelectionChanged();
+
+			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true);	});
+		}
+		else if((this->flags() & QGraphicsItem::ItemIsSelectable) == QGraphicsItem::ItemIsSelectable)
+		{
+			clearChildrenSelection();
+			BaseObjectView::mousePressEvent(event);
+		}
 	}
 }
 
@@ -190,7 +217,7 @@ void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 		obj_selection->setVisible(false);
 
 	attribs_toggler->clearButtonsSelection();
-	sel_child_obj=nullptr;
+	sel_child_obj_view=nullptr;
 }
 
 void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
@@ -232,7 +259,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 		}
 		else if(!items.isEmpty())
 		{
-			BaseObjectView *item=dynamic_cast<TableObjectView *>(items[static_cast<int>(item_idx)]);
+			TableObjectView *item=dynamic_cast<TableObjectView *>(items[static_cast<int>(item_idx)]);
 
 			//Configures the selection with the item's dimension
 			if(obj_selection->boundingRect().height() != item->boundingRect().height())
@@ -249,7 +276,7 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 			obj_selection->setPos(QPointF(title->pos().x() + HorizSpacing, -rect1.top() + VertSpacing/2));
 
 			//Stores the selected child object
-			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
+			sel_child_obj_view = item;
 			this->setToolTip(item->toolTip());
 		}
 	}
@@ -437,6 +464,25 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setBrush(QColor(50,50,50,60));
 	rect_item->setRect(this->boundingRect());
 	rect_item->setPos(3.5, 4.5);
+}
+
+vector<TableObjectView *> BaseTableView::getSelectedChidren(void)
+{
+	return(sel_child_objs);
+}
+
+void BaseTableView::clearChildrenSelection(void)
+{
+	if(sel_child_objs.empty())
+		return;
+
+	while(!sel_child_objs.empty())
+	{
+		sel_child_objs.back()->setFakeSelection(false);
+		sel_child_objs.pop_back();
+	}
+
+	emit s_childrenSelectionChanged();
 }
 
 void BaseTableView::startGeometryUpdate(void)

@@ -32,24 +32,21 @@ const QString TableObjectView::ConstrDelimEnd=QString("»");
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
 	descriptor=nullptr;
+	fake_selection=false;
+	obj_selection=new RoundedRectItem;
 
 	for(unsigned i=0; i < 3; i++)
-	{
 		lables[i]=new QGraphicsSimpleTextItem;
-		//this->addToGroup(lables[i]);
-	}
 }
 
 TableObjectView::~TableObjectView(void)
 {
-	//this->removeFromGroup(descriptor);
 	delete(descriptor);
 
 	for(unsigned i=0; i < 3; i++)
-	{
-		//this->removeFromGroup(lables[i]);
 		delete(lables[i]);
-	}
+
+	delete(obj_selection);
 }
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
@@ -71,7 +68,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		//this->removeFromGroup(descriptor);
 		delete(descriptor);
 		descriptor=nullptr;
 	}
@@ -645,6 +641,45 @@ QString TableObjectView::getConstraintString(Column *column)
 	else return(QString());
 }
 
+void TableObjectView::setFakeSelection(bool value)
+{
+	fake_selection = value;
+	configureObjectSelection();
+
+	if(value)
+		sel_order=++BaseObjectView::global_sel_order;
+	else
+		sel_order = 0;
+}
+
+bool TableObjectView::hasFakeSelection(void)
+{
+	return(fake_selection);
+}
+
+void TableObjectView::configureObjectSelection(void)
+{
+	QGraphicsItem *parent = this->parentItem();
+	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
+	QRectF rect = this->boundingRect();
+
+	rect.setX(0);
+	rect.setY(0);
+	rect.setHeight(rect.height() - VertSpacing);
+
+	// An small hack to capture the width of the table in which the item is child of
+	if(parent->parentItem())
+		rect.setWidth(parent->parentItem()->boundingRect().width() - (2.5 * HorizSpacing));
+	else
+		rect.setWidth(rect.width() - (3.5 * HorizSpacing));
+
+	rect_item->setBorderRadius(2);
+	rect_item->setRect(rect);
+	rect_item->setPos(0, VertSpacing/2);
+	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+}
+
 void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	painter->save();
@@ -661,6 +696,12 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 		painter->translate(lables[i]->pos());
 		lables[i]->paint(painter, option, widget);
 		painter->restore();
+	}
+
+	if(fake_selection)
+	{
+		painter->translate(obj_selection->pos());
+		obj_selection->paint(painter, option, widget);
 	}
 }
 

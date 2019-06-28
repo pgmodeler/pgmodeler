@@ -630,7 +630,7 @@ void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size
 	custom_paper_size=orig_custom_sz;
 }
 
-void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
+void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
 {
 	/* Treats the TableView::s_childObjectSelect() only when there is no
 		other object selected on the scene */
@@ -638,10 +638,25 @@ void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 		emit s_popupMenuRequested(child_obj);
 }
 
-void ObjectsScene::emitObjectSelection(BaseGraphicObject *object, bool selected)
+void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selected)
 {
 	if(object)
 		emit s_objectSelected(object, selected);
+}
+
+void ObjectsScene::handleChildrenSelectionChanged(void)
+{
+	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
+
+	if(!tab_view)
+		return;
+
+	if(tab_view->getSelectedChidren().empty())
+		tabs_sel_children.removeAll(tab_view);
+	else
+		tabs_sel_children.append(tab_view);
+
+	emit s_childrenSelectionChanged();
 }
 
 void ObjectsScene::addItem(QGraphicsItem *item)
@@ -656,7 +671,8 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)), this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_popupMenuRequested(TableObject*)), this, SLOT(handlePopupMenuRequested(TableObject*)));
+			connect(tab, SIGNAL(s_childrenSelectionChanged()), this, SLOT(handleChildrenSelectionChanged()));
 			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
 			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
 			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
@@ -665,7 +681,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		if(obj)
 		{
 			obj->setVisible(isLayerActive(obj->getLayer()));
-			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
 		}
 
 		QGraphicsScene::addItem(item);
@@ -1318,6 +1334,12 @@ void ObjectsScene::update(void)
 	QGraphicsScene::update(this->sceneRect());
 }
 
+void ObjectsScene::clearSelection(void)
+{
+	tabs_sel_children.clear();
+	QGraphicsScene::clearSelection();
+}
+
 vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
 {
 	vector<QRectF> pages;
@@ -1390,4 +1412,14 @@ bool ObjectsScene::isRelationshipLineVisible(void)
 bool ObjectsScene::isMovingObjects(void)
 {
 	return(moving_objs);
+}
+
+QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
+{
+	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
+
+	for(auto &obj_view :tabs_sel_children)
+		items.push_back(obj_view);
+
+	return(items);
 }

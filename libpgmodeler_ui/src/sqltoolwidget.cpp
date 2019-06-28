@@ -245,13 +245,15 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
 {
 	try
 	{
+		DatabaseExplorerWidget *db_explorer_wgt=nullptr;
+
 		//If the selected database is already being browse do not create another explorer instance
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
 			QString maintainance_db=conn.getConnectionParam(Connection::ParamDbName);
-			DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
 
+			db_explorer_wgt=new DatabaseExplorerWidget;
 			db_explorer_wgt->setObjectName(database_cmb->currentText());
 			conn.setConnectionParam(Connection::ParamDbName, database_cmb->currentText());
 			db_explorer_wgt->setConnection(conn, maintainance_db);
@@ -272,9 +274,9 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
 			/* Forcing the signal s_sqlExecutionRequested to be emitted to properly register the
 			new tab on the map of sql panes related to the database explorer */
 			db_explorer_wgt->runsql_tb->click();
-
-			return(db_explorer_wgt);
 		}
+
+		return(db_explorer_wgt);
 	}
 	catch(Exception &e)
 	{

@@ -41,6 +41,9 @@ class BaseTableView: public BaseObjectView {
 		/*! \brief Stores the references to the relationships connected to this table. */
 		vector<BaseRelationship *> connected_rels;
 
+		//! \brief Stores the selected child objects in order to retrieve them in ObjectScene/ModelWidget
+		vector<TableObjectView *> sel_child_objs;
+
 	protected:
 		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
 		 * call to configureObject(). This attribute is set to true only when the objects is invisible
@@ -73,7 +76,7 @@ class BaseTableView: public BaseObjectView {
 		TextPolygonItem *tag_item;
 
 		//! \brief Stores the reference to the child object currently selected on table
-		TableObject *sel_child_obj;
+		TableObjectView *sel_child_obj_view;
 
 		//! \brief Table title
 		TableTitleView *title;
@@ -159,6 +162,11 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
 
+		//! \brief Returns a list of selected children objects
+		vector<TableObjectView *> getSelectedChidren(void);
+
+		void clearChildrenSelection(void);
+
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */
@@ -178,8 +186,11 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Signal emitted to indicate that the relationships attached to the table need to be updated
 		void s_relUpdateRequest(void);
 
-		//! \brief Signal emitted when the user right-click a focused table child object
-		void s_childObjectSelected(TableObject *);
+		//! \brief Signal emitted when the user right-click a focused table child object requesting a popup menu
+		void s_popupMenuRequested(TableObject *);
+
+		//! \brief Signal emitted when the user clicks a focused table child object and holding Control+Shift
+		void s_childrenSelectionChanged(void);
 
 		//! \brief Signal emitted when the user toggles the table's collapse mode
 		void s_collapseModeChanged(void);
