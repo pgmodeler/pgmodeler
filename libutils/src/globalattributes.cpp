@@ -22,9 +22,6 @@
 
 namespace GlobalAttributes {
 	const QString
-	PgModelerAppName=QString("pgmodeler"),
-	PgModelerURI=QString("pgmodeler.io"),
-	PGMODELER_REVERSE_URI=QString("io.pgmodeler"),
 	PgModelerVersion=QString("0.9.2-beta1")
 
 	/* Appending the snapshot build number to the version number
@@ -33,7 +30,10 @@ namespace GlobalAttributes {
 		+ QString("_snapshot") + BUILDNUM
 	#endif
 	,
+	/****/
 
+	PgModelerAppName=QString("pgmodeler"),
+	PgModelerURI=QString("pgmodeler.io"),
 	PgModelerBuildNumber=QString(BUILDNUM),
 	PgModelerSite=QString("https://pgmodeler.io"),
 	PgModelerSupport=QString("https://pgmodeler.io/support/docs"),

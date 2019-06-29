@@ -291,10 +291,14 @@ bool XmlParser::accessElement(unsigned elem_type)
 		curr_elem=elems[elem_type];
 
 		/* NOTE: Due to XML2 implementation big line numbers are stored in the psvi
-		 * attribute so we need to reinterpret cast the value and return the real value */
+		 * attribute so we need to convert the void* to char and convert it back to integer value */
 		if(curr_elem->line == 65535 && curr_elem->next && curr_elem->next->psvi != nullptr)
 		{
-			int aux_line  = static_cast<int>(reinterpret_cast<long>(curr_elem->next->psvi));
+			char hex_value[10] = "";
+			int aux_line = 0;
+
+			sprintf(hex_value, "%p", curr_elem->next->psvi);
+			aux_line = static_cast<int>(strtol(hex_value, nullptr, 16));
 
 			if(curr_line < aux_line)
 				curr_line = aux_line;
@@ -431,9 +435,13 @@ int XmlParser::getBufferLineCount(void)
 		last line of the root element.
 
 		NOTE: Due to XML2 implementation big line numbers are stored in the psvi
-		attribute so we need to reinterpret cast the value and return the real value */
+		attribute so we need to convert the void* to char and convert it back to integer value */
 		if(xml_doc->last->last->line == 65535 && xml_doc->last->last->psvi != nullptr)
-			return(static_cast<int>(reinterpret_cast<long>(xml_doc->last->last->psvi)));
+		{
+			char hex_value[10] = "";
+			sprintf(hex_value, "%p", xml_doc->last->last->psvi);
+			return(static_cast<int>(strtol(hex_value, nullptr, 16)));
+		}
 
 		return(xml_doc->last->last->line);
 	}
