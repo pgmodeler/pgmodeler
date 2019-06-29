@@ -3,7 +3,7 @@
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 
@@ -12,6 +12,9 @@ DEMO_VERSION=0
 
 BUILD_ALL_OPT='-build-all'
 BUILD_ALL=0
+
+SNAPSHOT_OPT='-snapshot'
+SNAPSHOT=0
 
 # Installer settings
 FMT_PREFIX="C:\/Program Files\/pgmodeler"
@@ -25,6 +28,7 @@ INSTALLER_CONFIG="config.xml"
 INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 BUILD_DATE=`date '+%Y-%m-%d'`
+BUILD_NUM=`date '+%Y%m%d'`
 
 # Setting key paths according to the arch build (x86|x64)
 # If none of the build type parameter is specified, the default is tu use x86
@@ -47,6 +51,10 @@ for param in $@; do
  if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
    BUILD_ALL=1
    DEMO_VERSION=0
+ fi
+ if [[ "$param" == "$SNAPSHOT_OPT" ]]; then
+   SNAPSHOT=1
+   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_NUM}"
  fi
 done
 
@@ -91,6 +99,11 @@ QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
 if [ $DEMO_VERSION = 1 ]; then
   QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
 fi
+
+if [ $SNAPSHOT = 1 ]; then
+ QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
+fi 
+
 
 PKGFILE=$PKGNAME.exe
 GENINSTALLER=pgmodeler.exe
@@ -174,6 +187,10 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $SNAPSHOT = 1 ]; then
+  echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
+fi
 
 if [ $DEMO_VERSION = 1 ]; then
   echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
@@ -297,5 +314,11 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL -eq 1 ]; then
- sh windeploy.sh -demo-version $BUILD_ARCH_PARAM
+ EXTRA_OPT="" 
+   
+ if [ $SNAPSHOT = 1 ]; then
+    EXTRA_OPT="$SNAPSHOT_OPT"
+ fi  
+   
+ sh windeploy.sh -demo-version $BUILD_ARCH_PARAM $EXTRA_OPT
 fi
