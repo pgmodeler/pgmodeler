@@ -22,10 +22,19 @@
 
 namespace GlobalAttributes {
 	const QString
+	PgModelerVersion=QString("0.9.2-beta1")
+
+	/* Appending the snapshot build number to the version number
+	 * when the external variable SNAPSHOT_BUILD is defined */
+	#if defined(SNAPSHOT_BUILD)
+		+ QString("_snapshot") + BUILDNUM
+	#endif
+	,
+	/****/
+
 	PgModelerAppName=QString("pgmodeler"),
 	PgModelerURI=QString("pgmodeler.io"),
-	PGMODELER_REVERSE_URI=QString("io.pgmodeler"),
-	PgModelerVersion=QString("0.9.2-beta1"),
+    PgModelerReverseURI=QString("io.pgmodeler"),
 	PgModelerBuildNumber=QString(BUILDNUM),
 	PgModelerSite=QString("https://pgmodeler.io"),
 	PgModelerSupport=QString("https://pgmodeler.io/support/docs"),
@@ -81,10 +90,10 @@ namespace GlobalAttributes {
 
 #if defined(Q_OS_MAC)
 	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-									  QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PGMODELER_REVERSE_URI)),
+                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerReverseURI)),
 
 	TemporaryDir=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
-								 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)  + QString("/%1/tmp").arg(PGMODELER_REVERSE_URI)),
+                                 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)  + QString("/%1/tmp").arg(PgModelerReverseURI)),
 
 #elif defined(Q_OS_LINUX)
 	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
