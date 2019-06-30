@@ -7,21 +7,24 @@ QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g' | cut -s -f2`
 BUILD_NUM=$(date '+%Y%m%d')
 
-WITH_BUILD_NUM='-with-build-num'
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
+SNAPSHOT_OPT='-snapshot'
+SNAPSHOT=0
 
 for param in $@; do
- if [[ "$param" == "$WITH_BUILD_NUM" ]]; then
-   PKGNAME="${PKGNAME}_${BUILD_NUM}"
- fi
-
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
    QMAKE_ARGS="$QMAKE_ARGS DEMO_VERSION+=true"
+ fi
+
+ if [[ "$param" == "$SNAPSHOT_OPT" ]]; then
+   SNAPSHOT=1
+   QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
+   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_NUM}"
  fi
 done
 
@@ -68,6 +71,10 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+
+if [ $SNAPSHOT = 1 ]; then
+  echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
+fi
 
 if [ $DEMO_VERSION = 1 ]; then
   echo "Building demonstration version. (Found $DEMO_VERSION_OPT)"
