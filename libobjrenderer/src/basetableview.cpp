@@ -193,13 +193,13 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		else if((this->flags() & QGraphicsItem::ItemIsSelectable) == QGraphicsItem::ItemIsSelectable)
 		{
 			// Forcing the scene selection clearing when we right click the table itself directly
-			if(this->scene() && event->buttons() == Qt::RightButton)
+			if(event->buttons() == Qt::RightButton && !this->isSelected())
 			{
 				emit s_sceneClearRequested();
+				clearChildrenSelection();
 				this->setSelected(true);
 			}
 
-			clearChildrenSelection();
 			BaseObjectView::mousePressEvent(event);
 		}
 	}
