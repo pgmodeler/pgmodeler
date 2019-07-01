@@ -150,7 +150,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 	}
 }
 
-BaseObject *BaseObjectView::getSourceObject(void)
+BaseObject *BaseObjectView::getUnderlyingObject(void)
 {
 	return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
 }
@@ -367,7 +367,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 {
 	if(change==ItemPositionHasChanged)
 	{
-		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 		if(graph_obj && !graph_obj->isProtected())
 		{
@@ -385,7 +385,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 		obj_selection->setVisible(value.toBool());
 
 		this->configurePositionInfo(this->pos());
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject()), value.toBool());
 	}
 
 	return(value);
@@ -406,7 +406,7 @@ QRectF BaseObjectView::boundingRect(void) const
 
 void BaseObjectView::toggleProtectionIcon(bool value)
 {
-	BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+	BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	protected_icon->setVisible(value);
 	this->setFlag(QGraphicsItem::ItemIsMovable, !value);
@@ -455,9 +455,9 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 	{
 		double px=0, py=0;
 
-		sql_disabled_item->setVisible(this->getSourceObject()->isSQLDisabled());
+		sql_disabled_item->setVisible(this->getUnderlyingObject()->isSQLDisabled());
 
-		if(this->getSourceObject()->isSQLDisabled())
+		if(this->getUnderlyingObject()->isSQLDisabled())
 		{
 			QTextCharFormat char_fmt;
 			char_fmt=BaseObjectView::getFontStyle(Attributes::PositionInfo);
@@ -539,7 +539,7 @@ void BaseObjectView::configurePlaceholder(void)
 
 void BaseObjectView::__configureObject(void)
 {
-	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
 	{
@@ -592,7 +592,7 @@ double BaseObjectView::getFontFactor(void)
 
 void BaseObjectView::setLayer(unsigned layer)
 {
-	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
 		graph_obj->setLayer(layer);
@@ -600,7 +600,7 @@ void BaseObjectView::setLayer(unsigned layer)
 
 unsigned BaseObjectView::getLayer(void)
 {
-	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getSourceObject());
+	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
 		return(graph_obj->getLayer());

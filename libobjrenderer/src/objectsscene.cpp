@@ -247,7 +247,7 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 				if(!obj_view->isVisible() && is_in_layer)
 				{
 					if(!sch_view ||
-						 (sch_view && dynamic_cast<Schema *>(sch_view->getSourceObject())->isRectVisible()))
+						 (sch_view && dynamic_cast<Schema *>(sch_view->getUnderlyingObject())->isRectVisible()))
 					 obj_view->setVisible(true);
 				}
 				else if(obj_view->isVisible() && !is_in_layer)
@@ -391,7 +391,7 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 			if(obj_view && obj_view->isVisible())
 			{
-				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
+				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
 
 				if(graph_obj)
 				{
@@ -508,9 +508,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 
 		object=dynamic_cast<BaseObjectView *>(items.front());
 
-		if(object && object->getSourceObject())
+		if(object && object->getUnderlyingObject())
 		{
-			base_obj=dynamic_cast<BaseGraphicObject *>(object->getSourceObject());
+			base_obj=dynamic_cast<BaseGraphicObject *>(object->getUnderlyingObject());
 
 			if(!value && base_obj &&
 					base_obj->getObjectType()!=ObjectType::Relationship &&
@@ -710,8 +710,8 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		if(object)
 		{
 			disconnect(object, nullptr, this, nullptr);
-			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
-			disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
+			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
+			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
 			removed_objs.push_back(object);
 		}
 	}
@@ -739,7 +739,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
 
 		if(obj)
-			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
+			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject()));
 	}
 	else
 		//Emit a signal indicating that no object was selected
@@ -1155,7 +1155,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		else if(sch_view)
 		{
 			//Get the schema object
-			Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+			Schema *schema=dynamic_cast<Schema *>(sch_view->getUnderlyingObject());
 
 			if(!schema->isProtected())
 			{
@@ -1219,7 +1219,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 			/* If the relationship has points added to the line is necessary to move the points
 				 too. Since relationships cannot be moved naturally (by user) this will be done
 				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-			points=rel->getSourceObject()->getPoints();
+			points=rel->getUnderlyingObject()->getPoints();
 			if(items.size() > 1 && !points.empty())
 			{
 				itr=points.begin();
@@ -1237,7 +1237,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				}
 
 				//Assing the new points to relationship and reconfigure its line
-				rel->getSourceObject()->setPoints(points);
+				rel->getUnderlyingObject()->setPoints(points);
 				rel->configureLine();
 			}
 
@@ -1272,7 +1272,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		if(align_objs_grid)
 		{
 			tab_view->setPos(alignPointToGrid(tab_view->pos()));
-			schemas.insert(dynamic_cast<Schema *>(tab_view->getSourceObject()->getSchema()));
+			schemas.insert(dynamic_cast<Schema *>(tab_view->getUnderlyingObject()->getSchema()));
 		}
 
 		if(BaseObjectView::isPlaceholderEnabled())
@@ -1312,14 +1312,14 @@ void ObjectsScene::alignObjectsToGrid(void)
 			else if(rel)
 			{
 				//Align the relationship points
-				points=rel->getSourceObject()->getPoints();
+				points=rel->getUnderlyingObject()->getPoints();
 				count1=points.size();
 				for(i1=0; i1 < count1; i1++)
 					points[i1]=this->alignPointToGrid(points[i1]);
 
 				if(count1 > 0)
 				{
-					rel->getSourceObject()->setPoints(points);
+					rel->getUnderlyingObject()->setPoints(points);
 					rel->configureLine();
 				}
 
@@ -1335,7 +1335,7 @@ void ObjectsScene::alignObjectsToGrid(void)
 			else if(!dynamic_cast<SchemaView *>(items[i]))
 				items[i]->setPos(this->alignPointToGrid(items[i]->pos()));
 			else
-				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getSourceObject()));
+				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getUnderlyingObject()));
 		}
 	}
 

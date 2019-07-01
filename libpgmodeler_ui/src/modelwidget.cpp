@@ -967,10 +967,10 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
 					for(auto &tab : tables)
 					{
-						op_list->registerObject(tab->getSourceObject(), Operation::ObjectMoved);
+						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjectMoved);
 
 						//Registers the table on a auxiliary list to avoid multiple registration on operation history
-						reg_tables.push_back(tab->getSourceObject());
+						reg_tables.push_back(tab->getUnderlyingObject());
 					}
 				}
 			}			
@@ -1060,7 +1060,7 @@ void ModelWidget::configureObjectSelection(void)
 	while(itr!=objs_map.end())
 	{
 		item=dynamic_cast<BaseObjectView *>(itr->second);
-		selected_objects.push_back(item->getSourceObject());
+		selected_objects.push_back(item->getUnderlyingObject());
 		itr++;
 	}
 
@@ -4622,7 +4622,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 
 		//Positioning the root object at the top-left portion of canvas
 		root->setPos(QPointF(50, 50));
-		evaluated_tabs.push_back(root->getSourceObject());
+		evaluated_tabs.push_back(root->getUnderlyingObject());
 		items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
 		max_w = items_rect.width();
 
@@ -4657,12 +4657,12 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 			}
 
 			//Once determined the new root we perform the positioning of its "children"
-			if(root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), root->getSourceObject()) == evaluated_tabs.end())
+			if(root && std::find(evaluated_tabs.begin(), evaluated_tabs.end(), root->getUnderlyingObject()) == evaluated_tabs.end())
 			{
 				root->setPos(QPointF(50, items_rect.bottom() + 50));
-				evaluated_tabs.push_back(root->getSourceObject());
+				evaluated_tabs.push_back(root->getUnderlyingObject());
 				items_rect = rearrangeTablesHierarchically(root, evaluated_tabs);
-				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getSourceObject()));
+				not_evaluated.erase(std::find(not_evaluated.begin(), not_evaluated.end(),  root->getUnderlyingObject()));
 
 				if(items_rect.width() > max_w)
 					max_w = items_rect.width();
@@ -4734,7 +4734,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 
 QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<BaseObject *> &evaluated_tabs)
 {
-	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getSourceObject()),
+	BaseTable *base_tab = dynamic_cast<BaseTable *>(root->getUnderlyingObject()),
 			*src_tab = nullptr, *dst_tab = nullptr, *curr_tab = nullptr;
 	vector<BaseRelationship *> rels ;
 	double px = 0, py = 0, px1 = 0, py1 = 0;

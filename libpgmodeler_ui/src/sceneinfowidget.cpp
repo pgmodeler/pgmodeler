@@ -51,8 +51,8 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 																		object->boundingRect().width(),
 																		object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getSourceObject()->getSchemaName()));
-		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getSourceObject()->getSignature()).arg(object->getSourceObject()->getTypeName()));
+		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
+		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 															.arg(round(rect.left()))
 															.arg(round(rect.top()))

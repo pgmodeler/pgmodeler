@@ -46,10 +46,10 @@ class BaseTableView: public BaseObjectView {
 		/*! \brief Stores the references to the relationships connected to this table. */
 		vector<BaseRelationship *> connected_rels;
 
+	protected:		
 		//! \brief Stores the selected child objects in order to retrieve them in ObjectScene/ModelWidget
 		QList<TableObjectView *> sel_child_objs;
 
-	protected:
 		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
 		 * call to configureObject(). This attribute is set to true only when the objects is invisible
 		 * the the configureObject is called. Once the object gets visible again this attribute is set
