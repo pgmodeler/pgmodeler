@@ -4134,7 +4134,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		actions.pop_back();
 	}
 
-	if(objects.size() <= 2)
+	if(objects.size() <= 2 && !scene->hasOnlyTableChildrenSelection())
 	{
 		popup_menu.addSeparator();
 		popup_menu.addAction(action_edit_creation_order);
