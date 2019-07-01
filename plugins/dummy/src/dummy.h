@@ -46,6 +46,8 @@ class Dummy: public QObject, public PgModelerPlugin {
 		QKeySequence getPluginShortcut(void);
 		void executePlugin(ModelWidget *);
 
+		virtual void setMainWindow(QMainWindow *main_window);
+
 	public slots:
 		void showPluginInfo(void);
 };
