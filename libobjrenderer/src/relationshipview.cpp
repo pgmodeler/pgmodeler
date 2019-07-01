@@ -204,9 +204,9 @@ QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
 	return(conn_points[table_idx]);
 }
 
-BaseRelationship *RelationshipView::getSourceObject(void)
+BaseRelationship *RelationshipView::getUnderlyingObject(void)
 {
-	return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getSourceObject()));
+	return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject()));
 }
 
 TextboxView *RelationshipView::getLabel(unsigned lab_idx)
@@ -227,7 +227,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 	{
 		unsigned i, count;
 		QPen pen;
-		QColor color, line_color=this->getSourceObject()->getCustomColor();
+		QColor color, line_color=this->getUnderlyingObject()->getCustomColor();
 		vector<QGraphicsLineItem *> rel_lines;
 
 		this->setSelectionOrder(value.toBool());
@@ -320,7 +320,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 				else
 					round_cf_descriptors[idx]->setBrush(descriptor->brush());
 
-				if(this->getSourceObject()->getRelationshipType() == BaseRelationship::RelationshipFk)
+				if(this->getUnderlyingObject()->getRelationshipType() == BaseRelationship::RelationshipFk)
 					pen.setStyle(Qt::DashLine);
 
 				round_cf_descriptors[idx]->setPen(pen);
@@ -332,7 +332,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		for(i=0; i < count; i++)
 			attributes[i]->childItems().at(3)->setVisible(value.toBool());
 
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),	value.toBool());
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject()),	value.toBool());
 	}
 
 	return(value);
@@ -345,9 +345,9 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	BaseObjectView::mousePressEvent(event);
 	this->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-	if(!this->getSourceObject()->isProtected())
+	if(!this->getUnderlyingObject()->isProtected())
 	{
-		BaseRelationship *base_rel=this->getSourceObject();
+		BaseRelationship *base_rel=this->getUnderlyingObject();
 
 		//Resets the labels position when mid-button is pressed
 		if(event->buttons()==Qt::LeftButton && event->modifiers()==(Qt::AltModifier | Qt::ShiftModifier))
@@ -460,7 +460,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(this->isSelected() && event->buttons()==Qt::LeftButton &&
-			!this->getSourceObject()->isProtected())
+			!this->getUnderlyingObject()->isProtected())
 	{
 		if(dynamic_cast<QGraphicsPolygonItem *>(sel_object))
 		{
@@ -472,7 +472,7 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 			//We only include the point if it is not inside the tables' bounding rect
 			if(!brect.contains(event->pos()) && !brect1.contains(event->pos()))
 			{
-				BaseRelationship *rel_base=this->getSourceObject();
+				BaseRelationship *rel_base=this->getUnderlyingObject();
 				vector<QPointF> points=rel_base->getPoints();
 
 				points[sel_object_idx]=event->pos();
@@ -489,7 +489,7 @@ void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-	BaseRelationship *base_rel=this->getSourceObject();
+	BaseRelationship *base_rel=this->getUnderlyingObject();
 
 	if(event->button()==Qt::LeftButton)
 	{
@@ -511,7 +511,7 @@ void RelationshipView::disconnectTables(void)
 {
 	if(tables[0] && tables[1])
 	{
-		BaseRelationship *rel_base=this->getSourceObject();
+		BaseRelationship *rel_base=this->getUnderlyingObject();
 
 		tables[0]->removeConnectedRelationship(rel_base);
 
@@ -546,7 +546,7 @@ void RelationshipView::connectTables(void)
 
 void RelationshipView::configureObject(void)
 {
-	BaseRelationship *rel_base=this->getSourceObject();
+	BaseRelationship *rel_base=this->getUnderlyingObject();
 
 	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SrcTable)->getReceiverObject());
 	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DstTable)->getReceiverObject());
@@ -582,7 +582,7 @@ void RelationshipView::configureLine(void)
 
 	if(!configuring_line)
 	{
-		BaseRelationship *base_rel=this->getSourceObject();
+		BaseRelationship *base_rel=this->getUnderlyingObject();
 		Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 		vector<QPointF> points, fk_points, pk_points;
 		QGraphicsLineItem *lin=nullptr;
@@ -1264,7 +1264,7 @@ void RelationshipView::configureDescriptor(void)
 {
 	QLineF lin;
 	QPolygonF pol;
-	BaseRelationship *base_rel=this->getSourceObject();
+	BaseRelationship *base_rel=this->getUnderlyingObject();
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
@@ -1437,7 +1437,7 @@ void RelationshipView::configureDescriptor(void)
 
 void RelationshipView::configureCrowsFootDescriptors(void)
 {
-	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getSourceObject());
+	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getUnderlyingObject());
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
 	//Hiding all descriptors related to crow's foot when the notation is not being used
@@ -1693,7 +1693,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 
 void RelationshipView::configureAttributes(void)
 {
-	Relationship *rel=dynamic_cast<Relationship *>(this->getSourceObject());
+	Relationship *rel=dynamic_cast<Relationship *>(this->getUnderlyingObject());
 
 	if(rel)
 	{
@@ -1812,7 +1812,7 @@ void RelationshipView::configureLabels(void)
 {
 	double x=0,y=0;
 	QPointF pnt;
-	BaseRelationship *base_rel=this->getSourceObject();
+	BaseRelationship *base_rel=this->getUnderlyingObject();
 	unsigned rel_type=base_rel->getRelationshipType();
 	QPointF label_dist;
 
@@ -1833,7 +1833,7 @@ void RelationshipView::configureLabels(void)
 
 	if(!hide_name_label)
 	{
-		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::RelNameLabel]->getSourceObject());
+		Textbox *txtbox = dynamic_cast<Textbox *>(labels[BaseRelationship::RelNameLabel]->getUnderlyingObject());
 
 		if(compact_view && !base_rel->getAlias().isEmpty())
 		{
@@ -1984,7 +1984,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 
 	if(labels[label_id])
 	{
-		BaseRelationship *base_rel=this->getSourceObject();
+		BaseRelationship *base_rel=this->getUnderlyingObject();
 		QTextCharFormat char_fmt;
 		QPointF label_dist;
 
@@ -2005,7 +2005,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 		labels[label_id]->setFontStyle(char_fmt);
 		labels[label_id]->setColorStyle(BaseObjectView::getFillStyle(Attributes::Label),
 										BaseObjectView::getBorderStyle(Attributes::Label));
-		dynamic_cast<Textbox *>(labels[label_id]->getSourceObject())->setModified(true);
+		dynamic_cast<Textbox *>(labels[label_id]->getUnderlyingObject())->setModified(true);
 	}
 }
 
@@ -2015,7 +2015,7 @@ QRectF RelationshipView::__boundingRect(void)
 	unsigned i, count;
 	QPointF p;
 	QRectF rect;
-	vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getSourceObject())->getPoints();
+	vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getUnderlyingObject())->getPoints();
 
 	//The reference size will be the relationship descriptor dimension
 	x1=descriptor->pos().x();

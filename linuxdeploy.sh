@@ -27,7 +27,7 @@ LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g' | cut -s -f2`
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
@@ -47,13 +47,15 @@ INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
-BUILD_DATE=`date '+%Y-%m-%d'`
-  
+BUILD_DATE=`date '+%Y%m%d'`
+
+SNAPSHOT_OPT='-snapshot'
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
 BUILD_ALL_OPT='-build-all'
 COMPRESS_INSTALLER_OPT='-comp-installer'
+SNAPSHOT=0
 GEN_INST_PKG=0
 COMP_INST_PKG=0
 DEMO_VERSION=0
@@ -99,6 +101,12 @@ for param in $@; do
 
  if [[ "$param" == "$COMPRESS_INSTALLER_OPT" ]]; then
    COMP_INST_PKG=1
+ fi
+ 
+ if [[ "$param" == "$SNAPSHOT_OPT" ]]; then
+   SNAPSHOT=1
+   QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
+   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_DATE}"
  fi
  
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
@@ -218,6 +226,10 @@ if [ $GEN_INST_PKG = 1 ]; then
     echo "The installer will be compressed (Found $COMPRESS_INSTALLER_OPT)"
   fi
 
+fi
+
+if [ $SNAPSHOT = 1 ]; then
+  echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -427,9 +439,16 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL = 1 ]; then
-    if [ $COMP_INST_PKG = 1 ]; then
-        ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT
-    else
-        ./linuxdeploy.sh $DEMO_VERSION_OPT 
-    fi    
+
+   EXTRA_OPT="" 
+   
+   if [ $SNAPSHOT = 1 ]; then
+      EXTRA_OPT="$SNAPSHOT_OPT"
+   fi   
+
+   if [ $COMP_INST_PKG = 1 ]; then
+    ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT $EXTRA_OPT
+   else
+     ./linuxdeploy.sh $DEMO_VERSION_OPT $EXTRA_OPT
+   fi    
 fi
