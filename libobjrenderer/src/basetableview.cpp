@@ -196,10 +196,10 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			if(event->buttons() == Qt::RightButton && !this->isSelected())
 			{
 				emit s_sceneClearRequested();
-				clearChildrenSelection();
 				this->setSelected(true);
 			}
 
+			clearChildrenSelection();
 			BaseObjectView::mousePressEvent(event);
 		}
 	}

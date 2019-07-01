@@ -3017,6 +3017,14 @@ void ModelWidget::removeObjects(bool cascade)
 
 						if(tab_obj)
 						{
+							if(tab_obj->isAddedByRelationship())
+							{
+								throw Exception(Exception::getErrorMessage(ErrorCode::RemProtectedObject)
+																.arg(tab_obj->getName(true))
+																.arg(tab_obj->getTypeName()),
+																ErrorCode::RemProtectedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							}
+
 							table=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
 							obj_idx=table->getObjectIndex(tab_obj->getName(true), obj_type);
 
@@ -3398,7 +3406,7 @@ void ModelWidget::configureFadeMenu(void)
 	fade_in_menu.clear();
 	fade_out_menu.clear();
 
-	if(is_db_selected || selected_objects.size() > 1)
+	if(is_db_selected || (selected_objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()))
 	{
 		fade_menu.addAction(action_fade_in);
 		fade_menu.addAction(action_fade_out);
@@ -3447,7 +3455,7 @@ void ModelWidget::configureFadeMenu(void)
 			action_fade_out->setMenu(nullptr);
 		}
 	}
-	else
+	else if(selected_objects.size() == 1)
 	{
 		ObjectType obj_type = selected_objects[0]->getObjectType();
 
@@ -3968,7 +3976,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	}
 
 	if(!tab_obj &&
-		 (objects.empty() || objects.size() > 1 ||
+		 (objects.empty() || (objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()) ||
 			(objects.size() == 1 && (objects[0]->getObjectType() == ObjectType::Database ||
 															 objects[0]->getObjectType() == ObjectType::Tag ||
 															 BaseGraphicObject::isGraphicObject(objects[0]->getObjectType())))))

@@ -632,24 +632,17 @@ void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size
 
 void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
 {
-	//if(this->selectedItems().isEmpty())
 	emit s_popupMenuRequested(child_obj);
 }
 
 void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selected)
 {
-	QTextStream out(stdout);
-	out << "handleObjectSelection" << endl;
-
 	if(object)
 		emit s_objectSelected(object, selected);
 }
 
 void ObjectsScene::handleChildrenSelectionChanged(void)
 {
-	QTextStream out(stdout);
-	out << "handleChildrenSelectionChanged" << endl;
-
 	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
 
 	if(!tab_view)
