@@ -646,10 +646,12 @@ QString TableObjectView::getConstraintString(Column *column)
 void TableObjectView::setFakeSelection(bool value)
 {
 	fake_selection = value;
-	configureObjectSelection();
 
 	if(value)
+	{
+		configureObjectSelection();
 		sel_order=++BaseObjectView::global_sel_order;
+	}
 	else
 		sel_order = 0;
 

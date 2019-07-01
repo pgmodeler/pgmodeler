@@ -2179,53 +2179,14 @@ void ModelWidget::protectObject(void)
 		QObject *obj_sender=sender();
 		ObjectType obj_type;
 		TableObject *tab_obj=nullptr;
-		BaseObject *object=nullptr;
-		BaseGraphicObject *graph_obj=nullptr;
 		bool protect=false;
-		vector<BaseObject *>::iterator itr, itr_end;
+		QList<BaseGraphicObject *> upd_objects;
+		Messagebox msgbox;
 
 		scene->blockSignals(true);
 
-		if(this->selected_objects.size()==1)
-		{
-			tab_obj=dynamic_cast<TableObject *>(this->selected_objects[0]);
-			graph_obj=dynamic_cast<BaseGraphicObject *>(this->selected_objects[0]);
-
-			if(graph_obj)
-			{
-				bool protect=!graph_obj->isProtected();
-
-				if(graph_obj->getObjectType()==ObjectType::Schema)
-				{
-					Messagebox msgbox;
-					msgbox.show(QString(QT_TR_NOOP("Do you want to %1 the selected schema's children too?")).arg(protect ? QT_TR_NOOP("protect") : QT_TR_NOOP("unprotect")),
-								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
-
-					if(msgbox.result()==QDialog::Accepted)
-					{
-						vector<BaseObject *> objects(db_model->getObjects(this->selected_objects[0]));
-
-						for(BaseObject *obj : objects)
-							obj->setProtected(protect);
-					}
-				}
-
-				graph_obj->setProtected(protect);
-			}
-			else if(tab_obj)
-			{
-				tab_obj->setProtected(!tab_obj->isProtected());
-
-				//Force the update of the parent table
-				dynamic_cast<Table *>(tab_obj->getParentTable())->setModified(true);
-			}
-			else
-			{
-				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
-			}
-		}
 		//Protects the whole model if there is no selected object
-		else if(this->selected_objects.empty())
+		if(this->selected_objects.empty())
 		{
 			if(obj_sender==action_protect || obj_sender==action_unprotect)
 				db_model->setProtected(!db_model->isProtected());
@@ -2233,16 +2194,10 @@ void ModelWidget::protectObject(void)
 		//If there is more than one selected object, make a batch protection/unprotection
 		else
 		{
-			itr=this->selected_objects.begin();
-			itr_end=this->selected_objects.end();
 			protect=(!this->selected_objects[0]->isProtected());
 
-			while(itr!=itr_end)
+			for(auto &object : selected_objects)
 			{
-				object=(*itr);
-
-				itr++;
-
 				obj_type=object->getObjectType();
 
 				if(obj_type==ObjectType::Column || obj_type==ObjectType::Constraint)
@@ -2257,9 +2212,36 @@ void ModelWidget::protectObject(void)
 					}
 				}
 
+				// Applying protection status for the schema children objects
+				if(obj_type==ObjectType::Schema)
+				{
+					if(!msgbox.isCustomOptionChecked())
+					{
+						msgbox.setCustomOptionText("Apply to all other selected schemas");
+						msgbox.show(QString(QT_TR_NOOP("Do you want to %1 the children of the schema <strong>%2</strong> too?"))
+												.arg(protect ? QT_TR_NOOP("protect") : QT_TR_NOOP("unprotect")).arg(object->getName()),
+												Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+					}
+
+					if(msgbox.result()==QDialog::Accepted || msgbox.isCustomOptionChecked())
+					{
+						vector<BaseObject *> objects(db_model->getObjects(object));
+
+						for(BaseObject *obj : objects)
+							obj->setProtected(protect);
+					}
+				}
+
 				object->setProtected(protect);
+				tab_obj = dynamic_cast<TableObject *>(object);
+
+				if(tab_obj && !upd_objects.contains(tab_obj->getParentTable()))
+					upd_objects.push_back(tab_obj->getParentTable());
 			}
 		}
+
+		for(auto &obj : upd_objects)
+			obj->setModified(true);
 
 		protected_model_frm->setVisible(db_model->isProtected());
 		scene->blockSignals(false);
@@ -2817,6 +2799,7 @@ void ModelWidget::duplicateObject(void)
 			for(auto &tab : upd_fk_rels)
 				db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab));
 
+			this->setModified(true);
 			emit s_objectCreated();
 		}
 		else if(!selected_objects.empty())

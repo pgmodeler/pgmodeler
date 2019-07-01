@@ -151,7 +151,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj_view)
 	{
 		// Avoiding clear selection when the focused child item is amongst the other selected children
-		if(!sel_child_objs.contains(sel_child_obj_view))
+		if(sel_child_obj_view->getSourceObject() && !sel_child_objs.contains(sel_child_obj_view))
 		{
 			// Forcing the selection clearing when we right click an child object that is not selected yet
 			emit s_sceneClearRequested();
@@ -172,7 +172,10 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			 attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
 			attribs_toggler->setButtonSelected(pnt, true);
 
-		if(sel_child_obj_view && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+		/* We select children object only if the have a source object (column, constraint, trigger, etc). View references
+		 * items should not be selected here because they do not have a source object */
+		if(sel_child_obj_view && sel_child_obj_view->getSourceObject() &&
+			 event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
 		{
 			this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 			sel_child_obj_view->setFakeSelection(!sel_child_obj_view->hasFakeSelection());
