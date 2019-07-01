@@ -128,6 +128,8 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Formats the name of the layer removing any invalid chars and doing the desambiguation in case the name already exists
 		QString formatLayerName(const QString &name);
 
+		void clearTablesChildrenSelection(void);
+
 	protected:
 		//! \brief Brush used to draw the grid over the scene
 		static QBrush grid;
@@ -239,6 +241,7 @@ class ObjectsScene: public QGraphicsScene {
 		bool isMovingObjects(void);
 
 		QList<QGraphicsItem *> selectedItems(void) const;
+		bool hasOnlyTableChildrenSelection(void) const;
 
 	public slots:
 		void alignObjectsToGrid(void);

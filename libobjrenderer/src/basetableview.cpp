@@ -72,9 +72,15 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	sel_child_obj_view=nullptr;
 	configurePlaceholder();
 
+	sel_enabler_timer.setInterval(500);
+
 	connect(attribs_toggler, SIGNAL(s_collapseModeChanged(CollapseMode)), this, SLOT(configureCollapsedSections(CollapseMode)));
 	connect(attribs_toggler, SIGNAL(s_paginationToggled(bool)), this, SLOT(togglePagination(bool)));
 	connect(attribs_toggler, SIGNAL(s_currentPageChanged(unsigned,unsigned)), this, SLOT(configureCurrentPage(unsigned,unsigned)));
+
+	connect(&sel_enabler_timer, &QTimer::timeout, [&](){
+		this->setFlag(QGraphicsItem::ItemIsSelectable, true);
+	});
 }
 
 BaseTableView::~BaseTableView(void)
@@ -142,18 +148,20 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Emit a signal containing the select child object if the user right-click the focused item
-	if(!this->isSelected() && event->buttons()==Qt::RightButton)
+	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj_view)
 	{
-		if(this->scene())
-			this->scene()->clearSelection();
+		// Avoiding clear selection when the focused child item is amongst the other selected children
+		if(!sel_child_objs.contains(sel_child_obj_view))
+		{
+			// Forcing the selection clearing when we right click an child object that is not selected yet
+			emit s_sceneClearRequested();
+			clearChildrenSelection();
 
-		clearChildrenSelection();
-
-		/* Deactivate the table in order not to hide the child object selection.
-			 The table object is reativated when the context menu is hidden */
-		this->setEnabled(false);
-
-		emit s_popupMenuRequested(dynamic_cast<TableObject *>(sel_child_obj_view->getSourceObject()));
+			/* Deactivate the table in order not to hide the child object selection.
+				 The table object is reativated when the context menu is hidden */
+			this->setEnabled(false);
+			emit s_popupMenuRequested(dynamic_cast<TableObject *>(sel_child_obj_view->getSourceObject()));
+		}
 	}
 	else
 	{
@@ -170,24 +178,24 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			sel_child_obj_view->setFakeSelection(!sel_child_obj_view->hasFakeSelection());
 
 			if(!sel_child_obj_view->hasFakeSelection())
-			{
-				vector<TableObjectView *>::iterator itr =
-						std::find(sel_child_objs.begin(), sel_child_objs.end(), sel_child_obj_view);
-
-				if(itr != sel_child_objs.end())
-					sel_child_objs.erase(itr);
-			}
+					sel_child_objs.removeAll(sel_child_obj_view);
 			else
-				sel_child_objs.push_back(sel_child_obj_view);
+				sel_child_objs.append(sel_child_obj_view);
 
 			sel_child_obj_view = nullptr;
 			event->ignore();
 			emit s_childrenSelectionChanged();
-
-			QTimer::singleShot(300, [&]{ this->setFlag(QGraphicsItem::ItemIsSelectable, true);	});
+			sel_enabler_timer.start();
 		}
 		else if((this->flags() & QGraphicsItem::ItemIsSelectable) == QGraphicsItem::ItemIsSelectable)
 		{
+			// Forcing the scene selection clearing when we right click the table itself directly
+			if(this->scene() && event->buttons() == Qt::RightButton)
+			{
+				emit s_sceneClearRequested();
+				this->setSelected(true);
+			}
+
 			clearChildrenSelection();
 			BaseObjectView::mousePressEvent(event);
 		}
@@ -466,22 +474,20 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setPos(3.5, 4.5);
 }
 
-vector<TableObjectView *> BaseTableView::getSelectedChidren(void)
+QList<TableObjectView *> BaseTableView::getSelectedChidren(void)
 {
 	return(sel_child_objs);
 }
 
 void BaseTableView::clearChildrenSelection(void)
 {
-	if(sel_child_objs.empty())
+	if(sel_child_objs.isEmpty())
 		return;
 
-	while(!sel_child_objs.empty())
-	{
-		sel_child_objs.back()->setFakeSelection(false);
-		sel_child_objs.pop_back();
-	}
+	for(auto &tab_obj : sel_child_objs)
+		tab_obj->setFakeSelection(false);
 
+	sel_child_objs.clear();
 	emit s_childrenSelectionChanged();
 }
 

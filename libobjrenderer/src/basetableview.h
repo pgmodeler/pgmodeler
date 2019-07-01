@@ -38,11 +38,16 @@ class BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
+		/*! \brief This timer is used to control the selection enabling of the object
+		 * in mouse presse event in order to avoid select it instead of a child.
+		 * See mousePressEvent() for details */
+		QTimer sel_enabler_timer;
+
 		/*! \brief Stores the references to the relationships connected to this table. */
 		vector<BaseRelationship *> connected_rels;
 
 		//! \brief Stores the selected child objects in order to retrieve them in ObjectScene/ModelWidget
-		vector<TableObjectView *> sel_child_objs;
+		QList<TableObjectView *> sel_child_objs;
 
 	protected:
 		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
@@ -163,8 +168,9 @@ class BaseTableView: public BaseObjectView {
 		void configureObjectShadow(void);
 
 		//! \brief Returns a list of selected children objects
-		vector<TableObjectView *> getSelectedChidren(void);
+		QList<TableObjectView *> getSelectedChidren(void);
 
+		//! \brief Clear the selection over all selected children
 		void clearChildrenSelection(void);
 
 	private slots:
@@ -200,6 +206,9 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Signal emitted when the user changes the current table's attributes page
 		void s_currentPageChanged(void);
+
+		//! \brief Signal emitted when the object need the scene to clear its selection
+		void s_sceneClearRequested(void);
 
 		friend class RelationshipView;
 };

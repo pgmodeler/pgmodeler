@@ -33,10 +33,12 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
 	descriptor=nullptr;
 	fake_selection=false;
-	obj_selection=new RoundedRectItem;
 
 	for(unsigned i=0; i < 3; i++)
 		lables[i]=new QGraphicsSimpleTextItem;
+
+	if(obj_selection)
+		delete(obj_selection);
 }
 
 TableObjectView::~TableObjectView(void)
@@ -650,6 +652,8 @@ void TableObjectView::setFakeSelection(bool value)
 		sel_order=++BaseObjectView::global_sel_order;
 	else
 		sel_order = 0;
+
+	update();
 }
 
 bool TableObjectView::hasFakeSelection(void)
@@ -660,9 +664,16 @@ bool TableObjectView::hasFakeSelection(void)
 void TableObjectView::configureObjectSelection(void)
 {
 	QGraphicsItem *parent = this->parentItem();
-	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
+	RoundedRectItem *rect_item=nullptr;
 	QRectF rect = this->boundingRect();
 
+	/* In order to avoid unnecessary memory usage by items that eventually will
+	 * get selection we allocate the object selection rectangle only if the object
+	 * itself is selected by the user, and it'll be allocated until the object's destruction */
+	if(!obj_selection)
+		obj_selection=new RoundedRectItem;
+
+	rect_item = dynamic_cast<RoundedRectItem *>(obj_selection);
 	rect.setX(0);
 	rect.setY(0);
 	rect.setHeight(rect.height() - VertSpacing);

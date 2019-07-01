@@ -632,20 +632,24 @@ void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size
 
 void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
 {
-	/* Treats the TableView::s_childObjectSelect() only when there is no
-		other object selected on the scene */
-	if(this->selectedItems().isEmpty())
-		emit s_popupMenuRequested(child_obj);
+	//if(this->selectedItems().isEmpty())
+	emit s_popupMenuRequested(child_obj);
 }
 
 void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selected)
 {
+	QTextStream out(stdout);
+	out << "handleObjectSelection" << endl;
+
 	if(object)
 		emit s_objectSelected(object, selected);
 }
 
 void ObjectsScene::handleChildrenSelectionChanged(void)
 {
+	QTextStream out(stdout);
+	out << "handleChildrenSelectionChanged" << endl;
+
 	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
 
 	if(!tab_view)
@@ -653,7 +657,7 @@ void ObjectsScene::handleChildrenSelectionChanged(void)
 
 	if(tab_view->getSelectedChidren().empty())
 		tabs_sel_children.removeAll(tab_view);
-	else
+	else if(!tabs_sel_children.contains(tab_view))
 		tabs_sel_children.append(tab_view);
 
 	emit s_childrenSelectionChanged();
@@ -676,6 +680,7 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
 			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
 			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
+			connect(tab, SIGNAL(s_sceneClearRequested()), this, SLOT(clearSelection()));
 		}
 
 		if(obj)
@@ -744,8 +749,8 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Gets the item at mouse position
-	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
-	bool is_deselection = !this->selectedItems().isEmpty() && !this->itemAt(event->scenePos(), QTransform());
+	QGraphicsItem* item=this->itemAt(event->scenePos(), QTransform());
+	bool is_deselection = !this->selectedItems().isEmpty() && !item;
 
 	if(selectedItems().empty())
 		emit s_objectsScenePressed(event->buttons());
@@ -759,6 +764,12 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 	if(is_deselection)
 		this->blockItemsSignals(true);
+
+	/* If we're handling a deselection of the user selected another object whitout being holding Control
+	 * we need to deselect the tables' children objects too */
+	if(is_deselection || (event->buttons()==Qt::LeftButton && (event->modifiers() & Qt::ControlModifier) != Qt::ControlModifier))
+		//Forcing the clear on all selected table children object
+		clearTablesChildrenSelection();
 
 	QGraphicsScene::mousePressEvent(event);
 
@@ -1109,7 +1120,6 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 {
-	unsigned i, count;
 	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
 	double x1,y1,x2,y2, dx, dy;
 	QRectF rect;
@@ -1122,6 +1132,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	RelationshipView *rel=nullptr;
 	BaseObjectView *obj_view=nullptr;
 	BaseTableView *tab_view=nullptr;
+	TableObjectView *tab_obj_view=nullptr;
 	QSet<BaseObjectView *> tables;
 
 	//Gathering the relationships inside the selected schemsa in order to move their points too
@@ -1130,6 +1141,11 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		obj_view=dynamic_cast<BaseObjectView *>(item);
 		sch_view=dynamic_cast<SchemaView *>(item);
 		tab_view=dynamic_cast<BaseTableView *>(item);
+		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+
+		// Ignoring table objects items
+		if(tab_obj_view)
+			continue;
 
 		if(obj_view)
 			obj_view->togglePlaceholder(false);
@@ -1175,25 +1191,28 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	dx=pnt_end.x() - sel_ini_pnt.x();
 	dy=pnt_end.y() - sel_ini_pnt.y();
 
-	count=items.size();
-	for(i=0; i < count; i++)
+	for(auto &item : items)
 	{
-		rel=dynamic_cast<RelationshipView *>(items[i]);
+		// Ignoring table objects items
+		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+		if(tab_obj_view) continue;
+
+		rel=dynamic_cast<RelationshipView *>(item);
 
 		if(!rel)
 		{
 			if(align_objs_grid)
-				items[i]->setPos(alignPointToGrid(items[i]->pos()));
+				item->setPos(alignPointToGrid(item->pos()));
 			else
 			{
-				QPointF p=items[i]->pos();
+				QPointF p=item->pos();
 				if(p.x() < 0) p.setX(0);
 				if(p.y() < 0) p.setY(0);
-				items[i]->setPos(p);
+				item->setPos(p);
 			}
 
-			rect.setTopLeft(items[i]->pos());
-			rect.setSize(items[i]->boundingRect().size());
+			rect.setTopLeft(item->pos());
+			rect.setSize(item->boundingRect().size());
 		}
 		else
 		{
@@ -1201,7 +1220,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				 too. Since relationships cannot be moved naturally (by user) this will be done
 				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
 			points=rel->getSourceObject()->getPoints();
-			if(count > 1 && !points.empty())
+			if(items.size() > 1 && !points.empty())
 			{
 				itr=points.begin();
 				while(itr!=points.end())
@@ -1334,9 +1353,17 @@ void ObjectsScene::update(void)
 	QGraphicsScene::update(this->sceneRect());
 }
 
+void ObjectsScene::clearTablesChildrenSelection(void)
+{
+	for(auto &tab_obj_view : tabs_sel_children)
+		tab_obj_view->clearChildrenSelection();
+
+	tabs_sel_children.clear();
+}
+
 void ObjectsScene::clearSelection(void)
 {
-	tabs_sel_children.clear();
+	clearTablesChildrenSelection();
 	QGraphicsScene::clearSelection();
 }
 
@@ -1416,10 +1443,21 @@ bool ObjectsScene::isMovingObjects(void)
 
 QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
 {
+	if(tabs_sel_children.empty())
+		return(QGraphicsScene::selectedItems());
+
 	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
 
-	for(auto &obj_view :tabs_sel_children)
-		items.push_back(obj_view);
+	for(auto &tab_view :tabs_sel_children)
+	{
+		for(auto &tab_obj : tab_view->getSelectedChidren())
+			items.append(tab_obj);
+	}
 
 	return(items);
+}
+
+bool ObjectsScene::hasOnlyTableChildrenSelection() const
+{
+	return(QGraphicsScene::selectedItems().isEmpty() && !tabs_sel_children.isEmpty());
 }

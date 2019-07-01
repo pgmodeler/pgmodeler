@@ -951,6 +951,8 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 		while(itr!=itr_end)
 		{
 			obj=dynamic_cast<BaseGraphicObject *>(*itr);
+			itr++;
+			if(!obj)	continue;
 
 			if(!dynamic_cast<BaseRelationship *>(obj) && (obj && !obj->isProtected()))
 			{
@@ -971,9 +973,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 						reg_tables.push_back(tab->getSourceObject());
 					}
 				}
-			}
-
-			itr++;
+			}			
 		}
 	}
 	else
@@ -982,8 +982,9 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 
 		while(itr!=itr_end)
 		{
-			obj=dynamic_cast<BaseGraphicObject *>(*itr);
+			obj = dynamic_cast<BaseGraphicObject *>(*itr);
 			itr++;
+			if(!obj) continue;
 
 			if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
 			{
@@ -1701,7 +1702,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 {
 	try
 	{
-		unsigned rel_type=0, res = QDialog::Rejected;
+		unsigned rel_type=0;
+		int res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 		QPointF obj_pos=pos;
 
@@ -2750,33 +2752,70 @@ void ModelWidget::duplicateObject(void)
 
 	try
 	{
-		if(selected_objects.size() == 1 && TableObject::isTableObject(selected_objects[0]->getObjectType()))
+		if(scene->hasOnlyTableChildrenSelection())
 		{
-			BaseObject *object = selected_objects[0], *dup_object=nullptr;
+			Schema *schema = nullptr;
+			BaseObject *dup_object=nullptr;
 			BaseTable *table = nullptr;
-			ObjectType obj_type = object->getObjectType();
+			ObjectType obj_type;
+			QList<Schema *> upd_schemas;
+			QList<BaseTable *> upd_view_ref_tables;
+			QList<BaseTable *> upd_tables;
+			QList<BaseTable *> upd_fk_rels;
 
-			table = dynamic_cast<TableObject *>(object)->getParentTable();
-			PgModelerNs::copyObject(&dup_object, object, obj_type);
+			op_list->startOperationChain();
 
-			if(table->getObjectType() == ObjectType::Table)
-				dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
-			else
-				dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
-
-			op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
-			table->addObject(dup_object);
-			table->setModified(true);
-			dynamic_cast<Schema *>(table->getSchema())->setModified(true);
-
-			if(obj_type == ObjectType::Column)
+			for(auto &tab_obj : selected_objects)
 			{
-			  db_model->validateRelationships();
-				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
+				dup_object=nullptr;
+				obj_type = tab_obj->getObjectType();
+				table = dynamic_cast<TableObject *>(tab_obj)->getParentTable();
+				schema = dynamic_cast<Schema *>(table->getSchema());
+				PgModelerNs::copyObject(&dup_object, tab_obj, obj_type);
+
+				if(table->getObjectType() == ObjectType::Table)
+					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+				else
+					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
+
+				op_id=op_list->registerObject(dup_object, Operation::ObjectCreated, -1, table);
+				table->addObject(dup_object);
+
+				// Flagging the table to be repainted
+				if(!upd_tables.contains(table))
+					upd_tables.append(table);
+
+				// Flagging the schema to be repainted
+				if(!upd_schemas.contains(schema))
+					upd_schemas.append(schema);
+
+				// Flagging the table to have the view references (relationships) updated
+				if(!upd_view_ref_tables.contains(table) && obj_type == ObjectType::Column)
+					upd_view_ref_tables.append(table);
+				// Flagging the table to have its fk relationships updated
+				else if(!upd_fk_rels.contains(table) &&
+								obj_type == ObjectType::Constraint &&
+								dynamic_cast<Constraint *>(tab_obj)->getConstraintType() == ConstraintType::ForeignKey)
+					upd_fk_rels.append(table);
 			}
-			else if(obj_type == ObjectType::Constraint &&
-					dynamic_cast<Constraint *>(object)->getConstraintType() == ConstraintType::ForeignKey)
-			  db_model->updateTableFKRelationships(dynamic_cast<Table *>(table));
+
+			op_list->finishOperationChain();
+			scene->clearSelection();
+
+			for(auto &tab : upd_tables)
+				tab->setModified(true);
+
+			for(auto &sch : upd_schemas)
+				sch->setModified(true);
+
+			for(auto &tab : upd_view_ref_tables)
+			{
+				db_model->validateRelationships();
+				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(tab));
+			}
+
+			for(auto &tab : upd_fk_rels)
+				db_model->updateTableFKRelationships(dynamic_cast<Table *>(tab));
 
 			emit s_objectCreated();
 		}
