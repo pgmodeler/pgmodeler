@@ -113,7 +113,7 @@ void BaseGraphicObject::setReceiverObject(QObject *obj)
 	receiver_object=obj;
 }
 
-QObject *BaseGraphicObject::getReceiverObject(void)
+QObject *BaseGraphicObject::getOverlyingObject(void)
 {
 	return(receiver_object);
 }

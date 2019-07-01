@@ -548,8 +548,8 @@ void RelationshipView::configureObject(void)
 {
 	BaseRelationship *rel_base=this->getUnderlyingObject();
 
-	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SrcTable)->getReceiverObject());
-	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DstTable)->getReceiverObject());
+	tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SrcTable)->getOverlyingObject());
+	tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DstTable)->getOverlyingObject());
 
 	tables[0]->addConnectedRelationship(rel_base);
 
@@ -659,8 +659,8 @@ void RelationshipView::configureLine(void)
 				 rel->getRelationshipType()==Relationship::Relationship11 &&
 				 rel->isIdentifier())
 			{
-				tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
-				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+				tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getOverlyingObject());
+				tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getOverlyingObject());
 			}
 
 			if(line_conn_mode==ConnectCenterPoints || line_conn_mode==ConnectTableEdges || !rel_1n)
@@ -704,8 +704,8 @@ void RelationshipView::configureLine(void)
 				}
 
 				rec_tab->getForeignKeys(fks, true, ref_tab);
-				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getReceiverObject());
-				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getReceiverObject());
+				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getOverlyingObject());
+				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getOverlyingObject());
 
 				//Create the table's rectangles to detect where to connect the relationship
 				ref_tab_rect=QRectF(ref_tab_view->pos(), ref_tab_view->boundingRect().size());
@@ -1471,15 +1471,15 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 
 		if(rel_type == BaseRelationship::RelationshipNn || rel_type == BaseRelationship::RelationshipFk)
 		{
-			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SrcTable)->getReceiverObject());
-			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DstTable)->getReceiverObject());
+			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::SrcTable)->getOverlyingObject());
+			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DstTable)->getOverlyingObject());
 			mandatory[BaseRelationship::SrcTable] = base_rel->isTableMandatory(BaseRelationship::SrcTable);
 			mandatory[BaseRelationship::DstTable] = base_rel->isTableMandatory(BaseRelationship::DstTable);
 		}
 		else
 		{
-			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
-			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+			tables[BaseRelationship::SrcTable] = dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getOverlyingObject());
+			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getOverlyingObject());
 			mandatory[BaseRelationship::SrcTable] = rel->isReferenceTableMandatory();
 			mandatory[BaseRelationship::DstTable] = rel->isReceiverTableMandatory();
 

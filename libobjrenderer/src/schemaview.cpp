@@ -85,7 +85,7 @@ void SchemaView::fetchChildren(void)
 	children.clear();
 	while(!objs.empty())
 	{
-		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getReceiverObject()));
+		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getOverlyingObject()));
 		objs.pop_back();
 	}
 }

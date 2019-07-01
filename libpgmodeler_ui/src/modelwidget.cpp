@@ -854,7 +854,7 @@ void ModelWidget::addNewObject(void)
 		//Creating a table or view inside a schema
 		if(parent_obj && parent_obj->getObjectType()==ObjectType::Schema &&	 (obj_type==ObjectType::Table || obj_type==ObjectType::View))
 		{
-			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(parent_obj)->getReceiverObject());
+			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(parent_obj)->getOverlyingObject());
 			QSizeF size = sch_graph->boundingRect().size();
 			QPointF pos, menu_pos = viewport->mapToScene(this->mapFromGlobal(popup_menu.pos()));
 			QRectF rect = QRectF(sch_graph->pos(), size);
@@ -914,7 +914,7 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 
 	if(graph_obj)
 	{
-		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
+		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject()));
 
 		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
@@ -964,7 +964,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 				else if(schema)
 				{
 					//For schemas, when they are moved, the original position of tables are registered instead of the position of schema itself
-					tables=dynamic_cast<SchemaView *>(schema->getReceiverObject())->getChildren();
+					tables=dynamic_cast<SchemaView *>(schema->getOverlyingObject())->getChildren();
 					for(auto &tab : tables)
 					{
 						op_list->registerObject(tab->getUnderlyingObject(), Operation::ObjectMoved);
@@ -1026,9 +1026,12 @@ void ModelWidget::emitSceneInteracted(void)
 	else if(selected_objects.size() == 1)
 	{
 		BaseGraphicObject *base_obj = dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+		TableObject *tab_obj=dynamic_cast<TableObject *>(selected_objects[0]);
 
 		if(base_obj)
-			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject()));
+			emit s_sceneInteracted(dynamic_cast<BaseObjectView *>(base_obj->getOverlyingObject()));
+		else if(tab_obj)
+			emit s_sceneInteracted(1, QRect());
 		else
 			emit s_sceneInteracted(nullptr);
 	}
@@ -1085,7 +1088,7 @@ void ModelWidget::configureObjectSelection(void)
 				 count==1 && obj_type1==ObjectType::Table && new_obj_type > ObjectType::BaseTable &&	 QApplication::keyboardModifiers()==0)
 			{
 				BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
-				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
 				scene->showRelationshipLine(true,
 																		QPointF(object->scenePos().x() + object->boundingRect().width()/2,
@@ -1148,7 +1151,7 @@ void ModelWidget::selectAllObjects(void)
 
 		for(auto &obj : objs)
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getOverlyingObject());
 
 			if(obj_view)
 			{
@@ -1967,14 +1970,14 @@ void ModelWidget::moveToSchema(void)
 				//If the object is a graphical one, move it to a position near to the new schema box
 				if(obj_graph)
 				{
-					SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+					SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getOverlyingObject());
 					QPointF p;
 
 					if(dst_schema && dst_schema->isVisible())
 					{
 						p.setX(dst_schema->pos().x());
 						p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VertSpacing);
-						dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
+						dynamic_cast<BaseObjectView *>(obj_graph->getOverlyingObject())->setPos(p);
 					}
 				}
 
@@ -2148,7 +2151,7 @@ void ModelWidget::selectSchemaChildren(void)
 	scene->clearSelection();
 
 	dynamic_cast<SchemaView *>(
-				dynamic_cast<BaseObjectView *>(schema->getReceiverObject()))->selectChildren();
+				dynamic_cast<BaseObjectView *>(schema->getOverlyingObject()))->selectChildren();
 }
 
 void ModelWidget::selectTaggedTables(void)
@@ -2167,7 +2170,7 @@ void ModelWidget::selectTaggedTables(void)
 
 	for(auto object : objects)
 	{
-		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getReceiverObject());
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(object)->getOverlyingObject());
 		obj_view->setSelected(true);
 	}
 }
@@ -3180,7 +3183,7 @@ void ModelWidget::showObjectMenu(void)
 
 		if(tab_obj && tab_obj->getParentTable())
 			//Get the graphical representation for table
-			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getReceiverObject());
+			tab=dynamic_cast<BaseTableView *>(tab_obj->getParentTable()->getOverlyingObject());
 	}
 
 	magnifier_area_lbl->hide();
@@ -3468,7 +3471,7 @@ void ModelWidget::configureFadeMenu(void)
 		}
 		else
 		{
-			BaseObjectView *obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(selected_objects[0])->getReceiverObject());
+			BaseObjectView *obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(selected_objects[0])->getOverlyingObject());
 
 			if(obj_view)
 			{
@@ -3506,7 +3509,7 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 		 (schema && !schema->isRectVisible()))
 			continue;
 
-		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getOverlyingObject());
 
 		if(obj_view)
 		{
@@ -3715,7 +3718,7 @@ void ModelWidget::updateObjectsOpacity(void)
 		for(auto object : *db_model->getObjectList(type))
 		{
 			base_obj = dynamic_cast<BaseGraphicObject *>(object);
-			obj_view = dynamic_cast<BaseObjectView *>(base_obj->getReceiverObject());
+			obj_view = dynamic_cast<BaseObjectView *>(base_obj->getOverlyingObject());
 
 			if(obj_view &&
 				 ((base_obj->isFadedOut() && obj_view->opacity() == 1) ||
@@ -4187,7 +4190,7 @@ void ModelWidget::highlightObject(void)
 
 		if(graph_obj)
 		{
-			BaseObjectView *obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+			BaseObjectView *obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
 			scene->clearSelection();
 			obj_view->setSelected(true);
@@ -4343,7 +4346,7 @@ void ModelWidget::breakRelationshipLine(BaseRelationship *rel, unsigned break_ty
 
 	try
 	{
-		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getReceiverObject());
+		RelationshipView *rel_view=dynamic_cast<RelationshipView *>(rel->getOverlyingObject());
 		double dx, dy;
 		QPointF src_pnt, dst_pnt;
 
@@ -4441,7 +4444,7 @@ void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, 
 			 schemas over the screen */
 		schema->setRectVisible(true);
 
-		sch_view=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+		sch_view=dynamic_cast<SchemaView *>(schema->getOverlyingObject());
 		schema->setModified(true);
 
 		//The schema is processed only there are tables inside of it
@@ -4510,7 +4513,7 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 		while(itr!=tables.end())
 		{
 			base_tab=dynamic_cast<BaseTable *>(*itr);
-			tab_view=dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+			tab_view=dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 			tab_view->setPos(QPointF(x,y));
 
 			//Defining the maximum y position to avoid table boxes colliding vertically
@@ -4568,7 +4571,7 @@ void ModelWidget::jumpToTable(void)
 
 	tab = reinterpret_cast<BaseTable *>(act->data().value<void *>());
 	scene->clearSelection();
-	tab_view = dynamic_cast<BaseTableView *>(tab->getReceiverObject());
+	tab_view = dynamic_cast<BaseTableView *>(tab->getOverlyingObject());
 	tab_view->setSelected(true);
 	viewport->centerOn(tab_view);
 }
@@ -4611,7 +4614,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
 		dynamic_cast<Schema *>(graph_obj->getSchema())->setRectVisible(false);
 
-		tab_view = dynamic_cast<BaseTableView *>(graph_obj->getReceiverObject());
+		tab_view = dynamic_cast<BaseTableView *>(graph_obj->getOverlyingObject());
 
 		if(tab_view->getConnectRelsCount() > num_rels)
 		{
@@ -4655,7 +4658,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 			//Determining which table has the greater number of relationships attached
 			for(auto &tab : not_evaluated)
 			{
-				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(tab)->getReceiverObject());
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(tab)->getOverlyingObject());
 
 				if(tab_view->getConnectRelsCount() > num_rels)
 				{
@@ -4677,7 +4680,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 			}
 			else
 			{
-				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(not_evaluated.front())->getReceiverObject());
+				tab_view = dynamic_cast<BaseTableView *>(dynamic_cast<BaseTable *>(not_evaluated.front())->getOverlyingObject());
 
 				//If the table/view has not relationships connected we separate it in a new list for further rearrangement
 				if(tab_view->getConnectRelsCount() == 0)
@@ -4698,7 +4701,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 
 		for(auto &obj : objects)
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getReceiverObject());
+			obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getOverlyingObject());
 			obj_view->setPos(px, py);
 			px += obj_view->boundingRect().width() + 100;
 
@@ -4754,7 +4757,7 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 	{
 		base_tab = tabs.front();
 		tabs.erase(tabs.begin());
-		tab_view = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+		tab_view = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 		rels = db_model->getRelationships(base_tab);
 
 		for(auto &rel : rels)
@@ -4786,7 +4789,7 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 
 			for(auto &next_tab : next_tabs)
 			{
-				tab_view = dynamic_cast<BaseTableView *>(next_tab->getReceiverObject());
+				tab_view = dynamic_cast<BaseTableView *>(next_tab->getOverlyingObject());
 
 				//Temporarily unprotecting the table so it can be moved
 				if(next_tab->isProtected())
@@ -4834,14 +4837,14 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 		if(tables.size() <= 2)
 		{
 			base_tab = dynamic_cast<BaseTable *>(tables[0]);
-			curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+			curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 			curr_tab->setPos(start);
 
 			if(tables.size() > 1)
 			{
 				tab_view = curr_tab;
 				base_tab = dynamic_cast<BaseTable *>(tables[1]);
-				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 				curr_tab->setPos(start + QPointF(tab_view->boundingRect().width() * 1.25, 0));
 			}
 		}
@@ -4862,7 +4865,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			for(auto &tab : tables)
 			{
 				base_tab = dynamic_cast<BaseTable *>(tab);
-				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 				max_w += curr_tab->boundingRect().width();
 				max_h += curr_tab->boundingRect().height();
 			}
@@ -4885,7 +4888,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			for(auto &tab : tables)
 			{
 				base_tab = dynamic_cast<BaseTable *>(tab);
-				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 				pos.setX(dist_x(rand_num_engine));
 				pos.setY(dist_y(rand_num_engine));
 				curr_tab->setPos(pos);
@@ -4896,7 +4899,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 			for(auto &tab : tables)
 			{
 				base_tab = dynamic_cast<BaseTable *>(tab);
-				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+				curr_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 				curr_brect = QRectF(curr_tab->pos(), curr_tab->boundingRect().size());
 				tries = 0;
 
@@ -4910,7 +4913,7 @@ void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)
 							continue;
 
 						base_tab = dynamic_cast<BaseTable *>(tab1);
-						comp_tab = dynamic_cast<BaseTableView *>(base_tab->getReceiverObject());
+						comp_tab = dynamic_cast<BaseTableView *>(base_tab->getOverlyingObject());
 						comp_brect = QRectF(comp_tab->pos(), comp_tab->boundingRect().size());
 						irect = comp_brect.intersected(curr_brect);
 
@@ -4962,7 +4965,7 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 	for(auto &sch : schemas)
 	{
 		schema = dynamic_cast<Schema *>(sch);
-		sch_view = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+		sch_view = dynamic_cast<SchemaView *>(schema->getOverlyingObject());
 
 		if(!sch_view)	continue;
 
@@ -4983,7 +4986,7 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 	for(auto &sch : schemas)
 	{
 		schema = dynamic_cast<Schema *>(sch);
-		sch_view = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+		sch_view = dynamic_cast<SchemaView *>(schema->getOverlyingObject());
 		tries = 0;
 
 		if(!sch_view)	continue;
@@ -4997,7 +5000,7 @@ void ModelWidget::rearrangeTablesInSchemas(void)
 			for(auto &sch1 : schemas)
 			{
 				schema = dynamic_cast<Schema *>(sch1);
-				sch_view_aux = dynamic_cast<SchemaView *>(schema->getReceiverObject());
+				sch_view_aux = dynamic_cast<SchemaView *>(schema->getOverlyingObject());
 
 				if(sch == sch1 || !sch_view_aux)
 					continue;

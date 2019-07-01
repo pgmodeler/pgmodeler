@@ -1163,9 +1163,9 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 					/* If the relationship contains points and it is not selected then it will be included on the list
 						 in order to move their custom line points */
-					if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+					if(!dynamic_cast<RelationshipView *>(base_rel->getOverlyingObject())->isSelected() &&
 							!base_rel->getPoints().empty())
-						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
 				tables.unite(sch_view->getChildren().toSet());

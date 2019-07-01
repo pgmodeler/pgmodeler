@@ -65,6 +65,9 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 {
 	QRect rect = objs_rect.toRect();
 
+	if(!rect.isValid())
+		rect = QRect(0,0,0,0);
+
 	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 	obj_name_lbl->setText(trUtf8("Sel. objects: %1").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")

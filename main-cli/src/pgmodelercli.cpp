@@ -663,7 +663,7 @@ void PgModelerCli::handleObjectRemoval(BaseObject *object)
 
 	if(graph_obj)
 	{
-		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
+		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject()));
 
 		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
