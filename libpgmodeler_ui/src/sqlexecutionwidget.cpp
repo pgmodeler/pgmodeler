@@ -472,7 +472,9 @@ void SQLExecutionWidget::filterResults(void)
 	if(exact_chk->isChecked())
 		flags = Qt::MatchExactly;
 	else if(regexp_chk->isChecked())
-			flags = Qt::MatchRegExp;
+		flags = Qt::MatchRegExp;
+	else
+		flags = Qt::MatchContains;
 
 	if(case_sensitive_chk->isChecked())
 		flags |= Qt::MatchCaseSensitive;
