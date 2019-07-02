@@ -894,7 +894,7 @@ void MainWindow::addModel(const QString &filename)
 		obj_name=model_tab->db_model->getName();
 
 		models_tbw->blockSignals(true);
-        models_tbw->setUpdatesEnabled(false);
+		models_tbw->setUpdatesEnabled(false);
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
@@ -938,19 +938,20 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_nav_wgt->addModel(model_tab);
-        models_tbw->setUpdatesEnabled(true);
+		models_tbw->setUpdatesEnabled(true);
 		models_tbw->setVisible(true);
 		setCurrentModel();
 
-        if(start_timers)
+		if(start_timers)
 		{
-            if(model_save_timer.interval() > 0)
+			if(model_save_timer.interval() > 0)
 				model_save_timer.start();
 
 			tmpmodel_save_timer.start();
-        }
+		}
 
 		model_tab->setModified(false);
+		action_save_model->setEnabled(false);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
@@ -1435,6 +1436,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			}
 
 			stopTimers(false);
+			action_save_model->setEnabled(false);
 		}
 	}
 	catch(Exception &e)
@@ -1688,7 +1690,7 @@ void MainWindow::updateToolsState(bool model_closed)
 
 	action_print->setEnabled(enabled);
 	action_save_as->setEnabled(enabled);
-	action_save_model->setEnabled(enabled);
+	action_save_model->setEnabled(!model_closed && current_model && current_model->isModified());
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
