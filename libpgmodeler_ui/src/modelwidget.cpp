@@ -1625,7 +1625,6 @@ void ModelWidget::saveModel(const QString &filename)
 
 		saveLastCanvasPosition();
 		db_model->saveModel(filename, SchemaParser::XmlDefinition);
-
 		this->filename=filename;
 
 		task_prog_wgt.close();
@@ -2737,7 +2736,8 @@ void ModelWidget::duplicateObject(void)
 
 	try
 	{
-		if(scene->hasOnlyTableChildrenSelection())
+		if(scene->hasOnlyTableChildrenSelection() ||
+			 (selected_objects.size() == 1 && TableObject::isTableObject(selected_objects[0]->getObjectType())))
 		{
 			Schema *schema = nullptr;
 			BaseObject *dup_object=nullptr;

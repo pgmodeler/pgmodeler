@@ -100,7 +100,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(columns_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterResults()));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterResults()));
 	connect(hide_tb, SIGNAL(clicked(bool)), filter_tb, SLOT(click()));
-	connect(filter_tb, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
+
+	connect(filter_tb, &QToolButton::toggled, [&](bool checked){
+		filter_wgt->setVisible(checked);
+
+		if(checked)
+			filter_edt->setFocus();
+		else
+			sql_cmd_txt->setFocus();
+	});
 
 	connect(exact_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
 	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
