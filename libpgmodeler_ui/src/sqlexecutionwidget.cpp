@@ -848,10 +848,6 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 			{
 				//Generates the csv buffer and assigns it to application's clipboard
 				buf=generateCSVBuffer(results_tbw);
-
-				/* Making DataManipulationForm instances know that the clipboard has csv buffer
-				 * in order to paste the contents properly */
-				DataManipulationForm::setHasCsvClipboard(true);
 			}
 			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
 			{
