@@ -153,9 +153,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
-		//! \brief Creates drop shadown on a tool button that represents an QAction
-		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
-
 		void configureSamplesMenu(void);
 
 		/*! \brief Stores the current checkboxes states of the main dock widgets on the set of configuration params

@@ -365,7 +365,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			btn->setGraphicsEffect(createDropShadow(btn));
+			PgModelerUiNs::createDropShadow(btn);
 		}
 	}
 
@@ -1087,7 +1087,7 @@ void MainWindow::setCurrentModel(void)
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			btn->setGraphicsEffect(createDropShadow(tool_btn));
+			PgModelerUiNs::createDropShadow(btn);
 		}
 
 		edit_menu->addAction(current_model->action_copy);
@@ -1812,19 +1812,6 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 
 		widget->move(pos);
 	}
-}
-
-QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
-{
-	QGraphicsDropShadowEffect *shadow=nullptr;
-
-	shadow=new QGraphicsDropShadowEffect(btn);
-	shadow->setXOffset(2);
-	shadow->setYOffset(2);
-	shadow->setBlurRadius(5);
-	shadow->setColor(QColor(0,0,0, 100));
-
-	return(shadow);
 }
 
 void MainWindow::configureSamplesMenu(void)

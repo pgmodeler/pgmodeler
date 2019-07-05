@@ -2,6 +2,7 @@
 #include "messagebox.h"
 #include "databasemodel.h"
 #include <QLabel>
+#include <QGraphicsDropShadowEffect>
 #include "numberedtexteditor.h"
 #include <QScreen>
 #include <QDesktopWidget>
@@ -366,5 +367,17 @@ namespace PgModelerUiNs {
 				}
 			}
 		}
+	}
+
+	void createDropShadow(QToolButton *btn, int x_offset, int y_offset, int radius)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(btn);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(QColor(0,0,0, 100));
+		btn->setGraphicsEffect(shadow);
 	}
 }

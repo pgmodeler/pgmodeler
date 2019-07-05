@@ -81,6 +81,9 @@ namespace PgModelerUiNs {
 
 	//! brief Changes the values of the grid selection at once
 	extern void bulkDataEdit(QTableWidget *results_tbw);
+
+	//! \brief Creates drop shadown on a tool button that represents an QAction
+	extern void createDropShadow(QToolButton *btn, int x_offset = 2, int y_offset = 2, int radius = 5);
 }
 
 #endif

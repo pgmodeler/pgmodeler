@@ -35,11 +35,25 @@ constexpr unsigned DataManipulationForm::OpDelete;
 DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f): QDialog(parent, f)
 {
 	QAction *act = nullptr;
+	QToolButton *btn = nullptr;
+	QFont fnt;
+
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-	table_oid=0;
+	for(auto &obj : bnts_parent_wgt->children())
+	{
+		btn = dynamic_cast<QToolButton *>(obj);
+		if(!btn) continue;
 
+		fnt = btn->font();
+		fnt.setBold(true);
+		btn->setFont(fnt);
+		PgModelerUiNs::createDropShadow(btn);
+		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::MediumFontFactor);
+	}
+
+	table_oid=0;
 	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
 	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
 
@@ -99,7 +113,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	csv_load_tb->setToolTip(csv_load_tb->toolTip() + QString(" (%1)").arg(csv_load_tb->shortcut().toString()));
 	filter_tb->setToolTip(filter_tb->toolTip() + QString(" (%1)").arg(filter_tb->shortcut().toString()));
 	new_window_tb->setToolTip(new_window_tb->toolTip() + QString(" (%1)").arg(new_window_tb->shortcut().toString()));
-	clear_tb->setToolTip(clear_tb->toolTip() + QString("%1").arg(clear_tb->shortcut().toString()));
+	clear_tb->setToolTip(clear_tb->toolTip() + QString(" (%1)").arg(clear_tb->shortcut().toString()));
 	result_info_wgt->setVisible(false);
 
 	//Forcing the splitter that handles the bottom widgets to resize its children to their minimum size
@@ -1444,8 +1458,8 @@ void DataManipulationForm::resizeEvent(QResizeEvent *event)
 	Qt::ToolButtonStyle style = Qt::ToolButtonIconOnly;
 	QToolButton *btn = nullptr;
 
-	if(event->size().width() > this->baseSize().width())
-		style = Qt::ToolButtonTextBesideIcon;
+	if(event->size().height() > this->baseSize().height())
+		style = Qt::ToolButtonTextUnderIcon;
 
 	if(refresh_tb->toolButtonStyle() != style)
 	{
