@@ -50,7 +50,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		fnt.setBold(true);
 		btn->setFont(fnt);
 		PgModelerUiNs::createDropShadow(btn);
-		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::MediumFontFactor);
+		PgModelerUiNs::configureWidgetFont(btn, PgModelerUiNs::SmallFontFactor);
 	}
 
 	table_oid=0;
