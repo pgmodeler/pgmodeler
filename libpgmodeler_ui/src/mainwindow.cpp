@@ -720,20 +720,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			storeDockWidgetsSettings();
 
 			conf_wgt->saveConfiguration();
-			restoration_form->removeTemporaryModels();
-
-			//Remove import log files
-			QDir dir(GlobalAttributes::TemporaryDir);
-			QStringList log_files;
-
-			dir.setNameFilters({QString("*.log")});
-			log_files=dir.entryList(QDir::Files);
-
-			while(!log_files.isEmpty())
-			{
-				dir.remove(log_files.front());
-				log_files.pop_front();
-			}
+			restoration_form->removeTemporaryFiles();
 
 			SQLExecutionWidget::saveSQLHistory();
 			qApp->quit();

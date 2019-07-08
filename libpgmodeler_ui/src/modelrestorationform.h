@@ -48,7 +48,10 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	public slots:
 		int exec(void);
 
-		//! \brief Clears the tmp/ dir removing all temporary files
+		//! \brief Clears the tmp/ dir by removing all temporary files (*.dbm, *.dbk, *.omf, *.sql. *.log)
+		void removeTemporaryFiles(void);
+
+		//! \brief Clears the tmp/ dir removing all temporary models (*.dbm)
 		void removeTemporaryModels(void);
 
 		//! \brief Remove only the specified temp model

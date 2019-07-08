@@ -1626,18 +1626,25 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.setWindowTitle(trUtf8("Saving database model"));
 		task_prog_wgt.show();
 
+		/* If the original file exists we need to make a back first to avoid
+		 * in order to recover it in case of failures */
 		if(exists)
 		{
+			// Generate a temporary backup file
 			tmpfile.setAutoRemove(false);
 			tmpfile.setFileTemplate(GlobalAttributes::TemporaryDir +
 															GlobalAttributes::DirSeparator +
-															QString("tmp_%1_XXXXXX.dbmk").arg(this->db_model->getName()));
+															QString("%1_XXXXXX.dbk").arg(this->db_model->getName()));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();
 			tmpfile.close();
 			tmpfile.remove();
 
+			/* Copy the original database model file prior to the saving to store
+			 * its last state in a safe place (temporary storage of the tool ~/.config/pgmodeler by default */
 			QFile::copy(filename, bkpfile);
+
+			// Remove the original filename before create a new one in the same path
 			QFile::remove(filename);
 		}
 
@@ -1648,6 +1655,13 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
+
+		/* Doing a final check to the file regarding its size.
+		 * If we have a zero-byte file something went wrong during the saving process (disk failure, thread errors, etc)
+		 * so we raise an error to the user and restore the backup file to its original path */
+		if(QFileInfo(filename).size() == 0)
+			throw Exception(Exception::getErrorMessage(ErrorCode::ModelFileInvalidSize).arg(filename).arg(bkpfile),
+											ErrorCode::ModelFileInvalidSize,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(exists)
 			QFile::remove(bkpfile);
