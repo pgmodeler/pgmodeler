@@ -1616,12 +1616,30 @@ void ModelWidget::saveModel(void)
 void ModelWidget::saveModel(const QString &filename)
 {
 	TaskProgressWidget task_prog_wgt(this);
+	QString bkpfile;
+	QTemporaryFile tmpfile;
+	bool exists = QFile::exists(filename);
 
 	try
 	{
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), &task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt.setWindowTitle(trUtf8("Saving database model"));
 		task_prog_wgt.show();
+
+		if(exists)
+		{
+			tmpfile.setAutoRemove(false);
+			tmpfile.setFileTemplate(GlobalAttributes::TemporaryDir +
+															GlobalAttributes::DirSeparator +
+															QString("tmp_%1_XXXXXX.dbmk").arg(this->db_model->getName()));
+			tmpfile.open();
+			bkpfile = tmpfile.fileName();
+			tmpfile.close();
+			tmpfile.remove();
+
+			QFile::copy(filename, bkpfile);
+			QFile::remove(filename);
+		}
 
 		saveLastCanvasPosition();
 		db_model->saveModel(filename, SchemaParser::XmlDefinition);
@@ -1630,9 +1648,18 @@ void ModelWidget::saveModel(const QString &filename)
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		this->modified=false;
+
+		if(exists)
+			QFile::remove(bkpfile);
 	}
 	catch(Exception &e)
 	{
+		if(exists && QFile::exists(bkpfile))
+		{
+			QFile::remove(filename);
+			QFile::copy(bkpfile, filename);
+		}
+
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
