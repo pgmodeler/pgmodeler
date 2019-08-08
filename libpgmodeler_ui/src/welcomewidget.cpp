@@ -30,7 +30,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 		PgModelerUiNs::createDropShadow(btn, 3, 3, 10);
 
 #ifdef Q_OS_LINUX
-	PgModelerUiNs::__configureWidgetFont(btn, 1.20);
+	PgModelerUiNs::__configureWidgetFont(btn, 1.30);
 #else
 		PgModelerUiNs::__configureWidgetFont(btn, 1.50);
 #endif
