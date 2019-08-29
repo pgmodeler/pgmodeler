@@ -1,6 +1,49 @@
 Change Log
 ---------
 
+v0.9.2-beta1
+------
+<em>Release date: September 2, 2019</em><br/>
+
+* [New] Added a routine to write a backup file during the saving of model files in order to avoid data loss in some rare cases.
+* [New] Added a new action on DataManipulationForm to clear the selected items by pressing Ctrl+R.
+* [New] Enabling/disabling the save model action according to the model's modified status.
+* [New] The main window instance is now exposed to plugins to make the extra features development more flexible.
+* [New] Avoiding selecting table items in BaseTableView::mousePressEvent which doens't contain an underlying (source) object.
+* [New] Adding support to duplicate several table objects at once.
+* [New] Added support to table children multiselection by using Ctrl+Shift+Click on them.
+* [New] Added support to load the generated diff code in the SQL tool and automatically browsing the destination server for manual diff applying.
+* [New] Added a button to create a new data manipulation form from within another data manipulation form.
+* [New] Added a confirmation message before closing a database explorer widget.
+* [Change] Minor improvement on CSV text copying to exclude from the buffer the hidden columns.
+* [Change] Adjusted the font weight on WelcomeWidget (only for Linux).
+* [Change] Minor adjustment on tool buttons font size on DataManipulationForm.
+* [Change] Improved the UI of the DataManipulationForm by rearranging the tool buttons to the left of the dialog.
+* [Change] Improved the clipboard text pasting on DataManipulationForm in order to parse the text as CSV when Ctrl+Shift+V is pressed.
+* [Change] The filter input on SQLExecutionWidget is now automatically focused when toggling the filter widget.
+* [Change] Changed the default behavior of result set filtering to Qt::MatchContains on SQLExecutionWidget.
+* [Change] Avoiding showing the "Swap ids" action in popup menu when we have only columns/constraints selected
+* [Change] Minor adjustment on SceneInfoWidget to avoid display dimensions of selected columns/constraints on the canvas.
+* [Change] Renamed the method BaseGraphicObject::getReceiverObject to getOverlyingObject (to make sense with its counter part BaseObjctView::getUnderlyingObject)
+* [Change] Avoiding clear the whole scene selection when the table is already selected and the user requested popup menu.
+* [Change] Renamed BaseObjectView::getSourceObject to getUnderlyingObject.
+* [Change] Improved the object protection action in ModelWidget in order to accept the multi item selection on tables.
+* [Change] Changed the way the PSVI attribute is handled in xmlparser to retrieve big line numbers on a xml document.
+* [Change] Improved the diff code preview allowing the user to close the dialog without going back to previous tab and click 'Cancel'.
+* [Change] Minor adjustment on buttons shortcuts/tooltips on DataManipulationForm.
+* [Change] Changed the way the model saving timers are controlled to avoid infinity savings on the model (when the auto saving option is disabled) making the application unusable.
+* [Change] Making the mime update operation return exit code 0 even if there was errors (still displayed in the console). This will avoid the installer to abort installation when the dbm mime update fails.
+* [Change] Avoiding applying fillfactor to gin indexes.
+* [Change] Moved the method DatabaseImportHelper::parseIndexExpressions to Catalog class.
+* [Fix] Fixed the object duplication action when only a single table object is selected.
+* [Fix] Fixed a bug in ModelWidget::removeObjects that was causing the removal of relationship added columns
+* [Fix] Fixed the ModelWidget::configurePopupMenu to consider the table's multi item selection.
+* [Fix] Fixed a false-positive diff result when dealing with timestamptz.
+* [Fix] Fixed the progress calculation of dbm files loading.
+* [Fix] Fixed a bug that was causing the generation of broken view code.
+* [Fix] Fixed the display of index expressions on DatabaseExplorerWidget.
+* [Fix] Minor fix on SQLExecutionWidget to avoid results grid to overlap command execution history widget in certain cases.
+
 v0.9.2-beta
 ------
 <em>Release date: May 31, 2019</em><br/>
