@@ -795,7 +795,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	{
 		//Creating the header
 		for(col=start_col; col < max_col; col++)
+		{
+			if(results_tbw->isColumnHidden(col))
+				continue;
+
 			line.append(str_pattern.arg(model->headerData(col, Qt::Horizontal).toString()));
+		}
 
 		buf.append(line.join(separator));
 		buf.append('\n');
@@ -807,6 +812,9 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	{
 		for(col=start_col; col < max_col; col++)
 		{
+			if(results_tbw->isColumnHidden(col))
+				continue;
+
 			index = model->index(row, col);
 			line.append(str_pattern.arg(index.data().toString()));
 		}
