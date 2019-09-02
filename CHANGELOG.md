@@ -35,6 +35,7 @@ v0.9.2-beta1
 * [Change] Making the mime update operation return exit code 0 even if there was errors (still displayed in the console). This will avoid the installer to abort installation when the dbm mime update fails.
 * [Change] Avoiding applying fillfactor to gin indexes.
 * [Change] Moved the method DatabaseImportHelper::parseIndexExpressions to Catalog class.
+* [Fix] Fixed a broken diff code generation for policies.
 * [Fix] Fixed the object duplication action when only a single table object is selected.
 * [Fix] Fixed a bug in ModelWidget::removeObjects that was causing the removal of relationship added columns
 * [Fix] Fixed the ModelWidget::configurePopupMenu to consider the table's multi item selection.

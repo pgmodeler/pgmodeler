@@ -29,6 +29,7 @@ Finally, some changes of this version are detailed below. For the complete list 
 * [Change] Improved the object protection action in ModelWidget in order to accept the multi item selection on tables.
 * [Change] Improved the diff code preview allowing the user to close the dialog without going back to previous tab and click 'Cancel'.
 * [Change] Changed the way the model saving timers are controlled to avoid infinity savings on the model (when the auto saving option is disabled) making the application unusable.
+* [Fix] Fixed a broken diff code generation for policies.
 * [Fix] Fixed the object duplication action when only a single table object is selected.
 * [Fix] Fixed a bug in ModelWidget::removeObjects that was causing the removal of relationship added columns
 * [Fix] Fixed the ModelWidget::configurePopupMenu to consider the table's multi item selection.
