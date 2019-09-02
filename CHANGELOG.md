@@ -15,6 +15,7 @@ v0.9.2-beta1
 * [New] Added support to load the generated diff code in the SQL tool and automatically browsing the destination server for manual diff applying.
 * [New] Added a button to create a new data manipulation form from within another data manipulation form.
 * [New] Added a confirmation message before closing a database explorer widget.
+* [Change] Minor adjustments in PgModelerUiNs::createOutputListItem and PgModelerUiNs::createOutputTreeItem to better display formatted messages.
 * [Change] Minor improvement on CSV text copying to exclude from the buffer the hidden columns.
 * [Change] Adjusted the font weight on WelcomeWidget (only for Linux).
 * [Change] Minor adjustment on tool buttons font size on DataManipulationForm.
