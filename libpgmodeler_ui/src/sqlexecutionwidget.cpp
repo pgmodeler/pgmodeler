@@ -368,8 +368,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	msgoutput_lst->clear();
 
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
-										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), false);
+										PgModelerUiNs::formatMessage(QString("%1 %2").arg(time_str).arg(e.getErrorMessage())),
+										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 
 	if(e.getErrorCode()==ErrorCode::ConnectionTimeout ||
 		 e.getErrorCode()==ErrorCode::ConnectionBroken)
@@ -628,9 +628,9 @@ void SQLExecutionWidget::runSQLCommand(void)
 	output_tbw->setTabText(0, trUtf8("Results"));
 	output_tbw->setCurrentIndex(1);
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																			PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command is running...")
-																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
-																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
+																			trUtf8("[%1]: SQL command is running...")
+																			.arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))),
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), false);
 }
 
 void SQLExecutionWidget::saveCommands(void)
