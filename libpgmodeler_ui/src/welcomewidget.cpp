@@ -17,7 +17,6 @@
 */
 
 #include "welcomewidget.h"
-#include <QGraphicsDropShadowEffect>
 #include "pgmodeleruins.h"
 
 WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
@@ -25,18 +24,13 @@ WelcomeWidget::WelcomeWidget(QWidget *parent): QWidget(parent)
 	setupUi(this);
 
 	QList<QToolButton *> btns= { new_tb, open_tb, recent_tb, last_session_tb, sample_tb, support_tb };
-	QGraphicsDropShadowEffect *shadow=nullptr;
 
 	for(auto &btn : btns)
 	{
-		shadow=new QGraphicsDropShadowEffect(this);
-		shadow->setXOffset(3);
-		shadow->setYOffset(3);
-		shadow->setBlurRadius(10);
-		btn->setGraphicsEffect(shadow);
+		PgModelerUiNs::createDropShadow(btn, 3, 3, 10);
 
 #ifdef Q_OS_LINUX
-	PgModelerUiNs::__configureWidgetFont(btn, 1.20);
+	PgModelerUiNs::__configureWidgetFont(btn, 1.30);
 #else
 		PgModelerUiNs::__configureWidgetFont(btn, 1.50);
 #endif

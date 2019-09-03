@@ -48,7 +48,6 @@ int ModelRestorationForm::exec(void)
 	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
 	int start=-1, end=-1, col=0;
 
-
 	while(!file_list.isEmpty())
 	{
 		info.setFile(GlobalAttributes::TemporaryDir, file_list.front());
@@ -98,16 +97,23 @@ bool ModelRestorationForm::hasTemporaryModels(void)
 	return(!this->getTemporaryModels().isEmpty());
 }
 
+void ModelRestorationForm::removeTemporaryFiles(void)
+{
+	QDir tmp_file;
+	QStringList tmp_files = QDir(GlobalAttributes::TemporaryDir, QString("*.dbm;*.dbk;*.omf;*.sql;*.log"),
+															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
+
+	for(auto &file : tmp_files)
+		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
+}
+
 void ModelRestorationForm::removeTemporaryModels(void)
 {
 	QStringList file_list=this->getTemporaryModels();
 	QDir tmp_file;
 
-	while(!file_list.isEmpty())
-	{
-		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file_list.front());
-		file_list.pop_front();
-	}
+	for(auto &file : file_list)
+		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
 }
 
 void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)

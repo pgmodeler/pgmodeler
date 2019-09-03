@@ -44,16 +44,14 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Default row colors for each operation type
 		static const QColor RowColors[3];
 
-		static bool has_csv_clipboard;
-		
 		CsvLoadWidget *csv_load_wgt;
 
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu, truncate_menu;
-		
+		QMenu fks_menu, copy_menu, truncate_menu, paste_menu;
+
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
 		
@@ -117,10 +115,10 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
 
-		static void setHasCsvClipboard(bool value);
-
 	private slots:
 		void reject(void);
+
+		void clearItemsText(void);
 
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
@@ -180,7 +178,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void swapColumns(void);
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
-		void loadDataFromCsv(bool load_from_clipboard = false);
+		void loadDataFromCsv(bool load_from_clipboard = false, bool force_csv_parsing = false);
 
 		//! \brief Browse the referenced table data using the selected row in the results grid
 		void browseReferencedTable(void);
@@ -193,6 +191,12 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		//! \brief Display or hides a column when the related item is interacted in the column list at filter section
 		void toggleColumnDisplay(QListWidgetItem *item);
+
+		//! \brief Opens a new data manipulation windows
+		void openNewWindow(void);
+
+		//! \brief Shows the popup menu over the current selection
+		void showPopupMenu(void);
 };
 
 #endif

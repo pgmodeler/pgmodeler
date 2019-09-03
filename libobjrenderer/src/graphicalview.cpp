@@ -40,7 +40,7 @@ void GraphicalView::configureObject(void)
 		return;
 	}
 
-	View *view=dynamic_cast<View *>(this->getSourceObject());
+	View *view=dynamic_cast<View *>(this->getUnderlyingObject());
 	int i = 0, count = 0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
 	QPen pen;
@@ -59,6 +59,9 @@ void GraphicalView::configureObject(void)
 	Tag *tag=view->getTag();
 	CollapseMode collapse_mode = view->getCollapseMode();
 	bool has_col_pag = false, has_ext_pag = false;
+
+	// Clear the selected children objects vector since we'll (re)configure the whole view
+	sel_child_objs.clear();
 
 	//Configures the view's title
 	title->configureObject(view);

@@ -218,6 +218,10 @@ class Catalog {
 		//! \brief Parse the raw commands of a rule retrieved by the catalog and returns only the relevant parts
 		static QStringList parseRuleCommands(const QString &cmd);
 
+		/*! \brief Parse a set of expressions related to an index returned by the pg_get_expr(oid) and separates
+		 * them as a string list. */
+		static QStringList parseIndexExpressions(const QString &expr);
+
 		/*! \brief Enable/disable the use of cached catalog queries. When enabled, the schema files read for the first are stored in memory
 		so in the next time the same catalog query must be used it'll be read right from the memory and not from the disk anymore */
 		static void enableCachedQueries(bool value);

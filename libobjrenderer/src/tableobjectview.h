@@ -37,6 +37,8 @@ class TableObjectView: public BaseObjectView
 		//! \brief Table object descriptor
 		QGraphicsItem *descriptor;
 
+		bool fake_selection;
+
 		//! \brief Labels used to show objects informatoni (name, type, constraints/aliases)
 		QGraphicsSimpleTextItem *lables[3];
 
@@ -92,12 +94,14 @@ class TableObjectView: public BaseObjectView
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
 
+		void setFakeSelection(bool value);
+		bool hasFakeSelection(void);
+
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 		virtual QRectF boundingRect(void) const;
-
+		virtual void configureObjectSelection(void);
 		void configureObjectShadow(void) = delete;
-		void configureObjectSelection(void) = delete;
 };
 
 #endif

@@ -40,6 +40,7 @@ namespace GlobalAttributes {
 	extern const QString
 	PgModelerAppName,
 	PgModelerURI,
+    PgModelerReverseURI,
 	PgModelerVersion,
 	PgModelerBuildNumber,
 	PgModelerSite,

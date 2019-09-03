@@ -181,7 +181,7 @@ void ObjectFinderWidget::selectObjects(void)
 
 		if(graph_obj)
 		{
-			obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+			obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
 			if(obj_view)
 			{
@@ -295,7 +295,7 @@ void ObjectFinderWidget::selectObject(void)
 
 			if(graph_obj)
 			{
-				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
 				if(obj)
 				{

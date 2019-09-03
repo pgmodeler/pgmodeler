@@ -1486,8 +1486,8 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 																		{QString("bit varying"),QString("varbit")},
 																		{QString("oid"),QString("regproc"),QString("regprocedure"),
 																		 QString("regoper"),QString("regoperator"),QString("regclass"),
-																		 QString("regtype"),QString("regconfig"),QString("regdictionary")}};
-
+																		 QString("regtype"),QString("regconfig"),QString("regdictionary")},
+																		{QString("timestamptz"),QString("timestamp with time zone")}};
 
 	//If the types are equal there is no need to perform further operations
 	if(*this==type)

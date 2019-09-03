@@ -247,7 +247,7 @@ void ObjectsScene::setActiveLayers(QList<unsigned> layers_idxs)
 				if(!obj_view->isVisible() && is_in_layer)
 				{
 					if(!sch_view ||
-						 (sch_view && dynamic_cast<Schema *>(sch_view->getSourceObject())->isRectVisible()))
+						 (sch_view && dynamic_cast<Schema *>(sch_view->getUnderlyingObject())->isRectVisible()))
 					 obj_view->setVisible(true);
 				}
 				else if(obj_view->isVisible() && !is_in_layer)
@@ -391,7 +391,7 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 
 			if(obj_view && obj_view->isVisible())
 			{
-				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getSourceObject());
+				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
 
 				if(graph_obj)
 				{
@@ -508,9 +508,9 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 
 		object=dynamic_cast<BaseObjectView *>(items.front());
 
-		if(object && object->getSourceObject())
+		if(object && object->getUnderlyingObject())
 		{
-			base_obj=dynamic_cast<BaseGraphicObject *>(object->getSourceObject());
+			base_obj=dynamic_cast<BaseGraphicObject *>(object->getUnderlyingObject());
 
 			if(!value && base_obj &&
 					base_obj->getObjectType()!=ObjectType::Relationship &&
@@ -630,18 +630,30 @@ void ObjectsScene::configurePrinter(QPrinter *printer, const QSizeF &custom_size
 	custom_paper_size=orig_custom_sz;
 }
 
-void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
+void ObjectsScene::handlePopupMenuRequested(TableObject *child_obj)
 {
-	/* Treats the TableView::s_childObjectSelect() only when there is no
-		other object selected on the scene */
-	if(this->selectedItems().isEmpty())
-		emit s_popupMenuRequested(child_obj);
+	emit s_popupMenuRequested(child_obj);
 }
 
-void ObjectsScene::emitObjectSelection(BaseGraphicObject *object, bool selected)
+void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selected)
 {
 	if(object)
 		emit s_objectSelected(object, selected);
+}
+
+void ObjectsScene::handleChildrenSelectionChanged(void)
+{
+	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
+
+	if(!tab_view)
+		return;
+
+	if(tab_view->getSelectedChidren().empty())
+		tabs_sel_children.removeAll(tab_view);
+	else if(!tabs_sel_children.contains(tab_view))
+		tabs_sel_children.append(tab_view);
+
+	emit s_childrenSelectionChanged();
 }
 
 void ObjectsScene::addItem(QGraphicsItem *item)
@@ -656,16 +668,18 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 			connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)), this, SIGNAL(s_objectModified(BaseGraphicObject*)));
 		else if(tab)
 		{
-			connect(tab, SIGNAL(s_childObjectSelected(TableObject*)), this, SLOT(emitChildObjectSelection(TableObject*)));
+			connect(tab, SIGNAL(s_popupMenuRequested(TableObject*)), this, SLOT(handlePopupMenuRequested(TableObject*)));
+			connect(tab, SIGNAL(s_childrenSelectionChanged()), this, SLOT(handleChildrenSelectionChanged()));
 			connect(tab, SIGNAL(s_collapseModeChanged()), this, SIGNAL(s_collapseModeChanged()));
 			connect(tab, SIGNAL(s_paginationToggled()), this, SIGNAL(s_paginationToggled()));
 			connect(tab, SIGNAL(s_currentPageChanged()), this, SIGNAL(s_currentPageChanged()));
+			connect(tab, SIGNAL(s_sceneClearRequested()), this, SLOT(clearSelection()));
 		}
 
 		if(obj)
 		{
 			obj->setVisible(isLayerActive(obj->getLayer()));
-			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
 		}
 
 		QGraphicsScene::addItem(item);
@@ -689,8 +703,8 @@ void ObjectsScene::removeItem(QGraphicsItem *item)
 		if(object)
 		{
 			disconnect(object, nullptr, this, nullptr);
-			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr);
-			disconnect(dynamic_cast<BaseGraphicObject*>(object->getSourceObject()), nullptr, object, nullptr);
+			disconnect(object, nullptr, dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr);
+			disconnect(dynamic_cast<BaseGraphicObject*>(object->getUnderlyingObject()), nullptr, object, nullptr);
 			removed_objs.push_back(object);
 		}
 	}
@@ -718,7 +732,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
 
 		if(obj)
-			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
+			emit s_objectDoubleClicked(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject()));
 	}
 	else
 		//Emit a signal indicating that no object was selected
@@ -728,8 +742,8 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Gets the item at mouse position
-	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y(), QTransform());
-	bool is_deselection = !this->selectedItems().isEmpty() && !this->itemAt(event->scenePos(), QTransform());
+	QGraphicsItem* item=this->itemAt(event->scenePos(), QTransform());
+	bool is_deselection = !this->selectedItems().isEmpty() && !item;
 
 	if(selectedItems().empty())
 		emit s_objectsScenePressed(event->buttons());
@@ -743,6 +757,12 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 	if(is_deselection)
 		this->blockItemsSignals(true);
+
+	/* If we're handling a deselection of the user selected another object whitout being holding Control
+	 * we need to deselect the tables' children objects too */
+	if(is_deselection || (event->buttons()==Qt::LeftButton && (event->modifiers() & Qt::ControlModifier) != Qt::ControlModifier))
+		//Forcing the clear on all selected table children object
+		clearTablesChildrenSelection();
 
 	QGraphicsScene::mousePressEvent(event);
 
@@ -1093,7 +1113,6 @@ void ObjectsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 {
-	unsigned i, count;
 	QList<QGraphicsItem *> items=this->selectedItems(), rel_list;
 	double x1,y1,x2,y2, dx, dy;
 	QRectF rect;
@@ -1106,6 +1125,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	RelationshipView *rel=nullptr;
 	BaseObjectView *obj_view=nullptr;
 	BaseTableView *tab_view=nullptr;
+	TableObjectView *tab_obj_view=nullptr;
 	QSet<BaseObjectView *> tables;
 
 	//Gathering the relationships inside the selected schemsa in order to move their points too
@@ -1114,6 +1134,11 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		obj_view=dynamic_cast<BaseObjectView *>(item);
 		sch_view=dynamic_cast<SchemaView *>(item);
 		tab_view=dynamic_cast<BaseTableView *>(item);
+		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+
+		// Ignoring table objects items
+		if(tab_obj_view)
+			continue;
 
 		if(obj_view)
 			obj_view->togglePlaceholder(false);
@@ -1123,7 +1148,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		else if(sch_view)
 		{
 			//Get the schema object
-			Schema *schema=dynamic_cast<Schema *>(sch_view->getSourceObject());
+			Schema *schema=dynamic_cast<Schema *>(sch_view->getUnderlyingObject());
 
 			if(!schema->isProtected())
 			{
@@ -1138,9 +1163,9 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 
 					/* If the relationship contains points and it is not selected then it will be included on the list
 						 in order to move their custom line points */
-					if(!dynamic_cast<RelationshipView *>(base_rel->getReceiverObject())->isSelected() &&
+					if(!dynamic_cast<RelationshipView *>(base_rel->getOverlyingObject())->isSelected() &&
 							!base_rel->getPoints().empty())
-						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getReceiverObject()));
+						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
 				tables.unite(sch_view->getChildren().toSet());
@@ -1159,33 +1184,36 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	dx=pnt_end.x() - sel_ini_pnt.x();
 	dy=pnt_end.y() - sel_ini_pnt.y();
 
-	count=items.size();
-	for(i=0; i < count; i++)
+	for(auto &item : items)
 	{
-		rel=dynamic_cast<RelationshipView *>(items[i]);
+		// Ignoring table objects items
+		tab_obj_view=dynamic_cast<TableObjectView *>(item);
+		if(tab_obj_view) continue;
+
+		rel=dynamic_cast<RelationshipView *>(item);
 
 		if(!rel)
 		{
 			if(align_objs_grid)
-				items[i]->setPos(alignPointToGrid(items[i]->pos()));
+				item->setPos(alignPointToGrid(item->pos()));
 			else
 			{
-				QPointF p=items[i]->pos();
+				QPointF p=item->pos();
 				if(p.x() < 0) p.setX(0);
 				if(p.y() < 0) p.setY(0);
-				items[i]->setPos(p);
+				item->setPos(p);
 			}
 
-			rect.setTopLeft(items[i]->pos());
-			rect.setSize(items[i]->boundingRect().size());
+			rect.setTopLeft(item->pos());
+			rect.setSize(item->boundingRect().size());
 		}
 		else
 		{
 			/* If the relationship has points added to the line is necessary to move the points
 				 too. Since relationships cannot be moved naturally (by user) this will be done
 				 by the scene. NOTE: this operation is done ONLY WHEN there is more than one object selected! */
-			points=rel->getSourceObject()->getPoints();
-			if(count > 1 && !points.empty())
+			points=rel->getUnderlyingObject()->getPoints();
+			if(items.size() > 1 && !points.empty())
 			{
 				itr=points.begin();
 				while(itr!=points.end())
@@ -1202,7 +1230,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 				}
 
 				//Assing the new points to relationship and reconfigure its line
-				rel->getSourceObject()->setPoints(points);
+				rel->getUnderlyingObject()->setPoints(points);
 				rel->configureLine();
 			}
 
@@ -1237,7 +1265,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 		if(align_objs_grid)
 		{
 			tab_view->setPos(alignPointToGrid(tab_view->pos()));
-			schemas.insert(dynamic_cast<Schema *>(tab_view->getSourceObject()->getSchema()));
+			schemas.insert(dynamic_cast<Schema *>(tab_view->getUnderlyingObject()->getSchema()));
 		}
 
 		if(BaseObjectView::isPlaceholderEnabled())
@@ -1277,14 +1305,14 @@ void ObjectsScene::alignObjectsToGrid(void)
 			else if(rel)
 			{
 				//Align the relationship points
-				points=rel->getSourceObject()->getPoints();
+				points=rel->getUnderlyingObject()->getPoints();
 				count1=points.size();
 				for(i1=0; i1 < count1; i1++)
 					points[i1]=this->alignPointToGrid(points[i1]);
 
 				if(count1 > 0)
 				{
-					rel->getSourceObject()->setPoints(points);
+					rel->getUnderlyingObject()->setPoints(points);
 					rel->configureLine();
 				}
 
@@ -1300,7 +1328,7 @@ void ObjectsScene::alignObjectsToGrid(void)
 			else if(!dynamic_cast<SchemaView *>(items[i]))
 				items[i]->setPos(this->alignPointToGrid(items[i]->pos()));
 			else
-				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getSourceObject()));
+				schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getUnderlyingObject()));
 		}
 	}
 
@@ -1316,6 +1344,20 @@ void ObjectsScene::update(void)
 {
 	this->setBackgroundBrush(grid);
 	QGraphicsScene::update(this->sceneRect());
+}
+
+void ObjectsScene::clearTablesChildrenSelection(void)
+{
+	for(auto &tab_obj_view : tabs_sel_children)
+		tab_obj_view->clearChildrenSelection();
+
+	tabs_sel_children.clear();
+}
+
+void ObjectsScene::clearSelection(void)
+{
+	clearTablesChildrenSelection();
+	QGraphicsScene::clearSelection();
 }
 
 vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt)
@@ -1390,4 +1432,25 @@ bool ObjectsScene::isRelationshipLineVisible(void)
 bool ObjectsScene::isMovingObjects(void)
 {
 	return(moving_objs);
+}
+
+QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
+{
+	if(tabs_sel_children.empty())
+		return(QGraphicsScene::selectedItems());
+
+	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
+
+	for(auto &tab_view :tabs_sel_children)
+	{
+		for(auto &tab_obj : tab_view->getSelectedChidren())
+			items.append(tab_obj);
+	}
+
+	return(items);
+}
+
+bool ObjectsScene::hasOnlyTableChildrenSelection() const
+{
+	return(QGraphicsScene::selectedItems().isEmpty() && !tabs_sel_children.isEmpty());
 }

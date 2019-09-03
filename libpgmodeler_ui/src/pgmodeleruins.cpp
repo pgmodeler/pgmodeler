@@ -2,6 +2,7 @@
 #include "messagebox.h"
 #include "databasemodel.h"
 #include <QLabel>
+#include <QGraphicsDropShadowEffect>
 #include "numberedtexteditor.h"
 #include <QScreen>
 #include <QDesktopWidget>
@@ -50,6 +51,8 @@ namespace PgModelerUiNs {
 			label->setUpdatesEnabled(true);
 			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
+
+			item->setSizeHint(0, QSize(label->width(), label->minimumHeight()));
 			output_trw->setItemWidget(item, 0, label);
 		}
 
@@ -75,13 +78,22 @@ namespace PgModelerUiNs {
 			item->setText(text);
 		else
 		{
-			QLabel *label=new QLabel(text);
+			QLabel *label=new QLabel;
 			int txt_height = 0;
 
 			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
 
 			if(txt_height == 0)
-				txt_height = output_lst->fontMetrics().height();
+				txt_height = output_lst->fontMetrics().height() * 1.25;
+			else
+				txt_height *= 1.05;
+
+			label->setUpdatesEnabled(false);
+			label->setTextFormat(Qt::AutoText);
+			label->setText(text);
+			label->setWordWrap(true);
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			label->setUpdatesEnabled(true);
 
 			item->setSizeHint(QSize(output_lst->width(), txt_height));
 			output_lst->setItemWidget(item, label);
@@ -366,5 +378,17 @@ namespace PgModelerUiNs {
 				}
 			}
 		}
+	}
+
+	void createDropShadow(QToolButton *btn, int x_offset, int y_offset, int radius)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(btn);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(QColor(0,0,0, 100));
+		btn->setGraphicsEffect(shadow);
 	}
 }

@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)));
+		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)), this);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
@@ -365,7 +365,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			btn->setGraphicsEffect(createDropShadow(btn));
+			PgModelerUiNs::createDropShadow(btn);
 		}
 	}
 
@@ -565,8 +565,10 @@ void MainWindow::stopTimers(bool value)
 	}
 	else
 	{
-		tmpmodel_save_timer.start();
-		model_save_timer.start();
+        tmpmodel_save_timer.start();
+
+        if(model_save_timer.interval() < InfinityInterval)
+            model_save_timer.start();
 	}
 }
 
@@ -718,20 +720,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			storeDockWidgetsSettings();
 
 			conf_wgt->saveConfiguration();
-			restoration_form->removeTemporaryModels();
-
-			//Remove import log files
-			QDir dir(GlobalAttributes::TemporaryDir);
-			QStringList log_files;
-
-			dir.setNameFilters({QString("*.log")});
-			log_files=dir.entryList(QDir::Files);
-
-			while(!log_files.isEmpty())
-			{
-				dir.remove(log_files.front());
-				log_files.pop_front();
-			}
+			restoration_form->removeTemporaryFiles();
 
 			SQLExecutionWidget::saveSQLHistory();
 			qApp->quit();
@@ -892,7 +881,7 @@ void MainWindow::addModel(const QString &filename)
 		obj_name=model_tab->db_model->getName();
 
 		models_tbw->blockSignals(true);
-        models_tbw->setUpdatesEnabled(false);
+		models_tbw->setUpdatesEnabled(false);
 		models_tbw->addTab(model_tab, obj_name);
 		models_tbw->setCurrentIndex(models_tbw->count()-1);
 		models_tbw->blockSignals(false);
@@ -936,19 +925,20 @@ void MainWindow::addModel(const QString &filename)
 		}
 
 		model_nav_wgt->addModel(model_tab);
-        models_tbw->setUpdatesEnabled(true);
+		models_tbw->setUpdatesEnabled(true);
 		models_tbw->setVisible(true);
 		setCurrentModel();
 
-        if(start_timers)
+		if(start_timers)
 		{
-            if(model_save_timer.interval() > 0)
+			if(model_save_timer.interval() > 0)
 				model_save_timer.start();
 
 			tmpmodel_save_timer.start();
-        }
+		}
 
 		model_tab->setModified(false);
+		action_save_model->setEnabled(false);
 
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
@@ -1084,7 +1074,7 @@ void MainWindow::setCurrentModel(void)
 			font = btn->font();
 			font.setBold(true);
 			btn->setFont(font);
-			btn->setGraphicsEffect(createDropShadow(tool_btn));
+			PgModelerUiNs::createDropShadow(btn);
 		}
 
 		edit_menu->addAction(current_model->action_copy);
@@ -1303,8 +1293,8 @@ void MainWindow::applyConfigurations(void)
 		if(!conf_wgt->autosave_interv_chk->isChecked())
 		{
 			//Stop the save timer
-			model_save_timer.stop();
-			model_save_timer.setInterval(0);
+            model_save_timer.setInterval(InfinityInterval);
+            model_save_timer.stop();
 		}
 		else
 		{
@@ -1313,7 +1303,7 @@ void MainWindow::applyConfigurations(void)
 		}
 
 		//Temporary models are saved every five minutes
-		tmpmodel_save_timer.setInterval(model_save_timer.interval() != 0 ? model_save_timer.interval()/2 : 300000);
+        tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1433,6 +1423,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			}
 
 			stopTimers(false);
+			action_save_model->setEnabled(false);
 		}
 	}
 	catch(Exception &e)
@@ -1534,6 +1525,10 @@ void MainWindow::diffModelDatabase(void)
 
 		stopTimers(true);
 		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_connectionsUpdateRequest, [&](){ updateConnections(true); });
+		connect(&modeldb_diff_frm, &ModelDatabaseDiffForm::s_loadDiffInSQLTool, [&](QString conn_id, QString database, QString filename){
+			action_manage->toggle();
+			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
+		});
 
 		PgModelerUiNs::resizeDialog(&modeldb_diff_frm);
 		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
@@ -1682,7 +1677,7 @@ void MainWindow::updateToolsState(bool model_closed)
 
 	action_print->setEnabled(enabled);
 	action_save_as->setEnabled(enabled);
-	action_save_model->setEnabled(enabled);
+	action_save_model->setEnabled(!model_closed && current_model && current_model->isModified());
 	action_save_all->setEnabled(enabled);
 	action_export->setEnabled(enabled);
 	action_close_model->setEnabled(enabled);
@@ -1804,19 +1799,6 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 
 		widget->move(pos);
 	}
-}
-
-QGraphicsDropShadowEffect *MainWindow::createDropShadow(QToolButton *btn)
-{
-	QGraphicsDropShadowEffect *shadow=nullptr;
-
-	shadow=new QGraphicsDropShadowEffect(btn);
-	shadow->setXOffset(2);
-	shadow->setYOffset(2);
-	shadow->setBlurRadius(5);
-	shadow->setColor(QColor(0,0,0, 100));
-
-	return(shadow);
 }
 
 void MainWindow::configureSamplesMenu(void)
@@ -2086,3 +2068,4 @@ void MainWindow::toggleLayersWidget(bool show)
 									 tb_pos.y() - layers_wgt->height() * 0.80);
 	layers_wgt->setVisible(show);
 }
+

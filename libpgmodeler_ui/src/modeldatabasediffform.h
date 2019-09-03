@@ -145,11 +145,17 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void diffModels(void);
 		void exportDiff(bool confirm=true);
 		void filterDiffInfos(void);
+		void loadDiffInSQLTool(void);
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
 		void s_connectionsUpdateRequest(void);
+
+		/*! \brief This signal is emitted whenever the user wants to load the generated diff in the sql tool
+		 * The signal contains the connection id, the database name and the temp filename that is generated containing
+		 * the commands to be loaded */
+		void s_loadDiffInSQLTool(QString conn_id, QString database, QString sql_file);
 };
 
 #endif

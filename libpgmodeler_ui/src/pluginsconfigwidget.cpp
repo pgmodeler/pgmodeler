@@ -147,11 +147,12 @@ void PluginsConfigWidget::loadConfiguration(void)
 		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
-void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot)
+void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot, QMainWindow *main_window)
 {
 	if((toolbar || menu) && slot)
 	{
 		vector<QAction *>::iterator itr=plugins_actions.begin();
+		PgModelerPlugin *plugin = nullptr;
 
 		while(itr!=plugins_actions.end())
 		{
@@ -160,6 +161,13 @@ void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, 
 
 			if(menu)
 				menu->addAction(*itr);
+
+			// Exposing the main window instance to the plugin
+			if(main_window)
+			{
+				plugin =reinterpret_cast<PgModelerPlugin *>((*itr)->data().value<void *>());
+				plugin->setMainWindow(main_window);
+			}
 
 			connect(*itr, SIGNAL(triggered(void)), recv, slot);
 			itr++;

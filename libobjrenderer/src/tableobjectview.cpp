@@ -32,37 +32,36 @@ const QString TableObjectView::ConstrDelimEnd=QString("»");
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
 	descriptor=nullptr;
+	fake_selection=false;
 
 	for(unsigned i=0; i < 3; i++)
-	{
 		lables[i]=new QGraphicsSimpleTextItem;
-		//this->addToGroup(lables[i]);
-	}
+
+	if(obj_selection)
+		delete(obj_selection);
 }
 
 TableObjectView::~TableObjectView(void)
 {
-	//this->removeFromGroup(descriptor);
 	delete(descriptor);
 
 	for(unsigned i=0; i < 3; i++)
-	{
-		//this->removeFromGroup(lables[i]);
 		delete(lables[i]);
-	}
+
+	delete(obj_selection);
 }
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
-	Column *column=dynamic_cast<Column *>(this->getSourceObject());
+	Column *column=dynamic_cast<Column *>(this->getUnderlyingObject());
 	bool ellipse_desc=false;
 	double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 
 	//Based upon the source object type the descriptor is allocated
-	if(this->getSourceObject())
-		obj_type=this->getSourceObject()->getObjectType();
+	if(this->getUnderlyingObject())
+		obj_type=this->getUnderlyingObject()->getObjectType();
 
 	/* Elliptical descriptor is used to columns (with or without not-null constraint),
 		for other object types, polygonal descriptor is usded */
@@ -71,7 +70,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		//this->removeFromGroup(descriptor);
 		delete(descriptor);
 		descriptor=nullptr;
 	}
@@ -149,7 +147,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	}
 	else if(obj_type != ObjectType::BaseObject)
 	{
-		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
+		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getUnderlyingObject());
 		QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
 		QPolygonF pol;
 
@@ -181,12 +179,12 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 void TableObjectView::configureObject(void)
 {
-	if(this->getSourceObject())
+	if(this->getUnderlyingObject())
 	{
 		QTextCharFormat fmt;
 		double px = 0;
 		QString str_constr, tooltip, atribs_tip;
-		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
+		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getUnderlyingObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::Null;
 		bool sql_disabled=false;
@@ -194,6 +192,7 @@ void TableObjectView::configureObject(void)
 		tooltip=tab_obj->getName() + QString(" (") + tab_obj->getTypeName() + QString(")");
 		tooltip+=QString("\nId: %1").arg(tab_obj->getObjectId());
 		sql_disabled=tab_obj->isSQLDisabled();
+		fake_selection=false;
 
 		if(column)
 		{
@@ -645,6 +644,60 @@ QString TableObjectView::getConstraintString(Column *column)
 	else return(QString());
 }
 
+void TableObjectView::setFakeSelection(bool value)
+{
+	// Fake selection is used only by instances that own and underlying object (column, constratin, trigger,etc)
+	if(!this->getUnderlyingObject())
+		return;
+
+	fake_selection = value;
+
+	if(value)
+	{
+		configureObjectSelection();
+		sel_order=++BaseObjectView::global_sel_order;
+	}
+	else
+		sel_order = 0;
+
+	update();
+}
+
+bool TableObjectView::hasFakeSelection(void)
+{
+	return(fake_selection);
+}
+
+void TableObjectView::configureObjectSelection(void)
+{
+	QGraphicsItem *parent = this->parentItem();
+	RoundedRectItem *rect_item=nullptr;
+	QRectF rect = this->boundingRect();
+
+	/* In order to avoid unnecessary memory usage by items that eventually will
+	 * get selection we allocate the object selection rectangle only if the object
+	 * itself is selected by the user, and it'll be allocated until the object's destruction */
+	if(!obj_selection)
+		obj_selection=new RoundedRectItem;
+
+	rect_item = dynamic_cast<RoundedRectItem *>(obj_selection);
+	rect.setX(0);
+	rect.setY(0);
+	rect.setHeight(rect.height() - VertSpacing);
+
+	// An small hack to capture the width of the table in which the item is child of
+	if(parent->parentItem())
+		rect.setWidth(parent->parentItem()->boundingRect().width() - (2.5 * HorizSpacing));
+	else
+		rect.setWidth(rect.width() - (3.5 * HorizSpacing));
+
+	rect_item->setBorderRadius(2);
+	rect_item->setRect(rect);
+	rect_item->setPos(0, VertSpacing/2);
+	rect_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	rect_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+}
+
 void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	painter->save();
@@ -661,6 +714,12 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 		painter->translate(lables[i]->pos());
 		lables[i]->paint(painter, option, widget);
 		painter->restore();
+	}
+
+	if(fake_selection)
+	{
+		painter->translate(obj_selection->pos());
+		obj_selection->paint(painter, option, widget);
 	}
 }
 

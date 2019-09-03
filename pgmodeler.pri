@@ -17,6 +17,9 @@ MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 
+# Setting up the flag passed to compiler to indicate a snapshot build
+defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
+
 # Setting up the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
 

@@ -42,6 +42,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		vector<BaseObjectView *> removed_objs;
 
+		//! \brief Holds the tables/views which have selected children objects
+		QList<BaseTableView *> tabs_sel_children;
+
 		//! \brief Indicates if the corner move is enabled for the scene
 		static bool corner_move,
 
@@ -124,6 +127,8 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Formats the name of the layer removing any invalid chars and doing the desambiguation in case the name already exists
 		QString formatLayerName(const QString &name);
+
+		void clearTablesChildrenSelection(void);
 
 	protected:
 		//! \brief Brush used to draw the grid over the scene
@@ -235,9 +240,13 @@ class ObjectsScene: public QGraphicsScene {
 		bool isRelationshipLineVisible(void);
 		bool isMovingObjects(void);
 
+		QList<QGraphicsItem *> selectedItems(void) const;
+		bool hasOnlyTableChildrenSelection(void) const;
+
 	public slots:
 		void alignObjectsToGrid(void);
 		void update(void);
+		void clearSelection(void);
 
 		//! \brief Toggles the object range selection
 		void enableRangeSelection(bool value);
@@ -251,10 +260,13 @@ class ObjectsScene: public QGraphicsScene {
 		void moveObjectScene(void);
 
 		//! \brief Handles and redirects the signal emitted by the selected child object
-		void emitChildObjectSelection(TableObject *child_obj);
+		void handlePopupMenuRequested(TableObject *child_obj);
 
 		//! \brief Handles and redirects the signal emitted by the selected object
-		void emitObjectSelection(BaseGraphicObject *object, bool selected);
+		void handleObjectSelection(BaseGraphicObject *object, bool selected);
+
+		//! \brief Handles the tables children objects selection changes
+		void handleChildrenSelectionChanged(void);
 
 	signals:
 		//! \brief Signal emitted when the user start or finalizes a object movement.
@@ -298,6 +310,9 @@ class ObjectsScene: public QGraphicsScene {
 
 		//! \brief Signal emitted when objects are moved from a layer to another
 		void s_objectsMovedLayer(void);
+
+		//! \brief Signal emitted when tables children objects have their selection statuses changed
+		void s_childrenSelectionChanged(void);
 
 		friend class ModelWidget;
 };
