@@ -1813,7 +1813,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			cols=Catalog::parseArrayValues(attribs[Attributes::PartKeyCols]);
 			collations=Catalog::parseArrayValues(attribs[Attributes::PartKeyColls]);
 			opclasses=Catalog::parseArrayValues(attribs[Attributes::PartKeyOpCls]);
-			exprs = parseIndexExpressions(attribs[Attributes::PartKeyExprs]);
+			exprs = Catalog::parseIndexExpressions(attribs[Attributes::PartKeyExprs]);
 
 			for(int i = 0; i < cols.size(); i++)
 			{
@@ -2023,51 +2023,6 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	}
 }
 
-QStringList DatabaseImportHelper::parseIndexExpressions(const QString &expr)
-{
-	int open_paren = 0, close_paren = 0, pos = 0;
-	QStringList expressions;
-	QChar chr;
-	QString word;
-	bool open_apos = false;
-
-	if(!expr.isEmpty())
-	{
-		while(pos < expr.length())
-		{
-			chr = expr[pos++];
-			word += chr;
-
-			if(chr == QChar('\''))
-				open_apos = !open_apos;
-
-			if(!open_apos && chr == QChar('('))
-				open_paren++;
-			else if(!open_apos && chr == QChar(')'))
-				close_paren++;
-
-			if(chr == QChar(',') || pos == expr.length())
-			{
-				if(open_paren == close_paren)
-				{
-					if(word.endsWith(QChar(',')))
-						word.remove(word.length() - 1, 1);
-
-					if(word.contains('(') && word.contains(')'))
-						expressions.push_back(word.trimmed());
-					else
-						expressions.push_back(word);
-
-					word.clear();
-					open_paren = close_paren = 0;
-				}
-			}
-		}
-	}
-
-	return(expressions);
-}
-
 void DatabaseImportHelper::createIndex(attribs_map &attribs)
 {
 	try
@@ -2099,7 +2054,7 @@ void DatabaseImportHelper::createIndex(attribs_map &attribs)
 		cols=Catalog::parseArrayValues(attribs[Attributes::Columns]);
 		collations=Catalog::parseArrayValues(attribs[Attributes::Collations]);
 		opclasses=Catalog::parseArrayValues(attribs[Attributes::OpClasses]);
-		exprs = parseIndexExpressions(attribs[Attributes::Expressions]);
+		exprs = Catalog::parseIndexExpressions(attribs[Attributes::Expressions]);
 
 		for(i=0; i < cols.size(); i++)
 		{

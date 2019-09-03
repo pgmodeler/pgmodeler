@@ -24,5 +24,6 @@
     %if {check-exp} %then
         $br $tb [WITH CHECK (] {check-exp} [)]
     %end
-    {ddl-end}
+    
+    ; $br [-- ddl-end --] $br
 %end  

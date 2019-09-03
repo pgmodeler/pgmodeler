@@ -351,7 +351,7 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(this->indexing_type==IndexingType::Gist)
 		attributes[Attributes::StorageParams]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
 
-	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
+	if(this->indexing_type!=IndexingType::Gin && fill_factor >= 10)
 	{
 		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 		attributes[Attributes::StorageParams]=Attributes::True;
@@ -389,7 +389,8 @@ QString Index::getAlterDefinition(BaseObject *object)
 
 		if(this->indexing_type==index->indexing_type)
 		{
-			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
+			if(this->indexing_type != IndexingType::Gin &&
+				 this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
 				attribs[Attributes::Factor]=QString::number(index->fill_factor);
 
 			if(this->indexing_type==IndexingType::Gin &&

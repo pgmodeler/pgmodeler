@@ -25,6 +25,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 	QFont font;
 	QWidget *widget=nullptr;
 
+	main_window = nullptr;
 	plugin_info_frm=new BaseForm;
 	gridLayout=new QGridLayout;
 
@@ -89,4 +90,9 @@ void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &v
 
 	ico.load(ico_filename);
 	icon_lbl->setPixmap(ico);
+}
+
+void PgModelerPlugin::setMainWindow(QMainWindow *main_window)
+{
+	this->main_window = main_window;
 }

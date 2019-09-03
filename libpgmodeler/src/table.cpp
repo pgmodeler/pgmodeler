@@ -1981,7 +1981,11 @@ QString Table::getInitialDataCommands(void)
 
 			curr_col++;
 		}
+		
+		auto cmd = QString("COPY %1 (%2) FROM stdin;").arg( getSignature() ).arg( selected_cols.join(", ") );
 
+        commands.append( cmd );
+        
 		for(QString buf_row : buffer)
 		{
 			curr_col=0;
@@ -1998,6 +2002,8 @@ QString Table::getInitialDataCommands(void)
 			commands.append(createInsertCommand(selected_cols, col_values));
 			col_values.clear();
 		}
+		
+		commands.append("\\.");
 
 		return(commands.join('\n'));
 	}
@@ -2007,7 +2013,7 @@ QString Table::getInitialDataCommands(void)
 
 QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values)
 {
-	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
+	QString fmt_cmd, insert_cmd = QString("%1");
 	QStringList val_list, col_list;
 	int curr_col=0;
 
@@ -2016,10 +2022,10 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 
 	for(QString value : values)
 	{
-		//Empty values as considered as DEFAULT
+		//Empty values as considered as NULL
 		if(value.isEmpty())
 		{
-			value=QString("DEFAULT");
+			value=QString("\\N");
 		}
 		//Unescaped values will not be enclosed in quotes
 		else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
@@ -2034,7 +2040,7 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
-			value=QString("E'") + value + QString("'");
+			//value=QString("E'") + value + QString("'");
 		}
 
 		val_list.push_back(value);
@@ -2049,11 +2055,10 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
-				val_list.append(QString("DEFAULT"));
+				val_list.append(QString("\\N"));
 		}
 
-		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
-									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken);
+		fmt_cmd=insert_cmd.arg(val_list.join("\t"));
 	}
 
 	return(fmt_cmd);

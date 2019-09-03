@@ -60,7 +60,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
-		ManageView=2;
+        ManageView=2,
+        InfinityInterval = INT_MAX;
 
 		static bool confirm_validation;
 
@@ -151,9 +152,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
-
-		//! \brief Creates drop shadown on a tool button that represents an QAction
-		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 		void configureSamplesMenu(void);
 

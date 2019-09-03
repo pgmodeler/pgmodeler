@@ -169,7 +169,7 @@ class RelationshipView: public BaseObjectView {
 		QRectF __boundingRect(void);
 
 		//! \brief Returns the relationship that generates the graphical representation
-		BaseRelationship *getSourceObject(void);
+		BaseRelationship *getUnderlyingObject(void);
 
 		//! \brief Hides the relationship's name label. This applies to all relationship instances
 		static void setHideNameLabel(bool value);

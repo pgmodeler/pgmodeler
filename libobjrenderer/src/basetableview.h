@@ -38,10 +38,18 @@ class BaseTableView: public BaseObjectView {
 	private:
 		Q_OBJECT
 
+		/*! \brief This timer is used to control the selection enabling of the object
+		 * in mouse presse event in order to avoid select it instead of a child.
+		 * See mousePressEvent() for details */
+		QTimer sel_enabler_timer;
+
 		/*! \brief Stores the references to the relationships connected to this table. */
 		vector<BaseRelationship *> connected_rels;
 
-	protected:
+	protected:		
+		//! \brief Stores the selected child objects in order to retrieve them in ObjectScene/ModelWidget
+		QList<TableObjectView *> sel_child_objs;
+
 		/*! \brief This attributes indicates that the object's geometry update is pending demanding a
 		 * call to configureObject(). This attribute is set to true only when the objects is invisible
 		 * the the configureObject is called. Once the object gets visible again this attribute is set
@@ -73,7 +81,7 @@ class BaseTableView: public BaseObjectView {
 		TextPolygonItem *tag_item;
 
 		//! \brief Stores the reference to the child object currently selected on table
-		TableObject *sel_child_obj;
+		TableObjectView *sel_child_obj_view;
 
 		//! \brief Table title
 		TableTitleView *title;
@@ -159,6 +167,12 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Configures the shadow for the table
 		void configureObjectShadow(void);
 
+		//! \brief Returns a list of selected children objects
+		QList<TableObjectView *> getSelectedChidren(void);
+
+		//! \brief Clear the selection over all selected children
+		void clearChildrenSelection(void);
+
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */
@@ -178,8 +192,11 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Signal emitted to indicate that the relationships attached to the table need to be updated
 		void s_relUpdateRequest(void);
 
-		//! \brief Signal emitted when the user right-click a focused table child object
-		void s_childObjectSelected(TableObject *);
+		//! \brief Signal emitted when the user right-click a focused table child object requesting a popup menu
+		void s_popupMenuRequested(TableObject *);
+
+		//! \brief Signal emitted when the user clicks a focused table child object and holding Control+Shift
+		void s_childrenSelectionChanged(void);
 
 		//! \brief Signal emitted when the user toggles the table's collapse mode
 		void s_collapseModeChanged(void);
@@ -189,6 +206,9 @@ class BaseTableView: public BaseObjectView {
 
 		//! \brief Signal emitted when the user changes the current table's attributes page
 		void s_currentPageChanged(void);
+
+		//! \brief Signal emitted when the object need the scene to clear its selection
+		void s_sceneClearRequested(void);
 
 		friend class RelationshipView;
 };

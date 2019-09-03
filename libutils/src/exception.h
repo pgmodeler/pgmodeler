@@ -289,12 +289,13 @@ enum class ErrorCode: unsigned {
 	AsgOptionInvalidName,
 	AsgInvalidNameObjReference,
 	AsgNotAllocatedObjectReference,
-	InsDuplicatedObjectReference
+	InsDuplicatedObjectReference,
+	ModelFileInvalidSize
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=245;
+		static constexpr unsigned ErrorCount=246;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

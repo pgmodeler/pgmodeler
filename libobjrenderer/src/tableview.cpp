@@ -35,7 +35,7 @@ void TableView::configureObject(void)
 		return;
 	}
 
-	Table *table=dynamic_cast<Table *>(this->getSourceObject());
+	Table *table=dynamic_cast<Table *>(this->getUnderlyingObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
@@ -54,6 +54,10 @@ void TableView::configureObject(void)
 															ObjectType::Trigger, ObjectType::Index,
 															ObjectType::Rule, ObjectType::Policy };
 	bool has_col_pag = false, has_ext_pag = false;
+
+
+	// Clear the selected children objects vector since we'll (re)configure the whole table
+	sel_child_objs.clear();
 
 	//Configures the table title
 	title->configureObject(table);
@@ -222,7 +226,7 @@ void TableView::configureObject(void)
 			//Generating the connection points of the columns
 			if(obj_idx==0)
 			{
-				tab_obj=dynamic_cast<TableObject *>(col_item->getSourceObject());
+				tab_obj=dynamic_cast<TableObject *>(col_item->getUnderlyingObject());
 				cy=title->boundingRect().height() + col_item->pos().y() + (col_item->boundingRect().height()/2);
 				conn_points[tab_obj].resize(2);
 				conn_points[tab_obj][LeftConnPoint]=QPointF(col_item->pos().x() - 1.5, cy);

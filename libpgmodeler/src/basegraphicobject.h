@@ -106,8 +106,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Assigns on object to other mading the correct attribute copy
 		void operator = (BaseGraphicObject &obj);
 
-		//! \brief Gets the current receiver object that graphically represents the 'this' object
-		QObject *getReceiverObject(void);
+		//! \brief Gets the current overlying (top object, scene object) that graphically represents the 'this' object
+		QObject *getOverlyingObject(void);
 
 		//! \brief Returns the code definition of the object
 		virtual QString getCodeDefinition(unsigned)=0;

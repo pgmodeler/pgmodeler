@@ -51,8 +51,8 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 																		object->boundingRect().width(),
 																		object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getSourceObject()->getSchemaName()));
-		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getSourceObject()->getSignature()).arg(object->getSourceObject()->getTypeName()));
+		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
+		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 															.arg(round(rect.left()))
 															.arg(round(rect.top()))
@@ -64,6 +64,9 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_rect)
 {
 	QRect rect = objs_rect.toRect();
+
+	if(!rect.isValid())
+		rect = QRect(0,0,0,0);
 
 	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 	obj_name_lbl->setText(trUtf8("Sel. objects: %1").arg(obj_count));

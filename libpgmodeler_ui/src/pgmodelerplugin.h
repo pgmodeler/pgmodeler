@@ -51,6 +51,8 @@ class PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
 
+		QMainWindow *main_window;
+
 	private:
 		QLabel	*icon_lbl,
 		*title_lbl,
@@ -86,7 +88,11 @@ class PgModelerPlugin {
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
-								 const QString &description, const QString &ico_filename);
+														 const QString &description, const QString &ico_filename);
+
+		/*! \brief Sets the main window of the application so it can perform advanced operations like
+		 * add custom widget, access the models, and much more */
+		virtual void setMainWindow(QMainWindow *main_window);
 };
 
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base

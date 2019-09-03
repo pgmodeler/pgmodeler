@@ -20,6 +20,7 @@
 #include "configurationform.h"
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
+#include <QTemporaryFile>
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 
@@ -131,6 +132,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
 		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
 		connect(src_database_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
+		connect(open_in_sql_tool_btn, SIGNAL(clicked(bool)), this, SLOT(loadDiffInSQLTool()));
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
@@ -198,11 +200,12 @@ void ModelDatabaseDiffForm::resetForm(void)
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
-	if(process_paused ||
-			(import_thread && import_thread->isRunning()) ||
+	if((import_thread && import_thread->isRunning()) ||
 			(diff_thread && diff_thread->isRunning()) ||
-			(export_thread && export_thread->isRunning()))
+		 (export_thread && export_thread->isRunning()))
 		event->ignore();
+	else if(process_paused)
+		cancelOperation(true);
 }
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
@@ -429,6 +432,7 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	buttons_wgt->setEnabled(false);
 	cancel_btn->setEnabled(true);
 	generate_btn->setEnabled(false);
+	close_btn->setEnabled(false);
 
 	settings_tbw->setTabEnabled(0, false);
 	settings_tbw->setTabEnabled(1, true);
@@ -583,12 +587,14 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 			export_helper->setIgnoredErrors(error_codes_edt->text().simplified().split(' '));
 
 		export_thread->start();
+		close_btn->setEnabled(false);
 	}
 	else if(msg_box.isCancelled())
 		cancelOperation(true);
 	else
 	{
 		process_paused=true;
+		close_btn->setEnabled(true);
 		settings_tbw->setCurrentIndex(2);
 		apply_on_server_btn->setVisible(true);
 		output_trw->collapseItem(diff_item);
@@ -611,6 +617,44 @@ void ModelDatabaseDiffForm::filterDiffInfos(void)
 		if(diff_item->child(i)->data(0, Qt::UserRole).toUInt()==diff_types[btn])
 			output_trw->setItemHidden(diff_item->child(i), !btn->isChecked());
 	}
+}
+
+void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
+{
+	QString database = database_cmb->currentText(), filename;
+	QFile out_tmp_file;
+	Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
+	QByteArray buffer;
+	QTemporaryFile tmp_sql_file;
+
+	cancelOperation(true);
+
+	if(store_in_file_rb->isChecked())
+			filename = file_edt->text();
+	else
+	{
+			tmp_sql_file.setFileTemplate(GlobalAttributes::TemporaryDir +
+																	 GlobalAttributes::DirSeparator +
+																	 QString("diff_%1_XXXXXX.sql").arg(database));
+
+			tmp_sql_file.open();
+			filename = tmp_sql_file.fileName();
+			tmp_sql_file.close();
+
+			out_tmp_file.setFileName(filename);
+			out_tmp_file.open(QFile::WriteOnly);
+
+			if(!out_tmp_file.isOpen())
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(out_tmp_file.fileName()),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			buffer.append(sqlcode_txt->toPlainText());
+			out_tmp_file.write(buffer);
+			out_tmp_file.close();
+	}
+
+	emit s_loadDiffInSQLTool(conn.getConnectionId(), database, filename);
+	close();
 }
 
 void ModelDatabaseDiffForm::resetButtons(void)
@@ -701,6 +745,7 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 
 	resetButtons();
 	process_paused=false;
+	close_btn->setEnabled(true);
 }
 
 void ModelDatabaseDiffForm::captureThreadError(Exception e)

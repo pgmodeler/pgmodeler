@@ -100,7 +100,15 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(columns_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(filterResults()));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterResults()));
 	connect(hide_tb, SIGNAL(clicked(bool)), filter_tb, SLOT(click()));
-	connect(filter_tb, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
+
+	connect(filter_tb, &QToolButton::toggled, [&](bool checked){
+		filter_wgt->setVisible(checked);
+
+		if(checked)
+			filter_edt->setFocus();
+		else
+			sql_cmd_txt->setFocus();
+	});
 
 	connect(exact_chk, SIGNAL(toggled(bool)), this, SLOT(filterResults()));
 	connect(exact_chk, &QCheckBox::toggled, [&](bool checked){
@@ -209,7 +217,13 @@ void SQLExecutionWidget::setConnection(Connection conn)
 						 .arg(conn.getConnectionParam(Connection::ParamDbName))
 						 .arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
 								  conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-						 .arg(conn.getConnectionParam(Connection::ParamPort)));
+											 .arg(conn.getConnectionParam(Connection::ParamPort)));
+}
+
+void SQLExecutionWidget::setSQLCommand(const QString &sql)
+{
+	sql_cmd_txt->clear();
+	sql_cmd_txt->setPlainText(sql);
 }
 
 void SQLExecutionWidget::enableCommandButtons(void)
@@ -354,8 +368,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	msgoutput_lst->clear();
 
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-										QString("%1 %2").arg(time_str).arg(e.getErrorMessage()),
-										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")), false);
+										PgModelerUiNs::formatMessage(QString("%1 %2").arg(time_str).arg(e.getErrorMessage())),
+										QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 
 	if(e.getErrorCode()==ErrorCode::ConnectionTimeout ||
 		 e.getErrorCode()==ErrorCode::ConnectionBroken)
@@ -466,7 +480,9 @@ void SQLExecutionWidget::filterResults(void)
 	if(exact_chk->isChecked())
 		flags = Qt::MatchExactly;
 	else if(regexp_chk->isChecked())
-			flags = Qt::MatchRegExp;
+		flags = Qt::MatchRegExp;
+	else
+		flags = Qt::MatchContains;
 
 	if(case_sensitive_chk->isChecked())
 		flags |= Qt::MatchCaseSensitive;
@@ -612,9 +628,9 @@ void SQLExecutionWidget::runSQLCommand(void)
 	output_tbw->setTabText(0, trUtf8("Results"));
 	output_tbw->setCurrentIndex(1);
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																			PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command is running...")
-																																	 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))),
-																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
+																			trUtf8("[%1]: SQL command is running...")
+																			.arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))),
+																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), false);
 }
 
 void SQLExecutionWidget::saveCommands(void)
@@ -779,7 +795,12 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	{
 		//Creating the header
 		for(col=start_col; col < max_col; col++)
+		{
+			if(results_tbw->isColumnHidden(col))
+				continue;
+
 			line.append(str_pattern.arg(model->headerData(col, Qt::Horizontal).toString()));
+		}
 
 		buf.append(line.join(separator));
 		buf.append('\n');
@@ -791,6 +812,9 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	{
 		for(col=start_col; col < max_col; col++)
 		{
+			if(results_tbw->isColumnHidden(col))
+				continue;
+
 			index = model->index(row, col);
 			line.append(str_pattern.arg(index.data().toString()));
 		}
@@ -832,10 +856,6 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 			{
 				//Generates the csv buffer and assigns it to application's clipboard
 				buf=generateCSVBuffer(results_tbw);
-
-				/* Making DataManipulationForm instances know that the clipboard has csv buffer
-				 * in order to paste the contents properly */
-				DataManipulationForm::setHasCsvClipboard(true);
 			}
 			else if((use_popup && act == act_txt) || (!use_popup && !csv_is_default))
 			{

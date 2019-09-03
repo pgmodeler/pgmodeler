@@ -19,6 +19,7 @@
 #include "dummy.h"
 #include "exception.h"
 #include "messagebox.h"
+#include "mainwindow.h"
 
 Dummy::Dummy(void)
 {
@@ -64,7 +65,28 @@ void Dummy::executePlugin(ModelWidget *)
 	Messagebox msgbox;
 	msgbox.show(trUtf8("Plugin successfully loaded!"),
 				trUtf8("Plugin successfully loaded! Check the <a href='http://www.pgmodeler.com.br/wiki/doku.php?id=plugins'>plugins wiki page</a> to know how to create your own plugins."),
-				Messagebox::InfoIcon);
+							Messagebox::InfoIcon);
+}
+
+void Dummy::setMainWindow(QMainWindow *main_window)
+{
+	this->main_window = main_window;
+
+	/* The sample code below shows how to interact with the exposed main window by adding
+	 * a tool button to the bottom widgets bar.
+	 *
+	 * You can use this basic approach to add more UI elements to it.
+	 * To do so, open the design file mainwindow.ui to see the name of the widgets you
+	 * need to handle */
+
+	 //MainWindow *mw = dynamic_cast<MainWindow *>(main_window);
+	 //QToolButton *tb = new QToolButton(mw->tool_btns_bar_wgt);
+	 //mw->tool_btns_bar_wgt->layout()->addWidget(tb);
+	 //tb->setText("This is a test button");
+	 //connect(tb, &QToolButton::clicked, [&](){
+	 //	 Messagebox msgbox;
+	 //	 msgbox.show(trUtf8("Alert"), trUtf8("This is a message box triggered by the click signal emitted by the test button!"), Messagebox::AlertIcon);
+	 //});
 }
 
 QKeySequence Dummy::getPluginShortcut(void)

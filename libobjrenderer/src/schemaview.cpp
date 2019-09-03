@@ -73,7 +73,7 @@ void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void SchemaView::fetchChildren(void)
 {
-	Schema *schema=dynamic_cast<Schema *>(this->getSourceObject());
+	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
 	vector<BaseObject *> objs, objs1;
 
@@ -85,7 +85,7 @@ void SchemaView::fetchChildren(void)
 	children.clear();
 	while(!objs.empty())
 	{
-		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getReceiverObject()));
+		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getOverlyingObject()));
 		objs.pop_back();
 	}
 }
@@ -166,7 +166,7 @@ void SchemaView::moveTo(QPointF new_pos)
 
 void SchemaView::configureObject(void)
 {
-	Schema *schema=dynamic_cast<Schema *>(this->getSourceObject());
+	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();
 
 	/* Only configures the schema view if the rectangle is visible and there are

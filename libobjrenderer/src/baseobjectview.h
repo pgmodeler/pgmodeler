@@ -134,7 +134,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 		//! \brief Returns the object that is representend by the graphical object
-		BaseObject *getSourceObject(void);
+		BaseObject *getUnderlyingObject(void);
 
 		//! \brief Loads the font / color styels for the objects from a XML configuration file
 		static void loadObjectsStyle(void);
