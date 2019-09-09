@@ -1611,7 +1611,7 @@
              <number>20</number>
             </property>
             <property name="uniformRowHeights">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="wordWrap">
              <bool>false</bool>

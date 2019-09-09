@@ -174,7 +174,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	map<unsigned, attribs_map> *obj_map=nullptr;
 	vector<attribs_map> objects;
 	ObjectType sys_objs[]={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
-							ObjectType::Language, /* ObjectType::ObjCollation,*/ ObjectType::Type };
+							ObjectType::Language, ObjectType::Type };
 	unsigned i=0, oid=0, cnt=sizeof(sys_objs)/sizeof(ObjectType);
 
 	for(i=0; i < cnt && !import_canceled; i++)
@@ -253,11 +253,11 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 	col_itr=column_oids.begin();
 	while(col_itr!=column_oids.end())
 	{
-		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(ObjectType::Column)),
-							   ObjectType::Column);
-
 		names=getObjectName(QString::number(col_itr->first)).split(".");
+
+		emit s_progressUpdated(progress,
+								 trUtf8("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
+							   ObjectType::Column);
 
 		if(names.size() > 1)
 			retrieveTableColumns(names[0], names[1], col_itr->second);

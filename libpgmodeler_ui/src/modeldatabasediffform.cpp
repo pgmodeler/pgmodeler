@@ -224,8 +224,6 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		src_import_helper=new DatabaseImportHelper;
 		src_import_helper->moveToThread(src_import_thread);
 
-		output_trw->setUniformRowHeights(true);
-
 		connect(src_import_thread, SIGNAL(started(void)), src_import_helper, SLOT(importDatabase()));
 		connect(src_import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 		connect(src_import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
@@ -236,8 +234,6 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		import_thread=new QThread;
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
-
-		output_trw->setUniformRowHeights(true);
 
 		connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
 		connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
@@ -271,11 +267,6 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 			});
 
 		connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
-
-		connect(export_thread, &QThread::finished, [&](){
-			output_trw->setUniformRowHeights(false);
-		});
-
 		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
 		connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 		connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));

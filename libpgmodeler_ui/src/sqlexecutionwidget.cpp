@@ -402,6 +402,9 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		bool empty = false;
 		ResultSetModel *res_model = sql_exec_hlp.getResultSetModel();
 
+		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		total_exec = end_exec - start_exec;
+
 		results_tbw->setSortingEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->setUpdatesEnabled(false);
@@ -424,9 +427,6 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 			columns_cmb->addItem(res_model->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString());
 
 		columns_cmb->blockSignals(false);
-
-		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
-		total_exec = end_exec - start_exec;
 
 		addToSQLHistory(sql_cmd_txt->toPlainText(), rows_affected);
 
@@ -459,7 +459,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
 																				PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
-																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
+																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
 																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(rows_affected)),
 																				QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
