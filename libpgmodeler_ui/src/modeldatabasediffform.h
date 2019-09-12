@@ -113,6 +113,9 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void saveDiffToFile(void);
 		void finishDiff(void);
 
+		//! \brief Returns true when one or more threads of the whole diff process are running.
+		bool isThreadsRunning(void);
+
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
 		static constexpr unsigned SrcImportThread=0,
 		ImportThread=1,

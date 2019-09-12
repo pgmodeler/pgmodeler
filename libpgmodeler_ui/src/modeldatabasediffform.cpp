@@ -182,15 +182,25 @@ void ModelDatabaseDiffForm::setLowVerbosity(bool value)
 	low_verbosity = value;
 }
 
+bool ModelDatabaseDiffForm::isThreadsRunning(void)
+{
+	return ((import_thread && import_thread->isRunning()) ||
+					(src_import_thread && src_import_thread->isRunning()) ||
+					(diff_thread && diff_thread->isRunning()) ||
+					(export_thread && export_thread->isRunning()));
+}
+
 void ModelDatabaseDiffForm::resetForm(void)
 {
 	ConnectionsConfigWidget::fillConnectionsComboBox(src_connections_cmb, true);
 	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
 	src_connection_lbl->setEnabled(src_connections_cmb->isEnabled());
+	src_database_cmb->setCurrentIndex(0);
 
 	ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpDiff);
 	connections_cmb->setEnabled(connections_cmb->count() > 0);
 	connection_lbl->setEnabled(connections_cmb->isEnabled());
+	database_cmb->setCurrentIndex(0);
 
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
@@ -200,9 +210,7 @@ void ModelDatabaseDiffForm::resetForm(void)
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 {
 	//Ignore the close event when the thread is running
-	if((import_thread && import_thread->isRunning()) ||
-			(diff_thread && diff_thread->isRunning()) ||
-		 (export_thread && export_thread->isRunning()))
+	if(isThreadsRunning())
 		event->ignore();
 	else if(process_paused)
 		cancelOperation(true);
@@ -210,10 +218,14 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
 {
-	resetForm();
+	//Doing the form configuration in the first show in order to populate the connections combo
+	if(!isThreadsRunning() && connections_cmb->count() == 0)
+	{
+		resetForm();
 
-	if(connections_cmb->currentIndex() > 0)
-		listDatabases();
+		if(connections_cmb->currentIndex() > 0)
+			listDatabases();
+	}
 }
 
 void ModelDatabaseDiffForm::createThread(unsigned thread_id)
