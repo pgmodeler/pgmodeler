@@ -1551,7 +1551,7 @@ void DataManipulationForm::showPopupMenu(void)
 		act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), trUtf8("Clear items"));
+		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), trUtf8("Clear items"), this, SLOT(clearItemsText()));
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
 
 		if(obj_type == ObjectType::Table)
