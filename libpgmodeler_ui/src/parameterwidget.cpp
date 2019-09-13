@@ -57,8 +57,11 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 void ParameterWidget::enableVariadic(void)
 {
-	param_variadic_chk->setChecked(!param_in_chk->isChecked() &&
-								   !param_out_chk->isChecked());
+	param_variadic_chk->setEnabled(!param_in_chk->isChecked() &&
+																 !param_out_chk->isChecked());
+
+	if(!param_variadic_chk->isEnabled())
+		param_variadic_chk->setChecked(false);
 }
 
 void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)

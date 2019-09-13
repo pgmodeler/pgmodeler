@@ -1267,7 +1267,7 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 			if(object->getComment().isEmpty())
 				attributes[Attributes::Comment]=Attributes::Unset;
 			else
-				attributes[Attributes::Comment]=object->getComment();
+				attributes[Attributes::Comment]=object->getComment().replace(QString("'"), QString("''"));
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);

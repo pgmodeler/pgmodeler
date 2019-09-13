@@ -373,15 +373,17 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, ignore_name_diff);
 
 		if(this->password!=role->password)
+		{
+			attribs[Attributes::EmptyPassword]=role->password.isEmpty() ? Attributes::True : QString();
 			attribs[Attributes::Password]=role->password;
+		}
 
 		if(this->validity!=role->validity)
 			attribs[Attributes::Validity]=role->validity;
 
 		for(unsigned i=0; i <= OpBypassRls; i++)
 		{
-			if((attribs.count(Attributes::Password) && i==OpEncrypted) ||
-					this->options[i]!=role->options[i])
+			if((attribs.count(Attributes::Password) && i==OpEncrypted) ||	this->options[i]!=role->options[i])
 				attribs[op_attribs[i]]=(role->options[i] ? Attributes::True : Attributes::Unset);
 		}
 

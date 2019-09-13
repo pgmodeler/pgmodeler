@@ -193,6 +193,7 @@ namespace Attributes {
 	DynamicSharedMemory,
 	Element,
 	Elements,
+	EmptyPassword,
 	Encoding,
 	Encrypted,
 	EndExp,

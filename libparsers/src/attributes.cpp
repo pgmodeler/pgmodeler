@@ -176,6 +176,7 @@ namespace Attributes {
 	DstTable=QString("dst-table"),
 	DynamicLibraryPath=QString("dynamic-library-path"),
 	DynamicSharedMemory=QString("dynamic-shared-memory-type"),
+	EmptyPassword=QString("empty-password"),
 	EndExp=QString("end-exp"),
 	Element=QString("element"),
 	Elements=QString("elements"),

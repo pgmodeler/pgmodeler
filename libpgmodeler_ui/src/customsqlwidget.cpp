@@ -133,7 +133,10 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
 		if(object->getObjectType()==ObjectType::Database)
+		{
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
+			begin_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isPrependedAtBOD());
+		}
 
 		append_sql_txt->setFocus();
 		append_sql_txt->setPlainText(object->getAppendedSQL());
