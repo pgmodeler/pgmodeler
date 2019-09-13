@@ -62,7 +62,7 @@
 <!ELEMENT widget EMPTY>
 <!ATTLIST widget id CDATA #IMPLIED>
 <!ATTLIST widget sql-validation (false|true) "false">
-<!ATTLIST widget pgsql-version CDATA #IMPLIED>
+<!ATTLIST widget version CDATA #IMPLIED>
 <!ATTLIST widget use-unique-names (false|true) "false">
 <!ATTLIST widget regexp (false|true) "false">
 <!ATTLIST widget exact-match (false|true) "false">

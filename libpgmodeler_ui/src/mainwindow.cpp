@@ -1834,7 +1834,7 @@ void MainWindow::storeDockWidgetsSettings(void)
 	params[Attributes::Validator]=Attributes::True;
 	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
 	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::PgSqlVersion]=model_valid_wgt->version_cmb->currentText();
+	params[Attributes::Version]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(Attributes::Validator, params);
 	params.clear();
 
@@ -1863,7 +1863,7 @@ void MainWindow::restoreDockWidgetsSettings(void)
 	{
 		model_valid_wgt->sql_validation_chk->setChecked(confs[Attributes::Validator][Attributes::SqlValidation]==Attributes::True);
 		model_valid_wgt->use_tmp_names_chk->setChecked(confs[Attributes::Validator][Attributes::UseUniqueNames]==Attributes::True);
-		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::PgSqlVersion]);
+		model_valid_wgt->version_cmb->setCurrentText(confs[Attributes::Validator][Attributes::Version]);
 	}
 
 	if(confs.count(Attributes::ObjectFinder))
