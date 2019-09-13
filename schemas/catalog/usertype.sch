@@ -39,13 +39,12 @@
     #Retrieve the OID for table/view/sequence that generates the composite type
     [ (SELECT 
         CASE 
-            WHEN relkind = 'r' THEN 'table'
+	    WHEN relkind = 'r' THEN 'table'
             WHEN relkind = 'S' THEN 'sequence'
             WHEN relkind = 'v' THEN 'view'
-            WHEN relkind = 'm' THEN 'view'
-            WHEN typtype = 'd' THEN 'domain'
-	    WHEN typtype = 'p' THEN 'table'
-	    WHEN typtype = 'f' THEN 'foreigntable'
+	    WHEN relkind = 'm' THEN 'view'
+	    WHEN relkind = 'p' THEN 'table'
+	    WHEN relkind = 'f' THEN 'foreigntable'
         END AS type_class FROM pg_class WHERE oid=tp.typrelid), tp.typrelid AS object_id, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
@@ -63,9 +62,11 @@
 
     [   CASE
           WHEN typtype = 'e' THEN 'enumeration'
-          WHEN typtype = 'b' THEN 'base'    
+	  WHEN typtype = 'b' THEN 'base'
           WHEN typtype = 'c' THEN 'composite'
-          WHEN typtype = 'r' THEN 'range'
+	  WHEN typtype = 'r' THEN 'range'
+	  WHEN typtype = 'd' THEN 'domain'
+	  WHEN typtype = 'p' THEN 'pseudo'
         END AS configuration, ] 
 
     # Retrieve the enumaration labels (is null when the type is not an enumeration)

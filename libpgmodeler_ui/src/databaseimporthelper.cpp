@@ -1699,8 +1699,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 			}
 			else
 			{
-				is_type_registered=(types.count(type_oid)!=0);
 				type_name=itr->second[Attributes::Type];
+				is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
 			}
 
 			/* Checking if the type used by the column exists (is registered),
@@ -1709,13 +1709,14 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		 the non-array type, this way, if the original type is created there is no need to create the array form */
 			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
 			{
-				type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Type);
+				//First we try to retrieve the missing type from domains
+				type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Domain);
 				unknown_obj_xml=UnkownObjectOidXml.arg(type_oid);
 
-				/* If the type still doesn't exists means that the column maybe is referencing a domain
-		  this way pgModeler will try to retrieve the mentionend object */
+				/* If the type still doesn't exists means that the column maybe is referencing a user-defined type
+			this way pgModeler will try to retrieve the mentionend object */
 				if(type_def==unknown_obj_xml)
-					type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Domain);
+					type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Type);
 			}
 
 			col.setIdentityType(BaseType::Null);
