@@ -1708,16 +1708,8 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		 array types [] that will not be automatically created because they are derivated from
 		 the non-array type, this way, if the original type is created there is no need to create the array form */
 			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
-			{
-				//First we try to retrieve the missing type from domains
-				type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Domain);
-				unknown_obj_xml=UnkownObjectOidXml.arg(type_oid);
-
-				/* If the type still doesn't exists means that the column maybe is referencing a user-defined type
-			this way pgModeler will try to retrieve the mentionend object */
-				if(type_def==unknown_obj_xml)
-					type_def=getDependencyObject(itr->second[Attributes::TypeOid], ObjectType::Type);
-			}
+				// Try to create the missing data type
+				getType(itr->second[Attributes::TypeOid], false);
 
 			col.setIdentityType(BaseType::Null);
 			col.setType(PgSqlType::parseString(type_name));
@@ -1922,8 +1914,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 			}
 			else
 			{
-				is_type_registered=(types.count(type_oid)!=0);
-				type_name=itr.second[Attributes::Type];
+				type_name = itr.second[Attributes::Type];
+				is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
 			}
 
 			/* Checking if the type used by the column exists (is registered),
@@ -1931,15 +1923,8 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 			 * array types [] that will not be automatically created because they are derivated from
 			 * the non-array type, this way, if the original type is created there is no need to create the array form */
 			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
-			{
-				type_def = getDependencyObject(itr.second[Attributes::TypeOid], ObjectType::Type);
-				unknown_obj_xml = UnkownObjectOidXml.arg(type_oid);
-
-				/* If the type still doesn't exists means that the column maybe is referencing a domain
-				 * this way pgModeler will try to retrieve the mentionend object */
-				if(type_def==unknown_obj_xml)
-					type_def=getDependencyObject(itr.second[Attributes::TypeOid], ObjectType::Domain);
-			}
+				// Try to create the missing data type
+				getType(itr.second[Attributes::TypeOid], false);
 
 			col.setType(PgSqlType::parseString(type_name));
 			ref.addColumn(&col);
@@ -2816,13 +2801,16 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		attribs_map type_attr;
 		QString xml_def, sch_name, obj_name, aux_name;
 		unsigned type_oid=oid_str.toUInt(), elem_tp_oid = 0,
-				dimension=0, object_id=type_attr[Attributes::ObjectId].toUInt();
+				dimension=0, object_id=0;
 		bool is_derivated_from_obj = false;
 
 		if(type_oid > 0)
 		{
 			if(types.count(type_oid))
+			{
 				type_attr=types[type_oid];
+				object_id=type_attr[Attributes::ObjectId].toUInt();
+			}
 
 			//Special treatment for array types. Removes the [] descriptor when generating XML code for the type
 			if(!type_attr.empty() && type_attr[Attributes::Category]==QString("A") &&
@@ -2842,8 +2830,9 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			/* If the type was generated from a table/sequence/view/domain and the source object is not
 				 yet imported and the auto resolve deps is enabled, we need to import it */
-			if(!type_attr[Attributes::TypeClass].isEmpty() && auto_resolve_deps &&
-				 (!user_objs.count(object_id) && !system_objs.count(object_id)))
+			if(auto_resolve_deps &&
+				 (!type_attr[Attributes::TypeClass].isEmpty() ||
+					type_attr[Attributes::Configuration] == BaseObject::getSchemaName(ObjectType::Domain)))
 			{
 				ObjectType obj_type;
 
@@ -2851,13 +2840,21 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 					obj_type=ObjectType::Table;
 				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::View))
 					obj_type=ObjectType::View;
-				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Domain))
-					obj_type=ObjectType::Domain;
-				else
+				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Sequence))
 					obj_type=ObjectType::Sequence;
+				else
+				{
+					/* Domains are the only kind of object associated to data types that don't
+					 * contains an object-id attribute (which is related to the object in pg_class that generates the type)
+					 * this way we need to use type_oid instead to force the importing of the domain */
+					obj_type=ObjectType::Domain;
+					object_id = type_oid;
+				}
 
 				is_derivated_from_obj = true;
-				getDependencyObject(type_attr[Attributes::ObjectId], obj_type, true, true, false);
+
+				if(!user_objs.count(object_id) && !system_objs.count(object_id))
+					getDependencyObject(QString::number(object_id), obj_type, true, true, false);
 			}
 
 			/* Removing the optional modifier "without time zone" from date/time types.
@@ -2868,10 +2865,11 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 			/* Prepend the schema name only if it is not a system schema ('pg_catalog' or 'information_schema') and
 		 if the schema's names is already present in the type's name (in case of table types) */
-			sch_name=getObjectName(type_attr[Attributes::Schema]);
+			sch_name = getObjectName(type_attr[Attributes::Schema]);
 			if(!sch_name.isEmpty() &&
-				 ((sch_name!=QString("pg_catalog") && sch_name!=QString("information_schema")) ||
-					type_oid > catalog.getLastSysObjectOID()) &&
+				 (is_derivated_from_obj ||
+					(sch_name != QString("pg_catalog") && sch_name!=QString("information_schema")) ||
+					 type_oid > catalog.getLastSysObjectOID()) &&
 				 !obj_name.contains(QRegExp(QString("^(\\\")?(%1)(\\\")?(\\.)").arg(sch_name))))
 				obj_name.prepend(sch_name + QString("."));
 

@@ -40,8 +40,8 @@
     [ (SELECT 
         CASE 
 	    WHEN relkind = 'r' THEN 'table'
-            WHEN relkind = 'S' THEN 'sequence'
-            WHEN relkind = 'v' THEN 'view'
+        WHEN relkind = 'S' THEN 'sequence'
+        WHEN relkind = 'v' THEN 'view'
 	    WHEN relkind = 'm' THEN 'view'
 	    WHEN relkind = 'p' THEN 'table'
 	    WHEN relkind = 'f' THEN 'foreigntable'
@@ -62,11 +62,11 @@
 
     [   CASE
           WHEN typtype = 'e' THEN 'enumeration'
-	  WHEN typtype = 'b' THEN 'base'
+          WHEN typtype = 'b' THEN 'base'
           WHEN typtype = 'c' THEN 'composite'
-	  WHEN typtype = 'r' THEN 'range'
-	  WHEN typtype = 'd' THEN 'domain'
-	  WHEN typtype = 'p' THEN 'pseudo'
+          WHEN typtype = 'r' THEN 'range'
+          WHEN typtype = 'd' THEN 'domain'
+          WHEN typtype = 'p' THEN 'pseudo'
         END AS configuration, ] 
 
     # Retrieve the enumaration labels (is null when the type is not an enumeration)
