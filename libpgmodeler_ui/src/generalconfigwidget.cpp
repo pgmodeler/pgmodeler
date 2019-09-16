@@ -568,8 +568,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
-					itr->first==Attributes::ObjectFinder ||
-					itr->first==Attributes::SqlTool)
+							itr->first==Attributes::ObjectFinder ||
+							itr->first==Attributes::SqlTool)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
@@ -584,20 +584,27 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		if(save_restore_geometry_chk->isChecked())
 		{
-		  for(auto &itr : widgets_geom)
-		  {
-			attribs[Attributes::Id] = itr.first;
-			attribs[Attributes::XPos] = QString::number(itr.second.geometry.left());
-			attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
-			attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
-			attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
-			attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
+			for(auto &itr : widgets_geom)
+			{
+				/* Ignoring the validator, objectfinder and sqltool widget ids
+				 * In order to avoid the saving of widget geometry of that objects */
+				if(itr.first==Attributes::Validator ||
+					 itr.first==Attributes::ObjectFinder ||
+					 itr.first==Attributes::SqlTool)
+					continue;
 
-			schparser.ignoreUnkownAttributes(true);
-			config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
-				schparser.getCodeDefinition(widget_sch, attribs);
-			schparser.ignoreUnkownAttributes(false);
-		  }
+				attribs[Attributes::Id] = itr.first;
+				attribs[Attributes::XPos] = QString::number(itr.second.geometry.left());
+				attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
+				attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
+				attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
+				attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
+
+				schparser.ignoreUnkownAttributes(true);
+				config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
+						schparser.getCodeDefinition(widget_sch, attribs);
+				schparser.ignoreUnkownAttributes(false);
+			}
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::GeneralConf, config_params);
