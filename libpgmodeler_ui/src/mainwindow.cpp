@@ -227,6 +227,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(applyConfigurations(void)));
 	connect(configuration_form, SIGNAL(rejected()), this, SLOT(updateConnections()));
+
+	connect(configuration_form, &ConfigurationForm::s_invalidateModelsRequested, [&](){
+		//Forcing the models code invalidation if the user changes the escape comments option
+		for(int idx = 0; idx < models_tbw->count(); idx++)
+			dynamic_cast<ModelWidget *>(models_tbw->widget(idx))->getDatabaseModel()->setCodesInvalidated();
+	});
+
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 
 	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));

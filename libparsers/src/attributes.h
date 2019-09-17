@@ -199,6 +199,7 @@ namespace Attributes {
 	EndExp,
 	EnumType,
 	Enumerations,
+	EscapeComment,
 	EventType,
 	Event,
 	Events,

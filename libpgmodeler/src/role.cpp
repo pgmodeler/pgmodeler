@@ -45,6 +45,7 @@ Role::Role(void)
 	attributes[Attributes::Replication]=QString();
 	attributes[Attributes::Group]=QString();
 	attributes[Attributes::BypassRls]=QString();
+	attributes[Attributes::EmptyPassword]=QString();
 }
 
 void Role::setOption(unsigned op_type, bool value)

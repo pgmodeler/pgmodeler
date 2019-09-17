@@ -87,6 +87,7 @@ void ConfigurationForm::reject(void)
 void ConfigurationForm::applyConfiguration(void)
 {
 	BaseConfigWidget *conf_wgt=nullptr;
+	bool curr_escape_comments = BaseObject::isEscapeComments();
 
 	for(int i=GeneralConfWgt; i <= SnippetsConfWgt; i++)
 	{
@@ -98,6 +99,10 @@ void ConfigurationForm::applyConfiguration(void)
 
 	general_conf->applyConfiguration();
 	relationships_conf->applyConfiguration();
+
+	if(curr_escape_comments != BaseObject::isEscapeComments())
+		emit s_invalidateModelsRequested();
+
 	QDialog::accept();
 }
 

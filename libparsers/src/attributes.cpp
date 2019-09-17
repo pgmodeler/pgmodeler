@@ -184,6 +184,7 @@ namespace Attributes {
 	Encrypted=QString("encrypted"),
 	EnumType=QString("enumeration"),
 	Enumerations=QString("enumerations"),
+	EscapeComment=QString("escape-comment"),
 	EventType=QString("event-type"),
 	Event=QString("event"),
 	Events=QString("events"),

@@ -195,6 +195,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
 	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
 
+	escape_comments_ht = new HintTextWidget(escape_comments_hint, this);
+	escape_comments_ht->setText(escape_comments_chk->statusTip());
+
 	selectPaperSize();
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
@@ -349,6 +352,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
+		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -539,6 +543,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
@@ -626,6 +631,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
+
+	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
 	unity_cmb->setCurrentIndex(UnitPoint);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),
