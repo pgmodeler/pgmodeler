@@ -195,6 +195,9 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
 	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
 
+	escape_comments_ht = new HintTextWidget(escape_comments_hint, this);
+	escape_comments_ht->setText(escape_comments_chk->statusTip());
+
 	selectPaperSize();
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
@@ -349,6 +352,7 @@ void GeneralConfigWidget::loadConfiguration(void)
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
 		reset_sizes_tb->setEnabled(save_restore_geometry_chk->isChecked());
 		low_verbosity_chk->setChecked(config_params[Attributes::Configuration][Attributes::LowVerbosity]==Attributes::True);
+		escape_comments_chk->setChecked(config_params[Attributes::Configuration][Attributes::EscapeComment]==Attributes::True);
 
 		int ui_idx = ui_language_cmb->findData(config_params[Attributes::Configuration][Attributes::UiLanguage]);
 		ui_language_cmb->setCurrentIndex(ui_idx >= 0 ? ui_idx : 0);
@@ -539,6 +543,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
 		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : QString());
 
 		config_params[Attributes::Configuration][Attributes::File]=QString();
 		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
@@ -568,8 +573,8 @@ void GeneralConfigWidget::saveConfiguration(void)
 				recent_mdl_idx++;
 			}
 			else if(itr->first==Attributes::Validator ||
-					itr->first==Attributes::ObjectFinder ||
-					itr->first==Attributes::SqlTool)
+							itr->first==Attributes::ObjectFinder ||
+							itr->first==Attributes::SqlTool)
 			{
 				schparser.ignoreUnkownAttributes(true);
 				schparser.ignoreEmptyAttributes(true);
@@ -584,20 +589,27 @@ void GeneralConfigWidget::saveConfiguration(void)
 
 		if(save_restore_geometry_chk->isChecked())
 		{
-		  for(auto &itr : widgets_geom)
-		  {
-			attribs[Attributes::Id] = itr.first;
-			attribs[Attributes::XPos] = QString::number(itr.second.geometry.left());
-			attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
-			attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
-			attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
-			attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
+			for(auto &itr : widgets_geom)
+			{
+				/* Ignoring the validator, objectfinder and sqltool widget ids
+				 * In order to avoid the saving of widget geometry of that objects */
+				if(itr.first==Attributes::Validator ||
+					 itr.first==Attributes::ObjectFinder ||
+					 itr.first==Attributes::SqlTool)
+					continue;
 
-			schparser.ignoreUnkownAttributes(true);
-			config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
-				schparser.getCodeDefinition(widget_sch, attribs);
-			schparser.ignoreUnkownAttributes(false);
-		  }
+				attribs[Attributes::Id] = itr.first;
+				attribs[Attributes::XPos] = QString::number(itr.second.geometry.left());
+				attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
+				attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
+				attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
+				attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
+
+				schparser.ignoreUnkownAttributes(true);
+				config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
+						schparser.getCodeDefinition(widget_sch, attribs);
+				schparser.ignoreUnkownAttributes(false);
+			}
 		}
 
 		BaseConfigWidget::saveConfiguration(GlobalAttributes::GeneralConf, config_params);
@@ -619,6 +631,8 @@ void GeneralConfigWidget::applyConfiguration(void)
 
 	if(!save_restore_geometry_chk->isChecked())
 	  widgets_geom.clear();
+
+	BaseObject::setEscapeComments(escape_comments_chk->isChecked());
 
 	unity_cmb->setCurrentIndex(UnitPoint);
 	ObjectsScene::setPaperConfiguration(static_cast<QPrinter::PaperSize>(paper_cmb->itemData(paper_cmb->currentIndex()).toInt()),

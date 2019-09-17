@@ -1015,7 +1015,10 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 			{
 				conn.close();
 				aux_conn=conn;
-				aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
+
+				if(!orig_conn_db_name.isEmpty())
+					aux_conn.setConnectionParam(Connection::ParamDbName, orig_conn_db_name);
+
 				aux_conn.connect();
 				for(QString cmd : db_sql_cmds)
 					aux_conn.executeDDLCommand(cmd);

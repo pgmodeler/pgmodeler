@@ -75,6 +75,7 @@ unsigned BaseObject::global_id=4000;
 
 QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
+bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject(void)
 {
@@ -100,12 +101,23 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::PrependedSql]=QString();
 	attributes[Attributes::Drop]=QString();
 	attributes[Attributes::Signature]=QString();
+	attributes[Attributes::EscapeComment]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
 unsigned BaseObject::getGlobalId(void)
 {
 	return(global_id);
+}
+
+void BaseObject::setEscapeComments(bool value)
+{
+	escape_comments = value;
+}
+
+bool BaseObject::isEscapeComments(void)
+{
+	return(escape_comments);
 }
 
 QString BaseObject::getTypeName(ObjectType obj_type)
@@ -598,6 +610,21 @@ QString BaseObject::getComment(void)
 	return(comment);
 }
 
+QString BaseObject::getEscapedComment(bool escape_special_chars)
+{
+	QString fmt_comm = comment.trimmed();
+
+	if(escape_special_chars)
+	{
+		fmt_comm.replace(QChar('\\'), QString("\\\\"));
+		fmt_comm.replace(QChar::LineFeed, QString("\\n"));
+		fmt_comm.replace(QChar::Tabulation, QString("\\t"));
+	}
+
+	fmt_comm.replace(QChar('\''), QString("''"));
+	return(fmt_comm);
+}
+
 BaseObject *BaseObject::getSchema(void)
 {
 	return(schema);
@@ -777,7 +804,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(!comment.isEmpty())
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::Comment]=QString(comment).replace(QString("'"), QString("''"));
+			{
+				QString escape_comm = getEscapedComment(escape_comments);
+				attributes[Attributes::EscapeComment]=escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=escape_comm;
+			}
 			else
 				attributes[Attributes::Comment]=comment;
 
@@ -1262,12 +1293,18 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 {
 	try
 	{
-		if(this->getComment()!=object->getComment())
+		QString comm_this = this->getEscapedComment(escape_comments),
+				comm_obj = object->getEscapedComment(escape_comments);
+
+		if(comm_this != comm_obj)
 		{
-			if(object->getComment().isEmpty())
+			if(comm_obj.isEmpty())
 				attributes[Attributes::Comment]=Attributes::Unset;
 			else
-				attributes[Attributes::Comment]=object->getComment();
+			{
+				attributes[Attributes::EscapeComment] = escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=comm_obj;
+			}
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);

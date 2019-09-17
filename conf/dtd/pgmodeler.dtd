@@ -49,6 +49,7 @@
 <!ATTLIST configuration compact-view (false|true) "false">
 <!ATTLIST configuration save-restore-geometry (false|true) "false">
 <!ATTLIST configuration low-verbosity (false|true) "false">
+<!ATTLIST configuration escape-comment (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>
@@ -62,7 +63,7 @@
 <!ELEMENT widget EMPTY>
 <!ATTLIST widget id CDATA #IMPLIED>
 <!ATTLIST widget sql-validation (false|true) "false">
-<!ATTLIST widget pgsql-version CDATA #IMPLIED>
+<!ATTLIST widget version CDATA #IMPLIED>
 <!ATTLIST widget use-unique-names (false|true) "false">
 <!ATTLIST widget regexp (false|true) "false">
 <!ATTLIST widget exact-match (false|true) "false">

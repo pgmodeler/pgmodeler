@@ -6,7 +6,7 @@ $tb [<widget]
   [ id="validator"]
   [ sql-validation="] %if {sql-validation} %then true %else false %end ["]
   [ use-unique-names="] %if {use-unique-names} %then true %else false %end ["]
-  [ pgsql-version="] %if {pgsql-ver} %then {pgsql-ver} %else auto %end ["]
+  [ version="] {version} ["]
 %else
   %if {objectfinder} %then
     [ id="objectfinder"]
