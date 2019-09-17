@@ -469,7 +469,7 @@ void NumberedTextEditor::updateLineNumbers(void)
 		++block_number;
 
 		/* Check if the line count converted to widget coordinates is higher than the widget height.
-	   This is done to avoid draw line numbers that are beyond the widget's height */
+		 This is done to avoid draw line numbers that are beyond the widget's height */
 		if((static_cast<int>(line_count) * fontMetrics().height()) > this->height())
 			break;
 	}
