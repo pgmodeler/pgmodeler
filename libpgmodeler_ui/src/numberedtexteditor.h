@@ -29,7 +29,6 @@ based upon the code editor example provided by Qt
 #include <QPlainTextEdit>
 #include <QMenu>
 #include <QToolButton>
-#include <QTemporaryFile>
 #include <QProcess>
 #include <QLabel>
 #include "linenumberswidget.h"
@@ -72,7 +71,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		QToolButton *load_file_btn, *edit_src_btn, *clear_btn;
 
 		//! \brief The name of the temp file currently being used to edit the souce
-		QTemporaryFile tmp_src_file;
+		QString tmp_src_file;
 
 		//! \brief The process object that holds the source code editor app
 		QProcess src_editor_proc;
@@ -115,8 +114,10 @@ class NumberedTextEditor : public QPlainTextEdit {
 
 		void loadFile(void);
 		void editSource(void);
-		void updateSource(void);
+		void updateSource(int exit_code);
+		void handleProcessStart(void);
 		void handleProcessError(void);
+		void enableEditor(void);
 
 	public slots:
 		void setReadOnly(bool ro);
