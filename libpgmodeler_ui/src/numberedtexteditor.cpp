@@ -428,8 +428,6 @@ void NumberedTextEditor::updateSource(int exit_code)
 
 void NumberedTextEditor::handleProcessStart(void)
 {
-	QString stderr = src_editor_proc.readAllStandardError();
-
 	if(src_editor_proc.state() == QProcess::Running)
 	{
 		msg_lbl->setText(PgModelerUiNs::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
