@@ -1624,7 +1624,7 @@
             <item>
              <widget class="QCheckBox" name="low_verbosity_chk">
               <property name="statusTip">
-               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less UI operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.</string>
+               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.</string>
               </property>
               <property name="text">
                <string>Low verbosity for the export, import and diff processes</string>
