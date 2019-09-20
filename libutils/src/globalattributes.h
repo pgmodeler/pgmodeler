@@ -75,6 +75,7 @@ namespace GlobalAttributes {
 	ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
 	RelationshipsConf,   //! \brief Default name for the relationships configuration file
 	SnippetsConf,        //! \brief Default name for the code snippets configuration file
+	DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
 
 	SQLHighlightConf, //! \brief Configuration file for SQL language highlight
 	XMLHighlightConf, //! \brief Configuration file for XML language highlight

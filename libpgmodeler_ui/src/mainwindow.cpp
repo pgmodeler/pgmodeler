@@ -1537,7 +1537,7 @@ void MainWindow::diffModelDatabase(void)
 			sql_tool_wgt->addSQLExecutionTab(conn_id, database, filename);
 		});
 
-		PgModelerUiNs::resizeDialog(&modeldb_diff_frm);
+		//PgModelerUiNs::resizeDialog(&modeldb_diff_frm);
 		GeneralConfigWidget::restoreWidgetGeometry(&modeldb_diff_frm);
 		modeldb_diff_frm.exec();
 		GeneralConfigWidget::saveWidgetGeometry(&modeldb_diff_frm);
