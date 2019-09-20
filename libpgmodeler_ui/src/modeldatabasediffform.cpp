@@ -113,6 +113,13 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		cancel_preset_edit_tb->setVisible(false);
 		preset_name_edt->setVisible(false);
 
+		new_preset_tb->setToolTip(new_preset_tb->toolTip() + QString(" (%1)").arg(new_preset_tb->shortcut().toString()));
+		edit_preset_tb->setToolTip(edit_preset_tb->toolTip() + QString(" (%1)").arg(edit_preset_tb->shortcut().toString()));
+		save_preset_tb->setToolTip(save_preset_tb->toolTip() + QString(" (%1)").arg(save_preset_tb->shortcut().toString()));
+		cancel_preset_edit_tb->setToolTip(cancel_preset_edit_tb->toolTip() + QString(" (%1)").arg(cancel_preset_edit_tb->shortcut().toString()));
+		remove_preset_tb->setToolTip(remove_preset_tb->toolTip() + QString(" (%1)").arg(remove_preset_tb->shortcut().toString()));
+		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
+
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
@@ -1084,9 +1091,16 @@ void ModelDatabaseDiffForm::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
-		applyConfiguration();
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Do you really want to restore the default settings?"),
+								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
+
+		if(msg_box.result()==QDialog::Accepted)
+		{
+			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
+			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+			applyConfiguration();
+		}
 	}
 	catch(Exception &e)
 	{

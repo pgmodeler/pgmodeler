@@ -342,6 +342,9 @@
                        <height>22</height>
                       </size>
                      </property>
+                     <property name="shortcut">
+                      <string>Ctrl+R</string>
+                     </property>
                     </widget>
                    </item>
                   </layout>
