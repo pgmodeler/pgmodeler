@@ -67,6 +67,9 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		
 	private slots:
 		void restoreDefaults(void);
+
+	signals:
+		void s_invalidateModelsRequested(void);
 };
 
 #endif

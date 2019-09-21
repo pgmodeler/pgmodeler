@@ -1496,7 +1496,7 @@ void PgModelerCli::updateMimeType(void)
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << endl;
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 #endif
 }

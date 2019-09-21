@@ -125,7 +125,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static QByteArray generateTextBuffer(QTableView *results_tbw);
 
 		//! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and quote values
-		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes);
+		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars);
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableView *results_tbw);

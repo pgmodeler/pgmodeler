@@ -7449,10 +7449,10 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	def=schparser.getCodeDefinition(Attributes::DbModel, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
-		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + QString("\n---\n\n") + def;
+		def=QString("-- Prepended SQL commands --\n") +	this->prepended_sql + Attributes::DdlEndToken + def;
 
 	if(append_at_eod && def_type==SchemaParser::SqlDefinition)
-		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QString("\n---\n");
+		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
 	return(def);
 }

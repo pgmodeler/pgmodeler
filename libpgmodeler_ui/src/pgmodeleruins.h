@@ -77,7 +77,7 @@ namespace PgModelerUiNs {
 	extern QString getIconPath(ObjectType obj_type);
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
-	extern void resizeDialog(QDialog *dialog);
+	extern void resizeDialog(QWidget *dialog);
 
 	//! brief Changes the values of the grid selection at once
 	extern void bulkDataEdit(QTableWidget *results_tbw);

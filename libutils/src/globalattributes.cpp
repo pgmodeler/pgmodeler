@@ -69,6 +69,7 @@ namespace GlobalAttributes {
 	RelationshipsConf=QString("relationships"),
 	SnippetsConf=QString("snippets"),
 	SQLHistoryConf=QString("sql-history"),
+	DiffPresetsConf=QString("diff-presets"),
 
 	SQLHighlightConf=QString("sql-highlight"),
 	XMLHighlightConf=QString("xml-highlight"),

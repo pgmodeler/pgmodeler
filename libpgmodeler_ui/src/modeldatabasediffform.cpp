@@ -23,18 +23,22 @@
 #include <QTemporaryFile>
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
+map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
 
-ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
 	try
 	{
 		setupUi(this);
+		setWindowFlags(flags);
+
 		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
 
 		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
+		is_adding_new_preset=false;
 		imported_model=loaded_model=source_model=nullptr;
 		src_import_helper=import_helper=nullptr;
 		diff_helper=nullptr;
@@ -104,8 +108,17 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
-
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
+
+		cancel_preset_edit_tb->setVisible(false);
+		preset_name_edt->setVisible(false);
+
+		new_preset_tb->setToolTip(new_preset_tb->toolTip() + QString(" (%1)").arg(new_preset_tb->shortcut().toString()));
+		edit_preset_tb->setToolTip(edit_preset_tb->toolTip() + QString(" (%1)").arg(edit_preset_tb->shortcut().toString()));
+		save_preset_tb->setToolTip(save_preset_tb->toolTip() + QString(" (%1)").arg(save_preset_tb->shortcut().toString()));
+		cancel_preset_edit_tb->setToolTip(cancel_preset_edit_tb->toolTip() + QString(" (%1)").arg(cancel_preset_edit_tb->shortcut().toString()));
+		remove_preset_tb->setToolTip(remove_preset_tb->toolTip() + QString(" (%1)").arg(remove_preset_tb->shortcut().toString()));
+		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -126,13 +139,39 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags f)
 		connect(alter_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
 		connect(ignore_error_codes_chk, SIGNAL(toggled(bool)), error_codes_edt, SLOT(setEnabled(bool)));
-		connect(src_database_rb, SIGNAL(toggled(bool)), src_database_wgt, SLOT(setEnabled(bool)));
 		connect(src_model_rb, SIGNAL(toggled(bool)), src_model_name_lbl, SLOT(setEnabled(bool)));
 		connect(src_connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
 		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
 		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
-		connect(src_database_rb, SIGNAL(toggled(bool)), this, SLOT(enableDiffMode()));
 		connect(open_in_sql_tool_btn, SIGNAL(clicked(bool)), this, SLOT(loadDiffInSQLTool()));
+		connect(presets_cmb, SIGNAL(activated(int)), this, SLOT(selectPreset()));
+
+		connect(default_presets_tb, SIGNAL(clicked(bool)), this, SLOT(restoreDefaults()));
+		connect(remove_preset_tb, SIGNAL(clicked(bool)), this, SLOT(removePreset()));
+		connect(save_preset_tb, SIGNAL(clicked(bool)), this, SLOT(savePreset()));
+
+		connect(src_database_rb, &QRadioButton::toggled, [&](bool toggle){
+			src_database_wgt->setEnabled(toggle);
+			src_connection_lbl->setEnabled(toggle && src_connections_cmb->count() > 0);
+			enableDiffMode();
+		});
+
+		connect(new_preset_tb, &QToolButton::clicked, [&](){
+			togglePresetConfiguration(true);
+		});
+
+		connect(edit_preset_tb, &QToolButton::clicked, [&](){
+			togglePresetConfiguration(true, true);
+		});
+
+		connect(cancel_preset_edit_tb, &QToolButton::clicked, [&](){
+			togglePresetConfiguration(false);
+			enablePresetButtons();
+		});
+
+		connect(preset_name_edt, &QLineEdit::textChanged, [&](const QString &text){
+			save_preset_tb->setEnabled(!text.isEmpty());
+		});
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
@@ -158,6 +197,13 @@ ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 	destroyThread(DiffThread);
 	destroyThread(ExportThread);
 	destroyModel();
+}
+
+void ModelDatabaseDiffForm::exec(void)
+{
+	show();
+	loadConfiguration();
+	event_loop.exec();
 }
 
 void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
@@ -214,6 +260,10 @@ void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
 		event->ignore();
 	else if(process_paused)
 		cancelOperation(true);
+
+	//If no threads are running we quit the event loop so the control can be returned to main thread (application)
+	if(!isThreadsRunning())
+		event_loop.quit();
 }
 
 void ModelDatabaseDiffForm::showEvent(QShowEvent *)
@@ -408,6 +458,9 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 
 void ModelDatabaseDiffForm::generateDiff(void)
 {
+	// Cancel any pending preset editing before run the diff
+	togglePresetConfiguration(false);
+
 	//Destroy previously allocated threads and helper before start over.
 	destroyModel();
 	destroyThread(SrcImportThread);
@@ -916,8 +969,6 @@ void ModelDatabaseDiffForm::updateProgress(int progress, QString msg, ObjectType
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 	else
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
-
-	//this->repaint();
 }
 
 void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
@@ -968,4 +1019,268 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 
 		file_edt->setText(file);
 	}
+}
+
+void ModelDatabaseDiffForm::loadConfiguration(void)
+{
+	try
+	{
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+		applyConfiguration();
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons, trUtf8("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+
+		if(msg_box.result() == QDialog::Accepted)
+			restoreDefaults();
+	}
+}
+
+void ModelDatabaseDiffForm::saveConfiguration(void)
+{
+	try
+	{
+		attribs_map attribs;
+		QString preset_sch, root_dir;
+		QString presets;
+
+		root_dir=GlobalAttributes::TmplConfigurationDir +
+				 GlobalAttributes::DirSeparator;
+
+		preset_sch=root_dir +
+				 GlobalAttributes::SchemasDir +
+				 GlobalAttributes::DirSeparator +
+				 Attributes::Preset +
+				 GlobalAttributes::SchemaExt;
+
+		for(auto &conf : config_params)
+		{
+			schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreEmptyAttributes(true);
+			presets += schparser.getCodeDefinition(preset_sch, conf.second);
+			schparser.ignoreUnkownAttributes(false);
+			schparser.ignoreEmptyAttributes(false);
+		}
+
+		config_params[GlobalAttributes::DiffPresetsConf][Attributes::Preset] = presets;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::DiffPresetsConf, config_params);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void ModelDatabaseDiffForm::applyConfiguration(void)
+{
+	presets_cmb->clear();
+	presets_cmb->blockSignals(true);
+
+	for(auto &conf : config_params)
+		presets_cmb->addItem(conf.first);
+
+	presets_cmb->blockSignals(false);
+	enablePresetButtons();
+	selectPreset();
+}
+
+void ModelDatabaseDiffForm::restoreDefaults(void)
+{
+	try
+	{
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Do you really want to restore the default settings?"),
+								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
+
+		if(msg_box.result()==QDialog::Accepted)
+		{
+			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
+			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+			applyConfiguration();
+		}
+	}
+	catch(Exception &e)
+	{
+		Messagebox msg_box;
+		msg_box.show(e);
+	}
+}
+
+void ModelDatabaseDiffForm::selectPreset(void)
+{
+	attribs_map conf = config_params[presets_cmb->currentText()];
+	QStringList db_name;
+
+	src_model_rb->setChecked(src_model_rb->isEnabled() && conf[Attributes::CurrentModel] == Attributes::True);
+
+	src_database_rb->setChecked(!conf[Attributes::InputDatabase].isEmpty());
+	src_connections_cmb->setCurrentIndex(0);
+	src_connections_cmb->activated(0);
+	db_name = conf[Attributes::InputDatabase].split('@');
+
+	if(db_name.size() > 1)
+	{
+		int idx = src_connections_cmb->findText(db_name[1], Qt::MatchStartsWith);
+
+		if(idx >= 0)
+		{
+			src_connections_cmb->setCurrentIndex(idx);
+			src_connections_cmb->activated(idx);
+			src_database_cmb->setCurrentText(db_name[0]);
+		}
+	}
+
+	// Selecting the database to compare
+	connections_cmb->setCurrentIndex(0);
+	connections_cmb->activated(0);
+	db_name = conf[Attributes::CompareToDatabase].split('@');
+
+	if(db_name.size() > 1)
+	{
+		int idx = connections_cmb->findText(db_name[1], Qt::MatchStartsWith);
+
+		if(idx > 0)
+		{
+			connections_cmb->setCurrentIndex(idx);
+			connections_cmb->activated(idx);
+			database_cmb->setCurrentText(db_name[0]);
+		}
+	}
+
+	pgsql_ver_chk->setChecked(!conf[Attributes::Version].isEmpty());
+	if(pgsql_ver_chk->isChecked())
+		pgsql_ver_cmb->setCurrentText(conf[Attributes::Version]);
+
+	store_in_file_rb->setChecked(conf[Attributes::StoreInFile] == Attributes::True);
+	apply_on_server_rb->setChecked(conf[Attributes::ApplyOnServer] == Attributes::True);
+	enableDiffMode();
+
+	keep_cluster_objs_chk->setChecked(conf[Attributes::KeepClusterObjs] == Attributes::True);
+	keep_obj_perms_chk->setChecked(conf[Attributes::KeepObjsPerms] == Attributes::True);
+	dont_drop_missing_objs_chk->setChecked(conf[Attributes::DontDropMissingObjs] == Attributes::True);
+	drop_missing_cols_constr_chk->setChecked(conf[Attributes::DontDropMissingObjs] == Attributes::True &&
+																					 conf[Attributes::DropMissingColsConstrs] == Attributes::True);
+	preserve_db_name_chk->setChecked(conf[Attributes::PreserveDbName] == Attributes::True);
+	cascade_mode_chk->setChecked(conf[Attributes::DropTruncCascade] == Attributes::True);
+	trunc_tables_chk->setChecked(conf[Attributes::TruncColsBeforeAlter] == Attributes::True);
+	reuse_sequences_chk->setChecked(conf[Attributes::ReuseSequences] == Attributes::True);
+	force_recreation_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True);
+	recreate_unmod_chk->setChecked(conf[Attributes::ForceObjsRecreation] == Attributes::True &&
+																 conf[Attributes::RecreateUnmodObjs] == Attributes::True);
+
+	import_sys_objs_chk->setChecked(conf[Attributes::ImportSysObjs] == Attributes::True);
+	import_ext_objs_chk->setChecked(conf[Attributes::ImportExtObjs] == Attributes::True);
+	ignore_duplic_chk->setChecked(conf[Attributes::IgnoreDuplicErrors] == Attributes::True);
+	ignore_errors_chk->setChecked(conf[Attributes::IgnoreImportErrors] == Attributes::True);
+	ignore_error_codes_chk->setChecked(!conf[Attributes::IgnoreErrorCodes].isEmpty());
+	error_codes_edt->setText(conf[Attributes::IgnoreErrorCodes]);
+}
+
+void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
+{
+	is_adding_new_preset = toggle && !is_edit;
+	presets_cmb->setVisible(!toggle);
+	preset_name_edt->setVisible(toggle);
+	default_presets_tb->setVisible(!toggle);
+	cancel_preset_edit_tb->setVisible(toggle);
+	new_preset_tb->setVisible(!toggle);
+	edit_preset_tb->setVisible(!toggle);
+	remove_preset_tb->setVisible(!toggle);
+	preset_name_edt->clear();
+	save_preset_tb->setEnabled(toggle && (is_edit && presets_cmb->count() > 0));
+
+	if(is_edit)
+		preset_name_edt->setText(presets_cmb->currentText());
+
+	if(toggle)
+		preset_name_edt->setFocus();
+}
+
+void ModelDatabaseDiffForm::enablePresetButtons(void)
+{
+	presets_cmb->setEnabled(presets_cmb->count() > 0);
+	edit_preset_tb->setEnabled(presets_cmb->isEnabled());
+	remove_preset_tb->setEnabled(presets_cmb->isEnabled());
+	save_preset_tb->setEnabled(presets_cmb->isEnabled());
+}
+
+void ModelDatabaseDiffForm::removePreset(void)
+{
+	Messagebox msg_box;
+
+	msg_box.show(trUtf8("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+
+	if(msg_box.result() == QDialog::Accepted)
+	{
+		config_params.erase(presets_cmb->currentText());
+		applyConfiguration();
+		saveConfiguration();
+	}
+}
+
+void ModelDatabaseDiffForm::savePreset(void)
+{
+	QString name, fmt_name;
+	attribs_map conf;
+	int idx = 0;
+
+	if(!is_adding_new_preset)
+	{
+		fmt_name = name = preset_name_edt->text().isEmpty() ? presets_cmb->currentText() : preset_name_edt->text();
+		config_params.erase(presets_cmb->currentText());
+		presets_cmb->removeItem(presets_cmb->currentIndex());
+	}
+	else
+		fmt_name = name = preset_name_edt->text();
+
+	// Checking the preset name duplication and performing a basic desambiguation if necessary
+	while(presets_cmb->findText(fmt_name, Qt::MatchExactly) >= 0)
+		fmt_name = name + QString::number(++idx);
+
+	conf[Attributes::Name] = fmt_name;
+	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : QString();
+
+	if(src_database_rb->isChecked())
+	{
+		conf[Attributes::InputDatabase] = QString("%1@%2")
+																			.arg(src_database_cmb->currentIndex() > 0 ? src_database_cmb->currentText() : QString("-"))
+																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : QString("-"));
+	}
+	else
+		conf[Attributes::InputDatabase] = QString();
+
+	conf[Attributes::CompareToDatabase] = QString("%1@%2")
+																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : QString("-"))
+																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : QString("-"));
+	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : QString();
+	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::DropMissingColsConstrs] = drop_missing_cols_constr_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::PreserveDbName] = preserve_db_name_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::DropTruncCascade] = cascade_mode_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::TruncColsBeforeAlter] = trunc_tables_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::ReuseSequences] = reuse_sequences_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::ForceObjsRecreation] = force_recreation_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::RecreateUnmodObjs] = recreate_unmod_chk->isChecked() ? Attributes::True : Attributes::False;
+
+	conf[Attributes::ImportSysObjs] = import_sys_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::ImportExtObjs] = import_ext_objs_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::IgnoreDuplicErrors] = ignore_duplic_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::IgnoreImportErrors] = ignore_errors_chk->isChecked() ? Attributes::True : Attributes::False;
+	conf[Attributes::IgnoreErrorCodes] = error_codes_edt->text();
+
+	config_params[fmt_name] = conf;
+
+	saveConfiguration();
+	togglePresetConfiguration(false);
+	applyConfiguration();
+
+	presets_cmb->setCurrentText(fmt_name);
+	selectPreset();
 }

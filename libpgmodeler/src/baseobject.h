@@ -86,6 +86,8 @@ class BaseObject {
 		//! \brief Indicates the the cached code enabled
 		static bool use_cached_code;
 
+		static bool escape_comments;
+
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
 
@@ -290,6 +292,10 @@ class BaseObject {
 		//! \brief Returns the current value of the global object id counter
 		static unsigned getGlobalId(void);
 
+		static void setEscapeComments(bool value);
+
+		static bool isEscapeComments(void);
+
 		//! \brief Defines the comment of the object that will be attached to its SQL definition
 		virtual void setComment(const QString &comment);
 
@@ -349,8 +355,12 @@ class BaseObject {
 		//! \brief Returns the name of the object with schema name (when available) prepended by default
 		virtual QString getSignature(bool format=true);
 
-		//! \brief Retorns the object's comment
+		//! \brief Returns the object's comment (in raw form)
 		QString getComment(void);
+
+		/*! \brief Returns the object's comment in such way that the quotes are escaped as well,
+		 * if escape_special_chars is true, any line break and tabulation is returned in form \n and \t */
+		QString getEscapedComment(bool escape_special_chars);
 
 		//! \brief Returns the object's type
 		ObjectType getObjectType(void);

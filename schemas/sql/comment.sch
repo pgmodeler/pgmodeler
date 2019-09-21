@@ -6,9 +6,10 @@
  [COMMENT ON ] {sql-object} $sp {signature} [ IS ]
 
  %if ({comment}=="unset") %then
-  ''
+    ''
  %else
-  '{comment}'
+    %if {escape-comment} %then E %end
+    '{comment}'
  %end
 
  ; $br

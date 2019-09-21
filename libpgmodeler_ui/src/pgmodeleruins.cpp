@@ -301,7 +301,7 @@ namespace PgModelerUiNs {
 		return(getIconPath(BaseObject::getSchemaName(obj_type)));
 	}
 
-	void resizeDialog(QDialog *widget)
+	void resizeDialog(QWidget *widget)
 	{
 		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0,
