@@ -34,6 +34,7 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 		Q_OBJECT
 
 		static const QString IdLabel;
+		unsigned selector_idx = 0;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -42,6 +43,7 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
 		void fillCreationOrderGrid(void);
+		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -53,6 +55,8 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 		void showObjectId(void);
 		void swapObjectsIds(void);
 		void filterObjects(void);
+		void selectItem(QTableWidgetItem *item);
+		void clearSelectors(void);
 
 	signals:
 		void s_objectsIdsSwapped(void);
