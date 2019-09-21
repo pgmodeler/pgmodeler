@@ -618,9 +618,9 @@ void ModelValidationWidget::swapObjectsIds(void)
 	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
 	parent_form.setMainWidget(swap_ids_wgt);
 
-	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, this->metaObject()->className());
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&parent_form, this->metaObject()->className());
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 }
 
 void ModelValidationWidget::selectObject(void)

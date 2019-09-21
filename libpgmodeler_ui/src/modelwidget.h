@@ -494,7 +494,7 @@ class ModelWidget: public QWidget {
 
 		void toggleSchemasRectangles(void);
 
-		void editCreationOrder(void);
+		void swapObjectsIds(void);
 
 		void jumpToTable(void);
 

@@ -352,7 +352,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_creation_order=new QAction(QIcon(PgModelerUiNs::getIconPath("swapobjs")), trUtf8("Swap ids"), this);
 	action_edit_creation_order->setToolTip(trUtf8("Edit the objects creation order by swapping their ids"));
-	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(editCreationOrder()));
+	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds()));
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
@@ -4581,7 +4581,7 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 	}
 }
 
-void ModelWidget::editCreationOrder(void)
+void ModelWidget::swapObjectsIds(void)
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
@@ -4598,7 +4598,10 @@ void ModelWidget::editCreationOrder(void)
 
 	parent_form.apply_ok_btn->setVisible(true);
 	parent_form.setMainWidget(swap_ids_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 }
 
 void ModelWidget::jumpToTable(void)
