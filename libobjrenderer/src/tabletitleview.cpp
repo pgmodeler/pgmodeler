@@ -65,6 +65,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		schema_name_attrib=Attributes::ViewSchemaName;
 		title_color_attrib=Attributes::ViewTitle;
 	}
+	else if(object->getObjectType()==ObjectType::ForeignTable && !tag)
+	{
+		name_attrib=Attributes::ForeignTableName;
+		schema_name_attrib=Attributes::ForeignTableSchemaName;
+		title_color_attrib=Attributes::ForeignTableTitle;
+	}
 	else
 	{
 		name_attrib=Attributes::TableName;
@@ -113,7 +119,9 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(tag)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
-	if(object->getObjectType()==ObjectType::View || (table && table->isPartition()))
+	if(object->getObjectType()==ObjectType::View ||
+		 object->getObjectType()==ObjectType::ForeignTable ||
+		 (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 
 	box->setPen(pen);

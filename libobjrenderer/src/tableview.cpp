@@ -47,11 +47,16 @@ void TableView::configureObject(void)
 	QGraphicsItemGroup *groups[]={ columns, ext_attribs };
 	RoundedRectItem *bodies[]={ body, ext_attribs_body };
 	vector<TableObject *> tab_objs, columns, ext_tab_objs;
-	QString atribs[]={ Attributes::TableBody, Attributes::TableExtBody };
+	QStringList atribs, tag_attribs = { Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
 	CollapseMode collapse_mode = table->getCollapseMode();
 	vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
 	bool has_col_pag = false, has_ext_pag = false;
+
+	if(table->getObjectType() == ObjectType::Table)
+		atribs.append({ Attributes::TableBody, Attributes::TableExtBody });
+	else
+		atribs.append({ Attributes::ForeignTableBody, Attributes::ForeignTableExtBody });
 
 	// Clear the selected children objects vector since we'll (re)configure the whole table
 	sel_child_objs.clear();
@@ -188,15 +193,15 @@ void TableView::configureObject(void)
 		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VertSpacing)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
-		if(table->isPartition())
+		if(table->isPartition() || table->getObjectType() == ObjectType::ForeignTable)
 		  pen.setStyle(Qt::DashLine);
 
 		if(!tag)
 			bodies[obj_idx]->setBrush(this->getFillStyle(atribs[obj_idx]));
 		else
 		{
-			pen.setColor(tag->getElementColor(atribs[obj_idx], Tag::BorderColor));
-			bodies[obj_idx]->setBrush(tag->getFillStyle(atribs[obj_idx]));
+			pen.setColor(tag->getElementColor(tag_attribs[obj_idx], Tag::BorderColor));
+			bodies[obj_idx]->setBrush(tag->getFillStyle(tag_attribs[obj_idx]));
 		}
 
 		bodies[obj_idx]->setPen(pen);

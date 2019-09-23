@@ -44,4 +44,4 @@
  %end
  
 
-</table>  $br $br
+</foreigntable>  $br $br
