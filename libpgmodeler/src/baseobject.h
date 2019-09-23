@@ -76,7 +76,8 @@ enum class ObjectType: unsigned {
 	GenericSql,
 	BaseRelationship,
 	BaseObject,
-	BaseTable
+	BaseTable,
+	PhysicalTable
 };
 
 class BaseObject {

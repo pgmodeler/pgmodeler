@@ -519,6 +519,7 @@ class PgSqlType: public BaseType{
 
 		friend class Type;
 		friend class Domain;
+		friend class PhysicalTable;
 		friend class Table;
 		friend class Sequence;
 		friend class View;

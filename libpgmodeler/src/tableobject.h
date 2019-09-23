@@ -105,6 +105,7 @@ class TableObject: public BaseObject {
 		void operator = (TableObject &object);
 
 		friend class Relationship;
+		friend class PhysicalTable;
 		friend class Table;
 };
 

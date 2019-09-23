@@ -41,7 +41,7 @@ HEADERS += src/textbox.h \
 	   src/basegraphicobject.h \
 	   src/relationship.h \
 	   src/table.h \
-	src/usermapping.h \
+	   src/usermapping.h \
 	   src/view.h \
 	   src/operatorfamily.h \
 	   src/operatorclasselement.h \
@@ -64,8 +64,9 @@ HEADERS += src/textbox.h \
 	   src/policy.h \
 	   src/partitionkey.h \
 	   src/foreigndatawrapper.h \
-    src/foreignobject.h \
-    src/foreignserver.h
+	   src/foreignobject.h \
+	   src/foreignserver.h \
+	   src/physicaltable.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -84,7 +85,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/language.cpp \
 	    src/role.cpp \
 	    src/sequence.cpp \
-	src/usermapping.cpp \
+	    src/usermapping.cpp \
 	    src/view.cpp \
 	    src/conversion.cpp \
 	    src/function.cpp \
@@ -118,8 +119,9 @@ SOURCES +=  src/textbox.cpp \
 	    src/policy.cpp \
 	    src/partitionkey.cpp \
 	    src/foreigndatawrapper.cpp \
-    src/foreignobject.cpp \
-    src/foreignserver.cpp
+	    src/foreignobject.cpp \
+	    src/foreignserver.cpp \
+	    src/physicaltable.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
