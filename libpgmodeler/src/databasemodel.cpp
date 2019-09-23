@@ -18,6 +18,7 @@
 
 #include "databasemodel.h"
 #include "pgmodelerns.h"
+#include <QtDebug>
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -764,8 +765,8 @@ void DatabaseModel::destroyObjects(void)
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		qDebug("** FAIL TO DESTROY ALL OBJECTS **");
-		qDebug(e.getExceptionsText().toStdString().c_str());
+		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << endl;
+		qDebug() << e.getExceptionsText().toStdString().c_str() << endl;
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlDefinition, true);

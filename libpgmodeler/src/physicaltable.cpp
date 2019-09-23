@@ -47,7 +47,7 @@ PhysicalTable::PhysicalTable(void) : BaseTable()
 	this->setName(trUtf8("new_table").toUtf8());
 }
 
-PhysicalTable::~PhysicalTable(void)
+void PhysicalTable::destroyObjects(void)
 {
 	vector<BaseObject *> list=getObjects();
 
@@ -99,28 +99,20 @@ PhysicalTable *PhysicalTable::getPartitionedTable(void)
 
 void PhysicalTable::setProtected(bool value)
 {
-	ObjectType obj_types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
-	unsigned i = 0;
-	vector<TableObject *>::iterator itr, itr_end;
+	vector<ObjectType> obj_types = getChildObjectTypes(obj_type);
 	vector<TableObject *> *list=nullptr;
-	TableObject *tab_obj=nullptr;
 
 	//Protected the table child objects
-	for(i=0; i < 3; i++)
+	for(auto &type : obj_types)
 	{
-		list=getObjectList(obj_types[i]);
-		itr=list->begin();
-		itr_end=list->end();
+		list=getObjectList(type);
 
-		while(itr!=itr_end)
+		for(auto &tab_obj : *list)
 		{
-			tab_obj=(*itr);
-
 			/* Relationship included object are always protected, so
 			the protection state of this objects is not altered */
 			if(!tab_obj->isAddedByRelationship())
 				tab_obj->setProtected(value);
-			itr++;
 		}
 	}
 
@@ -360,89 +352,90 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 			if(getObject(obj->getName(),obj_type,idx))
 			{
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
-								.arg(obj->getName(true))
-								.arg(obj->getTypeName())
-								.arg(this->getName(true))
-								.arg(this->getTypeName()),
-								ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												.arg(obj->getName(true))
+												.arg(obj->getTypeName())
+												.arg(this->getName(true))
+												.arg(this->getTypeName()),
+												ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
 			//Raises an error if the user try to set the table as ancestor/copy of itself
-			else if((obj_type==ObjectType::Table || obj_type==ObjectType::BaseTable) && obj==this)
+			else if((isPhysicalTable(obj_type) || obj_type==ObjectType::BaseTable) && obj==this)
 				throw Exception(ErrorCode::InvInheritCopyPartRelationship,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			switch(obj_type)
+			if(!isPhysicalTable(obj_type))
 			{
-				case ObjectType::Column:
-				case ObjectType::Constraint:
-				case ObjectType::Trigger:
-					TableObject *tab_obj;
-					vector<TableObject *> *obj_list;
-					Column *col;
+				TableObject *tab_obj;
+				vector<TableObject *> *obj_list;
+				Column *col;
 
-					tab_obj=dynamic_cast<TableObject *>(obj);
-					col=dynamic_cast<Column *>(tab_obj);
+				tab_obj=dynamic_cast<TableObject *>(obj);
+				col=dynamic_cast<Column *>(tab_obj);
 
-					//Sets the object parent table if there isn't one
-					if(!tab_obj->getParentTable())
-						tab_obj->setParentTable(this);
-					//Raises an error if the parent table of the table object is different from table 'this'
-					else if(tab_obj->getParentTable()!=this)
-						throw Exception(ErrorCode::AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				//Sets the object parent table if there isn't one
+				if(!tab_obj->getParentTable())
+					tab_obj->setParentTable(this);
+				//Raises an error if the parent table of the table object is different from table 'this'
+				else if(tab_obj->getParentTable()!=this)
+					throw Exception(ErrorCode::AsgObjectBelongsAnotherTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-					//Validates the object SQL code befor insert on table
-					obj->getCodeDefinition(SchemaParser::SqlDefinition);
+				//Validates the object SQL code befor insert on table
+				obj->getCodeDefinition(SchemaParser::SqlDefinition);
 
-					if(col && col->getType()==this)
-					{
-						throw Exception(Exception::getErrorMessage(ErrorCode::InvColumnTableType)
-										.arg(col->getName())
-										.arg(this->getName()),
-										ErrorCode::InvColumnTableType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-					}
-					else if(obj_type==ObjectType::Trigger)
-						dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
+				if(col && col->getType()==this)
+				{
+					throw Exception(Exception::getErrorMessage(ErrorCode::InvColumnTableType)
+													.arg(col->getName())
+													.arg(this->getName()),
+													ErrorCode::InvColumnTableType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+				else if(obj_type==ObjectType::Constraint)
+				{
+					//Raises a error if the user try to add a second primary key on the table
+					if(dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::PrimaryKey &&
+						 this->getPrimaryKey())
+						throw Exception(ErrorCode::AsgExistingPrimaryKeyTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+				else if(obj_type==ObjectType::Trigger)
+					dynamic_cast<Trigger *>(tab_obj)->validateTrigger();
 
-					obj_list=getObjectList(obj_type);
+				obj_list=getObjectList(obj_type);
 
-					//Adds the object to the table
-					if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+				//Adds the object to the table
+				if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+					obj_list->push_back(tab_obj);
+				else
+				{
+					//If there is a object index specified inserts the object at the position
+					if(obj_list->size() > 0)
+						obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
+					else
 						obj_list->push_back(tab_obj);
-					else
-					{
-						//If there is a object index specified inserts the object at the position
-						if(obj_list->size() > 0)
-							obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
-						else
-							obj_list->push_back(tab_obj);
-					}
+				}
 
-					if(obj_type==ObjectType::Column || obj_type==ObjectType::Constraint)
-					{
-						updateAlterCmdsStatus();
+				if(obj_type==ObjectType::Column || obj_type==ObjectType::Constraint)
+				{
+					updateAlterCmdsStatus();
 
-						if(obj_type==ObjectType::Constraint)
-							dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
-					}
-				break;
-
-				case ObjectType::Table:
-				case ObjectType::ForeignTable:
-					PhysicalTable *tab;
-					tab = dynamic_cast<PhysicalTable *>(obj);
-					if(obj_idx < 0 || obj_idx >= static_cast<int>(ancestor_tables.size()))
-						ancestor_tables.push_back(tab);
-					else
-						ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
-
-					/* Updating the storage parameter WITH OIDS depending on the ancestors.
-					 * According to the docs, the child table will inherit WITH OID status from the parents */
-					with_oid=(with_oid || tab->isWithOIDs());
-				break;
-
-				default:
-					throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					if(obj_type==ObjectType::Constraint)
+						dynamic_cast<Constraint *>(tab_obj)->setColumnsNotNull(true);
+				}
 			}
+			else if(isPhysicalTable(obj_type))
+			{
+				PhysicalTable *tab = nullptr;
+				tab = dynamic_cast<PhysicalTable *>(obj);
+				if(obj_idx < 0 || obj_idx >= static_cast<int>(ancestor_tables.size()))
+					ancestor_tables.push_back(tab);
+				else
+					ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
+
+				/* Updating the storage parameter WITH OIDS depending on the ancestors.
+				 * According to the docs, the child table will inherit WITH OID status from the parents */
+				with_oid=(with_oid || tab->isWithOIDs());
+			}
+			else
+				throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			setCodeInvalidated(true);
 		}
@@ -450,9 +443,9 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 		{
 			if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
 				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
-								.arg(obj->getName())
-								.arg(obj->getTypeName()),
-								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+												.arg(obj->getName())
+												.arg(obj->getTypeName()),
+												ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
@@ -975,6 +968,21 @@ PhysicalTable *PhysicalTable::getAncestorTable(unsigned idx)
 	return(dynamic_cast<PhysicalTable *>(getObject(idx, ObjectType::Table)));
 }
 
+Constraint *PhysicalTable::getPrimaryKey(void)
+{
+	unsigned count,i;
+	Constraint *pk=nullptr, *constr=nullptr;
+
+	count=constraints.size();
+	for(i=0; i < count && !pk; i++)
+	{
+		constr=dynamic_cast<Constraint *>(constraints[i]);
+		pk=(constr->getConstraintType()==ConstraintType::PrimaryKey ? constr : nullptr);
+	}
+
+	return(pk);
+}
+
 Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
 {
 	if(!ref_old_name)
@@ -1176,7 +1184,6 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 	{
 		vector<TableObject *> *list=getObjectList(obj_type);
 		vector<TableObject *> new_list;
-		vector<TableObject *>::iterator itr;
 		QString name;
 		TableObject *tab_obj=nullptr;
 		unsigned i=0, pos=0, size=0, obj_idx, names_used=0, aux_size=0;
@@ -1359,19 +1366,19 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 		attributes[Attributes::InitialData]=getInitialDataCommands();
 }
 
-void PhysicalTable::operator = (PhysicalTable &tab)
+void PhysicalTable::operator = (PhysicalTable &table)
 {
 	QString prev_name = this->getName(true);
 
-	(*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(tab);
+	(*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(table);
 
-	this->layer = tab.layer;
-	this->with_oid=tab.with_oid;
-	this->col_indexes=tab.col_indexes;
-	this->constr_indexes=tab.constr_indexes;
-	this->partitioning_type=tab.partitioning_type;
-	this->initial_data=tab.initial_data;
-	this->partition_keys=tab.partition_keys;
+	this->layer = table.layer;
+	this->with_oid=table.with_oid;
+	this->col_indexes=table.col_indexes;
+	this->constr_indexes=table.constr_indexes;
+	this->partitioning_type=table.partitioning_type;
+	this->initial_data=table.initial_data;
+	this->partition_keys=table.partition_keys;
 
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
@@ -1409,7 +1416,9 @@ bool PhysicalTable::isPartitioned(void)
 
 bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
 {
-	return(obj_type == ObjectType::Table || obj_type == ObjectType::ForeignTable);
+	return(obj_type == ObjectType::Table ||
+				 obj_type == ObjectType::ForeignTable ||
+				 obj_type == ObjectType::PhysicalTable);
 }
 
 void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
@@ -1517,11 +1526,10 @@ void PhysicalTable::getColumnReferences(Column *column, vector<TableObject *> &r
 	}
 }
 
-
 vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_types)
 {
 	vector<BaseObject *> list;
-	vector<ObjectType> types={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+	vector<ObjectType> types=getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1541,7 +1549,7 @@ vector<PartitionKey> PhysicalTable::getPartitionKeys(void)
 
 void PhysicalTable::setCodeInvalidated(bool value)
 {
-	vector<ObjectType> types={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
+	vector<ObjectType> types = getChildObjectTypes(obj_type);
 
 	for(auto type : types)
 	{
@@ -1684,17 +1692,15 @@ void PhysicalTable::setObjectListsCapacity(unsigned capacity)
 	if(capacity < DefMaxObjectCount || capacity > DefMaxObjectCount * 10)
 		capacity = DefMaxObjectCount;
 
-	columns.reserve(capacity);
-	constraints.reserve(capacity/2);
-	triggers.reserve(capacity/2);
+	for(auto &type : getChildObjectTypes(obj_type))
+		getObjectList(type)->reserve(type != ObjectType::Column ? capacity/2 : capacity);
 }
 
 unsigned PhysicalTable::getMaxObjectCount(void)
 {
 	unsigned count = 0, max = 0;
-	vector<ObjectType> types = { ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
 
-	for(auto type : types)
+	for(auto &type : getChildObjectTypes(obj_type))
 	{
 		count = getObjectList(type)->size();
 		if(count > max) max = count;

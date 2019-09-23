@@ -35,7 +35,7 @@
 #include <QStringList>
 
 class PhysicalTable: public BaseTable {
-	private:
+	protected:
 		/*! \brief Stores the initial data of the table in CSV like form.
 		This will produce a set of INSERT commands that is appended to the table's SQL definition */
 		QString initial_data;
@@ -85,7 +85,6 @@ class PhysicalTable: public BaseTable {
 		void setAncestorTableAttribute(void);
 		void setRelObjectsIndexesAttribute(void);		
 
-	protected:
 		//! \brief Adds an ancestor table
 		void addAncestorTable(PhysicalTable *tab, int idx=-1);
 
@@ -116,6 +115,9 @@ class PhysicalTable: public BaseTable {
 		//! \brief Create an insert command from a list of columns and the values.
 		QString createInsertCommand(const QStringList &col_names, const QStringList &values);
 
+		//! \brief Performs the destruction of all children objects and internal lists clearing
+		void destroyObjects(void);
+
 	public:
 		//! \brief Default char for data separator in initial-data tag
 		static const QString DataSeparator,
@@ -124,9 +126,15 @@ class PhysicalTable: public BaseTable {
 		DataLineBreak;
 
 		PhysicalTable(void);
-		~PhysicalTable(void);
+		~PhysicalTable(void){}
 
+		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
+		static bool isPhysicalTable(ObjectType obj_type);
+
+		//! \brief Defines the table's name. This method updates the type named after the table
 		void setName(const QString &name);
+
+		//! \brief Defines the table's schema. This method updates the type named after the table
 		void setSchema(BaseObject *schema);
 
 		//! \brief Defines if the table accepts OIDs
@@ -214,6 +222,9 @@ class PhysicalTable: public BaseTable {
 		//! \brief Gets a ancestor table through its index
 		PhysicalTable *getAncestorTable(unsigned idx);
 
+		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
+		Constraint *getPrimaryKey(void);
+
 		//! \brief Gets the column count
 		unsigned getColumnCount(void);
 
@@ -297,13 +308,11 @@ class PhysicalTable: public BaseTable {
 		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
 		bool isPartitioned(void);
 
-		static bool isPhysicalTable(ObjectType obj_type);
-
 		//! \brief Copy the attributes between two tables
-		void operator = (PhysicalTable &tabela);
+		void operator = (PhysicalTable &table);
 
 		//! \brief Returns the specified object type list
-		vector<TableObject *> *getObjectList(ObjectType obj_type);
+		virtual vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
 		 The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
@@ -325,8 +334,11 @@ class PhysicalTable: public BaseTable {
 		//! \brief Invalidates the cached code forcing the generation of both SQL and XML
 		void setCodeInvalidated(bool value);
 
+		/*! \brief Returns the alter definition by comparing the this table against the one provided via parameter
+		 * This is a pure virtual method and must be implemented by children classes */
 		virtual QString getAlterDefinition(BaseObject *object) = 0;
 
+		//! \brief Returns the truncate definition for this table
 		QString getTruncateDefinition(bool cascade);
 
 		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
@@ -334,6 +346,7 @@ class PhysicalTable: public BaseTable {
 		rows use the DATA_LINE_BREAK */
 		void setInitialData(const QString &value);
 
+		//! \brief Returns the table's initial data in raw format
 		QString getInitialData(void);
 
 		/*! \brief Translate the CSV-like initial data to a set of INSERT commands.
@@ -347,7 +360,6 @@ class PhysicalTable: public BaseTable {
 		void setTableAttributes(unsigned def_type, bool incl_rel_added_objs);
 
 		virtual void setObjectListsCapacity(unsigned capacity);
-
 		virtual unsigned getMaxObjectCount(void);
 
 		friend class Relationship;

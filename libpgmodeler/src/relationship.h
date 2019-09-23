@@ -312,7 +312,7 @@ class Relationship: public BaseRelationship {
 		Relationship(Relationship *rel);
 
 		Relationship(unsigned rel_type,
-					 Table *src_tab, Table *dst_tab,
+					 PhysicalTable *src_tab, PhysicalTable *dst_tab,
 					 bool src_mdtry=false, bool dst_mdtry=false,
 					 bool identifier=false, bool deferrable=false,
 					 DeferralType deferral_type=DeferralType::Immediate,

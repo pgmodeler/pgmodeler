@@ -741,7 +741,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					if(debug_mode)
 					{
-						qDebug("create method for %s isn't implemented!", BaseObject::getSchemaName(obj_type).toStdString().c_str());
+						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << endl;
 					}
 				break;
 			}
@@ -2445,7 +2445,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 
 	try
 	{
-		Table *table = nullptr, *part_table = nullptr;
+		PhysicalTable *table = nullptr, *part_table = nullptr;
 		QString part_bound_expr;
 		Relationship *rel_part = nullptr;
 

@@ -246,7 +246,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	try
 	{
 		unsigned i, count;
-		Table *aux_tab=nullptr;
+		PhysicalTable *aux_tab=nullptr;
 		ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
 		vector<PartitionKey> part_keys;
 
@@ -761,7 +761,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 	}
 }
 
-void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
+void TableWidget::swapObjects(int idx1, int idx2)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	Table *table=nullptr;

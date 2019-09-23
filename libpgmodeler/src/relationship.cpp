@@ -42,10 +42,10 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 	(*(this))=(*rel);
 }
 
-Relationship::Relationship(unsigned rel_type, Table *src_tab,
-						   Table *dst_tab, bool src_mdtry, bool dst_mdtry,
-						   bool identifier,  bool deferrable, DeferralType deferral_type,
-						   ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
+Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
+							 PhysicalTable *dst_tab, bool src_mdtry, bool dst_mdtry,
+							 bool identifier,  bool deferrable, DeferralType deferral_type,
+							 ActionType fk_del_act, ActionType fk_upd_act, CopyOptions copy_op) :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
 	try
@@ -65,11 +65,11 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 							ErrorCode::InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		// Raises an error if the user tries to create another copy relationship if the table already copies another table
-		if(rel_type==RelationshipDep && src_tab->getCopyTable())
+		if(rel_type==RelationshipDep && src_tab->getObjectType() == ObjectType::Table && dynamic_cast<Table *>(src_tab)->getCopyTable())
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvCopyRelTableDefined)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
-							.arg(src_tab->getCopyTable()->getName(true)),
+							.arg(dynamic_cast<Table *>(src_tab)->getCopyTable()->getName(true)),
 							ErrorCode::InvCopyRelTableDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/*  If the relationship is partitioning the destination table (partitioned) shoud have
