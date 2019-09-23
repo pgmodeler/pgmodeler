@@ -1021,8 +1021,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
 																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
 
-	if(obj_type==ObjectType::ForeignTable ||
-		 obj_type==ObjectType::PhysicalTable)
+	if(obj_type==ObjectType::ForeignTable)
 		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger });
 
 	if(obj_type==ObjectType::View)

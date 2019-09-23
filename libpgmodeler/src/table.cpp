@@ -19,15 +19,15 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-Table::Table(void) : PhysicalTable()
+Table::Table(void) : PhysicalTable(ObjectType::Table)
 {
-	obj_type=ObjectType::Table;
 	unlogged=rls_enabled=rls_forced=false;
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::Unlogged]=QString();
 	attributes[Attributes::RlsEnabled]=QString();
 	attributes[Attributes::RlsForced]=QString();
 	copy_table=nullptr;
+	setName(trUtf8("new_table"));
 }
 
 Table::~Table(void)

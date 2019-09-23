@@ -22,9 +22,12 @@
 const QString PhysicalTable::DataSeparator = QString("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
-PhysicalTable::PhysicalTable(void) : BaseTable()
+PhysicalTable::PhysicalTable(ObjectType tab_type) : BaseTable()
 {
-	obj_type=ObjectType::PhysicalTable;
+	if(!isPhysicalTable(tab_type))
+		throw Exception(ErrorCode::AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	obj_type = tab_type;
 	with_oid=gen_alter_cmds==false;
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::InhColumns]=QString();
@@ -44,7 +47,6 @@ PhysicalTable::PhysicalTable(void) : BaseTable()
 
 	partitioned_table=nullptr;
 	partitioning_type=BaseType::Null;
-	this->setName(trUtf8("new_table").toUtf8());
 }
 
 void PhysicalTable::destroyObjects(void)
@@ -1417,8 +1419,7 @@ bool PhysicalTable::isPartitioned(void)
 bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
 {
 	return(obj_type == ObjectType::Table ||
-				 obj_type == ObjectType::ForeignTable ||
-				 obj_type == ObjectType::PhysicalTable);
+				 obj_type == ObjectType::ForeignTable);
 }
 
 void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)

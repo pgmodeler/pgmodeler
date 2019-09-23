@@ -66,7 +66,8 @@ HEADERS += src/textbox.h \
 	   src/foreigndatawrapper.h \
 	   src/foreignobject.h \
 	   src/foreignserver.h \
-	   src/physicaltable.h
+	   src/physicaltable.h \
+	   src/foreigntable.h
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
@@ -121,7 +122,8 @@ SOURCES +=  src/textbox.cpp \
 	    src/foreigndatawrapper.cpp \
 	    src/foreignobject.cpp \
 	    src/foreignserver.cpp \
-	    src/physicaltable.cpp
+	    src/physicaltable.cpp \
+	    src/foreigntable.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils

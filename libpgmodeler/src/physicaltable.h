@@ -125,7 +125,7 @@ class PhysicalTable: public BaseTable {
 		//! \brief Default char for data line break in initial-data tag
 		DataLineBreak;
 
-		PhysicalTable(void);
+		PhysicalTable(ObjectType tab_type);
 		~PhysicalTable(void){}
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)

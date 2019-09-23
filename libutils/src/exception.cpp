@@ -80,7 +80,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInexistentSeqOwnerColumn", QT_TR_NOOP("Assignment of a nonexistent owner column to the sequence `%1'!")},
 	{"AsgInvalidSeqOwnerColumn", QT_TR_NOOP("Assignment of an owner column to the sequence `%1' that is not related to any table!")},
 	{"RefLabelInvalidIndex", QT_TR_NOOP("Reference to a label which index is out of labels list bounds!")},
-	{"AllocationObjectInvalidType", QT_TR_NOOP("Allocation of object with invalid type!")},
+	{"AllocationObjectInvalidType", QT_TR_NOOP("Allocation of an object with invalid type!")},
 	{"AsgFunctionInvalidReturnType", QT_TR_NOOP("Assignment of a function with invalid return type to object `%1' (%2)!")},
 	{"AsgFunctionInvalidParameters", QT_TR_NOOP("Assignment of a function with invalid parameter(s) type(s) to object `%1' (%2)!")},
 	{"AsgNotAllocatedLanguage", QT_TR_NOOP("Assignment of not allocated language!")},
