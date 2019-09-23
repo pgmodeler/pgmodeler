@@ -25,7 +25,7 @@
 #ifndef TABLE_VIEW_H
 #define TABLE_VIEW_H
 
-#include "table.h"
+#include "physicaltable.h"
 #include "basetableview.h"
 #include "tabletitleview.h"
 #include "tableobjectview.h"
@@ -37,7 +37,7 @@ class TableView: public BaseTableView {
 		map<TableObject *, vector<QPointF>> conn_points;
 
 	public:
-		TableView(Table *table);
+		TableView(PhysicalTable *table);
 		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
 
 	private slots:

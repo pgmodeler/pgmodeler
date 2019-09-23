@@ -6119,6 +6119,7 @@ ForeignTable *DatabaseModel::createForeignTable(void)
 	{
 		ForeignTable *ftable = nullptr;
 		ftable = createPhysicalTable<ForeignTable>();
+#warning "Pending the extraction of <foreignserver> from xml code"
 		return(ftable);
 	}
 	catch(Exception &e)

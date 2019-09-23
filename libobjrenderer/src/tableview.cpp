@@ -18,7 +18,7 @@
 
 #include "tableview.h"
 
-TableView::TableView(Table *table) : BaseTableView(table)
+TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
 	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 	this->configureObject();
@@ -35,7 +35,7 @@ void TableView::configureObject(void)
 		return;
 	}
 
-	Table *table=dynamic_cast<Table *>(this->getUnderlyingObject());
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->getUnderlyingObject());
 	int i, count, obj_idx;
 	double width=0, px=0, cy=0, old_width=0, old_height=0;
 	unsigned start_col = 0, end_col = 0, start_ext = 0, end_ext = 0;
@@ -50,11 +50,8 @@ void TableView::configureObject(void)
 	QString atribs[]={ Attributes::TableBody, Attributes::TableExtBody };
 	Tag *tag=table->getTag();
 	CollapseMode collapse_mode = table->getCollapseMode();
-	ObjectType ext_types[5] = { ObjectType::Constraint,
-															ObjectType::Trigger, ObjectType::Index,
-															ObjectType::Rule, ObjectType::Policy };
+	vector<ObjectType> ext_types = BaseObject::getChildObjectTypes(table->getObjectType());
 	bool has_col_pag = false, has_ext_pag = false;
-
 
 	// Clear the selected children objects vector since we'll (re)configure the whole table
 	sel_child_objs.clear();
@@ -67,11 +64,14 @@ void TableView::configureObject(void)
 								 table->getObjectList(ObjectType::Column)->end());
 
 	// We store the extended attributes in a separated vector in order to paginate them (if enabled)
-	for(unsigned idx = 0; idx < 5; idx++)
+	for(auto &type : ext_types)
 	{
+		if(type == ObjectType::Column)
+			continue;
+
 		ext_tab_objs.insert(ext_tab_objs.end(),
-												table->getObjectList(ext_types[idx])->begin(),
-												table->getObjectList(ext_types[idx])->end());
+												table->getObjectList(type)->begin(),
+												table->getObjectList(type)->end());
 	}
 
 	has_col_pag = configurePaginationParams(BaseTable::AttribsSection, columns.size(), start_col, end_col);

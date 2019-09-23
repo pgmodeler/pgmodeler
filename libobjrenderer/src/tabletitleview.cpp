@@ -52,7 +52,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
-	else if(object->getObjectType()!=ObjectType::Table  &&
+	else if(!PhysicalTable::isPhysicalTable(object->getObjectType())  &&
 					object->getObjectType()!=ObjectType::View)
 		throw Exception(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 

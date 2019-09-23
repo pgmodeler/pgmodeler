@@ -800,8 +800,9 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 		switch(obj_type)
 		{
+			case ObjectType::ForeignTable:
 			case ObjectType::Table:
-				item=new TableView(dynamic_cast<Table *>(graph_obj));
+				item=new TableView(dynamic_cast<PhysicalTable *>(graph_obj));
 			break;
 
 			case ObjectType::View:
