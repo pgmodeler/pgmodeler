@@ -18,13 +18,13 @@
 
 #include "foreigndatawrapper.h"
 
-ForeignDataWrapper::ForeignDataWrapper(void) : ForeignObject()
+ForeignDataWrapper::ForeignDataWrapper(void) : BaseObject()
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
-
 	attributes[Attributes::HandlerFunc] = QString();
 	attributes[Attributes::ValidatorFunc] = QString();
+	attributes[Attributes::Options] = QString();
 }
 
 void ForeignDataWrapper::setHandlerFunction(Function *func)
@@ -103,7 +103,8 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_fo
 		attributes[Attributes::ValidatorFunc] = is_sql_def ? validator_func->getName(true) : validator_func->getCodeDefinition(def_type, true);
 	}
 
-	setOptionsAttribute(def_type);
+	attributes[Attributes::Options] = getOptionsAttribute(def_type);
+
 	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -118,7 +119,8 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 				*fdw_funcs[2] = { fdw->getValidatorFunction(), fdw->getHandlerFunction() },
 				*this_func = nullptr, *fdw_func = nullptr;
 
-		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(fdw);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(fdw);
+		getAlteredAttributes(fdw, attribs);
 
 		// Comparing FDW functions
 		for(int i = 0; i < 2; i++)

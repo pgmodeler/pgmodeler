@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "foreigndatawrapper.h"
 
-class ForeignServer: public ForeignObject {
+class ForeignServer: public BaseObject, public ForeignObject {
 	private:
 		//! \brief The foreign data wrapper which manages the server
 		ForeignDataWrapper *fdata_wrapper;

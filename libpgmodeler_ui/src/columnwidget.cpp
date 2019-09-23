@@ -130,7 +130,8 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	}
 
 	data_type->setAttributes(type, model,
-													 UserTypeConfig::BaseType | UserTypeConfig::TableType | UserTypeConfig::ViewType |
+													 UserTypeConfig::BaseType | UserTypeConfig::TableType |
+													 UserTypeConfig::ViewType | UserTypeConfig::ForeignTableType |
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 

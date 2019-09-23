@@ -32,7 +32,7 @@ DatabaseModel::DatabaseModel(void)
 	allow_conns = true;
 
 	encoding=BaseType::Null;
-	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
+	BaseObject::setName(QObject::trUtf8("new_database"));
 
 	default_objs[ObjectType::Schema]=nullptr;
 	default_objs[ObjectType::Role]=nullptr;
@@ -80,7 +80,8 @@ DatabaseModel::DatabaseModel(void)
 		{ ObjectType::GenericSql, &genericsqls },
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
 		{ ObjectType::ForeignServer, &foreign_servers },
-		{ ObjectType::UserMapping, &usermappings }
+		{ ObjectType::UserMapping, &usermappings },
+		{ ObjectType::ForeignTable, &foreign_tables }
 	};
 }
 
@@ -205,6 +206,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addForeignServer(dynamic_cast<ForeignServer *>(object));
 		else if(obj_type==ObjectType::UserMapping)
 			addUserMapping(dynamic_cast<UserMapping *>(object));
+		else if(obj_type==ObjectType::ForeignTable)
+			addForeignTable(dynamic_cast<ForeignTable *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -277,6 +280,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeForeignServer(dynamic_cast<ForeignServer *>(object));
 		else if(obj_type==ObjectType::UserMapping)
 			removeUserMapping(dynamic_cast<UserMapping *>(object));
+		else if(obj_type==ObjectType::ForeignTable)
+			removeForeignTable(dynamic_cast<ForeignTable *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -403,10 +408,12 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	/* Raises an error if there is an object with the same name.
 		 Special cases are for: functions/operator that are search by signature and views
 		 that are search on tables and views list */
-	if((obj_type==ObjectType::View &&	(getObject(object->getName(true), obj_type, idx) ||
-														 getObject(object->getName(true), ObjectType::Table, idx))) ||
-			(obj_type==ObjectType::Table && (getObject(object->getName(true), obj_type, idx) ||
-															 getObject(object->getName(true), ObjectType::View, idx))) ||
+	if(((obj_type==ObjectType::View ||
+			 obj_type==ObjectType::Table ||
+			 obj_type==ObjectType::ForeignTable) &&
+			(getObject(object->getName(true), ObjectType::View, idx) ||
+			 getObject(object->getName(true), ObjectType::Table, idx) ||
+			 getObject(object->getName(true), ObjectType::ForeignTable, idx))) ||
 			(obj_type==ObjectType::Extension &&	(getObject(object->getName(false), obj_type, idx))) ||
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
@@ -1158,6 +1165,44 @@ UserMapping *DatabaseModel::getUserMapping(unsigned obj_idx)
 UserMapping *DatabaseModel::getUserMapping(const QString &name)
 {
 	return(dynamic_cast<UserMapping *>(getObject(name, ObjectType::UserMapping)));
+}
+
+void DatabaseModel::addForeignTable(ForeignTable *table, int obj_idx)
+{
+	try
+	{
+		__addObject(table, obj_idx);
+
+		PgSqlType::addUserType(table->getName(true), table, this, UserTypeConfig::ForeignTableType);
+		dynamic_cast<Schema *>(table->getSchema())->setModified(true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+ForeignTable *DatabaseModel::getForeignTable(unsigned obj_idx)
+{
+	return(dynamic_cast<ForeignTable *>(getObject(obj_idx, ObjectType::ForeignTable)));
+}
+
+ForeignTable *DatabaseModel::getForeignTable(const QString &name)
+{
+	return(dynamic_cast<ForeignTable *>(getObject(name, ObjectType::ForeignTable)));
+}
+
+void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
+{
+	try
+	{
+		__removeObject(table, obj_idx);
+		PgSqlType::removeUserType(table->getName(true), table);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void DatabaseModel::removeExtension(Extension *extension, int obj_idx)
@@ -3382,6 +3427,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createForeignServer();
 		else if(obj_type==ObjectType::UserMapping)
 			object=createUserMapping();
+		else if(obj_type==ObjectType::ForeignTable)
+			object=createForeignTable();
 	}
 
 	return(object);
@@ -4830,155 +4877,23 @@ Aggregate *DatabaseModel::createAggregate(void)
 
 Table *DatabaseModel::createTable(void)
 {
-	attribs_map attribs, aux_attribs;
-	QString elem;
-	Table *table=nullptr;
-	TableObject *object=nullptr;
-	BaseObject *tag=nullptr;
-	ObjectType obj_type;
-	vector<unsigned> idxs;
-	vector<QString> names;
-	PartitionKey part_key;
-	vector<PartitionKey> partition_keys;
-
 	try
 	{
-		table=new Table;
-		setBasicAttributes(table);
-		xmlparser.getElementAttributes(attribs);
+		Table *table = nullptr;
+		attribs_map attribs;
 
-		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
-		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
+		xmlparser.getElementAttributes(attribs);
+		table = createPhysicalTable<Table>();
 		table->setUnlogged(attribs[Attributes::Unlogged]==Attributes::True);
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
-		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
-		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
-		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
-		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
-		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
-		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
-		table->setLayer(attribs[Attributes::Layer].toUInt());
 
-		if(xmlparser.accessElement(XmlParser::ChildElement))
-		{
-			do
-			{
-				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-				{
-					elem=xmlparser.getElementName();
-					xmlparser.savePosition();
-					object=nullptr;
-
-					if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Column)])
-						object=createColumn();
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Constraint)])
-						object=createConstraint(table);
-					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Tag)])
-					{
-						xmlparser.getElementAttributes(aux_attribs);
-						tag=getObject(aux_attribs[Attributes::Name], ObjectType::Tag);
-
-						if(!tag)
-						{
-							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
-											.arg(attribs[Attributes::Name])
-									.arg(BaseObject::getTypeName(ObjectType::Table))
-									.arg(aux_attribs[Attributes::Table])
-									.arg(BaseObject::getTypeName(ObjectType::Tag))
-									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-
-						table->setTag(dynamic_cast<Tag *>(tag));
-					}
-					//Retrieving custom columns / constraint indexes
-					else if(elem==Attributes::CustomIdxs)
-					{
-						xmlparser.getElementAttributes(aux_attribs);
-						obj_type=BaseObject::getObjectType(aux_attribs[Attributes::ObjectType]);
-
-						xmlparser.savePosition();
-
-						if(xmlparser.accessElement(XmlParser::ChildElement))
-						{
-							do
-							{
-								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
-								{
-									elem=xmlparser.getElementName();
-
-									//The element <object> stores the index for each object in the current group
-									if(elem==Attributes::Object)
-									{
-										xmlparser.getElementAttributes(aux_attribs);
-										names.push_back(aux_attribs[Attributes::Name]);
-										idxs.push_back(aux_attribs[Attributes::Index].toUInt());
-									}
-								}
-							}
-							while(xmlparser.accessElement(XmlParser::NextElement));
-
-							table->setRelObjectsIndexes(names, idxs, obj_type);
-							names.clear();
-							idxs.clear();
-						}
-
-						xmlparser.restorePosition();
-					}
-					else if(elem==Attributes::Partitioning)
-					{
-						xmlparser.getElementAttributes(aux_attribs);
-						table->setPartitioningType(aux_attribs[Attributes::Type]);
-						xmlparser.savePosition();
-
-						if(xmlparser.accessElement(XmlParser::ChildElement))
-						{
-							do
-							{
-								if(xmlparser.getElementType()==XML_ELEMENT_NODE &&
-									 xmlparser.getElementName()==Attributes::PartitionKey)
-								{
-										createElement(part_key, nullptr, table);
-										partition_keys.push_back(part_key);
-								}
-							}
-							while(xmlparser.accessElement(XmlParser::NextElement));
-
-							table->addPartitionKeys(partition_keys);
-						}
-
-						xmlparser.restorePosition();
-					}
-					//Retrieving initial data
-					else if(elem==Attributes::InitialData)
-					{
-						xmlparser.savePosition();
-						xmlparser.accessElement(XmlParser::ChildElement);
-						table->setInitialData(xmlparser.getElementContent());
-						xmlparser.restorePosition();
-					}
-
-					if(object)
-						table->addObject(object);
-
-					xmlparser.restorePosition();
-				}
-			}
-			while(xmlparser.accessElement(XmlParser::NextElement));
-		}
-
-		table->setProtected(table->isProtected());
+		return(table);
 	}
 	catch(Exception &e)
 	{
-		QString extra_info=getErrorExtraInfo();
-		xmlparser.restorePosition();
-
-		if(table) delete(table);
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
-
-	return(table);
 }
 
 Column *DatabaseModel::createColumn(void)
@@ -5049,7 +4964,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	attribs_map attribs;
 	Constraint *constr=nullptr;
 	BaseObject *ref_table=nullptr;
-	Table *table=nullptr,*table_aux=nullptr;
+	PhysicalTable *table=nullptr,*table_aux=nullptr;
 	Column *column=nullptr;
 	Relationship *rel=nullptr;
 	QString elem, str_aux;
@@ -5071,8 +4986,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			obj_type=parent_obj->getObjectType();
 
 			//Identifies the correct parent type
-			if(obj_type==ObjectType::Table)
-				table=dynamic_cast<Table *>(parent_obj);
+			if(PhysicalTable::isPhysicalTable(obj_type))
+				table=dynamic_cast<PhysicalTable *>(parent_obj);
 			else if(obj_type==ObjectType::Relationship)
 				rel=dynamic_cast<Relationship *>(parent_obj);
 			else
@@ -5081,8 +4996,15 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		}
 		else
 		{
-			obj_type=ObjectType::Table;
-			table=dynamic_cast<Table *>(getObject(attribs[Attributes::Table], ObjectType::Table));
+			obj_type = ObjectType::Table;
+			table = dynamic_cast<Table *>(getObject(attribs[Attributes::Table], obj_type));
+
+			if(!table)
+			{
+				obj_type = ObjectType::ForeignTable;
+				table = dynamic_cast<Table *>(getObject(attribs[Attributes::Table], obj_type));
+			}
+
 			parent_obj=table;
 			ins_constr_table=true;
 
@@ -5093,7 +5015,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						.arg(attribs[Attributes::Name])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint))
 						.arg(attribs[Attributes::Table])
-						.arg(BaseObject::getTypeName(ObjectType::Table));
+						.arg(BaseObject::getTypeName(obj_type));
 
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -5210,7 +5132,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 						{
 							if(col_type==Constraint::SourceCols)
 							{
-								if(obj_type==ObjectType::Table)
+								if(PhysicalTable::isPhysicalTable(obj_type))
 								{
 									column=table->getColumn(col_list[i]);
 
@@ -5223,7 +5145,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 							}
 							else
 							{
-								table_aux=dynamic_cast<Table *>(ref_table);
+								table_aux=dynamic_cast<PhysicalTable *>(ref_table);
 								column=table_aux->getColumn(col_list[i]);
 
 								//If the column doesn't exists tries to get it searching by the old name
@@ -6189,6 +6111,20 @@ UserMapping *DatabaseModel::createUserMapping(void)
 	}
 
 	return(user_map);
+}
+
+ForeignTable *DatabaseModel::createForeignTable(void)
+{
+	try
+	{
+		ForeignTable *ftable = nullptr;
+		ftable = createPhysicalTable<ForeignTable>();
+		return(ftable);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void DatabaseModel::updateViewsReferencingTable(Table *table)
@@ -10696,4 +10632,155 @@ void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
 QList<unsigned> DatabaseModel::getActiveLayers(void)
 {
 	return(active_layers);
+}
+
+template<class TableClass>
+TableClass *DatabaseModel::createPhysicalTable(void)
+{
+	attribs_map attribs, aux_attribs;
+	QString elem;
+	TableClass *table=nullptr;
+	TableObject *object=nullptr;
+	BaseObject *tag=nullptr;
+	ObjectType obj_type;
+	vector<unsigned> idxs;
+	vector<QString> names;
+	PartitionKey part_key;
+	vector<PartitionKey> partition_keys;
+
+	try
+	{
+		table = new TableClass;
+		setBasicAttributes(table);
+		xmlparser.getElementAttributes(attribs);
+
+		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
+		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
+		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
+		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
+		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);
+		table->setCurrentPage(BaseTable::AttribsSection, attribs[Attributes::AttribsPage].toUInt());
+		table->setCurrentPage(BaseTable::ExtAttribsSection, attribs[Attributes::ExtAttribsPage].toUInt());
+		table->setFadedOut(attribs[Attributes::FadedOut]==Attributes::True);
+		table->setLayer(attribs[Attributes::Layer].toUInt());
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					elem=xmlparser.getElementName();
+					xmlparser.savePosition();
+					object=nullptr;
+
+					if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Column)])
+						object=createColumn();
+					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Constraint)])
+						object=createConstraint(table);
+					else if(elem==BaseObject::objs_schemas[enum_cast(ObjectType::Tag)])
+					{
+						xmlparser.getElementAttributes(aux_attribs);
+						tag=getObject(aux_attribs[Attributes::Name], ObjectType::Tag);
+
+						if(!tag)
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(attribs[Attributes::Name])
+									.arg(BaseObject::getTypeName(ObjectType::Table))
+									.arg(aux_attribs[Attributes::Table])
+									.arg(BaseObject::getTypeName(ObjectType::Tag))
+									, ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						table->setTag(dynamic_cast<Tag *>(tag));
+					}
+					//Retrieving custom columns / constraint indexes
+					else if(elem==Attributes::CustomIdxs)
+					{
+						xmlparser.getElementAttributes(aux_attribs);
+						obj_type=BaseObject::getObjectType(aux_attribs[Attributes::ObjectType]);
+
+						xmlparser.savePosition();
+
+						if(xmlparser.accessElement(XmlParser::ChildElement))
+						{
+							do
+							{
+								if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+								{
+									elem=xmlparser.getElementName();
+
+									//The element <object> stores the index for each object in the current group
+									if(elem==Attributes::Object)
+									{
+										xmlparser.getElementAttributes(aux_attribs);
+										names.push_back(aux_attribs[Attributes::Name]);
+										idxs.push_back(aux_attribs[Attributes::Index].toUInt());
+									}
+								}
+							}
+							while(xmlparser.accessElement(XmlParser::NextElement));
+
+							table->setRelObjectsIndexes(names, idxs, obj_type);
+							names.clear();
+							idxs.clear();
+						}
+
+						xmlparser.restorePosition();
+					}
+					else if(elem==Attributes::Partitioning)
+					{
+						xmlparser.getElementAttributes(aux_attribs);
+						table->setPartitioningType(aux_attribs[Attributes::Type]);
+						xmlparser.savePosition();
+
+						if(xmlparser.accessElement(XmlParser::ChildElement))
+						{
+							do
+							{
+								if(xmlparser.getElementType()==XML_ELEMENT_NODE &&
+									 xmlparser.getElementName()==Attributes::PartitionKey)
+								{
+									createElement(part_key, nullptr, table);
+									partition_keys.push_back(part_key);
+								}
+							}
+							while(xmlparser.accessElement(XmlParser::NextElement));
+
+							table->addPartitionKeys(partition_keys);
+						}
+
+						xmlparser.restorePosition();
+					}
+					//Retrieving initial data
+					else if(elem==Attributes::InitialData)
+					{
+						xmlparser.savePosition();
+						xmlparser.accessElement(XmlParser::ChildElement);
+						table->setInitialData(xmlparser.getElementContent());
+						xmlparser.restorePosition();
+					}
+
+					if(object)
+						table->addObject(object);
+
+					xmlparser.restorePosition();
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		table->setProtected(table->isProtected());
+	}
+	catch(Exception &e)
+	{
+		QString extra_info=getErrorExtraInfo();
+		xmlparser.restorePosition();
+
+		if(table) delete(table);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+	}
+
+	return(table);
 }

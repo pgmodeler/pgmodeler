@@ -25,14 +25,15 @@
 #ifndef FOREIGN_OBJECT_H
 #define FOREIGN_OBJECT_H
 
-#include "baseobject.h"
+#include "attribsmap.h"
+#include "schemaparser.h"
 
-class ForeignObject: public BaseObject {
+class ForeignObject {
 	protected:
 		//! \brief A set of key/value options associated to the foreign object
 		attribs_map options;
 
-		void setOptionsAttribute(unsigned def_type);
+		QString getOptionsAttribute(unsigned def_type);
 
 	public:
 		//! \brief Store the character used to separate options/values in the XML code
@@ -47,8 +48,7 @@ class ForeignObject: public BaseObject {
 		void removeOptions(void);
 		attribs_map getOptions(void);
 
-		virtual QString getCodeDefinition(unsigned) = 0;
-		virtual QString getAlterDefinition(BaseObject *object);
+		void getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs);
 };
 
 #endif

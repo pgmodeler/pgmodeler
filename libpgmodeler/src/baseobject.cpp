@@ -401,7 +401,7 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
 			 obj_type==ObjectType::Type || obj_type==ObjectType::OpClass ||
 			 obj_type==ObjectType::OpFamily || obj_type==ObjectType::Collation ||
-			 obj_type==ObjectType::Extension);
+			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsSchema(void)
@@ -420,7 +420,8 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
-			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping);
+			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping ||
+			 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -473,7 +474,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
 				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
 				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
-				 obj_type==ObjectType::UserMapping);
+				 obj_type==ObjectType::UserMapping || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -491,7 +492,8 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Schema || obj_type==ObjectType::View ||
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
-				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy);
+				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -1013,7 +1015,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 
 	if(obj_type==ObjectType::Schema)
 		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
-																	ObjectType::Domain, ObjectType::Function, ObjectType::OpClass,
+																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
 																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
 																	ObjectType::Type, ObjectType::Table, ObjectType::View });
 

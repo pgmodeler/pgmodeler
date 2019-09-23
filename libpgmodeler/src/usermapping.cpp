@@ -18,12 +18,13 @@
 
 #include "usermapping.h"
 
-UserMapping::UserMapping(void) : ForeignObject()
+UserMapping::UserMapping(void) : BaseObject()
 {
 	obj_type = ObjectType::UserMapping;
 	foreign_server = nullptr;
 	setName("");
 	attributes[Attributes::Server] = QString();
+	attributes[Attributes::Options] = QString();
 }
 
 void UserMapping::setForeignServer(ForeignServer *server)
@@ -78,7 +79,8 @@ QString UserMapping::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Server] = foreign_server->getCodeDefinition(def_type, true);
 	}
 
-	setOptionsAttribute(def_type);
+	attributes[Attributes::Options] = getOptionsAttribute(def_type);
+
 	return(this->BaseObject::__getCodeDefinition(def_type));
 }
 
@@ -86,7 +88,8 @@ QString UserMapping::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
+		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attributes);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

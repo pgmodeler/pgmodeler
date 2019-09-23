@@ -74,6 +74,8 @@
 %foreignserver;
 <!ENTITY % usermapping SYSTEM "usermapping.dtd">
 %usermapping;
+<!ENTITY % foreigntable SYSTEM "foreigntable.dtd">
+%foreigntable;
 
 <!ELEMENT dbmodel ANY>
 <!ATTLIST dbmodel author CDATA #IMPLIED>

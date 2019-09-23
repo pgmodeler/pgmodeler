@@ -17,13 +17,15 @@
 */
 
 #include "foreignobject.h"
+#include "exception.h"
+#include "attributes.h"
 
 const QString ForeignObject::OptionsSeparator = QString(",");
 const QString ForeignObject::OptionValueSeparator = QString("=");
 
-ForeignObject::ForeignObject(void) : BaseObject()
+ForeignObject::ForeignObject(void)
 {
-	attributes[Attributes::Options] = QString();
+
 }
 
 void ForeignObject::setOption(const QString &opt, const QString &value)
@@ -60,45 +62,35 @@ attribs_map ForeignObject::getOptions(void)
 	return(options);
 }
 
-QString ForeignObject::getAlterDefinition(BaseObject *object)
+void ForeignObject::getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs)
 {
-	try
+	attribs_map attribs;
+	ForeignObject *fobj = dynamic_cast<ForeignObject *>(object);
+	QStringList opts;
+
+	if(!fobj)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	// Comparing options (to be modified or added)
+	for(auto &opt : fobj->options)
 	{
-		attribs_map attribs;
-		ForeignObject *fobj = dynamic_cast<ForeignObject *>(object);
-		QStringList opts;
-
-		if(!fobj)
-			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		// Comparing options (to be modified or added)
-		for(auto &opt : fobj->options)
-		{
-			if(this->options.count(opt.first) == 0)
-				opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
-			else if(this->options[opt.first] != opt.second)
-				opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
-		}
-
-		// Comparing options (to be removed)
-		for(auto &opt : this->options)
-		{
-			if(fobj->options.count(opt.first) == 0)
-				opts.push_back(QString("DROP %1").arg(opt.first));
-		}
-
-		attribs[Attributes::Options] = opts.join(OptionsSeparator);
-		copyAttributes(attribs);
-
-		return(BaseObject::getAlterDefinition(object));
+		if(this->options.count(opt.first) == 0)
+			opts.push_back(QString("ADD %1 '%2'").arg(opt.first).arg(opt.second));
+		else if(this->options[opt.first] != opt.second)
+			opts.push_back(QString("SET %1 '%3'").arg(opt.first).arg(opt.second));
 	}
-	catch(Exception &e)
+
+	// Comparing options (to be removed)
+	for(auto &opt : this->options)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		if(fobj->options.count(opt.first) == 0)
+			opts.push_back(QString("DROP %1").arg(opt.first));
 	}
+
+	fo_attribs[Attributes::Options] = opts.join(OptionsSeparator);
 }
 
-void ForeignObject::setOptionsAttribute(unsigned def_type)
+QString ForeignObject::getOptionsAttribute(unsigned def_type)
 {
 	QStringList fmt_options;
 
@@ -107,5 +99,5 @@ void ForeignObject::setOptionsAttribute(unsigned def_type)
 																QString("%1 '%2'").arg(itr.first).arg(itr.second) :
 																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
 
-	attributes[Attributes::Options] = fmt_options.join(OptionsSeparator);
+	return(fmt_options.join(OptionsSeparator));
 }

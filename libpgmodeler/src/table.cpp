@@ -19,8 +19,9 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-Table::Table(void) : PhysicalTable(ObjectType::Table)
+Table::Table(void) : PhysicalTable()
 {
+	obj_type = ObjectType::Table;
 	unlogged=rls_enabled=rls_forced=false;
 	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::Unlogged]=QString();

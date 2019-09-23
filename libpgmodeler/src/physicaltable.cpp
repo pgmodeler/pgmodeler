@@ -22,13 +22,9 @@
 const QString PhysicalTable::DataSeparator = QString("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
-PhysicalTable::PhysicalTable(ObjectType tab_type) : BaseTable()
+PhysicalTable::PhysicalTable(void) : BaseTable()
 {
-	if(!isPhysicalTable(tab_type))
-		throw Exception(ErrorCode::AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	obj_type = tab_type;
-	with_oid=gen_alter_cmds==false;
+	with_oid=gen_alter_cmds=false;
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::InhColumns]=QString();
 	attributes[Attributes::Constraints]=QString();

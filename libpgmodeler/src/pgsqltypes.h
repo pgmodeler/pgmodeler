@@ -267,9 +267,10 @@ class UserTypeConfig {
 		SequenceType=8, //! \brief The type refers to a sequence
 		ViewType=16, //! \brief The type refers to a view
 		ExtensionType=32, //! \brief The type refers to a extension used as datatype
+		ForeignTableType=64, //! \brief The type refers to a extension used as datatype
 
 		//! \brief This constant refers to all types above and must be used only on type searches
-		AllUserTypes=63;
+		AllUserTypes=127;
 
 		UserTypeConfig(void)
 		{ name=QString(); ptype=nullptr; pmodel=nullptr; invalidated=false; type_conf=BaseType; }

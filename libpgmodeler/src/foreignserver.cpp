@@ -18,7 +18,7 @@
 
 #include "foreignserver.h"
 
-ForeignServer::ForeignServer(void) : ForeignObject()
+ForeignServer::ForeignServer(void) : BaseObject()
 {
 	obj_type = ObjectType::ForeignServer;
 	fdata_wrapper = nullptr;
@@ -81,7 +81,8 @@ QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::Fdw] = fdata_wrapper->getCodeDefinition(def_type, true);
 	}
 
-	setOptionsAttribute(def_type);
+	attributes[Attributes::Options] = getOptionsAttribute(def_type);
+
 	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -92,7 +93,8 @@ QString ForeignServer::getAlterDefinition(BaseObject *object)
 		ForeignServer *server=dynamic_cast<ForeignServer *>(object);
 		attribs_map attribs;
 
-		attributes[Attributes::AlterCmds] = ForeignObject::getAlterDefinition(server);
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(server);
+		getAlteredAttributes(server, attribs);
 
 		if(this->version != server->version)
 			attribs[Attributes::Version] = server->version;

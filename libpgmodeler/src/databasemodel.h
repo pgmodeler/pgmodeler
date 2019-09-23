@@ -57,6 +57,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "foreigndatawrapper.h"
 #include "foreignserver.h"
 #include "usermapping.h"
+#include "foreigntable.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -134,7 +135,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		genericsqls,
 		fdata_wrappers,
 		foreign_servers,
-		usermappings;
+		usermappings,
+		foreign_tables;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -512,6 +514,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		UserMapping *getUserMapping(unsigned obj_idx);
 		UserMapping *getUserMapping(const QString &name);
 
+		void addForeignTable(ForeignTable *table, int obj_idx=-1);
+		void removeForeignTable(ForeignTable *table, int obj_idx=-1);
+		ForeignTable *getForeignTable(unsigned obj_idx);
+		ForeignTable *getForeignTable(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -573,6 +580,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignDataWrapper *createForeignDataWrapper(void);
 		ForeignServer *createForeignServer(void);
 		UserMapping *createUserMapping(void);
+		ForeignTable *createForeignTable(void);
+
+		template<class TableClass>
+		TableClass *createPhysicalTable(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(Table *table);

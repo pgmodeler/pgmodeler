@@ -29,7 +29,7 @@
 #include "function.h"
 #include "foreignobject.h"
 
-class ForeignDataWrapper: public ForeignObject {
+class ForeignDataWrapper: public BaseObject, public ForeignObject {
 	private:
 		//! \brief Function that executes the functions related to the foreign data wrapper
 		Function *handler_func,

@@ -28,7 +28,7 @@
 #include "baseobject.h"
 #include "foreignserver.h"
 
-class UserMapping: public ForeignObject {
+class UserMapping: public BaseObject, public ForeignObject {
 	private:
 		//! \brief The foreign server which is managed by this user mapping the server
 		ForeignServer *foreign_server;

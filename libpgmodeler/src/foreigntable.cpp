@@ -18,9 +18,11 @@
 
 #include "foreigntable.h"
 
-ForeignTable::ForeignTable(void) : PhysicalTable(ObjectType::ForeignTable)
+ForeignTable::ForeignTable(void) : PhysicalTable()
 {
-	PhysicalTable::setName(trUtf8("new_foreign_table"));
+	setName(trUtf8("new_foreign_table"));
+	attributes[Attributes::Server] = QString();
+	obj_type = ObjectType::ForeignTable;
 }
 
 ForeignTable::~ForeignTable(void)
