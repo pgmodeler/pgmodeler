@@ -65,6 +65,7 @@ enum class ObjectType: unsigned {
 	Policy,
 	ForeignDataWrapper,
 	ForeignServer,
+	ForeignTable,
 	UserMapping,
 	Relationship,
 	Textbox,

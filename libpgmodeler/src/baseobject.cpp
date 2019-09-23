@@ -33,9 +33,9 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
-	"foreignserver", "usermapping", "relationship", "textbox",
-	"permission", "parameter", "typeattribute", "tag",
-	"genericsql", "relationship"
+	"foreignserver", "foreigntable", "usermapping", "relationship",
+	"textbox", "permission", "parameter", "typeattribute",
+	"tag", "genericsql", "relationship"
 };
 
 const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
@@ -48,10 +48,10 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
-	QT_TR_NOOP("Foreign Server"), QT_TR_NOOP("User Mapping"), QT_TR_NOOP("Relationship"),
-	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
-	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
-	QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
+	QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
+	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+	QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -63,7 +63,7 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
 	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"),
 	QString("POLICY"), QString("FOREIGN DATA WRAPPER"), QString("SERVER"),
-	QString("USER MAPPING")
+	QString("FOREIGN TABLE"), QString("USER MAPPING")
 };
 
 /* Initializes the global id which is shared between instances
