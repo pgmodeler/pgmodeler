@@ -26,14 +26,24 @@
 
 #include "physicaltable.h"
 #include "foreignobject.h"
+#include "foreignserver.h"
 
 class ForeignTable: public PhysicalTable, public ForeignObject {
 	private:
-
+		//! \brief The foreign server in which the foreign table resides
+		ForeignServer *foreign_server;
 
 	public:
 		ForeignTable(void);
 		~ForeignTable(void);
+
+		void setForeignServer(ForeignServer *server);
+		ForeignServer *getForeignServer(void);
+
+		/*! \brief Adds an child object to the foreign table.
+		 * This will raise an error if the user try to add constraints other than CHECK,
+		 * indexes, rules and policies. This because foreign tables only accepts columns, check constraints, triggers */
+		void addObject(BaseObject *object, int obj_idx = -1);
 
 		//! \brief Returns the SQL / XML definition for table
 		virtual QString getCodeDefinition(unsigned def_type) final;

@@ -25,63 +25,68 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	setupUi(this);
 
 	QString conf_ids[]={
-		Attributes::Global, //0
-		Attributes::Constraints, //1
-		Attributes::ObjSelection, //2
-		Attributes::PositionInfo, //3
-		Attributes::PositionInfo, //4
-		Attributes::ObjectType, //5
-		Attributes::LockerArc, //6
-		Attributes::LockerBody, //7
-		Attributes::TableSchemaName, //8
-		Attributes::TableName, //9
-		Attributes::TableBody, //10
-		Attributes::TableExtBody, //11
-		Attributes::TableTitle, //12
-		BaseObject::getSchemaName(ObjectType::Rule), //13
-		BaseObject::getSchemaName(ObjectType::Rule), //14
-		BaseObject::getSchemaName(ObjectType::Index), //15
-		BaseObject::getSchemaName(ObjectType::Index), //16
-		BaseObject::getSchemaName(ObjectType::Trigger), //17
-		BaseObject::getSchemaName(ObjectType::Trigger), //18
-		BaseObject::getSchemaName(ObjectType::Constraint), //19
-		BaseObject::getSchemaName(ObjectType::Constraint), //20
-		BaseObject::getSchemaName(ObjectType::Policy), //21
-		BaseObject::getSchemaName(ObjectType::Policy), //22
-		Attributes::ViewSchemaName, //21 -> 23
-		Attributes::ViewName, //22
-		Attributes::ViewBody, //23
-		Attributes::ViewExtBody, //24
-		Attributes::ViewTitle, //25
-		Attributes::Alias, //26
-		Attributes::RefColumn, //27
-		Attributes::RefTable, //28
-		Attributes::Reference, //29
-		BaseObject::getSchemaName(ObjectType::Textbox), //30
-		Attributes::Column, //31
-		Attributes::Column, //32
-		Attributes::InhColumn, //33
-		Attributes::ProtColumn, //34
-		Attributes::PkColumn, //35
-		Attributes::PkColumn, //36
-		Attributes::FkColumn, //37
-		Attributes::FkColumn, //38
-		Attributes::UqColumn, //39
-		Attributes::UqColumn, //40
-		Attributes::NnColumn, //41
-		Attributes::NnColumn, //42
-		Attributes::Relationship, //43
-		Attributes::Label, //44
-		Attributes::Label, //45
-		Attributes::Attribute, //46
-		Attributes::Attribute, //47
-		Attributes::Tag, //48
-		Attributes::Tag, //49
-		Attributes::Placeholder /*50*/};
+		Attributes::Global,
+		Attributes::Constraints,
+		Attributes::ObjSelection,
+		Attributes::PositionInfo,
+		Attributes::PositionInfo,
+		Attributes::ObjectType,
+		Attributes::LockerArc,
+		Attributes::LockerBody,
+		Attributes::TableSchemaName,
+		Attributes::TableName,
+		Attributes::TableBody,
+		Attributes::TableExtBody,
+		Attributes::TableTitle,
+		BaseObject::getSchemaName(ObjectType::Rule),
+		BaseObject::getSchemaName(ObjectType::Rule),
+		BaseObject::getSchemaName(ObjectType::Index),
+		BaseObject::getSchemaName(ObjectType::Index),
+		BaseObject::getSchemaName(ObjectType::Trigger),
+		BaseObject::getSchemaName(ObjectType::Trigger),
+		BaseObject::getSchemaName(ObjectType::Constraint),
+		BaseObject::getSchemaName(ObjectType::Constraint),
+		BaseObject::getSchemaName(ObjectType::Policy),
+		BaseObject::getSchemaName(ObjectType::Policy),
+		Attributes::ViewSchemaName,
+		Attributes::ViewName,
+		Attributes::ViewBody,
+		Attributes::ViewExtBody,
+		Attributes::ViewTitle,
+		Attributes::Alias,
+		Attributes::RefColumn,
+		Attributes::RefTable,
+		Attributes::Reference,
+		BaseObject::getSchemaName(ObjectType::Textbox),
+		Attributes::Column,
+		Attributes::Column,
+		Attributes::InhColumn,
+		Attributes::ProtColumn,
+		Attributes::PkColumn,
+		Attributes::PkColumn,
+		Attributes::FkColumn,
+		Attributes::FkColumn,
+		Attributes::UqColumn,
+		Attributes::UqColumn,
+		Attributes::NnColumn,
+		Attributes::NnColumn,
+		Attributes::Relationship,
+		Attributes::Label,
+		Attributes::Label,
+		Attributes::Attribute,
+		Attributes::Attribute,
+		Attributes::Tag,
+		Attributes::Tag,
+		Attributes::Placeholder,
+		Attributes::ForeignTableSchemaName,
+		Attributes::ForeignTableName,
+		Attributes::ForeignTableBody,
+		Attributes::ForeignTableExtBody,
+		Attributes::ForeignTableTitle };
 	int i, count=element_cmb->count(),
-			//This auxiliary vector stores the id of elements that represents color/font conf. of objects
+			//This auxiliary vector stores the id of elements that represents color/font confing of graphical objects
 			obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 20, 22, 25, 26, 27,
-														31, 32, 34, 38, 40, 42, 44, 45, 47, 49, 51, 52 };
+														31, 32, 34, 38, 40, 42, 44, 45, 47, 49, 55, 56, 57, 58 };
 	vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
 	conf_items.resize(count);
@@ -169,6 +174,13 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				scene->addItem(tab);
 			}
 
+			count=model->getObjectCount(ObjectType::ForeignTable);
+			for(i=0; i < count; i++)
+			{
+				tab=new TableView(model->getForeignTable(i));
+				scene->addItem(tab);
+			}
+
 			count=model->getObjectCount(ObjectType::View);
 			for(i=0; i < count; i++)
 			{
@@ -198,7 +210,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 				scene->addItem(txtbox);
 			}
 
-			placeholder->setRect(QRectF(170, 190, 100,50));
+			placeholder->setRect(QRectF(170, 280, 100,50));
 			updatePlaceholderItem();
 			scene->addItem(placeholder);
 		}

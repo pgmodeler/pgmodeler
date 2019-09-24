@@ -356,7 +356,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 
 		else if(parent_obj &&
 				(((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
-				  (parent_obj->getObjectType()!=ObjectType::Relationship && parent_obj->getObjectType()!=ObjectType::Table)) ||
+					(parent_obj->getObjectType()!=ObjectType::Relationship && !PhysicalTable::isPhysicalTable(parent_obj->getObjectType()))) ||
 
 				 ((obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule || obj_type==ObjectType::Index) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);

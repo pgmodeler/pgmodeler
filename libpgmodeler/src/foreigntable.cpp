@@ -23,6 +23,7 @@ ForeignTable::ForeignTable(void) : PhysicalTable()
 	setName(trUtf8("new_foreign_table"));
 	attributes[Attributes::Server] = QString();
 	obj_type = ObjectType::ForeignTable;
+	foreign_server = nullptr;
 }
 
 ForeignTable::~ForeignTable(void)
@@ -30,9 +31,50 @@ ForeignTable::~ForeignTable(void)
 	destroyObjects();
 }
 
+void ForeignTable::setForeignServer(ForeignServer *server)
+{
+	setCodeInvalidated(foreign_server != server);
+	foreign_server = server;
+}
+
+ForeignServer *ForeignTable::getForeignServer(void)
+{
+	return(foreign_server);
+}
+
+void ForeignTable::addObject(BaseObject *object, int obj_idx)
+{
+	if(object)
+	{
+		ObjectType obj_type = object->getObjectType();
+
+		// If the child object is of an invalid type we need to reject that object
+		if(obj_type == ObjectType::Index || obj_type == ObjectType::Rule || obj_type == ObjectType::Policy ||
+			 (obj_type == ObjectType::Constraint &&
+				dynamic_cast<Constraint *>(object)->getConstraintType() != ConstraintType::Check))
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgInvalidObjectForeignTable)
+											.arg(object->getName(true))
+											.arg(object->getTypeName())
+											.arg(this->getName(true)),
+											ErrorCode::AsgInvalidObjectForeignTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+	}
+
+	PhysicalTable::addObject(object, obj_idx);
+}
+
 QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
+
+	if(foreign_server)
+	{
+		attributes[Attributes::Server] = (def_type == SchemaParser::SqlDefinition ?
+																			foreign_server->getSignature() :
+																			foreign_server->getCodeDefinition(SchemaParser::XmlDefinition, true));
+	}
+
 	return(PhysicalTable::__getCodeDefinition(def_type));
 }
 

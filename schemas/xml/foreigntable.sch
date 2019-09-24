@@ -19,7 +19,7 @@
  {schema}
  %if {owner} %then {owner} %end
  %if {comment} %then {comment} %end
- %if {server} %then {server} %end
+ {server}
  %if {tag} %then {tag} %end
  %if {appended-sql} %then {appended-sql} %end
  %if {prepended-sql} %then {prepended-sql} %end

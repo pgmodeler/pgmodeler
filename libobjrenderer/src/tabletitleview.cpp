@@ -46,7 +46,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	Schema *schema=nullptr;
 	QFont font;
 	Tag *tag=nullptr;
-	Table *table = dynamic_cast<Table *>(object);
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(object);
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
@@ -120,7 +120,6 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
 	if(object->getObjectType()==ObjectType::View ||
-		 object->getObjectType()==ObjectType::ForeignTable ||
 		 (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 

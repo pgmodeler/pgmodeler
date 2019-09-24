@@ -159,11 +159,13 @@ namespace PgModelerNs {
 			case ObjectType::UserMapping:
 				copyObject(psrc_obj, dynamic_cast<UserMapping *>(copy_obj));
 			break;
+			case ObjectType::ForeignTable:
+				copyObject(psrc_obj, dynamic_cast<ForeignTable *>(copy_obj));
+			break;
 			default:
 				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
-
 
 	bool isReservedKeyword(const QString &word)
 	{

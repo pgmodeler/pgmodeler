@@ -3,8 +3,12 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.1-alpha" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1">
-<database name="exampledb" encoding="UTF8">
+<dbmodel pgmodeler-ver="0.9.2" author="Raphael Araújo e Silva" last-position="0,0" last-zoom="1" max-obj-count="6">
+<role name="roletest"
+      inherit="true">
+</role>
+
+<database name="exampledb" encoding="UTF8" is-template="false" allow-conns="true">
 	<comment><![CDATA[Example Database Model]]></comment>
 </database>
 
@@ -16,7 +20,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-title" colors="#ff0000,#800000,#000000"/>
 	<comment><![CDATA[this tag is a test]]></comment>
 </tag>
-<schema name="public" protected="true" fill-color="#000000" sql-disabled="true">
+<schema name="public" layer="0" protected="true" fill-color="#000000" sql-disabled="true">
 </schema>
 
 	<language name="testlang" protected="true"/>
@@ -36,7 +40,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<definition><![CDATA[SELECT 1+1;]]></definition>
 </function>
 
-<table name="table">
+<table name="table" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="public"/>
 	<tag name="sample tag"/>
 	<position x="20" y="20"/>
@@ -65,9 +69,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="table1">
+<table name="table1" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="public"/>
-	<position x="396" y="312"/>
+	<position x="460" y="340"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -103,7 +107,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<function signature="public.trigger_func()"/>
 </trigger>
 
-<relationship name="table1_has_many_table" type="rel1n"
+<relationship name="table1_has_many_table" type="rel1n" layer="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
@@ -111,20 +115,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="303" y="294"/>
-	<position x="300" y="120"/>
+		<position x="400" y="180"/>
+	<position x="300" y="180"/>
 	</line>
 	<label ref-type="name-label">
-		<position x="45.4757" y="2.15147"/>
+		<position x="8.97422" y="6.08397"/>
 	</label>
 	<column name="attribute">
 		<type name="integer" length="1"/>
 	</column>
 </relationship>
 
-<view name="view">
+<view name="view" layer="0" collapse-mode="2" max-obj-count="4">
 	<schema name="public"/>
-	<position x="18" y="317"/>
+	<position x="20" y="360"/>
 	<reference table="public.&quot;table&quot;" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -135,12 +139,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<expression type="from-exp">3,0</expression>
 </view>
 
-<relationship name="rel_view_table" type="reltv"
+<relationship name="rel_view_table" type="reltv" layer="0"
 	 src-table="public.view"
 	 dst-table="public.&quot;table&quot;"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_view_table1" type="reltv"
+<relationship name="rel_view_table1" type="reltv" layer="0"
 	 src-table="public.view"
 	 dst-table="public.table1"
 	 src-required="false" dst-required="false">
@@ -149,19 +153,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<textbox name="textbox" font-size="9">
-	<position x="20" y="275"/>
+<textbox name="textbox" layer="0" font-size="9">
+	<position x="320" y="380"/>
 	<comment><![CDATA[Selected Textbox]]></comment>
 </textbox>
 
-<textbox name="textbox1" font-size="9">
-	<position x="430" y="215"/>
+<textbox name="textbox1" layer="0" font-size="9" protected="true">
+	<position x="180" y="380"/>
 	<comment><![CDATA[Protected Textbox]]></comment>
 </textbox>
 
-<table name="table2" oids="true">
+<table name="table2" layer="0" oids="true" collapse-mode="2" max-obj-count="4" protected="true">
 	<schema name="public"/>
-	<position x="380" y="21"/>
+	<position x="460" y="20"/>
 	<column name="column" not-null="true">
 		<type name="serial" length="1"/>
 	</column>
@@ -193,19 +197,38 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
+<foreigndatawrapper name="fdw_test">
+	<role name="roletest"/>
+</foreigndatawrapper>
+
+<foreignserver name="server_test">
+	<role name="roletest"/>
+	<foreigndatawrapper name="fdw_test"/>
+</foreignserver>
+
 <constraint name="table2_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;table&quot;" table="public.table2">
 	<columns names="column2" ref-type="src-columns"/>
 	<columns names="column" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_table2_table" type="relfk"
+<relationship name="rel_table2_table" type="relfk" layer="0"
 	 src-table="public.table2"
-	 dst-table="public.&quot;table&quot;"
+	 dst-table="public.&quot;table&quot;" reference-fk="table2_fk"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
 		<position x="2.43432" y="-59.4485"/>
 	</label>
 </relationship>
+
+<foreigntable name="foreign_table" layer="0" gen-alter-cmds="true" collapse-mode="2" max-obj-count="0">
+	<schema name="public"/>
+	<role name="roletest"/>
+	<foreignserver name="server_test"/>
+	<position x="270" y="280"/>
+    <column name="id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+</foreigntable>
 
 </dbmodel>

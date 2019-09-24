@@ -5555,24 +5555,27 @@ Trigger *DatabaseModel::createTrigger(void)
 	BaseObject *ref_table=nullptr, *func=nullptr;
 	Column *column=nullptr;
 	BaseTable *table=nullptr;
+	vector<ObjectType> table_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	try
 	{
 		xmlparser.getElementAttributes(attribs);
 
-		table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::Table));
+		for(auto &type : table_types)
+		{
+			table = dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], type));
+			if(table) break;
+		}
 
 		if(!table)
-			table=dynamic_cast<BaseTable *>(getObject(attribs[Attributes::Table], ObjectType::View));
-
-		if(!table)
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
 							.arg(attribs[Attributes::Name])
 				.arg(BaseObject::getTypeName(ObjectType::Trigger))
 				.arg(attribs[Attributes::Table])
 				.arg(BaseObject::getTypeName(ObjectType::Table)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
+		}
 
 		trigger=new Trigger;
 		trigger->setParentTable(table);
@@ -6115,15 +6118,55 @@ UserMapping *DatabaseModel::createUserMapping(void)
 
 ForeignTable *DatabaseModel::createForeignTable(void)
 {
+	ForeignTable *ftable = nullptr;
+
 	try
 	{
-		ForeignTable *ftable = nullptr;
+		ForeignServer *fserver = nullptr;
+		attribs_map attribs;
+		ObjectType obj_type;
+
+		xmlparser.savePosition();
 		ftable = createPhysicalTable<ForeignTable>();
-#warning "Pending the extraction of <foreignserver> from xml code"
+		xmlparser.restorePosition();
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					obj_type = BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type == ObjectType::ForeignServer)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						fserver = dynamic_cast<ForeignServer *>(getObject(attribs[Attributes::Name], ObjectType::ForeignServer));
+
+						//Raises an error if the server doesn't exists
+						if(!fserver)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(ftable->getName())
+															.arg(ftable->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::ForeignServer)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						ftable->setForeignServer(fserver);
+						xmlparser.restorePosition();
+						break;
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
 		return(ftable);
 	}
 	catch(Exception &e)
 	{
+		if(ftable) delete(ftable);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -9610,7 +9653,7 @@ void DatabaseModel::setObjectsModified(vector<BaseObject *> &objects)
 
 void DatabaseModel::setObjectsModified(vector<ObjectType> types)
 {
-	ObjectType obj_types[]={ObjectType::Table, ObjectType::View,
+	ObjectType obj_types[]={ObjectType::Table, ObjectType::View, ObjectType::ForeignTable,
 							ObjectType::Relationship, ObjectType::BaseRelationship,
 							ObjectType::Textbox, ObjectType::Schema };
 	vector<BaseObject *>::iterator itr, itr_end;

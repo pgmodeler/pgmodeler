@@ -193,7 +193,7 @@ void TableView::configureObject(void)
 		bodies[obj_idx]->setRect(QRectF(0,0, width, groups[obj_idx]->boundingRect().height() + (2 * VertSpacing)));
 		pen=this->getBorderStyle(atribs[obj_idx]);
 
-		if(table->isPartition() || table->getObjectType() == ObjectType::ForeignTable)
+		if(table->isPartition())
 		  pen.setStyle(Qt::DashLine);
 
 		if(!tag)
