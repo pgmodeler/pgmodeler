@@ -23,11 +23,9 @@ Table::Table(void) : PhysicalTable()
 {
 	obj_type = ObjectType::Table;
 	unlogged=rls_enabled=rls_forced=false;
-	attributes[Attributes::CopyTable]=QString();
 	attributes[Attributes::Unlogged]=QString();
 	attributes[Attributes::RlsEnabled]=QString();
 	attributes[Attributes::RlsForced]=QString();
-	copy_table=nullptr;
 	setName(trUtf8("new_table"));
 }
 
@@ -102,34 +100,6 @@ void Table::addPolicy(Policy *pol, int idx_pol)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
-}
-
-void Table::setCopyTable(Table *tab)
-{
-	setCodeInvalidated(copy_table != tab);
-	copy_table=tab;
-
-	if(!copy_table)
-		copy_op=CopyOptions(0,0);
-}
-
-void Table::setCopyTableOptions(CopyOptions like_op)
-{
-	if(copy_table)
-	{
-		setCodeInvalidated(copy_op != like_op);
-		this->copy_op=like_op;
-	}
-}
-
-Table *Table::getCopyTable(void)
-{
-	return(copy_table);
-}
-
-CopyOptions Table::getCopyTableOptions(void)
-{
-	return(copy_op);
 }
 
 void Table::removeIndex(const QString &name)

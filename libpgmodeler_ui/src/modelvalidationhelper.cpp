@@ -266,8 +266,9 @@ void ModelValidationHelper::validateModel(void)
 		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
 												 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
 												 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
-												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql },
-				aux_types[]={ ObjectType::Table, ObjectType::View },
+												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
+												 ObjectType::ForeignTable },
+				aux_types[]={ ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
 				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
 				obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
@@ -276,7 +277,8 @@ void ModelValidationHelper::validateModel(void)
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
-		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
+		Table *table=nullptr;
+		PhysicalTable *ref_tab=nullptr, *recv_tab=nullptr;
 		Constraint *constr=nullptr;
 		Column *col=nullptr;
 		Relationship *rel=nullptr;
@@ -314,7 +316,8 @@ void ModelValidationHelper::validateModel(void)
 					{
 						rel=dynamic_cast<Relationship *>(object);
 						if(rel->getRelationshipType()==Relationship::RelationshipGen ||
-								rel->getRelationshipType()==Relationship::RelationshipDep)
+								rel->getRelationshipType()==Relationship::RelationshipDep ||
+							 rel->getRelationshipType()==Relationship::RelationshipPart)
 						{
 							recv_tab=rel->getReceiverTable();
 							ref_tab=rel->getReferenceTable();
@@ -502,8 +505,8 @@ void ModelValidationHelper::validateModel(void)
 			}
 		}
 
-		/* Inserting the tables and views to the map in order to check if there are table objects
-	   that conflicts with thems */
+		/* Inserting the tables and views to the map in order to check if there are
+		 * other table objects that conflicts with them */
 		for(i=0; i < aux_cnt && !valid_canceled; i++)
 		{
 			obj_list=db_model->getObjectList(aux_types[i]);

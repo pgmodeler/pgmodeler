@@ -40,8 +40,9 @@ PhysicalTable::PhysicalTable(void) : BaseTable()
 	attributes[Attributes::PartitionKey]=QString();
 	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
+	attributes[Attributes::CopyTable]=QString();
 
-	partitioned_table=nullptr;
+	copy_table=partitioned_table=nullptr;
 	partitioning_type=BaseType::Null;
 }
 
@@ -77,6 +78,34 @@ void PhysicalTable::setWithOIDs(bool value)
 {
 	setCodeInvalidated(with_oid != value);
 	with_oid=value;
+}
+
+void PhysicalTable::setCopyTable(PhysicalTable *tab)
+{
+	setCodeInvalidated(copy_table != tab);
+	copy_table=tab;
+
+	if(!copy_table)
+		copy_op=CopyOptions(0,0);
+}
+
+void PhysicalTable::setCopyTableOptions(CopyOptions like_op)
+{
+	if(copy_table)
+	{
+		setCodeInvalidated(copy_op != like_op);
+		this->copy_op=like_op;
+	}
+}
+
+PhysicalTable *PhysicalTable::getCopyTable(void)
+{
+	return(copy_table);
+}
+
+CopyOptions PhysicalTable::getCopyTableOptions(void)
+{
+	return(copy_op);
 }
 
 void PhysicalTable::setPartitioningType(PartitioningType part_type)

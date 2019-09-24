@@ -20,10 +20,12 @@
 
 ForeignTable::ForeignTable(void) : PhysicalTable()
 {
-	setName(trUtf8("new_foreign_table"));
-	attributes[Attributes::Server] = QString();
 	obj_type = ObjectType::ForeignTable;
+	attributes[Attributes::Server] = QString();
+	attributes[Attributes::Options] = QString();
 	foreign_server = nullptr;
+
+	setName(trUtf8("new_foreign_table"));
 }
 
 ForeignTable::~ForeignTable(void)
@@ -75,6 +77,7 @@ QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added
 																			foreign_server->getCodeDefinition(SchemaParser::XmlDefinition, true));
 	}
 
+	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 	return(PhysicalTable::__getCodeDefinition(def_type));
 }
 

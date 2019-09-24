@@ -32,10 +32,17 @@
 #include "function.h"
 #include "role.h"
 #include "partitionkey.h"
+#include "copyoptions.h"
 #include <QStringList>
 
 class PhysicalTable: public BaseTable {
 	protected:
+		//! \brief Specifies the table from which columns are copied
+		PhysicalTable *copy_table;
+
+		//! \brief Specifies the copy table options
+		CopyOptions copy_op;
+
 		/*! \brief Stores the initial data of the table in CSV like form.
 		This will produce a set of INSERT commands that is appended to the table's SQL definition */
 		QString initial_data;
@@ -139,6 +146,18 @@ class PhysicalTable: public BaseTable {
 
 		//! \brief Defines if the table accepts OIDs
 		void setWithOIDs(bool value);
+
+		//! \brief Configures the copy table
+		void setCopyTable(PhysicalTable *tab);
+
+		//! \brief Configures the copy table options
+		void setCopyTableOptions(CopyOptions copy_op);
+
+		//! \brief Returns the copy table
+		PhysicalTable *getCopyTable(void);
+
+		//! \brief Get the copy table options
+		CopyOptions getCopyTableOptions(void);
 
 		//! \brief Defines if the partitioning type of the table
 		void setPartitioningType(PartitioningType part_type);

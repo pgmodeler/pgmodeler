@@ -982,7 +982,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
 									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
 									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
-									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View };
+									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)

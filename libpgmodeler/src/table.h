@@ -28,7 +28,6 @@
 #include "index.h"
 #include "rule.h"
 #include "policy.h"
-#include "copyoptions.h"
 #include "physicaltable.h"
 #include <QStringList>
 
@@ -42,12 +41,6 @@ class Table: public PhysicalTable {
 
 		//! \brief Stores the policies
 		vector<TableObject *> policies;
-
-		//! \brief Specifies the table from which columns are copied
-		Table *copy_table;
-
-		//! \brief Specifies the copy table options
-		CopyOptions copy_op;
 
 		//! \brief Indicates if the table is unlogged, which means, is not controled by the WAL (write ahead logs)
 		bool unlogged,
@@ -79,18 +72,6 @@ class Table: public PhysicalTable {
 
 		//! \brief Adds a policy to table (optionally the user can add the object at the specified index 'idx')
 		void addPolicy(Policy *pol, int idx_pol=-1);
-
-		//! \brief Configures the copy table
-		void setCopyTable(Table *tab);
-
-		//! \brief Configures the copy table options
-		void setCopyTableOptions(CopyOptions copy_op);
-
-		//! \brief Returns the copy table
-		Table *getCopyTable(void);
-
-		//! \brief Get the copy table options
-		CopyOptions getCopyTableOptions(void);
 
 		//! \brief Gets a index object through its name
 		Index *getIndex(const QString &name);

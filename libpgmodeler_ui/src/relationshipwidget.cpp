@@ -214,7 +214,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 	}
 }
 
-void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type)
+void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_list, PhysicalTable *src_tab, PhysicalTable *dst_tab, unsigned rel_type)
 {
 	Relationship *rel=nullptr;
 
@@ -241,7 +241,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 {
 	unsigned rel_type, i;
 	Relationship *aux_rel=nullptr;
-	bool rel1n=false, relnn=false, relgen_dep=false, use_name_patterns=false;
+	bool rel1n=false, relnn=false, relgen_dep=false,
+			use_name_patterns=false, has_foreign_tab=false;
 
 	if(!base_rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -370,15 +371,18 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		}
 	}
 
+	has_foreign_tab = (base_rel->getTable(BaseRelationship::SrcTable)->getObjectType() == ObjectType::ForeignTable ||
+										 base_rel->getTable(BaseRelationship::DstTable)->getObjectType() == ObjectType::ForeignTable);
+
 	rel1n=(rel_type==BaseRelationship::Relationship11 ||
-		   rel_type==BaseRelationship::Relationship1n);
+				 rel_type==BaseRelationship::Relationship1n);
 
 	relnn=(rel_type==BaseRelationship::RelationshipNn);
 
 	relgen_dep=(rel_type==BaseRelationship::RelationshipDep ||
-				rel_type==BaseRelationship::RelationshipGen ||
-				rel_type==BaseRelationship::RelationshipPart ||
-				rel_type==BaseRelationship::RelationshipFk);
+							rel_type==BaseRelationship::RelationshipGen ||
+							rel_type==BaseRelationship::RelationshipPart ||
+							rel_type==BaseRelationship::RelationshipFk);
 
 	use_name_patterns=(rel1n || relnn ||
 					   (relgen_dep && base_rel->getObjectType()==ObjectType::Relationship));
@@ -423,7 +427,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		for(i=SettingsTab; i <= SpecialPkTab; i++)
 			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
-	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship)
+	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship && !has_foreign_tab)
 		rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
 
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
@@ -432,7 +436,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjectType::Relationship &&
-								 base_rel->getRelationshipType()==BaseRelationship::RelationshipDep);
+															 base_rel->getRelationshipType()==BaseRelationship::RelationshipDep);
 
 	custom_color_chk->setChecked(base_rel->getCustomColor()!=Qt::transparent);
 	color_picker->setColor(0, base_rel->getCustomColor());

@@ -53,6 +53,28 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 		obj_type=ObjectType::Relationship;
 		QString str_aux;
 
+		/* Raises an error if the user tries to create a relationship (1-1, 1-n, n-n or copy)
+		 * if any involved table is a foreign table. Foreign tables can participate only
+		 * inheritance and partitioning relationships */
+		if((rel_type!=RelationshipGen && rel_type!=RelationshipPart && rel_type!=RelationshipDep) &&
+			 (src_tab->getObjectType() == ObjectType::ForeignTable ||
+				dst_tab->getObjectType() == ObjectType::ForeignTable))
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvRelTypeForeignTable)
+							.arg(obj_name)
+							.arg(src_tab->getName(true))
+							.arg(dst_tab->getName(true)),
+							ErrorCode::InvRelTypeForeignTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		/* Raises an error if the user tries to create a copy relation in which the receiver table
+		 * is a foreign table. In case of creating a copy relationship between a table and a foreign table
+		 * the receiver must be a table and the reference a foreign table */
+		if(rel_type == RelationshipDep && src_tab->getObjectType() == ObjectType::ForeignTable)
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvCopyRelForeignTable)
+							.arg(obj_name)
+							.arg(src_tab->getName(true))
+							.arg(dst_tab->getName(true)),
+							ErrorCode::InvCopyRelForeignTable,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 		/* Raises an error if the user tries to create a relationship which some
 		 table doesn't has a primary key */
 		if(((rel_type==Relationship11 || rel_type==Relationship1n) &&
@@ -65,7 +87,7 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 							ErrorCode::InvLinkTablesNoPrimaryKey,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		// Raises an error if the user tries to create another copy relationship if the table already copies another table
-		if(rel_type==RelationshipDep && src_tab->getObjectType() == ObjectType::Table && dynamic_cast<Table *>(src_tab)->getCopyTable())
+		if(rel_type==RelationshipDep && src_tab->getCopyTable())
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvCopyRelTableDefined)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
@@ -305,7 +327,7 @@ void Relationship::createSpecialPrimaryKey(void)
 	{
 		unsigned i, count;
 		vector<Column *> gen_cols;
-		Table *table = getReceiverTable();
+		PhysicalTable *table = getReceiverTable();
 
 		// First we need to remove the original primary key in order to use the special pk
 		if(table->getPrimaryKey())
@@ -588,7 +610,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
 	vector<TableObject *> *obj_list=nullptr;
 	TableObject *tab_obj=nullptr;
-	Table *recv_table=nullptr;
+	PhysicalTable *recv_table=nullptr;
 
 	if(obj_type==ObjectType::Column)
 		obj_list=&rel_attributes;
@@ -809,7 +831,7 @@ unsigned Relationship::getObjectCount(ObjectType obj_type)
 		throw Exception(ErrorCode::RefObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Relationship::addConstraints(Table *recv_tab)
+void Relationship::addConstraints(PhysicalTable *recv_tab)
 {
 	Constraint *constr=nullptr, *pk=nullptr;
 	unsigned constr_id, constr_cnt, i, count;
@@ -877,7 +899,7 @@ void Relationship::addConstraints(Table *recv_tab)
 
 void Relationship::addColumnsRelGenPart(void)
 {
-	Table *src_tab=nullptr, *dst_tab=nullptr,
+	PhysicalTable *src_tab=nullptr, *dst_tab=nullptr,
 			*parent_tab=nullptr, *aux_tab=nullptr;
 	Column *src_col=nullptr, *dst_col=nullptr,
 			*column=nullptr, *aux_col=nullptr;
@@ -885,11 +907,11 @@ void Relationship::addColumnsRelGenPart(void)
 			i, i1, i2, id_tab,
 			idx, tab_count;
 	vector<Column *> columns;
-	ObjectType types[2]={ObjectType::Table, ObjectType::BaseTable};
+	ObjectType types[2]={ ObjectType::Table, ObjectType::BaseTable };
 	ErrorCode err_code=ErrorCode::Custom;
 	bool duplic=false, cond=false,
 			/* 0 -> Column created by inheritance relationship
-								 1 -> Column created by copy relationship */
+			 * 1 -> Column created by copy relationship */
 			src_flags[2]={false,false},
 			dst_flags[2]={false,false};
 	QString str_aux, msg;
@@ -897,8 +919,8 @@ void Relationship::addColumnsRelGenPart(void)
 
 	try
 	{
-		src_tab=dynamic_cast<Table *>(src_table);
-		dst_tab=dynamic_cast<Table *>(dst_table);
+		src_tab=dynamic_cast<PhysicalTable *>(src_table);
+		dst_tab=dynamic_cast<PhysicalTable *>(dst_table);
 		
 		//Gets the column count from participant tables
 		src_count=src_tab->getColumnCount();
@@ -979,7 +1001,7 @@ void Relationship::addColumnsRelGenPart(void)
 						for(i2=0; i2 < 2; i2++)
 						{
 							//Checking if the column came from a generalization relationship
-							if(types[i2]==ObjectType::Table)
+							if(types[i2] == ObjectType::Table)
 							{
 								tab_count=aux_tab->getObjectCount(ObjectType::Table);
 								for(idx=0; idx < tab_count; idx++)
@@ -1121,8 +1143,10 @@ void Relationship::addColumnsRelGenPart(void)
 			throw Exception(msg, err_code,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		//Creates the special primary key if exists
-		this->createSpecialPrimaryKey();
+		/* Creates the special primary key if exists and if the receiver table is not a foreign table .
+		 * This kind of table still don't support pks and fks */
+		if(getReceiverTable()->getObjectType() != ObjectType::ForeignTable)
+			this->createSpecialPrimaryKey();
 
 		//Adds the constraint on the receiver table
 		this->addConstraints(getReceiverTable());
@@ -1139,8 +1163,8 @@ void Relationship::addColumnsRelGenPart(void)
 
 void Relationship::addConstraintsRelGenPart(void)
 {
-	Table *parent_tab=dynamic_cast<Table *>(getReferenceTable()),
-			*child_tab=dynamic_cast<Table *>(getReceiverTable());
+	PhysicalTable *parent_tab=getReferenceTable(),
+								*child_tab=getReceiverTable();
 	vector<TableObject *> *constrs=parent_tab->getObjectList(ObjectType::Constraint);
 	Constraint *ck_constr=nullptr, *constr=nullptr, *aux_constr=nullptr;
 
@@ -1193,7 +1217,7 @@ void Relationship::connectRelationship(void)
 				addColumnsRelGenPart();
 
 				//The reference table is added as parent table on the receiver
-				getReceiverTable()->addAncestorTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->addAncestorTable(getReferenceTable());
 			}
 			else if(rel_type==RelationshipDep)
 			{
@@ -1201,7 +1225,7 @@ void Relationship::connectRelationship(void)
 				addColumnsRelGenPart();
 
 				//The reference table is added as copy table on the receiver
-				getReceiverTable()->setCopyTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->setCopyTable(getReferenceTable());
 				getReceiverTable()->setCopyTableOptions(this->copy_options);
 			}
 			else if(rel_type == RelationshipPart)
@@ -1211,7 +1235,7 @@ void Relationship::connectRelationship(void)
 
 				//Creates the columns on the receiver table following the rules for copy rules
 				addColumnsRelGenPart();
-				getReceiverTable()->setPartionedTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->setPartionedTable(getReferenceTable());
 				getReceiverTable()->setPartitionBoundingExpr(part_bounding_expr);
 			}
 			else if(rel_type==Relationship11 ||
@@ -1259,7 +1283,7 @@ void Relationship::connectRelationship(void)
 	}
 }
 
-void Relationship::configureIndentifierRel(Table *recv_tab)
+void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 {
 	Constraint *pk=nullptr;
 	unsigned i, count;
@@ -1327,7 +1351,7 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 	}
 }
 
-void Relationship::addUniqueKey(Table *recv_tab)
+void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 {
 	Constraint *uq=nullptr;
 	unsigned i, count;
@@ -1370,7 +1394,7 @@ void Relationship::addUniqueKey(Table *recv_tab)
 	}
 }
 
-void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del_act, ActionType upd_act)
+void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab, ActionType del_act, ActionType upd_act)
 {
 	Constraint *pk=nullptr, *pk_aux=nullptr, *fk=nullptr;
 	unsigned i, i1, qty;
@@ -1432,7 +1456,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 			/* Get the created foreign keys created on the self relationship in order to
 				 create them properly */
 			if(isSelfRelationship())
-				table_relnn->getForeignKeys(fks, true, ref_tab);
+				table_relnn->getForeignKeys(fks, true, dynamic_cast<Table *>(ref_tab));
 
 			//Case 1: decrementing the quantity of columns to be scanned
 			if((!isSelfRelationship() && ref_tab==src_table) ||
@@ -1498,7 +1522,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 	}
 }
 
-void Relationship::addAttributes(Table *recv_tab)
+void Relationship::addAttributes(PhysicalTable *recv_tab)
 {
 	unsigned i, count;
 	Column *column=nullptr;
@@ -1536,7 +1560,7 @@ void Relationship::addAttributes(Table *recv_tab)
 	}
 }
 
-void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, bool is_dst_table)
+void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table)
 {
 	Constraint *dst_pk=nullptr, *src_pk=nullptr, *pk=nullptr;
 	unsigned i, count;
@@ -1898,7 +1922,7 @@ void Relationship::addColumnsRelNn(void)
 	}
 }
 
-Table *Relationship::getReferenceTable(void)
+PhysicalTable *Relationship::getReferenceTable(void)
 {
 	/* Many to Many relationships doesn't has only one reference table so
 		is returned nullptr */
@@ -1907,9 +1931,9 @@ Table *Relationship::getReferenceTable(void)
 	else
 	{
 		if(src_table==getReceiverTable())
-			return(dynamic_cast<Table *>(dst_table));
+			return(dynamic_cast<PhysicalTable *>(dst_table));
 		else
-			return(dynamic_cast<Table *>(src_table));
+			return(dynamic_cast<PhysicalTable *>(src_table));
 	}
 }
 
@@ -1927,7 +1951,7 @@ bool Relationship::isSiglePKColumn(void)
 	return(single_pk_column);
 }
 
-Table *Relationship::getReceiverTable(void)
+PhysicalTable *Relationship::getReceiverTable(void)
 {
 	if(rel_type==Relationship11)
 	{
@@ -1935,10 +1959,10 @@ Table *Relationship::getReceiverTable(void)
 		 Case 2: (1,1) ---<>--- (0,1) */
 		if((!src_mandatory && !dst_mandatory) ||
 				(src_mandatory && !dst_mandatory))
-			return(dynamic_cast<Table *>(dst_table));
+			return(dynamic_cast<PhysicalTable *>(dst_table));
 		/* Case 3: (0,1) ---<>--- (1,1) */
 		else if(!src_mandatory && dst_mandatory)
-			return(dynamic_cast<Table *>(src_table));
+			return(dynamic_cast<PhysicalTable *>(src_table));
 		// Case 4: (1,1) ---<>--- (1,1)
 		else
 			/* Returns nullptr since this type of relationship isn't implemented. Refer to
@@ -1948,20 +1972,21 @@ Table *Relationship::getReceiverTable(void)
 	/* For 1-n relationships, the table order is unchagned this means that
 		the columns are always included in the destination table */
 	else if(rel_type==Relationship1n)
-		return(dynamic_cast<Table *>(dst_table));
+		return(dynamic_cast<PhysicalTable *>(dst_table));
 	/* For generalization / copy relationships the columns are always added
 		in the source table */
 	else if(rel_type==RelationshipGen ||
 			rel_type==RelationshipDep ||
 			rel_type==RelationshipPart)
-		return(dynamic_cast<Table *>(src_table));
+		return(dynamic_cast<PhysicalTable *>(src_table));
 	//For n-n relationships, the columns are added in the table that represents the relationship (table_relnn)
 	else
-		return(dynamic_cast<Table *>(table_relnn));
+		return(dynamic_cast<PhysicalTable *>(table_relnn));
 }
 
-void Relationship::removeTableObjectsRefCols(Table *table)
+void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 {
+	Table *aux_table = dynamic_cast<Table *>(table);
 	Trigger *trigger=nullptr;
 	Index *index=nullptr;
 	Constraint *constr=nullptr;
@@ -1981,17 +2006,20 @@ void Relationship::removeTableObjectsRefCols(Table *table)
 		}
 	}
 
-	//Remove all indexes that reference columns added by relationship
-	count=table->getIndexCount();
-	for(i=0; i < count; i++)
+	if(aux_table)
 	{
-		index=table->getIndex(i);
-		if(index->isReferRelationshipAddedColumn())
+		//Remove all indexes that reference columns added by relationship
+		count=aux_table->getIndexCount();
+		for(i=0; i < count; i++)
 		{
-			table->removeObject(index);
-			delete(index);
-			count--; i--;
-			if(i < 0) i=0;
+			index=aux_table->getIndex(i);
+			if(index->isReferRelationshipAddedColumn())
+			{
+				aux_table->removeObject(index);
+				delete(index);
+				count--; i--;
+				if(i < 0) i=0;
+			}
 		}
 	}
 
@@ -2012,7 +2040,7 @@ void Relationship::removeTableObjectsRefCols(Table *table)
 	}
 }
 
-void Relationship::removeColumnsFromTablePK(Table *table)
+void Relationship::removeColumnsFromTablePK(PhysicalTable *table)
 {
 	if(table)
 	{
@@ -2045,7 +2073,7 @@ void Relationship::removeColumnsFromTablePK(Table *table)
 	}
 }
 
-void Relationship::removeColumnFromTablePK(Table *table, Column *column)
+void Relationship::removeColumnFromTablePK(PhysicalTable *table, Column *column)
 {
 	if(table && column)
 	{
@@ -2084,7 +2112,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 		{
 			vector<Column *>::iterator itr, itr_end;
 			Column *column=nullptr;
-			Table *table=nullptr;
+			PhysicalTable *table=nullptr;
 			unsigned list_idx=0;
 			vector<TableObject *> *attr_list=nullptr;
 			vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
@@ -2330,7 +2358,7 @@ void Relationship::forceInvalidate(void)
 bool Relationship::isInvalidated(void)
 {
 	unsigned rel_cols_count=0, tab_cols_count=0, i=0, count=0;
-	Table *table=nullptr, *table1=nullptr;
+	PhysicalTable *table=nullptr, *table1=nullptr;
 	Constraint *fk=nullptr, *fk1=nullptr, *constr=nullptr, *pk=nullptr;
 	bool valid=false;
 	Column *rel_pk_col=nullptr, *gen_col=nullptr, *col_aux=nullptr, *col_aux1 = nullptr, *pk_col=nullptr;

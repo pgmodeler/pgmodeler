@@ -265,7 +265,9 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
 	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
 	{"ModelFileInvalidSize", QT_TR_NOOP("A zero-byte file was detected while saving to `%1'. In order to avoid data loss the original contents of the file prior to the last saving was restored and a security copy kept on `%2'. You can copy that backup file to a safe place as a last resort to avoid the complete data loss! Note that the backup file will be erased when the application is closed.")},
-	{"AsgInvalidObjectForeignTable", QT_TR_NOOP("The object `%1' (%2) can't be assigned to the foreign table `%3' because its kind is not supported! Foreign tables only accepts columns, check constraints and trigger.")}
+	{"AsgInvalidObjectForeignTable", QT_TR_NOOP("The object `%1' (%2) can't be assigned to the foreign table `%3' because its kind is not supported! Foreign tables only accepts columns, check constraints and trigger.")},
+	{"InvRelTypeForeignTable", QT_TR_NOOP("The creation of the relationship `%1' between the tables `%2' and `%3' can't be done because one of the entities is a foreign table. Foreign tables can only be part of a inheritance, copy or partitioning relationship!")},
+	{"InvCopyRelForeignTable", QT_TR_NOOP("The creation of the copy relationship `%1' between the tables `%2' and `%3' can't be done because a foreign table is not allowed to copy table columns!")}
 };
 
 Exception::Exception(void)

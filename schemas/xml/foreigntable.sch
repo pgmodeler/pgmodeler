@@ -14,6 +14,7 @@
   %if {ext-attribs-page} %then [ ext-attribs-page=] "{ext-attribs-page}"  %end
   %if {faded-out} %then [ faded-out=] "true" %end
   %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
+  %if {options} %then [ options=] "{options}" %end
 > $br
 
  {schema}

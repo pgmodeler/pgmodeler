@@ -1819,7 +1819,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 				 rel_type==Relationship::RelationshipPart))
 		{
 			BaseTable *ref_table=nullptr, *src_table=nullptr;
-			Table *recv_table=nullptr;
+			PhysicalTable *recv_table=nullptr;
 			Relationship *rel_aux=nullptr;
 			BaseRelationship *base_rel=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
@@ -2218,12 +2218,12 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 	{
 		if(getObjectIndex(rel) >= 0)
 		{
-			Table *recv_tab=nullptr;
+			PhysicalTable *recv_tab=nullptr;
 
 			if(rel->getObjectType()==ObjectType::Relationship)
 			{
 				/* If the relationship is not a many-to-many we store the receiver table in order to
-		   update the fk relationships (if there are any) */
+				 * update the fk relationships (if there are any) */
 				if(rel->getRelationshipType()!=Relationship::RelationshipNn)
 					recv_tab=dynamic_cast<Relationship *>(rel)->getReceiverTable();
 
@@ -2240,13 +2240,11 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 			__removeObject(rel, obj_idx);
 
 			if(rel->getObjectType()==ObjectType::Relationship)
-			{
 				validateRelationships();
-			}
 
 			//Updating the fk relationships for the receiver table after removing the old relationship
-			if(recv_tab)
-				updateTableFKRelationships(recv_tab);
+			if(recv_tab && recv_tab->getObjectType() == ObjectType::Table)
+				updateTableFKRelationships(dynamic_cast<Table *>(recv_tab));
 		}
 	}
 	catch(Exception &e)
@@ -8192,10 +8190,12 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				for(auto role : pol->getRoles())
 					getObjectDependecies(role, deps, inc_indirect_deps);
 			}
-			//** Getting the dependecies for table **
-			else if(obj_type==ObjectType::Table)
+			//** Getting the dependecies for table / foreign table **
+			else if(PhysicalTable::isPhysicalTable(obj_type))
 			{
-				Table *tab=dynamic_cast<Table *>(object);
+				PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
+				Table *aux_tab = dynamic_cast<Table *>(object);
+				ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
 				BaseObject *usr_type=nullptr,  *seq=nullptr;
 				Constraint *constr=nullptr;
 				Trigger *trig=nullptr;
@@ -8256,37 +8256,45 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
 				}
 
-				count=tab->getIndexCount();
-				for(i=0; i < count; i++)
+				if(ftable)
 				{
-					index=dynamic_cast<Index *>(tab->getIndex(i));
-					count1=index->getIndexElementCount();
-
-					for(i1=0; i1 < count1; i1++)
-					{
-						if(index->getIndexElement(i1).getOperatorClass())
-							getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-
-						if(index->getIndexElement(i1).getColumn())
-						{
-							usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
-
-							if(usr_type)
-								getObjectDependecies(usr_type, deps, inc_indirect_deps);
-						}
-
-						if(index->getIndexElement(i1).getCollation())
-							getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
-					}
+					getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
 				}
 
-				count=tab->getPolicyCount();
-				for(i=0; i < count; i++)
+				if(aux_tab)
 				{
-					pol=dynamic_cast<Policy *>(tab->getPolicy(i));
+					count=aux_tab->getIndexCount();
+					for(i=0; i < count; i++)
+					{
+						index=dynamic_cast<Index *>(aux_tab->getIndex(i));
+						count1=index->getIndexElementCount();
 
-					for(auto role : pol->getRoles())
-						getObjectDependecies(role, deps, inc_indirect_deps);
+						for(i1=0; i1 < count1; i1++)
+						{
+							if(index->getIndexElement(i1).getOperatorClass())
+								getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+
+							if(index->getIndexElement(i1).getColumn())
+							{
+								usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
+
+								if(usr_type)
+									getObjectDependecies(usr_type, deps, inc_indirect_deps);
+							}
+
+							if(index->getIndexElement(i1).getCollation())
+								getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
+						}
+					}
+
+					count=aux_tab->getPolicyCount();
+					for(i=0; i < count; i++)
+					{
+						pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
+
+						for(auto role : pol->getRoles())
+							getObjectDependecies(role, deps, inc_indirect_deps);
+					}
 				}
 			}
 			//** Getting the dependecies for user defined type **
@@ -8368,7 +8376,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				getObjectDependecies(usr_map->getForeignServer(), deps, inc_indirect_deps);
 			}
 
-			if(obj_type == ObjectType::Table || obj_type == ObjectType::View)
+			if(PhysicalTable::isPhysicalTable(obj_type) || obj_type == ObjectType::View)
 			{
 				BaseTable *tab = dynamic_cast<BaseTable *>(object);
 
@@ -8421,23 +8429,27 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
 		}
 
-		if(obj_type==ObjectType::Table && (!exclusion_mode || (exclusion_mode && !refer)))
+		if(PhysicalTable::isPhysicalTable(obj_type) && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
-			Table *table=dynamic_cast<Table *>(object);
+			PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
 			Sequence *seq=nullptr;
 			Constraint *constr=nullptr;
-			Table *tab=nullptr;
+			PhysicalTable *tab=nullptr;
 			Trigger *gat=nullptr;
 			BaseRelationship *base_rel=nullptr;
 			View *view=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<TableObject *> *tab_objs;
 			unsigned i, count;
-			ObjectType tab_obj_types[4]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+			vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+			vector<BaseObject *> tabs;
 
-			for(i=0; i < 4; i++)
+			for(auto &type : tab_obj_types)
 			{
-				tab_objs=table->getObjectList(tab_obj_types[i]);
+				if(obj_type == ObjectType::ForeignTable && type != ObjectType::Trigger)
+					continue;
+
+				tab_objs=table->getObjectList(type);
 				refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
 			}
 
@@ -8488,12 +8500,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				itr++;
 			}
 
-			itr=tables.begin();
-			itr_end=tables.end();
+			tabs = tables;
+			tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+			itr= tabs.begin();
+			itr_end = tabs.end();
 
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				tab=dynamic_cast<Table *>(*itr);
+				tab = dynamic_cast<PhysicalTable *>(*itr);
 
 				count=tab->getConstraintCount();
 				for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
@@ -8741,13 +8755,13 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		{
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[11]={ObjectType::Function, ObjectType::Table, ObjectType::View,
-										ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
-										ObjectType::Sequence, ObjectType::Conversion,
-										ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
+			ObjectType obj_types[12]={ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
+																ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
+																ObjectType::Sequence, ObjectType::Conversion,
+																ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
 			unsigned i;
 
-			for(i=0; i < 11 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+			for(i=0; i < 12 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
 				obj_list=getObjectList(obj_types[i]);
 				itr=obj_list->begin();
@@ -8766,18 +8780,18 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		}
 
 		if((obj_type==ObjectType::Type || obj_type==ObjectType::Domain || obj_type==ObjectType::Sequence ||
-			obj_type==ObjectType::Table || obj_type==ObjectType::Extension || obj_type==ObjectType::View)
+				obj_type==ObjectType::Extension || obj_type==ObjectType::View || PhysicalTable::isPhysicalTable(obj_type))
 				&& (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType obj_types[]={ObjectType::Table, ObjectType::OpClass, ObjectType::Cast,
-									ObjectType::Domain, ObjectType::Function, ObjectType::Aggregate,
-									ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
+			ObjectType obj_types[]={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
+															ObjectType::Cast,	ObjectType::Domain, ObjectType::Function, ObjectType::Aggregate,
+															ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
 			unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
 			OperatorClass *op_class=nullptr;
 			OperatorClassElement elem;
-			Table *tab=nullptr;
+			PhysicalTable *tab=nullptr;
 			Column *col=nullptr;
 			Cast *cast=nullptr;
 			Domain *dom=nullptr;
@@ -8791,12 +8805,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			switch(obj_type)
 			{
 				case ObjectType::Type: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
-				case ObjectType::Domain:
-			  ptr_pgsqltype=dynamic_cast<Domain*>(object);
-			  break;
+				case ObjectType::Domain: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
 				case ObjectType::Sequence: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
 				case ObjectType::Extension: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
 				case ObjectType::View: ptr_pgsqltype=dynamic_cast<View*>(object); break;
+				case ObjectType::ForeignTable: ptr_pgsqltype=dynamic_cast<ForeignTable*>(object); break;
 				default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
 			}
 
@@ -8833,7 +8846,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				{
 					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{
-						tab=dynamic_cast<Table *>(*itr);
+						tab=dynamic_cast<PhysicalTable *>(*itr);
 						itr++;
 
 						count=tab->getColumnCount();
@@ -8989,7 +9002,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<ObjectType> obj_types = {
-										ObjectType::Function, ObjectType::Table, ObjectType::Domain,
+										ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::Domain,
 										ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
 										ObjectType::Sequence, ObjectType::Conversion,
 										ObjectType::Language, ObjectType::Tablespace,
@@ -9162,6 +9175,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Index *ind=nullptr;
 			Constraint *constr=nullptr;
 			Table *table=nullptr;
+			ForeignTable *ftable=nullptr;
 
 			itr=types.begin();
 			itr_end=types.end();
@@ -9231,6 +9245,27 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 				itr++;
 			}
+
+
+			itr=foreign_tables.begin();
+			itr_end=foreign_tables.end();
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				ftable=dynamic_cast<ForeignTable *>(*itr);
+
+				//Checking if the partition keys are referencing the operator class
+				for(auto &part_key : ftable->getPartitionKeys())
+				{
+					if(part_key.getOperatorClass() == object)
+					{
+						refer = true;
+						refs.push_back(ftable);
+						break;
+					}
+				}
+
+				itr++;
+			}
 		}
 
 		if(obj_type==ObjectType::Operator && (!exclusion_mode || (exclusion_mode && !refer)))
@@ -9238,9 +9273,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
 			ObjectType obj_types[]={ObjectType::OpClass,
-									ObjectType::Aggregate,
-									ObjectType::Operator,
-									ObjectType::Table };
+															ObjectType::Aggregate,
+															ObjectType::Operator,
+															ObjectType::Table };
 			unsigned i, i1, count;
 			OperatorClass *op_class=nullptr;
 			Operator *oper_aux=nullptr, *oper=dynamic_cast<Operator *>(object);
@@ -9430,7 +9465,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Column *column=dynamic_cast<Column *>(object);
 			vector<BaseObject *> *obj_list=nullptr;
 			vector<BaseObject *>::iterator itr, itr_end;
-			ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table, ObjectType::Relationship };
+			ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table,
+																ObjectType::ForeignTable, ObjectType::Relationship };
 			unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
 
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
@@ -9447,9 +9483,10 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						refer=true;
 						refs.push_back(*itr);
 					}
-					else if(obj_types[i]==ObjectType::Table)
+					else if(obj_types[i]==ObjectType::Table || obj_types[i]==ObjectType::ForeignTable)
 					{
-						Table *tab=dynamic_cast<Table *>(*itr);
+						PhysicalTable *tab=dynamic_cast<PhysicalTable *>(*itr);
+						Table *aux_tab = dynamic_cast<Table *>(tab);
 						unsigned count, idx, count1, i1;
 						Trigger *trig=nullptr;
 						Index *index=nullptr;
@@ -9467,14 +9504,17 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 							}
 						}
 
-						count=tab->getIndexCount();
-						for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+						if(aux_tab)
 						{
-							index=tab->getIndex(idx);
-							if(index->isReferColumn(column))
+							count=aux_tab->getIndexCount();
+							for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 							{
-								refer=true;
-								refs.push_back(index);
+								index=aux_tab->getIndex(idx);
+								if(index->isReferColumn(column))
+								{
+									refer=true;
+									refs.push_back(index);
+								}
 							}
 						}
 
@@ -9504,7 +9544,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 								break;
 							}
 						}
-
 					}
 					else if(obj_types[i]==ObjectType::Relationship)
 					{
@@ -9534,6 +9573,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Tag *tag=dynamic_cast<Tag *>(object);
 
 			list.assign(tables.begin(), tables.end());
+			list.assign(foreign_tables.begin(), foreign_tables.end());
 			list.insert(list.end(), views.begin(), views.end());
 
 			itr=list.begin();
@@ -9552,14 +9592,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 		if(obj_type==ObjectType::Sequence && (!exclusion_mode || (exclusion_mode && !refer)))
 		{
-			Table *table=nullptr;
+			PhysicalTable *table=nullptr;
 			vector<TableObject *> *cols=nullptr;
 			vector<TableObject *>::iterator itr, itr_end;
-			unsigned i, cnt=tables.size();
+			vector<BaseObject *> tabs;
+			unsigned i = 0, cnt = 0;
+
+			tabs = tables;
+			tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+			cnt = tabs.size();
 
 			for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
-				table=dynamic_cast<Table *>(tables[i]);
+				table=dynamic_cast<PhysicalTable *>(tabs[i]);
 				cols=table->getObjectList(ObjectType::Column);
 				itr=cols->begin();
 				itr_end=cols->end();
@@ -9608,6 +9653,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
 				if(dynamic_cast<UserMapping *>(*itr)->getForeignServer() == srv)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+
+			itr=foreign_tables.begin();
+			itr_end=foreign_tables.end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<ForeignTable *>(*itr)->getForeignServer() == srv)
 				{
 					refer=true;
 					refs.push_back(*itr);
@@ -10045,7 +10103,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	attribs_map attribs;
 	BaseGraphicObject *graph_obj=nullptr;
 	Relationship *rel=nullptr;
-	Table *tab_nn=nullptr;
+	PhysicalTable *tab_nn=nullptr;
 	BaseTable *src_tab=nullptr, *dst_tab=nullptr, *base_tab=nullptr;
 	Schema *schema=nullptr;
 	QPointF pnt;

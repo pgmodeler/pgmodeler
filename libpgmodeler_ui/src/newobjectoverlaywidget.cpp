@@ -59,7 +59,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 										{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjectType::GenericSql)   },
 										{ fdw_tb,          std::make_tuple(trUtf8("7"), ObjectType::ForeignDataWrapper) },
 										{ server_tb,       std::make_tuple(trUtf8("6"), ObjectType::ForeignServer) },
-										{ user_mapping_tb, std::make_tuple(trUtf8("5"), ObjectType::UserMapping) }};
+										{ user_mapping_tb, std::make_tuple(trUtf8("5"), ObjectType::UserMapping) },
+										{ foreigntable_tb, std::make_tuple(trUtf8("5"), ObjectType::ForeignTable) }};
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={
 										{ rel11_tb,  std::make_tuple(trUtf8("1"), 0) },

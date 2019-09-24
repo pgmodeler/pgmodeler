@@ -699,8 +699,8 @@ void RelationshipView::configureLine(void)
 				}
 				else
 				{
-					ref_tab=rel->getReferenceTable();
-					rec_tab=rel->getReceiverTable();
+					ref_tab=dynamic_cast<Table *>(rel->getReferenceTable());
+					rec_tab=dynamic_cast<Table *>(rel->getReceiverTable());
 				}
 
 				rec_tab->getForeignKeys(fks, true, ref_tab);
