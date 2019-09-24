@@ -226,7 +226,7 @@ class View: public BaseTable {
 		vector<Column *> getRelationshipAddedColumns(void);
 
 		//! \brief Returns if the view is referencing the specified table
-		bool isReferencingTable(Table *tab);
+		bool isReferencingTable(PhysicalTable *tab);
 
 		//! \brief Returns if the view is referencing the specified column
 		bool isReferencingColumn(Column *col);

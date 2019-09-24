@@ -40,7 +40,7 @@ struct SimpleColumn {
 class Reference {
 	private:
 		//! \brief Stores the table used by the reference
-		Table *table;
+		PhysicalTable *table;
 
 		//! \brief Stores the column used by the reference
 		Column *column;
@@ -68,7 +68,7 @@ class Reference {
 
 		/*! \brief Stores the tables that the reference object is using within the expression which defines the view
 		 * when is_def_expr is set. These tables are used to hint the user which tables the view is using. */
-		vector<Table *> ref_tables;
+		vector<PhysicalTable *> ref_tables;
 
 	public:
 		//! \brief Constants used to define the reference type
@@ -85,7 +85,7 @@ class Reference {
 		Reference(void);
 
 		//! \brief Creates a reference based on a table column
-		Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias);
+		Reference(PhysicalTable *table, Column *column, const QString &tab_alias, const QString &col_alias);
 
 		//! \brief Creates a reference based on a expression
 		Reference(const QString &expression, const QString &expr_alias);
@@ -94,13 +94,13 @@ class Reference {
 		reference to be used as the entire view SQL definition */
 		void setDefinitionExpression(bool value);
 
-		void addReferencedTable(Table *ref_table);
-		int getReferencedTableIndex(Table *ref_table);
+		void addReferencedTable(PhysicalTable *ref_table);
+		int getReferencedTableIndex(PhysicalTable *ref_table);
 		void clearReferencedTables(void);
-		vector<Table *> getReferencedTables(void);
+		vector<PhysicalTable *> getReferencedTables(void);
 
 		//! \brief Gets the referenced table
-		Table *getTable(void);
+		PhysicalTable *getTable(void);
 
 		//! \brief Gets the referenced column
 		Column *getColumn(void);

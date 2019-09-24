@@ -1363,12 +1363,12 @@ void DatabaseModel::updateTablesFKRelationships(void)
 
 void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	BaseRelationship *rel=nullptr;
 	Reference ref;
 	unsigned i, ref_count, idx;
 	vector<BaseObject *>::iterator itr, itr_end;
-	vector<Table *> tables;
+	vector<PhysicalTable *> tables;
 
 	if(!view)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1413,9 +1413,9 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 					rel->getTable(BaseRelationship::DstTable)==view)
 			{
 				if(rel->getTable(BaseRelationship::SrcTable)->getObjectType()==ObjectType::Table)
-					table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SrcTable));
+					table=dynamic_cast<PhysicalTable *>(rel->getTable(BaseRelationship::SrcTable));
 				else
-					table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
+					table=dynamic_cast<PhysicalTable *>(rel->getTable(BaseRelationship::DstTable));
 
 				if(!view->isReferencingTable(table))
 				{
@@ -1900,7 +1900,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	vector<BaseObject *>::iterator itr, itr_end;
 	Sequence *sequence=nullptr;
 	Permission *permission=nullptr;
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	TableObject *tab_obj=nullptr;
 	Constraint *constr=nullptr;
 	Index *index=nullptr;
@@ -1911,22 +1911,29 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 	Reference ref;
 	ObjectType tab_obj_type[3]={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 	bool found=false;
-	vector<BaseObject *> objects, rem_objects, upd_tables_rels;
+	vector<BaseObject *> objects, rem_objects, upd_tables_rels, aux_tables;
 
 	try
 	{
-		itr=tables.begin();
-		itr_end=tables.end();
+		aux_tables = tables;
+		aux_tables.insert(aux_tables.end(), foreign_tables.begin(), foreign_tables.end());
+		itr=aux_tables.begin();
+		itr_end=aux_tables.end();
 
 		/* Check on tables if there is some constraint/index/trigger that is referencing
 		 some column added by relationship */
 		while(itr!=itr_end)
 		{
-			table=dynamic_cast<Table *>(*itr);
+			table=dynamic_cast<PhysicalTable *>(*itr);
 			itr++;
 
 			for(type_id=0; type_id < 3; type_id++)
 			{
+				// Ignoring index type if we are dealing with foreign table
+				if(table->getObjectType() == ObjectType::ForeignTable &&
+					 tab_obj_type[type_id] == ObjectType::Index)
+					continue;
+
 				//Gets the table object count for the curret object type
 				count=table->getObjectCount(tab_obj_type[type_id]);
 
@@ -6282,7 +6289,7 @@ View *DatabaseModel::createView(void)
 	attribs_map attribs, aux_attribs;
 	View *view=nullptr;
 	Column *column=nullptr;
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	QString elem, str_aux;
 	QStringList list_aux;
 	vector<Reference> refs;
@@ -6326,6 +6333,9 @@ View *DatabaseModel::createView(void)
 						{
 							column=nullptr;
 							table=dynamic_cast<Table *>(getObject(attribs[Attributes::Table], ObjectType::Table));
+
+							if(!table)
+								table=dynamic_cast<ForeignTable *>(getObject(attribs[Attributes::Table], ObjectType::ForeignTable));
 
 							//Raises an error if the table doesn't exists
 							if(!table)

@@ -188,7 +188,7 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 void View::generateColumns(void)
 {
 	unsigned col_id = 0, col_count = 0, expr_idx = 0;
-	Table *tab = nullptr;
+	PhysicalTable *tab = nullptr;
 	Reference ref;
 	Column *col = nullptr;
 	QString name, alias;
@@ -586,9 +586,9 @@ vector<Column *> View::getRelationshipAddedColumns(void)
 	return(cols);
 }
 
-bool View::isReferencingTable(Table *tab)
+bool View::isReferencingTable(PhysicalTable *tab)
 {
-	Table *aux_tab=nullptr;
+	PhysicalTable *aux_tab=nullptr;
 	unsigned count, i;
 	bool found=false;
 
