@@ -122,13 +122,13 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 	db_objs_grp->setVisible(obj_type==ObjectType::Database);
 	sch_objs_grp->setVisible(obj_type==ObjectType::Database || obj_type==ObjectType::Schema);
 
-	tab_objs_grp->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship);
-	column_tb->setDisabled(obj_type==ObjectType::View);
-	constraint_tb->setDisabled(obj_type==ObjectType::View);
+	tab_objs_grp->setVisible(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type==ObjectType::Relationship);
+	column_tb->setVisible(obj_type!=ObjectType::View);
+	constraint_tb->setVisible(obj_type!=ObjectType::View);
 	index_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	rule_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-	trigger_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-	policy_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
+	trigger_tb->setVisible(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View);
+	policy_tb->setVisible(obj_type==ObjectType::Table);
 	tab_perms_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==ObjectType::Table) ||
 											 (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==ObjectType::Table && sel_objs.at(1)->getObjectType()==ObjectType::Table));
