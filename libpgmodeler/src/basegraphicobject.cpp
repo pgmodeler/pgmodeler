@@ -121,7 +121,8 @@ QObject *BaseGraphicObject::getOverlyingObject(void)
 bool BaseGraphicObject::isGraphicObject(ObjectType type)
 {
 	return(type==ObjectType::Table || type==ObjectType::View || type==ObjectType::Relationship ||
-				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema);
+				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema ||
+				 type==ObjectType::ForeignTable);
 }
 
 void BaseGraphicObject::setLayer(unsigned layer)

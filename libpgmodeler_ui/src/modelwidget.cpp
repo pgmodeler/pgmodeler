@@ -3695,6 +3695,7 @@ void ModelWidget::setCollapseMode(void)
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
 		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
 	}
 	else
@@ -3724,6 +3725,7 @@ void ModelWidget::togglePagination(void)
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
 		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
 	}
 	else
@@ -3850,11 +3852,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 			popup_menu.addAction(action_edit);
 
 			if((obj_type==ObjectType::Schema && obj->isSystemObject()) ||
-					(!obj->isProtected() && (obj_type==ObjectType::Table || obj_type==ObjectType::BaseRelationship ||
+					(!obj->isProtected() && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
 																	 obj_type==ObjectType::Relationship || obj_type==ObjectType::Schema ||
 																	 obj_type == ObjectType::Tag || obj_type==ObjectType::View)))
 			{
-				if(obj_type==ObjectType::Table || obj_type == ObjectType::View)
+				if(PhysicalTable::isPhysicalTable(obj_type) || obj_type == ObjectType::View)
 				{
 					for(auto type : BaseObject::getChildObjectTypes(obj_type))
 						new_object_menu.addAction(actions_new_objects[type]);
@@ -4009,8 +4011,10 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 
 	//Adding the extended attributes action (only for table/view/database)
 	if(objects.size() > 1 ||
-		 (objects.empty() && (db_model->getObjectCount(ObjectType::Table) > 0 || db_model->getObjectCount(ObjectType::View) > 0)) ||
-		 (objects.size() == 1 && (objects[0]->getObjectType() == ObjectType::Table ||
+		 (objects.empty() && (db_model->getObjectCount(ObjectType::Table) > 0 ||
+													db_model->getObjectCount(ObjectType::ForeignTable) > 0 ||
+													db_model->getObjectCount(ObjectType::View) > 0)) ||
+		 (objects.size() == 1 && (PhysicalTable::isPhysicalTable(objects[0]->getObjectType()) ||
 															objects[0]->getObjectType() == ObjectType::View ||
 															objects[0]->getObjectType() == ObjectType::Database)))
 	{
@@ -4020,7 +4024,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		{
 			if(!tab_or_view)
 			{
-				tab_or_view=(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View);
+				tab_or_view=(PhysicalTable::isPhysicalTable(obj->getObjectType()) || obj->getObjectType()==ObjectType::View);
 				break;
 			}
 		}
