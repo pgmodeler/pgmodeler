@@ -346,7 +346,7 @@ vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
 	if(obj_type==ObjectType::Trigger)
 		return(&triggers);
 
-	throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	return(nullptr);
 }
 
 void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
@@ -675,7 +675,7 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 	if(!TableObject::isTableObject(obj_type) && obj_type!=ObjectType::Table)
 		throw Exception(ErrorCode::RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	else if(obj_type==ObjectType::Table && obj_idx < ancestor_tables.size())
+	else if(PhysicalTable::isPhysicalTable(obj_type) && obj_idx < ancestor_tables.size())
 	{
 		vector<PhysicalTable *>::iterator itr;
 		PhysicalTable *tab=nullptr;
@@ -695,12 +695,13 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 			}
 		}
 	}
-	else if(obj_type!=ObjectType::Table && obj_type!=ObjectType::BaseTable)
+	else if(!PhysicalTable::isPhysicalTable(obj_type))
 	{
-		vector<TableObject *> *obj_list=nullptr;
+		vector<TableObject *> *obj_list=getObjectList(obj_type);
 		vector<TableObject *>::iterator itr;
 
-		obj_list=getObjectList(obj_type);
+		if(!obj_list)
+			return;
 
 		//Raises an error if the object index is out of bound
 		if(obj_idx >= obj_list->size())
@@ -864,30 +865,27 @@ int PhysicalTable::getObjectIndex(const QString &name, ObjectType obj_type)
 int PhysicalTable::getObjectIndex(BaseObject *obj)
 {
 	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+	vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
+	vector<TableObject *>::iterator itr, itr_end;
+	bool found=false;
 
-	if(!obj)
+	if(!obj || !obj_list)
 		return(-1);
-	else
+
+	itr=obj_list->begin();
+	itr_end=obj_list->end();
+
+	while(itr!=itr_end && !found)
 	{
-		vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
-		vector<TableObject *>::iterator itr, itr_end;
-		bool found=false;
-
-		itr=obj_list->begin();
-		itr_end=obj_list->end();
-
-		while(itr!=itr_end && !found)
-		{
-			found=((tab_obj->getParentTable()==this && (*itr)==tab_obj) ||
-				   (tab_obj->getName()==(*itr)->getName()));
-			if(!found) itr++;
-		}
-
-		if(found)
-			return(itr-obj_list->begin());
-		else
-			return(-1);
+		found=((tab_obj->getParentTable()==this && (*itr)==tab_obj) ||
+				 (tab_obj->getName()==(*itr)->getName()));
+		if(!found) itr++;
 	}
+
+	if(found)
+		return(itr-obj_list->begin());
+	else
+		return(-1);
 }
 
 BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type)
@@ -900,17 +898,16 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 {
 	BaseObject *object=nullptr;
 	bool found=false, format=false;
+	vector<TableObject *> *obj_list=getObjectList(obj_type);
 
 	//Checks if the name contains ", if so, the search will consider formatted names
 	format=name.contains('"');
 
-	if(TableObject::isTableObject(obj_type))
+	if(TableObject::isTableObject(obj_type) && obj_list)
 	{
 		vector<TableObject *>::iterator itr, itr_end;
-		vector<TableObject *> *obj_list=nullptr;
 		QString aux_name=name;
 
-		obj_list=getObjectList(obj_type);
 		itr=obj_list->begin();
 		itr_end=obj_list->end();
 
@@ -975,12 +972,16 @@ BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
 	}
 	else
 	{
-		obj_list=getObjectList(obj_type);
+		obj_list = getObjectList(obj_type);
+
+		if(!obj_list)
+			return(nullptr);
+
 		if(obj_idx < obj_list->size())
 			return(obj_list->at(obj_idx));
-		else
-			//Raises an error if the object index is out of bound
-			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Raises an error if the object index is out of bound
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }
 
@@ -1089,38 +1090,36 @@ unsigned PhysicalTable::getAncestorTableCount(void)
 
 unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 {
-	if(TableObject::isTableObject(obj_type) || isPhysicalTable(obj_type))
+	if(!TableObject::isTableObject(obj_type) && !isPhysicalTable(obj_type))
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	if(isPhysicalTable(obj_type))
+		return(ancestor_tables.size());
+	else
 	{
-		if(isPhysicalTable(obj_type))
+		vector<TableObject *> *list=nullptr;
+		list = getObjectList(obj_type);
+
+		if(!list) return(0);
+
+		if(!inc_added_by_rel)
 		{
-			return(ancestor_tables.size());
+			vector<TableObject *>::iterator itr, itr_end;
+			unsigned count=0;
+
+			itr=list->begin();
+			itr_end=list->end();
+			while(itr!=itr_end)
+			{
+				if(!(*itr)->isAddedByRelationship()) count++;
+				itr++;
+			}
+
+			return(count);
 		}
 		else
-		{
-			vector<TableObject *> *list=nullptr;
-			list=getObjectList(obj_type);
-
-			if(!inc_added_by_rel)
-			{
-				vector<TableObject *>::iterator itr, itr_end;
-				unsigned count=0;
-
-				itr=list->begin();
-				itr_end=list->end();
-				while(itr!=itr_end)
-				{
-					if(!(*itr)->isAddedByRelationship()) count++;
-					itr++;
-				}
-
-				return(count);
-			}
-			else
-				return(list->size());
-		}
+			return(list->size());
 	}
-	else
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 bool PhysicalTable::isWithOIDs(void)

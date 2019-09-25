@@ -6176,11 +6176,11 @@ ForeignTable *DatabaseModel::createForeignTable(void)
 	}
 }
 
-void DatabaseModel::updateViewsReferencingTable(Table *table)
+void DatabaseModel::updateViewsReferencingTable(PhysicalTable *table)
 {
 	BaseRelationship *rel = nullptr;
 	View *view = nullptr;
-	Table *tab = nullptr;
+	PhysicalTable *tab = nullptr;
 
 	if(!table) return;
 

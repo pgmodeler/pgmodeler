@@ -330,7 +330,7 @@ class PhysicalTable: public BaseTable {
 		//! \brief Copy the attributes between two tables
 		void operator = (PhysicalTable &table);
 
-		//! \brief Returns the specified object type list
+		//! \brief Returns the specified object type list. Returns null if an invalid object type is provided
 		virtual vector<TableObject *> *getObjectList(ObjectType obj_type);
 
 		/*! \brief Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.

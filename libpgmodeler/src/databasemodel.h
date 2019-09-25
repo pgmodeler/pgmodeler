@@ -586,7 +586,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		TableClass *createPhysicalTable(void);
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
-		void updateViewsReferencingTable(Table *table);
+		void updateViewsReferencingTable(PhysicalTable *table);
 
 		//! \brief Creates/removes the relationship between the passed view and the referecend tables
 		void updateViewRelationships(View *view, bool force_rel_removal=false);

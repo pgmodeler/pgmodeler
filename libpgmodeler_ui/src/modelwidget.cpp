@@ -1820,6 +1820,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			res=openEditingForm<Extension, ExtensionWidget, Schema>(object, sel_schema);
 		else if(obj_type==ObjectType::Table)
 			res=openEditingForm<Table,TableWidget,Schema>(object, sel_schema, obj_pos);
+		else if(obj_type==ObjectType::ForeignTable)
+			res=openEditingForm<ForeignTable,TableWidget,Schema>(object, sel_schema, obj_pos);
 		else if(obj_type==ObjectType::View)
 			res=openEditingForm<View,ViewWidget,Schema>(object, sel_schema, obj_pos);
 		else if(obj_type==ObjectType::Rule)

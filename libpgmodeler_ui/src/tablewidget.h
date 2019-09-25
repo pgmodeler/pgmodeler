@@ -61,10 +61,13 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
+		void __setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y);
+
 	public:
 		TableWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot
