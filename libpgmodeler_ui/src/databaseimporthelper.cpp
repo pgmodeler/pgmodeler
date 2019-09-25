@@ -2699,7 +2699,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 						else if(arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
 						{
 							if(arg_modes[i]==QString("i"))
-								params.push_back(QString("IN ") + arg_types[i]);
+								params.push_back(/* QString("IN ") + */ arg_types[i]);
 							else if(arg_modes[i]==QString("b"))
 								params.push_back(QString("INOUT ") + arg_types[i]);
 							else
