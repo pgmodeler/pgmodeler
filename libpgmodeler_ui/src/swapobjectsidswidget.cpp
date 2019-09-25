@@ -237,7 +237,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
 	else if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
-			(src_obj->getObjectType() != dst_obj->getObjectType()))
+					(src_obj->getObjectType() != dst_obj->getObjectType()))
 		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try

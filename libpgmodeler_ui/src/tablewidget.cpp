@@ -27,12 +27,13 @@
 #include "policywidget.h"
 #include "generalconfigwidget.h"
 
-TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Table)
+TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {
 	QGridLayout *grid=nullptr;
 	QVBoxLayout *vbox=nullptr;
 	ObjectsTableWidget *tab=nullptr;
-	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
+											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
 	map<QString, vector<QWidget *> > fields_map;
 	QFrame *frame=nullptr;
 	QPushButton *edt_data_tb=nullptr;
@@ -187,7 +188,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
-	configureFormLayout(table_grid, ObjectType::Table);
+	configureFormLayout(table_grid, tab_type);
 	configureTabOrder({ tag_sel });
 	setMinimumSize(660, 620);
 }
@@ -199,8 +200,7 @@ int TableWidget::openEditingForm(TableObject *object)
 	WidgetClass *object_wgt=new WidgetClass;
 	int res = 0;
 
-	object_wgt->setAttributes(this->model, this->op_list,
-							  dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
+	object_wgt->setAttributes(this->model, this->op_list, dynamic_cast<PhysicalTable *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
@@ -281,6 +281,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	attributes_tbw->removeTab(3); //Removing the Rule tab
 	attributes_tbw->removeTab(3); //Removing the Policies tab
 	attributes_tbw->removeTab(3); //Removing the Partition keys tab
+	objects_tab_map[ObjectType::Column]->setHeaderVisible(0, false);
 }
 
 void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y)
@@ -884,8 +885,6 @@ void TableWidget::applyConfiguration(void)
 			if(part_keys.empty())
 				part_type = BaseType::Null;
 		}
-		else
-			table->removePartitionKeys();
 
 		BaseObjectWidget::applyConfiguration();
 

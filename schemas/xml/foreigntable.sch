@@ -32,12 +32,6 @@
  %if {col-indexes} %then {col-indexes} %end
  %if {constr-indexes} %then {constr-indexes} %end
  
- %if {partitioning} %and {partitionkey} %then
- $tb [<partitioning type=]"{partitioning}"[>] $br
-        {partitionkey}  
- $tb [</partitioning>] $br
- %end
- 
  %if {initial-data} %then
  $tb <initial-data> $br
  <! $ob CDATA $ob {initial-data} $cb $cb >

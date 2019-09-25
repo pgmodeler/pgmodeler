@@ -190,7 +190,7 @@ void ColumnWidget::applyConfiguration(void)
 
 		if(table)
 		{
-			pk = dynamic_cast<Table *>(table)->getPrimaryKey();
+			pk = dynamic_cast<PhysicalTable *>(table)->getPrimaryKey();
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
 				throw Exception(Exception::getErrorMessage(ErrorCode::NullPrimaryKeyColumn)
 												.arg(column->getName())

@@ -160,7 +160,7 @@ class PhysicalTable: public BaseTable {
 		CopyOptions getCopyTableOptions(void);
 
 		//! \brief Defines if the partitioning type of the table
-		void setPartitioningType(PartitioningType part_type);
+		virtual void setPartitioningType(PartitioningType part_type);
 
 		//! \brief Returns the current partitioning type defined for the table
 		PartitioningType getPartitioningType(void);

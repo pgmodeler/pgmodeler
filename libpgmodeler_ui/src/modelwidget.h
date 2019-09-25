@@ -174,6 +174,9 @@ class ModelWidget: public QWidget {
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
 
+		//! \brief Opens a editing form specific for tables and foreign tables
+		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
+
 		//! \brief Configures the popup menu according the the selected objects list
 		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 

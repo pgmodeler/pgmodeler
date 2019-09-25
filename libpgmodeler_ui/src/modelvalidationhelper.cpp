@@ -106,7 +106,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						}
 					}
 
-					if(aux_obj && (aux_obj->getObjectType()==ObjectType::View || aux_obj->getObjectType()==ObjectType::Table))
+					if(aux_obj && (aux_obj->getObjectType()==ObjectType::View || PhysicalTable::isPhysicalTable(aux_obj->getObjectType())))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
@@ -277,8 +277,7 @@ void ModelValidationHelper::validateModel(void)
 		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
-		Table *table=nullptr;
-		PhysicalTable *ref_tab=nullptr, *recv_tab=nullptr;
+		PhysicalTable *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
 		Constraint *constr=nullptr;
 		Column *col=nullptr;
 		Relationship *rel=nullptr;
@@ -365,7 +364,7 @@ void ModelValidationHelper::validateModel(void)
 						/* Validating a special object. The validation made here is to check if the special object
 						 * (constraint/index/trigger/view) references a column added by a relationship and
 						 *  that relationship is being created after the creation of the special object */
-						if(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type == ObjectType::GenericSql)
+						if(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type == ObjectType::GenericSql)
 						{
 							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 							vector<TableObject *> *tab_objs;
@@ -376,7 +375,7 @@ void ModelValidationHelper::validateModel(void)
 							GenericSQL *gen_sql=nullptr;
 							Constraint *constr=nullptr;
 
-							table=dynamic_cast<Table *>(object);
+							table=dynamic_cast<PhysicalTable *>(object);
 							view=dynamic_cast<View *>(object);
 							gen_sql = dynamic_cast<GenericSQL *>(object);
 
@@ -388,6 +387,7 @@ void ModelValidationHelper::validateModel(void)
 								for(auto &obj_tp : tab_aux_types)
 								{
 									tab_objs = table->getObjectList(obj_tp);
+									if(!tab_objs) continue;
 
 									for(auto &tab_obj : (*tab_objs))
 									{
@@ -473,7 +473,7 @@ void ModelValidationHelper::validateModel(void)
 		//Searching the model's tables and gathering all the constraints and index
 		while(itr!=obj_list->end() && !valid_canceled)
 		{
-			table=dynamic_cast<Table *>(*itr);
+			table=dynamic_cast<PhysicalTable *>(*itr);
 			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(table->getTypeName()), table->getObjectType());
 
 			itr++;
@@ -542,13 +542,20 @@ void ModelValidationHelper::validateModel(void)
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
 		if(!postgis_exists)
 		{
-			obj_list=db_model->getObjectList(ObjectType::Table);
-			itr=obj_list->begin();
+			vector<BaseObject *> tabs;
+
+			tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
+									db_model->getObjectList(ObjectType::Table)->end());
+			tabs.insert(tabs.end(),
+									db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+									db_model->getObjectList(ObjectType::ForeignTable)->end());
+
+			itr=tabs.begin();
 			i=0;
 
-			while(itr!=obj_list->end() && !valid_canceled)
+			while(itr!=tabs.end() && !valid_canceled)
 			{
-				table = dynamic_cast<Table *>(*itr);
+				table = dynamic_cast<PhysicalTable *>(*itr);
 				itr++;
 
 				for(auto &obj : *table->getObjectList(ObjectType::Column))

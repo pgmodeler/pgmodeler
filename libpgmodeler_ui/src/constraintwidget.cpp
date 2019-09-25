@@ -215,7 +215,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 {
 	ObjectsTableWidget *aux_col_tab=nullptr;
 	Column *column=nullptr;
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	QComboBox *combo=nullptr;
 	Relationship *rel=nullptr;
 	unsigned i, count=0;
@@ -231,7 +231,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 			means that the column is from a table */
 			if(!this->relationship)
 			{
-				table=dynamic_cast<Table *>(this->table);
+				table=dynamic_cast<PhysicalTable *>(this->table);
 				count=table->getColumnCount();
 			}
 			else
@@ -360,8 +360,9 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	if(!parent_obj)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	obj_type=parent_obj->getObjectType();
-	if(obj_type!=ObjectType::Table && obj_type!=ObjectType::Relationship)
+	obj_type = parent_obj->getObjectType();
+
+	if(!PhysicalTable::isPhysicalTable(obj_type) && obj_type!=ObjectType::Relationship)
 		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
@@ -373,13 +374,13 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	if(constr)
 	{
-	  row = 0;
-	  for(auto column : constr->getColumns(Constraint::SourceCols))
-	  {
-		columns_tab->addRow();
-		addColumn(column, Constraint::SourceCols, row);
-		row++;
-	  }
+		row = 0;
+		for(auto column : constr->getColumns(Constraint::SourceCols))
+		{
+			columns_tab->addRow();
+			addColumn(column, Constraint::SourceCols, row);
+			row++;
+		}
 	}
 
 	updateColumnsCombo(Constraint::SourceCols);
@@ -418,9 +419,9 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			row = 0;
 			for(auto column : constr->getColumns(Constraint::ReferencedCols))
 			{
-			  ref_columns_tab->addRow();
-			  addColumn(column, Constraint::ReferencedCols, row);
-			  row++;
+				ref_columns_tab->addRow();
+				addColumn(column, Constraint::ReferencedCols, row);
+				row++;
 			}
 
 			updateColumnsCombo(Constraint::ReferencedCols);
@@ -510,7 +511,6 @@ void ConstraintWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-
 		cancelConfiguration();
 		msg_box.show(e);
 	}

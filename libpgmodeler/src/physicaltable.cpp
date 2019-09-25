@@ -112,6 +112,9 @@ void PhysicalTable::setPartitioningType(PartitioningType part_type)
 {
   setCodeInvalidated(partitioning_type != part_type);
   partitioning_type = part_type;
+
+	if(part_type == PartitioningType::Null)
+		partition_keys.clear();
 }
 
 PartitioningType PhysicalTable::getPartitioningType(void)

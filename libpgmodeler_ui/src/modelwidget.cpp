@@ -1743,6 +1743,18 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj, con
 	return(openEditingForm(object_wgt));
 }
 
+int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *schema, const QPointF &pos)
+{
+	TableWidget *tab_wgt=new TableWidget(nullptr, tab_type);
+
+	if(tab_type == ObjectType::Table)
+		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
+	else
+		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<ForeignTable *>(object), pos.x(), pos.y());
+
+	return(openEditingForm(tab_wgt));
+}
+
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
 {
 	try
@@ -1819,9 +1831,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		else if(obj_type==ObjectType::Extension)
 			res=openEditingForm<Extension, ExtensionWidget, Schema>(object, sel_schema);
 		else if(obj_type==ObjectType::Table)
-			res=openEditingForm<Table,TableWidget,Schema>(object, sel_schema, obj_pos);
+			res=openTableEditingForm(obj_type, dynamic_cast<Table *>(object), sel_schema, obj_pos);
 		else if(obj_type==ObjectType::ForeignTable)
-			res=openEditingForm<ForeignTable,TableWidget,Schema>(object, sel_schema, obj_pos);
+			res=openTableEditingForm(obj_type, dynamic_cast<ForeignTable *>(object), sel_schema, obj_pos);
 		else if(obj_type==ObjectType::View)
 			res=openEditingForm<View,ViewWidget,Schema>(object, sel_schema, obj_pos);
 		else if(obj_type==ObjectType::Rule)

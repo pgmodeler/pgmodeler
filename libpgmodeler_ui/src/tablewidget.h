@@ -64,7 +64,7 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void __setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y);
 
 	public:
-		TableWidget(QWidget * parent = nullptr);
+		TableWidget(QWidget * parent = nullptr, ObjectType tab_type = ObjectType::Table);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);

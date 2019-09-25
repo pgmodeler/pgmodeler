@@ -45,6 +45,10 @@ class ForeignTable: public PhysicalTable, public ForeignObject {
 		 * indexes, rules and policies. This because foreign tables only accepts columns, check constraints, triggers */
 		void addObject(BaseObject *object, int obj_idx = -1);
 
+		/*! \brief This method ignores any partitioning type provided for the foreign table.
+		 * It always set partitioning type as null since foreign tables doesn't support partitioning */
+		void setPartitioningType(PartitioningType);
+
 		//! \brief Returns the SQL / XML definition for table
 		virtual QString getCodeDefinition(unsigned def_type) final;
 

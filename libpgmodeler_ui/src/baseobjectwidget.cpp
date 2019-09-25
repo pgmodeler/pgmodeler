@@ -309,7 +309,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		parent_type=parent_obj->getObjectType();
 
-		if(parent_type==ObjectType::Table || parent_type==ObjectType::View)
+		if(PhysicalTable::isPhysicalTable(parent_type) || parent_type==ObjectType::View)
 			this->table=dynamic_cast<BaseTable *>(parent_obj);
 		else if(parent_type==ObjectType::Relationship)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
@@ -391,9 +391,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 		obj_type=object->getObjectType();
 		object_protected=(parent_type!=ObjectType::Relationship &&
-						   (object->isProtected() ||
-							((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
-							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
+																	 (object->isProtected() ||
+																		((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
+																		 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}

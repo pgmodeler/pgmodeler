@@ -66,6 +66,11 @@ void ForeignTable::addObject(BaseObject *object, int obj_idx)
 	PhysicalTable::addObject(object, obj_idx);
 }
 
+void ForeignTable::setPartitioningType(PartitioningType)
+{
+	PhysicalTable::setPartitioningType(PartitioningType::Null);
+}
+
 QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);

@@ -1513,19 +1513,20 @@ void DataManipulationForm::truncateTable(void)
 
 void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 {
-  if(!item)
-	return;
+	if(!item)
+		return;
 
-  if(item->checkState() != static_cast<Qt::CheckState>(item->data(Qt::UserRole).toInt()))
-  {
-	int idx = 0;
-	bool hide = false;
+	if(item->checkState() != static_cast<Qt::CheckState>(item->data(Qt::UserRole).toInt()))
+	{
+		int idx = 0;
+		bool hide = false;
 
-	idx = col_names.indexOf(item->text());
-	hide = item->checkState() == Qt::Unchecked;
-	results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
-	item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
-	item->setData(Qt::UserRole, item->checkState());
+		idx = col_names.indexOf(item->text());
+		hide = item->checkState() == Qt::Unchecked;
+		results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
+		item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
+		item->setData(Qt::UserRole, item->checkState());
+		results_tbw->resizeRowsToContents();
 	}
 }
 
