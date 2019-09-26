@@ -19,7 +19,7 @@
 
 [ TABLE ] {name} 
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [ PARTITION OF ] {partitioned-table} $sp %end
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [PARTITION OF ] {partitioned-table} $sp %end
 
 %if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
 
@@ -52,8 +52,8 @@
 $br )
 
 %else 
-    %if {partitioned-table} %and {constraints} %then
-        [ (] $br {constraints} [)] $br
+    %if %not {gen-alter-cmds} %and {partitioned-table} %and {constraints} %then
+        [ (] $br {constraints} $br [)] 
     %end
 %end
 

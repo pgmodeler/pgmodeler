@@ -12,43 +12,40 @@
 
 [CREATE FOREIGN TABLE ] {name} 
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [ PARTITION OF ] {partitioned-table} $sp %end
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
+    $br [PARTITION OF ] {partitioned-table} $sp 
+%end
 
 %if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
 
-[ (] $br
+    [ (] $br
 
-%if %not {gen-alter-cmds} %then
-    %if {columns} %then 
-        {columns} 
+    %if %not {gen-alter-cmds} %then
+        %if {columns} %then 
+            {columns} 
+            
+            %if %not {constr-sql-disabled} %and {constraints} %then [,] $br %end
+        %end
         
-        %if %not {constr-sql-disabled} %and {constraints} %then [,] $br %end
-    %end
-    
-    %if {inh-columns} %then 
-        $br {inh-columns} 
-    %end
+        %if {inh-columns} %then 
+            $br {inh-columns} 
+        %end
 
-    %if {constraints} %then
-        {constraints}
+        %if {constraints} %then
+            {constraints}
+        %end
     %end
-  %end
-$br )
+    $br )
 
 %else 
-    %if {partitioned-table} %and {constraints} %then
-        [ (] $br {constraints} [)] $br
+    %if %not {gen-alter-cmds} %and {partitioned-table} %and {constraints} %then
+        [ (] $br {constraints} $br [)]
     %end
 %end
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
-    %if {partition-bound-expr} %then
-        $br [FOR VALUES ] {partition-bound-expr}
-    %else
-        DEFAULT
-    %end
+    $br [FOR VALUES ] {partition-bound-expr}
 %end
-
 
 %if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
 $br [SERVER ] {server}

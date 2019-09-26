@@ -2661,7 +2661,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 		return;
 
 	vector<BaseObject *> refs;
-	Table *parent_tab=nullptr;
+	PhysicalTable *parent_tab=nullptr;
 
 	dbmodel->disconnectRelationships();
 
@@ -2679,7 +2679,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 			try
 			{
 				//Removing the column from the parent table and destroying it since they will be recreated by inheritances
-				parent_tab=dynamic_cast<Table *>(col->getParentTable());
+				parent_tab=dynamic_cast<PhysicalTable *>(col->getParentTable());
 				parent_tab->removeObject(col);
 				delete(col);
 			}

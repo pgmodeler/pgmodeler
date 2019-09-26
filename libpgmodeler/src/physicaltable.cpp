@@ -218,7 +218,7 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 		/* Do not generates the column code definition when it is not included by
 		 relatoinship, in case of XML definition. */
 		if((def_type==SchemaParser::SqlDefinition && !columns[i]->isAddedByCopy() && !columns[i]->isAddedByGeneralization()) ||
-			 (def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByCopy() && this->isPartition()) ||
+			 /* (def_type==SchemaParser::SqlDefinition && columns[i]->isAddedByCopy() && this->isPartition()) || */
 			 (def_type==SchemaParser::XmlDefinition && (!columns[i]->isAddedByRelationship() || (incl_rel_added_cols && columns[i]->isAddedByRelationship()))))
 		{
 			str_cols+=columns[i]->getCodeDefinition(def_type);
@@ -1318,7 +1318,7 @@ void PhysicalTable::updateAlterCmdsStatus(void)
 	//Foreign keys are aways created as ALTER form
 	for(i=0; i < constraints.size(); i++)
 		constraints[i]->setDeclaredInTable(!gen_alter_cmds &&
-											 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
+																			 dynamic_cast<Constraint *>(constraints[i])->getConstraintType()!=ConstraintType::ForeignKey);
 }
 
 void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
@@ -1326,6 +1326,7 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 	QStringList part_keys_code;
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
 	attributes[Attributes::AncestorTable]=QString();
+	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::Tag]=QString();
 	attributes[Attributes::Partitioning]=~partitioning_type;
 	attributes[Attributes::PartitionKey]=QString();
