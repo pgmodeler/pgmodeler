@@ -260,6 +260,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	rel_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(base_rel->getRelTypeAttribute().replace("rel", "relationship")));
 
 	aux_rel=dynamic_cast<Relationship *>(base_rel);
+	has_foreign_tab = (base_rel->getTable(BaseRelationship::SrcTable)->getObjectType() == ObjectType::ForeignTable ||
+										 base_rel->getTable(BaseRelationship::DstTable)->getObjectType() == ObjectType::ForeignTable);
 
 	if(base_rel->getObjectType()==ObjectType::BaseRelationship)
 	{
@@ -318,7 +320,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		if(rel_type == BaseRelationship::RelationshipPart)
 		{
 			part_type_lbl->setText(~aux_rel->getReferenceTable()->getPartitioningType());
-			default_part_chk->setChecked(aux_rel->getPartitionBoundingExpr().isEmpty());
+
+			// Default partitions can't be used by foreign tables
+			default_part_chk->setChecked(!has_foreign_tab && aux_rel->getPartitionBoundingExpr().isEmpty());
+			default_part_chk->setEnabled(!has_foreign_tab);
 		}
 	}
 
@@ -370,9 +375,6 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			}
 		}
 	}
-
-	has_foreign_tab = (base_rel->getTable(BaseRelationship::SrcTable)->getObjectType() == ObjectType::ForeignTable ||
-										 base_rel->getTable(BaseRelationship::DstTable)->getObjectType() == ObjectType::ForeignTable);
 
 	rel1n=(rel_type==BaseRelationship::Relationship11 ||
 				 rel_type==BaseRelationship::Relationship1n);
