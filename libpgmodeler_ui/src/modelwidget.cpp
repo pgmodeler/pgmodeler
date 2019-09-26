@@ -2815,8 +2815,8 @@ void ModelWidget::duplicateObject(void)
 				schema = dynamic_cast<Schema *>(table->getSchema());
 				PgModelerNs::copyObject(&dup_object, tab_obj, obj_type);
 
-				if(table->getObjectType() == ObjectType::Table)
-					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
+					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, QString("_cp")));
 				else
 					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
@@ -2853,7 +2853,7 @@ void ModelWidget::duplicateObject(void)
 			for(auto &tab : upd_view_ref_tables)
 			{
 				db_model->validateRelationships();
-				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(tab));
+				db_model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(tab));
 			}
 
 			for(auto &tab : upd_fk_rels)
