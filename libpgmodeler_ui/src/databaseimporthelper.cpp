@@ -737,6 +737,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::ForeignDataWrapper: createForeignDataWrapper(attribs); break;
 				case ObjectType::ForeignServer: createForeignServer(attribs); break;
 				case ObjectType::UserMapping: createUserMapping(attribs); break;
+				case ObjectType::ForeignTable: createForeignTable(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -1869,12 +1870,12 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	QString type_name, type_def, unknown_obj_xml, sch_name;
 	bool is_type_registered = false;
 	QStringList ref_tab_oids;
-	Table *ref_tab = nullptr;
+	PhysicalTable *ref_tab = nullptr;
 
 	try
 	{
 		attribs_map pos_attrib={{ Attributes::XPos, QString("0") },
-								{ Attributes::YPos, QString("0") }};
+														{ Attributes::YPos, QString("0") }};
 
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
@@ -1934,6 +1935,11 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		for(auto &tab_oid : Catalog::parseArrayValues(attribs[Attributes::RefTables]))
 		{
 			ref_tab = dbmodel->getTable(getDependencyObject(tab_oid, ObjectType::Table, true, true, false));
+
+			// If we couldn't get a table from tab_oid we try to get a foreign table
+			if(!ref_tab)
+				ref_tab = dbmodel->getForeignTable(getDependencyObject(tab_oid, ObjectType::ForeignTable, true, true, false));
+
 			ref.addReferencedTable(ref_tab);
 		}
 
@@ -1990,11 +1996,9 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 {
 	try
 	{
-		ObjectType table_type=ObjectType::Table;
+		ObjectType table_type;
 
-		if(attribs[Attributes::TableType]==BaseObject::getSchemaName(ObjectType::View))
-			table_type=ObjectType::View;
-
+		table_type=BaseObject::getObjectType(attribs[Attributes::TableType]);
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
 		attribs[Attributes::Arguments]=Catalog::parseArrayValues(attribs[Attributes::Arguments].remove(QString(",\"\""))).join(',');
@@ -2103,21 +2107,22 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 		QString table_oid=attribs[Attributes::Table],
 				ref_tab_oid=attribs[Attributes::RefTable],
 				tab_name;
-		Table *table=nullptr;
+		PhysicalTable *table=nullptr;
 
 		//If the table oid is 0 indicates that the constraint is part of a data type like domains
 		if(!table_oid.isEmpty() && table_oid!=QString("0"))
 		{
+			ObjectType tab_type = BaseObject::getObjectType(attribs[Attributes::TableType]);
 			QStringList factor=Catalog::parseArrayValues(attribs[Attributes::Factor]);
 
 			//Retrieving the table is it was not imported yet and auto_resolve_deps is true
-			tab_name=getDependencyObject(table_oid, ObjectType::Table, true, auto_resolve_deps, false);
+			tab_name=getDependencyObject(table_oid, tab_type, true, auto_resolve_deps, false);
 
 			if(!factor.isEmpty() && factor[0].startsWith(QString("fillfactor=")))
 				attribs[Attributes::Factor]=factor[0].remove(QString("fillfactor="));
 
 			attribs[attribs[Attributes::Type]]=Attributes::True;
-			table=dynamic_cast<Table *>(dbmodel->getObject(tab_name, ObjectType::Table));
+			table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_name, tab_type));
 
 			if(attribs[Attributes::Type]==Attributes::ExConstr)
 			{
@@ -2308,6 +2313,176 @@ void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
 		if(usr_map) delete(usr_map);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
+{
+	ForeignTable *ftable=nullptr;
+
+	try
+	{
+		unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
+		bool is_type_registered=false;
+		Column col;
+		vector<unsigned> inh_cols;
+		QString type_def, unknown_obj_xml, type_name, def_val;
+		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+		attribs_map pos_attrib={
+			{ Attributes::XPos, QString("0") },
+			{ Attributes::YPos, QString("0") }};
+
+		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
+		attribs[Attributes::Columns]=QString();
+		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+
+		//Retrieving columns if they were not retrieved yet
+		if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
+		{
+			QString sch_name;
+			sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
+			retrieveTableColumns(sch_name, attribs[Attributes::Name]);
+		}
+
+		itr=itr1=columns[attribs[Attributes::Oid].toUInt()].begin();
+		itr_end=columns[attribs[Attributes::Oid].toUInt()].end();
+		attribs[Attributes::MaxObjCount]=QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
+
+		//Creating columns
+		while(itr!=itr_end)
+		{
+			if(itr->second.count(Attributes::Permission) &&
+					!itr->second.at(Attributes::Permission).isEmpty())
+				col_perms[tab_oid].push_back(itr->second[Attributes::Oid].toUInt());
+
+			if(itr->second[Attributes::Inherited]==Attributes::True)
+				inh_cols.push_back(col_idx);
+
+			col.setName(itr->second[Attributes::Name]);
+			type_oid=itr->second[Attributes::TypeOid].toUInt();
+
+			/* If the type has an entry on the types map and its OID is greater than system object oids,
+		 means that it's a user defined type, thus, there is the need to check if the type
+		 is registered. */
+			if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+			{
+				/* Building the type name prepending the schema name in order to search it on
+				 * the user defined types list at PgSQLType class */
+				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
+				type_name+=QString(".");
+
+				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+				{
+					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
+					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					type_name+=BaseObject::formatName(aux_name, false);
+					type_name+=QString("[]").repeated(dim);
+				}
+				else
+					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+
+				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+			}
+			else
+			{
+				type_name=itr->second[Attributes::Type];
+				is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
+			}
+
+			/* Checking if the type used by the column exists (is registered),
+		 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+		 array types [] that will not be automatically created because they are derivated from
+		 the non-array type, this way, if the original type is created there is no need to create the array form */
+			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
+				// Try to create the missing data type
+				getType(itr->second[Attributes::TypeOid], false);
+
+			col.setIdentityType(BaseType::Null);
+			col.setType(PgSqlType::parseString(type_name));
+			col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
+			col.setComment(itr->second[Attributes::Comment]);
+
+			//Overriding the default value if the column is identity
+			if(!itr->second[Attributes::IdentityType].isEmpty())
+				col.setIdentityType(itr->second[Attributes::IdentityType]);
+			else
+			{
+				/* Removing extra/forced type casting in the retrieved default value.
+				 This is done in order to avoid unnecessary entries in the diff results.
+
+				 For instance: say in the model we have a column with the following configutation:
+				 > varchar(3) default 'foo'
+
+				 Now, when importing the same column the default value for it will be something like:
+				 > varchar(3) default 'foo'::character varying
+
+				 Since the extra chars in the default value of the imported column are redundant (casting
+				 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+				 the cast if the casting is equivalent to the column type. */
+
+				def_val = itr->second[Attributes::DefaultValue];
+
+				if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+				{
+					QStringList values = def_val.split(QString("::"));
+
+					if(values.size() > 1 &&
+						 ((~col.getType() == values[1]) ||
+							(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+							(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+						def_val=values[0];
+				}
+
+				col.setDefaultValue(def_val);
+			}
+
+			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
+			if(auto_resolve_deps && !itr->second[Attributes::Collation].isEmpty())
+				getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
+
+			col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
+			attribs[Attributes::Columns]+=col.getCodeDefinition(SchemaParser::XmlDefinition);
+			itr++;
+			col_idx++;
+		}
+
+		loadObjectXML(ObjectType::ForeignTable, attribs);
+		ftable=dbmodel->createForeignTable();
+
+		for(unsigned col_idx : inh_cols)
+			inherited_cols.push_back(ftable->getColumn(col_idx));
+
+		// Storing the partition bound expression temporarily in the table in order to configure the partition hierarchy later
+		ftable->setPartitionBoundingExpr(attribs[Attributes::PartitionBoundExpr].remove(QRegExp("^(FOR)( )+(VALUES)( )*", Qt::CaseInsensitive)));
+
+		// Retrieving the partitioned table related to the partition table being created
+		if(!attribs[Attributes::PartitionedTable].isEmpty())
+		{
+			Table *partitioned_tab = nullptr;
+
+			attribs[Attributes::PartitionedTable] =
+					getDependencyObject(attribs[Attributes::PartitionedTable], ObjectType::Table, true, auto_resolve_deps, false);
+
+			partitioned_tab = dbmodel->getTable(attribs[Attributes::PartitionedTable]);
+			ftable->setPartionedTable(partitioned_tab);
+
+			if(!partitioned_tab)
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+												.arg(attribs[Attributes::Name]).arg(BaseObject::getTypeName(ObjectType::Table))
+												.arg(attribs[Attributes::PartitionedTable]).arg(BaseObject::getTypeName(ObjectType::Table)),
+												ErrorCode::RefObjectInexistsModel ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+		}
+
+		dbmodel->addForeignTable(ftable);
+		imported_tables[tab_oid] = ftable;
+	}
+	catch(Exception &e)
+	{
+		if(ftable) delete(ftable);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 

@@ -4985,12 +4985,12 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		else
 		{
 			obj_type = ObjectType::Table;
-			table = dynamic_cast<Table *>(getObject(attribs[Attributes::Table], obj_type));
+			table = dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], obj_type));
 
 			if(!table)
 			{
 				obj_type = ObjectType::ForeignTable;
-				table = dynamic_cast<Table *>(getObject(attribs[Attributes::Table], obj_type));
+				table = dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], obj_type));
 			}
 
 			parent_obj=table;
@@ -6389,6 +6389,10 @@ View *DatabaseModel::createView(void)
 									{
 										xmlparser.getElementAttributes(aux_attribs);
 										table = getTable(aux_attribs[Attributes::Name]);
+
+										if(!table)
+											table = getForeignTable(aux_attribs[Attributes::Name]);
+
 										reference.addReferencedTable(table);
 									}
 

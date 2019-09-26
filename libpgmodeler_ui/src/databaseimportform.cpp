@@ -875,7 +875,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 				item->setData(ObjectSchema, Qt::UserRole, schema);
 				item->setData(ObjectTable, Qt::UserRole, table);
 
-				if(obj_type==ObjectType::Schema || obj_type == ObjectType::Table || obj_type == ObjectType::View)
+				if(obj_type==ObjectType::Schema || obj_type == ObjectType::View || PhysicalTable::isPhysicalTable(obj_type))
 					items_vect.push_back(item);
 			}
 

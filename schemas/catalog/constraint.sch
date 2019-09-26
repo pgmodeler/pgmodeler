@@ -11,7 +11,7 @@
      WHERE nspname= ] '{schema}'
 
    %if {table} %then
-     [ AND relkind IN ('r','p') AND relname=] '{table}'
+     [ AND relkind IN ('r','p','f') AND relname=] '{table}'
    %end
  %end
 
@@ -45,7 +45,7 @@
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
              am.amname AS index_type, cl.reloptions AS factor,  ]
-
+             
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
        pg_get_expr(id.indpred, id.indexrelid) AS condition,
@@ -102,21 +102,27 @@
 
 	[ ELSE NULL
 	END AS comparison_type, ]
+    
+    [ CASE 
+            WHEN tb.relkind = 'r' THEN 'table'
+            WHEN tb.relkind = 'p' THEN 'table'
+            WHEN tb.relkind = 'f' THEN 'foreigntable'
+      END AS table_type, ]
 
      ({comment}) [ AS comment ]
 	
      [ FROM pg_constraint AS cs
      LEFT JOIN pg_class AS cl ON cl.oid = cs.conindid
      LEFT JOIN pg_am AS am ON cl.relam = am.oid
-     LEFT JOIN pg_index AS id ON id.indexrelid= cs.conindid ]
+     LEFT JOIN pg_index AS id ON id.indexrelid= cs.conindid 
+     LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid ]
 
      %if {schema} %then
 	[ LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
-	  LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
 	  WHERE ns.nspname= ] '{schema}'
 
 	%if {table} %then
-	  [ AND tb.relkind IN ('r','p') AND tb.relname= ] '{table}'
+	  [ AND tb.relkind IN ('r','p','f') AND tb.relname= ] '{table}'
 	%end
      %end
 

@@ -127,7 +127,7 @@ class DatabaseImportHelper: public QObject {
 		DatabaseModel *dbmodel;
 
 		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
-		map<unsigned, Table *> imported_tables;
+		map<unsigned, PhysicalTable *> imported_tables;
 
 		XmlParser *xmlparser;
 		
@@ -163,6 +163,7 @@ class DatabaseImportHelper: public QObject {
 		void createForeignDataWrapper(attribs_map &attribs);
 		void createForeignServer(attribs_map &attribs);
 		void createUserMapping(attribs_map &attribs);
+		void createForeignTable(attribs_map &attribs);
 		void __createTableInheritances(void);
 		void createTableInheritances(void);
 		void createTablePartitionings(void);
