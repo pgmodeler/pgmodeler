@@ -343,6 +343,7 @@ void DataManipulationForm::retrieveData(void)
 		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
 		ResultSet res;
 		unsigned limit=limit_spb->value();
+		ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().trimmed().isEmpty())
@@ -388,12 +389,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
+		if(results_tbw->rowCount()==0 && PhysicalTable::isPhysicalTable(obj_type))
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
+		if(PhysicalTable::isPhysicalTable(obj_type))
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -407,10 +408,10 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
+													PhysicalTable::isPhysicalTable(obj_type) &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
+		truncate_tb->setEnabled(obj_type == ObjectType::Table &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
@@ -463,6 +464,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 	bool cols_selected, rows_selected;
+	ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
 
 	cols_selected = rows_selected = !sel_ranges.isEmpty();
 
@@ -477,7 +479,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	clear_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table)  &&
+											 PhysicalTable::isPhysicalTable(obj_type)  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -758,8 +760,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 				table_oid = pks[0][Attributes::Table].toUInt();
 		}
 
-		hint_frm->setVisible(obj_type==ObjectType::Table);
-		add_tb->setEnabled(obj_type==ObjectType::Table && !col_names.empty());
+		hint_frm->setVisible(PhysicalTable::isPhysicalTable(obj_type));
+		add_tb->setEnabled(PhysicalTable::isPhysicalTable(obj_type) && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -779,7 +781,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		catalog.closeConnection();
 
 		//For tables, even if there is no pk the user can manipulate data
-		if(obj_type==ObjectType::Table)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);

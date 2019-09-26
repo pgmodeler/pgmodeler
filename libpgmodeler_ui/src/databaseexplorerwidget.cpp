@@ -275,7 +275,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 					obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 
-					if(oid!=0 && (obj_type==ObjectType::Table || obj_type==ObjectType::View))
+					if(oid!=0 && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View))
 					{
 						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 												 item->text(0), obj_type!=ObjectType::View);
@@ -1077,7 +1077,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
 		if(obj_id > 0)
 		{
-			if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
+			if(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View)
 				handle_menu.addAction(show_data_action);
 
 			handle_menu.addAction(properties_action);
