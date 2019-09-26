@@ -267,10 +267,12 @@ void DataManipulationForm::listTables(void)
 
 	if(schema_cmb->currentIndex() > 0)
 	{
-		if(hide_views_chk->isChecked())
-			listObjects(table_cmb, { ObjectType::Table }, schema_cmb->currentText());
-		else
-			listObjects(table_cmb, { ObjectType::Table, ObjectType::View }, schema_cmb->currentText());
+		vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
+
+		if(!hide_views_chk->isChecked())
+			types.push_back(ObjectType::View);
+
+		listObjects(table_cmb, types, schema_cmb->currentText());
 	}
 
 	table_lbl->setEnabled(table_cmb->count() > 0);
