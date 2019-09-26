@@ -169,6 +169,10 @@ class DatabaseImportHelper: public QObject {
 		void createTablePartitionings(void);
 		void destroyDetachedColumns(void);
 
+		/*! \brief Create the columns of the table represented by the passed attributes.
+		 * The inh_cols is used to hold the id of inherited columns to be managed later */
+		void createColumns(attribs_map &attribs, vector<unsigned> &inh_cols);
+
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns(void);
 		

@@ -1638,12 +1638,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 
 	try
 	{
-		unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
-		bool is_type_registered=false;
-		Column col;
 		vector<unsigned> inh_cols;
-		QString type_def, unknown_obj_xml, type_name, def_val;
-		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -1651,116 +1646,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		attribs[Attributes::Columns]=QString();
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
-		//Retrieving columns if they were not retrieved yet
-		if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
-		{
-			QString sch_name;
-			sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
-			retrieveTableColumns(sch_name, attribs[Attributes::Name]);
-		}
-
-		itr=itr1=columns[attribs[Attributes::Oid].toUInt()].begin();
-		itr_end=columns[attribs[Attributes::Oid].toUInt()].end();
-		attribs[Attributes::MaxObjCount]=QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
-
-		//Creating columns
-		while(itr!=itr_end)
-		{
-			if(itr->second.count(Attributes::Permission) &&
-					!itr->second.at(Attributes::Permission).isEmpty())
-				col_perms[tab_oid].push_back(itr->second[Attributes::Oid].toUInt());
-
-			if(itr->second[Attributes::Inherited]==Attributes::True)
-				inh_cols.push_back(col_idx);
-
-			col.setName(itr->second[Attributes::Name]);
-			type_oid=itr->second[Attributes::TypeOid].toUInt();
-
-			/* If the type has an entry on the types map and its OID is greater than system object oids,
-		 means that it's a user defined type, thus, there is the need to check if the type
-		 is registered. */
-			if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
-			{
-				/* Building the type name prepending the schema name in order to search it on
-				 * the user defined types list at PgSQLType class */
-				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-				type_name+=QString(".");
-
-				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
-				{
-					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
-					type_name+=BaseObject::formatName(aux_name, false);
-					type_name+=QString("[]").repeated(dim);
-				}
-				else
-					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
-
-				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
-			}
-			else
-			{
-				type_name=itr->second[Attributes::Type];
-				is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
-			}
-
-			/* Checking if the type used by the column exists (is registered),
-		 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
-		 array types [] that will not be automatically created because they are derivated from
-		 the non-array type, this way, if the original type is created there is no need to create the array form */
-			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
-				// Try to create the missing data type
-				getType(itr->second[Attributes::TypeOid], false);
-
-			col.setIdentityType(BaseType::Null);
-			col.setType(PgSqlType::parseString(type_name));
-			col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
-			col.setComment(itr->second[Attributes::Comment]);
-
-			//Overriding the default value if the column is identity
-			if(!itr->second[Attributes::IdentityType].isEmpty())
-				col.setIdentityType(itr->second[Attributes::IdentityType]);
-			else
-			{
-				/* Removing extra/forced type casting in the retrieved default value.
-				 This is done in order to avoid unnecessary entries in the diff results.
-
-				 For instance: say in the model we have a column with the following configutation:
-				 > varchar(3) default 'foo'
-
-				 Now, when importing the same column the default value for it will be something like:
-				 > varchar(3) default 'foo'::character varying
-
-				 Since the extra chars in the default value of the imported column are redundant (casting
-				 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
-				 the cast if the casting is equivalent to the column type. */
-
-				def_val = itr->second[Attributes::DefaultValue];
-
-				if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
-				{
-					QStringList values = def_val.split(QString("::"));
-
-					if(values.size() > 1 &&
-						 ((~col.getType() == values[1]) ||
-							(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
-							(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
-						def_val=values[0];
-				}
-
-				col.setDefaultValue(def_val);
-			}
-
-			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
-			if(auto_resolve_deps && !itr->second[Attributes::Collation].isEmpty())
-				getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
-
-			col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
-			attribs[Attributes::Columns]+=col.getCodeDefinition(SchemaParser::XmlDefinition);
-			itr++;
-			col_idx++;
-		}
-
+		createColumns(attribs, inh_cols);
 		loadObjectXML(ObjectType::Table, attribs);
 		table=dbmodel->createTable();
 
@@ -1851,7 +1737,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 		}
 
 		dbmodel->addTable(table);
-		imported_tables[tab_oid] = table;
+		imported_tables[attribs[Attributes::Oid].toUInt()] = table;
 	}
 	catch(Exception &e)
 	{
@@ -2322,12 +2208,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 
 	try
 	{
-		unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
-		bool is_type_registered=false;
-		Column col;
 		vector<unsigned> inh_cols;
-		QString type_def, unknown_obj_xml, type_name, def_val;
-		map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
 		attribs_map pos_attrib={
 			{ Attributes::XPos, QString("0") },
 			{ Attributes::YPos, QString("0") }};
@@ -2336,116 +2217,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 		attribs[Attributes::Columns]=QString();
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
-		//Retrieving columns if they were not retrieved yet
-		if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
-		{
-			QString sch_name;
-			sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
-			retrieveTableColumns(sch_name, attribs[Attributes::Name]);
-		}
-
-		itr=itr1=columns[attribs[Attributes::Oid].toUInt()].begin();
-		itr_end=columns[attribs[Attributes::Oid].toUInt()].end();
-		attribs[Attributes::MaxObjCount]=QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
-
-		//Creating columns
-		while(itr!=itr_end)
-		{
-			if(itr->second.count(Attributes::Permission) &&
-					!itr->second.at(Attributes::Permission).isEmpty())
-				col_perms[tab_oid].push_back(itr->second[Attributes::Oid].toUInt());
-
-			if(itr->second[Attributes::Inherited]==Attributes::True)
-				inh_cols.push_back(col_idx);
-
-			col.setName(itr->second[Attributes::Name]);
-			type_oid=itr->second[Attributes::TypeOid].toUInt();
-
-			/* If the type has an entry on the types map and its OID is greater than system object oids,
-		 means that it's a user defined type, thus, there is the need to check if the type
-		 is registered. */
-			if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
-			{
-				/* Building the type name prepending the schema name in order to search it on
-				 * the user defined types list at PgSQLType class */
-				type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-				type_name+=QString(".");
-
-				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
-				{
-					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
-					type_name+=BaseObject::formatName(aux_name, false);
-					type_name+=QString("[]").repeated(dim);
-				}
-				else
-					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
-
-				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
-			}
-			else
-			{
-				type_name=itr->second[Attributes::Type];
-				is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
-			}
-
-			/* Checking if the type used by the column exists (is registered),
-		 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
-		 array types [] that will not be automatically created because they are derivated from
-		 the non-array type, this way, if the original type is created there is no need to create the array form */
-			if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
-				// Try to create the missing data type
-				getType(itr->second[Attributes::TypeOid], false);
-
-			col.setIdentityType(BaseType::Null);
-			col.setType(PgSqlType::parseString(type_name));
-			col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
-			col.setComment(itr->second[Attributes::Comment]);
-
-			//Overriding the default value if the column is identity
-			if(!itr->second[Attributes::IdentityType].isEmpty())
-				col.setIdentityType(itr->second[Attributes::IdentityType]);
-			else
-			{
-				/* Removing extra/forced type casting in the retrieved default value.
-				 This is done in order to avoid unnecessary entries in the diff results.
-
-				 For instance: say in the model we have a column with the following configutation:
-				 > varchar(3) default 'foo'
-
-				 Now, when importing the same column the default value for it will be something like:
-				 > varchar(3) default 'foo'::character varying
-
-				 Since the extra chars in the default value of the imported column are redundant (casting
-				 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
-				 the cast if the casting is equivalent to the column type. */
-
-				def_val = itr->second[Attributes::DefaultValue];
-
-				if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
-				{
-					QStringList values = def_val.split(QString("::"));
-
-					if(values.size() > 1 &&
-						 ((~col.getType() == values[1]) ||
-							(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
-							(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
-						def_val=values[0];
-				}
-
-				col.setDefaultValue(def_val);
-			}
-
-			//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
-			if(auto_resolve_deps && !itr->second[Attributes::Collation].isEmpty())
-				getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
-
-			col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
-			attribs[Attributes::Columns]+=col.getCodeDefinition(SchemaParser::XmlDefinition);
-			itr++;
-			col_idx++;
-		}
-
+		createColumns(attribs, inh_cols);
 		loadObjectXML(ObjectType::ForeignTable, attribs);
 		ftable=dbmodel->createForeignTable();
 
@@ -2476,7 +2248,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 		}
 
 		dbmodel->addForeignTable(ftable);
-		imported_tables[tab_oid] = ftable;
+		imported_tables[attribs[Attributes::Oid].toUInt()] = ftable;
 	}
 	catch(Exception &e)
 	{
@@ -2696,6 +2468,128 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 	/* Force the validation and connection of inheritance relationships
 	 leading to the creation of inherited columns */
 	dbmodel->validateRelationships();
+}
+
+void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> &inh_cols)
+{
+	unsigned tab_oid=attribs[Attributes::Oid].toUInt(), type_oid=0, col_idx=0;
+	bool is_type_registered=false;
+	Column col;
+	QString type_def, unknown_obj_xml, type_name, def_val;
+	map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+
+	if(tab_oid == 0)
+		return;
+
+	//Retrieving columns if they were not retrieved yet
+	if(columns[attribs[Attributes::Oid].toUInt()].empty() && auto_resolve_deps)
+	{
+		QString sch_name;
+		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
+		retrieveTableColumns(sch_name, attribs[Attributes::Name]);
+	}
+
+	itr=itr1=columns[attribs[Attributes::Oid].toUInt()].begin();
+	itr_end=columns[attribs[Attributes::Oid].toUInt()].end();
+	attribs[Attributes::MaxObjCount]=QString::number(columns[attribs[Attributes::Oid].toUInt()].size());
+
+	//Creating columns
+	while(itr!=itr_end)
+	{
+		if(itr->second.count(Attributes::Permission) &&
+				!itr->second.at(Attributes::Permission).isEmpty())
+			col_perms[tab_oid].push_back(itr->second[Attributes::Oid].toUInt());
+
+		if(itr->second[Attributes::Inherited]==Attributes::True)
+			inh_cols.push_back(col_idx);
+
+		col.setName(itr->second[Attributes::Name]);
+		type_oid=itr->second[Attributes::TypeOid].toUInt();
+
+		/* If the type has an entry on the types map and its OID is greater than system object oids,
+	 means that it's a user defined type, thus, there is the need to check if the type
+	 is registered. */
+		if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+		{
+			/* Building the type name prepending the schema name in order to search it on
+			 * the user defined types list at PgSQLType class */
+			type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
+			type_name+=QString(".");
+
+			if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+			{
+				int dim = types[type_oid][Attributes::Name].count(QString("[]"));
+				QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+				type_name+=BaseObject::formatName(aux_name, false);
+				type_name+=QString("[]").repeated(dim);
+			}
+			else
+				type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+
+			is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+		}
+		else
+		{
+			type_name=itr->second[Attributes::Type];
+			is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
+		}
+
+		/* Checking if the type used by the column exists (is registered),
+	 if not it'll be created when auto_resolve_deps is checked. The only exception here if for
+	 array types [] that will not be automatically created because they are derivated from
+	 the non-array type, this way, if the original type is created there is no need to create the array form */
+		if(auto_resolve_deps && !is_type_registered && !type_name.contains(QString("[]")))
+			// Try to create the missing data type
+			getType(itr->second[Attributes::TypeOid], false);
+
+		col.setIdentityType(BaseType::Null);
+		col.setType(PgSqlType::parseString(type_name));
+		col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
+		col.setComment(itr->second[Attributes::Comment]);
+
+		//Overriding the default value if the column is identity
+		if(!itr->second[Attributes::IdentityType].isEmpty())
+			col.setIdentityType(itr->second[Attributes::IdentityType]);
+		else
+		{
+			/* Removing extra/forced type casting in the retrieved default value.
+			 This is done in order to avoid unnecessary entries in the diff results.
+
+			 For instance: say in the model we have a column with the following configutation:
+			 > varchar(3) default 'foo'
+
+			 Now, when importing the same column the default value for it will be something like:
+			 > varchar(3) default 'foo'::character varying
+
+			 Since the extra chars in the default value of the imported column are redundant (casting
+			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
+			 the cast if the casting is equivalent to the column type. */
+
+			def_val = itr->second[Attributes::DefaultValue];
+
+			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
+			{
+				QStringList values = def_val.split(QString("::"));
+
+				if(values.size() > 1 &&
+					 ((~col.getType() == values[1]) ||
+						(~col.getType() == QString("char") && values[1] == QString("bpchar")) ||
+						(col.getType().isUserType() && (~col.getType()).endsWith(values[1]))))
+					def_val=values[0];
+			}
+
+			col.setDefaultValue(def_val);
+		}
+
+		//Checking if the collation used by the column exists, if not it'll be created when auto_resolve_deps is checked
+		if(auto_resolve_deps && !itr->second[Attributes::Collation].isEmpty())
+			getDependencyObject(itr->second[Attributes::Collation], ObjectType::Collation);
+
+		col.setCollation(dbmodel->getObject(getObjectName(itr->second[Attributes::Collation]),ObjectType::Collation));
+		attribs[Attributes::Columns]+=col.getCodeDefinition(SchemaParser::XmlDefinition);
+		itr++;
+		col_idx++;
+	}
 }
 
 void DatabaseImportHelper::assignSequencesToColumns(void)

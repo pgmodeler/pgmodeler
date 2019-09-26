@@ -987,7 +987,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 			itr++;
 			if(!obj) continue;
 
-			if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+			if(PhysicalTable::isPhysicalTable(obj->getObjectType()) || obj->getObjectType()==ObjectType::View)
 			{
 				Schema *schema=dynamic_cast<Schema *>(dynamic_cast<BaseTable *>(obj)->getSchema());
 
@@ -4558,7 +4558,7 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 {
 	if(schema)
 	{
-		vector<BaseObject *> tables, views;
+		vector<BaseObject *> tables, views, ftables;
 		vector<BaseObject *>::iterator itr;
 		BaseTableView *tab_view=nullptr;
 		BaseTable *base_tab=nullptr;
@@ -4567,7 +4567,9 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 
 		//Get the tables and views for the specified schema
 		tables=db_model->getObjects(ObjectType::Table, schema);
+		ftables=db_model->getObjects(ObjectType::ForeignTable, schema);
 		views=db_model->getObjects(ObjectType::View, schema);
+		tables.insert(tables.end(), ftables.begin(), ftables.end());
 		tables.insert(tables.end(), views.begin(), views.end());
 
 		itr=tables.begin();
