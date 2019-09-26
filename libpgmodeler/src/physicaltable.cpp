@@ -24,11 +24,10 @@ const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n'
 
 PhysicalTable::PhysicalTable(void) : BaseTable()
 {
-	with_oid=gen_alter_cmds=false;
+	gen_alter_cmds=false;
 	attributes[Attributes::Columns]=QString();
 	attributes[Attributes::InhColumns]=QString();
 	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::Oids]=QString();
 	attributes[Attributes::ColsComment]=QString();
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::GenAlterCmds]=QString();
@@ -72,12 +71,6 @@ void PhysicalTable::setSchema(BaseObject *schema)
 	QString prev_name=this->getName(true);
 	BaseObject::setSchema(schema);
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
-}
-
-void PhysicalTable::setWithOIDs(bool value)
-{
-	setCodeInvalidated(with_oid != value);
-	with_oid=value;
 }
 
 void PhysicalTable::setCopyTable(PhysicalTable *tab)
@@ -459,10 +452,6 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 					ancestor_tables.push_back(tab);
 				else
 					ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
-
-				/* Updating the storage parameter WITH OIDS depending on the ancestors.
-				 * According to the docs, the child table will inherit WITH OID status from the parents */
-				with_oid=(with_oid || tab->isWithOIDs());
 			}
 			else
 				throw Exception(ErrorCode::AsgObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -681,22 +670,8 @@ void PhysicalTable::removeObject(unsigned obj_idx, ObjectType obj_type)
 	else if(PhysicalTable::isPhysicalTable(obj_type) && obj_idx < ancestor_tables.size())
 	{
 		vector<PhysicalTable *>::iterator itr;
-		PhysicalTable *tab=nullptr;
-
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
-		with_oid=false;
-
-		for(auto &obj : ancestor_tables)
-		{
-			tab=dynamic_cast<PhysicalTable *>(obj);
-
-			if(!with_oid && tab->isWithOIDs())
-			{
-				with_oid=true;
-				break;
-			}
-		}
 	}
 	else if(!PhysicalTable::isPhysicalTable(obj_type))
 	{
@@ -1127,11 +1102,6 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 	}
 }
 
-bool PhysicalTable::isWithOIDs(void)
-{
-	return(with_oid);
-}
-
 void PhysicalTable::setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type)
 {
 	if(!obj_names.empty() && obj_names.size()==idxs.size())
@@ -1354,7 +1324,6 @@ void PhysicalTable::updateAlterCmdsStatus(void)
 void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
-	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
 	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
 	attributes[Attributes::AncestorTable]=QString();
 	attributes[Attributes::Tag]=QString();
@@ -1404,7 +1373,6 @@ void PhysicalTable::operator = (PhysicalTable &table)
 	(*dynamic_cast<BaseTable *>(this))=dynamic_cast<BaseTable &>(table);
 
 	this->layer = table.layer;
-	this->with_oid=table.with_oid;
 	this->col_indexes=table.col_indexes;
 	this->constr_indexes=table.constr_indexes;
 	this->partitioning_type=table.partitioning_type;

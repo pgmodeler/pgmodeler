@@ -52,9 +52,7 @@ $br )
 
 %if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
 $br [SERVER ] {server}
-
 %if {options} %then $br [OPTIONS (] {options} [)] %end
-%if {oids} %then $br [WITH ( OIDS = TRUE )] %end
 
 ; $br
 

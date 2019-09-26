@@ -49,7 +49,10 @@ class Table: public PhysicalTable {
 		rls_enabled,
 
 		//! \brief Indicates if the row level security is enforced
-		rls_forced;
+		rls_forced,
+
+		//! \brief Indicates if the table accepts OIDs
+		with_oid;
 
 	public:
 		Table(void);
@@ -63,6 +66,20 @@ class Table: public PhysicalTable {
 
 		//! \brief Defines if the row level security on table is forced for the table owner
 		void setRLSForced(bool value);
+
+		//! \brief Defines if the table accepts OIDs
+		void setWithOIDs(bool value);
+
+		//! \brief Returns if the table is configured with oids
+		bool isWithOIDs(void);
+
+		void addObject(BaseObject *object, int obj_idx = -1);
+
+		void removeObject(unsigned obj_idx, ObjectType obj_type);
+
+		void removeObject(const QString &name, ObjectType obj_type);
+
+		void removeObject(BaseObject *obj);
 
 		//! \brief Adds a index to table (optionally the user can add the object at the specified index 'idx')
 		void addIndex(Index *ind, int idx=-1);

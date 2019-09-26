@@ -4,7 +4,6 @@
 [<foreigntable name=] "{name}" 
   %if {layer} %then [ layer=]"{layer}" %end
   %if {alias} %then [ alias=]"{alias}" %end
-  %if {oids} %then [ oids="true"] %end
   %if {gen-alter-cmds} %then [ gen-alter-cmds="true"] %end
   %if {protected} %then [ protected=] "true"  %end
   %if {sql-disabled} %then [ sql-disabled=] "true" %end

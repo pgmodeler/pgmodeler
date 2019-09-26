@@ -4874,6 +4874,7 @@ Table *DatabaseModel::createTable(void)
 		table->setUnlogged(attribs[Attributes::Unlogged]==Attributes::True);
 		table->setRLSEnabled(attribs[Attributes::RlsEnabled]==Attributes::True);
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
+		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
 
 		return(table);
 	}
@@ -10768,7 +10769,6 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 		xmlparser.getElementAttributes(attribs);
 
 		table->setObjectListsCapacity(attribs[Attributes::MaxObjCount].toUInt());
-		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
 		table->setGenerateAlterCmds(attribs[Attributes::GenAlterCmds]==Attributes::True);
 		table->setCollapseMode(attribs[Attributes::CollapseMode].isEmpty() ? CollapseMode::NotCollapsed : static_cast<CollapseMode>(attribs[Attributes::CollapseMode].toUInt()));
 		table->setPaginationEnabled(attribs[Attributes::Pagination]==Attributes::True);

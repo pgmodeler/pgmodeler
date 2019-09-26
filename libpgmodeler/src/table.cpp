@@ -22,10 +22,11 @@
 Table::Table(void) : PhysicalTable()
 {
 	obj_type = ObjectType::Table;
-	unlogged=rls_enabled=rls_forced=false;
+	with_oid=unlogged=rls_enabled=rls_forced=false;
 	attributes[Attributes::Unlogged]=QString();
 	attributes[Attributes::RlsEnabled]=QString();
 	attributes[Attributes::RlsForced]=QString();
+	attributes[Attributes::Oids]=QString();
 	setName(trUtf8("new_table"));
 }
 
@@ -50,6 +51,73 @@ void Table::setRLSForced(bool value)
 {
 	setCodeInvalidated(rls_forced != value);
 	rls_forced = value;
+}
+
+void Table::addObject(BaseObject *object, int obj_idx)
+{
+	try
+	{
+		PhysicalTable::addObject(object, obj_idx);
+
+		if(object->getObjectType() == ObjectType::Table)
+		{
+			/* Updating the storage parameter WITH OIDS depending on the ancestors.
+			 * According to the docs, the child table will inherit WITH OID status from the parents */
+			with_oid=(with_oid || dynamic_cast<Table *>(object)->isWithOIDs());
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
+{
+	try
+	{
+		Table *tab = nullptr;
+		PhysicalTable::removeObject(obj_idx, obj_type);
+		with_oid=false;
+
+		for(auto &obj : ancestor_tables)
+		{
+			tab = dynamic_cast<Table *>(obj);
+			if(!with_oid && tab->isWithOIDs())
+			{
+				with_oid=true;
+				break;
+			}
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void Table::removeObject(const QString &name, ObjectType obj_type)
+{
+	try
+	{
+		PhysicalTable::removeObject(name, obj_type);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void Table::removeObject(BaseObject *obj)
+{
+	try
+	{
+		PhysicalTable::removeObject(obj);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
@@ -255,6 +323,17 @@ bool Table::isRLSForced(void)
 	return(rls_forced);
 }
 
+void Table::setWithOIDs(bool value)
+{
+	setCodeInvalidated(with_oid != value);
+	with_oid=value;
+}
+
+bool Table::isWithOIDs(void)
+{
+	return(with_oid);
+}
+
 bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
 	unsigned count,i;
@@ -276,6 +355,8 @@ bool Table::isReferTableOnForeignKey(Table *ref_tab)
 QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
+
+	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
 	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : QString());
 	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : QString());
 	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
@@ -301,6 +382,9 @@ void Table::operator = (Table &tab)
 
 	this->copy_op=tab.copy_op;
 	this->unlogged=tab.unlogged;
+	this->with_oid=tab.with_oid;
+	this->rls_forced=tab.rls_forced;
+	this->rls_enabled=tab.rls_enabled;
 }
 
 void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)

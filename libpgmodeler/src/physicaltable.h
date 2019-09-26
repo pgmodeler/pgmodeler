@@ -67,13 +67,10 @@ class PhysicalTable: public BaseTable {
 		//! \brief Stores the table which this one is partition of
 		PhysicalTable *partitioned_table;
 
-		//! \brief Indicates if the table accepts OIDs
-		bool with_oid,
-
 		/*! \brief Indicates that constraints and columns are generated in for of ALTER commands.
 		When true this will cause constraints and columsn to be created in a separated command
 		outside tha table's declaration */
-		gen_alter_cmds;
+		bool gen_alter_cmds;
 
 		//! \brief Stores the relationship added column / constraints indexes
 		map<QString, unsigned> col_indexes,	constr_indexes;
@@ -143,9 +140,6 @@ class PhysicalTable: public BaseTable {
 
 		//! \brief Defines the table's schema. This method updates the type named after the table
 		void setSchema(BaseObject *schema);
-
-		//! \brief Defines if the table accepts OIDs
-		void setWithOIDs(bool value);
 
 		//! \brief Configures the copy table
 		void setCopyTable(PhysicalTable *tab);
@@ -294,9 +288,6 @@ class PhysicalTable: public BaseTable {
 
 		//! \brief Returns all the partition keys used by the table
 		vector<PartitionKey> getPartitionKeys(void);
-
-		//! \brief Returns if the table is configured with oids
-		bool isWithOIDs(void);
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);

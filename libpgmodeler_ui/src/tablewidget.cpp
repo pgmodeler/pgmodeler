@@ -299,6 +299,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 	__setAttributes(model, op_list, schema, ftable, pos_x, pos_y);
 
+	with_oids_chk->setVisible(false);
 	unlogged_chk->setVisible(false);
 	enable_rls_chk->setVisible(false);
 	force_rls_chk->setVisible(false);
@@ -381,10 +382,25 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 			unlogged_chk->setChecked(tab->isUnlogged());
 			enable_rls_chk->setChecked(tab->isRLSEnabled());
 			force_rls_chk->setChecked(tab->isRLSForced());
+			with_oids_chk->setChecked(tab->isWithOIDs());
+		}
+		else
+		{
+			ForeignTable *ftab = dynamic_cast<ForeignTable *>(table);
+			options_tab->blockSignals(true);
+
+			for(auto &itr : ftab->getOptions())
+			{
+				options_tab->addRow();
+				options_tab->setCellText(itr.first, options_tab->getRowCount() - 1, 0);
+				options_tab->setCellText(itr.second, options_tab->getRowCount() - 1, 1);
+			}
+
+			options_tab->clearSelection();
+			options_tab->blockSignals(false);
 		}
 
 		parent_tables->clearSelection();
-		with_oids_chk->setChecked(table->isWithOIDs());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
 
 		tag_sel->setModel(this->model);
@@ -890,13 +906,13 @@ void TableWidget::applyConfiguration(void)
 		table=dynamic_cast<PhysicalTable *>(this->object);
 		aux_tab = dynamic_cast<Table *>(table);
 
-		table->setWithOIDs(with_oids_chk->isChecked());
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
 		// Applying settings specific to table
 		if(aux_tab)
 		{
+			aux_tab->setWithOIDs(with_oids_chk->isChecked());
 			aux_tab->setRLSEnabled(enable_rls_chk->isChecked());
 			aux_tab->setRLSForced(force_rls_chk->isChecked());
 			aux_tab->setUnlogged(unlogged_chk->isChecked());

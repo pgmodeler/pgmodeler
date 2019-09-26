@@ -6,7 +6,6 @@
 <!ATTLIST foreigntable name CDATA #REQUIRED>
 <!ATTLIST foreigntable layer CDATA #IMPLIED>
 <!ATTLIST foreigntable alias CDATA #IMPLIED>
-<!ATTLIST foreigntable oids (true | false) "false">
 <!ATTLIST foreigntable gen-alter-cmds (true | false) "false">
 <!ATTLIST foreigntable protected (false|true) "false">
 <!ATTLIST foreigntable sql-disabled (false|true) "false">
