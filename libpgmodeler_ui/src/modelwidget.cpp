@@ -3301,7 +3301,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		obj_type=obj->getObjectType();
 
 		if(!tab_or_view)
-			tab_or_view=(obj_type==ObjectType::Table || obj_type==ObjectType::View);
+			tab_or_view=(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View);
 
 		if(!is_graph_obj)
 			is_graph_obj = BaseGraphicObject::isGraphicObject(obj_type);

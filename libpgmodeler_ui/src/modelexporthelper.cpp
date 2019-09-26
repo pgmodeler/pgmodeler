@@ -787,7 +787,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::UserMapping, ObjectType::Database, ObjectType::BaseObject };
+																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */

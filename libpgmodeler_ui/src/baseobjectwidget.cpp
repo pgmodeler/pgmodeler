@@ -943,7 +943,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
 	  ((!new_object && obj_type!=ObjectType::Database && obj_type!=ObjectType::Permission && operation_count != op_list->getCurrentSize()) ||
-	   (new_object && (obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship))))
+		 (new_object && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type==ObjectType::Relationship))))
 	{
 		try
 		{

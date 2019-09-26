@@ -35,11 +35,11 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *parent_tables;
+		ObjectsTableWidget *parent_tables, *options_tab;
 
 		ElementsTableWidget *partition_keys_tab;
 
-		ObjectSelectorWidget *tag_sel;
+		ObjectSelectorWidget *tag_sel, *server_sel;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectsTableWidget *> objects_tab_map;

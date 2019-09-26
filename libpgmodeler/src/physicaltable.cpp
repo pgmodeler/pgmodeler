@@ -868,12 +868,14 @@ int PhysicalTable::getObjectIndex(const QString &name, ObjectType obj_type)
 int PhysicalTable::getObjectIndex(BaseObject *obj)
 {
 	TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
-	vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
+	vector<TableObject *> *obj_list = nullptr;
 	vector<TableObject *>::iterator itr, itr_end;
 	bool found=false;
 
-	if(!obj || !obj_list)
-		return(-1);
+	if(!obj) return(-1);
+
+	obj_list = getObjectList(obj->getObjectType());
+	if(!obj_list) return(-1);
 
 	itr=obj_list->begin();
 	itr_end=obj_list->end();

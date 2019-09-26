@@ -60,7 +60,8 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			obj_type==ObjectType::Sequence || obj_type==ObjectType::Database || obj_type==ObjectType::Function ||
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
 			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
-			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer);
+			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
+			obj_type==ObjectType::ForeignTable);
 
 
 	//Validating privilege
@@ -85,12 +86,12 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			Foreign Data Wrapper: USAGE
 			Foreign Server: USAGE */
 		result=result &&
-				(((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
+				(((obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::ForeignTable) &&
 					(priv_id==PrivSelect || priv_id==PrivInsert ||
 					 priv_id==PrivUpdate || priv_id==PrivDelete ||
 					 priv_id==PrivReferences ||	priv_id==PrivTrigger)) ||
 
-				((obj_type==ObjectType::Table || obj_type==ObjectType::View) && priv_id==PrivTruncate) ||
+				((obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::ForeignTable) && priv_id==PrivTruncate) ||
 
 				(obj_type==ObjectType::Column &&
 				 (priv_id==PrivSelect ||priv_id==PrivInsert ||
@@ -428,8 +429,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		if(obj_type == ObjectType::View)
-			//Views and Tables uses the same key word when setting permission (TABLE)
+		if(obj_type == ObjectType::View || obj_type == ObjectType::ForeignTable)
+			//Views, Tables and foreign tables use the same keyword when setting permission (TABLE)
 			attributes[Attributes::Type] = BaseObject::getSQLName(ObjectType::Table);
 		else if(obj_type == ObjectType::ForeignServer)
 			attributes[Attributes::Type] = QString("FOREIGN ") + object->getSQLName();

@@ -69,6 +69,26 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
 
+	server_sel=nullptr;
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+
+	vbox = new QVBoxLayout;
+	vbox->setContentsMargins(0,0,0,0);
+	vbox->addWidget(server_sel);
+	server_wgt->setLayout(vbox);
+
+	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab->setCellsEditable(true);
+	options_tab->setColumnCount(2);
+	options_tab->setHeaderLabel(trUtf8("Option"), 0);
+	options_tab->setHeaderLabel(trUtf8("Value"), 1);
+
+	vbox = new QVBoxLayout;
+	vbox->setContentsMargins(4,4,4,4);
+	vbox->addWidget(options_tab);
+	attributes_tbw->widget(8)->setLayout(vbox);
+
 	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, false, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
 	vbox->addWidget(tag_sel);
@@ -188,9 +208,11 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
+	setRequiredField(server_lbl);
+	setRequiredField(server_sel);
 	configureFormLayout(table_grid, tab_type);
 	configureTabOrder({ tag_sel });
-	setMinimumSize(660, 620);
+	setMinimumSize(660, 630);
 }
 
 template<class Class, class WidgetClass>
@@ -256,6 +278,9 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	}
 
 	__setAttributes(model, op_list, schema, table, pos_x, pos_y);
+	server_lbl->setVisible(false);
+	server_wgt->setVisible(false);
+	attributes_tbw->removeTab(8); // Removing the options tab
 }
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y)
@@ -281,7 +306,9 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	attributes_tbw->removeTab(3); //Removing the Rule tab
 	attributes_tbw->removeTab(3); //Removing the Policies tab
 	attributes_tbw->removeTab(3); //Removing the Partition keys tab
-	objects_tab_map[ObjectType::Column]->setHeaderVisible(0, false);
+	objects_tab_map[ObjectType::Column]->setHeaderVisible(0, false); //Hiding the "PK" checkbox on columns grid
+	server_sel->setModel(this->model);
+	server_sel->setSelectedObject(ftable->getForeignServer());
 }
 
 void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y)
@@ -867,11 +894,22 @@ void TableWidget::applyConfiguration(void)
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
 
+		// Applying settings specific to table
 		if(aux_tab)
 		{
 			aux_tab->setRLSEnabled(enable_rls_chk->isChecked());
 			aux_tab->setRLSForced(force_rls_chk->isChecked());
 			aux_tab->setUnlogged(unlogged_chk->isChecked());
+		}
+		// Applying settings specific to foreign table
+		else if(server_sel->isVisible())
+		{
+			ForeignTable *ftable = dynamic_cast<ForeignTable *>(table);
+
+			ftable->setForeignServer(dynamic_cast<ForeignServer *>(server_sel->getSelectedObject()));
+			ftable->removeOptions();
+			for(unsigned row = 0; row < options_tab->getRowCount(); row++)
+				ftable->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
 		}
 
 		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());

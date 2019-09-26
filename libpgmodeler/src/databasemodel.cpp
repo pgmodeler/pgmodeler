@@ -6801,8 +6801,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 				rel_type=BaseRelationship::RelationshipPart;
 
 			rel=new Relationship(rel_type,
-								 dynamic_cast<Table *>(tables[0]),
-					dynamic_cast<Table *>(tables[1]),
+					dynamic_cast<PhysicalTable *>(tables[0]),
+					dynamic_cast<PhysicalTable *>(tables[1]),
 					src_mand, dst_mand,
 					identifier, deferrable, defer_type, del_action, upd_action,
 					CopyOptions(attribs[Attributes::CopyMode].toUInt(),
@@ -6978,6 +6978,9 @@ Permission *DatabaseModel::createPermission(void)
 		if(obj_type==ObjectType::Column)
 		{
 			parent_table=dynamic_cast<Table *>(getObject(parent_name, ObjectType::Table));
+
+			if(!parent_table)
+				parent_table=dynamic_cast<Table *>(getObject(parent_name, ObjectType::ForeignTable));
 
 			if(parent_table)
 				object=parent_table->getColumn(obj_name);
@@ -8840,7 +8843,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						}
 					}
 				}
-				else if(obj_types[i]==ObjectType::Table)
+				else if(PhysicalTable::isPhysicalTable(obj_types[i]))
 				{
 					while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{

@@ -19,7 +19,7 @@
 
 [ TABLE ] {name} 
 
-%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then [ PARTITION OF ] {partitioned-table} $sp %end
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [ PARTITION OF ] {partitioned-table} $sp %end
 
 %if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
 
@@ -66,7 +66,7 @@ $br )
 %end
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
-%if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] %end
+%if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
 %if {oids} %then $br [WITH ( OIDS = TRUE )] %end
 %if {tablespace} %then
  $br [TABLESPACE ] {tablespace}
