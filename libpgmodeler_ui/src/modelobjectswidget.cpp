@@ -472,6 +472,7 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 
 		//Removing the ObjectType::Table and ObjectType::View types since they are handled separetedly
 		types.erase(std::find(types.begin(), types.end(), ObjectType::Table));
+		types.erase(std::find(types.begin(), types.end(), ObjectType::ForeignTable));
 		types.erase(std::find(types.begin(), types.end(), ObjectType::View));
 
 		//Get the current schema count on database
@@ -504,7 +505,10 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 				}
 
 				//Updates the table subtree for the current schema
-				updateTableTree(item2, schema);
+				updateTableTree(item2, schema, ObjectType::Table);
+
+				//Updates the foreign table subtree for the current schema
+				updateTableTree(item2, schema, ObjectType::ForeignTable);
 
 				//Updates the view subtree for the current schema
 				updateViewTree(item2, schema);
@@ -541,28 +545,28 @@ void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 	}
 }
 
-void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *schema)
+void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *schema, ObjectType table_type)
 {
-	if(db_model && visible_objs_map[ObjectType::Table])
+	if(db_model && PhysicalTable::isPhysicalTable(table_type) && visible_objs_map[table_type])
 	{
 		vector<BaseObject *> obj_list;
-		Table *table=nullptr;
+		PhysicalTable *table=nullptr;
 		QTreeWidgetItem *item=nullptr, *item1=nullptr, *item2=nullptr;
 		QFont font;
-		vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
-		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table) + QString("_grp")));
+		vector<ObjectType> types = BaseObject::getChildObjectTypes(table_type);
+		QPixmap group_icon=QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(table_type) + QString("_grp")));
 
 		try
 		{
 			//Get all tables that belongs to the specified schema
-			obj_list=db_model->getObjects(ObjectType::Table, schema);
+			obj_list=db_model->getObjects(table_type, schema);
 
 			//Create a table group item
 			item=new QTreeWidgetItem(root);
 			item->setIcon(0,group_icon);
-			item->setText(0,BaseObject::getTypeName(ObjectType::Table) +
+			item->setText(0,BaseObject::getTypeName(table_type) +
 						  QString(" (%1)").arg(obj_list.size()));
-			item->setData(1, Qt::UserRole, QVariant(enum_cast(ObjectType::Table)));
+			item->setData(1, Qt::UserRole, QVariant(enum_cast(table_type)));
 
 			font=item->font(0);
 			font.setItalic(true);
@@ -570,7 +574,7 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 
 			for(auto obj : obj_list)
 			{
-				table=dynamic_cast<Table *>(obj);
+				table=dynamic_cast<PhysicalTable *>(obj);
 				item1=createItemForObject(table, item);
 
 				//Creating the group for the child objects (column, rules, triggers, indexes and constraints)

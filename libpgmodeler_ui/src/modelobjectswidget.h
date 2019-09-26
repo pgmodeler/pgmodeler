@@ -68,8 +68,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Updates only a schema tree starting from the 'root' item
 		void updateSchemaTree(QTreeWidgetItem *root);
 
-		//! \brief Updates only a table tree starting from the 'root' item
-		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);
+		/*! \brief Updates only a table / foreign table tree starting from the 'root' item.
+		 * table_type must be ObjectType::Table or ObjectType::ForeignTable */
+		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema, ObjectType table_type);
 
 		//! \brief Updates only a view tree starting from the 'root' item
 		void updateViewTree(QTreeWidgetItem *root, BaseObject *schema);

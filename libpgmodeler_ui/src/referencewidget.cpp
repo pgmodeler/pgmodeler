@@ -42,7 +42,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
 	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
-	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::Column }, true, this);
+	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
 	ref_object_sel->enableObjectCreation(false);
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 
@@ -81,7 +81,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	ref_tables_tab->setHeaderLabel(trUtf8("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
 
-	ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
+	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
 	ref_table_sel->enableObjectCreation(false);
 
 	QHBoxLayout *hbox = new QHBoxLayout;
@@ -226,8 +226,8 @@ void ReferenceWidget::applyConfiguration(void)
 		if(static_cast<unsigned>(ref_type_cmb->currentIndex())==Reference::ReferColumn)
 		{
 			Column *column = dynamic_cast<Column *>(ref_object_sel->getSelectedObject());
-			Table *table = (column ? dynamic_cast<Table *>(column->getParentTable()) :
-															 dynamic_cast<Table *>(ref_object_sel->getSelectedObject()));
+			PhysicalTable *table = (column ? dynamic_cast<PhysicalTable *>(column->getParentTable()) :
+																			 dynamic_cast<PhysicalTable *>(ref_object_sel->getSelectedObject()));
 			reference = Reference(table, column,	tab_alias_edt->text(), col_alias_edt->text());
 		}
 		//Creating a reference to an expression
@@ -256,7 +256,7 @@ void ReferenceWidget::applyConfiguration(void)
 														columns_tab->getCellText(row, 2));
 
 			for(unsigned row = 0; row < ref_tables_tab->getRowCount(); row++)
-				reference.addReferencedTable(reinterpret_cast<Table *>(ref_tables_tab->getRowData(row).value<void *>()));
+				reference.addReferencedTable(reinterpret_cast<PhysicalTable *>(ref_tables_tab->getRowData(row).value<void *>()));
 		}
 
 		if(select_from_chk->isChecked())
@@ -302,7 +302,7 @@ void ReferenceWidget::addColumn(int row)
 
 void ReferenceWidget::addRefTable(int row)
 {
-	Table *table = dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(ref_table_sel->getSelectedObject());
 	ref_tables_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(table)), row);
 	ref_tables_tab->setCellText(table->getName(), row, 0);
 	ref_tables_tab->setCellText(table->getSchema()->getName(), row, 1);
