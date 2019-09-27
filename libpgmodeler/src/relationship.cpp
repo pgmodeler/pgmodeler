@@ -2743,6 +2743,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 	attributes[Attributes::PartitionedTable]=QString();
 	attributes[Attributes::PartitionBoundExpr]=QString();
 	attributes[Attributes::Partitioning]=QString();
+	attributes[Attributes::SqlObject]=getReceiverTable()->getSQLName();
 
 	if(rel_type == RelationshipGen)
 	{

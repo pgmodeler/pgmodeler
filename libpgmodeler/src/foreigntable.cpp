@@ -101,5 +101,14 @@ void ForeignTable::operator = (ForeignTable &tab)
 
 QString ForeignTable::getAlterDefinition(BaseObject *object)
 {
-
+	try
+	{
+		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
+		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attributes);
+		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

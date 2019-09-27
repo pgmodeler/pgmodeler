@@ -789,10 +789,10 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 			attribs_map obj_attr;
 			attribs_map::iterator itr=extra_attribs.begin();
 
-			if(system_objs.count(obj_oid))
-				obj_attr=system_objs[obj_oid];
-			else
+			if(user_objs.count(obj_oid))
 				obj_attr=user_objs[obj_oid];
+			else
+				obj_attr=system_objs[obj_oid];
 
 			/* If the attributes for the dependency does not exists and the automatic dependency
 			resolution is enable, the object's attributes will be retrieved from catalog */
@@ -2641,38 +2641,48 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 
 void DatabaseImportHelper::__createTableInheritances(void)
 {
-	vector<unsigned>::iterator itr, itr_end;
+	vector<unsigned> table_oids;
 	Relationship *rel=nullptr;
-	Table *parent_tab=nullptr, *child_tab=nullptr;
+	PhysicalTable *parent_tab=nullptr, *child_tab=nullptr;
 	QStringList inh_list;
-	unsigned oid;
+	ObjectType tab_type;
+	attribs_map tab_attribs;
+	unsigned inh_oid;
 
-	itr=object_oids[ObjectType::Table].begin();
-	itr_end=object_oids[ObjectType::Table].end();
+	table_oids = object_oids[ObjectType::Table];
+	table_oids.insert(table_oids.end(),
+										object_oids[ObjectType::ForeignTable].begin(),
+										object_oids[ObjectType::ForeignTable].end());
 
-	while(itr!=itr_end)
+	for(auto &oid : table_oids)
 	{
+		tab_attribs=(user_objs.count(oid) ? user_objs[oid] : system_objs[oid]);
+		tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
+
 		//Get the list of parent table's oids
-		oid=(*itr);
 		inh_list=Catalog::parseArrayValues(user_objs[oid][Attributes::Parents]);
-		itr++;
 
 		if(!inh_list.isEmpty())
 		{
 			//Get the child table resolving it's name from the oid
-			child_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(user_objs[oid][Attributes::Oid]), ObjectType::Table));
+			child_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(user_objs[oid][Attributes::Oid]), tab_type));
 
 			while(!inh_list.isEmpty())
 			{
+				inh_oid = inh_list.front().toUInt();
+				tab_attribs=(user_objs.count(inh_oid) ? user_objs[inh_oid] : system_objs[inh_oid]);
+				tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
+
 				//Get the parent table resolving it's name from the oid
-				parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), ObjectType::Table));
+				parent_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(inh_list.front()), tab_type));
 
 				try
 				{
 					if(!parent_tab && auto_resolve_deps)
 					{
-						getDependencyObject(inh_list.front(), ObjectType::Table);
-						parent_tab=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(inh_list.front()), ObjectType::Table));
+						getDependencyObject(inh_list.front(), ObjectType::Table, true);
+						tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
+						parent_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(inh_list.front()), tab_type));
 					}
 
 					if(!parent_tab)
@@ -2701,6 +2711,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 			}
 		}
 	}
+
 }
 
 void DatabaseImportHelper::configureDatabase(attribs_map &attribs)
