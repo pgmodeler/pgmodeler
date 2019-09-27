@@ -32,6 +32,7 @@
 {spacer} recreate-unmod-objs="{recreate-unmod-objs}"
 {spacer} import-sys-objs="{import-sys-objs}"
 {spacer} import-ext-objs="{import-ext-objs}"
+{spacer} reuse-sequences="{reuse-sequences}"
 {spacer} ignore-import-errors="{ignore-import-errors}"
 {spacer} ignore-duplic-errors="{ignore-duplic-errors}"
 
