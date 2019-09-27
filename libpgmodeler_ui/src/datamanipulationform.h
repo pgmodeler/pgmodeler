@@ -61,6 +61,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! \brief Current editing table pk columns names
 		pk_col_names;
 
+		//! \brief Stores the current table's name (schema.table)
+		QString curr_table_name;
+
 		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
 		and it is used to retrieve all foreign keys that references the current table */
 		unsigned table_oid;
@@ -113,7 +116,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
+		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name=QString(), const QString &filter=QString());
 
 	private slots:
 		void reject(void);

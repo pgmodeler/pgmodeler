@@ -340,10 +340,24 @@ void DataManipulationForm::retrieveData(void)
 				return;
 		}
 
-		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
+		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText()),
+				prev_tab_name;
 		ResultSet res;
 		unsigned limit=limit_spb->value();
 		ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
+		vector<int> curr_hidden_cols;
+		int col_cnt = results_tbw->horizontalHeader()->count();
+
+		prev_tab_name = curr_table_name;
+		curr_table_name = QString("%1.%2").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
+
+		/* Storing the current hidden columns to make them hidden again after retrive data
+		 * if the table is the same */
+		for(int idx = 0; prev_tab_name == curr_table_name && idx < col_cnt; idx++)
+		{
+			if(results_tbw->horizontalHeader()->isSectionHidden(idx))
+				curr_hidden_cols.push_back(idx);
+		}
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().trimmed().isEmpty())
@@ -423,16 +437,32 @@ void DataManipulationForm::retrieveData(void)
 
 		for(auto &col : col_names)
 		{
-		  columns_lst->addItem(col);
-		  item = columns_lst->item(columns_lst->count() - 1);
-		  item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		  item->setCheckState(Qt::Checked);
-		  item->setData(Qt::UserRole, item->checkState());
+			columns_lst->addItem(col);
+			item = columns_lst->item(columns_lst->count() - 1);
+			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+			item->setCheckState(Qt::Checked);
+			item->setData(Qt::UserRole, item->checkState());
 		}
 
 		//Restoring the visibily of the columns
-		for(int idx = 0; idx < results_tbw->horizontalHeader()->count(); idx++)
-		   results_tbw->horizontalHeader()->setSectionHidden(idx, false);
+		results_tbw->horizontalHeader()->blockSignals(true);
+		col_cnt = results_tbw->horizontalHeader()->count();
+
+		for(int idx = 0; idx < col_cnt; idx++)
+			results_tbw->horizontalHeader()->setSectionHidden(idx, false);
+
+		for(auto &idx : curr_hidden_cols)
+		{
+			item = columns_lst->item(idx);
+			item->setCheckState(Qt::Unchecked);
+			item->setData(Qt::UserRole, item->checkState());
+			results_tbw->horizontalHeader()->setSectionHidden(idx, true);
+		}
+
+		if(!curr_hidden_cols.empty())
+			results_tbw->resizeRowsToContents();
+
+		results_tbw->horizontalHeader()->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
