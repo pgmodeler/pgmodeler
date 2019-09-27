@@ -1455,9 +1455,10 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 		avoid reference breaking when generation SQL code */
 		if(owner_col.size()==2)
 		{
-			Table *tab = nullptr;
+			PhysicalTable *tab = nullptr;
 			QString col_name, tab_name;
-			attribs_map pos_attrib={
+			attribs_map extra_attrs,
+					pos_attrib={
 				{ Attributes::XPos, QString("0") },
 				{ Attributes::YPos, QString("0") }};
 
@@ -1466,12 +1467,17 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 
 			/* Get the table and the owner column instances so the sequence code can be disabled if the
 				column is an identity one */
-			tab_name = getDependencyObject(owner_col[0], ObjectType::Table, true, auto_resolve_deps, false,
-			{{ Attributes::Position,
-				 schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition)}});
+			extra_attrs[Attributes::Position] = schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
+			tab_name = getDependencyObject(owner_col[0], ObjectType::Table, true, auto_resolve_deps, false, extra_attrs);
+			tab = dbmodel->getTable(tab_name);
+
+			if(!tab)
+			{
+				tab_name = getDependencyObject(owner_col[0], ObjectType::ForeignTable, true, auto_resolve_deps, false, extra_attrs);
+				tab = dbmodel->getTable(tab_name);
+			}
 
 			col_name=getColumnName(owner_col[0], owner_col[1]);
-			tab = dbmodel->getTable(tab_name);
 
 			if(tab)
 				col = tab->getColumn(col_name);

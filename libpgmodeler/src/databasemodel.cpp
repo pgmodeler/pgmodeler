@@ -6221,7 +6221,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 				col_name=elem_list[1];
 			}
 
-			table=getObject(tab_name, ObjectType::Table);
+			table=getPhysicalTable(tab_name);
 
 			//Raises an error if the column parent table doesn't exists
 			if(!table)
@@ -6235,10 +6235,10 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 				throw Exception(str_aux,ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			column=dynamic_cast<Table *>(table)->getColumn(col_name);
+			column=dynamic_cast<PhysicalTable *>(table)->getColumn(col_name);
 
 			if(!column)
-				column=dynamic_cast<Table *>(table)->getColumn(col_name, true);
+				column=dynamic_cast<PhysicalTable *>(table)->getColumn(col_name, true);
 
 			//Raises an error if the column doesn't exists
 			if(!column && !ignore_onwer)

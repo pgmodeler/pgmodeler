@@ -333,7 +333,14 @@ void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 			visible_objs_map[ObjectType::Database]=true;
 
 		if(TableObject::isTableObject(obj_type))
+		{
 			visible_objs_map[ObjectType::Table]=visible_objs_map[ObjectType::Schema]=true;
+
+			if(obj_type == ObjectType::Column ||
+				 obj_type == ObjectType::Constraint ||
+				 obj_type == ObjectType::Trigger)
+				visible_objs_map[ObjectType::ForeignTable]=true;
+		}
 
 		if(BaseObject::acceptsSchema(obj_type))
 			visible_objs_map[ObjectType::Schema]=true;

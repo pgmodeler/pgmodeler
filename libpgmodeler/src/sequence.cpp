@@ -214,13 +214,13 @@ void Sequence::setName(const QString &name)
 
 void Sequence::setSchema(BaseObject *schema)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	QString prev_name=this->getName(true);
 
 	if(owner_col)
 	{
 		//Gets the table that owns the column
-		table=dynamic_cast<Table *>(owner_col->getParentTable());
+		table=dynamic_cast<PhysicalTable *>(owner_col->getParentTable());
 
 		//Raises an error when the passed schema differs from the table schema
 		if(table && table->getSchema()!=schema)
@@ -266,7 +266,7 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
 	setCodeInvalidated(true);
 }
 
-void Sequence::setOwnerColumn(Table *table, const QString &col_name)
+void Sequence::setOwnerColumn(PhysicalTable *table, const QString &col_name)
 {
 	if(!table || col_name.isEmpty())
 		this->owner_col=nullptr;
@@ -305,13 +305,13 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 
 void Sequence::setOwnerColumn(Column *column)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 
 	if(!column)
 		this->owner_col=nullptr;
 	else
 	{
-		table=dynamic_cast<Table *>(column->getParentTable());
+		table=dynamic_cast<PhysicalTable *>(column->getParentTable());
 
 		//Raises an error when the column doesn't has a parent table
 		if(!table)
@@ -388,12 +388,12 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return(code_def);
 
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 
 	if(owner_col)
 	{
 		attributes[Attributes::OwnerColumn]=owner_col->getSignature();
-		table=dynamic_cast<Table *>(owner_col->getParentTable());
+		table=dynamic_cast<PhysicalTable *>(owner_col->getParentTable());
 	}
 
 	attributes[Attributes::Table]=(table ? table->getName(true) : QString());
@@ -421,7 +421,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 
 	try
 	{
-		Table *table=nullptr;
+		PhysicalTable *table=nullptr;
 		attribs_map attribs;
 
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
@@ -434,7 +434,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			if(seq->owner_col)
 			{
 				attribs[Attributes::OwnerColumn]=seq->owner_col->getSignature();
-				table=dynamic_cast<Table *>(seq->owner_col->getParentTable());
+				table=dynamic_cast<PhysicalTable *>(seq->owner_col->getParentTable());
 
 				if(table)
 				{

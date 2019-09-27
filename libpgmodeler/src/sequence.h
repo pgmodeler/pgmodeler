@@ -89,7 +89,7 @@ class Sequence: public BaseObject {
 		void setDefaultValues(PgSqlType serial_type);
 
 		//! \brief Defines the owner column using a table and a column name
-		void setOwnerColumn(Table *tabela, const QString &col_name);
+		void setOwnerColumn(PhysicalTable *table, const QString &col_name);
 
 		//! \brief Defines the owner column using a column itself
 		void setOwnerColumn(Column *column);
