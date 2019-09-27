@@ -18,7 +18,7 @@
    {signature}
  %end
  
- %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %then
+ %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %and %not {usermapping} %then
    [ CASCADE]
  %end
  ; 

@@ -706,7 +706,7 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	{
 		/* If the user is adding a graphical object, the left click will set the initial position and
 		show the editing form related to the object type */
-		if(!simple_obj_creation && (PhysicalTable::isPhysicalTable(new_obj_type) || new_obj_type==ObjectType::Textbox || new_obj_type==ObjectType::View))
+		if(!simple_obj_creation && (BaseTable::isBaseTable(new_obj_type) || new_obj_type==ObjectType::Textbox))
 		{
 			this->scene->enableRangeSelection(false);
 			this->showObjectForm(new_obj_type, nullptr, nullptr, viewport->mapToScene(event->pos()));
@@ -853,7 +853,7 @@ void ModelWidget::addNewObject(void)
 			parent_obj=selected_objects[0];
 
 		//Creating a table or view inside a schema
-		if(parent_obj && parent_obj->getObjectType()==ObjectType::Schema && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View))
+		if(parent_obj && parent_obj->getObjectType()==ObjectType::Schema && BaseTable::isBaseTable(obj_type))
 		{
 			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(parent_obj)->getOverlyingObject());
 			QSizeF size = sch_graph->boundingRect().size();
@@ -870,7 +870,7 @@ void ModelWidget::addNewObject(void)
 
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
-		else if(!PhysicalTable::isPhysicalTable(obj_type) && obj_type!=ObjectType::View &&
+		else if(!BaseTable::isBaseTable(obj_type) &&
 						obj_type!=ObjectType::Textbox && obj_type <= ObjectType::BaseTable)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
@@ -888,7 +888,7 @@ void ModelWidget::addNewObject(void)
 			{
 				//Simple table|view|textbox creation
 				if(simple_obj_creation &&
-						(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type==ObjectType::Textbox))
+						(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Textbox))
 					this->showObjectForm(obj_type, nullptr, parent_obj, viewport->mapToScene(viewport->rect().center()));
 				else
 				{
@@ -987,7 +987,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 			itr++;
 			if(!obj) continue;
 
-			if(PhysicalTable::isPhysicalTable(obj->getObjectType()) || obj->getObjectType()==ObjectType::View)
+			if(BaseTable::isBaseTable(obj->getObjectType()))
 			{
 				Schema *schema=dynamic_cast<Schema *>(dynamic_cast<BaseTable *>(obj)->getSchema());
 
@@ -3301,7 +3301,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		obj_type=obj->getObjectType();
 
 		if(!tab_or_view)
-			tab_or_view=(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View);
+			tab_or_view=BaseTable::isBaseTable(obj_type);
 
 		if(!is_graph_obj)
 			is_graph_obj = BaseGraphicObject::isGraphicObject(obj_type);
@@ -3852,11 +3852,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 			popup_menu.addAction(action_edit);
 
 			if((obj_type==ObjectType::Schema && obj->isSystemObject()) ||
-					(!obj->isProtected() && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
+					(!obj->isProtected() && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
 																	 obj_type==ObjectType::Relationship || obj_type==ObjectType::Schema ||
-																	 obj_type == ObjectType::Tag || obj_type==ObjectType::View)))
+																	 obj_type == ObjectType::Tag)))
 			{
-				if(PhysicalTable::isPhysicalTable(obj_type) || obj_type == ObjectType::View)
+				if(BaseTable::isBaseTable(obj_type))
 				{
 					for(auto type : BaseObject::getChildObjectTypes(obj_type))
 						new_object_menu.addAction(actions_new_objects[type]);
@@ -4014,8 +4014,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		 (objects.empty() && (db_model->getObjectCount(ObjectType::Table) > 0 ||
 													db_model->getObjectCount(ObjectType::ForeignTable) > 0 ||
 													db_model->getObjectCount(ObjectType::View) > 0)) ||
-		 (objects.size() == 1 && (PhysicalTable::isPhysicalTable(objects[0]->getObjectType()) ||
-															objects[0]->getObjectType() == ObjectType::View ||
+		 (objects.size() == 1 && (BaseTable::isBaseTable(objects[0]->getObjectType()) ||
 															objects[0]->getObjectType() == ObjectType::Database)))
 	{
 		bool tab_or_view = false;

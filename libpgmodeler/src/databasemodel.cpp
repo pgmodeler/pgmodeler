@@ -7681,7 +7681,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 	}
 
 	//If there is the need to include the children objects
-	if(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type==ObjectType::Schema)
+	if(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Schema)
 	{
 		vector<BaseObject *>::iterator end;
 
@@ -8370,7 +8370,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				getObjectDependecies(usr_map->getForeignServer(), deps, inc_indirect_deps);
 			}
 
-			if(PhysicalTable::isPhysicalTable(obj_type) || obj_type == ObjectType::View)
+			if(BaseTable::isBaseTable(obj_type))
 			{
 				BaseTable *tab = dynamic_cast<BaseTable *>(object);
 
@@ -8786,7 +8786,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 		}
 
 		if((obj_type==ObjectType::Type || obj_type==ObjectType::Domain || obj_type==ObjectType::Sequence ||
-				obj_type==ObjectType::Extension || obj_type==ObjectType::View || PhysicalTable::isPhysicalTable(obj_type))
+				obj_type==ObjectType::Extension || BaseTable::isBaseTable(obj_type))
 				&& (!exclusion_mode || (exclusion_mode && !refer)))
 		{
 			vector<BaseObject *> *obj_list=nullptr;

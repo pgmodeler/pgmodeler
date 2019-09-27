@@ -1416,8 +1416,7 @@ bool PhysicalTable::isPartitioned(void)
 
 bool PhysicalTable::isPhysicalTable(ObjectType obj_type)
 {
-	return(obj_type == ObjectType::Table ||
-				 obj_type == ObjectType::ForeignTable);
+	return(BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::View);
 }
 
 void PhysicalTable::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)

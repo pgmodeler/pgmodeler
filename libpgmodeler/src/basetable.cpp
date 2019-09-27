@@ -50,6 +50,13 @@ Tag *BaseTable::getTag(void)
 	return(tag);
 }
 
+bool BaseTable::isBaseTable(ObjectType obj_type)
+{
+	return(obj_type == ObjectType::Table ||
+				 obj_type == ObjectType::ForeignTable ||
+				 obj_type == ObjectType::View);
+}
+
 QString BaseTable::getAlterDefinition(BaseObject *object)
 {
 	try

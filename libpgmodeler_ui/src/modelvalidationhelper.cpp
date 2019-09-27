@@ -106,7 +106,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						}
 					}
 
-					if(aux_obj && (aux_obj->getObjectType()==ObjectType::View || PhysicalTable::isPhysicalTable(aux_obj->getObjectType())))
+					if(aux_obj && BaseTable::isBaseTable(aux_obj->getObjectType()))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
@@ -364,7 +364,7 @@ void ModelValidationHelper::validateModel(void)
 						/* Validating a special object. The validation made here is to check if the special object
 						 * (constraint/index/trigger/view) references a column added by a relationship and
 						 *  that relationship is being created after the creation of the special object */
-						if(PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type == ObjectType::GenericSql)
+						if(BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::GenericSql)
 						{
 							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 							vector<TableObject *> *tab_objs;

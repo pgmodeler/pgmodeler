@@ -309,7 +309,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		parent_type=parent_obj->getObjectType();
 
-		if(PhysicalTable::isPhysicalTable(parent_type) || parent_type==ObjectType::View)
+		if(BaseTable::isBaseTable(parent_type))
 			this->table=dynamic_cast<BaseTable *>(parent_obj);
 		else if(parent_type==ObjectType::Relationship)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
@@ -943,7 +943,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
 	  ((!new_object && obj_type!=ObjectType::Database && obj_type!=ObjectType::Permission && operation_count != op_list->getCurrentSize()) ||
-		 (new_object && (PhysicalTable::isPhysicalTable(obj_type) || obj_type==ObjectType::View || obj_type==ObjectType::Relationship))))
+		 (new_object && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Relationship))))
 	{
 		try
 		{
