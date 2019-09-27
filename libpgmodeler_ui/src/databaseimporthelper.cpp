@@ -2214,6 +2214,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 			{ Attributes::YPos, QString("0") }};
 
 		attribs[Attributes::Server] = getDependencyObject(attribs[Attributes::Server], ObjectType::ForeignServer, true , true, true);
+		attribs[Attributes::Options] = Catalog::parseArrayValues(attribs[Attributes::Options]).join(ForeignDataWrapper::OptionsSeparator);
 		attribs[Attributes::Columns]=QString();
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 

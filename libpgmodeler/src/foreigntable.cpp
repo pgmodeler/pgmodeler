@@ -103,8 +103,10 @@ QString ForeignTable::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
+		attribs_map attribs;
 		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
-		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attributes);
+		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attribs);
+		copyAttributes(attribs);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)

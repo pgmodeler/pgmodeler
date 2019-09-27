@@ -21,7 +21,8 @@
     %end
 %else
     %if {attribs} %then
-        [SELECT ft.oid, ft.relname AS name, ft.relnamespace AS schema, ft.relowner AS owner, ft.relacl AS permission, ftserver AS server, ]
+        [SELECT ft.oid, ft.relname AS name, ft.relnamespace AS schema, ft.relowner AS owner, ft.relacl AS permission, 
+                ftserver AS server, ftoptions AS options, ]
 
         [(SELECT array_agg(inhparent) AS parents FROM pg_inherits WHERE inhrelid = ft.oid]
         

@@ -87,7 +87,8 @@ void ForeignObject::getAlteredAttributes(ForeignObject *object, attribs_map &fo_
 			opts.push_back(QString("DROP %1").arg(opt.first));
 	}
 
-	fo_attribs[Attributes::Options] = opts.join(OptionsSeparator);
+	if(!opts.isEmpty())
+		fo_attribs[Attributes::Options] = opts.join(OptionsSeparator);
 }
 
 QString ForeignObject::getOptionsAttribute(unsigned def_type)
