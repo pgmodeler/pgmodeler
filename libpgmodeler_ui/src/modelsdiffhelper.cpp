@@ -278,17 +278,17 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
 					else if(obj_type==ObjectType::Relationship)
 					{
-						Table *ref_tab=nullptr, *rec_tab=nullptr;
+						PhysicalTable *ref_tab=nullptr, *rec_tab=nullptr;
 						Relationship *rel=dynamic_cast<Relationship *>(object);
 
-						rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
+						rec_tab=aux_model->getPhysicalTable(rel->getReceiverTable()->getName(true));
 
 						if(rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
 							 rel->getRelationshipType()==BaseRelationship::RelationshipPart)
 						{
 							Relationship *aux_rel = nullptr;
 
-							ref_tab = aux_model->getTable(rel->getReferenceTable()->getName(true));
+							ref_tab = aux_model->getPhysicalTable(rel->getReferenceTable()->getName(true));
 							aux_rel = dynamic_cast<Relationship *>(aux_model->getRelationship(ref_tab, rec_tab));
 
 							/* If the receiver table exists on the model generates a info for the relationship,

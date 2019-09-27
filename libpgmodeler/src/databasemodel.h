@@ -677,6 +677,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Load the file containing the objects positioning to be applied to the model
 		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
+		//! \brief Returns a table or foreign table (the one that is found first) using the provided name
+		PhysicalTable *getPhysicalTable(const QString &name);
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);

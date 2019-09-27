@@ -4985,14 +4985,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		else
 		{
 			obj_type = ObjectType::Table;
-			table = dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], obj_type));
-
-			if(!table)
-			{
-				obj_type = ObjectType::ForeignTable;
-				table = dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], obj_type));
-			}
-
+			table = getPhysicalTable(attribs[Attributes::Table]);
 			parent_obj=table;
 			ins_constr_table=true;
 
@@ -10730,6 +10723,16 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
+}
+
+PhysicalTable *DatabaseModel::getPhysicalTable(const QString &name)
+{
+	PhysicalTable *table = getTable(name);
+
+	if(!table)
+		table = getForeignTable(name);
+
+	return(table);
 }
 
 void DatabaseModel::setLayers(const QStringList &layers)

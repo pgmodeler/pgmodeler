@@ -2,7 +2,7 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-%set {alter-table} [ALTER ] {sql-object}
+%set {alter-table} [ALTER ] {sql-object} $sp 
 
 %if {partitioned-table} %then
 
