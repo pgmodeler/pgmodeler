@@ -402,7 +402,7 @@ QString Relationship::getTableNameRelNN(void)
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = part_bound_expr.toLower() == Attributes::Default.toLower() ? QString() : part_bound_expr;
+	part_bounding_expr = (part_bound_expr.toLower() == Attributes::Default.toLower() ? QString() : part_bound_expr);
 	this->invalidated = true;
 }
 
@@ -2701,7 +2701,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 					 attributes[Attributes::Points].isEmpty() &&
 					 attributes[Attributes::SpecialPkCols].isEmpty() &&
 					 attributes[Attributes::Points].isEmpty() &&
-					 attributes[Attributes::LabelsPos].isEmpty());
+					 attributes[Attributes::LabelsPos].isEmpty() &&
+					 attributes[Attributes::PartitionBoundExpr].isEmpty());
 
 		if(!reduced_form)
 			cached_reduced_code.clear();
@@ -2731,6 +2732,7 @@ void Relationship::operator = (Relationship &rel)
 	this->del_action=rel.del_action;
 	this->custom_color=rel.custom_color;
 	this->single_pk_column=rel.single_pk_column;
+	this->part_bounding_expr=rel.part_bounding_expr;
 }
 
 QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
