@@ -68,6 +68,7 @@ int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 bool GenericSQL::isObjectReferenced(BaseObject *object)
 {
 	bool found = false;
+	BaseObject *ref_obj = nullptr;
 	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
 			itr_end = objects_refs.end();
 
@@ -76,7 +77,12 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 
 	while(itr != itr_end && !found)
 	{
-		found = ((*itr).object == object);
+		ref_obj = (*itr).object;
+		found = (ref_obj == object);
+
+		if(!found && TableObject::isTableObject(ref_obj->getObjectType()))
+			found = (dynamic_cast<TableObject *>(ref_obj)->getParentTable() == object);
+
 		itr++;
 	}
 

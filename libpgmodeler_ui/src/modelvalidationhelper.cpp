@@ -442,7 +442,7 @@ void ModelValidationHelper::validateModel(void)
 								for(auto &ref_obj : gen_sql->getReferencedObjects())
 								{
 									col = dynamic_cast<Column *>(ref_obj);
-									if(!col) continue;
+									if(!col || !col->isAddedByRelationship()) continue;
 
 									rel = col->getParentRelationship();
 

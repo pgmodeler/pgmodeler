@@ -2611,8 +2611,8 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);
 	tables.insert(tables.end(),
-								dbmodel->getObjectList(ObjectType::Table)->begin(),
-								dbmodel->getObjectList(ObjectType::Table)->end());
+								dbmodel->getObjectList(ObjectType::ForeignTable)->begin(),
+								dbmodel->getObjectList(ObjectType::ForeignTable)->end());
 
 	for(auto &object : tables)
 	{
