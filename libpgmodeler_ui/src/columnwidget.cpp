@@ -199,7 +199,7 @@ void ColumnWidget::applyConfiguration(void)
 		}
 
 		BaseObjectWidget::applyConfiguration();
-		model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
+		model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(table));
 
 		finishConfiguration();
 	}

@@ -136,7 +136,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		{
 			unsigned suffix=1;
 			QString new_name;
-			Table *table=nullptr;
+			BaseTable *table=nullptr;
 			ObjectType obj_type;
 			BaseObject *obj=info.getObject();
 			TableObject *tab_obj=nullptr;
@@ -144,11 +144,11 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
 			bool rename_obj=(refs.back()->getObjectType()==ObjectType::Table ||
-							 refs.back()->getObjectType()==ObjectType::View);
+											 refs.back()->getObjectType()==ObjectType::View);
 
 			if(rename_obj)
 			{
-				table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(obj)->getParentTable());
+				table=dynamic_cast<BaseTable *>(dynamic_cast<TableObject *>(obj)->getParentTable());
 				obj_type=obj->getObjectType();
 
 				do
@@ -173,7 +173,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				//Tables and view aren't renamed only table child objects (constraints, indexes)
 				if(tab_obj && !tab_obj->isAddedByRelationship())
 				{
-					table=dynamic_cast<Table *>(tab_obj->getParentTable());
+					table=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
 
 					do
 					{

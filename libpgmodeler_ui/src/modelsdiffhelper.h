@@ -73,7 +73,7 @@ class ModelsDiffHelper: public QObject {
 		ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
-		void diffTables(Table *src_table, Table *imp_table, unsigned diff_type);
+		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
 
 		//! \brief Compares the two models storing the diff between them in the diff_infos vector.
 		void diffModels(unsigned diff_type);

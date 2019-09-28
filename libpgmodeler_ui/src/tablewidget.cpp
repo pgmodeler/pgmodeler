@@ -136,7 +136,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;
-			Table *table = dynamic_cast<Table *>(this->object);
+			PhysicalTable *table = dynamic_cast<Table *>(this->object);
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
@@ -876,7 +876,7 @@ void TableWidget::editData(void)
 	BaseForm base_form(this);
 	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
 
-	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
+	tab_data_wgt->setAttributes(this->model, dynamic_cast<PhysicalTable *>(this->object));
 	base_form.setMainWidget(tab_data_wgt);
 	base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 

@@ -263,7 +263,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 			}
 			else
 			{
-				Table *table=dynamic_cast<Table *>(this->object);
+				PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 				Column *column = table->getColumn(col_name);
 				item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 				item->setForeground(data_tbw->horizontalHeader()->palette().color(QPalette::Foreground));
@@ -312,7 +312,7 @@ void TableDataWidget::enableButtons(void)
 	copy_tb->setEnabled(!sel_ranges.isEmpty());
 }
 
-void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
+void TableDataWidget::setAttributes(DatabaseModel *model, PhysicalTable *table)
 {
 	BaseObjectWidget::setAttributes(model, table, nullptr);
 	bool enable=(object != nullptr);
@@ -328,7 +328,7 @@ void TableDataWidget::setAttributes(DatabaseModel *model, Table *table)
 
 void TableDataWidget::populateDataGrid(const QString &data)
 {
-	Table *table=dynamic_cast<Table *>(this->object);
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	QTableWidgetItem *item=nullptr;
 	QString ini_data;
 	int col=0, row=0;
@@ -429,7 +429,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 
 void TableDataWidget::configureColumnNamesMenu(void)
 {
-	Table *table=dynamic_cast<Table *>(this->object);
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	QStringList col_names;
 
 	col_names_menu.clear();
@@ -583,7 +583,7 @@ void TableDataWidget::applyConfiguration(void)
 {
 	try
 	{
-		Table *table = dynamic_cast<Table *>(this->object);
+		PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
 		table->setInitialData(generateDataBuffer());
 		emit s_closeRequested();
 	}

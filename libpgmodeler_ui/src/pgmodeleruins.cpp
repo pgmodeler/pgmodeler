@@ -131,10 +131,10 @@ namespace PgModelerUiNs {
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
 			 * codes when the code of parent table is disabled too in order to avoid export errors */
-			if(object->getObjectType()==ObjectType::Table)
+			if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(ObjectType::Constraint);
+				vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{

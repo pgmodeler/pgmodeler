@@ -587,11 +587,11 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 
 
 	if(modify_name &&
-			(obj_type==ObjectType::Table || TableObject::isTableObject(obj_type)))
+			(PhysicalTable::isPhysicalTable(obj_type) || TableObject::isTableObject(obj_type)))
 	{
 		if(obj_type==ObjectType::Table)
 		{
-			Table *tab=dynamic_cast<Table *>(obj);
+			PhysicalTable *tab=dynamic_cast<PhysicalTable *>(obj);
 
 			name+=QString("(");
 			for(unsigned i=0; i < tab->getColumnCount(); i++)

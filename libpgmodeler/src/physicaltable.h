@@ -348,9 +348,6 @@ class PhysicalTable: public BaseTable {
 		 * This is a pure virtual method and must be implemented by children classes */
 		virtual QString getAlterDefinition(BaseObject *object) = 0;
 
-		//! \brief Returns the truncate definition for this table
-		QString getTruncateDefinition(bool cascade);
-
 		/*! \brief Defines an initial set of data for the table in a CSV-like buffer.
 		In order to separate columns and values use the DATA_SEPARATOR char and to separate
 		rows use the DATA_LINE_BREAK */

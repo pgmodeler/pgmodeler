@@ -1558,20 +1558,6 @@ void PhysicalTable::setCodeInvalidated(bool value)
 	BaseObject::setCodeInvalidated(value);
 }
 
-QString PhysicalTable::getTruncateDefinition(bool cascade)
-{
-	try
-	{
-		BaseObject::setBasicAttributes(true);
-		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
-		return(BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false));
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}
-
 void PhysicalTable::setInitialData(const QString &value)
 {
 	setCodeInvalidated(initial_data != value);

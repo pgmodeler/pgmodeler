@@ -631,6 +631,10 @@ void PgModelerCli::handleObjectAddition(BaseObject *object)
 				item=new TableView(dynamic_cast<Table *>(graph_obj));
 			break;
 
+			case ObjectType::ForeignTable:
+				item=new TableView(dynamic_cast<ForeignTable *>(graph_obj));
+			break;
+
 			case ObjectType::View:
 				item=new GraphicalView(dynamic_cast<View *>(graph_obj));
 			break;

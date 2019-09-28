@@ -244,7 +244,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 		{
 			combo=ref_column_cmb;
 			aux_col_tab=ref_columns_tab;
-			table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
+			table=dynamic_cast<PhysicalTable *>(ref_table_sel->getSelectedObject());
 
 			if(table)
 				count=table->getColumnCount();

@@ -182,7 +182,7 @@ void CustomSQLWidget::applyConfiguration(void)
 
 void CustomSQLWidget::addCommand(void)
 {
-	Table *table=dynamic_cast<Table *>(this->object);
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
 	QString cmd,
 			ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),

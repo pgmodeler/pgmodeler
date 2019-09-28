@@ -91,7 +91,7 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvCopyRelTableDefined)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
-							.arg(dynamic_cast<Table *>(src_tab)->getCopyTable()->getName(true)),
+							.arg(dynamic_cast<PhysicalTable *>(src_tab)->getCopyTable()->getName(true)),
 							ErrorCode::InvCopyRelTableDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/*  If the relationship is partitioning the destination table (partitioned) shoud have
@@ -667,7 +667,7 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		if(sp_pk_itr!=column_ids_pk_rel.end())
 			column_ids_pk_rel.erase(sp_pk_itr);
 
-		removeColumnFromTablePK(dynamic_cast<Table *>(col->getParentTable()), col);
+		removeColumnFromTablePK(dynamic_cast<PhysicalTable *>(col->getParentTable()), col);
 	}
 
 	//Removing the object from the receiver table
@@ -1001,15 +1001,14 @@ void Relationship::addColumnsRelGenPart(void)
 						for(i2=0; i2 < 2; i2++)
 						{
 							//Checking if the column came from a generalization relationship
-							if(types[i2] == ObjectType::Table)
+							if(PhysicalTable::isPhysicalTable(types[i2]))
 							{
 								tab_count=aux_tab->getObjectCount(ObjectType::Table);
 								for(idx=0; idx < tab_count; idx++)
 								{
-									parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, ObjectType::Table));
+									parent_tab=dynamic_cast<PhysicalTable *>(aux_tab->getObject(idx, ObjectType::Table));
 									cond=(aux_col->getParentTable()==parent_tab && aux_col->isAddedByGeneralization());
 								}
-
 							}
 							//Checking if the column came from a copy relationship
 							else
@@ -2372,7 +2371,7 @@ bool Relationship::isInvalidated(void)
 		 any relationship 1-1, 1-n or n-n connected to it should be revalidated */
 		if(pk_relident && pk_relident->isAddedByLinking())
 		{
-			dynamic_cast<Table *>(pk_relident->getParentTable())->removeObject(pk_relident);
+			dynamic_cast<PhysicalTable *>(pk_relident->getParentTable())->removeObject(pk_relident);
 			pk_relident=nullptr;
 		}
 		return(true);

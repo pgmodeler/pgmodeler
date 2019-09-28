@@ -583,11 +583,14 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 {
 	vector<BaseObject *> objects;
-	Table *tab=nullptr;
+	PhysicalTable *tab=nullptr;
 	Relationship *rel=nullptr;
 
 	objects.insert(objects.end(), db_model->getObjectList(ObjectType::Table)->begin(),
-				   db_model->getObjectList(ObjectType::Table)->end());
+								 db_model->getObjectList(ObjectType::Table)->end());
+
+	objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+								 db_model->getObjectList(ObjectType::ForeignTable)->end());
 
 	//Store the relationship on the auxiliary vector but only many-to-many are considered
 	objects.insert(objects.end(), db_model->getObjectList(ObjectType::Relationship)->begin(),
@@ -604,7 +607,7 @@ void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 		if(rel)
 			tab=rel->getGeneratedTable();
 		else
-			tab=dynamic_cast<Table *>(objects.back());
+			tab=dynamic_cast<PhysicalTable *>(objects.back());
 
 		if(tab)
 		{
@@ -620,13 +623,8 @@ void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 
 void ModelExportHelper::restoreGenAtlerCmdsStatus(void)
 {
-	map<Table *, bool>::iterator itr=alter_cmds_status.begin();
-
-	while(itr!=alter_cmds_status.end())
-	{
-		itr->first->setGenerateAlterCmds(itr->second);
-		itr++;
-	}
+	for(auto &itr : alter_cmds_status)
+		itr.first->setGenerateAlterCmds(itr.second);
 
 	alter_cmds_status.clear();
 }

@@ -63,7 +63,7 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 
 		TableDataWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, Table *table);
+		void setAttributes(DatabaseModel *model, PhysicalTable *table);
 
 	public slots:
 		void applyConfiguration(void);

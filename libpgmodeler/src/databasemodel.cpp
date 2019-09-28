@@ -351,7 +351,10 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 		removeGenericSQL(dynamic_cast<GenericSQL *>(object), obj_idx);
 	else if(obj_type==ObjectType::ForeignDataWrapper)
 		removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object), obj_idx);
-
+	else if(obj_type==ObjectType::UserMapping)
+		removeUserMapping(dynamic_cast<UserMapping *>(object), obj_idx);
+	else if(obj_type==ObjectType::ForeignTable)
+		removeForeignTable(dynamic_cast<ForeignTable *>(object), obj_idx);
 }
 
 void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
@@ -1773,7 +1776,10 @@ void DatabaseModel::validateRelationships(void)
 	if(!loading_model)
 	{
 		for(auto &tab : tables)
-			dynamic_cast<Table *>(tab)->restoreRelObjectsIndexes();
+			dynamic_cast<PhysicalTable *>(tab)->restoreRelObjectsIndexes();
+
+		for(auto &tab : foreign_tables)
+			dynamic_cast<PhysicalTable *>(tab)->restoreRelObjectsIndexes();
 
 		xml_special_objs.clear();
 	}
@@ -5536,6 +5542,7 @@ Trigger *DatabaseModel::createTrigger(void)
 	BaseObject *ref_table=nullptr, *func=nullptr;
 	Column *column=nullptr;
 	BaseTable *table=nullptr;
+	PhysicalTable *aux_table = nullptr;
 	vector<ObjectType> table_types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	try
@@ -5663,9 +5670,10 @@ Trigger *DatabaseModel::createTrigger(void)
 						for(i=0; i < count; i++)
 						{
 							column=dynamic_cast<Column *>(table->getObject(list_aux[i].trimmed(), ObjectType::Column));
+							aux_table=dynamic_cast<PhysicalTable *>(table);
 
-							if(!column && dynamic_cast<Table *>(table))
-								column=dynamic_cast<Table *>(table)->getColumn(list_aux[i].trimmed(), true);
+							if(!column && aux_table)
+								column=aux_table->getColumn(list_aux[i].trimmed(), true);
 
 							trigger->addColumn(column);
 						}
@@ -5845,7 +5853,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	attribs_map attribs;
 	QString elem, parent_name, obj_name;
 	ObjectType obj_type;
-	Table *parent_table = nullptr;
+	PhysicalTable *parent_table = nullptr;
 	BaseObject *object = nullptr;
 
 	try
@@ -5879,7 +5887,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 						//If the object is a column its needed to get the parent table
 						if(obj_type == ObjectType::Column)
 						{
-							parent_table = dynamic_cast<Table *>(getObject(parent_name, ObjectType::Table));
+							parent_table = dynamic_cast<PhysicalTable *>(getPhysicalTable(parent_name));
 
 							if(parent_table)
 								object = parent_table->getColumn(obj_name);
@@ -6168,7 +6176,7 @@ void DatabaseModel::updateViewsReferencingTable(PhysicalTable *table)
 			continue;
 
 		view = dynamic_cast<View *>(rel->getTable(BaseRelationship::SrcTable));
-		tab = dynamic_cast<Table *>(rel->getTable(BaseRelationship::DstTable));
+		tab = dynamic_cast<PhysicalTable *>(rel->getTable(BaseRelationship::DstTable));
 
 		if(view && tab == table)
 		{
@@ -6306,10 +6314,7 @@ View *DatabaseModel::createView(void)
 						if(!attribs[Attributes::Table].isEmpty())
 						{
 							column=nullptr;
-							table=dynamic_cast<Table *>(getObject(attribs[Attributes::Table], ObjectType::Table));
-
-							if(!table)
-								table=dynamic_cast<ForeignTable *>(getObject(attribs[Attributes::Table], ObjectType::ForeignTable));
+							table=dynamic_cast<PhysicalTable *>(getPhysicalTable(attribs[Attributes::Table]));
 
 							//Raises an error if the table doesn't exists
 							if(!table)
@@ -6948,7 +6953,7 @@ Permission *DatabaseModel::createPermission(void)
 {
 	Permission *perm=nullptr;
 	BaseObject *object=nullptr;
-	Table *parent_table=nullptr;
+	PhysicalTable *parent_table=nullptr;
 	Role *role=nullptr;
 	attribs_map priv_attribs, attribs;
 	attribs_map::iterator itr, itr_end;
@@ -6975,10 +6980,7 @@ Permission *DatabaseModel::createPermission(void)
 		//If the object is a column its needed to get the parent table
 		if(obj_type==ObjectType::Column)
 		{
-			parent_table=dynamic_cast<Table *>(getObject(parent_name, ObjectType::Table));
-
-			if(!parent_table)
-				parent_table=dynamic_cast<Table *>(getObject(parent_name, ObjectType::ForeignTable));
+			parent_table=dynamic_cast<PhysicalTable *>(getPhysicalTable(parent_name));
 
 			if(parent_table)
 				object=parent_table->getColumn(obj_name);
@@ -9394,7 +9396,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<TableObject *> *tab_obj_list=nullptr;
 			vector<TableObject *>::iterator tab_itr, tab_itr_end;
 			TableObject *tab_obj=nullptr;
-			Table *table = nullptr;
+			PhysicalTable *table = nullptr;
 
 			count=sizeof(obj_types)/sizeof(ObjectType);
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
@@ -9416,17 +9418,22 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			}
 
 			count=sizeof(tab_obj_types)/sizeof(ObjectType);
-			obj_list=getObjectList(ObjectType::Table);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
+			vector<BaseObject *> tabs;
+
+			tabs.insert(tabs.end(), tables.begin(), tabs.end());
+			tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+			itr=tabs.begin();
+			itr_end=tabs.end();
 
 			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 			{
-				table = dynamic_cast<Table *>(*itr);
+				table = dynamic_cast<PhysicalTable *>(*itr);
 
 				for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 				{
-					tab_obj_list=table->getObjectList(tab_obj_types[i]);
+					tab_obj_list = table->getObjectList(tab_obj_types[i]);
+					if(!tab_obj_list) continue;
+
 					tab_itr=tab_obj_list->begin();
 					tab_itr_end=tab_obj_list->end();
 
@@ -9817,9 +9824,9 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 
 void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_sch_name)
 {
-	ObjectType types[]={ ObjectType::Table, ObjectType::View, ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
-	vector<BaseObject *> list, vet;
-	BaseObject *obj=nullptr;
+	vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
+															 ObjectType::Domain, ObjectType::Type, ObjectType::Sequence };
+	vector<BaseObject *> list, sch_objs, refs;
 	QString prev_name;
 
 	//Raise an error if the schema is not allocated
@@ -9827,36 +9834,50 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Get all the objects on the informed schema
-	for(unsigned i=0; i < 5; i++)
+	for(auto &type : types)
 	{
-		vet=getObjects(types[i], schema);
-		list.insert(list.end(), vet.begin(), vet.end());
+		list = getObjects(type, schema);
+		sch_objs.insert(sch_objs.end(), list.begin(), list.end());
 	}
 
-	while(!list.empty())
+	for(auto &obj : sch_objs)
 	{
-		obj=list.back();
+		//Configures the previous type name
+		prev_name=BaseObject::formatName(prev_sch_name) + QString(".") +
+							BaseObject::formatName(obj->getName(), false);
 
-		//For objects that is not a Views is needed to rename the pgsql type represented by the object
-		if(obj->getObjectType()!=ObjectType::View)
-		{
-			//Configures the previous type name
-			prev_name=BaseObject::formatName(prev_sch_name) + QString(".") +
-					  BaseObject::formatName(obj->getName(), false);
+		/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
+		the correct reference to table */
+		if(obj->getObjectType() == ObjectType::Table)
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
+		else if(obj->getObjectType() == ObjectType::View)
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<View *>(obj)), obj->getName(true));
+		else if(obj->getObjectType() == ObjectType::ForeignTable)
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<ForeignTable *>(obj)), obj->getName(true));
+		else
+			PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
 
-			/* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
-			the correct reference to table */
-			if(obj->getObjectType()==ObjectType::Table)
-				PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
-			else
-				PgSqlType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
-		}
+		getObjectReferences(obj, refs);
 
 		//For graphical objects set them as modified to redraw them
-		if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+		if(BaseTable::isBaseTable(obj->getObjectType()))
 			dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
 
-		list.pop_back();
+		for(auto &ref_obj : refs)
+		{
+			if(BaseTable::isBaseTable(ref_obj->getObjectType()))
+				dynamic_cast<BaseGraphicObject *>(ref_obj)->setModified(true);
+			else if(TableObject::isTableObject(ref_obj->getObjectType()))
+			{
+				BaseTable *tab = dynamic_cast<TableObject *>(ref_obj)->getParentTable();
+				tab->setModified(true);
+				tab->setCodeInvalidated(true);
+			}
+
+			ref_obj->setCodeInvalidated(true);
+		}
+
+		refs.clear();
 	}
 }
 
@@ -9961,6 +9982,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 		if(!inc_tabs && TableObject::isTableObject(*itr_tp))
 		{
 			tables.insert(tables.end(), getObjectList(ObjectType::Table)->begin(), getObjectList(ObjectType::Table)->end());
+			tables.insert(tables.end(), getObjectList(ObjectType::ForeignTable)->begin(), getObjectList(ObjectType::ForeignTable)->end());
 			inc_tabs=true;
 		}
 
@@ -9996,10 +10018,9 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 				tab=(*itr);
 				itr++;
 
-				if(tab->getObjectType()==ObjectType::Table)
-					tab_objs=dynamic_cast<Table *>(tab)->getObjectList(obj_type);
-				else if(tab->getObjectType()==ObjectType::View &&
-						(obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule))
+				if(PhysicalTable::isPhysicalTable(tab->getObjectType()))
+					tab_objs=dynamic_cast<PhysicalTable *>(tab)->getObjectList(obj_type);
+				else if(tab->getObjectType()==ObjectType::View &&	(obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule))
 					tab_objs=dynamic_cast<View *>(tab)->getObjectList(obj_type);
 
 				if(tab_objs)
@@ -10186,6 +10207,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				for(auto &tab : tables)
 				{
 					tab_objs = dynamic_cast<Table *>(tab)->getObjects();
+					objects.insert(objects.end(), tab_objs.begin(), tab_objs.end());
+				}
+
+				for(auto &tab : foreign_tables)
+				{
+					tab_objs = dynamic_cast<ForeignTable *>(tab)->getObjects();
 					objects.insert(objects.end(), tab_objs.begin(), tab_objs.end());
 				}
 

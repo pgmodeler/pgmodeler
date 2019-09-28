@@ -2278,7 +2278,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 		QString role_name;
 		Role *role=nullptr;
 		BaseObject *object=nullptr;
-		Table *table=nullptr;
+		PhysicalTable *table=nullptr;
 
 		//Parses the permissions vector string
 		perm_list=Catalog::parseArrayValues(attribs[Attributes::Permission]);
@@ -2298,7 +2298,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			else
 			{
 				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
-				table=dynamic_cast<Table *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), ObjectType::Table));
+				table=dynamic_cast<PhysicalTable *>(dbmodel->getPhysicalTable(getObjectName(attribs[Attributes::Table])));
 				object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
 			}
 		}
@@ -2601,15 +2601,22 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 
 void DatabaseImportHelper::assignSequencesToColumns(void)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
+	vector<BaseObject *> tables;
+
 	emit s_progressUpdated(100,
 							 trUtf8("Assigning sequences to columns..."),
 						   ObjectType::Sequence);
 
-	for(auto &object : *dbmodel->getObjectList(ObjectType::Table))
+	tables = *dbmodel->getObjectList(ObjectType::Table);
+	tables.insert(tables.end(),
+								dbmodel->getObjectList(ObjectType::Table)->begin(),
+								dbmodel->getObjectList(ObjectType::Table)->end());
+
+	for(auto &object : tables)
 	{
-		table=dynamic_cast<Table *>(object);
+		table=dynamic_cast<PhysicalTable *>(object);
 
 		for(auto &tab_obj : *table->getObjectList(ObjectType::Column))
 		{

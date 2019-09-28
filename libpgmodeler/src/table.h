@@ -171,6 +171,9 @@ class Table: public PhysicalTable {
 		//! \brief Returns the alter definition comparing the this table against the one provided via parameter
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
+		//! \brief Returns the truncate definition for this table
+		QString getTruncateDefinition(bool cascade);
+
 		/*! \brief Generates the table's SQL code considering adding the relationship added object or not.
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
 		 * that does not reflect the real semantics of the table. So take care to use this method and always

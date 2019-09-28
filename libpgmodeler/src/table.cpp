@@ -423,6 +423,20 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 	}
 }
 
+QString Table::getTruncateDefinition(bool cascade)
+{
+	try
+	{
+		BaseObject::setBasicAttributes(true);
+		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+		return(BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
 QString Table::getAlterDefinition(BaseObject *object)
 {
 	Table *tab=dynamic_cast<Table *>(object);
