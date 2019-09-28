@@ -2756,10 +2756,10 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 		attribs_map obj_attr;
 
 		//Get the object from one of the maps of objects
-		if(system_objs.count(obj_oid))
-			obj_attr=system_objs[obj_oid];
-		else if(user_objs.count(obj_oid))
+		if(user_objs.count(obj_oid))
 			obj_attr=user_objs[obj_oid];
+		else
+			obj_attr=system_objs[obj_oid];
 
 		if(obj_attr.empty())
 			return(QString());
