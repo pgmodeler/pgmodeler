@@ -321,8 +321,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 		qualifying_level=-1;
 	else if(obj->getObjectType()==ObjectType::Schema)
 		qualifying_level=0;
-	else if(obj->getObjectType()==ObjectType::Table ||
-			obj->getObjectType()==ObjectType::View)
+	else if(BaseTable::isBaseTable(obj->getObjectType()))
 		qualifying_level=1;
 	else
 		qualifying_level=2;
@@ -373,7 +372,7 @@ void CodeCompletionWidget::updateList(void)
 			word.remove(completion_trigger);
 			word.remove('"');
 
-			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::View }, false, false, true);
+			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View }, false, false, true);
 
 			if(objects.size()==1)
 				setQualifyingLevel(objects[0]);
@@ -589,7 +588,7 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 	if(modify_name &&
 			(PhysicalTable::isPhysicalTable(obj_type) || TableObject::isTableObject(obj_type)))
 	{
-		if(obj_type==ObjectType::Table)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 		{
 			PhysicalTable *tab=dynamic_cast<PhysicalTable *>(obj);
 
