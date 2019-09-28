@@ -3430,7 +3430,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));
 		}
 
-		if(object && obj_type == ObjectType::Table)
+		if(object && PhysicalTable::isPhysicalTable(obj_type))
 			quick_actions_menu.addAction(action_edit_data);
 
 		if(object && BaseObject::acceptsCustomSQL(obj_type))
@@ -4645,7 +4645,7 @@ void ModelWidget::editTableData(void)
 {
 	TableDataWidget *tab_data_wgt=new TableDataWidget;
 
-	tab_data_wgt->setAttributes(db_model, dynamic_cast<Table *>(selected_objects.at(0)));
+	tab_data_wgt->setAttributes(db_model, dynamic_cast<PhysicalTable *>(selected_objects.at(0)));
 	openEditingForm(tab_data_wgt);
 	this->setModified(true);
 	emit s_objectManipulated();
