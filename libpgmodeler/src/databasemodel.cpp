@@ -5882,11 +5882,18 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 
 						obj_type = BaseObject::getObjectType(attribs[Attributes::Type]);
 						obj_name = attribs[Attributes::Name];
-						parent_name = attribs[Attributes::Parent];
 
 						//If the object is a column its needed to get the parent table
 						if(obj_type == ObjectType::Column)
 						{
+							QStringList names = obj_name.split('.');
+
+							if(names.size() > 2)
+							{
+								parent_name = QString("%1.%2").arg(names[0]).arg(names[1]);
+								obj_name = names[2];
+							}
+
 							parent_table = dynamic_cast<PhysicalTable *>(getPhysicalTable(parent_name));
 
 							if(parent_table)
