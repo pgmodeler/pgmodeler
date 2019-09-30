@@ -432,15 +432,22 @@ void Exception::getExceptionsList(vector<Exception> &list)
 QString Exception::getExceptionsText(void)
 {
 	vector<Exception> exceptions;
-	vector<Exception>::iterator itr, itr_end;
-	unsigned idx=0;
+	vector<Exception>::reverse_iterator itr, itr_end;
+	unsigned idx=0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
+	bool stack_truncated = false;
 
 	//Get the generated exceptions list
 	this->getExceptionsList(exceptions);
-	itr=exceptions.begin();
-	itr_end=exceptions.end();
-	idx=exceptions.size()-1;
+	itr=exceptions.rbegin();
+	itr_end=exceptions.rend();
+	idx = 0;
+
+	if(exceptions.size() > MaximumStackSize)
+	{
+		hidden_errors_cnt = exceptions.size() - Exception::MaximumStackSize;
+		stack_truncated = true;
+	}
 
 	//Append all usefull information about the exceptions on the string
 	while(itr!=itr_end)
@@ -454,7 +461,13 @@ QString Exception::getExceptionsText(void)
 		else
 			exceptions_txt+=QString("\n");
 
-		itr++; idx--;
+		itr++; idx++;
+
+		if(stack_truncated && idx >= Exception::MaximumStackSize)
+		{
+			exceptions_txt += QString(QT_TR_NOOP("** Another %1 error(s) were suppressed due to stacktrace size limits.\n\n")).arg(hidden_errors_cnt);
+			break;
+		}
 	}
 
 	return(exceptions_txt);

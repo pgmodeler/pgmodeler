@@ -338,6 +338,8 @@ class Exception {
 		void addException(Exception &exception);
 
 	public:
+		static unsigned constexpr MaximumStackSize = 50;
+
 		Exception(void);
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
 		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
