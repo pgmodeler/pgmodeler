@@ -34,8 +34,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	ObjectsTableWidget *tab=nullptr;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
 											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	map<QString, vector<QWidget *> > fields_map;
-	QFrame *frame=nullptr;
+	map<QString, vector<QWidget *> > fields_map;	
 	QPushButton *edt_data_tb=nullptr;
 	QStringList part_types;
 
@@ -56,9 +55,9 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
-	frame=generateVersionWarningFrame(fields_map);
-	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
-	frame->setParent(this);
+	warn_frame=generateVersionWarningFrame(fields_map);
+	table_grid->addWidget(warn_frame, table_grid->count()+1, 0, 1, 2);
+	warn_frame->setParent(this);
 
 	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NoButtons, true, this);
 	parent_tables->setColumnCount(3);
@@ -299,6 +298,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 	__setAttributes(model, op_list, schema, ftable, pos_x, pos_y);
 
+	warn_frame->setVisible(false);
 	with_oids_chk->setVisible(false);
 	unlogged_chk->setVisible(false);
 	enable_rls_chk->setVisible(false);

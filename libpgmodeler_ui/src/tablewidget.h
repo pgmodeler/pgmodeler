@@ -41,6 +41,8 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 
 		ObjectSelectorWidget *tag_sel, *server_sel;
 
+		QFrame *warn_frame;
+
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 

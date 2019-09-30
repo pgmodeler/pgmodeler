@@ -22,7 +22,7 @@
 
 namespace GlobalAttributes {
 	const QString
-	PgModelerVersion=QString("0.9.2")
+	PgModelerVersion=QString("0.9.2-beta2")
 
 	/* Appending the snapshot build number to the version number
 	 * when the external variable SNAPSHOT_BUILD is defined */

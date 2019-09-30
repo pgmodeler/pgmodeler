@@ -422,8 +422,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
 
-	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
-	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
+	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
+																		 ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
+	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Foreign Tables"),
+												 trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
 
 	i=0;
 	for(auto &obj_type : graph_types)
