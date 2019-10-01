@@ -862,9 +862,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 		/* If the object in question is graphical it has the modified flag
 			marked to force the redraw at the time of its restoration */
-		else if(obj_type==ObjectType::Table || obj_type==ObjectType::View ||
-				obj_type==ObjectType::BaseRelationship || obj_type==ObjectType::Relationship ||
-				obj_type==ObjectType::Textbox || obj_type==ObjectType::Schema)
+		else if(BaseGraphicObject::isGraphicObject(obj_type))
 		{
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -876,14 +874,14 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(obj_type==ObjectType::View && op_type==Operation::ObjectModified)
 				model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
 			else if((obj_type==ObjectType::Relationship ||
-					 (obj_type==ObjectType::Table && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
-					op_type==Operation::ObjectModified)
+							(PhysicalTable::isPhysicalTable(obj_type) && model->getRelationship(dynamic_cast<BaseTable *>(object), nullptr))) &&
+							op_type==Operation::ObjectModified)
 				model->validateRelationships();
 
 			//If a object had its schema restored is necessary to update the envolved schemas
-			if((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
-					((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::ObjectModified) ||
-					 op_type==Operation::ObjectMoved))
+			if(BaseTable::isBaseTable(obj_type) &&
+				 ((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && op_type==Operation::ObjectModified) ||
+					op_type==Operation::ObjectMoved))
 			{
 				dynamic_cast<BaseGraphicObject *>(graph_obj->getSchema())->setModified(true);
 
@@ -914,8 +912,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 		//Case the object is a type update the tables that are referencing it
 		if(op_type==Operation::ObjectModified &&
 				(object->getObjectType()==ObjectType::Type || object->getObjectType()==ObjectType::Domain ||
-				 object->getObjectType()==ObjectType::Table || object->getObjectType()==ObjectType::View ||
-				 object->getObjectType()==ObjectType::Extension))
+				 object->getObjectType()==ObjectType::Table || object->getObjectType()==ObjectType::ForeignTable ||
+				 object->getObjectType()==ObjectType::View || object->getObjectType()==ObjectType::Extension))
 		{
 			vector<BaseObject *> ref_objs;
 			model->getObjectReferences(object, ref_objs);

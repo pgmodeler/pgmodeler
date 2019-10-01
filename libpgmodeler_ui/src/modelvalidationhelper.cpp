@@ -143,8 +143,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
-			bool rename_obj=(refs.back()->getObjectType()==ObjectType::Table ||
-											 refs.back()->getObjectType()==ObjectType::View);
+			bool rename_obj=BaseTable::isBaseTable(refs.back()->getObjectType());
 
 			if(rename_obj)
 			{
@@ -162,6 +161,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 				//Renames the object
 				obj->setName(new_name);
+				table->setModified(true);
 			}
 
 			//Renaming the referrer objects
@@ -178,14 +178,15 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 					do
 					{
 						//Configures a new name for the object [name]_[suffix]
-						new_name=QString("%1_%2").arg(refs.back()->getName()).arg(suffix);
+						new_name=QString("%1_%2").arg(tab_obj->getName()).arg(suffix);
 						suffix++;
 					}
 					//Generates a new name until no object is found on parent table
 					while(table->getObjectIndex(new_name, obj_type) >= 0);
 
 					//Renames the referrer object
-					refs.back()->setName(new_name);
+					tab_obj->setName(new_name);
+					table->setModified(true);
 				}
 
 				refs.pop_back();
@@ -274,10 +275,11 @@ void ModelValidationHelper::validateModel(void)
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=nullptr, *refer_obj=nullptr;
-		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
+		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
 		PhysicalTable *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
+		BaseTable *base_tab = nullptr;
 		Constraint *constr=nullptr;
 		Column *col=nullptr;
 		Relationship *rel=nullptr;
@@ -466,26 +468,29 @@ void ModelValidationHelper::validateModel(void)
 
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
-	  and indexs of all tables/views. The table and view names are checked too. */
-		obj_list=db_model->getObjectList(ObjectType::Table);
-		itr=obj_list->begin();
+		and indexs of all tables/foreign talbes/views. The tables/views names are checked too. */
+		aux_tables = *db_model->getObjectList(ObjectType::Table);
+		aux_tables.insert(aux_tables.end(),
+											db_model->getObjectList(ObjectType::View)->begin(),
+											db_model->getObjectList(ObjectType::View)->end());
+		itr = aux_tables.begin();
 
 		//Searching the model's tables and gathering all the constraints and index
-		while(itr!=obj_list->end() && !valid_canceled)
+		while(itr != aux_tables.end() && !valid_canceled)
 		{
-			table=dynamic_cast<PhysicalTable *>(*itr);
-			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(table->getTypeName()), table->getObjectType());
+			base_tab = dynamic_cast<BaseTable *>(*itr);
+			emit s_objectProcessed(signal_msg.arg(base_tab->getName()).arg(base_tab->getTypeName()), base_tab->getObjectType());
 
 			itr++;
 
 			for(i=0; i < count1 && !valid_canceled; i++)
 			{
-				cnt=table->getObjectCount(tab_obj_types[i]);
+				cnt=base_tab->getObjectCount(tab_obj_types[i]);
 
 				for(i1=0; i1 < cnt && !valid_canceled; i1++)
 				{
 					//Get the table object (constraint or index)
-					tab_obj=dynamic_cast<TableObject *>(table->getObject(i1, tab_obj_types[i]));
+					tab_obj=dynamic_cast<TableObject *>(base_tab->getObject(i1, tab_obj_types[i]));
 
 					//Configures the full name of the object including the parent name
 					name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
@@ -495,11 +500,11 @@ void ModelValidationHelper::validateModel(void)
 					constr=dynamic_cast<Constraint *>(tab_obj);
 
 					/* If the object is an index or	a primary key, unique or exclude constraint,
-		  insert the object on duplicated	objects map */
+					 * insert the object on duplicated	objects map */
 					if((!constr ||
 						(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
-									constr->getConstraintType()==ConstraintType::Unique ||
-									constr->getConstraintType()==ConstraintType::Exclude))))
+												constr->getConstraintType()==ConstraintType::Unique ||
+												constr->getConstraintType()==ConstraintType::Exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}

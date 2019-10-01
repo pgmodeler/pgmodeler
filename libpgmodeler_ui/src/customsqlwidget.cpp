@@ -106,9 +106,9 @@ void CustomSQLWidget::configureMenus(void)
 	for(int i=0; i < count; i++)
 		btns[i]->setMenu(nullptr);
 
-	if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
+	if(BaseTable::isBaseTable(obj_type))
 	{
-		if(obj_type==ObjectType::Table)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);

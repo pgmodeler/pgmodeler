@@ -741,17 +741,12 @@ void BaseObjectWidget::applyConfiguration(void)
 					parent_obj=model;
 					aux_obj=model->getObject(obj_name,obj_type);
 
-					/* Special case for tables an views. Its necessary to make an additional
+					/* Special case for tables and views. Its necessary to make an additional
 					checking on table list when the configured object is a view or a checking
 					on view list when the configured object is a table, this because PostgreSQL
 					does not accepts tables and views have the same name on the same schema */
-					if(!aux_obj && obj_type==ObjectType::Table)
-						aux_obj=model->getObject(obj_name, ObjectType::View);
-					else if(!aux_obj && obj_type==ObjectType::View)
-						aux_obj=model->getObject(obj_name, ObjectType::Table);
-
-					aux_obj1=model->getObject(object->getSignature(), obj_type);
-					new_obj=(!aux_obj && !aux_obj1);
+					aux_obj = model->getObject(obj_name, { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View });
+					new_obj = (aux_obj == nullptr);
 				}
 
 				//Raises an error if another object is found with the same name as the editing object
@@ -929,9 +924,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		else if(relationship && relationship->getObjectIndex(tab_obj) >= 0)
 			relationship->removeObject(tab_obj);
 
-		if(obj_type!=ObjectType::Table &&
-				obj_type!=ObjectType::View &&
-				obj_type!=ObjectType::Relationship)
+		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
 			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
 				delete(this->object);

@@ -160,8 +160,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		double last_zoom;
 
-		/*! \brief Returns an object seaching it by its name and type. The third parameter stores
-		 the object index */
+		//! \brief Returns an object seaching it by its name and type. The third parameter stores the object index
 		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
 		//! \brief Generic method that adds an object to the model
@@ -240,6 +239,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Validates all the relationship, propagating all column modifications over the tables
 		void validateRelationships(void);
+
+		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
+		 * If the types list is empty the method will return nullptr. */
+		BaseObject *getObject(const QString &name, const vector<ObjectType> &types);
 
 		//! \brief Returns the list of specified object type that belongs to the passed schema
 		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=nullptr);
@@ -676,9 +679,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
 		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
-
-		//! \brief Returns a table or foreign table (the one that is found first) using the provided name
-		PhysicalTable *getPhysicalTable(const QString &name);
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

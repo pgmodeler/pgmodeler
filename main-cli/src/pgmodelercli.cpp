@@ -655,7 +655,7 @@ void PgModelerCli::handleObjectAddition(BaseObject *object)
 
 		scene->addItem(item);
 
-		if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
+		if(BaseTable::isBaseTable(obj_type))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
@@ -670,8 +670,7 @@ void PgModelerCli::handleObjectRemoval(BaseObject *object)
 		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getOverlyingObject()));
 
 		//Updates the parent schema if the removed object were a table or view
-		if(graph_obj->getSchema() &&
-				(graph_obj->getObjectType()==ObjectType::Table || graph_obj->getObjectType()==ObjectType::View))
+		if(graph_obj->getSchema() && BaseTable::isBaseTable(graph_obj->getObjectType()))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 }
@@ -931,9 +930,8 @@ void PgModelerCli::recreateObjects(void)
 				}
 
 				/* Additional step to extract indexes/triggers/rules from within tables/views
-		   and putting their xml on the list of object to be created */
-				if((obj_type==ObjectType::Table || obj_type==ObjectType::View) &&
-						xml_def.contains(QRegExp("(<)(index|trigger|rule)")))
+				 * and putting their xml on the list of object to be created */
+				if(BaseTable::isBaseTable(obj_type) && xml_def.contains(QRegExp("(<)(index|trigger|rule)")))
 				{
 					for(ObjectType type : types)
 					{

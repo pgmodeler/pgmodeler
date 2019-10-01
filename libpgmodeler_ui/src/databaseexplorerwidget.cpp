@@ -1898,7 +1898,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						if(TableObject::isTableObject(obj_type) || is_column)
 						{
 							PhysicalTable *table=nullptr;
-							table=dynamic_cast<PhysicalTable *>(dbmodel.getPhysicalTable(tab_name));
+							table=dynamic_cast<PhysicalTable *>(dbmodel.getObject(tab_name, {ObjectType::Table, ObjectType::ForeignTable}));
 							QTreeWidgetItem *table_item=nullptr;
 
 							//If the table was imported then the source code of it will be placed on the respective item

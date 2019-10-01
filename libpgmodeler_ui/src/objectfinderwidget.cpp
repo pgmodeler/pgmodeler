@@ -117,7 +117,8 @@ void ObjectFinderWidget::fadeObjects(void)
 	vector<BaseObject *> objects, other_objs;
 	bool fade_listed = false;
 
-	for(auto obj_type : {ObjectType::Table, ObjectType::View, ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
+	for(auto obj_type : {ObjectType::Table, ObjectType::ForeignTable, ObjectType::View, ObjectType::Textbox,
+											 ObjectType::Relationship, ObjectType::BaseRelationship, ObjectType::Schema})
 	{
 		objects.insert(objects.end(),
 									 model_wgt->getDatabaseModel()->getObjectList(obj_type)->begin(),
@@ -136,8 +137,8 @@ void ObjectFinderWidget::fadeObjects(void)
 	std::set_difference(objects.begin(), objects.end(), found_objs.begin(), found_objs.end(),
 											std::inserter(other_objs, other_objs.begin()));
 
-	model_wgt->fadeObjects(found_objs, fade_listed);
-	model_wgt->fadeObjects(other_objs, !fade_listed);
+	model_wgt->fadeObjects(found_objs, !fade_listed);
+	model_wgt->fadeObjects(other_objs, fade_listed);
 }
 
 void ObjectFinderWidget::selectObjects(void)

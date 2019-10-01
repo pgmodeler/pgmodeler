@@ -2298,7 +2298,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 			else
 			{
 				//If the object is column it's necessary to retrive the parent table to get the valid reference to column
-				table=dynamic_cast<PhysicalTable *>(dbmodel->getPhysicalTable(getObjectName(attribs[Attributes::Table])));
+				table=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(attribs[Attributes::Table]), {ObjectType::Table, ObjectType::ForeignTable}));
 				object=table->getObject(getColumnName(attribs[Attributes::Table], attribs[Attributes::Oid]), ObjectType::Column);
 			}
 		}

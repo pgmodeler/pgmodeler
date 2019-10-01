@@ -281,14 +281,15 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 						PhysicalTable *ref_tab=nullptr, *rec_tab=nullptr;
 						Relationship *rel=dynamic_cast<Relationship *>(object);
 
-						rec_tab=aux_model->getPhysicalTable(rel->getReceiverTable()->getName(true));
+						rec_tab=dynamic_cast<PhysicalTable *>(aux_model->getObject(rel->getReceiverTable()->getName(true),
+																																				{ObjectType::Table, ObjectType::ForeignTable}));
 
 						if(rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
 							 rel->getRelationshipType()==BaseRelationship::RelationshipPart)
 						{
 							Relationship *aux_rel = nullptr;
 
-							ref_tab = aux_model->getPhysicalTable(rel->getReferenceTable()->getName(true));
+							ref_tab = dynamic_cast<PhysicalTable *>(aux_model->getObject(rel->getReferenceTable()->getName(true), {ObjectType::Table, ObjectType::ForeignTable}));
 							aux_rel = dynamic_cast<Relationship *>(aux_model->getRelationship(ref_tab, rec_tab));
 
 							/* If the receiver table exists on the model generates a info for the relationship,

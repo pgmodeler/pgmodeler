@@ -622,6 +622,19 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 	return(object);
 }
 
+BaseObject *DatabaseModel::getObject(const QString &name, const vector<ObjectType> &types)
+{
+	BaseObject *object = nullptr;
+
+	for(auto &type : types)
+	{
+		object = getObject(name, type);
+		if(object) break;
+	}
+
+	return(object);
+}
+
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<BaseObject *> *obj_list=nullptr;
@@ -4991,7 +5004,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		else
 		{
 			obj_type = ObjectType::Table;
-			table = getPhysicalTable(attribs[Attributes::Table]);
+			table = dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], {ObjectType::Table, ObjectType::ForeignTable}));
 			parent_obj=table;
 			ins_constr_table=true;
 
@@ -5894,7 +5907,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 								obj_name = names[2];
 							}
 
-							parent_table = dynamic_cast<PhysicalTable *>(getPhysicalTable(parent_name));
+							parent_table = dynamic_cast<PhysicalTable *>(getObject(parent_name, {ObjectType::Table, ObjectType::ForeignTable}));
 
 							if(parent_table)
 								object = parent_table->getColumn(obj_name);
@@ -6236,7 +6249,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 				col_name=elem_list[1];
 			}
 
-			table=getPhysicalTable(tab_name);
+			table=getObject(tab_name, {ObjectType::Table, ObjectType::ForeignTable});
 
 			//Raises an error if the column parent table doesn't exists
 			if(!table)
@@ -6321,7 +6334,7 @@ View *DatabaseModel::createView(void)
 						if(!attribs[Attributes::Table].isEmpty())
 						{
 							column=nullptr;
-							table=dynamic_cast<PhysicalTable *>(getPhysicalTable(attribs[Attributes::Table]));
+							table=dynamic_cast<PhysicalTable *>(getObject(attribs[Attributes::Table], {ObjectType::Table, ObjectType::ForeignTable}));
 
 							//Raises an error if the table doesn't exists
 							if(!table)
@@ -6987,7 +7000,7 @@ Permission *DatabaseModel::createPermission(void)
 		//If the object is a column its needed to get the parent table
 		if(obj_type==ObjectType::Column)
 		{
-			parent_table=dynamic_cast<PhysicalTable *>(getPhysicalTable(parent_name));
+			parent_table=dynamic_cast<PhysicalTable *>(getObject(parent_name, {ObjectType::Table, ObjectType::ForeignTable}));
 
 			if(parent_table)
 				object=parent_table->getColumn(obj_name);
@@ -10757,16 +10770,6 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
-}
-
-PhysicalTable *DatabaseModel::getPhysicalTable(const QString &name)
-{
-	PhysicalTable *table = getTable(name);
-
-	if(!table)
-		table = getForeignTable(name);
-
-	return(table);
 }
 
 void DatabaseModel::setLayers(const QStringList &layers)
