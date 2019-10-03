@@ -14,7 +14,7 @@
 %else
     %if {attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,
-	     cl.attacl AS permission, df.adsrc AS default_value,
+	     cl.attacl AS permission, pg_get_expr(df.adbin, df.adrelid) AS default_value,
 	     ds.description AS comment, tb.oid AS table, ]
 
     %if ({pgsql-ver} >=f "10.0") %then

@@ -29,13 +29,14 @@ namespace PgSqlVersions {
 	PgSqlVersion96=QString("9.6"),
 	PgSqlVersion100=QString("10.0"),
 	PgSqlVersion110=QString("11.0"),
-	DefaulVersion=PgSqlVersion110;
+	PgSqlVersion120=QString("12.0"),
+	DefaulVersion=PgSqlVersion120;
 
 	const QStringList
 	AllVersions={
-		PgSqlVersion110, PgSqlVersion100,
-		PgSqlVersion96, PgSqlVersion95,
-		PgSqlVersion94, PgSqlVersion93,
-		PgSqlVersion92, PgSqlVersion91,
-		PgSqlVersion90 };
+		PgSqlVersion120, PgSqlVersion110,
+		PgSqlVersion100, PgSqlVersion96,
+		PgSqlVersion95, PgSqlVersion94,
+		PgSqlVersion93, PgSqlVersion92,
+		PgSqlVersion91, PgSqlVersion90 };
 }

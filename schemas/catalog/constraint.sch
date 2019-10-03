@@ -41,7 +41,7 @@
 %else
     %if {attribs} %then
      [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table,
-	     cs.conkey AS src_columns, cs.confkey AS dst_columns, cs.consrc AS expression,
+	     cs.conkey AS src_columns, cs.confkey AS dst_columns, 
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
              am.amname AS index_type, cl.reloptions AS factor,  ]

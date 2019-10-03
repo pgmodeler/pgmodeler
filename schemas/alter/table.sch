@@ -9,7 +9,7 @@
   %set {rls}     [ROW LEVEL SECURITY]
   %set {ddl-end} ; $br [-- ddl-end --] $br
 
-  %if {oids} %then
+  %if ({pgsql-ver} <=f "11.0") %and {oids} %then
     {alter} [ SET ]
 
     %if ({oids}=="unset") %then
