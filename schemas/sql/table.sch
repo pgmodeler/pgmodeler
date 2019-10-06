@@ -67,7 +67,7 @@ $br )
 
 %if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
 %if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
-%if {oids} %then $br [WITH ( OIDS = TRUE )] %end
+%if ({pgsql-ver} <=f "11.0") %and {oids} %then $br [WITH ( OIDS = TRUE )] %end
 %if {tablespace} %then
  $br [TABLESPACE ] {tablespace}
 %end

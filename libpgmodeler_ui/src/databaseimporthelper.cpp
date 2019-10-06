@@ -1014,7 +1014,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 			aux_attribs[Attributes::Name] = constr_attrs.at(0);
 
 			expr = constr_attrs.at(1);
-			expr.remove(0,1);
+			expr.replace(QString("CHECK ("), QString());
 			expr.remove(expr.length() - 1,1);
 			aux_attribs[Attributes::Expression] = expr;
 
@@ -2079,6 +2079,13 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				//Clears the tablespace attribute when the constraint is fk avoiding errors
 				if(attribs[Attributes::Type]==Attributes::FkConstr)
 					attribs[Attributes::Tablespace]=QString();
+				else if(attribs[Attributes::Type]==Attributes::CkConstr)
+				{
+					QString expr = attribs[Attributes::Expressions];
+					expr.replace(QString("CHECK ("), QString());
+					expr.remove(expr.lastIndexOf(')'), 1);
+					attribs[Attributes::Expression] = expr;
+				}
 
 				attribs[Attributes::SrcColumns]=getColumnNames(attribs[Attributes::Table], attribs[Attributes::SrcColumns]).join(',');
 			}
@@ -2571,7 +2578,6 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 			 Since the extra chars in the default value of the imported column are redundant (casting
 			 varchar to character varying) we remove the '::character varying'. The idea here is to eliminate
 			 the cast if the casting is equivalent to the column type. */
-
 			def_val = itr->second[Attributes::DefaultValue];
 
 			if(!def_val.startsWith(QString("nextval(")) && def_val.contains(QString("::")))
