@@ -447,13 +447,32 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 		 (widgets_geom[dlg_name].maximized ||
 			(widgets_geom[dlg_name].geometry.width() > 0 && widgets_geom[dlg_name].geometry.height() > 0)))
 	{
-		if(widgets_geom[dlg_name].maximized)
+		QList<QScreen *> screens = qApp->screens();
+		WidgetState wgt_st = widgets_geom[dlg_name];
+		bool scr_contains_geom = false;
+		QRect scr_geom;
+
+		// Validating the widget geometry against the available screens sizes
+		for(auto &scr : screens)
 		{
-			widget->move(widgets_geom[dlg_name].geometry.topLeft());
+			scr_geom = scr->geometry();
+			scr_contains_geom = ((wgt_st.maximized && scr_geom.contains(wgt_st.geometry.topLeft())) ||
+													 (scr_geom.contains(wgt_st.geometry)));
+			if(scr_contains_geom) break;
+		}
+
+		/* If the current window geometry doesn't fit the screen(s) geometry
+		 * the default geometry of the window is used */
+		if(!scr_contains_geom)
+			return(false);
+
+		if(wgt_st.maximized)
+		{
+			widget->move(wgt_st.geometry.topLeft());
 			widget->setWindowState(Qt::WindowMaximized);
 		}
 		else
-			widget->setGeometry(widgets_geom[dlg_name].geometry);
+			widget->setGeometry(wgt_st.geometry);
 
 		return(true);
 	}
