@@ -234,11 +234,11 @@ void PhysicalTable::setColumnsAttribute(unsigned def_type, bool incl_rel_added_c
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
-		if(!str_cols.isEmpty())
+		if(!str_cols.isEmpty()  && !gen_alter_cmds)
 		{
 			count = str_cols.size();
 
-			// Removing the last comma from the columns SQL
+			// Removing the last comma from the columns SQL in order to avoid syntax errors
 			if(str_cols[count-2] == ',' || str_cols[count-2] == '\n')
 				str_cols.remove(count - 2, 2);
 
