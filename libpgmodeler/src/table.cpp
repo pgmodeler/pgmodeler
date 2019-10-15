@@ -2005,7 +2005,7 @@ QString Table::getInitialDataCommands(void)
 		
 		commands.append("\\.");
 
-		return(commands.join('\n'));
+		return(commands.join('\n') + Attributes::DdlEndToken );
 	}
 
 	return(QString());

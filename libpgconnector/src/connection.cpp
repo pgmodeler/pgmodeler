@@ -437,7 +437,61 @@ void Connection::executeDDLCommand(const QString &sql)
 
 	validateConnectionStatus();
 	notices.clear();
-	sql_res=PQexec(connection, sql.toStdString().c_str());
+
+    QRegExp rx( "^(COPY .+\\.[\\s\\S]+ FROM stdin;)\\n([\\s\\S]+)\\n\\\\.");
+    
+    if ( -1 !=  rx.indexIn( sql ) )
+    {
+        sql_res=PQexec(connection, rx.cap(1).toStdString().c_str());
+        
+        if ( PQresultStatus(sql_res) != PGRES_COPY_IN )
+        {
+            QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
+            
+            PQclear(sql_res);
+            
+            throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
+                .arg(PQerrorMessage(connection)),
+                ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
+        }
+        else
+        {
+            PQclear(sql_res);
+
+            auto data = rx.cap(2).toStdString();
+            
+            PQputCopyData( connection, data.c_str(), data.size() );
+            
+            if ( 1 ==  PQputCopyEnd( connection, NULL ) )
+            {
+                sql_res = PQgetResult(connection);
+                if (PQresultStatus(sql_res) != PGRES_COMMAND_OK) 
+                {
+                    QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
+                
+                    PQclear(sql_res);
+                    
+                    throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
+                    .arg(PQerrorMessage(connection)),
+                    ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
+                }
+            }
+            else 
+            {
+                QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
+
+                PQclear(sql_res);
+                
+                throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
+                    .arg(PQerrorMessage(connection)),
+                    ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
+            }
+        }
+    }
+    else
+    {
+        sql_res=PQexec(connection, sql.toStdString().c_str());
+    }
 
 	//Prints the SQL to stdout when the flag is active
 	if(print_sql)
