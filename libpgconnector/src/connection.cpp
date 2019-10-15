@@ -462,29 +462,9 @@ void Connection::executeDDLCommand(const QString &sql)
             
             PQputCopyData( connection, data.c_str(), data.size() );
             
-            if ( 1 ==  PQputCopyEnd( connection, NULL ) )
+            if ( 1 == PQputCopyEnd( connection, NULL ) )
             {
                 sql_res = PQgetResult(connection);
-                if (PQresultStatus(sql_res) != PGRES_COMMAND_OK) 
-                {
-                    QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
-                
-                    PQclear(sql_res);
-                    
-                    throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
-                    .arg(PQerrorMessage(connection)),
-                    ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
-                }
-            }
-            else 
-            {
-                QString field = QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE));
-
-                PQclear(sql_res);
-                
-                throw Exception(Exception::getErrorMessage(ErrorCode::SQLCommandNotExecuted)
-                    .arg(PQerrorMessage(connection)),
-                    ErrorCode::SQLCommandNotExecuted, __PRETTY_FUNCTION__, __FILE__, __LINE__, nullptr,	field);
             }
         }
     }
