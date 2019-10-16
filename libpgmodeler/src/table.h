@@ -53,18 +53,10 @@ class Table: public PhysicalTable {
 
 		//! \brief Indicates if the table accepts OIDs
 		with_oid;
-
-        static bool use_copy_syntax;
-        //! \brief Flag to use COPY syntax instead of INSERT.
+        
 	public:
 		Table(void);
 		~Table(void);
-        
-                
-        /*! \brief This method sets whether to use COPY FROM syntax instead of INSERT INTO or not. 
-         * \param p_use_copy_syntax if true, else use INSERT INTO
-         */
-        static inline void setCopySyntax( bool p_use_copy_syntax ) noexcept { Table::use_copy_syntax = p_use_copy_syntax; } 
 
 		//! \brief Defines if the table is unlogged
 		void setUnlogged(bool value);

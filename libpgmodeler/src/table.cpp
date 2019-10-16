@@ -19,7 +19,6 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-bool Table::use_copy_syntax;
 Table::Table(void) : PhysicalTable()
 {
 	obj_type = ObjectType::Table;

@@ -121,6 +121,10 @@ class PhysicalTable: public BaseTable {
 
 		//! \brief Performs the destruction of all children objects and internal lists clearing
 		void destroyObjects(void);
+        
+        //! \brief Flag to use COPY syntax instead of INSERT.
+        static bool use_copy_syntax;
+
 
 	public:
 		//! \brief Default char for data separator in initial-data tag
@@ -131,6 +135,11 @@ class PhysicalTable: public BaseTable {
 
 		PhysicalTable(void);
 		~PhysicalTable(void){}
+		
+        /*! \brief This method sets whether to use COPY FROM syntax instead of INSERT INTO or not. 
+         * \param p_use_copy_syntax if true, else use INSERT INTO
+         */
+        static inline void setCopySyntax( bool p_use_copy_syntax ) noexcept { PhysicalTable::use_copy_syntax = p_use_copy_syntax; } 
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
 		static bool isPhysicalTable(ObjectType obj_type);

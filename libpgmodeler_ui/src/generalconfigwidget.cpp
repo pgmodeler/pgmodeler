@@ -700,7 +700,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelDatabaseDiffForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	DatabaseImportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
-    Table::setCopySyntax(copy_from_chk->isChecked());
+    PhysicalTable::setCopySyntax(copy_from_chk->isChecked());
 }
 
 void GeneralConfigWidget::restoreDefaults(void)

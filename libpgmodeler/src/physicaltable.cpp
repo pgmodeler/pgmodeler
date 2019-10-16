@@ -22,6 +22,8 @@
 const QString PhysicalTable::DataSeparator = QString("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
+bool PhysicalTable::use_copy_syntax;
+
 PhysicalTable::PhysicalTable(void) : BaseTable()
 {
 	gen_alter_cmds=false;
@@ -1593,6 +1595,12 @@ QString PhysicalTable::getInitialDataCommands(void)
 
 			curr_col++;
 		}
+		
+		if ( PhysicalTable::use_copy_syntax )
+		{
+			auto cmd = QString("COPY %1 (%2) FROM stdin;").arg( getSignature() ).arg( selected_cols.join(", ") );
+			commands.append( cmd );
+		}
 
 		for(QString buf_row : buffer)
 		{
@@ -1610,8 +1618,13 @@ QString PhysicalTable::getInitialDataCommands(void)
 			commands.append(createInsertCommand(selected_cols, col_values));
 			col_values.clear();
 		}
+		
+		if ( PhysicalTable::use_copy_syntax )
+		{
+			commands.append("\\.");
+		}
 
-		return(commands.join('\n'));
+		return( commands.join('\n')  + Attributes::DdlEndToken );
 	}
 
 	return(QString());
@@ -1619,7 +1632,7 @@ QString PhysicalTable::getInitialDataCommands(void)
 
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
 {
-	QString fmt_cmd, insert_cmd = QString("INSERT INTO %1 (%2) VALUES (%3);\n%4");
+	QString fmt_cmd, insert_cmd = ( PhysicalTable::use_copy_syntax ? QString("%1") : QString("INSERT INTO %1 (%2) VALUES (%3);\n%4") );
 	QStringList val_list, col_list;
 	int curr_col=0;
 
@@ -1628,10 +1641,10 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 
 	for(QString value : values)
 	{
-		//Empty values as considered as DEFAULT
+		//Empty values as considered as DEFAULT for INSERT queries or NULL if COPY FROM 
 		if(value.isEmpty())
 		{
-			value=QString("DEFAULT");
+			value= ( PhysicalTable::use_copy_syntax ? QString("\\N") : QString("DEFAULT") );
 		}
 		//Unescaped values will not be enclosed in quotes
 		else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
@@ -1646,7 +1659,11 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 			value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
-			value=QString("E'") + value + QString("'");
+			
+			if ( !PhysicalTable::use_copy_syntax )
+			{
+				value=QString("E'") + value + QString("'");
+			}
 		}
 
 		val_list.push_back(value);
@@ -1661,11 +1678,11 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
-				val_list.append(QString("DEFAULT"));
+				val_list.append( ( PhysicalTable::use_copy_syntax ? QString("\\N") : QString("DEFAULT") ) );
 		}
 
-		fmt_cmd=insert_cmd.arg(getSignature()).arg(col_list.join(", "))
-									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken);
+		fmt_cmd=( PhysicalTable::use_copy_syntax ? insert_cmd.arg(val_list.join("\t")) : insert_cmd.arg(getSignature()).arg(col_list.join(", "))
+									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken) );
 	}
 
 	return(fmt_cmd);
