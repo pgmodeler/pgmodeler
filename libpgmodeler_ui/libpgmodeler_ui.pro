@@ -25,7 +25,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-		 src/databasewidget.cpp \
+	   src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/rolewidget.cpp \
 	   src/permissionwidget.cpp \

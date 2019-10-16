@@ -130,7 +130,8 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	}
 
 	data_type->setAttributes(type, model,
-													 UserTypeConfig::BaseType | UserTypeConfig::TableType | UserTypeConfig::ViewType |
+													 UserTypeConfig::BaseType | UserTypeConfig::TableType |
+													 UserTypeConfig::ViewType | UserTypeConfig::ForeignTableType |
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
@@ -189,7 +190,7 @@ void ColumnWidget::applyConfiguration(void)
 
 		if(table)
 		{
-			pk = dynamic_cast<Table *>(table)->getPrimaryKey();
+			pk = dynamic_cast<PhysicalTable *>(table)->getPrimaryKey();
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
 				throw Exception(Exception::getErrorMessage(ErrorCode::NullPrimaryKeyColumn)
 												.arg(column->getName())
@@ -198,7 +199,7 @@ void ColumnWidget::applyConfiguration(void)
 		}
 
 		BaseObjectWidget::applyConfiguration();
-		model->updateViewsReferencingTable(dynamic_cast<Table *>(table));
+		model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(table));
 
 		finishConfiguration();
 	}

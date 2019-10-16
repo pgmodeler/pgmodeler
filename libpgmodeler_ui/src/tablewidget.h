@@ -35,11 +35,13 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		ObjectsTableWidget *parent_tables;
+		ObjectsTableWidget *parent_tables, *options_tab;
 
 		ElementsTableWidget *partition_keys_tab;
 
-		ObjectSelectorWidget *tag_sel;
+		ObjectSelectorWidget *tag_sel, *server_sel;
+
+		QFrame *warn_frame;
 
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
@@ -61,10 +63,13 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
+		void __setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y);
+
 	public:
-		TableWidget(QWidget * parent = nullptr);
+		TableWidget(QWidget * parent = nullptr, ObjectType tab_type = ObjectType::Table);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y);
 
 	private slots:
 		//! \brief Adds or edit a object on the object table that calls the slot

@@ -33,9 +33,9 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
-	"foreignserver", "usermapping", "relationship", "textbox",
-	"permission", "parameter", "typeattribute", "tag",
-	"genericsql", "relationship"
+	"foreignserver", "foreigntable", "usermapping", "relationship",
+	"textbox", "permission", "parameter", "typeattribute",
+	"tag", "genericsql", "relationship"
 };
 
 const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
@@ -48,10 +48,10 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
-	QT_TR_NOOP("Foreign Server"), QT_TR_NOOP("User Mapping"), QT_TR_NOOP("Relationship"),
-	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
-	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
-	QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
+	QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
+	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+	QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -63,7 +63,7 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
 	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"),
 	QString("POLICY"), QString("FOREIGN DATA WRAPPER"), QString("SERVER"),
-	QString("USER MAPPING")
+	QString("FOREIGN TABLE"), QString("USER MAPPING")
 };
 
 /* Initializes the global id which is shared between instances
@@ -75,6 +75,7 @@ unsigned BaseObject::global_id=4000;
 
 QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
+bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject(void)
 {
@@ -100,12 +101,23 @@ BaseObject::BaseObject(void)
 	attributes[Attributes::PrependedSql]=QString();
 	attributes[Attributes::Drop]=QString();
 	attributes[Attributes::Signature]=QString();
+	attributes[Attributes::EscapeComment]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
 unsigned BaseObject::getGlobalId(void)
 {
 	return(global_id);
+}
+
+void BaseObject::setEscapeComments(bool value)
+{
+	escape_comments = value;
+}
+
+bool BaseObject::isEscapeComments(void)
+{
+	return(escape_comments);
 }
 
 QString BaseObject::getTypeName(ObjectType obj_type)
@@ -389,7 +401,7 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
 			 obj_type==ObjectType::Type || obj_type==ObjectType::OpClass ||
 			 obj_type==ObjectType::OpFamily || obj_type==ObjectType::Collation ||
-			 obj_type==ObjectType::Extension);
+			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsSchema(void)
@@ -408,7 +420,8 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
-			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping);
+			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping ||
+			 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -461,7 +474,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
 				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
 				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
-				 obj_type==ObjectType::UserMapping);
+				 obj_type==ObjectType::UserMapping || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -479,7 +492,8 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Schema || obj_type==ObjectType::View ||
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
-				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy);
+				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -596,6 +610,21 @@ QString BaseObject::getSignature(bool format)
 QString BaseObject::getComment(void)
 {
 	return(comment);
+}
+
+QString BaseObject::getEscapedComment(bool escape_special_chars)
+{
+	QString fmt_comm = comment.trimmed();
+
+	if(escape_special_chars)
+	{
+		fmt_comm.replace(QChar('\\'), QString("\\\\"));
+		fmt_comm.replace(QChar::LineFeed, QString("\\n"));
+		fmt_comm.replace(QChar::Tabulation, QString("\\t"));
+	}
+
+	fmt_comm.replace(QChar('\''), QString("''"));
+	return(fmt_comm);
 }
 
 BaseObject *BaseObject::getSchema(void)
@@ -777,7 +806,11 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(!comment.isEmpty())
 		{
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::Comment]=QString(comment).replace(QString("'"), QString("''"));
+			{
+				QString escape_comm = getEscapedComment(escape_comments);
+				attributes[Attributes::EscapeComment]=escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=escape_comm;
+			}
 			else
 				attributes[Attributes::Comment]=comment;
 
@@ -949,7 +982,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
 									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
 									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
-									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View };
+									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
@@ -982,13 +1015,16 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 
 	if(obj_type==ObjectType::Schema)
 		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
-																	ObjectType::Domain, ObjectType::Function, ObjectType::OpClass,
+																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
 																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
 																	ObjectType::Type, ObjectType::Table, ObjectType::View });
 
 	if(obj_type==ObjectType::Table)
 		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
 																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
+
+	if(obj_type==ObjectType::ForeignTable)
+		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger });
 
 	if(obj_type==ObjectType::View)
 		return(vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index});
@@ -1262,12 +1298,18 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 {
 	try
 	{
-		if(this->getComment()!=object->getComment())
+		QString comm_this = this->getEscapedComment(escape_comments),
+				comm_obj = object->getEscapedComment(escape_comments);
+
+		if(comm_this != comm_obj)
 		{
-			if(object->getComment().isEmpty())
+			if(comm_obj.isEmpty())
 				attributes[Attributes::Comment]=Attributes::Unset;
 			else
-				attributes[Attributes::Comment]=object->getComment();
+			{
+				attributes[Attributes::EscapeComment] = escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=comm_obj;
+			}
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);

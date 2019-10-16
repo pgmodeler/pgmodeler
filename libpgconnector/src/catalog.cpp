@@ -39,7 +39,7 @@ map<ObjectType, QString> Catalog::oid_fields=
 	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
 	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
 	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
-	{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}
+	{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}, {ObjectType::ForeignTable, "ft.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
@@ -60,7 +60,7 @@ map<ObjectType, QString> Catalog::name_fields=
 	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
 	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "relname"},
 	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"},
-	{ObjectType::ForeignServer, "srvname"}
+	{ObjectType::ForeignServer, "srvname"}, {ObjectType::ForeignTable, "relname"}
 };
 
 Catalog::Catalog(void)

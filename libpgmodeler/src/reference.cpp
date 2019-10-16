@@ -25,7 +25,7 @@ Reference::Reference(void)
 	this->is_def_expr=false;
 }
 
-Reference::Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias)
+Reference::Reference(PhysicalTable *table, Column *column, const QString &tab_alias, const QString &col_alias)
 {
 	//Raises an error if the table is not allocated
 	if(!table)
@@ -69,7 +69,7 @@ void Reference::setDefinitionExpression(bool value)
 	if(!value) clearReferencedTables();
 }
 
-void Reference::addReferencedTable(Table *ref_table)
+void Reference::addReferencedTable(PhysicalTable *ref_table)
 {
 	if(!ref_table)
 		return;
@@ -78,10 +78,10 @@ void Reference::addReferencedTable(Table *ref_table)
 		ref_tables.push_back(ref_table);
 }
 
-int Reference::getReferencedTableIndex(Table *ref_table)
+int Reference::getReferencedTableIndex(PhysicalTable *ref_table)
 {
 	int idx = -1;
-	vector<Table *>::iterator itr = std::find(ref_tables.begin(), ref_tables.end(), ref_table);
+	vector<PhysicalTable *>::iterator itr = std::find(ref_tables.begin(), ref_tables.end(), ref_table);
 
 	if(itr != ref_tables.end())
 		idx = itr - ref_tables.begin();
@@ -94,7 +94,7 @@ void Reference::clearReferencedTables(void)
 	ref_tables.clear();
 }
 
-vector<Table *> Reference::getReferencedTables(void)
+vector<PhysicalTable *> Reference::getReferencedTables(void)
 {
 	return(ref_tables);
 }
@@ -154,7 +154,7 @@ vector<SimpleColumn> Reference::getColumns(void)
 	return(columns);
 }
 
-Table *Reference::getTable(void)
+PhysicalTable *Reference::getTable(void)
 {
 	return(table);
 }

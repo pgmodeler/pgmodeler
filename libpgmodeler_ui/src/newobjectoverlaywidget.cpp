@@ -59,7 +59,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 										{ genericsql_tb,   std::make_tuple(trUtf8("8"), ObjectType::GenericSql)   },
 										{ fdw_tb,          std::make_tuple(trUtf8("7"), ObjectType::ForeignDataWrapper) },
 										{ server_tb,       std::make_tuple(trUtf8("6"), ObjectType::ForeignServer) },
-										{ user_mapping_tb, std::make_tuple(trUtf8("5"), ObjectType::UserMapping) }};
+										{ user_mapping_tb, std::make_tuple(trUtf8("5"), ObjectType::UserMapping) },
+										{ foreigntable_tb, std::make_tuple(trUtf8("4"), ObjectType::ForeignTable) }};
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={
 										{ rel11_tb,  std::make_tuple(trUtf8("1"), 0) },
@@ -121,13 +122,13 @@ void NewObjectOverlayWidget::setSelectedObjects(vector<BaseObject *> &sel_objs)
 	db_objs_grp->setVisible(obj_type==ObjectType::Database);
 	sch_objs_grp->setVisible(obj_type==ObjectType::Database || obj_type==ObjectType::Schema);
 
-	tab_objs_grp->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship);
-	column_tb->setDisabled(obj_type==ObjectType::View);
-	constraint_tb->setDisabled(obj_type==ObjectType::View);
+	tab_objs_grp->setVisible(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Relationship);
+	column_tb->setVisible(obj_type!=ObjectType::View);
+	constraint_tb->setVisible(obj_type!=ObjectType::View);
 	index_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	rule_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-	trigger_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
-	policy_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
+	trigger_tb->setVisible(BaseTable::isBaseTable(obj_type));
+	policy_tb->setVisible(obj_type==ObjectType::Table);
 	tab_perms_tb->setVisible(obj_type==ObjectType::Table || obj_type==ObjectType::View);
 	rels_grp->setVisible((sel_objs.size()==1 && sel_objs.at(0)->getObjectType()==ObjectType::Table) ||
 											 (sel_objs.size()==2 && sel_objs.at(0)->getObjectType()==ObjectType::Table && sel_objs.at(1)->getObjectType()==ObjectType::Table));

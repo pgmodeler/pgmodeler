@@ -75,12 +75,15 @@ void SchemaView::fetchChildren(void)
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
-	vector<BaseObject *> objs, objs1;
+	vector<BaseObject *> objs, list;
+	vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	//Gets all tables and views that belongs to the schema
-	objs=model->getObjects(ObjectType::Table, schema);
-	objs1=model->getObjects(ObjectType::View, schema);
-	objs.insert(objs.end(), objs1.begin(), objs1.end());
+	for(auto &type : types)
+	{
+		list = model->getObjects(type, schema);
+		objs.insert(objs.end(), list.begin(), list.end());
+	}
 
 	children.clear();
 	while(!objs.empty())

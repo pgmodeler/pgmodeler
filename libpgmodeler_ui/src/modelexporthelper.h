@@ -83,7 +83,7 @@ class ModelExportHelper: public QObject {
 		map<ObjectType, int> created_objs;
 
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
-		map<Table *, bool> alter_cmds_status;
+		map<PhysicalTable *, bool> alter_cmds_status;
 
 		//! \brief Stores the original object names before the call of generateRandomObjectNames()
 		map<BaseObject *, QString> orig_obj_names;

@@ -422,7 +422,7 @@ QString Function::getSignature(bool)
 
 void Function::createSignature(bool format, bool prepend_schema)
 {
-	QString str_param;
+	QString str_params, aux_str;
 	unsigned i, count;
 
 	count=parameters.size();
@@ -433,15 +433,18 @@ void Function::createSignature(bool format, bool prepend_schema)
 				(parameters[i].isIn() && parameters[i].isOut()) ||
 				(parameters[i].isIn() && !parameters[i].isOut()))
 		{
-			str_param+=parameters[i].getCodeDefinition(SchemaParser::SqlDefinition, true).trimmed();
+			/* Removing the arg mode IN from parameter signature because this is de default for any kind of parameter
+			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it */
+			aux_str=parameters[i].getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)( )"),"");
+			str_params+=aux_str.trimmed();
 			parameters[i].setCodeInvalidated(true);
 		}
 	}
 
-	str_param.remove(str_param.length()-1, 1);
+	str_params.remove(str_params.length()-1, 1);
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + str_param + QString(")");
+	signature=this->getName(format, prepend_schema) + QString("(") + str_params + QString(")");
 	this->setCodeInvalidated(true);
 }
 
@@ -507,9 +510,8 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
-		if(this->source_code.simplified()!=func->source_code.simplified() ||
-				this->library!=func->library ||
-				this->symbol!=func->symbol)
+		if(this->source_code.simplified() != func->source_code.simplified() ||
+			 this->library!=func->library || this->symbol!=func->symbol)
 		{
 			attribs[Attributes::Definition]=func->getCodeDefinition(SchemaParser::SqlDefinition);
 			attribs[Attributes::Definition].replace(QString("CREATE FUNCTION"), QString("CREATE OR REPLACE FUNCTION"));

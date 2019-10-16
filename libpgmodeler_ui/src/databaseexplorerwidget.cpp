@@ -131,7 +131,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::PartitionedTable, QT_TR_NOOP("Partition of")},	{Attributes::PartitionBoundExpr, QT_TR_NOOP("Partition bound expr.")},
 	{Attributes::DeadRowsAmount, QT_TR_NOOP("Dead rows amount")},	{Attributes::PartitionKey, QT_TR_NOOP("Partition keys")},
 	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")},
-	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")}
+	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")},
+	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
@@ -227,7 +228,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 				ObjectType obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 				unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 
-				if((obj_type==ObjectType::Schema || obj_type==ObjectType::Table || obj_type==ObjectType::View) && oid > 0 && item->childCount() <= 1)
+				if((obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type)) && oid > 0 && item->childCount() <= 1)
 				{
 					updateItem(item);
 				}
@@ -275,7 +276,7 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 					unsigned oid=item->data(DatabaseImportForm::ObjectId, Qt::UserRole).toUInt();
 					obj_type=static_cast<ObjectType>(item->data(DatabaseImportForm::ObjectTypeId, Qt::UserRole).toUInt());
 
-					if(oid!=0 && (obj_type==ObjectType::Table || obj_type==ObjectType::View))
+					if(oid!=0 && BaseTable::isBaseTable(obj_type))
 					{
 						openDataGrid(item->data(DatabaseImportForm::ObjectSchema, Qt::UserRole).toString(),
 												 item->text(0), obj_type!=ObjectType::View);
@@ -521,18 +522,18 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 
 	formatOidAttribs(attribs, { Attributes::ArgTypes }, ObjectType::Type, true);
 	attribs[Attributes::Signature]=(QString("%1(%2)")
-											 .arg(BaseObject::formatName(attribs[Attributes::Name]))
-											.arg(attribs[Attributes::ArgTypes])).replace(ElemSeparator, QString(","));
+																	.arg(BaseObject::formatName(attribs[Attributes::Name]))
+																	.arg(attribs[Attributes::ArgTypes])).replace(ElemSeparator, QString(","));
 
 	formatBooleanAttribs(attribs, { Attributes::WindowFunc,
-									Attributes::LeakProof,
-									Attributes::ReturnsSetOf });
+																	Attributes::LeakProof,
+																	Attributes::ReturnsSetOf });
 }
 
 void DatabaseExplorerWidget::formatOperatorAttribs(attribs_map &attribs)
 {
 	formatBooleanAttribs(attribs, { Attributes::Hashes,
-									Attributes::Merges });
+																	Attributes::Merges });
 
 	formatOidAttribs(attribs, { Attributes::LeftType,
 								Attributes::RightType}, ObjectType::Type, false);
@@ -846,6 +847,7 @@ void DatabaseExplorerWidget::formatServerAttribs(attribs_map &attribs)
 void DatabaseExplorerWidget::formatUserMappingAttribs(attribs_map &attribs)
 {
 	attribs[Attributes::Options]=Catalog::parseArrayValues(attribs[Attributes::Options]).join(ElemSeparator);
+	formatOidAttribs(attribs, { Attributes::Owner }, ObjectType::Role, false);
 	formatOidAttribs(attribs, { Attributes::Server }, ObjectType::ForeignServer, false);
 }
 
@@ -1077,7 +1079,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 
 		if(obj_id > 0)
 		{
-			if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
+			if(BaseTable::isBaseTable(obj_type))
 				handle_menu.addAction(show_data_action);
 
 			handle_menu.addAction(properties_action);
@@ -1091,7 +1093,7 @@ void DatabaseExplorerWidget::handleObject(QTreeWidgetItem *item, int)
 				handle_menu.addSeparator();
 				handle_menu.addAction(drop_action);
 
-				if(obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace)
+				if(obj_type!=ObjectType::Role && obj_type!=ObjectType::ForeignTable && obj_type!=ObjectType::Tablespace)
 					handle_menu.addAction(drop_cascade_action);
 
 				if(obj_type==ObjectType::Table)
@@ -1226,6 +1228,13 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 		attribs_map aux_attribs=item->data(DatabaseImportForm::ObjectOtherData, Qt::UserRole).value<attribs_map>();
 		attribs[Attributes::Signature]=QString("%1 USING %2").arg(attribs[Attributes::Name]).arg(aux_attribs[Attributes::IndexType]);
 	}
+	else if(obj_type == ObjectType::UserMapping)
+	{
+		QStringList names = attribs[Attributes::Name].remove('"').split('@');
+		attribs[Attributes::Signature]=QString("FOR %1 SERVER %2")
+																		.arg(BaseObject::formatName(names[0]))
+																		.arg(BaseObject::formatName(names[1]));
+	}
 	else
 	{
 		/* If we are handling a view we need to append the MATERIALIZED keyword in the sql-object in order
@@ -1264,8 +1273,8 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 			QString msg;
 			QString obj_name=item->data(DatabaseImportForm::ObjectName, Qt::UserRole).toString();
 
-			//Roles and tablespaces can't be removed in cascade mode
-			if(cascade && (obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace))
+			//Roles, tablespaces and user mappings can't be removed in cascade mode
+			if(cascade && (obj_type==ObjectType::Role || obj_type==ObjectType::Tablespace || obj_type == ObjectType::UserMapping))
 				return;
 
 			if(!cascade)
@@ -1427,7 +1436,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 				}
 				else
 				{
-					if(obj_type==ObjectType::Schema || obj_type==ObjectType::Table || obj_type == ObjectType::View)
+					if(obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type))
 					{
 						root=item;
 						root->takeChildren();
@@ -1448,7 +1457,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			configureImportHelper();
 
 			//Updates the group type only
-			if(obj_id==0 || (obj_type!=ObjectType::Table && obj_type!=ObjectType::View && obj_type!=ObjectType::Schema))
+			if(obj_id==0 || (!BaseTable::isBaseTable(obj_type) && obj_type!=ObjectType::Schema))
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name, sort_column);
 			else
 				//Updates all child objcts when the selected object is a schema or table or view
@@ -1456,7 +1465,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name, sort_column);
 
 			//Creating dummy items for schemas and tables
-			if(obj_type==ObjectType::Schema || obj_type==ObjectType::Table || obj_type==ObjectType::View)
+			if(obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type))
 			{
 				for(auto &item : gen_items)
 				{
@@ -1470,7 +1479,7 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 			objects_trw->sortItems(sort_column, Qt::AscendingOrder);
 			objects_trw->setCurrentItem(nullptr);
 
-			if(obj_type==ObjectType::Table)
+			if(BaseTable::isBaseTable(obj_type))
 			{
 				objects_trw->blockSignals(true);
 				objects_trw->setCurrentItem(item);
@@ -1888,8 +1897,8 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						//Generating the code for table child object
 						if(TableObject::isTableObject(obj_type) || is_column)
 						{
-							Table *table=nullptr;
-							table=dynamic_cast<Table *>(dbmodel.getObject(tab_name, ObjectType::Table));
+							PhysicalTable *table=nullptr;
+							table=dynamic_cast<PhysicalTable *>(dbmodel.getObject(tab_name, {ObjectType::Table, ObjectType::ForeignTable}));
 							QTreeWidgetItem *table_item=nullptr;
 
 							//If the table was imported then the source code of it will be placed on the respective item

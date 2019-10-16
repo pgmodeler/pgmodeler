@@ -599,7 +599,7 @@ QString TableObjectView::getConstraintString(Column *column)
 {
 	if(column && column->getParentTable())
 	{
-		Table *table=dynamic_cast<Table *>(column->getParentTable());
+		PhysicalTable *table=dynamic_cast<PhysicalTable *>(column->getParentTable());
 		QString str_constr;
 		Constraint *constr=nullptr;
 		vector<TableObject *>::iterator itr,itr_end;

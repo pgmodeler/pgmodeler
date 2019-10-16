@@ -82,7 +82,7 @@ void ObjectRenameWidget::applyRenaming(void)
 	{
 		//Apply the new name only when its not empty and its differs from the original one
 		if(!new_name_edt->text().isEmpty() &&
-				this->object->getName()!=new_name_edt->text())
+			 this->object->getName()!=new_name_edt->text())
 		{
 			BaseGraphicObject *obj_graph=dynamic_cast<BaseGraphicObject *>(object);
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -131,20 +131,22 @@ void ObjectRenameWidget::applyRenaming(void)
 			object->setName(new_name_edt->text().toUtf8());
 
 			//If the renamed object is a graphical one, set as modified to force its redraw
-			if(obj_graph)
+			if(object->getObjectType()==ObjectType::Schema)
+			{
+				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
+				dynamic_cast<Schema *>(object)->setModified(true);
+			}
+			else if(obj_graph)
 			{
 				obj_graph->setModified(true);
 
-				if(obj_graph->getObjectType()==ObjectType::Table ||
-						obj_graph->getObjectType()==ObjectType::View)
-				{
+				if(BaseTable::isBaseTable(obj_graph->getObjectType()))
 					dynamic_cast<Schema *>(obj_graph->getSchema())->setModified(true);
-				}
 			}
 			else if(tab_obj)
 			{
 				BaseTable *base_tab = tab_obj->getParentTable();
-				Table *tab = dynamic_cast<Table *>(base_tab);
+				PhysicalTable *tab = dynamic_cast<PhysicalTable *>(base_tab);
 				Column *col=dynamic_cast<Column *>(tab_obj);
 
 				/* If the object is a column and some primary key on table is referencing it
@@ -161,11 +163,6 @@ void ObjectRenameWidget::applyRenaming(void)
 				base_tab->setCodeInvalidated(true);
 				dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 			}
-			else if(object->getObjectType()==ObjectType::Schema)
-			{
-				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
-				dynamic_cast<Schema *>(object)->setModified(true);
-			}
 
 			Column *col=nullptr;
 			model->getObjectReferences(object, ref_objs);
@@ -181,7 +178,6 @@ void ObjectRenameWidget::applyRenaming(void)
 				else
 					obj->setCodeInvalidated(true);
 			}
-
 
 			accept();
 		}

@@ -46,7 +46,7 @@
             AND dv.classid = 'pg_rewrite'::regclass::oid AND dv.deptype = 'i'
             AND dv.objid = dt.objid AND dv.refobjid <> dt.refobjid AND dt.classid = 'pg_rewrite'::regclass::oid
             AND dt.refclassid = 'pg_class'::regclass::oid AND dt.refobjid = t.oid 
-            AND t.relnamespace = nt.oid AND t.relkind IN ('r', 'p') 
+            AND t.relnamespace = nt.oid AND t.relkind IN ('r', 'p', 'f') 
             AND v.oid = ] vw.oid [) AS ref_tables, ]
                 
         [ CASE

@@ -28,17 +28,17 @@ Component.prototype.createOperations = function()
             "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/pgmodeler.exe",
             "iconId=0", "description=PostgreSQL Database Modeler");
 			
-			mime_update=installdir + "/" + "pgmodeler-cli.exe";    
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
+			//mime_update=installdir + "/" + "pgmodeler-cli.exe";    
+			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
+			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
 		}
 		else {			
 			start_script=installdir + "/" + "start-pgmodeler.sh";
 			mime_update=installdir + "/" + "dbm-mime-type.sh";
 			component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
 			component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "uninstall");
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "install");
+			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "uninstall");
+			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "install");
 		}
     } catch (e) {
         print(e);

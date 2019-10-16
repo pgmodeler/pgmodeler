@@ -494,7 +494,7 @@ void ViewWidget::editReference(int ref_idx)
 
 void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned row)
 {
-	Table *tab=nullptr;
+	PhysicalTable *tab=nullptr;
 	Column *col=nullptr;
 	QString str_aux;
 	bool	selec_from = (ref_flags & Reference::SqlReferSelect) == Reference::SqlReferSelect,

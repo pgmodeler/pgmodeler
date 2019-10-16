@@ -57,6 +57,26 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
 		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
 
+		connect(sql_validation_chk, &QCheckBox::toggled, [&](){
+			configureValidation();
+			clearOutput();
+		});
+
+		connect(use_tmp_names_chk, &QCheckBox::toggled, [&](){
+			configureValidation();
+			clearOutput();
+		});
+
+		connect(connections_cmb, &QComboBox::currentTextChanged, [&](){
+			configureValidation();
+			clearOutput();
+		});
+
+		connect(version_cmb, &QComboBox::currentTextChanged, [&](){
+			configureValidation();
+			clearOutput();
+		});
+
 		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true);
 	}
 	catch(Exception &e)
@@ -119,14 +139,15 @@ void ModelValidationWidget::createThread(void)
 		connect(validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
 
-		connect(validation_helper, &ModelValidationHelper::s_validationCanceled,
-				[&](){ emit s_validationCanceled(); });
+		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, [&](){
+			emit s_validationCanceled();
+		});
 
-		connect(validation_helper, &ModelValidationHelper::s_fixApplied,
-				[&](){ emit s_fixApplied(); });
+		connect(validation_helper, &ModelValidationHelper::s_fixApplied, [&](){
+			emit s_fixApplied();
+		});
 
-		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged,
-				[&](BaseObject *obj) {
+		connect(validation_helper, &ModelValidationHelper::s_objectIdChanged, [&](BaseObject *obj) {
 			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
 			if(graph_obj) graph_objects.push_back(graph_obj);
 		});
@@ -618,9 +639,9 @@ void ModelValidationWidget::swapObjectsIds(void)
 	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
 	parent_form.setMainWidget(swap_ids_wgt);
 
-	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, this->metaObject()->className());
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&parent_form, this->metaObject()->className());
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 }
 
 void ModelValidationWidget::selectObject(void)

@@ -64,7 +64,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
 		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht,
 		*autosave_ht, *op_history_ht, *ui_language_ht, *grid_size_ht,
-		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht, *reduce_verbosity_ht;
+		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht,
+		*reduce_verbosity_ht, *escape_comments_ht;
 
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 

@@ -27,14 +27,14 @@
 #include "policywidget.h"
 #include "generalconfigwidget.h"
 
-TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Table)
+TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget(parent, tab_type)
 {
 	QGridLayout *grid=nullptr;
 	QVBoxLayout *vbox=nullptr;
 	ObjectsTableWidget *tab=nullptr;
-	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-	map<QString, vector<QWidget *> > fields_map;
-	QFrame *frame=nullptr;
+	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger,
+											 ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+	map<QString, vector<QWidget *> > fields_map;	
 	QPushButton *edt_data_tb=nullptr;
 	QStringList part_types;
 
@@ -51,13 +51,14 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	connect(edt_data_tb, SIGNAL(clicked(bool)), this, SLOT(editData()));
 	misc_btns_lt->insertWidget(1, edt_data_tb);
 
+	fields_map[generateVersionsInterval(UntilVersion, PgSqlVersions::PgSqlVersion110)].push_back(with_oids_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(unlogged_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(enable_rls_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(force_rls_chk);
 	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(partitioning_type_lbl);
-	frame=generateVersionWarningFrame(fields_map);
-	table_grid->addWidget(frame, table_grid->count()+1, 0, 1, 2);
-	frame->setParent(this);
+	warn_frame=generateVersionWarningFrame(fields_map);
+	table_grid->addWidget(warn_frame, table_grid->count()+1, 0, 1, 2);
+	warn_frame->setParent(this);
 
 	parent_tables = new ObjectsTableWidget(ObjectsTableWidget::NoButtons, true, this);
 	parent_tables->setColumnCount(3);
@@ -67,6 +68,26 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
 	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
 	parent_tables->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),2);
+
+	server_sel=nullptr;
+	server_sel=new ObjectSelectorWidget(ObjectType::ForeignServer, true, this);
+
+	vbox = new QVBoxLayout;
+	vbox->setContentsMargins(0,0,0,0);
+	vbox->addWidget(server_sel);
+	server_wgt->setLayout(vbox);
+
+	options_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																			 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
+	options_tab->setCellsEditable(true);
+	options_tab->setColumnCount(2);
+	options_tab->setHeaderLabel(trUtf8("Option"), 0);
+	options_tab->setHeaderLabel(trUtf8("Value"), 1);
+
+	vbox = new QVBoxLayout;
+	vbox->setContentsMargins(4,4,4,4);
+	vbox->addWidget(options_tab);
+	attributes_tbw->widget(8)->setLayout(vbox);
 
 	tag_sel = new ObjectSelectorWidget(ObjectType::Tag, false, this);
 	vbox = new QVBoxLayout(tag_sel_parent);
@@ -115,7 +136,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		if(col == 0 && objects_tab_map[ObjectType::Column]->isCellDisabled(static_cast<unsigned>(row), static_cast<unsigned>(col)))
 		{
 			Messagebox msg_box;
-			Table *table = dynamic_cast<Table *>(this->object);
+			PhysicalTable *table = dynamic_cast<Table *>(this->object);
 			Constraint *pk = table->getPrimaryKey();
 
 			if(pk && pk->isAddedByRelationship())
@@ -187,9 +208,11 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 	  partition_keys_tab->setEnabled(partitioning_type_cmb->currentIndex() != 0);
 	});
 
-	configureFormLayout(table_grid, ObjectType::Table);
+	setRequiredField(server_lbl);
+	setRequiredField(server_sel);
+	configureFormLayout(table_grid, tab_type);
 	configureTabOrder({ tag_sel });
-	setMinimumSize(660, 620);
+	setMinimumSize(660, 630);
 }
 
 template<class Class, class WidgetClass>
@@ -199,8 +222,7 @@ int TableWidget::openEditingForm(TableObject *object)
 	WidgetClass *object_wgt=new WidgetClass;
 	int res = 0;
 
-	object_wgt->setAttributes(this->model, this->op_list,
-							  dynamic_cast<Table *>(this->object), dynamic_cast<Class *>(object));
+	object_wgt->setAttributes(this->model, this->op_list, dynamic_cast<PhysicalTable *>(this->object), dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
 	GeneralConfigWidget::restoreWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
@@ -214,8 +236,8 @@ ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
-	else
-		return(nullptr);
+
+	return(nullptr);
 }
 
 ObjectType TableWidget::getObjectType(QObject *sender)
@@ -243,24 +265,62 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y)
 {
+	if(!table)
+	{
+		table=new Table;
+
+		if(schema)
+			table->setSchema(schema);
+
+		/* Sets the 'new_object' flag as true indicating that the alocated table must be treated
+			 as a recently created object */
+		this->new_object=true;
+	}
+
+	__setAttributes(model, op_list, schema, table, pos_x, pos_y);
+	server_lbl->setVisible(false);
+	server_wgt->setVisible(false);
+	attributes_tbw->removeTab(8); // Removing the options tab
+}
+
+void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, ForeignTable *ftable, double pos_x, double pos_y)
+{
+	if(!ftable)
+	{
+		ftable = new ForeignTable;
+
+		if(schema)
+			ftable->setSchema(schema);
+
+		/* Sets the 'new_object' flag as true indicating that the alocated table must be treated
+			 as a recently created object */
+		this->new_object=true;
+	}
+
+	__setAttributes(model, op_list, schema, ftable, pos_x, pos_y);
+
+	warn_frame->setVisible(false);
+	with_oids_chk->setVisible(false);
+	unlogged_chk->setVisible(false);
+	enable_rls_chk->setVisible(false);
+	force_rls_chk->setVisible(false);
+	attributes_tbw->removeTab(3); //Removing the Index tab
+	attributes_tbw->removeTab(3); //Removing the Rule tab
+	attributes_tbw->removeTab(3); //Removing the Policies tab
+	attributes_tbw->removeTab(3); //Removing the Partition keys tab
+	objects_tab_map[ObjectType::Column]->setHeaderVisible(0, false); //Hiding the "PK" checkbox on columns grid
+	server_sel->setModel(this->model);
+	server_sel->setSelectedObject(ftable->getForeignServer());
+}
+
+void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, PhysicalTable *table, double pos_x, double pos_y)
+{
 	try
 	{
 		unsigned i, count;
-		Table *aux_tab=nullptr;
-		ObjectType types[]={ ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+		PhysicalTable *aux_tab=nullptr;
+		vector<ObjectType> types=BaseObject::getChildObjectTypes(ObjectType::Table);
 		vector<PartitionKey> part_keys;
-
-		if(!table)
-		{
-			table=new Table;
-
-			if(schema)
-				table->setSchema(schema);
-
-			/* Sets the 'new_object' flag as true indicating that the alocated table must be treated
-				 as a recently created object */
-			this->new_object=true;
-		}
 
 		BaseObjectWidget::setAttributes(model, op_list, table, schema, pos_x, pos_y);
 
@@ -269,11 +329,11 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 
 		/* Listing all objects (column, constraint, trigger, index, rule) on the
 		respective table objects */
-		for(i=0; i < 6; i++)
+		for(auto &type : types)
 		{
-			listObjects(types[i]);
-			objects_tab_map[types[i]]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
-															  (ObjectsTableWidget::UpdateButton));
+			listObjects(type);
+			objects_tab_map[type]->setButtonConfiguration(ObjectsTableWidget::AllButtons ^
+																										(ObjectsTableWidget::UpdateButton));
 		}
 
 		//Listing the ancestor tables
@@ -317,12 +377,32 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 			i++;
 		}
 
+		if(table->getObjectType() == ObjectType::Table)
+		{
+			Table *tab = dynamic_cast<Table *>(table);
+			unlogged_chk->setChecked(tab->isUnlogged());
+			enable_rls_chk->setChecked(tab->isRLSEnabled());
+			force_rls_chk->setChecked(tab->isRLSForced());
+			with_oids_chk->setChecked(tab->isWithOIDs());
+		}
+		else
+		{
+			ForeignTable *ftab = dynamic_cast<ForeignTable *>(table);
+			options_tab->blockSignals(true);
+
+			for(auto &itr : ftab->getOptions())
+			{
+				options_tab->addRow();
+				options_tab->setCellText(itr.first, options_tab->getRowCount() - 1, 0);
+				options_tab->setCellText(itr.second, options_tab->getRowCount() - 1, 1);
+			}
+
+			options_tab->clearSelection();
+			options_tab->blockSignals(false);
+		}
+
 		parent_tables->clearSelection();
-		with_oids_chk->setChecked(table->isWithOIDs());
-		unlogged_chk->setChecked(table->isUnlogged());
 		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
-		enable_rls_chk->setChecked(table->isRLSEnabled());
-		force_rls_chk->setChecked(table->isRLSForced());
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
@@ -344,25 +424,25 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 void TableWidget::listObjects(ObjectType obj_type)
 {
 	ObjectsTableWidget *tab=nullptr;
-	unsigned count, i;
-	Table *table=nullptr;
+	unsigned idx = 0, count = 0;
+	PhysicalTable *table=nullptr;
 
 	try
 	{
 		//Gets the object table related to the object type
 		tab=objects_tab_map[obj_type];
-
-		table=dynamic_cast<Table *>(this->object);
+		table=dynamic_cast<PhysicalTable *>(this->object);
 
 		tab->blockSignals(true);
 		tab->removeRows();
+		count = table->getObjectCount(obj_type);
 
-		count=table->getObjectCount(obj_type);
-		for(i=0; i < count; i++)
+		for(idx = 0; idx < count; idx++)
 		{
 			tab->addRow();
-			showObjectData(dynamic_cast<TableObject*>(table->getObject(i, obj_type)), i);
+			showObjectData(dynamic_cast<TableObject*>(table->getObject(idx, obj_type)), idx);
 		}
+
 		tab->clearSelection();
 		tab->blockSignals(false);
 
@@ -370,11 +450,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 		if(obj_type==ObjectType::Column)
 		{
 			objects_tab_map[ObjectType::Constraint]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-															   objects_tab_map[ObjectType::Column]->getRowCount() > 0);
+																																 objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 			objects_tab_map[ObjectType::Trigger]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-															objects_tab_map[ObjectType::Column]->getRowCount() > 0);
+																															objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 			objects_tab_map[ObjectType::Index]->setButtonsEnabled(ObjectsTableWidget::AddButton,
-														  objects_tab_map[ObjectType::Column]->getRowCount() > 0);
+																														objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 		}
 	}
 	catch(Exception &e)
@@ -438,8 +518,8 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	QString str_aux, str_aux1;
 
 	QStringList contr_types={ ~ConstraintType(ConstraintType::PrimaryKey), ~ConstraintType(ConstraintType::ForeignKey),
-							  ~ConstraintType(ConstraintType::Check), ~ConstraintType(ConstraintType::Unique),
-							  QString("NOT NULL") },
+														~ConstraintType(ConstraintType::Check), ~ConstraintType(ConstraintType::Unique),
+														QString("NOT NULL") },
 			constr_codes={ TableObjectView::TextPrimaryKey,
 										 TableObjectView::TextForeignKey,
 										 TableObjectView::TextCheck,
@@ -463,7 +543,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==ObjectType::Column)
 	{
-		Table *table = dynamic_cast<Table *>(this->object);
+		PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
 		Constraint *pk = table->getPrimaryKey();
 		column=dynamic_cast<Column *>(object);
 
@@ -618,15 +698,14 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 void TableWidget::removeObjects(void)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	unsigned count, op_count=0, i;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 
 	try
 	{
-		table=dynamic_cast<Table *>(this->object);
-
+		table=dynamic_cast<PhysicalTable *>(this->object);
 		obj_type=getObjectType(sender());
 		count=table->getObjectCount(obj_type);
 		op_count=op_list->getCurrentSize();
@@ -675,16 +754,15 @@ void TableWidget::removeObjects(void)
 
 void TableWidget::removeObject(int row)
 {
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	BaseObject *object=nullptr;
 	ObjectType obj_type=ObjectType::BaseObject;
 	int op_id=-1;
 
 	try
 	{
-		table=dynamic_cast<Table *>(this->object);
+		table=dynamic_cast<PhysicalTable *>(this->object);
 		obj_type=getObjectType(sender());
-
 		object=table->getObject(row, obj_type);
 
 		if(!object->isProtected() &&
@@ -723,7 +801,7 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 	ObjectType obj_type=ObjectType::BaseObject;
 	BaseObject *object=nullptr, *dup_object=nullptr;
 	ObjectsTableWidget *obj_table=nullptr;
-	Table *table = dynamic_cast<Table *>(this->object);
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(this->object);
 	int op_id = -1;
 
 	try
@@ -761,16 +839,16 @@ void TableWidget::duplicateObject(int sel_row, int new_row)
 	}
 }
 
-void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
+void TableWidget::swapObjects(int idx1, int idx2)
 {
 	ObjectType obj_type=ObjectType::BaseObject;
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	int count;
 
 	try
 	{
 		obj_type=getObjectType(sender());
-		table=dynamic_cast<Table *>(this->object);
+		table=dynamic_cast<PhysicalTable *>(this->object);
 		count=table->getObjectCount(obj_type);
 
 		if(idx1 >= count)
@@ -799,7 +877,7 @@ void TableWidget::editData(void)
 	BaseForm base_form(this);
 	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
 
-	tab_data_wgt->setAttributes(this->model, dynamic_cast<Table *>(this->object));
+	tab_data_wgt->setAttributes(this->model, dynamic_cast<PhysicalTable *>(this->object));
 	base_form.setMainWidget(tab_data_wgt);
 	base_form.setButtonConfiguration(Messagebox::OkCancelButtons);
 
@@ -812,7 +890,8 @@ void TableWidget::applyConfiguration(void)
 {
 	try
 	{
-		Table *table=nullptr;
+		PhysicalTable *table=nullptr;
+		Table *aux_tab = nullptr;
 		Constraint *pk = nullptr;
 		vector<BaseRelationship *> rels;
 		vector<Column *> pk_cols;
@@ -825,13 +904,30 @@ void TableWidget::applyConfiguration(void)
 		else
 			registerNewObject();
 
-		table=dynamic_cast<Table *>(this->object);
-		table->setWithOIDs(with_oids_chk->isChecked());
+		table=dynamic_cast<PhysicalTable *>(this->object);
+		aux_tab = dynamic_cast<Table *>(table);
+
 		table->setGenerateAlterCmds(gen_alter_cmds_chk->isChecked());
-		table->setRLSEnabled(enable_rls_chk->isChecked());
-		table->setRLSForced(force_rls_chk->isChecked());
-		table->setUnlogged(unlogged_chk->isChecked());
 		table->setTag(dynamic_cast<Tag *>(tag_sel->getSelectedObject()));
+
+		// Applying settings specific to table
+		if(aux_tab)
+		{
+			aux_tab->setWithOIDs(with_oids_chk->isChecked());
+			aux_tab->setRLSEnabled(enable_rls_chk->isChecked());
+			aux_tab->setRLSForced(force_rls_chk->isChecked());
+			aux_tab->setUnlogged(unlogged_chk->isChecked());
+		}
+		// Applying settings specific to foreign table
+		else if(server_sel->isVisible())
+		{
+			ForeignTable *ftable = dynamic_cast<ForeignTable *>(table);
+
+			ftable->setForeignServer(dynamic_cast<ForeignServer *>(server_sel->getSelectedObject()));
+			ftable->removeOptions();
+			for(unsigned row = 0; row < options_tab->getRowCount(); row++)
+				ftable->setOption(options_tab->getCellText(row, 0), options_tab->getCellText(row, 1));
+		}
 
 		part_type = partitioning_type_cmb->currentIndex() == 0 ? BaseType::Null : PartitioningType(partitioning_type_cmb->currentText());
 		table->setPartitioningType(part_type);
@@ -844,8 +940,6 @@ void TableWidget::applyConfiguration(void)
 			if(part_keys.empty())
 				part_type = BaseType::Null;
 		}
-		else
-			table->removePartitionKeys();
 
 		BaseObjectWidget::applyConfiguration();
 
@@ -912,7 +1006,9 @@ void TableWidget::applyConfiguration(void)
 			if(model->getRelationship(table, nullptr))
 				model->validateRelationships();
 
-			model->updateTableFKRelationships(table);
+			if(aux_tab)
+				model->updateTableFKRelationships(aux_tab);
+
 			model->updateViewsReferencingTable(table);
 		}
 		catch(Exception &e)

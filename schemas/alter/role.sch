@@ -49,18 +49,22 @@
     BYPASSRLS 
   %end
   
-  %if {password} %then
-   $br $tb
-   
-   %if {encrypted} %then
-     %if ({encrypted}=="unset") %then 
-       [UNENCRYPTED ]
-     %else
-       [ENCRYPTED ]
-     %end    
-   %end
-   
-   [PASSWORD ] '{password}'
+  %if {password} %or {empty-password} %then
+    $br $tb
+    
+    %if {empty-password} %then
+        [PASSWORD ] ''
+    %else
+        %if {encrypted} %then
+            %if ({encrypted}=="unset") %then 
+            [UNENCRYPTED ]
+            %else
+            [ENCRYPTED ]
+            %end    
+        %end
+        
+        [PASSWORD ] '{password}'
+    %end
   %end
 
   %if {connlimit} %then $br $tb [CONNECTION LIMIT ] {connlimit} %end

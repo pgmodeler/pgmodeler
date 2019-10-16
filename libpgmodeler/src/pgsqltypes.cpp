@@ -1143,6 +1143,7 @@ void PgSqlType::addUserType(const QString &type_name, void *ptype, void *pmodel,
 			 type_conf==UserTypeConfig::TableType ||
 			 type_conf==UserTypeConfig::ViewType ||
 			 type_conf==UserTypeConfig::ExtensionType ||
+			 type_conf==UserTypeConfig::ForeignTableType ||
 			 type_conf==UserTypeConfig::BaseType) &&
 			getUserTypeIndex(type_name,ptype,pmodel)==0)
 	{

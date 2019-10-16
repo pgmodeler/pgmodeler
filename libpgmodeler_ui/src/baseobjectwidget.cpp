@@ -309,7 +309,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		parent_type=parent_obj->getObjectType();
 
-		if(parent_type==ObjectType::Table || parent_type==ObjectType::View)
+		if(BaseTable::isBaseTable(parent_type))
 			this->table=dynamic_cast<BaseTable *>(parent_obj);
 		else if(parent_type==ObjectType::Relationship)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
@@ -391,9 +391,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 		obj_type=object->getObjectType();
 		object_protected=(parent_type!=ObjectType::Relationship &&
-						   (object->isProtected() ||
-							((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
-							 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
+																	 (object->isProtected() ||
+																		((obj_type==ObjectType::Column || obj_type==ObjectType::Constraint) &&
+																		 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(object_protected);
 		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}
@@ -741,17 +741,12 @@ void BaseObjectWidget::applyConfiguration(void)
 					parent_obj=model;
 					aux_obj=model->getObject(obj_name,obj_type);
 
-					/* Special case for tables an views. Its necessary to make an additional
+					/* Special case for tables and views. Its necessary to make an additional
 					checking on table list when the configured object is a view or a checking
 					on view list when the configured object is a table, this because PostgreSQL
 					does not accepts tables and views have the same name on the same schema */
-					if(!aux_obj && obj_type==ObjectType::Table)
-						aux_obj=model->getObject(obj_name, ObjectType::View);
-					else if(!aux_obj && obj_type==ObjectType::View)
-						aux_obj=model->getObject(obj_name, ObjectType::Table);
-
-					aux_obj1=model->getObject(object->getSignature(), obj_type);
-					new_obj=(!aux_obj && !aux_obj1);
+					aux_obj = model->getObject(obj_name, { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View });
+					new_obj = (aux_obj == nullptr);
 				}
 
 				//Raises an error if another object is found with the same name as the editing object
@@ -929,9 +924,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		else if(relationship && relationship->getObjectIndex(tab_obj) >= 0)
 			relationship->removeObject(tab_obj);
 
-		if(obj_type!=ObjectType::Table &&
-				obj_type!=ObjectType::View &&
-				obj_type!=ObjectType::Relationship)
+		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
 			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
 				delete(this->object);
@@ -943,7 +936,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 	//If the object is not a new one, restore its previous state
 	if(op_list &&
 	  ((!new_object && obj_type!=ObjectType::Database && obj_type!=ObjectType::Permission && operation_count != op_list->getCurrentSize()) ||
-	   (new_object && (obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Relationship))))
+		 (new_object && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Relationship))))
 	{
 		try
 		{

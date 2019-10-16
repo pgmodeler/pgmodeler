@@ -131,10 +131,10 @@ namespace PgModelerUiNs {
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
 			 * codes when the code of parent table is disabled too in order to avoid export errors */
-			if(object->getObjectType()==ObjectType::Table)
+			if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(ObjectType::Constraint);
+				vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{
@@ -258,6 +258,7 @@ namespace PgModelerUiNs {
 	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
 	{
 		vector<Exception> list;
+		vector<Exception>::reverse_iterator itr, itr_end;
 		QString text;
 		int idx=0;
 		QTreeWidgetItem *item=nullptr, *child_item=nullptr;
@@ -266,28 +267,41 @@ namespace PgModelerUiNs {
 			return;
 
 		e.getExceptionsList(list);
+		itr = list.rbegin();
+		itr_end = list.rend();
 
-		for(Exception &ex : list)
-		{
-			text=QString("[%1] - %2").arg(idx).arg(ex.getMethod());
+		//for(Exception &ex : list)
+		while(itr != itr_end)
+		{			
+			text=QString("[%1] - %2").arg(idx).arg(itr->getMethod());
 			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("funcao")), root, false, true);
 
-			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
+			text=QString("%1 (%2)").arg(itr->getFile()).arg(itr->getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorCode())).arg(enum_cast(ex.getErrorCode()));
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(itr->getErrorCode())).arg(enum_cast(itr->getErrorCode()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
-			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
+			child_item=createOutputTreeItem(exceptions_trw, itr->getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
 			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
 
-			if(!ex.getExtraInfo().isEmpty())
+			if(!itr->getExtraInfo().isEmpty())
 			{
-				child_item=createOutputTreeItem(exceptions_trw, ex.getExtraInfo(), QPixmap(getIconPath("msgbox_info")), item, false, true);
+				child_item=createOutputTreeItem(exceptions_trw, itr->getExtraInfo(), QPixmap(getIconPath("msgbox_info")), item, false, true);
 				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
 			}
 
-			idx++;
+			idx++; itr++;
+
+			/* If we have a stack bigger than 30 items we just ignore the rest in order to avoid
+			 * the production or reduntant/useless information on the exception message box */
+			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
+			{
+				text = QT_TR_NOOP("Another %1 error(s) were suppressed due to stacktrace size limits.");
+				text = text.arg(list.size() - idx);
+				createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, false);
+				break;
+			}
 		}
 	}
 
@@ -301,7 +315,7 @@ namespace PgModelerUiNs {
 		return(getIconPath(BaseObject::getSchemaName(obj_type)));
 	}
 
-	void resizeDialog(QDialog *widget)
+	void resizeDialog(QWidget *widget)
 	{
 		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0,

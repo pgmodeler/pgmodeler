@@ -88,6 +88,8 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 	{
 		QString	double_quote=QString("%1%1").arg(text_delim),
 				placeholder = QString(QChar::ReplacementCharacter),
+				escaped_delim = QString("\u2020"), //Unicode char to be used as a placeholder for escaped text delimiter, e.g., \"
+				escaped_sep = QString("\u2052"),  //Unicode char to be used as a placeholder for escaped value separator, e.g., \;
 				aux_buffer = csv_buffer,
 				win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
 				mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
@@ -99,6 +101,12 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 		else if(aux_buffer.contains(mac_line_break))
 			aux_buffer.replace(mac_line_break, QString(QChar::LineFeed));
 
+		/* In order to avoid wrong replacement of escapade both text delimiter and value separator
+		 * we replace them by their respective placeholders in order to revert them back to their
+		 * original representation on the final (formated) string */
+		aux_buffer.replace(QString("\\%1").arg(text_delim), escaped_delim);
+		aux_buffer.replace(QString("\\%1").arg(separator), escaped_sep);
+
 		if(cols_in_first_row)
 		{
 			int lf_idx = aux_buffer.indexOf(QChar::LineFeed);
@@ -108,6 +116,11 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 
 			csv_cols=aux_buffer.mid(0, lf_idx).split(separator);
 			csv_cols.replaceInStrings(text_delim, QString());
+
+			//Replace the escaped separator and delimiter by their original form in the col names
+			csv_cols.replaceInStrings(escaped_sep, separator);
+			csv_cols.replaceInStrings(escaped_delim, text_delim);
+
 			aux_buffer.replace(0, lf_idx + 1, QString());
 		}
 
@@ -132,7 +145,13 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 			values = row.split(separator);
 
 			for(int i =0; i < values.count(); i++)
+			{
+				//Replace the escaped separator and delimiter by their original form in the final value
+				values[i].replace(escaped_sep, separator);
+				values[i].replace(escaped_delim, text_delim);
+
 				values[i] = values[i].trimmed();
+			}
 
 			csv_rows.append(values);
 		}

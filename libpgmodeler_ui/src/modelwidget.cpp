@@ -352,7 +352,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_edit_creation_order=new QAction(QIcon(PgModelerUiNs::getIconPath("swapobjs")), trUtf8("Swap ids"), this);
 	action_edit_creation_order->setToolTip(trUtf8("Edit the objects creation order by swapping their ids"));
-	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(editCreationOrder()));
+	connect(action_edit_creation_order, SIGNAL(triggered(bool)), this, SLOT(swapObjectsIds()));
 
 	action=new QAction(QIcon(PgModelerUiNs::getIconPath("breakline_90dv")), trUtf8("90° (vertical)"), this);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(breakRelationshipLine(void)));
@@ -422,8 +422,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
 
-	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
-	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
+	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
+																		 ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
+	QStringList labels = { trUtf8("All objects"), trUtf8("Schemas"), trUtf8("Tables"), trUtf8("Foreign Tables"),
+												 trUtf8("Views"), trUtf8("Relationships"), trUtf8("Textboxes") };
 
 	i=0;
 	for(auto &obj_type : graph_types)
@@ -706,7 +708,7 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 	{
 		/* If the user is adding a graphical object, the left click will set the initial position and
 		show the editing form related to the object type */
-		if(!simple_obj_creation && (new_obj_type==ObjectType::Table || new_obj_type==ObjectType::Textbox || new_obj_type==ObjectType::View))
+		if(!simple_obj_creation && (BaseTable::isBaseTable(new_obj_type) || new_obj_type==ObjectType::Textbox))
 		{
 			this->scene->enableRangeSelection(false);
 			this->showObjectForm(new_obj_type, nullptr, nullptr, viewport->mapToScene(event->pos()));
@@ -800,8 +802,9 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 		switch(obj_type)
 		{
+			case ObjectType::ForeignTable:
 			case ObjectType::Table:
-				item=new TableView(dynamic_cast<Table *>(graph_obj));
+				item=new TableView(dynamic_cast<PhysicalTable *>(graph_obj));
 			break;
 
 			case ObjectType::View:
@@ -852,7 +855,7 @@ void ModelWidget::addNewObject(void)
 			parent_obj=selected_objects[0];
 
 		//Creating a table or view inside a schema
-		if(parent_obj && parent_obj->getObjectType()==ObjectType::Schema &&	 (obj_type==ObjectType::Table || obj_type==ObjectType::View))
+		if(parent_obj && parent_obj->getObjectType()==ObjectType::Schema && BaseTable::isBaseTable(obj_type))
 		{
 			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(parent_obj)->getOverlyingObject());
 			QSizeF size = sch_graph->boundingRect().size();
@@ -869,7 +872,7 @@ void ModelWidget::addNewObject(void)
 
 			this->showObjectForm(obj_type, nullptr, parent_obj, pos);
 		}
-		else if(obj_type!=ObjectType::Table && obj_type!=ObjectType::View &&
+		else if(!BaseTable::isBaseTable(obj_type) &&
 						obj_type!=ObjectType::Textbox && obj_type <= ObjectType::BaseTable)
 			this->showObjectForm(obj_type, nullptr, parent_obj);
 		else
@@ -887,7 +890,7 @@ void ModelWidget::addNewObject(void)
 			{
 				//Simple table|view|textbox creation
 				if(simple_obj_creation &&
-						(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type==ObjectType::Textbox))
+						(BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::Textbox))
 					this->showObjectForm(obj_type, nullptr, parent_obj, viewport->mapToScene(viewport->rect().center()));
 				else
 				{
@@ -900,7 +903,7 @@ void ModelWidget::addNewObject(void)
 					 * we force the enabling of the relationship creation steps. This will automatically selects the current table
 					 * as source table of the relationship */
 					if(selected_objects.size() == 1 &&
-						 selected_objects[0]->getObjectType() == ObjectType::Table && new_obj_type > ObjectType::BaseTable)
+						 PhysicalTable::isPhysicalTable(selected_objects[0]->getObjectType()) && new_obj_type > ObjectType::BaseTable)
 						configureObjectSelection();
 				}
 			}
@@ -986,7 +989,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 			itr++;
 			if(!obj) continue;
 
-			if(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View)
+			if(BaseTable::isBaseTable(obj->getObjectType()))
 			{
 				Schema *schema=dynamic_cast<Schema *>(dynamic_cast<BaseTable *>(obj)->getSchema());
 
@@ -1085,7 +1088,8 @@ void ModelWidget::configureObjectSelection(void)
 
 			//If there is only one selected object and this is a table, activates the relationship creation
 			if(!scene->isRelationshipLineVisible() &&
-				 count==1 && obj_type1==ObjectType::Table && new_obj_type > ObjectType::BaseTable &&	 QApplication::keyboardModifiers()==0)
+				 count==1 && PhysicalTable::isPhysicalTable(obj_type1) &&
+				 new_obj_type > ObjectType::BaseTable &&	QApplication::keyboardModifiers() == 0)
 			{
 				BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
 				BaseObjectView *object=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
@@ -1095,15 +1099,15 @@ void ModelWidget::configureObjectSelection(void)
 																						object->scenePos().y() + object->boundingRect().height()/2));
 			}
 			//If the user has selected object that are not tables, cancel the operation
-			else if(obj_type1!=ObjectType::Table || (obj_type2!=ObjectType::Table && obj_type2!=ObjectType::BaseObject))
+			else if(!PhysicalTable::isPhysicalTable(obj_type1) || (!PhysicalTable::isPhysicalTable(obj_type2) && obj_type2 != ObjectType::BaseObject))
 			{
 				this->cancelObjectAddition();
 			}
 
 			/* Case there is only one selected object (table) and the SHIFT key is pressed too, creates a self-relationship.
 				 Case there is two selected objects, create a relationship between them */
-			else if((count==1 && obj_type1==ObjectType::Table && QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
-							(count==2 && obj_type1==ObjectType::Table && obj_type2==ObjectType::Table))
+			else if((count==1 && PhysicalTable::isPhysicalTable(obj_type1) && QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
+							(count==2 && PhysicalTable::isPhysicalTable(obj_type1) && PhysicalTable::isPhysicalTable(obj_type2)))
 			{
 				/* Forcing no signals to be emitted by the scene while the relationship is being configured to avoid this
 				 * method to be called unecessarily */
@@ -1201,7 +1205,7 @@ void ModelWidget::convertRelationshipNN(void)
 					op_count=op_list->getCurrentSize();
 
 					//Stores the XML code definition for the table generated by the relationship
-					tab_nn=rel->getReceiverTable();
+					tab_nn=dynamic_cast<Table *>(rel->getReceiverTable());
 					pk=tab_nn->getPrimaryKey();
 
 					if(!rel->isSelfRelationship())
@@ -1741,6 +1745,18 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj, con
 	return(openEditingForm(object_wgt));
 }
 
+int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *schema, const QPointF &pos)
+{
+	TableWidget *tab_wgt=new TableWidget(nullptr, tab_type);
+
+	if(tab_type == ObjectType::Table)
+		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
+	else
+		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<ForeignTable *>(object), pos.x(), pos.y());
+
+	return(openEditingForm(tab_wgt));
+}
+
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
 {
 	try
@@ -1817,7 +1833,9 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		else if(obj_type==ObjectType::Extension)
 			res=openEditingForm<Extension, ExtensionWidget, Schema>(object, sel_schema);
 		else if(obj_type==ObjectType::Table)
-			res=openEditingForm<Table,TableWidget,Schema>(object, sel_schema, obj_pos);
+			res=openTableEditingForm(obj_type, dynamic_cast<Table *>(object), sel_schema, obj_pos);
+		else if(obj_type==ObjectType::ForeignTable)
+			res=openTableEditingForm(obj_type, dynamic_cast<ForeignTable *>(object), sel_schema, obj_pos);
 		else if(obj_type==ObjectType::View)
 			res=openEditingForm<View,ViewWidget,Schema>(object, sel_schema, obj_pos);
 		else if(obj_type==ObjectType::Rule)
@@ -1851,11 +1869,11 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 			if(!object && rel_type > 0 &&
 					selected_objects.size() > 0 &&
-					selected_objects[0]->getObjectType()==ObjectType::Table)
+					PhysicalTable::isPhysicalTable(selected_objects[0]->getObjectType()))
 			{
-				Table *tab1=dynamic_cast<Table *>(selected_objects[0]),
-						*tab2=(selected_objects.size()==2 ?
-									 dynamic_cast<Table *>(selected_objects[1]) : tab1);
+				PhysicalTable *tab1 = dynamic_cast<PhysicalTable *>(selected_objects[0]),
+											*tab2 = (selected_objects.size()==2 ?
+															 dynamic_cast<PhysicalTable *>(selected_objects[1]) : tab1);
 				relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
 			}
 			else
@@ -2799,8 +2817,8 @@ void ModelWidget::duplicateObject(void)
 				schema = dynamic_cast<Schema *>(table->getSchema());
 				PgModelerNs::copyObject(&dup_object, tab_obj, obj_type);
 
-				if(table->getObjectType() == ObjectType::Table)
-					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<Table *>(table)->getObjectList(obj_type), false, QString("_cp")));
+				if(PhysicalTable::isPhysicalTable(table->getObjectType()))
+					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<PhysicalTable *>(table)->getObjectList(obj_type), false, QString("_cp")));
 				else
 					dup_object->setName(PgModelerNs::generateUniqueName(dup_object, *dynamic_cast<View *>(table)->getObjectList(obj_type), false, QString("_cp")));
 
@@ -2837,7 +2855,7 @@ void ModelWidget::duplicateObject(void)
 			for(auto &tab : upd_view_ref_tables)
 			{
 				db_model->validateRelationships();
-				db_model->updateViewsReferencingTable(dynamic_cast<Table *>(tab));
+				db_model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(tab));
 			}
 
 			for(auto &tab : upd_fk_rels)
@@ -3285,7 +3303,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 		obj_type=obj->getObjectType();
 
 		if(!tab_or_view)
-			tab_or_view=(obj_type==ObjectType::Table || obj_type==ObjectType::View);
+			tab_or_view=BaseTable::isBaseTable(obj_type);
 
 		if(!is_graph_obj)
 			is_graph_obj = BaseGraphicObject::isGraphicObject(obj_type);
@@ -3414,7 +3432,7 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 			action_edit_perms->setData(QVariant::fromValue<void *>(object));
 		}
 
-		if(object && obj_type == ObjectType::Table)
+		if(object && PhysicalTable::isPhysicalTable(obj_type))
 			quick_actions_menu.addAction(action_edit_data);
 
 		if(object && BaseObject::acceptsCustomSQL(obj_type))
@@ -3679,6 +3697,7 @@ void ModelWidget::setCollapseMode(void)
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
 		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
 	}
 	else
@@ -3708,6 +3727,7 @@ void ModelWidget::togglePagination(void)
 	if(selected_objects.empty() || (selected_objects.size() == 1 && selected_objects[0] == db_model))
 	{
 		objects.assign(db_model->getObjectList(ObjectType::Table)->begin(), db_model->getObjectList(ObjectType::Table)->end());
+		objects.insert(objects.end(), db_model->getObjectList(ObjectType::ForeignTable)->begin(), db_model->getObjectList(ObjectType::ForeignTable)->end());
 		objects.insert(objects.end(), db_model->getObjectList(ObjectType::View)->begin(), db_model->getObjectList(ObjectType::View)->end());
 	}
 	else
@@ -3775,7 +3795,7 @@ void ModelWidget::updateObjectsOpacity(void)
 void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 {
 	QMenu *submenu=nullptr;
-	Table *table=nullptr;
+	PhysicalTable *table=nullptr;
 	unsigned count, i;
 	vector<QMenu *> submenus;
 	Constraint *constr=nullptr;
@@ -3834,11 +3854,11 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 			popup_menu.addAction(action_edit);
 
 			if((obj_type==ObjectType::Schema && obj->isSystemObject()) ||
-					(!obj->isProtected() && (obj_type==ObjectType::Table || obj_type==ObjectType::BaseRelationship ||
+					(!obj->isProtected() && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
 																	 obj_type==ObjectType::Relationship || obj_type==ObjectType::Schema ||
-																	 obj_type == ObjectType::Tag || obj_type==ObjectType::View)))
+																	 obj_type == ObjectType::Tag)))
 			{
-				if(obj_type==ObjectType::Table || obj_type == ObjectType::View)
+				if(BaseTable::isBaseTable(obj_type))
 				{
 					for(auto type : BaseObject::getChildObjectTypes(obj_type))
 						new_object_menu.addAction(actions_new_objects[type]);
@@ -3993,9 +4013,10 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 
 	//Adding the extended attributes action (only for table/view/database)
 	if(objects.size() > 1 ||
-		 (objects.empty() && (db_model->getObjectCount(ObjectType::Table) > 0 || db_model->getObjectCount(ObjectType::View) > 0)) ||
-		 (objects.size() == 1 && (objects[0]->getObjectType() == ObjectType::Table ||
-															objects[0]->getObjectType() == ObjectType::View ||
+		 (objects.empty() && (db_model->getObjectCount(ObjectType::Table) > 0 ||
+													db_model->getObjectCount(ObjectType::ForeignTable) > 0 ||
+													db_model->getObjectCount(ObjectType::View) > 0)) ||
+		 (objects.size() == 1 && (BaseTable::isBaseTable(objects[0]->getObjectType()) ||
 															objects[0]->getObjectType() == ObjectType::Database)))
 	{
 		bool tab_or_view = false;
@@ -4004,7 +4025,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 		{
 			if(!tab_or_view)
 			{
-				tab_or_view=(obj->getObjectType()==ObjectType::Table || obj->getObjectType()==ObjectType::View);
+				tab_or_view=(PhysicalTable::isPhysicalTable(obj->getObjectType()) || obj->getObjectType()==ObjectType::View);
 				break;
 			}
 		}
@@ -4072,7 +4093,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	//If the table object is a column creates a special menu to acess the constraints that is applied to the column
 	if(tab_obj)
 	{
-		table=dynamic_cast<Table *>(tab_obj->getParentTable());
+		table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
 
 		if(tab_obj->getObjectType()==ObjectType::Column)
 		{
@@ -4538,7 +4559,7 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 {
 	if(schema)
 	{
-		vector<BaseObject *> tables, views;
+		vector<BaseObject *> tables, views, ftables;
 		vector<BaseObject *>::iterator itr;
 		BaseTableView *tab_view=nullptr;
 		BaseTable *base_tab=nullptr;
@@ -4547,7 +4568,9 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 
 		//Get the tables and views for the specified schema
 		tables=db_model->getObjects(ObjectType::Table, schema);
+		ftables=db_model->getObjects(ObjectType::ForeignTable, schema);
 		views=db_model->getObjects(ObjectType::View, schema);
+		tables.insert(tables.end(), ftables.begin(), ftables.end());
 		tables.insert(tables.end(), views.begin(), views.end());
 
 		itr=tables.begin();
@@ -4581,7 +4604,7 @@ void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned
 	}
 }
 
-void ModelWidget::editCreationOrder(void)
+void ModelWidget::swapObjectsIds(void)
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
@@ -4598,7 +4621,10 @@ void ModelWidget::editCreationOrder(void)
 
 	parent_form.apply_ok_btn->setVisible(true);
 	parent_form.setMainWidget(swap_ids_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 }
 
 void ModelWidget::jumpToTable(void)
@@ -4621,7 +4647,7 @@ void ModelWidget::editTableData(void)
 {
 	TableDataWidget *tab_data_wgt=new TableDataWidget;
 
-	tab_data_wgt->setAttributes(db_model, dynamic_cast<Table *>(selected_objects.at(0)));
+	tab_data_wgt->setAttributes(db_model, dynamic_cast<PhysicalTable *>(selected_objects.at(0)));
 	openEditingForm(tab_data_wgt);
 	this->setModified(true);
 	emit s_objectManipulated();

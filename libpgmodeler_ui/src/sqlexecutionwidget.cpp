@@ -402,6 +402,9 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		bool empty = false;
 		ResultSetModel *res_model = sql_exec_hlp.getResultSetModel();
 
+		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
+		total_exec = end_exec - start_exec;
+
 		results_tbw->setSortingEnabled(false);
 		results_tbw->blockSignals(true);
 		results_tbw->setUpdatesEnabled(false);
@@ -424,9 +427,6 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 			columns_cmb->addItem(res_model->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString());
 
 		columns_cmb->blockSignals(false);
-
-		end_exec=QDateTime::currentDateTime().toMSecsSinceEpoch();
-		total_exec = end_exec - start_exec;
 
 		addToSQLHistory(sql_cmd_txt->toPlainText(), rows_affected);
 
@@ -459,7 +459,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
 																				PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
-																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000) : QString("%1 ms").arg(total_exec))
+																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
 																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
 																																		 .arg(rows_affected)),
 																				QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
@@ -757,15 +757,15 @@ int SQLExecutionWidget::clearAll(void)
 
 QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar(';'), true, true));
+	return(generateBuffer(results_tbw, QChar(';'), true, true, true));
 }
 
 QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar('\t'), false, false));
+	return(generateBuffer(results_tbw, QChar('\t'), false, false, false));
 }
 
-QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes)
+QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars)
 {
 	if(!results_tbw)
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -778,7 +778,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 	QByteArray buf;
 	QStringList line;
 	QModelIndex index;
-	QString str_pattern = use_quotes ? QString("\"%1\"") : QString("%1");
+	QString str_pattern = use_quotes ? QString("\"%1\"") : QString("%1"), value;
 	int start_row = -1, start_col = -1,
 			row_cnt = 0, col_cnt = 0;
 
@@ -799,7 +799,19 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			if(results_tbw->isColumnHidden(col))
 				continue;
 
-			line.append(str_pattern.arg(model->headerData(col, Qt::Horizontal).toString()));
+			value = model->headerData(col, Qt::Horizontal).toString();
+
+			if(escape_chars)
+			{
+				value.replace(separator, QString("\\%1").arg(separator));
+				value.replace(QChar::Tabulation, QString("\\t"));
+				value.replace(QChar::LineFeed, QString("\\n"));
+
+				if(use_quotes)
+					value.replace('"', QString("\\%1").arg('"'));
+			}
+
+			line.append(str_pattern.arg(value));
 		}
 
 		buf.append(line.join(separator));
@@ -816,7 +828,19 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 				continue;
 
 			index = model->index(row, col);
-			line.append(str_pattern.arg(index.data().toString()));
+			value = index.data().toString();
+
+			if(escape_chars)
+			{
+				value.replace(separator, QString("\\%1").arg(separator));
+				value.replace(QChar::Tabulation, QString("\\t"));
+				value.replace(QChar::LineFeed, QString("\\n"));
+
+				if(use_quotes)
+					value.replace('"', QString("\\%1").arg('"'));
+			}
+
+			line.append(str_pattern.arg(value));
 		}
 
 		buf.append(line.join(separator));

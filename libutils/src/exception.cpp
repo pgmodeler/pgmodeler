@@ -80,7 +80,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInexistentSeqOwnerColumn", QT_TR_NOOP("Assignment of a nonexistent owner column to the sequence `%1'!")},
 	{"AsgInvalidSeqOwnerColumn", QT_TR_NOOP("Assignment of an owner column to the sequence `%1' that is not related to any table!")},
 	{"RefLabelInvalidIndex", QT_TR_NOOP("Reference to a label which index is out of labels list bounds!")},
-	{"AllocationObjectInvalidType", QT_TR_NOOP("Allocation of object with invalid type!")},
+	{"AllocationObjectInvalidType", QT_TR_NOOP("Allocation of an object with invalid type!")},
 	{"AsgFunctionInvalidReturnType", QT_TR_NOOP("Assignment of a function with invalid return type to object `%1' (%2)!")},
 	{"AsgFunctionInvalidParameters", QT_TR_NOOP("Assignment of a function with invalid parameter(s) type(s) to object `%1' (%2)!")},
 	{"AsgNotAllocatedLanguage", QT_TR_NOOP("Assignment of not allocated language!")},
@@ -264,7 +264,10 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"AsgInvalidNameObjReference", QT_TR_NOOP("Assignment of an invalid name to the object reference!")},
 	{"AsgNotAllocatedObjectReference", QT_TR_NOOP("Assignment of a not allocated object to the object reference!")},
 	{"InsDuplicatedObjectReference", QT_TR_NOOP("The object reference name `%1' is already defined!")},
-	{"ModelFileInvalidSize", QT_TR_NOOP("A zero-byte file was detected while saving to `%1'. In order to avoid data loss the original contents of the file prior to the last saving was restored and a security copy kept on `%2'. You can copy that backup file to a safe place as a last resort to avoid the complete data loss! Note that the backup file will be erased when the application is closed.")}
+	{"ModelFileInvalidSize", QT_TR_NOOP("A zero-byte file was detected while saving to `%1'. In order to avoid data loss the original contents of the file prior to the last saving was restored and a security copy kept on `%2'. You can copy that backup file to a safe place as a last resort to avoid the complete data loss! Note that the backup file will be erased when the application is closed.")},
+	{"AsgInvalidObjectForeignTable", QT_TR_NOOP("The object `%1' (%2) can't be assigned to the foreign table `%3' because it's unsupported! Foreign tables only accepts columns, check constraints and triggers.")},
+	{"InvRelTypeForeignTable", QT_TR_NOOP("The creation of the relationship `%1' between the tables `%2' and `%3' can't be done because one of the entities is a foreign table. Foreign tables can only be part of a inheritance, copy or partitioning relationship!")},
+	{"InvCopyRelForeignTable", QT_TR_NOOP("The creation of the copy relationship `%1' between the tables `%2' and `%3' can't be done because a foreign table is not allowed to copy table columns!")}
 };
 
 Exception::Exception(void)
@@ -429,15 +432,22 @@ void Exception::getExceptionsList(vector<Exception> &list)
 QString Exception::getExceptionsText(void)
 {
 	vector<Exception> exceptions;
-	vector<Exception>::iterator itr, itr_end;
-	unsigned idx=0;
+	vector<Exception>::reverse_iterator itr, itr_end;
+	unsigned idx=0, hidden_errors_cnt = 0;
 	QString exceptions_txt;
+	bool stack_truncated = false;
 
 	//Get the generated exceptions list
 	this->getExceptionsList(exceptions);
-	itr=exceptions.begin();
-	itr_end=exceptions.end();
-	idx=exceptions.size()-1;
+	itr=exceptions.rbegin();
+	itr_end=exceptions.rend();
+	idx = 0;
+
+	if(exceptions.size() > MaximumStackSize)
+	{
+		hidden_errors_cnt = exceptions.size() - Exception::MaximumStackSize;
+		stack_truncated = true;
+	}
 
 	//Append all usefull information about the exceptions on the string
 	while(itr!=itr_end)
@@ -451,7 +461,13 @@ QString Exception::getExceptionsText(void)
 		else
 			exceptions_txt+=QString("\n");
 
-		itr++; idx--;
+		itr++; idx++;
+
+		if(stack_truncated && idx >= Exception::MaximumStackSize)
+		{
+			exceptions_txt += QString(QT_TR_NOOP("** Another %1 error(s) were suppressed due to stacktrace size limits.\n\n")).arg(hidden_errors_cnt);
+			break;
+		}
 	}
 
 	return(exceptions_txt);

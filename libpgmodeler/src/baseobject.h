@@ -65,6 +65,7 @@ enum class ObjectType: unsigned {
 	Policy,
 	ForeignDataWrapper,
 	ForeignServer,
+	ForeignTable,
 	UserMapping,
 	Relationship,
 	Textbox,
@@ -85,6 +86,8 @@ class BaseObject {
 
 		//! \brief Indicates the the cached code enabled
 		static bool use_cached_code;
+
+		static bool escape_comments;
 
 		//! \brief Stores the set of special (valid) chars that forces the object's name quoting
 		static const QByteArray special_chars;
@@ -290,6 +293,10 @@ class BaseObject {
 		//! \brief Returns the current value of the global object id counter
 		static unsigned getGlobalId(void);
 
+		static void setEscapeComments(bool value);
+
+		static bool isEscapeComments(void);
+
 		//! \brief Defines the comment of the object that will be attached to its SQL definition
 		virtual void setComment(const QString &comment);
 
@@ -349,8 +356,12 @@ class BaseObject {
 		//! \brief Returns the name of the object with schema name (when available) prepended by default
 		virtual QString getSignature(bool format=true);
 
-		//! \brief Retorns the object's comment
+		//! \brief Returns the object's comment (in raw form)
 		QString getComment(void);
+
+		/*! \brief Returns the object's comment in such way that the quotes are escaped as well,
+		 * if escape_special_chars is true, any line break and tabulation is returned in form \n and \t */
+		QString getEscapedComment(bool escape_special_chars);
 
 		//! \brief Returns the object's type
 		ObjectType getObjectType(void);
@@ -488,7 +499,7 @@ class BaseObject {
 		/*! \brief Returns the valid object types that are child or grouped under the specified type.
 	This method works a litte different from getObjectTypes() since this latter returns all valid types
 	and this one returns only the valid types for the current specified type. For now the only accepted
-	types are ObjectType::Database, ObjectType::Schema and ObjectType::Table */
+	types are ObjectType::Database, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that

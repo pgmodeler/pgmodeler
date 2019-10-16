@@ -106,9 +106,9 @@ void CustomSQLWidget::configureMenus(void)
 	for(int i=0; i < count; i++)
 		btns[i]->setMenu(nullptr);
 
-	if(obj_type==ObjectType::Table || obj_type==ObjectType::View)
+	if(BaseTable::isBaseTable(obj_type))
 	{
-		if(obj_type==ObjectType::Table)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);
@@ -133,7 +133,10 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
 		if(object->getObjectType()==ObjectType::Database)
+		{
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
+			begin_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isPrependedAtBOD());
+		}
 
 		append_sql_txt->setFocus();
 		append_sql_txt->setPlainText(object->getAppendedSQL());
@@ -179,7 +182,7 @@ void CustomSQLWidget::applyConfiguration(void)
 
 void CustomSQLWidget::addCommand(void)
 {
-	Table *table=dynamic_cast<Table *>(this->object);
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
 	QString cmd,
 			ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),
@@ -188,8 +191,8 @@ void CustomSQLWidget::addCommand(void)
 			upd_cmd=QString("UPDATE %1 SET ;");
 	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
-	if(sender()->objectName().contains(QLatin1String("insert")) ||
-			sender()->objectName().contains(QLatin1String("serial")))
+	if(sender()->objectName().contains(QString("insert")) ||
+			sender()->objectName().contains(QString("serial")))
 	{
 		if(!table || sender()==action_gen_insert)
 			cmd=ins_cmd.arg("table").arg("cols").arg("values");
@@ -214,14 +217,14 @@ void CustomSQLWidget::addCommand(void)
 			cmd=ins_cmd.arg(table->getName(true)).arg(cols).arg(vals);
 		}
 	}
-	else if(sender()->objectName().contains(QLatin1String("select")))
+	else if(sender()->objectName().contains(QString("select")))
 	{
 		if(!base_table || sender()==action_gen_select)
 			cmd=sel_cmd.arg("object");
 		else if(base_table)
 			cmd=sel_cmd.arg(base_table->getName(true));
 	}
-	else if(sender()->objectName().contains(QLatin1String("delete")))
+	else if(sender()->objectName().contains(QString("delete")))
 	{
 		if(!table || sender()==action_gen_delete)
 			cmd=del_cmd.arg("object");
@@ -237,7 +240,7 @@ void CustomSQLWidget::addCommand(void)
 	}
 
 	if(!sqlcode_txt->toPlainText().isEmpty())
-		sqlcode_txt->insertPlainText(QLatin1String("\n"));
+		sqlcode_txt->insertPlainText(QString("\n"));
 
 	sqlcode_txt->insertPlainText(cmd);
 }

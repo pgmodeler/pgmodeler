@@ -267,10 +267,12 @@ void DataManipulationForm::listTables(void)
 
 	if(schema_cmb->currentIndex() > 0)
 	{
-		if(hide_views_chk->isChecked())
-			listObjects(table_cmb, { ObjectType::Table }, schema_cmb->currentText());
-		else
-			listObjects(table_cmb, { ObjectType::Table, ObjectType::View }, schema_cmb->currentText());
+		vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable };
+
+		if(!hide_views_chk->isChecked())
+			types.push_back(ObjectType::View);
+
+		listObjects(table_cmb, types, schema_cmb->currentText());
 	}
 
 	table_lbl->setEnabled(table_cmb->count() > 0);
@@ -338,9 +340,24 @@ void DataManipulationForm::retrieveData(void)
 				return;
 		}
 
-		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
+		QString query=QString("SELECT * FROM \"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText()),
+				prev_tab_name;
 		ResultSet res;
 		unsigned limit=limit_spb->value();
+		ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
+		vector<int> curr_hidden_cols;
+		int col_cnt = results_tbw->horizontalHeader()->count();
+
+		prev_tab_name = curr_table_name;
+		curr_table_name = QString("%1.%2").arg(schema_cmb->currentText()).arg(table_cmb->currentText());
+
+		/* Storing the current hidden columns to make them hidden again after retrive data
+		 * if the table is the same */
+		for(int idx = 0; prev_tab_name == curr_table_name && idx < col_cnt; idx++)
+		{
+			if(results_tbw->horizontalHeader()->isSectionHidden(idx))
+				curr_hidden_cols.push_back(idx);
+		}
 
 		//Building the where clause
 		if(!filter_txt->toPlainText().trimmed().isEmpty())
@@ -386,12 +403,12 @@ void DataManipulationForm::retrieveData(void)
 		clearChangedRows();
 
 		//If the table is empty automatically creates a new row
-		if(results_tbw->rowCount()==0 && table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
+		if(results_tbw->rowCount()==0 && PhysicalTable::isPhysicalTable(obj_type))
 			addRow();
 		else
 			results_tbw->setFocus();
 
-		if(table_cmb->currentData(Qt::UserRole).toUInt()== enum_cast(ObjectType::Table))
+		if(PhysicalTable::isPhysicalTable(obj_type))
 			csv_load_tb->setEnabled(!col_names.isEmpty());
 		else
 		{
@@ -405,10 +422,10 @@ void DataManipulationForm::retrieveData(void)
 		QApplication::restoreOverrideCursor();
 
 		paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-												 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
+													PhysicalTable::isPhysicalTable(obj_type) &&
 												 !col_names.isEmpty());
 
-		truncate_tb->setEnabled(table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table) &&
+		truncate_tb->setEnabled(obj_type == ObjectType::Table &&
 														res.getTupleCount() > 0 &&
 														!col_names.isEmpty());
 
@@ -420,16 +437,32 @@ void DataManipulationForm::retrieveData(void)
 
 		for(auto &col : col_names)
 		{
-		  columns_lst->addItem(col);
-		  item = columns_lst->item(columns_lst->count() - 1);
-		  item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		  item->setCheckState(Qt::Checked);
-		  item->setData(Qt::UserRole, item->checkState());
+			columns_lst->addItem(col);
+			item = columns_lst->item(columns_lst->count() - 1);
+			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+			item->setCheckState(Qt::Checked);
+			item->setData(Qt::UserRole, item->checkState());
 		}
 
 		//Restoring the visibily of the columns
-		for(int idx = 0; idx < results_tbw->horizontalHeader()->count(); idx++)
-		   results_tbw->horizontalHeader()->setSectionHidden(idx, false);
+		results_tbw->horizontalHeader()->blockSignals(true);
+		col_cnt = results_tbw->horizontalHeader()->count();
+
+		for(int idx = 0; idx < col_cnt; idx++)
+			results_tbw->horizontalHeader()->setSectionHidden(idx, false);
+
+		for(auto &idx : curr_hidden_cols)
+		{
+			item = columns_lst->item(idx);
+			item->setCheckState(Qt::Unchecked);
+			item->setData(Qt::UserRole, item->checkState());
+			results_tbw->horizontalHeader()->setSectionHidden(idx, true);
+		}
+
+		if(!curr_hidden_cols.empty())
+			results_tbw->resizeRowsToContents();
+
+		results_tbw->horizontalHeader()->blockSignals(false);
 	}
 	catch(Exception &e)
 	{
@@ -461,6 +494,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 	bool cols_selected, rows_selected;
+	ObjectType obj_type = static_cast<ObjectType>(table_cmb->currentData(Qt::UserRole).toUInt());
 
 	cols_selected = rows_selected = !sel_ranges.isEmpty();
 
@@ -475,7 +509,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	copy_tb->setEnabled(sel_ranges.count() != 0);
 	clear_tb->setEnabled(sel_ranges.count() != 0);
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty() &&
-											 table_cmb->currentData().toUInt() == enum_cast(ObjectType::Table)  &&
+											 PhysicalTable::isPhysicalTable(obj_type)  &&
 											 !col_names.isEmpty());
 	browse_tabs_tb->setEnabled((!fk_infos.empty() || !ref_fk_infos.empty()) && sel_ranges.count() == 1 && sel_ranges.at(0).rowCount() == 1);
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
@@ -756,8 +790,8 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 				table_oid = pks[0][Attributes::Table].toUInt();
 		}
 
-		hint_frm->setVisible(obj_type==ObjectType::Table);
-		add_tb->setEnabled(obj_type==ObjectType::Table && !col_names.empty());
+		hint_frm->setVisible(PhysicalTable::isPhysicalTable(obj_type));
+		add_tb->setEnabled(PhysicalTable::isPhysicalTable(obj_type) && !col_names.empty());
 		pk_col_names.clear();
 
 		if(!pks.empty())
@@ -777,7 +811,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		catalog.closeConnection();
 
 		//For tables, even if there is no pk the user can manipulate data
-		if(obj_type==ObjectType::Table)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 			results_tbw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::AnyKeyPressed);
 		else
 			results_tbw->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -1513,19 +1547,20 @@ void DataManipulationForm::truncateTable(void)
 
 void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 {
-  if(!item)
-	return;
+	if(!item)
+		return;
 
-  if(item->checkState() != static_cast<Qt::CheckState>(item->data(Qt::UserRole).toInt()))
-  {
-	int idx = 0;
-	bool hide = false;
+	if(item->checkState() != static_cast<Qt::CheckState>(item->data(Qt::UserRole).toInt()))
+	{
+		int idx = 0;
+		bool hide = false;
 
-	idx = col_names.indexOf(item->text());
-	hide = item->checkState() == Qt::Unchecked;
-	results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
-	item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
-	item->setData(Qt::UserRole, item->checkState());
+		idx = col_names.indexOf(item->text());
+		hide = item->checkState() == Qt::Unchecked;
+		results_tbw->horizontalHeader()->setSectionHidden(idx, hide);
+		item->setCheckState(hide ? Qt::Unchecked : Qt::Checked);
+		item->setData(Qt::UserRole, item->checkState());
+		results_tbw->resizeRowsToContents();
 	}
 }
 
@@ -1551,7 +1586,7 @@ void DataManipulationForm::showPopupMenu(void)
 		act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), trUtf8("Clear items"));
+		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), trUtf8("Clear items"), this, SLOT(clearItemsText()));
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
 
 		if(obj_type == ObjectType::Table)

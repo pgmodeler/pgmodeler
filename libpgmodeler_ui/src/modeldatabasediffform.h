@@ -33,15 +33,22 @@
 #include "syntaxhighlighter.h"
 #include "htmlitemdelegate.h"
 #include "numberedtexteditor.h"
+#include "baseconfigwidget.h"
 #include <QThread>
 
-class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
+class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
 	private:
 		Q_OBJECT
 
 		/*! \brief Indicates if the full output generated during the process should be displayed
 		 * When this attribute is true, only errors and some key info messages are displayed. */
 		static bool low_verbosity;
+
+		static map<QString, attribs_map> config_params;
+
+		QEventLoop event_loop;
+
+		bool is_adding_new_preset;
 
 		NumberedTextEditor *sqlcode_txt;
 
@@ -113,15 +120,33 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void saveDiffToFile(void);
 		void finishDiff(void);
 
+		//! \brief Returns true when one or more threads of the whole diff process are running.
+		bool isThreadsRunning(void);
+
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
 		static constexpr unsigned SrcImportThread=0,
 		ImportThread=1,
 		DiffThread=2,
 		ExportThread=3;
 
+		//! \brief Applies the loaded configurations to the form. In this widget only list the loaded presets
+		virtual void applyConfiguration(void);
+
+		//! \brief Loads a set of configurations from a file
+		virtual void loadConfiguration(void);
+
+		//! \brief Saves the current settings to a file
+		virtual void saveConfiguration(void);
+
+		void togglePresetConfiguration(bool toggle, bool is_edit = false);
+		void enablePresetButtons(void);
+
 	public:
-		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 		~ModelDatabaseDiffForm(void);
+
+		//! \brief Makes the form behaves like a QDialog by running it from an event loop. The event loop is finished when the user clicks close
+		void exec(void);
 
 		void setModelWidget(ModelWidget *model_wgt);
 
@@ -146,6 +171,12 @@ class ModelDatabaseDiffForm: public QDialog, public Ui::ModelDatabaseDiffForm {
 		void exportDiff(bool confirm=true);
 		void filterDiffInfos(void);
 		void loadDiffInSQLTool(void);
+		void selectPreset(void);
+		void removePreset(void);
+		void savePreset(void);
+
+		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
+		virtual void restoreDefaults(void);
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings

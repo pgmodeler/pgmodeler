@@ -188,7 +188,7 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 void View::generateColumns(void)
 {
 	unsigned col_id = 0, col_count = 0, expr_idx = 0;
-	Table *tab = nullptr;
+	PhysicalTable *tab = nullptr;
 	Reference ref;
 	Column *col = nullptr;
 	QString name, alias;
@@ -586,9 +586,9 @@ vector<Column *> View::getRelationshipAddedColumns(void)
 	return(cols);
 }
 
-bool View::isReferencingTable(Table *tab)
+bool View::isReferencingTable(PhysicalTable *tab)
 {
-	Table *aux_tab=nullptr;
+	PhysicalTable *aux_tab=nullptr;
 	unsigned count, i;
 	bool found=false;
 
@@ -1016,14 +1016,8 @@ Index *View::getIndex(unsigned obj_idx)
 
 unsigned View::getObjectCount(ObjectType obj_type, bool)
 {
-	try
-	{
-		return(getObjectList(obj_type)->size());
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	vector<TableObject *> *obj_list = getObjectList(obj_type);
+	return(!obj_list ? 0 : obj_list->size());
 }
 
 unsigned View::getTriggerCount(void)
@@ -1052,7 +1046,7 @@ vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 	if(obj_type==ObjectType::Index)
 		return(&indexes);
 
-	throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	return(nullptr);
 }
 
 void View::removeObjects(void)

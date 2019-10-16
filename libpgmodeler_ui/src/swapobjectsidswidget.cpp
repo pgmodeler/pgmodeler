@@ -14,6 +14,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
+		selector_idx = 0;
 		src_object_sel=nullptr;
 		dst_object_sel=nullptr;
 
@@ -63,30 +64,18 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		connect(objects_tbw, &QTableWidget::itemDoubleClicked,
 		[&](QTableWidgetItem *item){
-
-			static unsigned sel_idx = 0;
-			QTableWidgetItem *item_aux = (item->column() == 1 ? item : objects_tbw->item(item->row(), 1));
-			BaseObject *obj = reinterpret_cast<BaseObject *>(item_aux->data(Qt::UserRole).value<void *>());
-
 			if(QApplication::mouseButtons() == Qt::LeftButton)
-			{
-				if(sel_idx == 0)
-				{
-					src_object_sel->setSelectedObject(obj);
-					sel_idx = 1;
-				}
-				else
-				{
-					dst_object_sel->setSelectedObject(obj);
-					sel_idx = 0;
-				}
-			}
+				selectItem(item);
 		});
 
 		setMinimumSize(640,480);
 
 		connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
 		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
+		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+
+		objects_tbw->installEventFilter(this);
 	}
 	catch(Exception &e)
 	{
@@ -138,6 +127,62 @@ void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
 
 	ObjectFinderWidget::updateObjectTable(objects_tbw, objects);
 	objects_tbw->resizeColumnsToContents();
+
+	if(!filter_edt->text().isEmpty() || hide_rels_chk->isChecked() || hide_sys_objs_chk->isChecked())
+		filterObjects();
+}
+
+bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
+{
+	if(object == objects_tbw && event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+		QTableWidgetItem *item = objects_tbw->currentItem();
+		int row = item->row();
+
+		if(k_event->key() == Qt::Key_Space)
+			selectItem(item);
+		else if((k_event->key() == Qt::Key_Down || k_event->key() == Qt::Key_Up) && k_event->modifiers() == Qt::ControlModifier)
+		{
+			QTableWidgetItem *aux_item = nullptr;
+			int key_code = k_event->key();
+
+			clearSelectors();
+			selectItem(item);
+
+			while(!aux_item)
+			{
+				// If user presses down we get the next item below
+				if(key_code == Qt::Key_Down && row < objects_tbw->rowCount() - 1)
+					aux_item = objects_tbw->item(row + 1, 0);
+				// If user presses up we get the next item above
+				else if(key_code == Qt::Key_Up && row > 1)
+					aux_item =  objects_tbw->item(row - 1, 0);
+
+				// If we reach a hidden row we need to jump to the next one that is not hidden
+				if(aux_item && objects_tbw->isRowHidden(aux_item->row()))
+				{
+					aux_item = nullptr;
+					row += (key_code == Qt::Key_Down ? 1 : -1);
+				}
+
+				// Breaking if we've reached the top or down limits (avoiding swap ids with null objects)
+				if((key_code == Qt::Key_Down && row >= objects_tbw->rowCount() - 1) ||
+					 (key_code == Qt::Key_Up && row <= 0))
+					break;
+			}
+
+			if(aux_item)
+			{
+				selectItem(aux_item);
+				swapObjectsIds();
+				clearSelectors();
+				objects_tbw->setCurrentItem(objects_tbw->item(row , 0));
+			}
+		}
+	}
+
+	return(QWidget::eventFilter(object, event));
 }
 
 void SwapObjectsIdsWidget::showObjectId(void)
@@ -192,7 +237,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raise an exception if the user try to swap an id of relationship by other object of different kind
 	else if((src_obj->getObjectType()==ObjectType::Relationship || dst_obj->getObjectType()==ObjectType::Relationship) &&
-			(src_obj->getObjectType() != dst_obj->getObjectType()))
+					(src_obj->getObjectType() != dst_obj->getObjectType()))
 		throw Exception(ErrorCode::InvRelationshipIdSwap,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
@@ -238,14 +283,50 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 
 void SwapObjectsIdsWidget::filterObjects(void)
 {
+	BaseObject *object = nullptr;
+	bool is_rel = false, is_sys_obj = false;
 	QList<QTableWidgetItem*> items=objects_tbw->findItems(filter_edt->text(), Qt::MatchStartsWith | Qt::MatchRecursive);
+	QTableWidgetItem *item = nullptr;
 
 	for(int row=0; row < objects_tbw->rowCount(); row++)
 		objects_tbw->setRowHidden(row, true);
 
 	while(!items.isEmpty())
 	{
-		objects_tbw->setRowHidden(items.front()->row(), false);
+		item = items.front();
+		object = reinterpret_cast<BaseObject *>(objects_tbw->item(item->row(), 0)->data(Qt::UserRole).value<void *>());
+		is_rel = (object->getObjectType() == ObjectType::BaseRelationship || object->getObjectType() == ObjectType::Relationship);
+		is_sys_obj = object->isSystemObject();
+
+		if((!is_rel && !is_sys_obj) ||
+			 (!hide_rels_chk->isChecked() && is_rel) ||
+			 (!hide_sys_objs_chk->isChecked() && is_sys_obj))
+			objects_tbw->setRowHidden(items.front()->row(), false);
+
 		items.pop_front();
 	}
+}
+
+void SwapObjectsIdsWidget::selectItem(QTableWidgetItem *item)
+{
+	QTableWidgetItem *item_aux = (item->column() == 1 ? item : objects_tbw->item(item->row(), 1));
+	BaseObject *obj = reinterpret_cast<BaseObject *>(item_aux->data(Qt::UserRole).value<void *>());
+
+	if(selector_idx == 0)
+	{
+		src_object_sel->setSelectedObject(obj);
+		selector_idx = 1;
+	}
+	else
+	{
+		dst_object_sel->setSelectedObject(obj);
+		selector_idx = 0;
+	}
+}
+
+void SwapObjectsIdsWidget::clearSelectors(void)
+{
+	selector_idx = 0;
+	src_object_sel->clearSelector();
+	dst_object_sel->clearSelector();
 }

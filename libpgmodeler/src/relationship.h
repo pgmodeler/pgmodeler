@@ -235,42 +235,42 @@ class Relationship: public BaseRelationship {
 
 		/*! \brief Creates the foreign key that represents the relationship and adds it
 		 to the receiver table. Must be specified the actions ON DELETE and UPDATE. */
-		void addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del_act, ActionType upd_act);
+		void addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab, ActionType del_act, ActionType upd_act);
 
 		/*! \brief Creates the unique key that represents the 1-1 relationship e adds it to
 		 the receiver table */
-		void addUniqueKey(Table *recv_tab);
+		void addUniqueKey(PhysicalTable *recv_tab);
 
 		//! \brief Adds the relationship attributes (columns) into receiver table
-		void addAttributes(Table *recv_tab);
+		void addAttributes(PhysicalTable *recv_tab);
 
 		/*! \brief Adds relationship constraints on the receiver table. If the relationship is
 		 of type n-n, constraints will be added to the created table. If among the constraints
 		 there is a primary key, then it will be merged with the primary key of receiver table */
-		void addConstraints(Table *recv_tab);
+		void addConstraints(PhysicalTable *recv_tab);
 
 		/*! \brief Executes adicional configurations on receiver table primary key when the
 		 relationship is identifier */
-		void configureIndentifierRel(Table *recv_tab);
+		void configureIndentifierRel(PhysicalTable *recv_tab);
 
 		/*! \brief Copy the columns from the reference table to the receiver table. The parameter not_null indicates
 		 that the columns must not accept null values. The parameter is_dst_table is used to force the usage of destination table
 		and destination name pattern when creating a self many-to-many relationship */
-		void copyColumns(Table *ref_tab, Table *recv_tab, bool not_null, bool is_dst_table = false);
+		void copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, bool not_null, bool is_dst_table = false);
 
 		/*! \brief This method is always executed before disconnection of the relationship.
 		 Its function is to remove from the specified table all the attributes which
 		 references any relationship generated column avoiding reference break */
-		void removeTableObjectsRefCols(Table *table);
+		void removeTableObjectsRefCols(PhysicalTable *table);
 
 		//! \brief Creates the special primary key using the names stored in the 'column_ids_pk_rel' vector
 		void createSpecialPrimaryKey(void);
 
 		//! \brief Removes all the columns created by the relationship from the specified table primary key if exists.
-		void removeColumnsFromTablePK(Table *table);
+		void removeColumnsFromTablePK(PhysicalTable *table);
 
 		//! \brief Removes a single column created by the relationship from the specified table primary key if exists.
-		void removeColumnFromTablePK(Table *table, Column *column);
+		void removeColumnFromTablePK(PhysicalTable *table, Column *column);
 
 		//! \brief Generates the object name according to the specified name pattern
 		QString generateObjectName(unsigned pat_id, Column *id_col=nullptr, bool use_alias=false);
@@ -312,7 +312,7 @@ class Relationship: public BaseRelationship {
 		Relationship(Relationship *rel);
 
 		Relationship(unsigned rel_type,
-					 Table *src_tab, Table *dst_tab,
+					 PhysicalTable *src_tab, PhysicalTable *dst_tab,
 					 bool src_mdtry=false, bool dst_mdtry=false,
 					 bool identifier=false, bool deferrable=false,
 					 DeferralType deferral_type=DeferralType::Immediate,
@@ -475,7 +475,7 @@ class Relationship: public BaseRelationship {
 
 		 WARNING: Not necessarily this method returns the destination table this because not in all
 		 relationship configuration the receiver is the destination table */
-		Table *getReceiverTable(void);
+		PhysicalTable *getReceiverTable(void);
 
 		/*! \brief Returns table which serves as a reference when coping the columns to the
 		 receiver table.
@@ -485,7 +485,7 @@ class Relationship: public BaseRelationship {
 
 		 For n-n relationships this method returns nullptr as this type of relationship
 		 has 2 reference tables, which may be obtained by the method BaseRelationship::getTable() */
-		Table *getReferenceTable(void);
+		PhysicalTable *getReferenceTable(void);
 
 		void setSiglePKColumn(bool value);
 

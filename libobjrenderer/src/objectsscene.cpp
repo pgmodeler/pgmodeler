@@ -74,9 +74,8 @@ ObjectsScene::~ObjectsScene(void)
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
-	ObjectType obj_types[]={ ObjectType::Relationship, ObjectType::Textbox,
-							 ObjectType::View, ObjectType::Table, ObjectType::Schema };
-	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
+	vector<ObjectType> obj_types={ ObjectType::Relationship, ObjectType::Textbox, ObjectType::View,
+																 ObjectType::Table, ObjectType::ForeignTable, ObjectType::Schema };
 
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
@@ -85,7 +84,7 @@ ObjectsScene::~ObjectsScene(void)
 	delete(rel_line);
 
 	//Destroy the objects in the order defined on obj_types vector
-	for(i=0; i < count; i++)
+	for(auto &type : obj_types)
 	{
 		items=this->items();
 
@@ -98,12 +97,12 @@ ObjectsScene::~ObjectsScene(void)
 			/* Case the object is converted to a item group and can be converted to database
 			objects, indicates that the object can be removed from the scene */
 			if(item && !item->parentItem() &&
-					((dynamic_cast<RelationshipView *>(item) && obj_types[i]==ObjectType::Relationship) ||
-					 (dynamic_cast<TextboxView *>(item) && obj_types[i]==ObjectType::Textbox) ||
-					 (dynamic_cast<StyledTextboxView *>(item) && obj_types[i]==ObjectType::Textbox) ||
-					 (dynamic_cast<GraphicalView *>(item) && obj_types[i]==ObjectType::View) ||
-					 (dynamic_cast<TableView *>(item) && obj_types[i]==ObjectType::Table) ||
-					 (dynamic_cast<SchemaView *>(item) && obj_types[i]==ObjectType::Schema)))
+					((dynamic_cast<RelationshipView *>(item) && type==ObjectType::Relationship) ||
+					 (dynamic_cast<TextboxView *>(item) && type==ObjectType::Textbox) ||
+					 (dynamic_cast<StyledTextboxView *>(item) && type==ObjectType::Textbox) ||
+					 (dynamic_cast<GraphicalView *>(item) && type==ObjectType::View) ||
+					 (dynamic_cast<TableView *>(item) && (type==ObjectType::Table || type==ObjectType::ForeignTable)) ||
+					 (dynamic_cast<SchemaView *>(item) && type==ObjectType::Schema)))
 
 			{
 				this->removeItem(item);

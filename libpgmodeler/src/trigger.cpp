@@ -445,7 +445,7 @@ void Trigger::validateTrigger(void)
 		if(!is_constraint)
 		{
 			//The INSTEAD OF mode cannot be used on triggers that belongs to tables! This is available only for view triggers
-			if(firing_type==FiringType::InsteadOf && parent_type==ObjectType::Table)
+			if(firing_type==FiringType::InsteadOf && parent_type != ObjectType::View)
 				throw Exception(ErrorCode::InvTableTriggerInsteadOfFiring,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			//The INSTEAD OF mode cannot be used on view triggers that executes for each statement

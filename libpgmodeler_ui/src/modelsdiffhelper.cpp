@@ -133,12 +133,12 @@ void ModelsDiffHelper::cancelDiff(void)
 	diff_canceled=true;
 }
 
-void ModelsDiffHelper::diffTables(Table *src_table, Table *imp_table, unsigned diff_type)
+void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type)
 {
 	ObjectType types[2]={ ObjectType::Column, ObjectType::Constraint };
 	vector<TableObject *> *tab_objs=nullptr;
 	Constraint *constr=nullptr;
-	Table *ref_tab=nullptr, *comp_tab=nullptr;
+	PhysicalTable *ref_tab=nullptr, *comp_tab=nullptr;
 	BaseObject *aux_obj=nullptr;
 
 	if(diff_type==ObjectsDiffInfo::DropObject)
@@ -278,17 +278,18 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					//Processing relationship (in this case only generalization and patitioning ones are considered)
 					else if(obj_type==ObjectType::Relationship)
 					{
-						Table *ref_tab=nullptr, *rec_tab=nullptr;
+						PhysicalTable *ref_tab=nullptr, *rec_tab=nullptr;
 						Relationship *rel=dynamic_cast<Relationship *>(object);
 
-						rec_tab=aux_model->getTable(rel->getReceiverTable()->getName(true));
+						rec_tab=dynamic_cast<PhysicalTable *>(aux_model->getObject(rel->getReceiverTable()->getName(true),
+																																				{ObjectType::Table, ObjectType::ForeignTable}));
 
 						if(rel->getRelationshipType()==BaseRelationship::RelationshipGen ||
 							 rel->getRelationshipType()==BaseRelationship::RelationshipPart)
 						{
 							Relationship *aux_rel = nullptr;
 
-							ref_tab = aux_model->getTable(rel->getReferenceTable()->getName(true));
+							ref_tab = dynamic_cast<PhysicalTable *>(aux_model->getObject(rel->getReferenceTable()->getName(true), {ObjectType::Table, ObjectType::ForeignTable}));
 							aux_rel = dynamic_cast<Relationship *>(aux_model->getRelationship(ref_tab, rec_tab));
 
 							/* If the receiver table exists on the model generates a info for the relationship,
@@ -337,9 +338,11 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnchangeble]) && object->getObjectType()==ObjectType::Table)
+								if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnchangeble]) && PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
-									Table *tab=dynamic_cast<Table *>(object), *aux_tab=dynamic_cast<Table *>(aux_object);
+									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
+											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
+
 									diffTables(tab, aux_tab, ObjectsDiffInfo::DropObject);
 									diffTables(tab, aux_tab, ObjectsDiffInfo::CreateObject);
 								}
@@ -421,7 +424,7 @@ void ModelsDiffHelper::diffTableObject(TableObject *tab_obj, unsigned diff_type)
 	{
 		if(obj_type==ObjectType::Constraint)
 		{
-			Table *aux_table=dynamic_cast<Table *>(aux_base_tab);
+			PhysicalTable *aux_table=dynamic_cast<PhysicalTable *>(aux_base_tab);
 			aux_tab_obj=aux_table->getObject(obj_name, obj_type);
 		}
 		else
@@ -636,7 +639,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 	vector<Type *> types;
 	Constraint *constr=nullptr;
 	Column *col=nullptr, *aux_col=nullptr;
-	Table *parent_tab=nullptr;
+	PhysicalTable *parent_tab=nullptr;
 	bool skip_obj=false;
 	QStringList sch_names;
 
@@ -684,7 +687,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		 of commands to create or drop an inherited constraint raising errors when export the diff */
 			if(constr && constr->getConstraintType()==ConstraintType::Check)
 			{
-				parent_tab=dynamic_cast<Table *>(constr->getParentTable());
+				parent_tab=dynamic_cast<PhysicalTable *>(constr->getParentTable());
 				skip_obj=constr->isAddedByGeneralization();
 
 				for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
@@ -695,7 +698,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			//Igoring any operation done over inherited columns
 			else if(col)
 			{
-				parent_tab=dynamic_cast<Table *>(col->getParentTable());
+				parent_tab=dynamic_cast<PhysicalTable *>(col->getParentTable());
 				skip_obj=col->isAddedByGeneralization();
 
 				for(unsigned i=0; i < parent_tab->getAncestorTableCount() && !skip_obj; i++)
@@ -825,7 +828,8 @@ void ModelsDiffHelper::processDiffInfos(void)
 									*old_col=dynamic_cast<Column *>(diff.getOldObject());
 							Table *tab=dynamic_cast<Table *>(src_col->getParentTable());
 
-							if(((old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType().getAliasType())) ||
+							if(tab &&
+								 ((old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType().getAliasType())) ||
 									(!old_col->getType().isSerialType() && !src_col->getType().isEquivalentTo(old_col->getType()))) &&
 								 truncate_tabs.count(tab->getObjectId())==0)
 							{
@@ -957,7 +961,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 		if(tab_obj && (tab_obj->getObjectType()==ObjectType::Column || tab_obj->getObjectType()==ObjectType::Constraint))
 		{
 			bool gen_alter=false;
-			Table *table=dynamic_cast<Table *>(tab_obj->getParentTable());
+			PhysicalTable *table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
 
 			gen_alter=table->isGenerateAlterCmds();
 			table->setGenerateAlterCmds(true);

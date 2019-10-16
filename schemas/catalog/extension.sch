@@ -30,7 +30,7 @@
 		   END
 	    FROM pg_depend AS _dp
 	    LEFT JOIN pg_extension AS _ex ON _ex.oid=_dp.objid
-	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text=ex.extname
+	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text SIMILAR TO '(' || ex.extnamespace::regnamespace::text || '.)?(' || ex.extname  || ')'
 	    AND _dp.classid::regclass::text = 'pg_type') AS handles_type_bool, ]
 
 	  ({comment}) [ AS comment ]

@@ -106,7 +106,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 						}
 					}
 
-					if(aux_obj && (aux_obj->getObjectType()==ObjectType::View || aux_obj->getObjectType()==ObjectType::Table))
+					if(aux_obj && BaseTable::isBaseTable(aux_obj->getObjectType()))
 					{
 						vector<BaseRelationship *> base_rels=db_model->getRelationships(dynamic_cast<BaseTable *>(aux_obj));
 						for(auto &rel : base_rels)
@@ -136,19 +136,18 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		{
 			unsigned suffix=1;
 			QString new_name;
-			Table *table=nullptr;
+			BaseTable *table=nullptr;
 			ObjectType obj_type;
 			BaseObject *obj=info.getObject();
 			TableObject *tab_obj=nullptr;
 
 			/* If the last element of the referrer objects is a table or view the
 			info object itself need to be renamed since tables and views will not be renamed */
-			bool rename_obj=(refs.back()->getObjectType()==ObjectType::Table ||
-							 refs.back()->getObjectType()==ObjectType::View);
+			bool rename_obj=BaseTable::isBaseTable(refs.back()->getObjectType());
 
 			if(rename_obj)
 			{
-				table=dynamic_cast<Table *>(dynamic_cast<TableObject *>(obj)->getParentTable());
+				table=dynamic_cast<BaseTable *>(dynamic_cast<TableObject *>(obj)->getParentTable());
 				obj_type=obj->getObjectType();
 
 				do
@@ -162,6 +161,7 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 				//Renames the object
 				obj->setName(new_name);
+				table->setModified(true);
 			}
 
 			//Renaming the referrer objects
@@ -173,19 +173,20 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 				//Tables and view aren't renamed only table child objects (constraints, indexes)
 				if(tab_obj && !tab_obj->isAddedByRelationship())
 				{
-					table=dynamic_cast<Table *>(tab_obj->getParentTable());
+					table=dynamic_cast<BaseTable *>(tab_obj->getParentTable());
 
 					do
 					{
 						//Configures a new name for the object [name]_[suffix]
-						new_name=QString("%1_%2").arg(refs.back()->getName()).arg(suffix);
+						new_name=QString("%1_%2").arg(tab_obj->getName()).arg(suffix);
 						suffix++;
 					}
 					//Generates a new name until no object is found on parent table
 					while(table->getObjectIndex(new_name, obj_type) >= 0);
 
 					//Renames the referrer object
-					refs.back()->setName(new_name);
+					tab_obj->setName(new_name);
+					table->setModified(true);
 				}
 
 				refs.pop_back();
@@ -266,17 +267,19 @@ void ModelValidationHelper::validateModel(void)
 		ObjectType types[]={ ObjectType::Role, ObjectType::Tablespace, ObjectType::Schema, ObjectType::Language, ObjectType::Function,
 												 ObjectType::Type, ObjectType::Domain, ObjectType::Sequence, ObjectType::Operator, ObjectType::OpFamily,
 												 ObjectType::OpClass, ObjectType::Collation, ObjectType::Table, ObjectType::Extension, ObjectType::View,
-												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql },
-				aux_types[]={ ObjectType::Table, ObjectType::View },
+												 ObjectType::Relationship, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::GenericSql,
+												 ObjectType::ForeignTable },
+				aux_types[]={ ObjectType::Table, ObjectType::ForeignTable, ObjectType::View },
 				tab_obj_types[]={ ObjectType::Constraint, ObjectType::Index },
 				obj_type;
 		unsigned i, i1, cnt, aux_cnt=sizeof(aux_types)/sizeof(ObjectType),
 				count=sizeof(types)/sizeof(ObjectType), count1=sizeof(tab_obj_types)/sizeof(ObjectType);
 		BaseObject *object=nullptr, *refer_obj=nullptr;
-		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr;
+		vector<BaseObject *> refs, refs_aux, *obj_list=nullptr, aux_tables;
 		vector<BaseObject *>::iterator itr;
 		TableObject *tab_obj=nullptr;
-		Table *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
+		PhysicalTable *table=nullptr, *ref_tab=nullptr, *recv_tab=nullptr;
+		BaseTable *base_tab = nullptr;
 		Constraint *constr=nullptr;
 		Column *col=nullptr;
 		Relationship *rel=nullptr;
@@ -314,7 +317,8 @@ void ModelValidationHelper::validateModel(void)
 					{
 						rel=dynamic_cast<Relationship *>(object);
 						if(rel->getRelationshipType()==Relationship::RelationshipGen ||
-								rel->getRelationshipType()==Relationship::RelationshipDep)
+								rel->getRelationshipType()==Relationship::RelationshipDep ||
+							 rel->getRelationshipType()==Relationship::RelationshipPart)
 						{
 							recv_tab=rel->getReceiverTable();
 							ref_tab=rel->getReferenceTable();
@@ -362,7 +366,7 @@ void ModelValidationHelper::validateModel(void)
 						/* Validating a special object. The validation made here is to check if the special object
 						 * (constraint/index/trigger/view) references a column added by a relationship and
 						 *  that relationship is being created after the creation of the special object */
-						if(obj_type==ObjectType::Table || obj_type==ObjectType::View || obj_type == ObjectType::GenericSql)
+						if(BaseTable::isBaseTable(obj_type) || obj_type == ObjectType::GenericSql)
 						{
 							vector<ObjectType> tab_aux_types={ ObjectType::Constraint, ObjectType::Trigger, ObjectType::Index };
 							vector<TableObject *> *tab_objs;
@@ -373,7 +377,7 @@ void ModelValidationHelper::validateModel(void)
 							GenericSQL *gen_sql=nullptr;
 							Constraint *constr=nullptr;
 
-							table=dynamic_cast<Table *>(object);
+							table=dynamic_cast<PhysicalTable *>(object);
 							view=dynamic_cast<View *>(object);
 							gen_sql = dynamic_cast<GenericSQL *>(object);
 
@@ -385,6 +389,7 @@ void ModelValidationHelper::validateModel(void)
 								for(auto &obj_tp : tab_aux_types)
 								{
 									tab_objs = table->getObjectList(obj_tp);
+									if(!tab_objs) continue;
 
 									for(auto &tab_obj : (*tab_objs))
 									{
@@ -439,7 +444,7 @@ void ModelValidationHelper::validateModel(void)
 								for(auto &ref_obj : gen_sql->getReferencedObjects())
 								{
 									col = dynamic_cast<Column *>(ref_obj);
-									if(!col) continue;
+									if(!col || !col->isAddedByRelationship()) continue;
 
 									rel = col->getParentRelationship();
 
@@ -463,26 +468,29 @@ void ModelValidationHelper::validateModel(void)
 
 
 		/* Step 2: Validating name conflitcs between primary keys, unique keys, exclude constraints
-	  and indexs of all tables/views. The table and view names are checked too. */
-		obj_list=db_model->getObjectList(ObjectType::Table);
-		itr=obj_list->begin();
+		and indexs of all tables/foreign talbes/views. The tables/views names are checked too. */
+		aux_tables = *db_model->getObjectList(ObjectType::Table);
+		aux_tables.insert(aux_tables.end(),
+											db_model->getObjectList(ObjectType::View)->begin(),
+											db_model->getObjectList(ObjectType::View)->end());
+		itr = aux_tables.begin();
 
 		//Searching the model's tables and gathering all the constraints and index
-		while(itr!=obj_list->end() && !valid_canceled)
+		while(itr != aux_tables.end() && !valid_canceled)
 		{
-			table=dynamic_cast<Table *>(*itr);
-			emit s_objectProcessed(signal_msg.arg(table->getName()).arg(table->getTypeName()), table->getObjectType());
+			base_tab = dynamic_cast<BaseTable *>(*itr);
+			emit s_objectProcessed(signal_msg.arg(base_tab->getName()).arg(base_tab->getTypeName()), base_tab->getObjectType());
 
 			itr++;
 
 			for(i=0; i < count1 && !valid_canceled; i++)
 			{
-				cnt=table->getObjectCount(tab_obj_types[i]);
+				cnt=base_tab->getObjectCount(tab_obj_types[i]);
 
 				for(i1=0; i1 < cnt && !valid_canceled; i1++)
 				{
 					//Get the table object (constraint or index)
-					tab_obj=dynamic_cast<TableObject *>(table->getObject(i1, tab_obj_types[i]));
+					tab_obj=dynamic_cast<TableObject *>(base_tab->getObject(i1, tab_obj_types[i]));
 
 					//Configures the full name of the object including the parent name
 					name=tab_obj->getParentTable()->getSchema()->getName(true) + QString(".") + tab_obj->getName(true);
@@ -492,18 +500,18 @@ void ModelValidationHelper::validateModel(void)
 					constr=dynamic_cast<Constraint *>(tab_obj);
 
 					/* If the object is an index or	a primary key, unique or exclude constraint,
-		  insert the object on duplicated	objects map */
+					 * insert the object on duplicated	objects map */
 					if((!constr ||
 						(constr && (constr->getConstraintType()==ConstraintType::PrimaryKey ||
-									constr->getConstraintType()==ConstraintType::Unique ||
-									constr->getConstraintType()==ConstraintType::Exclude))))
+												constr->getConstraintType()==ConstraintType::Unique ||
+												constr->getConstraintType()==ConstraintType::Exclude))))
 						dup_objects[name].push_back(tab_obj);
 				}
 			}
 		}
 
-		/* Inserting the tables and views to the map in order to check if there are table objects
-	   that conflicts with thems */
+		/* Inserting the tables and views to the map in order to check if there are
+		 * other table objects that conflicts with them */
 		for(i=0; i < aux_cnt && !valid_canceled; i++)
 		{
 			obj_list=db_model->getObjectList(aux_types[i]);
@@ -539,13 +547,20 @@ void ModelValidationHelper::validateModel(void)
 		// Step 3: Checking if columns of any table is using GiS data types and the postgis extension is not created.
 		if(!postgis_exists)
 		{
-			obj_list=db_model->getObjectList(ObjectType::Table);
-			itr=obj_list->begin();
+			vector<BaseObject *> tabs;
+
+			tabs.assign(db_model->getObjectList(ObjectType::Table)->begin(),
+									db_model->getObjectList(ObjectType::Table)->end());
+			tabs.insert(tabs.end(),
+									db_model->getObjectList(ObjectType::ForeignTable)->begin(),
+									db_model->getObjectList(ObjectType::ForeignTable)->end());
+
+			itr=tabs.begin();
 			i=0;
 
-			while(itr!=obj_list->end() && !valid_canceled)
+			while(itr!=tabs.end() && !valid_canceled)
 			{
-				table = dynamic_cast<Table *>(*itr);
+				table = dynamic_cast<PhysicalTable *>(*itr);
 				itr++;
 
 				for(auto &obj : *table->getObjectList(ObjectType::Column))

@@ -1129,6 +1129,51 @@
             </item>
            </layout>
           </item>
+          <item row="9" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_24">
+            <item>
+             <widget class="QCheckBox" name="escape_comments_chk">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="statusTip">
+               <string>Forces the escaping of line breaks and tabulations in objects' comments during SQL code generation. This option produces a more compact SQL code since all comments will be presented in one line. Despite changing the presentation this option doen't not affects the final semantics of multilined comments.</string>
+              </property>
+              <property name="text">
+               <string>Escape objects' comments in SQL code</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="escape_comments_hint" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1567,7 +1612,7 @@
             <item>
              <widget class="QCheckBox" name="low_verbosity_chk">
               <property name="statusTip">
-               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less UI operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.</string>
+               <string>Reduces the verbosity of the export, import and diff process causing only key info messages and errors to be displayed. This option causes less rendering operations to be performed when displaying progress messages and, as a consequence, it makes these processes run faster.</string>
               </property>
               <property name="text">
                <string>Low verbosity for the export, import and diff processes</string>

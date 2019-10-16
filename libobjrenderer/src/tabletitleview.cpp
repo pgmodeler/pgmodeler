@@ -46,14 +46,13 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	Schema *schema=nullptr;
 	QFont font;
 	Tag *tag=nullptr;
-	Table *table = dynamic_cast<Table *>(object);
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(object);
 
 	//Raises an error if the object related to the title is not allocated
 	if(!object)
 		throw Exception(ErrorCode::OprNotAllocatedObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	//Raises an error if the object is invalid
-	else if(object->getObjectType()!=ObjectType::Table  &&
-					object->getObjectType()!=ObjectType::View)
+	else if(!BaseTable::isBaseTable(object->getObjectType()))
 		throw Exception(ErrorCode::OprObjectInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	schema=dynamic_cast<Schema *>(object->getSchema());
@@ -64,6 +63,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 		name_attrib=Attributes::ViewName;
 		schema_name_attrib=Attributes::ViewSchemaName;
 		title_color_attrib=Attributes::ViewTitle;
+	}
+	else if(object->getObjectType()==ObjectType::ForeignTable && !tag)
+	{
+		name_attrib=Attributes::ForeignTableName;
+		schema_name_attrib=Attributes::ForeignTableSchemaName;
+		title_color_attrib=Attributes::ForeignTableTitle;
 	}
 	else
 	{
@@ -113,7 +118,8 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(tag)
 		pen.setColor(tag->getElementColor(title_color_attrib, Tag::BorderColor));
 
-	if(object->getObjectType()==ObjectType::View || (table && table->isPartition()))
+	if(object->getObjectType()==ObjectType::View ||
+		 (table && table->isPartition()))
 		pen.setStyle(Qt::DashLine);
 
 	box->setPen(pen);
