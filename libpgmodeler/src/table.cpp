@@ -22,6 +22,8 @@
 const QString Table::DataSeparator = QString("•");
 const QString Table::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
+bool Table::use_copy_syntax;
+
 Table::Table(void) : BaseTable()
 {
 	obj_type=ObjectType::Table;
@@ -1957,7 +1959,7 @@ QString Table::getInitialData(void)
 	return(initial_data);
 }
 
-QString Table::getInitialDataCommands(void)
+QString Table::getInitialDataCommands()
 {
 	QStringList buffer=initial_data.split(DataLineBreak);
 
@@ -1982,9 +1984,11 @@ QString Table::getInitialDataCommands(void)
 			curr_col++;
 		}
 		
-		auto cmd = QString("COPY %1 (%2) FROM stdin;").arg( getSignature() ).arg( selected_cols.join(", ") );
-
-        commands.append( cmd );
+		if ( Table::use_copy_syntax )
+        {
+            auto cmd = QString("COPY %1 (%2) FROM stdin;").arg( getSignature() ).arg( selected_cols.join(", ") );
+            commands.append( cmd );
+        }
         
 		for(QString buf_row : buffer)
 		{
@@ -2003,7 +2007,10 @@ QString Table::getInitialDataCommands(void)
 			col_values.clear();
 		}
 		
-		commands.append("\\.");
+		if ( Table::use_copy_syntax )
+        {
+            commands.append("\\.");
+        }
 
 		return(commands.join('\n') + Attributes::DdlEndToken );
 	}
@@ -2011,9 +2018,9 @@ QString Table::getInitialDataCommands(void)
 	return(QString());
 }
 
-QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values)
+QString Table::createInsertCommand(const QStringList &col_names, const QStringList &values )
 {
-	QString fmt_cmd, insert_cmd = QString("%1");
+	QString fmt_cmd, insert_cmd = ( Table::use_copy_syntax ? QString("%1") : QString("INSERT INTO %1 (%2) VALUES (%3);\n%4") );
 	QStringList val_list, col_list;
 	int curr_col=0;
 
@@ -2022,10 +2029,10 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 
 	for(QString value : values)
 	{
-		//Empty values as considered as NULL
+		//Empty values as considered as DEFAULT for INSERT queries or NULL if COPY FROM 
 		if(value.isEmpty())
 		{
-			value=QString("\\N");
+			value= ( Table::use_copy_syntax ? QString("\\N") : QString("DEFAULT") );
 		}
 		//Unescaped values will not be enclosed in quotes
 		else if(value.startsWith(PgModelerNs::UnescValueStart) && value.endsWith(PgModelerNs::UnescValueEnd))
@@ -2040,7 +2047,11 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 			value.replace(QString("\\") + PgModelerNs::UnescValueEnd, PgModelerNs::UnescValueEnd);
 			value.replace(QString("\'"), QString("''"));
 			value.replace(QChar(QChar::LineFeed), QString("\\n"));
-			//value=QString("E'") + value + QString("'");
+			
+            if ( !Table::use_copy_syntax )
+            {
+                value=QString("E'") + value + QString("'");
+            }
 		}
 
 		val_list.push_back(value);
@@ -2055,10 +2066,11 @@ QString Table::createInsertCommand(const QStringList &col_names, const QStringLi
 		else if(col_list.size() > val_list.size())
 		{
 			for(curr_col = val_list.size(); curr_col < col_list.size(); curr_col++)
-				val_list.append(QString("\\N"));
+				val_list.append( ( Table::use_copy_syntax ? QString("\\N") : QString("DEFAULT") ) );
 		}
 
-		fmt_cmd=insert_cmd.arg(val_list.join("\t"));
+		fmt_cmd=( Table::use_copy_syntax ? insert_cmd.arg(val_list.join("\t")) : insert_cmd.arg(getSignature()).arg(col_list.join(", "))
+									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken) );
 	}
 
 	return(fmt_cmd);

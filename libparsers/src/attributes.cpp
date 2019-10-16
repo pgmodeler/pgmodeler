@@ -575,6 +575,7 @@ namespace Attributes {
 	UqConstr=QString("uq-constr"),
 	UqPattern=QString("uq-pattern"),
 	UsagePriv=QString("usage"),
+	UseCopyFrom=QString("use-copy-from"),
 	UseCurvedLines=QString("use-curved-lines"),
 	UseSignature=QString("use-signature"),
 	UsePlaceholders=QString("use-placeholders"),

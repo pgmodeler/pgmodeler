@@ -95,6 +95,9 @@ class Table: public BaseTable {
 
 		//! \brief The partitioning mode/type used by the table
 		PartitioningType partitioning_type;
+        
+        //! \brief Flag to use COPY syntax instead of INSERT.
+        static bool use_copy_syntax;
 
 		/*! \brief Gets one table ancestor (ObjectType::Table) or copy (ObjectType::ObjBaseTable) using its name and stores
 		 the index of the found object on parameter 'obj_idx' */
@@ -135,8 +138,9 @@ class Table: public BaseTable {
 		void saveRelObjectsIndexes(ObjectType obj_type);
 		void restoreRelObjectsIndexes(ObjectType obj_type);
 
-		//! \brief Create an insert command from a list of columns and the values.
-		QString createInsertCommand(const QStringList &col_names, const QStringList &values);
+		/*! \brief Create an insert command from a list of columns and the values.
+         * */        
+		QString createInsertCommand(const QStringList &col_names, const QStringList &values );
 
 	public:
 		//! \brief Default char for data separator in initial-data tag
@@ -147,6 +151,12 @@ class Table: public BaseTable {
 
 		Table(void);
 		~Table(void);
+        
+                
+        /*! \brief This method sets whether to use COPY FROM syntax instead of INSERT INTO or not. 
+         * \param p_use_copy_syntax if true, else use INSERT INTO
+         */
+        static inline void setCopySyntax( bool p_use_copy_syntax ) noexcept { Table::use_copy_syntax = p_use_copy_syntax; } 
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
@@ -452,9 +462,10 @@ class Table: public BaseTable {
 
 		QString getInitialData(void);
 
-		/*! \brief Translate the CSV-like initial data to a set of INSERT commands.
-		In invalid columns exist in the buffer they will be rejected when generating the commands */
-		QString getInitialDataCommands(void);
+		/*! \brief Translate the CSV-like initial data to a set of INSERT or COPY FROM commands.
+		In invalid columns exist in the buffer they will be rejected when generating the commands 
+		*/
+		QString getInitialDataCommands();
 
 		/*! \brief Generates the table's SQL code considering adding the relationship added object or not.
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code

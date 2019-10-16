@@ -49,6 +49,7 @@
 <!ATTLIST configuration compact-view (false|true) "false">
 <!ATTLIST configuration save-restore-geometry (false|true) "false">
 <!ATTLIST configuration low-verbosity (false|true) "false">
+<!ATTLIST configuration use-copy-from (false|true) "false">
 
 <!ELEMENT session (file+)>
 <!ELEMENT recent-models (file+)>

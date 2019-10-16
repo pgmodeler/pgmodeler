@@ -97,7 +97,7 @@ class ModelExportHelper: public QObject {
 		double zoom;
 
 		bool show_grid, show_delim, page_by_page;
-
+        
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
 
