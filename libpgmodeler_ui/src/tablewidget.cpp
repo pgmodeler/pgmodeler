@@ -426,12 +426,26 @@ void TableWidget::listObjects(ObjectType obj_type)
 	ObjectsTableWidget *tab=nullptr;
 	unsigned idx = 0, count = 0;
 	PhysicalTable *table=nullptr;
+	vector<int> checked_cols;
 
 	try
 	{
 		//Gets the object table related to the object type
 		tab=objects_tab_map[obj_type];
 		table=dynamic_cast<PhysicalTable *>(this->object);
+
+		/* Since the object grid is cleared we need to register the checked PK columns
+		 * so after (re)populating the cols list the check state of that columns
+		 * can be restored properly */
+		if(obj_type == ObjectType::Column)
+		{
+			count = tab->getRowCount();
+			for(idx = 0; idx < count; idx++)
+			{
+				if(tab->getCellCheckState(idx, 0) == Qt::Checked)
+					checked_cols.push_back(idx);
+			}
+		}
 
 		tab->blockSignals(true);
 		tab->removeRows();
@@ -455,6 +469,13 @@ void TableWidget::listObjects(ObjectType obj_type)
 																															objects_tab_map[ObjectType::Column]->getRowCount() > 0);
 			objects_tab_map[ObjectType::Index]->setButtonsEnabled(ObjectsTableWidget::AddButton,
 																														objects_tab_map[ObjectType::Column]->getRowCount() > 0);
+
+			// Restoring the PK columns check state
+			while(!checked_cols.empty())
+			{
+				tab->setCellCheckState(checked_cols.back(), 0, Qt::Checked);
+				checked_cols.pop_back();
+			}
 		}
 	}
 	catch(Exception &e)
