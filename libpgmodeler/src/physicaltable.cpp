@@ -1624,7 +1624,7 @@ QString PhysicalTable::getInitialDataCommands(void)
 			commands.append("\\.");
 		}
 
-		return( commands.join('\n')  + Attributes::DdlEndToken );
+		return( commands.join('\n')  + "\n" + Attributes::DdlEndToken );
 	}
 
 	return(QString());
