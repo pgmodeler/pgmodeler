@@ -1143,7 +1143,7 @@
                <string/>
               </property>
               <property name="statusTip">
-               <string>Forces the escaping of line breaks and tabulations in objects' comments during SQL code generation. This option produces a more compact SQL code since all comments will be presented in one line. Despite changing the presentation this option doen't not affects the final semantics of multilined comments.</string>
+               <string>Forces the escaping of line breaks and tabulations in objects' comments during SQL code generation. This option produces a more compact SQL code since all comments will be presented in one line. Despite changing the presentation this option doesn't affect the final semantics of multilined comments.</string>
               </property>
               <property name="text">
                <string>Escape objects' comments in SQL code</string>
