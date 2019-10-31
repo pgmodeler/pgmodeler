@@ -19,6 +19,7 @@ v0.9.2-beta2
 * [New] Added support to save diff settings in form of presets.
 * [New] Added an option to BaseObject to force the comment escaping making multilined comments be presented as single lines but without changing their semantics.
 * [New] Adding support to parse escaped text delimiters and value separators in CSVLoadWidget.
+* [Change] Avoiding the usage of "Generate ALTER commands" option when the table is a partition or partitioned.
 * [Change] Avoid unchecking PK checkboxes on TableWidget when adding a new column.
 * [Change] Validating the dialogs geometry regarding to screens geometry in order to avoid their appearance in an invalid position (out of range).
 * [Change] Limiting the size of the exceptions stack in 50 elements.
