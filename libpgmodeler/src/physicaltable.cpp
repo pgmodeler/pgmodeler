@@ -103,11 +103,14 @@ CopyOptions PhysicalTable::getCopyTableOptions(void)
 
 void PhysicalTable::setPartitioningType(PartitioningType part_type)
 {
-  setCodeInvalidated(partitioning_type != part_type);
-  partitioning_type = part_type;
+	setCodeInvalidated(partitioning_type != part_type);
+	partitioning_type = part_type;
 
 	if(part_type == PartitioningType::Null)
 		partition_keys.clear();
+	else
+		// If changing the partitioning type of the table the ALTER commands for columns and constraints is disabled
+		setGenerateAlterCmds(false);
 }
 
 PartitioningType PhysicalTable::getPartitioningType(void)
@@ -155,7 +158,10 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
 		attribs[Attributes::Table]=this->getName(true);
 		attribs[Attributes::Name]=tab_obj->getName(true);
-		attribs[Attributes::Comment]=QString(tab_obj->getComment()).replace(QString("'"), QString("''"));;
+
+		QString comment = getEscapedComment(BaseObject::isEscapeComments());
+		attribs[Attributes::EscapeComment]=BaseObject::isEscapeComments() ? Attributes::True : QString();
+		attribs[Attributes::Comment]=comment;
 
 		schparser.ignoreUnkownAttributes(true);
 		if(tab_obj->isSQLDisabled())
@@ -505,7 +511,13 @@ void PhysicalTable::setPartionedTable(PhysicalTable *table)
 	partitioned_table = table;
 
 	if(partitioned_table)
+	{
 		partitioned_table->addPartitionTable(this);
+
+		/* If the partitioned table is defined we need to disable the ALTER commands for columns and constraints
+		 * in order to avoid SQL syntax errors */
+		setGenerateAlterCmds(false);
+	}
 }
 
 void PhysicalTable::setPartitionBoundingExpr(const QString part_bound_expr)
@@ -1298,8 +1310,20 @@ bool PhysicalTable::isPartitionKeyRefColumn(Column *column)
 
 void PhysicalTable::setGenerateAlterCmds(bool value)
 {
-	setCodeInvalidated(gen_alter_cmds != value);
-	gen_alter_cmds=value;
+	if(value && (isPartition() || isPartitioned()))
+	{
+		/* Forcing the disabling of ALTER commands for columns and constraints
+		 * if the table is a partition or partitioned table in order to avoid
+		 * SQL syntax errors */
+		setCodeInvalidated(true);
+		gen_alter_cmds = false;
+	}
+	else
+	{
+		setCodeInvalidated(gen_alter_cmds != value);
+		gen_alter_cmds = value;
+	}
+
 	updateAlterCmdsStatus();
 }
 

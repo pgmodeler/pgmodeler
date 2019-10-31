@@ -402,7 +402,8 @@ void TableWidget::__setAttributes(DatabaseModel *model, OperationList *op_list, 
 		}
 
 		parent_tables->clearSelection();
-		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds());
+		gen_alter_cmds_chk->setChecked(table->isGenerateAlterCmds() && !table->isPartition() && !table->isPartitioned());
+		gen_alter_cmds_chk->setEnabled(!table->isPartition() && !table->isPartitioned());
 
 		tag_sel->setModel(this->model);
 		tag_sel->setSelectedObject(table->getTag());
