@@ -153,10 +153,8 @@ void ObjectRenameWidget::applyRenaming(void)
 				 * the model relationship will be revalidated */
 				if(col && tab)
 				{
-					if(tab->isConstraintRefColumn(col, ConstraintType::PrimaryKey))
-						model->validateRelationships();
-					else
-						model->updateViewsReferencingTable(tab);
+					model->validateRelationships();
+					model->updateViewsReferencingTable(tab);
 				}
 
 				base_tab->setModified(true);

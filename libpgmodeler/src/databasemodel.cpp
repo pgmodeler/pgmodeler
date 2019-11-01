@@ -9599,7 +9599,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			Tag *tag=dynamic_cast<Tag *>(object);
 
 			list.assign(tables.begin(), tables.end());
-			list.assign(foreign_tables.begin(), foreign_tables.end());
+			list.insert(list.end(), foreign_tables.begin(), foreign_tables.end());
 			list.insert(list.end(), views.begin(), views.end());
 
 			itr=list.begin();
