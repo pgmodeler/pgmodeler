@@ -797,6 +797,13 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 					sch_parser.ignoreUnkownAttributes(true);
 					attributes[Attributes::Owner]=sch_parser.getCodeDefinition(filename, attributes);
+
+					/* Disabling the SQL statement regarding the owner configuration (ALTER...OWNER TO...) when
+					 * the role used to be the owner of the object has its SQL code disabled. This will avoid
+					 * errors if the user wants to ignore that command without disabling the whole object's SQL when
+					 * its owner is disabled too */
+					if(owner->isSQLDisabled())
+						attributes[Attributes::Owner].prepend(QString("-- "));
 				}
 			}
 			else
