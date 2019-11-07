@@ -159,7 +159,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 		attribs[Attributes::Table]=this->getName(true);
 		attribs[Attributes::Name]=tab_obj->getName(true);
 
-		QString comment = getEscapedComment(BaseObject::isEscapeComments());
+		QString comment = tab_obj->getEscapedComment(BaseObject::isEscapeComments());
 		attribs[Attributes::EscapeComment]=BaseObject::isEscapeComments() ? Attributes::True : QString();
 		attribs[Attributes::Comment]=comment;
 
