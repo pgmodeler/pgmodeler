@@ -110,10 +110,14 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 							ErrorCode::InvPartRelPartitionedDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the user tries to create a generalization or copy relationship in
-		 * which one of the tables is part of a partitioning hierarchy. */
+		 * which one of the tables is part of a partitioning hierarchy, or if the relationship is 1-1, 1-n, n-n and
+		 * one of the tables is a partition. */
 		if(((rel_type == RelationshipGen || rel_type == RelationshipDep) &&
 				(src_tab->isPartition() || src_tab->isPartitioned() ||
-				 dst_tab->isPartition() || dst_tab->isPartitioned())))
+				 dst_tab->isPartition() || dst_tab->isPartitioned())) ||
+
+			 ((rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn) &&
+				(src_tab->isPartition() || dst_tab->isPartition())))
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvRelTypeForPatitionTables)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
