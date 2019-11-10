@@ -5,4 +5,4 @@
 
 include(../pgmodeler.pri)
 
-SUBDIRS += dummy xml2object
+SUBDIRS += dummy xml2object code_generator
