@@ -673,6 +673,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns the ALTER definition between the current model and the provided one
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
+		//! \brief Returns the data dictionary of all tables in a single HTML code
+		QString getDataDictionary(bool extended_dict);
+
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */
 		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);

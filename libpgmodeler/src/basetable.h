@@ -128,6 +128,11 @@ class BaseTable: public BaseGraphicObject {
 		void resetCurrentPages(void);
 		unsigned getCurrentPage(unsigned section_id);
 
+		/*! \brief Returns the data dictionary definition of the table (in HTML format).
+		 * The extended_dict parameter indicates if extended attributes of the table should
+		 * be included in the generated code */
+		virtual QString getDataDictionary(bool extended_dict) = 0;
+
 		friend class DatabaseModel;
 };
 

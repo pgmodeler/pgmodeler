@@ -1716,3 +1716,47 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 
 	return(max);
 }
+
+QString PhysicalTable::getDataDictionary(bool extended_dict)
+{
+	Column *column = nullptr;
+	attribs_map attribs, row_attribs;
+	QStringList ancestors;
+	QString tab_dict_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+													GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
+													Attributes::Table + GlobalAttributes::SchemaExt,
+			row_dict_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+											GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
+											Attributes::Row + GlobalAttributes::SchemaExt,
+			check_mark = QString("&#10003;");
+
+	for(auto &tab : ancestor_tables)
+		ancestors.push_back(tab->getName());
+
+	attribs[Attributes::Extended] = extended_dict ? Attributes::True : QString();
+	attribs[Attributes::Name] = obj_name;
+	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
+	attribs[Attributes::Comment] = comment;
+	attribs[Attributes::Inherit] = ancestors.join(", ");
+	attribs[Attributes::PartitionedTable] = partitioned_table ? partitioned_table->getName() : QString();
+
+	for(auto &obj : columns)
+	{
+		column = dynamic_cast<Column *>(obj);
+		row_attribs[Attributes::Name] = column->getName();
+		row_attribs[Attributes::Type] = *column->getType();
+		row_attribs[Attributes::DefaultValue] = column->getDefaultValue();
+		row_attribs[Attributes::Comment] = column->getComment();
+		row_attribs[Attributes::NotNull] = column->isNotNull() ? check_mark : QString();
+		row_attribs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : QString();
+		row_attribs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : QString();
+		row_attribs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : QString();
+
+		schparser.ignoreEmptyAttributes(true);
+		attribs[Attributes::Rows] += schparser.getCodeDefinition(row_dict_file, row_attribs);
+		row_attribs.clear();
+	}
+
+	schparser.ignoreEmptyAttributes(true);
+	return(schparser.getCodeDefinition(tab_dict_file, attribs));
+}

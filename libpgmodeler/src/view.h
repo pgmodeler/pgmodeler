@@ -247,6 +247,11 @@ class View: public BaseTable {
 		//! \brief Returns the deduced columns of the view
 		vector<SimpleColumn> getColumns(void);
 
+		/*! \brief Returns the data dictionary definition of the table (in HTML format).
+		 * The extended_dict parameter indicates if extended attributes of the table should
+		 * be included in the generated code */
+		virtual QString getDataDictionary(bool extended_dict);
+
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);
 };

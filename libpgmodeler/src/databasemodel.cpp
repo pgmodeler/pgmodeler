@@ -10941,3 +10941,29 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 
 	return(table);
 }
+
+QString DatabaseModel::getDataDictionary(bool extended_dict)
+{
+	BaseObject *object = nullptr;
+	attribs_map attribs;
+	map<unsigned, BaseObject *> objs_map = getCreationOrder(SchemaParser::XmlDefinition, true, false);
+	QString sch_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+										 GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
+										 GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt;
+
+	for(auto &itr : objs_map)
+	{
+		object = itr.second;
+
+		if(BaseTable::isBaseTable(object->getObjectType()))
+			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended_dict);
+		else if(object->getObjectType() == ObjectType::Relationship)
+		{
+			Relationship *rel = dynamic_cast<Relationship *>(object);
+			if(rel && rel->getGeneratedTable())
+				attribs[Attributes::Objects] += rel->getGeneratedTable()->getDataDictionary(extended_dict);
+		}
+	}
+
+	return(schparser.getCodeDefinition(sch_file, attribs));
+}

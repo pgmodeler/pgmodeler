@@ -261,6 +261,11 @@ vector<SimpleColumn> View::getColumns(void)
 	return(columns);
 }
 
+QString View::getDataDictionary(bool extended_dict)
+{
+
+}
+
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 {
 	int idx;

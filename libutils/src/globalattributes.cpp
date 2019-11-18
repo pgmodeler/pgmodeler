@@ -34,7 +34,7 @@ namespace GlobalAttributes {
 
 	PgModelerAppName=QString("pgmodeler"),
 	PgModelerURI=QString("pgmodeler.io"),
-    PgModelerReverseURI=QString("io.pgmodeler"),
+	PgModelerReverseURI=QString("io.pgmodeler"),
 	PgModelerBuildNumber=QString(BUILDNUM),
 	PgModelerSite=QString("https://pgmodeler.io"),
 	PgModelerSupport=QString("https://pgmodeler.io/support/docs"),
@@ -53,6 +53,7 @@ namespace GlobalAttributes {
 	SchemasDir=QString("schemas"),
 	SQLSchemaDir=QString("sql"),
 	XMLSchemaDir=QString("xml"),
+	DataDictSchemaDir=QString("datadict"),
 	AlterSchemaDir=QString("alter"),
 	SchemaExt=QString(".sch"),
 	ObjectDTDDir=QString("dtd"),
