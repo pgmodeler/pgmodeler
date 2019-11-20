@@ -10967,3 +10967,27 @@ QString DatabaseModel::getDataDictionary(bool extended_dict)
 
 	return(schparser.getCodeDefinition(sch_file, attribs));
 }
+
+void DatabaseModel::saveDataDictionary(const QString &filename, bool splited_files, bool extended_dict)
+{
+	QFile output(filename);
+	output.open(QFile::WriteOnly);
+
+	if(!output.isOpen())
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
+										ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+		QByteArray buffer;
+		buffer.append(getDataDictionary(extended_dict));
+		output.write(buffer);
+		output.close();
+	}
+	catch(Exception &e)
+	{
+		output.close();
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+

@@ -1720,14 +1720,14 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 QString PhysicalTable::getDataDictionary(bool extended_dict)
 {
 	Column *column = nullptr;
-	attribs_map attribs, row_attribs;
-	QStringList ancestors;
-	QString tab_dict_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-													GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
-													Attributes::Table + GlobalAttributes::SchemaExt,
-			row_dict_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-											GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
-											Attributes::Row + GlobalAttributes::SchemaExt,
+	Constraint *constr = nullptr;
+	attribs_map attribs, aux_attrs;
+	QStringList ancestors, col_names;
+	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
+			tab_dict_file = dict_files_root + Attributes::Table + GlobalAttributes::SchemaExt,
+			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,
+			constr_dict_file = dict_files_root + Attributes::Constraint + GlobalAttributes::SchemaExt,
 			check_mark = QString("&#10003;");
 
 	for(auto &tab : ancestor_tables)
@@ -1739,22 +1739,42 @@ QString PhysicalTable::getDataDictionary(bool extended_dict)
 	attribs[Attributes::Comment] = comment;
 	attribs[Attributes::Inherit] = ancestors.join(", ");
 	attribs[Attributes::PartitionedTable] = partitioned_table ? partitioned_table->getName() : QString();
+	attribs[Attributes::Columns] = QString();
+	attribs[Attributes::Constraints] = QString();
 
 	for(auto &obj : columns)
 	{
 		column = dynamic_cast<Column *>(obj);
-		row_attribs[Attributes::Name] = column->getName();
-		row_attribs[Attributes::Type] = *column->getType();
-		row_attribs[Attributes::DefaultValue] = column->getDefaultValue();
-		row_attribs[Attributes::Comment] = column->getComment();
-		row_attribs[Attributes::NotNull] = column->isNotNull() ? check_mark : QString();
-		row_attribs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : QString();
-		row_attribs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : QString();
-		row_attribs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : QString();
+		aux_attrs[Attributes::Name] = column->getName();
+		aux_attrs[Attributes::Type] = *column->getType();
+		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();
+		aux_attrs[Attributes::Comment] = column->getComment();
+		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : QString();
+		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : QString();
+		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : QString();
+		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : QString();
 
 		schparser.ignoreEmptyAttributes(true);
-		attribs[Attributes::Rows] += schparser.getCodeDefinition(row_dict_file, row_attribs);
-		row_attribs.clear();
+		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
+		aux_attrs.clear();
+	}
+
+	for(auto &obj : constraints)
+	{
+		constr = dynamic_cast<Constraint *>(obj);
+		aux_attrs[Attributes::Name] = constr->getName();
+		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
+		aux_attrs[Attributes::Comment] = constr->getComment();
+		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature(false) : QString();
+
+		for(auto &col : constr->getColumns(Constraint::SourceCols))
+			 col_names.push_back(col->getName());
+
+		aux_attrs[Attributes::Columns] = col_names.join(", ");
+
+		schparser.ignoreEmptyAttributes(true);
+		attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
+		aux_attrs.clear();
 	}
 
 	schparser.ignoreEmptyAttributes(true);

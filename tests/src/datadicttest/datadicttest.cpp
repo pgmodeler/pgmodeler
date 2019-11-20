@@ -46,12 +46,16 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 		col = new Column;
 		col->setName("col_1");
 		col->setType(PgSqlType("integer"));
+		col->setDefaultValue("50");
+		col->setComment("Some test comment on col_1");
 		table.addColumn(col);
 
 		col = new Column;
 		col->setName("col_2");
 		col->setType(PgSqlType("varchar", 1, 30));
 		col->setNotNull(true);
+		col->setComment("Some test comment on col_2, now a bit longer.");
+		col->setDefaultValue("foo bar");
 		table.addColumn(col);
 
 		col = new Column;
@@ -62,7 +66,8 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 
 		col = new Column;
 		col->setName("col_4");
-		col->setType(PgSqlType::parseString("timestamp without time zone"));
+		col->setType(PgSqlType::parseString("timestamp with time zone"));
+		col->setDefaultValue("now()");
 		table.addColumn(col);
 
 		constr = new Constraint;
@@ -76,12 +81,13 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 		constr->setConstraintType(ConstraintType::Unique);
 		constr->addColumn(table.getColumn("col_2"), Constraint::SourceCols);
 		constr->addColumn(table.getColumn("col_3"), Constraint::SourceCols);
+		constr->setComment("This is a unique constraint");
 		table.addConstraint(constr);
 
-		dbmodel.addTable(&table);
+		table.setComment("This is some test comment on the table in order to test the data dictionary generation.");
 
-		QTextStream out(stdout);
-		out << dbmodel.getDataDictionary(false) << endl;
+		dbmodel.addTable(&table);
+		dbmodel.saveDataDictionary("/home/raphael/dicttest.html",false,false);
 		dbmodel.removeTable(&table);
 	}
 	catch (Exception &e)

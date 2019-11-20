@@ -486,8 +486,6 @@ namespace Attributes {
 	Role=QString("role"),
 	Roles=QString("roles"),
 	RoleType=QString("role-type"),
-	Row=QString("row"),
-	Rows=QString("rows"),
 	RowAmount=QString("row-amount"),
 	Rules=QString("rules"),
 	SaveLastPosition=QString("save-last-position"),

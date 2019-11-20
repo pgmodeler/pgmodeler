@@ -504,8 +504,6 @@ namespace Attributes {
 	Role,
 	Roles,
 	RoleType,
-	Row,
-	Rows,
 	RowAmount,
 	Rules,
 	SaveLastPosition,
