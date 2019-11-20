@@ -524,6 +524,7 @@ namespace Attributes {
 	SourceType=QString("source-type"),
 	SpatialType=QString("spatial-type"),
 	SpecialPkCols=QString("special-pk-cols"),
+	Splitted=QString("splitted"),
 	SqlDisabled=QString("sql-disabled"),
 	SqlObject=QString("sql-object"),
 	SqlTool=QString("sqltool"),

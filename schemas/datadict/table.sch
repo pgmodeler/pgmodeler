@@ -2,9 +2,10 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made. 
 
-<table>
+<table $sp id="{schema}.{name}" $sp class="{type-class}">
 $br [	] <caption [ class="tab-name"]>
 $br [		] <em>{schema}</em>.<strong>{name}</strong>
+$br [		] <span $sp class="type-label">{type}</span>
 $br [	] </caption>
 $br [	] <thead>
 
@@ -87,6 +88,20 @@ $br [
 ] </tr>
 $br [				] </table>
 $br [			] </td>
-$br [		] </tr>            
+$br [		] </tr>
+
+<tr $sp class="back-link">
+	<td>
+		%if {splitted} %then
+[<a href="index.html" class="back-link">]
+%else
+[<a href="\#index" class="back-link">]
+%end
+
+[Back to index</a>] $br
+	</td>
+</tr>
+
 $br [	] </tfoot> $br
 </table> $br
+

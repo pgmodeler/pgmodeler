@@ -10942,51 +10942,99 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 	return(table);
 }
 
-QString DatabaseModel::getDataDictionary(bool extended_dict)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool splitted)
 {
+	QString styles, id;
 	BaseObject *object = nullptr;
 	attribs_map attribs;
 	map<unsigned, BaseObject *> objs_map = getCreationOrder(SchemaParser::XmlDefinition, true, false);
-	QString sch_file = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-										 GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator +
-										 GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt;
+	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
+			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
+			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt;
+
+	datadict.clear();
+	styles = schparser.getCodeDefinition(style_sch_file, attribs);
+	attribs[Attributes::Styles] = QString();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+
+	if(!splitted)
+		attribs[Attributes::Styles] = styles;
+	else
+		datadict[Attributes::Styles + QString(".css")] = styles;
 
 	for(auto &itr : objs_map)
 	{
 		object = itr.second;
 
 		if(BaseTable::isBaseTable(object->getObjectType()))
-			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended_dict);
+			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted);
 		else if(object->getObjectType() == ObjectType::Relationship)
 		{
 			Relationship *rel = dynamic_cast<Relationship *>(object);
+
 			if(rel && rel->getGeneratedTable())
-				attribs[Attributes::Objects] += rel->getGeneratedTable()->getDataDictionary(extended_dict);
+				attribs[Attributes::Objects] += rel->getGeneratedTable()->getDataDictionary(extended, splitted);
+		}
+
+		if(splitted && !attribs[Attributes::Objects].isEmpty())
+		{
+			id = object->getSignature(true).remove(QChar('"')) + QString(".html");
+			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
+			attribs[Attributes::Objects].clear();
 		}
 	}
 
-	return(schparser.getCodeDefinition(sch_file, attribs));
+	if(!splitted)
+	{
+		datadict[this->getName()] = schparser.getCodeDefinition(dict_sch_file, attribs);
+		schparser.getCodeDefinition(dict_sch_file, attribs);
+	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &filename, bool splited_files, bool extended_dict)
+void DatabaseModel::saveDataDictionary(const QString &path, bool extended, bool splitted)
 {
-	QFile output(filename);
-	output.open(QFile::WriteOnly);
-
-	if(!output.isOpen())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename),
-										ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	try
 	{
+		attribs_map datadict;
+		QFile output;
 		QByteArray buffer;
-		buffer.append(getDataDictionary(extended_dict));
-		output.write(buffer);
-		output.close();
+		QFileInfo finfo(path);
+		QDir dir;
+
+		if(splitted)
+		{
+			if(finfo.exists() && !finfo.isDir())
+				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(!finfo.exists())
+				dir.mkpath(path);
+		}
+
+		getDataDictionary(datadict, extended, splitted);
+		output.setFileName(path);
+
+		for(auto &itr : datadict)
+		{
+			if(splitted)
+				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
+
+			output.open(QFile::WriteOnly);
+
+			if(!output.isOpen())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			buffer.append(itr.second);
+			output.write(buffer);
+			output.close();
+			buffer.clear();
+		}
 	}
 	catch(Exception &e)
 	{
-		output.close();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

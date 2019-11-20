@@ -30,7 +30,7 @@ class DataDictTest: public QObject {
 void DataDictTest::generateASimpleDataDictForATable(void)
 {	
 	DatabaseModel dbmodel;
-	Table table;
+	Table *table = nullptr, *table1 = nullptr;
 	Schema *schema = nullptr;
 	Column *col = nullptr;
 	Constraint *constr = nullptr;
@@ -40,15 +40,16 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 		dbmodel.createSystemObjects(true);
 		schema = dbmodel.getSchema("public");
 
-		table.setName("table_test");
-		table.setSchema(schema);
+		table = new Table;
+		table->setName("table_test");
+		table->setSchema(schema);
 
 		col = new Column;
 		col->setName("col_1");
 		col->setType(PgSqlType("integer"));
 		col->setDefaultValue("50");
 		col->setComment("Some test comment on col_1");
-		table.addColumn(col);
+		table->addColumn(col);
 
 		col = new Column;
 		col->setName("col_2");
@@ -56,39 +57,57 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 		col->setNotNull(true);
 		col->setComment("Some test comment on col_2, now a bit longer.");
 		col->setDefaultValue("foo bar");
-		table.addColumn(col);
+		table->addColumn(col);
 
 		col = new Column;
 		col->setName("col_3");
 		col->setType(PgSqlType("text"));
 		col->setNotNull(true);
-		table.addColumn(col);
+		table->addColumn(col);
 
 		col = new Column;
 		col->setName("col_4");
 		col->setType(PgSqlType::parseString("timestamp with time zone"));
 		col->setDefaultValue("now()");
-		table.addColumn(col);
+		table->addColumn(col);
 
 		constr = new Constraint;
 		constr->setName("table_test_pk");
 		constr->setConstraintType(ConstraintType::PrimaryKey);
-		constr->addColumn(table.getColumn("col_1"), Constraint::SourceCols);
-		table.addConstraint(constr);
+		constr->addColumn(table->getColumn("col_1"), Constraint::SourceCols);
+		table->addConstraint(constr);
 
 		constr = new Constraint;
 		constr->setName("table_test_uq");
 		constr->setConstraintType(ConstraintType::Unique);
-		constr->addColumn(table.getColumn("col_2"), Constraint::SourceCols);
-		constr->addColumn(table.getColumn("col_3"), Constraint::SourceCols);
+		constr->addColumn(table->getColumn("col_2"), Constraint::SourceCols);
+		constr->addColumn(table->getColumn("col_3"), Constraint::SourceCols);
 		constr->setComment("This is a unique constraint");
-		table.addConstraint(constr);
+		table->addConstraint(constr);
+		table->setComment("This is some test comment on the table in order to test the data dictionary generation.");
 
-		table.setComment("This is some test comment on the table in order to test the data dictionary generation.");
+		table1 = new Table;
+		table1->setName("table_test1");
+		table1->setSchema(schema);
 
-		dbmodel.addTable(&table);
-		dbmodel.saveDataDictionary("/home/raphael/dicttest.html",false,false);
-		dbmodel.removeTable(&table);
+		col = new Column;
+		col->setName("col_table_test");
+		col->setType(PgSqlType("integer"));
+		table1->addColumn(col);
+
+		constr = new Constraint;
+		constr->setName("table_test1_fk");
+		constr->setConstraintType(ConstraintType::ForeignKey);
+		constr->addColumn(table1->getColumn(0), Constraint::SourceCols);
+		constr->addColumn(table->getColumn(0), Constraint::ReferencedCols);
+		constr->setComment("This is a foreign key constraint");
+		constr->setReferencedTable(table);
+		table1->addConstraint(constr);
+		table1->setComment("This is some test comment on the table in order to test the data dictionary generation.");
+
+		dbmodel.addTable(table);
+		dbmodel.addTable(table1);
+		dbmodel.saveDataDictionary("/home/raphael/dicttest.html", false, false);
 	}
 	catch (Exception &e)
 	{

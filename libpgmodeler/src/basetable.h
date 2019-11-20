@@ -129,9 +129,11 @@ class BaseTable: public BaseGraphicObject {
 		unsigned getCurrentPage(unsigned section_id);
 
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).
-		 * The extended_dict parameter indicates if extended attributes of the table should
-		 * be included in the generated code */
-		virtual QString getDataDictionary(bool extended_dict) = 0;
+		 * The extended parameter indicates if extended attributes of the table should
+		 * be included in the generated code.
+		 * The splitted parameter is used to inform the generation process that the dicts are being
+		 * saved in separated files. This changes the way links are generated inside the data dictionaries */
+		virtual QString getDataDictionary(bool extended, bool splitted) = 0;
 
 		friend class DatabaseModel;
 };

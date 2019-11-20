@@ -261,11 +261,6 @@ vector<SimpleColumn> View::getColumns(void)
 	return(columns);
 }
 
-QString View::getDataDictionary(bool extended_dict)
-{
-
-}
-
 void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 {
 	int idx;
@@ -1109,4 +1104,9 @@ vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 	}
 
 	return(list);
+}
+
+QString View::getDataDictionary(bool extended, bool splitted)
+{
+
 }

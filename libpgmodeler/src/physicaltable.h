@@ -370,10 +370,7 @@ class PhysicalTable: public BaseTable {
 
 		virtual unsigned getMaxObjectCount(void);
 
-		/*! \brief Returns the data dictionary definition of the table (in HTML format).
-		 * The extended_dict parameter indicates if extended attributes of the table should
-		 * be included in the generated code */
-		virtual QString getDataDictionary(bool extended_dict);
+		virtual QString getDataDictionary(bool extended, bool splitted);
 
 		friend class Relationship;
 		friend class OperationList;

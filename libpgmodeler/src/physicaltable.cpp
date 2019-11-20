@@ -1717,7 +1717,7 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 	return(max);
 }
 
-QString PhysicalTable::getDataDictionary(bool extended_dict)
+QString PhysicalTable::getDataDictionary(bool extended, bool splitted)
 {
 	Column *column = nullptr;
 	Constraint *constr = nullptr;
@@ -1733,7 +1733,10 @@ QString PhysicalTable::getDataDictionary(bool extended_dict)
 	for(auto &tab : ancestor_tables)
 		ancestors.push_back(tab->getName());
 
-	attribs[Attributes::Extended] = extended_dict ? Attributes::True : QString();
+	attribs[Attributes::Type] = getTypeName();
+	attribs[Attributes::TypeClass] = getSchemaName();
+	attribs[Attributes::Extended] = extended ? Attributes::True : QString();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
 	attribs[Attributes::Comment] = comment;
@@ -1762,15 +1765,18 @@ QString PhysicalTable::getDataDictionary(bool extended_dict)
 	for(auto &obj : constraints)
 	{
 		constr = dynamic_cast<Constraint *>(obj);
+
+		aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
 		aux_attrs[Attributes::Name] = constr->getName();
 		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
 		aux_attrs[Attributes::Comment] = constr->getComment();
-		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature(false) : QString();
+		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : QString();
 
 		for(auto &col : constr->getColumns(Constraint::SourceCols))
 			 col_names.push_back(col->getName());
 
 		aux_attrs[Attributes::Columns] = col_names.join(", ");
+		col_names.clear();
 
 		schparser.ignoreEmptyAttributes(true);
 		attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
