@@ -9,7 +9,8 @@
 .table, .foreigntable, .view {
 	font-size: 11pt;
 	border-collapse: collapse;
-	margin-bottom: 3em;
+	margin-top: 1.2em;
+	margin-bottom: 1.2em;
 }
 
 .type-label {
@@ -35,8 +36,25 @@ caption {
 	border-bottom: none;
 }
 
-th, .title, .back-link {
+th, .title, .nav-link {
 	background-color: \#e9f8ff;
+}
+
+.nav-link {
+	font-size: 85%;
+	background-color: \#f2f2f3;
+	padding: 5px;
+	border-radius: 4px 4px 4px 4px;
+	color: \#212529;
+	font-weight: bold;
+	text-decoration: none;
+	margin-right: .5em;
+	margin-bottom: 1em;
+}
+
+.nav-link:hover {
+	color: white;
+	background-color: \#007bff;
 }
 
 td, th, caption, .title {

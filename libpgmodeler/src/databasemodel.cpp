@@ -10944,11 +10944,13 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool splitted)
 {
-	QString styles, id, index, items;
+	int idx = 0;
 	BaseObject *object = nullptr;
+	vector<BaseObject *> objects;
+	map<QString, BaseObject *> objs_map;
+	QString styles, id, index, items, buffer;
 	attribs_map attribs, aux_attribs;
 	QStringList index_list;
-	map<unsigned, BaseObject *> objs_map = getCreationOrder(SchemaParser::XmlDefinition, true, false);
 	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
 			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
@@ -10956,12 +10958,36 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 			item_sch_file = dict_files_root + Attributes::Item + GlobalAttributes::SchemaExt,
 			index_sch_file = dict_files_root + Attributes::Index + GlobalAttributes::SchemaExt;
 
+	objects.assign(tables.begin(), tables.end());
+	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
+	objects.insert(objects.end(), views.begin(), views.end());
+	objects.insert(objects.end(), relationships.begin(), relationships.end());
+
+	// Placing the object in alphabectical order
+	for(auto &obj : objects)
+	{
+		// Retrieving the generated table if the current object is a relationship (n-n)
+		if(obj->getObjectType() == ObjectType::Relationship)
+		{
+			Relationship *rel = dynamic_cast<Relationship *>(obj);
+
+			if(!rel->getGeneratedTable())
+				continue;
+
+			obj = rel->getGeneratedTable();
+		}
+
+		id = obj->getSignature().remove(QChar('"'));
+		objs_map[id] = obj;
+		index_list.push_back(id);
+	}
+
+	index_list.sort();
 	datadict.clear();
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 
-	attribs[Attributes::Index] = QString();
 	attribs[Attributes::Styles] = QString();
-	attribs[Attributes::Table] = QString();
+	attribs[Attributes::Index] = QString();
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
 
 	if(!splitted)
@@ -10969,47 +10995,28 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 	else
 		datadict[Attributes::Styles + QString(".css")] = styles;
 
+	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
 	{
 		object = itr.second;
-
-		// Retrieving the generated table if the current object is a relationship (n-n)
-		if(object->getObjectType() == ObjectType::Relationship)
-		{
-			Relationship *rel = dynamic_cast<Relationship *>(object);
-			if(rel && rel->getGeneratedTable())
-				object = rel->getGeneratedTable();
-		}
-
-		if(BaseTable::isBaseTable(object->getObjectType()))
-		{
-			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted);
-			index_list.push_back(object->getSignature().remove(QChar('"')));
-		}
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
+		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
+		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted, aux_attribs);
 
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = object->getSignature().remove(QChar('"')) + QString(".html");
+			id = itr.first + QString(".html");
 			schparser.ignoreEmptyAttributes(true);
 			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
 	}
 
-	// Generating the index
-	index_list.sort();
-
-	for(auto &idx : index_list)
+	// Generating the index items
+	for(auto &item : index_list)
 	{
-		id = idx;
-
-		if(splitted)
-			id.append(QString(".html"));
-		else
-			id.prepend(QChar('#'));
-
-		aux_attribs[Attributes::Id] = id;
-		aux_attribs[Attributes::Label] = idx;
+		aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+		aux_attribs[Attributes::Item] = item;
 		items += schparser.getCodeDefinition(item_sch_file, aux_attribs);
 	}
 
@@ -11025,7 +11032,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 	{
 		attribs[Attributes::Index] = index;
 		schparser.ignoreEmptyAttributes(true);
-		datadict[this->getName()] = schparser.getCodeDefinition(dict_sch_file, attribs);
+		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
 	}
 }
 

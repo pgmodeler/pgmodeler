@@ -1106,7 +1106,7 @@ vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 	return(list);
 }
 
-QString View::getDataDictionary(bool extended, bool splitted)
+QString View::getDataDictionary(bool extended, bool splitted, attribs_map extra_attribs)
 {
 	return "";
 }

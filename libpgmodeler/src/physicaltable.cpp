@@ -1717,7 +1717,7 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 	return(max);
 }
 
-QString PhysicalTable::getDataDictionary(bool extended, bool splitted)
+QString PhysicalTable::getDataDictionary(bool extended, bool splitted, attribs_map extra_attribs)
 {
 	Column *column = nullptr;
 	Constraint *constr = nullptr;
@@ -1732,6 +1732,8 @@ QString PhysicalTable::getDataDictionary(bool extended, bool splitted)
 
 	for(auto &tab : ancestor_tables)
 		ancestors.push_back(tab->getName());
+
+	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
