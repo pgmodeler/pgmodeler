@@ -24,10 +24,11 @@ class DataDictTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void generateASimpleDataDictForATable(void);
+		void generateASimpleDataDict(void);
+		void generateASplittedDataDictFromSampleModel(void);
 };
 
-void DataDictTest::generateASimpleDataDictForATable(void)
+void DataDictTest::generateASimpleDataDict(void)
 {	
 	DatabaseModel dbmodel;
 	Table *table = nullptr, *table1 = nullptr;
@@ -107,7 +108,22 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 
 		dbmodel.addTable(table);
 		dbmodel.addTable(table1);
-		dbmodel.saveDataDictionary("/home/raphael/dicttest", false, false);
+		dbmodel.saveDataDictionary("./simpledict.html", false, false);
+	}
+	catch (Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void DataDictTest::generateASplittedDataDictFromSampleModel(void)
+{
+	DatabaseModel dbmodel;
+	try
+	{
+		dbmodel.createSystemObjects(false);
+		dbmodel.loadModel("../../../samples/demo.dbm");
+		dbmodel.saveDataDictionary("./dict_test_dir", false, true);
 	}
 	catch (Exception &e)
 	{

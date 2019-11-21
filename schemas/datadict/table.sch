@@ -78,30 +78,31 @@ $br [					] <tr>
 $br [						] <td $sp class="label">[Inherits: ]</td>
 $br [						] <td>{inherit}</td>
 $br [					] </tr>
-$br [					
-] <tr>
-$br [					
-	] <td $sp class="label">[Partition of: ]</td>
-$br [					
-	] <td>{partitioned-table}</td>
-$br [					
-] </tr>
+$br [					] <tr>
+$br [						] <td $sp class="label">[Partition of: ]</td>
+$br [						] <td>{partitioned-table}</td>
+$br [					] </tr>
 $br [				] </table>
 $br [			] </td>
 $br [		] </tr>
-
-<tr $sp class="back-link">
-	<td>
-		%if {splitted} %then
-[<a href="index.html" class="back-link">]
-%else
-[<a href="\#index" class="back-link">]
-%end
-
-[Back to index</a>] $br
-	</td>
-</tr>
-
 $br [	] </tfoot> $br
 </table> $br
+
+$br <div>
+$br [	] <span $sp class="back-link"> 
+
+%if {splitted} %then
+ [<a href="index.html" >]
+%else
+ [<a href="\#index" class="back-link">]
+%end
+
+[&uarr; Index</a>]
+</span>
+
+%if {splitted} %then
+	$br [	] <span $sp class="back-link"> <a $sp href="{table}"> {table} &rarr;</a>]</span>
+%end
+
+$br </div> $br
 

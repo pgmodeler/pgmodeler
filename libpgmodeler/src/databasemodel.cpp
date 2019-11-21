@@ -10944,18 +10944,24 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool splitted)
 {
-	QString styles, id;
+	QString styles, id, index, items;
 	BaseObject *object = nullptr;
-	attribs_map attribs;
+	attribs_map attribs, aux_attribs;
+	QStringList index_list;
 	map<unsigned, BaseObject *> objs_map = getCreationOrder(SchemaParser::XmlDefinition, true, false);
 	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
 														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
 			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
-			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt;
+			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt,
+			item_sch_file = dict_files_root + Attributes::Item + GlobalAttributes::SchemaExt,
+			index_sch_file = dict_files_root + Attributes::Index + GlobalAttributes::SchemaExt;
 
 	datadict.clear();
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
+
+	attribs[Attributes::Index] = QString();
 	attribs[Attributes::Styles] = QString();
+	attribs[Attributes::Table] = QString();
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
 
 	if(!splitted)
@@ -10967,28 +10973,59 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 	{
 		object = itr.second;
 
-		if(BaseTable::isBaseTable(object->getObjectType()))
-			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted);
-		else if(object->getObjectType() == ObjectType::Relationship)
+		// Retrieving the generated table if the current object is a relationship (n-n)
+		if(object->getObjectType() == ObjectType::Relationship)
 		{
 			Relationship *rel = dynamic_cast<Relationship *>(object);
-
 			if(rel && rel->getGeneratedTable())
-				attribs[Attributes::Objects] += rel->getGeneratedTable()->getDataDictionary(extended, splitted);
+				object = rel->getGeneratedTable();
+		}
+
+		if(BaseTable::isBaseTable(object->getObjectType()))
+		{
+			attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted);
+			index_list.push_back(object->getSignature().remove(QChar('"')));
 		}
 
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
-			id = object->getSignature(true).remove(QChar('"')) + QString(".html");
+			id = object->getSignature().remove(QChar('"')) + QString(".html");
+			schparser.ignoreEmptyAttributes(true);
 			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
 	}
 
-	if(!splitted)
+	// Generating the index
+	index_list.sort();
+
+	for(auto &idx : index_list)
 	{
+		id = idx;
+
+		if(splitted)
+			id.append(QString(".html"));
+		else
+			id.prepend(QChar('#'));
+
+		aux_attribs[Attributes::Id] = id;
+		aux_attribs[Attributes::Label] = idx;
+		items += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+	}
+
+	aux_attribs.clear();
+	aux_attribs[Attributes::Items] = items;
+	aux_attribs[Attributes::Name] = this->obj_name;
+	aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+	index = schparser.getCodeDefinition(index_sch_file, aux_attribs);
+
+	if(splitted)
+		datadict[Attributes::Index + QString(".html")] = index;
+	else
+	{
+		attribs[Attributes::Index] = index;
+		schparser.ignoreEmptyAttributes(true);
 		datadict[this->getName()] = schparser.getCodeDefinition(dict_sch_file, attribs);
-		schparser.getCodeDefinition(dict_sch_file, attribs);
 	}
 }
 
@@ -11006,7 +11043,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool extended, bool 
 		{
 			if(finfo.exists() && !finfo.isDir())
 				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
-												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												ErrorCode::InvDataDictDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			else if(!finfo.exists())
 				dir.mkpath(path);
 		}
@@ -11038,4 +11075,3 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool extended, bool 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
-

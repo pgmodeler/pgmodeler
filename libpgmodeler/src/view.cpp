@@ -1108,5 +1108,5 @@ vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 
 QString View::getDataDictionary(bool extended, bool splitted)
 {
-
+	return "";
 }

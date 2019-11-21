@@ -9,7 +9,7 @@
 .table, .foreigntable, .view {
 	font-size: 11pt;
 	border-collapse: collapse;
-	margin-bottom: 2em;
+	margin-bottom: 3em;
 }
 
 .type-label {
@@ -76,8 +76,8 @@ td, th, caption, .title {
 	padding: .5em;
 }
 
-#index {
-	margin-bottom: 5em;
+\#index {
+	margin-block-end: 5em;
 }
 
 ]

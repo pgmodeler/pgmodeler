@@ -124,7 +124,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"RefObjectInexistsModel", QT_TR_NOOP("The object `%1' (%2) is referencing the object `%3' (%4) which was not found in the model!")},
 	{"RefUserTypeInexistsModel", QT_TR_NOOP("Reference to an user-defined data type that not exists in the model!")},
 	{"AsgInvalidMaxSizeOpList", QT_TR_NOOP("Assignment of invalid maximum size to operation list!")},
-	{"FileDirectoryNotWritten", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure the output directory exists, or if the user has write permissions over it!")},
+	{"FileDirectoryNotWritten", QT_TR_NOOP("Unable to write the file or directory `%1'! Make sure that the path exists and the user has write permissions over it!")},
 	{"FileNotWrittenInvalidDefinition", QT_TR_NOOP("Unable to write the file `%1' due to one or more errors in the definition generation process!")},
 	{"InsDuplicatedRelationship", QT_TR_NOOP("There is already a relationship between `%1' (%2) and `%3' (%4) in the model! When using relationships of the type generalization, copy and one-to-one there can't be other relationships linked to the pair of tables.")},
 	{"InsRelationshipRedundancy", QT_TR_NOOP("The configuration of the relationship `%1' generates a redundancy between the relationships `%2'. Redundancy on identifier or generalization/copy relationships are not accepted since they result in incorrect column spreading making the model inconsistent!")},
