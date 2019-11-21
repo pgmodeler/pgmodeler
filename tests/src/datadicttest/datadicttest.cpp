@@ -107,7 +107,7 @@ void DataDictTest::generateASimpleDataDictForATable(void)
 
 		dbmodel.addTable(table);
 		dbmodel.addTable(table1);
-		dbmodel.saveDataDictionary("/home/raphael/dicttest.html", false, false);
+		dbmodel.saveDataDictionary("/home/raphael/dicttest", false, false);
 	}
 	catch (Exception &e)
 	{

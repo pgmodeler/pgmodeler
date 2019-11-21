@@ -294,6 +294,8 @@ namespace Attributes {
 	IsPartitioned=QString("is-partitioned"),
 	IsTemplate=QString("is-template"),
 	Italic=QString("italic"),
+	Item=QString("item"),
+	Items=QString("items"),
 	JoinFunc=QString("join"),
 	KeepClusterObjs="keep-cluster-objs",
 	KeepObjsPerms="keep-objs-perms",

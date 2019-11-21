@@ -311,6 +311,8 @@ namespace Attributes {
 	IsPartitioned,
 	IsTemplate,
 	Italic,
+	Item,
+	Items,
 	JoinFunc,
 	KeepClusterObjs,
 	KeepObjsPerms,

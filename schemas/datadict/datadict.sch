@@ -15,14 +15,12 @@
 	[	</style>] $br
 %end
 
-</head>
+</head> $br
 <body> $br
 
-[<h3 id="index"> Data dictionary of DB_NAME</h3>]
-<ul>
-	<li><a $sp href="\#public.table_test">public.table_test</a></li>
-	<li><a $sp href="\#public.table_test1">public.table_test1</a></li>
-</ul>
+%if %not {splitted} %then
+{index}
+%end
 
 {objects}
 
