@@ -4,13 +4,44 @@
 [body {
 	font-family: sans-serif;
 	color: \#333;
+	margin-left: 2em;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+h3 {
+	text-decoration: underline;
+}
+
+a {
+	color: \#4182c3;
+	text-decoration: none;
+}
+
+a:hover {
+	color: \#080;
+	text-decoration: underline;
+}
+
+\#index {
+	background-color: \#f8f9fa;
+	margin-block-end: 1.5em;
+	list-style: none;
+	display: inline-block;
+	padding: 1em;
+	border: 1px solid \#c0c0c0;
+	border-radius: 4px 4px 4px 4px;
+}
+
+\#index li {
+	list-style: none;
 }
 
 .table, .foreigntable, .view {
 	font-size: 11pt;
 	border-collapse: collapse;
-	margin-top: 1.2em;
-	margin-bottom: 1.2em;
+	margin-top: 3em;
+	margin-bottom: 1em;
 }
 
 .type-label {
@@ -29,14 +60,14 @@ caption {
 }
 
 .table, caption, th, td {
-	border: 1px solid \#ccc;
+	border: 1px solid \#b4d0da;
 }
 
 caption {
 	border-bottom: none;
 }
 
-th, .title, .nav-link {
+th, .title {
 	background-color: \#e9f8ff;
 }
 
@@ -49,7 +80,6 @@ th, .title, .nav-link {
 	font-weight: bold;
 	text-decoration: none;
 	margin-right: .5em;
-	margin-bottom: 1em;
 }
 
 .nav-link:hover {
@@ -62,17 +92,23 @@ td, th, caption, .title {
 	padding: .3em;
 }
 
-.title {
+.title, th {
 	font-weight: bold;
+	text-align: center;
+	color: \#535c67;
 }
 
-.data-type, .value {
+.data-type, .value, .constr-type {
 	font-family: monospace;
 	text-align: center;
 }
 
+.constr-type {
+	color: \#24486c;
+}
+
 .data-type {            
-	color: \#c00;
+	color: \#b00;
 }
 
 .bool-field {
@@ -82,11 +118,14 @@ td, th, caption, .title {
 
 .label {
 	font-weight: bold;
-	font-style: italic;
+	background-color: \#e9f8ff;
+	color: \#444f53;
+	width: 1px;
+	white-space: nowrap;
 }
 
 .tab-name {
-	font-size: 110%;
+	font-size: 112%;
 }
 
 .tab-description {
@@ -94,8 +133,33 @@ td, th, caption, .title {
 	padding: .5em;
 }
 
-\#index {
-	margin-block-end: 5em;
+.nested-tab-parent {
+	padding: 0;
+}
+
+.nested-tab {
+	font-size: 11pt;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.nested-tab > tbody > tr,
+.nested-tab > tr{
+	padding: 0;
+}
+
+.nested-tab td {
+	border-bottom: 0;
+	border-left: 0;
+}
+
+.nested-tab > tbody > tr:first-child td,
+.nested-tab > tr:first-child td {
+	border-top: 0;
+}
+
+.nested-tab td:last-child {
+	border-right: 0;
 }
 
 ]

@@ -43,50 +43,65 @@ $br [	] <tbody>
 	{columns}
 %end
 
-$br [		] <tr>
-$br [			] <td [ class="title" colspan="8"]>			
-$br [				]
-
 %if {constraints} %then
- Constraints
-%else
- <em>[No constraints]</em> 
-%end
-
-$br [			] </td>
-$br [		] </tr>
-
-%if {constraints} %then
-	$br [		] <tr>
-	$br [			] <td [ class="title"]>Name</td>
-	$br [			] <td [ class="title"]>Type</td>
-	$br [			] <td [ class="title"]>Column(s)</td>
-	$br [			] <td [ class="title"]>References</td>
-	$br [			] <td [ class="title" colspan="4"]>Description</td>
-	$br [		] </tr>
+	$br [	] <tr>
+	$br [		] <td $sp colspan="8" $sp class="nested-tab-parent">
+	$br [			] <table $sp class="nested-tab">
+	$br [				] <tr>
+	$br [					] <td [ class="title" colspan="5"]>Constraints</td>
+	$br [				] </tr>
+	$br [				] <tr>
+	$br [					] <td [ class="title"]>Name</td>
+	$br [					] <td [ class="title"]>Type</td>
+	$br [					] <td [ class="title"]>Column(s)</td>
+	$br [					] <td [ class="title"]>References</td>
+	$br [					] <td [ class="title"]>Description</td>
+	$br [				] </tr>
 
 	{constraints}
+
+	$br [			] </table>
+	$br [		] </td>		
+	$br [	] </tr>
 %end
 
-
 $br [	] </tbody>
-$br [	] <tfoot>
-$br [		] <tr>
-$br [			] <td [ colspan="8">]
-$br [				] <table [ width="100%">]
-$br [					] <tr>
-$br [						] <td $sp class="label">[Inherits: ]</td>
-$br [						] <td>{inherit}</td>
-$br [					] </tr>
-$br [					] <tr>
-$br [						] <td $sp class="label">[Partition of: ]</td>
-$br [						] <td>{partitioned-table}</td>
-$br [					] </tr>
-$br [				] </table>
-$br [			] </td>
-$br [		] </tr>
-$br [	] </tfoot> $br
-</table> $br
+
+
+%if {inherit} %or {partitioned-table} %or {partition-tables} %then
+	$br [	] <tfoot>
+	$br [		] <tr>
+	$br [			] <td $sp colspan="8" $sp class="nested-tab-parent">
+	$br [				] <table $sp class="nested-tab">
+
+	%if {inherit} %then
+		$br [					] <tr>
+		$br [						] <td $sp class="label">Inherits:</td>
+		$br [						] <td> {inherit} </td>
+		$br [					] </tr>
+	%end
+
+	%if {partitioned-table} %then
+		$br [					] <tr>
+		$br [						] <td $sp class="label">[Partition of:]</td>
+		$br [						] <td>{partitioned-table}</td>
+		$br [					] </tr>
+	%end
+	
+	%if {partition-tables} %then
+		$br [					] <tr>
+		$br [						] <td $sp class="label">[Partitions:]</td>
+		$br [						] <td>{partition-tables}</td>
+		$br [					] </tr>
+	%end
+
+	$br [				] </table>
+	$br [			] </td>
+	$br [		] </tr>
+	$br [	] </tfoot> $br
+%end
+
+$br </table> $br
 
 $br <div>
 
@@ -95,9 +110,9 @@ $br <div>
 %end	
 	
 %if {splitted} %then
- [<a href="index.html" class="nav-link">]
+ $br [	<a href="index.html" class="nav-link">]
 %else
- [<a href="\#index" class="nav-link">]
+ $br [	<a href="\#index" class="nav-link">]
 %end
 
 [&uarr; Index</a>]

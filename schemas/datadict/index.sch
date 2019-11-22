@@ -14,7 +14,7 @@
 
 $br [<h3> Data dictionary of ] {name} </h3>
 $br [	] <ul $sp id="index">
-$br [		] <li>Tables
+$br [		] <li><strong>Tables</strong>
 $br [			] <ul>
 {items}
 $br [			] </ul>

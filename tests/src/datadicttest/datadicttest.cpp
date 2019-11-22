@@ -123,7 +123,8 @@ void DataDictTest::generateASplittedDataDictFromSampleModel(void)
 	{
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel("../../../samples/demo.dbm");
-		dbmodel.saveDataDictionary("./dict_test_dir.html", false, false);
+		//dbmodel.loadModel("/home/raphael/rel_part_test.dbm");
+		dbmodel.saveDataDictionary("./dict_test.html", false, false);
 	}
 	catch (Exception &e)
 	{
