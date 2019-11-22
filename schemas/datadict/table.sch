@@ -103,23 +103,25 @@ $br [	] </tbody>
 
 $br </table> $br
 
-$br <div>
 
-%if {splitted} %and {previous} %then
-	$br [	] <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
-%end	
-	
-%if {splitted} %then
- $br [	<a href="index.html" class="nav-link">]
-%else
- $br [	<a href="\#index" class="nav-link">]
+%if {index}	%then
+	$br <div>
+
+	%if {splitted} %and {previous} %then
+		$br [	] <a $sp href="{previous}.html" $sp class="nav-link"> &larr; $sp {previous}</a>
+	%end	
+		
+	%if {splitted} %then
+		$br [	<a href="index.html" class="nav-link">]
+	%else
+		$br [	<a href="\#index" class="nav-link">]
+	%end
+
+	[&uarr; Index</a>]
+
+	%if {splitted} %and {next} %then
+		$br [	] <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr;</a>
+	%end
+
+	$br </div> $br
 %end
-
-[&uarr; Index</a>]
-
-%if {splitted} %and {next} %then
-	$br [	] <a $sp href="{next}.html" $sp class="nav-link"> {next} $sp &rarr;</a>
-%end
-
-$br </div> $br
-

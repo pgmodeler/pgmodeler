@@ -108,7 +108,7 @@ void DataDictTest::generateASimpleDataDict(void)
 
 		dbmodel.addTable(table);
 		dbmodel.addTable(table1);
-		dbmodel.saveDataDictionary("./simpledict.html", false, false);
+		dbmodel.saveDataDictionary("./simpledict.html", true, false, false);
 	}
 	catch (Exception &e)
 	{
@@ -122,9 +122,9 @@ void DataDictTest::generateASplittedDataDictFromSampleModel(void)
 	try
 	{
 		dbmodel.createSystemObjects(false);
-		dbmodel.loadModel("../../../samples/demo.dbm");
-		//dbmodel.loadModel("/home/raphael/rel_part_test.dbm");
-		dbmodel.saveDataDictionary("./dict_test.html", false, false);
+		//dbmodel.loadModel("../../../samples/demo.dbm");
+		dbmodel.loadModel("/home/raphael/alto_sapl_test.dbm");
+		dbmodel.saveDataDictionary("./dict_test", true, false, true);
 	}
 	catch (Exception &e)
 	{

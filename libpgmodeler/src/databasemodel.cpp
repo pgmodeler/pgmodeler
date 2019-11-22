@@ -10942,7 +10942,7 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 	return(table);
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool splitted)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool extended, bool splitted)
 {
 	int idx = 0;
 	BaseObject *object = nullptr;
@@ -10999,6 +10999,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 	for(auto &itr : objs_map)
 	{
 		object = itr.second;
+		aux_attribs[Attributes::Index] = browsable ? Attributes::True : QString();
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
 		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
 		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted, aux_attribs);
@@ -11012,23 +11013,32 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 		}
 	}
 
-	// Generating the index items
-	for(auto &item : index_list)
+	if(browsable)
 	{
-		aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
-		aux_attribs[Attributes::Item] = item;
-		items += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+		attribs_map idx_attribs;
+
+		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = QString();
+		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = QString();
+		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = QString();
+
+		// Generating the index items
+		for(auto &item : index_list)
+		{
+			aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+			aux_attribs[Attributes::Item] = item;
+			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+		}
+
+		idx_attribs[Attributes::Name] = this->obj_name;
+		idx_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+
+		schparser.ignoreEmptyAttributes(true);
+		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
 	}
 
-	aux_attribs.clear();
-	aux_attribs[Attributes::Items] = items;
-	aux_attribs[Attributes::Name] = this->obj_name;
-	aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
-	index = schparser.getCodeDefinition(index_sch_file, aux_attribs);
-
-	if(splitted)
+	if(splitted && browsable)
 		datadict[Attributes::Index + QString(".html")] = index;
-	else
+	else if(!splitted)
 	{
 		attribs[Attributes::Index] = index;
 		schparser.ignoreEmptyAttributes(true);
@@ -11036,7 +11046,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool extended, bool
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool extended, bool splitted)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool extended, bool splitted)
 {
 	try
 	{
@@ -11055,7 +11065,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool extended, bool 
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, extended, splitted);
+		getDataDictionary(datadict, browsable, extended, splitted);
 		output.setFileName(path);
 
 		for(auto &itr : datadict)

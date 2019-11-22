@@ -6,11 +6,16 @@
 	color: \#333;
 	margin-left: 2em;
 	margin-top: 2em;
-	margin-bottom: 2em;
+}
+
+footer {
+	margin-top: 3em;
+	margin-bottom: .5em;
+	font-size: 75%;
 }
 
 h3 {
-	text-decoration: underline;
+	margin-bottom: .5em;
 }
 
 a {
@@ -35,6 +40,11 @@ a:hover {
 
 \#index li {
 	list-style: none;
+	margin: 0;
+}
+
+\#index > li > ul {
+	padding-inline-start: 1em;
 }
 
 .table, .foreigntable, .view {
