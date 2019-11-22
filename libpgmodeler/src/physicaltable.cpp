@@ -1717,7 +1717,7 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 	return(max);
 }
 
-QString PhysicalTable::getDataDictionary(bool extended, bool splitted, attribs_map extra_attribs)
+QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attribs)
 {
 	Column *column = nullptr;
 	Constraint *constr = nullptr;
@@ -1734,7 +1734,6 @@ QString PhysicalTable::getDataDictionary(bool extended, bool splitted, attribs_m
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
-	attribs[Attributes::Extended] = extended ? Attributes::True : QString();
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
 	attribs[Attributes::Name] = obj_name;
 	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
@@ -1769,6 +1768,8 @@ QString PhysicalTable::getDataDictionary(bool extended, bool splitted, attribs_m
 	for(auto &obj : columns)
 	{
 		column = dynamic_cast<Column *>(obj);
+
+		aux_attrs[Attributes::Parent] = getSchemaName();
 		aux_attrs[Attributes::Name] = column->getName();
 		aux_attrs[Attributes::Type] = *column->getType();
 		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();

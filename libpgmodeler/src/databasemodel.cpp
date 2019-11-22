@@ -10942,7 +10942,7 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 	return(table);
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool extended, bool splitted)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool splitted)
 {
 	int idx = 0;
 	BaseObject *object = nullptr;
@@ -11002,7 +11002,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		aux_attribs[Attributes::Index] = browsable ? Attributes::True : QString();
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
 		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(extended, splitted, aux_attribs);
+		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
 
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
@@ -11046,7 +11046,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool extended, bool splitted)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool splitted)
 {
 	try
 	{
@@ -11065,7 +11065,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, extended, splitted);
+		getDataDictionary(datadict, browsable, splitted);
 		output.setFileName(path);
 
 		for(auto &itr : datadict)

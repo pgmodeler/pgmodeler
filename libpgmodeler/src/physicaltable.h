@@ -370,7 +370,7 @@ class PhysicalTable: public BaseTable {
 
 		virtual unsigned getMaxObjectCount(void);
 
-		virtual QString getDataDictionary(bool extended, bool splitted, attribs_map extra_attribs = {});
+		virtual QString getDataDictionary(bool splitted, attribs_map extra_attribs = {});
 
 		friend class Relationship;
 		friend class OperationList;

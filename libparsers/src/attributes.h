@@ -220,7 +220,6 @@ namespace Attributes {
 	Expressions,
 	ExtAttribsPage,
 	ExtAttribsPerPage,
-	Extended,
 	ExtObjOids,
 	Factor,
 	FadedOut,

@@ -1106,7 +1106,57 @@ vector<BaseObject *> View::getObjects(const vector<ObjectType> &excl_types)
 	return(list);
 }
 
-QString View::getDataDictionary(bool extended, bool splitted, attribs_map extra_attribs)
+QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
 {
-	return "";
+	attribs_map attribs, aux_attrs;
+	QStringList tab_names, col_names;
+	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
+			view_dict_file = dict_files_root + getSchemaName() + GlobalAttributes::SchemaExt,
+			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,
+			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::SchemaExt;
+
+	attribs.insert(extra_attribs.begin(), extra_attribs.end());
+	attribs[Attributes::Type] = getTypeName();
+	attribs[Attributes::TypeClass] = getSchemaName();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+	attribs[Attributes::Name] = obj_name;
+	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
+	attribs[Attributes::Comment] = comment;
+	attribs[Attributes::Columns] = QString();
+
+	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+
+	for(auto &ref : references)
+	{
+		if(ref.getTable())
+		{
+			aux_attrs[Attributes::Name] = ref.getTable()->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+		}
+
+		for(auto &tab : ref.getReferencedTables())
+		{
+			aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+			tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+		}
+	}
+
+	tab_names.removeDuplicates();
+	attribs[Attributes::References] = tab_names.join(", ");
+	aux_attrs.clear();
+
+	for(auto &col : columns)
+	{
+		aux_attrs[Attributes::Parent] = getSchemaName();
+		aux_attrs[Attributes::Name] = col.name;
+		aux_attrs[Attributes::Type] = col.type;
+
+		schparser.ignoreUnkownAttributes(true);
+		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
+		aux_attrs.clear();
+	}
+
+	schparser.ignoreEmptyAttributes(true);
+	return(schparser.getCodeDefinition(view_dict_file, attribs));
 }

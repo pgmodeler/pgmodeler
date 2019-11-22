@@ -674,10 +674,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		virtual QString getAlterDefinition(BaseObject *object) final;
 
 		//! \brief Returns the data dictionary of all tables in a single HTML code
-		void getDataDictionary(attribs_map &datadict, bool browsable, bool extended, bool splitted);
+		void getDataDictionary(attribs_map &datadict, bool browsable, bool splitted);
 
 		//! \brief Saves the data dictionary of all tables in a single HTML file or splitted in several files for each table
-		void saveDataDictionary(const QString &path, bool browsable, bool extended, bool splitted);
+		void saveDataDictionary(const QString &path, bool browsable, bool splitted);
 
 		/*! \brief Save the graphical objects positions, custom colors and custom points (for relationship lines) to an special file
 				that can be loaded by another model in order to change their objects position */

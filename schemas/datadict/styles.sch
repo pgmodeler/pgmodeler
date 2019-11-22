@@ -54,6 +54,63 @@ a:hover {
 	margin-bottom: 1em;
 }
 
+.table caption {
+	background-color: \#d2f3ff;
+}
+
+.foreigntable caption {	
+	background-color: \#94f0b1;
+}
+
+.view caption {	
+	background-color: \#ffd8a1;
+}
+
+.table,
+.table caption, 
+.table th, 
+.table td {
+	border: 1px solid \#b4d0da;
+}
+
+.foreigntable, 
+.foreigntable caption, 
+.foreigntable th, 
+.foreigntable td {
+	border: 1px solid \#6aad80;
+}
+
+.view, 
+.view caption, 
+.view th, 
+.view td {
+	border: 1px solid \#ba7c00;
+}
+
+.table caption, 
+.foreigntable caption, 
+.view caption {
+	border-bottom: 0;
+}
+
+.table th,
+.table .title,
+.table .label{
+	background-color: \#e9f8ff;
+}
+
+.foreigntable th,
+.foreigntable .title,
+.foreigntable .label {
+	background-color: \#e2ffed;
+}
+
+.view th,
+.view .title,
+.view .label {
+	background-color: \#ffebd2;
+}
+
 .type-label {
 	float: right;
 	color: \#212529;
@@ -65,20 +122,7 @@ a:hover {
 }
 
 caption {
-	border-radius: 5px 5px 0 0;
-	background-color: \#d2f3ff;
-}
-
-.table, caption, th, td {
-	border: 1px solid \#b4d0da;
-}
-
-caption {
-	border-bottom: none;
-}
-
-th, .title {
-	background-color: \#e9f8ff;
+	border-radius: 5px 5px 0 0;	
 }
 
 .nav-link {
@@ -128,7 +172,6 @@ td, th, caption, .title {
 
 .label {
 	font-weight: bold;
-	background-color: \#e9f8ff;
 	color: \#444f53;
 	width: 1px;
 	white-space: nowrap;
