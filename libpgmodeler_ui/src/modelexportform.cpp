@@ -50,13 +50,21 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
 	ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
+	mode_ht=new HintTextWidget(mode_hint, this);
+	mode_ht->setText(mode_hint->statusTip());
+
+	incl_index_ht=new HintTextWidget(incl_index_hint, this);
+	incl_index_ht->setText(incl_index_hint->statusTip());
+
 	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
 	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
 	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
+	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
 	connect(pgsqlvers_chk, SIGNAL(toggled(bool)), pgsqlvers1_cmb, SLOT(setEnabled(bool)));
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
 	connect(select_file_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(select_img_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
+	connect(select_dict_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
 	connect(export_btn, SIGNAL(clicked(void)), this, SLOT(exportModel(void)));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
@@ -75,6 +83,8 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 			else
 				export_hlp.exportToSVG();
 		}
+		else if(export_to_dict_rb->isChecked())
+			export_hlp.exportToDataDict();
 		else
 			export_hlp.exportToSQL();
 	});
@@ -198,6 +208,10 @@ void ModelExportForm::exportModel(void)
 		{
 			progress_lbl->setText(trUtf8("Initializing model export..."));
 
+			if(low_verbosity)
+				PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+																						QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
+
 			//Exporting to sql file
 			if(export_to_file_rb->isChecked())
 			{
@@ -205,15 +219,16 @@ void ModelExportForm::exportModel(void)
 				export_hlp.setExportToSQLParams(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
 				export_thread->start();
 			}
+			else if(export_to_dict_rb->isChecked())
+			{
+				export_hlp.setExportToDataDictParams(model->db_model, dict_edt->text(), splitted_rb->isChecked(), incl_index_chk->isChecked());
+				export_thread->start();
+			}
 			//Exporting directly to DBMS
 			else
 			{
 				QString version;
-				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-
-				if(low_verbosity)
-					PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
-																							QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
+				Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());			
 
 				//If the user chose a specific version
 				if(pgsqlvers1_cmb->isEnabled())
@@ -241,8 +256,8 @@ void ModelExportForm::exportModel(void)
 
 void ModelExportForm::selectExportMode(void)
 {
-	QList<QRadioButton *> radios={ export_to_dbms_rb, export_to_img_rb, export_to_file_rb};
-	QWidgetList wgts={ export_to_dbms_wgt, export_to_img_wgt, export_to_file_wgt };
+	QList<QRadioButton *> radios={ export_to_dbms_rb, export_to_img_rb, export_to_file_rb, export_to_dict_rb};
+	QWidgetList wgts={ export_to_dbms_wgt, export_to_img_wgt, export_to_file_wgt, export_to_dict_wgt };
 	int i=0;
 
 	for(QRadioButton *rb : radios)
@@ -255,8 +270,9 @@ void ModelExportForm::selectExportMode(void)
 
 	pgsqlvers1_cmb->setEnabled(export_to_dbms_rb->isChecked() && pgsqlvers_chk->isChecked());
 	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1) ||
-						   (export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-						   (export_to_img_rb->isChecked() && !image_edt->text().isEmpty()));
+							(export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
+							(export_to_img_rb->isChecked() && !image_edt->text().isEmpty()) ||
+							(export_to_dict_rb->isChecked() && !dict_edt->text().isEmpty()));
 }
 
 void ModelExportForm::selectOutputFile(void)
@@ -273,6 +289,19 @@ void ModelExportForm::selectOutputFile(void)
 	{
 		file_dlg.setNameFilter(trUtf8("SQL script (*.sql);;All files (*.*)"));
 		file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".sql"));
+	}
+	else if(export_to_dict_rb->isChecked())
+	{
+		if(splitted_rb->isChecked())
+		{
+			file_dlg.setFileMode(QFileDialog::DirectoryOnly);
+			file_dlg.setNameFilter(QString());
+		}
+		else
+		{
+			file_dlg.setNameFilter(trUtf8("HTML file (*.html);;All files (*.*)"));
+			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".html"));
+		}
 	}
 	else
 	{
@@ -297,11 +326,15 @@ void ModelExportForm::selectOutputFile(void)
 
 		if(export_to_file_rb->isChecked())
 			file_edt->setText(file);
+		else if(export_to_dict_rb->isChecked())
+			dict_edt->setText(file);
 		else
 			image_edt->setText(file);
 	}
 
-	export_btn->setEnabled(!file_edt->text().isEmpty() || !image_edt->text().isEmpty());
+	export_btn->setEnabled(!file_edt->text().isEmpty() ||
+												 !dict_edt->text().isEmpty() ||
+												 !image_edt->text().isEmpty());
 }
 
 void ModelExportForm::captureThreadError(Exception e)
@@ -336,7 +369,7 @@ void ModelExportForm::handleExportCanceled(void)
 void ModelExportForm::handleExportFinished(void)
 {
 	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
-	QString msg=trUtf8("Exporting process sucessfuly ended!");
+	QString msg=trUtf8("Exporting process sucessfully ended!");
 
 	finishExport(msg);
 	ico_lbl->setPixmap(ico);
@@ -368,6 +401,7 @@ void ModelExportForm::enableExportModes(bool value)
 	export_to_dbms_rb->setEnabled(value);
 	export_to_file_rb->setEnabled(value);
 	export_to_img_rb->setEnabled(value);
+	export_to_dict_rb->setEnabled(value);
 	export_btn->setEnabled(value);
 	close_btn->setEnabled(value);
 }

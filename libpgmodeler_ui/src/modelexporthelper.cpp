@@ -16,7 +16,7 @@ void ModelExportHelper::resetExportParams(void)
 	connection=nullptr;
 	scene=nullptr;
 	zoom=100;
-	show_grid=show_delim=page_by_page=false;
+	show_grid=show_delim=page_by_page=splitted=browsable=false;
 	viewp=nullptr;
 }
 
@@ -580,6 +580,34 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 	}
 }
 
+void ModelExportHelper::exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted)
+{
+	if(!db_model)
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	connect(db_model, SIGNAL(s_objectLoaded(int,QString,uint)), this, SLOT(updateProgress(int,QString,uint)));
+
+	try
+	{
+		progress=0;
+		emit s_progressUpdated(progress,
+													 trUtf8("Starting data dictionary generation..."),
+													 ObjectType::BaseObject);
+		progress=1;
+		db_model->saveDataDictionary(path, browsable, splitted);
+
+		emit s_progressUpdated(100, trUtf8("Data dictionary successfully saved into `%1'.").arg(path), ObjectType::BaseObject);
+		emit s_exportFinished();
+	}
+	catch(Exception &e)
+	{
+		disconnect(db_model, nullptr, this, nullptr);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+
+	disconnect(db_model, nullptr, this, nullptr);
+}
+
 void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 {
 	vector<BaseObject *> objects;
@@ -1095,6 +1123,14 @@ void ModelExportHelper::setExportToSVGParams(ObjectsScene *scene, const QString 
 	this->show_delim=show_delim;
 }
 
+void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted)
+{
+	this->db_model=db_model;
+	this->filename=path;
+	this->browsable=browsable;
+	this->splitted=splitted;
+}
+
 void ModelExportHelper::exportToDBMS(void)
 {
 	if(connection)
@@ -1147,6 +1183,19 @@ void ModelExportHelper::exportToSQL(void)
 	try
 	{
 		exportToSQL(db_model, filename, pgsql_ver);
+		resetExportParams();
+	}
+	catch(Exception &e)
+	{
+		abortExport(e);
+	}
+}
+
+void ModelExportHelper::exportToDataDict(void)
+{
+	try
+	{
+		exportToDataDict(db_model, filename, browsable, splitted);
 		resetExportParams();
 	}
 	catch(Exception &e)

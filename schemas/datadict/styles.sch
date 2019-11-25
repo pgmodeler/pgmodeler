@@ -6,6 +6,7 @@
 	color: \#333;
 	margin-left: 2em;
 	margin-top: 2em;
+	background-color: white;
 }
 
 footer {
