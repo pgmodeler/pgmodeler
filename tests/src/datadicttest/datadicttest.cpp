@@ -122,8 +122,9 @@ void DataDictTest::generateASplittedDataDictFromSampleModel(void)
 	try
 	{
 		dbmodel.createSystemObjects(false);
-		dbmodel.loadModel("../../../samples/demo.dbm");
-		dbmodel.saveDataDictionary("./dict_test", true, true);
+		//dbmodel.loadModel("../../../samples/demo.dbm");
+		dbmodel.loadModel("/home/raphael/alto_sapl_test.dbm");
+		dbmodel.saveDataDictionary("./dict_test.html", true, false);
 	}
 	catch (Exception &e)
 	{

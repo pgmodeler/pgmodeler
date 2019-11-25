@@ -2,6 +2,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made. 
 
+%if ({type-class} == "table") %then
+	%set {colspan} 8
+%else
+	%set {colspan} 5
+%end
+
+
 <table $sp id="{schema}.{name}" $sp class="{type-class}">
 $br [	] <caption [ class="tab-name"]>
 $br [		] <em>{schema}</em>.<strong>{name}</strong>
@@ -11,7 +18,7 @@ $br [	] <thead>
 
 %if {comment} %then
     $br [	] <tr>
-    $br [		] <td [ colspan="8" class="tab-description"]>
+    $br [		] <td $sp colspan="{colspan}" $sp class="tab-description">
 					{comment}
     $br [		] </td>
     $br [	] </tr>
@@ -21,16 +28,20 @@ $br [	] <thead>
 	$br [		] <tr>
 	$br [			] <th>Name</th>
 	$br [			] <th>[Data type]</th>
-	$br [			] <th>PK</th>
-	$br [			] <th>FK</th>
-	$br [			] <th>UQ</th>
+	
+	%if ({type-class} == "table") %then
+		$br [			] <th>PK</th>
+		$br [			] <th>FK</th>
+		$br [			] <th>UQ</th>
+	%end
+	
 	$br [			] <th>[Not null]</th>
 	$br [			] <th>[Default value]</th>
 	$br [			] <th>Description</th>
 	$br [		] </tr>
 %else
 	$br [		] <tr>
-	$br [			] <th [ colspan="8"]>
+	$br [			] <th $sp colspan="{colspan}">
 	$br [				] <em>[No columns]</em>
 	$br [			] </th>
 	$br [		] </tr>
@@ -45,7 +56,7 @@ $br [	] <tbody>
 
 %if {constraints} %then
 	$br [	] <tr>
-	$br [		] <td $sp colspan="8" $sp class="nested-tab-parent">
+	$br [		] <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
 	$br [			] <table $sp class="nested-tab">
 	$br [				] <tr>
 	$br [					] <td [ class="title" colspan="5"]>Constraints</td>
@@ -71,7 +82,7 @@ $br [	] </tbody>
 %if {inherit} %or {partitioned-table} %or {partition-tables} %then
 	$br [	] <tfoot>
 	$br [		] <tr>
-	$br [			] <td $sp colspan="8" $sp class="nested-tab-parent">
+	$br [			] <td $sp colspan="{colspan}" $sp class="nested-tab-parent">
 	$br [				] <table $sp class="nested-tab">
 
 	%if {inherit} %then

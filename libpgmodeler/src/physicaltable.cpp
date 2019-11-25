@@ -1743,6 +1743,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 
 	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
 
+	// Gathering the acestor table names
 	for(auto &tab : ancestor_tables)
 	{
 		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
@@ -1758,6 +1759,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
 	}
 
+	// Gathering the patition table names
 	for(auto &tab : partition_tables)
 	{
 		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
@@ -1794,6 +1796,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		aux_attrs[Attributes::Comment] = constr->getComment();
 		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : QString();
 
+		// Retrieving the columns that composes the constraint
 		for(auto &col : constr->getColumns(Constraint::SourceCols))
 			 col_names.push_back(col->getName());
 

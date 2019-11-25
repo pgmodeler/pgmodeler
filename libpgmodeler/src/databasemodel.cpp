@@ -10963,7 +10963,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	objects.insert(objects.end(), views.begin(), views.end());
 	objects.insert(objects.end(), relationships.begin(), relationships.end());
 
-	// Placing the object in alphabectical order
+	// Placing the objects in alphabectical order
 	for(auto &obj : objects)
 	{
 		// Retrieving the generated table if the current object is a relationship (n-n)
@@ -10984,26 +10984,32 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	index_list.sort();
 	datadict.clear();
-	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 
+	// Generates the the stylesheet
+	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 	attribs[Attributes::Styles] = QString();
 	attribs[Attributes::Index] = QString();
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
 
+	// If the generation is a standalone HTML the css is embedded
 	if(!splitted)
 		attribs[Attributes::Styles] = styles;
 	else
+		// Otherwise we create a separated stylesheet file
 		datadict[Attributes::Styles + QString(".css")] = styles;
 
 	// Generating individual data dictionaries
 	for(auto &itr : objs_map)
 	{
 		object = itr.second;
+
+		// Generate the individual data dictionaries
 		aux_attribs[Attributes::Index] = browsable ? Attributes::True : QString();
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
 		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
 		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
 
+		// If the generation is configured to be splitted we generate a complete HTML file for the current table
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
@@ -11013,6 +11019,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		}
 	}
 
+	// If the data dictionary is browsable we proceed with the index generation
 	if(browsable)
 	{
 		attribs_map idx_attribs;
@@ -11036,6 +11043,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
 	}
 
+	// If the data dictionary is browsable and splitted the index goes into a separated file
 	if(splitted && browsable)
 		datadict[Attributes::Index + QString(".html")] = index;
 	else if(!splitted)

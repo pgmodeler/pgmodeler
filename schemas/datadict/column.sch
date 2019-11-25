@@ -7,9 +7,13 @@ $br [		] <td>{name}</td>
 $br [		] <td $sp class="data-type">{type}</td>
 
 %if ({parent} != "view") %then
-	$br [		] <td $sp class="bool-field">{pk-constr}</td>
-	$br [		] <td $sp class="bool-field">{fk-constr}</td>
-	$br [		] <td $sp class="bool-field">{uq-constr}</td>
+	
+	%if ({parent} == "table") %then
+		$br [		] <td $sp class="bool-field">{pk-constr}</td>
+		$br [		] <td $sp class="bool-field">{fk-constr}</td>
+		$br [		] <td $sp class="bool-field">{uq-constr}</td>
+	%end
+		
 	$br [		] <td $sp class="bool-field">{not-null}</td>
 	$br [		] <td $sp class="value">{default-value}</td>
 	$br [		] <td><em>{comment}</em></td>
