@@ -221,7 +221,7 @@ void ModelExportForm::exportModel(void)
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_edt->text(), splitted_rb->isChecked(), incl_index_chk->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model, dict_edt->text(), incl_index_chk->isChecked(), splitted_rb->isChecked());
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
