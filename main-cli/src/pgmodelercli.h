@@ -110,6 +110,7 @@ class PgModelerCli: public QApplication {
 		ExportToPng,
 		ExportToSvg,
 		ExportToDbms,
+		ExportToDict,
 		ImportDb,
 		Diff,
 		DropDatabase,
@@ -137,6 +138,8 @@ class PgModelerCli: public QApplication {
 		DbmMimeType,
 		Install,
 		Uninstall,
+		NoIndex,
+		Splitted,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,
