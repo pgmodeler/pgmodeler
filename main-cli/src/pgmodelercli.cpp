@@ -592,7 +592,7 @@ int PgModelerCli::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8(" command line interface.")));
+			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8("command line interface.")));
 
 			if(parsed_opts.count(FixModel))
 				fixModel();
