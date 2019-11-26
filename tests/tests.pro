@@ -17,6 +17,7 @@ src/linenumberstest \
 src/partrelationshiptest \
 src/foreigndatawrappertest \
 src/servertest \
-src/usermappingtest
+src/usermappingtest \
+src/datadicttest
 
 

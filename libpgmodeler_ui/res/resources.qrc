@@ -278,6 +278,7 @@
         <file>imagens/bugreport.png</file>
         <file>imagens/crows_foot_notation.png</file>
         <file>imagens/rel_tab_edges.png</file>
+        <file>imagens/model2datadict.png</file>
     </qresource>
     <qresource prefix="/styles">
         <file>styles/pgmodeler_bg_logo.png</file>

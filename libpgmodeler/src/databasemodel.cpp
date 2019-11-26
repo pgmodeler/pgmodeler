@@ -10941,3 +10941,162 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 
 	return(table);
 }
+
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool splitted)
+{
+	int idx = 0;
+	BaseObject *object = nullptr;
+	vector<BaseObject *> objects;
+	map<QString, BaseObject *> objs_map;
+	QString styles, id, index, items, buffer;
+	attribs_map attribs, aux_attribs;
+	QStringList index_list;
+	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
+			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
+			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt,
+			item_sch_file = dict_files_root + Attributes::Item + GlobalAttributes::SchemaExt,
+			index_sch_file = dict_files_root + Attributes::Index + GlobalAttributes::SchemaExt;
+
+	objects.assign(tables.begin(), tables.end());
+	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
+	objects.insert(objects.end(), views.begin(), views.end());
+	objects.insert(objects.end(), relationships.begin(), relationships.end());
+
+	// Placing the objects in alphabectical order
+	for(auto &obj : objects)
+	{
+		// Retrieving the generated table if the current object is a relationship (n-n)
+		if(obj->getObjectType() == ObjectType::Relationship)
+		{
+			Relationship *rel = dynamic_cast<Relationship *>(obj);
+
+			if(!rel->getGeneratedTable())
+				continue;
+
+			obj = rel->getGeneratedTable();
+		}
+
+		id = obj->getSignature().remove(QChar('"'));
+		objs_map[id] = obj;
+		index_list.push_back(id);
+	}
+
+	index_list.sort();
+	datadict.clear();
+
+	// Generates the the stylesheet
+	styles = schparser.getCodeDefinition(style_sch_file, attribs);
+	attribs[Attributes::Styles] = QString();
+	attribs[Attributes::Index] = QString();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+
+	// If the generation is a standalone HTML the css is embedded
+	if(!splitted)
+		attribs[Attributes::Styles] = styles;
+	else
+		// Otherwise we create a separated stylesheet file
+		datadict[Attributes::Styles + QString(".css")] = styles;
+
+	// Generating individual data dictionaries
+	for(auto &itr : objs_map)
+	{
+		object = itr.second;
+
+		// Generate the individual data dictionaries
+		aux_attribs[Attributes::Index] = browsable ? Attributes::True : QString();
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
+		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
+		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
+
+		// If the generation is configured to be splitted we generate a complete HTML file for the current table
+		if(splitted && !attribs[Attributes::Objects].isEmpty())
+		{
+			id = itr.first + QString(".html");
+			schparser.ignoreEmptyAttributes(true);
+			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
+			attribs[Attributes::Objects].clear();
+		}
+	}
+
+	// If the data dictionary is browsable we proceed with the index generation
+	if(browsable)
+	{
+		attribs_map idx_attribs;
+
+		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = QString();
+		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = QString();
+		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = QString();
+
+		// Generating the index items
+		for(auto &item : index_list)
+		{
+			aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+			aux_attribs[Attributes::Item] = item;
+			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
+		}
+
+		idx_attribs[Attributes::Name] = this->obj_name;
+		idx_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+
+		schparser.ignoreEmptyAttributes(true);
+		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
+	}
+
+	// If the data dictionary is browsable and splitted the index goes into a separated file
+	if(splitted && browsable)
+		datadict[Attributes::Index + QString(".html")] = index;
+	else if(!splitted)
+	{
+		attribs[Attributes::Index] = index;
+		schparser.ignoreEmptyAttributes(true);
+		datadict[Attributes::Database] = schparser.getCodeDefinition(dict_sch_file, attribs);
+	}
+}
+
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool splitted)
+{
+	try
+	{
+		attribs_map datadict;
+		QFile output;
+		QByteArray buffer;
+		QFileInfo finfo(path);
+		QDir dir;
+
+		if(splitted)
+		{
+			if(finfo.exists() && !finfo.isDir())
+				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
+												ErrorCode::InvDataDictDirectory,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else if(!finfo.exists())
+				dir.mkpath(path);
+		}
+
+		getDataDictionary(datadict, browsable, splitted);
+		output.setFileName(path);
+
+		for(auto &itr : datadict)
+		{
+			if(splitted)
+				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
+
+			output.open(QFile::WriteOnly);
+
+			if(!output.isOpen())
+			{
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(output.fileName()),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			buffer.append(itr.second);
+			output.write(buffer);
+			output.close();
+			buffer.clear();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}

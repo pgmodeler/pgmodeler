@@ -367,7 +367,10 @@ class PhysicalTable: public BaseTable {
 		void setTableAttributes(unsigned def_type, bool incl_rel_added_objs);
 
 		virtual void setObjectListsCapacity(unsigned capacity);
+
 		virtual unsigned getMaxObjectCount(void);
+
+		virtual QString getDataDictionary(bool splitted, attribs_map extra_attribs = {});
 
 		friend class Relationship;
 		friend class OperationList;

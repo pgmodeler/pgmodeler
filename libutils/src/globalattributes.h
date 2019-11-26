@@ -40,7 +40,7 @@ namespace GlobalAttributes {
 	extern const QString
 	PgModelerAppName,
 	PgModelerURI,
-    PgModelerReverseURI,
+	PgModelerReverseURI,
 	PgModelerVersion,
 	PgModelerBuildNumber,
 	PgModelerSite,
@@ -60,6 +60,7 @@ namespace GlobalAttributes {
 	SchemasDir,        //! \brief Default name for the schemas directory
 	SQLSchemaDir,     //! \brief Default name for the sql schemas directory
 	XMLSchemaDir,     //! \brief Default name for the xml schemas directory
+	DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
 	AlterSchemaDir,   //! \brief Default name for the alter schemas directory
 	SchemaExt,         //! \brief Default extension for schema files
 	ObjectDTDDir,     //! \brief Default directory for dtd files

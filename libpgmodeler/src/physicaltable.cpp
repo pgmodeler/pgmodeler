@@ -1716,3 +1716,98 @@ unsigned PhysicalTable::getMaxObjectCount(void)
 
 	return(max);
 }
+
+QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attribs)
+{
+	Column *column = nullptr;
+	Constraint *constr = nullptr;
+	attribs_map attribs, aux_attrs;
+	QStringList tab_names, col_names;
+	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
+			tab_dict_file = dict_files_root + Attributes::Table + GlobalAttributes::SchemaExt,
+			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,
+			constr_dict_file = dict_files_root + Attributes::Constraint + GlobalAttributes::SchemaExt,
+			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::SchemaExt,
+			check_mark = QString("&#10003;");
+
+	attribs.insert(extra_attribs.begin(), extra_attribs.end());
+	attribs[Attributes::Type] = getTypeName();
+	attribs[Attributes::TypeClass] = getSchemaName();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+	attribs[Attributes::Name] = obj_name;
+	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
+	attribs[Attributes::Comment] = comment;
+	attribs[Attributes::Columns] = QString();
+	attribs[Attributes::Constraints] = QString();
+
+	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+
+	// Gathering the acestor table names
+	for(auto &tab : ancestor_tables)
+	{
+		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+	}
+	attribs[Attributes::Inherit] = tab_names.join(", ");
+	tab_names.clear();
+
+	attribs[Attributes::PartitionedTable] = QString();
+	if(partitioned_table)
+	{
+		aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
+		attribs[Attributes::PartitionedTable] = schparser.getCodeDefinition(link_dict_file, aux_attrs);
+	}
+
+	// Gathering the patition table names
+	for(auto &tab : partition_tables)
+	{
+		aux_attrs[Attributes::Name] = tab->getSignature().remove(QChar('"'));
+		tab_names.push_back(schparser.getCodeDefinition(link_dict_file, aux_attrs));
+	}
+	attribs[Attributes::PartitionTables] = tab_names.join(", ");
+
+	for(auto &obj : columns)
+	{
+		column = dynamic_cast<Column *>(obj);
+
+		aux_attrs[Attributes::Parent] = getSchemaName();
+		aux_attrs[Attributes::Name] = column->getName();
+		aux_attrs[Attributes::Type] = *column->getType();
+		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();
+		aux_attrs[Attributes::Comment] = column->getComment();
+		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : QString();
+		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : QString();
+		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : QString();
+		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : QString();
+
+		schparser.ignoreEmptyAttributes(true);
+		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
+		aux_attrs.clear();
+	}
+
+	for(auto &obj : constraints)
+	{
+		constr = dynamic_cast<Constraint *>(obj);
+
+		aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
+		aux_attrs[Attributes::Name] = constr->getName();
+		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
+		aux_attrs[Attributes::Comment] = constr->getComment();
+		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : QString();
+
+		// Retrieving the columns that composes the constraint
+		for(auto &col : constr->getColumns(Constraint::SourceCols))
+			 col_names.push_back(col->getName());
+
+		aux_attrs[Attributes::Columns] = col_names.join(", ");
+		col_names.clear();
+
+		schparser.ignoreEmptyAttributes(true);
+		attribs[Attributes::Constraints] += schparser.getCodeDefinition(constr_dict_file, aux_attrs);
+		aux_attrs.clear();
+	}
+
+	schparser.ignoreEmptyAttributes(true);
+	return(schparser.getCodeDefinition(tab_dict_file, attribs));
+}
