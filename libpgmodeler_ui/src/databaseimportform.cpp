@@ -353,9 +353,9 @@ void DatabaseImportForm::listDatabases(void)
 		//Close a previous connection opened by the import helper
 		import_helper->closeConnection();
 
-		if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
-				ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
+			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
 			emit s_connectionsUpdateRequest();
 		}
 

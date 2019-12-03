@@ -417,10 +417,9 @@ void ModelDatabaseDiffForm::listDatabases(void)
 	{
 		if(conn_cmb->currentIndex()==conn_cmb->count()-1)
 		{
-			if(ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
-				emit s_connectionsUpdateRequest();
-
+			ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true);
 			resetForm();
+			emit s_connectionsUpdateRequest();
 		}
 
 		Connection *conn=reinterpret_cast<Connection *>(conn_cmb->itemData(conn_cmb->currentIndex()).value<void *>());
