@@ -415,10 +415,11 @@ void ModelDatabaseDiffForm::listDatabases(void)
 
 	try
 	{
-		if(conn_cmb->currentIndex()==conn_cmb->count()-1 &&
-			 ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
+		if(conn_cmb->currentIndex()==conn_cmb->count()-1)
 		{
-			emit s_connectionsUpdateRequest();
+			if(ConnectionsConfigWidget::openConnectionsConfiguration(conn_cmb, true))
+				emit s_connectionsUpdateRequest();
+
 			resetForm();
 		}
 
