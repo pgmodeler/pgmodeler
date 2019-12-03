@@ -287,7 +287,7 @@ class ModelWidget: public QWidget {
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
-		void rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
+		void rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row, QPointF origin, double obj_spacing);
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
@@ -365,7 +365,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
+		void rearrangeSchemasInGrid(unsigned tabs_per_row = 0, unsigned sch_per_row = 0, QPointF origin = QPointF(50, 50), double obj_spacing = 50);
 
 		//! \brief Arrange all tables it their schemas randomly (scattered)
 		void rearrangeTablesInSchemas(void);

@@ -4488,15 +4488,31 @@ void ModelWidget::removeRelationshipPoints(void)
 	}
 }
 
-void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, unsigned sch_per_row, double obj_spacing)
+void ModelWidget::rearrangeSchemasInGrid(unsigned tabs_per_row, unsigned sch_per_row, QPointF origin, double obj_spacing)
 {
 	vector<BaseObject *> *objects=nullptr;
 	Schema *schema=nullptr;
 	SchemaView *sch_view=nullptr;
-	unsigned sch_id=0;
+	unsigned sch_id=0, min_cnt = 0;
 	double x=origin.x(), y=origin.y(), max_y=-1, cy=0;
 
 	objects=db_model->getObjectList(ObjectType::Schema);
+
+	/* If schemas per row or tables per row isn't specified
+	 * we calculate an minimal number of objects to be arranged per row */
+	if(sch_per_row == 0)
+	{
+		min_cnt = objects->size() * 0.10;
+		sch_per_row = min_cnt < 3 ? 3 : min_cnt;
+	}
+
+	if(tabs_per_row == 0)
+	{
+		min_cnt = (db_model->getObjectCount(ObjectType::Table) +
+							 db_model->getObjectCount(ObjectType::View) +
+							 db_model->getObjectCount(ObjectType::ForeignTable)) * 0.05;
+		tabs_per_row = min_cnt < 5 ? 5 : min_cnt;
+	}
 
 	for(BaseObject *obj : *objects)
 	{
@@ -4513,7 +4529,7 @@ void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, 
 		if(sch_view && sch_view->getChildrenCount() > 0)
 		{
 			//Organizing the tables inside the schema
-			rearrangeTablesInGrid(schema, QPointF(x,y), tabs_per_row, obj_spacing);
+			rearrangeTablesInGrid(schema, tabs_per_row, QPointF(x,y), obj_spacing);
 			schema->setModified(true);
 
 			cy=sch_view->pos().y() + sch_view->boundingRect().height();
@@ -4555,7 +4571,7 @@ void ModelWidget::rearrangeSchemasInGrid(QPointF origin, unsigned tabs_per_row, 
 	this->adjustSceneSize();
 }
 
-void ModelWidget::rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing)
+void ModelWidget::rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row,  QPointF origin, double obj_spacing)
 {
 	if(schema)
 	{
@@ -4793,8 +4809,8 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 			rel->resetLabelsDistance();
 
 			if(!RelationshipView::isCurvedLines() &&
-				 rel->getTable(BaseRelationship::SrcTable)->getPosition().y() !=
-				 rel->getTable(BaseRelationship::DstTable)->getPosition().y())
+				 round(rel->getTable(BaseRelationship::SrcTable)->getPosition().y()) !=
+				 round(rel->getTable(BaseRelationship::DstTable)->getPosition().y()))
 				breakRelationshipLine(dynamic_cast<BaseRelationship *>(obj), ModelWidget::BreakVert2NinetyDegrees);
 		}
 
@@ -4803,7 +4819,7 @@ void ModelWidget::rearrangeTablesHierarchically(void)
 	else
 	{
 		//This is a fallback arrangement when the model does not have relationships
-		rearrangeSchemasInGrid(QPointF(50, 50), 10, 5, 50);
+		rearrangeSchemasInGrid();
 	}
 
 	adjustSceneSize();
