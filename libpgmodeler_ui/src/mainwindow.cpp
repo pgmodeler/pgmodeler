@@ -1430,7 +1430,7 @@ void MainWindow::saveModel(ModelWidget *model)
 			}
 
 			stopTimers(false);
-			action_save_model->setEnabled(false);
+			action_save_model->setEnabled(model->isModified());
 		}
 	}
 	catch(Exception &e)
