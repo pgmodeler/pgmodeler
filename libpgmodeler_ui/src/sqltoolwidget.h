@@ -63,6 +63,10 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
 		void updateTabs(void);
 
+		bool isAnyDbOpened(void);
+
+		void insertQuery(const QString &query);
+
 	public slots:
 		void configureSnippets(void);
 
