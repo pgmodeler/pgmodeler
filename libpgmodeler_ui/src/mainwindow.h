@@ -193,6 +193,10 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Returns the model at given index
 		ModelWidget *getModel(int idx);
 
+		QPair<bool,SQLToolWidget *> isAnyManageDbOpened();
+
+		void switchView(int view);
+
 	private slots:
 		void showMainMenu(void);
 
@@ -290,6 +294,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void arrangeObjects(void);
 		void toggleCompactView(void);
 		void toggleLayersWidget(bool show);
+
+	signals:
+		void s_currentModelChanged(ModelWidget *model_wgt);
 };
 
 #endif
