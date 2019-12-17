@@ -19,8 +19,17 @@ SUBDIRS = libutils \
           libobjrenderer \
           libpgmodeler_ui
 
-# Include the tests and plugins subprojects only on debug mode
-CONFIG(debug, debug|release): SUBDIRS += tests plugins
+# Include the tests subprojects only on debug mode
+CONFIG(debug, debug|release): SUBDIRS += tests
+
+# Include the plugins subprojects only if exists
+PLUGINS_SRC_ROOT=$$PWD/plugins
+!exists($$PLUGINS_SRC_ROOT) {
+    warning("Plugins folder $$PLUGINS_SRC_ROOT wasn't found! pgModeler will be build without plugins.")
+}
+exists($$PLUGINS_SRC_ROOT) {
+   SUBDIRS += plugins
+}
 
 # Including executables subprojects (libraries only)
 SUBDIRS += crashhandler \
