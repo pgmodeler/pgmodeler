@@ -111,21 +111,25 @@ void PluginsConfigWidget::loadConfiguration(void)
 			fi.setFile(lib);
 
 			//Inserts the loaded plugin on the vector
-			plugin=qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
+			plugin = qobject_cast<PgModelerPlugin *>(plugin_loader.instance());
 			plugins.push_back(plugin);
 
-			//Configures the action related to plugin
-			plugin_action=new QAction(this);
-			plugin_action->setText(plugin->getPluginTitle());
-			plugin_action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(plugin)));
-			plugin_action->setShortcut(plugin->getPluginShortcut());
+			if(plugin->hasMenuAction())
+			{
+				//Configures the action related to plugin
+				plugin_action=new QAction(this);
+				plugin_action->setText(plugin->getPluginTitle());
+				plugin_action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(plugin)));
+				plugin_action->setShortcut(plugin->getPluginShortcut());
 
-			icon.load(dir_plugins + plugin_name +
-					  GlobalAttributes::DirSeparator  +
-					  plugin_name + QString(".png"));
-			plugin_action->setIcon(icon);
+				icon.load(dir_plugins + plugin_name +
+									GlobalAttributes::DirSeparator  +
+									plugin_name + QString(".png"));
 
-			plugins_actions.push_back(plugin_action);
+				plugin_action->setIcon(icon);
+				plugins_actions.push_back(plugin_action);
+			}
+
 			plugins_tab->addRow();
 			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
 			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
@@ -139,6 +143,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 																 .arg(plugin_loader.errorString()),
 																 ErrorCode::PluginNotLoaded, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
+
 		dir_list.pop_front();
 		plugins_tab->clearSelection();
 	}
@@ -147,30 +152,25 @@ void PluginsConfigWidget::loadConfiguration(void)
 		throw Exception(ErrorCode::PluginsNotLoaded,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors);
 }
 
-void PluginsConfigWidget::installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot, QMainWindow *main_window)
+void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, const char *slot)
 {
-	if((toolbar || menu) && slot)
+	if(menu && slot)
 	{
 		vector<QAction *>::iterator itr=plugins_actions.begin();
-		PgModelerPlugin *plugin = nullptr;
 
 		while(itr!=plugins_actions.end())
 		{
-			if(toolbar)
-				toolbar->addAction(*itr);
-
 			if(menu)
 				menu->addAction(*itr);
-
-			// Exposing the main window instance to the plugin
-			if(main_window)
-			{
-				plugin =reinterpret_cast<PgModelerPlugin *>((*itr)->data().value<void *>());
-				plugin->setMainWindow(main_window);
-			}
 
 			connect(*itr, SIGNAL(triggered(void)), recv, slot);
 			itr++;
 		}
 	}
+}
+
+void PluginsConfigWidget::initPlugins(QMainWindow *main_window)
+{
+	for(auto &plugin : plugins)
+		plugin->initPlugin(main_window);
 }

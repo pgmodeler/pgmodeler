@@ -65,6 +65,12 @@ class PgModelerPlugin {
 
 		virtual ~PgModelerPlugin(void);
 
+		/*! \brief This method is executed right before the main window is created and can be used to perform
+		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
+		 * in the constructor. Additionally, a main window instance can be passed to the plugin in order to facilitate
+		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
+		virtual void initPlugin(QMainWindow *main_window);
+
 		//! \brief Executes the plugins having a ModelWidget as input parameter.
 		virtual void executePlugin(ModelWidget *modelo)=0;
 
@@ -83,16 +89,17 @@ class PgModelerPlugin {
 		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void) = 0;
 
-		//! \brief Returns the plugin's action shortcut
-		virtual QKeySequence getPluginShortcut(void) = 0;
+		/*! \brief Returns the plugin's action shortcut
+		 * The default implementation is to return an empty shortcut */
+		virtual QKeySequence getPluginShortcut(void);
+
+		/*! \brief Indicates if the plugin's has an action to be installed in a Qmenu instance
+		 * The default implementation is to indicate the presence of an action */
+		virtual bool hasMenuAction(void);
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
 														 const QString &description, const QString &ico_filename);
-
-		/*! \brief Sets the main window of the application so it can perform advanced operations like
-		 * add custom widget, access the models, and much more */
-		virtual void setMainWindow(QMainWindow *main_window);
 };
 
 /* Declares the class PgModelerPlugin as interface, this means that the class is a base
