@@ -330,10 +330,10 @@ class ModelWidget: public QWidget {
 		DatabaseModel *getDatabaseModel(void);
 
 		//! \brief Returns the object scene used by the model
-		ObjectsScene *getObjectScene(void)const{return scene;};
+		ObjectsScene *getObjectsScene(void);
 
 		//! \brief Returns the scene view used by the model
-		QGraphicsView *getViewport(){return viewport;};
+		QGraphicsView *getViewport(void);
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);

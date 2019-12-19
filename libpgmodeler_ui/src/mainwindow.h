@@ -165,6 +165,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
 		void showFixMessage(Exception &e, const QString &filename);
 
+		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
+		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
+		 * the current button toggle state. */
+		bool isToolButtonsChecked(QHBoxLayout *layout);
+
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
 		~MainWindow(void);

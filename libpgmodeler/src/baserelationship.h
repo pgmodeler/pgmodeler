@@ -88,9 +88,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		virtual QString getDropDefinition(bool) final { return(""); }
 
-	protected:
 		void setReferenceForeignKey(Constraint *reference_fk);
-		Constraint *getReferenceForeignKey(void);
 
 	public:
 		//! \brief Constants used to assign the type to relationship
@@ -162,6 +160,8 @@ class BaseRelationship: public BaseGraphicObject  {
 		QColor getCustomColor(void);
 
 		void resetLabelsDistance(void);
+
+		Constraint *getReferenceForeignKey(void);
 
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);

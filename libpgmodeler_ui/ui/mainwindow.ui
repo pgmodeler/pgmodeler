@@ -383,7 +383,7 @@
               <number>0</number>
              </property>
              <item row="0" column="0" colspan="2">
-              <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <layout class="QHBoxLayout" name="horiz_wgts_btns_layout">
                <property name="spacing">
                 <number>6</number>
                </property>
@@ -520,7 +520,7 @@
               </spacer>
              </item>
              <item row="0" column="13">
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <layout class="QHBoxLayout" name="vert_wgts_btns_layout">
                <property name="spacing">
                 <number>0</number>
                </property>
@@ -725,7 +725,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="autoFillBackground">

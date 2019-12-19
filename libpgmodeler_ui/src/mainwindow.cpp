@@ -522,35 +522,35 @@ void MainWindow::restoreTemporaryModels(void)
 	}
 }
 
-void MainWindow::showRightWidgetsBar(void)
+bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout)
 {
-	int i=0;
-	bool show=false;
-	//This is currently the only way to enumerate widgets inside a layout...
+	int i = 0;
+	bool show = false;
+	QToolButton * btn = nullptr;
+
+	//This is currently the only way to enumerate widgets inside a layout.
 	//See https://stackoverflow.com/a/27225570/7359123
-	while(horizontalLayout_4->itemAt(i))
+	while(layout && layout->itemAt(i) && !show)
 	{
-		auto btn = dynamic_cast<QToolButton *>(horizontalLayout_4->itemAt(i)->widget());
+		btn = dynamic_cast<QToolButton *>(layout->itemAt(i)->widget());
+
 		if(btn && btn->isChecked())
-			show=true;
+			return(true);
+
 		i++;
 	}
-	right_wgt_bar->setVisible(show);}
+
+	return(false);
+}
+
+void MainWindow::showRightWidgetsBar(void)
+{
+	right_wgt_bar->setVisible(isToolButtonsChecked(vert_wgts_btns_layout));
+}
 
 void MainWindow::showBottomWidgetsBar(void)
 {
-	int i=0;
-	bool show=false;
-	//This is currently the only way to enumerate widgets inside a layout...
-	//See https://stackoverflow.com/a/27225570/7359123
-	while(horizontalLayout_3->itemAt(i))
-	{
-		auto btn = dynamic_cast<QToolButton *>(horizontalLayout_3->itemAt(i)->widget());
-		if(btn && btn->isChecked())
-			show=true;
-		i++;
-	}
-	bottom_wgt_bar->setVisible(show);
+	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout));
 }
 
 void MainWindow::restoreLastSession(void)
