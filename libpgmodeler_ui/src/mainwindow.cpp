@@ -524,12 +524,33 @@ void MainWindow::restoreTemporaryModels(void)
 
 void MainWindow::showRightWidgetsBar(void)
 {
-	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
-}
+	int i=0;
+	bool show=false;
+	//This is currently the only way to enumerate widgets inside a layout...
+	//See https://stackoverflow.com/a/27225570/7359123
+	while(horizontalLayout_4->itemAt(i))
+	{
+		auto btn = dynamic_cast<QToolButton *>(horizontalLayout_4->itemAt(i)->widget());
+		if(btn && btn->isChecked())
+			show=true;
+		i++;
+	}
+	right_wgt_bar->setVisible(show);}
 
 void MainWindow::showBottomWidgetsBar(void)
 {
-	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
+	int i=0;
+	bool show=false;
+	//This is currently the only way to enumerate widgets inside a layout...
+	//See https://stackoverflow.com/a/27225570/7359123
+	while(horizontalLayout_3->itemAt(i))
+	{
+		auto btn = dynamic_cast<QToolButton *>(horizontalLayout_3->itemAt(i)->widget());
+		if(btn && btn->isChecked())
+			show=true;
+		i++;
+	}
+	bottom_wgt_bar->setVisible(show);
 }
 
 void MainWindow::restoreLastSession(void)
@@ -1143,6 +1164,8 @@ void MainWindow::setCurrentModel(void)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
+
+	emit s_currentModelChanged(current_model);
 }
 
 void MainWindow::setGridOptions(void)
@@ -2077,3 +2100,22 @@ void MainWindow::toggleLayersWidget(bool show)
 	layers_wgt->setVisible(show);
 }
 
+QPair <bool, SQLToolWidget *> MainWindow::isAnyManageDbOpened(void)
+{
+	return qMakePair(sql_tool_wgt->isAnyDbOpened(), sql_tool_wgt);
+}
+
+void MainWindow::switchView(int view)
+{
+	switch(view)
+	{
+	case(ManageView):
+		action_manage->toggle();
+		break;
+	case(DesignView):
+		action_design->toggle();
+		break;
+	case(WelcomeView):
+		action_welcome->toggle();
+	}
+}
