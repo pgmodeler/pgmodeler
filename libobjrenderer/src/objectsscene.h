@@ -153,9 +153,6 @@ class ObjectsScene: public QGraphicsScene {
 		ObjectsScene(void);
 		~ObjectsScene(void);
 
-		//Qt does not implement this, and it is a pita
-		void adjustViewportToItems(QList<BaseObjectView *> items);
-
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */
 		QString addLayer(const QString &name);

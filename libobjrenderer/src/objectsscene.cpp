@@ -854,14 +854,6 @@ QGraphicsView *ObjectsScene::getActiveViewport(void)
 	return(view_p);
 }
 
-void ObjectsScene::adjustViewportToItems(QList<BaseObjectView *> items)
-{
-	QRectF new_pov=items.front()->sceneBoundingRect();
-	for(const auto &item:items)
-		new_pov=new_pov.united(item->sceneBoundingRect());
-	getActiveViewport()->fitInView(new_pov,Qt::KeepAspectRatio);
-}
-
 void ObjectsScene::moveObjectScene(void)
 {
 	if(scene_move_dx!=0 || scene_move_dy!=0)
