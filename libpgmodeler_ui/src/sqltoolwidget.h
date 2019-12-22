@@ -63,17 +63,18 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
 		void updateTabs(void);
 
-		bool isAnyDbOpened(void);
-
-		void insertQuery(const QString &query);
+		//! \brief Indicates if there is at least one database being browsed through explorer widget
+		bool hasDatabasesBrowsed(void);
 
 	public slots:
 		void configureSnippets(void);
-
 		void clearDatabases(void);
 
+		//! \brief Add a tab to permit the SQL execution for the current database being browsed
+		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = QString());
+
 	protected slots:
-		//! \brief Add a tab by browsing a database in the specified connectio, loads the sql file and put its contents on a SQL execution
+		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
 		void addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file);
 
 	private slots:
@@ -88,9 +89,6 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 		//! \brief Open the current database in a database explorer instance
 		DatabaseExplorerWidget *browseDatabase(void);
-
-		//! \brief Add a tab to permit the SQL execution for the current database being browsed
-		SQLExecutionWidget *addSQLExecutionTab(void);
 
 		//! \brief Show the selected snippet on the current opened SQL execution tab
 		void showSnippet(const QString &snip);

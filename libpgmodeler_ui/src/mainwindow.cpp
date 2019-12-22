@@ -2101,11 +2101,6 @@ void MainWindow::toggleLayersWidget(bool show)
 	layers_wgt->setVisible(show);
 }
 
-QPair <bool, SQLToolWidget *> MainWindow::isAnyManageDbOpened(void)
-{
-	return qMakePair(sql_tool_wgt->isAnyDbOpened(), sql_tool_wgt);
-}
-
 void MainWindow::switchView(int view)
 {
 	switch(view)
@@ -2119,4 +2114,22 @@ void MainWindow::switchView(int view)
 	case(WelcomeView):
 		action_welcome->toggle();
 	}
+}
+
+void MainWindow::addExecTabInSQLTool(const QString &sql_cmd)
+{
+	try
+	{
+		if(sql_tool_wgt->hasDatabasesBrowsed())
+			sql_tool_wgt->addSQLExecutionTab(sql_cmd);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+bool MainWindow::hasDbsListedInSQLTool(void)
+{
+	return(sql_tool_wgt->hasDatabasesBrowsed());
 }
