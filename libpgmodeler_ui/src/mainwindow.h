@@ -60,8 +60,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
-        ManageView=2,
-        InfinityInterval = INT_MAX;
+		ManageView=2,
+		InfinityInterval = INT_MAX;
 
 		static bool confirm_validation;
 
@@ -74,26 +74,27 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		unsigned pending_op;
 
+		//! \brief Timer used for auto saving the model and temporary model.
+		QTimer model_save_timer,	tmpmodel_save_timer;
+
 		AboutWidget *about_wgt;
 
 		DonateWidget *donate_wgt;
 
 		SceneInfoWidget *scene_info_wgt;
 
+		//! \brief Layers management widget
 		LayersWidget *layers_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
 		WelcomeWidget *central_wgt;
 
-		//! \brief Widget used to navigate through the opened models.
-		ModelNavigationWidget *model_nav_wgt;
-
-		//! \brief Timer used for auto saving the model and temporary model.
-		QTimer model_save_timer,	tmpmodel_save_timer;
-
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
+
+		//! \brief Widget used to navigate through the opened models.
+		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
@@ -101,14 +102,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief SQL tool widget widget
 		SQLToolWidget *sql_tool_wgt;
 
-		//! \brief Temporary model restoration form
-		ModelRestorationForm *restoration_form;
-
 		//! \brief Operation list dock widget
 		OperationListWidget *oper_list_wgt;
 
 		//! \brief Model objects dock widget
 		ModelObjectsWidget *model_objs_wgt;
+
+		//! \brief Temporary model restoration form
+		ModelRestorationForm *restoration_form;
 
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
@@ -165,8 +166,13 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
 		void showFixMessage(Exception &e, const QString &filename);
 
+		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
+		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
+		 * the current button toggle state. */
+		bool isToolButtonsChecked(QHBoxLayout *layout);
+
 	public:
-		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
+		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list
@@ -192,6 +198,17 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Returns the model at given index
 		ModelWidget *getModel(int idx);
+
+		//! \brief Switches the currently opened view (Design, Manage, Welcome)
+		void switchView(int view);
+
+		/*! \brief This is a convenience method to make able the addition of execution tabs in SQL tool without
+		 *  expose the SQL Tool widget itself (useful for plugin developers) */
+		void addExecTabInSQLTool(const QString &sql_cmd);
+
+		/*! \brief This is a convenience method that returns a true value when there're databases listed in the SQL tool widget without
+		 *  expose the SQL Tool widget itself (useful for plugin developers) */
+		bool hasDbsListedInSQLTool(void);
 
 	private slots:
 		void showMainMenu(void);
@@ -290,6 +307,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void arrangeObjects(void);
 		void toggleCompactView(void);
 		void toggleLayersWidget(bool show);
+
+	signals:
+		void s_currentModelChanged(ModelWidget *model_wgt);
 };
 
 #endif

@@ -284,22 +284,24 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
 	}
 }
 
-SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(void)
+SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 {
 	try
 	{
-		SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
+		SQLExecutionWidget *sql_exec_wgt = nullptr;
 		DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
 		Connection conn;
 
 		if(!db_explorer_wgt)
 			return(nullptr);
 
+		sql_exec_wgt = new SQLExecutionWidget;
 		conn = db_explorer_wgt->getConnection();
 		sql_exec_wgt->setConnection(conn);
 		sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::ParamDbName));
 		sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
 		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
+		sql_exec_wgt->sql_cmd_txt->appendPlainText(sql_cmd);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
 
 		return(sql_exec_wgt);
@@ -422,4 +424,9 @@ void SQLToolWidget::showSnippet(const QString &snip)
 		sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
 		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
 	}
+}
+
+bool SQLToolWidget::hasDatabasesBrowsed(void)
+{
+	return(databases_tbw->count() > 0);
 }

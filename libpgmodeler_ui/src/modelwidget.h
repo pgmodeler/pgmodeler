@@ -158,9 +158,6 @@ class ModelWidget: public QWidget {
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
-		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
-
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
 		int openEditingForm(BaseObject *object);
@@ -301,6 +298,9 @@ class ModelWidget: public QWidget {
 		ModelWidget(QWidget *parent = nullptr);
 		~ModelWidget(void);
 
+		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
+
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
 		void adjustSceneSize(void);
@@ -328,6 +328,12 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);
+
+		//! \brief Returns the object scene used by the model
+		ObjectsScene *getObjectsScene(void);
+
+		//! \brief Returns the scene view used by the model
+		QGraphicsView *getViewport(void);
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);

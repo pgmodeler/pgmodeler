@@ -81,7 +81,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PluginsConfWgt));
-		plugins_conf_wgt->installPluginsActions(nullptr, plugins_menu, this, SLOT(executePlugin(void)), this);
+		plugins_conf_wgt->installPluginsActions(plugins_menu, this, SLOT(executePlugin(void)));
+		plugins_conf_wgt->initPlugins(this);
 		plugins_menu->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
@@ -522,14 +523,35 @@ void MainWindow::restoreTemporaryModels(void)
 	}
 }
 
+bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout)
+{
+	int i = 0;
+	bool show = false;
+	QToolButton * btn = nullptr;
+
+	//This is currently the only way to enumerate widgets inside a layout.
+	//See https://stackoverflow.com/a/27225570/7359123
+	while(layout && layout->itemAt(i) && !show)
+	{
+		btn = dynamic_cast<QToolButton *>(layout->itemAt(i)->widget());
+
+		if(btn && btn->isChecked())
+			return(true);
+
+		i++;
+	}
+
+	return(false);
+}
+
 void MainWindow::showRightWidgetsBar(void)
 {
-	right_wgt_bar->setVisible(objects_btn->isChecked() || operations_btn->isChecked());
+	right_wgt_bar->setVisible(isToolButtonsChecked(vert_wgts_btns_layout));
 }
 
 void MainWindow::showBottomWidgetsBar(void)
 {
-	bottom_wgt_bar->setVisible(validation_btn->isChecked() || find_obj_btn->isChecked());
+	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout));
 }
 
 void MainWindow::restoreLastSession(void)
@@ -1143,6 +1165,8 @@ void MainWindow::setCurrentModel(void)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
 	model_objs_wgt->saveTreeState(true);
+
+	emit s_currentModelChanged(current_model);
 }
 
 void MainWindow::setGridOptions(void)
@@ -2077,3 +2101,35 @@ void MainWindow::toggleLayersWidget(bool show)
 	layers_wgt->setVisible(show);
 }
 
+void MainWindow::switchView(int view)
+{
+	switch(view)
+	{
+	case(ManageView):
+		action_manage->toggle();
+		break;
+	case(DesignView):
+		action_design->toggle();
+		break;
+	case(WelcomeView):
+		action_welcome->toggle();
+	}
+}
+
+void MainWindow::addExecTabInSQLTool(const QString &sql_cmd)
+{
+	try
+	{
+		if(sql_tool_wgt->hasDatabasesBrowsed())
+			sql_tool_wgt->addSQLExecutionTab(sql_cmd);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+bool MainWindow::hasDbsListedInSQLTool(void)
+{
+	return(sql_tool_wgt->hasDatabasesBrowsed());
+}

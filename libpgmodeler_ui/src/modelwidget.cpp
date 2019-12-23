@@ -4213,6 +4213,16 @@ DatabaseModel *ModelWidget::getDatabaseModel(void)
 	return(db_model);
 }
 
+ObjectsScene *ModelWidget::getObjectsScene(void)
+{
+	return(scene);
+}
+
+QGraphicsView *ModelWidget::getViewport(void)
+{
+	return(viewport);
+}
+
 OperationList *ModelWidget::getOperationList(void)
 {
 	return(op_list);

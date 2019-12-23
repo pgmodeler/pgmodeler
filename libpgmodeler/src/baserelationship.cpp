@@ -391,7 +391,6 @@ void BaseRelationship::setReferenceForeignKey(Constraint *ref_fk)
 {
 	//if(ref_fk && rel_type != RELATIONSHIP_FK)
 		//Throw error...
-
 	this->reference_fk = ref_fk;
 }
 

@@ -78,6 +78,21 @@ PgModelerPlugin::~PgModelerPlugin(void)
 	delete(plugin_info_frm);
 }
 
+void PgModelerPlugin::initPlugin(QMainWindow *main_window)
+{
+	this->main_window = main_window;
+}
+
+QKeySequence PgModelerPlugin::getPluginShortcut(void)
+{
+	return(QKeySequence());
+}
+
+bool PgModelerPlugin::hasMenuAction(void)
+{
+	return (true);
+}
+
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,
 										  const QString &description, const QString &ico_filename)
 {
@@ -90,9 +105,4 @@ void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &v
 
 	ico.load(ico_filename);
 	icon_lbl->setPixmap(ico);
-}
-
-void PgModelerPlugin::setMainWindow(QMainWindow *main_window)
-{
-	this->main_window = main_window;
 }
