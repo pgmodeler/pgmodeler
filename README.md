@@ -4,7 +4,7 @@
 <br/>
 ![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
 [![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
-[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/0.9.2-beta.svg)](https://github.com/pgmodeler/pgmodeler/commits/0.9.2-beta)
+[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/master.svg)](https://github.com/pgmodeler/pgmodeler/commits/master)
 
 Introduction
 ------------
