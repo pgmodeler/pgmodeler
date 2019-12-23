@@ -158,9 +158,6 @@ class ModelWidget: public QWidget {
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
-		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
-
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
 		int openEditingForm(BaseObject *object);
@@ -287,7 +284,7 @@ class ModelWidget: public QWidget {
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
-		void rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
+		void rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row, QPointF origin, double obj_spacing);
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
@@ -300,6 +297,9 @@ class ModelWidget: public QWidget {
 
 		ModelWidget(QWidget *parent = nullptr);
 		~ModelWidget(void);
+
+		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
@@ -328,6 +328,12 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);
+
+		//! \brief Returns the object scene used by the model
+		ObjectsScene *getObjectsScene(void);
+
+		//! \brief Returns the scene view used by the model
+		QGraphicsView *getViewport(void);
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
@@ -365,7 +371,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
+		void rearrangeSchemasInGrid(unsigned tabs_per_row = 0, unsigned sch_per_row = 0, QPointF origin = QPointF(50, 50), double obj_spacing = 50);
 
 		//! \brief Arrange all tables it their schemas randomly (scattered)
 		void rearrangeTablesInSchemas(void);

@@ -134,9 +134,12 @@ void SchemaParser::restartParser(void)
 
 void SchemaParser::loadBuffer(const QString &buf)
 {
-	QString buf_aux=buf, lin;
+	QString buf_aux=buf, lin,
+			escaped_comm_chr=QString("\\%1").arg(CharComment),
+			placeholder = QString(QChar::ReplacementCharacter);
 	QTextStream ts(&buf_aux);
 	int pos=0;
+	bool comm_holder_used = false;
 
 	//Prepares the parser to do new reading
 	restartParser();
@@ -147,7 +150,18 @@ void SchemaParser::loadBuffer(const QString &buf)
 	while(!ts.atEnd())
 	{
 		//Get one line from stream (until the last char before \n)
-		lin=ts.readLine();
+		lin = ts.readLine();
+
+		/* Special treatment for escaped comment characters (e.g.: \#):
+		 * In order to avoid removing wrongly the # from the the line where it appear in the form \#
+		 * we need to replace it temporarily by a placeholder <?> and remove other portions of the line
+		 * the is considered a real comment and then replace back that placeholder by the comment char again.
+		 * This is useful if the user intend to represent the hash (#) char in the schema code and not use it as comment. */
+		if(lin.indexOf(escaped_comm_chr) >= 0)
+		{
+			lin.replace(escaped_comm_chr, placeholder);
+			comm_holder_used = true;
+		}
 
 		/* Since the method getline discards the \n when the line was just a line break
 		its needed to treat it in order to not lost it */
@@ -162,6 +176,13 @@ void SchemaParser::loadBuffer(const QString &buf)
 		//Removes the characters from the found position
 		if(pos >= 0)
 			lin.remove(pos, lin.size());
+
+		//Replacing the comment placeholder by the comment char causing that character to be printed to the code
+		if(comm_holder_used)
+		{
+			lin.replace(placeholder, QString(CharComment));
+			comm_holder_used = false;
+		}
 
 		if(!lin.isEmpty())
 		{
@@ -1051,7 +1072,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 				case CharSpace:
 					//The parser will ignore the spaces that are not within pure texts
 					while(buffer[line][column]==CharSpace ||
-						  buffer[line][column]==CharTabulation) column++;
+								buffer[line][column]==CharTabulation) column++;
 				break;
 
 					//Metacharacter extraction

@@ -4,7 +4,7 @@
 <br/>
 ![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
 [![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
-[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/0.9.2-beta.svg)](https://github.com/pgmodeler/pgmodeler/commits/0.9.2-beta)
+[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/master.svg)](https://github.com/pgmodeler/pgmodeler/commits/master)
 
 Introduction
 ------------
@@ -30,7 +30,7 @@ Much effort, coffee, chocolate, time and knowledge is being devoted to this proj
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grown bigger and reached a state that its lonely developer cannot handle all the modifications and new features requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
+pgModeler grown bigger and reached a state where its lonely developer cannot handle all the modifications and new features requests. So if you know C++ and Qt framework programming and wants to contribute with coding let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------

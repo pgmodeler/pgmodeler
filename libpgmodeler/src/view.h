@@ -247,6 +247,8 @@ class View: public BaseTable {
 		//! \brief Returns the deduced columns of the view
 		vector<SimpleColumn> getColumns(void);
 
+		virtual QString getDataDictionary(bool splitted, attribs_map extra_attribs = {});
+
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);
 };

@@ -114,19 +114,6 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		key_attribs.push_back(Attributes::Alias);
 		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, key_attribs);
 
-		/*try
-		{
-			BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
-		}
-		catch(Exception &e)
-		{
-			if(e.getErrorType()==ERR_LIBXMLERR)
-			{
-				fixConnectionsFileSyntax();
-				BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, config_params, key_attribs);
-			}
-		}*/
-
 		itr=config_params.begin();
 		itr_end=config_params.end();
 

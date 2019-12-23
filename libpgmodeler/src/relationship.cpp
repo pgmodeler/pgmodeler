@@ -109,21 +109,15 @@ Relationship::Relationship(unsigned rel_type, PhysicalTable *src_tab,
 							.arg(src_tab->getPartitionedTable()->getName(true)),
 							ErrorCode::InvPartRelPartitionedDefined,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		/* Raises an error if the user tries to create a relationship in the following configuration:
-		 * 1) Many-to-many relationship where one of the tables is a partitioned one
-		 *		it will be created a fk in the intermediate table which references the partitioned table which
-		 *		is not allowed by partitioning rules.
-		 *
-		 * 2) One-to-many relationship which the reference table is partitioned and the received is a ordinary table, because
-		 *		a fk will be created on the ordinary table (receiver) which will be referencing the partitioned table, situation
-		 *		that is not allowed as too.
-		 *
-		 * 3) Generalization, copy relationship or one-to-many in which one of the tables is part of a partitioning hierarchy.
-		 */
-		if((rel_type == RelationshipNn && (src_tab->isPartitioned() || dst_tab->isPartitioned())) ||
-			 (rel_type == Relationship1n &&	getReferenceTable()->isPartitioned() && !getReceiverTable()->isPartitioned()) ||
-				((rel_type == RelationshipGen || rel_type == RelationshipDep || rel_type == Relationship11) &&
-					 (src_tab->isPartition() || src_tab->isPartitioned() || dst_tab->isPartition() || dst_tab->isPartitioned())))
+		/* Raises an error if the user tries to create a generalization or copy relationship in
+		 * which one of the tables is part of a partitioning hierarchy, or if the relationship is 1-1, 1-n, n-n and
+		 * one of the tables is a partition. */
+		if(((rel_type == RelationshipGen || rel_type == RelationshipDep) &&
+				(src_tab->isPartition() || src_tab->isPartitioned() ||
+				 dst_tab->isPartition() || dst_tab->isPartitioned())) ||
+
+			 ((rel_type == Relationship11 || rel_type == Relationship1n || rel_type == RelationshipNn) &&
+				(src_tab->isPartition() || dst_tab->isPartition())))
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvRelTypeForPatitionTables)
 							.arg(src_tab->getName(true))
 							.arg(dst_tab->getName(true))
@@ -1374,6 +1368,19 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 
 		while(i < count)
 			uq->addColumn(gen_columns[i++], Constraint::SourceCols);
+
+		/* Special case when the receiver table of the one-to-one unique key
+		 * is a partitioned table. If any of the partition keys of that table
+		 * refer to a column, the column itself must be included into the generated
+		 * unique key according to PostgreSQL rules (12+) */
+		if(recv_tab->isPartitioned())
+		{
+			for(auto &part_key : recv_tab->getPartitionKeys())
+			{
+				if(part_key.getColumn())
+					uq->addColumn(part_key.getColumn(), Constraint::SourceCols);
+			}
+		}
 
 		uq->setName(generateObjectName(UqPattern));
 		uq->setAlias(generateObjectName(UqPattern, nullptr, true));

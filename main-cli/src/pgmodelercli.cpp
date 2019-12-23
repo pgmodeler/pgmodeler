@@ -30,7 +30,10 @@ const QString PgModelerCli::ExportToFile=QString("--export-to-file");
 const QString PgModelerCli::ExportToPng=QString("--export-to-png");
 const QString PgModelerCli::ExportToSvg=QString("--export-to-svg");
 const QString PgModelerCli::ExportToDbms=QString("--export-to-dbms");
+const QString PgModelerCli::ExportToDict=QString("--export-to-dict");
 const QString PgModelerCli::ImportDb=QString("--import-db");
+const QString PgModelerCli::NoIndex=QString("--no-index");
+const QString PgModelerCli::Splitted=QString("--splitted");
 const QString PgModelerCli::Diff=QString("--diff");
 const QString PgModelerCli::DropDatabase=QString("--drop-database");
 const QString PgModelerCli::DropObjects=QString("--drop-objects");
@@ -284,6 +287,9 @@ void PgModelerCli::initializeOptions(void)
 	long_opts[NoCascadeDropTrunc]=false;
 	long_opts[NoForceObjRecreation]=false;
 	long_opts[NoUnmodObjRecreation]=false;
+	long_opts[ExportToDict]=false;
+	long_opts[NoIndex]=false;
+	long_opts[Splitted]=false;
 
 	short_opts[Input]=QString("-if");
 	short_opts[Output]=QString("-of");
@@ -292,6 +298,7 @@ void PgModelerCli::initializeOptions(void)
 	short_opts[ExportToPng]=QString("-ep");
 	short_opts[ExportToSvg]=QString("-es");
 	short_opts[ExportToDbms]=QString("-ed");
+	short_opts[ExportToDict]=QString("-et");
 	short_opts[ImportDb]=QString("-im");
 	short_opts[Diff]=QString("-df");
 	short_opts[DropDatabase]=QString("-dd");
@@ -335,6 +342,8 @@ void PgModelerCli::initializeOptions(void)
 	short_opts[NoCascadeDropTrunc]=QString("-nd");
 	short_opts[NoForceObjRecreation]=QString("-nf");
 	short_opts[NoUnmodObjRecreation]=QString("-nu");
+	short_opts[NoIndex]=QString("-ni");
+	short_opts[Splitted]=QString("-sp");
 }
 
 bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
@@ -383,6 +392,7 @@ void PgModelerCli::showMenu(void)
 	out << trUtf8("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << endl;
 	out << trUtf8("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << endl;
 	out << trUtf8("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << endl;
+	out << trUtf8("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << endl;
 	out << trUtf8("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << endl;
 	out << trUtf8("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << endl;
 	out << trUtf8("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << endl;
@@ -411,6 +421,10 @@ void PgModelerCli::showMenu(void)
 	out << trUtf8("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << endl;
 	out << trUtf8("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << endl;
 	out << trUtf8("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
+	out << endl;
+	out << trUtf8("Data dictionary export options: ") << endl;
+	out << trUtf8("  %1, %2\t\t   The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
+	out << trUtf8("  %1, %2\t\t   Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
 	out << endl;
 	out << trUtf8("Database import options: ") << endl;
 	out << trUtf8("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
@@ -500,6 +514,7 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 		mode_cnt+=opts.count(ExportToPng);
 		mode_cnt+=opts.count(ExportToSvg);
 		mode_cnt+=opts.count(ExportToDbms);
+		mode_cnt+=opts.count(ExportToDict);
 
 		other_modes_cnt+=opts.count(FixModel);
 		other_modes_cnt+=opts.count(ImportDb);
@@ -577,7 +592,7 @@ int PgModelerCli::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8(" command line interface.")));
+			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8("command line interface.")));
 
 			if(parsed_opts.count(FixModel))
 				fixModel();
@@ -1262,8 +1277,13 @@ void PgModelerCli::exportModel(void)
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(trUtf8("Export to SQL script file: %1").arg(parsed_opts[Output]));
-
 		export_hlp.exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
+	}
+	//Export data dictionary
+	else if(parsed_opts.count(ExportToDict))
+	{
+		printMessage(trUtf8("Export to data dictionary: %1").arg(parsed_opts[Output]));
+		export_hlp.exportToDataDict(model, parsed_opts[Output], parsed_opts.count(NoIndex) == 0, parsed_opts.count(Splitted) > 0);
 	}
 	//Export to DBMS
 	else

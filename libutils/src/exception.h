@@ -293,12 +293,13 @@ enum class ErrorCode: unsigned {
 	ModelFileInvalidSize,
 	AsgInvalidObjectForeignTable,
 	InvRelTypeForeignTable,
-	InvCopyRelForeignTable
+	InvCopyRelForeignTable,
+	InvDataDictDirectory
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=249;
+		static constexpr unsigned ErrorCount=250;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

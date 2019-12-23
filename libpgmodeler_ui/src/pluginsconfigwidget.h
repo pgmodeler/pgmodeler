@@ -56,9 +56,12 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration(void);
 
-		/*! \brief Install the created actions on menu and toolbars. Additionally the user must specify the
+		/*! \brief Install the created actions on menu. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */
-		void installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot, QMainWindow *main_window);
+		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
+
+		//*! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
+		void initPlugins(QMainWindow *main_window);
 
 	private slots:
 		void showPluginInfo(int idx);
