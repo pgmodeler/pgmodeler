@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		/*! \brief Indicates if the widget must be used as a simplified view (without the most interactions).
 		The purpose to use it as simplified view is to be serve as a object pick commonly used on the
 		object selectors. See ObjectSelectorWidget for details. */
-		bool	simplified_view,
+		bool simplified_view,
 
 		/*! \brief Indicates if the object tree state must be saved, this means, that the current item
 					expansion is memorized and can be restored at any moment via restoreTreeState() method */
@@ -68,8 +68,9 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Updates only a schema tree starting from the 'root' item
 		void updateSchemaTree(QTreeWidgetItem *root);
 
-		//! \brief Updates only a table tree starting from the 'root' item
-		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);
+		/*! \brief Updates only a table / foreign table tree starting from the 'root' item.
+		 * table_type must be ObjectType::Table or ObjectType::ForeignTable */
+		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema, ObjectType table_type);
 
 		//! \brief Updates only a view tree starting from the 'root' item
 		void updateViewTree(QTreeWidgetItem *root, BaseObject *schema);
@@ -98,7 +99,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0);
+		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = nullptr);
 
 		BaseObject *getSelectedObject(void);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,11 +40,11 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 
 	connect(donate_tb, &QToolButton::clicked,
 			[&](){
-		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_DONATE_URL));
+		QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerDonateURL));
 		this->close();
 		emit s_visibilityChanged(false);
 	});
 
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::BigFontFactor);
 	this->adjustSize();
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 
 #include "sqltoolwidget.h"
 #include "taskprogresswidget.h"
-#include "databaseexplorerwidget.h"
 #include "snippetsconfigwidget.h"
-#include "sqlexecutionwidget.h"
 #include "connectionsconfigwidget.h"
+#include "pgmodeleruins.h"
 
 SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 {
@@ -29,15 +28,22 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	h_splitter->setSizes({315, 10000});
 	h_splitter->handle(1)->installEventFilter(this);
-
 	v_splitter->setSizes({1000, 400});
+
+	sql_exec_corner_btn = new QToolButton;
+	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("newtab")));
+	sql_exec_corner_btn->setIconSize(QSize(18, 18));
+	sql_exec_corner_btn->setStyleSheet("QToolButton { margin-left: 4px; margin-bottom: 4px; padding: 2px; }");
+	sql_exec_corner_btn->setShortcut(QKeySequence("Ctrl+T"));
+	sql_exec_corner_btn->setToolTip(trUtf8("Add a new execution tab for the current database (%1)").arg(sql_exec_corner_btn->shortcut().toString()));
+	sql_exec_tbw->setCornerWidget(sql_exec_corner_btn, Qt::TopRightCorner);
 
 	QVBoxLayout *vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
 	sourcecode_txt->setReadOnly(true);
 
 	sourcecode_hl=new SyntaxHighlighter(sourcecode_txt);
-	sourcecode_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	sourcecode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	vbox->setContentsMargins(4,4,4,4);
 	vbox->addWidget(sourcecode_txt);
@@ -50,6 +56,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
 	connect(disconnect_tb, SIGNAL(clicked()), this, SLOT(disconnectFromDatabases()));
 	connect(source_pane_tb, SIGNAL(toggled(bool)), sourcecode_gb, SLOT(setVisible(bool)));
+	connect(sql_exec_corner_btn, SIGNAL(clicked(bool)), this, SLOT(addSQLExecutionTab()));
 
 	connect(databases_tbw, &QTabWidget::currentChanged,
 			[&](){
@@ -60,7 +67,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 				if(dbexplorer && dbexplorer->objects_trw->currentItem())
 					sourcecode_txt->setPlainText(dbexplorer->objects_trw->currentItem()->
-																			 data(DatabaseImportForm::OBJECT_SOURCE, Qt::UserRole).toString());
+																			 data(DatabaseImportForm::ObjectSource, Qt::UserRole).toString());
 
 				while(itr != sql_exec_wgts.end())
 				{
@@ -72,7 +79,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 					else
 					{
 						for(auto &wgt : itr.value())
-							sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::PARAM_DB_NAME));
+							sql_exec_tbw->addTab(wgt, dbexplorer->getConnection().getConnectionParam(Connection::ParamDbName));
 					}
 
 					itr++;
@@ -145,9 +152,9 @@ void SQLToolWidget::connectToServer(void)
 {
 	try
 	{
-		if(connections_cmb->currentIndex()==connections_cmb->count()-1 &&
-				ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true))
+		if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 		{
+			ConnectionsConfigWidget::openConnectionsConfiguration(connections_cmb, true);
 			emit s_connectionsUpdateRequest();
 		}
 		else
@@ -163,7 +170,7 @@ void SQLToolWidget::connectToServer(void)
 
 				if(sender()==connections_cmb && conn->isAutoBrowseDB())
 				{
-					database_cmb->setCurrentText(conn->getConnectionParam(Connection::PARAM_DB_NAME));
+					database_cmb->setCurrentText(conn->getConnectionParam(Connection::ParamDbName));
 					browseDatabase();
 				}
 			}
@@ -174,7 +181,7 @@ void SQLToolWidget::connectToServer(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -186,7 +193,7 @@ void SQLToolWidget::disconnectFromDatabases(void)
 
 		msg_box.show(trUtf8("Warning"),
 					 trUtf8("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
-					 Messagebox::ALERT_ICON, Messagebox::YES_NO_BUTTONS);
+					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
@@ -208,7 +215,7 @@ void SQLToolWidget::disconnectFromDatabases(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -230,27 +237,30 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 }
 
-void SQLToolWidget::browseDatabase(void)
+DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
 {
 	try
 	{
+		DatabaseExplorerWidget *db_explorer_wgt=nullptr;
+
 		//If the selected database is already being browse do not create another explorer instance
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection conn=(*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>()));
-			QString maintainance_db=conn.getConnectionParam(Connection::PARAM_DB_NAME);
-			DatabaseExplorerWidget *db_explorer_wgt=new DatabaseExplorerWidget;
+			QString maintainance_db=conn.getConnectionParam(Connection::ParamDbName);
 
+			db_explorer_wgt=new DatabaseExplorerWidget;
 			db_explorer_wgt->setObjectName(database_cmb->currentText());
-			conn.setConnectionParam(Connection::PARAM_DB_NAME, database_cmb->currentText());
+			conn.setConnectionParam(Connection::ParamDbName, database_cmb->currentText());
 			db_explorer_wgt->setConnection(conn, maintainance_db);
 			db_explorer_wgt->listObjects();
 
 			databases_tbw->addTab(db_explorer_wgt, database_cmb->currentText());
+			databases_tbw->setTabToolTip(databases_tbw->count() - 1, db_explorer_wgt->getConnection().getConnectionId(true, true));
 			databases_tbw->setCurrentWidget(db_explorer_wgt);
 
 			connect(db_explorer_wgt, SIGNAL(s_databaseDropped(QString)), this, SLOT(handleDatabaseDropped(QString)));
@@ -265,40 +275,103 @@ void SQLToolWidget::browseDatabase(void)
 			new tab on the map of sql panes related to the database explorer */
 			db_explorer_wgt->runsql_tb->click();
 		}
+
+		return(db_explorer_wgt);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
-void SQLToolWidget::addSQLExecutionTab(void)
+SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 {
 	try
 	{
-		SQLExecutionWidget *sql_exec_wgt=new SQLExecutionWidget;
-		DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(sender());
-		Connection conn=db_explorer_wgt->getConnection();
+		SQLExecutionWidget *sql_exec_wgt = nullptr;
+		DatabaseExplorerWidget *db_explorer_wgt=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->currentWidget());
+		Connection conn;
 
+		if(!db_explorer_wgt)
+			return(nullptr);
+
+		sql_exec_wgt = new SQLExecutionWidget;
+		conn = db_explorer_wgt->getConnection();
 		sql_exec_wgt->setConnection(conn);
-		sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::PARAM_DB_NAME));
+		sql_exec_tbw->addTab(sql_exec_wgt, conn.getConnectionParam(Connection::ParamDbName));
 		sql_exec_tbw->setCurrentWidget(sql_exec_wgt);
 		sql_exec_tbw->currentWidget()->layout()->setContentsMargins(4,4,4,4);
+		sql_exec_wgt->sql_cmd_txt->appendPlainText(sql_cmd);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
+
+		return(sql_exec_wgt);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
+}
+
+void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &database, const QString &sql_file)
+{
+	map<QString, Connection *> conns;
+	SQLExecutionWidget *sql_exec_wgt = nullptr;
+	DatabaseExplorerWidget *db_explorer_wgt = nullptr;
+	QFile file;
+
+	if(!ConnectionsConfigWidget::getConnection(conn_id))
+	{
+		throw Exception(trUtf8("Failed to load the file `%1' in SQL tool because the connection ID `%2' was not found!")
+										.arg(sql_file).arg(conn_id),
+										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+	else if(!QFileInfo(sql_file).exists())
+	{
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(sql_file),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	// Connect to the server using the provided connection id
+	connections_cmb->setCurrentText(conn_id);
+	connectToServer();
+
+	// Browse the database and retrive the database explorer instace generated
+	database_cmb->setCurrentText(database);
+	db_explorer_wgt = browseDatabase();
+
+	/* Now we get the sql execution widget created from the previous operation
+	 * in order to load the sql file there */
+	sql_exec_wgt = dynamic_cast<SQLExecutionWidget *>(sql_exec_wgts[db_explorer_wgt].at(0));
+
+	file.setFileName(sql_file);
+	file.open(QFile::ReadOnly);
+	sql_exec_wgt->setSQLCommand(file.readAll());
+	file.close();
 }
 
 void SQLToolWidget::closeDatabaseExplorer(int idx)
 {
 	DatabaseExplorerWidget *db_explorer=dynamic_cast<DatabaseExplorerWidget *>(databases_tbw->widget(idx));
 
+	/* Display a message box confirming the database explorer tab only if the user
+	 * click the close button on the DatabaseExplorerWidget instance */
+	if(sender() == databases_tbw)
+	{
+		Messagebox msg_box;
+		msg_box.show(trUtf8("Warning"),
+					 trUtf8("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
+					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+		if(msg_box.result() != QDialog::Accepted)
+			return;
+	}
+
 	//Closing sql execution tabs related to the database to be closed
 	for(QWidget *wgt : sql_exec_wgts[db_explorer])
+	{
 		sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
+		delete(wgt);
+	}
 
 	sql_exec_wgts.remove(db_explorer);
 	databases_tbw->removeTab(idx);
@@ -331,6 +404,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx)
 
 	if(sql_exec_wgt)
 		delete(sql_exec_wgt);
+
 }
 
 void SQLToolWidget::showSnippet(const QString &snip)
@@ -342,9 +416,17 @@ void SQLToolWidget::showSnippet(const QString &snip)
 
 	sql_exec_wgt=dynamic_cast<SQLExecutionWidget *>(sql_exec_tbw->currentWidget());
 
-	QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
-	cursor.movePosition(QTextCursor::End);
+	if(sql_exec_wgt->sql_cmd_txt->isEnabled())
+	{
+		QTextCursor cursor=sql_exec_wgt->sql_cmd_txt->textCursor();
+		cursor.movePosition(QTextCursor::End);
 
-	sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
-	sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+		sql_exec_wgt->sql_cmd_txt->appendPlainText(snip);
+		sql_exec_wgt->sql_cmd_txt->setTextCursor(cursor);
+	}
+}
+
+bool SQLToolWidget::hasDatabasesBrowsed(void)
+{
+	return(databases_tbw->count() > 0);
 }

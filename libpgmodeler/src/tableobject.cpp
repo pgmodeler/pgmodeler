@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -89,8 +89,8 @@ bool  TableObject::isDeclaredInTable(void)
 
 bool TableObject::isTableObject(ObjectType type)
 {
-	return(type==OBJ_COLUMN || type==OBJ_CONSTRAINT || type==OBJ_TRIGGER ||
-			 type==OBJ_RULE || type==OBJ_INDEX || type==OBJ_POLICY);
+	return(type==ObjectType::Column || type==ObjectType::Constraint || type==ObjectType::Trigger ||
+			 type==ObjectType::Rule || type==ObjectType::Index || type==ObjectType::Policy);
 }
 
 void TableObject::operator = (TableObject &object)
@@ -114,9 +114,9 @@ void TableObject::setCodeInvalidated(bool value)
 QString TableObject::getDropDefinition(bool cascade)
 {
 	if(getParentTable())
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+	attributes[this->getSchemaName()]=Attributes::True;
 
 	return(BaseObject::getDropDefinition(cascade));
 }

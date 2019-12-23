@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 #include "objectsdiffinfo.h"
 
-const unsigned ObjectsDiffInfo::CREATE_OBJECT=0;
-const unsigned ObjectsDiffInfo::DROP_OBJECT=1;
-const unsigned ObjectsDiffInfo::ALTER_OBJECT=2;
-const unsigned ObjectsDiffInfo::IGNORE_OBJECT=3;
-const unsigned ObjectsDiffInfo::NO_DIFFERENCE=4;
+constexpr unsigned ObjectsDiffInfo::CreateObject;
+constexpr unsigned ObjectsDiffInfo::DropObject;
+constexpr unsigned ObjectsDiffInfo::AlterObject;
+constexpr unsigned ObjectsDiffInfo::IgnoreObject;
+constexpr unsigned ObjectsDiffInfo::NoDifference;
 
 ObjectsDiffInfo::ObjectsDiffInfo(void)
 {
 	object=old_object=nullptr;
-	diff_type=NO_DIFFERENCE;
+	diff_type=NoDifference;
 }
 
 ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *new_object)
@@ -46,9 +46,9 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 {
 	QString msg=QString("%1 `%2' (%3)"), obj_name;
 	BaseObject *ref_obj=nullptr;
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 
-	if(diff_type==ALTER_OBJECT && old_object)
+	if(diff_type==AlterObject && old_object)
 		ref_obj=old_object;
 	else
 		ref_obj=object;
@@ -58,35 +58,35 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	/* Forcing the usage of BaseObject::getSignature for the following object,
 	 since the custom getSignature for those types return some undesired
 	 SQL keywords for this context */
-	if(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE)
+	if(obj_type==ObjectType::Constraint || obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule)
 		obj_name=dynamic_cast<TableObject *>(ref_obj)->TableObject::getSignature();
-	else if(obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
+	else if(obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily)
 		obj_name=ref_obj->BaseObject::getSignature();
 	else
 		obj_name=ref_obj->getSignature();
 
-	if(diff_type==NO_DIFFERENCE)
+	if(diff_type==NoDifference)
 		return(QString());
-	else if(diff_type==DROP_OBJECT)
+	else if(diff_type==DropObject)
 	{
 		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
-	else if(diff_type==CREATE_OBJECT)
+	else if(diff_type==CreateObject)
 	{
 		msg=msg.arg(QString("<font color=\"#008000\"><strong>CREATE</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 	}
-	else if(diff_type==ALTER_OBJECT)
+	else if(diff_type==AlterObject)
 	{
 		msg=msg.arg(QString("<font color=\"#ff8000\"><strong>ALTER</strong></font>"))
 			.arg(obj_name)
 			.arg(ref_obj->getTypeName());
 
 	}
-	else if(diff_type==IGNORE_OBJECT)
+	else if(diff_type==IgnoreObject)
 	{
 		msg=msg.arg(QString("<font color=\"#606060\"><strong>IGNORE</strong></font>"))
 			.arg(obj_name)
@@ -99,13 +99,13 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 
 QString ObjectsDiffInfo::getDiffTypeString(void)
 {
-	if(diff_type==NO_DIFFERENCE)
+	if(diff_type==NoDifference)
 		return(QString());
-	else if(diff_type==DROP_OBJECT)
+	else if(diff_type==DropObject)
 		return(QString("DROP"));
-	else if(diff_type==CREATE_OBJECT)
+	else if(diff_type==CreateObject)
 		return(QString("CREATE"));
-	else if(diff_type==ALTER_OBJECT)
+	else if(diff_type==AlterObject)
 		return(QString("ALTER"));
 	else
 		return(QString("IGNORE"));

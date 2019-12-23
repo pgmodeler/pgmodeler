@@ -4,24 +4,30 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.9.3/5.9.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.12.3/5.12.3/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
-    
-   *)
+
+  *)
     ARCH="linux32"
     FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
 
-# Uncomment this line if your system doesn't have LLVM (clang) compiler tools
-#QMAKE_ARGS="-r -spec linux-g++"
-QMAKE_ARGS="-r -spec linux-clang"
+# Uncomment this line if you want to compile using LLVM (clang) compiler tools
+# QMAKE_ARGS="-r -spec linux-clang"
+
+# Comment this one if you've decided to use LLVM
+QMAKE_ARGS="-r -spec linux-g++"
+
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-ifw-1.5.0
+QT_IFW_ROOT=/opt/qt-ifw-3.0.4
+
+# Detecting current pgModeler version
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g' | cut -s -f2`
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
@@ -29,19 +35,27 @@ ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
 INSTALL_ROOT="/opt/pgmodeler"
-INSTALLER_CONF_DIR="$PWD/installer/linux/config"
-INSTALLER_PKG_DIR="$PWD/installer/linux/packages"
-INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/br.com.pgmodeler/data"
+FMT_PREFIX="\/opt\/pgmodeler"
+INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
+INSTALLER_CONF_DIR="$PWD/installer/template/config"
+INSTALLER_PKG_DIR="$PWD/installer/template/packages"
+INSTALLER_DATA_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/data"
+INSTALLER_META_DIR="$INSTALLER_PKG_DIR/io.pgmodeler/meta"
+INSTALLER_TMPL_CONFIG="config.xml.tmpl"
+INSTALLER_CONFIG="config.xml"
+INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
+INSTALLER_PKG_CONFIG="package.xml"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
-  
-# Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PGMODELER_VERSION | sed 's/PGMODELER_VERSION=QString("//g' | sed 's/"),//g' | sed 's/^ *//g' | cut -s -f2`
+BUILD_DATE=`date '+%Y%m%d'`
+
+SNAPSHOT_OPT='-snapshot'
 GEN_INSTALLER_OPT='-gen-installer'
 DEMO_VERSION_OPT='-demo-version'
 NO_QT_LIBS_OPT='-no-qt-libs'
 BUILD_ALL_OPT='-build-all'
 COMPRESS_INSTALLER_OPT='-comp-installer'
+SNAPSHOT=0
 GEN_INST_PKG=0
 COMP_INST_PKG=0
 DEMO_VERSION=0
@@ -87,6 +101,12 @@ for param in $@; do
 
  if [[ "$param" == "$COMPRESS_INSTALLER_OPT" ]]; then
    COMP_INST_PKG=1
+ fi
+ 
+ if [[ "$param" == "$SNAPSHOT_OPT" ]]; then
+   SNAPSHOT=1
+   QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
+   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_DATE}"
  fi
  
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
@@ -147,17 +167,17 @@ clear
 echo 
 echo "pgModeler Linux deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_1=`$QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o -E '[0-9].[0-9]+\.[0-9]+'`
   QT_VER_1=${QT_VER_1:0:5}
 fi
 
 # Identifying Fallback Qt version
 if [ -e "$FALLBACK_QMAKE_ROOT/$QMAKE_CMD" ]; then
-  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o '[0-9].[0-9].[0-9]'`
+  QT_VER_2=`$FALLBACK_QMAKE_ROOT/$QMAKE_CMD --version | grep --color=never -m 1 -o -E '[0-9].[0-9]+\.[0-9]+'`
   QT_VER_2=${QT_VER_2:0:5}
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$FALLBACK_QT_ROOT/lib"
 fi
@@ -206,6 +226,10 @@ if [ $GEN_INST_PKG = 1 ]; then
     echo "The installer will be compressed (Found $COMPRESS_INSTALLER_OPT)"
   fi
 
+fi
+
+if [ $SNAPSHOT = 1 ]; then
+  echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
 fi
 
 if [ $DEMO_VERSION = 1 ]; then
@@ -370,6 +394,17 @@ if [ $GEN_INST_PKG = 1 ]; then
     exit 1
   fi   
  
+  # Configuing installer scripts before packaging
+  cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
+  
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create the installer config file!"
+    echo
+    exit 1
+  fi 
+   
+  # Packaging installation
   $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then
@@ -404,9 +439,16 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL = 1 ]; then
-    if [ $COMP_INST_PKG = 1 ]; then
-        ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT
-    else
-        ./linuxdeploy.sh $DEMO_VERSION_OPT 
-    fi    
+
+   EXTRA_OPT="" 
+   
+   if [ $SNAPSHOT = 1 ]; then
+      EXTRA_OPT="$SNAPSHOT_OPT"
+   fi   
+
+   if [ $COMP_INST_PKG = 1 ]; then
+    ./linuxdeploy.sh $DEMO_VERSION_OPT $COMPRESS_INSTALLER_OPT $EXTRA_OPT
+   else
+     ./linuxdeploy.sh $DEMO_VERSION_OPT $EXTRA_OPT
+   fi    
 fi

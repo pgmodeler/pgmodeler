@@ -1,5 +1,4 @@
 # SQL definition for comments
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -7,9 +6,10 @@
  [COMMENT ON ] {sql-object} $sp {signature} [ IS ]
 
  %if ({comment}=="unset") %then
-  ''
+    ''
  %else
-  '{comment}'
+    %if {escape-comment} %then E %end
+    '{comment}'
  %end
 
  ; $br

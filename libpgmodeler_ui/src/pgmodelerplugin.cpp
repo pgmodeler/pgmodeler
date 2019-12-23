@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 	QFont font;
 	QWidget *widget=nullptr;
 
+	main_window = nullptr;
 	plugin_info_frm=new BaseForm;
 	gridLayout=new QGridLayout;
 
@@ -75,6 +76,21 @@ PgModelerPlugin::PgModelerPlugin(void)
 PgModelerPlugin::~PgModelerPlugin(void)
 {
 	delete(plugin_info_frm);
+}
+
+void PgModelerPlugin::initPlugin(QMainWindow *main_window)
+{
+	this->main_window = main_window;
+}
+
+QKeySequence PgModelerPlugin::getPluginShortcut(void)
+{
+	return(QKeySequence());
+}
+
+bool PgModelerPlugin::hasMenuAction(void)
+{
+	return (true);
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,

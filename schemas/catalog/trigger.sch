@@ -4,7 +4,7 @@
 
 %if {list} %then
   [SELECT tg.oid, tgname AS name FROM pg_trigger AS tg
-    LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v') ]
+    LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v','m','f') ]
 
   %if {schema} %then
     [  LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
@@ -43,6 +43,7 @@
       
         CASE 
             WHEN tb.relkind = 'r' THEN 'table'
+            WHEN tb.relkind = 'f' THEN 'foreigntable'
             WHEN tb.relkind = 'v' THEN 'view'
             WHEN tb.relkind = 'm' THEN 'view'
         END AS table_type, 
@@ -75,6 +76,13 @@
                 regexp_replace(regexp_replace(pg_get_triggerdef(tg.oid), '(.)+((INSERT|DELETE|UPDATE)|( OF))', ''), '( ON)(.)*','')
 	      ELSE NULL
 	    END AS columns, ]
+	    
+	    
+     %if ({pgsql-ver} >=f "10.0") %then
+        [ tgoldtable AS old_table_name, tgnewtable AS new_table_name, ]
+     %else
+        [ NULL AS old_table_name, NULL AS new_table_name, ]
+     %end
 
          ({comment}) [ AS comment ] 
 	    

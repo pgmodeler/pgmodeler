@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class Function: public BaseObject {
 		FunctionType function_type;
 
 		//! \brief Function return type
-		PgSQLType return_type;
+		PgSqlType return_type;
 
 		/*! \brief Stores the table columns returned by the clause RETURNS TABLE. This clause instead
 		 of return a specific element returns a whole table. This structure is available
@@ -87,6 +87,9 @@ class Function: public BaseObject {
 		//! \brief Formats the function return type to be used by the SchemaParser
 		void setTableReturnTypeAttribute(unsigned def_type);
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		Function(void);
 
@@ -100,7 +103,7 @@ class Function: public BaseObject {
 		void addParameter(Parameter param);
 
 		//! \brief Adds a column to the function returned table
-		void addReturnedTableColumn(const QString &name, PgSQLType type);
+		void addReturnedTableColumn(const QString &name, PgSqlType type);
 
 		//! \brief Defines the function source code (if its not use the C language)
 		void setSourceCode(const QString &src_code);
@@ -136,7 +139,7 @@ class Function: public BaseObject {
 		void setFunctionType(FunctionType func_type);
 
 		//! \brief Defines the function return type
-		void setReturnType(PgSQLType type);
+		void setReturnType(PgSqlType type);
 
 		//! \brief Defines the security type of the function
 		void setSecurityType(SecurityType sec_type);
@@ -184,7 +187,7 @@ class Function: public BaseObject {
 		FunctionType getFunctionType(void);
 
 		//! \brief Returns the function returned type
-		PgSQLType getReturnType(void);
+		PgSqlType getReturnType(void);
 
 		//! \brief Returns the security type used by the function
 		SecurityType getSecurityType(void);
@@ -196,7 +199,7 @@ class Function: public BaseObject {
 		unsigned getRowAmount(void);
 
 		//! \brief Removes a parameter using its name and type
-		void removeParameter(const QString &name, PgSQLType type);
+		void removeParameter(const QString &name, PgSqlType type);
 
 		//! \brief Removes a parameter using its index
 		void removeParameter(unsigned param_idx);

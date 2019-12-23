@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 		HintTextWidget * keep_models_ht;
 
 	public:
-		ModelRestorationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		//! \brief Returns the list of temporary files existant on tmp/ dir
 		QStringList getTemporaryModels(void);
@@ -48,7 +48,10 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	public slots:
 		int exec(void);
 
-		//! \brief Clears the tmp/ dir removing all temporary files
+		//! \brief Clears the tmp/ dir by removing all temporary files (*.dbm, *.dbk, *.omf, *.sql. *.log)
+		void removeTemporaryFiles(void);
+
+		//! \brief Clears the tmp/ dir removing all temporary models (*.dbm)
 		void removeTemporaryModels(void);
 
 		//! \brief Remove only the specified temp model

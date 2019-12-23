@@ -21,6 +21,7 @@
 [  <font id="rule" color="] {rule-fcolor} [" italic="] {rule-italic} [" bold="] {rule-bold} [" underline="] {rule-underline} ["/>] $br  
 [  <font id="trigger" color="] {trigger-fcolor} [" italic="] {trigger-italic} [" bold="] {trigger-bold} [" underline="] {trigger-underline} ["/>] $br
 [  <font id="constraint" color="] {constraint-fcolor} [" italic="] {constraint-italic} [" bold="] {constraint-bold} [" underline="] {constraint-underline} ["/>] $br
+[  <font id="policy" color="] {policy-fcolor} [" italic="] {policy-italic} [" bold="] {policy-bold} [" underline="] {policy-underline} ["/>] $br
 [  <font id="view-name" color="] {view-name-fcolor} [" italic="] {view-name-italic} [" bold="] {view-name-bold} [" underline="] {view-name-underline} ["/>] $br
 [  <font id="view-schema-name" color="] {view-schema-name-fcolor} [" italic="] {view-schema-name-italic} [" bold="] {view-schema-name-bold} [" underline="] {view-schema-name-underline} ["/>] $br
 [  <font id="ref-table" color="] {ref-table-fcolor} [" italic="] {ref-table-italic} [" bold="] {ref-table-bold} [" underline="] {ref-table-underline} ["/>] $br
@@ -31,6 +32,8 @@
 [  <font id="constraints" color="] {constraints-fcolor} [" italic="] {constraints-italic} [" bold="] {constraints-bold} [" underline="] {constraints-underline} ["/>] $br
 [  <font id="pos-info" color="] {pos-info-fcolor} [" italic="] {pos-info-italic} [" bold="] {pos-info-bold} [" underline="] {pos-info-underline} ["/>] $br
 [  <font id="tag" color="] {tag-fcolor} [" italic="] {tag-italic} [" bold="] {tag-bold} [" underline="] {tag-underline} ["/>] $br
+[  <font id="foreigntable-name" color="] {foreigntable-name-fcolor} [" italic="] {foreigntable-name-italic} [" bold="] {foreigntable-name-bold} [" underline="] {foreigntable-name-underline} ["/>] $br
+[  <font id="foreigntable-schema-name" color="] {foreigntable-schema-name-fcolor} [" italic="] {foreigntable-schema-name-italic} [" bold="] {foreigntable-schema-name-bold} [" underline="] {foreigntable-schema-name-
 $br 
 [  <object id="table-title" fill-color="] {table-title-color} [" border-color="] {table-title-bcolor} ["/>] $br
 [  <object id="table-body" fill-color="] {table-body-color} [" border-color="] {table-body-bcolor} ["/>] $br
@@ -52,10 +55,15 @@ $br
 [  <object id="trigger" fill-color="] {trigger-color} [" border-color="] {trigger-bcolor} ["/>] $br
 [  <object id="index" fill-color="] {index-color} [" border-color="] {index-bcolor} ["/>] $br
 [  <object id="constraint" fill-color="] {constraint-color} [" border-color="] {constraint-bcolor} ["/>] $br
+[  <object id="policy" fill-color="] {policy-color} [" border-color="] {policy-bcolor} ["/>] $br
 [  <object id="locker-body" fill-color="] {locker-body-color} [" border-color="] {locker-body-bcolor} ["/>] $br
 [  <object id="locker-arc" fill-color="] {locker-arc-color} [" border-color="] {locker-arc-bcolor} ["/>] $br
 [  <object id="obj-selection" fill-color="] {obj-selection-color} [" border-color="] {obj-selection-bcolor} ["/>] $br
 [  <object id="pos-info" fill-color="] {pos-info-color} [" border-color="] {pos-info-bcolor} ["/>] $br
 [  <object id="tag" fill-color="] {tag-color} [" border-color="] {tag-bcolor} ["/>] $br
 [  <object id="placeholder" fill-color="] {placeholder-color} [" border-color="] {placeholder-bcolor} ["/>] $br
+[  <object id="foreigntable-title" fill-color="] {foreigntable-title-color} [" border-color="] {foreigntable-title-bcolor} ["/>] $br
+[  <object id="foreigntable-body" fill-color="] {foreigntable-body-color} [" border-color="] {foreigntable-body-bcolor} ["/>] $br
+[  <object id="foreigntable-ext-body" fill-color="] {foreigntable-ext-body-color} [" border-color="] {foreigntable-ext-body-bcolor} ["/>] $br
+
 </objects-style> $br

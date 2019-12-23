@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ class ObjectsDiffInfo {
 		BaseObject *object, *old_object;
 
 	public:
-		static const unsigned CREATE_OBJECT,
-		DROP_OBJECT,
-		ALTER_OBJECT,
-		IGNORE_OBJECT,
-		NO_DIFFERENCE;
+		static constexpr unsigned CreateObject=0,
+		DropObject=1,
+		AlterObject=2,
+		IgnoreObject=3,
+		NoDifference=4;
 
 		ObjectsDiffInfo(void);
 		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);

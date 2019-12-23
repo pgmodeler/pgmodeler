@@ -2,7 +2,15 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 %if {reduced-form} %then $tb %end
-[<schema name=] "{name}"
+[<schema name=] "{name}" 
+
+ %if {layer} %then
+    [ layer=]"{layer}"
+ %end
+
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
 
 %if {reduced-form} %then
 /> $br

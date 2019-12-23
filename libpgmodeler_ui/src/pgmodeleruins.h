@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,18 +27,19 @@
 
 #include <QTreeWidget>
 #include <QListWidget>
+#include <QTableWidget>
 #include <QPixmap>
 #include "baseobject.h"
 #include "numberedtexteditor.h"
 
-namespace PgModelerUiNS {
-	static const unsigned SMALL_FONT_FACTOR = 0,
-	MEDIUM_FONT_FACTOR = 1,
-	BIG_FONT_FACTOR = 2,
-	HUGE_FONT_FACTOR = 3;
+namespace PgModelerUiNs {
+	static constexpr unsigned SmallFontFactor = 0,
+	MediumFontFactor = 1,
+	BigFontFactor = 2,
+	HugeFontFactor = 3;
 
 	extern void configureWidgetFont(QWidget *widget, unsigned factor_id);
-	extern void configureWidgetFont(QWidget *widget, float factor);
+	extern void __configureWidgetFont(QWidget *widget, double factor);
 
 	/*! \brief Creates a NumberedTextEditor instance automatically assigning it to 'parent'.
 	  This method will create a layout if 'parent' doesn't has one. If parent has a layout
@@ -76,7 +77,13 @@ namespace PgModelerUiNS {
 	extern QString getIconPath(ObjectType obj_type);
 
 	//! \brief Resizes the provided dialog considering font dpi changes as well screen size
-	extern void resizeDialog(QDialog *dialog);
+	extern void resizeDialog(QWidget *dialog);
+
+	//! brief Changes the values of the grid selection at once
+	extern void bulkDataEdit(QTableWidget *results_tbw);
+
+	//! \brief Creates drop shadown on a tool button that represents an QAction
+	extern void createDropShadow(QToolButton *btn, int x_offset = 2, int y_offset = 2, int radius = 5);
 }
 
 #endif

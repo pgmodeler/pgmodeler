@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ ResultSet::ResultSet(PGresult *sql_result)
 	int res_state;
 
 	if(!sql_result)
-		throw Exception(ERR_ASG_SQL_RESULT_NOT_ALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::AsgNotAllocatedSQLResult, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	this->sql_result=sql_result;
 	res_state=PQresultStatus(this->sql_result);
@@ -42,23 +42,22 @@ ResultSet::ResultSet(PGresult *sql_result)
 	{
 		//Generating an error in case the server returns an incomprehensible response
 		case PGRES_BAD_RESPONSE:
-			throw Exception(ERR_INCOMPREHENSIBLE_DBMS_RESP, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
+			throw Exception(ErrorCode::IncomprehensibleDBMSResponse, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 			//Generating an error in case the server returns a fatal error
 		case PGRES_FATAL_ERROR:
-			str_aux=QString(Exception::getErrorMessage(ERR_DBMS_FATAL_ERROR))
+			str_aux=Exception::getErrorMessage(ErrorCode::DBMSFatalError)
 					.arg(PQresultErrorMessage(sql_result));
-			throw Exception(str_aux,ERR_DBMS_FATAL_ERROR, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-		break;
+			throw Exception(str_aux,ErrorCode::DBMSFatalError, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 			//In case of sucess states the result will be created
 		case PGRES_COMMAND_OK:
 		case PGRES_TUPLES_OK:
+		case PGRES_SINGLE_TUPLE:
 		case PGRES_COPY_OUT:
 		case PGRES_COPY_IN:
 		default:
-			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_EMPTY_QUERY);
+			empty_result=(res_state!=PGRES_TUPLES_OK && res_state!=PGRES_SINGLE_TUPLE && res_state!=PGRES_EMPTY_QUERY);
 			current_tuple=-1;
 			is_res_copied=false;
 		break;
@@ -67,10 +66,10 @@ ResultSet::ResultSet(PGresult *sql_result)
 
 ResultSet::~ResultSet(void)
 {
-	destroyResultSet();
+	clearResultSet();
 }
 
-void ResultSet::destroyResultSet(void)
+void ResultSet::clearResultSet(void)
 {
 	/* Destroy the resultset of the object if it was not copied
 		to another class instance (see 'operator =') */
@@ -88,7 +87,7 @@ QString ResultSet::getColumnName(int column_idx)
 {
 	//Throws an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
-		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column name on the specified index
 	return(QString(PQfname(sql_result, column_idx)));
@@ -98,7 +97,7 @@ unsigned ResultSet::getColumnTypeId(int column_idx)
 {
 	//Throws an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
-		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column type id on the specified index
 	return(static_cast<unsigned>(PQftype(sql_result, column_idx)));
@@ -114,7 +113,7 @@ int ResultSet::getColumnIndex(const QString &column_name)
 	/* In case the index is negative indicates that the column doesn't exists in the tuple
 		thus an error will be raised */
 	if(col_idx < 0)
-		throw Exception(ERR_REF_TUPLE_COL_INV_NAME, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidName, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	return(col_idx);
 }
@@ -127,9 +126,9 @@ int ResultSet::validateColumnName(const QString &column_name)
 		 a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		 that is, which command do not return lines but only do updates or removal */
 		if(getTupleCount()==0 || empty_result)
-			throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		else if(current_tuple < 0 || current_tuple >= getTupleCount())
-			throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Get the column index through its name
 		return (getColumnIndex(column_name));
@@ -137,7 +136,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 	catch(Exception &e)
 	{
 		//Capture and redirect any generated exception
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
 
@@ -151,14 +150,14 @@ void ResultSet::validateColumnIndex(int column_idx)
 {
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
-		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	/* Raises an error if the user try to get the value of a column in
 		a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		that is, which command do not return lines but only do updates or removal */
 	else if(getTupleCount()==0 || empty_result)
-		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	else if(current_tuple < 0 || current_tuple >= getTupleCount())
-		throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 }
 
 char *ResultSet::getColumnValue(int column_idx)
@@ -193,9 +192,9 @@ int ResultSet::getColumnSize(int column_idx)
 {
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
-		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	else if(current_tuple < 0 || current_tuple >= getTupleCount())
-		throw Exception(ERR_REF_INV_TUPLE_COLUMN, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Retorns the column value length on the current tuple
 	return(PQgetlength(sql_result, current_tuple, column_idx));
@@ -206,7 +205,7 @@ attribs_map ResultSet::getTupleValues(void)
 	attribs_map tup_vals;
 
 	if(current_tuple < 0 || current_tuple >= getTupleCount())
-		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	for(int col=0; col < getColumnCount(); col++)
 		tup_vals[getColumnName(col)]=getColumnValue(col);
@@ -246,7 +245,7 @@ bool ResultSet::isColumnBinaryFormat(const QString &column_name)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 
 	/* Returns the column format in the current tuple.
@@ -259,7 +258,7 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 {
 	//Raise an error in case the column index is invalid
 	if(column_idx < 0 || column_idx >= getColumnCount())
-		throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	/* Returns the column format in the current tuple.
 		According to libpq documentation, value = 0, indicates column text format,
@@ -277,8 +276,8 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		is derived from a command which affects only rows or
 		The tuple type to be accessed is invalid, out of
 		set defined by the class */
-	if(empty_result || tuple_type > NEXT_TUPLE)
-		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+	if(empty_result || tuple_type > NextTuple)
+		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(tuple_count==0)
 		return(false);
@@ -288,20 +287,20 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 
 		switch(tuple_type)
 		{
-			case FIRST_TUPLE:
+			case FirstTuple:
 				current_tuple=0;
 			break;
 
-			case LAST_TUPLE:
+			case LastTuple:
 				current_tuple=tuple_count-1;
 			break;
 
-			case PREVIOUS_TUPLE:
+			case PreviousTuple:
 				accessed=(current_tuple > 0);
 				if(accessed) current_tuple--;
 			break;
 
-			case NEXT_TUPLE:
+			case NextTuple:
 				accessed=(current_tuple < (tuple_count-1));
 				if(accessed) current_tuple++;
 			break;
@@ -316,6 +315,11 @@ bool ResultSet::isEmpty(void)
 	return(empty_result);
 }
 
+bool ResultSet::isValid(void)
+{
+	return(sql_result != nullptr);
+}
+
 void ResultSet::operator = (ResultSet &res)
 {
 	/* Mark the result parameter as copied, avoiding
@@ -324,7 +328,7 @@ void ResultSet::operator = (ResultSet &res)
 
 	/* If the resultset 'this' is allocated,
 		it will be deallocated to avoid memory leaks */
-	destroyResultSet();
+	clearResultSet();
 
 	//Copy the parameter restulset attributes to 'this' resultset
 	this->current_tuple=res.current_tuple;

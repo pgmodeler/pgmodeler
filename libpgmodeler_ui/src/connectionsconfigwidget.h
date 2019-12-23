@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
 
-		static const QString DEFAULT_FOR;
+		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user
 		static vector<Connection *> connections;
@@ -54,7 +54,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		void updateConnectionsCombo(void);
 		
 	public:
-		ConnectionsConfigWidget(QWidget * parent=0);
+		ConnectionsConfigWidget(QWidget * parent = nullptr);
 		~ConnectionsConfigWidget(void);
 		
 		void saveConfiguration(void);
@@ -64,9 +64,12 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 		//! \brief Fills the passed map with all the loaded connections.
 		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
+
+		//! \brief Return a connection with the provided ID. If no connection is found the method returns nullptr
+		static Connection *getConnection(const QString &conn_id);
 		
 		//! \brief Fills the passed combobox with all the loaded connections
-		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OP_NONE);
+		static void fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for=Connection::OpNone);
 		
 		//! \brief Opens a local instance of connection config dialog to permit user configures connections on-the-fly
 		static bool openConnectionsConfiguration(QComboBox *combo, bool incl_placeholder);

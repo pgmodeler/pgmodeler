@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,14 +20,23 @@
 
 Parameter::Parameter(void)
 {
-	obj_type=OBJ_PARAMETER;
+	obj_type=ObjectType::Parameter;
 	is_in=is_out=is_variadic=false;
 }
 
-void Parameter::setType(PgSQLType type)
+Parameter::Parameter(const QString &name, PgSqlType type, bool in, bool out, bool variadic) : Parameter()
+{
+	setName(name);
+	setType(type);
+	setIn(in);
+	setOut(out);
+	setVariadic(variadic);
+}
+
+void Parameter::setType(PgSqlType type)
 {
 	if(!type.isArrayType() && !type.isPolymorphicType() && is_variadic)
-		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->type != type);
 	this->type=type;
@@ -50,7 +59,7 @@ void Parameter::setOut(bool value)
 void Parameter::setVariadic(bool value)
 {
 	if(value && !type.isArrayType() && !type.isPolymorphicType())
-		throw Exception(ERR_INV_USE_VARIADIC_PARAM_MODE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvUsageVariadicParamMode ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(is_variadic != value);
 	is_variadic=value;
@@ -93,16 +102,16 @@ QString Parameter::getCodeDefinition(unsigned def_type)
 
 QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
-		attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
+	if(def_type==SchemaParser::SqlDefinition)
+		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
 	else
-		attributes[ParsersAttributes::NAME]=obj_name;
+		attributes[Attributes::Name]=obj_name;
 
-	attributes[ParsersAttributes::PARAM_IN]=(is_in ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::PARAM_OUT]=(is_out ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::PARAM_VARIADIC]=(is_variadic ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
-	attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
+	attributes[Attributes::ParamIn]=(is_in ? Attributes::True : QString());
+	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : QString());
+	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : QString());
+	attributes[Attributes::DefaultValue]=default_value;
+	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }

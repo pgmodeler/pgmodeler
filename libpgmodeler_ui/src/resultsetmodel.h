@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,13 +41,15 @@ class ResultSetModel: public QAbstractTableModel {
 
 	public:
 		ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent = 0);
-		virtual int rowCount(const QModelIndex &) const;
+		virtual int rowCount(const QModelIndex & = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &) const;
 		virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
 		virtual QModelIndex parent(const QModelIndex &) const;
 		virtual QVariant data(const QModelIndex &index, int role) const;
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 		virtual Qt::ItemFlags flags(const QModelIndex &) const;
+		void append(ResultSet &res);
+		bool isEmpty(void);
 };
 
 #endif

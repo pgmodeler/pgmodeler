@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,19 +25,20 @@ const QByteArray BaseObject::special_chars = QByteArray("'_-.@ $:()/<>+*\\=~!#%^
 /* CAUTION: If both amount and order of the enumerations are modified
 	 then the order and amount of the elements of this vector
 	 must also be modified */
-QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
+const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"column",  "constraint", "function", "trigger",
 	"index", "rule", "table", "view",
 	"domain", "schema", "aggregate", "operator",
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
-	"extension", "eventtrigger", "policy", "relationship",
-	"textbox",	"permission", "parameter", "typeattribute",
+	"extension", "eventtrigger", "policy", "foreigndatawrapper",
+	"foreignserver", "foreigntable", "usermapping", "relationship",
+	"textbox", "permission", "parameter", "typeattribute",
 	"tag", "genericsql", "relationship"
 };
 
-QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
+const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
 	QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
 	QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
@@ -46,19 +47,23 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
-	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"), QT_TR_NOOP("Relationship"),
-	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),	QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
+	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
+	QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
+	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
+	QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
 };
 
-QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
+const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	QString("COLUMN"),  QString("CONSTRAINT"), QString("FUNCTION"),
 	QString("TRIGGER"), QString("INDEX"), QString("RULE"), QString("TABLE"),
 	QString("VIEW"), QString("DOMAIN"), QString("SCHEMA"), QString("AGGREGATE"),
 	QString("OPERATOR"), QString("SEQUENCE"), QString("ROLE"), QString("CONVERSION"),
 	QString("CAST"), QString("LANGUAGE"), QString("TYPE"), QString("TABLESPACE"),
 	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
-	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"), QString("POLICY")
+	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"),
+	QString("POLICY"), QString("FOREIGN DATA WRAPPER"), QString("SERVER"),
+	QString("FOREIGN TABLE"), QString("USER MAPPING")
 };
 
 /* Initializes the global id which is shared between instances
@@ -68,32 +73,35 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
    DatabaseModel, Tag */
 unsigned BaseObject::global_id=4000;
 
-QString BaseObject::pgsql_ver=PgSQLVersions::DEFAULT_VERSION;
+QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
+bool BaseObject::escape_comments=true;
 
 BaseObject::BaseObject(void)
 {
 	object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
 	code_invalidated=true;
-	obj_type=BASE_OBJECT;
+	obj_type=ObjectType::BaseObject;
 	schema=nullptr;
 	owner=nullptr;
 	tablespace=nullptr;
 	database=nullptr;
 	collation=nullptr;
-	attributes[ParsersAttributes::NAME]=QString();
-	attributes[ParsersAttributes::COMMENT]=QString();
-	attributes[ParsersAttributes::OWNER]=QString();
-	attributes[ParsersAttributes::TABLESPACE]=QString();
-	attributes[ParsersAttributes::SCHEMA]=QString();
-	attributes[ParsersAttributes::COLLATION]=QString();
-	attributes[ParsersAttributes::PROTECTED]=QString();
-	attributes[ParsersAttributes::SQL_DISABLED]=QString();
-	attributes[ParsersAttributes::APPENDED_SQL]=QString();
-	attributes[ParsersAttributes::PREPENDED_SQL]=QString();
-	attributes[ParsersAttributes::DROP]=QString();
-	attributes[ParsersAttributes::SIGNATURE]=QString();
+	attributes[Attributes::Name]=QString();
+	attributes[Attributes::Alias]=QString();
+	attributes[Attributes::Comment]=QString();
+	attributes[Attributes::Owner]=QString();
+	attributes[Attributes::Tablespace]=QString();
+	attributes[Attributes::Schema]=QString();
+	attributes[Attributes::Collation]=QString();
+	attributes[Attributes::Protected]=QString();
+	attributes[Attributes::SqlDisabled]=QString();
+	attributes[Attributes::AppendedSql]=QString();
+	attributes[Attributes::PrependedSql]=QString();
+	attributes[Attributes::Drop]=QString();
+	attributes[Attributes::Signature]=QString();
+	attributes[Attributes::EscapeComment]=QString();
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -102,13 +110,23 @@ unsigned BaseObject::getGlobalId(void)
 	return(global_id);
 }
 
+void BaseObject::setEscapeComments(bool value)
+{
+	escape_comments = value;
+}
+
+bool BaseObject::isEscapeComments(void)
+{
+	return(escape_comments);
+}
+
 QString BaseObject::getTypeName(ObjectType obj_type)
 {
-	if(obj_type!=BASE_OBJECT)
+	if(obj_type!=ObjectType::BaseObject)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"", -1));
+		return(QApplication::translate("BaseObject",obj_type_names[enum_cast(obj_type)].toStdString().c_str(),"", -1));
 	else
 		return(QString());
 }
@@ -120,9 +138,9 @@ QString BaseObject::getTypeName(const QString &type_str)
 
 ObjectType BaseObject::getObjectType(const QString &type_name)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 
-	for(int i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
+	for(unsigned i=0; i < BaseObject::ObjectTypeCount; i++)
 	{
 		if(objs_schemas[i]==type_name)
 		{
@@ -136,12 +154,12 @@ ObjectType BaseObject::getObjectType(const QString &type_name)
 
 QString BaseObject::getSchemaName(ObjectType obj_type)
 {
-	return(objs_schemas[obj_type]);
+	return(objs_schemas[enum_cast(obj_type)]);
 }
 
 QString BaseObject::getSQLName(ObjectType obj_type)
 {
-	return(objs_sql[obj_type]);
+	return(objs_sql[enum_cast(obj_type)]);
 }
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
@@ -214,7 +232,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
 		}
 
-		if(needs_fmt || PgModelerNS::isReservedKeyword(name))
+		if(needs_fmt || PgModelerNs::isReservedKeyword(name))
 			frmt_name=QString("\"%1\"").arg(name);
 		else
 			frmt_name=name;
@@ -239,7 +257,7 @@ bool BaseObject::isValidName(const QString &name)
 	by PostgreSQL (currently 63 bytes) the name is invalid.
 	In this case the starting and ending quotes are discarded from
 	the name in order to validate the length. */
-	if(name.isEmpty() || aux_name.size() > OBJECT_NAME_MAX_LENGTH)
+	if(name.isEmpty() || aux_name.size() > ObjectNameMaxLength)
 		return(false);
 	else
 	{
@@ -323,7 +341,7 @@ bool BaseObject::isValidName(const QString &name)
 
 void BaseObject::setDatabase(BaseObject *db)
 {
-	if((db && db->getObjectType()==OBJ_DATABASE) || !db)
+	if((db && db->getObjectType()==ObjectType::Database) || !db)
 		this->database=db;
 }
 
@@ -347,17 +365,26 @@ void BaseObject::setName(const QString &name)
 	if(!isValidName(aux_name))
 	{
 		if(aux_name.isEmpty())
-			throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		//If the name is quoted we add 2 bytes to the maximum in order to check if it exceeds the limit
-		else if(aux_name.size() > (OBJECT_NAME_MAX_LENGTH + (is_quoted ? 2 : 0)))
-			throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(aux_name.size() > (ObjectNameMaxLength + (is_quoted ? 2 : 0)))
+			throw Exception(ErrorCode::AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
-			throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
 	aux_name.remove('"');
 	setCodeInvalidated(this->obj_name!=aux_name);
 	this->obj_name=aux_name;
+}
+
+void BaseObject::setAlias(const QString &alias)
+{
+	if(alias.size() > ObjectNameMaxLength)
+		throw Exception(ErrorCode::AsgLongNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->alias = alias;
+	setCodeInvalidated(this->alias != alias);
 }
 
 void BaseObject::setComment(const QString &comment)
@@ -368,13 +395,13 @@ void BaseObject::setComment(const QString &comment)
 
 bool BaseObject::acceptsSchema(ObjectType obj_type)
 {
-	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
-		   obj_type==OBJ_VIEW  || obj_type==OBJ_DOMAIN ||
-		   obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-		   obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
-		   obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
-		   obj_type==OBJ_OPFAMILY || obj_type==OBJ_COLLATION ||
-		   obj_type==OBJ_EXTENSION);
+	return(obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
+			 obj_type==ObjectType::View  || obj_type==ObjectType::Domain ||
+			 obj_type==ObjectType::Aggregate || obj_type==ObjectType::Operator ||
+			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
+			 obj_type==ObjectType::Type || obj_type==ObjectType::OpClass ||
+			 obj_type==ObjectType::OpFamily || obj_type==ObjectType::Collation ||
+			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsSchema(void)
@@ -384,15 +411,17 @@ bool BaseObject::acceptsSchema(void)
 
 bool BaseObject::acceptsOwner(ObjectType obj_type)
 {
-	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
-		   obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
-		   obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-		   obj_type==OBJ_CONVERSION || obj_type==OBJ_SEQUENCE ||
-		   obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
-		   obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
-		   obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
-		   obj_type==OBJ_COLLATION  || obj_type==OBJ_VIEW ||
-		   obj_type==OBJ_EVENT_TRIGGER);
+	return(obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
+			 obj_type==ObjectType::Domain || obj_type==ObjectType::Schema ||
+			 obj_type==ObjectType::Aggregate || obj_type==ObjectType::Operator ||
+			 obj_type==ObjectType::Conversion || obj_type==ObjectType::Sequence ||
+			 obj_type==ObjectType::Language || obj_type==ObjectType::Type ||
+			 obj_type==ObjectType::Tablespace || obj_type==ObjectType::Database ||
+			 obj_type==ObjectType::OpClass || obj_type==ObjectType::OpFamily ||
+			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
+			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
+			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping ||
+			 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -402,11 +431,11 @@ bool BaseObject::acceptsOwner(void)
 
 bool BaseObject::acceptsTablespace(ObjectType obj_type)
 {
-	return(obj_type==OBJ_INDEX ||
-		   obj_type==OBJ_TABLE ||
-		   obj_type==OBJ_VIEW ||
-		   obj_type==OBJ_CONSTRAINT ||
-		   obj_type==OBJ_DATABASE);
+	return(obj_type==ObjectType::Index ||
+			 obj_type==ObjectType::Table ||
+			 obj_type==ObjectType::View ||
+			 obj_type==ObjectType::Constraint ||
+			 obj_type==ObjectType::Database);
 }
 
 bool BaseObject::acceptsTablespace(void)
@@ -416,9 +445,9 @@ bool BaseObject::acceptsTablespace(void)
 
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
-	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_COLUMN  ||
-		   obj_type==OBJ_COLLATION || obj_type==OBJ_TYPE ||
-		   obj_type==OBJ_TYPE_ATTRIBUTE);
+	return(obj_type==ObjectType::Domain || obj_type==ObjectType::Column  ||
+			 obj_type==ObjectType::Collation || obj_type==ObjectType::Type ||
+			 obj_type==ObjectType::TypeAttribute);
 }
 
 bool BaseObject::acceptsCollation(void)
@@ -428,31 +457,43 @@ bool BaseObject::acceptsCollation(void)
 
 bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
-	return(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
-				 obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER &&
-				 obj_type!=OBJ_TYPE_ATTRIBUTE && obj_type!=BASE_RELATIONSHIP  &&
-				 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE && obj_type!=OBJ_PERMISSION &&
-				 obj_type!=OBJ_TAG && obj_type!=OBJ_GENERIC_SQL);
+	return(obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint &&
+				 obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Parameter &&
+				 obj_type!=ObjectType::TypeAttribute && obj_type!=ObjectType::BaseRelationship  &&
+				 obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::BaseTable && obj_type!=ObjectType::Permission &&
+				 obj_type!=ObjectType::Tag && obj_type!=ObjectType::GenericSql);
 }
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
-	return(obj_type==OBJ_COLLATION || obj_type==OBJ_COLUMN ||
-		   obj_type==OBJ_DOMAIN || obj_type==OBJ_EVENT_TRIGGER ||
-		   obj_type==OBJ_EXTENSION || obj_type==OBJ_FUNCTION ||
-		   obj_type==OBJ_INDEX || obj_type==OBJ_ROLE ||
-		   obj_type==OBJ_SCHEMA || obj_type==OBJ_SEQUENCE ||
-		   obj_type==OBJ_TABLE || obj_type==OBJ_TABLESPACE ||
-			 obj_type==OBJ_TYPE || obj_type==OBJ_POLICY);
+	return(obj_type==ObjectType::Collation || obj_type==ObjectType::Column ||
+				 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
+				 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
+				 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
+				 obj_type==ObjectType::Schema || obj_type==ObjectType::Sequence ||
+				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
+				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
+				 obj_type==ObjectType::UserMapping || obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 {
-	return(obj_type!=OBJ_PERMISSION && obj_type!=OBJ_RELATIONSHIP &&
-									obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_TYPE_ATTRIBUTE &&
-									obj_type!=OBJ_PARAMETER && obj_type!=BASE_OBJECT &&
-									obj_type!=OBJ_TAG && obj_type!=BASE_RELATIONSHIP &&
-									obj_type!=BASE_TABLE);
+	return(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Relationship &&
+				obj_type!=ObjectType::Textbox && obj_type!=ObjectType::TypeAttribute &&
+				obj_type!=ObjectType::Parameter && obj_type!=ObjectType::BaseObject &&
+				obj_type!=ObjectType::Tag && obj_type!=ObjectType::BaseRelationship &&
+				obj_type!=ObjectType::BaseTable);
+}
+
+bool BaseObject::acceptsAlias(ObjectType obj_type)
+{
+	return(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship ||
+				 obj_type==ObjectType::Table || obj_type==ObjectType::Schema || obj_type==ObjectType::View ||
+				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
+				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
+				 obj_type == ObjectType::Trigger || obj_type == ObjectType::Policy ||
+				 obj_type==ObjectType::ForeignTable);
 }
 
 bool BaseObject::acceptsCustomSQL(void)
@@ -473,14 +514,14 @@ bool BaseObject::acceptsDropCommand(void)
 void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedSchema)
 						.arg(this->obj_name)
 						.arg(this->getTypeName()),
-						ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
-		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::AsgNotAllocatedSchema,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(schema && schema->getObjectType()!=ObjectType::Schema)
+		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsSchema())
-		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidSchemaObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->schema != schema);
 	this->schema=schema;
@@ -488,10 +529,10 @@ void BaseObject::setSchema(BaseObject *schema)
 
 void BaseObject::setOwner(BaseObject *owner)
 {
-	if(owner && owner->getObjectType()!=OBJ_ROLE)
-		throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(owner && owner->getObjectType()!=ObjectType::Role)
+		throw Exception(ErrorCode::AsgInvalidRoleObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsOwner())
-		throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgRoleObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->owner != owner);
 	this->owner=owner;
@@ -499,10 +540,10 @@ void BaseObject::setOwner(BaseObject *owner)
 
 void BaseObject::setTablespace(BaseObject *tablespace)
 {
-	if(tablespace && tablespace->getObjectType()!=OBJ_TABLESPACE)
-		throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(tablespace && tablespace->getObjectType()!=ObjectType::Tablespace)
+		throw Exception(ErrorCode::AsgInvalidTablespaceObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!acceptsTablespace())
-		throw Exception(ERR_ASG_TABSPC_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgTablespaceInvalidObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->tablespace != tablespace);
 	this->tablespace=tablespace;
@@ -511,9 +552,9 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 void BaseObject::setCollation(BaseObject *collation)
 {
 	if(collation && !acceptsCollation())
-		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	if(collation && collation->getObjectType()!=OBJ_COLLATION)
-		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(collation && collation->getObjectType()!=ObjectType::Collation)
+		throw Exception(ErrorCode::AsgInvalidCollationObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->collation != collation);
 	this->collation=collation;
@@ -522,7 +563,7 @@ void BaseObject::setCollation(BaseObject *collation)
 void BaseObject::setAppendedSQL(const QString &sql)
 {
 	if(!acceptsCustomSQL())
-		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgCustomSQLObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->appended_sql != sql);
 	this->appended_sql=sql;
@@ -531,7 +572,7 @@ void BaseObject::setAppendedSQL(const QString &sql)
 void BaseObject::setPrependedSQL(const QString &sql)
 {
 	if(!acceptsCustomSQL())
-		throw Exception(ERR_ASG_APPSQL_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgCustomSQLObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(this->prepended_sql != sql);
 	this->prepended_sql=sql;
@@ -542,7 +583,7 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 	if(format)
 	{
 		QString aux_name;
-		aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
+		aux_name=formatName(this->obj_name, (obj_type==ObjectType::Operator));
 
 		if(this->schema && prepend_schema)
 			aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
@@ -556,6 +597,11 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		return(this->obj_name);
 }
 
+QString BaseObject::getAlias(void)
+{
+	return(this->alias);
+}
+
 QString BaseObject::getSignature(bool format)
 {
 	return(this->getName(format, true));
@@ -564,6 +610,21 @@ QString BaseObject::getSignature(bool format)
 QString BaseObject::getComment(void)
 {
 	return(comment);
+}
+
+QString BaseObject::getEscapedComment(bool escape_special_chars)
+{
+	QString fmt_comm = comment.trimmed();
+
+	if(escape_special_chars)
+	{
+		fmt_comm.replace(QChar('\\'), QString("\\\\"));
+		fmt_comm.replace(QChar::LineFeed, QString("\\n"));
+		fmt_comm.replace(QChar::Tabulation, QString("\\t"));
+	}
+
+	fmt_comm.replace(QChar('\''), QString("''"));
+	return(fmt_comm);
 }
 
 BaseObject *BaseObject::getSchema(void)
@@ -650,14 +711,17 @@ bool BaseObject::isSystemObject(void)
 
 void BaseObject::setBasicAttributes(bool format_name)
 {
-	if(attributes[ParsersAttributes::NAME].isEmpty())
-		attributes[ParsersAttributes::NAME]=this->getName(format_name);
+	if(attributes[Attributes::Name].isEmpty())
+		attributes[Attributes::Name]=this->getName(format_name);
 
-	if(attributes[ParsersAttributes::SIGNATURE].isEmpty())
-		attributes[ParsersAttributes::SIGNATURE]=this->getSignature(format_name);
+	if(attributes[Attributes::Alias].isEmpty())
+		attributes[Attributes::Alias]=this->getAlias();
 
-	if(attributes[ParsersAttributes::SQL_OBJECT].isEmpty())
-		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
+	if(attributes[Attributes::Signature].isEmpty())
+		attributes[Attributes::Signature]=this->getSignature(format_name);
+
+	if(attributes[Attributes::SqlObject].isEmpty())
+		attributes[Attributes::SqlObject]=objs_sql[enum_cast(this->obj_type)];
 }
 
 QString BaseObject::__getCodeDefinition(unsigned def_type)
@@ -669,135 +733,146 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def;
 
-	if((def_type==SchemaParser::SQL_DEFINITION &&
-		obj_type!=BASE_OBJECT && obj_type!=BASE_RELATIONSHIP &&
-		obj_type!=BASE_TABLE && obj_type!=OBJ_TEXTBOX) ||
+	if((def_type==SchemaParser::SqlDefinition &&
+		obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::BaseRelationship &&
+		obj_type!=ObjectType::BaseTable && obj_type!=ObjectType::Textbox) ||
 
-			(def_type==SchemaParser::XML_DEFINITION &&
-			 obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
+			(def_type==SchemaParser::XmlDefinition &&
+			 obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::BaseTable))
 	{
 		bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? ParsersAttributes::_TRUE_ : QString());
+		attributes[Attributes::SqlDisabled]=(sql_disabled ? Attributes::True : QString());
 
 		//Formats the object's name in case the SQL definition is being generated
-		format=((def_type==SchemaParser::SQL_DEFINITION) ||
-				(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
-				 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP));
+		format=((def_type==SchemaParser::SqlDefinition) ||
+				(def_type==SchemaParser::XmlDefinition && reduced_form &&
+				 obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Relationship));
 
 		setBasicAttributes(format);
 
 		if(schema)
 		{
-			if(def_type==SchemaParser::XML_DEFINITION)
-				attributes[ParsersAttributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
+			if(def_type==SchemaParser::XmlDefinition)
+				attributes[Attributes::Schema]=schema->getCodeDefinition(def_type, true);
 			else
-				attributes[ParsersAttributes::SCHEMA]=schema->getName(format);
+				attributes[Attributes::Schema]=schema->getName(format);
 		}
 
-		if(def_type==SchemaParser::XML_DEFINITION)
-			attributes[ParsersAttributes::PROTECTED]=(is_protected ? ParsersAttributes::_TRUE_ : QString());
+		if(def_type==SchemaParser::XmlDefinition)
+			attributes[Attributes::Protected]=(is_protected ? Attributes::True : QString());
 
 		if(tablespace)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[ParsersAttributes::TABLESPACE]=tablespace->getName(format);
+			if(def_type==SchemaParser::SqlDefinition)
+				attributes[Attributes::Tablespace]=tablespace->getName(format);
 			else
-				attributes[ParsersAttributes::TABLESPACE]=tablespace->getCodeDefinition(def_type, true);
+				attributes[Attributes::Tablespace]=tablespace->getCodeDefinition(def_type, true);
 		}
 
-		if(collation && attributes[ParsersAttributes::COLLATION].isEmpty())
+		if(collation && attributes[Attributes::Collation].isEmpty())
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[ParsersAttributes::COLLATION]=collation->getName(format);
+			if(def_type==SchemaParser::SqlDefinition)
+				attributes[Attributes::Collation]=collation->getName(format);
 			else
-				attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
+				attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 		}
 
 		if(owner)
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 			{
-				attributes[ParsersAttributes::OWNER]=owner->getName(format);
+				attributes[Attributes::Owner]=owner->getName(format);
 
-				/** Only tablespaces and database do not have an ALTER OWNER SET
+				/* Only tablespaces, database and user mapping do not have an ALTER OWNER SET
 				 because the rule says that PostgreSQL tablespaces and database should be created
-				 with just a command line isolated from the others **/
-				if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_DATABASE)
+				 with just a command line isolated from the others */
+				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
-					QString filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-									 GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-									 ParsersAttributes::OWNER + GlobalAttributes::SCHEMA_EXT;
+					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+									 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
+									 Attributes::Owner + GlobalAttributes::SchemaExt;
 
 					sch_parser.ignoreUnkownAttributes(true);
-					attributes[ParsersAttributes::OWNER]=sch_parser.getCodeDefinition(filename, attributes);
+					attributes[Attributes::Owner]=sch_parser.getCodeDefinition(filename, attributes);
+
+					/* Disabling the SQL statement regarding the owner configuration (ALTER...OWNER TO...) when
+					 * the role used to be the owner of the object has its SQL code disabled. This will avoid
+					 * errors if the user wants to ignore that command without disabling the whole object's SQL when
+					 * its owner is disabled too */
+					if(owner->isSQLDisabled())
+						attributes[Attributes::Owner].prepend(QString("-- "));
 				}
 			}
 			else
-				attributes[ParsersAttributes::OWNER]=owner->getCodeDefinition(def_type, true);
+				attributes[Attributes::Owner]=owner->getCodeDefinition(def_type, true);
 		}
 
 		if(!comment.isEmpty())
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
-				attributes[ParsersAttributes::COMMENT]=QString(comment).replace(QString("'"), QString("''"));
+			if(def_type==SchemaParser::SqlDefinition)
+			{
+				QString escape_comm = getEscapedComment(escape_comments);
+				attributes[Attributes::EscapeComment]=escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=escape_comm;
+			}
 			else
-				attributes[ParsersAttributes::COMMENT]=comment;
+				attributes[Attributes::Comment]=comment;
 
 			schparser.ignoreUnkownAttributes(true);
 
-			attributes[ParsersAttributes::COMMENT]=
-					schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
+			attributes[Attributes::Comment]=
+					schparser.getCodeDefinition(Attributes::Comment, attributes, def_type);
 		}
 
 		if(!appended_sql.isEmpty())
 		{
-			attributes[ParsersAttributes::APPENDED_SQL]=appended_sql;
+			attributes[Attributes::AppendedSql]=appended_sql;
 
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
-				attributes[ParsersAttributes::APPENDED_SQL]=
-						schparser.getCodeDefinition(QString(ParsersAttributes::APPENDED_SQL).remove('-'), attributes, def_type);
+				attributes[Attributes::AppendedSql]=
+						schparser.getCodeDefinition(QString(Attributes::AppendedSql).remove('-'), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::APPENDED_SQL]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
+				attributes[Attributes::AppendedSql]=QString("\n-- Appended SQL commands --\n") +	appended_sql;
 			}
 		}
 
 		if(!prepended_sql.isEmpty())
 		{
-			attributes[ParsersAttributes::PREPENDED_SQL]=prepended_sql;
+			attributes[Attributes::PrependedSql]=prepended_sql;
 
-			if(def_type==SchemaParser::XML_DEFINITION)
+			if(def_type==SchemaParser::XmlDefinition)
 			{
 				schparser.ignoreUnkownAttributes(true);
-				attributes[ParsersAttributes::PREPENDED_SQL]=
-						schparser.getCodeDefinition(QString(ParsersAttributes::PREPENDED_SQL).remove('-'), attributes, def_type);
+				attributes[Attributes::PrependedSql]=
+						schparser.getCodeDefinition(QString(Attributes::PrependedSql).remove('-'), attributes, def_type);
 			}
 			else
 			{
-				attributes[ParsersAttributes::PREPENDED_SQL]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
+				attributes[Attributes::PrependedSql]=QString("\n-- Prepended SQL commands --\n") +	prepended_sql;
 			}
 		}
 
-		if(def_type==SchemaParser::SQL_DEFINITION && this->acceptsDropCommand())
+		if(def_type==SchemaParser::SqlDefinition && this->acceptsDropCommand())
 		{
-			attributes[ParsersAttributes::DROP]=getDropDefinition(true);
-			attributes[ParsersAttributes::DROP].remove(ParsersAttributes::DDL_END_TOKEN + '\n');
+			attributes[Attributes::Drop]=getDropDefinition(true);
+			attributes[Attributes::Drop].remove(Attributes::DdlEndToken + '\n');
 		}
 
-		attributes[ParsersAttributes::REDUCED_FORM]=(reduced_form ? ParsersAttributes::_TRUE_ : QString());
+		attributes[Attributes::ReducedForm]=(reduced_form ? Attributes::True : QString());
 
 		try
 		{
-			code_def+=schparser.getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
+			code_def+=schparser.getCodeDefinition(objs_schemas[enum_cast(obj_type)], attributes, def_type);
 
 			//Internally disabling the SQL definition
-			if(sql_disabled && def_type==SchemaParser::SQL_DEFINITION)
+			if(sql_disabled && def_type==SchemaParser::SqlDefinition)
 			{
 				//Creates a text stream and insert an comment start token on each line
 				QTextStream ts(&code_def);
@@ -813,10 +888,10 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			clearAttributes();
 
 			//Database object doesn't handles cached code.
-			if(use_cached_code && obj_type!=OBJ_DATABASE)
+			if(use_cached_code && obj_type!=ObjectType::Database)
 			{
-				if(def_type==SchemaParser::SQL_DEFINITION ||
-						(!reduced_form && def_type==SchemaParser::XML_DEFINITION))
+				if(def_type==SchemaParser::SqlDefinition ||
+						(!reduced_form && def_type==SchemaParser::XmlDefinition))
 					cached_code[def_type]=code_def;
 				else if(reduced_form)
 					cached_reduced_code=code_def;
@@ -829,13 +904,13 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			schparser.restartParser();
 			clearAttributes();
 
-			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
-				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
+			if(e.getErrorCode()==ErrorCode::UndefinedAttributeValue)
+				throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
 								.arg(this->getName(true))
 								.arg(this->getTypeName()),
-								ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+								ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
-				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+				throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 	}
 
@@ -865,26 +940,26 @@ void BaseObject::swapObjectsIds(BaseObject *obj1, BaseObject *obj2, bool enable_
 {
 	//Raises an error if some of the objects aren't allocated
 	if(!obj1 || !obj2)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the involved objects are the same
 	else if(obj1==obj2)
-		throw Exception(ERR_INV_ID_SWAP_SAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InvIdSwapSameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the some of the objects are system objects
 	else if(obj1->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj1->getName())
 						.arg(obj1->getTypeName()),
-						ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(obj2->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj2->getName())
 						.arg(obj2->getTypeName()),
-						ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the object is object is cluster level and the swap of these types isn't enabled
 	else if(!enable_cl_obj_swap &&
-			(obj1->getObjectType()==OBJ_DATABASE || obj1->getObjectType()==OBJ_TABLESPACE || obj1->getObjectType()==OBJ_ROLE ||
-			 obj2->getObjectType()==OBJ_DATABASE || obj2->getObjectType()==OBJ_TABLESPACE || obj2->getObjectType()==OBJ_ROLE))
-		throw Exception(ERR_INV_ID_SWAP_INV_OBJ_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			(obj1->getObjectType()==ObjectType::Database || obj1->getObjectType()==ObjectType::Tablespace || obj1->getObjectType()==ObjectType::Role ||
+			 obj2->getObjectType()==ObjectType::Database || obj2->getObjectType()==ObjectType::Tablespace || obj2->getObjectType()==ObjectType::Role))
+		throw Exception(ErrorCode::InvIdSwapInvalidObjectType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		unsigned id_bkp=obj1->object_id;
@@ -897,34 +972,34 @@ void BaseObject::updateObjectId(BaseObject *obj)
 {
 	//Raises an error if some of the objects aren't allocated
 	if(!obj)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else  if(obj->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 						.arg(obj->getName())
 						.arg(obj->getTypeName()),
-						ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		obj->object_id=++global_id;
 }
 
 vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<ObjectType> exclude_types)
 {
-	vector<ObjectType> vet_types={ BASE_RELATIONSHIP, OBJ_AGGREGATE, OBJ_CAST, OBJ_COLLATION,
-								   OBJ_CONVERSION, OBJ_DATABASE, OBJ_DOMAIN, OBJ_EXTENSION, OBJ_EVENT_TRIGGER,
-								   OBJ_TAG, OBJ_FUNCTION, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
-								   OBJ_OPFAMILY, OBJ_RELATIONSHIP, OBJ_ROLE, OBJ_SCHEMA,
-								   OBJ_SEQUENCE, OBJ_TABLE, OBJ_TABLESPACE, OBJ_TEXTBOX,
-									 OBJ_TYPE, OBJ_VIEW, OBJ_PERMISSION, OBJ_GENERIC_SQL };
+	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
+									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
+									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
+									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
+									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
+									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
 	{
-		vet_types.push_back(OBJ_COLUMN);
-		vet_types.push_back(OBJ_CONSTRAINT);
-		vet_types.push_back(OBJ_TRIGGER);
-		vet_types.push_back(OBJ_RULE);
-		vet_types.push_back(OBJ_INDEX);
-		vet_types.push_back(OBJ_POLICY);
+		vet_types.push_back(ObjectType::Column);
+		vet_types.push_back(ObjectType::Constraint);
+		vet_types.push_back(ObjectType::Trigger);
+		vet_types.push_back(ObjectType::Rule);
+		vet_types.push_back(ObjectType::Index);
+		vet_types.push_back(ObjectType::Policy);
 	}
 
 	for(ObjectType type : exclude_types)
@@ -939,17 +1014,29 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
-	if(obj_type==OBJ_DATABASE)
-		return(vector<ObjectType>()={OBJ_CAST, OBJ_ROLE, OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_SCHEMA, OBJ_EXTENSION, OBJ_EVENT_TRIGGER});
-	else if(obj_type==OBJ_SCHEMA)
-		return(vector<ObjectType>()={OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_COLLATION, OBJ_DOMAIN, OBJ_FUNCTION,
-									OBJ_OPCLASS, OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLE, OBJ_VIEW});
-	else if(obj_type==OBJ_TABLE)
-		return(vector<ObjectType>()={OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_POLICY});
-	else if(obj_type==OBJ_VIEW)
-		return(vector<ObjectType>()={OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX});
-	else
-		return(vector<ObjectType>()={});
+	if(obj_type==ObjectType::Database)
+		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
+																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
+																	ObjectType::UserMapping });
+
+	if(obj_type==ObjectType::Schema)
+		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
+																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
+																	ObjectType::Type, ObjectType::Table, ObjectType::View });
+
+	if(obj_type==ObjectType::Table)
+		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
+
+	if(obj_type==ObjectType::ForeignTable)
+		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger });
+
+	if(obj_type==ObjectType::View)
+		return(vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index});
+
+	return(vector<ObjectType>()={});
 }
 
 void BaseObject::setPgSQLVersion(const QString &ver)
@@ -960,6 +1047,11 @@ void BaseObject::setPgSQLVersion(const QString &ver)
 QString BaseObject::getPgSQLVersion(void)
 {
 	return(pgsql_ver);
+}
+
+attribs_map BaseObject::getSearchAttributes(void)
+{
+	return(search_attribs);
 }
 
 void BaseObject::enableCachedCode(bool value)
@@ -975,6 +1067,7 @@ void BaseObject::operator = (BaseObject &obj)
 	this->database=obj.database;
 	this->comment=obj.comment;
 	this->obj_name=obj.obj_name;
+	this->alias=obj.alias;
 	this->obj_type=obj.obj_type;
 	this->is_protected=obj.is_protected;
 	this->sql_disabled=obj.sql_disabled;
@@ -995,6 +1088,16 @@ void BaseObject::setCodeInvalidated(bool value)
 
 		code_invalidated=value;
 	}
+}
+
+void BaseObject::configureSearchAttributes(void)
+{
+	search_attribs[Attributes::Name] = this->getName(false);
+	search_attribs[Attributes::Signature] = this->getSignature(false);
+	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : QString();
+	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : QString();
+	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : QString();
+	search_attribs[Attributes::Comment] = comment;
 }
 
 bool BaseObject::isCodeInvalidated(void)
@@ -1047,32 +1150,32 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(object->getObjectType()!=this->getObjectType())
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
-		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XML_DEFINITION),
-											 object->getCodeDefinition(SchemaParser::XML_DEFINITION),
+		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition),
+											 object->getCodeDefinition(SchemaParser::XmlDefinition),
 											 ignored_attribs, ignored_tags));
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 {
-	if(use_cached_code && def_type==SchemaParser::SQL_DEFINITION && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
+	if(use_cached_code && def_type==SchemaParser::SqlDefinition && schparser.getPgSQLVersion()!=BaseObject::pgsql_ver)
 		code_invalidated=true;
 
 	if(!code_invalidated &&
 			((!reduced_form && !cached_code[def_type].isEmpty()) ||
-			 (def_type==SchemaParser::XML_DEFINITION  && reduced_form && !cached_reduced_code.isEmpty())))
+			 (def_type==SchemaParser::XmlDefinition  && reduced_form && !cached_reduced_code.isEmpty())))
 	{
-		if(def_type==SchemaParser::XML_DEFINITION  && reduced_form)
+		if(def_type==SchemaParser::XmlDefinition  && reduced_form)
 			return(cached_reduced_code);
 		else
 			return(cached_code[def_type]);
@@ -1099,18 +1202,18 @@ QString BaseObject::getDropDefinition(bool cascade)
 			/* Creating an attribute that identifies the object type in order
 		 to permit conditional code generation inside the DROP script */
 			if(attribs.count(this->getSchemaName())==0)
-				attribs[this->getSchemaName()]=ParsersAttributes::_TRUE_;
+				attribs[this->getSchemaName()]=Attributes::True;
 
-			attribs[ParsersAttributes::CASCADE]=(cascade ? ParsersAttributes::_TRUE_ : QString());
+			attribs[Attributes::Cascade]=(cascade ? Attributes::True : QString());
 
-			return(schparser.getCodeDefinition(ParsersAttributes::DROP, attribs, SchemaParser::SQL_DEFINITION));
+			return(schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition));
 		}
 		else
 			return(QString());
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -1119,9 +1222,9 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	try
 	{
 		SchemaParser schparser;
-		QString alter_sch_dir=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-							  GlobalAttributes::ALTER_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-							  QString("%1") + GlobalAttributes::SCHEMA_EXT;
+		QString alter_sch_dir=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+								GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
+								QString("%1") + GlobalAttributes::SchemaExt;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
 		schparser.ignoreEmptyAttributes(ignore_empty_attribs);
@@ -1130,7 +1233,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -1138,12 +1241,12 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 {
 	if(!attribs.empty())
 	{
-		attributes[ParsersAttributes::HAS_CHANGES]=ParsersAttributes::_TRUE_;
+		attributes[Attributes::HasChanges]=Attributes::True;
 		for(auto &itr : attribs)
 			attributes[itr.first]=itr.second;
 	}
 	else
-		attributes[ParsersAttributes::HAS_CHANGES]=QString();
+		attributes[Attributes::HasChanges]=QString();
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
@@ -1154,28 +1257,28 @@ QString BaseObject::getAlterDefinition(BaseObject *object)
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QString alter;
 
 	if(object->obj_type!=this->obj_type)
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setBasicAttributes(true);
 
 	try
 	{
-		QStringList attribs={ ParsersAttributes::OWNER, ParsersAttributes::SCHEMA, ParsersAttributes::TABLESPACE };
+		QStringList attribs={ Attributes::Owner, Attributes::Schema, Attributes::Tablespace };
 		bool accepts_obj[3]={ acceptsOwner(), acceptsSchema(), acceptsTablespace() };
 		BaseObject *dep_objs[3]={ this->getOwner(), this->getSchema(), this->getTablespace() },
 				*aux_dep_objs[3]={ object->getOwner(), object->getSchema(), object->getTablespace() };
 
 		if(!ignore_name_diff && this->getName()!=object->getName())
 		{
-			attributes[ParsersAttributes::NEW_NAME]=object->getName(true, false);
-			alter+=BaseObject::getAlterDefinition(ParsersAttributes::RENAME, attributes, true);
-			attributes[ParsersAttributes::NAME]=attributes[ParsersAttributes::NEW_NAME];
-			attributes[ParsersAttributes::SIGNATURE]=object->getSignature(true);
+			attributes[Attributes::NewName]=object->getName(true, false);
+			alter+=BaseObject::getAlterDefinition(Attributes::Rename, attributes, true);
+			attributes[Attributes::Name]=attributes[Attributes::NewName];
+			attributes[Attributes::Signature]=object->getSignature(true);
 		}
 
 		for(unsigned i=0; i < 3; i++)
@@ -1188,22 +1291,42 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 			}
 		}
 
-		if(this->getComment()!=object->getComment())
-		{
-			if(object->getComment().isEmpty())
-				attributes[ParsersAttributes::COMMENT]=ParsersAttributes::UNSET;
-			else
-				attributes[ParsersAttributes::COMMENT]=object->getComment();
-
-			schparser.ignoreUnkownAttributes(true);
-			schparser.ignoreEmptyAttributes(true);
-			alter+=schparser.getCodeDefinition(ParsersAttributes::COMMENT, attributes, SchemaParser::SQL_DEFINITION);
-		}
+		alter += getAlterCommentDefinition(object, attributes);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
 	return(alter);
+}
+
+QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map attributes)
+{
+	try
+	{
+		QString comm_this = this->getEscapedComment(escape_comments),
+				comm_obj = object->getEscapedComment(escape_comments);
+
+		if(comm_this != comm_obj)
+		{
+			if(comm_obj.isEmpty())
+				attributes[Attributes::Comment]=Attributes::Unset;
+			else
+			{
+				attributes[Attributes::EscapeComment] = escape_comments ? Attributes::True : QString();
+				attributes[Attributes::Comment]=comm_obj;
+			}
+
+			schparser.ignoreUnkownAttributes(true);
+			schparser.ignoreEmptyAttributes(true);
+			return(schparser.getCodeDefinition(Attributes::Comment, attributes, SchemaParser::SqlDefinition));
+		}
+
+		return(QString());
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

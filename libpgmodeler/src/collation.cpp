@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,19 +20,19 @@
 
 Collation::Collation(void)
 {
-	obj_type=OBJ_COLLATION;
-	encoding=BaseType::null;
+	obj_type=ObjectType::Collation;
+	encoding=BaseType::Null;
 
-	attributes[ParsersAttributes::_LC_CTYPE_]=QString();
-	attributes[ParsersAttributes::_LC_COLLATE_]=QString();
-	attributes[ParsersAttributes::LOCALE]=QString();
-	attributes[ParsersAttributes::ENCODING]=QString();
+	attributes[Attributes::LcCtype]=QString();
+	attributes[Attributes::LcCollate]=QString();
+	attributes[Attributes::Locale]=QString();
+	attributes[Attributes::Encoding]=QString();
 }
 
 void Collation::setLocale(const QString &locale)
 {
-	setLocalization(_LC_CTYPE, locale);
-	setLocalization(_LC_COLLATE, locale);
+	setLocalization(LcCtype, locale);
+	setLocalization(LcCollate, locale);
 	this->locale=locale;
 }
 
@@ -40,8 +40,8 @@ void Collation::setLocalization(unsigned lc_id, QString lc_name)
 {
 	if(locale.isEmpty())
 	{
-		if(lc_id > _LC_COLLATE)
-			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(lc_id > LcCollate)
+			throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Removes encoding specification from localization e.g 'aa_BB.ENC' will
 		 turn into 'aa_BB' since the encoding is appended on code generation */
@@ -60,14 +60,14 @@ void Collation::setEncoding(EncodingType encoding)
 void Collation::setCollation(BaseObject *collation)
 {
 	if(collation==this)
-		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
+		throw Exception(Exception::getErrorMessage(ErrorCode::ObjectReferencingItself)
 						.arg(this->getName(true))
 						.arg(this->getTypeName()),
-						ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						ErrorCode::ObjectReferencingItself,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setCollation(collation);
 
-	encoding=BaseType::null;
+	encoding=BaseType::Null;
 	locale.clear();
 	localization[0]=localization[1]=QString();
 }
@@ -79,8 +79,8 @@ QString Collation::getLocale(void)
 
 QString Collation::getLocalization(unsigned lc_id)
 {
-	if(lc_id > _LC_COLLATE)
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(lc_id > LcCollate)
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(localization[lc_id]);
 }
@@ -102,31 +102,31 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	if(!locale.isEmpty())
 	{
-		attributes[ParsersAttributes::LOCALE]=locale;
+		attributes[Attributes::Locale]=locale;
 
-		if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null)
-			attributes[ParsersAttributes::LOCALE]=locale + "." + (~encoding).toLower();
+		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
+			attributes[Attributes::Locale]=locale + "." + (~encoding).toLower();
 	}
 	else if(collation)
-		attributes[ParsersAttributes::COLLATION]=collation->getName(true);
+		attributes[Attributes::Collation]=collation->getName(true);
 	else
 	{
-		QString lc_attribs[2]={ ParsersAttributes::_LC_CTYPE_, ParsersAttributes::_LC_COLLATE_ };
+		QString lc_attribs[2]={ Attributes::LcCtype, Attributes::LcCollate };
 
-		if(localization[_LC_CTYPE].isEmpty() && localization[_LC_COLLATE].isEmpty())
-			throw Exception(ERR_EMPTY_LOCAL_ATTRIB_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if(localization[LcCtype].isEmpty() && localization[LcCollate].isEmpty())
+			throw Exception(ErrorCode::EmptyLCCollationAttributes,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		for(unsigned int i=_LC_CTYPE; i <= _LC_COLLATE; i++)
+		for(unsigned int i=LcCtype; i <= LcCollate; i++)
 		{
 			attributes[lc_attribs[i]]=getLocalization(i);
 
-			if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null &&
+			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null &&
 					!attributes[lc_attribs[i]].isEmpty())
 				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
 		}
 	}
 
-	attributes[ParsersAttributes::ENCODING]=~encoding;
+	attributes[Attributes::Encoding]=~encoding;
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
@@ -134,11 +134,11 @@ QString Collation::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

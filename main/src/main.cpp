@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,12 +38,12 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-	cmd=QString("\"%1\"").arg(GlobalAttributes::PGMODELER_CHANDLER_PATH) + QString(" -style ") + GlobalAttributes::DEFAULT_QT_STYLE;
+	cmd=QString("\"%1\"").arg(GlobalAttributes::PgModelerCHandlerPath) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
 
 	//Creates the stacktrace file
-	output.setFileName(GlobalAttributes::TEMPORARY_DIR +
-					   GlobalAttributes::DIR_SEPARATOR +
-					   GlobalAttributes::STACKTRACE_FILE);
+	output.setFileName(GlobalAttributes::TemporaryDir +
+					   GlobalAttributes::DirSeparator +
+					   GlobalAttributes::StacktraceFile);
 	output.open(QFile::WriteOnly);
 
 	if(output.isOpen())
@@ -51,8 +51,8 @@ void startCrashHandler(int signal)
 		lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
 			.arg(signal)
 			.arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
-			.arg(GlobalAttributes::PGMODELER_VERSION)
-			.arg(GlobalAttributes::PGMODELER_BUILD_NUMBER);
+			.arg(GlobalAttributes::PgModelerVersion)
+			.arg(GlobalAttributes::PgModelerBuildNumber);
 
 		lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
 			 .arg(QT_VERSION_STR)
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	try
 	{
 		/* Registering the below classes as metatypes in order to make
-	them liable to be sent through signal parameters. */
+		 * them liable to be sent through signal parameters. */
 		qRegisterMetaType<ObjectType>("ObjectType");
 		qRegisterMetaType<Exception>("Exception");
 		qRegisterMetaType<ValidationInfo>("ValidationInfo");
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 
 		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
 		if(!using_style)
-			app.setStyle(GlobalAttributes::DEFAULT_QT_STYLE);
+			app.setStyle(GlobalAttributes::DefaultQtStyle);
 
 		//Loading the application splash screen
 		QSplashScreen splash;
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 			fmain.loadModels(params);
 #endif
 
-		fmain.showMaximized();
+		fmain.show();
 		splash.finish(&fmain);
 		res=app.exec();
 		app.closeAllWindows();
@@ -150,6 +150,6 @@ int main(int argc, char **argv)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(e.getErrorType());
+		return(enum_cast(e.getErrorCode()));
 	}
 }

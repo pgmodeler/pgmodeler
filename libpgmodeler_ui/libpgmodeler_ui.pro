@@ -25,7 +25,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/baseform.cpp \
 	   src/sourcecodewidget.cpp \
 	   src/syntaxhighlighter.cpp \
-		 src/databasewidget.cpp \
+	   src/databasewidget.cpp \
 	   src/schemawidget.cpp \
 	   src/rolewidget.cpp \
 	   src/permissionwidget.cpp \
@@ -66,7 +66,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/pgmodelerplugin.cpp \
 	   src/pluginsconfigwidget.cpp \
 	   src/collationwidget.cpp \
-	   src/elementswidget.cpp \
 	   src/modelexporthelper.cpp \
 	   src/modelvalidationwidget.cpp \
 	   src/modelvalidationhelper.cpp \
@@ -113,7 +112,15 @@ SOURCES += src/mainwindow.cpp \
     src/bulkdataeditwidget.cpp \
     src/policywidget.cpp \
     src/objectstablewidget.cpp \
-    src/resultsetmodel.cpp
+    src/resultsetmodel.cpp \
+    src/referencewidget.cpp \
+    src/sqlexecutionhelper.cpp \
+    src/elementstablewidget.cpp \
+    src/elementwidget.cpp \
+    src/layerswidget.cpp \
+    src/foreigndatawrapperwidget.cpp \
+    src/foreignserverwidget.cpp \
+    src/usermappingwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -167,7 +174,6 @@ HEADERS += src/mainwindow.h \
 	   src/objectrenamewidget.h \
 	   src/pluginsconfigwidget.h \
 	   src/collationwidget.h \
-	   src/elementswidget.h \
 	   src/modelexporthelper.h \
 	   src/modelvalidationwidget.h \
 	   src/modelvalidationhelper.h \
@@ -214,7 +220,15 @@ HEADERS += src/mainwindow.h \
     src/bulkdataeditwidget.h \
     src/policywidget.h \
     src/objectstablewidget.h \
-    src/resultsetmodel.h
+    src/resultsetmodel.h \
+    src/referencewidget.h \
+    src/sqlexecutionhelper.h \
+    src/elementstablewidget.h \
+    src/elementwidget.h \
+    src/layerswidget.h \
+    src/foreigndatawrapperwidget.h \
+    src/foreignserverwidget.h \
+    src/usermappingwidget.h
 
 FORMS += ui/mainwindow.ui \
 	 ui/textboxwidget.ui \
@@ -263,7 +277,6 @@ FORMS += ui/mainwindow.ui \
 	 ui/pluginsconfigwidget.ui \
 	 ui/schemawidget.ui \
 	 ui/collationwidget.ui \
-	 ui/elementswidget.ui \
 	 ui/modelvalidationwidget.ui \
 	 ui/extensionwidget.ui \
 	 ui/objectfinderwidget.ui \
@@ -297,7 +310,13 @@ FORMS += ui/mainwindow.ui \
     ui/sceneinfowidget.ui \
     ui/bulkdataeditwidget.ui \
     ui/policywidget.ui \
-    ui/objectstablewidget.ui
+    ui/objectstablewidget.ui \
+    ui/referencewidget.ui \
+    ui/elementwidget.ui \
+    ui/layerswidget.ui \
+    ui/foreigndatawrapperwidget.ui \
+    ui/foreignserverwidget.ui \
+    ui/usermappingwidget.ui
 
 unix|windows: LIBS += -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \
                       -L$$OUT_PWD/../libpgconnector/ -lpgconnector \

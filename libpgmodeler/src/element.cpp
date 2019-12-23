@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ Element::Element(void)
 {
 	column=nullptr;
 	operator_class=nullptr;
-	sorting_attibs[NULLS_FIRST]=false;
-	sorting_attibs[ASC_ORDER]=true;
+	sorting_attibs[NullsFirst]=false;
+	sorting_attibs[AscOrder]=true;
 	sorting_enabled=false;
 }
 
@@ -52,8 +52,8 @@ void Element::setOperatorClass(OperatorClass *oper_class)
 
 void Element::setSortingAttribute(unsigned attrib, bool value)
 {
-	if(attrib > NULLS_FIRST)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib > NullsFirst)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	sorting_attibs[attrib]=value;
 }
@@ -70,8 +70,8 @@ bool Element::isSortingEnabled(void)
 
 bool Element::getSortingAttribute(unsigned attrib)
 {
-	if(attrib > NULLS_FIRST)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib > NullsFirst)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(sorting_attibs[attrib]);
 }
@@ -93,34 +93,44 @@ OperatorClass *Element::getOperatorClass(void)
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
-	attributes[ParsersAttributes::COLUMN]=QString();
-	attributes[ParsersAttributes::EXPRESSION]=QString();
-	attributes[ParsersAttributes::OP_CLASS]=QString();
-	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? ParsersAttributes::_TRUE_ : QString());
+	attributes[Attributes::Column]=QString();
+	attributes[Attributes::Expression]=QString();
+	attributes[Attributes::OpClass]=QString();
+	attributes[Attributes::UseSorting]=(this->sorting_enabled ? Attributes::True : QString());
+	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
+	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : QString());
 
 
 	if(column)
-		attributes[ParsersAttributes::COLUMN]=column->getName(true);
+		attributes[Attributes::Column]=column->getName(true);
 	else
-		attributes[ParsersAttributes::EXPRESSION]=expression;
+		attributes[Attributes::Expression]=expression;
 
 	if(operator_class)
 	{
-		if(def_type==SchemaParser::SQL_DEFINITION)
-			attributes[ParsersAttributes::OP_CLASS]=operator_class->getName(true);
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::OpClass]=operator_class->getName(true);
 		else
-			attributes[ParsersAttributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
+			attributes[Attributes::OpClass]=operator_class->getCodeDefinition(def_type, true);
 	}
+}
+
+bool Element::isEqualsTo(Element &elem)
+{
+  return(this->column == elem.column &&
+		 this->expression == elem.expression &&
+		 this->operator_class == elem.operator_class &&
+		 this->sorting_enabled == elem.sorting_enabled &&
+		 this->sorting_attibs[AscOrder] == elem.sorting_attibs[AscOrder] &&
+		 this->sorting_attibs[NullsFirst] == elem.sorting_attibs[NullsFirst]);
 }
 
 bool Element::operator == (Element &elem)
 {
-	return(this->column == elem.column &&
-		   this->expression == elem.expression &&
-		   this->operator_class == elem.operator_class &&
-		   this->sorting_enabled == elem.sorting_enabled &&
-		   this->sorting_attibs[ASC_ORDER] == elem.sorting_attibs[ASC_ORDER] &&
-		   this->sorting_attibs[NULLS_FIRST] == elem.sorting_attibs[NULLS_FIRST]);
+  return(isEqualsTo(elem));
+}
+
+bool Element::operator == (const Element &elem)
+{
+  return(isEqualsTo(const_cast<Element &>(elem)));
 }

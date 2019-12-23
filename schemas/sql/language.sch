@@ -1,5 +1,4 @@
 # SQL definition for procedural languages
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -25,11 +24,11 @@
 %end
 
 %if {validator} %then
- $br $tb [VALIDATOR ] {validator}
+ $br [VALIDATOR ] {validator}
 %end
 
 %if {inline} %then
- $br $tb [INLINE ] {inline}
+ $br [INLINE ] {inline}
 %end
 
 ; $br

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include "column.h"
 #include "operatorclass.h"
+#include "collation.h"
 
 class Element {
 	private:
@@ -45,8 +46,12 @@ class Element {
 		/*! \brief Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
 		 This attibutes can be configured used the constants ASC_ORDER and nullptrS_FIRST */
 		bool sorting_attibs[2],
+
 		//! \brief Enable the use of the sort attributes
 		sorting_enabled;
+
+		//! \brief Compares the attributes of provided element against this returning true/false if the match or not
+		bool isEqualsTo(Element &elem);
 
 	protected:
 		SchemaParser schparser;
@@ -55,16 +60,18 @@ class Element {
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
-		static const unsigned ASC_ORDER=0,
-		NULLS_FIRST=1;
+		static constexpr unsigned AscOrder=0,
+		NullsFirst=1;
 
 		Element(void);
 		virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
-		void setColumn(Column *column);
-		void setExpression(const QString &expression);
-		void setOperatorClass(OperatorClass *oper_class);
+		virtual void setColumn(Column *column);
+		virtual void setExpression(const QString &expression);
+		virtual void setOperatorClass(OperatorClass *oper_class);
+		virtual void setCollation(Collation *){}
+		virtual void setOperator(Operator *){}
 		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
@@ -76,10 +83,14 @@ class Element {
 		Column *getColumn(void);
 		QString getExpression(void);
 		OperatorClass *getOperatorClass(void);
+		virtual Collation *getCollation(void){ return(nullptr); }
+		virtual Operator *getOperator(void){ return(nullptr); }
+
 		bool isSortingEnabled(void);
 
-		virtual QString getCodeDefinition(unsigned) = 0;
+		virtual QString getCodeDefinition(unsigned) { return(QString()); }
 		bool operator == (Element &elem);
+		bool operator ==(const Element &elem);
 };
 
 #endif

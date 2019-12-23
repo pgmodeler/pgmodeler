@@ -33,7 +33,7 @@
     <number>4</number>
    </property>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="basics_grp">
      <property name="title">
       <string>Basics</string>
      </property>
@@ -169,6 +169,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>command_cmb</tabstop>
+  <tabstop>permissive_chk</tabstop>
+  <tabstop>attribs_tbw</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

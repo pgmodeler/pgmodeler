@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class OperationList: public QObject {
 		//! \brief Inidcates that operation chaining is ignored temporarily
 		bool ignore_chain;
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		//! \brief List of objects that were removed / modified on the model
 		vector<BaseObject *> object_pool;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,24 +28,48 @@
 #include "ui_genericsqlwidget.h"
 #include "baseobjectwidget.h"
 #include "codecompletionwidget.h"
+#include "objectstablewidget.h"
+#include "objectselectorwidget.h"
+#include "hinttextwidget.h"
 
 class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
 
-		NumberedTextEditor *definition_txt;
+		HintTextWidget *ref_name_ht, *use_signature_ht, *format_name_ht;
 
-		SyntaxHighlighter *definition_hl;
+		NumberedTextEditor *definition_txt, *preview_txt;
+
+		SyntaxHighlighter *definition_hl, *preview_hl;
 
 		CodeCompletionWidget *definition_cp;
 
-	public:
-		GenericSQLWidget(QWidget * parent = 0);
+		ObjectsTableWidget *objects_refs_tab;
 
+		ObjectSelectorWidget *object_sel;
+
+		/*! \brief This dummy object is used to generated the code preview while the user changes the fields
+		 * in form. Once the dummy is configure it is copied to the real object being handled by the form (this->object) */
+		GenericSQL dummy_gsql;
+
+		//! \brief A regular expression used to remove attribute/reference delimiters {} from the names of configured references
+		static const QRegExp AttrDelimRegexp;
+
+		void showObjectReferenceData(int row, BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
+
+	public:
+		GenericSQLWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
 
 	public slots:
 		void applyConfiguration(void);
+
+	private slots:
+		void updateCodePreview(void);
+		void addObjectReference(int row);
+		void editObjectReference(int row);
+		void updateObjectReference(int row);
+		void clearObjectReferenceForm(void);
 };
 
 #endif

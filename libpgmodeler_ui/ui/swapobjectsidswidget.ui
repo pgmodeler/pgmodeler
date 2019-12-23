@@ -424,6 +424,26 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QCheckBox" name="hide_sys_objs_chk">
+      <property name="text">
+       <string>Hide system objects</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="hide_rels_chk">
+      <property name="text">
+       <string>Hide relationships</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QTableWidget" name="objects_tbw">
@@ -437,11 +457,6 @@
      <width>421</width>
      <height>81</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
    </property>
    <property name="editTriggers">
     <set>QAbstractItemView::NoEditTriggers</set>
@@ -483,7 +498,7 @@
     <bool>false</bool>
    </attribute>
    <attribute name="verticalHeaderDefaultSectionSize">
-    <number>25</number>
+    <number>28</number>
    </attribute>
    <attribute name="verticalHeaderHighlightSections">
     <bool>false</bool>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,9 +45,9 @@ class Language: public BaseObject{
 			> VALIDATOR: Function that validates the code written in the language's syntax
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
-		static const unsigned VALIDATOR_FUNC=0,
-		HANDLER_FUNC=1,
-		INLINE_FUNC=2;
+		static constexpr unsigned ValidatorFunc=0,
+		HandlerFunc=1,
+		InlineFunc=2;
 
 		Language(void);
 

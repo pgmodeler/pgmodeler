@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,40 +95,40 @@ class Connection {
 
 	public:
 		//! \brief Constants used to reference the connections parameters
-		static const QString	PARAM_ALIAS,
-		PARAM_SERVER_FQDN,
-		PARAM_SERVER_IP,
-		PARAM_PORT,
-		PARAM_DB_NAME,
-		PARAM_USER,
-		PARAM_PASSWORD,
-		PARAM_CONN_TIMEOUT,
-		PARAM_OTHERS,
-		PARAM_SSL_MODE,
-		PARAM_SSL_CERT,
-		PARAM_SSL_KEY,
-		PARAM_SSL_ROOT_CERT,
-		PARAM_SSL_CRL,
-		PARAM_KERBEROS_SERVER,
-		PARAM_LIB_GSSAPI,
-		SSL_DESABLE,
-		SSL_ALLOW,
-		SSL_PREFER,
-		SSL_REQUIRE,
-		SSL_CA_VERIF,
-		SSL_FULL_VERIF;
+		static const QString	ParamAlias,
+		ParamServerFqdn,
+		ParamServerIp,
+		ParamPort,
+		ParamDbName,
+		ParamUser,
+		ParamPassword,
+		ParamConnTimeout,
+		ParamOthers,
+		ParamSslMode,
+		ParamSslCert,
+		ParamSslKey,
+		ParamSslRootCert,
+		ParamSslCrl,
+		ParamKerberosServer,
+		ParamLibGssapi,
+		SslDisable,
+		SslAllow,
+		SslPrefer,
+		SslRequire,
+		SslCaVerify,
+		SslFullVerify;
 
 		//! \brief Constants used to reference the server info details (see getServerInfo())
-		static const QString	SERVER_VERSION,
-		SERVER_PROTOCOL,
-		SERVER_PID;
+		static const QString	ServerVersion,
+		ServerProtocol,
+		ServerPid;
 
 		//! \brief Constants used to reference the default usage in model operations (see setDefaultForOperation())
-		static const unsigned OP_VALIDATION=0,
-		OP_EXPORT=1,
-		OP_IMPORT=2,
-		OP_DIFF=3,
-		OP_NONE=4;
+		static constexpr unsigned OpValidation=0,
+		OpExport=1,
+		OpImport=2,
+		OpDiff=3,
+		OpNone=4;
 
 		Connection(void);
 		Connection(const attribs_map &params);
@@ -168,7 +168,7 @@ class Connection {
 		//! \brief Set if the database configured on the connection is auto browseable when using the SQLTool manage database
 		void setAutoBrowseDB(bool value);
 
-		//! \brief Open the connection to the database
+		//! \brief Open the connection to the database.
 		void connect(void);
 
 		//! \brief Resets the database connection
@@ -176,6 +176,9 @@ class Connection {
 
 		//! \brief Close the opened connection
 		void close(void);
+
+		//! \brief Request the cancel of the running command on a opened connection
+		void requestCancel(void);
 
 		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);

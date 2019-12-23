@@ -4,6 +4,8 @@
 -->
 <!ELEMENT schema (role?,comment?, appended-sql?,prepended-sql?)>
 <!ATTLIST schema name CDATA #REQUIRED>
+<!ATTLIST schema layer CDATA #IMPLIED>
+<!ATTLIST schema alias CDATA #IMPLIED>
 <!ATTLIST schema protected (false|true) "false">
 <!ATTLIST schema rect-visible (false|true) "false">
 <!ATTLIST schema fill-color CDATA #IMPLIED>

@@ -15,12 +15,13 @@
 <!ATTLIST font underline (false|true) "false">
 <!ATTLIST font id (table-schema-name|view-schema-name|table-name|column|fk-column|pk-column|uq-column|nn-column|
                    prot-column|inh-column|index|rule|trigger|constraint|view-name|attribute|label|
-                   constraints|object-type|ref-table|ref-column|alias|pos-info|tag) "table-name">
+                   constraints|object-type|ref-table|ref-column|alias|pos-info|tag|policy|foreigntable-name|
+                   foreigntable-schema-name) "table-name">
 
 <!ELEMENT object EMPTY>
 <!ATTLIST object fill-color CDATA #REQUIRED>
 <!ATTLIST object border-color CDATA #REQUIRED>
 <!ATTLIST object id (table-title|table-body|textbox|view-title|view-body|label|relationship|
                      attribute|column|pk-column|uq-column|fk-column|nn-column|rule|trigger|index|constraint|
-		     locker-body|locker-arc|obj-selection|reference|view-ext-body|table-ext-body|
-		     pos-info|tag|placeholder) "table-title">
+                     locker-body|locker-arc|obj-selection|reference|view-ext-body|table-ext-body|
+                     pos-info|tag|placeholder|policy|foreigntable-title|foreigntable-body|foreigntable-ext-body) "table-title">

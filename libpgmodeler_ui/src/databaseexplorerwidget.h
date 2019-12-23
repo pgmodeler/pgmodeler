@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,10 +34,10 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 	private:
 		Q_OBJECT
 		
-		static const QString DEP_NOT_DEFINED,
-		DEP_NOT_FOUND,
-		ELEM_SEPARATOR,
-		DEFAULT_SOURCE_CODE;
+		static const QString DepNotDefined,
+		DepNotFound,
+		ElemSeparator,
+		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
 		static const attribs_map attribs_i18n;
@@ -132,6 +132,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatConstraintAttribs(attribs_map &attribs);
 		void formatIndexAttribs(attribs_map &attribs);
 		void formatPolicyAttribs(attribs_map &attribs);
+		void formatForeignDataWrapperAttribs(attribs_map &attribs);
+		void formatServerAttribs(attribs_map &attribs);
+		void formatUserMappingAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
@@ -144,7 +147,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		QString getObjectSource(BaseObject *object, DatabaseModel *dbmodel);
 
 	public:
-		DatabaseExplorerWidget(QWidget * parent = 0);
+		DatabaseExplorerWidget(QWidget * parent = nullptr);
 		
 		//! \brief Configures the connection used to retrieve and manipulate objects on database
 		void setConnection(Connection conn, const QString &default_db);
@@ -155,6 +158,9 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		//! \brief Clears the object's properties table
 		void clearObjectProperties(void);
 		
+		//! \brief Truncates a named table (in cascade mode or not) using the provided connection
+		static bool truncateTable(const QString &sch_name, const QString &obj_name, bool cascade, Connection connection);
+
 	public slots:
 		//! \brief Lists all objects for the current selected database
 		void listObjects(void);

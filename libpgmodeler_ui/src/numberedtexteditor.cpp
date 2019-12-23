@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QFileDialog>
+#include <QTemporaryFile>
 #include "pgmodeleruins.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
@@ -45,7 +46,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		QHBoxLayout *hbox = new QHBoxLayout, *hbox1 = new QHBoxLayout;
 		QFont font = this->font();
 
-		font.setPointSizeF(font.pointSizeF() * 0.95f);
+		font.setPointSizeF(font.pointSizeF() * 0.95);
 
 		top_widget = new QWidget(this);
 		top_widget->setAutoFillBackground(true);
@@ -63,7 +64,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		msg_lbl->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		ico->setMaximumSize(22,22);
-		ico->setPixmap(QPixmap(PgModelerUiNS::getIconPath("msgbox_alerta")));
+		ico->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		ico->setScaledContents(true);
 
 		editor_alert_wgt = new QWidget(this);
@@ -77,7 +78,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		hbox->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
 
 		load_file_btn = new QToolButton(top_widget);
-		load_file_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
+		load_file_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("abrir")));
 		load_file_btn->setIconSize(QSize(16,16));
 		load_file_btn->setAutoRaise(true);
 		load_file_btn->setText(trUtf8("Load"));
@@ -88,7 +89,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(load_file_btn, SIGNAL(clicked(bool)), this, SLOT(loadFile()));
 
 		edit_src_btn = new QToolButton(top_widget);
-		edit_src_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("editar")));
+		edit_src_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("editar")));
 		edit_src_btn->setIconSize(QSize(16,16));
 		edit_src_btn->setAutoRaise(true);
 		edit_src_btn->setText(trUtf8("Edit"));
@@ -99,7 +100,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		connect(edit_src_btn, SIGNAL(clicked(bool)), this, SLOT(editSource()));
 
 		clear_btn = new QToolButton(top_widget);
-		clear_btn->setIcon(QPixmap(PgModelerUiNS::getIconPath("limpartexto")));
+		clear_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("limpartexto")));
 		clear_btn->setIconSize(QSize(16,16));
 		clear_btn->setAutoRaise(true);
 		clear_btn->setText(trUtf8("Clear"));
@@ -119,8 +120,9 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		hbox->addWidget(clear_btn);
 		top_widget->setLayout(hbox);
 
-		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource()));
-		connect(&src_editor_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError()));
+		connect(&src_editor_proc, SIGNAL(finished(int)), this, SLOT(updateSource(int)));
+		connect(&src_editor_proc, SIGNAL(started()), this, SLOT(handleProcessStart()));
+		connect(&src_editor_proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(handleProcessError()));
 	}
 
 	setWordWrapMode(QTextOption::NoWrap);
@@ -139,7 +141,7 @@ NumberedTextEditor::~NumberedTextEditor(void)
 		disconnect(&src_editor_proc, nullptr, this, nullptr);
 		src_editor_proc.terminate();
 		src_editor_proc.waitForFinished();
-		QFile(tmp_src_file.fileName()).remove();
+		QFile(tmp_src_file).remove();
 	}
 }
 
@@ -342,9 +344,9 @@ void NumberedTextEditor::loadFile(void)
 		file.setFileName(sql_file_dlg.selectedFiles().at(0));
 
 		if(!file.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
-											.arg(sql_file_dlg.selectedFiles().at(0))
-											,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+											.arg(sql_file_dlg.selectedFiles().at(0)),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->clear();
 		this->setPlainText(file.readAll());
@@ -359,30 +361,76 @@ void NumberedTextEditor::editSource(void)
 {
 	QByteArray buffer;
 	QFile input;
+	QStringList args;
 
-	tmp_src_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("source_XXXXXX") + QString(".sql"));
-	tmp_src_file.open();
-	tmp_src_file.close();
-	input.setFileName(tmp_src_file.fileName());
+	if(tmp_src_file.isEmpty())
+	{
+		QTemporaryFile tmp_file;
+		tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + QString("source_XXXXXX") + QString(".sql"));
+		tmp_file.open();
+		tmp_src_file = tmp_file.fileName();
+		tmp_file.close();
+	}
+
+	input.setFileName(tmp_src_file);
 
 	if(!input.open(QFile::WriteOnly | QFile::Truncate))
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
-										.arg(tmp_src_file.fileName())
-										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+										.arg(tmp_src_file),
+										ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	buffer.append(this->toPlainText());
 	input.write(buffer);
 	input.close();
 
 	//Starting the source editor application using the temp source file as input
-	src_editor_proc.setProgram(NumberedTextEditor::src_editor_app);
-	src_editor_proc.setArguments({ src_editor_app_args, tmp_src_file.fileName() });
-	src_editor_proc.start();
+	if(!src_editor_app_args.isEmpty())
+		args.push_back(src_editor_app_args);
 
+	args.push_back(tmp_src_file);
+
+	src_editor_proc.setProgram(src_editor_app);
+	src_editor_proc.setArguments(args);
+	src_editor_proc.setWorkingDirectory(QDir::currentPath());
+	src_editor_proc.start();
 	src_editor_proc.waitForStarted();
+}
+
+void NumberedTextEditor::enableEditor(void)
+{
+	editor_alert_wgt->setVisible(false);
+	load_file_btn->setEnabled(true);
+	edit_src_btn->setEnabled(true);
+	clear_btn->setEnabled(!this->toPlainText().isEmpty());
+	this->setReadOnly(false);
+}
+
+void NumberedTextEditor::updateSource(int exit_code)
+{
+	if(exit_code != 0)
+		handleProcessError();
+	else
+	{
+		QFile input(tmp_src_file);
+
+		enableEditor();
+
+		if(!input.open(QFile::ReadOnly))
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed)
+											.arg(tmp_src_file),
+											ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		this->setPlainText(input.readAll());
+		input.close();
+		input.remove();
+	}
+}
+
+void NumberedTextEditor::handleProcessStart(void)
+{
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(PgModelerUiNS::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
+		msg_lbl->setText(PgModelerUiNs::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
 																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
@@ -392,31 +440,16 @@ void NumberedTextEditor::editSource(void)
 	}
 }
 
-void NumberedTextEditor::updateSource(void)
-{
-	QFile input(tmp_src_file.fileName());
-
-	editor_alert_wgt->setVisible(false);
-	load_file_btn->setEnabled(true);
-	edit_src_btn->setEnabled(true);
-	clear_btn->setEnabled(!this->toPlainText().isEmpty());
-	this->setReadOnly(false);
-
-	if(!input.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)
-										.arg(tmp_src_file.fileName())
-										,ERR_FILE_DIR_NOT_ACCESSED ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	this->setPlainText(input.readAll());
-	input.close();
-	input.remove();
-}
-
 void NumberedTextEditor::handleProcessError(void)
 {
 	Messagebox msg_box;
-	msg_box.show(PgModelerUiNS::formatMessage(trUtf8("Could not start the source code editor application `%1'! Make to sure that the source editor path defined in the general settings points to a valid executable and the current user has permission to run the application. Error message returned: `%2'")
-																						.arg(src_editor_proc.program()).arg(src_editor_proc.errorString())), Messagebox::ERROR_ICON);
+	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
+
+	msg_box.show(PgModelerUiNs::formatMessage(trUtf8("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+																						.arg(src_editor_proc.program())
+																						.arg(errors.join(QString("\n\n")))), Messagebox::ErrorIcon);
+
+	enableEditor();
 }
 
 void NumberedTextEditor::setReadOnly(bool ro)
@@ -469,7 +502,7 @@ void NumberedTextEditor::updateLineNumbers(void)
 		++block_number;
 
 		/* Check if the line count converted to widget coordinates is higher than the widget height.
-	   This is done to avoid draw line numbers that are beyond the widget's height */
+		 This is done to avoid draw line numbers that are beyond the widget's height */
 		if((static_cast<int>(line_count) * fontMetrics().height()) > this->height())
 			break;
 	}

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class ModelExportHelper: public QObject {
 		map<ObjectType, int> created_objs;
 
 		//! \brief Stores the current state of ALTER command generation for table columns/constraints
-		map<Table *, bool> alter_cmds_status;
+		map<PhysicalTable *, bool> alter_cmds_status;
 
 		//! \brief Stores the original object names before the call of generateRandomObjectNames()
 		map<BaseObject *, QString> orig_obj_names;
@@ -96,7 +96,7 @@ class ModelExportHelper: public QObject {
 
 		double zoom;
 
-		bool show_grid, show_delim, page_by_page;
+		bool show_grid, show_delim, page_by_page,	splitted, browsable;
 
 		//! \brief Saves the current state of ALTER command generaton for table columns/constraints
 		void saveGenAtlerCmdsStatus(DatabaseModel *db_model);
@@ -135,7 +135,7 @@ class ModelExportHelper: public QObject {
 		void handleSQLError(Exception &e, const QString &sql_cmd, bool ignore_dup);
 
 	public:
-		ModelExportHelper(QObject *parent = 0);
+		ModelExportHelper(QObject *parent = nullptr);
 
 		/*! \brief Determines which error codes must be ignored during the export process.
 		There must be some caution when ignore some error codes because the export may
@@ -164,6 +164,11 @@ class ModelExportHelper: public QObject {
 		void exportToDBMS(DatabaseModel *db_model, Connection conn, const QString &pgsql_ver=QString(), bool ignore_dup=false,
 											bool drop_db=false, bool drop_objs=false, bool simulate=false, bool use_tmp_names=false);
 
+		/*! \brief Exports the model to a named data dictionary. The options browsable and splitted indicate,
+		 * respectively, that the data dictionary should have an object index and the dictionary should be splitted
+		 * in different files per table */
+		void exportToDataDict(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted);
+
 		/*! \brief Configures the DBMS export params before start the export thread (when in thread mode).
 		This form receive a database model as input and the sql code to be exported will be generated from it.
 		\note The params drop_db and drop_objs can't be true at the same time. */
@@ -187,9 +192,13 @@ class ModelExportHelper: public QObject {
 		This form receive the objects scene, the output filename, grid options. */
 		void setExportToSVGParams(ObjectsScene *scene, const QString &filename, bool show_grid, bool show_delim);
 
+		/*! \brief Configures the Data Dictionary export params before start the export thread (when in thread mode).
+		This form receive the database model, the output path and browsabe and splitted options. */
+		void setExportToDataDictParams(DatabaseModel *db_model, const QString &path, bool browsable, bool splitted);
+
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT, QString cmd=QString(), bool is_code_gen=false);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd=QString(), bool is_code_gen=false);
 
 		//! \brief This signal is emited when the export has finished
 		void s_exportFinished(void);
@@ -208,6 +217,7 @@ class ModelExportHelper: public QObject {
 		void exportToPNG(void);
 		void exportToSVG(void);
 		void exportToSQL(void);
+		void exportToDataDict(void);
 		void cancelExport(void);
 
 	private slots:

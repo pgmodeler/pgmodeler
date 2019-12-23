@@ -3,26 +3,39 @@
 #          Code generation can be broken if incorrect changes are made.
 [<sequence name=] "{name}"
 
-$br $tb
-[ start=] "{start}"
-[ increment=] "{increment}"
-
-$br $tb
-[ min-value=] "{min-value}"
-[ max-value=] "{max-value}"
-
-$br $tb
-[ cache=] "{cache}"
 [ cycle=] %if {cycle} %then "true" %else "false" %end
-%if {owner-col} %then [ owner-col=] "{owner-col}" %end
 
- %if {protected} %then 
-  [ protected=] "true"
- %end
+%if {start} %then
+    [ start=] "{start}"
+%end
 
-  %if {sql-disabled} %then
-   [ sql-disabled=] "true"
-  %end
+%if {increment} %then
+    [ increment=] "{increment}"
+%end
+
+%if {min-value} %then
+    [ min-value=] "{min-value}"
+%end
+
+%if {max-value} %then
+    [ max-value=] "{max-value}"
+%end
+
+%if {cache} %then
+    [ cache=] "{cache}"
+%end
+
+%if {owner-col} %then 
+    [ owner-col=] "{owner-col}" 
+%end
+
+%if {protected} %then 
+    [ protected=] "true"
+%end
+
+%if {sql-disabled} %then
+    [ sql-disabled=] "true"
+%end
 
 > $br
 

@@ -16,13 +16,12 @@
 
 > $br
 
- $tb [<object name=] "{object}" 
 
- %if {parent} %then
-   [ parent=] "{parent}" 
- %end
+$tb [<object name=] "{object}" 
 
-   [ type=] "{type}" [/>] $br
+ %if {parent} %then  [ parent=] "{parent}"  %end
+
+ [ type=] "{type}" [/>] $br
 
  %if {roles} %then
   $tb [<roles names=] "{roles}" [/>] $br

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "textbox.h"
 #include "baseobjectview.h"
 #include "roundedrectitem.h"
+#include "textpolygonitem.h"
 
 class TextboxView: public BaseObjectView {
 	private:
@@ -36,12 +37,16 @@ class TextboxView: public BaseObjectView {
 		//! \brief Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
 		bool override_style;
 
+		QString txtbox_tooltip;
+
 	protected:
 		//! \brief Graphical item that represent the box
 		QGraphicsPolygonItem *box;
 
 		//! \brief Graphical item that represent the text
 		QGraphicsSimpleTextItem *text;
+
+		TextPolygonItem *text_item;
 
 		//! \brief Configures the shadow for the textbox
 		void configureObjectShadow(void);
@@ -63,6 +68,8 @@ class TextboxView: public BaseObjectView {
 		/*! \brief Sets the font style for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
 		void setFontStyle(const QTextCharFormat &fmt);
+
+		void setToolTip(const QString &tooltip);
 
 	protected slots:
 		virtual void configureObject(void);

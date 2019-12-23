@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "numberedtexteditor.h"
 #include "findreplacewidget.h"
 #include "resultsetmodel.h"
+#include "sqlexecutionhelper.h"
 
 class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 	private:
@@ -43,7 +44,13 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		static int cmd_history_max_len;
 
+		qint64 start_exec, end_exec, total_exec;
+
 		SchemaParser schparser;
+
+		QThread sql_exec_thread;
+
+		SQLExecutionHelper sql_exec_hlp;
 
 		//! \brief Syntax highlighter for sql input field
 		SyntaxHighlighter *sql_cmd_hl,
@@ -69,8 +76,6 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		FindReplaceWidget *find_history_wgt;
 
-		ResultSetModel *result_model;
-
 		/*! \brief Enables/Disables the fields for sql input and execution.
 				When enabling a new connection to server will be opened. */
 		void enableSQLExecution(bool enable);
@@ -78,13 +83,11 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		//! \brief Stores the command on the sql command history
 		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
 
-		//! \brief Show the exception message in the output widget
-		void showError(Exception &e);
-
-		//! \brief Fills the result grid with the specified result set
-		void fillResultsTable(ResultSet &res);
-
 		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
+
+		void switchToExecutionMode(bool value);
+
+		void destroyResultModel(void);
 
 	protected:
 		//! \brief Widget that serves as SQL commands input
@@ -97,13 +100,16 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
-		static const QString COLUMN_NULL_VALUE;
+		static const QString ColumnNullValue;
 
-		SQLExecutionWidget(QWidget * parent = 0);
+		SQLExecutionWidget(QWidget * parent = nullptr);
 		~SQLExecutionWidget(void);
 
 		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);
+
+		//! \brief Insert the provided sql commands in the input field. This method clears the current commands before adding new content
+		void setSQLCommand(const QString &sql);
 
 		/*! \brief Fills up the results grid based upon the specified result set.
 				The parameter store_data will make each item store the text as its data */
@@ -119,13 +125,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static QByteArray generateTextBuffer(QTableView *results_tbw);
 
 		//! \brief Generates a custom text buffer. User can specify a separator for columns, include column names and quote values
-		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes);
+		static QByteArray generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars);
 
 		//! \brief Exports the results to csv file
 		static void exportResults(QTableView *results_tbw);
-
-	public slots:
-		void configureSnippets(void);
 
 		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
 		static void saveSQLHistory(void);
@@ -138,6 +141,12 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void setSQLHistoryMaxLength(int len);
 
 		static int getSQLHistoryMaxLength(void);
+
+	public slots:
+		void configureSnippets(void);
+
+		//! \brief Show the exception message in the output widget
+		void	handleExecutionAborted(Exception e);
 
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
@@ -160,6 +169,10 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void toggleOutputPane(bool visible);
 
 		void showHistoryContextMenu(void);
+
+		void finishExecution(int rows_affected = 0);
+
+		void filterResults(void);
 
 		friend class SQLToolWidget;
 };

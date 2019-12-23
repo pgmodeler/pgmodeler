@@ -3,6 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb <reference
 
+%if {ref-alias} %then 
+    [ ref-alias=] "{ref-alias}" 
+%end
+
 %if {table} %then
   [ table=] "{table}" 
   %if {column} %then [ column=] "{column}" %end
@@ -14,8 +18,13 @@ $tb <reference
 
 %if {expression} %then
  > $br
+ 
  $tb $tb <expression> <! $ob CDATA $ob {expression} $cb $cb > </expression> $br
-$tb </reference> $br
+ 
+ %if {columns} %then {columns} %end
+ %if {ref-tables} %then {ref-tables} %end
+   
+ $tb </reference> $br
 %else
  /> $br
 %end

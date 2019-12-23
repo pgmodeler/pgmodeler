@@ -1,5 +1,4 @@
 # SQL definition for triggers
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -29,6 +28,13 @@ $tb [ON ] {table} $br
   %else
     $tb [NOT DEFERRABLE ] $br
  %end
+%end
+
+%if {old-table-name} %or {new-table-name} %and ({pgsql-ver} >=f "10.0") %then
+    $tb REFERENCING
+    %if {old-table-name} %then [ OLD TABLE AS ] {old-table-name} %end
+    %if {new-table-name} %then [ NEW TABLE AS ] {new-table-name} %end
+    $br
 %end
 
 $tb [FOR EACH ] %if {per-line} %then ROW %else STATEMENT %end $br

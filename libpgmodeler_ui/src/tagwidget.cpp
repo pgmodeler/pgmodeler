@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,20 +18,20 @@
 
 #include "tagwidget.h"
 
-TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
+TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Tag)
 {
 	Ui_TagWidget::setupUi(this);
-	configureFormLayout(tag_grid, OBJ_TAG);
+	configureFormLayout(tag_grid, ObjectType::Tag);
 
-	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
-						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-						  ParsersAttributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 	unsigned color_count=1;
 	int row=0;
 
 	for(auto &attr : attribs)
 	{
-		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
 
 		color_pickers[attr]=new ColorPickerWidget(color_count, this);
@@ -46,15 +46,15 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TAG)
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)
 {
 	unsigned color_count=1, i;
-	QStringList attribs={ ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_SCHEMA_NAME,
-						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-						  ParsersAttributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 
 	BaseObjectWidget::setAttributes(model, op_list, tag);
 
 	for(auto &attr : attribs)
 	{
-		if(color_count==1 && attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
 
 		for(i=0; i < color_count; i++)
@@ -73,24 +73,24 @@ void TagWidget::applyConfiguration(void)
 	{
 		Tag *tag=nullptr;
 		vector<BaseObject *> tagged_tabs;
-		QStringList attribs={ ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-							  ParsersAttributes::TABLE_EXT_BODY };
+		QStringList attribs={ Attributes::TableTitle, Attributes::TableBody,
+							  Attributes::TableExtBody };
 
 		startConfiguration<Tag>();
 		tag=dynamic_cast<Tag *>(this->object);
 
 		BaseObjectWidget::applyConfiguration();
 
-		tag->setElementColor(ParsersAttributes::TABLE_NAME, color_pickers[ParsersAttributes::TABLE_NAME]->getColor(0), Tag::FILL_COLOR1);
-		tag->setElementColor(ParsersAttributes::TABLE_SCHEMA_NAME, color_pickers[ParsersAttributes::TABLE_SCHEMA_NAME]->getColor(0), Tag::FILL_COLOR1);
+		tag->setElementColor(Attributes::TableName, color_pickers[Attributes::TableName]->getColor(0), Tag::FillColor1);
+		tag->setElementColor(Attributes::TableSchemaName, color_pickers[Attributes::TableSchemaName]->getColor(0), Tag::FillColor1);
 
 		for(auto &attr : attribs)
 		{
 			tag->setElementColors(attr,
 								  QString("%1,%2,%3")
-								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR1).name())
-								  .arg(color_pickers[attr]->getColor(Tag::FILL_COLOR2).name())
-								  .arg(color_pickers[attr]->getColor(Tag::BORDER_COLOR).name()));
+								  .arg(color_pickers[attr]->getColor(Tag::FillColor1).name())
+								  .arg(color_pickers[attr]->getColor(Tag::FillColor2).name())
+								  .arg(color_pickers[attr]->getColor(Tag::BorderColor).name()));
 		}
 
 		model->getObjectReferences(tag, tagged_tabs);
@@ -105,7 +105,7 @@ void TagWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

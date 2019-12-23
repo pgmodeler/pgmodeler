@@ -2,7 +2,13 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
-[<policy name=] "{name}" [ table=] "{table}" [ command=] "{command}"
+[<policy name=] "{name}"
+
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+
+[ table=] "{table}" [ command=] "{command}"
 
 [ permissive=] %if {permissive} %then  "true" %else "false" %end
 

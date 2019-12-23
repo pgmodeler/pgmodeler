@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,35 +41,25 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 	private:
 		Q_OBJECT
 
-		QFrame *frame_info;
-
 		ObjectSelectorWidget *tag_sel;
 
-		NumberedTextEditor *cte_expression_txt, *code_txt, *expression_txt;
+		NumberedTextEditor *cte_expression_txt, *code_txt;
 
 		//! \brief Stores all the view references
 		ObjectsTableWidget *references_tab;
 
 		map<ObjectType, ObjectsTableWidget *> objects_tab_map;
 
-		SyntaxHighlighter *expression_hl,
-		*code_hl,
-		*cte_expression_hl;
+		SyntaxHighlighter *code_hl,	*cte_expression_hl;
 
-		CodeCompletionWidget *cte_expression_cp,
-		*expression_cp;
-
-		ObjectSelectorWidget *table_sel,
-		*column_sel;
+		CodeCompletionWidget *cte_expression_cp;
 
 		//! \brief Shows the reference at the reference's table
-		void showReferenceData(Reference refer, bool selec_from, bool from_where,
-													 bool after_where, bool end_expr, bool view_def, unsigned row);
-
-		void clearReferenceForm(void);
+		void showReferenceData(Reference refer, unsigned ref_flags, unsigned row);
 
 		//! \brief Returns the object table according with the child type
 		ObjectsTableWidget *getObjectTable(ObjectType obj_type);
+
 		ObjectType getObjectType(QObject *sender);
 
 		void showObjectData(TableObject *object, int row);
@@ -81,23 +71,18 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		template<class Class, class ClassWidget>
 		int openEditingForm(TableObject *object);
 
+		int openReferenceForm(Reference ref, int row, bool update);
+
+		unsigned getReferenceFlag(int row);
+
 	public:
-		ViewWidget(QWidget * parent = 0);
+		ViewWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, double px, double py);
 
 	private slots:
-		//! \brief Shows the field according to the selected reference type
-		void selectReferenceType(void);
-
-		//! \brief Creates a reference from the values filled on the form
-		void handleReference(int ref_idx);
-
 		//! \brief Edits the selected reference
 		void editReference(int ref_idx);
-
-		//! \brief Controls the form which are show the table and column names of the reference
-		void showObjectName(void);
 
 		//! \brief Updates the sql code field of the view form
 		void updateCodePreview(void);
@@ -113,6 +98,12 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 
 		//! \brief Removes all objects from the table that calls the slot
 		void removeObjects(void);
+
+		//! \brief Opens the reference form when a new row is added in the references grid
+		void addReference(int row);
+
+		//! \brief Duplicate the current selected reference
+		void duplicateReference(int orig_row, int new_row);
 
 	public slots:
 		void applyConfiguration(void);

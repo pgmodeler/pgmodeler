@@ -11,11 +11,14 @@
 
 # General Qt settings
 QT += core widgets printsupport network svg
-CONFIG += ordered qt stl rtti exceptions warn_on c++11
+CONFIG += ordered qt stl rtti exceptions warn_on c++14
 TEMPLATE = subdirs
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
+
+# Setting up the flag passed to compiler to indicate a snapshot build
+defined(SNAPSHOT_BUILD, var): DEFINES+=SNAPSHOT_BUILD
 
 # Setting up the flag passed to compiler to build the demo version
 defined(DEMO_VERSION, var): DEFINES+=DEMO_VERSION
@@ -146,18 +149,18 @@ unix:!macx {
 }
 
 macx {
-  PGSQL_LIB = /Library/PostgreSQL/10/lib/libpq.dylib
-  PGSQL_INC = /Library/PostgreSQL/10/include
+  PGSQL_LIB = /Library/PostgreSQL/11/lib/libpq.dylib
+  PGSQL_INC = /Library/PostgreSQL/11/include
   XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
   XML_LIB = /usr/lib/libxml2.dylib
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 
 windows {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/PostgreSQL/10.1/lib/libpq.dll
-  !defined(PGSQL_INC, var): PGSQL_INC = C:/PostgreSQL/10.1/include
-  !defined(XML_INC, var): XML_INC = C:/PostgreSQL/10.1/include
-  !defined(XML_LIB, var): XML_LIB = C:/PostgreSQL/10.1/bin/libxml2.dll
+  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/msys_64/mingw64/bin/libpq.dll
+  !defined(PGSQL_INC, var): PGSQL_INC = C:/msys_64/mingw64/include
+  !defined(XML_INC, var): XML_INC = C:/msys_64/mingw64/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = C:/msys_64/mingw64/bin/libxml2-2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"

@@ -1,5 +1,4 @@
 # SQL command to drop an object
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -19,7 +18,7 @@
    {signature}
  %end
  
- %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %then
+ %if {cascade} %and %not {database} %and %not {tablespace} %and %not {role} %and %not {usermapping} %then
    [ CASCADE]
  %end
  ; 

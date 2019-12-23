@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "exception.h"
 #include "xmlparser.h"
 #include "globalattributes.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 #include <algorithm>
 
 class SyntaxHighlighter: public QSyntaxHighlighter {
@@ -58,18 +58,18 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
 		};
 
 		//! \brief XML parser used to parse configuration files
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 
 		//! \brief Default font configuratoin for all instances os syntax highlighter
 		static QFont default_font;
 
 		//! \brief Indicates that the current block has no special meaning
-		static const int SIMPLE_BLOCK=-1,
+		static constexpr int SimpleBlock=-1,
 
 		/*! \brief Indicates that the current block has an open (but still to close) expression (e.g. multline comments)
 		When the highlighter finds this const it'll do special operation like highlight next blocks with the same
 		configuration as the current one */
-		OPEN_EXPR_BLOCK=0;
+		OpenExprBlock=0;
 
 		/*! \brief Stores the regexp used to identify keywords, identifiers, strings, numbers.
 		Also stores initial regexps used to identify a multiline group */

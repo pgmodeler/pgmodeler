@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -86,14 +86,14 @@ class Constraint: public TableObject{
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */
-		static const unsigned SOURCE_COLS=0,
+		static constexpr unsigned SourceCols=0,
 
 		/*! \brief Access the referenced columns that means the columns from the
 														 referenced table primary key (only for foreign keys) */
-		REFERENCED_COLS=1;
+		ReferencedCols=1;
 
-		static const unsigned DELETE_ACTION=0,
-		UPDATE_ACTION=1;
+		static constexpr unsigned DeleteAction=0,
+		UpdateAction=1;
 
 		Constraint(void);
 		~Constraint(void);
@@ -145,6 +145,9 @@ class Constraint: public TableObject{
 
 		//! \brief Retuns the action type (ON DELETE or ON UPDATE) of a foreign key
 		ActionType getActionType(unsigned act_id);
+
+		//! \brief Returns the list of columns of the specified type SOURCE_COLS or REFERENCED_COLS
+		vector<Column *> getColumns(unsigned col_type);
 
 		/*! \brief Returns one column (using its index) from the internal constraint column lists.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */

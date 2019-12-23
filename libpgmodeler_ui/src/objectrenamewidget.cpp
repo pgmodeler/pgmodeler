@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,19 +38,19 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
 	if(!object || !op_list)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(tab_obj && tab_obj->isAddedByRelationship())
-		throw Exception(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT)
-						.arg(tab_obj->getName())
-						.arg(tab_obj->getTypeName())
-						,ERR_OPR_REL_INCL_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprRelationshipAddedObject)
+										.arg(tab_obj->getName())
+										.arg(tab_obj->getTypeName()),
+										ErrorCode::OprRelationshipAddedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->adjustSize();
 	this->object=object;
 	this->op_list=op_list;
 	this->model=model;
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getSchemaName())));
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getSchemaName())));
 	obj_icon_lbl->setToolTip(object->getTypeName());
 
 	obj_name_lbl->setText(object->getName());
@@ -76,13 +76,13 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 
 void ObjectRenameWidget::applyRenaming(void)
 {
-	ObjectType obj_type=BASE_OBJECT;
+	ObjectType obj_type=ObjectType::BaseObject;
 
 	try
 	{
 		//Apply the new name only when its not empty and its differs from the original one
 		if(!new_name_edt->text().isEmpty() &&
-				this->object->getName()!=new_name_edt->text())
+			 this->object->getName()!=new_name_edt->text())
 		{
 			BaseGraphicObject *obj_graph=dynamic_cast<BaseGraphicObject *>(object);
 			TableObject *tab_obj=dynamic_cast<TableObject *>(object);
@@ -92,13 +92,13 @@ void ObjectRenameWidget::applyRenaming(void)
 
 			obj_type=object->getObjectType();
 
-			if(obj_type!=OBJ_DATABASE)
+			if(obj_type!=ObjectType::Database)
 			{
 				//Register the object on operations list before the modification
-				op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
+				op_list->registerObject(object, Operation::ObjectModified, -1, (tab_obj ? tab_obj->getParentTable() : nullptr));
 
 				//Format the object name to check if it will have a conflicting name
-				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
+				fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==ObjectType::Operator);
 
 				if(object->getSchema())
 					fmt_name=object->getSchema()->getName(true) + QString(".") + fmt_name;
@@ -107,7 +107,7 @@ void ObjectRenameWidget::applyRenaming(void)
 				if(tab_obj)
 				{
 					parent_obj=tab_obj->getParentTable();
-					aux_obj=dynamic_cast<Table *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
+					aux_obj=dynamic_cast<BaseTable *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
 				}
 				//For database child object, check if there is another object with the same new name
 				else
@@ -119,46 +119,47 @@ void ObjectRenameWidget::applyRenaming(void)
 				//Raises a error if another object is found
 				if(aux_obj && aux_obj!=object)
 				{
-					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-									.arg(fmt_name)
-									.arg(object->getTypeName())
-									.arg(parent_obj->getName(true))
-									.arg(parent_obj->getTypeName()),
-									ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObject)
+													.arg(fmt_name)
+													.arg(object->getTypeName())
+													.arg(parent_obj->getName(true))
+													.arg(parent_obj->getTypeName()),
+													ErrorCode::AsgDuplicatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}
 
 			object->setName(new_name_edt->text().toUtf8());
 
 			//If the renamed object is a graphical one, set as modified to force its redraw
-			if(obj_graph)
-			{
-				obj_graph->setModified(true);
-
-				if(obj_graph->getObjectType()==OBJ_TABLE ||
-						obj_graph->getObjectType()==OBJ_VIEW)
-				{
-					dynamic_cast<Schema *>(obj_graph->getSchema())->setModified(true);
-				}
-			}
-			else if(tab_obj)
-			{
-				Table *tab=dynamic_cast<Table *>(tab_obj->getParentTable());
-				Column *col=dynamic_cast<Column *>(tab_obj);
-
-				/* If the object is a column and some primary key on table is referencing it
-			 the model relationship will be revalidated */
-				if(col && tab->isConstraintRefColumn(col, ConstraintType::primary_key))
-					model->validateRelationships();
-
-				tab->setModified(true);
-				tab->setCodeInvalidated(true);
-				dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
-			}
-			else if(object->getObjectType()==OBJ_SCHEMA)
+			if(object->getObjectType()==ObjectType::Schema)
 			{
 				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
 				dynamic_cast<Schema *>(object)->setModified(true);
+			}
+			else if(obj_graph)
+			{
+				obj_graph->setModified(true);
+
+				if(BaseTable::isBaseTable(obj_graph->getObjectType()))
+					dynamic_cast<Schema *>(obj_graph->getSchema())->setModified(true);
+			}
+			else if(tab_obj)
+			{
+				BaseTable *base_tab = tab_obj->getParentTable();
+				PhysicalTable *tab = dynamic_cast<PhysicalTable *>(base_tab);
+				Column *col=dynamic_cast<Column *>(tab_obj);
+
+				/* If the object is a column and some primary key on table is referencing it
+				 * the model relationship will be revalidated */
+				if(col && tab)
+				{
+					model->validateRelationships();
+					model->updateViewsReferencingTable(tab);
+				}
+
+				base_tab->setModified(true);
+				base_tab->setCodeInvalidated(true);
+				dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 			}
 
 			Column *col=nullptr;
@@ -166,7 +167,7 @@ void ObjectRenameWidget::applyRenaming(void)
 
 			for(auto &obj : ref_objs)
 			{
-				if(obj->getObjectType()==OBJ_COLUMN)
+				if(obj->getObjectType()==ObjectType::Column)
 				{
 					col=dynamic_cast<Column *>(obj);
 					col->getParentTable()->setModified(true);
@@ -176,7 +177,6 @@ void ObjectRenameWidget::applyRenaming(void)
 					obj->setCodeInvalidated(true);
 			}
 
-
 			accept();
 		}
 	}
@@ -184,7 +184,7 @@ void ObjectRenameWidget::applyRenaming(void)
 	{
 		Messagebox msg_box;
 
-		if(obj_type!=OBJ_DATABASE)
+		if(obj_type!=ObjectType::Database)
 			op_list->removeLastOperation();
 
 		msg_box.show(e);

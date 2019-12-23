@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,55 +17,56 @@
 */
 #include "catalog.h"
 
-const QString Catalog::QUERY_LIST=QString("list");
-const QString Catalog::QUERY_ATTRIBS=QString("attribs");
-const QString Catalog::CATALOG_SCH_DIR=QString("catalog");
-const QString Catalog::PGSQL_TRUE=QString("t");
-const QString Catalog::PGSQL_FALSE=QString("f");
-const QString Catalog::BOOL_FIELD=QString("_bool");
-const QString Catalog::ARRAY_PATTERN=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
-const QString Catalog::GET_EXT_OBJS_SQL=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
-const QString Catalog::PGMODELER_TEMP_DB_OBJ=QString("__pgmodeler_tmp");
+const QString Catalog::QueryList=QString("list");
+const QString Catalog::QueryAttribs=QString("attribs");
+const QString Catalog::CatalogSchemasDir=QString("catalog");
+const QString Catalog::PgSqlTrue=QString("t");
+const QString Catalog::PgSqlFalse=QString("f");
+const QString Catalog::BoolField=QString("_bool");
+const QString Catalog::ArrayPattern=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
+const QString Catalog::GetExtensionObjsSql=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::PgModelerTempDbObj=QString("__pgmodeler_tmp");
 
-bool Catalog::use_cached_queries=false;
 attribs_map Catalog::catalog_queries;
 
 map<ObjectType, QString> Catalog::oid_fields=
-{ {OBJ_DATABASE, "oid"}, {OBJ_ROLE, "oid"}, {OBJ_SCHEMA,"oid"},
-  {OBJ_LANGUAGE, "oid"}, {OBJ_TABLESPACE, "oid"}, {OBJ_EXTENSION, "ex.oid"},
-  {OBJ_FUNCTION, "pr.oid"}, {OBJ_AGGREGATE, "pr.oid"}, {OBJ_OPERATOR, "op.oid"},
-  {OBJ_OPCLASS, "op.oid"}, {OBJ_OPFAMILY, "op.oid"}, {OBJ_COLLATION, "cl.oid"},
-  {OBJ_CONVERSION, "cn.oid"}, {OBJ_CAST, "cs.oid"}, {OBJ_VIEW, "vw.oid"},
-  {OBJ_SEQUENCE, "sq.oid"}, {OBJ_DOMAIN, "dm.oid"}, {OBJ_TYPE, "tp.oid"},
-  {OBJ_TABLE, "tb.oid"}, {OBJ_COLUMN, "cl.oid"}, {OBJ_CONSTRAINT, "cs.oid"},
-	{OBJ_RULE, "rl.oid"}, {OBJ_TRIGGER, "tg.oid"}, {OBJ_INDEX, "id.indexrelid"},
-	{OBJ_EVENT_TRIGGER, "et.oid"}, {OBJ_POLICY, "pl.oid"}
+{ {ObjectType::Database, "oid"}, {ObjectType::Role, "oid"}, {ObjectType::Schema,"oid"},
+	{ObjectType::Language, "oid"}, {ObjectType::Tablespace, "oid"}, {ObjectType::Extension, "ex.oid"},
+	{ObjectType::Function, "pr.oid"}, {ObjectType::Aggregate, "pr.oid"}, {ObjectType::Operator, "op.oid"},
+	{ObjectType::OpClass, "op.oid"}, {ObjectType::OpFamily, "op.oid"}, {ObjectType::Collation, "cl.oid"},
+	{ObjectType::Conversion, "cn.oid"}, {ObjectType::Cast, "cs.oid"}, {ObjectType::View, "vw.oid"},
+	{ObjectType::Sequence, "sq.oid"}, {ObjectType::Domain, "dm.oid"}, {ObjectType::Type, "tp.oid"},
+	{ObjectType::Table, "tb.oid"}, {ObjectType::Column, "cl.oid"}, {ObjectType::Constraint, "cs.oid"},
+	{ObjectType::Rule, "rl.oid"}, {ObjectType::Trigger, "tg.oid"}, {ObjectType::Index, "id.indexrelid"},
+	{ObjectType::EventTrigger, "et.oid"}, {ObjectType::Policy, "pl.oid"}, {ObjectType::ForeignDataWrapper, "fw.oid"},
+	{ObjectType::ForeignServer, "sv.oid"}, {ObjectType::UserMapping, "um.umid"}, {ObjectType::ForeignTable, "ft.oid"}
 };
 
 map<ObjectType, QString> Catalog::ext_oid_fields={
-	{OBJ_CONSTRAINT, "cs.conrelid"},
-	{OBJ_INDEX, "id.indexrelid"},
-	{OBJ_TRIGGER, "tg.tgrelid"},
-	{OBJ_RULE, "rl.ev_class"},
-	{OBJ_POLICY, "pl.polrelid"}
+	{ObjectType::Constraint, "cs.conrelid"},
+	{ObjectType::Index, "id.indexrelid"},
+	{ObjectType::Trigger, "tg.tgrelid"},
+	{ObjectType::Rule, "rl.ev_class"},
+	{ObjectType::Policy, "pl.polrelid"}
 };
 
 map<ObjectType, QString> Catalog::name_fields=
-{ {OBJ_DATABASE, "datname"}, {OBJ_ROLE, "rolname"}, {OBJ_SCHEMA,"nspname"},
-	{OBJ_LANGUAGE, "lanname"}, {OBJ_TABLESPACE, "spcname"}, {OBJ_EXTENSION, "extname"},
-	{OBJ_FUNCTION, "proname"}, {OBJ_AGGREGATE, "proname"}, {OBJ_OPERATOR, "oprname"},
-	{OBJ_OPCLASS, "opcname"}, {OBJ_OPFAMILY, "opfname"}, {OBJ_COLLATION, "collname"},
-	{OBJ_CONVERSION, "conname"}, {OBJ_CAST, ""}, {OBJ_VIEW, "relname"},
-	{OBJ_SEQUENCE, "relname"}, {OBJ_DOMAIN, "typname"}, {OBJ_TYPE, "typname"},
-	{OBJ_TABLE, "relname"}, {OBJ_COLUMN, "attname"}, {OBJ_CONSTRAINT, "conname"},
-	{OBJ_RULE, "rulename"}, {OBJ_TRIGGER, "tgname"}, {OBJ_INDEX, "relname"},
-	{OBJ_EVENT_TRIGGER, "evtname"}, {OBJ_POLICY, "polname"}
+{ {ObjectType::Database, "datname"}, {ObjectType::Role, "rolname"}, {ObjectType::Schema,"nspname"},
+	{ObjectType::Language, "lanname"}, {ObjectType::Tablespace, "spcname"}, {ObjectType::Extension, "extname"},
+	{ObjectType::Function, "proname"}, {ObjectType::Aggregate, "proname"}, {ObjectType::Operator, "oprname"},
+	{ObjectType::OpClass, "opcname"}, {ObjectType::OpFamily, "opfname"}, {ObjectType::Collation, "collname"},
+	{ObjectType::Conversion, "conname"}, {ObjectType::Cast, ""}, {ObjectType::View, "relname"},
+	{ObjectType::Sequence, "relname"}, {ObjectType::Domain, "typname"}, {ObjectType::Type, "typname"},
+	{ObjectType::Table, "relname"}, {ObjectType::Column, "attname"}, {ObjectType::Constraint, "conname"},
+	{ObjectType::Rule, "rulename"}, {ObjectType::Trigger, "tgname"}, {ObjectType::Index, "relname"},
+	{ObjectType::EventTrigger, "evtname"}, {ObjectType::Policy, "polname"}, {ObjectType::ForeignDataWrapper, "fdwname"},
+	{ObjectType::ForeignServer, "srvname"}, {ObjectType::ForeignTable, "relname"}
 };
 
 Catalog::Catalog(void)
 {
 	last_sys_oid=0;
-	setFilter(EXCL_EXTENSION_OBJS | EXCL_SYSTEM_OBJS);
+	setFilter(ExclExtensionObjs | ExclSystemObjs);
 }
 
 Catalog::Catalog(const Catalog &catalog)
@@ -85,31 +86,31 @@ void Catalog::setConnection(Connection &conn)
 		connection.connect();
 
 		//Retrieving the last system oid
-		executeCatalogQuery(QUERY_LIST, OBJ_DATABASE, res, true,
-		{{ParsersAttributes::NAME, conn.getConnectionParam(Connection::PARAM_DB_NAME)}});
+		executeCatalogQuery(QueryList, ObjectType::Database, res, true,
+		{{Attributes::Name, conn.getConnectionParam(Connection::ParamDbName)}});
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			attribs_map attribs=changeAttributeNames(res.getTupleValues());
-			last_sys_oid=attribs[ParsersAttributes::LAST_SYS_OID].toUInt();
+			last_sys_oid=attribs[Attributes::LastSysOid].toUInt();
 		}
 
 		//Retrieving the list of objects created by extensions
-		this->connection.executeDMLCommand(GET_EXT_OBJS_SQL, res);
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		this->connection.executeDMLCommand(GetExtensionObjsSql, res);
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
 				ext_obj.push_back(res.getColumnValue(QString("oid")));
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 
 			ext_obj_oids=ext_obj.join(',');
 		}
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -120,17 +121,17 @@ void Catalog::closeConnection(void)
 
 void Catalog::setFilter(unsigned filter)
 {
-	bool list_all=(LIST_ALL_OBJS & filter) == LIST_ALL_OBJS;
+	bool list_all=(ListAllObjects & filter) == ListAllObjects;
 
 	this->filter=filter;
 	list_only_sys_objs=false;
-	exclude_array_types=(EXCL_BUILTIN_ARRAY_TYPES & filter) == EXCL_BUILTIN_ARRAY_TYPES;
-	exclude_ext_objs=(EXCL_EXTENSION_OBJS & filter) == EXCL_EXTENSION_OBJS;
-	exclude_sys_objs=(EXCL_SYSTEM_OBJS & filter) == EXCL_SYSTEM_OBJS;
+	exclude_array_types=(ExclBuiltinArrayTypes & filter) == ExclBuiltinArrayTypes;
+	exclude_ext_objs=(ExclExtensionObjs & filter) == ExclExtensionObjs;
+	exclude_sys_objs=(ExclSystemObjs & filter) == ExclSystemObjs;
 
 	if(!list_all)
 	{
-		list_only_sys_objs=(LIST_ONLY_SYS_OBJS & filter) == LIST_ONLY_SYS_OBJS;
+		list_only_sys_objs=(ListOnlySystemObjs & filter) == ListOnlySystemObjs;
 
 		if(list_only_sys_objs)
 		{
@@ -157,17 +158,16 @@ bool Catalog::isExtensionObject(unsigned oid)
 
 void Catalog::loadCatalogQuery(const QString &qry_id)
 {
-	if((!use_cached_queries) ||
-			(use_cached_queries && catalog_queries.count(qry_id)==0))
+	if(catalog_queries.count(qry_id)==0)
 	{
 		QFile input;
-		input.setFileName(GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-						  CATALOG_SCH_DIR + GlobalAttributes::DIR_SEPARATOR +
-						  qry_id + GlobalAttributes::SCHEMA_EXT);
+		input.setFileName(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+							CatalogSchemasDir + GlobalAttributes::DirSeparator +
+							qry_id + GlobalAttributes::SchemaExt);
 
 		if(!input.open(QFile::ReadOnly))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(input.fileName()),
-							ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),
+											ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		catalog_queries[qry_id]=QString(input.readAll());
 		input.close();
@@ -184,44 +184,44 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	 * due to support to this char in the middle of objects' names */
 	for(auto &attr : attribs)
 	{
-		if(attr.first != ParsersAttributes::CUSTOM_FILTER && attr.second.contains(QChar('\'')))
+		if(attr.first != Attributes::CustomFilter && attr.second.contains(QChar('\'')))
 			attr.second.replace(QChar('\''), QString("''"));
 	}
 
 	schparser.setPgSQLVersion(connection.getPgSQLVersion(true));
-	attribs[qry_type]=ParsersAttributes::_TRUE_;
+	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)
-		attribs[ParsersAttributes::LAST_SYS_OID]=QString("%1").arg(last_sys_oid);
+		attribs[Attributes::LastSysOid]=QString("%1").arg(last_sys_oid);
 
 	if(list_only_sys_objs)
-		attribs[ParsersAttributes::OID_FILTER_OP]=QString("<=");
+		attribs[Attributes::OidFilterOp]=QString("<=");
 	else
-		attribs[ParsersAttributes::OID_FILTER_OP]=QString(">");
+		attribs[Attributes::OidFilterOp]=QString(">");
 
-	if(obj_type==OBJ_TYPE && exclude_array_types)
-		attribs[ParsersAttributes::EXC_BUILTIN_ARRAYS]=ParsersAttributes::_TRUE_;
+	if(obj_type==ObjectType::Type && exclude_array_types)
+		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
 
 	//Checking if the custom filter expression is present
-	if(attribs.count(ParsersAttributes::CUSTOM_FILTER))
+	if(attribs.count(Attributes::CustomFilter))
 	{
-		custom_filter=attribs[ParsersAttributes::CUSTOM_FILTER];
-		attribs.erase(ParsersAttributes::CUSTOM_FILTER);
+		custom_filter=attribs[Attributes::CustomFilter];
+		attribs.erase(Attributes::CustomFilter);
 	}
 
-	if(exclude_ext_objs && obj_type!=OBJ_DATABASE &&	obj_type!=OBJ_ROLE && obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_EXTENSION)
+	if(exclude_ext_objs && obj_type!=ObjectType::Database &&	obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Extension)
 	{
 		if(ext_oid_fields.count(obj_type)==0)
-			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(oid_fields[obj_type]);
+			attribs[Attributes::NotExtObject]=getNotExtObjectQuery(oid_fields[obj_type]);
 		else
-			attribs[ParsersAttributes::NOT_EXT_OBJECT]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
+			attribs[Attributes::NotExtObject]=getNotExtObjectQuery(ext_oid_fields[obj_type]);
 	}
 
 	loadCatalogQuery(BaseObject::getSchemaName(obj_type));
 	schparser.ignoreUnkownAttributes(true);
 	schparser.ignoreEmptyAttributes(true);
 
-	attribs[ParsersAttributes::PGSQL_VERSION]=schparser.getPgSQLVersion();
+	attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
 	sql=schparser.getCodeDefinition(attribs).simplified();
 
 	//Appeding the custom filter to the whole catalog query
@@ -256,7 +256,7 @@ void Catalog::executeCatalogQuery(const QString &qry_type, ObjectType obj_type, 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QString("catalog: %1").arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
@@ -267,16 +267,16 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	{
 		ResultSet res;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		extra_attribs[Attributes::Schema]=sch_name;
+		extra_attribs[Attributes::Table]=tab_name;
 
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
-		res.accessTuple(ResultSet::FIRST_TUPLE);
+		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
+		res.accessTuple(ResultSet::FirstTuple);
 		return(res.getTupleCount());
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -289,9 +289,9 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 {
 	try
 	{
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, { OBJ_DATABASE, OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
-																																OBJ_TEXTBOX, OBJ_TAG, OBJ_COLUMN, OBJ_PERMISSION,
-																																OBJ_GENERIC_SQL });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, { ObjectType::Database, ObjectType::Relationship, ObjectType::BaseRelationship,
+																																ObjectType::Textbox, ObjectType::Tag, ObjectType::Column, ObjectType::Permission,
+																																ObjectType::GenericSql });
 		attribs_map attribs, col_attribs, sch_names;
 		vector<attribs_map> tab_attribs;
 		unsigned tab_oid=0;
@@ -305,16 +305,16 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 				obj_oids[type].push_back(attr.first.toUInt());
 
 				//Store the schemas names in order to retrieve the tables' columns correctly
-				if(type==OBJ_SCHEMA)
+				if(type==ObjectType::Schema)
 					sch_names[attr.first]=attr.second;
-				else if(type==OBJ_TABLE)
+				else if(type==ObjectType::Table)
 				{
 					//Get the full set of attributes of the table
 					tab_oid=attr.first.toUInt();
 					tab_attribs=getObjectsAttributes(type, QString(), QString(), { tab_oid });
 
 					//Retrieve the oid and names of the table's columns
-					col_attribs=getObjectsNames(OBJ_COLUMN, sch_names[tab_attribs[0][ParsersAttributes::SCHEMA]], attr.second);
+					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][Attributes::Schema]], attr.second);
 
 					for(auto &col_attr : col_attribs)
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
@@ -324,7 +324,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -335,24 +335,24 @@ attribs_map Catalog::getObjectsNames(ObjectType obj_type, const QString &sch_nam
 		ResultSet res;
 		attribs_map objects;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, extra_attribs);
+		extra_attribs[Attributes::Schema]=sch_name;
+		extra_attribs[Attributes::Table]=tab_name;
+		executeCatalogQuery(QueryList, obj_type, res, false, extra_attribs);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
-				objects[res.getColumnValue(ParsersAttributes::OID)]=res.getColumnValue(ParsersAttributes::NAME);
+				objects[res.getColumnValue(Attributes::Oid)]=res.getColumnValue(Attributes::Name);
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(objects);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -366,13 +366,13 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		QStringList queries;
 		attribs_map attribs;
 
-		extra_attribs[ParsersAttributes::SCHEMA]=sch_name;
-		extra_attribs[ParsersAttributes::TABLE]=tab_name;
+		extra_attribs[Attributes::Schema]=sch_name;
+		extra_attribs[Attributes::Table]=tab_name;
 
 		for(ObjectType obj_type : obj_types)
 		{
 			//Build the catalog query for the specified object type
-			sql=getCatalogQuery(QUERY_LIST, obj_type, false, extra_attribs);
+			sql=getCatalogQuery(QueryList, obj_type, false, extra_attribs);
 
 			/* For certain objects the catalog query will be empty due to the
 			absence of that kind of element in the version of the database.
@@ -381,7 +381,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 			{
 				//Injecting the object type integer code in order to sort the final result
 				sql.replace(sql.indexOf(select_kw), select_kw.size(),
-										QString("%1 %2 AS object_type, ").arg(select_kw).arg(obj_type));
+										QString("%1 %2 AS object_type, ").arg(select_kw).arg(enum_cast(obj_type)));
 
 				sql+=QChar('\n');
 				queries.push_back(sql);
@@ -396,24 +396,24 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 
 		connection.executeDMLCommand(sql, res);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
-				attribs[ParsersAttributes::OID]=res.getColumnValue(ParsersAttributes::OID);
-				attribs[ParsersAttributes::NAME]=res.getColumnValue(ParsersAttributes::NAME);
-				attribs[ParsersAttributes::OBJECT_TYPE]=res.getColumnValue(QString("object_type"));
+				attribs[Attributes::Oid]=res.getColumnValue(Attributes::Oid);
+				attribs[Attributes::Name]=res.getColumnValue(Attributes::Name);
+				attribs[Attributes::ObjectType]=res.getColumnValue(QString("object_type"));
 				objects.push_back(attribs);
 				attribs.clear();
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(objects);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -425,21 +425,21 @@ attribs_map Catalog::getAttributes(const QString &obj_name, ObjectType obj_type,
 		attribs_map obj_attribs;
 
 		//Add the name of the object as extra attrib in order to retrieve the data only for it
-		extra_attribs[ParsersAttributes::NAME]=obj_name;
-		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, true, extra_attribs);
+		extra_attribs[Attributes::Name]=obj_name;
+		executeCatalogQuery(QueryAttribs, obj_type, res, true, extra_attribs);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 			obj_attribs=changeAttributeNames(res.getTupleValues());
 
 		/* Insert the object type as an attribute of the query result to facilitate the
 		import process on the classes that uses the Catalog */
-		obj_attribs[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
+		obj_attribs[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
 
 		return(obj_attribs);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -451,8 +451,8 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 		attribs_map tuple;
 		vector<attribs_map> obj_attribs;
 
-		executeCatalogQuery(QUERY_ATTRIBS, obj_type, res, false, extra_attribs);
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		executeCatalogQuery(QueryAttribs, obj_type, res, false, extra_attribs);
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -460,37 +460,71 @@ vector<attribs_map> Catalog::getMultipleAttributes(ObjectType obj_type, attribs_
 
 				/* Insert the object type as an attribute of the query result to facilitate the
 				import process on the classes that uses the Catalog */
-				tuple[ParsersAttributes::OBJECT_TYPE]=QString("%1").arg(obj_type);
+				tuple[Attributes::ObjectType]=QString("%1").arg(enum_cast(obj_type));
 
 				obj_attribs.push_back(tuple);
 				tuple.clear();
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
 		return(obj_attribs);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+vector<attribs_map> Catalog::getMultipleAttributes(const QString &catalog_sch, attribs_map attribs)
+{
+	try
+	{
+		ResultSet res;
+		attribs_map tuple;
+		vector<attribs_map> obj_attribs;
+
+		loadCatalogQuery(catalog_sch);
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
+
+		attribs[Attributes::PgSqlVersion]=schparser.getPgSQLVersion();
+		connection.executeDMLCommand(schparser.getCodeDefinition(attribs).simplified(), res);
+
+		if(res.accessTuple(ResultSet::FirstTuple))
+		{
+			do
+			{
+				tuple=changeAttributeNames(res.getTupleValues());
+				obj_attribs.push_back(tuple);
+				tuple.clear();
+			}
+			while(res.accessTuple(ResultSet::NextTuple));
+		}
+
+		return(obj_attribs);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 {
-	QString query_id=ParsersAttributes::COMMENT;
+	QString query_id=Attributes::Comment;
 
 	try
 	{
-		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-												 {ParsersAttributes::SHARED_OBJ, (is_shared_obj ? ParsersAttributes::_TRUE_ : QString())}};
+		attribs_map attribs={{Attributes::Oid, oid_field},
+												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : QString())}};
 
 		loadCatalogQuery(query_id);
 		return(schparser.getCodeDefinition(attribs).simplified());
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QString("catalog: %1").arg(query_id));
 	}
 }
@@ -501,8 +535,8 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 
 	try
 	{
-		attribs_map attribs={{ParsersAttributes::OID, oid_field},
-							 {ParsersAttributes::EXT_OBJ_OIDS, ext_obj_oids}};
+		attribs_map attribs={{Attributes::Oid, oid_field},
+							 {Attributes::ExtObjOids, ext_obj_oids}};
 
 
 		loadCatalogQuery(query_id);
@@ -510,7 +544,7 @@ QString Catalog::getNotExtObjectQuery(const QString &oid_field)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QString("catalog: %1").arg(query_id));
 	}
 }
@@ -526,11 +560,11 @@ attribs_map Catalog::changeAttributeNames(const attribs_map &attribs)
 		attr_name=itr->first;
 		value=itr->second;
 
-		if(attr_name.endsWith(BOOL_FIELD))
+		if(attr_name.endsWith(BoolField))
 		{
-			attr_name.remove(BOOL_FIELD);
-			if(value==PGSQL_FALSE) value.clear();
-			else value=ParsersAttributes::_TRUE_;
+			attr_name.remove(BoolField);
+			if(value==PgSqlFalse) value.clear();
+			else value=Attributes::True;
 		}
 
 		attr_name.replace('_','-');
@@ -558,24 +592,24 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 {
 	try
 	{
-		bool is_shared_obj=(obj_type==OBJ_DATABASE ||	obj_type==OBJ_ROLE ||	obj_type==OBJ_TABLESPACE ||
-												obj_type==OBJ_LANGUAGE || obj_type==OBJ_CAST);
+		bool is_shared_obj=(obj_type==ObjectType::Database ||	obj_type==ObjectType::Role ||	obj_type==ObjectType::Tablespace ||
+												obj_type==ObjectType::Language || obj_type==ObjectType::Cast);
 
-		extra_attribs[ParsersAttributes::SCHEMA]=schema;
-		extra_attribs[ParsersAttributes::TABLE]=table;
+		extra_attribs[Attributes::Schema]=schema;
+		extra_attribs[Attributes::Table]=table;
 
 		if(!filter_oids.empty())
-			extra_attribs[ParsersAttributes::FILTER_OIDS]=createOidFilter(filter_oids);
+			extra_attribs[Attributes::FilterOids]=createOidFilter(filter_oids);
 
 		//Retrieve the comment catalog query. Only columns need to retreive comments in their own catalog query file
-		if(obj_type != OBJ_COLUMN)
-			extra_attribs[ParsersAttributes::COMMENT]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
+		if(obj_type != ObjectType::Column)
+			extra_attribs[Attributes::Comment]=getCommentQuery(oid_fields[obj_type], is_shared_obj);
 
 		return(getMultipleAttributes(obj_type, extra_attribs));
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
@@ -589,7 +623,7 @@ attribs_map Catalog::getObjectAttributes(ObjectType obj_type, unsigned oid, cons
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
@@ -601,26 +635,26 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 		attribs_map attribs;
 		ResultSet res;
 
-		attribs[ParsersAttributes::CUSTOM_FILTER] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
-		attribs[ParsersAttributes::SCHEMA] = schema;
-		attribs[ParsersAttributes::TABLE] = table;
-		executeCatalogQuery(QUERY_LIST, obj_type, res, false, attribs);
+		attribs[Attributes::CustomFilter] = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(name);
+		attribs[Attributes::Schema] = schema;
+		attribs[Attributes::Table] = table;
+		executeCatalogQuery(QueryList, obj_type, res, false, attribs);
 
 		if(res.getTupleCount() > 1)
 			throw Exception(QApplication::translate("Catalog","The catalog query returned more than one OID!","", -1),
-											ERR_CUSTOM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+											ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		else if(res.isEmpty())
 			return("0");
 		else
 		{
-			res.accessTuple(ResultSet::FIRST_TUPLE);
-			return(res.getColumnValue(ParsersAttributes::OID));
+			res.accessTuple(ResultSet::FirstTuple);
+			return(res.getColumnValue(Attributes::Oid));
 		}
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
@@ -641,25 +675,25 @@ attribs_map Catalog::getServerAttributes(void)
 		sql = schparser.getCodeDefinition(attribs).simplified();
 		connection.executeDMLCommand(sql, res);
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
 				tuple=res.getTupleValues();
-				attr_name = tuple[ParsersAttributes::ATTRIBUTE];
+				attr_name = tuple[Attributes::Attribute];
 				attr_name.replace('_','-');
-				attribs[attr_name]=tuple[ParsersAttributes::VALUE];
+				attribs[attr_name]=tuple[Attributes::Value];
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 
-			attribs[ParsersAttributes::CONNECTION] = connection.getConnectionId();
+			attribs[Attributes::Connection] = connection.getConnectionId();
 			attribs_aux = connection.getServerInfo();
 			attribs.insert(attribs_aux.begin(), attribs_aux.end()) ;
 		}
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
 						QApplication::translate("Catalog","Object type: server","", -1));
 	}
 
@@ -670,7 +704,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 {
 	QStringList list;
 
-	if(QRegExp(ARRAY_PATTERN).exactMatch(array_val))
+	if(QRegExp(ArrayPattern).exactMatch(array_val))
 	{
 		//Detecting the position of { and }
 		int start=array_val.indexOf('{')+1,
@@ -752,14 +786,49 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 	return(cmds.mid(start,(end - start) + 1).split(';', QString::SkipEmptyParts));
 }
 
-void Catalog::enableCachedQueries(bool value)
+QStringList Catalog::parseIndexExpressions(const QString &expr)
 {
-	use_cached_queries=value;
-}
+	int open_paren = 0, close_paren = 0, pos = 0;
+	QStringList expressions;
+	QChar chr;
+	QString word;
+	bool open_apos = false;
 
-bool Catalog::isCachedQueriesEnabled(void)
-{
-	return(use_cached_queries);
+	if(!expr.isEmpty())
+	{
+		while(pos < expr.length())
+		{
+			chr = expr[pos++];
+			word += chr;
+
+			if(chr == QChar('\''))
+				open_apos = !open_apos;
+
+			if(!open_apos && chr == QChar('('))
+				open_paren++;
+			else if(!open_apos && chr == QChar(')'))
+				close_paren++;
+
+			if(chr == QChar(',') || pos == expr.length())
+			{
+				if(open_paren == close_paren)
+				{
+					if(word.endsWith(QChar(',')))
+						word.remove(word.length() - 1, 1);
+
+					if(word.contains('(') && word.contains(')'))
+						expressions.push_back(word.trimmed());
+					else
+						expressions.push_back(word);
+
+					word.clear();
+					open_paren = close_paren = 0;
+				}
+			}
+		}
+	}
+
+	return(expressions);
 }
 
 void Catalog::operator = (const Catalog &catalog)
@@ -778,6 +847,6 @@ void Catalog::operator = (const Catalog &catalog)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

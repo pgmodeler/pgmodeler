@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,12 +54,16 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		//! brief Generated the CSV-like buffer to be used as initial data in the table object
 		QString generateDataBuffer(void);
 
+		void showEvent(QShowEvent *);
+
+		void enterEvent(QEvent *);
+
 	public:
-		static const QString PLACEHOLDER_COLUMN;
+		static const QString PlaceholderColumn;
 
-		TableDataWidget(QWidget * parent = 0);
+		TableDataWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, Table *table);
+		void setAttributes(DatabaseModel *model, PhysicalTable *table);
 
 	public slots:
 		void applyConfiguration(void);

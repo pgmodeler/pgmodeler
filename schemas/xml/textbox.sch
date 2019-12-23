@@ -1,7 +1,7 @@
 # XML definition for textboxes
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<textbox name=] "{name}" 
+[<textbox name=] "{name}" [ layer=]"{layer}"
 
  %if {protected} %then 
   [ protected=] "true"

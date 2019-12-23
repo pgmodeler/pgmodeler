@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ void DatabaseModelTest::saveObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omf"),
-			input=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm");
+	QString output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo.omf"),
+			input=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm");
 
 	try
 	{
@@ -55,16 +55,16 @@ void DatabaseModelTest::loadObjectsMetadata(void)
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
-	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo.omf"),
-			input_dbm=SAMPLESDIR + GlobalAttributes::DIR_SEPARATOR + QString("demo.dbm"),
-			output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DIR_SEPARATOR + QString("demo_changed.dbm");
+	QString input_opf=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo.omf"),
+			input_dbm=SAMPLESDIR + GlobalAttributes::DirSeparator + QString("demo.dbm"),
+			output=QFileInfo(BINDIR).absolutePath() + GlobalAttributes::DirSeparator + QString("demo_changed.dbm");
 
 	try
 	{
 		dbmodel.createSystemObjects(false);
 		dbmodel.loadModel(input_dbm);
 		dbmodel.loadObjectsMetadata(input_opf);
-		dbmodel.saveModel(output, SchemaParser::XML_DEFINITION);
+		dbmodel.saveModel(output, SchemaParser::XmlDefinition);
 		QCOMPARE(true, true);
 	}
 	catch (Exception &e)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,21 +87,45 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 	if(!csv_buffer.isEmpty())
 	{
 		QString	double_quote=QString("%1%1").arg(text_delim),
-				placeholder = QString("⁋"), aux_buffer = csv_buffer;
+				placeholder = QString(QChar::ReplacementCharacter),
+				escaped_delim = QString("\u2020"), //Unicode char to be used as a placeholder for escaped text delimiter, e.g., \"
+				escaped_sep = QString("\u2052"),  //Unicode char to be used as a placeholder for escaped value separator, e.g., \;
+				aux_buffer = csv_buffer,
+				win_line_break = QString("%1%2").arg(QChar(QChar::CarriageReturn)).arg(QChar(QChar::LineFeed)),
+				mac_line_break = QString("%1").arg(QChar(QChar::CarriageReturn));
 		QStringList values, rows;
 		QRegExp empty_val;
 
-		//If no custom separator is specified we use the default ';'
-		aux_buffer.replace(QString("\r\n"), placeholder);
-		rows=aux_buffer.split(QChar::LineFeed, QString::SkipEmptyParts);
-		rows.replaceInStrings(placeholder, QString("\r\n"));
+		if(aux_buffer.contains(win_line_break))
+			aux_buffer.replace(win_line_break, QString(QChar::LineFeed));
+		else if(aux_buffer.contains(mac_line_break))
+			aux_buffer.replace(mac_line_break, QString(QChar::LineFeed));
+
+		/* In order to avoid wrong replacement of escapade both text delimiter and value separator
+		 * we replace them by their respective placeholders in order to revert them back to their
+		 * original representation on the final (formated) string */
+		aux_buffer.replace(QString("\\%1").arg(text_delim), escaped_delim);
+		aux_buffer.replace(QString("\\%1").arg(separator), escaped_sep);
 
 		if(cols_in_first_row)
 		{
-			csv_cols=rows[0].split(separator);
+			int lf_idx = aux_buffer.indexOf(QChar::LineFeed);
+
+			if(lf_idx < 0)
+				lf_idx = aux_buffer.size();
+
+			csv_cols=aux_buffer.mid(0, lf_idx).split(separator);
 			csv_cols.replaceInStrings(text_delim, QString());
-			rows.removeAt(0);
+
+			//Replace the escaped separator and delimiter by their original form in the col names
+			csv_cols.replaceInStrings(escaped_sep, separator);
+			csv_cols.replaceInStrings(escaped_delim, text_delim);
+
+			aux_buffer.replace(0, lf_idx + 1, QString());
 		}
+
+		aux_buffer.replace(QString("%1%2").arg(QChar(QChar::LineFeed)).arg(text_delim), placeholder);
+		rows = aux_buffer.split(placeholder, QString::SkipEmptyParts);
 
 		//Configuring an regexp to remove empty quoted values, e.g, "",
 		if(!text_delim.isEmpty())
@@ -113,14 +137,21 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 				row.replace(empty_val, separator);
 
 			/* In order to preserve double quotes (double delimiters) inside the values,
-			 we first replace them by a placeholder, erase the delimiters and restore the previous value */
+			 * we first replace them by a placeholder, erase the delimiters and restore the previous value */
 			row.replace(double_quote, placeholder);
 			row.replace(text_delim, QString());
 			row.replace(placeholder, double_quote);
 
 			values = row.split(separator);
+
 			for(int i =0; i < values.count(); i++)
+			{
+				//Replace the escaped separator and delimiter by their original form in the final value
+				values[i].replace(escaped_sep, separator);
+				values[i].replace(escaped_delim, text_delim);
+
 				values[i] = values[i].trimmed();
+			}
 
 			csv_rows.append(values);
 		}
@@ -137,8 +168,8 @@ void CsvLoadWidget::loadCsvFile(void)
 	file.setFileName(file_edt->text());
 
 	if(!file.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_edt->text()),
-										ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_edt->text()),
+										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	csv_columns.clear();
 	csv_rows.clear();
@@ -147,17 +178,20 @@ void CsvLoadWidget::loadCsvFile(void)
 
 	if(!csv_buffer.isEmpty())
 	{
-		QString separator;
-		QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
-		separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
-		separator = separators[separator_cmb->currentIndex()];
-		csv_rows = loadCsvFromBuffer(csv_buffer, separator,
+		csv_rows = loadCsvFromBuffer(csv_buffer, getSeparator(),
 																 txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
 																 col_names_chk->isChecked(), csv_columns);
 	}
 
 	file_edt->clear();
 	emit s_csvFileLoaded();
+}
+
+QString CsvLoadWidget::getSeparator(void)
+{
+	QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
+	separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
+	return(separators[separator_cmb->currentIndex()]);
 }
 
 QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
@@ -184,4 +218,18 @@ QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
 bool CsvLoadWidget::isColumnsInFirstRow(void)
 {
 	return(col_names_chk->isChecked());
+}
+
+void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row)
+{
+	csv_columns.clear();
+	csv_rows.clear();
+	csv_rows = loadCsvFromBuffer(csv_buffer, separator, text_delim, cols_in_first_row, csv_columns);
+}
+
+void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer)
+{
+	loadCsvBuffer(csv_buffer, getSeparator(),
+								txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
+								col_names_chk->isChecked());
 }

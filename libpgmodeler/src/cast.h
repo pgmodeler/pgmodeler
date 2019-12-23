@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class Cast: public BaseObject {
 		/*! \brief Data types used on the cast:
 		0 -> Source data type
 		1 -> Destination data type */
-		PgSQLType types[2];
+		PgSqlType types[2];
 
 		//! \brief Conversion type (ASSIGNMENT or IMPLICIT)
 		unsigned cast_type;
@@ -47,19 +47,24 @@ class Cast: public BaseObject {
 		 function of the source data type */
 		bool is_in_out;
 
+	protected:
+		virtual void configureSearchAttributes(void);
+
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
-		static const unsigned SRC_TYPE=0,
-		DST_TYPE=1,
+		static constexpr unsigned SrcType=0,
+		DstType=1,
+
 		//! \brief Constants used to define the cast type
-		EXPLICIT=0,
-		ASSIGNMENT=1,
-		IMPLICIT=2;
+		Explicit=0,
+		Assignment=1,
+		Implicit=2;
+
 		Cast(void);
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
-		void setDataType(unsigned type_idx, PgSQLType type);
+		void setDataType(unsigned type_idx, PgSqlType type);
 
 		//! \brief Defines the cast type (using constants ASSINGMENT | IMPLICIT)
 		void setCastType(unsigned cast_type);
@@ -73,7 +78,7 @@ class Cast: public BaseObject {
 		void setInOut(bool value);
 
 		//! \brief Returns one of the cast envolved data types
-		PgSQLType getDataType(unsigned type_idx);
+		PgSqlType getDataType(unsigned type_idx);
 
 		//! \brief Returns the cast type
 		unsigned getCastType(void);

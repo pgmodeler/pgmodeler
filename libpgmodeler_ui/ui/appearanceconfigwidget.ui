@@ -109,7 +109,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Table: Table name</string>
+          <string>Table: Name</string>
          </property>
         </item>
         <item>
@@ -169,12 +169,22 @@
         </item>
         <item>
          <property name="text">
+          <string>Policy: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Policy: Descriptor</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>View: Schema name</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>View: View name</string>
+          <string>View: Name</string>
          </property>
         </item>
         <item>
@@ -239,7 +249,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Column (pk): Column name</string>
+          <string>Column (pk): Name</string>
          </property>
         </item>
         <item>
@@ -249,7 +259,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Column (fk): Column name</string>
+          <string>Column (fk): Name</string>
          </property>
         </item>
         <item>
@@ -259,7 +269,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Column (uq): Column name</string>
+          <string>Column (uq): Name</string>
          </property>
         </item>
         <item>
@@ -269,7 +279,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Column (nn): Column name</string>
+          <string>Column (nn): Name</string>
          </property>
         </item>
         <item>
@@ -315,6 +325,31 @@
         <item>
          <property name="text">
           <string>Placeholder: Body</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Schema name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Attributes box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Extended attributes box</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreign table: Title box</string>
          </property>
         </item>
        </widget>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,13 +46,13 @@ class ValidationInfo {
 		QStringList errors;
 
 	public:
-		static const unsigned NO_UNIQUE_NAME=0,
-		BROKEN_REFERENCE=1,
-		SP_OBJ_BROKEN_REFERENCE=2,
-		BROKEN_REL_CONFIG=3,
-		MISSING_EXTENSION=4,
-		SQL_VALIDATION_ERR=5,
-		VALIDATION_ABORTED=6;
+		static constexpr unsigned NoUniqueName=0,
+		BrokenReference=1,
+		SpObjBrokenReference=2,
+		BrokenRelConfig=3,
+		MissingExtension=4,
+		SqlValidationError=5,
+		ValidationAborted=6;
 
 		ValidationInfo(void);
 		ValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> references);

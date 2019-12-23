@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "eventtriggerwidget.h"
 
-EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_EVENT_TRIGGER)
+EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::EventTrigger)
 {
 	map<QString, vector<QWidget *> > fields_map;
 	map<QWidget *, vector<QString> > values_map;
@@ -26,24 +26,24 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	Ui_EventTriggerWidget::setupUi(this);
 
-	function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
-									 ObjectsTableWidget::EDIT_BUTTON |
-									 ObjectsTableWidget::UPDATE_BUTTON |
-									 ObjectsTableWidget::REMOVE_BUTTON |
-									 ObjectsTableWidget::REMOVE_ALL_BUTTON |
-									 ObjectsTableWidget::MOVE_BUTTONS, false, this);
+	function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
+	filter_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
+									 ObjectsTableWidget::EditButton |
+									 ObjectsTableWidget::UpdateButton |
+									 ObjectsTableWidget::RemoveButton |
+									 ObjectsTableWidget::RemoveAllButton |
+									 ObjectsTableWidget::MoveButtons, false, this);
 	filter_tab->setColumnCount(1);
 	filter_tab->setHeaderLabel(trUtf8("Tag command"), 0);
 
 	eventtrigger_grid->addWidget(function_sel, 1, 1);
 	filter_layout->addWidget(filter_tab);
 
-	configureFormLayout(eventtrigger_grid, OBJ_EVENT_TRIGGER);
+	configureFormLayout(eventtrigger_grid, ObjectType::EventTrigger);
 	setRequiredField(function_lbl);
 
-	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(event_lbl);
-	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::table_rewrite));
+	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(event_lbl);
+	values_map[event_lbl].push_back(~EventTriggerType(EventTriggerType::TableRewrite));
 
 	frame=BaseObjectWidget::generateVersionWarningFrame(fields_map, &values_map);
 	frame->setParent(this);
@@ -59,15 +59,15 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));
 
 	connect(filter_tab, &ObjectsTableWidget::s_rowsRemoved,
-			[&](){ filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false); });
+			[&](){ filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false); });
 
 	connect(filter_tab, &ObjectsTableWidget::s_rowEdited,
 			[&](int row){ tag_edt->setText(filter_tab->getCellText(row, 0)); });
 
 	connect(tag_edt, &QLineEdit::textChanged,
 			[&](){
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, !tag_edt->text().isEmpty());
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::UPDATE_BUTTON, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, !tag_edt->text().isEmpty());
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::UpdateButton, !tag_edt->text().isEmpty());
 	});
 
 	setMinimumSize(500, 440);
@@ -83,10 +83,10 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		event_cmb->setCurrentText(~event_trig->getEvent());
 		function_sel->setSelectedObject(event_trig->getFunction());
 
-		QStringList filter=event_trig->getFilter(ParsersAttributes::TAG.toUpper());
+		QStringList filter=event_trig->getFilter(Attributes::Tag.toUpper());
 
 		if(filter.isEmpty())
-			filter=event_trig->getFilter(ParsersAttributes::TAG);
+			filter=event_trig->getFilter(Attributes::Tag);
 
 		filter_tab->blockSignals(true);
 
@@ -100,7 +100,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		filter_tab->clearSelection();
 	}
 
-	filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false);
+	filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
 void EventTriggerWidget::applyConfiguration(void)
@@ -118,14 +118,14 @@ void EventTriggerWidget::applyConfiguration(void)
 
 		event_trig->clearFilter();
 		for(unsigned row=0; row < filter_tab->getRowCount(); row++)
-			event_trig->setFilter(ParsersAttributes::TAG.toUpper(), filter_tab->getCellText(row, 0));
+			event_trig->setFilter(Attributes::Tag.toUpper(), filter_tab->getCellText(row, 0));
 
 		finishConfiguration();
 	}
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -136,7 +136,7 @@ void EventTriggerWidget::handleTagValue(int row)
 		filter_tab->setCellText(tag_edt->text().simplified(), row, 0);
 		tag_edt->clear();
 		filter_tab->clearSelection();
-		filter_tab->setButtonsEnabled(ObjectsTableWidget::ADD_BUTTON, false);
+		filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 	}
 	else if(filter_tab->getCellText(row, 0).isEmpty())
 		filter_tab->removeRow(row);

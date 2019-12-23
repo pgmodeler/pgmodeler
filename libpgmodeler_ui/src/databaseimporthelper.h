@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class DatabaseImportHelper: public QObject {
 		//! \brief Random number generator engine used to generate random colors for imported schemas
 		default_random_engine rand_num_engine;
 		
-		static const QString UNKNOWN_OBJECT_OID_XML;
+		static const QString UnkownObjectOidXml;
 		
 		/*! \brief File handle to log the import process. This file is opened for writing only when
 		the 'ignore_errors' is true */
@@ -125,8 +125,11 @@ class DatabaseImportHelper: public QObject {
 		
 		//! \brief Reference for the database model instance of the model widget
 		DatabaseModel *dbmodel;
-		
-		XMLParser *xmlparser;
+
+		//! \brief Stored the table created (value) from the oid (key) so the partitioning hierarchy (if existent) can be reconstructed
+		map<unsigned, PhysicalTable *> imported_tables;
+
+		XmlParser *xmlparser;
 		
 		SchemaParser schparser;
 		
@@ -157,10 +160,19 @@ class DatabaseImportHelper: public QObject {
 		void createPolicy(attribs_map &attribs);
 		void createPermission(attribs_map &attribs);
 		void createEventTrigger(attribs_map &attribs);
+		void createForeignDataWrapper(attribs_map &attribs);
+		void createForeignServer(attribs_map &attribs);
+		void createUserMapping(attribs_map &attribs);
+		void createForeignTable(attribs_map &attribs);
 		void __createTableInheritances(void);
 		void createTableInheritances(void);
+		void createTablePartitionings(void);
 		void destroyDetachedColumns(void);
-		
+
+		/*! \brief Create the columns of the table represented by the passed attributes.
+		 * The inh_cols is used to hold the id of inherited columns to be managed later */
+		void createColumns(attribs_map &attribs, vector<unsigned> &inh_cols);
+
 		//! \brief Tries to assign imported sequences that are related to nextval() calls used in columns default values
 		void assignSequencesToColumns(void);
 		
@@ -204,13 +216,9 @@ class DatabaseImportHelper: public QObject {
 		
 		//! \brief Return a string containing all attributes and their values in a formatted way
 		QString dumpObjectAttributes(attribs_map &attribs);
-		
-		/*! \brief Parse a set of expressions related to an index returned by the pg_get_expr(oid) and separates
-		 * them as a string list. */
-		QStringList parseIndexExpressions(const QString &expr);
 
 	public:
-		DatabaseImportHelper(QObject *parent=0);
+		DatabaseImportHelper(QObject *parent = nullptr);
 		
 		//! \brief Set the connection used to access the PostgreSQL server
 		void setConnection(Connection &conn);
@@ -268,7 +276,7 @@ class DatabaseImportHelper: public QObject {
 		
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 		
 		//! \brief This signal is emited when the import has finished
 		void s_importFinished(Exception e=Exception());

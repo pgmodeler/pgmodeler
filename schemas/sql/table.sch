@@ -1,5 +1,4 @@
 # SQL definition for tables
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -18,7 +17,13 @@
   [ UNLOGGED]
 %end
 
-[ TABLE ] {name} ( $br
+[ TABLE ] {name} 
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then $br [PARTITION OF ] {partitioned-table} $sp %end
+
+%if %not {partitioned-table} %or ({pgsql-ver} <f "10.0")  %then 
+
+[ (] $br
   %if {copy-table} %then
     $tb LIKE $sp {copy-table}
     %if %not {gen-alter-cmds} %then
@@ -33,18 +38,36 @@
         
         %if %not {constr-sql-disabled} %and {constraints} %then [,] $br %end
     %end
+    
+    %if {inh-columns} %then 
+        $br {inh-columns} 
+    %end
 
-    %if {inh-columns} %then {inh-columns} %end
-
-    %if {constraints} %then       
+    %if {constraints} %then
         {constraints}
     %end
+
   %end
 
 $br )
 
-%if {ancestor-table} %then [ INHERITS(] {ancestor-table} [)] $br %end
-%if {oids} %then [WITH ( OIDS = TRUE )] %end
+%else 
+    %if %not {gen-alter-cmds} %and {partitioned-table} %and {constraints} %then
+        [ (] $br {constraints} $br [)] 
+    %end
+%end
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioned-table} %then 
+    %if {partition-bound-expr} %then
+        $br [FOR VALUES ] {partition-bound-expr}
+    %else
+        DEFAULT
+    %end
+%end
+
+%if ({pgsql-ver} >=f "10.0") %and {partitioning} %then $br [PARTITION BY ] {partitioning} [ (] {partitionkey} [)] %end
+%if {ancestor-table} %then $br [ INHERITS(] {ancestor-table} [)] %end
+%if ({pgsql-ver} <=f "11.0") %and {oids} %then $br [WITH ( OIDS = TRUE )] %end
 %if {tablespace} %then
  $br [TABLESPACE ] {tablespace}
 %end

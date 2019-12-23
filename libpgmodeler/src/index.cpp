@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,26 +20,26 @@
 
 Index::Index(void)
 {
-	obj_type=OBJ_INDEX;
-	index_attribs[UNIQUE]=index_attribs[CONCURRENT]=
-			index_attribs[FAST_UPDATE]=index_attribs[BUFFERING]=false;
+	obj_type=ObjectType::Index;
+	index_attribs[Unique]=index_attribs[Concurrent]=
+			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;
-	attributes[ParsersAttributes::UNIQUE]=QString();
-	attributes[ParsersAttributes::CONCURRENT]=QString();
-	attributes[ParsersAttributes::TABLE]=QString();
-	attributes[ParsersAttributes::INDEX_TYPE]=QString();
-	attributes[ParsersAttributes::COLUMNS]=QString();
-	attributes[ParsersAttributes::EXPRESSION]=QString();
-	attributes[ParsersAttributes::FACTOR]=QString();
-	attributes[ParsersAttributes::PREDICATE]=QString();
-	attributes[ParsersAttributes::OP_CLASS]=QString();
-	attributes[ParsersAttributes::NULLS_FIRST]=QString();
-	attributes[ParsersAttributes::ASC_ORDER]=QString();
-	attributes[ParsersAttributes::DECL_IN_TABLE]=QString();
-	attributes[ParsersAttributes::ELEMENTS]=QString();
-	attributes[ParsersAttributes::FAST_UPDATE]=QString();
-	attributes[ParsersAttributes::BUFFERING]=QString();
-	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::Unique]=QString();
+	attributes[Attributes::Concurrent]=QString();
+	attributes[Attributes::Table]=QString();
+	attributes[Attributes::IndexType]=QString();
+	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::Expression]=QString();
+	attributes[Attributes::Factor]=QString();
+	attributes[Attributes::Predicate]=QString();
+	attributes[Attributes::OpClass]=QString();
+	attributes[Attributes::NullsFirst]=QString();
+	attributes[Attributes::AscOrder]=QString();
+	attributes[Attributes::DeclInTable]=QString();
+	attributes[Attributes::Elements]=QString();
+	attributes[Attributes::FastUpdate]=QString();
+	attributes[Attributes::Buffering]=QString();
+	attributes[Attributes::StorageParams]=QString();
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -51,10 +51,10 @@ void Index::setIndexElementsAttribute(unsigned def_type)
 	for(i=0; i < count; i++)
 	{
 		str_elem+=idx_elements[i].getCodeDefinition(def_type);
-		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=',';
+		if(i < (count-1) && def_type==SchemaParser::SqlDefinition) str_elem+=',';
 	}
 
-	attributes[ParsersAttributes::ELEMENTS]=str_elem;
+	attributes[Attributes::Elements]=str_elem;
 }
 
 int Index::getElementIndex(IndexElement elem)
@@ -74,9 +74,9 @@ int Index::getElementIndex(IndexElement elem)
 void Index::addIndexElement(IndexElement elem)
 {
 	if(getElementIndex(elem) >= 0)
-		throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem.getExpression().isEmpty() && !elem.getColumn())
-		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.push_back(elem);
 	setCodeInvalidated(true);
@@ -91,18 +91,18 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 
 		//Raises an error if the expression is empty
 		if(expr.isEmpty())
-			throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::AsgInvalidExpressionObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setExpression(expr);
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(IndexElement::AscOrder, asc_order);
 
 		if(getElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -110,7 +110,7 @@ void Index::addIndexElement(const QString &expr, Collation *coll, OperatorClass 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -122,21 +122,21 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 
 		//Case the column is not allocated raises an error
 		if(!column)
-			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedColumn)
 							.arg(this->getName())
 							.arg(this->getTypeName()),
-							ERR_ASG_NOT_ALOC_COLUMN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgNotAllocatedColumn, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Configures the element
 		elem.setColumn(column);
 		elem.setOperatorClass(op_class);
 		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingAttribute(IndexElement::NullsFirst, nulls_first);
+		elem.setSortingAttribute(IndexElement::AscOrder, asc_order);
 
 		if(getElementIndex(elem) >= 0)
-			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::InsDuplicatedElement,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		idx_elements.push_back(elem);
 		setCodeInvalidated(true);
@@ -144,7 +144,7 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -162,14 +162,14 @@ void Index::addIndexElements(vector<IndexElement> &elems)
 	catch(Exception &e)
 	{
 		idx_elements = elems_bkp;
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void Index::removeIndexElement(unsigned idx_elem)
 {
 	if(idx_elem >= idx_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	idx_elements.erase(idx_elements.begin() + idx_elem);
 	setCodeInvalidated(true);
@@ -184,7 +184,7 @@ void Index::removeIndexElements(void)
 IndexElement Index::getIndexElement(unsigned elem_idx)
 {
 	if(elem_idx >= idx_elements.size())
-		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(idx_elements[elem_idx]);
 }
@@ -201,8 +201,8 @@ unsigned Index::getIndexElementCount(void)
 
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
-	if(attrib_id > BUFFERING)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib_id > Buffering)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(index_attribs[attrib_id] != value);
 	index_attribs[attrib_id]=value;
@@ -234,8 +234,8 @@ unsigned Index::getFillFactor(void)
 
 bool Index::getIndexAttribute(unsigned attrib_id)
 {
-	if(attrib_id > BUFFERING)
-		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(attrib_id > Buffering)
+		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(index_attribs[attrib_id]);
 }
@@ -331,38 +331,38 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return(code_def);
 
 	setIndexElementsAttribute(def_type);
-	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? ParsersAttributes::_TRUE_ : QString());
-	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
-	attributes[ParsersAttributes::PREDICATE]=predicate;
-	attributes[ParsersAttributes::STORAGE_PARAMS]=QString();
+	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : QString());
+	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
+	attributes[Attributes::IndexType]=(~indexing_type);
+	attributes[Attributes::Predicate]=predicate;
+	attributes[Attributes::StorageParams]=QString();
 
 	if(getParentTable())
 	{
-		attributes[ParsersAttributes::TABLE]=getParentTable()->getName(true);
+		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-		if(def_type==SchemaParser::SQL_DEFINITION && getParentTable()->getSchema())
-			attributes[ParsersAttributes::SCHEMA]=getParentTable()->getSchema()->getName(true);
+		if(def_type==SchemaParser::SqlDefinition && getParentTable()->getSchema())
+			attributes[Attributes::Schema]=getParentTable()->getSchema()->getName(true);
 	}
 
-	if(this->indexing_type==IndexingType::gin)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : QString());
+	if(this->indexing_type==IndexingType::Gin)
+		attributes[Attributes::StorageParams]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : QString());
 
-	if(this->indexing_type==IndexingType::gist)
-		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::BUFFERING]=(index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : QString());
+	if(this->indexing_type==IndexingType::Gist)
+		attributes[Attributes::StorageParams]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
 
-	if(/*this->indexing_type==IndexingType::btree && */fill_factor >= 10)
+	if(this->indexing_type!=IndexingType::Gin && fill_factor >= 10)
 	{
-		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
-		attributes[ParsersAttributes::STORAGE_PARAMS]=ParsersAttributes::_TRUE_;
+		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
+		attributes[Attributes::StorageParams]=Attributes::True;
 	}
-	else if(def_type==SchemaParser::XML_DEFINITION)
-		attributes[ParsersAttributes::FACTOR]=QString("0");
+	else if(def_type==SchemaParser::XmlDefinition)
+		attributes[Attributes::Factor]=QString("0");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
 	if(!isReferRelationshipAddedColumn())
-		attributes[ParsersAttributes::DECL_IN_TABLE]=ParsersAttributes::_TRUE_;
+		attributes[Attributes::DeclInTable]=Attributes::True;
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -380,25 +380,26 @@ QString Index::getAlterDefinition(BaseObject *object)
 	Index *index=dynamic_cast<Index *>(object);
 
 	if(!index)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
 		attribs_map attribs;
-		attributes[ParsersAttributes::ALTER_CMDS]=BaseObject::getAlterDefinition(object);
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
 
 		if(this->indexing_type==index->indexing_type)
 		{
-			if(this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
-				attribs[ParsersAttributes::FACTOR]=QString::number(index->fill_factor);
+			if(this->indexing_type != IndexingType::Gin &&
+				 this->fill_factor!=index->fill_factor && index->fill_factor >= 10)
+				attribs[Attributes::Factor]=QString::number(index->fill_factor);
 
-			if(this->indexing_type==IndexingType::gin &&
-					this->index_attribs[FAST_UPDATE] != index->index_attribs[FAST_UPDATE])
-				attribs[ParsersAttributes::FAST_UPDATE]=(index->index_attribs[FAST_UPDATE] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+			if(this->indexing_type==IndexingType::Gin &&
+					this->index_attribs[FastUpdate] != index->index_attribs[FastUpdate])
+				attribs[Attributes::FastUpdate]=(index->index_attribs[FastUpdate] ? Attributes::True : Attributes::Unset);
 
-			if(this->indexing_type==IndexingType::gist &&
-					this->index_attribs[BUFFERING] != index->index_attribs[BUFFERING])
-				attribs[ParsersAttributes::BUFFERING]=(index->index_attribs[BUFFERING] ? ParsersAttributes::_TRUE_ : ParsersAttributes::UNSET);
+			if(this->indexing_type==IndexingType::Gist &&
+					this->index_attribs[Buffering] != index->index_attribs[Buffering])
+				attribs[Attributes::Buffering]=(index->index_attribs[Buffering] ? Attributes::True : Attributes::Unset);
 		}
 
 		copyAttributes(attribs);
@@ -406,13 +407,13 @@ QString Index::getAlterDefinition(BaseObject *object)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
 void Index::validateElements(void)
 {
-	if(indexing_type!=IndexingType::btree)
+	if(indexing_type!=IndexingType::Btree)
 	{
 		for(unsigned i=0; i < idx_elements.size(); i++)
 		{

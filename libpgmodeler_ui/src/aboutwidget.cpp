@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	drop_shadow->setBlurRadius(30);
 	this->setGraphicsEffect(drop_shadow);
 
-	PgModelerUiNS::configureWidgetFont(title_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNS::HUGE_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
-	PgModelerUiNS::configureWidgetFont(build_num_lbl, PgModelerUiNS::BIG_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::HugeFontFactor);
+	PgModelerUiNs::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNs::HugeFontFactor);
+	PgModelerUiNs::configureWidgetFont(build_lbl, PgModelerUiNs::BigFontFactor);
+	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BigFontFactor);
 
-	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PGMODELER_VERSION));
-	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PGMODELER_BUILD_NUMBER).arg(QT_VERSION_STR));
+	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
+	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
 
 	connect(hide_tb, &QToolButton::clicked, this,
 			[&](){
@@ -45,7 +45,7 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 		emit s_visibilityChanged(false);
 	});
 
-	float factor = BaseObjectView::getScreenDpiFactor();
+	double factor = BaseObjectView::getScreenDpiFactor();
 	this->adjustSize();
 	this->resize(this->minimumWidth() * factor, this->minimumHeight() * factor);
 }

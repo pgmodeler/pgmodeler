@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 {
 	setupUi(this);
 
-	PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 	keep_models_ht=new HintTextWidget(keep_models_hint, this);
 	keep_models_ht->setText(keep_models_chk->statusTip());
 
@@ -35,7 +35,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels(void)
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+	return(QDir(GlobalAttributes::TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 int ModelRestorationForm::exec(void)
@@ -48,11 +48,10 @@ int ModelRestorationForm::exec(void)
 	QRegExp regexp=QRegExp("(\\<database)( )+(name)(=)(\")");
 	int start=-1, end=-1, col=0;
 
-
 	while(!file_list.isEmpty())
 	{
-		info.setFile(GlobalAttributes::TEMPORARY_DIR, file_list.front());
-		filename=GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front();
+		info.setFile(GlobalAttributes::TemporaryDir, file_list.front());
+		filename=GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file_list.front();
 
 		input.setFileName(filename);
 		input.open(QFile::ReadOnly);
@@ -98,23 +97,30 @@ bool ModelRestorationForm::hasTemporaryModels(void)
 	return(!this->getTemporaryModels().isEmpty());
 }
 
+void ModelRestorationForm::removeTemporaryFiles(void)
+{
+	QDir tmp_file;
+	QStringList tmp_files = QDir(GlobalAttributes::TemporaryDir, QString("*.dbm;*.dbk;*.omf;*.sql;*.log"),
+															 QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
+
+	for(auto &file : tmp_files)
+		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
+}
+
 void ModelRestorationForm::removeTemporaryModels(void)
 {
 	QStringList file_list=this->getTemporaryModels();
 	QDir tmp_file;
 
-	while(!file_list.isEmpty())
-	{
-		tmp_file.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file_list.front());
-		file_list.pop_front();
-	}
+	for(auto &file : file_list)
+		tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
 }
 
 void ModelRestorationForm::removeTemporaryModel(const QString &tmp_model)
 {
 	QDir tmp_file;
 	QString file=QFileInfo(tmp_model).fileName();
-	tmp_file.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + file);
+	tmp_file.remove(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + file);
 }
 
 void ModelRestorationForm::enableRestoration(void)

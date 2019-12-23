@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,19 +28,21 @@
 
 #include <QStringList>
 
-namespace PgSQLVersions {
+namespace PgSqlVersions {
 	extern const QString
-	PGSQL_VERSION_90,
-	PGSQL_VERSION_91,
-	PGSQL_VERSION_92,
-	PGSQL_VERSION_93,
-	PGSQL_VERSION_94,
-	PGSQL_VERSION_95,
-	PGSQL_VERSION_96,
-	PGSQL_VERSION_100,
-	DEFAULT_VERSION;
+	PgSqlVersion90,
+	PgSqlVersion91,
+	PgSqlVersion92,
+	PgSqlVersion93,
+	PgSqlVersion94,
+	PgSqlVersion95,
+	PgSqlVersion96,
+	PgSqlVersion100,
+	PgSqlVersion110,
+	PgSqlVersion120,
+	DefaulVersion;
 
-	extern const QStringList ALL_VERSIONS;
+	extern const QStringList AllVersions;
 }
 
 #endif

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ class Permission: public BaseObject {
 				* view
 				* sequence
 				* database
-				* foreign-data wrapper (not implemented)
-				* foreign server (not implemented)
+				* foreign-data wrapper
+				* foreign server
 				* large objects (not implemented)
 				* function
 				* aggregate
@@ -84,18 +84,18 @@ class Permission: public BaseObject {
 
 	public:
 		//! \brief Constants used to reference the privileges
-		static const unsigned PRIV_SELECT=0,
-		PRIV_INSERT=1,
-		PRIV_UPDATE=2,
-		PRIV_DELETE=3,
-		PRIV_TRUNCATE=4,
-		PRIV_REFERENCES=5,
-		PRIV_TRIGGER=6,
-		PRIV_CREATE=7,
-		PRIV_CONNECT=8,
-		PRIV_TEMPORARY=9,
-		PRIV_EXECUTE=10,
-		PRIV_USAGE=11;
+		static constexpr unsigned PrivSelect=0,
+		PrivInsert=1,
+		PrivUpdate=2,
+		PrivDelete=3,
+		PrivTruncate=4,
+		PrivReferences=5,
+		PrivTrigger=6,
+		PrivCreate=7,
+		PrivConnect=8,
+		PrivTemporary=9,
+		PrivExecute=10,
+		PrivUsage=11;
 
 		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
@@ -154,7 +154,7 @@ class Permission: public BaseObject {
 		bool isSimilarTo(Permission *perm);
 
 		//! \brief Returns if the passed object type accepts permission
-		static bool objectAcceptsPermission(ObjectType obj_type, int privilege=-1);
+		static bool acceptsPermission(ObjectType obj_type, int privilege=-1);
 
 		//! \brief Returns the SQL / XML definition for the permission
 		virtual QString getCodeDefinition(unsigned def_type) final;

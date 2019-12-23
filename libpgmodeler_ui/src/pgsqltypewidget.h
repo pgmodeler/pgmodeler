@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,35 +37,35 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		Q_OBJECT
 
 		//! \brief Stores the PostgreSQL type configured on the form
-		PgSQLType type;
+		PgSqlType type;
 
 		//! \brief Syntax highlighter used on the format field
 		SyntaxHighlighter *format_hl;
 
 		bool eventFilter(QObject *watched, QEvent *event);
 
-		static const QString INVALID_TYPE;
+		static const QString InvalidType;
 
 	public:
-		PgSQLTypeWidget(QWidget * parent = 0, const QString &label=QString());
+		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label=QString());
 
 		/*! \brief Lists the PostgreSQL types on the specified combo. The user can configure which types
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to
 		gather the user-defined types of the specified model. */
 		static void listPgSQLTypes(QComboBox *combo, DatabaseModel *model,
-								   unsigned user_type_conf=UserTypeConfig::ALL_USER_TYPES,
+								   unsigned user_type_conf=UserTypeConfig::AllUserTypes,
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
 		void updateTypeFormat(void);
 
 	public slots:
-		void setAttributes(PgSQLType type, DatabaseModel *model,
-						   unsigned usr_type_conf=UserTypeConfig::ALL_USER_TYPES,
+		void setAttributes(PgSqlType type, DatabaseModel *model,
+						   unsigned usr_type_conf=UserTypeConfig::AllUserTypes,
 						   bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form
-		PgSQLType getPgSQLType(void);
+		PgSqlType getPgSQLType(void);
 };
 
 #endif

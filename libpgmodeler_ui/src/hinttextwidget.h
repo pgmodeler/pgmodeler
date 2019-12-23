@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,10 +41,12 @@ class HintTextWidget: public QWidget, public Ui::HintTextWidget {
 
 		bool eventFilter(QObject *object, QEvent *event);
 
+		void showEvent(QShowEvent *);
+
 	public:
-		const static unsigned SMALL_ICON=16,
-		MEDIUM_ICON=24,
-		LARGE_ICON=32;
+		static constexpr unsigned SmallIcon=16,
+		MediumIcon=24,
+		LargeIcon=32;
 
 		HintTextWidget(QWidget *btn_parent, QWidget *parent);
 

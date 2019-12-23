@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,6 +56,9 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		QObject *receiver_object;
 
 	protected:
+		//! \brief This attributes holds the layer in which the object is visible.
+		unsigned layer;
+
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
 		void setPositionAttribute(void);
@@ -103,14 +106,20 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief Assigns on object to other mading the correct attribute copy
 		void operator = (BaseGraphicObject &obj);
 
-		//! \brief Gets the current receiver object that graphically represents the 'this' object
-		QObject *getReceiverObject(void);
+		//! \brief Gets the current overlying (top object, scene object) that graphically represents the 'this' object
+		QObject *getOverlyingObject(void);
 
 		//! \brief Returns the code definition of the object
 		virtual QString getCodeDefinition(unsigned)=0;
 
 		//! \brief Returns if the passed type one that has a graphical representation (table, view, schema, relationship or textbox)
 		static bool isGraphicObject(ObjectType type);
+
+		//! \brief Defines in which layer the object is visible
+		void setLayer(unsigned layer);
+
+		//! \brief Returns the layer in which the object is visible
+		unsigned getLayer(void);
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method

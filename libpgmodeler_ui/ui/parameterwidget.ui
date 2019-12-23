@@ -50,6 +50,9 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="mode_lbl">
    <property name="geometry">
@@ -76,7 +79,7 @@
      <x>83</x>
      <y>129</y>
      <width>200</width>
-     <height>24</height>
+     <height>30</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="in_out_hlt">

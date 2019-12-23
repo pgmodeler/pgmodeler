@@ -4,9 +4,13 @@
 
 %if {list} %then
 [SELECT rl.oid, rl.rulename AS name
-  FROM (
-	SELECT rw.oid, rw.*
-	FROM pg_rewrite AS rw
+  FROM ( SELECT rw.* ]
+	
+  %if ({pgsql-ver} <=f "11.0") %then
+    [ , rw.oid ] 
+  %end
+    
+[   FROM pg_rewrite AS rw
 	WHERE rw.ev_type <> '1'::"char"
   ) AS rl
   LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m') ]
@@ -63,10 +67,14 @@
             WHEN cl.relkind = 'm' THEN 'view'
         END AS table_type
 
-       FROM (
-	SELECT rw.oid, rw.*
-	FROM pg_rewrite AS rw
-       ) AS rl
+    FROM (SELECT rw.* ]
+    
+    %if ({pgsql-ver} <=f "11.0") %then
+        [ , rw.oid ] 
+    %end
+    
+    [ FROM pg_rewrite AS rw  
+     ) AS rl
 
       LEFT JOIN pg_class AS cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m')
       LEFT JOIN pg_description ds ON ds.objoid = rl.oid ]

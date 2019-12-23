@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@ int main(int argc, char **argv)
 
 #ifdef DEMO_VERSION
 	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PGMODELER_VERSION << QT_TR_NOOP(" command line interface.") << endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.com.br") << endl;
-	out << QT_TR_NOOP("Copyright 2006-2015 Raphael A. Silva <raphael@pgmodeler.com.br>") << endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
+	out << QT_TR_NOOP("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
 #else
 	try
 	{
 		QTranslator translator;
-		PgModelerCLI pgmodeler_cli(argc, argv);
+		PgModelerCli pgmodeler_cli(argc, argv);
 
 		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
+		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
 
 		//Installs the translator on the application
 		pgmodeler_cli.installTranslator(&translator);
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		out << endl;
 		out << e.getExceptionsText();
 		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
-		return(e.getErrorType()==ERR_CUSTOM ? -1 : e.getErrorType());
+		return(e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
 	}
 #endif
 }

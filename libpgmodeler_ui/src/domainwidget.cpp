@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "domainwidget.h"
 #include "numberedtexteditor.h"
 
-DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN)
+DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Domain)
 {
 	try
 	{
@@ -27,7 +27,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 
 		check_expr_hl=nullptr;
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false, true);
-		check_expr_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		check_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
@@ -36,14 +36,14 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		grid->addWidget(data_type, 1, 0, 1, 2);
 		grid->addItem(new QSpacerItem(10, 1, QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0, 1, 1);
 
-		constr_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^ (ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		constr_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ (ObjectsTableWidget::DuplicateButton), true, this);
 		constr_tab->setColumnCount(2);
 
 		constr_tab->setHeaderLabel(trUtf8("Name"), 0);
-		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("constraint_ck")), 0);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("constraint_ck")), 0);
 
 		constr_tab->setHeaderLabel(trUtf8("Expression"), 1);
-		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("codigofonte")), 1);
+		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigofonte")), 1);
 
 		grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
 		grid->addWidget(constr_tab, 2, 0, 1, 2);
@@ -52,7 +52,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		connect(constr_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleConstraint(int)));
 		connect(constr_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editConstraint(int)));
 
-		configureFormLayout(domain_grid, OBJ_DOMAIN);
+		configureFormLayout(domain_grid, ObjectType::Domain);
 		setRequiredField(data_type);
 		configureTabOrder({ def_value_edt, not_null_chk,	data_type, constr_name_edt, check_expr_txt });
 
@@ -60,13 +60,13 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain)
 {
-	PgSQLType type;
+	PgSqlType type;
 
 	BaseObjectWidget::setAttributes(model, op_list, domain, schema);
 
@@ -133,7 +133,7 @@ void DomainWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

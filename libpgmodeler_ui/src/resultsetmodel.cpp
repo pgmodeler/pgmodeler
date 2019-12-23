@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 			type_ids.push_back(res.getColumnTypeId(col));
 		}
 
-		if(res.accessTuple(ResultSet::FIRST_TUPLE))
+		if(res.accessTuple(ResultSet::FirstTuple))
 		{
 			do
 			{
@@ -53,26 +53,26 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 						item_data.push_back(res.getColumnValue(col));
 				}
 			}
-			while(res.accessTuple(ResultSet::NEXT_TUPLE));
+			while(res.accessTuple(ResultSet::NextTuple));
 		}
 
-		aux_cat.setFilter(Catalog::LIST_ALL_OBJS);
+		aux_cat.setFilter(Catalog::ListAllObjects);
 		std::sort(type_ids.begin(), type_ids.end());
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types = aux_cat.getObjectsAttributes(OBJ_TYPE, QString(), QString(), type_ids);
+		types = aux_cat.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
 		col = 0;
 
 		for(auto &tp : types)
-			type_names[tp[ParsersAttributes::OID].toInt()]=tp[ParsersAttributes::NAME];
+			type_names[tp[Attributes::Oid].toInt()]=tp[Attributes::Name];
 
 		for(col=0; col < col_count; col++)
 			tooltip_data.push_back(type_names[res.getColumnTypeId(col)]);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -133,5 +133,47 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 Qt::ItemFlags ResultSetModel::flags(const QModelIndex &) const
 {
 	return(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled );
+}
+
+void ResultSetModel::append(ResultSet &res)
+{
+	try
+	{
+		if(res.isValid() && !res.isEmpty())
+		{
+			if(res.accessTuple(ResultSet::FirstTuple))
+			{
+				do
+				{
+					for(int col=0; col < col_count; col++)
+					{
+						if(col < res.getColumnCount())
+						{
+							if(res.isColumnBinaryFormat(col))
+								item_data.push_back(trUtf8("[binary data]"));
+							else
+								item_data.push_back(res.getColumnValue(col));
+						}
+						else
+						{
+							item_data.push_back(QString());
+						}
+					}
+				}
+				while(res.accessTuple(ResultSet::NextTuple));
+			}
+
+			row_count += res.getTupleCount();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+bool ResultSetModel::isEmpty(void)
+{
+	return(row_count <= 0);
 }
 

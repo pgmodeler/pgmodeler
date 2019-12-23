@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,62 +18,58 @@
 
 #include "permissionwidget.h"
 
-PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PERMISSION)
+PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Permission)
 {
 	QGridLayout *grid=nullptr;
 	QFrame *frame=nullptr;
 	QCheckBox *check=nullptr;
 	unsigned i;
-	QString privs[]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-					  ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-					  ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-					  ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-					  ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-					  ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+	QString privs[]={ Attributes::SelectPriv, Attributes::InsertPriv,
+					  Attributes::UpdatePriv, Attributes::DeletePriv,
+					  Attributes::TruncatePriv, Attributes::ReferencesPriv,
+					  Attributes::TriggerPriv, Attributes::CreatePriv,
+					  Attributes::ConnectPriv, Attributes::TemporaryPriv,
+					  Attributes::ExecutPriv, Attributes::UsagePriv };
 
 	Ui_PermissionWidget::setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt);
-	code_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+	code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
 
-	configureFormLayout(permission_grid, OBJ_PERMISSION);
+	configureFormLayout(permission_grid, ObjectType::Permission);
 
-	name_edt->setReadOnly(true);
-	comment_edt->setVisible(false);
-	comment_lbl->setVisible(false);
-
-	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::ADD_BUTTON |
-									ObjectsTableWidget::REMOVE_BUTTON |
-									ObjectsTableWidget::EDIT_BUTTON, false, this);
+	roles_tab=new ObjectsTableWidget(ObjectsTableWidget::AddButton |
+									ObjectsTableWidget::RemoveButton |
+									ObjectsTableWidget::EditButton, false, this);
 	roles_tab->setColumnCount(1);
 	roles_tab->setHeaderLabel(trUtf8("Name"),0);
-	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
 	grid->setContentsMargins(2,2,2,2);
 	roles_gb->setLayout(grid);
 
-	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::REMOVE_BUTTON |
-										  ObjectsTableWidget::EDIT_BUTTON |
-										  ObjectsTableWidget::REMOVE_ALL_BUTTON, true, this);
+	permissions_tab=new ObjectsTableWidget(ObjectsTableWidget::RemoveButton |
+										  ObjectsTableWidget::EditButton |
+										  ObjectsTableWidget::RemoveAllButton, true, this);
 	permissions_tab->setColumnCount(3);
 	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
-	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("uid")),0);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 	permissions_tab->setHeaderLabel(trUtf8("Roles"),1);
-	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),1);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),1);
 	permissions_tab->setHeaderLabel(trUtf8("Privileges"),2);
-	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("grant")),2);
+	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("grant")),2);
 
 	grid=new QGridLayout;
 	grid->addWidget(permissions_tab,0,0,1,1);
 	grid->setContentsMargins(2,2,2,2);
 	permissions_gb->setLayout(grid);
 
-	for(i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
+	for(i=Permission::PrivSelect; i<=Permission::PrivUsage; i++)
 	{
 		check=new QCheckBox;
 		check->setText(privs[i].toUpper());
@@ -89,7 +85,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	}
 
 	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
-																 .arg(BaseObject::getTypeName(OBJ_PERMISSION).toLower()));
+																 .arg(BaseObject::getTypeName(ObjectType::Permission).toLower()));
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
@@ -140,7 +136,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			//Gets the checkboxes that represents the privilege and the GRANT OPTION
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
@@ -150,7 +146,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			chk1->setChecked(false);
 
 			//Enabling the checkboxes using a validation of privilege type against the curret object type.
-			privileges_tbw->setRowHidden(priv, !Permission::objectAcceptsPermission(object->getObjectType(), priv));
+			privileges_tbw->setRowHidden(priv, !Permission::acceptsPermission(object->getObjectType(), priv));
 		}
 
 		listPermissions();
@@ -163,7 +159,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 void PermissionWidget::selectRole(void)
 {
-	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setObjectVisible(ObjectType::Role, true);
 	object_selection_wgt->setModel(this->model);
 	object_selection_wgt->show();
 }
@@ -180,7 +176,7 @@ void PermissionWidget::disableGrantOptions(void)
 {
 	QCheckBox *check=nullptr;
 
-	for(unsigned i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
+	for(unsigned i=Permission::PrivSelect; i<=Permission::PrivUsage; i++)
 	{
 		check=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(i,1));
 		check->setEnabled(roles_tab->getRowCount() > 0);
@@ -262,11 +258,11 @@ void PermissionWidget::showSelectedRoleData(void)
 		//Raise an error if the role already exists on selected role table
 		if(role && row_idx >= 0)
 		{
-			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
-							.arg(role->getName())
-							.arg(role->getTypeName())
-							.arg(roles_gb->title()),
-							ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedObjectContainer)
+											.arg(role->getName())
+											.arg(role->getTypeName())
+											.arg(roles_gb->title()),
+											ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 }
@@ -294,7 +290,7 @@ void PermissionWidget::addPermission(void)
 		}
 
 		cancelOperation();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -317,7 +313,7 @@ void PermissionWidget::updatePermission(void)
 		//Checking if the permission already exists on model
 		perm_idx=model->getPermissionIndex(perm, false);
 
-		if(perm_idx < 0 || (perm_idx >=0 && model->getObject(perm_idx,OBJ_PERMISSION)==permission))
+		if(perm_idx < 0 || (perm_idx >=0 && model->getObject(perm_idx,ObjectType::Permission)==permission))
 		{
 			(*permission)=(*perm);
 			listPermissions();
@@ -326,10 +322,10 @@ void PermissionWidget::updatePermission(void)
 		else
 		{
 			//Raises an error if the configured permission already exists
-			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedPermission)
 							.arg(permission->getObject()->getName())
 							.arg(permission->getObject()->getTypeName()),
-							ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+							ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
 		delete(perm_bkp);
@@ -344,7 +340,7 @@ void PermissionWidget::updatePermission(void)
 		delete(perm_bkp);
 
 		cancelOperation();
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -375,7 +371,7 @@ void PermissionWidget::editPermission(void)
 
 		roles_tab->blockSignals(false);
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
@@ -423,7 +419,7 @@ void PermissionWidget::configurePermission(Permission *perm)
 		for(i=0; i < count; i++)
 			perm->addRole(reinterpret_cast<Role *>(roles_tab->getRowData(i).value<void *>()));
 
-		for(priv=Permission::PRIV_SELECT; priv <= Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv <= Permission::PrivUsage; priv++)
 		{
 			if(!privileges_tbw->isRowHidden(priv))
 			{
@@ -442,7 +438,7 @@ void PermissionWidget::cancelOperation(void)
 
 	permission=nullptr;
 
-	for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+	for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 	{
 		chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 		chk->setChecked(false);
@@ -469,7 +465,7 @@ void PermissionWidget::checkPrivilege(void)
 
 		chk=dynamic_cast<QCheckBox *>(obj_sender);
 
-		for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
+		for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage; priv++)
 		{
 			chk_priv=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 			chk_gop=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
@@ -496,7 +492,7 @@ void PermissionWidget::enableEditButtons(void)
 	unsigned priv;
 	QCheckBox *chk=nullptr, *chk1=nullptr;
 
-	for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE && !checked_privs; priv++)
+	for(priv=Permission::PrivSelect; priv<=Permission::PrivUsage && !checked_privs; priv++)
 	{
 		chk=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,0));
 		chk1=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(priv,1));
@@ -520,7 +516,7 @@ void PermissionWidget::updateCodePreview(void)
 		cnt=perms.size();
 
 		for(i=0; i < cnt; i++)
-			code+=perms[i]->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+			code+=perms[i]->getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(code.isEmpty())
 			code=trUtf8("-- No permissions defined for the specified object!");

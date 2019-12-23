@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "parameterwidget.h"
 
-ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PARAMETER)
+ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Parameter)
 {
 	try
 	{
@@ -41,7 +41,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		parameter_grid->addWidget(data_type,2, 0, 1, 4);
 		parameter_grid->addItem(spacer, parameter_grid->count()+1,0);
 
-		configureFormLayout(parameter_grid, OBJ_PARAMETER);
+		configureFormLayout(parameter_grid, ObjectType::Parameter);
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_in_chk, SLOT(setDisabled(bool)));
 		connect(param_variadic_chk, SIGNAL(toggled(bool)), param_out_chk, SLOT(setDisabled(bool)));
 		connect(param_in_chk, SIGNAL(toggled(bool)), this, SLOT(enableVariadic(void)));
@@ -51,14 +51,17 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void ParameterWidget::enableVariadic(void)
 {
-	param_variadic_chk->setChecked(!param_in_chk->isChecked() &&
-								   !param_out_chk->isChecked());
+	param_variadic_chk->setEnabled(!param_in_chk->isChecked() &&
+																 !param_out_chk->isChecked());
+
+	if(!param_variadic_chk->isEnabled())
+		param_variadic_chk->setChecked(false);
 }
 
 void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
@@ -90,7 +93,7 @@ void ParameterWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

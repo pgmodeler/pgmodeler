@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,22 +18,25 @@
 
 #include "pgsqlversions.h"
 
-namespace PgSQLVersions {
+namespace PgSqlVersions {
 	const QString
-	PGSQL_VERSION_90=QString("9.0"),
-	PGSQL_VERSION_91=QString("9.1"),
-	PGSQL_VERSION_92=QString("9.2"),
-	PGSQL_VERSION_93=QString("9.3"),
-	PGSQL_VERSION_94=QString("9.4"),
-	PGSQL_VERSION_95=QString("9.5"),
-	PGSQL_VERSION_96=QString("9.6"),
-	PGSQL_VERSION_100=QString("10.0"),
-	DEFAULT_VERSION=PGSQL_VERSION_100;
+	PgSqlVersion90=QString("9.0"),
+	PgSqlVersion91=QString("9.1"),
+	PgSqlVersion92=QString("9.2"),
+	PgSqlVersion93=QString("9.3"),
+	PgSqlVersion94=QString("9.4"),
+	PgSqlVersion95=QString("9.5"),
+	PgSqlVersion96=QString("9.6"),
+	PgSqlVersion100=QString("10.0"),
+	PgSqlVersion110=QString("11.0"),
+	PgSqlVersion120=QString("12.0"),
+	DefaulVersion=PgSqlVersion120;
 
 	const QStringList
-	ALL_VERSIONS={
-		PGSQL_VERSION_100, PGSQL_VERSION_96,
-		PGSQL_VERSION_95, PGSQL_VERSION_94,
-		PGSQL_VERSION_93, PGSQL_VERSION_92,
-		PGSQL_VERSION_91, PGSQL_VERSION_90 };
+	AllVersions={
+		PgSqlVersion120, PgSqlVersion110,
+		PgSqlVersion100, PgSqlVersion96,
+		PgSqlVersion95, PgSqlVersion94,
+		PgSqlVersion93, PgSqlVersion92,
+		PgSqlVersion91, PgSqlVersion90 };
 }

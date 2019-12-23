@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,15 @@
 class ModelsDiffHelper: public QObject {
 	private:
 		Q_OBJECT
+
+		//! \brief List of attributes ignored when comparing XML code of table children objects
+		static const vector<QString> TableObjsIgnoredAttribs,
+
+		//! \brief List of attributes ignored when comparing XML code of database objects
+		ObjectsIgnoredAttribs,
+
+		//! \brief List of tags ignored when comparing XML code of database objects
+		ObjectsIgnoredTags;
 
 		//! \brief Stores the SQL code that represents the diff between model and database
 		QString diff_def,
@@ -64,7 +73,7 @@ class ModelsDiffHelper: public QObject {
 		ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
-		void diffTables(Table *src_table, Table *imp_table, unsigned diff_type);
+		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
 
 		//! \brief Compares the two models storing the diff between them in the diff_infos vector.
 		void diffModels(unsigned diff_type);
@@ -99,41 +108,41 @@ class ModelsDiffHelper: public QObject {
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
 	public:
-		static const unsigned OPT_KEEP_CLUSTER_OBJS=0,
+		static constexpr unsigned OptKeepClusterObjs=0,
 
 		//! \brief Indicates if any DROP/TRUNCATE generated must be in cascade mode
-		OPT_CASCADE_MODE=1,
+		OptCascadeMode=1,
 
 		//! \brief Forces the recreation of any object maked as ALTER in the output
-		OPT_FORCE_RECREATION=2,
+		OptForceRecreation=2,
 
 		//! \brief Recreates only objects that can't be modified using ALTER commands
-		OPT_RECREATE_UNCHANGEBLE=3,
+		OptRecreateUnchangeble=3,
 
 		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
-		OPT_TRUCANTE_TABLES=4,
+		OptTruncateTables=4,
 
 		//! \brief Indicates if permissions must be preserved on database
-		OPT_KEEP_OBJ_PERMS=5,
+		OptKeepObjectPerms=5,
 
 		/*! \brief Indicates that existing sequences must be reused in serial columns. Since serial columns are converted
 		into integer and a new sequence created and assigned as nextval(sequence) default value for those columns,
 		if reuse is enabled, new sequences will not be created instead the ones which name matches the column's default
 		value will be reused */
-		OPT_REUSE_SEQUENCES=6,
+		OptReuseSequences=6,
 
 		//! \brief Indicates to not generate and execute commands to rename the destination database
-		OPT_PRESERVE_DB_NAME=7,
+		OptPreserveDbName=7,
 
 		/*! \brief Indicates to not generate and execute commands to drop missing objects. For instance, if user
 		try to diff a partial model against the original database DROP commands will be generated, this option
 		will avoid this situation and preserve the missing (not imported) objects. */
-		OPT_DONT_DROP_MISSING_OBJS=8,
+		OptDontDropMissingObjs=8,
 
 		/*! \brief Indicates to generate and execute commands to drop missing columns and constraints. For instance, if user
 		try to diff a partial model against the original database and the OPT_DONT_DROP_MISSING_OBJS is set, DROP commands will not be generated,
 		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
-		OPT_DROP_MISSING_COLS_CONSTR=9;
+		OptDropMissingColsConstr=9;
 
 		ModelsDiffHelper(void);
 		~ModelsDiffHelper(void);
@@ -164,7 +173,7 @@ class ModelsDiffHelper: public QObject {
 
 	signals:
 		//! \brief This singal is emitted whenever the diff progress changes
-		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=BASE_OBJECT);
+		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 
 		//! \brief This signal is emited when the diff has finished
 		void s_diffFinished(void);

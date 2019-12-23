@@ -2,6 +2,11 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
  [<trigger name=] "{name}" 
+ 
+ %if {alias} %then
+   $sp alias="{alias}"
+ %end
+ 
  [ firing-type=] "{firing-type}"
  [ per-line=] %if {per-line} %then "true" %else "false" %end
  [ constraint=] %if {constraint} %then "true" %else "false" %end
@@ -38,6 +43,12 @@
   %if {sql-disabled} %then
    [ sql-disabled=] "true"
   %end
+  
+ %if {old-table-name} %or {new-table-name} %then
+    $br $tb 
+    %if {old-table-name} %then [ old-table-name=] "{old-table-name}" %end
+    %if {new-table-name} %then [ new-table-name=] "{new-table-name}" %end
+ %end
 
  > $br
  %if {comment} %then $tb {comment} %end

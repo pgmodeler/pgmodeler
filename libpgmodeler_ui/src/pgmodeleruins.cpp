@@ -2,11 +2,14 @@
 #include "messagebox.h"
 #include "databasemodel.h"
 #include <QLabel>
+#include <QGraphicsDropShadowEffect>
 #include "numberedtexteditor.h"
 #include <QScreen>
 #include <QDesktopWidget>
+#include "baseform.h"
+#include "bulkdataeditwidget.h"
 
-namespace PgModelerUiNS {
+namespace PgModelerUiNs {
 
 	NumberedTextEditor *createNumberedTextEditor(QWidget *parent, bool handle_ext_files)
 	{
@@ -25,7 +28,7 @@ namespace PgModelerUiNS {
 	QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
 	{
 		if(!output_trw)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QTreeWidgetItem *item=nullptr;
 
@@ -40,12 +43,16 @@ namespace PgModelerUiNS {
 		else
 		{
 			QLabel *label=new QLabel;
+			label->setUpdatesEnabled(false);
 			label->setTextFormat(Qt::AutoText);
 			label->setText(text);
 			label->setWordWrap(true);
 			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			label->setUpdatesEnabled(true);
 			label->setMinimumHeight(output_trw->iconSize().height() * 1.5);
 			label->setMaximumHeight(label->heightForWidth(label->width()));
+
+			item->setSizeHint(0, QSize(label->width(), label->minimumHeight()));
 			output_trw->setItemWidget(item, 0, label);
 		}
 
@@ -60,9 +67,10 @@ namespace PgModelerUiNS {
 	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
 	{
 		if(!output_lst)
-			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		QListWidgetItem *item=new QListWidgetItem;
+
 		item->setIcon(ico);
 		output_lst->addItem(item);
 
@@ -70,51 +78,72 @@ namespace PgModelerUiNS {
 			item->setText(text);
 		else
 		{
-			QLabel *label=new QLabel(text);
+			QLabel *label=new QLabel;
+			int txt_height = 0;
+
+			txt_height = output_lst->fontMetrics().height() * text.count(QString("<br/>"));
+
+			if(txt_height == 0)
+				txt_height = output_lst->fontMetrics().height() * 1.25;
+			else
+				txt_height *= 1.05;
+
+			label->setUpdatesEnabled(false);
+			label->setTextFormat(Qt::AutoText);
+			label->setText(text);
+			label->setWordWrap(true);
+			label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+			label->setUpdatesEnabled(true);
+
+			item->setSizeHint(QSize(output_lst->width(), txt_height));
 			output_lst->setItemWidget(item, label);
 		}
 	}
 
 	void disableObjectSQL(BaseObject *object, bool disable)
 	{
-		if(object && object->getObjectType()!=BASE_RELATIONSHIP)
+		if(object && object->getObjectType()!=ObjectType::BaseRelationship)
 		{
 			Messagebox msgbox;
 			ObjectType obj_type=object->getObjectType();
 			bool curr_val=object->isSQLDisabled();
+			TableObject *tab_obj = dynamic_cast<TableObject *>(object);
 
 			if(object->isSystemObject())
-				throw Exception(Exception::getErrorMessage(ERR_OPR_RESERVED_OBJECT)
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
 								.arg(object->getName(true))
 								.arg(object->getTypeName()),
-								ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+								ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			object->setSQLDisabled(disable);
 
-			if(obj_type!=OBJ_DATABASE && curr_val!=disable)
+			if(tab_obj && tab_obj->getParentTable())
+				tab_obj->getParentTable()->setModified(true);
+
+			if(obj_type!=ObjectType::Database && curr_val!=disable)
 			{
 				msgbox.show(QString(QT_TR_NOOP("Do you want to apply the <strong>SQL %1 status</strong> to the object's references too? This will avoid problems when exporting or validating the model.")).arg(disable ? QT_TR_NOOP("disabling") : QT_TR_NOOP("enabling")),
-							Messagebox::CONFIRM_ICON, Messagebox::YES_NO_BUTTONS);
+							Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 				if(msgbox.result()==QDialog::Accepted)
 					disableReferencesSQL(object);
 			}
 
 			/* Special case for tables. When disable the code there is the need to disable constraints
-	   codes when the code of parent table is disabled too in order to avoid export errors */
-			if(object->getObjectType()==OBJ_TABLE)
+			 * codes when the code of parent table is disabled too in order to avoid export errors */
+			if(PhysicalTable::isPhysicalTable(object->getObjectType()))
 			{
 				Constraint *constr = nullptr;
-				vector<TableObject *> *objects=dynamic_cast<Table *>(object)->getObjectList(OBJ_CONSTRAINT);
+				vector<TableObject *> *objects=dynamic_cast<PhysicalTable *>(object)->getObjectList(ObjectType::Constraint);
 
 				for(auto &obj : (*objects))
 				{
 					constr=dynamic_cast<Constraint *>(obj);
 
 					/* If the constraint is not FK but is declared outside table via alter (ALTER TABLE...ADD CONSTRAINT...) or
-		   The constraint is FK and the reference table is disabled the FK will not be enabled */
-					if((constr->getConstraintType()!=ConstraintType::foreign_key && !constr->isDeclaredInTable()) ||
-							(constr->getConstraintType()==ConstraintType::foreign_key &&
+					 * The constraint is FK and the reference table is disabled the FK will not be enabled */
+					if((constr->getConstraintType()!=ConstraintType::ForeignKey && !constr->isDeclaredInTable()) ||
+							(constr->getConstraintType()==ConstraintType::ForeignKey &&
 							 (disable || (!disable && !constr->getReferencedTable()->isSQLDisabled()))))
 						constr->setSQLDisabled(disable);
 				}
@@ -137,7 +166,7 @@ namespace PgModelerUiNS {
 				tab_obj=dynamic_cast<TableObject *>(refs.back());
 
 				//If the object is a relationship added does not do anything since the relationship itself will be disabled
-				if(refs.back()->getObjectType()!=BASE_RELATIONSHIP &&
+				if(refs.back()->getObjectType()!=ObjectType::BaseRelationship &&
 						(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 				{
 					refs.back()->setSQLDisabled(object->isSQLDisabled());
@@ -194,29 +223,29 @@ namespace PgModelerUiNS {
 
 	void configureWidgetFont(QWidget *widget, unsigned factor_id)
 	{
-		float factor = 1;
+		double factor = 1;
 
 		switch(factor_id)
 		{
-			case SMALL_FONT_FACTOR:
-				factor=0.85f;
+			case SmallFontFactor:
+				factor=0.80;
 			break;
-			case MEDIUM_FONT_FACTOR:
-				factor=0.90f;
+			case MediumFontFactor:
+				factor=0.90;
 			break;
-			case BIG_FONT_FACTOR:
-				factor=1.10f;
+			case BigFontFactor:
+				factor=1.10;
 			break;
-			case HUGE_FONT_FACTOR:
+			case HugeFontFactor:
 			default:
-				factor=1.40f;
+				factor=1.40;
 			break;
 		}
 
-		configureWidgetFont(widget, factor);
+		__configureWidgetFont(widget, factor);
 	}
 
-	void configureWidgetFont(QWidget *widget, float factor)
+	void __configureWidgetFont(QWidget *widget, double factor)
 	{
 		if(!widget)
 			return;
@@ -229,6 +258,7 @@ namespace PgModelerUiNS {
 	void createExceptionsTree(QTreeWidget *exceptions_trw, Exception &e, QTreeWidgetItem *root)
 	{
 		vector<Exception> list;
+		vector<Exception>::reverse_iterator itr, itr_end;
 		QString text;
 		int idx=0;
 		QTreeWidgetItem *item=nullptr, *child_item=nullptr;
@@ -237,28 +267,41 @@ namespace PgModelerUiNS {
 			return;
 
 		e.getExceptionsList(list);
+		itr = list.rbegin();
+		itr_end = list.rend();
 
-		for(Exception &ex : list)
-		{
-			text=QString("[%1] - %2").arg(idx).arg(ex.getMethod());
+		//for(Exception &ex : list)
+		while(itr != itr_end)
+		{			
+			text=QString("[%1] - %2").arg(idx).arg(itr->getMethod());
 			item=createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("funcao")), root, false, true);
 
-			text=QString("%1 (%2)").arg(ex.getFile()).arg(ex.getLine());
+			text=QString("%1 (%2)").arg(itr->getFile()).arg(itr->getLine());
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("codigofonte")), item, false, true);
 
-			text=QString("%1 (%2)").arg(Exception::getErrorCode(ex.getErrorType())).arg(ex.getErrorType());
+			text=QString("%1 (%2)").arg(Exception::getErrorCode(itr->getErrorCode())).arg(enum_cast(itr->getErrorCode()));
 			createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, true);
 
-			child_item=createOutputTreeItem(exceptions_trw, ex.getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
+			child_item=createOutputTreeItem(exceptions_trw, itr->getErrorMessage(), QPixmap(getIconPath("msgbox_erro")), item, false, true);
 			exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #ff0000;"));
 
-			if(!ex.getExtraInfo().isEmpty())
+			if(!itr->getExtraInfo().isEmpty())
 			{
-				child_item=createOutputTreeItem(exceptions_trw, ex.getExtraInfo(), QPixmap(getIconPath("msgbox_info")), item, false, true);
+				child_item=createOutputTreeItem(exceptions_trw, itr->getExtraInfo(), QPixmap(getIconPath("msgbox_info")), item, false, true);
 				exceptions_trw->itemWidget(child_item, 0)->setStyleSheet(QString("color: #000080;"));
 			}
 
-			idx++;
+			idx++; itr++;
+
+			/* If we have a stack bigger than 30 items we just ignore the rest in order to avoid
+			 * the production or reduntant/useless information on the exception message box */
+			if(static_cast<unsigned>(idx) >= Exception::MaximumStackSize)
+			{
+				text = QT_TR_NOOP("Another %1 error(s) were suppressed due to stacktrace size limits.");
+				text = text.arg(list.size() - idx);
+				createOutputTreeItem(exceptions_trw, text, QPixmap(getIconPath("msgbox_alerta")), item, false, false);
+				break;
+			}
 		}
 	}
 
@@ -272,20 +315,20 @@ namespace PgModelerUiNS {
 		return(getIconPath(BaseObject::getSchemaName(obj_type)));
 	}
 
-	void resizeDialog(QDialog *widget)
+	void resizeDialog(QWidget *widget)
 	{
 		QSize min_size=widget->minimumSize();
 		int max_h = 0, curr_w =0, curr_h = 0,
 				screen_id = qApp->desktop()->screenNumber(qApp->activeWindow());
 		QScreen *screen=qApp->screens().at(screen_id);
-		float dpi_factor = 0;
-    float pixel_ratio = 0;
+		double dpi_factor = 0;
+		double pixel_ratio = 0;
 
-		dpi_factor = screen->logicalDotsPerInch() / 96.0f;
+		dpi_factor = screen->logicalDotsPerInch() / 96.0;
     pixel_ratio = screen->devicePixelRatio();
 
 		//If the dpi_factor is unchanged (1) we keep the dialog original dimension
-		if(dpi_factor <= 1.01f)
+		if(dpi_factor <= 1.01)
 			return;
 
 		max_h = screen->size().height() * 0.70;
@@ -320,5 +363,46 @@ namespace PgModelerUiNS {
 
 		widget->setMinimumSize(widget->minimumSize());
 		widget->resize(curr_w, curr_h);
+		widget->adjustSize();
+	}
+
+	void bulkDataEdit(QTableWidget *results_tbw)
+	{
+		if(!results_tbw)
+			return;
+
+		BaseForm base_frm;
+		BulkDataEditWidget *bulkedit_wgt = new BulkDataEditWidget;
+
+		base_frm.setMainWidget(bulkedit_wgt);
+		base_frm.setButtonConfiguration(Messagebox::OkCancelButtons);
+
+		if(base_frm.exec() == QDialog::Accepted)
+		{
+			QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
+
+			for(auto range : sel_ranges)
+			{
+				for(int row = range.topRow(); row <= range.bottomRow(); row++)
+				{
+					for(int col = range.leftColumn(); col <= range.rightColumn(); col++)
+					{
+						results_tbw->item(row, col)->setText(bulkedit_wgt->value_edt->toPlainText());
+					}
+				}
+			}
+		}
+	}
+
+	void createDropShadow(QToolButton *btn, int x_offset, int y_offset, int radius)
+	{
+		QGraphicsDropShadowEffect *shadow=nullptr;
+
+		shadow=new QGraphicsDropShadowEffect(btn);
+		shadow->setXOffset(x_offset);
+		shadow->setYOffset(y_offset);
+		shadow->setBlurRadius(radius);
+		shadow->setColor(QColor(0,0,0, 100));
+		btn->setGraphicsEffect(shadow);
 	}
 }

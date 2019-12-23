@@ -45,8 +45,14 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
 [               show-page-delimiters="] %if {show-page-delimiters} %then true %else false %end ["] $br
 [               align-objs-to-grid="] %if {align-objs-to-grid} %then true %else false %end ["] $br
 [               min-object-opacity="] {min-object-opacity} ["] $br
+[               attribs-per-page="] {attribs-per-page} ["] $br
+[               ext-attribs-per-page="] {ext-attribs-per-page} ["] $br
 [               history-max-length="] {history-max-length} ["] $br
 [               use-curved-lines="] %if {use-curved-lines} %then true %else false %end ["] $br
+[               compact-view="] %if {compact-view} %then true %else false %end ["] $br
+[               save-restore-geometry="] %if {save-restore-geometry} %then true %else false %end ["] $br
+[               low-verbosity="] %if {low-verbosity} %then true %else false %end ["] $br
+[               escape-comment="] %if {escape-comment} %then true %else false %end ["] $br
 
 %if {source-editor-app} %then
 [               source-editor-app="] {source-editor-app} ["] $br
@@ -78,6 +84,12 @@ $sp [<configuration op-list-size="] {op-list-size} ["] $br
  $sp <dock-widgets> $br
  $sp {dock-widgets}
  $sp </dock-widgets> $br
+%end
+
+%if {widgets-geometry} %then
+ $sp <widgets-geometry> $br
+ $sp {widgets-geometry}
+ $sp </widgets-geometry> $br
 %end
 
 </pgmodeler> $br

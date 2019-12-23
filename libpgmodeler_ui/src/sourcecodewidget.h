@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 	private:
 		Q_OBJECT
 
-		static const int ORIGINAL_SQL=0,
-		DEPENDENCIES_SQL=1,
-		CHILDREN_SQL=2;
+		static constexpr int OriginalSql=0,
+		DependenciesSql=1,
+		ChildrenSql=2;
 
 		NumberedTextEditor *sqlcode_txt,
 		*xmlcode_txt;
@@ -47,7 +47,7 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		HintTextWidget *code_options_ht;
 
 	public:
-		SourceCodeWidget(QWidget * parent = 0);
+		SourceCodeWidget(QWidget * parent = nullptr);
 
 		void setAttributes(DatabaseModel *model, BaseObject *object=nullptr);
 

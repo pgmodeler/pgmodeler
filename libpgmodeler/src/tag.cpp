@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@ unsigned Tag::tag_id=3000;
 
 Tag::Tag(void)
 {
-	QStringList attribs={ ParsersAttributes::TABLE_NAME,  ParsersAttributes::TABLE_SCHEMA_NAME,
-						  ParsersAttributes::TABLE_TITLE, ParsersAttributes::TABLE_BODY,
-						  ParsersAttributes::TABLE_EXT_BODY };
+	QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
+						  Attributes::TableTitle, Attributes::TableBody,
+						  Attributes::TableExtBody };
 
-	obj_type=OBJ_TAG;
+	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
-	attributes[ParsersAttributes::STYLES]=QString();
+	attributes[Attributes::Styles]=QString();
 
 	for(auto &attr : attribs)
 	{
-		if(attr!=ParsersAttributes::TABLE_NAME && attr!=ParsersAttributes::TABLE_SCHEMA_NAME)
+		if(attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_config[attr] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
 		else
 			color_config[attr] = { QColor(0,0,0) };
@@ -42,9 +42,9 @@ Tag::Tag(void)
 void Tag::setName(const QString &name)
 {
 	if(name.isEmpty())
-		throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(name.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
-		throw Exception(ERR_ASG_LONG_NAME_OBJECT ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgEmptyNameObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(name.size() > BaseObject::ObjectNameMaxLength)
+		throw Exception(ErrorCode::AsgLongNameObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->obj_name=name;
 }
@@ -64,7 +64,7 @@ void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned 
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -73,7 +73,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
 	try
 	{
 		QStringList color_lst=colors.split(',');
-		unsigned color_id=FILL_COLOR1;
+		unsigned color_id=FillColor1;
 
 		for(auto &color : color_lst)
 		{
@@ -86,7 +86,7 @@ void Tag::setElementColors(const QString &elem_id, const QString &colors)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -99,20 +99,20 @@ QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
 void Tag::validateElementId(const QString &id, unsigned color_id)
 {
 	if(color_config.count(id) == 0)
-		throw Exception(Exception::getErrorMessage(ERR_OPR_INV_ELEMENT_ID).arg(id),
-						ERR_OPR_INV_ELEMENT_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if((color_id > COLOR_COUNT) ||
+		throw Exception(Exception::getErrorMessage(ErrorCode::OprInvalidElementId).arg(id),
+										ErrorCode::OprInvalidElementId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if((color_id > ColorCount) ||
 					(color_id > 0 &&
-					 (id==ParsersAttributes::TABLE_NAME || id==ParsersAttributes::TABLE_SCHEMA_NAME)))
-		throw Exception(Exception::getErrorMessage(ERR_REF_ELEMENT_COLOR_ID).arg(id).arg(color_id),
-										ERR_REF_ELEMENT_COLOR_ID ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					 (id==Attributes::TableName || id==Attributes::TableSchemaName)))
+		throw Exception(Exception::getErrorMessage(ErrorCode::RefInvalidElementColorId).arg(id).arg(color_id),
+										ErrorCode::RefInvalidElementColorId ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 QLinearGradient Tag::getFillStyle(const QString &elem_id)
@@ -123,14 +123,14 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 		QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 
 		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-		grad.setColorAt(0, color_config[elem_id][FILL_COLOR1]);
-		grad.setColorAt(1, color_config[elem_id][FILL_COLOR2]);
+		grad.setColorAt(0, color_config[elem_id][FillColor1]);
+		grad.setColorAt(1, color_config[elem_id][FillColor2]);
 
 		return(grad);
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -141,7 +141,7 @@ QString Tag::getCodeDefinition(unsigned def_type)
 
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-	if(def_type==SchemaParser::SQL_DEFINITION)
+	if(def_type==SchemaParser::SqlDefinition)
 		return(QString());
 	else
 	{
@@ -154,21 +154,21 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 			for(auto &itr : color_config)
 			{
-				attribs[ParsersAttributes::ID]=itr.first;
-				attribs[ParsersAttributes::COLORS]=QString();
+				attribs[Attributes::Id]=itr.first;
+				attribs[Attributes::Colors]=QString();
 
-				if(itr.first==ParsersAttributes::TABLE_NAME || itr.first==ParsersAttributes::TABLE_SCHEMA_NAME)
-					attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name();
+				if(itr.first==Attributes::TableName || itr.first==Attributes::TableSchemaName)
+					attribs[Attributes::Colors]=itr.second[FillColor1].name();
 				else
-					attribs[ParsersAttributes::COLORS]=itr.second[FILL_COLOR1].name() + QString(",") +
-													   itr.second[FILL_COLOR2].name() + QString(",") + itr.second[BORDER_COLOR].name();
+					attribs[Attributes::Colors]=itr.second[FillColor1].name() + QString(",") +
+													   itr.second[FillColor2].name() + QString(",") + itr.second[BorderColor].name();
 
-				attributes[ParsersAttributes::STYLES]+=schparser.getCodeDefinition(ParsersAttributes::STYLE, attribs, SchemaParser::XML_DEFINITION);
+				attributes[Attributes::Styles]+=schparser.getCodeDefinition(Attributes::Style, attribs, SchemaParser::XmlDefinition);
 			}
 		}
 		catch(Exception &e)
 		{
-			throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
 		return(BaseObject::getCodeDefinition(def_type, reduced_form));

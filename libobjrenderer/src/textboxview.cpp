@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 	box=new QGraphicsPolygonItem;
 	text=new QGraphicsSimpleTextItem;
 
-	box->setZValue(0);
-	text->setZValue(1);
+	text_item = new TextPolygonItem;
+	this->addToGroup(text_item);
 
 	obj_shadow=new QGraphicsPolygonItem;
 	obj_shadow->setZValue(-1);
@@ -39,25 +39,21 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 	this->addToGroup(obj_selection);
 
 	this->override_style=override_style;
-	this->addToGroup(text);
-	this->addToGroup(box);
 	this->configureObject();
 }
 
 TextboxView::~TextboxView(void)
 {
-	this->removeFromGroup(box);
-	this->removeFromGroup(text);
-	delete(box);
-	delete(text);
+	this->removeFromGroup(text_item);
+	delete(text_item);
 }
 
 void TextboxView::setColorStyle(const QBrush &fill_style, const QPen &border_style)
 {
 	if(override_style)
 	{
-		box->setBrush(fill_style);
-		box->setPen(border_style);
+		text_item->setBrush(fill_style);
+		text_item->setPen(border_style);
 	}
 }
 
@@ -65,80 +61,63 @@ void TextboxView::setFontStyle(const QTextCharFormat &fmt)
 {
 	if(override_style)
 	{
-		text->setFont(fmt.font());
-		text->setBrush(fmt.foreground());
+		text_item->setFont(fmt.font());
+		text_item->setTextBrush(fmt.foreground());
 	}
 }
 
-/*void TextboxView::togglePlaceholder(bool visible)
+void TextboxView::setToolTip(const QString &tooltip)
 {
-  if(use_placeholder && this->scene())
-  {
-	if(!placeholder_pol->scene())
-	 this->scene()->addItem(placeholder_pol);
-
-	if(visible)
-	{
-	  QPen pen=BaseObjectView::getBorderStyle(ParsersAttributes::PLACEHOLDER);
-	  pen.setStyle(Qt::DashLine);
-
-	  placeholder_pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::PLACEHOLDER));
-	  placeholder_pol->setPen(pen);
-	  placeholder_pol->setPolygon(box->polygon());
-	  placeholder_pol->setPos(this->mapToScene(this->bounding_rect.topLeft()));
-	}
-
-	placeholder_pol->setVisible(visible);
-  }
-}*/
+	txtbox_tooltip = tooltip;
+}
 
 void TextboxView::__configureObject(void)
 {
-	Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
-	QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
+	Textbox *txtbox=dynamic_cast<Textbox *>(this->getUnderlyingObject());
+	QTextCharFormat fmt=font_config[Attributes::Global];
 	QPolygonF polygon;
 
-	polygon.append(QPointF(0.0f,0.0f));
-	polygon.append(QPointF(1.0f,0.0f));
-	polygon.append(QPointF(1.0f,1.0f));
-	polygon.append(QPointF(0.0f,1.0f));
+	polygon.append(QPointF(0.0,0.0));
+	polygon.append(QPointF(1.0,0.0));
+	polygon.append(QPointF(1.0,1.0));
+	polygon.append(QPointF(0.0,1.0));
 
 	if(!override_style)
 	{
 		QFont font;
-		box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
-		box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+
+		text_item->setBrush(this->getFillStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
+		text_item->setPen(this->getBorderStyle(BaseObject::getSchemaName(ObjectType::Textbox)));
 
 		font=fmt.font();
-		font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
-		font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
-		font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
+		font.setItalic(txtbox->getTextAttribute(Textbox::ItalicText));
+		font.setBold(txtbox->getTextAttribute(Textbox::BoldText));
+		font.setUnderline(txtbox->getTextAttribute(Textbox::UnderlineText));
 		font.setPointSizeF(txtbox->getFontSize());
 
-		text->setFont(font);
-		text->setBrush(txtbox->getTextColor());
+		text_item->setFont(font);
+		text_item->setTextBrush(txtbox->getTextColor());
 	}
 
-	text->setText(txtbox->getComment());
+	text_item->setText(txtbox->getComment());
+	text_item->setTextPos(HorizSpacing * 2, VertSpacing * (text_item->getFont().italic() ? 0.90 : 0.50));
 
-	if(text->font().italic())
-		text->setPos(HORIZ_SPACING * 1.5, VERT_SPACING * 0.90);
-	else
-		text->setPos(HORIZ_SPACING, VERT_SPACING);
+	TextPolygonItem::resizePolygon(polygon, round(text_item->getTextBoundingRect().width() + (2.5 * HorizSpacing)),
+																					round(text_item->getTextBoundingRect().height() + (1.5 * VertSpacing)));
 
-	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2.5 * HORIZ_SPACING)),
-						roundf(text->boundingRect().height() + (1.5 * VERT_SPACING)));
+	text_item->setPos(0,0);
+	text_item->setPolygon(polygon);
 
-	box->setPos(0,0);
-	box->setPolygon(polygon);
+	protected_icon->setPos(text_item->boundingRect().width() + 2 * HorizSpacing,
+												 text_item->boundingRect().height() * 0.70);
 
-	protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
-						   box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
-
-	this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
-	this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());
+	this->bounding_rect.setTopLeft(text_item->boundingRect().topLeft());
+	this->bounding_rect.setBottomRight(text_item->boundingRect().bottomRight());
 
 	BaseObjectView::__configureObject();
+
+	if(!txtbox_tooltip.isEmpty())
+		this->BaseObjectView::setToolTip(txtbox_tooltip);
 }
 
 void TextboxView::configureObject(void)
@@ -154,7 +133,7 @@ void TextboxView::configureObjectShadow(void)
 
 	pol_item->setPen(Qt::NoPen);
 	pol_item->setBrush(QColor(50,50,50,60));
-	pol_item->setPolygon(box->polygon());
+	pol_item->setPolygon(text_item->polygon());
 	pol_item->setPos(3.5,3.5);
 }
 
@@ -162,8 +141,8 @@ void TextboxView::configureObjectSelection(void)
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_selection);
 
-	pol_item->setPolygon(box->polygon());
+	pol_item->setPolygon(text_item->polygon());
 	pol_item->setPos(0,0);
-	pol_item->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-	pol_item->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
+	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
 }

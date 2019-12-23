@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 {
 	if(!object)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("fechar1")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("fechar1")));
 		obj_name_lbl->setText(trUtf8("No selection"));
 		obj_pos_info_lbl->setText(trUtf8("N/A"));
 	}
@@ -51,13 +51,13 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 																		object->boundingRect().width(),
 																		object->boundingRect().height());
 
-		obj_icon_lbl->setPixmap(PgModelerUiNS::getIconPath(object->getSourceObject()->getSchemaName()));
-		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getSourceObject()->getSignature()).arg(object->getSourceObject()->getTypeName()));
+		obj_icon_lbl->setPixmap(PgModelerUiNs::getIconPath(object->getUnderlyingObject()->getSchemaName()));
+		obj_name_lbl->setText(QString("<strong>%1</strong> <em>(%2)</em>").arg(object->getUnderlyingObject()->getSignature()).arg(object->getUnderlyingObject()->getTypeName()));
 		obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
-															.arg(roundf(rect.left()))
-															.arg(roundf(rect.top()))
-															.arg(roundf(rect.width()))
-															.arg(roundf(rect.height())));
+															.arg(round(rect.left()))
+															.arg(round(rect.top()))
+															.arg(round(rect.width()))
+															.arg(round(rect.height())));
 	}
 }
 
@@ -65,7 +65,10 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 {
 	QRect rect = objs_rect.toRect();
 
-	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath("seltodos")));
+	if(!rect.isValid())
+		rect = QRect(0,0,0,0);
+
+	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 	obj_name_lbl->setText(trUtf8("Sel. objects: %1").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 														.arg(rect.left())
@@ -76,7 +79,7 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 
 void SceneInfoWidget::updateMousePosition(const QPointF &mouse_pos)
 {
-	mouse_pos_info_lbl->setText(QString("%1, %2").arg(roundf(mouse_pos.x())).arg(roundf(mouse_pos.y())));
+	mouse_pos_info_lbl->setText(QString("%1, %2").arg(round(mouse_pos.x())).arg(round(mouse_pos.y())));
 }
 
 void SceneInfoWidget::updateSceneZoom(double zoom)

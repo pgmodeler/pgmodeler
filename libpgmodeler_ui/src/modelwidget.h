@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
-		XMLParser *xmlparser;
+		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
 
@@ -63,7 +63,7 @@ class ModelWidget: public QWidget {
 		disable_render_smooth;
 
 		//! \brief Indicates if the minimum object opacity used when appliyng fade out to objects
-		static float min_object_opacity;
+		static double min_object_opacity;
 
 		/*! \brief Stores the model that generates the copy/cut operation. This model is updated
 		from the destination model whenever a past/cut operation is done. */
@@ -102,6 +102,9 @@ class ModelWidget: public QWidget {
 		//! \brief Stores the tags used by the "set tag" operation
 		tags_menu,
 
+		//! \brief Stores the layers used by the "move to layer" operation
+		layers_menu,
+
 		break_rel_menu,
 
 		fade_menu,
@@ -114,11 +117,17 @@ class ModelWidget: public QWidget {
 
 		toggle_attrs_menu,
 
+		pagination_menu,
+
 		select_all_menu,
 
 		jump_to_tab_menu,
 
-		toggle_sch_rects_menu;
+		toggle_sch_rects_menu,
+
+		database_category_menu,
+
+		schema_category_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -149,9 +158,6 @@ class ModelWidget: public QWidget {
 		//! \brief This timer controls the interval the zoom label is visible
 		QTimer zoom_info_timer;
 
-		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
-		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OK_CANCEL_BUTTONS);
-
 		//! \brief Opens a editing form for objects at database level
 		template<class Class, class WidgetClass>
 		int openEditingForm(BaseObject *object);
@@ -164,6 +170,9 @@ class ModelWidget: public QWidget {
 		//! \brief Opens a editing form for objects that can have a position in the canvas area
 		template<class Class, class WidgetClass, class ParentClass>
 		int openEditingForm(BaseObject *object, BaseObject *parent_obj, const QPointF &pos);
+
+		//! \brief Opens a editing form specific for tables and foreign tables
+		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
 
 		//! \brief Configures the popup menu according the the selected objects list
 		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
@@ -194,10 +203,10 @@ class ModelWidget: public QWidget {
 		void showMagnifierArea(bool show);
 
 	protected:
-		static const unsigned BREAK_VERT_NINETY_DEGREES, //Break vertically the line in one 90° angle
-		BREAK_HORIZ_NINETY_DEGREES, //Break horizontally the line in one 90° angle
-		BREAK_VERT_2NINETY_DEGREES, //Break vertically the line in two 90° angles
-		BREAK_HORIZ_2NINETY_DEGREES;//Break horizontally the line in two 90° angles
+		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
+		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
+		BreakVert2NinetyDegrees=2, //Break vertically the line in two 90° angles
+		BreakHoriz2NinetyDegrees=3;//Break horizontally the line in two 90° angles
 
 		QAction *action_source_code,
 		*action_edit,
@@ -227,6 +236,7 @@ class ModelWidget: public QWidget {
 		*action_break_rel_line,
 		*action_remove_rel_points,
 		*action_set_tag,
+		*action_moveto_layer,
 		*action_disable_sql,
 		*action_enable_sql,
 		*action_duplicate,
@@ -236,14 +246,19 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
-		*action_extended_attribs,
-		*action_show_ext_attribs,
-		*action_hide_ext_attribs,
+		*action_pagination,
+		*action_collapse_mode,
+		*action_collapse_ext_attribs,
+		*action_collpase_all_attribs,
+		*action_no_collapse_attribs,
 		*action_edit_creation_order,
 		*action_jump_to_table,
 		*action_schemas_rects,
 		*action_show_schemas_rects,
-		*action_hide_schemas_rects;
+		*action_hide_schemas_rects,
+		*action_edit_data,
+		*action_database_category,
+		*action_schema_category;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -269,17 +284,22 @@ class ModelWidget: public QWidget {
 		/*! \brief Reorganizes the tables of a specific schema over the scene. The parameter are:
 		 the schema in which the tables will be rearranged, an origin point, number of tables per row
 		 a object spacing */
-		void rearrangeTablesInGrid(Schema *schema, QPointF origin, unsigned tabs_per_row, double obj_spacing);
+		void rearrangeTablesInGrid(Schema *schema, unsigned tabs_per_row, QPointF origin, double obj_spacing);
 
 		void fadeObjects(const vector<BaseObject *> &objects, bool fade_in);
 
-	public:
-		static constexpr double MINIMUM_ZOOM=0.050000,
-		MAXIMUM_ZOOM=5.000001,
-		ZOOM_INCREMENT=0.050000;
+		void setAllCollapseMode(CollapseMode mode);
 
-		ModelWidget(QWidget *parent = 0);
+	public:
+		static constexpr double MinimumZoom=0.050000,
+		MaximumZoom=5.000001,
+		ZoomIncrement=0.050000;
+
+		ModelWidget(QWidget *parent = nullptr);
 		~ModelWidget(void);
+
+		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
+		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
@@ -295,7 +315,7 @@ class ModelWidget: public QWidget {
 		QString getTempFilename(void);
 
 		//! \brief Shows the editing form according to the passed object type
-		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(NAN, NAN));
+		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(DNaN, DNaN));
 
 		//! \brief Applies a zoom factor to the model
 		void applyZoom(double zoom);
@@ -308,6 +328,12 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns the reference database model
 		DatabaseModel *getDatabaseModel(void);
+
+		//! \brief Returns the object scene used by the model
+		ObjectsScene *getObjectsScene(void);
+
+		//! \brief Returns the scene view used by the model
+		QGraphicsView *getViewport(void);
 
 		//! \brief Returns the operation list used by database model
 		OperationList *getOperationList(void);
@@ -345,7 +371,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
-		void rearrangeSchemasInGrid(QPointF origin = QPointF(50, 50), unsigned tabs_per_row = 5, unsigned sch_per_row = 3, double obj_spacing = 50);
+		void rearrangeSchemasInGrid(unsigned tabs_per_row = 0, unsigned sch_per_row = 0, QPointF origin = QPointF(50, 50), double obj_spacing = 50);
 
 		//! \brief Arrange all tables it their schemas randomly (scattered)
 		void rearrangeTablesInSchemas(void);
@@ -389,6 +415,9 @@ class ModelWidget: public QWidget {
 		//! \brief Move the selected object to a schema (selectable via menu)
 		void moveToSchema(void);
 
+		//! \brief Move the selected object to a layer (selectable via menu)
+		void moveToLayer(void);
+
 		//! \brief Quickly changes the object's owner via popup menu
 		void changeOwner(void);
 
@@ -417,7 +446,7 @@ class ModelWidget: public QWidget {
 		void copyObjects(bool duplicate_mode = false);
 
 		//! \brief Paste all the objects copied previously
-		void pasteObjects(void);
+		void pasteObjects(bool duplicate_mode = false);
 
 		//! \brief Duplicate the selected table object in its parent table
 		void duplicateObject(void);
@@ -468,13 +497,19 @@ class ModelWidget: public QWidget {
 
 		void fadeObjectsOut(void);
 
-		void toggleExtendedAttributes(void);
+		void setCollapseMode(void);
+
+		void togglePagination(void);
 
 		void toggleSchemasRectangles(void);
 
-		void editCreationOrder(void);
+		void swapObjectsIds(void);
 
 		void jumpToTable(void);
+
+		void editTableData(void);
+
+		void updateModelLayers(void);
 
 	public slots:
 		void loadModel(const QString &filename);
@@ -512,6 +547,7 @@ class ModelWidget: public QWidget {
 		friend class DatabaseImportForm;
 		friend class ObjectFinderWidget;
 		friend class NewObjectOverlayWidget;
+		friend class LayersWidget;
 };
 
 #endif

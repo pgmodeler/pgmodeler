@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ class Conversion: public BaseObject {
 
 	public:
 		//! \brief Constants used to access the conversion encodings
-		static const unsigned SRC_ENCODING=0,
-		DST_ENCODING=1;
+		static constexpr unsigned SrcEncoding=0,
+		DstEncoding=1;
 
 		Conversion(void);
 

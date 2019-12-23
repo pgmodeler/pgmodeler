@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 #include "exception.h"
 #include "xmlparser.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 #include <algorithm>
 #include <QWidget>
 
@@ -40,7 +40,7 @@ class BaseConfigWidget: public QWidget {
 		bool config_changed;
 		
 	protected:
-		XMLParser xmlparser;
+		XmlParser xmlparser;
 		SchemaParser schparser;
 		
 		/*! \brief Saves the configuration params on file. The conf_id param indicates the type of
@@ -65,7 +65,7 @@ class BaseConfigWidget: public QWidget {
 		void showEvent(QShowEvent *);
 		
 	public:
-		BaseConfigWidget(QWidget *parent = 0);
+		BaseConfigWidget(QWidget *parent = nullptr);
 		~BaseConfigWidget(void){}
 		
 		bool isConfigurationChanged(void);

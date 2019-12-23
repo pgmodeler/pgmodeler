@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ class TableTitleView: public BaseObjectView
 	private:
 		Q_OBJECT
 
-		//! \brief Polygonal object that defines the title border
-		//QGraphicsPolygonItem *box;
+		//! \brief Rounded rectangle object that defines the title border
 		RoundedRectItem *box;
 
 		//! \brief Graphical texts that is used to store the object name and schema name
@@ -52,6 +51,8 @@ class TableTitleView: public BaseObjectView
 
 		void configureObject(BaseGraphicObject *object);
 		void resizeTitle(double width, double height);
+
+		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 };
 
 #endif

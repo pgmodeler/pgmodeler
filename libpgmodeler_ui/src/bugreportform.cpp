@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 #include "messagebox.h"
 #include "pgmodeleruins.h"
 
-const char BugReportForm::CHR_DELIMITER=static_cast<char>(3);
-
 BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
@@ -32,7 +30,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 				   Qt::WindowMinMaxButtonsHint |
 				   Qt::WindowCloseButtonHint);
 
-	PgModelerUiNS::configureWidgetFont(hint_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
 
 	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
 	connect(create_btn, SIGNAL(clicked(void)), this, SLOT(generateReport(void)));
@@ -42,13 +40,13 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	connect(actions_txt, SIGNAL(textChanged()), this, SLOT(enableGeneration()));
 	connect(output_edt, SIGNAL(textChanged(QString)), this, SLOT(enableGeneration()));
 
-	output_edt->setText(QFileInfo(GlobalAttributes::TEMPORARY_DIR).absoluteFilePath());
+	output_edt->setText(QFileInfo(GlobalAttributes::TemporaryDir).absoluteFilePath());
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt);
-	hl_model_txt->loadConfiguration(GlobalAttributes::XML_HIGHLIGHT_CONF_PATH);
+	hl_model_txt->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
 
-	QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+	QDir tmp_dir=QDir(GlobalAttributes::TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
 	tmp_dir.setSorting(QDir::Time);
 	QStringList list=tmp_dir.entryList();
 
@@ -57,8 +55,8 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 		QFile input;
 
 		//Opens the last modified model file showing it on the proper widget
-		input.setFileName(GlobalAttributes::TEMPORARY_DIR +
-						  GlobalAttributes::DIR_SEPARATOR + list[0]);
+		input.setFileName(GlobalAttributes::TemporaryDir +
+						  GlobalAttributes::DirSeparator + list[0]);
 
 		input.open(QFile::ReadOnly);
 		model_txt->setPlainText(QString(input.readAll()));
@@ -71,11 +69,11 @@ QByteArray BugReportForm::generateReportBuffer(void)
 	QByteArray buf;
 
 	buf.append(actions_txt->toPlainText().toUtf8());
-	buf.append(CHR_DELIMITER);
+	buf.append(CharDelimiter);
 
 	if(attach_mod_chk->isChecked())
 		buf.append(model_txt->toPlainText().toUtf8());
-	buf.append(CHR_DELIMITER);
+	buf.append(CharDelimiter);
 
 	return(buf);
 }
@@ -96,8 +94,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	Messagebox msgbox;
 	QFile output;
 	QString filename=QFileInfo(QString(output_edt->text() +
-									   GlobalAttributes::DIR_SEPARATOR +
-									   GlobalAttributes::BUG_REPORT_FILE)
+									   GlobalAttributes::DirSeparator +
+									   GlobalAttributes::BugReportFile)
 							   .arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm")))).absoluteFilePath();
 
 	//Opens the file for writting
@@ -105,7 +103,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	output.open(QFile::WriteOnly);
 
 	if(!output.isOpen())
-		msgbox.show(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(filename), Messagebox::ERROR_ICON);
+		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray comp_buf;
@@ -117,8 +115,9 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!").arg(filename).arg(GlobalAttributes::BUG_REPORT_EMAIL),
-					Messagebox::INFO_ICON);
+		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
+								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
+					Messagebox::InfoIcon);
 	}
 }
 
@@ -142,8 +141,8 @@ void BugReportForm::attachModel(void)
 			input.open(QFile::ReadOnly);
 
 			if(!input.isOpen())
-				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file_dlg.selectedFiles().at(0)),
-								ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_dlg.selectedFiles().at(0)),
+												ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf=input.readAll();
 			model_txt->setPlainText(QString(buf));

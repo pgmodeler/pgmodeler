@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,21 +36,22 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		Q_OBJECT
 		
 		//! \brief Constants used to mark the type of operation performed on rows
-		static const unsigned NO_OPERATION,	OP_INSERT, OP_UPDATE, OP_DELETE;
-		
-		//! \brief Default row colors for each operation type
-		static const QColor ROW_COLORS[3];
+		static constexpr unsigned NoOperation=0,
+		OpInsert=1,
+		OpUpdate=2,
+		OpDelete=3;
 
-		static bool has_csv_clipboard;
-		
+		//! \brief Default row colors for each operation type
+		static const QColor RowColors[3];
+
 		CsvLoadWidget *csv_load_wgt;
 
 		SyntaxHighlighter *filter_hl;
 		
 		CodeCompletionWidget *code_compl_wgt;
 
-		QMenu fks_menu, copy_menu;
-		
+		QMenu fks_menu, copy_menu, truncate_menu, paste_menu;
+
 		//! \brief Store the template connection params to be used by catalogs and command execution connections
 		attribs_map tmpl_conn_params;
 		
@@ -59,6 +60,9 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		
 		//! \brief Current editing table pk columns names
 		pk_col_names;
+
+		//! \brief Stores the current table's name (schema.table)
+		QString curr_table_name;
 
 		/*! \brief Stores the current opened table's oid. This attribute is filled only the table has an primary
 		and it is used to retrieve all foreign keys that references the current table */
@@ -94,7 +98,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		QString getDMLCommand(int row);
 		
 		//! \brief Remove the rows marked as OP_INSERT which ids are specified on the parameter vector
-		void removeNewRows(const vector<int> &ins_rows);
+		void removeNewRows(vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
 		void clearChangedRows(void);
@@ -102,15 +106,23 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		//! brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
 
+		void resizeEvent(QResizeEvent *event);
+
+		void closeEvent(QCloseEvent *);
+
+		void setColumnsCheckState(Qt::CheckState state);
+
 	public:
-		DataManipulationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table=QString(), const QString &filter=QString());
-
-		static void setHasCsvClipboard(bool value);
+		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name=QString(), const QString &filter=QString());
 
 	private slots:
+		void reject(void);
+
+		void clearItemsText(void);
+
 		//! \brief List the tables based upon the current schema
 		void listTables(void);
 		
@@ -169,16 +181,25 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void swapColumns(void);
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
-		void loadDataFromCsv(bool load_from_clipboard = false);
+		void loadDataFromCsv(bool load_from_clipboard = false, bool force_csv_parsing = false);
 
-		//! brief Browse the referenced table data using the selected row in the results grid
+		//! \brief Browse the referenced table data using the selected row in the results grid
 		void browseReferencedTable(void);
 
-		//! brief Browse the referencing table data using the selected row in the results grid
+		//! \brief Browse the referencing table data using the selected row in the results grid
 		void browseReferrerTable(void);
 
-		//! brief Changes the values of the grid selection at once
-		void bulkDataEdit(void);
+		//! \brief Truncates the browsed table
+		void truncateTable(void);
+
+		//! \brief Display or hides a column when the related item is interacted in the column list at filter section
+		void toggleColumnDisplay(QListWidgetItem *item);
+
+		//! \brief Opens a new data manipulation windows
+		void openNewWindow(void);
+
+		//! \brief Shows the popup menu over the current selection
+		void showPopupMenu(void);
 };
 
 #endif

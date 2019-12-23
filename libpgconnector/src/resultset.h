@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,8 +46,6 @@ class ResultSet {
 	 when this flag is marked as false */
 		bool is_res_copied;
 
-		void destroyResultSet(void);
-
 		void validateColumnIndex(int column_idx);
 
 		int validateColumnName(const QString &column_name);
@@ -69,10 +67,10 @@ class ResultSet {
 
 	public:
 		//! \brief Constants used to navigate through the resultset
-		static const unsigned FIRST_TUPLE=0,
-		LAST_TUPLE=1,
-		PREVIOUS_TUPLE=2,
-		NEXT_TUPLE=3;
+		static constexpr unsigned FirstTuple=0,
+		LastTuple=1,
+		PreviousTuple=2,
+		NextTuple=3;
 
 		ResultSet(void);
 		~ResultSet(void);
@@ -121,6 +119,11 @@ class ResultSet {
 
 		//! \brief Returns if the result set is empty due a DML command that does not returned any data
 		bool isEmpty(void);
+
+		//! \brief Returns if the result set is valid (created from a valid result set)
+		bool isValid(void);
+
+		void clearResultSet(void);
 
 		//! \brief Make a copy between two resultsets
 		void operator = (ResultSet &res);

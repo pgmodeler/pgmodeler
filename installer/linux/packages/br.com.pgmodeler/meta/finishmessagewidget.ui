@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>548</width>
-    <height>385</height>
+    <height>502</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,7 +42,6 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>11</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -65,11 +64,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
      </property>
      <property name="text">
       <string>Please, read the instructions below to see how to run it.</string>
@@ -96,7 +90,6 @@
      <property name="font">
       <font>
        <family>Courier 10 Pitch</family>
-       <pointsize>11</pointsize>
       </font>
      </property>
      <property name="readOnly">
@@ -143,15 +136,7 @@ p, li { white-space: pre-wrap; }
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>You can find more information about pgModeler on:&lt;br/&gt;
-&lt;br/&gt;Official site:&lt;br/&gt;
-&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;
-&lt;br/&gt;GitHub repository:&lt;br/&gt;
-&lt;a href=&quot;https://github.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;
-&lt;br/&gt;Social Networks:&lt;br/&gt;
-&lt;a href=&quot;http://twitter.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://twitter.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;
-&lt;a href=&quot;http://facebook.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://facebook.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;
-&lt;a href=&quot;https://plus.google.com/u/0/communities/114191031055593275754&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://plus.google.com/u/0/communities/114191031055593275754&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can find more information about pgModeler on:&lt;br/&gt;&lt;br/&gt;Official site:&lt;br/&gt;&lt;a href=&quot;https://pgmodeler.io&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://pgmodeler.io&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;GitHub repository:&lt;br/&gt;&lt;a href=&quot;https://github.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://github.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;Social Networks:&lt;br/&gt;&lt;a href=&quot;https://twitter.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://twitter.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;a href=&quot;https://facebook.com/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://facebook.com/pgmodeler&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="textInteractionFlags">
          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

@@ -16,11 +16,11 @@ windows: DESTDIR = $$PWD
 HEADERS += src/schemaparser.h \
 	   src/xmlparser.h \
 	   src/attribsmap.h \
-	   src/parsersattributes.h
+	    src/attributes.h
 
 SOURCES += src/schemaparser.cpp \
 	   src/xmlparser.cpp \
-    src/parsersattributes.cpp
+    src/attributes.cpp
 
 unix|windows: LIBS += -L$$OUT_PWD/../libutils/ -lutils $$XML_LIB
 

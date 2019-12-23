@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,52 +50,51 @@
 #include "configurationform.h"
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
+#include "layerswidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		//! \brief Maximum number of files listed on recent models menu
-		const static int MAX_RECENT_MODELS=15;
+		static constexpr int GeneralActionsCount=8;
 
-		const static int GENERAL_ACTIONS_COUNT=8;
-
-		const static int WELCOME_VIEW=0,
-		DESIGN_VIEW=1,
-		MANAGE_VIEW=2;
+		static constexpr int WelcomeView=0,
+		DesignView=1,
+		ManageView=2,
+		InfinityInterval = INT_MAX;
 
 		static bool confirm_validation;
 
 		//! \brief Constants used to mark a pending operation to be executed after validate model
-		const static unsigned NO_PENDING_OPER=0,
-		PENDING_SAVE_OPER=1,
-		PENDING_SAVE_AS_OPER=2,
-		PENDING_EXPORT_OPER=3,
-		PENDING_DIFF_OPER=4;
+		static constexpr unsigned NoPendingOp=0,
+		PendingSaveOp=1,
+		PendingSaveAsOp=2,
+		PendingExportOp=3,
+		PendingDiffOp=4;
 
 		unsigned pending_op;
+
+		//! \brief Timer used for auto saving the model and temporary model.
+		QTimer model_save_timer,	tmpmodel_save_timer;
 
 		AboutWidget *about_wgt;
 
 		DonateWidget *donate_wgt;
 
-		SceneInfoWidget *canvas_info_wgt;
+		SceneInfoWidget *scene_info_wgt;
+
+		//! \brief Layers management widget
+		LayersWidget *layers_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
 		WelcomeWidget *central_wgt;
 
-		//! \brief Widget used to navigate through the opened models.
-		ModelNavigationWidget *model_nav_wgt;
-
-		//! \brief Thread that controls temporary model file savings
-		QThread tmpmodel_thread;
-
-		//! \brief Timer used for auto saving the model and temporary model.
-		QTimer model_save_timer,	tmpmodel_save_timer;
-
 		//! \brief Model overview widget
 		ModelOverviewWidget *overview_wgt;
+
+		//! \brief Widget used to navigate through the opened models.
+		ModelNavigationWidget *model_nav_wgt;
 
 		//! \brief Model validation widget
 		ModelValidationWidget *model_valid_wgt;
@@ -103,14 +102,14 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief SQL tool widget widget
 		SQLToolWidget *sql_tool_wgt;
 
-		//! \brief Temporary model restoration form
-		ModelRestorationForm *restoration_form;
-
 		//! \brief Operation list dock widget
 		OperationListWidget *oper_list_wgt;
 
 		//! \brief Model objects dock widget
 		ModelObjectsWidget *model_objs_wgt;
+
+		//! \brief Temporary model restoration form
+		ModelRestorationForm *restoration_form;
 
 		//! \brief Object finder used as dock widget
 		ObjectFinderWidget *obj_finder_wgt;
@@ -143,7 +142,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		sample_mdls_menu,
 
-		arrange_menu;
+		arrange_menu,
+
+		more_actions_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -152,9 +153,6 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
-
-		//! \brief Creates drop shadown on a tool button that represents an QAction
-		QGraphicsDropShadowEffect *createDropShadow(QToolButton *btn);
 
 		void configureSamplesMenu(void);
 
@@ -168,8 +166,13 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Shows a error dialog informing that the model demands a fix after the error ocurred when loading the filename.
 		void showFixMessage(Exception &e, const QString &filename);
 
+		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
+		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
+		 * the current button toggle state. */
+		bool isToolButtonsChecked(QHBoxLayout *layout);
+
 	public:
-		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
 		~MainWindow(void);
 
 		//! \brief Loads a set of models from string list
@@ -195,6 +198,17 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Returns the model at given index
 		ModelWidget *getModel(int idx);
+
+		//! \brief Switches the currently opened view (Design, Manage, Welcome)
+		void switchView(int view);
+
+		/*! \brief This is a convenience method to make able the addition of execution tabs in SQL tool without
+		 *  expose the SQL Tool widget itself (useful for plugin developers) */
+		void addExecTabInSQLTool(const QString &sql_cmd);
+
+		/*! \brief This is a convenience method that returns a true value when there're databases listed in the SQL tool widget without
+		 *  expose the SQL Tool widget itself (useful for plugin developers) */
+		bool hasDbsListedInSQLTool(void);
 
 	private slots:
 		void showMainMenu(void);
@@ -291,6 +305,11 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void handleObjectsMetadata(void);
 		void restoreTemporaryModels(void);
 		void arrangeObjects(void);
+		void toggleCompactView(void);
+		void toggleLayersWidget(bool show);
+
+	signals:
+		void s_currentModelChanged(ModelWidget *model_wgt);
 };
 
 #endif

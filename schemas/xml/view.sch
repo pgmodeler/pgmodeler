@@ -1,16 +1,21 @@
 # XML definition for views
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-[<view name=] "{name}" 
+[<view name=] "{name}"
 
+ %if {layer} %then [ layer=]"{layer}" %end
+ %if {alias} %then [ alias=]"{alias}" %end
  %if {protected} %then [ protected=] "true" %end
  %if {materialized} %then [ materialized=] "true" %end
  %if {recursive} %then [ recursive=] "true" %end
  %if {with-no-data} %then [ with-no-data=] "true" %end
  %if {sql-disabled} %then [ sql-disabled=] "true" %end
- %if {hide-ext-attribs} %then [ hide-ext-attribs=] "true" %end
+ %if {collapse-mode} %then [ collapse-mode=] "{collapse-mode}" %end
+ %if {pagination} %then [ pagination=] "true"  %end
+ %if {attribs-page} %then [ attribs-page=] "{attribs-page}"  %end
+ %if {ext-attribs-page} %then [ ext-attribs-page=] "{ext-attribs-page}"  %end
  %if {faded-out} %then [ faded-out=] "true" %end
-
+ %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
  > $br
 
  {schema}

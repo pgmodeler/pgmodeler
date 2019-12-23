@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,26 +20,26 @@
 
 Language::Language(void)
 {
-	obj_type=OBJ_LANGUAGE;
+	obj_type=ObjectType::Language;
 	is_trusted=false;
 
-	for(unsigned i=VALIDATOR_FUNC; i <= INLINE_FUNC; i++)
+	for(unsigned i=ValidatorFunc; i <= InlineFunc; i++)
 		functions[i]=nullptr;
 
-	attributes[ParsersAttributes::TRUSTED]=QString();
-	attributes[ParsersAttributes::HANDLER_FUNC]=QString();
-	attributes[ParsersAttributes::VALIDATOR_FUNC]=QString();
-	attributes[ParsersAttributes::INLINE_FUNC]=QString();
+	attributes[Attributes::Trusted]=QString();
+	attributes[Attributes::HandlerFunc]=QString();
+	attributes[Attributes::ValidatorFunc]=QString();
+	attributes[Attributes::InlineFunc]=QString();
 }
 
 void Language::setName(const QString &name)
 {
 	//Raises an error if the user try to set an system reserved language name (C, SQL)
 	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
-						.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
-						ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Language)),
+						ErrorCode::AsgReservedName,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObject::setName(name);
 }
@@ -52,26 +52,26 @@ void Language::setTrusted(bool value)
 
 void  Language::setFunction(Function *func, unsigned func_type)
 {
-	LanguageType lang=LanguageType::c;
+	LanguageType lang=LanguageType::C;
 
 	if(!func ||
 			(func &&
 			 /* The handler function must be written in C and have
 								  'language_handler' as return type */
-			 ((func_type==HANDLER_FUNC &&
+			 ((func_type==HandlerFunc &&
 			   func->getReturnType()==QString("language_handler") &&
 			   func->getParameterCount()==0 &&
 			   func->getLanguage()->getName()==(~lang)) ||
 			  /* The validator function must be written in C and return 'void' also
 									   must have only one parameter of the type 'oid' */
-			  (func_type==VALIDATOR_FUNC &&
+			  (func_type==ValidatorFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("oid") &&
 			   func->getLanguage()->getName()==(~lang)) ||
 			  /* The inline function must be written in C and return 'void' also
 									   must have only one parameter of the type 'internal' */
-			  (func_type==INLINE_FUNC &&
+			  (func_type==InlineFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("internal") &&
@@ -81,21 +81,21 @@ void  Language::setFunction(Function *func, unsigned func_type)
 		this->functions[func_type]=func;
 	}
 	//Raises an error in case the function return type doesn't matches the required by each rule
-	else if((func_type==HANDLER_FUNC && func->getReturnType()!=QString("language_handler")) ||
-			((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!=QString("void")))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
+	else if((func_type==HandlerFunc && func->getReturnType()!=QString("language_handler")) ||
+			((func_type==ValidatorFunc || func_type==InlineFunc) && func->getReturnType()!=QString("void")))
+		throw Exception(Exception::getErrorMessage(ErrorCode::AsgFunctionInvalidReturnType)
 						.arg(this->getName(true))
-						.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
-						ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						.arg(BaseObject::getTypeName(ObjectType::Language)),
+						ErrorCode::AsgFunctionInvalidReturnType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 		//Raises an error in case the function has invalid parameters (count and types)
-		throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgFunctionInvalidParameters,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Function * Language::getFunction(unsigned func_type)
 {
-	if(func_type > INLINE_FUNC)
-		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(func_type > InlineFunc)
+		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_type]);
 }
@@ -116,24 +116,24 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(!code_def.isEmpty()) return(code_def);
 
 	unsigned i;
-	QString attribs_func[3]={ParsersAttributes::VALIDATOR_FUNC,
-							 ParsersAttributes::HANDLER_FUNC,
-							 ParsersAttributes::INLINE_FUNC};
+	QString attribs_func[3]={Attributes::ValidatorFunc,
+							 Attributes::HandlerFunc,
+							 Attributes::InlineFunc};
 
-	attributes[ParsersAttributes::TRUSTED]=(is_trusted ? ParsersAttributes::_TRUE_ : QString());
+	attributes[Attributes::Trusted]=(is_trusted ? Attributes::True : QString());
 
-	if(!reduced_form && def_type==SchemaParser::XML_DEFINITION)
-		reduced_form=(!functions[VALIDATOR_FUNC] && !functions[HANDLER_FUNC] && !functions[INLINE_FUNC] && !this->getOwner());
+	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
+		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());
 
 	for(i=0; i < 3; i++)
 	{
 		if(functions[i])
 		{
-			if(def_type==SchemaParser::SQL_DEFINITION)
+			if(def_type==SchemaParser::SqlDefinition)
 				attributes[attribs_func[i]]=functions[i]->getName(true);
 			else
 			{
-				functions[i]->setAttribute(ParsersAttributes::REF_TYPE, attribs_func[i]);
+				functions[i]->setAttribute(Attributes::RefType, attribs_func[i]);
 				attributes[attribs_func[i]]=functions[i]->getCodeDefinition(def_type, true);
 			}
 		}

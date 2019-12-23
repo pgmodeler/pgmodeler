@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ class RelationshipView: public BaseObjectView {
 		Q_OBJECT
 
 		//! \brief Graphical point radius
-		static constexpr double GRAPHIC_PNT_RADIUS=6.0f;
+		static constexpr double GraphicPointRadius=6.0;
 
 		//! \brief Length of the lines linked to fk/pk columns
-		static constexpr double CONN_LINE_LENGTH=20.0f;
+		static constexpr double ConnLineLength=20.0;
 
 		//! \brief Indicates that the relationship labels must be hidden
 		static bool hide_name_label;
@@ -158,9 +158,9 @@ class RelationshipView: public BaseObjectView {
 		void configureObject(void);
 
 	public:
-		static const unsigned CONNECT_CENTER_PNTS=0,
-		CONNECT_FK_TO_PK=1,
-		CONNECT_TABLE_EGDES=2;
+		static constexpr unsigned ConnectCenterPoints=0,
+		ConnectFkToPk=1,
+		ConnectTableEdges=2;
 
 		RelationshipView(BaseRelationship *rel);
 		~RelationshipView(void);
@@ -169,7 +169,7 @@ class RelationshipView: public BaseObjectView {
 		QRectF __boundingRect(void);
 
 		//! \brief Returns the relationship that generates the graphical representation
-		BaseRelationship *getSourceObject(void);
+		BaseRelationship *getUnderlyingObject(void);
 
 		//! \brief Hides the relationship's name label. This applies to all relationship instances
 		static void setHideNameLabel(bool value);
@@ -202,6 +202,9 @@ class RelationshipView: public BaseObjectView {
 		 where the relationship is connected on envolved tables. The point returned deffers depending on the
 		 line connection mode used.	*/
 		QPointF getConnectionPoint(unsigned table_idx);
+
+		void configureObjectShadow(void) = delete;
+		void configureObjectSelection(void) = delete;
 
 	signals:
 		void s_relationshipModified(BaseGraphicObject *rel);

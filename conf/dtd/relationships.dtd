@@ -16,7 +16,7 @@
 <!ELEMENT name-patterns (patterns+)>
 
 <!ELEMENT patterns EMPTY>
-<!ATTLIST patterns type (rel11|rel1n|relnn|relgen|reldep) "rel11">
+<!ATTLIST patterns type (rel11|rel1n|relnn|relgen|reldep|relpart) "rel11">
 <!ATTLIST patterns src-col-pattern CDATA #IMPLIED>
 <!ATTLIST patterns dst-col-pattern CDATA #IMPLIED>
 <!ATTLIST patterns src-fk-pattern CDATA #IMPLIED>

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 
+		QScrollArea *scrollarea;
+
 		//! \brief Model which object are drawn on the overview widget
 		ModelWidget *model;
 
@@ -52,7 +54,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		QSize pixmap_size;
 
 		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
-		static constexpr double RESIZE_FACTOR=0.20f;
+		static constexpr double ResizeFactor=0.20;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent *event);
@@ -67,7 +69,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void updateOverview(bool force_update);
 
 	public:
-		ModelOverviewWidget(QWidget *parent = 0);
+		ModelOverviewWidget(QWidget *parent = nullptr);
 
 	public slots:
 		//! \brief Updates the overview (only if the widget is visible)

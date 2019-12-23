@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 #include "application.h"
 #include "globalattributes.h"
 #include "messagebox.h"
-#include "parsersattributes.h"
+#include "attributes.h"
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::TMPL_CONFIGURATIONS_DIR +
-				   GlobalAttributes::DIR_SEPARATOR +
-				   GlobalAttributes::UI_STYLE_CONF +
-				   GlobalAttributes::CONFIGURATION_EXT);
+	QFile ui_style(GlobalAttributes::TmplConfigurationDir +
+				   GlobalAttributes::DirSeparator +
+				   GlobalAttributes::UiStyleConf +
+				   GlobalAttributes::ConfigurationExt);
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
@@ -41,25 +41,25 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	this->addLibraryPath(this->applicationDirPath());
 
 	//If pgModeler bundles plugins, add the root plugins path to lib search paths
-	if(dir.exists(GlobalAttributes::PLUGINS_DIR))
-		this->addLibraryPath(GlobalAttributes::PLUGINS_DIR);
+	if(dir.exists(GlobalAttributes::PluginsDir))
+		this->addLibraryPath(GlobalAttributes::PluginsDir);
 
 	//Check if the temporary dir exists, if not, creates it.
-	if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
+	if(!dir.exists(GlobalAttributes::TemporaryDir))
 	{
-		if(!dir.mkdir(GlobalAttributes::TEMPORARY_DIR))
+		if(!dir.mkdir(GlobalAttributes::TemporaryDir))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(GlobalAttributes::TEMPORARY_DIR),
-							   ERR_FILE_DIR_NOT_WRITTEN, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::TemporaryDir),
+												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::CONFIGURATIONS_DIR +
-											GlobalAttributes::DIR_SEPARATOR +
-											GlobalAttributes::GENERAL_CONF +
-											GlobalAttributes::CONFIGURATION_EXT;
+	QString conf_file =	GlobalAttributes::ConfigurationsDir +
+											GlobalAttributes::DirSeparator +
+											GlobalAttributes::GeneralConf +
+											GlobalAttributes::ConfigurationExt;
 	QFile input;
 	QString lang_id = QLocale::system().name();
 
@@ -68,23 +68,23 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	if(input.open(QFile::ReadOnly))
 	{
 		QString buf = QString(input.readAll());
-		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(ParsersAttributes::UI_LANGUAGE));
+		QRegExp regexp = QRegExp(QString("(%1)(.*)(=)(\\\")(.)+(\\\")(\\\n)").arg(Attributes::UiLanguage));
 		int idx =	regexp.indexIn(QString(buf));
 
 		//Extract the value of the ui-language attribute in the conf file
 		lang_id = buf.mid(idx, regexp.matchedLength());
-		lang_id.remove(ParsersAttributes::UI_LANGUAGE);
+		lang_id.remove(Attributes::UiLanguage);
 		lang_id.remove(QChar('"')).remove(QChar('=')).remove(QChar('\n'));
 	}
 
 	//Tries to load the main ui translation according to the system's locale
 	main_translator=new QTranslator(this);
-	main_translator->load(lang_id, GlobalAttributes::LANGUAGES_DIR);
+	main_translator->load(lang_id, GlobalAttributes::LanguagesDir);
 	this->installTranslator(main_translator);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::PLUGINS_DIR +
-								GlobalAttributes::DIR_SEPARATOR,
+	dir_list=QDir(GlobalAttributes::PluginsDir +
+								GlobalAttributes::DirSeparator,
 								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
@@ -93,10 +93,10 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::PLUGINS_DIR +
-					  GlobalAttributes::DIR_SEPARATOR + plugin_name +
-					  GlobalAttributes::DIR_SEPARATOR + QString("lang") +
-					  GlobalAttributes::DIR_SEPARATOR;
+		plug_lang_dir=GlobalAttributes::PluginsDir +
+					  GlobalAttributes::DirSeparator + plugin_name +
+					  GlobalAttributes::DirSeparator + QString("lang") +
+					  GlobalAttributes::DirSeparator;
 
 		plug_lang_file=plugin_name + QString(".") + lang_id;
 
@@ -116,8 +116,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	if(!ui_style.isOpen())
 	{
 		Messagebox msg;
-		msg.show(Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(ui_style.fileName()),
-						   ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+		msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(ui_style.fileName()),
+											 ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	else
 		this->setStyleSheet(ui_style.readAll());
@@ -138,28 +138,28 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	catch(...)
 	{
 		Messagebox msg_box;
-		msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ERROR_ICON);
+		msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ErrorIcon);
 		return(false);
 	}
 }
 
 void Application::createUserConfiguration(void)
 {
-	QDir config_dir(GlobalAttributes::CONFIGURATIONS_DIR);
+	QDir config_dir(GlobalAttributes::ConfigurationsDir);
 
 	try
 	{
 		//If the directory not exists or is empty
 		if(!config_dir.exists() ||
-				config_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
+				config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
 									 QDir::Files | QDir::NoDotAndDotDot).isEmpty())
-			copyFilesRecursively(GlobalAttributes::TMPL_CONFIGURATIONS_DIR, GlobalAttributes::CONFIGURATIONS_DIR);
+			copyFilesRecursively(GlobalAttributes::TmplConfigurationDir, GlobalAttributes::ConfigurationsDir);
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::CONFIGURATIONS_DIR, CONFDIR));
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -168,7 +168,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	QFileInfo src_file(src_path);
 
 	if(!src_file.exists())
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(src_path),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(src_path),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(src_file.isDir())
@@ -179,16 +179,16 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 				src_dir(src_path);
 
 		if(!dst_dir.exists() && !dst_dir.mkpath(dst_path))
-			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(dst_path),
+			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 							__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::CONFIGURATION_EXT)},
+		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
 									  QDir::Files | QDir::NoDotAndDotDot);
 
 		for(QString filename : filenames)
 		{
 			//Avoiding the copy of ui-style.conf file
-			if(!filename.contains(GlobalAttributes::UI_STYLE_CONF))
+			if(!filename.contains(GlobalAttributes::UiStyleConf))
 			{
 				new_src_path = src_path + src_dir.separator() + filename;
 				new_dst_path = dst_path + dst_dir.separator() + filename;
@@ -198,7 +198,7 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 	}
 	else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
 	{
-		throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(dst_path),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }

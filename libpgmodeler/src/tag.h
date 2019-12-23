@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,10 +43,10 @@ class Tag: public BaseObject {
 		void validateElementId(const QString &elem_id, unsigned color_id);
 
 	public:
-		static const unsigned FILL_COLOR1=0,
-		FILL_COLOR2=1,
-		BORDER_COLOR=2,
-		COLOR_COUNT=3;
+		static constexpr unsigned FillColor1=0,
+		FillColor2=1,
+		BorderColor=2,
+		ColorCount=3;
 
 		Tag(void);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "messagebox.h"
 #include "pgmodeleruins.h"
 
-const QString CrashHandlerForm::ANALYSIS_MODE=QString("-analysis-mode");
+const QString CrashHandlerForm::AnalysisMode=QString("-analysis-mode");
 
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {
@@ -44,9 +44,9 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	report_twg->addTab(wgt, trUtf8("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
-	input.setFileName(GlobalAttributes::TEMPORARY_DIR +
-					  GlobalAttributes::DIR_SEPARATOR +
-					  GlobalAttributes::STACKTRACE_FILE);
+	input.setFileName(GlobalAttributes::TemporaryDir +
+					  GlobalAttributes::DirSeparator +
+					  GlobalAttributes::StacktraceFile);
 	input.open(QFile::ReadOnly);
 
 	if(input.isOpen())
@@ -56,9 +56,9 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 		//Removes the stack trace file
 		QDir stack_file;
-		stack_file.remove(GlobalAttributes::TEMPORARY_DIR +
-						  GlobalAttributes::DIR_SEPARATOR +
-						  GlobalAttributes::STACKTRACE_FILE);
+		stack_file.remove(GlobalAttributes::TemporaryDir +
+						  GlobalAttributes::DirSeparator +
+						  GlobalAttributes::StacktraceFile);
 
 		//Shows the stacktrace loaded on the widget
 		stack_txt->setPlainText(buf);
@@ -82,7 +82,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(input_edt);
 
 	load_tb=new QToolButton(input_wgt);
-	load_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("abrir")));
+	load_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("abrir")));
 	load_tb->setSizePolicy(output_tb->sizePolicy());
 	load_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	load_tb->setIconSize(output_tb->iconSize());
@@ -90,7 +90,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->addWidget(load_tb);
 
 	save_tb=new QToolButton(input_wgt);
-	save_tb->setIcon(QPixmap(PgModelerUiNS::getIconPath("salvar")));
+	save_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("salvar")));
 	save_tb->setSizePolicy(output_tb->sizePolicy());
 	save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	save_tb->setIconSize(output_tb->iconSize());
@@ -125,7 +125,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 
 	//Raises an error if the file could not be opened
 	if(!input.isOpen())
-		msgbox.show(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), Messagebox::ERROR_ICON);
+		msgbox.show(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(filename), Messagebox::ErrorIcon);
 	else
 	{
 		QByteArray uncomp_buf;
@@ -153,7 +153,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 		//Showing the sections of the uncompressed buffer on the respective widgets
 		while(i < buf_aux.size() && idx <= 2)
 		{
-			if(buf_aux.at(i).toLatin1()!=CHR_DELIMITER)
+			if(buf_aux.at(i).toLatin1()!=CharDelimiter)
 				str_aux.append(buf_aux.at(i));
 			else
 			{
@@ -210,8 +210,8 @@ void CrashHandlerForm::saveModel(void)
 			output.open(QFile::WriteOnly);
 
 			if(!output.isOpen())
-				throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_WRITTEN).arg(file_dlg.selectedFiles().at(0)),
-								ERR_FILE_DIR_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
+												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			buf.append(model_txt->toPlainText());
 			output.write(buf.data(),buf.size());
@@ -251,7 +251,7 @@ QByteArray CrashHandlerForm::generateReportBuffer(void)
 {
 	QByteArray buf=BugReportForm::generateReportBuffer();
 	buf.append(stack_txt->toPlainText().toUtf8());
-	buf.append(CHR_DELIMITER);
+	buf.append(CharDelimiter);
 
 	return(buf);
 }

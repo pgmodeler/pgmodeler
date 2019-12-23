@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,58 +38,61 @@
 
 namespace GlobalAttributes {
 	extern const QString
-	PGMODELER_APP_NAME,
-	PGMODELER_URI,
-	PGMODELER_VERSION,
-	PGMODELER_BUILD_NUMBER,
-	PGMODELER_SITE,
-	PGMODELER_SUPPORT,
-	PGMODELER_SRC_URL,
-	PGMODELER_DOWNLOAD_URL,
-	PGMODELER_DONATE_URL,
-	PGMODELER_UPD_CHECK_URL,
+	PgModelerAppName,
+	PgModelerURI,
+	PgModelerReverseURI,
+	PgModelerVersion,
+	PgModelerBuildNumber,
+	PgModelerSite,
+	PgModelerSupport,
+	PgModelerSourceURL,
+	PgModelerDownloadURL,
+	PgModelerDonateURL,
+	PgModelerUpdateCheckURL,
 
-	BUG_REPORT_EMAIL,
-	BUG_REPORT_FILE,
-	STACKTRACE_FILE,
+	BugReportEmail,
+	BugReportFile,
+	StacktraceFile,
 
-	DIR_SEPARATOR,
-	DEFAULT_CONFS_DIR,  //! \brief Directory name which holds the default pgModeler configuration
-	CONFS_BACKUPS_DIR,  //! \brief Directory name which holds the pgModeler configuration backups
-	SCHEMAS_DIR,        //! \brief Default name for the schemas directory
-	SQL_SCHEMA_DIR,     //! \brief Default name for the sql schemas directory
-	XML_SCHEMA_DIR,     //! \brief Default name for the xml schemas directory
-	ALTER_SCHEMA_DIR,   //! \brief Default name for the alter schemas directory
-	SCHEMA_EXT,         //! \brief Default extension for schema files
-	OBJECT_DTD_DIR,     //! \brief Default directory for dtd files
-	OBJECT_DTD_EXT,     //! \brief Default extension for dtd files
-	ROOT_DTD,           //! \brief Root DTD of model xml files
-	METADATA_DTD,				//! \brief Root DTD of objects metadata xml files
-	CONFIGURATION_EXT,  //! \brief Default extension for configuration files
-	HIGHLIGHT_FILE_SUF, //! \brief Suffix of language highlight configuration files
+	DirSeparator,
+	DefaultConfsDir,  //! \brief Directory name which holds the default pgModeler configuration
+	ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
+	SchemasDir,        //! \brief Default name for the schemas directory
+	SQLSchemaDir,     //! \brief Default name for the sql schemas directory
+	XMLSchemaDir,     //! \brief Default name for the xml schemas directory
+	DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
+	AlterSchemaDir,   //! \brief Default name for the alter schemas directory
+	SchemaExt,         //! \brief Default extension for schema files
+	ObjectDTDDir,     //! \brief Default directory for dtd files
+	ObjectDTDExt,     //! \brief Default extension for dtd files
+	RootDTD,           //! \brief Root DTD of model xml files
+	MetadataDTD,				//! \brief Root DTD of objects metadata xml files
+	ConfigurationExt,  //! \brief Default extension for configuration files
+	HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
 
-	CODE_HIGHLIGHT_CONF,  //! \brief Default name for the language highlight dtd
-	OBJECTS_STYLE_CONF,   //! \brief Default name for the object style configuration file
-	GENERAL_CONF,         //! \brief Default name for the general pgModeler configuration
-	CONNECTIONS_CONF,     //! \brief Default name for the DBMS connection configuration file
-	RELATIONSHIPS_CONF,   //! \brief Default name for the relationships configuration file
-	SNIPPETS_CONF,        //! \brief Default name for the code snippets configuration file
+	CodeHighlightConf,  //! \brief Default name for the language highlight dtd
+	ObjectsStyleConf,   //! \brief Default name for the object style configuration file
+	GeneralConf,         //! \brief Default name for the general pgModeler configuration
+	ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
+	RelationshipsConf,   //! \brief Default name for the relationships configuration file
+	SnippetsConf,        //! \brief Default name for the code snippets configuration file
+	DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
 
-	SQL_HIGHLIGHT_CONF, //! \brief Configuration file for SQL language highlight
-	XML_HIGHLIGHT_CONF, //! \brief Configuration file for XML language highlight
-	PATTERN_HIGHLIGHT_CONF, //! \brief Configuration file for name patterns highlight (relationship editing form)
-	SQL_HISTORY_CONF,		//! \brief Default name for the SQL commands history configuration file
+	SQLHighlightConf, //! \brief Configuration file for SQL language highlight
+	XMLHighlightConf, //! \brief Configuration file for XML language highlight
+	PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
+	SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
-	EXAMPLE_MODEL, //! \brief Default name for the sample model loaded on appearence configuration form
-	UI_STYLE_CONF, //! \brief Configuration file ui style
+	ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
+	UiStyleConf, //! \brief Configuration file ui style
 
 	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
   the executable using -style option. This same style is applied to crash handler. */
-	DEFAULT_QT_STYLE,
-	UI_STYLE_OPT;
+	DefaultQtStyle,
+	UiStyleOption;
 
 
-	/*! \brief Variables used to reference the pgModeler directories.
+	/*! \brief Environment variables used to reference the pgModeler directories.
 
 	 PGMODELER_SCHEMAS_DIR   --> "schemas" folder  (SQL/XML generation schema files)
 	 PGMODELER_CONF_DIR      --> "conf" folder    (user's own settings for pgModeler)
@@ -107,22 +110,22 @@ namespace GlobalAttributes {
 	 PGMDOELER_APP_PATH      --> Full path to pgmodeler executable */
 
 	extern const QString
-	SCHEMAS_ROOT_DIR,
-	LANGUAGES_DIR,
-	PLUGINS_DIR,
-	TEMPORARY_DIR,
-	SAMPLES_DIR,
-	TMPL_CONFIGURATIONS_DIR,
-	CONFIGURATIONS_DIR,
-	SQL_HIGHLIGHT_CONF_PATH,
-	XML_HIGHLIGHT_CONF_PATH,
-	PGMODELER_CHANDLER_PATH,
-	PGMODELER_CLI_PATH,
-	PGMODELER_APP_PATH;
+	SchemasRootDir,
+	LanguagesDir,
+	PluginsDir,
+	TemporaryDir,
+	SamplesDir,
+	TmplConfigurationDir,
+	ConfigurationsDir,
+	SQLHighlightConfPath,
+	XMLHighlightConfPath,
+	PgModelerCHandlerPath,
+	PgModelerCLIPath,
+	PgModelerAppPath;
 
 #ifdef DEMO_VERSION
 	//Maximum object creation counter for demo version
-	extern const unsigned MAX_OBJECT_COUNT;
+	extern const unsigned MaxObjectCount;
 #endif
 
 	/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not

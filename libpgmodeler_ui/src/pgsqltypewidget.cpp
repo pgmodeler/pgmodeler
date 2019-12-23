@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "pgsqltypewidget.h"
 
-const QString PgSQLTypeWidget::INVALID_TYPE = QString("invalid_type");
+const QString PgSQLTypeWidget::InvalidType = QString("invalid_type");
 
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
@@ -35,7 +35,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, true);
-		format_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		format_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		this->adjustSize();
 
 		IntervalType::getTypes(interval_lst);
@@ -62,7 +62,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -76,7 +76,7 @@ bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 		}
 		catch(Exception &)
 		{
-			format_txt->setPlainText(INVALID_TYPE);
+			format_txt->setPlainText(InvalidType);
 		}
 	}
 
@@ -121,11 +121,11 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
 
 			if(var_z_chk->isChecked() && var_m_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_zm);
+				spatial_tp.setVariation(SpatialType::VarZm);
 			else if(var_m_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_m);
+				spatial_tp.setVariation(SpatialType::VarM);
 			else if(var_z_chk->isChecked())
-				spatial_tp.setVariation(SpatialType::var_z);
+				spatial_tp.setVariation(SpatialType::VarZ);
 
 			type.setSpatialType(spatial_tp);
 		}
@@ -140,7 +140,7 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -154,21 +154,21 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		combo->clear();
 
 		//Getting the user defined type adding them into the combo
-		PgSQLType::getUserTypes(types,model, user_type_conf);
+		PgSqlType::getUserTypes(types,model, user_type_conf);
 		types.sort();
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-			combo->addItem(types[idx], QVariant(PgSQLType::getUserTypeIndex(types[idx],nullptr,model)));
+			combo->addItem(types[idx], QVariant(PgSqlType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
-		PgSQLType::getTypes(types, oid_types, pseudo_types);
+		PgSqlType::getTypes(types, oid_types, pseudo_types);
 		types.sort();
 		combo->addItems(types);
 	}
 }
 
-void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
+void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsigned usr_type_conf, bool oid_types, bool pseudo_types)
 {
 	try
 	{
@@ -206,14 +206,14 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
-PgSQLType PgSQLTypeWidget::getPgSQLType(void)
+PgSqlType PgSQLTypeWidget::getPgSQLType(void)
 {
-	if(format_txt->toPlainText() == INVALID_TYPE)
-		throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(format_txt->toPlainText() == InvalidType)
+		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(type);
 }

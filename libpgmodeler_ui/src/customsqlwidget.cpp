@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,24 +26,24 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		QFont font;
 
 		Ui_CustomSQLWidget::setupUi(this);
-		configureFormLayout(sqlappend_grid, BASE_OBJECT);
+		configureFormLayout(sqlappend_grid, ObjectType::BaseObject);
 
-		append_sql_txt=PgModelerUiNS::createNumberedTextEditor(append_sql_wgt, true);
-		prepend_sql_txt=PgModelerUiNS::createNumberedTextEditor(prepend_sql_wgt, true);
+		append_sql_txt=PgModelerUiNs::createNumberedTextEditor(append_sql_wgt, true);
+		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-		append_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		append_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
 		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQL_HIGHLIGHT_CONF_PATH);
+		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
 		name_edt->setReadOnly(true);
 		comment_edt->setVisible(false);
 		comment_lbl->setVisible(false);
 
-		PgModelerUiNS::configureWidgetFont(message_lbl, PgModelerUiNS::MEDIUM_FONT_FACTOR);
+		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
 		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));
@@ -93,7 +93,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
@@ -106,9 +106,9 @@ void CustomSQLWidget::configureMenus(void)
 	for(int i=0; i < count; i++)
 		btns[i]->setMenu(nullptr);
 
-	if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
+	if(BaseTable::isBaseTable(obj_type))
 	{
-		if(obj_type==OBJ_TABLE)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 		{
 			insert_tb->setMenu(&insert_menu);
 			delete_tb->setMenu(&delete_menu);
@@ -122,9 +122,9 @@ void CustomSQLWidget::configureMenus(void)
 void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 {
 	if(!object)
-		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!BaseObject::acceptsCustomSQL(object->getObjectType()))
-		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	try
 	{
@@ -132,8 +132,11 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 		name_edt->setText(QString("%1 (%2)").arg(object->getSignature()).arg(object->getTypeName()));
 
-		if(object->getObjectType()==OBJ_DATABASE)
+		if(object->getObjectType()==ObjectType::Database)
+		{
 			end_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isAppendAtEOD());
+			begin_of_model_chk->setChecked(dynamic_cast<DatabaseModel *>(object)->isPrependedAtBOD());
+		}
 
 		append_sql_txt->setFocus();
 		append_sql_txt->setPlainText(object->getAppendedSQL());
@@ -145,26 +148,26 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		prepend_sql_cp->configureCompletion(model, prepend_sql_hl);
 		prepend_sql_txt->moveCursor(QTextCursor::End);
 
-		end_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
-		begin_of_model_chk->setVisible(object->getObjectType()==OBJ_DATABASE);
+		end_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
+		begin_of_model_chk->setVisible(object->getObjectType()==ObjectType::Database);
 
 		protected_obj_frm->setVisible(false);
 		obj_id_lbl->setVisible(false);
 
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNS::getIconPath(object->getObjectType())));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 		configureMenus();
 	}
 	catch(Exception &e)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
 }
 
 void CustomSQLWidget::applyConfiguration(void)
 {
-	if(this->object->getObjectType()==OBJ_DATABASE)
+	if(this->object->getObjectType()==ObjectType::Database)
 	{
 		dynamic_cast<DatabaseModel *>(this->object)->setAppendAtEOD(end_of_model_chk->isChecked());
 		dynamic_cast<DatabaseModel *>(this->object)->setPrependAtBOD(begin_of_model_chk->isChecked());
@@ -179,7 +182,7 @@ void CustomSQLWidget::applyConfiguration(void)
 
 void CustomSQLWidget::addCommand(void)
 {
-	Table *table=dynamic_cast<Table *>(this->object);
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
 	QString cmd,
 			ins_cmd=QString("INSERT INTO %1 (%2) VALUES (%3);"),
@@ -188,8 +191,8 @@ void CustomSQLWidget::addCommand(void)
 			upd_cmd=QString("UPDATE %1 SET ;");
 	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 
-	if(sender()->objectName().contains(QLatin1String("insert")) ||
-			sender()->objectName().contains(QLatin1String("serial")))
+	if(sender()->objectName().contains(QString("insert")) ||
+			sender()->objectName().contains(QString("serial")))
 	{
 		if(!table || sender()==action_gen_insert)
 			cmd=ins_cmd.arg("table").arg("cols").arg("values");
@@ -214,14 +217,14 @@ void CustomSQLWidget::addCommand(void)
 			cmd=ins_cmd.arg(table->getName(true)).arg(cols).arg(vals);
 		}
 	}
-	else if(sender()->objectName().contains(QLatin1String("select")))
+	else if(sender()->objectName().contains(QString("select")))
 	{
 		if(!base_table || sender()==action_gen_select)
 			cmd=sel_cmd.arg("object");
 		else if(base_table)
 			cmd=sel_cmd.arg(base_table->getName(true));
 	}
-	else if(sender()->objectName().contains(QLatin1String("delete")))
+	else if(sender()->objectName().contains(QString("delete")))
 	{
 		if(!table || sender()==action_gen_delete)
 			cmd=del_cmd.arg("object");
@@ -237,7 +240,7 @@ void CustomSQLWidget::addCommand(void)
 	}
 
 	if(!sqlcode_txt->toPlainText().isEmpty())
-		sqlcode_txt->insertPlainText(QLatin1String("\n"));
+		sqlcode_txt->insertPlainText(QString("\n"));
 
 	sqlcode_txt->insertPlainText(cmd);
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "rolewidget.h"
 #include "modelobjectswidget.h"
 
-RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
+RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Role)
 {
 	ObjectsTableWidget *obj_tab=nullptr;
 	QGridLayout *grid=nullptr;
@@ -28,7 +28,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	unsigned i;
 
 	Ui_RoleWidget::setupUi(this);
-	configureFormLayout(role_grid, OBJ_ROLE);
+	configureFormLayout(role_grid, ObjectType::Role);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 
@@ -38,8 +38,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
 	frame->setParent(this);
 
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_91)].push_back(can_replicate_chk);
-	fields_map[generateVersionsInterval(AFTER_VERSION, PgSQLVersions::PGSQL_VERSION_95)].push_back(bypass_rls_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion91)].push_back(can_replicate_chk);
+	fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(bypass_rls_chk);
 	frame=generateVersionWarningFrame(fields_map);
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -50,26 +50,26 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::ALL_BUTTONS ^
-																	(ObjectsTableWidget::UPDATE_BUTTON | ObjectsTableWidget::DUPLICATE_BUTTON), true, this);
+		obj_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
+																	(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 		members_tab[i]=obj_tab;
 
 		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),0);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),0);
 
 		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("validade")),1);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("validade")),1);
 
 		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),2);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),2);
 
 		obj_tab->setHeaderLabel(trUtf8("Members"),3);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),3);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),3);
 
 		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
-		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNS::getIconPath("role")),4);
+		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -93,7 +93,7 @@ void RoleWidget::configureRoleSelection(void)
 
 	//Disconnects all signals from the member role tables
 	for(i=0; i < 3; i++)
-		disconnect(members_tab[i],0,this,0);
+		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
 	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole(void)));
@@ -102,7 +102,7 @@ void RoleWidget::configureRoleSelection(void)
 
 void RoleWidget::selectMemberRole(void)
 {
-	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setObjectVisible(ObjectType::Role, true);
 	object_selection_wgt->setModel(this->model);
 	object_selection_wgt->show();
 }
@@ -117,14 +117,14 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		validity_chk->setChecked(!role->getValidity().isEmpty());
 		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(), QString("yyyy-MM-dd hh:mm:ss")));
 
-		superusr_chk->setChecked(role->getOption(Role::OP_SUPERUSER));
-		create_db_chk->setChecked(role->getOption(Role::OP_CREATEDB));
-		create_role_chk->setChecked(role->getOption(Role::OP_CREATEROLE));
-		encrypt_pass_chk->setChecked(role->getOption(Role::OP_ENCRYPTED));
-		inh_perm_chk->setChecked(role->getOption(Role::OP_INHERIT));
-		can_login_chk->setChecked(role->getOption(Role::OP_LOGIN));
-		can_replicate_chk->setChecked(role->getOption(Role::OP_REPLICATION));
-		bypass_rls_chk->setChecked(role->getOption(Role::OP_BYPASSRLS));
+		superusr_chk->setChecked(role->getOption(Role::OpSuperuser));
+		create_db_chk->setChecked(role->getOption(Role::OpCreateDb));
+		create_role_chk->setChecked(role->getOption(Role::OpCreateRole));
+		encrypt_pass_chk->setChecked(role->getOption(Role::OpEncrypted));
+		inh_perm_chk->setChecked(role->getOption(Role::OpInherit));
+		can_login_chk->setChecked(role->getOption(Role::OpLogin));
+		can_replicate_chk->setChecked(role->getOption(Role::OpReplication));
+		bypass_rls_chk->setChecked(role->getOption(Role::OpBypassRls));
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
@@ -140,10 +140,10 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		QString str_aux;
 		Role *aux_role=nullptr;
 		unsigned count, i, type_id,
-				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 		if(table_id > 3)
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
 		members_tab[table_id]->setCellText(role->getName(), row, 0);
@@ -172,7 +172,7 @@ void RoleWidget::fillMembersTable(void)
 	{
 		Role *aux_role=nullptr, *role=nullptr;
 		unsigned count, i, type_id,
-				role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+				role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 		role=dynamic_cast<Role *>(this->object);
 
@@ -219,10 +219,10 @@ void RoleWidget::showSelectedRoleData(void)
 		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
 			members_tab[idx_tab]->removeRow(lin);
 
-		msg_box.show(Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-							   .arg(obj_sel->getName())
-							   .arg(name_edt->text()),
-							   ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+		msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::AsgRoleReferenceRedundancy)
+													 .arg(obj_sel->getName())
+													 .arg(name_edt->text()),
+													 ErrorCode::AsgRoleReferenceRedundancy,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 	}
 	//If the role does not exist on table, show its data
 	else if(obj_sel && idx_lin < 0)
@@ -237,10 +237,10 @@ void RoleWidget::showSelectedRoleData(void)
 		//Raises an error if the role already is in the table
 		if(obj_sel && idx_lin >= 0)
 		{
-			msg_box.show( Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-									.arg(obj_sel->getName())
-									.arg(name_edt->text()),
-									ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__));
+			msg_box.show( Exception(Exception::getErrorMessage(ErrorCode::InsDuplicatedRole)
+															.arg(obj_sel->getName())
+															.arg(name_edt->text()),
+															ErrorCode::InsDuplicatedRole,__PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 }
@@ -249,7 +249,7 @@ void RoleWidget::applyConfiguration(void)
 {
 	Role *role=nullptr, *aux_role=nullptr;
 	unsigned count, i, type_id,
-			role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
+			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
 
 	try
 	{
@@ -264,14 +264,14 @@ void RoleWidget::applyConfiguration(void)
 		else
 			role->setValidity(QString());
 
-		role->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
-		role->setOption(Role::OP_CREATEDB, create_db_chk->isChecked());
-		role->setOption(Role::OP_CREATEROLE, create_role_chk->isChecked());
-		role->setOption(Role::OP_ENCRYPTED, encrypt_pass_chk->isChecked());
-		role->setOption(Role::OP_INHERIT, inh_perm_chk->isChecked());
-		role->setOption(Role::OP_LOGIN, can_login_chk->isChecked());
-		role->setOption(Role::OP_REPLICATION, can_replicate_chk->isChecked());
-		role->setOption(Role::OP_BYPASSRLS, bypass_rls_chk->isChecked());
+		role->setOption(Role::OpSuperuser, superusr_chk->isChecked());
+		role->setOption(Role::OpCreateDb, create_db_chk->isChecked());
+		role->setOption(Role::OpCreateRole, create_role_chk->isChecked());
+		role->setOption(Role::OpEncrypted, encrypt_pass_chk->isChecked());
+		role->setOption(Role::OpInherit, inh_perm_chk->isChecked());
+		role->setOption(Role::OpLogin, can_login_chk->isChecked());
+		role->setOption(Role::OpReplication, can_replicate_chk->isChecked());
+		role->setOption(Role::OpBypassRls, bypass_rls_chk->isChecked());
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
@@ -291,6 +291,6 @@ void RoleWidget::applyConfiguration(void)
 	catch(Exception &e)
 	{
 		cancelConfiguration();
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

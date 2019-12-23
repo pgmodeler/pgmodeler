@@ -1,5 +1,4 @@
 # SQL definition for table's attributes change
-# PostgreSQL Version: 9.x
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
@@ -10,7 +9,7 @@
   %set {rls}     [ROW LEVEL SECURITY]
   %set {ddl-end} ; $br [-- ddl-end --] $br
 
-  %if {oids} %then
+  %if ({pgsql-ver} <=f "11.0") %and {oids} %then
     {alter} [ SET ]
 
     %if ({oids}=="unset") %then

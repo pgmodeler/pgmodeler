@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ TaskProgressWidget::TaskProgressWidget(QWidget *parent, Qt::WindowFlags f) : QDi
 	this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
 	for(auto &obj_tp : obj_types)
-		addIcon(obj_tp, QIcon(PgModelerUiNS::getIconPath(obj_tp)));
+		addIcon(enum_cast(obj_tp), QIcon(PgModelerUiNs::getIconPath(obj_tp)));
 }
 
 void TaskProgressWidget::addIcon(unsigned id, const QIcon &ico)
@@ -43,7 +43,7 @@ void TaskProgressWidget::show(void)
 	 isn't used the task is not shown properly and sometimes stay only on taskbar not poping up
 	 to the user. */
 	QEventLoop eventLoop;
-	PgModelerUiNS::resizeDialog(this);
+	PgModelerUiNs::resizeDialog(this);
 	QDialog::show();
 	QTimer t;
 
@@ -66,7 +66,7 @@ void TaskProgressWidget::updateProgress(int progress, QString text, unsigned ico
 	progress_pb->setValue(progress);
 
 	if(!text.isEmpty())
-		text_lbl->setText(PgModelerUiNS::formatMessage(text));
+		text_lbl->setText(PgModelerUiNs::formatMessage(text));
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));

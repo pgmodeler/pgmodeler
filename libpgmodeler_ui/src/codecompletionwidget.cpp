@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool enable_snippets) :	QWidget(dynamic_cast<QWidget *>(code_field_txt))
 {
 	if(!code_field_txt)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->enable_snippets = enable_snippets;
 	popup_timer.setInterval(300);
@@ -49,9 +49,7 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	vbox->setSpacing(6);
 	completion_wgt->setLayout(vbox);
 
-	QFont font=name_list->font();
-	font.setPointSizeF(8);
-	name_list->setFont(font);
+	PgModelerUiNs::configureWidgetFont(name_list, PgModelerUiNs::MediumFontFactor);
 
 	this->code_field_txt=code_field_txt;
 	auto_triggered=false;
@@ -204,7 +202,7 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 	auto_triggered=false;
 	this->db_model=db_model;
 
-	if(confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::CODE_COMPLETION]==ParsersAttributes::_TRUE_)
+	if(confs[Attributes::Configuration][Attributes::CodeCompletion]==Attributes::True)
 	{
 		code_field_txt->installEventFilter(this);
 		name_list->installEventFilter(this);
@@ -228,9 +226,9 @@ void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHi
 		if(enable_snippets)
 		{
 			clearCustomItems();
-			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::ID),
-												SnippetsConfigWidget::getAllSnippetsAttribute(ParsersAttributes::LABEL),
-												QPixmap(PgModelerUiNS::getIconPath("codesnippet")));
+			insertCustomItems(SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::Id),
+												SnippetsConfigWidget::getAllSnippetsAttribute(Attributes::Label),
+												QPixmap(PgModelerUiNs::getIconPath("codesnippet")));
 		}
 	}
 	else
@@ -261,7 +259,7 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type)
 {
 	for(auto &name : names)
-		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNS::getIconPath(obj_type)));
+		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
 void CodeCompletionWidget::clearCustomItems(void)
@@ -284,12 +282,12 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		obj_name.clear();
 
 		//Formatting the object name according to the object type
-		if(obj_type==OBJ_FUNCTION)
+		if(obj_type==ObjectType::Function)
 		{
 			dynamic_cast<Function *>(objects[i])->createSignature(false);
 			obj_name=dynamic_cast<Function *>(objects[i])->getSignature();
 		}
-		else if(obj_type==OBJ_OPERATOR)
+		else if(obj_type==ObjectType::Operator)
 			obj_name=dynamic_cast<Operator *>(objects[i])->getSignature(false);
 		else
 			obj_name+=objects[i]->getName(false, false);
@@ -297,7 +295,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 		//The object will be inserted if its name matches the filter or there is no filter set
 		if(filter.isEmpty() || regexp.exactMatch(obj_name))
 		{
-			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath(objects[i]->getSchemaName())), obj_name);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath(objects[i]->getSchemaName())), obj_name);
 			item->setToolTip(QString("%1 (%2)").arg(objects[i]->getName(true)).arg(objects[i]->getTypeName()));
 			item->setData(Qt::UserRole, QVariant::fromValue<void *>(objects[i]));
 			item->setToolTip(BaseObject::getTypeName(obj_type));
@@ -321,10 +319,9 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 {
 	if(!obj)
 		qualifying_level=-1;
-	else if(obj->getObjectType()==OBJ_SCHEMA)
+	else if(obj->getObjectType()==ObjectType::Schema)
 		qualifying_level=0;
-	else if(obj->getObjectType()==OBJ_TABLE ||
-			obj->getObjectType()==OBJ_VIEW)
+	else if(BaseTable::isBaseTable(obj->getObjectType()))
 		qualifying_level=1;
 	else
 		qualifying_level=2;
@@ -346,7 +343,7 @@ void CodeCompletionWidget::updateList(void)
 	QString pattern;
 	QStringList list;
 	vector<BaseObject *> objects;
-	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ OBJ_TEXTBOX, OBJ_RELATIONSHIP, BASE_RELATIONSHIP });
+	vector<ObjectType> types=BaseObject::getObjectTypes(false, 	{ ObjectType::Textbox, ObjectType::Relationship, ObjectType::BaseRelationship });
 	QTextCursor tc;
 
 	name_list->clear();
@@ -375,7 +372,7 @@ void CodeCompletionWidget::updateList(void)
 			word.remove(completion_trigger);
 			word.remove('"');
 
-			objects=db_model->findObjects(word, { OBJ_SCHEMA, OBJ_TABLE, OBJ_VIEW }, false, false, false, true);
+			objects=db_model->findObjects(word, { ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View }, false, false, true);
 
 			if(objects.size()==1)
 				setQualifyingLevel(objects[0]);
@@ -394,7 +391,7 @@ void CodeCompletionWidget::updateList(void)
 		//Negative qualifying level means that user called the completion before a space (empty word)
 		if(qualifying_level < 0)
 			//The default behavior for this is to search all the objects on the model
-			objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered);
+			objects=db_model->findObjects(pattern, types, false, !auto_triggered, auto_triggered);
 		else
 		{
 			QString left_word;
@@ -427,7 +424,7 @@ void CodeCompletionWidget::updateList(void)
 		 we try to find any object in the model and reset the qualifying level */
 			else
 			{
-				objects=db_model->findObjects(pattern, types, false, false, !auto_triggered, auto_triggered);
+				objects=db_model->findObjects(pattern, types, false, !auto_triggered, auto_triggered);
 				setQualifyingLevel(nullptr);
 			}
 
@@ -449,7 +446,7 @@ void CodeCompletionWidget::updateList(void)
 		list=keywords.filter(regexp);
 		for(int i=0; i < list.size(); i++)
 		{
-			item=new QListWidgetItem(QPixmap(PgModelerUiNS::getIconPath("keyword")), list[i]);
+			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath("keyword")), list[i]);
 			item->setToolTip(trUtf8("SQL Keyword"));
 			name_list->addItem(item);
 		}
@@ -589,11 +586,11 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 
 
 	if(modify_name &&
-			(obj_type==OBJ_TABLE || TableObject::isTableObject(obj_type)))
+			(PhysicalTable::isPhysicalTable(obj_type) || TableObject::isTableObject(obj_type)))
 	{
-		if(obj_type==OBJ_TABLE)
+		if(PhysicalTable::isPhysicalTable(obj_type))
 		{
-			Table *tab=dynamic_cast<Table *>(obj);
+			PhysicalTable *tab=dynamic_cast<PhysicalTable *>(obj);
 
 			name+=QString("(");
 			for(unsigned i=0; i < tab->getColumnCount(); i++)
@@ -613,17 +610,17 @@ void CodeCompletionWidget::insertObjectName(BaseObject *obj)
 			code_field_txt->setTextCursor(lvl_cur);
 		}
 	}
-	else if(obj_type==OBJ_FUNCTION)
+	else if(obj_type==ObjectType::Function)
 	{
 		Function *func=dynamic_cast<Function *>(obj);
 		func->createSignature(true, sch_qualified);
 		name=func->getSignature();
 	}
-	else if(obj_type==OBJ_CAST)
+	else if(obj_type==ObjectType::Cast)
 	{
 		name.replace(',', QLatin1String(" AS "));
 	}
-	else if(obj_type==OBJ_AGGREGATE)
+	else if(obj_type==ObjectType::Aggregate)
 	{
 		Aggregate *agg;
 		agg=dynamic_cast<Aggregate *>(obj);

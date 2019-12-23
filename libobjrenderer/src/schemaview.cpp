@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2018 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "schemaview.h"
+#include "objectsscene.h"
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
@@ -72,19 +73,22 @@ void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void SchemaView::fetchChildren(void)
 {
-	Schema *schema=dynamic_cast<Schema *>(this->getSourceObject());
+	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
-	vector<BaseObject *> objs, objs1;
+	vector<BaseObject *> objs, list;
+	vector<ObjectType> types = { ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
 
 	//Gets all tables and views that belongs to the schema
-	objs=model->getObjects(OBJ_TABLE, schema);
-	objs1=model->getObjects(OBJ_VIEW, schema);
-	objs.insert(objs.end(), objs1.begin(), objs1.end());
+	for(auto &type : types)
+	{
+		list = model->getObjects(type, schema);
+		objs.insert(objs.end(), list.begin(), list.end());
+	}
 
 	children.clear();
 	while(!objs.empty())
 	{
-		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getReceiverObject()));
+		children.push_front(dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(objs.back())->getOverlyingObject()));
 		objs.pop_back();
 	}
 }
@@ -165,8 +169,7 @@ void SchemaView::moveTo(QPointF new_pos)
 
 void SchemaView::configureObject(void)
 {
-	Schema *schema=dynamic_cast<Schema *>(this->getSourceObject());
-
+	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();
 
 	/* Only configures the schema view if the rectangle is visible and there are
@@ -200,19 +203,19 @@ void SchemaView::configureObject(void)
 		}
 
 		//Configures the schema name at the top
-		sch_name->setText(schema->getName());
-		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
+		sch_name->setText(compact_view && !schema->getAlias().isEmpty() ? schema->getAlias() : schema->getName());
+		font=BaseObjectView::getFontStyle(Attributes::Global).font();
 		font.setItalic(true);
 		font.setBold(true);
-		font.setPointSizeF(font.pointSizeF() * 1.3f);
+		font.setPointSizeF(font.pointSizeF() * 1.3);
 
 		sch_name->setFont(font);
-		sch_name->setPos(HORIZ_SPACING, VERT_SPACING);
-		txt_h=sch_name->boundingRect().height() + (2 * VERT_SPACING);
+		sch_name->setPos(HorizSpacing, VertSpacing);
+		txt_h=sch_name->boundingRect().height() + (2 * VertSpacing);
 
 		//Configures the box with the points calculated above
-		sp_h=(3 * HORIZ_SPACING);
-		sp_v=(3 * VERT_SPACING) + txt_h;
+		sp_h=(3 * HorizSpacing);
+		sp_v=(3 * VertSpacing) + txt_h;
 
 		width=(x2-x1) + 1;
 
@@ -233,20 +236,24 @@ void SchemaView::configureObject(void)
 		this->setFlag(ItemSendsGeometryChanges, true);
 
 		color=schema->getFillColor();
-		color.setAlpha(OBJ_ALPHA_CHANNEL * 0.80);
+		color.setAlpha(ObjectAlphaChannel * 0.80);
 		box->setBrush(color);
 
 		color=QColor(color.red()/3,color.green()/3,color.blue()/3, 80);
 		box->setPen(QPen(color, 1, Qt::SolidLine));
 
 		this->bounding_rect=rect;
-		this->setVisible(true);
 
-		this->setToolTip(schema->getName(true) +  QString(" (") + schema->getTypeName() + QString(")"));
+		ObjectsScene *scene = dynamic_cast<ObjectsScene *>(this->scene());
+		this->setVisible(scene && scene->isLayerActive(schema->getLayer()));
+
+		this->setToolTip(schema->getName(true) +
+										 QString(" (") + schema->getTypeName() + QString(")") +
+										 QString("\nId: %1").arg(schema->getObjectId()));
 		sch_name->setToolTip(this->toolTip());
 
 		this->protected_icon->setPos(QPointF( sch_name->boundingRect().width() + sp_h,
-											  sch_name->pos().y() + VERT_SPACING ));
+											  sch_name->pos().y() + VertSpacing ));
 
 		this->configureObjectSelection();
 		this->configureProtectedIcon();

@@ -749,33 +749,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="rel_type_cmb">
-            <item>
-             <property name="text">
-              <string>One to one (1:1)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>One to many (1:n)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Many to many (n:n)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Generalization</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Copy</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="rel_type_cmb"/>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="src_col_pattern_lbl">

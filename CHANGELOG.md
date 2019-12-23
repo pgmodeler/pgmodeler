@@ -1,6 +1,401 @@
 Change Log
 ---------
 
+v0.9.2
+------
+<em>Release date: December 30, 2019</em><br/>
+
+* [New] Add support to data dictionaries generation in HTML format in ModelExportForm.
+* [New] Added options to control data dictionary generation in CLI.
+* [New] Plugins now can optionally be associated to a menu action or not. Generally, an plugin not associated to a menu action is automatilly executed during the startup (see PgModelerPlugin::initPlugin).
+* [Change] Making BaseRelationship::getReferenceForeignKey() public.
+* [Change] Isolated duplicated code in MainWindow::isToolButtonsChecked that checks if any tool button of the bottom or right widget bars is checked.
+* [Change] Removing the plugins from core code.
+* [Change] Modified pgmodeler.pro to include plugins folder when present in the source root (either in debug or release mode).
+* [Change] Ignoring plugins folder in the core code.
+* [Change] Minor improvement on ModelWidget::rearrangeSchemasInGrid in order to consider the amount of tables to determine the minimum grid size used to rearrange table.
+* [Change] Minor text adjustments in CLI.
+* [Change] Added an additional checking during relationship creation in order to avoid the creation of 1-* or n-n relationships involving partition tables.
+* [Change] Removing the restriction to create 1-1, 1-n and n-n relationships in which the involved tables are partitioned ones.
+* [Change] Disabling the SQL statment ALTER...OWNER TO in the object's SQL when the owner role has its SQL disabled but the object itself not. This will avoid reference errors when validating/exporting code.
+* [Fix] Fixed the "Save" action enabled state according to the current model's modified state.
+* [Fix] Fixed a crash when the user tried to edit connections in ModelDatabaseDiffForm and right after select a connection in the "Compare to" field.
+* [Fix] Fixed the generation of escaped comments for columns.
+
+v0.9.2-beta2
+------
+<em>Release date: November 1st, 2019</em><br/>
+
+* [New] Added support to foreign tables.
+* [New] Added the method DatabaseModel::getObject(QString,vector<ObjectType>) to return the first ocurrency in the lists related to the provided types.
+* [New] Added support to select all foreign tables in ModelWidget.
+* [New] Created the method BaseTable::isBaseTable to help determining if an object type is of Table, View or ForeignTable.
+* [New] Added extra support to foreign tables on DatabaseExplorerWidget and DataManipulationForm.
+* [New] Added the method DatabaseImportHelper::createColumns in order to isolate the code to create table/foreign table columns during reverse engineering.
+* [New] Added support to foreign table importing as well its children objects (columns, constraints, triggers).
+* [New] Added server and options fields on TableWidget for foreign table.
+* [New] TableWidget now fully supporting the edition of foreign tables.
+* [New] Added the ability to TableView to render ForeignTable objects.
+* [New] Added support to swap objects ids using arrow keys by changing creation order between two close objects on the grid.
+* [New] Added support to save diff settings in form of presets.
+* [New] Added an option to BaseObject to force the comment escaping making multilined comments be presented as single lines but without changing their semantics.
+* [New] Adding support to parse escaped text delimiters and value separators in CSVLoadWidget.
+* [Change] Avoiding the usage of "Generate ALTER commands" option when the table is a partition or partitioned.
+* [Change] Avoid unchecking PK checkboxes on TableWidget when adding a new column.
+* [Change] Validating the dialogs geometry regarding to screens geometry in order to avoid their appearance in an invalid position (out of range).
+* [Change] Limiting the size of the exceptions stack in 50 elements.
+* [Change] Improved the GenericSQL::isObjectReferenced in order to check if, when a referenced object is a column, the provided object is the same as the parent of that referenced object.
+* [Change] Restricting the usage of "Default partition" option for partitioning relationships when the partition table is a foreign table.
+* [Change] Making ModelObjectsWidget update the foreign table subtree.
+* [Change] Making ReferenceWidget to use foreign tables from referenced table selector.
+* [Change] Improved the Relationship class to accept foreign tables.
+* [Change] Improved the DatabaseModel::getObjectDependecies and DatabaseModel::getObjectReferences to include ForeignTable.
+* [Change] Updated View class to accept reference foreign table columns.
+* [Change] Moved the original implementation of DatabaseModel::createTable to a template method createPhysicalTable in order to reuse it to create tables and foreign tables.
+* [Change] ForeignObject is not a BaseObject child anymore due to multi inheritance problem that it can generate in ForeignTable class.
+* [Change] Minor ajustment in Relationship class to accept PhysicalTable in its constructor so relationships can be used by ForeignTable class as well.
+* [Change] Isolated the code common to Table and ForeignTable classes in a parent class named PhysicalTable.
+* [Change] Disabling mime type update on installers.
+* [Change] Minor adjustment on SQLExecutionWidget::generateBuffer to escape line breaks and separators when generating CSV buffer.
+* [Change] Removing unused code from NumberedTextEditor.
+* [Change] Changed the way temp source file is handled by the tool in order to solve a sharing violation problem on Windows.
+* [Change] Minor adjustment on HtmlItemDelegate to avoid creating local variables in paint() everytime the method is called.
+* [Fix] Fixed an bug in SQL generation of columns that was wrongly removing a comma from decimal data types.
+* [Fix] Fixed some catalog queries in order to support PostgreSQL 12.
+* [Fix] Fixed ObjectsScene to remove foreign tables during destruction.
+* [Fix] Fixed the View::getObjectCount in order to return 0 when the provided object type is invalid.
+* [Fix] Fixed the ObjectFinderWidget in order to fade out correctly the listed/not listed elements.
+* [Fix] Fixed the quick actions menu at ModelWidget in order to include the "Edit data" action for foreing tables.
+* [Fix] Fixed the DatabaseImportHelper::assignSequencesToColumns in order to correctly assign sequences to foreign table columns.
+* [Fix] Fixed a crash in ModelValidationHelper that was caused by wrong checking when validating generic sql objects.
+* [Fix] Fixed the source code display for tables and foreign tables on DatabaseExplorerWidget.
+* [Fix] Fixed the CodeCompletionWidget to display foreign table children.
+* [Fix] Fixed the loading of generic SQL objects when a referenced object was a column.
+* [Fix] Additional fixes to correctly reference foreign tables and tables in the portions were both classes are acceptable/desirable.
+* [Fix] Fixed the diff process in order recognize partition foreign tables attach/detach.
+* [Fix] Fixed the generation of XML code of partitioning relationships.
+* [Fix] Fixed the Relationship::getAlterRelationshipDefinition to include foreign tables.
+* [Fix] Fixed the preset.sch since it was not registering the "Reuse sequences" options correctly.
+* [Fix] Improved the DataManipulationForm in order to restore the columns visibility when retrieving again the data of the current table.
+* [Fix] Fixed the drop action in DatabaseExplorerWidget for user mappings.
+* [Fix] Fixed the ModelWidget::rearrangeTablesInGrid to adjust position of foreign tables.
+* [Fix] Fixed the generation of SQL code of partition tables in order to avoid the inclusion of partitioned tables columns on the code.
+* [Fix] Fixed a crash on DatabaseImportHelper when destroying detached inherited columns.
+* [Fix] Fixed the object duplication operation in model widget to accept duplicate foreign table children objects.
+* [Fix] Fixed the creation of relationships involving foreign tables.
+* [Fix] Fixed the permission object in order to support foreign tables.
+* [Fix] Fixed the model export helper to support foreign tables.
+* [Fix] Fixed ModelWidget to show missing popup actions for foreign tables.
+* [Fix] Fixed the NewObjectOverlayWidget to display tool buttons related to foreign table children.
+* [Fix] Fixed the SchemaView::fetchChildren to include foreign tables in the returned list.
+* [Fix] Fixed the ModelValidationHelper to validate foreign tables and table-view relationships.
+* [Fix] Fixed ColumnWidget and ConstraintWidget to accept foreign tables usage.
+* [Fix] Fixed a regression when importing permissions related to functions.
+* [Fix] Fixed the OperationList to handle foreign tables.
+* [Fix] Fixed create methods in DatabaseModel related to table children object in order to accept foreign tables.
+* [Fix] Fixed the SwapIdsWidget postion/size saving and restoration.
+* [Fix] Minor tooltip fix in GeneralConfigWidget.
+* [Fix] Minor fix in default conf files removing unused tag attribute.
+* [Fix] Additional fix to the extension import to correctly indetify it as a data type handler.
+* [Fix] Fixed a bug on Role's SQL generation due to a missing attribute.
+* [Fix] Additional fix in GeneralConfigWidget to save correctly the settings of dockwidgets.
+* [Fix] Minor fix in DatabaseModel to write ddl end token in the appended/prepended custom code.
+* [Fix] Fixed a false-positive result when doing the diff between two fuctions that contains the same signature.
+* [Fix] Fixed the diff generation for Role objects when setting up an blank password.
+* [Fix] Fixed the "Prepend at the beggining of the model" option behavior on CustomSQLWidget.
+* [Fix] Fixed the catalog query for extension in order to indetify correctly if this object handles a data type.
+* [Fix] Fixed the Variadic option enabling on ParameterWidget.
+* [Fix] Fixed the saving of validator widget settings. There was a conflict between pgsql-ver attributes present on the validator settings and the default attribute added by the schema parser. The solution was to use a different attribute (version) in the validator.
+* [Fix] Fixed the "Clear items" action in popup menu at DataManipulationForm.
+* [Fix] Fixed the importing of tables and views in such way to automatically create correctly the domains referenced by their columns.
+* [Fix] Fixed a bug on ModelDatabaseDiffForm that was causing the form to be reseted on the middle of a diff process when the user minimize the diff dialog causing unexpected behavior (or even crashes sometimes).
+* [Fix] Minor fix in AboutWidget.
+* [Fix] Minor fix in ModelDatabaseDiffForm to avoid using uniform items height in output widget.
+
+v0.9.2-beta1
+------
+<em>Release date: September 2, 2019</em><br/>
+
+* [New] Added a routine to write a backup file during the saving of model files in order to avoid data loss in some rare cases.
+* [New] Added a new action on DataManipulationForm to clear the selected items by pressing Ctrl+R.
+* [New] Enabling/disabling the save model action according to the model's modified status.
+* [New] The main window instance is now exposed to plugins to make the extra features development more flexible.
+* [New] Avoiding selecting table items in BaseTableView::mousePressEvent which doens't contain an underlying (source) object.
+* [New] Adding support to duplicate several table objects at once.
+* [New] Added support to table children multiselection by using Ctrl+Shift+Click on them.
+* [New] Added support to load the generated diff code in the SQL tool and automatically browsing the destination server for manual diff applying.
+* [New] Added a button to create a new data manipulation form from within another data manipulation form.
+* [New] Added a confirmation message before closing a database explorer widget.
+* [Change] Minor adjustments in PgModelerUiNs::createOutputListItem and PgModelerUiNs::createOutputTreeItem to better display formatted messages.
+* [Change] Minor improvement on CSV text copying to exclude from the buffer the hidden columns.
+* [Change] Adjusted the font weight on WelcomeWidget (only for Linux).
+* [Change] Minor adjustment on tool buttons font size on DataManipulationForm.
+* [Change] Improved the UI of the DataManipulationForm by rearranging the tool buttons to the left of the dialog.
+* [Change] Improved the clipboard text pasting on DataManipulationForm in order to parse the text as CSV when Ctrl+Shift+V is pressed.
+* [Change] The filter input on SQLExecutionWidget is now automatically focused when toggling the filter widget.
+* [Change] Changed the default behavior of result set filtering to Qt::MatchContains on SQLExecutionWidget.
+* [Change] Avoiding showing the "Swap ids" action in popup menu when we have only columns/constraints selected
+* [Change] Minor adjustment on SceneInfoWidget to avoid display dimensions of selected columns/constraints on the canvas.
+* [Change] Renamed the method BaseGraphicObject::getReceiverObject to getOverlyingObject (to make sense with its counter part BaseObjctView::getUnderlyingObject)
+* [Change] Avoiding clear the whole scene selection when the table is already selected and the user requested popup menu.
+* [Change] Renamed BaseObjectView::getSourceObject to getUnderlyingObject.
+* [Change] Improved the object protection action in ModelWidget in order to accept the multi item selection on tables.
+* [Change] Changed the way the PSVI attribute is handled in xmlparser to retrieve big line numbers on a xml document.
+* [Change] Improved the diff code preview allowing the user to close the dialog without going back to previous tab and click 'Cancel'.
+* [Change] Minor adjustment on buttons shortcuts/tooltips on DataManipulationForm.
+* [Change] Changed the way the model saving timers are controlled to avoid infinity savings on the model (when the auto saving option is disabled) making the application unusable.
+* [Change] Making the mime update operation return exit code 0 even if there was errors (still displayed in the console). This will avoid the installer to abort installation when the dbm mime update fails.
+* [Change] Avoiding applying fillfactor to gin indexes.
+* [Change] Moved the method DatabaseImportHelper::parseIndexExpressions to Catalog class.
+* [Fix] Fixed a broken diff code generation for policies.
+* [Fix] Fixed the object duplication action when only a single table object is selected.
+* [Fix] Fixed a bug in ModelWidget::removeObjects that was causing the removal of relationship added columns
+* [Fix] Fixed the ModelWidget::configurePopupMenu to consider the table's multi item selection.
+* [Fix] Fixed a false-positive diff result when dealing with timestamptz.
+* [Fix] Fixed the progress calculation of dbm files loading.
+* [Fix] Fixed a bug that was causing the generation of broken view code.
+* [Fix] Fixed the display of index expressions on DatabaseExplorerWidget.
+* [Fix] Minor fix on SQLExecutionWidget to avoid results grid to overlap command execution history widget in certain cases.
+
+v0.9.2-beta
+------
+<em>Release date: May 31, 2019</em><br/>
+
+* [New] Added support to user mapping.
+* [New] Added support to foreign server.
+* [New] Added support to foreign data wrapper.
+* [New] Added support to reduced verbosity on diff, export and import processes in order to improve performance.
+* [New] Adding missing tootip on ObjectFinderWidget.
+* [New] Generic SQL objects now support dynamic references to objects which can be used in the definition code.
+* [New] Added support to compare foreign servers on diff process.
+* [New] Created a generic getAlterDefinition on ForeignObject.
+* [New] Added ForeignServer toolbutton in NewObjectOverlayWidget.
+* [New] Added support to the reverse engineering user mapping objects.
+* [New] Added support to the reverse engineering foreign server objects.
+* [New] Added code snippets for foreign data wrapper and foreign server.
+* [New] Added support to diff user mapping.
+* [New] Added support to diff foreign data wrappers.
+* [New] Added support to set permissions to foreign data wrapper.
+* [New] Added the WRAPPER, SERVER and MAPPING key words to sql-highlight.conf.
+* [New] Added the method PgSqlType::isExactTo in order to do a full comparison (all attributes) between two data types.
+* [New] Added the ability to view references to store referenced tables. This feature will cause relationships to be created between the view and the referenced tables. This is useful when we're using reverse engineering feature in which, in previous versions, couldn't determine the tables that were linked to a view. Now, with this feature a relationship is created between the view and all involved tables.
+* [New] Added missing data type macaddr8.
+* [New] Enabling quick clear button on several input fields.
+* [New] Added support to result set filtering in the SQL execution widget.
+* [New] Adding a column labeled "Comment" in TableWidget and ViewWidget to hold comments of children objects.
+* [Change] Changed the shortcut of run SQL action in SQLExecutionWidget to F5.
+* [Change] Changed the shortcut of tree update action in DatabaseExplorerWidget to F6.
+* [Change] Change "New object" action in popup menu in order categorize object types when clicking the database object diminishing the amount of items displayed on the screen.
+* [Change] Improved the object search mechanism in such way that various attributes of the object can be matched. New searchable attribute may be added in the future.
+* [Change] Added missing code documentation.
+* [Change] Minor adjustment on ForeignDataWrapper::getAlterDefinition.
+* [Change] Minor improvement on ModelDatabaseDiffForm to show the connection id of the databases being imported in the output tree.
+* [Change] Formatting server objects' attributes on DatabaseExplorerWidget.
+* [Change] Minor adjustments on the icons of the buttons in ObjectsTableWidget.
+* [Change] Improved the method DatabaseModel::getObjectReferences to detected foreign data wrappers as functions' references.
+* [Change] Minor code refactoring on Table and View classes.
+* [Change] Renamed the method Exception::getErrorType to Exception::getErrorCode.
+* [Change] Improved the ModelValidationWidget in such way that is possible to operate over objects on the output list through their respective context menu (the same as in the ModelWidget).
+* [Change] Now its possible to trigger the swap ids dialog for two selected objects, causing their ids to be swapped more quickly.
+* [Change] Minor refactor on schema files.
+* [Change] Minor attributes refactoring on several classes.
+* [Change] Minor change in the PgSqlType constructor by turning some parameters optional in order to facilitate the creation of array only types.
+* [Change] Minor update on disclaimer text at start of the source files.
+* [Change] Allowing copied object to be pasted multiple times. This feature works only with copy/paste operation without remove the pasted objects from the clipboard, for cut/paste the behaviour is unchanged.
+* [Change] Increased the maximum limit of SQL history.
+* [Change] Updated the windeploy.sh and the installer scripts.
+* [Change] Adjusted the installer scripts.
+* [Change] Changed the windows deploy script to use Qt Installer Framework.
+* [Change] Adjusted the deploy script to use Qt 5.12.
+* [Change] Fixed the windows deploy script to use newer version of the compiler in 64 bits environment.
+* [Change] Minor improvements in SQLToolWidget and SQLExecutionWidget to avoid segmentation faults when trying to close a execution tab while the command is still running.
+* [Change] Adjusted the resize parameters in DataManipulationForm to avoid wrong dialog resizings mainly on Windows.
+* [Fix] Fixed a bug in DataManipulationForm that was deleting new rows wrongly.
+* [Fix] Fixed a bug that was causing domain constraints not to be extracted correctly during reverse engineering.
+* [Fix] Fixed a bug that was causing a fk relationship not to be deleted if the fk tied to it was changed by the user.
+* [Fix] Fixed a bug on CLI that was not fixing broken models correctly when they had no role declaration.
+* [Fix] Fixed a bug that was causing tables not to be moved on the canvas using mouse.
+* [Fix] Fixed a crash related to destruction of special objects on DatabaseModel::destroyObjects.
+* [Fix] Fixed a bug that could crash the application when no language was specified to a funcion and the SQL/XML code was being generated.
+* [Fix] Minor fix a bug on index importing.
+* [Fix] Minor fix on View::isReferencingTable.
+* [Fix] Fixed a crash when a query executed in SQLExecutionWidget was a DDL one or was not returning results.
+* [Fix] Fixed a bug in CLI that was failing to fix model in certain cases.
+* [Fix] Minor fix on buttons tooltips.
+* [Fix] Fixed a bug that was causing syntax error if the last column of a table had the SQL code disabled.
+* [Fix] Fixed a bug on diff process due to a missing attribute on the generation of diff code for inheritance relationships.
+* [Fix] Fixed a bug when rendering several self relationships attached to the same table.
+* [Fix] Fixed the CLI in order to restore the layers information when fixing a broken model.
+* [Fix] Fixed a bug in object finder that was causing objects from a hidden layer to be displayed causing inconsistency on the layer state.
+
+
+v0.9.2-alpha1
+------
+<em>Release date: December 17, 2018</em><br/>
+
+* [New] Added support to scene layers.
+* [New] Added support to view's columns importing in DatabaseImportHelper. 
+* [New] Added the ability to load view columns from database model file in DatabaseModel::createView.
+* [New] Added a tab "Columns" in ReferenceWidget where the user will be able to insert columns to be used as view columns.
+* [New] Added support to pagination of tables and views columns pagination.
+* [New] Added a pagination toggler action on context menu at ModelWidget.
+* [New] Added a fix step on CLI to remove the deprecated attribute hide-ext-attribs from tables and views xml code.
+* [New] Added a configuration option to control attributes per pages in tables and views.
+* [New] Added support to save collapsing states and current attributes pages to the database model file.
+* [New] Added constants to reference child objects of TableObjectView.
+* [New] Added the class TextPolygonItem which can be used to draw a text over a background polygon.
+* [New] Added support to OLD/NEW tables aliases on triggers.
+* [New] Added a hint text on RelationshipWidget to document the correct usage of default partitions.
+* [New] Added support for partition attaching/detaching detection in diff process.
+* [New] Added auxiliary methods in Table class in order to add/remove and retrieve partition tables.
+* [New] Added support to importing partitioned/partition tables on DatabaseImportHelper.
+* [New] Added a missing validation in Relationship to avoid creating other types of relationships involving partitioned or partition tables.
+* [New] Added support to specify partition bounding expression on partitioning relationships.
+* [New] Added support to resize grid cells to fit contents on ObjectsTableWidget.
+* [New] Added a tab "Partition keys" that will handle partitioning configuration on TableWidget.
+* [New] Added a method in ObjectsTableWidget to hide some horizontal header sections.
+* [New] Added some validations when creating partitioning relationships.
+* [New] Added support to hide columns on data manipulation dialog.
+* [New] Added a transient attribute to objects DatabaseModel, Table and View in order to give a hint on the maximum count of objects held. This attribute is used to preallocate the vectors which store the children objects in order to avoid excessive memory allocation/deallocation due to vector resizing.
+* [New] Added a column labeled "Alias" on all objects tables in TableWidget so the aliases of children can be displayed.
+* [New] Added support to adding tabs via shortcut or corner button in the SQL Execution panel.
+* [Change] Minor adjustments on MainWindow to make the overview widget to update its contents whenever the active layers change on the current model.
+* [Change] Minor adjusment in ObjectsScene::addItem to make the item (in)visible according to the visibility of its related layer.
+* [Change] Minor fix in AttributesTogglerItem in order to consider the parent's opacity during painting.
+* [Change] Minor fixes in OperationList in order to force views to be updated correctly when operating over a table which is referenced by those objects.
+* [Change] Minor adjustments on SchemaView and BaseTableView (and its children classes) to update the geometry when they switch from invisble to visible state.
+* [Change] Changed views in such way so they can use the struct SimpleColumn to represent their deduced columns.
+* [Change] Improved the update of views when referenced columns and tables change their structure.
+* [Change] Improved database model loading times by avoiding the rendering of tables while the children objects (indexes, trigger, rules, etc) are being added.
+* [Change] Removed the several operators ~ overloading that statically cast enums to their underlying type and created a template function called enum_cast in C++14 syntax.
+* [Change] The zoom in/out level is now sensible on how much the user rolls the mouse wheel.
+* [Change] Move the default implementation of configureObjectShadow and configureObjectSelection from BaseObjectView to BaseTableView.
+* [Change] Disabling configureObjectSelection and configureObjectShadow on TableObjectView and RelationshipView.
+* [Change] Minor adjustment on protected icon position on TableTitleView and TextboxView.
+* [Change] Minor performance adjustments in ModelWidget.
+* [Change] Minor improvement in TextboxView to use only a TextPolygonItem to hold text and the object's rectangle instead of a box and a text items.
+* [Change] Replaced the sql_info_txt and sql_info_box items by a single instance of TextPolygonItem to denote SQL disabled status.
+* [Change] Replace the tag_body and tag_name elements on BaseTableView by the tag_item which is a instance of TextPolygonItem.
+* [Change] Improved the TableObjectView to avoid adding extra scene items.
+* [Change] Improved the TableTitleView to avoid adding children items. A custom paint() method now draws them.
+* [Change] Removing unused fr_FR UI translations.
+* [Change] Minor update on known issues sections at README.md.
+* [Change] Renamed the namespace ParsersAttributes to Attributes and its attributes has been refactored.
+* [Change] Refactored all static const attributes of the classes present in pgsqltypes.h.
+* [Change] Renamed PgModelerNS to PgModelerNs.
+* [Change] Renamed PgModelerUiNs to PgModelerUiNs.
+* [Change] Renamed XMLParser to XmlParser.
+* [Change] Removing uneeded temporary QString instance created from Exception::getErroMessage call before throwing exceptions.
+* [Change] Refactored static const attributes of BaseObject.
+* [Change] Refactored the items in the enum ObjectType by removing the prefix 'OBJ'.
+* [Change] The enums ErrorType and ObjectType were transformed into scoped enums. Also the ErrorType enum was renamed to ErrorCode.
+* [Change] Code refactoring done in order to make it more close to C++14 in order to take advantage of new features introduced by that standard.
+* [Change] Removed unused labels and fixed warning frame on ModelWidget.
+* [Change] Minor improvements on table's attributes displaying on DatabaseExplorerWidget.
+* [Change] Improved the diff process in such way to avoid generating unnecessary/noise commands related to changing types of columns to integer and setting nextval() call as default value.
+* [Change] Partition tables are now displayed in the "Tables" tab at TableWidget.
+* [Change] Removed the cached catalog query test feature from Catalog.
+* [Change] Fine tuning on the validation of the entities used in the partitioning relationship creation.
+* [Change] Forcing the partitioning relationship to be invalidated when the reference table (partitioned) partitioning type is set to null (no partitioning).
+* [Change] Move the FK settings, copy options and name patterns group boxes to a dedicated tab on RelationshipWidget.
+* [Change] Improved the models destruction when closing the application.
+* [Change] Improved the Index/Exclude/ParitionKey elements handling by creating a generic form/grid that handles these kinds of objects (ElementsTableWidget).
+* [Change] Modified the RelationshipWidget in order to handle partitioning relationships.
+* [Change] Modified RelationshipConfigWidget in order to write name partterns for partitioning relationships.
+* [Change] Improved the column copying and validation on class Relationship to include partitioning relationship logics.
+* [Change] Improved the reverse engineering performance by avoiding update relationships as they are being imported.
+* [Change] Improved the object duplication feature in ModelWidget.
+* [Change] When the model is loaded it is copied to the temporary models storage as a first version of the temporary dbm file.
+* [Change] Simplified the temporary models saving process by removing the thread that was controlling it. Actually the thread was unnacessary because the process was being executed in the main thread no matter if there was another thread to control the saving.
+* [Change] Minor adjustment on the hint text resizing.
+* [Change] Increasing to 5 minutes the period in which the temporary model saving will be executed.
+* [Change] pgModeler will now use the official docs url in the help buttons.
+* [Fix] Fixed a minor bug that was preventing the copy action to be enabled in DataManipulationForm.
+* [Fix] Fixed some sample models to remove deprecated attributes.
+* [Fix] Fixed a crash while renaming view's children objects.
+* [Fix] Fixed the rendering of views which contain only a single reference that is the whole object's defintion.
+* [Fix] Fixed the column name deduction for recursive views.
+* [Fix] Fixed a bug that was causing crashes while configure new constraints on tables.
+* [Fix] Fixed the view's resizing.
+* [Fix] Fixed a regression in schema's rectangle selection.
+* [Fix] Fixed the StyledTextboxView bounding rectangle.
+* [Fix] Fixed an artifact when user switched on and off the compact view.
+* [Fix] Fixed the Linux deploy script.
+* [Fix] Fixed the macOs deploy script.
+* [Fix] Fixed some compilation problems on macOs due to the usage of C++14.
+* [Fix] Fixed some compilation problems on Windows due to the usage of C++14.
+* [Fix] Fixed a bug in DatabaseModel::destroyObjects that could lead to segfault when the destroyed model had permissions on it.
+* [Fix] Fixed a bug when importing columns which data types is some user defined type in form of array, e.g., custom_type[].
+* [Fix] Fixed a bug in SchemaParser that was causing only the first %set line in a if block to be parsed no matter that there were others %set below the same block.
+* [Fix] Fixed the tooltip of some graphical objects by adding their comments and aliases.
+* [Fix] Fixed the catalog query for tables to select partitioned tables correctly.
+* [Fix] Fixed the catalog query for types to avoid selecting partitioned tables as being data types.
+* [Fix] Fixed a bug that was causing special primary key configured on a relationship to make the original primary key of the table to disappear after disconnect the relationship. Now pgModeler stores in memory the original PK prior the connection of relationship and creation of the special PK. When disconnected the relationship, the original primary key is restored on its parent table.
+* [Fix] Fixed the creation of elements (index, exclude, patition key) on DatabaseModel.
+* [Fix] Fixed the class Relationship to reuse compatible columns when handling partitioning relationships.
+* [Fix] Fixed the diff process in such way to create new columns with their respective COMMENT ON statement when present.
+* [Fix] Fixed the detection of comment changes for columns on diff process.
+* [Fix] Fixed the order of recent models saved on the file pgmodeler.conf.
+* [Fix] Fixed a bug when creating a view reference as the whole view definition.
+* [Fix] Minor tooltip fix on DatabaseExplorerWidget.
+* [Fix] Making pgModeler honor the columns arrangement in primary keys.
+* [Fix] Fixed a bug that was causing FK relationship deletion to crash the application sometimes.
+* [Fix] Some fixes were done in the ModelOverviewWidget in order to support large models without exceed the screen size when configuring the size of the overall widget.
+* [Fix] Fixes a bad erase in View::removeReference.
+* [Fix] Fixed some bugs related to dialog size restoration in DataManipulationForm and TableWidget.
+
+v0.9.2-alpha
+------
+<em>Release date: August 20, 2018</em><br/>
+
+* [New] Added the support to cancelling SQL execution in SQLExecutionWidget.
+* [New] Added support to save/restore the dialogs sizes and positions.
+* [New] Added support to truncate tables in DataManipulationForm.
+* [New] Added support to aliases on some graphical objects that is used in the compact view mode.
+* [New] Added support to save/load object's metadata containing aliases information.
+* [New] Added support to compact view of the model where graphical objects can have a more friendly name for a reduced view as well for those who don't need to see details about tables (clients of the business, for instance).
+* [New] Added support to sequence options for identity columns.
+* [New] Added the ability to paste CSV text from clipboard into the TableDataWidget.
+* [New] Added support to bulk data edit in TableDataWidget.
+* [Change] Added missing copy options on copy relationships.
+* [Change] Minor adjustments on the item delegates in order draw text in the right alignment.
+* [Change] Minor adjustment on buttons style in DatabaseExplorerWidget, DataManipulationForm and SQLExecutionWidget.
+* [Change] Minor adjustment on OperationList::removeFromPool to avoid throw an exception when an invalid index is passed.
+* [Change] Changed the behaviour of the fade in/out of relationships linked to a table by applying the effect on the other tables that are related to the selected one.
+* [Change] Refactored the view editing dialog by moving the references handling form to a dedicated modal dialog.
+* [Change] Improved the model loading from file by blocking signals of relationships avoiding excessive/repetive rendering of objects. The whole model is fully rendered when the file was completely loaded.
+* [Change] Minor adjustment on constraints rendering at extended attributes section of tables.
+* [Change] French translation update.
+* [Change] Updated the other lang dictionaries with the new text brought by new releases.
+* [Change] Removing icons at the top of the dialogs: DatabaseImportForm, MetaDataHandlingForm, ModelDatabaseDiffForm, ModelExportForm, ModelFixForm.
+* [Change] Minor adjustments in the features of the demo version.
+* [Change] Minor adjustments in the UI stylesheet.
+* [Change] In DatabaseExplorerWidget the root item will come automatically selcted when browsing a database.
+* [Change] Minor performance tuning when handling big models.
+* [Change] Added some statistics attributes for tables on DatabaseExplorerWidget.
+* [Change] Minor adjustment in NewObjectOverlayWidget by putting the tool buttons under categories.
+* [Fix] Fixed a bug in ObjectFinderWidget that was forcing schemas rectangles to appear even if the flag indicating them to be visible was set to false.
+* [Fix] Fixed the editing form cancel operation. Now operations done when the form was active are undone correctly.
+* [Fix] Fixed a bug that was preventing to create a view containing the same name as a table but in different schema.
+* [Fix] Fixed a regression that caused notices not to be shown in the output panel at SQLExecutionWidget.
+* [Fix] Fixed the query catalog for policies which was causing syntax error when combining import system objects and extension objects options.
+* [Fix] Fixed the disabling of some actions related to design when switching to manage view.
+* [Fix] Minor fix on stylesheet in order to display the extended button on general toolbar.
+* [Fix] Fix a shortcut conflict in DataManipulationform.
+* [Fix] Fixed the offset of strings composing the StorageType.
+* [Fix] Minor form size adjustments.
+* [Fix] Minor fix in sqlexecutionwidget.ui to force the exhibition of grid headers
+* [Fix] Minor fix in SQLExecutionWidget allowing the output widget to be resized to a size lower than the default one.
+* [Fix] Fixed the tab order in PolicyWidget.
+* [Fix] Fixed the generation of Database object source in DatabaseExplorerWidget.
+* [Fix] Fixed the method BaseObjectWidget::setRequiredField to make object selector fields as required correctly.
+* [Fix] Minor fix in HintTextWidget to stay on top of all widget when being displayed.
+* [Fix] Fixed a bug that was not quoting extension name when needed.
+* [Fix] Fixed a crash when trying to remove a fk relationship when it was created from a foreign key which references protected columns (added by relationship).
+* [Fix] Fix a crash when importing CSV files into DataManipulationForm.
+* [Fix] Minor typo in TableDataWidget.
+* [Fix] Minor fix on schema file sql/table.sch.
+
 v0.9.1
 ------
 <em>Release date: May 14, 2018</em><br/>
