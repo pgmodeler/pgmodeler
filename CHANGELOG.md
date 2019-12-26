@@ -3,7 +3,7 @@ Change Log
 
 v0.9.2
 ------
-<em>Release date: December 30, 2019</em><br/>
+<em>Release date: December 26, 2019</em><br/>
 
 * [New] Add support to data dictionaries generation in HTML format in ModelExportForm.
 * [New] Added options to control data dictionary generation in CLI.

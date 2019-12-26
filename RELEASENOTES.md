@@ -1,7 +1,7 @@
 v0.9.2
 ------
 
-<em>Release date: December 30, 2019</em><br/>
+<em>Release date: December 26, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-beta2</strong></em><br/>
 
 <strong>Summary:</strong> this is the end of a long development cycle that started still in May, 2018 when the stable 0.9.1 was released. This one is composed by 84 new features, 134 fixes and 146 changes in total. <br/>
