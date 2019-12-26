@@ -4,7 +4,7 @@ v0.9.2
 <em>Release date: December 30, 2019</em><br/>
 <em>Changes since: <strong>v0.9.2-beta2</strong></em><br/>
 
-<strong>Summary:</strong> this is the end of a long development cycle that started still in May, 2018 when the stable 0.9.1 was released and is composed by 84 new features, 134 fixes and 146 changes in total. <br/>
+<strong>Summary:</strong> this is the end of a long development cycle that started still in May, 2018 when the stable 0.9.1 was released. This one is composed by 84 new features, 134 fixes and 146 changes in total. <br/>
 
 This release was intended to be just a fine tuning of what was constructed in alpha and beta versions and it only includes new relavant feature included specifically to generate data dictionaries in HTML format from database models. <br/>
 
