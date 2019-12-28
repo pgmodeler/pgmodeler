@@ -81,7 +81,7 @@ const QString PgModelerCli::NoUnmodObjRecreation=QString("--no-unmod-recreation"
 
 const QString PgModelerCli::TagExpr=QString("<%1");
 const QString PgModelerCli::EndTagExpr=QString("</%1");
-const QString PgModelerCli::AttributeExpr=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;)+(\")");
+const QString PgModelerCli::AttributeExpr=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
 PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 {
@@ -1159,6 +1159,25 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 		 obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::View))))
 	{
 		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), QString());
+	}
+
+	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
+	QRegExp regexp = QRegExp(AttributeExpr.arg(Attributes::Signature));
+	int sig_idx = regexp.indexIn(obj_xml),	len = 0;
+	QString signature, in_keyw = QString("IN ");
+
+	while(sig_idx >= 0)
+	{
+		signature = obj_xml.mid(sig_idx, regexp.matchedLength());
+
+		if(!signature.contains(in_keyw))
+			continue;
+
+		len = signature.length();
+		signature.remove(in_keyw);
+		obj_xml.remove(sig_idx, len);
+		obj_xml.insert(sig_idx, signature);
+		sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 	}
 
 	//Fix the references to op. classes and families if needed
