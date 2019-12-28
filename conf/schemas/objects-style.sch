@@ -33,8 +33,8 @@
 [  <font id="pos-info" color="] {pos-info-fcolor} [" italic="] {pos-info-italic} [" bold="] {pos-info-bold} [" underline="] {pos-info-underline} ["/>] $br
 [  <font id="tag" color="] {tag-fcolor} [" italic="] {tag-italic} [" bold="] {tag-bold} [" underline="] {tag-underline} ["/>] $br
 [  <font id="foreigntable-name" color="] {foreigntable-name-fcolor} [" italic="] {foreigntable-name-italic} [" bold="] {foreigntable-name-bold} [" underline="] {foreigntable-name-underline} ["/>] $br
-[  <font id="foreigntable-schema-name" color="] {foreigntable-schema-name-fcolor} [" italic="] {foreigntable-schema-name-italic} [" bold="] {foreigntable-schema-name-bold} [" underline="] {foreigntable-schema-name-
-$br 
+[  <font id="foreigntable-schema-name" color="] {foreigntable-schema-name-fcolor} [" italic="] {foreigntable-schema-name-italic} [" bold="] {foreigntable-schema-name-bold} [" underline="] {foreigntable-schema-name-underline} ["/>] $br 
+
 [  <object id="table-title" fill-color="] {table-title-color} [" border-color="] {table-title-bcolor} ["/>] $br
 [  <object id="table-body" fill-color="] {table-body-color} [" border-color="] {table-body-bcolor} ["/>] $br
 [  <object id="table-ext-body" fill-color="] {table-ext-body-color} [" border-color="] {table-ext-body-bcolor} ["/>] $br
