@@ -15,6 +15,7 @@ Finally, the changes of this version are detailed below. For the complete list o
 * [New] Add support to data dictionaries generation in HTML format in ModelExportForm.
 * [New] Added options to control data dictionary generation in CLI.
 * [New] Plugins now can optionally be associated to a menu action or not. Generally, an plugin not associated to a menu action is automatilly executed during the startup (see PgModelerPlugin::initPlugin).
+* [New] Added a missing model fix step on CLI that removes the IN keyword from functions signatures.
 * [Change] Making BaseRelationship::getReferenceForeignKey() public.
 * [Change] Isolated duplicated code in MainWindow::isToolButtonsChecked that checks if any tool button of the bottom or right widget bars is checked.
 * [Change] Removing the plugins from core code.
