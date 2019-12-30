@@ -3351,6 +3351,11 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 							menus[i]->addAction(trUtf8("None"), this, SLOT(setTag()));
 							menus[i]->addSeparator();
 						}
+						else if(types[i] == ObjectType::Role)
+						{
+							act = menus[i]->addAction(trUtf8("None"), this, SLOT(changeOwner()));
+							menus[i]->addSeparator();
+						}
 
 						while(!obj_list.empty())
 						{
@@ -3359,11 +3364,11 @@ void ModelWidget::configureSubmenu(BaseObject *object)
 
 							/* Check the current action only if there is only one selected object and the object representing
 								 the action is assigned to the selected object */
-							act->setCheckable(sel_objs.size()==1);
-							act->setChecked(sel_objs.size()==1 &&
-											(object->getSchema()==obj_list.back() ||
-											 object->getOwner()==obj_list.back() ||
-											 (tab_or_view && dynamic_cast<BaseTable *>(sel_objs[0])->getTag()==obj_list.back())));
+							act->setCheckable(sel_objs.size() == 1);
+							act->setChecked(sel_objs.size() == 1 &&
+															(object->getSchema() == obj_list.back() ||
+															 object->getOwner() == obj_list.back() ||
+															 (tab_or_view && dynamic_cast<BaseTable *>(sel_objs[0])->getTag()==obj_list.back())));
 
 							act->setEnabled(!act->isChecked());
 							act->setData(QVariant::fromValue<void *>(obj_list.back()));
