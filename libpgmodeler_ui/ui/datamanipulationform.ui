@@ -300,7 +300,7 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>26</number>
+          <number>28</number>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>25</number>
@@ -448,9 +448,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Ins</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -485,9 +482,6 @@
                      <width>20</width>
                      <height>20</height>
                     </size>
-                   </property>
-                   <property name="shortcut">
-                    <string>Del</string>
                    </property>
                   </widget>
                  </item>
@@ -524,9 +518,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Del</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -562,9 +553,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Del</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -599,9 +587,6 @@
                      <width>20</width>
                      <height>20</height>
                     </size>
-                   </property>
-                   <property name="shortcut">
-                    <string>Del</string>
                    </property>
                   </widget>
                  </item>
