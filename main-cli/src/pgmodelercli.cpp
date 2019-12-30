@@ -377,7 +377,7 @@ void PgModelerCli::showMenu(void)
 	out << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << trUtf8(" command line interface.") << endl;
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
-	out << trUtf8("Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
+	out << trUtf8("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << endl;
 	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl << endl;
 	out << trUtf8("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << endl;
