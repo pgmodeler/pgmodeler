@@ -68,7 +68,7 @@ void OperationListWidget::updateOperationList(void)
 		unsigned count, i, op_type;
 		ObjectType obj_type;
 		QString obj_name, str_aux, op_name, op_icon;
-		QTreeWidgetItem *item=nullptr,*item1=nullptr, *item2=nullptr;
+		QTreeWidgetItem *item=nullptr,*item1=nullptr;
 		QFont font=this->font();
 		bool value=false;
 
@@ -102,12 +102,7 @@ void OperationListWidget::updateOperationList(void)
 
 			operations_tw->insertTopLevelItem(i,item);
 			item->setFont(0,font);
-			item->setText(0,trUtf8("Object: %1").arg(BaseObject::getTypeName(obj_type)));
-
-			item2=new QTreeWidgetItem(item);
-			item2->setIcon(0,QPixmap(PgModelerUiNs::getIconPath("uid")));
-			item2->setFont(0,font);
-			item2->setText(0,trUtf8("Name: %1").arg(obj_name));
+			item->setText(0, QString("%1 (%2)").arg(obj_name).arg(BaseObject::getTypeName(obj_type)));
 
 			if(op_type==Operation::ObjectCreated)
 			{
@@ -133,7 +128,7 @@ void OperationListWidget::updateOperationList(void)
 			item1=new QTreeWidgetItem(item);
 			item1->setIcon(0,QPixmap(PgModelerUiNs::getIconPath(op_icon)));
 			item1->setFont(0,font);
-			item1->setText(0,trUtf8("Operation: %1").arg(op_name));
+			item1->setText(0,op_name);
 
 			operations_tw->expandItem(item);
 
