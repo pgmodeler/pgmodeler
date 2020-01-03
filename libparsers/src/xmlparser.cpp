@@ -24,6 +24,10 @@ const QString XmlParser::CharLt=QString("&lt;");
 const QString XmlParser::CharGt=QString("&gt;");
 const QString XmlParser::CharQuot=QString("&quot;");
 const QString XmlParser::CharApos=QString("&apos;");
+const QString XmlParser::CdataStart=QString("<![CDATA[");
+const QString XmlParser::CdataEnd=QString("]]>");
+const QString XmlParser::CommentStart=QString("<!--");
+const QString XmlParser::CommentEnd=QString("-->");
 
 XmlParser::XmlParser(void)
 {
@@ -449,3 +453,96 @@ int XmlParser::getBufferLineCount(void)
 		return(0);
 }
 
+QString XmlParser::convertCharsToXMLEntities(QString buf)
+{
+	//Configures a text stream to read the entire buffer line by line
+	QTextStream ts(&buf);
+	QString lin, buf_aux;
+	bool xml_header = false, in_comment = false, in_cdata = false;
+
+	//Sets the text steam to detect UTF8 encoding
+	ts.setAutoDetectUnicode(true);
+
+	while(!ts.atEnd())
+	{
+		lin=ts.readLine();
+
+		//Checks if the current line is a XML header (<?xml...)
+		xml_header=(lin.indexOf("<?xml") >= 0);
+
+		//Checks if the current line is a comment start tag
+		if(!in_comment)
+			in_comment=(lin.indexOf(CommentStart) >= 0);
+		else if(in_comment && lin.indexOf(CommentEnd) >=0)
+			in_comment=false;
+
+		//Checks if the current line is a cdata start tag
+		if(!in_cdata)
+			in_cdata=(lin.indexOf(CdataStart) >= 0);
+		else if(in_cdata && lin.indexOf(CdataEnd) >=0)
+			in_cdata=false;
+
+		//Case the line is empty, is a xml header or a comment line and does not treat XML entities on it
+		if(lin.isEmpty() || xml_header || in_comment || in_cdata)
+			lin+="\n";
+		else
+		{
+			QRegExp attr_regexp=QRegExp("(([a-z]+)|(\\-))+( )*(=\")"),
+					next_attr_regexp=QRegExp(QString("(\")(( )|(\\t))+(%1)").arg(attr_regexp.pattern()));
+			int attr_start=0, attr_end=0, count=0, next_attr=-1;
+			QString str_aux;
+
+			lin+="\n";
+
+			do
+			{
+				//Try to extract the values using regular expressions
+				attr_start=attr_regexp.indexIn(lin, attr_start);
+				attr_start+=attr_regexp.matchedLength();
+				next_attr=next_attr_regexp.indexIn(lin, attr_start);
+
+				if(next_attr < 0)
+					attr_end=lin.lastIndexOf(QChar('"')) - 1;
+				else
+					attr_end=next_attr - 1;
+
+				//Calculates the amount of extracted characters
+				count=(attr_start > 0 ? (attr_end - attr_start) + 1 : 0);
+
+				if(attr_start >= 0 && count > 0)
+				{
+					//Gets the substring extracted using regexp
+					str_aux=lin.mid(attr_start, count).trimmed();
+
+					if(str_aux.contains(QRegExp("(&|\\<|\\>|\")")))
+					{
+						//Replaces the char by the XML entities
+						if(!str_aux.contains(CharQuot) && !str_aux.contains(CharLt) &&
+								!str_aux.contains(CharGt) && !str_aux.contains(CharAmp) &&
+								!str_aux.contains(CharApos) && str_aux.contains('&'))
+							str_aux.replace('&', CharAmp);
+
+						str_aux.replace('"',CharQuot);
+						str_aux.replace('<',CharLt);
+						str_aux.replace('>',CharGt);
+
+						//Puts on the original XML definition the modified string
+						lin.replace(attr_start, count, str_aux);
+					}
+
+					attr_start+=str_aux.size() + 1;
+				}
+			}
+
+			/* Iterates while the positions of the expressions found is valid.
+			 Positions less than 0 indicates that no regular expressions
+			 managed to find values */
+			while(attr_start >=0 && attr_end >=0 && attr_start < lin.size());
+		}
+
+		buf_aux+=lin;
+		lin.clear();
+	}
+
+	return(buf_aux);
+}

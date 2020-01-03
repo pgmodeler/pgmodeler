@@ -10440,10 +10440,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
-				objs_def+=schparser.convertCharsToXMLEntities(
+				objs_def+=XmlParser::convertCharsToXMLEntities(
 										schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-																							GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																							Attributes::Info + GlobalAttributes::SchemaExt, attribs));
+																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																								Attributes::Info + GlobalAttributes::SchemaExt, attribs));
 			}
 			else
 				idx++;

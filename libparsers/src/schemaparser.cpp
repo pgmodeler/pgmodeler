@@ -922,7 +922,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 					 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator + obj_name +
 					 GlobalAttributes::SchemaExt;
 
-			return(convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
+			return(XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
 		}
 	}
 	catch(Exception &e)
@@ -939,98 +939,6 @@ void SchemaParser::ignoreUnkownAttributes(bool ignore)
 void SchemaParser::ignoreEmptyAttributes(bool ignore)
 {
 	ignore_empty_atribs=ignore;
-}
-
-QString SchemaParser::convertCharsToXMLEntities(QString buf)
-{
-	//Configures a text stream to read the entire buffer line by line
-	QTextStream ts(&buf);
-	QString lin, buf_aux;
-	bool xml_header=false, in_comment=false;
-
-	//Sets the text steam to detect UTF8 encoding
-	ts.setAutoDetectUnicode(true);
-
-	while(!ts.atEnd())
-	{
-		lin=ts.readLine();
-
-		//Checks if the current line is a XML header (<?xml...)
-		xml_header=(lin.indexOf("<?xml") >= 0);
-
-		//Checks if the current line is a comment start tag
-		if(!in_comment)
-			in_comment=(lin.indexOf("<!--") >= 0);
-		else if(in_comment && lin.indexOf("-->") >=0)
-			in_comment=false;
-
-		//Case the line is empty, is a xml header or a comment line and does not treat XML entities on it
-		if(lin.isEmpty() || xml_header || in_comment)
-			lin+="\n";
-		else
-		{
-			QRegExp attr_regexp=QRegExp("(([a-z]+)|(\\-))+( )*(=\")"),
-					next_attr_regexp=QRegExp(QString("(\")(( )|(\\t))+(%1)").arg(attr_regexp.pattern()));
-			int attr_start=0, attr_end=0, count=0, next_attr=-1;
-			QString str_aux;
-
-			lin+="\n";
-
-			do
-			{
-				//Try to extract the values using regular expressions
-				attr_start=attr_regexp.indexIn(lin, attr_start);
-				attr_start+=attr_regexp.matchedLength();
-				next_attr=next_attr_regexp.indexIn(lin, attr_start);
-
-				if(next_attr < 0)
-					attr_end=lin.lastIndexOf(QChar('"')) - 1;
-				else
-					attr_end=next_attr - 1;
-
-				//Calculates the amount of extracted characters
-				count=(attr_start > 0 ? (attr_end - attr_start) + 1 : 0);
-
-				if(attr_start >= 0 && count > 0)
-				{
-					//Gets the substring extracted using regexp
-					str_aux=lin.mid(attr_start, count).trimmed();
-
-					if(str_aux.contains(QRegExp("(&|\\<|\\>|\")")))
-					{
-						//Replaces the char by the XML entities
-						if(!str_aux.contains(XmlParser::CharQuot) && !str_aux.contains(XmlParser::CharLt) &&
-								!str_aux.contains(XmlParser::CharGt) && !str_aux.contains(XmlParser::CharAmp) &&
-								!str_aux.contains(XmlParser::CharApos) && str_aux.contains('&'))
-							str_aux.replace('&', XmlParser::CharAmp);
-
-						str_aux.replace('"',XmlParser::CharQuot);
-						str_aux.replace('<',XmlParser::CharLt);
-						str_aux.replace('>',XmlParser::CharGt);
-
-						//Puts on the original XML definition the modified string
-						lin.replace(attr_start, count, str_aux);
-					}
-
-					attr_start+=str_aux.size() + 1;
-				}
-			}
-
-			/* Iterates while the positions of the expressions found is valid.
-			 Positions less than 0 indicates that no regular expressions
-			 managed to find values */
-			while(attr_start >=0 && attr_end >=0 && attr_start < lin.size());
-		}
-
-		buf_aux+=lin;
-		lin.clear();
-
-		//Reseting the in_comment flag when the current line has a end comment tag
-		if(in_comment && lin.indexOf("-->") >= 0)
-			in_comment=false;
-	}
-
-	return(buf_aux);
 }
 
 QString SchemaParser::getCodeDefinition(attribs_map &attribs)

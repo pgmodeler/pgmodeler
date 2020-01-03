@@ -581,13 +581,13 @@ void GeneralConfigWidget::saveConfiguration(void)
 			if((itr->first).contains(QRegExp(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 
 				recent_mdl_idx++;
 			}

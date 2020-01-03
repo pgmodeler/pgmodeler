@@ -79,7 +79,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		buf.append(schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)));
+		buf.append(XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())

@@ -1152,6 +1152,18 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();
 		}
+		else
+		{
+			/* Removing extra \n from the beggining and from the end of the fucntion's definition.
+			 * Some functions come from the catalogs with a extra \n appended/prepended in the field prosrc in which we get the functions source.
+			 * This way if repeatedely export and import a model the amount of \n at the beginning and end of the source
+			 * will increase leading to an unecessary addition of new lines to the functions source. */
+			if(attribs[Attributes::Definition].startsWith(QChar::LineFeed))
+				attribs[Attributes::Definition].remove(0, 1);
+
+			if(attribs[Attributes::Definition].endsWith(QChar::LineFeed))
+				attribs[Attributes::Definition].remove(attribs[Attributes::Definition].length() - 1, 1);
+		}
 
 		//Get the language reference code
 		attribs[Attributes::Language]=getDependencyObject(attribs[Attributes::Language], ObjectType::Language);

@@ -232,10 +232,6 @@ class SchemaParser {
 
 		//! \brief Extracts the attributes names from the currently loaded buffer
 		QStringList extractAttributes(void);
-
-		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
-		 * 	called when generating XML code and only tag attributes are treated.*/
-		static QString convertCharsToXMLEntities(QString buf);
 };
 
 #endif

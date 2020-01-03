@@ -970,7 +970,7 @@ void PgModelerCli::recreateObjects(void)
 								if(!aux_def.contains("table="))
 								{
 									aux_def.replace(aux_tag, QString("%1 table=\"%2\"").arg(aux_tag).arg(object->getName(true)));
-									aux_def=SchemaParser::convertCharsToXMLEntities(aux_def);
+									aux_def=XmlParser::convertCharsToXMLEntities(aux_def);
 								}
 
 								objs_xml.push_back(aux_def);
