@@ -169,7 +169,7 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, cons
 	}
 }
 
-void PluginsConfigWidget::initPlugins(QMainWindow *main_window)
+void PluginsConfigWidget::initPlugins(MainWindow *main_window)
 {
 	for(auto &plugin : plugins)
 		plugin->initPlugin(main_window);

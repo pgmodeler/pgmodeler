@@ -47,11 +47,14 @@
 
 	Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
+// Making the MainWindow class of pgModeler be known by the plugin interface
+class MainWindow;
+
 class PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
 
-		QMainWindow *main_window;
+		MainWindow *main_window;
 
 	private:
 		QLabel	*icon_lbl,
@@ -69,7 +72,7 @@ class PgModelerPlugin {
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
 		 * in the constructor. Additionally, a main window instance can be passed to the plugin in order to facilitate
 		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
-		virtual void initPlugin(QMainWindow *main_window);
+		virtual void initPlugin(MainWindow *main_window);
 
 		//! \brief Executes the plugins having a ModelWidget as input parameter.
 		virtual void executePlugin(ModelWidget *modelo)=0;

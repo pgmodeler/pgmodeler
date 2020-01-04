@@ -78,7 +78,7 @@ PgModelerPlugin::~PgModelerPlugin(void)
 	delete(plugin_info_frm);
 }
 
-void PgModelerPlugin::initPlugin(QMainWindow *main_window)
+void PgModelerPlugin::initPlugin(MainWindow *main_window)
 {
 	this->main_window = main_window;
 }

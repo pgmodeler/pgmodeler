@@ -61,7 +61,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
 
 		//*! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
-		void initPlugins(QMainWindow *main_window);
+		void initPlugins(MainWindow *main_window);
 
 	private slots:
 		void showPluginInfo(int idx);
