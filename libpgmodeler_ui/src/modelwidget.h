@@ -533,9 +533,20 @@ class ModelWidget: public QWidget {
 		by closing the form */
 		void s_manipulationCanceled(void);
 
+		/*! \brief Signal emitted whenever the scene suffered an interaction.
+		 * This version carries the interacted object in the scene */
 		void s_sceneInteracted(BaseObjectView *sel_obj);
+
+		/*! \brief Signal emitted whenever the scene suffered an interaction.
+		 * This version carries the scene size after being adjusted */
 		void s_sceneInteracted(const QSizeF &scene_size);
+
+		/*! \brief Signal emitted whenever the scene suffered an interaction.
+		 * This version carries the mouse position after the moving objects */
 		void s_sceneInteracted(const QPointF &mouse_pos);
+
+		/*! \brief Signal emitted whenever the scene suffered an interaction.
+		 * This version carries the amount objects selected and their bounding rects */
 		void s_sceneInteracted(int obj_count, const QRectF &objs_rect);
 
 		friend class MainWindow;

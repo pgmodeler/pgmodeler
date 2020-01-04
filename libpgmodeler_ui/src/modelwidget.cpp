@@ -1039,7 +1039,7 @@ void ModelWidget::emitSceneInteracted(void)
 			emit s_sceneInteracted(nullptr);
 	}
 	else
-		emit s_sceneInteracted(selected_objects.size(), scene->itemsBoundingRect(true, true));
+		emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
 }
 
 void ModelWidget::configureObjectSelection(void)
