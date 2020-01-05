@@ -114,6 +114,7 @@ PLUGINS="dummy xml2object"
 
 # Common dependency libraries
 DEP_LIBS="$DEP_LIBS \
+		$MINGW_ROOT/libdouble-conversion.dll \
 		$MINGW_ROOT/libicuin*.dll \
 		$MINGW_ROOT/libicuuc*.dll \
 		$MINGW_ROOT/libicudt*.dll \
@@ -127,6 +128,7 @@ DEP_LIBS="$DEP_LIBS \
 		$MINGW_ROOT/libbz2-1.dll \
 		$MINGW_ROOT/libstdc++-6.dll \
 		$MINGW_ROOT/libwinpthread-1.dll \
+		$MINGW_ROOT/libzstd.dll \
 		$MINGW_ROOT/zlib1.dll \
 		$MINGW_ROOT/libpq.dll \
 		$MINGW_ROOT/libxml2-2.dll \
