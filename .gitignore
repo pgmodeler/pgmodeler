@@ -24,5 +24,6 @@ dist/*
 installer/*
 moc/*
 obj/*
+plugins
 plugins/*
 release/*
