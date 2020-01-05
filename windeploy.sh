@@ -17,7 +17,7 @@ SNAPSHOT_OPT='-snapshot'
 SNAPSHOT=0
 
 # Installer settings
-FMT_PREFIX="C:\/Program Files\/pgmodeler"
+FMT_PREFIX="C:\/Program Files\/pgModeler"
 INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
 INSTALLER_CONF_DIR="$PWD/installer/template/config"
 INSTALLER_PKG_DIR="$PWD/installer/template/packages"
