@@ -199,9 +199,8 @@ fi
 echo "Building for arch: $DEST_ARCH"
 echo "Cleaning previous compilation..."
 
-if [ $BUILD_ALL -eq 1 ]; then
-  rm -r $DIST_ROOT/* > $LOG 2>&1
-fi
+mkdir -p "${DIST_ROOT}"   > $LOG 2>&1
+rm    -r "${DIST_ROOT}/*" > $LOG 2>&1
 
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
