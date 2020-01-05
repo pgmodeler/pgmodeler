@@ -88,7 +88,6 @@ QT_INSTALL_VERSION='5.12.3'
 QT_BASE_VERSION='5.12.3'
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
-QT_IFW_ROOT=/c/qt-ifw
 PGSQL_ROOT=$MINGW_ROOT
 QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
 		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
@@ -298,7 +297,7 @@ if [ $? -ne 0 ]; then
    exit 1
 fi
 
-$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
+binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
