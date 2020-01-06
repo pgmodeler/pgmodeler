@@ -160,7 +160,7 @@ namespace GlobalAttributes {
 	{
 		QFileInfo fi;
 		QStringList paths={ QDir::toNativeSeparators(getenv(varname.toStdString().c_str())),
-							QDir::toNativeSeparators(default_val) };
+												QDir::toNativeSeparators(default_val) };
 
 		for(int i=0; i < 2; i++)
 		{

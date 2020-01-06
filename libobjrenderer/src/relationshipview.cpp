@@ -363,6 +363,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			unsigned i, count;
 			bool pnt_rem=false;
 			vector<QPointF> points=base_rel->getPoints();
+			QLineF::IntersectType inter_type;
 
 			if(!base_rel->isSelfRelationship())
 			{
@@ -400,7 +401,13 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						if((!use_curved_lines && lines[i]->line().intersects(lin, &p) == QLineF::BoundedIntersection) ||
+						#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+							inter_type = lines[i]->line().intersect(lin, &p);
+						#else
+							inter_type = lines[i]->line().intersects(lin, &p);
+						#endif
+
+						if((!use_curved_lines && inter_type == QLineF::BoundedIntersection) ||
 							 (use_curved_lines && curves[i]->contains(event->pos())))
 						{
 							//Inserts the point to the line
@@ -853,6 +860,7 @@ void RelationshipView::configureLine(void)
 					min_lim = 0, max_lim = 0,
 					conn_rels_factors[2] = { 0, 0 };
 			unsigned conn_rels_cnt[2] = { 0, 0 };
+			QLineF::IntersectType inter_type;
 
 			for(int tab_idx = 0; tab_idx < 2; tab_idx++)
 			{
@@ -903,7 +911,13 @@ void RelationshipView::configureLine(void)
 					edge.setP1(pol.at(idx));
 					edge.setP2(pol.at(idx + 1));
 
-					if(line.intersects(edge, &pi)==QLineF::BoundedIntersection)
+					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+						inter_type = line.intersect(edge, &pi);
+					#else
+						inter_type = line.intersects(edge, &pi);
+					#endif
+
+					if(inter_type == QLineF::BoundedIntersection)
 					{
 						/* Adjusting the intersection point if there're more than one relationship connected the current table
 						 * this will cause all relationships to be aligned together */
@@ -1527,6 +1541,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 		QPointF pi;
 		QRectF brect;
 		QPen pen, pens[2] = { lines.front()->pen(), lines.back()->pen() };
+		QLineF::IntersectType inter_type;
 		QLineF line, line1, edge, rel_lines[2] = {(signal < 0 ? lines.back()->line() : lines.front()->line()),
 															 (signal < 0 ? lines.front()->line() : lines.back()->line())};
 		QPolygonF pol;
@@ -1592,7 +1607,6 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 				line_item->setPos(px, 0);
 				line_item->setPen(pens[tab_id]);
 			}
-
 
 			cf_descriptors[tab_id]->removeFromGroup(round_cf_descriptors[tab_id]);
 			this->removeFromGroup(round_cf_descriptors[tab_id]);
@@ -1664,7 +1678,13 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 				edge.setP1(pol.at(idx));
 				edge.setP2(pol.at(idx + 1));
 
-				if(rel_lines[tab_id].intersects(edge, &pi)==QLineF::BoundedIntersection)
+				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+					inter_type = rel_lines[tab_id].intersect(edge, &pi);
+				#else
+					inter_type = rel_lines[tab_id].intersects(edge, &pi);
+				#endif
+
+				if(inter_type == QLineF::BoundedIntersection)
 				{
 					cf_descriptors[tab_id]->setPos(pi);
 					break;
@@ -1892,6 +1912,8 @@ void RelationshipView::configureLabels(void)
 		}
 		else
 		{
+			QLineF::IntersectType inter_type;
+
 			lins[0]=lines[0]->line();
 			lins[1]=lines[lines.size()-1]->line();
 
@@ -1914,7 +1936,13 @@ void RelationshipView::configureLabels(void)
 			{
 				for(i1=0; i1 < 4; i1++)
 				{
-					if(lins[idx].intersects(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
+					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+						inter_type = lins[idx].intersect(borders[idx][i1], &p_int);
+					#else
+						inter_type = lins[idx].intersects(borders[idx][i1], &p_int);
+					#endif
+
+					if(inter_type == QLineF::BoundedIntersection)
 					{
 						if(idx==0)
 							lins[idx].setP1(p_int);

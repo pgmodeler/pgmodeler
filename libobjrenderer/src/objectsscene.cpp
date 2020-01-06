@@ -1167,8 +1167,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
-				QList<BaseObjectView *> list = sch_view->getChildren();
-				tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
+				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+					tables.unite(sch_view->getChildren().toSet());
+				#else
+					QList<BaseObjectView *> list = sch_view->getChildren();
+					tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
+				#endif
 			}
 		}
 	}
