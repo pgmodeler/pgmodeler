@@ -116,11 +116,13 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
 	if(!txt.isEmpty())
 	{
-		QString text=txt + QChar('\n'), word, group;
+		QString text, word, group;
 		unsigned i=0, len, idx=0, i1;
 		int match_idx, match_len, aux_len, start_col;
 		QChar chr_delim, lookahead_chr;
-		len=text.length();
+
+		text = txt + QString("\n");
+		len = text.length();
 
 		do
 		{
@@ -136,20 +138,26 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 				if(word_separators.contains(text[i]))
 				{
 					while(i < len && word_separators.contains(text[i]))
-						word+=text[i++];
+					{
+						word += text[i];
+						i++;
+					}
 				}
 				//If the char is a word delimiter
 				else if(word_delimiters.contains(text[i]))
 				{
-					chr_delim=text[i++];
-					word+=chr_delim;
+					chr_delim = text[i++];
+					word += chr_delim;
 
-					while(i < len && chr_delim!=text[i])
-						word+=text[i++];
-
-					if(i < len && text[i]==chr_delim)
+					while(i < len && chr_delim != text[i])
 					{
-						word+=chr_delim;
+						word += text[i];
+						i++;
+					}
+
+					if(i < len && text[i] == chr_delim)
+					{
+						word += chr_delim;
 						i++;
 					}
 				}
@@ -162,7 +170,8 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 							!ignored_chars.contains(text[i]) &&
 							!word_delimiters.contains(text[i]))
 					{
-						word+=text[i++];
+						word += text[i];
+						i++;
 					}
 
 					/* This is an workaround for multi lined groups which use word delimiters
@@ -183,13 +192,14 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 					this because the final expression of the group contains the word delimiter '. In order to force the highlight stop
 					in the last ' we include it in the current evaluated word and increment the position in the text so the next
 					word starts without the word delimiter. */
-					if(word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->has_exprs)
+					if(i < len && word_delimiters.contains(text[i]) && prev_info && !prev_info->group.isEmpty() && prev_info->has_exprs)
 					{
 						for(auto exp : final_exprs[prev_info->group])
 						{
 							if(exp.pattern().contains(text[i]))
 							{
-								word+=text[i++];
+								word += text[i];
+								i++;
 								break;
 							}
 						}

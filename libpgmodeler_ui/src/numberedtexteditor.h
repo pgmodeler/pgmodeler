@@ -50,7 +50,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 		static QFont default_font;
 
 		//! \brief Default tab size for texts
-		static int tab_width;
+		static double tab_width;
 
 		static QString src_editor_app;
 
