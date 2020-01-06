@@ -55,19 +55,19 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		table1_hl=nullptr;
 		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
-		table1_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		table1_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		table2_hl=nullptr;
 		table2_hl=new SyntaxHighlighter(recv_table_txt, true);
-		table2_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		table2_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		for(int i=0; i < pattern_fields.size(); i++)
 		{
 			patterns_hl[i]=new SyntaxHighlighter(qobject_cast<QPlainTextEdit *>(pattern_fields[i]), true);
-			patterns_hl[i]->loadConfiguration(GlobalAttributes::ConfigurationsDir +
-											  GlobalAttributes::DirSeparator +
-											  GlobalAttributes::PatternHighlightConf +
-											  GlobalAttributes::ConfigurationExt);
+			patterns_hl[i]->loadConfiguration(GlobalAttributes::get().ConfigurationsDir +
+											  GlobalAttributes::get().DirSeparator +
+											  GlobalAttributes::get().PatternHighlightConf +
+											  GlobalAttributes::get().ConfigurationExt);
 		}
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
@@ -163,7 +163,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		part_bound_expr_txt=new NumberedTextEditor(this, true);
 		part_bound_expr_hl=new SyntaxHighlighter(part_bound_expr_txt);
-		part_bound_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		part_bound_expr_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 		dynamic_cast<QGridLayout *>(part_bound_expr_gb->layout())->addWidget(part_bound_expr_txt, 1, 0);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));

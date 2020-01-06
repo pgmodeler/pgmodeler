@@ -30,12 +30,12 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		using_edt = PgModelerUiNs::createNumberedTextEditor(using_wgt);
 		using_edt->setTabChangesFocus(true);
 		using_hl = new SyntaxHighlighter(using_edt);
-		using_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		using_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		check_edt = PgModelerUiNs::createNumberedTextEditor(check_wgt);
 		check_edt->setTabChangesFocus(true);
 		check_hl = new SyntaxHighlighter(check_edt);
-		check_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		check_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		roles_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 																			 (ObjectsTableWidget::DuplicateButton |

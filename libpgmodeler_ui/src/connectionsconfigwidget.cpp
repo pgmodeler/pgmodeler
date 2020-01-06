@@ -112,7 +112,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 
 		destroyConnections();
 		key_attribs.push_back(Attributes::Alias);
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::ConnectionsConf, config_params, key_attribs);
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::get().ConnectionsConf, config_params, key_attribs);
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
@@ -438,7 +438,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	try
 	{
 		//Restore the default connection config file
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::ConnectionsConf, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::get().ConnectionsConf, false);
 
 		//Remove all connections
 		while(connections_cmb->count() > 0)
@@ -476,12 +476,12 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				handleConnection();
 		}
 
-		config_params[GlobalAttributes::ConnectionsConf].clear();
+		config_params[GlobalAttributes::get().ConnectionsConf].clear();
 
 		/* Workaround: When there is no connection, to prevent saving an empty file, is necessary to
 		 fill the attribute CONNECTIONS with white spaces */
 		if(connections.empty())
-			config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]=QString("  ");
+			config_params[GlobalAttributes::get().ConnectionsConf][Attributes::Connections]=QString("  ");
 		else
 		{
 			for(Connection *conn : connections)
@@ -501,13 +501,13 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 				attribs[DefaultFor.arg(Attributes::Validation)]=(conn->isDefaultForOperation(Connection::OpValidation) ? Attributes::True : QString());
 
 				schparser.ignoreUnkownAttributes(true);
-				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
-						schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::SchemasDir +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::ConnectionsConf +
-													GlobalAttributes::SchemaExt,
+				config_params[GlobalAttributes::get().ConnectionsConf][Attributes::Connections]+=
+						schparser.getCodeDefinition(GlobalAttributes::get().TmplConfigurationDir +
+													GlobalAttributes::get().DirSeparator +
+													GlobalAttributes::get().SchemasDir +
+													GlobalAttributes::get().DirSeparator +
+													GlobalAttributes::get().ConnectionsConf +
+													GlobalAttributes::get().SchemaExt,
 													attribs);
 
 				schparser.ignoreUnkownAttributes(false);
@@ -515,7 +515,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		}
 
 		schparser.ignoreUnkownAttributes(true);
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::ConnectionsConf, config_params);
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::get().ConnectionsConf, config_params);
 		schparser.ignoreUnkownAttributes(false);
 	}
 	catch(Exception &e)

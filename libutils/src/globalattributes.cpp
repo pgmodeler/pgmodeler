@@ -20,189 +20,206 @@
 #include <QCoreApplication>
 #include <QTextStream>
 
-namespace GlobalAttributes {
-	const QString
-	PgModelerVersion=QString("0.9.2")
+GlobalAttributes* GlobalAttributes::_instance = NULL;
+
+GlobalAttributes::GlobalAttributes(const QApplication& app) :
+	PgModelerVersion(QString("0.9.2")
 
 	/* Appending the snapshot build number to the version number
 	 * when the external variable SNAPSHOT_BUILD is defined */
 	#if defined(SNAPSHOT_BUILD)
 		+ QString("_snapshot") + BUILDNUM
 	#endif
-	,
+	),
 	/****/
 
-	PgModelerAppName=QString("pgmodeler"),
-	PgModelerURI=QString("pgmodeler.io"),
-	PgModelerReverseURI=QString("io.pgmodeler"),
-	PgModelerBuildNumber=QString(BUILDNUM),
-	PgModelerSite=QString("https://pgmodeler.io"),
-	PgModelerSupport=QString("https://pgmodeler.io/support/docs"),
-	PgModelerSourceURL=QString("https://github.com/pgmodeler/pgmodeler/releases"),
-	PgModelerDownloadURL=QString("%1/download").arg(PgModelerSite),
-	PgModelerDonateURL=QString("%1/#donationForm").arg(PgModelerSite),
-	PgModelerUpdateCheckURL=QString("%1/checkupdate?version=").arg(PgModelerSite),
+	PgModelerAppName(QString("pgmodeler")),
+	PgModelerURI(QString("pgmodeler.io")),
+	PgModelerReverseURI(QString("io.pgmodeler")),
+	PgModelerBuildNumber(QString(BUILDNUM)),
+	PgModelerSite(QString("https://pgmodeler.io")),
+	PgModelerSupport(QString("https://pgmodeler.io/support/docs")),
+	PgModelerSourceURL(QString("https://github.com/pgmodeler/pgmodeler/releases")),
+	PgModelerDownloadURL(QString("%1/download").arg(PgModelerSite)),
+	PgModelerDonateURL(QString("%1/#donationForm").arg(PgModelerSite)),
+	PgModelerUpdateCheckURL(QString("%1/checkupdate?version=").arg(PgModelerSite)),
 
-	BugReportEmail=QString("bug@pgmodeler.io"),
-	BugReportFile=QString("pgmodeler%1.bug"),
-	StacktraceFile=QString(".stacktrace"),
+	BugReportEmail(QString("bug@pgmodeler.io")),
+	BugReportFile(QString("pgmodeler%1.bug")),
+	StacktraceFile(QString(".stacktrace")),
 
-	DirSeparator=QString("/"),
-	DefaultConfsDir=QString("defaults"),
-	ConfsBackupsDir=QString("backups"),
-	SchemasDir=QString("schemas"),
-	SQLSchemaDir=QString("sql"),
-	XMLSchemaDir=QString("xml"),
-	DataDictSchemaDir=QString("datadict"),
-	AlterSchemaDir=QString("alter"),
-	SchemaExt=QString(".sch"),
-	ObjectDTDDir=QString("dtd"),
-	ObjectDTDExt=QString(".dtd"),
-	RootDTD=QString("dbmodel"),
-	MetadataDTD=QString("metadata"),
-	ConfigurationExt=QString(".conf"),
-	HighlightFileSuffix=QString("-highlight"),
+	DirSeparator(QString("/")),
+	DefaultConfsDir(QString("defaults")),
+	ConfsBackupsDir(QString("backups")),
+	SchemasDir(QString("schemas")),
+	SQLSchemaDir(QString("sql")),
+	XMLSchemaDir(QString("xml")),
+	DataDictSchemaDir(QString("datadict")),
+	AlterSchemaDir(QString("alter")),
+	SchemaExt(QString(".sch")),
+	ObjectDTDDir(QString("dtd")),
+	ObjectDTDExt(QString(".dtd")),
+	RootDTD(QString("dbmodel")),
+	MetadataDTD(QString("metadata")),
+	ConfigurationExt(QString(".conf")),
+	HighlightFileSuffix(QString("-highlight")),
 
-	CodeHighlightConf=QString("source-code-highlight"),
-	ObjectsStyleConf=QString("objects-style"),
-	GeneralConf=QString("pgmodeler"),
-	ConnectionsConf=QString("connections"),
-	RelationshipsConf=QString("relationships"),
-	SnippetsConf=QString("snippets"),
-	SQLHistoryConf=QString("sql-history"),
-	DiffPresetsConf=QString("diff-presets"),
+	CodeHighlightConf(QString("source-code-highlight")),
+	ObjectsStyleConf(QString("objects-style")),
+	GeneralConf(QString("pgmodeler")),
+	ConnectionsConf(QString("connections")),
+	RelationshipsConf(QString("relationships")),
+	SnippetsConf(QString("snippets")),
+	DiffPresetsConf(QString("diff-presets")),
 
-	SQLHighlightConf=QString("sql-highlight"),
-	XMLHighlightConf=QString("xml-highlight"),
-	PatternHighlightConf=QString("pattern-highlight"),
+	SQLHighlightConf(QString("sql-highlight")),
+	XMLHighlightConf(QString("xml-highlight")),
+	PatternHighlightConf(QString("pattern-highlight")),
+	SQLHistoryConf(QString("sql-history")),
 
-	ExampleModel=QString("example.dbm"),
-	UiStyleConf=QString("ui-style"),
+	ExampleModel(QString("example.dbm")),
+	UiStyleConf(QString("ui-style")),
 
-	DefaultQtStyle=QString("Fusion"),
-	UiStyleOption=QString("-style"),
+	DefaultQtStyle(QString("Fusion")),
+	UiStyleOption(QString("-style")),
 
-	SchemasRootDir			= getPathFromEnv(
-								QString("PGMODELER_SCHEMAS_DIR"),
-								QString(SCHEMASDIR),
-								QCoreApplication::applicationDirPath() + QString("/schemas")),
-	LanguagesDir			= getPathFromEnv(
-								QString("PGMODELER_LANG_DIR"),
-								QString(LANGDIR),
-								QCoreApplication::applicationDirPath() + QString("/lang")),
-	SamplesDir				= getPathFromEnv(
-								QString("PGMODELER_SAMPLES_DIR"),
-								QString(SAMPLESDIR),
-								QCoreApplication::applicationDirPath() + QString("/samples")),
-	TmplConfigurationDir	= getPathFromEnv(
-								QString("PGMODELER_TMPL_CONF_DIR"),
-								QString(CONFDIR),
-								QCoreApplication::applicationDirPath() + QString("/conf")),
+	SchemasRootDir(getPathFromEnv(
+		QString("PGMODELER_SCHEMAS_DIR"),
+		QString(SCHEMASDIR),
+		app.applicationDirPath() + QString("/schemas"))),
+
+	LanguagesDir(getPathFromEnv(
+		QString("PGMODELER_LANG_DIR"),
+		QString(LANGDIR),
+		app.applicationDirPath() + QString("/lang"))),
+
+	SamplesDir(getPathFromEnv(
+		QString("PGMODELER_SAMPLES_DIR"),
+		QString(SAMPLESDIR),
+		app.applicationDirPath() + QString("/samples"))),
+
+	TmplConfigurationDir(getPathFromEnv(
+		QString("PGMODELER_TMPL_CONF_DIR"),
+		QString(CONFDIR),
+		app.applicationDirPath() + QString("/conf"))),
 
 	//Currently, plugins folder is auto-created when missing so it can't be resolved by getPathFromEnv()
-	PluginsDir = getenv("PGMODELER_PLUGINS_DIR")
-					? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/')
-					: QString(PLUGINSDIR),
+	PluginsDir
+	(
+		getenv("PGMODELER_PLUGINS_DIR")
+			? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/')
+			: QString(PLUGINSDIR)
+	),
 
 #if defined(Q_OS_MAC)
-	ConfigurationsDir	=getPathFromEnv(
-							QString("PGMODELER_CONF_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-							+ QString("/%1").arg(PgModelerReverseURI)),
+	ConfigurationsDir(getPathFromEnv(
+		QString("PGMODELER_CONF_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+		+ QString("/%1").arg(PgModelerReverseURI))),
 
-	TemporaryDir		=getPathFromEnv(
-							QString("PGMODELER_TMP_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-							+ QString("/%1/tmp").arg(PgModelerReverseURI)),
+	TemporaryDir(getPathFromEnv(
+		QString("PGMODELER_TMP_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+		+ QString("/%1/tmp").arg(PgModelerReverseURI))),
 
 #elif defined(Q_OS_LINUX)
-	ConfigurationsDir	= getPathFromEnv(
-							QString("PGMODELER_CONF_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-							+ QString("/%1").arg(PgModelerAppName)),
+	ConfigurationsDir(getPathFromEnv(
+		QString("PGMODELER_CONF_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+		+ QString("/%1").arg(PgModelerAppName))),
 
-	TemporaryDir		= getPathFromEnv(
-							QString("PGMODELER_TMP_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
-							+ QString("/%1/tmp").arg(PgModelerAppName)),
+	TemporaryDir(getPathFromEnv(
+		QString("PGMODELER_TMP_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+		+ QString("/%1/tmp").arg(PgModelerAppName))),
 #else
-	ConfigurationsDir	= getPathFromEnv(
-							QString("PGMODELER_CONF_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-							+ QString("/%1").arg(PgModelerAppName)),
+	ConfigurationsDir(getPathFromEnv(
+		QString("PGMODELER_CONF_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+		+ QString("/%1").arg(PgModelerAppName))),
 
-	TemporaryDir		= getPathFromEnv(
-							QString("PGMODELER_TMP_DIR"),
-							QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-							+ QString("/%1/tmp").arg(PgModelerAppName)),
+	TemporaryDir(getPathFromEnv(
+		QString("PGMODELER_TMP_DIR"),
+		QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+		+ QString("/%1/tmp").arg(PgModelerAppName))),
 #endif
 
-	SQLHighlightConfPath = ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt,
-	XMLHighlightConfPath = ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt,
+	SQLHighlightConfPath(ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt),
+	XMLHighlightConfPath(ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt),
 
 #if defined(Q_OS_UNIX)
 #if defined(Q_OS_MAC)
 	//For MacOSX the crash handler path is fixed (inside bundle)
-	PgModelerCHandlerPath = getPathFromEnv(
-								QString("PGMODELER_CHANDLER_PATH"),
-								QString(BINDIR)							+ QString("/pgmodeler-ch"),
-								QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-ch")),
+	PgModelerCHandlerPath(getPathFromEnv(
+		QString("PGMODELER_CHANDLER_PATH"),
+		QString(BINDIR)				+ QString("/pgmodeler-ch"),
+		app.applicationDirPath()	+ QString("/pgmodeler-ch"))),
 #else
-	PgModelerCHandlerPath = getPathFromEnv(
-								QString("PGMODELER_CHANDLER_PATH"),
-								QString(PRIVATEBINDIR)					+ QString("/pgmodeler-ch"),
-								QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-ch")),
+	PgModelerCHandlerPath(getPathFromEnv(
+		QString("PGMODELER_CHANDLER_PATH"),
+		QString(PRIVATEBINDIR)		+ QString("/pgmodeler-ch"),
+		app.applicationDirPath()	+ QString("/pgmodeler-ch"))),
 #endif
 
-	PgModelerCLIPath = getPathFromEnv(
-						QString("PGMODELER_CLI_PATH"),
-						QString(BINDIR)							+ QString("/pgmodeler-cli"),
-						QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-cli")),
+	PgModelerCLIPath(getPathFromEnv(
+		QString("PGMODELER_CLI_PATH"),
+		QString(BINDIR)				+ QString("/pgmodeler-cli"),
+		app.applicationDirPath()	+ QString("/pgmodeler-cli"))),
 
-	PgModelerAppPath = getPathFromEnv(
-						QString("PGMODELER_APP_PATH"),
-						QString(BINDIR)							+ QString("/pgmodeler"),
-						QCoreApplication::applicationDirPath()	+ QString("/pgmodeler"));
-
+	PgModelerAppPath(getPathFromEnv(
+		QString("PGMODELER_APP_PATH"),
+		QString(BINDIR)				+ QString("/pgmodeler"),
+		app.applicationDirPath()	+ QString("/pgmodeler")));
 
 #else
-	PgModelerCHandlerPath = getPathFromEnv(
-								QString("PGMODELER_CHANDLER_PATH"),
-								QString(PRIVATEBINDIR)					+ QString("\\pgmodeler-ch.exe"),
-								QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler-ch.exe")),
+	PgModelerCHandlerPath(getPathFromEnv(
+		QString("PGMODELER_CHANDLER_PATH"),
+		QString(PRIVATEBINDIR)		+ QString("\\pgmodeler-ch.exe"),
+		app.applicationDirPath()	+ QString("\\pgmodeler-ch.exe"))),
 
-	PgModelerCLIPath = getPathFromEnv(
-						QString("PGMODELER_CLI_PATH"),
-						QString(PRIVATEBINDIR)					+ QString("\\pgmodeler-cli.exe"),
-						QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler-cli.exe")),
+	PgModelerCLIPath(getPathFromEnv(
+		QString("PGMODELER_CLI_PATH"),
+		QString(PRIVATEBINDIR)		+ QString("\\pgmodeler-cli.exe"),
+		app.applicationDirPath()	+ QString("\\pgmodeler-cli.exe"))),
 
-	PgModelerAppPath = getPathFromEnv(
-						QString("PGMODELER_APP_PATH"),
-						QString(BINDIR)							+ QString("\\pgmodeler.exe"),
-						QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler.exe"));
-
+	PgModelerAppPath(getPathFromEnv(
+		QString("PGMODELER_APP_PATH"),
+		QString(BINDIR)				+ QString("\\pgmodeler.exe"),
+		app.applicationDirPath()	+ QString("\\pgmodeler.exe")))
 #endif
 
 #ifdef DEMO_VERSION
 	//Maximum object creation counter for demo version
-	const unsigned MaxObjectCount=15;
+	, MaxObjectCount(15)
 #endif
+{
+}
 
+QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
+{
+	QFileInfo fi;
+	QStringList paths={ QDir::toNativeSeparators(getenv(varname.toStdString().c_str())),
+						QDir::toNativeSeparators(default_val) };
 
-	QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val)
+	for(int i=0; i < 2; i++)
 	{
-		QFileInfo fi;
-		QStringList paths={ QDir::toNativeSeparators(getenv(varname.toStdString().c_str())),
-							QDir::toNativeSeparators(default_val) };
-
-		for(int i=0; i < 2; i++)
-		{
-			fi.setFile(paths[i]);
-			if(fi.exists() || (i==1 && fallback_val.isEmpty()))
-				return(paths[i].replace('\\','/'));
-		}
-
-		fi.setFile(fallback_val);
-		return(fi.absoluteFilePath());
+		fi.setFile(paths[i]);
+		if(fi.exists() || (i==1 && fallback_val.isEmpty()))
+			return(paths[i].replace('\\','/'));
 	}
+
+	fi.setFile(fallback_val);
+	return(fi.absoluteFilePath());
+}
+
+GlobalAttributes& GlobalAttributes::create(const QApplication& app)
+{
+	GlobalAttributes::get()._instance = new GlobalAttributes(app);
+
+	return *GlobalAttributes::get()._instance;
+}
+
+const GlobalAttributes& GlobalAttributes::get()
+{
+	return *GlobalAttributes::get()._instance;
 }

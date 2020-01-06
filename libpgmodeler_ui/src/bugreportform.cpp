@@ -40,13 +40,13 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	connect(actions_txt, SIGNAL(textChanged()), this, SLOT(enableGeneration()));
 	connect(output_edt, SIGNAL(textChanged(QString)), this, SLOT(enableGeneration()));
 
-	output_edt->setText(QFileInfo(GlobalAttributes::TemporaryDir).absoluteFilePath());
+	output_edt->setText(QFileInfo(GlobalAttributes::get().TemporaryDir).absoluteFilePath());
 
 	//Installs a syntax highlighter on model_txt widget
 	hl_model_txt=new SyntaxHighlighter(model_txt);
-	hl_model_txt->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
+	hl_model_txt->loadConfiguration(GlobalAttributes::get().XMLHighlightConfPath);
 
-	QDir tmp_dir=QDir(GlobalAttributes::TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+	QDir tmp_dir=QDir(GlobalAttributes::get().TemporaryDir, QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
 	tmp_dir.setSorting(QDir::Time);
 	QStringList list=tmp_dir.entryList();
 
@@ -55,8 +55,8 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 		QFile input;
 
 		//Opens the last modified model file showing it on the proper widget
-		input.setFileName(GlobalAttributes::TemporaryDir +
-						  GlobalAttributes::DirSeparator + list[0]);
+		input.setFileName(GlobalAttributes::get().TemporaryDir +
+						  GlobalAttributes::get().DirSeparator + list[0]);
 
 		input.open(QFile::ReadOnly);
 		model_txt->setPlainText(QString(input.readAll()));
@@ -79,7 +79,7 @@ QByteArray BugReportForm::generateReportBuffer(void)
 }
 
 void BugReportForm::generateReport(void)
-{ 
+{
 	generateReport(generateReportBuffer());
 	this->accept();
 }
@@ -94,8 +94,8 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	Messagebox msgbox;
 	QFile output;
 	QString filename=QFileInfo(QString(output_edt->text() +
-									   GlobalAttributes::DirSeparator +
-									   GlobalAttributes::BugReportFile)
+									   GlobalAttributes::get().DirSeparator +
+									   GlobalAttributes::get().BugReportFile)
 							   .arg(QDateTime::currentDateTime().toString(QString("_yyyyMMdd_hhmm")))).absoluteFilePath();
 
 	//Opens the file for writting
@@ -116,7 +116,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.close();
 
 		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
-								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
+								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::get().BugReportEmail),
 					Messagebox::InfoIcon);
 	}
 }

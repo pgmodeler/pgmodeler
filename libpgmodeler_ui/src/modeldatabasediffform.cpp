@@ -105,7 +105,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
-		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		sqlcode_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -689,8 +689,8 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
 			filename = file_edt->text();
 	else
 	{
-			tmp_sql_file.setFileTemplate(GlobalAttributes::TemporaryDir +
-																	 GlobalAttributes::DirSeparator +
+			tmp_sql_file.setFileTemplate(GlobalAttributes::get().TemporaryDir +
+																	 GlobalAttributes::get().DirSeparator +
 																	 QString("diff_%1_XXXXXX.sql").arg(database));
 
 			tmp_sql_file.open();
@@ -1025,7 +1025,7 @@ void ModelDatabaseDiffForm::loadConfiguration(void)
 {
 	try
 	{
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::get().DiffPresetsConf, config_params, { Attributes::Name });
 		applyConfiguration();
 	}
 	catch(Exception &e)
@@ -1047,14 +1047,14 @@ void ModelDatabaseDiffForm::saveConfiguration(void)
 		QString preset_sch, root_dir;
 		QString presets;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
-				 GlobalAttributes::DirSeparator;
+		root_dir=GlobalAttributes::get().TmplConfigurationDir +
+				 GlobalAttributes::get().DirSeparator;
 
 		preset_sch=root_dir +
-				 GlobalAttributes::SchemasDir +
-				 GlobalAttributes::DirSeparator +
+				 GlobalAttributes::get().SchemasDir +
+				 GlobalAttributes::get().DirSeparator +
 				 Attributes::Preset +
-				 GlobalAttributes::SchemaExt;
+				 GlobalAttributes::get().SchemaExt;
 
 		for(auto &conf : config_params)
 		{
@@ -1065,8 +1065,8 @@ void ModelDatabaseDiffForm::saveConfiguration(void)
 			schparser.ignoreEmptyAttributes(false);
 		}
 
-		config_params[GlobalAttributes::DiffPresetsConf][Attributes::Preset] = presets;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::DiffPresetsConf, config_params);
+		config_params[GlobalAttributes::get().DiffPresetsConf][Attributes::Preset] = presets;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::get().DiffPresetsConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -1097,8 +1097,8 @@ void ModelDatabaseDiffForm::restoreDefaults(void)
 
 		if(msg_box.result()==QDialog::Accepted)
 		{
-			BaseConfigWidget::restoreDefaults(GlobalAttributes::DiffPresetsConf, false);
-			BaseConfigWidget::loadConfiguration(GlobalAttributes::DiffPresetsConf, config_params, { Attributes::Name });
+			BaseConfigWidget::restoreDefaults(GlobalAttributes::get().DiffPresetsConf, false);
+			BaseConfigWidget::loadConfiguration(GlobalAttributes::get().DiffPresetsConf, config_params, { Attributes::Name });
 			applyConfiguration();
 		}
 	}

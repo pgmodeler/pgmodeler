@@ -440,7 +440,7 @@ void DatabaseExplorerWidget::formatOidAttribs(attribs_map &attribs, QStringList 
 }
 
 void DatabaseExplorerWidget::formatCastAttribs(attribs_map &attribs)
-{  
+{
 	formatBooleanAttribs(attribs, { Attributes::IoCast });
 
 	formatOidAttribs(attribs, { Attributes::DestType,
@@ -1368,9 +1368,9 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			//Generate the truncate command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-																					 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-																					 Attributes::Truncate + GlobalAttributes::SchemaExt,
+			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+																					 GlobalAttributes::get().AlterSchemaDir + GlobalAttributes::get().DirSeparator +
+																					 Attributes::Truncate + GlobalAttributes::get().SchemaExt,
 																					 attribs);
 
 			//Executes the truncate cmd
@@ -1767,9 +1767,9 @@ void DatabaseExplorerWidget::finishObjectRename(void)
 			//Generate the drop command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-												   GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-													 Attributes::Rename + GlobalAttributes::SchemaExt,
+			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+												   GlobalAttributes::get().AlterSchemaDir + GlobalAttributes::get().DirSeparator +
+													 Attributes::Rename + GlobalAttributes::get().SchemaExt,
 												   attribs);
 
 			//Executes the rename cmd

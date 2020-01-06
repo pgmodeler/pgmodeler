@@ -40,7 +40,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 }
 
 BaseObjectView::~BaseObjectView(void)
-{  
+{
 	setSourceObject(nullptr);
 }
 
@@ -163,19 +163,19 @@ void BaseObjectView::loadObjectsStyle(void)
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,
-			config_file=GlobalAttributes::ConfigurationsDir + GlobalAttributes::DirSeparator +
-						GlobalAttributes::ObjectsStyleConf + GlobalAttributes::ConfigurationExt;
+			config_file=GlobalAttributes::get().ConfigurationsDir + GlobalAttributes::get().DirSeparator +
+						GlobalAttributes::get().ObjectsStyleConf + GlobalAttributes::get().ConfigurationExt;
 	XmlParser xmlparser;
 
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectDTDDir +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectsStyleConf +
-							 GlobalAttributes::ObjectDTDExt, GlobalAttributes::ObjectsStyleConf);
+		xmlparser.setDTDFile(GlobalAttributes::get().TmplConfigurationDir +
+							 GlobalAttributes::get().DirSeparator +
+							 GlobalAttributes::get().ObjectDTDDir +
+							 GlobalAttributes::get().DirSeparator +
+							 GlobalAttributes::get().ObjectsStyleConf +
+							 GlobalAttributes::get().ObjectDTDExt, GlobalAttributes::get().ObjectsStyleConf);
 		xmlparser.loadXMLFile(config_file);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))

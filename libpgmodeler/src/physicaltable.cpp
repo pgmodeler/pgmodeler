@@ -366,10 +366,10 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 #warning "DEMO VERSION: table children objects creation limit."
 		vector<TableObject *> *obj_list=(obj_type!=ObjectType::Table ? getObjectList(obj_type) : nullptr);
 
-		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
-				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
+		if((obj_list && obj_list->size() >= GlobalAttributes::get().MaxObjectCount) ||
+				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::get().MaxObjectCount))
 			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
-							.arg(GlobalAttributes::MaxObjectCount)
+							.arg(GlobalAttributes::get().MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
 							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -1723,12 +1723,12 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	Constraint *constr = nullptr;
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
-			tab_dict_file = dict_files_root + Attributes::Table + GlobalAttributes::SchemaExt,
-			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,
-			constr_dict_file = dict_files_root + Attributes::Constraint + GlobalAttributes::SchemaExt,
-			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::SchemaExt,
+	QString dict_files_root = GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+														GlobalAttributes::get().DataDictSchemaDir + GlobalAttributes::get().DirSeparator,
+			tab_dict_file = dict_files_root + Attributes::Table + GlobalAttributes::get().SchemaExt,
+			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::get().SchemaExt,
+			constr_dict_file = dict_files_root + Attributes::Constraint + GlobalAttributes::get().SchemaExt,
+			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::get().SchemaExt,
 			check_mark = QString("&#10003;");
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());

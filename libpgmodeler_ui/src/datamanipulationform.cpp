@@ -58,7 +58,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
-	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	filter_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);
@@ -863,7 +863,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
 
 			for(auto &fk : fks)
-			{				
+			{
 				aux_table = catalog.getObjectAttributes(ObjectType::Table, fk[Attributes::RefTable].toUInt());
 				aux_schema = catalog.getObjectAttributes(ObjectType::Schema, aux_table[Attributes::Schema].toUInt());
 				fk_name = QString("%1.%2.%3")

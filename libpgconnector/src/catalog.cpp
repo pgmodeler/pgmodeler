@@ -161,9 +161,9 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 	if(catalog_queries.count(qry_id)==0)
 	{
 		QFile input;
-		input.setFileName(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-							CatalogSchemasDir + GlobalAttributes::DirSeparator +
-							qry_id + GlobalAttributes::SchemaExt);
+		input.setFileName(GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+							CatalogSchemasDir + GlobalAttributes::get().DirSeparator +
+							qry_id + GlobalAttributes::get().SchemaExt);
 
 		if(!input.open(QFile::ReadOnly))
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),

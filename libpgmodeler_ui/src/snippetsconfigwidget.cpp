@@ -64,7 +64,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	try
 	{
 		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		snippet_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 	}
 	catch(Exception &e)
 	{
@@ -157,7 +157,7 @@ vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
 }
 
 QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attribs)
-{ 
+{
 	SchemaParser schparser;
 	QStringList aux_attribs;
 	QString buf=snippet[Attributes::Contents];
@@ -270,7 +270,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 		QStringList inv_snippets;
 
 		this->resetForm();
-		BaseConfigWidget::loadConfiguration(GlobalAttributes::SnippetsConf, config_params, { Attributes::Id });
+		BaseConfigWidget::loadConfiguration(GlobalAttributes::get().SnippetsConf, config_params, { Attributes::Id });
 
 		//Check if there are invalid snippets loaded
 		for(auto &snip : config_params)
@@ -442,17 +442,17 @@ void SnippetsConfigWidget::parseSnippet(void)
 }
 
 void SnippetsConfigWidget::saveConfiguration(void)
-{ 
+{
 	try
 	{
-		QString root_dir=GlobalAttributes::TmplConfigurationDir +
-						 GlobalAttributes::DirSeparator,
+		QString root_dir=GlobalAttributes::get().TmplConfigurationDir +
+						 GlobalAttributes::get().DirSeparator,
 
 				snippet_sch=root_dir +
-							GlobalAttributes::SchemasDir +
-							GlobalAttributes::DirSeparator +
+							GlobalAttributes::get().SchemasDir +
+							GlobalAttributes::get().DirSeparator +
 							Attributes::Snippet +
-							GlobalAttributes::SchemaExt;
+							GlobalAttributes::get().SchemaExt;
 
 		attribs_map attribs;
 		ObjectType obj_type;
@@ -471,8 +471,8 @@ void SnippetsConfigWidget::saveConfiguration(void)
 			}
 		}
 
-		config_params[GlobalAttributes::SnippetsConf]=attribs;
-		BaseConfigWidget::saveConfiguration(GlobalAttributes::SnippetsConf, config_params);
+		config_params[GlobalAttributes::get().SnippetsConf]=attribs;
+		BaseConfigWidget::saveConfiguration(GlobalAttributes::get().SnippetsConf, config_params);
 	}
 	catch(Exception &e)
 	{
@@ -484,7 +484,7 @@ void SnippetsConfigWidget::restoreDefaults(void)
 {
 	try
 	{
-		BaseConfigWidget::restoreDefaults(GlobalAttributes::SnippetsConf, false);
+		BaseConfigWidget::restoreDefaults(GlobalAttributes::get().SnippetsConf, false);
 		this->loadConfiguration();
 		setConfigurationChanged(true);
 	}

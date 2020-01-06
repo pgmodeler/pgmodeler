@@ -37,8 +37,8 @@ UpdateNotifierWidget::UpdateNotifierWidget(QWidget *parent) : QWidget(parent)
 	connect(&update_chk_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleUpdateChecked(QNetworkReply*)));
 
 	//C++11 lambda slots
-	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerSourceURL); });
-	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::PgModelerDownloadURL); });
+	connect(get_source_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::get().PgModelerSourceURL); });
+	connect(get_binary_tb, &QToolButton::clicked, this, [&](){ activateLink(GlobalAttributes::get().PgModelerDownloadURL); });
 
 
 	connect(hide_tb, &QToolButton::clicked, this,
@@ -97,7 +97,7 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 
 void UpdateNotifierWidget::checkForUpdate(void)
 {
-	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL + GlobalAttributes::PgModelerVersion);
+	QUrl url(GlobalAttributes::get().PgModelerUpdateCheckURL + GlobalAttributes::get().PgModelerVersion);
 	QNetworkRequest req(url);
 
 	req.setRawHeader("User-Agent", "pgModelerUpdateCheck");
@@ -124,8 +124,8 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 		{
 			QString url=reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 
-			if(http_status==302 && !url.startsWith(GlobalAttributes::PgModelerSite))
-				url.prepend(GlobalAttributes::PgModelerSite);
+			if(http_status==302 && !url.startsWith(GlobalAttributes::get().PgModelerSite))
+				url.prepend(GlobalAttributes::get().PgModelerSite);
 
 			QNetworkRequest req(url);
 			update_chk_reply=update_chk_manager.get(req);

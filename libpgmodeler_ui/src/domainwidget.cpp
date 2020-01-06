@@ -27,7 +27,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 		check_expr_hl=nullptr;
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false, true);
-		check_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		check_expr_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);

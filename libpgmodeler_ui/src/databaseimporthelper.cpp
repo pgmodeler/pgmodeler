@@ -578,8 +578,8 @@ void DatabaseImportHelper::importDatabase(void)
 				QString log_name;
 
 				//Writing the erros to log file
-				log_name=GlobalAttributes::TemporaryDir +
-						 GlobalAttributes::DirSeparator +
+				log_name=GlobalAttributes::get().TemporaryDir +
+						 GlobalAttributes::get().DirSeparator +
 						 QString("%1_%2_%3.log").arg(dbmodel->getName())
 						 .arg(QString("import"))
 						 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd_hhmmss")));
@@ -1772,7 +1772,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 		attribs[Attributes::Position]=schparser.getCodeDefinition(Attributes::Position, pos_attrib, SchemaParser::XmlDefinition);
 
 		ref=Reference(attribs[Attributes::Definition], QString());
-		ref.setDefinitionExpression(true);	
+		ref.setDefinitionExpression(true);
 
 		sch_name = getDependencyObject(attribs[Attributes::SchemaOid], ObjectType::Schema, true, auto_resolve_deps, false);
 		retrieveTableColumns(sch_name, attribs[Attributes::Name]);

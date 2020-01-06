@@ -44,9 +44,9 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	report_twg->addTab(wgt, trUtf8("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
-	input.setFileName(GlobalAttributes::TemporaryDir +
-					  GlobalAttributes::DirSeparator +
-					  GlobalAttributes::StacktraceFile);
+	input.setFileName(GlobalAttributes::get().TemporaryDir +
+					  GlobalAttributes::get().DirSeparator +
+					  GlobalAttributes::get().StacktraceFile);
 	input.open(QFile::ReadOnly);
 
 	if(input.isOpen())
@@ -56,9 +56,9 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 		//Removes the stack trace file
 		QDir stack_file;
-		stack_file.remove(GlobalAttributes::TemporaryDir +
-						  GlobalAttributes::DirSeparator +
-						  GlobalAttributes::StacktraceFile);
+		stack_file.remove(GlobalAttributes::get().TemporaryDir +
+						  GlobalAttributes::get().DirSeparator +
+						  GlobalAttributes::get().StacktraceFile);
 
 		//Shows the stacktrace loaded on the widget
 		stack_txt->setPlainText(buf);

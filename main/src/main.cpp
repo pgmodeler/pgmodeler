@@ -38,12 +38,12 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-	cmd=QString("\"%1\"").arg(GlobalAttributes::PgModelerCHandlerPath) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
+	cmd=QString("\"%1\"").arg(GlobalAttributes::get().PgModelerCHandlerPath) + QString(" -style ") + GlobalAttributes::get().DefaultQtStyle;
 
 	//Creates the stacktrace file
-	output.setFileName(GlobalAttributes::TemporaryDir +
-					   GlobalAttributes::DirSeparator +
-					   GlobalAttributes::StacktraceFile);
+	output.setFileName(GlobalAttributes::get().TemporaryDir +
+					   GlobalAttributes::get().DirSeparator +
+					   GlobalAttributes::get().StacktraceFile);
 	output.open(QFile::WriteOnly);
 
 	if(output.isOpen())
@@ -51,8 +51,8 @@ void startCrashHandler(int signal)
 		lin=QString("** pgModeler crashed after receive signal: %1 **\n\nDate/Time: %2 \nVersion: %3 \nBuild: %4 \n")
 			.arg(signal)
 			.arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss")))
-			.arg(GlobalAttributes::PgModelerVersion)
-			.arg(GlobalAttributes::PgModelerBuildNumber);
+			.arg(GlobalAttributes::get().PgModelerVersion)
+			.arg(GlobalAttributes::get().PgModelerBuildNumber);
 
 		lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
 			 .arg(QT_VERSION_STR)
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 
 		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
 		if(!using_style)
-			app.setStyle(GlobalAttributes::DefaultQtStyle);
+			app.setStyle(GlobalAttributes::get().DefaultQtStyle);
 
 		//Loading the application splash screen
 		QSplashScreen splash;

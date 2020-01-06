@@ -1110,11 +1110,11 @@ QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
-			view_dict_file = dict_files_root + getSchemaName() + GlobalAttributes::SchemaExt,
-			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,
-			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::SchemaExt;
+	QString dict_files_root = GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+														GlobalAttributes::get().DataDictSchemaDir + GlobalAttributes::get().DirSeparator,
+			view_dict_file = dict_files_root + getSchemaName() + GlobalAttributes::get().SchemaExt,
+			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::get().SchemaExt,
+			link_dict_file = dict_files_root + Attributes::Link + GlobalAttributes::get().SchemaExt;
 
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();

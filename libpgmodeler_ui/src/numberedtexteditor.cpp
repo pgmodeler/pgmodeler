@@ -366,7 +366,7 @@ void NumberedTextEditor::editSource(void)
 	if(tmp_src_file.isEmpty())
 	{
 		QTemporaryFile tmp_file;
-		tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + QString("source_XXXXXX") + QString(".sql"));
+		tmp_file.setFileTemplate(GlobalAttributes::get().TemporaryDir + GlobalAttributes::get().DirSeparator + QString("source_XXXXXX") + QString(".sql"));
 		tmp_file.open();
 		tmp_src_file = tmp_file.fileName();
 		tmp_file.close();

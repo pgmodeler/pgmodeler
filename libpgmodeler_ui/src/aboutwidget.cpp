@@ -36,8 +36,8 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	PgModelerUiNs::configureWidgetFont(build_lbl, PgModelerUiNs::BigFontFactor);
 	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BigFontFactor);
 
-	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));
-	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR));
+	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::get().PgModelerVersion));
+	build_num_lbl->setText(QString("%1 Qt %2").arg(GlobalAttributes::get().PgModelerBuildNumber).arg(QT_VERSION_STR));
 
 	connect(hide_tb, &QToolButton::clicked, this,
 			[&](){

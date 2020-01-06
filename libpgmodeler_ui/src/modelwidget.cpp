@@ -100,7 +100,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QTemporaryFile tmp_file;
 
 	//Configuring the template mask which includes the full path to temporary dir
-	tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir + GlobalAttributes::DirSeparator + QString("model_XXXXXX") + QString(".dbm"));
+	tmp_file.setFileTemplate(GlobalAttributes::get().TemporaryDir + GlobalAttributes::get().DirSeparator + QString("model_XXXXXX") + QString(".dbm"));
 	tmp_file.open();
 	tmp_filename=tmp_file.fileName();
 	tmp_file.close();
@@ -976,7 +976,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 						reg_tables.push_back(tab->getUnderlyingObject());
 					}
 				}
-			}			
+			}
 		}
 	}
 	else
@@ -1636,8 +1636,8 @@ void ModelWidget::saveModel(const QString &filename)
 		{
 			// Generate a temporary backup file
 			tmpfile.setAutoRemove(false);
-			tmpfile.setFileTemplate(GlobalAttributes::TemporaryDir +
-															GlobalAttributes::DirSeparator +
+			tmpfile.setFileTemplate(GlobalAttributes::get().TemporaryDir +
+															GlobalAttributes::get().DirSeparator +
 															QString("%1_XXXXXX.dbk").arg(this->db_model->getName()));
 			tmpfile.open();
 			bkpfile = tmpfile.fileName();

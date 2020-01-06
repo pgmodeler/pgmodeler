@@ -50,18 +50,18 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 	//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::TmplConfigurationDir +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::SchemasDir +
-						 GlobalAttributes::DirSeparator +
+	QString	sch_filename=GlobalAttributes::get().TmplConfigurationDir +
+						 GlobalAttributes::get().DirSeparator +
+						 GlobalAttributes::get().SchemasDir +
+						 GlobalAttributes::get().DirSeparator +
 						 conf_id +
-						 GlobalAttributes::SchemaExt,
+						 GlobalAttributes::get().SchemaExt,
 
 			//Cofnigures the filename for the configuration file
-			cfg_filename=GlobalAttributes::ConfigurationsDir +
-						 GlobalAttributes::DirSeparator +
+			cfg_filename=GlobalAttributes::get().ConfigurationsDir +
+						 GlobalAttributes::get().DirSeparator +
 						 conf_id +
-						 GlobalAttributes::ConfigurationExt;
+						 GlobalAttributes::get().ConfigurationExt;
 	QFile output(cfg_filename);
 	attribs_map attribs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -104,18 +104,18 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	QString current_file, default_file;
 
 	//Build the path to the current configuration (conf/[conf_id].conf
-	current_file=GlobalAttributes::ConfigurationsDir +
-				 GlobalAttributes::DirSeparator +
+	current_file=GlobalAttributes::get().ConfigurationsDir +
+				 GlobalAttributes::get().DirSeparator +
 				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
+				 GlobalAttributes::get().ConfigurationExt;
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::TmplConfigurationDir +
-				 GlobalAttributes::DirSeparator +
-				 GlobalAttributes::DefaultConfsDir+
-				 GlobalAttributes::DirSeparator +
+	default_file=GlobalAttributes::get().TmplConfigurationDir +
+				 GlobalAttributes::get().DirSeparator +
+				 GlobalAttributes::get().DefaultConfsDir+
+				 GlobalAttributes::get().DirSeparator +
 				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
+				 GlobalAttributes::get().ConfigurationExt;
 
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
@@ -126,8 +126,8 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 		bool bkp_saved = false;
 		QFileInfo fi(current_file);
 		QDir dir;
-		QString bkp_dir = fi.absolutePath() + GlobalAttributes::DirSeparator + GlobalAttributes::ConfsBackupsDir,
-				bkp_filename = bkp_dir + GlobalAttributes::DirSeparator +
+		QString bkp_dir = fi.absolutePath() + GlobalAttributes::get().DirSeparator + GlobalAttributes::get().ConfsBackupsDir,
+				bkp_filename = bkp_dir + GlobalAttributes::get().DirSeparator +
 											 QString("%1.bkp_%2").arg(fi.fileName()).arg(QDateTime::currentDateTime().toString("yyyyMMd_hhmmss"));
 
 		dir.mkpath(bkp_dir);
@@ -148,19 +148,19 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 	try
 	{
-		filename = GlobalAttributes::ConfigurationsDir +
-							 GlobalAttributes::DirSeparator +
+		filename = GlobalAttributes::get().ConfigurationsDir +
+							 GlobalAttributes::get().DirSeparator +
 							 conf_id +
-							 GlobalAttributes::ConfigurationExt;
+							 GlobalAttributes::get().ConfigurationExt;
 
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectDTDDir +
-							 GlobalAttributes::DirSeparator +
+		xmlparser.setDTDFile(GlobalAttributes::get().TmplConfigurationDir +
+							 GlobalAttributes::get().DirSeparator +
+							 GlobalAttributes::get().ObjectDTDDir +
+							 GlobalAttributes::get().DirSeparator +
 							 conf_id +
-							 GlobalAttributes::ObjectDTDExt,
+							 GlobalAttributes::get().ObjectDTDExt,
 							 conf_id);
 
 		xmlparser.loadXMLFile(filename);

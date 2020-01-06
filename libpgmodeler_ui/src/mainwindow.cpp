@@ -253,7 +253,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
 
-	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
+	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::get().PgModelerVersion;
 
 #ifdef DEMO_VERSION
 	window_title+=trUtf8(" (Demo)");
@@ -611,7 +611,7 @@ void MainWindow::fixModel(const QString &filename)
 	{
 		QFileInfo fi(filename);
 		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::get().DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
 	PgModelerUiNs::resizeDialog(&model_fix_form);
@@ -1667,7 +1667,7 @@ void MainWindow::loadModels(const QStringList &list)
 			recent_models.push_front(list[i]);
 		}
 
-		updateRecentModelsMenu();		
+		updateRecentModelsMenu();
 		qApp->restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -1773,7 +1773,7 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openSupport(void)
 {
-	QDesktopServices::openUrl(QUrl(GlobalAttributes::PgModelerSupport));
+	QDesktopServices::openUrl(QUrl(GlobalAttributes::get().PgModelerSupport));
 }
 
 void MainWindow::toggleUpdateNotifier(bool show)
@@ -1834,7 +1834,7 @@ void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *t
 
 void MainWindow::configureSamplesMenu(void)
 {
-	QDir dir(GlobalAttributes::SamplesDir);
+	QDir dir(GlobalAttributes::get().SamplesDir);
 	QStringList files=dir.entryList({QString("*.dbm")});
 	QAction *act=nullptr;
 	QString path;
@@ -1842,7 +1842,7 @@ void MainWindow::configureSamplesMenu(void)
 	while(!files.isEmpty())
 	{
 		act=sample_mdls_menu.addAction(files.front(),this,SLOT(loadModelFromAction(void)));
-		path=QFileInfo(GlobalAttributes::SamplesDir + GlobalAttributes::DirSeparator + files.front()).absoluteFilePath();
+		path=QFileInfo(GlobalAttributes::get().SamplesDir + GlobalAttributes::get().DirSeparator + files.front()).absoluteFilePath();
 		act->setToolTip(path);
 		act->setData(path);
 		files.pop_front();
@@ -1921,7 +1921,7 @@ void MainWindow::showDemoVersionWarning(void)
 				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
-						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
+						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::get().MaxObjectCount),
 						Messagebox::AlertIcon, Messagebox::OkButton);
 #endif
 }

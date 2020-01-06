@@ -36,9 +36,9 @@
 #define APPLICATION_H
 
 #include <QApplication>
+#include <QFile>
 #include <QTextStream>
 #include <QTranslator>
-#include <QFile>
 
 class Application: public QApplication {
 	private:

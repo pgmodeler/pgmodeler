@@ -148,7 +148,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			pages=scene->getPagesForPrinting(page_sz, margins.size(), h_cnt, v_cnt);
 
 			//Configures the template filename for pages pixmaps
-			tmpl_filename=fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
+			tmpl_filename=fi.absolutePath() + GlobalAttributes::get().DirSeparator + fi.baseName() + QString("_p%1.") + fi.completeSuffix();
 		}
 		else
 		{

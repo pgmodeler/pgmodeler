@@ -27,7 +27,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		Ui_TriggerWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 										  (ObjectsTableWidget::EditButton |

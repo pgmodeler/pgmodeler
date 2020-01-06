@@ -34,7 +34,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	Ui_PermissionWidget::setupUi(this);
 
 	code_hl=new SyntaxHighlighter(code_txt);
-	code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	code_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 	permission=nullptr;
@@ -385,7 +385,7 @@ void PermissionWidget::editPermission(void)
 }
 
 void PermissionWidget::removePermission(int)
-{ 
+{
 	model->removePermission(permission);
 	cancelOperation();
 	permission=nullptr;

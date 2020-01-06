@@ -40,7 +40,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	expression_txt=new NumberedTextEditor(this, true);
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
-	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	expression_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
 	ref_object_sel->enableObjectCreation(false);

@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
 #ifdef DEMO_VERSION
 	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << endl;
+	out << QString("pgModeler ") << GlobalAttributes::get().PgModelerVersion << QT_TR_NOOP(" command line interface.") << endl;
 	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
 	out << QT_TR_NOOP("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		PgModelerCli pgmodeler_cli(argc, argv);
 
 		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
+		translator.load(QLocale::system().name(), GlobalAttributes::get().LanguagesDir);
 
 		//Installs the translator on the application
 		pgmodeler_cli.installTranslator(&translator);

@@ -40,7 +40,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	definition_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
-	definition_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	definition_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 	definition_cp=new CodeCompletionWidget(definition_txt, true);
 
 	comment_edt->setVisible(false);
@@ -49,7 +49,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	preview_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(2), false);
 	preview_txt->setReadOnly(true);
 	preview_hl = new SyntaxHighlighter(preview_txt);
-	preview_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	preview_hl->loadConfiguration(GlobalAttributes::get().SQLHighlightConfPath);
 
 	attribs_tbw->widget(0)->layout()->setContentsMargins(4,4,4,4);
 	attribs_tbw->widget(0)->layout()->addWidget(definition_txt);

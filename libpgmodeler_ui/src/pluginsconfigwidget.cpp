@@ -23,7 +23,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::PluginsDir);
+	QDir dir=QDir(GlobalAttributes::get().PluginsDir);
 
 	root_dir_edt->setText(dir.absolutePath());
 
@@ -65,8 +65,8 @@ void PluginsConfigWidget::loadConfiguration(void)
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::PluginsDir +
-						GlobalAttributes::DirSeparator;
+			dir_plugins=GlobalAttributes::get().PluginsDir +
+						GlobalAttributes::get().DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;
 	PgModelerPlugin *plugin=nullptr;
@@ -90,16 +90,16 @@ void PluginsConfigWidget::loadConfiguration(void)
 		 [PLUGINS ROOT DIR]/[PLUGIN NAME]/lib[PLUGIN NAME].[EXTENSION] */
 #ifdef Q_OS_WIN
 		lib=dir_plugins + plugin_name +
-            GlobalAttributes::DirSeparator  +
+            GlobalAttributes::get().DirSeparator  +
 			plugin_name + QString(".dll");
 #else
 #ifdef Q_OS_MAC
 		lib=dir_plugins + plugin_name +
-            GlobalAttributes::DirSeparator  +
+            GlobalAttributes::get().DirSeparator  +
 			QString("lib") + plugin_name + QString(".dylib");
 #else
 		lib=dir_plugins + plugin_name +
-			GlobalAttributes::DirSeparator  +
+			GlobalAttributes::get().DirSeparator  +
 			QString("lib") + plugin_name + QString(".so");
 #endif
 #endif
@@ -123,7 +123,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 				plugin_action->setShortcut(plugin->getPluginShortcut());
 
 				icon.load(dir_plugins + plugin_name +
-									GlobalAttributes::DirSeparator  +
+									GlobalAttributes::get().DirSeparator  +
 									plugin_name + QString(".png"));
 
 				plugin_action->setIcon(icon);

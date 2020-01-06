@@ -23,10 +23,12 @@
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::TmplConfigurationDir +
-				   GlobalAttributes::DirSeparator +
-				   GlobalAttributes::UiStyleConf +
-				   GlobalAttributes::ConfigurationExt);
+	GlobalAttributes::get().create(*this);
+
+	QFile ui_style(GlobalAttributes::get().TmplConfigurationDir +
+				   GlobalAttributes::get().DirSeparator +
+				   GlobalAttributes::get().UiStyleConf +
+				   GlobalAttributes::get().ConfigurationExt);
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;
@@ -41,25 +43,25 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	this->addLibraryPath(this->applicationDirPath());
 
 	//If pgModeler bundles plugins, add the root plugins path to lib search paths
-	if(dir.exists(GlobalAttributes::PluginsDir))
-		this->addLibraryPath(GlobalAttributes::PluginsDir);
+	if(dir.exists(GlobalAttributes::get().PluginsDir))
+		this->addLibraryPath(GlobalAttributes::get().PluginsDir);
 
 	//Check if the temporary dir exists, if not, creates it.
-	if(!dir.exists(GlobalAttributes::TemporaryDir))
+	if(!dir.exists(GlobalAttributes::get().TemporaryDir))
 	{
-		if(!dir.mkdir(GlobalAttributes::TemporaryDir))
+		if(!dir.mkdir(GlobalAttributes::get().TemporaryDir))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::TemporaryDir),
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::get().TemporaryDir),
 												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::ConfigurationsDir +
-											GlobalAttributes::DirSeparator +
-											GlobalAttributes::GeneralConf +
-											GlobalAttributes::ConfigurationExt;
+	QString conf_file =	GlobalAttributes::get().ConfigurationsDir +
+											GlobalAttributes::get().DirSeparator +
+											GlobalAttributes::get().GeneralConf +
+											GlobalAttributes::get().ConfigurationExt;
 	QFile input;
 	QString lang_id = QLocale::system().name();
 
@@ -79,12 +81,12 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 
 	//Tries to load the main ui translation according to the system's locale
 	main_translator=new QTranslator(this);
-	main_translator->load(lang_id, GlobalAttributes::LanguagesDir);
+	main_translator->load(lang_id, GlobalAttributes::get().LanguagesDir);
 	this->installTranslator(main_translator);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::PluginsDir +
-								GlobalAttributes::DirSeparator,
+	dir_list=QDir(GlobalAttributes::get().PluginsDir +
+								GlobalAttributes::get().DirSeparator,
 								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
 	while(!dir_list.isEmpty())
@@ -93,10 +95,10 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::PluginsDir +
-					  GlobalAttributes::DirSeparator + plugin_name +
-					  GlobalAttributes::DirSeparator + QString("lang") +
-					  GlobalAttributes::DirSeparator;
+		plug_lang_dir=GlobalAttributes::get().PluginsDir +
+					  GlobalAttributes::get().DirSeparator + plugin_name +
+					  GlobalAttributes::get().DirSeparator + QString("lang") +
+					  GlobalAttributes::get().DirSeparator;
 
 		plug_lang_file=plugin_name + QString(".") + lang_id;
 
@@ -145,20 +147,20 @@ bool Application::notify(QObject *receiver, QEvent *event)
 
 void Application::createUserConfiguration(void)
 {
-	QDir config_dir(GlobalAttributes::ConfigurationsDir);
+	QDir config_dir(GlobalAttributes::get().ConfigurationsDir);
 
 	try
 	{
 		//If the directory not exists or is empty
 		if(!config_dir.exists() ||
-				config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
+				config_dir.entryList({QString("*%1").arg(GlobalAttributes::get().ConfigurationExt)},
 									 QDir::Files | QDir::NoDotAndDotDot).isEmpty())
-			copyFilesRecursively(GlobalAttributes::TmplConfigurationDir, GlobalAttributes::ConfigurationsDir);
+			copyFilesRecursively(GlobalAttributes::get().TmplConfigurationDir, GlobalAttributes::get().ConfigurationsDir);
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
+		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::get().ConfigurationsDir, CONFDIR));
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -182,13 +184,13 @@ void Application::copyFilesRecursively(const QString &src_path, const QString &d
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
 							__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
+		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::get().ConfigurationExt)},
 									  QDir::Files | QDir::NoDotAndDotDot);
 
 		for(QString filename : filenames)
 		{
 			//Avoiding the copy of ui-style.conf file
-			if(!filename.contains(GlobalAttributes::UiStyleConf))
+			if(!filename.contains(GlobalAttributes::get().UiStyleConf))
 			{
 				new_src_path = src_path + src_dir.separator() + filename;
 				new_dst_path = dst_path + dst_dir.separator() + filename;

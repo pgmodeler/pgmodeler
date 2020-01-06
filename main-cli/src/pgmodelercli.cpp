@@ -375,7 +375,7 @@ bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 void PgModelerCli::showMenu(void)
 {
 	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << trUtf8(" command line interface.") << endl;
+	out << QString("pgModeler ") << GlobalAttributes::get().PgModelerVersion << trUtf8(" command line interface.") << endl;
 	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
 	out << trUtf8("Copyright 2006-2018 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << endl;
@@ -400,7 +400,7 @@ void PgModelerCli::showMenu(void)
 	out << trUtf8("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << endl;
 	out << endl;
 	out << trUtf8("Connection options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
+	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::get().ConnectionsConf + GlobalAttributes::get().ConfigurationExt) << endl;
 	out << trUtf8("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << endl;
 	out << trUtf8("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << endl;
 	out << trUtf8("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << endl;
@@ -526,13 +526,13 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 
 		if(other_modes_cnt==0 && mode_cnt==0)
 			throw Exception(trUtf8("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff)) || (mode_cnt==0 && other_modes_cnt > 1))
 			throw Exception(trUtf8("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(!fix_model && !upd_mime && mode_cnt > 1)
 			throw Exception(trUtf8("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(!upd_mime && !import_db && !diff && opts[Input].isEmpty())
 			throw Exception(trUtf8("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -541,22 +541,22 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 
 		if(!opts.count(ExportToDbms) && !upd_mime && !diff && opts[Output].isEmpty())
 			throw Exception(trUtf8("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
 			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(trUtf8("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
 			throw Exception(trUtf8("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
 			throw Exception(trUtf8("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		
+
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
 			throw Exception(trUtf8("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			
+
 		if(opts.count(Diff))
 		{
 			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
@@ -574,7 +574,7 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(trUtf8("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
-		
+
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
 		if(!opts[Input].isEmpty())
 			opts[Input]=QFileInfo(opts[Input]).absoluteFilePath();
@@ -592,7 +592,7 @@ int PgModelerCli::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8("command line interface.")));
+			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::get().PgModelerVersion).arg(trUtf8("command line interface.")));
 
 			if(parsed_opts.count(FixModel))
 				fixModel();
@@ -1613,12 +1613,12 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 	QString str_aux,
 
 			//Configures the path to the application logo
-			exec_icon=QDir(GlobalAttributes::TmplConfigurationDir +
-						   GlobalAttributes::DirSeparator + QString("pgmodeler_logo.png")).absolutePath(),
+			exec_icon=QDir(GlobalAttributes::get().TmplConfigurationDir +
+						   GlobalAttributes::get().DirSeparator + QString("pgmodeler_logo.png")).absolutePath(),
 
 			//Configures the path to the document logo
-			dbm_icon=QDir(GlobalAttributes::TmplConfigurationDir +
-						  GlobalAttributes::DirSeparator + QString("pgmodeler_dbm.png")).absolutePath(),
+			dbm_icon=QDir(GlobalAttributes::get().TmplConfigurationDir +
+						  GlobalAttributes::get().DirSeparator + QString("pgmodeler_dbm.png")).absolutePath(),
 
 			//Path to directory that register mime types
 			mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
@@ -1626,15 +1626,15 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 			//Path to the file that associates apps to mimetypes
 			mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
 
-			base_conf_dir=GlobalAttributes::TmplConfigurationDir + GlobalAttributes::DirSeparator +
-						  GlobalAttributes::SchemasDir + GlobalAttributes::DirSeparator,
+			base_conf_dir=GlobalAttributes::get().TmplConfigurationDir + GlobalAttributes::get().DirSeparator +
+						  GlobalAttributes::get().SchemasDir + GlobalAttributes::get().DirSeparator,
 
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 			files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
 						mime_db_dir + QString("/packages/application-dbm.xml") },
 
-			schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SchemaExt,
-						  base_conf_dir + QString("application-dbm") + GlobalAttributes::SchemaExt };
+			schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::get().SchemaExt,
+						  base_conf_dir + QString("application-dbm") + GlobalAttributes::get().SchemaExt };
 	QByteArray buf, buf_aux;
 	QFile out;
 
@@ -1650,11 +1650,11 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 	else if(!uninstall)
 	{
 		QString startup_script=QString("%1/start-pgmodeler.sh")
-							   .arg(QFileInfo(GlobalAttributes::PgModelerAppPath).absolutePath());
+							   .arg(QFileInfo(GlobalAttributes::get().PgModelerAppPath).absolutePath());
 
 		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 		attribs[Attributes::Application]=(QFileInfo(startup_script).exists() ?
-													 startup_script : GlobalAttributes::PgModelerAppPath);
+													 startup_script : GlobalAttributes::get().PgModelerAppPath);
 		attribs[Attributes::Icon]=exec_icon;
 	}
 
@@ -1753,7 +1753,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 
 	//Checking if the .dbm registry key exists
 	QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-    QString exe_path=QDir::toNativeSeparators(GlobalAttributes::PgModelerAppPath);
+    QString exe_path=QDir::toNativeSeparators(GlobalAttributes::get().PgModelerAppPath);
 
 	//If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall && dbm_ext.value(QString("Default")).toString().isEmpty())

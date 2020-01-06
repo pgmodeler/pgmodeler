@@ -73,7 +73,7 @@ void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
 }
 
 void ModelsDiffHelper::resetDiffCounter(void)
-{  
+{
 	diffs_counter[ObjectsDiffInfo::AlterObject]=0;
 	diffs_counter[ObjectsDiffInfo::DropObject]=0;
 	diffs_counter[ObjectsDiffInfo::CreateObject]=0;
@@ -872,7 +872,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Attributes used on the diff schema file
 			attribs[Attributes::HasChanges]=Attributes::True;
-			attribs[Attributes::PgModelerVersion]=GlobalAttributes::PgModelerVersion;
+			attribs[Attributes::PgModelerVersion]=GlobalAttributes::get().PgModelerVersion;
 			attribs[Attributes::DbModel]=source_model->getName();
 			attribs[Attributes::Database]=imported_model->getName();
 			attribs[Attributes::Date]=QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
@@ -925,9 +925,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);
-			diff_def=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-												 Attributes::Diff + GlobalAttributes::SchemaExt, attribs);
+			diff_def=schparser.getCodeDefinition(GlobalAttributes::get().SchemasRootDir + GlobalAttributes::get().DirSeparator +
+												 GlobalAttributes::get().AlterSchemaDir + GlobalAttributes::get().DirSeparator +
+												 Attributes::Diff + GlobalAttributes::get().SchemaExt, attribs);
 		}
 
 		if(diff_def.isEmpty())
