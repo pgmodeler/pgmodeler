@@ -82,71 +82,104 @@ namespace GlobalAttributes {
 	DefaultQtStyle=QString("Fusion"),
 	UiStyleOption=QString("-style"),
 
-	SchemasRootDir=getPathFromEnv(QString("PGMODELER_SCHEMAS_DIR"), QString(SCHEMASDIR), QString("./schemas")),
-	LanguagesDir=getPathFromEnv(QString("PGMODELER_LANG_DIR"), QString(LANGDIR), QString("./lang")),
-	SamplesDir=getPathFromEnv(QString("PGMODELER_SAMPLES_DIR"), QString(SAMPLESDIR), QString("./samples")),
-	TmplConfigurationDir=getPathFromEnv(QString("PGMODELER_TMPL_CONF_DIR"), QString(CONFDIR), QString("./conf")),
+	SchemasRootDir			= getPathFromEnv(
+								QString("PGMODELER_SCHEMAS_DIR"),
+								QString(SCHEMASDIR),
+								QCoreApplication::applicationDirPath() + QString("/schemas")),
+	LanguagesDir			= getPathFromEnv(
+								QString("PGMODELER_LANG_DIR"),
+								QString(LANGDIR),
+								QCoreApplication::applicationDirPath() + QString("/lang")),
+	SamplesDir				= getPathFromEnv(
+								QString("PGMODELER_SAMPLES_DIR"),
+								QString(SAMPLESDIR),
+								QCoreApplication::applicationDirPath() + QString("/samples")),
+	TmplConfigurationDir	= getPathFromEnv(
+								QString("PGMODELER_TMPL_CONF_DIR"),
+								QString(CONFDIR),
+								QCoreApplication::applicationDirPath() + QString("/conf")),
 
 	//Currently, plugins folder is auto-created when missing so it can't be resolved by getPathFromEnv()
-	PluginsDir=getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/') : QString(PLUGINSDIR),
+	PluginsDir = getenv("PGMODELER_PLUGINS_DIR")
+					? QString(getenv("PGMODELER_PLUGINS_DIR")).replace('\\','/')
+					: QString(PLUGINSDIR),
 
 #if defined(Q_OS_MAC)
-	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerReverseURI)),
+	ConfigurationsDir	=getPathFromEnv(
+							QString("PGMODELER_CONF_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+							+ QString("/%1").arg(PgModelerReverseURI)),
 
-	TemporaryDir=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
-                                 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)  + QString("/%1/tmp").arg(PgModelerReverseURI)),
+	TemporaryDir		=getPathFromEnv(
+							QString("PGMODELER_TMP_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+							+ QString("/%1/tmp").arg(PgModelerReverseURI)),
 
 #elif defined(Q_OS_LINUX)
-	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-									  QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1").arg(PgModelerAppName)),
+	ConfigurationsDir	= getPathFromEnv(
+							QString("PGMODELER_CONF_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+							+ QString("/%1").arg(PgModelerAppName)),
 
-	TemporaryDir=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
-								 QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + QString("/%1/tmp").arg(PgModelerAppName)),
+	TemporaryDir		= getPathFromEnv(
+							QString("PGMODELER_TMP_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+							+ QString("/%1/tmp").arg(PgModelerAppName)),
 #else
-	ConfigurationsDir=getPathFromEnv(QString("PGMODELER_CONF_DIR"),
-                                      QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +  QString("/%1").arg(PgModelerAppName)),
+	ConfigurationsDir	= getPathFromEnv(
+							QString("PGMODELER_CONF_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+							+ QString("/%1").arg(PgModelerAppName)),
 
-	TemporaryDir=getPathFromEnv(QString("PGMODELER_TMP_DIR"),
-                                 QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QString("/%1/tmp").arg(PgModelerAppName)),
+	TemporaryDir		= getPathFromEnv(
+							QString("PGMODELER_TMP_DIR"),
+							QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+							+ QString("/%1/tmp").arg(PgModelerAppName)),
 #endif
 
-	SQLHighlightConfPath=ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt,
-	XMLHighlightConfPath=ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt,
+	SQLHighlightConfPath = ConfigurationsDir + DirSeparator + SQLHighlightConf + ConfigurationExt,
+	XMLHighlightConfPath = ConfigurationsDir + DirSeparator + XMLHighlightConf + ConfigurationExt,
 
 #if defined(Q_OS_UNIX)
 #if defined(Q_OS_MAC)
 	//For MacOSX the crash handler path is fixed (inside bundle)
-	PgModelerCHandlerPath=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
-										   QString(BINDIR) + QString("/pgmodeler-ch"),
-										   QString("./pgmodeler-ch")),
+	PgModelerCHandlerPath = getPathFromEnv(
+								QString("PGMODELER_CHANDLER_PATH"),
+								QString(BINDIR)							+ QString("/pgmodeler-ch"),
+								QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-ch")),
 #else
-	PgModelerCHandlerPath=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
-										   QString(PRIVATEBINDIR) + QString("/pgmodeler-ch"),
-										   QString("./pgmodeler-ch")),
+	PgModelerCHandlerPath = getPathFromEnv(
+								QString("PGMODELER_CHANDLER_PATH"),
+								QString(PRIVATEBINDIR)					+ QString("/pgmodeler-ch"),
+								QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-ch")),
 #endif
 
-	PgModelerCLIPath=getPathFromEnv(QString("PGMODELER_CLI_PATH"),
-									  QString(BINDIR) + QString("/pgmodeler-cli"),
-									  QString("./pgmodeler-cli")),
+	PgModelerCLIPath = getPathFromEnv(
+						QString("PGMODELER_CLI_PATH"),
+						QString(BINDIR)							+ QString("/pgmodeler-cli"),
+						QCoreApplication::applicationDirPath()	+ QString("/pgmodeler-cli")),
 
-	PgModelerAppPath=getPathFromEnv(QString("PGMODELER_APP_PATH"),
-									  QString(BINDIR) + QString("/pgmodeler"),
-									  QString("./pgmodeler"));
+	PgModelerAppPath = getPathFromEnv(
+						QString("PGMODELER_APP_PATH"),
+						QString(BINDIR)							+ QString("/pgmodeler"),
+						QCoreApplication::applicationDirPath()	+ QString("/pgmodeler"));
 
 
 #else
-	PgModelerCHandlerPath=getPathFromEnv(QString("PGMODELER_CHANDLER_PATH"),
-										   QString(PRIVATEBINDIR) + QString("\\pgmodeler-ch.exe"),
-										   QString(".\\pgmodeler-ch.exe")),
+	PgModelerCHandlerPath = getPathFromEnv(
+								QString("PGMODELER_CHANDLER_PATH"),
+								QString(PRIVATEBINDIR)					+ QString("\\pgmodeler-ch.exe"),
+								QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler-ch.exe")),
 
-	PgModelerCLIPath=getPathFromEnv(QString("PGMODELER_CLI_PATH"),
-									  QString(PRIVATEBINDIR) + QString("\\pgmodeler-cli.exe"),
-									  QString(".\\pgmodeler-cli.exe")),
+	PgModelerCLIPath = getPathFromEnv(
+						QString("PGMODELER_CLI_PATH"),
+						QString(PRIVATEBINDIR)					+ QString("\\pgmodeler-cli.exe"),
+						QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler-cli.exe")),
 
-	PgModelerAppPath=getPathFromEnv(QString("PGMODELER_APP_PATH"),
-									  QString(BINDIR) + QString("\\pgmodeler.exe"),
-									  QString(".\\pgmodeler.exe"));
+	PgModelerAppPath = getPathFromEnv(
+						QString("PGMODELER_APP_PATH"),
+						QString(BINDIR)							+ QString("\\pgmodeler.exe"),
+						QCoreApplication::applicationDirPath()	+ QString("\\pgmodeler.exe"));
 
 #endif
 
