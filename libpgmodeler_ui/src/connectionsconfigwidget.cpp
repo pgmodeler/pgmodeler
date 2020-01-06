@@ -35,7 +35,7 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	other_params_ht->setText(other_params_edt->statusTip());
 
 	default_for_ops_ht=new HintTextWidget(default_for_ops_hint, this);
-	default_for_ops_ht->setText(trUtf8("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
+	default_for_ops_ht->setText(tr("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
 
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
 
@@ -421,8 +421,8 @@ void ConnectionsConfigWidget::testConnection(void)
 		this->configureConnection(&conn);
 		conn.connect();
 		srv_info=conn.getServerInfo();
-		msg_box.show(trUtf8("Success"),
-					 PgModelerUiNs::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+		msg_box.show(tr("Success"),
+					 PgModelerUiNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
@@ -469,7 +469,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			msg_box.show(trUtf8("There is a connection being created or edited! Do you want to save it?"),
+			msg_box.show(tr("There is a connection being created or edited! Do you want to save it?"),
 									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -567,9 +567,9 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	if(incl_placeholder)
 	{
 		if(!connections.empty())
-			combo->addItem(trUtf8("Found %1 connection(s)").arg(connections.size()));
+			combo->addItem(tr("Found %1 connection(s)").arg(connections.size()));
 		else
-			combo->addItem(trUtf8("No connections found"));
+			combo->addItem(tr("No connections found"));
 	}
 
 	for(auto &itr : connections)
@@ -581,7 +581,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	if(incl_placeholder)
-		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), trUtf8("Edit connections"));
+		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), tr("Edit connections"));
 
 	if(def_conn)
 		combo->setCurrentText(def_conn->getConnectionId());
@@ -597,7 +597,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		ConnectionsConfigWidget conn_cfg_wgt;
 		bool conn_saved = false;
 
-		parent_form.setWindowTitle(trUtf8("Edit database connections"));
+		parent_form.setWindowTitle(tr("Edit database connections"));
 		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
 		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), &parent_form, SLOT(reject()));

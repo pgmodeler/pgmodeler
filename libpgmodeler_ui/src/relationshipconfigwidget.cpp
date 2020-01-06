@@ -63,7 +63,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	deferral_cmb->addItems(list);
 
 	ActionType::getTypes(list);
-	list.push_front(trUtf8("Default"));
+	list.push_front(tr("Default"));
 	del_action_cmb->addItems(list);
 	upd_action_cmb->addItems(list);
 

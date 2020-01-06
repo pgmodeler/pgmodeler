@@ -37,13 +37,13 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 		btns_selected[arr_id] = false;
 	}
 
-	buttons[AttribsExpandBtn]->setToolTip(trUtf8("Expands the currently collapsed section of the object"));
-	buttons[AttribsCollapseBtn]->setToolTip(trUtf8("Collapses the currently expanded section of the object"));
-	buttons[NextAttribsPageBtn]->setToolTip(trUtf8("Displays the next attributes page"));
-	buttons[PrevAttribsPageBtn]->setToolTip(trUtf8("Displays the previous attributes page"));
-	buttons[NextExtAttribsPageBtn]->setToolTip(trUtf8("Displays the next extended attributes page"));
-	buttons[PrevExtAttribsPageBtn]->setToolTip(trUtf8("Displays the previous extended attributes page"));
-	buttons[PaginationTogglerBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
+	buttons[AttribsExpandBtn]->setToolTip(tr("Expands the currently collapsed section of the object"));
+	buttons[AttribsCollapseBtn]->setToolTip(tr("Collapses the currently expanded section of the object"));
+	buttons[NextAttribsPageBtn]->setToolTip(tr("Displays the next attributes page"));
+	buttons[PrevAttribsPageBtn]->setToolTip(tr("Displays the previous attributes page"));
+	buttons[NextExtAttribsPageBtn]->setToolTip(tr("Displays the next extended attributes page"));
+	buttons[PrevExtAttribsPageBtn]->setToolTip(tr("Displays the previous extended attributes page"));
+	buttons[PaginationTogglerBtn]->setToolTip(tr("Toggles the attributes pagination on the object"));
 
 	has_ext_attribs = false;
 	pagination_enabled = false;

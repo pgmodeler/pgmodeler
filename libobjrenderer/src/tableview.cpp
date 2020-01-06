@@ -243,10 +243,10 @@ void TableView::configureObject(void)
 	BaseTableView::__configureObject(width);
 
 	if(table->isPartitioned())
-		table_tooltip += QString("\n%1 (%2)").arg(trUtf8("Partitioned")).arg(~table->getPartitioningType());
+		table_tooltip += QString("\n%1 (%2)").arg(tr("Partitioned")).arg(~table->getPartitioningType());
 
 	if(table->isPartition())
-		table_tooltip += QString("\n%1 of %2").arg(trUtf8("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+		table_tooltip += QString("\n%1 of %2").arg(tr("Partition")).arg(table->getPartitionedTable()->getSignature(true));
 
 	if(!table->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());

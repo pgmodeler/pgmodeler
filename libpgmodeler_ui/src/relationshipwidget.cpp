@@ -81,21 +81,21 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		advanced_objs_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, true, this);
 
 		attributes_tab->setColumnCount(2);
-		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
+		attributes_tab->setHeaderLabel(tr("Attribute"), 0);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		attributes_tab->setHeaderLabel(trUtf8("Type"), 1);
+		attributes_tab->setHeaderLabel(tr("Type"), 1);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		constraints_tab->setColumnCount(2);
-		constraints_tab->setHeaderLabel(trUtf8("Constraint"), 0);
+		constraints_tab->setHeaderLabel(tr("Constraint"), 0);
 		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("constraint")),0);
-		constraints_tab->setHeaderLabel(trUtf8("Type"), 1);
+		constraints_tab->setHeaderLabel(tr("Type"), 1);
 		constraints_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		advanced_objs_tab->setColumnCount(2);
-		advanced_objs_tab->setHeaderLabel(trUtf8("Name"), 0);
+		advanced_objs_tab->setHeaderLabel(tr("Name"), 0);
 		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
+		advanced_objs_tab->setHeaderLabel(tr("Type"), 1);
 		advanced_objs_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
@@ -111,7 +111,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		rel_attribs_tbw->widget(ConstraintsTab)->setLayout(grid);
 
 		grid=dynamic_cast<QGridLayout *>(rel_attribs_tbw->widget(SpecialPkTab)->layout());
-		frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
+		frame=generateInformationFrame(tr("Use the special primary key if you want to include a primary key containing generated columns to the receiver table. <strong>Important:</strong> if this is a new relationship there is a need to finish its creation and reopen this dialog to create the special primary key."));
 
 		grid->addWidget(frame, 1, 0, 1, 1);
 		frame->setParent(rel_attribs_tbw->widget(SpecialPkTab));
@@ -121,7 +121,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		grid->addWidget(advanced_objs_tab, 0, 0, 1, 1);
 
-		frame=generateInformationFrame(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
+		frame=generateInformationFrame(tr("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
 		grid->addWidget(frame, 1, 0, 1, 1);
 
 		rel_attribs_tbw->widget(AdvancedTab)->setLayout(grid);
@@ -136,7 +136,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		DeferralType::getTypes(list);
 		deferral_cmb->addItems(list);
 
-		frame=generateInformationFrame(trUtf8("Available tokens to define name patterns:<br/>\
+		frame=generateInformationFrame(tr("Available tokens to define name patterns:<br/>\
 					<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
 					<strong>%2</strong> = Reference (source) table name.<br/> \
 					<strong>%3</strong> = Receiver (destination) table name.<br/> \
@@ -149,7 +149,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		vlayout->addWidget(frame);
 
 		ActionType::getTypes(list);
-		list.push_front(trUtf8("Default"));
+		list.push_front(tr("Default"));
 		del_action_cmb->addItems(list);
 		upd_action_cmb->addItems(list);
 
@@ -267,18 +267,18 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		if(base_rel->getRelationshipType()!=BaseRelationship::RelationshipFk)
 		{
-			ref_table_lbl->setText(trUtf8("Referer View:"));
-			ref_table_ht->setText(trUtf8("Referer view references one or more columns of a table to construct it's own columns."));
-			recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
+			ref_table_lbl->setText(tr("Referer View:"));
+			ref_table_ht->setText(tr("Referer view references one or more columns of a table to construct it's own columns."));
+			recv_table_ht->setText(tr("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
 		}
 		else
 		{
-			ref_table_lbl->setText(trUtf8("Referer Table:"));
-			ref_table_ht->setText(trUtf8("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
-			recv_table_ht->setText(trUtf8("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
+			ref_table_lbl->setText(tr("Referer Table:"));
+			ref_table_ht->setText(tr("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
+			recv_table_ht->setText(tr("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
 		}
 
-		recv_table_lbl->setText(trUtf8("Referenced Table:"));
+		recv_table_lbl->setText(tr("Referenced Table:"));
 
 		ref_table_txt->setPlainText(base_rel->getTable(BaseRelationship::SrcTable)->getName(true));
 		recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DstTable)->getName(true));
@@ -287,31 +287,31 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		if(rel_type == BaseRelationship::RelationshipPart)
 		{
-		  ref_table_lbl->setText(trUtf8("Partitioned Table:"));
-		  ref_table_ht->setText(trUtf8("Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined."));
+		  ref_table_lbl->setText(tr("Partitioned Table:"));
+		  ref_table_ht->setText(tr("Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined."));
 
-		  recv_table_lbl->setText(trUtf8("Partition Table:"));
-		  recv_table_ht->setText(trUtf8("Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table."));
+		  recv_table_lbl->setText(tr("Partition Table:"));
+		  recv_table_ht->setText(tr("Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table."));
 
 		  ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
 		  recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
 		}
 		else if(rel_type!=BaseRelationship::RelationshipNn)
 		{
-			ref_table_lbl->setText(trUtf8("Reference Table:"));
-			ref_table_ht->setText(trUtf8("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
+			ref_table_lbl->setText(tr("Reference Table:"));
+			ref_table_ht->setText(tr("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
 
-			recv_table_lbl->setText(trUtf8("Receiver Table:"));
-			recv_table_ht->setText(trUtf8("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
+			recv_table_lbl->setText(tr("Receiver Table:"));
+			recv_table_ht->setText(tr("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
 
 			ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
 			recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
 		}
 		else
 		{
-			ref_table_lbl->setText(trUtf8("Reference Table:"));
-			ref_table_ht->setText(trUtf8("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
-			recv_table_lbl->setText(trUtf8("Reference Table:"));
+			ref_table_lbl->setText(tr("Reference Table:"));
+			ref_table_ht->setText(tr("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
+			recv_table_lbl->setText(tr("Reference Table:"));
 			recv_table_ht->setText(ref_table_ht->getText());
 			ref_table_txt->setPlainText(base_rel->getTable(BaseRelationship::SrcTable)->getName(true));
 			recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DstTable)->getName(true));
@@ -328,8 +328,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 
 	disable_sql_chk->setVisible(base_rel->getObjectType()==ObjectType::Relationship);
-	table1_mand_chk->setText(base_rel->getTable(BaseRelationship::SrcTable)->getName() + trUtf8(" is required"));
-	table2_mand_chk->setText(base_rel->getTable(BaseRelationship::DstTable)->getName() + trUtf8(" is required"));
+	table1_mand_chk->setText(base_rel->getTable(BaseRelationship::SrcTable)->getName() + tr(" is required"));
+	table2_mand_chk->setText(base_rel->getTable(BaseRelationship::DstTable)->getName() + tr(" is required"));
 
 	if(aux_rel)
 	{

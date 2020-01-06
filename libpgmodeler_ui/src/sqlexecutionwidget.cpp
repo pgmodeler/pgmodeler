@@ -37,7 +37,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=PgModelerUiNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabWidth());
+	cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);
@@ -63,7 +63,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
+	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
 	snippets_tb->setMenu(&snippets_menu);
@@ -86,9 +86,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
-	action_load=new QAction(QIcon(PgModelerUiNs::getIconPath("abrir")), trUtf8("Load"), this);
-	action_save=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save"), this);
-	action_save_as=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar_como")), trUtf8("Save as"), this);
+	action_load=new QAction(QIcon(PgModelerUiNs::getIconPath("abrir")), tr("Load"), this);
+	action_save=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar")), tr("Save"), this);
+	action_save_as=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar_como")), tr("Save as"), this);
 
 	file_menu.addAction(action_load);
 	file_menu.addAction(action_save);
@@ -327,7 +327,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 					{
 						//Binary columns can't be edited by user
 						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-						item->setText(trUtf8("[binary data]"));
+						item->setText(tr("[binary data]"));
 					}
 					else
 					{
@@ -375,7 +375,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 		 e.getErrorCode()==ErrorCode::ConnectionBroken)
 	{
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
-											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
+											QString("%1 %2").arg(time_str).arg(tr("No results retrieved or changes done due to the error above! Run the command again.")),
 											QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), false);
 	}
 
@@ -385,8 +385,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	filter_tb->setEnabled(false);
 	filter_tb->setChecked(false);
 
-	output_tbw->setTabText(0, trUtf8("Results"));
-	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+	output_tbw->setTabText(0, tr("Results"));
+	output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
 	output_tbw->setCurrentIndex(1);
 	output_tbw->setTabEnabled(0, false);
 
@@ -438,12 +438,12 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		if(!empty)
 		{
-			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res_model->rowCount()));
+			output_tbw->setTabText(0, tr("Results (%1)").arg(res_model->rowCount()));
 			output_tbw->setCurrentIndex(0);
 		}
 		else
 		{
-			output_tbw->setTabText(0, trUtf8("Results"));
+			output_tbw->setTabText(0, tr("Results"));
 			output_tbw->setCurrentIndex(1);
 		}
 
@@ -457,14 +457,14 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		}
 
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
+																				PgModelerUiNs::formatMessage(tr("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
 																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
-																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
+																																		 .arg(!res_model ? tr("Rows affected") :  tr("Rows retrieved"))
 																																		 .arg(rows_affected)),
 																				QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
-		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+		output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
 	}
 
 	switchToExecutionMode(false);
@@ -517,18 +517,18 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 			fmt_cmd += QString("\n");
 
 		fmt_cmd += QString("-- %1 [%2] -- \n")
-							 .arg(trUtf8("Executed at"))
+							 .arg(tr("Executed at"))
 							 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
 		fmt_cmd += cmd;
 		fmt_cmd += QChar('\n');
 
 		if(!error.isEmpty())
 		{
-			fmt_cmd += QString("-- %1 --\n").arg(trUtf8("Command failed"));
+			fmt_cmd += QString("-- %1 --\n").arg(tr("Command failed"));
 			fmt_cmd += QString("/*\n%1\n*/\n").arg(error);
 		}
 		else
-			fmt_cmd += QString("-- %1 %2\n").arg(trUtf8("Rows:")).arg(rows);
+			fmt_cmd += QString("-- %1 %2\n").arg(tr("Rows:")).arg(rows);
 
 		if(!fmt_cmd.trimmed().endsWith(Attributes::DdlEndToken))
 			fmt_cmd += Attributes::DdlEndToken + QChar('\n');
@@ -625,10 +625,10 @@ void SQLExecutionWidget::runSQLCommand(void)
 	switchToExecutionMode(true);
 
 	output_tbw->setTabEnabled(0, false);
-	output_tbw->setTabText(0, trUtf8("Results"));
+	output_tbw->setTabText(0, tr("Results"));
 	output_tbw->setCurrentIndex(1);
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																			trUtf8("[%1]: SQL command is running...")
+																			tr("[%1]: SQL command is running...")
 																			.arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))),
 																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), false);
 }
@@ -640,7 +640,7 @@ void SQLExecutionWidget::saveCommands(void)
 
 	if(browse_file)
 	{
-		sql_file_dlg.setWindowTitle(trUtf8("Save SQL commands"));
+		sql_file_dlg.setWindowTitle(tr("Save SQL commands"));
 		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		sql_file_dlg.exec();
 
@@ -669,7 +669,7 @@ void SQLExecutionWidget::saveCommands(void)
 
 void SQLExecutionWidget::loadCommands(void)
 {
-	sql_file_dlg.setWindowTitle(trUtf8("Load SQL commands"));
+	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 	sql_file_dlg.exec();
 
@@ -701,8 +701,8 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 
 	csv_file_dlg.setDefaultSuffix(QString("csv"));
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
-	csv_file_dlg.setWindowTitle(trUtf8("Save CSV file"));
-	csv_file_dlg.setNameFilter(trUtf8("Comma-separated values file (*.csv);;All files (*.*)"));
+	csv_file_dlg.setWindowTitle(tr("Save CSV file"));
+	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -738,7 +738,7 @@ int SQLExecutionWidget::clearAll(void)
 	Messagebox msg_box;
 	int res = 0;
 
-	msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
+	msg_box.show(tr("The SQL input field and the results grid will be cleared! Want to proceed?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	res = msg_box.result();
@@ -865,9 +865,9 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(use_popup)
 		{
-			act = copy_menu.addAction(trUtf8("Copy selection"));
-			act_txt = copy_mode_menu.addAction(trUtf8("Plain format"));
-			act_csv = copy_mode_menu.addAction(trUtf8("CVS format"));
+			act = copy_menu.addAction(tr("Copy selection"));
+			act_txt = copy_mode_menu.addAction(tr("Plain format"));
+			act_csv = copy_mode_menu.addAction(tr("CVS format"));
 			act->setMenu(&copy_mode_menu);
 			act = copy_menu.exec(QCursor::pos());
 		}
@@ -1031,7 +1031,7 @@ void SQLExecutionWidget::destroySQLHistory(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
+	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
 								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
@@ -1078,16 +1078,16 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 void SQLExecutionWidget::showHistoryContextMenu(void)
 {
 	QMenu *ctx_menu=cmd_history_txt->createStandardContextMenu();
-	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), trUtf8("Clear history"), ctx_menu),
-			*action_save = new QAction(QPixmap(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save history"), ctx_menu),
-			*action_reload = new QAction(QPixmap(PgModelerUiNs::getIconPath("atualizar")), trUtf8("Reload history"), ctx_menu),
+	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), tr("Clear history"), ctx_menu),
+			*action_save = new QAction(QPixmap(PgModelerUiNs::getIconPath("salvar")), tr("Save history"), ctx_menu),
+			*action_reload = new QAction(QPixmap(PgModelerUiNs::getIconPath("atualizar")), tr("Reload history"), ctx_menu),
 			*action_toggle_find = nullptr,
 			*exec_act = nullptr;
 
 	if(!find_history_parent->isVisible())
-		action_toggle_find = new QAction(QPixmap(PgModelerUiNs::getIconPath("buscar")), trUtf8("Find in history"), ctx_menu);
+		action_toggle_find = new QAction(QPixmap(PgModelerUiNs::getIconPath("buscar")), tr("Find in history"), ctx_menu);
 	else
-		action_toggle_find = new QAction(trUtf8("Hide find tool"), ctx_menu);
+		action_toggle_find = new QAction(tr("Hide find tool"), ctx_menu);
 
 	ctx_menu->addSeparator();
 	ctx_menu->addAction(action_toggle_find);
@@ -1102,7 +1102,7 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 	{
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
+		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
 									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result() == QDialog::Accepted)

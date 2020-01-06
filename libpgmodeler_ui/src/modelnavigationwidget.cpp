@@ -70,7 +70,7 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 		tooltip=model->getFilename();
 
 		if(tooltip.isEmpty())
-			tooltip=trUtf8("(model not saved yet)");
+			tooltip=tr("(model not saved yet)");
 
 		models_cmb->addItem(model->getDatabaseModel()->getName(), tooltip);
 		models_cmb->setCurrentIndex(models_cmb->count()-1);

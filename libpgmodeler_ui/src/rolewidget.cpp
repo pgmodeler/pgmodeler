@@ -32,7 +32,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 
-	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
+	frame=generateInformationFrame(tr("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 										  Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
 
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
@@ -56,19 +56,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 		obj_tab->setColumnCount(5);
 
-		obj_tab->setHeaderLabel(trUtf8("Role"),0);
+		obj_tab->setHeaderLabel(tr("Role"),0);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),0);
 
-		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
+		obj_tab->setHeaderLabel(tr("Validity"),1);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("validade")),1);
 
-		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
+		obj_tab->setHeaderLabel(tr("Member of"),2);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),2);
 
-		obj_tab->setHeaderLabel(trUtf8("Members"),3);
+		obj_tab->setHeaderLabel(tr("Members"),3);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),3);
 
-		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
+		obj_tab->setHeaderLabel(tr("Members (Admin.)"),4);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;

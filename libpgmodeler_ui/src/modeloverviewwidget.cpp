@@ -138,7 +138,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		if(!p.isActive())
 		{
 			label->setPixmap(QPixmap());
-			label->setText(trUtf8("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
+			label->setText(tr("Failed to generate the overview image.\nThe requested size %1 x %2 was too big and there was not enough memory to allocate!")
 										 .arg(pixmap_size.width()).arg(pixmap_size.height()));
 			frame->setEnabled(false);
 		}
@@ -198,7 +198,7 @@ void ModelOverviewWidget::resizeOverview(void)
 	if(this->model)
 	{
 		QDesktopWidget desktop;
-		QRect screen_rect=desktop.screenGeometry(desktop.primaryScreen());
+		QRect screen_rect=qApp->primaryScreen()->geometry();
 
 		//Make an initial calculation of the overview window size
 		scene_rect=this->model->scene->sceneRect();

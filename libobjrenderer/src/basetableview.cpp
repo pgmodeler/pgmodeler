@@ -431,7 +431,7 @@ void BaseTableView::__configureObject(double width)
 	this->table_tooltip=this->getUnderlyingObject()->getName(true) +
 						QString(" (") + this->getUnderlyingObject()->getTypeName() + QString(") \n") +
 						QString("Id: %1\n").arg(this->getUnderlyingObject()->getObjectId()) +
-						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount());
+						tr("Connected rels: %1").arg(this->getConnectRelsCount());
 
 	this->setToolTip(this->table_tooltip);
 

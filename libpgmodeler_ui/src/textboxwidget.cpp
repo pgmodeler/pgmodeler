@@ -52,7 +52,7 @@ void TextboxWidget::selectTextColor(void)
 	QColorDialog color_dlg;
 	QPalette palette;
 
-	color_dlg.setWindowTitle(trUtf8("Select text color"));
+	color_dlg.setWindowTitle(tr("Select text color"));
 	color_dlg.setCurrentColor(color_select_tb->palette().color(QPalette::Button));
 	color_dlg.exec();
 

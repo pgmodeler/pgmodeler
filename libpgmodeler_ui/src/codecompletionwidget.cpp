@@ -38,8 +38,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setSortingEnabled(false);
 
 	persistent_chk=new QCheckBox(completion_wgt);
-	persistent_chk->setText(trUtf8("Make &persistent"));
-	persistent_chk->setToolTip(trUtf8("Makes the widget closable only by ESC key or mouse click on other controls."));
+	persistent_chk->setText(tr("Make &persistent"));
+	persistent_chk->setToolTip(tr("Makes the widget closable only by ESC key or mouse click on other controls."));
 	persistent_chk->setFocusPolicy(Qt::NoFocus);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
@@ -447,7 +447,7 @@ void CodeCompletionWidget::updateList(void)
 		for(int i=0; i < list.size(); i++)
 		{
 			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath("keyword")), list[i]);
-			item->setToolTip(trUtf8("SQL Keyword"));
+			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
 
@@ -478,12 +478,12 @@ void CodeCompletionWidget::updateList(void)
 
 	if(name_list->count()==0)
 	{
-		name_list->addItem(trUtf8("(no items found.)"));
+		name_list->addItem(tr("(no items found.)"));
 		name_list->item(0)->setFlags(Qt::NoItemFlags);
 		QToolTip::hideText();
 	}
 	else
-		name_list->setItemSelected(name_list->item(0), true);
+		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
 	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));

@@ -44,7 +44,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		SpatialType::getTypes(spatial_lst);
 		spatial_lst.sort();
-		spatial_cmb->addItem(trUtf8("NONE"));
+		spatial_cmb->addItem(tr("NONE"));
 		spatial_cmb->addItems(spatial_lst);
 
 		type_cmb->installEventFilter(this);

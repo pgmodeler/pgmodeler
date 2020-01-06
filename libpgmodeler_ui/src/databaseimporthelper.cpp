@@ -180,7 +180,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	for(i=0; i < cnt && !import_canceled; i++)
 	{
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
+								 tr("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
 							   sys_objs[i]);
 
 		if(sys_objs[i]!=ObjectType::Type)
@@ -230,7 +230,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 	while(oid_itr!=object_oids.end() && !import_canceled)
 	{
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
+								 tr("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
 							   oid_itr->first);
 
 		objects=catalog.getObjectsAttributes(oid_itr->first, QString(), QString(), oid_itr->second);
@@ -256,7 +256,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		names=getObjectName(QString::number(col_itr->first)).split(".");
 
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
+								 tr("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
 							   ObjectType::Column);
 
 		if(names.size() > 1)
@@ -311,7 +311,7 @@ void DatabaseImportHelper::createObjects(void)
 				 in order to be created later */
 			if(obj_type!=ObjectType::Constraint)
 			{
-				emit s_progressUpdated(progress, trUtf8("Creating object `%1' (%2), oid `%3'...")
+				emit s_progressUpdated(progress, tr("Creating object `%1' (%2), oid `%3'...")
 															.arg(attribs[Attributes::Name])
 															.arg(BaseObject::getTypeName(obj_type))
 															.arg(attribs[Attributes::Oid]),
@@ -361,7 +361,7 @@ void DatabaseImportHelper::createObjects(void)
 				itr++;
 
 				emit s_progressUpdated(progress,
-										 trUtf8("Trying to recreate object `%1' (%2), oid `%3'...")
+										 tr("Trying to recreate object `%1' (%2), oid `%3'...")
 										.arg(attribs[Attributes::Name])
 										.arg(BaseObject::getTypeName(obj_type))
 										.arg(attribs[Attributes::Oid]),
@@ -385,7 +385,7 @@ void DatabaseImportHelper::createObjects(void)
 
 			if(tries >= max_tries)
 				emit s_progressUpdated(progress,
-									   trUtf8("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
+									   tr("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
 									   ObjectType::BaseObject);
 
 			if(!import_canceled)
@@ -425,7 +425,7 @@ void DatabaseImportHelper::createConstraints(void)
 					 attribs[Attributes::Inherited]!=Attributes::True))
 			{
 				emit s_progressUpdated(progress,
-										 trUtf8("Creating object `%1' (%2)...")
+										 tr("Creating object `%1' (%2)...")
 									   .arg(attribs[Attributes::Name])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint)),
 						ObjectType::Constraint);
@@ -454,7 +454,7 @@ void DatabaseImportHelper::createPermissions(void)
 		unsigned i=0, progress=0;
 		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
 		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
-		QString msg=trUtf8("Creating permissions for object `%1' (%2)...");
+		QString msg=tr("Creating permissions for object `%1' (%2)...");
 		ObjectType obj_type;
 
 		//Create the object level permission
@@ -472,7 +472,7 @@ void DatabaseImportHelper::createPermissions(void)
 			progress=((i++)/static_cast<double>(obj_perms.size())) * 100;
 		}
 
-		emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), ObjectType::Permission);
+		emit s_progressUpdated(progress, tr("Creating columns permissions..."), ObjectType::Permission);
 		//Create the column level permission
 		i=0;
 		while(itr_cols!=col_perms.end() && !import_canceled)
@@ -523,7 +523,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-									 trUtf8("Updating relationships of `%1' (%2)...")
+									 tr("Updating relationships of `%1' (%2)...")
 								   .arg(tab->getName())
 								   .arg(BaseObject::getTypeName(ObjectType::Table)),
 								   ObjectType::Table);
@@ -564,7 +564,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 		if(!inherited_cols.empty())
 		{
-			emit s_progressUpdated(100, trUtf8("Validating relationships..."), ObjectType::Relationship);
+			emit s_progressUpdated(100, tr("Validating relationships..."), ObjectType::Relationship);
 			dbmodel->validateRelationships();
 		}
 
@@ -592,7 +592,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 				import_log.close();
 
-				emit s_importFinished(Exception(trUtf8("The database import ended but some errors were generated and saved into the log file `%1'. This file will last until pgModeler quit.").arg(log_name),
+				emit s_importFinished(Exception(tr("The database import ended but some errors were generated and saved into the log file `%1'. This file will last until pgModeler quit.").arg(log_name),
 												__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
@@ -2397,7 +2397,7 @@ void DatabaseImportHelper::createTableInheritances(void)
 		try
 		{
 			emit s_progressUpdated(90,
-								   trUtf8("Creating table inheritances..."),
+								   tr("Creating table inheritances..."),
 								   ObjectType::Relationship);
 			__createTableInheritances();
 		}
@@ -2423,7 +2423,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 		Relationship *rel_part = nullptr;
 
 		emit s_progressUpdated(95,
-								 trUtf8("Creating table partitionings..."),
+								 tr("Creating table partitionings..."),
 								 ObjectType::Relationship);
 
 		// Creating the paritioning relationships
@@ -2464,7 +2464,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 	dbmodel->disconnectRelationships();
 
 	emit s_progressUpdated(100,
-						   trUtf8("Destroying unused detached columns..."),
+						   tr("Destroying unused detached columns..."),
 						   ObjectType::Column);
 
 	//Destroying detached columns before create inheritances
@@ -2624,7 +2624,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 	vector<BaseObject *> tables;
 
 	emit s_progressUpdated(100,
-							 trUtf8("Assigning sequences to columns..."),
+							 tr("Assigning sequences to columns..."),
 						   ObjectType::Sequence);
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);

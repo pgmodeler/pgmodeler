@@ -519,7 +519,7 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	else
 	{
 		obj_type=ObjectType::BaseObject;
-		obj_name=trUtf8("(invalid object)");
+		obj_name=tr("(invalid object)");
 	}
 }
 

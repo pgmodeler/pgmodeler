@@ -50,20 +50,20 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		return_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 										 ObjectsTableWidget::UpdateButton, true, this);
 		return_tab->setColumnCount(2);
-		return_tab->setHeaderLabel(trUtf8("Column"), 0);
+		return_tab->setHeaderLabel(tr("Column"), 0);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		return_tab->setHeaderLabel(trUtf8("Type"), 1);
+		return_tab->setHeaderLabel(tr("Type"), 1);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 											 ObjectsTableWidget::UpdateButton, true, this);
 		parameters_tab->setColumnCount(4);
-		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
+		parameters_tab->setHeaderLabel(tr("Name"),0);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("parameter")),0);
-		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
+		parameters_tab->setHeaderLabel(tr("Type"),1);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
-		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
+		parameters_tab->setHeaderLabel(tr("Mode"),2);
+		parameters_tab->setHeaderLabel(tr("Default Value"),3);
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);

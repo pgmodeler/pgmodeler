@@ -43,9 +43,9 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
 		columns_tab->setColumnCount(2);
-		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		columns_tab->setHeaderLabel(tr("Column"), 0);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		columns_tab->setHeaderLabel(tr("Type"), 1);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);

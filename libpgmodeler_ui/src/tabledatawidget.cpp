@@ -172,7 +172,7 @@ void TableDataWidget::deleteColumns(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Delete columns is an irreversible action! Do you really want to proceed?"),
+	msg_box.show(tr("Delete columns is an irreversible action! Do you really want to proceed?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -207,7 +207,7 @@ void TableDataWidget::clearRows(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
-		msg_box.show(trUtf8("Remove all rows is an irreversible action! Do you really want to proceed?"),
+		msg_box.show(tr("Remove all rows is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
@@ -222,7 +222,7 @@ void TableDataWidget::clearColumns(void)
 {
 	Messagebox msg_box;
 
-		msg_box.show(trUtf8("Remove all columns is an irreversible action! Do you really want to proceed?"),
+		msg_box.show(tr("Remove all columns is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -259,7 +259,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 			{
 				item->setFlags(Qt::NoItemFlags);
 				item->setForeground(QColor(Qt::red));
-				item->setToolTip(trUtf8("Unknown column"));
+				item->setToolTip(tr("Unknown column"));
 			}
 			else
 			{
@@ -374,9 +374,9 @@ void TableDataWidget::populateDataGrid(const QString &data)
 			invalid_cols.push_back(col);
 
 			if(!column)
-				item->setToolTip(trUtf8("Unknown column"));
+				item->setToolTip(tr("Unknown column"));
 			else
-				item->setToolTip(trUtf8("Duplicated column"));
+				item->setToolTip(tr("Duplicated column"));
 		}
 		else
 			item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
@@ -467,7 +467,7 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 	if(item)
 	{
 		item->setData(Qt::UserRole, item->background());
-		item->setBackgroundColor(QColor(QString("#FFC0C0")));
+		item->setBackground(QColor(QString("#FFC0C0")));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }

@@ -145,7 +145,7 @@ void ColorPickerWidget::selectColor(void)
 	QToolButton *btn=qobject_cast<QToolButton *>(sender());
 	int btn_idx=buttons.indexOf(btn);
 
-	color_dlg.setWindowTitle(trUtf8("Select color"));
+	color_dlg.setWindowTitle(tr("Select color"));
 	color_dlg.setCurrentColor(colors[btn_idx]);
 	color_dlg.exec();
 

@@ -107,22 +107,22 @@ void OperationListWidget::updateOperationList(void)
 			if(op_type==Operation::ObjectCreated)
 			{
 				op_icon=QString("criado");
-				op_name=trUtf8("created");
+				op_name=tr("created");
 			}
 			else if(op_type==Operation::ObjectRemoved)
 			{
 				op_icon=QString("removido");
-				op_name=trUtf8("removed");
+				op_name=tr("removed");
 			}
 			else if(op_type==Operation::ObjectModified)
 			{
 				op_icon=QString("modificado");
-				op_name=trUtf8("modified");
+				op_name=tr("modified");
 			}
 			else if(op_type==Operation::ObjectMoved)
 			{
 				op_icon=QString("movimentado");
-				op_name=trUtf8("moved");
+				op_name=tr("moved");
 			}
 
 			item1=new QTreeWidgetItem(item);
@@ -202,8 +202,8 @@ void OperationListWidget::removeOperations(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Operation history exclusion"),
-				 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
+	msg_box.show(tr("Operation history exclusion"),
+				 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 

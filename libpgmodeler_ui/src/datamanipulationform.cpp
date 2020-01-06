@@ -66,7 +66,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, false));
 	browse_tabs_tb->setMenu(&fks_menu);
 
-	act = copy_menu.addAction(trUtf8("Copy as CSV"));
+	act = copy_menu.addAction(tr("Copy as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+C"));
 
 	connect(act, &QAction::triggered, [&](){
@@ -74,21 +74,21 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 		paste_tb->setEnabled(true);
 	});
 
-	act = copy_menu.addAction(trUtf8("Copy as text"));
+	act = copy_menu.addAction(tr("Copy as text"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+C"));
 	connect(act, &QAction::triggered,	[&](){
 		SQLExecutionWidget::copySelection(results_tbw, false, false);
 		paste_tb->setEnabled(true);
 	});
 
-	act = paste_menu.addAction(trUtf8("Paste as text"));
+	act = paste_menu.addAction(tr("Paste as text"));
 	act->setShortcut(QKeySequence("Ctrl+V"));
 	connect(act, &QAction::triggered,	[&](){
 		loadDataFromCsv(true, false);
 		paste_tb->setEnabled(false);
 	});
 
-	act = paste_menu.addAction(trUtf8("Paste as CSV"));
+	act = paste_menu.addAction(tr("Paste as CSV"));
 	act->setShortcut(QKeySequence("Ctrl+Shift+V"));
 	connect(act, &QAction::triggered,	[&](){
 		loadDataFromCsv(true, true);
@@ -97,8 +97,8 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	paste_tb->setMenu(&paste_menu);
 	truncate_tb->setMenu(&truncate_menu);
-	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("truncate")), trUtf8("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
-	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), trUtf8("Truncate cascade"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("truncate")), tr("Truncate"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Del"))->setData(QVariant::fromValue<bool>(false));
+	truncate_menu.addAction(QIcon(PgModelerUiNs::getIconPath("trunccascade")), tr("Truncate cascade"), this, SLOT(truncateTable()), QKeySequence("Ctrl+Shift+Del"))->setData(QVariant::fromValue<bool>(true));
 
 	copy_tb->setMenu(&copy_menu);
 	refresh_tb->setToolTip(refresh_tb->toolTip() + QString(" (%1)").arg(refresh_tb->shortcut().toString()));
@@ -333,7 +333,7 @@ void DataManipulationForm::retrieveData(void)
 	{
 		if(!changed_rows.empty())
 		{
-			msg_box.show(trUtf8("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
+			msg_box.show(tr("<strong>WARNING: </strong> There are some changed rows waiting the commit! Do you really want to discard them and retrieve the data now?"),
 						 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Rejected)
@@ -396,8 +396,8 @@ void DataManipulationForm::retrieveData(void)
 		export_tb->setEnabled(results_tbw->rowCount() > 0);
 		result_info_wgt->setVisible(results_tbw->rowCount() > 0);
 		result_info_lbl->setText(QString("<em>[%1]</em> ").arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))) +
-								 trUtf8("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
-								 trUtf8("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? trUtf8("none") : QString::number(limit_spb->value())));
+								 tr("Rows returned: <strong>%1</strong>&nbsp;&nbsp;&nbsp;").arg(results_tbw->rowCount()) +
+								 tr("<em>(Limit: <strong>%1</strong>)</em>").arg(limit_spb->value()==0 ? tr("none") : QString::number(limit_spb->value())));
 
 		//Reset the changed rows state
 		clearChangedRows();
@@ -430,7 +430,7 @@ void DataManipulationForm::retrieveData(void)
 														!col_names.isEmpty());
 
 		code_compl_wgt->clearCustomItems();
-		code_compl_wgt->insertCustomItems(col_names, trUtf8("Column"), ObjectType::Column);
+		code_compl_wgt->insertCustomItems(col_names, tr("Column"), ObjectType::Column);
 
 		columns_lst->clear();
 		QListWidgetItem *item = nullptr;
@@ -742,9 +742,9 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		}
 
 		if(combo->count()==0)
-			combo->insertItem(0, trUtf8("No objects found"));
+			combo->insertItem(0, tr("No objects found"));
 		else
-			combo->insertItem(0, trUtf8("Found %1 object(s)").arg(combo->count()));
+			combo->insertItem(0, tr("Found %1 object(s)").arg(combo->count()));
 
 		combo->setCurrentIndex(0);
 		combo->blockSignals(false);
@@ -774,7 +774,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 		if(obj_type==ObjectType::View)
 		{
 			warning_frm->setVisible(true);
-			warning_lbl->setText(trUtf8("Views can't have their data handled through this grid, this way, all operations are disabled."));
+			warning_lbl->setText(tr("Views can't have their data handled through this grid, this way, all operations are disabled."));
 		}
 		else
 		{
@@ -785,7 +785,7 @@ void DataManipulationForm::retrievePKColumns(const QString &schema, const QStrin
 			warning_frm->setVisible(pks.empty());
 
 			if(pks.empty())
-				warning_lbl->setText(trUtf8("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
+				warning_lbl->setText(tr("The selected table doesn't owns a primary key! Updates and deletes will be performed by considering all columns as primary key. <strong>WARNING:</strong> those operations can affect more than one row."));
 			else
 				table_oid = pks[0][Attributes::Table].toUInt();
 		}
@@ -857,10 +857,10 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			QStringList name_list;
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referenced")), trUtf8("Referenced tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referenced")), tr("Referenced tables"))->setMenu(submenu);
 
 			if(fks.empty())
-				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
+				submenu->addAction(tr("(none)"))->setEnabled(false);
 
 			for(auto &fk : fks)
 			{				
@@ -906,10 +906,10 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 			}
 
 			submenu = new QMenu(this);
-			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referrer")), trUtf8("Referrer tables"))->setMenu(submenu);
+			fks_menu.addAction(QPixmap(PgModelerUiNs::getIconPath("referrer")), tr("Referrer tables"))->setMenu(submenu);
 
 			if(ref_fks.empty())
-				submenu->addAction(trUtf8("(none)"))->setEnabled(false);
+				submenu->addAction(tr("(none)"))->setEnabled(false);
 
 			for(auto &fk : ref_fks)
 			{
@@ -957,16 +957,16 @@ void DataManipulationForm::markOperationOnRow(unsigned operation, int row)
 			(operation==NoOperation || results_tbw->verticalHeaderItem(row)->data(Qt::UserRole)!=OpInsert))
 	{
 		QTableWidgetItem *item=nullptr, *header_item=results_tbw->verticalHeaderItem(row);
-		QString tooltip=trUtf8("This row is marked to be %1");
+		QString tooltip=tr("This row is marked to be %1");
 		QFont fnt=results_tbw->font();
 		int marked_cols=0;
 
 		if(operation==OpDelete)
-			tooltip=tooltip.arg(trUtf8("deleted"));
+			tooltip=tooltip.arg(tr("deleted"));
 		else if(operation==OpUpdate)
-			tooltip=tooltip.arg(trUtf8("updated"));
+			tooltip=tooltip.arg(tr("updated"));
 		else if(operation==OpInsert)
-			tooltip=tooltip.arg(trUtf8("inserted"));
+			tooltip=tooltip.arg(tr("inserted"));
 		else
 			tooltip.clear();
 
@@ -1091,7 +1091,7 @@ void DataManipulationForm::addRow(bool focus_new_row)
 		if(results_tbw->horizontalHeaderItem(col)->data(Qt::UserRole)==QString("bytea"))
 		{
 			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			item->setText(trUtf8("[binary data]"));
+			item->setText(tr("[binary data]"));
 		}
 		else
 			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -1306,8 +1306,8 @@ void DataManipulationForm::saveChanges(void)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: data manipulation save feature disabled warning."
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
+	msg_box.show(tr("Warning"),
+				 tr("You're running a demonstration version! The save feature of the data manipulation form is available only in the full version!"),
 				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	int row=0;
@@ -1318,7 +1318,7 @@ void DataManipulationForm::saveChanges(void)
 		QString cmd;
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
+		msg_box.show(tr("<strong>WARNING:</strong> Once commited its not possible to undo the changes! Proceed with saving?"),
 					 Messagebox::AlertIcon,
 					 Messagebox::YesNoButtons);
 
@@ -1349,9 +1349,9 @@ void DataManipulationForm::saveChanges(void)
 	}
 	catch(Exception &e)
 	{
-		map<unsigned, QString> op_names={{ OpDelete, trUtf8("delete") },
-										 { OpUpdate, trUtf8("update") },
-										 { OpInsert, trUtf8("insert") }};
+		map<unsigned, QString> op_names={{ OpDelete, tr("delete") },
+										 { OpUpdate, tr("update") },
+										 { OpInsert, tr("insert") }};
 
 		QString tab_name=QString("%1.%2")
 						 .arg(schema_cmb->currentText())
@@ -1579,31 +1579,31 @@ void DataManipulationForm::showPopupMenu(void)
 		QAction *act = nullptr;
 		ObjectType obj_type=static_cast<ObjectType>(table_cmb->currentData().toUInt());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("copiar")), trUtf8("Copy items"));
+		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("copiar")), tr("Copy items"));
 		act->setMenu(&copy_menu);
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("colar")), trUtf8("Pase items"));
+		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("colar")), tr("Pase items"));
 		act->setMenu(&paste_menu);
 		act->setEnabled(paste_tb->isEnabled());
 
-		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), trUtf8("Clear items"), this, SLOT(clearItemsText()));
+		act = item_menu.addAction(QIcon(PgModelerUiNs::getIconPath("limpar")), tr("Clear items"), this, SLOT(clearItemsText()));
 		act->setEnabled(!results_tbw->selectedRanges().isEmpty());
 
 		if(obj_type == ObjectType::Table)
 		{
 			item_menu.addSeparator();
-			act = item_menu.addAction(browse_tabs_tb->icon(), trUtf8("Browse tables"));
+			act = item_menu.addAction(browse_tabs_tb->icon(), tr("Browse tables"));
 			act->setMenu(&fks_menu);
 			act->setEnabled(browse_tabs_tb->isEnabled());
 
 			item_menu.addSeparator();
-			act = item_menu.addAction(duplicate_tb->icon(), trUtf8("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
+			act = item_menu.addAction(duplicate_tb->icon(), tr("Duplicate row(s)"), this, SLOT(duplicateRows()), duplicate_tb->shortcut());
 			act->setEnabled(duplicate_tb->isEnabled());
 
-			act = item_menu.addAction(delete_tb->icon(), trUtf8("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
+			act = item_menu.addAction(delete_tb->icon(), tr("Delete row(s)"), this, SLOT(markDeleteOnRows()), delete_tb->shortcut());
 			act->setEnabled(delete_tb->isEnabled());
 
-			act = item_menu.addAction(bulkedit_tb->icon(), trUtf8("Edit cell(s)"), bulkedit_tb, SLOT(click()), bulkedit_tb->shortcut());
+			act = item_menu.addAction(bulkedit_tb->icon(), tr("Edit cell(s)"), bulkedit_tb, SLOT(click()), bulkedit_tb->shortcut());
 			act->setEnabled(bulkedit_tb->isEnabled());
 		}
 

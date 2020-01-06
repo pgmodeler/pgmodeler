@@ -28,12 +28,12 @@ void BaseForm::setButtonConfiguration(unsigned button_conf)
 {
 	if(button_conf==Messagebox::OkCancelButtons)
 	{
-		apply_ok_btn->setText(trUtf8("&Apply"));
+		apply_ok_btn->setText(tr("&Apply"));
 		cancel_btn->setVisible(true);
 	}
 	else
 	{
-		apply_ok_btn->setText(trUtf8("&Ok"));
+		apply_ok_btn->setText(tr("&Ok"));
 		cancel_btn->setVisible(false);
 	}
 }
@@ -128,7 +128,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	if(!widget)	return;
 
 	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
-		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+		setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
 	else
 		setWindowTitle(widget->windowTitle());
 

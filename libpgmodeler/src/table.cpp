@@ -27,7 +27,7 @@ Table::Table(void) : PhysicalTable()
 	attributes[Attributes::RlsEnabled]=QString();
 	attributes[Attributes::RlsForced]=QString();
 	attributes[Attributes::Oids]=QString();
-	setName(trUtf8("new_table"));
+	setName(tr("new_table"));
 }
 
 Table::~Table(void)

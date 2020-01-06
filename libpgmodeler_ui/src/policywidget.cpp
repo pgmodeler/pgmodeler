@@ -42,13 +42,13 @@ PolicyWidget::PolicyWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 																				ObjectsTableWidget::UpdateButton |
 																				ObjectsTableWidget::EditButton), true, this);
 		roles_tab->setColumnCount(1);
-		roles_tab->setHeaderLabel(trUtf8("Name"), 0);
+		roles_tab->setHeaderLabel(tr("Name"), 0);
 		roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")), 0);
 
 		QVBoxLayout *vbox = new QVBoxLayout;
 		vbox->addWidget(roles_tab);
 
-		QFrame *frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+		QFrame *frame=generateInformationFrame(tr("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
 																					 .arg(BaseObject::getTypeName(ObjectType::Policy).toLower()));
 		vbox->addWidget(frame);
 		frame->setParent(this);

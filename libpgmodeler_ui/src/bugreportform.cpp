@@ -115,7 +115,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 		output.write(comp_buf.data(), comp_buf.size());
 		output.close();
 
-		msgbox.show(trUtf8("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
+		msgbox.show(tr("Bug report successfuly generated! Please, send the file <strong>%1</strong> to <em>%2</em> in order be analyzed. Thank you for the collaboration!")
 								.arg(QDir::toNativeSeparators(filename)).arg(GlobalAttributes::BugReportEmail),
 					Messagebox::InfoIcon);
 	}
@@ -128,8 +128,8 @@ void BugReportForm::attachModel(void)
 	try
 	{
 		file_dlg.setDefaultSuffix(QString("dbm"));
-		file_dlg.setWindowTitle(trUtf8("Load model"));
-		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setWindowTitle(tr("Load model"));
+		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setModal(true);
 
@@ -160,7 +160,7 @@ void BugReportForm::selectOutput(void)
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setWindowTitle(trUtf8("Select report output folder"));
+	file_dlg.setWindowTitle(tr("Select report output folder"));
 	file_dlg.setFileMode(QFileDialog::DirectoryOnly);
 	file_dlg.setModal(true);
 

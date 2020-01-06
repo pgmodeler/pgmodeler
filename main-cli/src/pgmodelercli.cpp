@@ -125,13 +125,13 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 
 					//Raises an error if the option is not recognized
 					if(!isOptionRecognized(op, accepts_val))
-						throw Exception(trUtf8("Unrecognized option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Unrecognized option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
-						throw Exception(trUtf8("Value not specified for option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Value not specified for option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					else if(!accepts_val && !value.isEmpty())
-						throw Exception(trUtf8("Option '%1' does not accept values.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Option '%1' does not accept values.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					opts[op]=value;
 				}
@@ -220,7 +220,7 @@ void PgModelerCli::configureConnection(bool extra_conn)
 	if(parsed_opts.count(ConnAlias + chr))
 	{
 		if(!connections.count(parsed_opts[ConnAlias + chr]))
-			throw Exception(trUtf8("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[ConnAlias + chr]),
+			throw Exception(tr("Connection aliased as '%1' was not found in the configuration file.").arg(parsed_opts[ConnAlias + chr]),
 							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//Make a copy of the named connection
@@ -375,92 +375,92 @@ bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 void PgModelerCli::showMenu(void)
 {
 	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << trUtf8(" command line interface.") << endl;
-	out << trUtf8("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
-	out << trUtf8("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << endl;
+	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
+	out << tr("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
 	out << endl;
-	out << trUtf8("Usage: pgmodeler-cli [OPTIONS]") << endl << endl;
-	out << trUtf8("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << endl;
+	out << tr("Usage: pgmodeler-cli [OPTIONS]") << endl << endl;
+	out << tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << endl;
 	out << endl;
-	out << trUtf8("General options: ") << endl;
-	out << trUtf8("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for fix, export operations.").arg(short_opts[Input]).arg(Input) << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << endl;
-	out << trUtf8("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << endl;
-	out << trUtf8("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << endl;
-	out << trUtf8("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << endl;
-	out << trUtf8("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << endl;
-	out << trUtf8("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << endl;
-	out << trUtf8("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << endl;
-	out << trUtf8("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << endl;
+	out << tr("General options: ") << endl;
+	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for fix, export operations.").arg(short_opts[Input]).arg(Input) << endl;
+	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << endl;
+	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << endl;
+	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << endl;
+	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << endl;
+	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< endl;
+	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << endl;
+	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << endl;
+	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << endl;
+	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << endl;
+	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << endl;
+	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to synch the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << endl;
+	out << tr("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << endl;
+	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << endl;
+	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << endl;
 	out << endl;
-	out << trUtf8("Connection options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
-	out << trUtf8("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << endl;
-	out << trUtf8("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << endl;
-	out << trUtf8("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << endl;
-	out << trUtf8("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << endl;
-	out << trUtf8("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << endl;
+	out << tr("Connection options: ") << endl;
+	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
+	out << tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << endl;
+	out << tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << endl;
+	out << tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << endl;
+	out << tr("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << endl;
+	out << tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << endl;
+	out << tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << endl;
 	out << endl;
-	out << trUtf8("PNG and SVG export options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << endl;
-	out << trUtf8("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << endl;
-	out << trUtf8("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << endl;
-	out << trUtf8("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
+	out << tr("PNG and SVG export options: ") << endl;
+	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << endl;
+	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << endl;
+	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << endl;
+	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
 	out << endl;
-	out << trUtf8("DBMS export options: ") << endl;
-	out << trUtf8("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << endl;
-	out << trUtf8("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << endl;
-	out << trUtf8("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << endl;
-	out << trUtf8("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << endl;
-	out << trUtf8("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << endl;
-	out << trUtf8("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
+	out << tr("DBMS export options: ") << endl;
+	out << tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << endl;
+	out << tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << endl;
+	out << tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << endl;
+	out << tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << endl;
+	out << tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << endl;
+	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
 	out << endl;
-	out << trUtf8("Data dictionary export options: ") << endl;
-	out << trUtf8("  %1, %2\t\t   The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
-	out << trUtf8("  %1, %2\t\t   Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
+	out << tr("Data dictionary export options: ") << endl;
+	out << tr("  %1, %2\t\t   The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
+	out << tr("  %1, %2\t\t   Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
 	out << endl;
-	out << trUtf8("Database import options: ") << endl;
-	out << trUtf8("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
-	out << trUtf8("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
-	out << trUtf8("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
-	out << trUtf8("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
+	out << tr("Database import options: ") << endl;
+	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
+	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
+	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
+	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
 	out << endl;
-	out << trUtf8("Diff options: ") << endl;
-	out << trUtf8("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << endl;
-	out << trUtf8("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << endl;
-	out << trUtf8("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << endl;
-	out << trUtf8("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << endl;
-	out << trUtf8("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << endl;
-	out << trUtf8("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << endl;
-	out << trUtf8("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << endl;
-	out << trUtf8("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << endl;
-	out << trUtf8("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << endl;
-	out << trUtf8("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << endl;
-	out << trUtf8("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << endl;
-	out << trUtf8("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << endl;
-	out << trUtf8("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << endl;
-	out << trUtf8("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << endl;
+	out << tr("Diff options: ") << endl;
+	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << endl;
+	out << tr("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << endl;
+	out << tr("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << endl;
+	out << tr("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << endl;
+	out << tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << endl;
+	out << tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << endl;
+	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << endl;
+	out << tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << endl;
+	out << tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << endl;
+	out << tr("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << endl;
+	out << tr("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << endl;
+	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << endl;
+	out << tr("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << endl;
+	out << tr("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << endl;
 	out << endl;
 
 #ifndef Q_OS_MAC
-	out << trUtf8("Miscellaneous options: ") << endl;
-	out << trUtf8("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
+	out << tr("Miscellaneous options: ") << endl;
+	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
 	out << endl;
 #endif
 
-	out << trUtf8("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
-	out << "   " << QStringList({ trUtf8("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", trUtf8("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
+	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
+	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
 	out << endl;
-	out << trUtf8("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(InputDb).arg(CompareTo) << endl;
-	out << trUtf8("   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.") << endl;
-	out << trUtf8("   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.") << endl;
+	out << tr("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(InputDb).arg(CompareTo) << endl;
+	out << tr("   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.") << endl;
+	out << tr("   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.") << endl;
 	out << endl;
 }
 
@@ -487,12 +487,12 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 		map<QString, Connection *>::iterator itr=connections.begin();
 
 		if(connections.empty())
-			out << endl <<  trUtf8("There are no connections configured.") << endl << endl;
+			out << endl <<  tr("There are no connections configured.") << endl << endl;
 		else
 		{
 			unsigned id=0;
 
-			out << endl << trUtf8("Available connections (alias : connection string)") << endl;
+			out << endl << tr("Available connections (alias : connection string)") << endl;
 			while(itr != connections.end())
 			{
 				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
@@ -525,54 +525,54 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
 
 		if(other_modes_cnt==0 && mode_cnt==0)
-			throw Exception(trUtf8("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff)) || (mode_cnt==0 && other_modes_cnt > 1))
-			throw Exception(trUtf8("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!fix_model && !upd_mime && mode_cnt > 1)
-			throw Exception(trUtf8("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!upd_mime && !import_db && !diff && opts[Input].isEmpty())
-			throw Exception(trUtf8("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && opts[InputDb].isEmpty())
-			throw Exception(trUtf8("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(!opts.count(ExportToDbms) && !upd_mime && !diff && opts[Output].isEmpty())
-			throw Exception(trUtf8("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
 			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
-			throw Exception(trUtf8("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(opts.count(ExportToDbms) && !opts.count(ConnAlias) &&
 			 (!opts.count(Host) || !opts.count(User) || !opts.count(Passwd) || !opts.count(InitialDb)) )
-			throw Exception(trUtf8("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Incomplete connection information!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(opts.count(ExportToPng) && (zoom < ModelWidget::MinimumZoom || zoom > ModelWidget::MaximumZoom))
-			throw Exception(trUtf8("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Invalid zoom specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
-			throw Exception(trUtf8("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			throw Exception(tr("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			
 		if(opts.count(Diff))
 		{
 			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
-				throw Exception(trUtf8("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts[Input].isEmpty() && !opts[InputDb].isEmpty())
-				throw Exception(trUtf8("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(CompareTo))
-				throw Exception(trUtf8("No database to be compared was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("No database to be compared was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(SaveDiff) && !opts.count(ApplyDiff))
-				throw Exception(trUtf8("No diff action (save or apply) was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("No diff action (save or apply) was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
-				throw Exception(trUtf8("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
@@ -592,7 +592,7 @@ int PgModelerCli::exec(void)
 	{
 		if(!parsed_opts.empty())
 		{
-			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(trUtf8("command line interface.")));
+			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(tr("command line interface.")));
 
 			if(parsed_opts.count(FixModel))
 				fixModel();
@@ -625,8 +625,8 @@ void PgModelerCli::updateProgress(int progress, QString msg, ObjectType)
 void PgModelerCli::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
 {
 	out << endl;
-	out << trUtf8("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << endl;
-	out << trUtf8("** Command: %1").arg(cmd) << endl;
+	out << tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << endl;
+	out << tr("** Command: %1").arg(cmd) << endl;
 	out << err_msg << endl;
 	out << endl;
 }
@@ -706,7 +706,7 @@ void PgModelerCli::extractObjectXML(void)
 	int start=-1, end=-1;
 	bool open_tag=false, close_tag=false, is_rel=false, short_tag=false, end_extract_rel;
 
-	printMessage(trUtf8("Extracting objects' XML..."));
+	printMessage(tr("Extracting objects' XML..."));
 
 	input.setFileName(parsed_opts[Input]);
 	input.open(QFile::ReadOnly);
@@ -722,7 +722,7 @@ void PgModelerCli::extractObjectXML(void)
 	start=regexp.indexIn(buf);
 
 	if(start < 0)
-		throw Exception(trUtf8("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(tr("Invalid input file! It seems that is not a pgModeler generated model or the file is corrupted!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		//Extracting layers informations from the tag <dbmodel>
@@ -878,7 +878,7 @@ void PgModelerCli::recreateObjects(void)
 	unsigned tries=0, max_tries=parsed_opts[FixTries].toUInt();
 	int start_pos=-1, end_pos=-1, len=0;
 
-	printMessage(trUtf8("Recreating objects..."));
+	printMessage(tr("Recreating objects..."));
 
 	if(max_tries==0)
 		max_tries=1;
@@ -997,7 +997,7 @@ void PgModelerCli::recreateObjects(void)
 			if(tries > max_tries)
 			{
 				//Outputs the code of the objects that wasn't created
-				out << trUtf8("\n** Object(s) that couldn't fixed: ") << endl;
+				out << tr("\n** Object(s) that couldn't fixed: ") << endl;
 				while(!fail_objs.isEmpty())
 				{
 					out << fail_objs.front() << endl;
@@ -1008,7 +1008,7 @@ void PgModelerCli::recreateObjects(void)
 			}
 			else
 			{
-				printMessage(trUtf8("WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries));
+				printMessage(tr("WARNING: There are objects that maybe can't be fixed. Trying again... (tries %1/%2)").arg(tries).arg(max_tries));
 				model->validateRelationships();
 				objs_xml=fail_objs;
 				objs_xml.append(constr);
@@ -1250,22 +1250,22 @@ void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 
 void PgModelerCli::fixModel(void)
 {
-	printMessage(trUtf8("Starting model fixing..."));
-	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[Input]));
-	printMessage(trUtf8("Fixed model file: %1").arg(parsed_opts[Output]));
+	printMessage(tr("Starting model fixing..."));
+	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
+	printMessage(tr("Fixed model file: %1").arg(parsed_opts[Output]));
 
 	extractObjectXML();
 	recreateObjects();
 	model->updateTablesFKRelationships();
 	model->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
 
-	printMessage(trUtf8("Model successfully fixed!"));
+	printMessage(tr("Model successfully fixed!"));
 }
 
 void PgModelerCli::exportModel(void)
 {
-	printMessage(trUtf8("Starting model export..."));
-	printMessage(trUtf8("Loading input file: %1").arg(parsed_opts[Input]));
+	printMessage(tr("Starting model export..."));
+	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
 
 	//Create the systems objects on model before loading it
 	model->createSystemObjects(false);
@@ -1276,7 +1276,7 @@ void PgModelerCli::exportModel(void)
 	//Export to PNG
 	if(parsed_opts.count(ExportToPng))
 	{
-		printMessage(trUtf8("Export to PNG image: %1").arg(parsed_opts[Output]));
+		printMessage(tr("Export to PNG image: %1").arg(parsed_opts[Output]));
 
 		export_hlp.exportToPNG(scene, parsed_opts[Output], zoom,
 								 parsed_opts.count(ShowGrid) > 0,
@@ -1286,7 +1286,7 @@ void PgModelerCli::exportModel(void)
 	//Export to SVG
 	else if(parsed_opts.count(ExportToSvg))
 	{
-		printMessage(trUtf8("Export to SVG file: %1").arg(parsed_opts[Output]));
+		printMessage(tr("Export to SVG file: %1").arg(parsed_opts[Output]));
 
 		export_hlp.exportToSVG(scene, parsed_opts[Output],
 													 parsed_opts.count(ShowGrid) > 0,
@@ -1295,19 +1295,19 @@ void PgModelerCli::exportModel(void)
 	//Export to SQL file
 	else if(parsed_opts.count(ExportToFile))
 	{
-		printMessage(trUtf8("Export to SQL script file: %1").arg(parsed_opts[Output]));
+		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
 		export_hlp.exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
 	{
-		printMessage(trUtf8("Export to data dictionary: %1").arg(parsed_opts[Output]));
+		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
 		export_hlp.exportToDataDict(model, parsed_opts[Output], parsed_opts.count(NoIndex) == 0, parsed_opts.count(Splitted) > 0);
 	}
 	//Export to DBMS
 	else
 	{
-		printMessage(trUtf8("Export to DBMS: %1").arg(connection.getConnectionString().replace(PasswordRegExp, PasswordPlaceholder)));
+		printMessage(tr("Export to DBMS: %1").arg(connection.getConnectionString().replace(PasswordRegExp, PasswordPlaceholder)));
 
 		if(parsed_opts.count(IgnoreErrorCodes))
 			export_hlp.setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
@@ -1320,24 +1320,24 @@ void PgModelerCli::exportModel(void)
 								parsed_opts.count(UseTmpNames) > 0);
 	}
 
-	printMessage(trUtf8("Export successfully ended!\n"));
+	printMessage(tr("Export successfully ended!\n"));
 }
 
 void PgModelerCli::importDatabase(void)
 {
-	printMessage(trUtf8("Starting database import..."));
-	printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
+	printMessage(tr("Starting database import..."));
+	printMessage(tr("Input database: %1").arg(connection.getConnectionId(true, true)));
 
 	ModelWidget *model_wgt = new ModelWidget;
 
 	importDatabase(model_wgt->getDatabaseModel(), connection);
 	model_wgt->rearrangeSchemasInGrid();
 
-	printMessage(trUtf8("Saving the imported database to file..."));
+	printMessage(tr("Saving the imported database to file..."));
 
 	model_wgt->getDatabaseModel()->saveModel(parsed_opts[Output], SchemaParser::XmlDefinition);
 
-	printMessage(trUtf8("Import successfully ended!\n"));
+	printMessage(tr("Import successfully ended!\n"));
 
 	delete(model_wgt);
 }
@@ -1388,29 +1388,29 @@ void PgModelerCli::diffModelDatabase(void)
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
 
-	printMessage(trUtf8("Starting diff process..."));
+	printMessage(tr("Starting diff process..."));
 
 	if(!parsed_opts[Input].isEmpty())
-		printMessage(trUtf8("Input model: %1").arg(parsed_opts[Input]));
+		printMessage(tr("Input model: %1").arg(parsed_opts[Input]));
 	else
-		printMessage(trUtf8("Input database: %1").arg(connection.getConnectionId(true, true)));
+		printMessage(tr("Input database: %1").arg(connection.getConnectionId(true, true)));
 
 	dbname = extra_connection.getConnectionId(true, true);
-	printMessage(trUtf8("Compare to: %1").arg(dbname));
+	printMessage(tr("Compare to: %1").arg(dbname));
 
 	if(!parsed_opts[Input].isEmpty())
 	{
-		printMessage(trUtf8("Loading input model..."));
+		printMessage(tr("Loading input model..."));
 		model->createSystemObjects(false);
 		model->loadModel(parsed_opts[Input]);
 	}
 	else
 	{
-		printMessage(trUtf8("Importing the database `%1'...").arg(connection.getConnectionId(true, true)));
+		printMessage(tr("Importing the database `%1'...").arg(connection.getConnectionId(true, true)));
 		importDatabase(model, connection);
 	}
 
-	printMessage(trUtf8("Importing the database `%1'...").arg(dbname));
+	printMessage(tr("Importing the database `%1'...").arg(dbname));
 	importDatabase(model_aux, extra_connection);
 
 	diff_hlp.setModels(model, model_aux);
@@ -1434,18 +1434,18 @@ void PgModelerCli::diffModelDatabase(void)
 		extra_connection.close();
 	}
 
-	printMessage(trUtf8("Comparing the generated models..."));
+	printMessage(tr("Comparing the generated models..."));
 	diff_hlp.diffModels();
 
 	if(diff_hlp.getDiffDefinition().isEmpty())
-		printMessage(trUtf8("No differences were detected."));
+		printMessage(tr("No differences were detected."));
 	else
 	{
 		if(parsed_opts.count(SaveDiff))
 		{
 			QFile output;
 
-			printMessage(trUtf8("Saving diff to file `%1'").arg(parsed_opts[Output]));
+			printMessage(tr("Saving diff to file `%1'").arg(parsed_opts[Output]));
 			output.setFileName(parsed_opts[Output]);
 
 			if(!output.open(QFile::WriteOnly))
@@ -1487,28 +1487,28 @@ void PgModelerCli::diffModelDatabase(void)
 				}
 
 				out << endl;
-				out << trUtf8("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << endl;
+				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << endl;
 
 				do
 				{
-					out << trUtf8("** Proceed with the diff applying? (yes/no) > ");
+					out << tr("** Proceed with the diff applying? (yes/no) > ");
 					out.flush();
 
 					in.skipWhiteSpace();
 					res = in.readLine();
 				}
-				while(res.toLower() != trUtf8("yes") && res.toLower() != trUtf8("no"));
+				while(res.toLower() != tr("yes") && res.toLower() != tr("no"));
 
-				if(res.toLower() == trUtf8("no"))
+				if(res.toLower() == tr("no"))
 				{
 					apply_diff = false;
-					printMessage(trUtf8("Diff code not applied to the server."));
+					printMessage(tr("Diff code not applied to the server."));
 				}
 			}
 
 			if(apply_diff)
 			{
-				printMessage(trUtf8("Applying diff to the database `%1'...").arg(dbname));
+				printMessage(tr("Applying diff to the database `%1'...").arg(dbname));
 				export_hlp.setExportToDBMSParams(diff_hlp.getDiffDefinition(),
 												 &extra_connection,
 												 parsed_opts[CompareTo], parsed_opts.count(IgnoreDuplicates));
@@ -1521,7 +1521,7 @@ void PgModelerCli::diffModelDatabase(void)
 		}
 	}
 
-	printMessage(trUtf8("Diff successfully ended!\n"));
+	printMessage(tr("Diff successfully ended!\n"));
 }
 
 void PgModelerCli::updateMimeType(void)
@@ -1529,11 +1529,11 @@ void PgModelerCli::updateMimeType(void)
 #ifndef Q_OS_MAC
 	try
 	{
-		printMessage(trUtf8("Starting mime update..."));
+		printMessage(tr("Starting mime update..."));
 
 		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall);
 
-		printMessage(trUtf8("Mime database successfully updated!\n"));
+		printMessage(tr("Mime database successfully updated!\n"));
 	}
 	catch (Exception &e)
 	{
@@ -1600,10 +1600,10 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 void PgModelerCli::handleMimeDatabase(bool uninstall)
 {
 	SchemaParser schparser;
-	QString msg_file_associated=trUtf8("Database model files (.dbm) are already associated to pgModeler!"),
-			msg_no_association=trUtf8("There is no file association related to pgModeler and .dbm files!");
+	QString msg_file_associated=tr("Database model files (.dbm) are already associated to pgModeler!"),
+			msg_no_association=tr("There is no file association related to pgModeler and .dbm files!");
 
-	printMessage(trUtf8("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
+	printMessage(tr("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
 
 #ifdef Q_OS_LINUX
 	attribs_map attribs;
@@ -1662,7 +1662,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 			if(uninstall)
 			{
 				if(!QFile(files[i]).remove())
-					throw Exception(trUtf8("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
+					throw Exception(tr("Can't erase the file %1! Check if the current user has permissions to delete it and if the file exists.").arg(files[i]),
 													ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 			else
@@ -1737,7 +1737,7 @@ void PgModelerCli::handleMimeDatabase(bool uninstall)
 		}
 
 		//Update the mime database
-		printMessage(trUtf8("Running update-mime-database command..."));
+		printMessage(tr("Running update-mime-database command..."));
 
 		QProcess::execute(QString("update-mime-database"), QStringList { mime_db_dir });
 	}

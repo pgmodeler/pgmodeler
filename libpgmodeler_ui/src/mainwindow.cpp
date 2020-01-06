@@ -49,9 +49,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
-	arrange_menu.addAction(trUtf8("Grid"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(trUtf8("Hierarchical"), this, SLOT(arrangeObjects()));
-	arrange_menu.addAction(trUtf8("Scattered"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Hierarchical"), this, SLOT(arrangeObjects()));
+	arrange_menu.addAction(tr("Scattered"), this, SLOT(arrangeObjects()));
 
 	try
 	{
@@ -256,7 +256,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
 #ifdef DEMO_VERSION
-	window_title+=trUtf8(" (Demo)");
+	window_title+=tr(" (Demo)");
 #endif
 
 	this->setWindowTitle(window_title);
@@ -676,8 +676,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			{
 				Messagebox msg_box;
 
-				msg_box.show(trUtf8("Save modified model(s)"),
-							 trUtf8("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
+				msg_box.show(tr("Save modified model(s)"),
+							 tr("The following models were modified but not saved: %1. Do you really want to quit pgModeler?").arg(model_names.join(", ")),
 							 Messagebox::ConfirmIcon,Messagebox::YesNoButtons);
 
 				/* If the user rejects the message box the close event will be aborted
@@ -838,7 +838,7 @@ void MainWindow::updateRecentModelsMenu(void)
 	if(!recent_mdls_menu.isEmpty())
 	{
 		recent_mdls_menu.addSeparator();
-		recent_mdls_menu.addAction(trUtf8("Clear Menu"), this, SLOT(clearRecentModelsMenu(void)));
+		recent_mdls_menu.addAction(tr("Clear Menu"), this, SLOT(clearRecentModelsMenu(void)));
 		action_recent_models->setMenu(&recent_mdls_menu);
 		dynamic_cast<QToolButton *>(control_tb->widgetForAction(action_recent_models))->setPopupMode(QToolButton::InstantPopup);
 	}
@@ -886,7 +886,7 @@ void MainWindow::addModel(const QString &filename)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: database model creation limit."
 	if(models_tbw->count()==1)
-		throw Exception(trUtf8("The demonstration version can create only `one' instance of database model!"),
+		throw Exception(tr("The demonstration version can create only `one' instance of database model!"),
 										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #endif
 
@@ -1252,8 +1252,8 @@ void MainWindow::closeModel(int model_id)
 		//Ask the user to save the model if its modified
 		if(model->isModified())
 		{
-			msg_box.show(trUtf8("Save model"),
-						 trUtf8("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
+			msg_box.show(tr("Save model"),
+						 tr("The model <strong>%1</strong> was modified! Do you really want to close without save it?").arg(model->getDatabaseModel()->getName()),
 						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 		}
 #endif
@@ -1381,8 +1381,8 @@ void MainWindow::saveModel(ModelWidget *model)
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: model saving disabled."
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! The model saving feature is available only in the full version!"),
+	msg_box.show(tr("Warning"),
+				 tr("You're running a demonstration version! The model saving feature is available only in the full version!"),
 				 Messagebox::AlertIcon, Messagebox::OkButton);
 #else
 	try
@@ -1396,10 +1396,10 @@ void MainWindow::saveModel(ModelWidget *model)
 
 			if(confirm_validation && db_model->isInvalidated())
 			{
-				msg_box.show(trUtf8("Confirmation"),
-							 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
+				msg_box.show(tr("Confirmation"),
+							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::AlertIcon, Messagebox::AllButtons,
-							 trUtf8("Validate"), trUtf8("Save anyway"), QString(),
+							 tr("Validate"), tr("Save anyway"), QString(),
 								PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("salvar"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
@@ -1432,8 +1432,8 @@ void MainWindow::saveModel(ModelWidget *model)
 					QFileDialog file_dlg;
 
 					file_dlg.setDefaultSuffix(QString("dbm"));
-					file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-					file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+					file_dlg.setWindowTitle(tr("Save '%1' as...").arg(model->db_model->getName()));
+					file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
 					file_dlg.setFileMode(QFileDialog::AnyFile);
 					file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 					file_dlg.setModal(true);
@@ -1475,10 +1475,10 @@ void MainWindow::exportModel(void)
 
 	if(confirm_validation && db_model->isInvalidated())
 	{
-		msg_box.show(trUtf8("Confirmation"),
-					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
+		msg_box.show(tr("Confirmation"),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 trUtf8("Validate"), trUtf8("Export anyway"), QString(),
+					 tr("Validate"), tr("Export anyway"), QString(),
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("exportar"));
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1535,10 +1535,10 @@ void MainWindow::diffModelDatabase(void)
 
 	if(confirm_validation && db_model && db_model->isInvalidated())
 	{
-		msg_box.show(trUtf8("Confirmation"),
-					 trUtf8(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
+		msg_box.show(tr("Confirmation"),
+					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 trUtf8("Validate"), trUtf8("Diff anyway"), QString(),
+					 tr("Validate"), tr("Diff anyway"), QString(),
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("diff"));
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1583,7 +1583,7 @@ void MainWindow::printModel(void)
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
-		print_dlg.setWindowTitle(trUtf8("Database model printing"));
+		print_dlg.setWindowTitle(tr("Database model printing"));
 
 		//Get the page configuration of the scene
 		ObjectsScene::getPaperConfiguration(paper_size, orientation, margins, custom_size);
@@ -1611,7 +1611,7 @@ void MainWindow::printModel(void)
 			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 					orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
-				msg_box.show(trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
+				msg_box.show(tr("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 							 Messagebox::AlertIcon, Messagebox::AllButtons);
 			}
 
@@ -1632,9 +1632,9 @@ void MainWindow::loadModel(void)
 
 	try
 	{
-		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
-		file_dlg.setWindowTitle(trUtf8("Load model"));
+		file_dlg.setWindowTitle(tr("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
@@ -1683,9 +1683,9 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 
 	msg_box.show(Exception(Exception::getErrorMessage(ErrorCode::ModelFileNotLoaded).arg(filename),
 												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
-							 trUtf8("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
+							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
-							 trUtf8("Fix model"), trUtf8("Cancel"), QString(),
+							 tr("Fix model"), tr("Cancel"), QString(),
 							 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -1850,7 +1850,7 @@ void MainWindow::configureSamplesMenu(void)
 
 	if(sample_mdls_menu.isEmpty())
 	{
-		act=sample_mdls_menu.addAction(trUtf8("(no samples found)"));
+		act=sample_mdls_menu.addAction(tr("(no samples found)"));
 		act->setEnabled(false);
 	}
 
@@ -1917,8 +1917,8 @@ void MainWindow::showDemoVersionWarning(void)
 {
 #ifdef DEMO_VERSION
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
+	msg_box.show(tr("Warning"),
+				 tr("You're running a demonstration version! Note that you'll be able to create only <strong>%1</strong> instances \
 						of each type of object and some key features will be disabled or limited!<br/><br/>You can purchase a full binary copy or get the source code at <a href='https://pgmodeler.io'>https://pgmodeler.io</a>.\
 						<strong>NOTE:</strong> pgModeler is an open source software, but purchasing binary copies or providing some donations will support the project and keep the development alive and at full speed!<br/><br/>\
 						<strong>HINT:</strong> in order to test all features it's recommended to use the <strong>demo.dbm</strong> model located in </strong>Sample models</strong> at <strong>Welcome</strong> view.<br/><br/><br/><br/>").arg(GlobalAttributes::MaxObjectCount),
@@ -1934,7 +1934,7 @@ void MainWindow::executePendingOperation(bool valid_error)
 																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
 		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,
-											trUtf8("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
+											tr("Executing pending <strong>%1</strong> operation...").arg(op_names[pending_op]));
 
 		if(pending_op==PendingSaveOp || pending_op==PendingSaveAsOp)
 			saveModel();
@@ -2047,7 +2047,7 @@ void MainWindow::arrangeObjects(void)
 		return;
 
 	Messagebox msgbox;
-	msgbox.show(trUtf8("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	msgbox.show(tr("Rearrange objects over the canvas is an irreversible operation! Would like to proceed?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msgbox.result() == QDialog::Accepted)
 	{

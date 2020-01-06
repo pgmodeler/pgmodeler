@@ -57,11 +57,11 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 
 		references_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::UpdateButton, true, this);
 		references_tab->setColumnCount(5);
-		references_tab->setHeaderLabel(trUtf8("Col./Expr."), 0);
-		references_tab->setHeaderLabel(trUtf8("Table alias"), 1);
-		references_tab->setHeaderLabel(trUtf8("Column alias"), 2);
-		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW EX VD"), 3);
-		references_tab->setHeaderLabel(trUtf8("Reference alias"), 4);
+		references_tab->setHeaderLabel(tr("Col./Expr."), 0);
+		references_tab->setHeaderLabel(tr("Table alias"), 1);
+		references_tab->setHeaderLabel(tr("Column alias"), 2);
+		references_tab->setHeaderLabel(tr("Flags: SF FW AW EX VD"), 3);
+		references_tab->setHeaderLabel(tr("Reference alias"), 4);
 
 		vbox=new QVBoxLayout(tabWidget->widget(0));
 		vbox->setContentsMargins(4,4,4,4);
@@ -90,30 +90,30 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		}
 
 		objects_tab_map[ObjectType::Trigger]->setColumnCount(6);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Refer. Table"), 1);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Refer. Table"), 1);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),1);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Firing"), 2);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Firing"), 2);
 		objects_tab_map[ObjectType::Trigger]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("trigger")),2);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Events"), 3);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Alias"), 4);
-		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(trUtf8("Comment"), 5);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Events"), 3);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Alias"), 4);
+		objects_tab_map[ObjectType::Trigger]->setHeaderLabel(tr("Comment"), 5);
 
 		objects_tab_map[ObjectType::Index]->setColumnCount(4);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Index]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Indexing"), 1);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Alias"), 2);
-		objects_tab_map[ObjectType::Index]->setHeaderLabel(trUtf8("Comment"), 3);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Indexing"), 1);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Alias"), 2);
+		objects_tab_map[ObjectType::Index]->setHeaderLabel(tr("Comment"), 3);
 
 		objects_tab_map[ObjectType::Rule]->setColumnCount(5);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Name"), 0);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Name"), 0);
 		objects_tab_map[ObjectType::Rule]->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Execution"), 1);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Event"), 2);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Alias"), 3);
-		objects_tab_map[ObjectType::Rule]->setHeaderLabel(trUtf8("Comment"), 4);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Execution"), 1);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Event"), 2);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Alias"), 3);
+		objects_tab_map[ObjectType::Rule]->setHeaderLabel(tr("Comment"), 4);
 
 
 		tablespace_sel->setEnabled(false);
@@ -619,7 +619,7 @@ void ViewWidget::updateCodePreview(void)
 	{
 		QString str_aux;
 		//In case of error no code is outputed, showing a error message in the code preview widget
-		str_aux=trUtf8("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
+		str_aux=tr("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
 		code_txt->setPlainText(str_aux);
 	}

@@ -45,23 +45,23 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
 
-		action_gen_insert=new QAction(trUtf8("Generic INSERT"), this);
+		action_gen_insert=new QAction(tr("Generic INSERT"), this);
 		action_gen_insert->setObjectName(QString("action_gen_insert"));
-		action_inc_serials=new QAction(trUtf8("Include serial columns"), this);
+		action_inc_serials=new QAction(tr("Include serial columns"), this);
 		action_inc_serials->setObjectName(QString("action_inc_serials"));
-		action_exc_serials=new QAction(trUtf8("Exclude serial columns"), this);
+		action_exc_serials=new QAction(tr("Exclude serial columns"), this);
 		action_exc_serials->setObjectName(QString("action_exc_serials"));
-		action_gen_select=new QAction(trUtf8("Generic SELECT"), this);
+		action_gen_select=new QAction(tr("Generic SELECT"), this);
 		action_gen_select->setObjectName(QString("action_gen_select"));
-		action_tab_select=new QAction(trUtf8("Table SELECT"), this);
+		action_tab_select=new QAction(tr("Table SELECT"), this);
 		action_tab_select->setObjectName(QString("action_tab_select"));
-		action_gen_update=new QAction(trUtf8("Generic UPDATE"), this);
+		action_gen_update=new QAction(tr("Generic UPDATE"), this);
 		action_gen_update->setObjectName(QString("action_gen_update"));
-		action_tab_update=new QAction(trUtf8("Table UPDATE"), this);
+		action_tab_update=new QAction(tr("Table UPDATE"), this);
 		action_tab_update->setObjectName(QString("action_tab_update"));
-		action_gen_delete=new QAction(trUtf8("Generic DELETE"), this);
+		action_gen_delete=new QAction(tr("Generic DELETE"), this);
 		action_gen_delete->setObjectName(QString("action_gen_delete"));
-		action_tab_delete=new QAction(trUtf8("Table DELETE"), this);
+		action_tab_delete=new QAction(tr("Table DELETE"), this);
 		action_tab_delete->setObjectName(QString("action_tab_delete"));
 
 		insert_menu.addAction(action_inc_serials);

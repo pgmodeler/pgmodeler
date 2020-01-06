@@ -128,8 +128,8 @@ void ConfigurationForm::loadConfiguration(void)
 			else
 			{
 				Exception ex = Exception(Exception::getErrorMessage(ErrorCode::ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-										 Messagebox::AlertIcon, Messagebox::YesNoButtons, trUtf8("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
+										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
 
 				if(msg_box.result() == QDialog::Accepted)
 					config_wgt->restoreDefaults();
@@ -141,7 +141,7 @@ void ConfigurationForm::loadConfiguration(void)
 void ConfigurationForm::restoreDefaults(void)
 {
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
+	msg_box.show(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 

@@ -66,7 +66,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 	invalid_cli_lbl->setVisible(false);
 	input_file_edt->clear();
 	output_file_edt->clear();
-	output_txt->setPlainText(trUtf8("Waiting process to start..."));
+	output_txt->setPlainText(tr("Waiting process to start..."));
 	load_model_chk->setChecked(true);
 }
 
@@ -77,7 +77,7 @@ int ModelFixForm::exec(void)
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-		not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
 							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
@@ -148,7 +148,7 @@ void ModelFixForm::selectFile(void)
 
 		file_dlg.selectFile(cli_cmd);
 		file_dlg.setFileMode(QFileDialog::ExistingFile);
-		file_dlg.setNameFilter(trUtf8("pgModeler command line tool (%1)").arg(cli_cmd));
+		file_dlg.setNameFilter(tr("pgModeler command line tool (%1)").arg(cli_cmd));
 		file_dlg.setWindowTitle(QString("Browse pgmodeler-cli command..."));
 	}
 	else

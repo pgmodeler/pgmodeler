@@ -165,7 +165,7 @@ void ModelObjectsWidget::selectObject(void)
 				obj_type!=ObjectType::Index && obj_type!=ObjectType::Trigger && obj_type!=ObjectType::Permission)
 		{
 			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
+						tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
@@ -913,7 +913,8 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	{
 		QPoint pos_dif;
 		QDesktopWidget desktop;
-		QRect ret=desktop.screenGeometry();
+		//QRect ret=desktop.screenGeometry();
+		QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
 		int px, py;
 
 		pos_dif=pos1-pos;
@@ -1025,7 +1026,7 @@ void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
 	if(item)
 	{
 		objectstree_tw->blockSignals(true);
-		objectstree_tw->setItemSelected(item, true);
+		item->setSelected(true);
 		objectstree_tw->setCurrentItem(item);
 		objectstree_tw->scrollToItem(item);
 		selected_object=obj;

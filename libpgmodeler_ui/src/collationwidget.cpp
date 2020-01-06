@@ -27,7 +27,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 		Ui_CollationWidget::setupUi(this);
 
-		frame=generateInformationFrame(trUtf8("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
+		frame=generateInformationFrame(tr("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
 
 		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
@@ -36,7 +36,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);
-		encodings.push_front(trUtf8("Not defined"));
+		encodings.push_front(tr("Not defined"));
 		encoding_cmb->addItems(encodings);
 
 		//Configures the localizations combobox
@@ -48,7 +48,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 
 		loc_list.removeDuplicates();
 		loc_list.sort();
-		loc_list.push_front(trUtf8("Not defined"));
+		loc_list.push_front(tr("Not defined"));
 
 		lccollate_cmb->addItems(loc_list);
 		lcctype_cmb->addItems(loc_list);

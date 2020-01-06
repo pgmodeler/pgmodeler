@@ -368,7 +368,7 @@ void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
 
 		if((obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount) ||
 				(obj_type==ObjectType::Table && ancestor_tables.size() >= GlobalAttributes::MaxObjectCount))
-			throw Exception(trUtf8("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
+			throw Exception(tr("In demonstration version tables can have only `%1' instances of each child object type or ancestor tables! You've reach this limit for the type: `%2'")
 							.arg(GlobalAttributes::MaxObjectCount)
 							.arg(BaseObject::getTypeName(obj_type)),
 							ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);

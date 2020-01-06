@@ -45,7 +45,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 									ObjectsTableWidget::RemoveButton |
 									ObjectsTableWidget::EditButton, false, this);
 	roles_tab->setColumnCount(1);
-	roles_tab->setHeaderLabel(trUtf8("Name"),0);
+	roles_tab->setHeaderLabel(tr("Name"),0);
 	roles_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
 
 	grid=new QGridLayout;
@@ -57,11 +57,11 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 										  ObjectsTableWidget::EditButton |
 										  ObjectsTableWidget::RemoveAllButton, true, this);
 	permissions_tab->setColumnCount(3);
-	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
+	permissions_tab->setHeaderLabel(tr("Id"),0);
 	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	permissions_tab->setHeaderLabel(trUtf8("Roles"),1);
+	permissions_tab->setHeaderLabel(tr("Roles"),1);
 	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),1);
-	permissions_tab->setHeaderLabel(trUtf8("Privileges"),2);
+	permissions_tab->setHeaderLabel(tr("Privileges"),2);
 	permissions_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("grant")),2);
 
 	grid=new QGridLayout;
@@ -84,7 +84,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 	}
 
-	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
+	frame=generateInformationFrame(tr("Leave the <em><strong>Roles</strong></em> grid empty in order to create a %1 applicable to <strong><em>PUBLIC</em></strong>.")
 																 .arg(BaseObject::getTypeName(ObjectType::Permission).toLower()));
 	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
@@ -519,7 +519,7 @@ void PermissionWidget::updateCodePreview(void)
 			code+=perms[i]->getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(code.isEmpty())
-			code=trUtf8("-- No permissions defined for the specified object!");
+			code=tr("-- No permissions defined for the specified object!");
 
 		code_txt->setPlainText(code);
 	}
@@ -527,7 +527,7 @@ void PermissionWidget::updateCodePreview(void)
 	{
 		QString str_aux;
 		//In case of error no code is outputed, showing a error message in the code preview widget
-		str_aux=trUtf8("/* Could not generate the SQL code preview for permissions!");
+		str_aux=tr("/* Could not generate the SQL code preview for permissions!");
 		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
 		code_txt->setPlainText(str_aux);
 	}

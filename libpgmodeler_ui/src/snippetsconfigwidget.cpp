@@ -28,7 +28,7 @@ const QRegExp SnippetsConfigWidget::IdFormatRegExp=QRegExp(QString("^([a-z])([a-
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPixmap ico;
-	QString gen_purpose=trUtf8("General purpose");
+	QString gen_purpose=tr("General purpose");
 	map<QString, ObjectType> types_map;
 	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
 																														 ObjectType::Permission, ObjectType::BaseRelationship });
@@ -50,7 +50,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	applies_to_cmb->setCurrentIndex(0);
 
 	filter_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
-	filter_cmb->insertItem(0, trUtf8("All snippets"));
+	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
 	parsable_ht=new HintTextWidget(parsable_hint, this);
@@ -201,7 +201,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 		}
 		catch(Exception &e)
 		{
-			return(trUtf8("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage()));
+			return(tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage()));
 		}
 	}
 	else
@@ -223,13 +223,13 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 			err_msg;
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
-		err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
+		err_msg=tr("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
 	else if(!IdFormatRegExp.exactMatch(snip_id))
-		err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
+		err_msg=tr("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
 	else if(attribs[Attributes::Label].isEmpty())
-		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+		err_msg=tr("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Contents].isEmpty())
-		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+		err_msg=tr("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Parsable]==Attributes::True)
 	{
 		try
@@ -245,7 +245,7 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 		}
 		catch(Exception &e)
 		{
-			err_msg=trUtf8("The dynamic snippet contains syntax error(s). Additional info: <br/><em>%1</em>").arg(e.getErrorMessage());
+			err_msg=tr("The dynamic snippet contains syntax error(s). Additional info: <br/><em>%1</em>").arg(e.getErrorMessage());
 		}
 	}
 
@@ -363,7 +363,7 @@ void SnippetsConfigWidget::removeAllSnippets(void)
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Do you really want to remove all snippets?"),
+	msg_box.show(tr("Do you really want to remove all snippets?"),
 				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -433,7 +433,7 @@ void SnippetsConfigWidget::parseSnippet(void)
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(trUtf8("No syntax errors found in the snippet."), Messagebox::InfoIcon);
+		msg_box.show(tr("No syntax errors found in the snippet."), Messagebox::InfoIcon);
 	}
 	catch(Exception &e)
 	{
@@ -531,7 +531,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 			if(type_name.isEmpty())
 			{
 				ico=QPixmap();
-				type_name=trUtf8("General");
+				type_name=tr("General");
 			}
 			else
 				ico=QPixmap(PgModelerUiNs::getIconPath(object));

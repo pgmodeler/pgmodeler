@@ -464,7 +464,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 			char_fmt.setFontPointSize(char_fmt.font().pointSizeF() * 0.80);
 
 			sql_disabled_item->setFont(char_fmt.font());
-			sql_disabled_item->setText(trUtf8("SQL off"));
+			sql_disabled_item->setText(tr("SQL off"));
 			sql_disabled_item->setTextBrush(char_fmt.foreground());
 
 			sql_disabled_item->setPolygon(QRectF(QPointF(0,0), sql_disabled_item->getTextBoundingRect().size() + QSizeF(1.5 * HorizSpacing, 1.5 * VertSpacing)));

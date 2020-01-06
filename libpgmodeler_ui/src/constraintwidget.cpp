@@ -51,16 +51,16 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		ref_table_sel=new ObjectSelectorWidget(ObjectType::Table, true, this);
 
 		columns_tab->setColumnCount(2);
-		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		columns_tab->setHeaderLabel(tr("Column"), 0);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		columns_tab->setHeaderLabel(tr("Type"), 1);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->setColumnCount(2);
-		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		ref_columns_tab->setHeaderLabel(tr("Column"), 0);
 		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		ref_columns_tab->setHeaderLabel(tr("Type"), 1);
 		ref_columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
@@ -85,7 +85,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-		info_frm=generateInformationFrame(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
+		info_frm=generateInformationFrame(tr("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 

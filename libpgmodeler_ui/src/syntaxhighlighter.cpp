@@ -32,7 +32,7 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit *parent, bool single_line_mo
 	parent->installEventFilter(this);
 
 	if(use_custom_tab_width)
-		parent->setTabStopWidth(NumberedTextEditor::getTabWidth());
+		parent->setTabStopDistance(NumberedTextEditor::getTabDistance());
 
 	//Adjusting the size of the parent input according to the current font size
 	if(single_line_mode)

@@ -35,18 +35,18 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
 		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
 		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
+		storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
 		elements_tab->setColumnCount(4);
-		elements_tab->setHeaderLabel(trUtf8("Object"),0);
+		elements_tab->setHeaderLabel(tr("Object"),0);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),0);
 
-		elements_tab->setHeaderLabel(trUtf8("Type"),1);
+		elements_tab->setHeaderLabel(tr("Type"),1);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
-		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
-		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
+		elements_tab->setHeaderLabel(tr("Support/Strategy"),2);
+		elements_tab->setHeaderLabel(tr("Operator Family"),3);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;

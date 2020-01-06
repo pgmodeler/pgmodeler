@@ -35,7 +35,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	sql_exec_corner_btn->setIconSize(QSize(18, 18));
 	sql_exec_corner_btn->setStyleSheet("QToolButton { margin-left: 4px; margin-bottom: 4px; padding: 2px; }");
 	sql_exec_corner_btn->setShortcut(QKeySequence("Ctrl+T"));
-	sql_exec_corner_btn->setToolTip(trUtf8("Add a new execution tab for the current database (%1)").arg(sql_exec_corner_btn->shortcut().toString()));
+	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(sql_exec_corner_btn->shortcut().toString()));
 	sql_exec_tbw->setCornerWidget(sql_exec_corner_btn, Qt::TopRightCorner);
 
 	QVBoxLayout *vbox=new QVBoxLayout;
@@ -191,8 +191,8 @@ void SQLToolWidget::disconnectFromDatabases(void)
 	{
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("Warning"),
-					 trUtf8("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
+		msg_box.show(tr("Warning"),
+					 tr("<strong>ATTENTION:</strong> Disconnect from all databases will close any opened tab in this view! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -321,7 +321,7 @@ void SQLToolWidget::addSQLExecutionTab(const QString &conn_id, const QString &da
 
 	if(!ConnectionsConfigWidget::getConnection(conn_id))
 	{
-		throw Exception(trUtf8("Failed to load the file `%1' in SQL tool because the connection ID `%2' was not found!")
+		throw Exception(tr("Failed to load the file `%1' in SQL tool because the connection ID `%2' was not found!")
 										.arg(sql_file).arg(conn_id),
 										ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -358,8 +358,8 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
 	if(sender() == databases_tbw)
 	{
 		Messagebox msg_box;
-		msg_box.show(trUtf8("Warning"),
-					 trUtf8("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
+		msg_box.show(tr("Warning"),
+					 tr("<strong>ATTENTION:</strong> Close the database being browsed will close any opened SQL execution pane related to it! Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result() != QDialog::Accepted)

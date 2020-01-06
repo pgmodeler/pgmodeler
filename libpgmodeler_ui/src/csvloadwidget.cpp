@@ -65,9 +65,9 @@ void CsvLoadWidget::selectCsvFile(void)
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setWindowTitle(trUtf8("Load CSV file"));
+	file_dlg.setWindowTitle(tr("Load CSV file"));
 	file_dlg.setModal(true);
-	file_dlg.setNameFilter(trUtf8("Comma-separted values (*.csv);;All files (*.*)"));
+	file_dlg.setNameFilter(tr("Comma-separted values (*.csv);;All files (*.*)"));
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
 	{

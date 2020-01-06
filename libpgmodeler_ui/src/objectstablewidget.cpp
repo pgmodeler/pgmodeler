@@ -201,7 +201,7 @@ void ObjectsTableWidget::setRowFont(int row_idx, const QFont &font, const QColor
 		item=table_tbw->item(row_idx, i);
 		item->setFont(font);
 		item->setForeground(fg_color);
-		item->setBackgroundColor(bg_color);
+		item->setBackground(bg_color);
 	}
 }
 
@@ -400,7 +400,7 @@ void ObjectsTableWidget::removeRow(void)
 		if(item->isSelected())
 		{
 			if(conf_exclusion)
-				msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove the selected item?"),
+				msg_box.show(tr("Confirmation"),tr("Do you really want to remove the selected item?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
@@ -453,7 +453,7 @@ void ObjectsTableWidget::removeRows(void)
 		/* Only shows the confirmation message if the conf_exclusion is set and the user called the method
 			 activating the 'remove_all_tb' button */
 		if(conf_exclusion && sender_obj==remove_all_tb)
-			msg_box.show(trUtf8("Confirmation"),trUtf8("Do you really want to remove all the items?"),
+			msg_box.show(tr("Confirmation"),tr("Do you really want to remove all the items?"),
 						 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||

@@ -400,7 +400,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						if((!use_curved_lines && lines[i]->line().intersect(lin, &p) == QLineF::BoundedIntersection) ||
+						if((!use_curved_lines && lines[i]->line().intersects(lin, &p) == QLineF::BoundedIntersection) ||
 							 (use_curved_lines && curves[i]->contains(event->pos())))
 						{
 							//Inserts the point to the line
@@ -903,7 +903,7 @@ void RelationshipView::configureLine(void)
 					edge.setP1(pol.at(idx));
 					edge.setP2(pol.at(idx + 1));
 
-					if(line.intersect(edge, &pi)==QLineF::BoundedIntersection)
+					if(line.intersects(edge, &pi)==QLineF::BoundedIntersection)
 					{
 						/* Adjusting the intersection point if there're more than one relationship connected the current table
 						 * this will cause all relationships to be aligned together */
@@ -1664,7 +1664,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 				edge.setP1(pol.at(idx));
 				edge.setP2(pol.at(idx + 1));
 
-				if(rel_lines[tab_id].intersect(edge, &pi)==QLineF::BoundedIntersection)
+				if(rel_lines[tab_id].intersects(edge, &pi)==QLineF::BoundedIntersection)
 				{
 					cf_descriptors[tab_id]->setPos(pi);
 					break;
@@ -1914,7 +1914,7 @@ void RelationshipView::configureLabels(void)
 			{
 				for(i1=0; i1 < 4; i1++)
 				{
-					if(lins[idx].intersect(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
+					if(lins[idx].intersects(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
 					{
 						if(idx==0)
 							lins[idx].setP1(p_int);

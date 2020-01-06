@@ -35,11 +35,11 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
-		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
+		commands_tab->setHeaderLabel(tr("SQL command"),0);
 		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
-		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
+		frame=generateInformationFrame(tr("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
 		rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 

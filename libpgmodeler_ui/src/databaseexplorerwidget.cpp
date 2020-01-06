@@ -152,45 +152,45 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	QAction *act = nullptr;
 
-	act = toggle_disp_menu.addAction(trUtf8("Show objects filter"));
+	act = toggle_disp_menu.addAction(tr("Show objects filter"));
 	act->setCheckable(true);
 	connect(act, SIGNAL(toggled(bool)), filter_parent, SLOT(setVisible(bool)));
 
 	toggle_disp_menu.addSeparator();
 
-	show_sys_objs = toggle_disp_menu.addAction(trUtf8("Show system objects"));
+	show_sys_objs = toggle_disp_menu.addAction(tr("Show system objects"));
 	show_sys_objs->setCheckable(true);
 	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
-	show_ext_objs = toggle_disp_menu.addAction(trUtf8("Show extension objects"));
+	show_ext_objs = toggle_disp_menu.addAction(tr("Show extension objects"));
 	show_ext_objs->setCheckable(true);
 	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
-	snippets_menu.setTitle(trUtf8("Snippets"));
+	snippets_menu.setTitle(tr("Snippets"));
 	snippets_menu.setIcon(QIcon(QString(":icones/icones/codesnippet.png")));
 
-	drop_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), trUtf8("Drop object"), &handle_menu);
+	drop_action=new QAction(QIcon(QString(":icones/icones/excluir.png")), tr("Drop object"), &handle_menu);
 	drop_action->setShortcut(QKeySequence(Qt::Key_Delete));
 
-	drop_cascade_action=new QAction(QIcon(QString(":icones/icones/delcascade.png")), trUtf8("Drop cascade"), &handle_menu);
+	drop_cascade_action=new QAction(QIcon(QString(":icones/icones/delcascade.png")), tr("Drop cascade"), &handle_menu);
 	drop_cascade_action->setShortcut(QKeySequence("Shift+Del"));
 
-	truncate_action=new QAction(QIcon(QString(":icones/icones/truncate.png")), trUtf8("Truncate"), &handle_menu);
-	trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), trUtf8("Trunc. cascade"), &handle_menu);
+	truncate_action=new QAction(QIcon(QString(":icones/icones/truncate.png")), tr("Truncate"), &handle_menu);
+	trunc_cascade_action=new QAction(QIcon(QString(":icones/icones/trunccascade.png")), tr("Trunc. cascade"), &handle_menu);
 
-	show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), trUtf8("Show data"), &handle_menu);
+	show_data_action=new QAction(QIcon(QString(":icones/icones/result.png")), tr("Show data"), &handle_menu);
 	show_data_action->setShortcut(QKeySequence(Qt::Key_Space));
-	properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), trUtf8("Reload properties"), &handle_menu);
+	properties_action=new QAction(QIcon(QString(":icones/icones/editar.png")), tr("Reload properties"), &handle_menu);
 
-	refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), trUtf8("Update"), &handle_menu);
+	refresh_action=new QAction(QIcon(QString(":icones/icones/atualizar.png")), tr("Update"), &handle_menu);
 	refresh_action->setShortcut(QKeySequence(Qt::Key_F6));
 
-	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), trUtf8("Rename"), &handle_menu);
+	rename_action=new QAction(QIcon(QString(":icones/icones/rename.png")), tr("Rename"), &handle_menu);
 	rename_action->setShortcut(QKeySequence(Qt::Key_F2));
 
-	source_action=new QAction(QIcon(QString(":icones/icones/codigosql.png")), trUtf8("Source code"), &handle_menu);
+	source_action=new QAction(QIcon(QString(":icones/icones/codigosql.png")), tr("Source code"), &handle_menu);
 	source_action->setShortcut(QKeySequence(Qt::Key_F7));
 
 	objects_trw->installEventFilter(this);
@@ -237,15 +237,15 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 	connect(sort_by_name_tb, &QToolButton::clicked,
 	[&]() {
 			sort_column = sort_by_name_tb->isChecked() ? 0 : DatabaseImportForm::ObjectId;
-			objects_trw->sortByColumn(sort_column);
+			objects_trw->sortByColumn(sort_column, Qt::AscendingOrder);
 	});
 
 	QMenu *refresh_menu=new QMenu(refresh_tb);
 
-	act=refresh_menu->addAction(trUtf8("Quick refresh"), this, SLOT(listObjects()), QKeySequence("Alt+F5"));
+	act=refresh_menu->addAction(tr("Quick refresh"), this, SLOT(listObjects()), QKeySequence("Alt+F5"));
 	act->setData(QVariant::fromValue<bool>(true));
 
-	act=refresh_menu->addAction(trUtf8("Full refresh"), this, SLOT(listObjects()), QKeySequence("Ctrl+F5"));
+	act=refresh_menu->addAction(tr("Full refresh"), this, SLOT(listObjects()), QKeySequence("Ctrl+F5"));
 	act->setData(QVariant::fromValue<bool>(false));
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
@@ -1022,7 +1022,7 @@ void DatabaseExplorerWidget::listObjects(void)
 		root->setIcon(0, QPixmap(PgModelerUiNs::getIconPath("server")));
 		root->setData(DatabaseImportForm::ObjectId, Qt::UserRole, -1);
 		root->setData(DatabaseImportForm::ObjectTypeId, Qt::UserRole, enum_cast(ObjectType::BaseObject));
-		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, trUtf8("-- Source code unavailable for this kind of object --"));
+		root->setData(DatabaseImportForm::ObjectSource, Qt::UserRole, tr("-- Source code unavailable for this kind of object --"));
 		root->addChild(curr_root);
 		objects_trw->addTopLevelItem(root);
 		root->setExpanded(true);
@@ -1278,10 +1278,10 @@ void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
 				return;
 
 			if(!cascade)
-				msg=trUtf8("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
+				msg=tr("Do you really want to drop the object <strong>%1</strong> <em>(%2)</em>?")
 					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 			else
-				msg=trUtf8("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
+				msg=tr("Do you really want to <strong>cascade</strong> drop the object <strong>%1</strong> <em>(%2)</em>? This action will drop all the other objects that depends on it.")
 					.arg(obj_name).arg(BaseObject::getTypeName(obj_type));
 
 			msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
@@ -1346,11 +1346,11 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 		QString msg;
 
 		if(!cascade)
-			msg=trUtf8("Do you really want to truncate the table <strong>%1.%2</strong>?").arg(sch_name).arg(obj_name);
+			msg=tr("Do you really want to truncate the table <strong>%1.%2</strong>?").arg(sch_name).arg(obj_name);
 		else
-			msg=trUtf8("Do you really want to truncate in <strong>cascade</strong> mode the table <strong>%1.%2</strong>? This action will truncate all the tables that depends on it?").arg(sch_name).arg(obj_name);
+			msg=tr("Do you really want to truncate in <strong>cascade</strong> mode the table <strong>%1.%2</strong>? This action will truncate all the tables that depends on it?").arg(sch_name).arg(obj_name);
 
-		msg_box.setCustomOptionText(trUtf8("Also restart sequences"));
+		msg_box.setCustomOptionText(tr("Also restart sequences"));
 		msg_box.show(msg, Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1657,7 +1657,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						src_item->setText(0, QString("%1(%2)")
 															.arg(cached_attribs[Attributes::Table])
 															.arg(cached_attribs[Attributes::SrcColumns]));
-						src_item->setToolTip(0, trUtf8("Src. table: %1\nSrc. column(s): %2")
+						src_item->setToolTip(0, tr("Src. table: %1\nSrc. column(s): %2")
 																	.arg(cached_attribs[Attributes::Table])
 																	.arg(cached_attribs[Attributes::SrcColumns]));
 						src_item->setFlags(Qt::ItemIsEnabled);
@@ -1668,7 +1668,7 @@ void DatabaseExplorerWidget::showObjectProperties(bool force_reload)
 						fk_item->setText(0, QString("%1(%2)")
 														.arg(cached_attribs[Attributes::RefTable])
 														.arg(cached_attribs[Attributes::DstColumns]));
-						fk_item->setToolTip(0, trUtf8("Ref. table: %1\nRef. column(s): %2")
+						fk_item->setToolTip(0, tr("Ref. table: %1\nRef. column(s): %2")
 																.arg(cached_attribs[Attributes::RefTable])
 																.arg(cached_attribs[Attributes::DstColumns]));
 						fk_item->setFlags(Qt::ItemIsEnabled);
@@ -1871,7 +1871,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 				if(obj_type==ObjectType::Type &&
 					 (oid <= sys_oid || attribs[Attributes::Configuration]==Attributes::BaseType))
 				{
-					source=QString("-- %1 --").arg(trUtf8("Source code genaration for built-in and base types currently unavailable."));
+					source=QString("-- %1 --").arg(tr("Source code genaration for built-in and base types currently unavailable."));
 					emit s_sourceCodeShowRequested(source);
 				}
 				else
@@ -1925,7 +1925,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 						if(object)
 							source=getObjectSource(object, &dbmodel);
 						else
-							source=QString("-- %1 --").arg(trUtf8("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
+							source=QString("-- %1 --").arg(tr("Source code unavailable for the object %1 (%2).").arg(name).arg(BaseObject::getTypeName(obj_type)));
 					}
 				}
 
@@ -2014,8 +2014,8 @@ void DatabaseExplorerWidget::dropDatabase(void)
 	Messagebox msg_box;
 	QString dbname = connection.getConnectionParam(Connection::ParamDbName);
 
-	msg_box.show(trUtf8("Warning"),
-				 trUtf8("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
+	msg_box.show(tr("Warning"),
+				 tr("<strong>CAUTION:</strong> You are about to drop the entire database <strong>%1</strong> from the server <strong>%2</strong>! All data will be completely wiped out. Do you really want to proceed?")
 							 .arg(dbname).arg(connection.getConnectionId(true)),
 				 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 

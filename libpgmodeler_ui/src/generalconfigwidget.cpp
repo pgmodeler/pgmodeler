@@ -45,17 +45,17 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	Ui_GeneralConfigWidget::setupUi(this);
 
 	line_numbers_cp=new ColorPickerWidget(1, this);
-	line_numbers_cp->setButtonToolTip(0, trUtf8("Line numbers' font color"));
+	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
 
 	line_numbers_bg_cp=new ColorPickerWidget(1, this);
-	line_numbers_bg_cp->setButtonToolTip(0, trUtf8("Line numbers' background color"));
+	line_numbers_bg_cp->setButtonToolTip(0, tr("Line numbers' background color"));
 
 	line_highlight_cp=new ColorPickerWidget(1, this);
-	line_highlight_cp->setButtonToolTip(0, trUtf8("Highlighted line color"));
+	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
 
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
+	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
 
 	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
 	QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
@@ -257,7 +257,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
 	langs.replaceInStrings(QString(".qm"), QString());
-	ui_language_cmb->addItem(trUtf8("System default"));
+	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
 	for(QString lang : langs)
@@ -751,7 +751,7 @@ void GeneralConfigWidget::updateFontPreview(void)
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-	NumberedTextEditor::setTabWidth(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+	NumberedTextEditor::setTabDistance(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
 	font_preview_txt->setReadOnly(false);
@@ -779,9 +779,9 @@ void GeneralConfigWidget::selectSourceEditor(void)
 	QFileDialog sel_editor_dlg;
 
 	sel_editor_dlg.setFileMode(QFileDialog::ExistingFile);
-	sel_editor_dlg.setNameFilter(trUtf8("All files (*.*)"));
+	sel_editor_dlg.setNameFilter(tr("All files (*.*)"));
 	sel_editor_dlg.setModal(true);
-	sel_editor_dlg.setWindowTitle(trUtf8("Load file"));
+	sel_editor_dlg.setWindowTitle(tr("Load file"));
 	sel_editor_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 	sel_editor_dlg.exec();
 
@@ -792,7 +792,7 @@ void GeneralConfigWidget::selectSourceEditor(void)
 void GeneralConfigWidget::resetDialogsSizes(void)
 {
 	Messagebox msg_box;
-	msg_box.show(trUtf8("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
+	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)

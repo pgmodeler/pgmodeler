@@ -32,7 +32,7 @@ bool ObjectsScene::invert_rangesel_trigger=false;
 
 ObjectsScene::ObjectsScene(void)
 {
-	layers.push_back(trUtf8("Default layer"));
+	layers.push_back(tr("Default layer"));
 	active_layers.push_back(layers.at(0));
 
 	moving_objs=move_scene=false;
@@ -1167,7 +1167,8 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
-				tables.unite(sch_view->getChildren().toSet());
+				QList<BaseObjectView *> list = sch_view->getChildren();
+				tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
 			}
 		}
 	}

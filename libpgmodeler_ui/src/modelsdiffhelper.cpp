@@ -257,7 +257,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					 (diff_type!=ObjectsDiffInfo::DropObject)))
 			{
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-															 trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+															 tr("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 															 object->getObjectType());
 
 				//Processing objects that are not database, table child object (they are processed further)
@@ -377,7 +377,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-									   trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+									   tr("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 									   object->getObjectType());
 
 				if(diff_canceled)
@@ -649,7 +649,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		BaseObject::setPgSQLVersion(pgsql_version);
 
 		if(!diff_infos.empty())
-			emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
+			emit s_progressUpdated(0, tr("Processing diff infos..."));
 
 		//Reuniting the schema names to inject a SET search_path command
 		for(auto &schema : *imported_model->getObjectList(ObjectType::Schema))
@@ -677,7 +677,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			col=dynamic_cast<Column *>(object);
 
 			emit s_progressUpdated((idx++/static_cast<double>(diff_infos.size())) * 100,
-								   trUtf8("Processing `%1' info for object `%2' (%3)...")
+								   tr("Processing `%1' info for object `%2' (%3)...")
 								   .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
 								   obj_type);
 
@@ -931,9 +931,9 @@ void ModelsDiffHelper::processDiffInfos(void)
 		}
 
 		if(diff_def.isEmpty())
-			emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
+			emit s_progressUpdated(100, tr("No differences between the model and database."));
 		else
-			emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
+			emit s_progressUpdated(100, tr("Preparing diff code..."));
 
 		//Restoring the global PostgreSQL version
 		BaseObject::setPgSQLVersion(curr_pgsql_ver);

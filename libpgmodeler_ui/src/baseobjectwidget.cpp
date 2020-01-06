@@ -178,7 +178,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
-		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("Required field. Leaving this empty will raise errors!"));
+		widget->setToolTip(widget->toolTip() + str_aux + tr("Required field. Leaving this empty will raise errors!"));
 	}
 }
 
@@ -598,7 +598,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 		{
 			if(values && values->count(wgt) > 0)
 			{
-				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
+				field_name+=QString("<br/>") + tr("Value(s)") + QString(": (");
 				for(auto value : values->at(wgt))
 				{
 					field_name += value;
@@ -611,7 +611,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 
 			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
 			wgt->setToolTip(QString("<em>") +
-											trUtf8("Version ") +
+											tr("Version ") +
 											itr.first + QString(" %1</em>").arg(field_name));
 		}
 	}
@@ -658,7 +658,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
+	msg_lbl->setText(tr("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
 							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);

@@ -48,7 +48,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 				for(int col=0; col < col_count; col++)
 				{
 					if(res.isColumnBinaryFormat(col))
-						item_data.push_back(trUtf8("[binary data]"));
+						item_data.push_back(tr("[binary data]"));
 					else
 						item_data.push_back(res.getColumnValue(col));
 				}
@@ -150,7 +150,7 @@ void ResultSetModel::append(ResultSet &res)
 						if(col < res.getColumnCount())
 						{
 							if(res.isColumnBinaryFormat(col))
-								item_data.push_back(trUtf8("[binary data]"));
+								item_data.push_back(tr("[binary data]"));
 							else
 								item_data.push_back(res.getColumnValue(col));
 						}

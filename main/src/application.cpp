@@ -138,7 +138,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	catch(...)
 	{
 		Messagebox msg_box;
-		msg_box.show(trUtf8("Unknown exception caught!"), Messagebox::ErrorIcon);
+		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
 		return(false);
 	}
 }
@@ -158,7 +158,7 @@ void Application::createUserConfiguration(void)
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-		msg_box.show(e, trUtf8("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
+		msg_box.show(e, tr("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

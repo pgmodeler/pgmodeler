@@ -89,10 +89,10 @@ void LayersWidget::removeLayer(bool clear)
 	Messagebox msg_box;
 
 	if(clear)
-		msg_box.show(trUtf8("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 	else
-		msg_box.show(trUtf8("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
@@ -147,7 +147,7 @@ void LayersWidget::setModel(ModelWidget *model)
 QListWidgetItem *LayersWidget::addLayer(const QString &name)
 {
 	QListWidgetItem *item = nullptr;
-	QString aux_name = name.isEmpty() ? trUtf8("New layer") : name;
+	QString aux_name = name.isEmpty() ? tr("New layer") : name;
 
 	aux_name = model->scene->addLayer(aux_name);
 	item = new QListWidgetItem(aux_name);

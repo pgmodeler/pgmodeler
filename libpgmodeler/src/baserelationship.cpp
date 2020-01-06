@@ -524,18 +524,18 @@ QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_vie
 {
   switch(rel_type)
   {
-		case Relationship11: return(trUtf8("One-to-one"));
-		case Relationship1n: return(trUtf8("One-to-many"));
-		case RelationshipNn: return(trUtf8("Many-to-many"));
-		case RelationshipGen: return(trUtf8("Inheritance"));
-		case RelationshipPart: return(trUtf8("Partitioning"));
-		case RelationshipFk: return(trUtf8("FK relationship"));
+		case Relationship11: return(tr("One-to-one"));
+		case Relationship1n: return(tr("One-to-many"));
+		case RelationshipNn: return(tr("Many-to-many"));
+		case RelationshipGen: return(tr("Inheritance"));
+		case RelationshipPart: return(tr("Partitioning"));
+		case RelationshipFk: return(tr("FK relationship"));
 	  default:
 		{
 			if(is_view)
-				return(trUtf8("Dependency"));
+				return(tr("Dependency"));
 			else
-				return(trUtf8("Copy"));
+				return(tr("Copy"));
 		}
   }
 }

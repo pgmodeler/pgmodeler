@@ -193,7 +193,7 @@ void ObjectSelectorWidget::showObjectView(void)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
 
 	if(sel_obj_types.size()==1)
-		obj_view_wgt->setWindowTitle(trUtf8("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
+		obj_view_wgt->setWindowTitle(tr("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
 
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();

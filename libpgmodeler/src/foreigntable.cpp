@@ -25,7 +25,7 @@ ForeignTable::ForeignTable(void) : PhysicalTable()
 	attributes[Attributes::Options] = QString();
 	foreign_server = nullptr;
 
-	setName(trUtf8("new_foreign_table"));
+	setName(tr("new_foreign_table"));
 }
 
 ForeignTable::~ForeignTable(void)

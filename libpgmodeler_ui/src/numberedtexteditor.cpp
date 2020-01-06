@@ -81,8 +81,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		load_file_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("abrir")));
 		load_file_btn->setIconSize(QSize(16,16));
 		load_file_btn->setAutoRaise(true);
-		load_file_btn->setText(trUtf8("Load"));
-		load_file_btn->setToolTip(trUtf8("Load the object's source code from an external file"));
+		load_file_btn->setText(tr("Load"));
+		load_file_btn->setToolTip(tr("Load the object's source code from an external file"));
 		load_file_btn->setFont(font);
 		load_file_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(load_file_btn);
@@ -92,8 +92,8 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		edit_src_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("editar")));
 		edit_src_btn->setIconSize(QSize(16,16));
 		edit_src_btn->setAutoRaise(true);
-		edit_src_btn->setText(trUtf8("Edit"));
-		edit_src_btn->setToolTip(trUtf8("Edit the source code in the preferred external editor"));
+		edit_src_btn->setText(tr("Edit"));
+		edit_src_btn->setToolTip(tr("Edit the source code in the preferred external editor"));
 		edit_src_btn->setFont(font);
 		edit_src_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		hbox->addWidget(edit_src_btn);
@@ -103,7 +103,7 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 		clear_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("limpartexto")));
 		clear_btn->setIconSize(QSize(16,16));
 		clear_btn->setAutoRaise(true);
-		clear_btn->setText(trUtf8("Clear"));
+		clear_btn->setText(tr("Clear"));
 		clear_btn->setFont(font);
 		clear_btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		clear_btn->setDisabled(true);
@@ -179,7 +179,7 @@ void NumberedTextEditor::setLineHighlightColor(const QColor &color)
 	line_hl_color=color;
 }
 
-void NumberedTextEditor::setTabWidth(int value)
+void NumberedTextEditor::setTabDistance(double value)
 {
 	if(value < 0)
 		tab_width=0;
@@ -187,14 +187,14 @@ void NumberedTextEditor::setTabWidth(int value)
 		tab_width=value;
 }
 
-int NumberedTextEditor::getTabWidth(void)
+double NumberedTextEditor::getTabDistance(void)
 {
 	if(tab_width == 0)
 		return(80);
 	else
 	{
 		QFontMetrics fm(default_font);
-		return(tab_width * fm.width(' '));
+		return(tab_width * fm.horizontalAdvance(' '));
 	}
 }
 
@@ -219,18 +219,18 @@ void NumberedTextEditor::showContextMenu(void)
 	{
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(trUtf8("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
+		act=ctx_menu->addAction(tr("Upper case"), this, SLOT(changeSelectionToUpper()), QKeySequence(QString("Ctrl+U")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(trUtf8("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
+		act=ctx_menu->addAction(tr("Lower case"), this, SLOT(changeSelectionToLower()), QKeySequence(QString("Ctrl+Shift+U")));
 		act->setEnabled(textCursor().hasSelection());
 
 		ctx_menu->addSeparator();
 
-		act=ctx_menu->addAction(trUtf8("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
+		act=ctx_menu->addAction(tr("Ident right"), this, SLOT(identSelectionRight()), QKeySequence(QString("Tab")));
 		act->setEnabled(textCursor().hasSelection());
 
-		act=ctx_menu->addAction(trUtf8("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
+		act=ctx_menu->addAction(tr("Ident left"), this, SLOT(identSelectionLeft()), QKeySequence(QString("Shift+Tab")));
 		act->setEnabled(textCursor().hasSelection());
 	}
 
@@ -332,9 +332,9 @@ void NumberedTextEditor::loadFile(void)
 
 	sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
+	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
-	sql_file_dlg.setWindowTitle(trUtf8("Load file"));
+	sql_file_dlg.setWindowTitle(tr("Load file"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 	sql_file_dlg.exec();
 
@@ -430,7 +430,7 @@ void NumberedTextEditor::handleProcessStart(void)
 {
 	if(src_editor_proc.state() == QProcess::Running)
 	{
-		msg_lbl->setText(PgModelerUiNs::formatMessage(trUtf8("The source editor `%1' is running on `pid: %2'.")
+		msg_lbl->setText(PgModelerUiNs::formatMessage(tr("The source editor `%1' is running on `pid: %2'.")
 																									.arg(src_editor_proc.program()).arg(src_editor_proc.processId())));
 		editor_alert_wgt->setVisible(true);
 		load_file_btn->setEnabled(false);
@@ -445,7 +445,7 @@ void NumberedTextEditor::handleProcessError(void)
 	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
 
-	msg_box.show(PgModelerUiNs::formatMessage(trUtf8("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
+	msg_box.show(PgModelerUiNs::formatMessage(tr("Failed to the source code editor <strong>%1</strong>! Make to sure that the source editor path points to a valid executable and the current user has permission to run the application. Error message returned: <strong>%2</strong>")
 																						.arg(src_editor_proc.program())
 																						.arg(errors.join(QString("\n\n")))), Messagebox::ErrorIcon);
 
@@ -509,8 +509,8 @@ void NumberedTextEditor::updateLineNumbers(void)
 
 	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
 
-	if(this->tabStopWidth()!=NumberedTextEditor::getTabWidth())
-		this->setTabStopWidth(NumberedTextEditor::getTabWidth());
+	if(round(this->tabStopDistance()) != round(NumberedTextEditor::getTabDistance()))
+		this->setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
 void NumberedTextEditor::updateLineNumbersSize(void)
@@ -543,7 +543,7 @@ int NumberedTextEditor::getLineNumbersWidth(void)
 		++digits;
 	}
 
-	return(15 + fontMetrics().width(QChar('9')) * digits);
+	return(15 + fontMetrics().horizontalAdvance(QChar('9')) * digits);
 }
 
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)

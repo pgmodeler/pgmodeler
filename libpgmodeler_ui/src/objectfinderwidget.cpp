@@ -37,12 +37,12 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
-	select_menu.addAction(trUtf8("Listed"), this, SLOT(selectObjects()));
-	select_menu.addAction(trUtf8("Not listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Not listed"), this, SLOT(selectObjects()));
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(trUtf8("Listed"), this, SLOT(fadeObjects()));
-	fade_menu.addAction(trUtf8("Not listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Not listed"), this, SLOT(fadeObjects()));
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
@@ -257,19 +257,19 @@ void ObjectFinderWidget::findObjects(void)
 			 search_attr != Attributes::Comment)
 			item->setText(search_attrs_cmb->currentText());
 		else
-			item->setText(trUtf8("Comment"));
+			item->setText(tr("Comment"));
 
 		found_lbl->setVisible(true);
 
 		//Show a message indicating the number of found objects
 		if(!found_objs.empty())
 		{
-			found_lbl->setText(trUtf8("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
+			found_lbl->setText(tr("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
 			result_tbw->horizontalHeader()->setStretchLastSection(true);
 			result_tbw->resizeColumnsToContents();
 		}
 		else
-			found_lbl->setText(trUtf8("No objects found."));
+			found_lbl->setText(tr("No objects found."));
 
 		clear_res_btn->setEnabled(!found_objs.empty());
 		select_btn->setEnabled(!found_objs.empty());

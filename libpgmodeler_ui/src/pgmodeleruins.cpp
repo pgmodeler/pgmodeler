@@ -58,7 +58,7 @@ namespace PgModelerUiNs {
 
 		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		item->setExpanded(expand_item);
-		output_trw->setItemHidden(item, false);
+		item->setHidden(false);
 		output_trw->scrollToBottom();
 
 		return(item);

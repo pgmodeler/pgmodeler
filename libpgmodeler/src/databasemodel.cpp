@@ -32,7 +32,7 @@ DatabaseModel::DatabaseModel(void)
 	allow_conns = true;
 
 	encoding=BaseType::Null;
-	BaseObject::setName(QObject::trUtf8("new_database"));
+	BaseObject::setName(QObject::tr("new_database"));
 
 	default_objs[ObjectType::Schema]=nullptr;
 	default_objs[ObjectType::Role]=nullptr;
@@ -373,7 +373,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 #warning "DEMO VERSION: database model object creation limit."
 	obj_list=getObjectList(obj_type);
 	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
-		throw Exception(trUtf8("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
+		throw Exception(tr("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
 						.arg(GlobalAttributes::MaxObjectCount)
 						.arg(BaseObject::getTypeName(obj_type)),
 						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -3274,7 +3274,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										found_inh_rel=true;
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-														trUtf8("Loading: `%1' (%2)")
+														tr("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
 														enum_cast(obj_type));
@@ -3284,7 +3284,7 @@ void DatabaseModel::loadModel(const QString &filename)
 							}
 							catch(Exception &e)
 							{
-								QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+								QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 								throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 							}
 						}
@@ -3321,24 +3321,24 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}
 
 			this->setInvalidated(false);
-			emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			if(found_inh_rel)
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
 			}
 
 			updateTablesFKRelationships();
-			emit s_objectLoaded(100, trUtf8("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Rendering database model..."), enum_cast(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}
 		catch(Exception &e)
@@ -3347,7 +3347,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			loading_model=false;
 
 			if(xmlparser.getCurrentElement())
-				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 			if(e.getErrorCode()>=ErrorCode::InvalidSyntax)
 			{
@@ -3602,7 +3602,7 @@ QString DatabaseModel::getErrorExtraInfo(void)
 	QString extra_info;
 
 	if(!xmlparser.getLoadedFilename().isEmpty())
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename())
+		extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename())
 				   .arg(xmlparser.getCurrentElement()->line);
 	else
 		extra_info=xmlparser.getXMLBuffer();
@@ -7259,7 +7259,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	bool sql_disabled=false;
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
-			msg=trUtf8("Generating %1 code: `%2' (%3)"),
+			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
 			def_type_str=(def_type==SchemaParser::SqlDefinition ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
@@ -10270,7 +10270,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag || obj_type == ObjectType::GenericSql)
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
-														trUtf8("Saving object `%1' (%2)")
+														tr("Saving object `%1' (%2)")
 														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
@@ -10436,7 +10436,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
-														trUtf8("Saving metadata of the object `%1' (%2)")
+														tr("Saving metadata of the object `%1' (%2)")
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
@@ -10460,10 +10460,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 																						 Attributes::Metadata + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
 		}
 		else
-			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
 
 		output.close();
 	}
@@ -10545,13 +10545,13 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 						if(getObjectIndex(new_object->getName(), obj_type) < 0)
 						{
-							emit s_objectLoaded(progress, trUtf8("Creating object `%1' (%2)")
+							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
 																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
 							addObject(new_object);
 						}
 						else
 						{
-							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) already exists. Ignoring.")
+							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
 																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
 							delete(new_object);
 						}
@@ -10617,7 +10617,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 						if(object)
 						{
-							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
+							emit s_objectLoaded(progress, tr("Loading metadata for object `%1' (%2)")
 																	.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 							if(!object->isSystemObject() &&
@@ -10746,7 +10746,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						}
 						else if(!object)
 						{
-							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
+							emit s_objectLoaded(progress, tr("Object `%1' (%2) not found. Ignoring metadata.")
 																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
 						}
 
@@ -10758,7 +10758,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
+		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
 		setObjectsModified();
 	}
 	catch(Exception &e)
@@ -10766,7 +10766,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 		QString extra_info;
 
 		if(xmlparser.getCurrentElement())
-			extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}

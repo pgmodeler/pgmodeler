@@ -34,7 +34,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 									 ObjectsTableWidget::RemoveAllButton |
 									 ObjectsTableWidget::MoveButtons, false, this);
 	filter_tab->setColumnCount(1);
-	filter_tab->setHeaderLabel(trUtf8("Tag command"), 0);
+	filter_tab->setHeaderLabel(tr("Tag command"), 0);
 
 	eventtrigger_grid->addWidget(function_sel, 1, 1);
 	filter_layout->addWidget(filter_tab);

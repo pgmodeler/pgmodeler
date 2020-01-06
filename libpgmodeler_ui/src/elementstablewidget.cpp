@@ -37,18 +37,18 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 																				(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 
 		elements_tab->setColumnCount(7);
-		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
+		elements_tab->setHeaderLabel(tr("Element"), 0);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
+		elements_tab->setHeaderLabel(tr("Type"), 1);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
+		elements_tab->setHeaderLabel(tr("Operator"), 2);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("operator")),2);
-		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
+		elements_tab->setHeaderLabel(tr("Operator Class"), 3);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opclass")),3);
-		elements_tab->setHeaderLabel(trUtf8("Collation"), 4);
+		elements_tab->setHeaderLabel(tr("Collation"), 4);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("collation")),4);
-		elements_tab->setHeaderLabel(trUtf8("Sorting"), 5);
-		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 6);
+		elements_tab->setHeaderLabel(tr("Sorting"), 5);
+		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
 
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(elements_tab);
@@ -81,7 +81,7 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 	else
 	{
 		elements_tab->setCellText(elem->getExpression(), elem_idx, 0);
-		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
+		elements_tab->setCellText(tr("Expression"), elem_idx, 1);
 	}
 
 	elements_tab->clearCellText(elem_idx, 2);
@@ -99,14 +99,14 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 	if(elem->isSortingEnabled())
 	{
 		if(elem->getSortingAttribute(IndexElement::AscOrder))
-			elements_tab->setCellText(trUtf8("Ascending"), elem_idx, 5);
+			elements_tab->setCellText(tr("Ascending"), elem_idx, 5);
 		else
-			elements_tab->setCellText(trUtf8("Descending"), elem_idx, 5);
+			elements_tab->setCellText(tr("Descending"), elem_idx, 5);
 
 		if(elem->getSortingAttribute(IndexElement::NullsFirst))
-			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 6);
+			elements_tab->setCellText(tr("Yes"), elem_idx, 6);
 		else
-			elements_tab->setCellText(trUtf8("No"), elem_idx, 6);
+			elements_tab->setCellText(tr("No"), elem_idx, 6);
 	}
 	else
 	{

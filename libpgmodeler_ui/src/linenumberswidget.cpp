@@ -88,10 +88,10 @@ void LineNumbersWidget::paintEvent(QPaintEvent *event)
 
 		if(font.bold())
 		{
-			painter.setBrush(bg_color.dark(150));
+			painter.setBrush(bg_color.darker(150));
 			painter.setPen(Qt::transparent);
 			painter.drawRect(QRect(-1, y, this->width() + 1, height));
-			painter.setPen(font_color.light(180));
+			painter.setPen(font_color.lighter(180));
 		}
 		else
 			painter.setPen(font_color);

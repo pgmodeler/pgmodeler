@@ -159,7 +159,7 @@ void ElementWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 void ElementWidget::setIndexElement(IndexElement *elem)
 {
 	createElement<IndexElement>(elem);
-	setWindowTitle(trUtf8("Index element properties"));
+	setWindowTitle(tr("Index element properties"));
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
 	warning_frame->setVisible(true);
@@ -168,7 +168,7 @@ void ElementWidget::setIndexElement(IndexElement *elem)
 void ElementWidget::setExcludeElement(ExcludeElement *elem)
 {
 	createElement<ExcludeElement>(elem);
-	setWindowTitle(trUtf8("Exclude element properties"));
+	setWindowTitle(tr("Exclude element properties"));
 	operator_sel->setVisible(true);
 	operator_lbl->setVisible(true);
 	warning_frame->setVisible(false);
@@ -177,7 +177,7 @@ void ElementWidget::setExcludeElement(ExcludeElement *elem)
 void ElementWidget::setPartitionKey(PartitionKey *elem)
 {
 	createElement<PartitionKey>(elem);
-	setWindowTitle(trUtf8("Partition key properties"));
+	setWindowTitle(tr("Partition key properties"));
 	collation_sel->setVisible(true);
 	collation_lbl->setVisible(true);
 	sorting_chk->setVisible(false);
