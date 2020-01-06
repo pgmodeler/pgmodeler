@@ -1169,11 +1169,14 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	while(sig_idx >= 0)
 	{
 		signature = obj_xml.mid(sig_idx, regexp.matchedLength());
+		len = signature.length();
 
 		if(!signature.contains(in_keyw))
+		{
+			sig_idx = regexp.indexIn(obj_xml, sig_idx + len);
 			continue;
+		}
 
-		len = signature.length();
 		signature.remove(in_keyw);
 		obj_xml.remove(sig_idx, len);
 		obj_xml.insert(sig_idx, signature);
