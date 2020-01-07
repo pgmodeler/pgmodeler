@@ -18,13 +18,14 @@
 
 /**
 \ingroup pgmodeler-cli
-\class PgModelerCli
+\class PgModelerCliApp
 \brief Implements the operations export models whitout use the graphical interface
 */
 
-#ifndef PGMODELER_CLI_H
-#define PGMODELER_CLI_H
+#ifndef PGMODELER_CLI_APP_H
+#define PGMODELER_CLI_APP_H
 
+#include "application.h"
 #include <QObject>
 #include <QTextStream>
 #include <QCoreApplication>
@@ -39,7 +40,7 @@
 #include "databaseimporthelper.h"
 #include "modelsdiffhelper.h"
 
-class PgModelerCli: public QApplication {
+class PgModelerCliApp: public Application {
 	private:
 		Q_OBJECT
 
@@ -215,8 +216,8 @@ class PgModelerCli: public QApplication {
 		void printMessage(const QString &msg);
 
 	public:
-		PgModelerCli(int argc, char **argv);
-		~PgModelerCli();
+		PgModelerCliApp(int argc, char **argv);
+		~PgModelerCliApp();
 		int exec();
 
 	private slots:

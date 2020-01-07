@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "application.h"
+#include "pgmodelerapp.h"
 #include "mainwindow.h"
 
 #ifndef Q_OS_WIN
@@ -104,14 +104,14 @@ int main(int argc, char **argv)
 		for(int i=0; i < argc && !using_style; i++)
 			using_style=QString(argv[i]).contains("-style");
 
-		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 		//High DPI suport via application attributes is available only from Qt 5.6.0
 		#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 			Application::setAttribute(Qt::AA_EnableHighDpiScaling);
 		#endif
 
-		Application app(argc,argv);
+		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)

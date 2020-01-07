@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	try
 	{
 		QTranslator translator;
-		PgModelerCli pgmodeler_cli(argc, argv);
+		PgModelerCliApp pgmodeler_cli(argc, argv);
 
 		//Tries to load the ui translation according to the system's locale
 		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());

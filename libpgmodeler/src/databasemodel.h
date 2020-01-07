@@ -698,7 +698,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 	friend class DatabaseImportHelper;
 	friend class ModelWidget;
-	friend class PgModelerCli;
+	friend class PgModelerCliApp;
 };
 
 #endif

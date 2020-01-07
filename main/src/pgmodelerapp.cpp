@@ -15,15 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#include "application.h"
+#include "pgmodelerapp.h"
 #include "globalattributes.h"
 #include "messagebox.h"
 #include "attributes.h"
 
-Application::Application(int &argc, char **argv) : QApplication(argc,argv)
+PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
-	GlobalAttributes::setSearchPath(this->applicationDirPath());
-
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
 	QFile ui_style(GlobalAttributes::getTmplConfigurationDir() +
 				   GlobalAttributes::DirSeparator +
@@ -125,7 +123,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		this->setStyleSheet(ui_style.readAll());
 }
 
-bool Application::notify(QObject *receiver, QEvent *event)
+bool PgModelerApp::notify(QObject *receiver, QEvent *event)
 {
 	try
 	{
@@ -145,7 +143,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	}
 }
 
-void Application::createUserConfiguration()
+void PgModelerApp::createUserConfiguration()
 {
 	QDir config_dir(GlobalAttributes::getConfigurationsDir());
 
@@ -165,7 +163,7 @@ void Application::createUserConfiguration()
 	}
 }
 
-void Application::copyFilesRecursively(const QString &src_path, const QString &dst_path)
+void PgModelerApp::copyFilesRecursively(const QString &src_path, const QString &dst_path)
 {
 	QFileInfo src_file(src_path);
 

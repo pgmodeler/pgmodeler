@@ -18,75 +18,73 @@
 
 #include "pgmodelercli.h"
 
-QTextStream PgModelerCli::out(stdout);
+QTextStream PgModelerCliApp::out(stdout);
 
-const QRegExp PgModelerCli::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
-const QString PgModelerCli::PasswordPlaceholder("password=******");
+const QRegExp PgModelerCliApp::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
+const QString PgModelerCliApp::PasswordPlaceholder("password=******");
 
-const QString PgModelerCli::Input("--input");
-const QString PgModelerCli::Output("--output");
-const QString PgModelerCli::InputDb("--input-db");
-const QString PgModelerCli::ExportToFile("--export-to-file");
-const QString PgModelerCli::ExportToPng("--export-to-png");
-const QString PgModelerCli::ExportToSvg("--export-to-svg");
-const QString PgModelerCli::ExportToDbms("--export-to-dbms");
-const QString PgModelerCli::ExportToDict("--export-to-dict");
-const QString PgModelerCli::ImportDb("--import-db");
-const QString PgModelerCli::NoIndex("--no-index");
-const QString PgModelerCli::Splitted("--splitted");
-const QString PgModelerCli::Diff("--diff");
-const QString PgModelerCli::DropDatabase("--drop-database");
-const QString PgModelerCli::DropObjects("--drop-objects");
-const QString PgModelerCli::PgSqlVer("--pgsql-ver");
-const QString PgModelerCli::Help("--help");
-const QString PgModelerCli::ShowGrid("--show-grid");
-const QString PgModelerCli::ShowDelimiters("--show-delimiters");
-const QString PgModelerCli::PageByPage("--page-by-page");
-const QString PgModelerCli::IgnoreDuplicates("--ignore-duplicates");
-const QString PgModelerCli::IgnoreErrorCodes("--ignore-error-codes");
-const QString PgModelerCli::ConnAlias("--conn-alias");
-const QString PgModelerCli::Host("--host");
-const QString PgModelerCli::Port("--port");
-const QString PgModelerCli::User("--user");
-const QString PgModelerCli::Passwd("--passwd");
-const QString PgModelerCli::InitialDb("--initial-db");
-const QString PgModelerCli::Silent("--silent");
-const QString PgModelerCli::ListConns("--list-conns");
-const QString PgModelerCli::Simulate("--simulate");
-const QString PgModelerCli::FixModel("--fix-model");
-const QString PgModelerCli::FixTries("--fix-tries");
-const QString PgModelerCli::ZoomFactor("--zoom");
-const QString PgModelerCli::UseTmpNames("--use-tmp-names");
-const QString PgModelerCli::DbmMimeType("--dbm-mime-type");
-const QString PgModelerCli::Install("install");
-const QString PgModelerCli::Uninstall("uninstall");
-const QString PgModelerCli::IgnoreImportErrors("--ignore-errors");
-const QString PgModelerCli::ImportSystemObjs("--import-sys-objs");
-const QString PgModelerCli::ImportExtensionObjs("--import-ext-objs");
-const QString PgModelerCli::DebugMode("--debug-mode");
-const QString PgModelerCli::CompareTo("--compare-to");
-const QString PgModelerCli::SaveDiff("--save-diff");
-const QString PgModelerCli::ApplyDiff("--apply-diff");
-const QString PgModelerCli::NoDiffPreview("--no-diff-preview");
-const QString PgModelerCli::DropClusterObjs("--drop-cluster-objs");
-const QString PgModelerCli::RevokePermissions("--revoke-perms");
-const QString PgModelerCli::DropMissingObjs("--drop-missing");
-const QString PgModelerCli::ForceDropColsConstrs("--force-drop-cols");
-const QString PgModelerCli::RenameDb("--rename-db");
-const QString PgModelerCli::TruncOnColsTypeChange("--trunc-type-change");
-const QString PgModelerCli::NoSequenceReuse("--no-sequence-reuse");
-const QString PgModelerCli::NoCascadeDropTrunc("--no-cascade");
-const QString PgModelerCli::NoForceObjRecreation("--no-force-recreation");
-const QString PgModelerCli::NoUnmodObjRecreation("--no-unmod-recreation");
+const QString PgModelerCliApp::Input("--input");
+const QString PgModelerCliApp::Output("--output");
+const QString PgModelerCliApp::InputDb("--input-db");
+const QString PgModelerCliApp::ExportToFile("--export-to-file");
+const QString PgModelerCliApp::ExportToPng("--export-to-png");
+const QString PgModelerCliApp::ExportToSvg("--export-to-svg");
+const QString PgModelerCliApp::ExportToDbms("--export-to-dbms");
+const QString PgModelerCliApp::ExportToDict("--export-to-dict");
+const QString PgModelerCliApp::ImportDb("--import-db");
+const QString PgModelerCliApp::NoIndex("--no-index");
+const QString PgModelerCliApp::Splitted("--splitted");
+const QString PgModelerCliApp::Diff("--diff");
+const QString PgModelerCliApp::DropDatabase("--drop-database");
+const QString PgModelerCliApp::DropObjects("--drop-objects");
+const QString PgModelerCliApp::PgSqlVer("--pgsql-ver");
+const QString PgModelerCliApp::Help("--help");
+const QString PgModelerCliApp::ShowGrid("--show-grid");
+const QString PgModelerCliApp::ShowDelimiters("--show-delimiters");
+const QString PgModelerCliApp::PageByPage("--page-by-page");
+const QString PgModelerCliApp::IgnoreDuplicates("--ignore-duplicates");
+const QString PgModelerCliApp::IgnoreErrorCodes("--ignore-error-codes");
+const QString PgModelerCliApp::ConnAlias("--conn-alias");
+const QString PgModelerCliApp::Host("--host");
+const QString PgModelerCliApp::Port("--port");
+const QString PgModelerCliApp::User("--user");
+const QString PgModelerCliApp::Passwd("--passwd");
+const QString PgModelerCliApp::InitialDb("--initial-db");
+const QString PgModelerCliApp::Silent("--silent");
+const QString PgModelerCliApp::ListConns("--list-conns");
+const QString PgModelerCliApp::Simulate("--simulate");
+const QString PgModelerCliApp::FixModel("--fix-model");
+const QString PgModelerCliApp::FixTries("--fix-tries");
+const QString PgModelerCliApp::ZoomFactor("--zoom");
+const QString PgModelerCliApp::UseTmpNames("--use-tmp-names");
+const QString PgModelerCliApp::DbmMimeType("--dbm-mime-type");
+const QString PgModelerCliApp::Install("install");
+const QString PgModelerCliApp::Uninstall("uninstall");
+const QString PgModelerCliApp::IgnoreImportErrors("--ignore-errors");
+const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
+const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
+const QString PgModelerCliApp::DebugMode("--debug-mode");
+const QString PgModelerCliApp::CompareTo("--compare-to");
+const QString PgModelerCliApp::SaveDiff("--save-diff");
+const QString PgModelerCliApp::ApplyDiff("--apply-diff");
+const QString PgModelerCliApp::NoDiffPreview("--no-diff-preview");
+const QString PgModelerCliApp::DropClusterObjs("--drop-cluster-objs");
+const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
+const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
+const QString PgModelerCliApp::ForceDropColsConstrs("--force-drop-cols");
+const QString PgModelerCliApp::RenameDb("--rename-db");
+const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
+const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
+const QString PgModelerCliApp::NoCascadeDropTrunc("--no-cascade");
+const QString PgModelerCliApp::NoForceObjRecreation("--no-force-recreation");
+const QString PgModelerCliApp::NoUnmodObjRecreation("--no-unmod-recreation");
 
-const QString PgModelerCli::TagExpr("<%1");
-const QString PgModelerCli::EndTagExpr("</%1");
-const QString PgModelerCli::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
+const QString PgModelerCliApp::TagExpr("<%1");
+const QString PgModelerCliApp::EndTagExpr("</%1");
+const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
-PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
+PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
-	GlobalAttributes::setSearchPath(this->applicationDirPath());
-
 	try
 	{
 		QString op, value;
@@ -209,7 +207,7 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 	}
 }
 
-PgModelerCli::~PgModelerCli()
+PgModelerCliApp::~PgModelerCliApp()
 {
 	if(scene) delete scene;
 	delete model;
@@ -221,12 +219,12 @@ PgModelerCli::~PgModelerCli()
 	delete general_conf;
 }
 
-void PgModelerCli::printMessage(const QString &msg)
+void PgModelerCliApp::printMessage(const QString &msg)
 {
 	if(!silent_mode) out << msg << endl;
 }
 
-void PgModelerCli::configureConnection(bool extra_conn)
+void PgModelerCliApp::configureConnection(bool extra_conn)
 {
 	QString chr = (extra_conn ? "1" : "");
 	Connection *conn = (extra_conn ? &extra_connection : &connection);
@@ -251,7 +249,7 @@ void PgModelerCli::configureConnection(bool extra_conn)
 	}
 }
 
-void PgModelerCli::initializeOptions()
+void PgModelerCliApp::initializeOptions()
 {
 	long_opts[Input]=true;
 	long_opts[Output]=true;
@@ -361,7 +359,7 @@ void PgModelerCli::initializeOptions()
 	short_opts[Splitted]=QString("-sp");
 }
 
-bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
+bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 {
 	bool found=false, append_chr = false;
 
@@ -387,7 +385,7 @@ bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 	return found;
 }
 
-void PgModelerCli::showMenu()
+void PgModelerCliApp::showMenu()
 {
 	out << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << endl;
@@ -479,7 +477,7 @@ void PgModelerCli::showMenu()
 	out << endl;
 }
 
-void PgModelerCli::parseOptions(attribs_map &opts)
+void PgModelerCliApp::parseOptions(attribs_map &opts)
 {
 	//Loading connections
 	if(opts.count(ListConns) || opts.count(ExportToDbms) || opts.count(ImportDb) || opts.count(Diff))
@@ -601,7 +599,7 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 	}
 }
 
-int PgModelerCli::exec()
+int PgModelerCliApp::exec()
 {
 	try
 	{
@@ -629,7 +627,7 @@ int PgModelerCli::exec()
 	}
 }
 
-void PgModelerCli::updateProgress(int progress, QString msg, ObjectType)
+void PgModelerCliApp::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
 		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
@@ -637,7 +635,7 @@ void PgModelerCli::updateProgress(int progress, QString msg, ObjectType)
 		out << msg << endl;
 }
 
-void PgModelerCli::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
+void PgModelerCliApp::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
 {
 	out << endl;
 	out << tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << endl;
@@ -646,7 +644,7 @@ void PgModelerCli::printIgnoredError(QString err_cod, QString err_msg, QString c
 	out << endl;
 }
 
-void PgModelerCli::handleObjectAddition(BaseObject *object)
+void PgModelerCliApp::handleObjectAddition(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -691,7 +689,7 @@ void PgModelerCli::handleObjectAddition(BaseObject *object)
 }
 
 
-void PgModelerCli::handleObjectRemoval(BaseObject *object)
+void PgModelerCliApp::handleObjectRemoval(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
@@ -706,7 +704,7 @@ void PgModelerCli::handleObjectRemoval(BaseObject *object)
 }
 
 
-void PgModelerCli::extractObjectXML()
+void PgModelerCliApp::extractObjectXML()
 {
 	QFile input;
 	QString buf, lin, def_xml, end_tag;
@@ -881,7 +879,7 @@ void PgModelerCli::extractObjectXML()
 	}
 }
 
-void PgModelerCli::recreateObjects()
+void PgModelerCliApp::recreateObjects()
 {
 	QStringList fail_objs, constr, list;
 	QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
@@ -1034,7 +1032,7 @@ void PgModelerCli::recreateObjects()
 	}
 }
 
-void PgModelerCli::fixObjectAttributes(QString &obj_xml)
+void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 {
 	//Placing objects <index>, <rule>, <trigger> outside of <table>
 	if(!obj_xml.startsWith(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Tablespace))) &&
@@ -1202,7 +1200,7 @@ void PgModelerCli::fixObjectAttributes(QString &obj_xml)
 	fixOpClassesFamiliesReferences(obj_xml);
 }
 
-void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
+void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 {
 	ObjectType ref_obj_type;
 
@@ -1266,7 +1264,7 @@ void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 	while(pos >= 0);
 }
 
-void PgModelerCli::fixModel()
+void PgModelerCliApp::fixModel()
 {
 	printMessage(tr("Starting model fixing..."));
 	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
@@ -1280,7 +1278,7 @@ void PgModelerCli::fixModel()
 	printMessage(tr("Model successfully fixed!"));
 }
 
-void PgModelerCli::exportModel()
+void PgModelerCliApp::exportModel()
 {
 	printMessage(tr("Starting model export..."));
 	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
@@ -1341,7 +1339,7 @@ void PgModelerCli::exportModel()
 	printMessage(tr("Export successfully ended!\n"));
 }
 
-void PgModelerCli::importDatabase()
+void PgModelerCliApp::importDatabase()
 {
 	printMessage(tr("Starting database import..."));
 	printMessage(tr("Input database: %1").arg(connection.getConnectionId(true, true)));
@@ -1360,7 +1358,7 @@ void PgModelerCli::importDatabase()
 	delete model_wgt;
 }
 
-void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
+void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 {
 	try
 	{
@@ -1401,7 +1399,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 	}
 }
 
-void PgModelerCli::diffModelDatabase()
+void PgModelerCliApp::diffModelDatabase()
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
@@ -1542,7 +1540,7 @@ void PgModelerCli::diffModelDatabase()
 	printMessage(tr("Diff successfully ended!\n"));
 }
 
-void PgModelerCli::updateMimeType()
+void PgModelerCliApp::updateMimeType()
 {
 #ifndef Q_OS_MAC
 	try
@@ -1560,7 +1558,7 @@ void PgModelerCli::updateMimeType()
 #endif
 }
 
-QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
+QStringList PgModelerCliApp::extractForeignKeys(QString &obj_xml)
 {
 	QStringList constr_lst;
 	int start=0, end=0, pos=0, count=0;
@@ -1595,7 +1593,7 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 	return constr_lst;
 }
 
-bool PgModelerCli::containsRelAttributes(const QString &str)
+bool PgModelerCliApp::containsRelAttributes(const QString &str)
 {
 	bool found=false;
 	static vector<QString> attribs={ Attributes::Relationship,
@@ -1615,7 +1613,7 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 	return found;
 }
 
-void PgModelerCli::handleMimeDatabase(bool uninstall)
+void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 {
 	SchemaParser schparser;
 	QString msg_file_associated=tr("Database model files (.dbm) are already associated to pgModeler!"),

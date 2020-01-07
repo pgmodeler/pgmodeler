@@ -15,35 +15,10 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-
-#include "crashhandlerform.h"
 #include "application.h"
-#include <QTranslator>
-#include "pgmodeleruins.h"
+#include "globalattributes.h"
 
-int main(int argc, char **argv)
+Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
-	try
-	{
-		Application app(argc,argv);
-		QStringList args = app.arguments();
-		QTranslator translator;
-
-		//Loads the ui translation for crashhandler
-		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
-		app.installTranslator(&translator);
-
-		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);
-		PgModelerUiNs::resizeDialog(&crashhandler);
-		crashhandler.show();
-		app.exec();
-
-		return 0;
-	}
-	catch(Exception &e)
-	{
-		QTextStream out(stdout);
-		out << e.getExceptionsText();
-		return enum_cast(e.getErrorCode());
-	}
+	GlobalAttributes::setSearchPath(this->applicationDirPath());
 }
