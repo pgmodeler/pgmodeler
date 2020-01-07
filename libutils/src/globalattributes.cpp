@@ -169,8 +169,7 @@ GlobalAttributes::GlobalAttributes(const QApplication& app) :
 	PgModelerAppPath(getPathFromEnv(
 		QString("PGMODELER_APP_PATH"),
 		QString(BINDIR)				+ QString("/pgmodeler"),
-		app.applicationDirPath()	+ QString("/pgmodeler")));
-
+		app.applicationDirPath()	+ QString("/pgmodeler")))
 #else
 	PgModelerCHandlerPath(getPathFromEnv(
 		QString("PGMODELER_CHANDLER_PATH"),
