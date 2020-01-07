@@ -87,7 +87,7 @@ void SourceCodeWidget::setSourceCodeTab(int)
 	version_lbl->setEnabled(enabled);
 }
 
-void SourceCodeWidget::saveSQLCode(void)
+void SourceCodeWidget::saveSQLCode()
 {
 	QFileDialog file_dlg;
 
@@ -256,7 +256,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 	}
 }
 
-void SourceCodeWidget::applyConfiguration(void)
+void SourceCodeWidget::applyConfiguration()
 {
 	emit s_closeRequested();
 }

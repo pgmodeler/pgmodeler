@@ -18,7 +18,7 @@
 
 #include "trigger.h"
 
-Trigger::Trigger(void)
+Trigger::Trigger()
 {
 	unsigned i;
 	EventType tipos[4]={EventType::OnInsert, EventType::OnDelete,
@@ -174,7 +174,7 @@ bool Trigger::isExecuteOnEvent(EventType event)
 	return(events.at(!event));
 }
 
-bool Trigger::isExecutePerRow(void)
+bool Trigger::isExecutePerRow()
 {
 	return(is_exec_per_row);
 }
@@ -197,27 +197,27 @@ Column *Trigger::getColumn(unsigned col_idx)
 	return(upd_columns[col_idx]);
 }
 
-unsigned Trigger::getArgumentCount(void)
+unsigned Trigger::getArgumentCount()
 {
 	return(arguments.size());
 }
 
-unsigned Trigger::getColumnCount(void)
+unsigned Trigger::getColumnCount()
 {
 	return(upd_columns.size());
 }
 
-Function *Trigger::getFunction(void)
+Function *Trigger::getFunction()
 {
 	return(function);
 }
 
-QString Trigger::getCondition(void)
+QString Trigger::getCondition()
 {
 	return(condition);
 }
 
-FiringType Trigger::getFiringType(void)
+FiringType Trigger::getFiringType()
 {
 	return(firing_type);
 }
@@ -234,13 +234,13 @@ void Trigger::removeArgument(unsigned arg_idx)
 	setCodeInvalidated(true);
 }
 
-void Trigger::removeArguments(void)
+void Trigger::removeArguments()
 {
 	arguments.clear();
 	setCodeInvalidated(true);
 }
 
-void Trigger::removeColumns(void)
+void Trigger::removeColumns()
 {
 	upd_columns.clear();
 	setCodeInvalidated(true);
@@ -268,17 +268,17 @@ void Trigger::setDeferrable(bool value)
 	is_deferrable=value;
 }
 
-BaseTable *Trigger::getReferencedTable(void)
+BaseTable *Trigger::getReferencedTable()
 {
 	return(referenced_table);
 }
 
-DeferralType Trigger::getDeferralType(void)
+DeferralType Trigger::getDeferralType()
 {
 	return(deferral_type);
 }
 
-bool Trigger::isDeferrable(void)
+bool Trigger::isDeferrable()
 {
 	return(is_deferrable);
 }
@@ -306,12 +306,12 @@ QString Trigger::getTransitionTableName(unsigned tab_idx)
 	return(transition_tabs_names[tab_idx]);
 }
 
-bool Trigger::isConstraint(void)
+bool Trigger::isConstraint()
 {
 	return(is_constraint);
 }
 
-bool Trigger::isReferRelationshipAddedColumn(void)
+bool Trigger::isReferRelationshipAddedColumn()
 {
 	vector<Column *>::iterator itr, itr_end;
 	Column *col=nullptr;
@@ -330,7 +330,7 @@ bool Trigger::isReferRelationshipAddedColumn(void)
 	return(enc);
 }
 
-vector<Column *> Trigger::getRelationshipAddedColumns(void)
+vector<Column *> Trigger::getRelationshipAddedColumns()
 {
 	vector<Column *> cols;
 
@@ -436,7 +436,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
-void Trigger::validateTrigger(void)
+void Trigger::validateTrigger()
 {
 	if(getParentTable())
 	{

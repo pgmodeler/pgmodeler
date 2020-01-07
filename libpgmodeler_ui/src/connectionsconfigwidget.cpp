@@ -37,29 +37,29 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 	default_for_ops_ht=new HintTextWidget(default_for_ops_hint, this);
 	default_for_ops_ht->setText(tr("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
 
-	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
+	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates()));
 
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
-	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection(void)));
+	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
+	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection()));
 
-	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection(void)));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection(void)));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection(void)));
+	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection()));
+	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
+	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
+	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection()));
+	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection()));
 
-	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
+	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
 
 	update_tb->setVisible(false);
 	cancel_tb->setVisible(false);
 }
 
-ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
+ConnectionsConfigWidget::~ConnectionsConfigWidget()
 {
 
 }
@@ -76,7 +76,7 @@ void ConnectionsConfigWidget::showEvent(QShowEvent *)
 	conn_attribs_tbw->setCurrentIndex(0);
 }
 
-void ConnectionsConfigWidget::updateConnectionsCombo(void)
+void ConnectionsConfigWidget::updateConnectionsCombo()
 {
 	connections_cmb->clear();
 
@@ -84,7 +84,7 @@ void ConnectionsConfigWidget::updateConnectionsCombo(void)
 		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("server")), conn->getConnectionId());
 }
 
-void ConnectionsConfigWidget::destroyConnections(void)
+void ConnectionsConfigWidget::destroyConnections()
 {
 	Connection *conn=nullptr;
 
@@ -97,12 +97,12 @@ void ConnectionsConfigWidget::destroyConnections(void)
 	}
 }
 
-map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
 {
 	return(config_params);
 }
 
-void ConnectionsConfigWidget::loadConfiguration(void)
+void ConnectionsConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -156,7 +156,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	}
 }
 
-void ConnectionsConfigWidget::enableCertificates(void)
+void ConnectionsConfigWidget::enableCertificates()
 {
 	client_cert_lbl->setEnabled(ssl_mode_cmb->currentIndex()!=0);
 	client_cert_edt->setEnabled(ssl_mode_cmb->currentIndex()!=0);
@@ -168,7 +168,7 @@ void ConnectionsConfigWidget::enableCertificates(void)
 	client_key_edt->setEnabled(ssl_mode_cmb->currentIndex()!=0);
 }
 
-void ConnectionsConfigWidget::enableConnectionTest(void)
+void ConnectionsConfigWidget::enableConnectionTest()
 {
 	test_tb->setEnabled(!alias_edt->text().isEmpty() &&
 						!host_edt->text().isEmpty() &&
@@ -181,7 +181,7 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 		setConfigurationChanged(true);
 }
 
-void ConnectionsConfigWidget::newConnection(void)
+void ConnectionsConfigWidget::newConnection()
 {
 	conn_db_edt->clear();
 	alias_edt->clear();
@@ -219,7 +219,7 @@ void ConnectionsConfigWidget::newConnection(void)
 	duplicate_tb->setEnabled(connections_cmb->count() > 0);
 }
 
-void ConnectionsConfigWidget::duplicateConnection(void)
+void ConnectionsConfigWidget::duplicateConnection()
 {
 	Connection *conn=nullptr, *new_conn=nullptr;
 
@@ -244,7 +244,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::handleConnection(void)
+void ConnectionsConfigWidget::handleConnection()
 {
 	Connection *conn=nullptr;
 
@@ -278,7 +278,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::removeConnection(void)
+void ConnectionsConfigWidget::removeConnection()
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
@@ -292,7 +292,7 @@ void ConnectionsConfigWidget::removeConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::editConnection(void)
+void ConnectionsConfigWidget::editConnection()
 {
 	if(connections_cmb->count() > 0)
 	{
@@ -410,7 +410,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	}
 }
 
-void ConnectionsConfigWidget::testConnection(void)
+void ConnectionsConfigWidget::testConnection()
 {
 	Connection conn;
 	Messagebox msg_box;
@@ -433,7 +433,7 @@ void ConnectionsConfigWidget::testConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::restoreDefaults(void)
+void ConnectionsConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -456,7 +456,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	}
 }
 
-void ConnectionsConfigWidget::saveConfiguration(void)
+void ConnectionsConfigWidget::saveConfiguration()
 {
 	try
 	{

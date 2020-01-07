@@ -54,15 +54,15 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 
 	private slots:
 		void addColumn(int lin_idx);
-		void selectUpdateEvent(void);
+		void selectUpdateEvent();
 		void handleArgument(int lin_idx);
 		void editArgument(int lin_idx);
-		void updateColumnsCombo(void);
+		void updateColumnsCombo();
 		void setConstraintTrigger(bool value);
-		void enableTransitionTableNames(void);
+		void enableTransitionTableNames();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

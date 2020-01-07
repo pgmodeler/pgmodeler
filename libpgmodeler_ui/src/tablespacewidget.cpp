@@ -41,7 +41,7 @@ void TablespaceWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		directory_edt->setText(tablespc->getDirectory());
 }
 
-void TablespaceWidget::applyConfiguration(void)
+void TablespaceWidget::applyConfiguration()
 {
 	try
 	{

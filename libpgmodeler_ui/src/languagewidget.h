@@ -42,7 +42,7 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *language);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

@@ -51,17 +51,17 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 	});
 }
 
-QStringList CsvLoadWidget::getCsvColumns(void)
+QStringList CsvLoadWidget::getCsvColumns()
 {
 	return(csv_columns);
 }
 
-QList<QStringList> CsvLoadWidget::getCsvRows(void)
+QList<QStringList> CsvLoadWidget::getCsvRows()
 {
 	return(csv_rows);
 }
 
-void CsvLoadWidget::selectCsvFile(void)
+void CsvLoadWidget::selectCsvFile()
 {
 	QFileDialog file_dlg;
 
@@ -160,7 +160,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 	return (csv_rows);
 }
 
-void CsvLoadWidget::loadCsvFile(void)
+void CsvLoadWidget::loadCsvFile()
 {
 	QFile file;
 	QString csv_buffer;
@@ -187,7 +187,7 @@ void CsvLoadWidget::loadCsvFile(void)
 	emit s_csvFileLoaded();
 }
 
-QString CsvLoadWidget::getSeparator(void)
+QString CsvLoadWidget::getSeparator()
 {
 	QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
 	separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
@@ -215,7 +215,7 @@ QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
 	return(buffer);
 }
 
-bool CsvLoadWidget::isColumnsInFirstRow(void)
+bool CsvLoadWidget::isColumnsInFirstRow()
 {
 	return(col_names_chk->isChecked());
 }

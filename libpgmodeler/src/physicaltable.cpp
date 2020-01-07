@@ -22,7 +22,7 @@
 const QString PhysicalTable::DataSeparator("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
-PhysicalTable::PhysicalTable(void) : BaseTable()
+PhysicalTable::PhysicalTable() : BaseTable()
 {
 	gen_alter_cmds=false;
 	attributes[Attributes::Columns]=QString();
@@ -45,7 +45,7 @@ PhysicalTable::PhysicalTable(void) : BaseTable()
 	partitioning_type=BaseType::Null;
 }
 
-void PhysicalTable::destroyObjects(void)
+void PhysicalTable::destroyObjects()
 {
 	vector<BaseObject *> list=getObjects();
 
@@ -91,12 +91,12 @@ void PhysicalTable::setCopyTableOptions(CopyOptions like_op)
 	}
 }
 
-PhysicalTable *PhysicalTable::getCopyTable(void)
+PhysicalTable *PhysicalTable::getCopyTable()
 {
 	return(copy_table);
 }
 
-CopyOptions PhysicalTable::getCopyTableOptions(void)
+CopyOptions PhysicalTable::getCopyTableOptions()
 {
 	return(copy_op);
 }
@@ -113,12 +113,12 @@ void PhysicalTable::setPartitioningType(PartitioningType part_type)
 		setGenerateAlterCmds(false);
 }
 
-PartitioningType PhysicalTable::getPartitioningType(void)
+PartitioningType PhysicalTable::getPartitioningType()
 {
   return(partitioning_type);
 }
 
-PhysicalTable *PhysicalTable::getPartitionedTable(void)
+PhysicalTable *PhysicalTable::getPartitionedTable()
 {
 	return(partitioned_table);
 }
@@ -172,7 +172,7 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 	}
 }
 
-void PhysicalTable::setAncestorTableAttribute(void)
+void PhysicalTable::setAncestorTableAttribute()
 {
 	unsigned i, count=ancestor_tables.size();
 	QStringList list;
@@ -183,7 +183,7 @@ void PhysicalTable::setAncestorTableAttribute(void)
 	attributes[Attributes::AncestorTable]=list.join(',');
 }
 
-void PhysicalTable::setRelObjectsIndexesAttribute(void)
+void PhysicalTable::setRelObjectsIndexesAttribute()
 {
 	attribs_map aux_attribs;
 	vector<map<QString, unsigned> *> obj_indexes={ &col_indexes, &constr_indexes };
@@ -526,12 +526,12 @@ void PhysicalTable::setPartitionBoundingExpr(const QString part_bound_expr)
 	part_bounding_expr = part_bound_expr;
 }
 
-QString PhysicalTable::getPartitionBoundingExpr(void)
+QString PhysicalTable::getPartitionBoundingExpr()
 {
 	return(part_bounding_expr);
 }
 
-vector<PhysicalTable *> PhysicalTable::getPartionTables(void)
+vector<PhysicalTable *> PhysicalTable::getPartionTables()
 {
 	return(partition_tables);
 }
@@ -635,7 +635,7 @@ void PhysicalTable::addPartitionKeys(vector<PartitionKey> &part_keys)
 	setCodeInvalidated(true);
 }
 
-void PhysicalTable::removePartitionKeys(void)
+void PhysicalTable::removePartitionKeys()
 {
   partition_keys.clear();
   setCodeInvalidated(true);
@@ -988,7 +988,7 @@ PhysicalTable *PhysicalTable::getAncestorTable(unsigned idx)
 	return(dynamic_cast<PhysicalTable *>(getObject(idx, ObjectType::Table)));
 }
 
-Constraint *PhysicalTable::getPrimaryKey(void)
+Constraint *PhysicalTable::getPrimaryKey()
 {
 	unsigned count,i;
 	Constraint *pk=nullptr, *constr=nullptr;
@@ -1060,22 +1060,22 @@ Constraint *PhysicalTable::getConstraint(unsigned idx)
 	return(dynamic_cast<Constraint *>(getObject(idx,ObjectType::Constraint)));
 }
 
-unsigned PhysicalTable::getColumnCount(void)
+unsigned PhysicalTable::getColumnCount()
 {
 	return(columns.size());
 }
 
-unsigned PhysicalTable::getTriggerCount(void)
+unsigned PhysicalTable::getTriggerCount()
 {
 	return(triggers.size());
 }
 
-unsigned PhysicalTable::getConstraintCount(void)
+unsigned PhysicalTable::getConstraintCount()
 {
 	return(constraints.size());
 }
 
-unsigned PhysicalTable::getAncestorTableCount(void)
+unsigned PhysicalTable::getAncestorTableCount()
 {
 	return(ancestor_tables.size());
 }
@@ -1166,13 +1166,13 @@ void PhysicalTable::saveRelObjectsIndexes(ObjectType obj_type)
 	}
 }
 
-void PhysicalTable::saveRelObjectsIndexes(void)
+void PhysicalTable::saveRelObjectsIndexes()
 {
 	saveRelObjectsIndexes(ObjectType::Column);
 	saveRelObjectsIndexes(ObjectType::Constraint);
 }
 
-void PhysicalTable::restoreRelObjectsIndexes(void)
+void PhysicalTable::restoreRelObjectsIndexes()
 {
 	restoreRelObjectsIndexes(ObjectType::Column);
 	restoreRelObjectsIndexes(ObjectType::Constraint);
@@ -1327,12 +1327,12 @@ void PhysicalTable::setGenerateAlterCmds(bool value)
 	updateAlterCmdsStatus();
 }
 
-bool PhysicalTable::isGenerateAlterCmds(void)
+bool PhysicalTable::isGenerateAlterCmds()
 {
 	return(gen_alter_cmds);
 }
 
-void PhysicalTable::updateAlterCmdsStatus(void)
+void PhysicalTable::updateAlterCmdsStatus()
 {
 	unsigned i;
 
@@ -1407,7 +1407,7 @@ void PhysicalTable::operator = (PhysicalTable &table)
 	PgSqlType::renameUserType(prev_name, this, this->getName(true));
 }
 
-bool PhysicalTable::isReferRelationshipAddedObject(void)
+bool PhysicalTable::isReferRelationshipAddedObject()
 {
 	vector<TableObject *>::iterator itr, itr_end;
 	ObjectType types[]={ ObjectType::Column, ObjectType::Constraint };
@@ -1428,12 +1428,12 @@ bool PhysicalTable::isReferRelationshipAddedObject(void)
 	return(found);
 }
 
-bool PhysicalTable::isPartition(void)
+bool PhysicalTable::isPartition()
 {
 	return(partitioned_table != nullptr);
 }
 
-bool PhysicalTable::isPartitioned(void)
+bool PhysicalTable::isPartitioned()
 {
 	return(partitioning_type != BaseType::Null);
 }
@@ -1564,7 +1564,7 @@ vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_ty
 	return(list);
 }
 
-vector<PartitionKey> PhysicalTable::getPartitionKeys(void)
+vector<PartitionKey> PhysicalTable::getPartitionKeys()
 {
   return(partition_keys);
 }
@@ -1588,12 +1588,12 @@ void PhysicalTable::setInitialData(const QString &value)
 	initial_data = value;
 }
 
-QString PhysicalTable::getInitialData(void)
+QString PhysicalTable::getInitialData()
 {
 	return(initial_data);
 }
 
-QString PhysicalTable::getInitialDataCommands(void)
+QString PhysicalTable::getInitialDataCommands()
 {
 	QStringList buffer=initial_data.split(DataLineBreak);
 
@@ -1704,7 +1704,7 @@ void PhysicalTable::setObjectListsCapacity(unsigned capacity)
 		getObjectList(type)->reserve(type != ObjectType::Column ? capacity/2 : capacity);
 }
 
-unsigned PhysicalTable::getMaxObjectCount(void)
+unsigned PhysicalTable::getMaxObjectCount()
 {
 	unsigned count = 0, max = 0;
 

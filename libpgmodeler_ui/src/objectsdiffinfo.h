@@ -42,14 +42,14 @@ class ObjectsDiffInfo {
 		IgnoreObject=3,
 		NoDifference=4;
 
-		ObjectsDiffInfo(void);
+		ObjectsDiffInfo();
 		ObjectsDiffInfo(unsigned diff_type, BaseObject *ref_object, BaseObject *old_object);
 
-		unsigned getDiffType(void);
-		QString getInfoMessage(void);
-		QString getDiffTypeString(void);
-		BaseObject *getObject(void);
-		BaseObject *getOldObject(void);
+		unsigned getDiffType();
+		QString getInfoMessage();
+		QString getDiffTypeString();
+		BaseObject *getObject();
+		BaseObject *getOldObject();
 
 		bool operator == (ObjectsDiffInfo &info);
 

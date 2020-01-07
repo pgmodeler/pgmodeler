@@ -21,21 +21,21 @@
 ObjectsTableWidget::ObjectsTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
-	connect(move_up_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
-	connect(move_first_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
-	connect(move_last_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addRow(void)));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow(void)));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow(void)));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRow(void)));
-	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
-	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled(void)));
-	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled(void)));
-	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
-	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(setButtonsEnabled(void)));
-	connect(table_tbw, SIGNAL(itemSelectionChanged(void)), this, SLOT(emitRowSelected(void)));
+	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
+	connect(move_up_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
+	connect(move_first_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
+	connect(move_last_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows()));
+	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addRow()));
+	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow()));
+	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow()));
+	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow()));
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateRow()));
+	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows()));
+	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled()));
+	connect(table_tbw, SIGNAL(cellActivated(int,int)), this, SLOT(setButtonsEnabled()));
+	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow()));
+	connect(table_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(setButtonsEnabled()));
+	connect(table_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(emitRowSelected()));
 
 	connect(table_tbw, &QTableWidget::cellClicked, [&](int row, int col){
 		emit s_cellClicked(row, col);
@@ -217,12 +217,12 @@ void ObjectsTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 	item->setData(Qt::UserRole, data);
 }
 
-unsigned ObjectsTableWidget::getColumnCount(void)
+unsigned ObjectsTableWidget::getColumnCount()
 {
 	return(table_tbw->columnCount());
 }
 
-unsigned ObjectsTableWidget::getRowCount(void)
+unsigned ObjectsTableWidget::getRowCount()
 {
 	return(table_tbw->rowCount());
 }
@@ -279,7 +279,7 @@ QVariant ObjectsTableWidget::getRowData(unsigned row_idx)
 	return(item->data(Qt::UserRole));
 }
 
-int ObjectsTableWidget::getSelectedRow(void)
+int ObjectsTableWidget::getSelectedRow()
 {
 	return(table_tbw->currentRow());
 }
@@ -355,7 +355,7 @@ void ObjectsTableWidget::addRow(unsigned lin_idx)
 	table_tbw->setCurrentItem(item);
 }
 
-void ObjectsTableWidget::addRow(void)
+void ObjectsTableWidget::addRow()
 {
 	this->addRow(table_tbw->rowCount());
 	setButtonsEnabled();
@@ -389,7 +389,7 @@ void ObjectsTableWidget::removeRow(unsigned row_idx)
 	conf_exclusion=conf;
 }
 
-void ObjectsTableWidget::removeRow(void)
+void ObjectsTableWidget::removeRow()
 {
 	if(table_tbw->currentRow()>=0)
 	{
@@ -420,7 +420,7 @@ void ObjectsTableWidget::removeRow(void)
 	}
 }
 
-void ObjectsTableWidget::duplicateRow(void)
+void ObjectsTableWidget::duplicateRow()
 {
 	if(table_tbw->currentRow() >= 0)
 	{
@@ -443,7 +443,7 @@ void ObjectsTableWidget::duplicateRow(void)
 	}
 }
 
-void ObjectsTableWidget::removeRows(void)
+void ObjectsTableWidget::removeRows()
 {
 	if(table_tbw->rowCount() > 0)
 	{
@@ -479,7 +479,7 @@ void ObjectsTableWidget::removeColumn(unsigned col_idx)
 	emit s_columnRemoved(col_idx);
 }
 
-void ObjectsTableWidget::moveRows(void)
+void ObjectsTableWidget::moveRows()
 {
 	QObject *sender_obj=sender();
 	QTableWidgetItem *item=nullptr, *item1=nullptr;
@@ -564,17 +564,17 @@ void ObjectsTableWidget::moveRows(void)
 	}
 }
 
-void ObjectsTableWidget::editRow(void)
+void ObjectsTableWidget::editRow()
 {
 	emit s_rowEdited(table_tbw->currentRow());
 }
 
-void ObjectsTableWidget::updateRow(void)
+void ObjectsTableWidget::updateRow()
 {
 	emit s_rowUpdated(table_tbw->currentRow());
 }
 
-void ObjectsTableWidget::clearSelection(void)
+void ObjectsTableWidget::clearSelection()
 {
 	table_tbw->clearSelection();
 	table_tbw->setCurrentItem(nullptr);
@@ -625,12 +625,12 @@ void ObjectsTableWidget::setCellsEditable(bool value)
 	table_tbw->setEditTriggers(value ? QAbstractItemView::AllEditTriggers : QAbstractItemView::NoEditTriggers);
 }
 
-void ObjectsTableWidget::setButtonsEnabled(void)
+void ObjectsTableWidget::setButtonsEnabled()
 {
 	setButtonsEnabled(AllButtons, true);
 }
 
-void ObjectsTableWidget::emitRowSelected(void)
+void ObjectsTableWidget::emitRowSelected()
 {
 	QTableWidgetItem *item=table_tbw->currentItem();
 

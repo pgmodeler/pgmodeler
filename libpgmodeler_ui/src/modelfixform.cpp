@@ -70,7 +70,7 @@ void ModelFixForm::hideEvent(QHideEvent *)
 	load_model_chk->setChecked(true);
 }
 
-int ModelFixForm::exec(void)
+int ModelFixForm::exec()
 {
 	QFileInfo fi(GlobalAttributes::getPgModelerCLIPath());
 
@@ -90,7 +90,7 @@ int ModelFixForm::exec(void)
 	return(QDialog::exec());
 }
 
-void ModelFixForm::enableFix(void)
+void ModelFixForm::enableFix()
 {
 	if(!pgmodeler_cli_edt->text().isEmpty())
 	{
@@ -112,7 +112,7 @@ void ModelFixForm::enableFix(void)
 						!invalid_cli_lbl->isVisible());
 }
 
-void ModelFixForm::fixModel(void)
+void ModelFixForm::fixModel()
 {
 	QString cmd=QString("\"%1\"");
 
@@ -131,7 +131,7 @@ void ModelFixForm::fixModel(void)
 	pgmodeler_cli_proc.start(cmd);
 }
 
-void ModelFixForm::selectFile(void)
+void ModelFixForm::selectFile()
 {
 	QObject *sender_obj=sender();
 	QFileDialog file_dlg;
@@ -167,7 +167,7 @@ void ModelFixForm::selectFile(void)
 		txt->setText(file_dlg.selectedFiles().at(0));
 }
 
-void ModelFixForm::updateOutput(void)
+void ModelFixForm::updateOutput()
 {
 	QTextCursor cursor;
 	QString txt=output_txt->toPlainText();

@@ -25,18 +25,18 @@ class BaseObjectTest: public QObject {
     Q_OBJECT
 
   private slots:
-    void quoteNameIfKeyword(void);
-    void nameIsInvalidIfStartsWithNumber(void);
+    void quoteNameIfKeyword();
+    void nameIsInvalidIfStartsWithNumber();
 };
 
-void BaseObjectTest::quoteNameIfKeyword(void)
+void BaseObjectTest::quoteNameIfKeyword()
 {
   QString name = "objectname", kw_name="table";
   QCOMPARE(BaseObject::formatName(name), name);
   QCOMPARE(BaseObject::formatName(kw_name), QString("\"%1\"").arg(kw_name));
 }
 
-void BaseObjectTest::nameIsInvalidIfStartsWithNumber(void)
+void BaseObjectTest::nameIsInvalidIfStartsWithNumber()
 {
   QCOMPARE(BaseObject::isValidName("123"), false);
   QCOMPARE(BaseObject::isValidName("\"123name\""), false);

@@ -97,19 +97,19 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
+		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType()));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 		connect(indexing_chk, SIGNAL(toggled(bool)), indexing_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
+		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeColumns()));
 		connect(ref_columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
 		connect(ref_columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
-		connect(ref_columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
-		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
-		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
+		connect(ref_columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeColumns()));
+		connect(ref_table_sel, SIGNAL(s_selectorCleared()), this, SLOT(selectReferencedTable()));
+		connect(ref_table_sel, SIGNAL(s_objectSelected()), this, SLOT(selectReferencedTable()));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 
 		selectConstraintType();
@@ -173,7 +173,7 @@ void ConstraintWidget::removeColumn(int)
 		updateColumnsCombo(Constraint::ReferencedCols);
 }
 
-void ConstraintWidget::removeColumns(void)
+void ConstraintWidget::removeColumns()
 {
 	if(sender()==columns_tab)
 		updateColumnsCombo(Constraint::SourceCols);
@@ -275,7 +275,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 	}
 }
 
-void ConstraintWidget::selectReferencedTable(void)
+void ConstraintWidget::selectReferencedTable()
 {
 	Table *table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
 
@@ -296,7 +296,7 @@ void ConstraintWidget::selectReferencedTable(void)
 	}
 }
 
-void ConstraintWidget::selectConstraintType(void)
+void ConstraintWidget::selectConstraintType()
 {
 	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());
 
@@ -434,7 +434,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	excl_elems_tab->setElements<ExcludeElement>(excl_elems);
 }
 
-void ConstraintWidget::applyConfiguration(void)
+void ConstraintWidget::applyConfiguration()
 {
 	try
 	{

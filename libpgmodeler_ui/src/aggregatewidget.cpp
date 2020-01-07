@@ -139,7 +139,7 @@ void AggregateWidget::handleDataType(int row)
 	}
 }
 
-void AggregateWidget::applyConfiguration(void)
+void AggregateWidget::applyConfiguration()
 {
 	try
 	{

@@ -108,8 +108,8 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadReport(void)));
-	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveModel(void)));
+	connect(load_tb, SIGNAL(clicked()), this, SLOT(loadReport()));
+	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveModel()));
 }
 
 void CrashHandlerForm::loadReport(const QString &filename)
@@ -165,7 +165,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 	}
 }
 
-void CrashHandlerForm::loadReport(void)
+void CrashHandlerForm::loadReport()
 {
 	QFileDialog file_dlg;
 
@@ -189,7 +189,7 @@ void CrashHandlerForm::loadReport(void)
 	}
 }
 
-void CrashHandlerForm::saveModel(void)
+void CrashHandlerForm::saveModel()
 {
 	QFileDialog file_dlg;
 
@@ -247,7 +247,7 @@ void CrashHandlerForm::setAnalysisMode(bool value)
 	}
 }
 
-QByteArray CrashHandlerForm::generateReportBuffer(void)
+QByteArray CrashHandlerForm::generateReportBuffer()
 {
 	QByteArray buf=BugReportForm::generateReportBuffer();
 	buf.append(stack_txt->toPlainText().toUtf8());

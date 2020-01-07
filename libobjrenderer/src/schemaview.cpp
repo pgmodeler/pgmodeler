@@ -21,7 +21,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(schema, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	sch_name=new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
@@ -44,7 +44,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
-SchemaView::~SchemaView(void)
+SchemaView::~SchemaView()
 {
 	this->removeFromGroup(box);
 	this->removeFromGroup(sch_name);
@@ -71,7 +71,7 @@ void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		BaseObjectView::mouseReleaseEvent(event);
 }
 
-void SchemaView::fetchChildren(void)
+void SchemaView::fetchChildren()
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
@@ -93,7 +93,7 @@ void SchemaView::fetchChildren(void)
 	}
 }
 
-void SchemaView::selectChildren(void)
+void SchemaView::selectChildren()
 {
 	QList<BaseObjectView *>::Iterator itr=children.begin();
 
@@ -110,7 +110,7 @@ void SchemaView::selectChildren(void)
 	this->setSelected(true);
 }
 
-bool SchemaView::isChildrenSelected(void)
+bool SchemaView::isChildrenSelected()
 {
 	QList<BaseObjectView *>::Iterator itr=children.begin();
 	bool selected=true;
@@ -145,7 +145,7 @@ unsigned SchemaView::getChildrenCount()
 	return(children.size());
 }
 
-QList<BaseObjectView *> SchemaView::getChildren(void)
+QList<BaseObjectView *> SchemaView::getChildren()
 {
 	return(children);
 }
@@ -167,7 +167,7 @@ void SchemaView::moveTo(QPointF new_pos)
 		child->moveBy(dx, dy);
 }
 
-void SchemaView::configureObject(void)
+void SchemaView::configureObject()
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();

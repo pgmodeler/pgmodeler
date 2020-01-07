@@ -83,7 +83,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	});
 }
 
-BaseTableView::~BaseTableView(void)
+BaseTableView::~BaseTableView()
 {
 	this->removeFromGroup(body);
 	this->removeFromGroup(title);
@@ -111,12 +111,12 @@ void BaseTableView::setHideTags(bool value)
 	hide_tags=value;
 }
 
-bool BaseTableView::isExtAttributesHidden(void)
+bool BaseTableView::isExtAttributesHidden()
 {
 	return(hide_ext_attribs);
 }
 
-bool BaseTableView::isTagsHidden(void)
+bool BaseTableView::isTagsHidden()
 {
 	return(hide_tags);
 }
@@ -353,7 +353,7 @@ unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst
 	return(count);
 }
 
-void BaseTableView::configureTag(void)
+void BaseTableView::configureTag()
 {
 	BaseTable *tab=dynamic_cast<BaseTable *>(this->getUnderlyingObject());
 	Tag *tag=tab->getTag();
@@ -439,7 +439,7 @@ void BaseTableView::__configureObject(double width)
 	configureObjectShadow();
 }
 
-double BaseTableView::calculateWidth(void)
+double BaseTableView::calculateWidth()
 {
 	/* Calculating the maximum width between the title, columns, extended attributes and the attribs toggler.
 	 * This width is used to set the uniform width of table */
@@ -452,12 +452,12 @@ double BaseTableView::calculateWidth(void)
 	return (widths.back() + (2 * HorizSpacing));
 }
 
-int BaseTableView::getConnectRelsCount(void)
+int BaseTableView::getConnectRelsCount()
 {
 	return(connected_rels.size());
 }
 
-void BaseTableView::requestRelationshipsUpdate(void)
+void BaseTableView::requestRelationshipsUpdate()
 {
 	emit s_relUpdateRequest();
 }
@@ -467,7 +467,7 @@ void BaseTableView::togglePlaceholder(bool value)
 	BaseObjectView::togglePlaceholder(!connected_rels.empty() && value);
 }
 
-void BaseTableView::configureObjectShadow(void)
+void BaseTableView::configureObjectShadow()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
 
@@ -477,12 +477,12 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setPos(3.5, 4.5);
 }
 
-QList<TableObjectView *> BaseTableView::getSelectedChidren(void)
+QList<TableObjectView *> BaseTableView::getSelectedChidren()
 {
 	return(sel_child_objs);
 }
 
-void BaseTableView::clearChildrenSelection(void)
+void BaseTableView::clearChildrenSelection()
 {
 	if(sel_child_objs.isEmpty())
 		return;
@@ -494,13 +494,13 @@ void BaseTableView::clearChildrenSelection(void)
 	emit s_childrenSelectionChanged();
 }
 
-void BaseTableView::startGeometryUpdate(void)
+void BaseTableView::startGeometryUpdate()
 {
 	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 
-void BaseTableView::finishGeometryUpdate(void)
+void BaseTableView::finishGeometryUpdate()
 {
 	//Updating the object's geometry to reflect the geometry change
 	this->configureObject();

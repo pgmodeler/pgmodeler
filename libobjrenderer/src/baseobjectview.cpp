@@ -39,7 +39,7 @@ BaseObjectView::BaseObjectView(BaseObject *object)
 	setSourceObject(object);
 }
 
-BaseObjectView::~BaseObjectView(void)
+BaseObjectView::~BaseObjectView()
 {  
 	setSourceObject(nullptr);
 }
@@ -150,12 +150,12 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 	}
 }
 
-BaseObject *BaseObjectView::getUnderlyingObject(void)
+BaseObject *BaseObjectView::getUnderlyingObject()
 {
 	return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
 }
 
-void BaseObjectView::loadObjectsStyle(void)
+void BaseObjectView::loadObjectsStyle()
 {
 	QTextCharFormat font_fmt;
 	QFont font;
@@ -348,7 +348,7 @@ void BaseObjectView::setPlaceholderEnabled(bool value)
 	use_placeholder=value;
 }
 
-bool BaseObjectView::isPlaceholderEnabled(void)
+bool BaseObjectView::isPlaceholderEnabled()
 {
 	return(use_placeholder);
 }
@@ -358,7 +358,7 @@ void BaseObjectView::setCompactViewEnabled(bool value)
 	compact_view = value;
 }
 
-bool BaseObjectView::isCompactViewEnabled(void)
+bool BaseObjectView::isCompactViewEnabled()
 {
 	return(compact_view);
 }
@@ -399,7 +399,7 @@ void BaseObjectView::setSelectionOrder(bool selected)
 		this->sel_order=0;
 }
 
-QRectF BaseObjectView::boundingRect(void) const
+QRectF BaseObjectView::boundingRect() const
 {
 	return(bounding_rect);
 }
@@ -415,7 +415,7 @@ void BaseObjectView::toggleProtectionIcon(bool value)
 		obj_graf->setModified(true);
 }
 
-void BaseObjectView::configureObjectSelection(void)
+void BaseObjectView::configureObjectSelection()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_selection);
 
@@ -449,7 +449,7 @@ void BaseObjectView::configurePositionInfo(QPointF pos)
 	}
 }
 
-void BaseObjectView::configureSQLDisabledInfo(void)
+void BaseObjectView::configureSQLDisabledInfo()
 {
 	if(sql_disabled_item)
 	{
@@ -480,7 +480,7 @@ void BaseObjectView::configureSQLDisabledInfo(void)
 	}
 }
 
-void BaseObjectView::configureProtectedIcon(void)
+void BaseObjectView::configureProtectedIcon()
 {
 	if(protected_icon)
 	{
@@ -525,7 +525,7 @@ void BaseObjectView::configureProtectedIcon(void)
 	}
 }
 
-void BaseObjectView::configurePlaceholder(void)
+void BaseObjectView::configurePlaceholder()
 {
 	if(!placeholder)
 	{
@@ -537,7 +537,7 @@ void BaseObjectView::configurePlaceholder(void)
 	}
 }
 
-void BaseObjectView::__configureObject(void)
+void BaseObjectView::__configureObject()
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
@@ -552,12 +552,12 @@ void BaseObjectView::__configureObject(void)
 	}
 }
 
-unsigned BaseObjectView::getSelectionOrder(void)
+unsigned BaseObjectView::getSelectionOrder()
 {
 	return(sel_order);
 }
 
-QPointF BaseObjectView::getCenter(void)
+QPointF BaseObjectView::getCenter()
 {
 	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0,
 					 this->pos().y() + this->boundingRect().height()/2.0));
@@ -585,7 +585,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 	}
 }
 
-double BaseObjectView::getFontFactor(void)
+double BaseObjectView::getFontFactor()
 {
 	return(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize);
 }
@@ -598,7 +598,7 @@ void BaseObjectView::setLayer(unsigned layer)
 		graph_obj->setLayer(layer);
 }
 
-unsigned BaseObjectView::getLayer(void)
+unsigned BaseObjectView::getLayer()
 {
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
@@ -608,7 +608,7 @@ unsigned BaseObjectView::getLayer(void)
 	return(0);
 }
 
-double BaseObjectView::getScreenDpiFactor(void)
+double BaseObjectView::getScreenDpiFactor()
 {
 	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));
 	double factor = screen->logicalDotsPerInch() / 96.0;

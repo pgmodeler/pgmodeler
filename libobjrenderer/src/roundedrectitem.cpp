@@ -30,7 +30,7 @@ void RoundedRectItem::setBorderRadius(double radius)
 	createPolygon();
 }
 
-double RoundedRectItem::getBorderRadius(void)
+double RoundedRectItem::getBorderRadius()
 {
 	return(radius);
 }
@@ -44,7 +44,7 @@ void RoundedRectItem::setRoundedCorners(unsigned corners)
 	createPolygon();
 }
 
-unsigned RoundedRectItem::getRoundedCorners(void)
+unsigned RoundedRectItem::getRoundedCorners()
 {
 	return(corners);
 }
@@ -73,7 +73,7 @@ void RoundedRectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 		painter->drawPolygon(polygon);
 }
 
-void RoundedRectItem::createPolygon(void)
+void RoundedRectItem::createPolygon()
 {
 	polygon.clear();
 

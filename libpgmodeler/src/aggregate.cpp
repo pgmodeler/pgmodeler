@@ -18,7 +18,7 @@
 
 #include "aggregate.h"
 
-Aggregate::Aggregate(void)
+Aggregate::Aggregate()
 {
 	obj_type=ObjectType::Aggregate;
 	functions[0]=functions[1]=nullptr;
@@ -175,13 +175,13 @@ void Aggregate::removeDataType(unsigned type_idx)
 	setCodeInvalidated(true);
 }
 
-void Aggregate::removeDataTypes(void)
+void Aggregate::removeDataTypes()
 {
 	data_types.clear();
 	setCodeInvalidated(true);
 }
 
-unsigned Aggregate::getDataTypeCount(void)
+unsigned Aggregate::getDataTypeCount()
 {
 	return(data_types.size());
 }
@@ -195,17 +195,17 @@ Function *Aggregate::getFunction(unsigned func_idx)
 	return(functions[func_idx]);
 }
 
-PgSqlType Aggregate::getStateType(void)
+PgSqlType Aggregate::getStateType()
 {
 	return(state_type);
 }
 
-QString Aggregate::getInitialCondition(void)
+QString Aggregate::getInitialCondition()
 {
 	return(initial_condition);
 }
 
-Operator *Aggregate::getSortOperator(void)
+Operator *Aggregate::getSortOperator()
 {
 	return(sort_operator);
 }
@@ -303,7 +303,7 @@ QString Aggregate::getSignature(bool format)
 	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
 }
 
-void Aggregate::configureSearchAttributes(void)
+void Aggregate::configureSearchAttributes()
 {
 	QStringList list;
 

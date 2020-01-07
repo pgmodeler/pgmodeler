@@ -56,13 +56,13 @@ class BezierCurveItem: public QGraphicsPathItem {
 		void setLine(const QLineF &line, bool simple_curve, bool invert_cpoints);
 
 		//! \brief Returns if the curve has the control points inverted
-		bool isControlPointsInverted(void);
+		bool isControlPointsInverted();
 
 		//! \brief Returns if the curve is a simple one (with only one control point)
-		bool isSimpleCurve(void);
+		bool isSimpleCurve();
 
 		//! \brief Returns if the curve object was created from a straight line (90 or 180 degrees)
-		bool isStraightLine(void);
+		bool isStraightLine();
 
 		//! \brief Returns if the specified point is contained by the curve (specifically, by the stroke)
 		virtual bool contains(const QPointF &pnt) const;

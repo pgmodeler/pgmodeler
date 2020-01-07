@@ -59,7 +59,7 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 		
 		void setColor(int color_idx, const QColor &color);
 		QColor getColor(int color_idx);
-		unsigned getColorCount(void);
+		unsigned getColorCount();
 		bool isButtonVisible(unsigned idx);
 		
 		void setButtonToolTip(unsigned button_idx, const QString &tooltip);
@@ -67,12 +67,12 @@ class ColorPickerWidget: public QWidget, public Ui::ColorPickerWidget {
 	public slots:
 		void setEnabled(bool value);
 		void setButtonVisible(unsigned idx, bool value);
-		void selectColor(void);
-		void generateRandomColors(void);
+		void selectColor();
+		void generateRandomColors();
 		
 	signals:
 		void s_colorChanged(unsigned, QColor);
-		void s_colorsChanged(void);
+		void s_colorsChanged();
 };
 
 #endif

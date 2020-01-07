@@ -52,30 +52,30 @@ class SchemaView: public BaseObjectView
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 		//! \brief Fills the children vector
-		void fetchChildren(void);
+		void fetchChildren();
 
 		//! \brief Returns if all children are selected
-		bool isChildrenSelected(void);
+		bool isChildrenSelected();
 
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 	public:
 		SchemaView(Schema *schema);
-		~SchemaView(void);
+		~SchemaView();
 
 		//! \brief Visually selects all the schema children
-		void selectChildren(void);
+		void selectChildren();
 
-		unsigned getChildrenCount(void);
+		unsigned getChildrenCount();
 
-		QList<BaseObjectView *> getChildren(void);
+		QList<BaseObjectView *> getChildren();
 
 		virtual void togglePlaceholder(bool visible);
 
 		void moveTo(QPointF new_pos);
 
 	public slots:
-		void configureObject(void);
+		void configureObject();
 };
 
 #endif

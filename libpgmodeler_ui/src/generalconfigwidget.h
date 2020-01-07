@@ -75,11 +75,11 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		GeneralConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration(void);
-		void loadConfiguration(void);
+		void saveConfiguration();
+		void loadConfiguration();
 		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
 		static void removeConfigurationParam(const QRegExp &param_reg);
-		static map<QString, attribs_map> getConfigurationParams(void);
+		static map<QString, attribs_map> getConfigurationParams();
 
 		/*! \brief Returns a single value of a configuration param in the specified section id.
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
@@ -89,15 +89,15 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
 
 	public slots:
-		void applyConfiguration(void);
-		void restoreDefaults(void);
-		void selectPaperSize(void);
-		void selectSourceEditor(void);
+		void applyConfiguration();
+		void restoreDefaults();
+		void selectPaperSize();
+		void selectSourceEditor();
 
 	private slots:
-		void convertMarginUnity(void);
-		void updateFontPreview(void);
-		void resetDialogsSizes(void);
+		void convertMarginUnity();
+		void updateFontPreview();
+		void resetDialogsSizes();
 };
 
 #endif

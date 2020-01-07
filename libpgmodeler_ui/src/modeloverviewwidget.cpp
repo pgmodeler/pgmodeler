@@ -54,22 +54,22 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 	if(this->model)
 	{
-		connect(this->model, SIGNAL(s_objectCreated(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectRemoved(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectsMoved(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objectModified(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objectCreated()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectRemoved()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectsMoved()), this, SLOT(updateOverview()));
+		connect(this->model, SIGNAL(s_objectModified()), this, SLOT(updateOverview()));
 		connect(this->model, SIGNAL(s_zoomModified(double)), this, SLOT(updateZoomFactor(double)));
 
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeOverview(void)));
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeOverview()));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(resizeWindowFrame()));
+		connect(this->model, SIGNAL(s_modelResized()), this, SLOT(updateOverview()));
 
-		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
+		connect(this->model->viewport->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(resizeWindowFrame()));
 
-		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
-		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
+		connect(this->model->scene, SIGNAL(selectionChanged()), this, SLOT(updateOverview()));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview()));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview()));
 
 		this->resizeOverview();
 		this->updateZoomFactor(this->model->getCurrentZoom());
@@ -116,7 +116,7 @@ bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void ModelOverviewWidget::updateOverview(void)
+void ModelOverviewWidget::updateOverview()
 {
 	this->updateOverview(false);
 }
@@ -159,7 +159,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 	}
 }
 
-void ModelOverviewWidget::resizeWindowFrame(void)
+void ModelOverviewWidget::resizeWindowFrame()
 {
 	if(this->model)
 	{
@@ -193,7 +193,7 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	}
 }
 
-void ModelOverviewWidget::resizeOverview(void)
+void ModelOverviewWidget::resizeOverview()
 {
 	if(this->model)
 	{

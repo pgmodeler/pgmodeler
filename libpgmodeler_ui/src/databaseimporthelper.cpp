@@ -45,7 +45,7 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 	}
 }
 
-void DatabaseImportHelper::closeConnection(void)
+void DatabaseImportHelper::closeConnection()
 {
 	connection.close();
 	catalog.closeConnection();
@@ -109,17 +109,17 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 }
 
-unsigned DatabaseImportHelper::getLastSystemOID(void)
+unsigned DatabaseImportHelper::getLastSystemOID()
 {
 	return(catalog.getLastSysObjectOID());
 }
 
-QString DatabaseImportHelper::getCurrentDatabase(void)
+QString DatabaseImportHelper::getCurrentDatabase()
 {
 	return(connection.getConnectionParam(Connection::ParamDbName));
 }
 
-Catalog DatabaseImportHelper::getCatalog(void)
+Catalog DatabaseImportHelper::getCatalog()
 {
 	return(catalog);
 }
@@ -150,7 +150,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 	}
 }
 
-void DatabaseImportHelper::swapSequencesTablesIds(void)
+void DatabaseImportHelper::swapSequencesTablesIds()
 {
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
@@ -167,7 +167,7 @@ void DatabaseImportHelper::swapSequencesTablesIds(void)
 	}
 }
 
-void DatabaseImportHelper::retrieveSystemObjects(void)
+void DatabaseImportHelper::retrieveSystemObjects()
 {
 	int progress=0;
 	vector<attribs_map>::iterator itr;
@@ -213,7 +213,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	}
 }
 
-void DatabaseImportHelper::retrieveUserObjects(void)
+void DatabaseImportHelper::retrieveUserObjects()
 {
 	int progress=0;
 	map<ObjectType, vector<unsigned>>::iterator oid_itr=object_oids.begin();
@@ -289,7 +289,7 @@ void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const Q
 	}
 }
 
-void DatabaseImportHelper::createObjects(void)
+void DatabaseImportHelper::createObjects()
 {
 	int progress=0;
 	attribs_map attribs;
@@ -406,7 +406,7 @@ void DatabaseImportHelper::createObjects(void)
 	#endif
 }
 
-void DatabaseImportHelper::createConstraints(void)
+void DatabaseImportHelper::createConstraints()
 {
 	int progress=0;
 	attribs_map attribs;
@@ -445,7 +445,7 @@ void DatabaseImportHelper::createConstraints(void)
 	}
 }
 
-void DatabaseImportHelper::createPermissions(void)
+void DatabaseImportHelper::createPermissions()
 {
 	attribs_map attribs;
 
@@ -504,7 +504,7 @@ void DatabaseImportHelper::createPermissions(void)
 	}
 }
 
-void DatabaseImportHelper::updateFKRelationships(void)
+void DatabaseImportHelper::updateFKRelationships()
 {
 	int progress=0;
 	vector<BaseObject *>::iterator itr_tab, itr_tab_end;
@@ -540,7 +540,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 	}
 }
 
-void DatabaseImportHelper::importDatabase(void)
+void DatabaseImportHelper::importDatabase()
 {
 	try
 	{
@@ -650,7 +650,7 @@ void DatabaseImportHelper::importDatabase(void)
 	}
 }
 
-void DatabaseImportHelper::cancelImport(void)
+void DatabaseImportHelper::cancelImport()
 {
 	import_canceled=true;
 }
@@ -887,7 +887,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 	}
 }
 
-void DatabaseImportHelper::resetImportParameters(void)
+void DatabaseImportHelper::resetImportParameters()
 {
 	Connection::setPrintSQL(false);
 	import_canceled=false;
@@ -2389,7 +2389,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTableInheritances(void)
+void DatabaseImportHelper::createTableInheritances()
 {
 	//Creating table inheiritances
 	if(dbmodel->getObjectCount(ObjectType::Table) > 0 && !import_canceled)
@@ -2411,7 +2411,7 @@ void DatabaseImportHelper::createTableInheritances(void)
 	}
 }
 
-void DatabaseImportHelper::createTablePartitionings(void)
+void DatabaseImportHelper::createTablePartitionings()
 {
 	if(imported_tables.empty())
 		return;
@@ -2453,7 +2453,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 	}
 }
 
-void DatabaseImportHelper::destroyDetachedColumns(void)
+void DatabaseImportHelper::destroyDetachedColumns()
 {
 	if(inherited_cols.empty() || import_canceled)
 		return;
@@ -2617,7 +2617,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 	}
 }
 
-void DatabaseImportHelper::assignSequencesToColumns(void)
+void DatabaseImportHelper::assignSequencesToColumns()
 {
 	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
@@ -2671,7 +2671,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 	}
 }
 
-void DatabaseImportHelper::__createTableInheritances(void)
+void DatabaseImportHelper::__createTableInheritances()
 {
 	vector<unsigned> table_oids;
 	Relationship *rel=nullptr;

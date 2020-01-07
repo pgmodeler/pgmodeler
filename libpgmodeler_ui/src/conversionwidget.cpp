@@ -70,7 +70,7 @@ void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	}
 }
 
-void ConversionWidget::applyConfiguration(void)
+void ConversionWidget::applyConfiguration()
 {
 	try
 	{

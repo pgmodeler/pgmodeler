@@ -62,7 +62,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 	}
 }
 
-ElementsTableWidget::~ElementsTableWidget(void)
+ElementsTableWidget::~ElementsTableWidget()
 {
 	if(handled_elem)
 		delete handled_elem;

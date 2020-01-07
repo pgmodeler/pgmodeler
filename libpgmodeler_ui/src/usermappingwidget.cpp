@@ -82,7 +82,7 @@ void UserMappingWidget::setAttributes(DatabaseModel *model, OperationList *op_li
 	}
 }
 
-void UserMappingWidget::applyConfiguration(void)
+void UserMappingWidget::applyConfiguration()
 {
 	try
 	{

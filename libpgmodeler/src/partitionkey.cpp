@@ -18,7 +18,7 @@
 
 #include "partitionkey.h"
 
-PartitionKey::PartitionKey(void)
+PartitionKey::PartitionKey()
 {
 	collation = nullptr;
 }
@@ -28,7 +28,7 @@ void PartitionKey::setCollation(Collation *collation)
 	this->collation=collation;
 }
 
-Collation *PartitionKey::getCollation(void)
+Collation *PartitionKey::getCollation()
 {
 	return(collation);
 }

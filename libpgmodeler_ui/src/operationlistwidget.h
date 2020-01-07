@@ -37,25 +37,25 @@ class OperationListWidget: public QWidget, public Ui::OperationListWidget {
 		ModelWidget *model_wgt;
 
 		//! \brief Updates the operation list and emits the signal s_operationListUpdated to the connected objects
-		void notifyUpdateOnModel(void);
+		void notifyUpdateOnModel();
 
 	public:
 		OperationListWidget(QWidget * parent = nullptr);
 
 	public slots:
-		void updateOperationList(void);
+		void updateOperationList();
 		void setModel(ModelWidget *model);
-		void undoOperation(void);
-		void redoOperation(void);
-		void removeOperations(void);
-		void hide(void);
+		void undoOperation();
+		void redoOperation();
+		void removeOperations();
+		void hide();
 
 	private slots:
 		void selectItem(QTreeWidgetItem *item, int coluna);
 
 	signals:
-		void s_operationExecuted(void);
-		void s_operationListUpdated(void);
+		void s_operationExecuted();
+		void s_operationListUpdated();
 		void s_visibilityChanged(bool);
 };
 

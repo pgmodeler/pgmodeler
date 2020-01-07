@@ -18,7 +18,7 @@
 
 #include "operation.h"
 
-Operation::Operation(void)
+Operation::Operation()
 {
 	parent_obj=nullptr;
 	pool_obj=nullptr;
@@ -28,7 +28,7 @@ Operation::Operation(void)
 	op_type=NoOperation;
 }
 
-QString Operation::generateOperationId(void)
+QString Operation::generateOperationId()
 {
 	QString addr;
 	QTextStream stream(&addr);
@@ -87,47 +87,47 @@ void Operation::setXMLDefinition(const QString &xml_def)
 	xml_definition=xml_def;
 }
 
-int Operation::getObjectIndex(void)
+int Operation::getObjectIndex()
 {
 	return(object_idx);
 }
 
-unsigned Operation::getChainType(void)
+unsigned Operation::getChainType()
 {
 	return(chain_type);
 }
 
-unsigned Operation::getOperationType(void)
+unsigned Operation::getOperationType()
 {
 	return(op_type);
 }
 
-BaseObject *Operation::getOriginalObject(void)
+BaseObject *Operation::getOriginalObject()
 {
 	return(original_obj);
 }
 
-BaseObject *Operation::getPoolObject(void)
+BaseObject *Operation::getPoolObject()
 {
 	return(pool_obj);
 }
 
-BaseObject *Operation::getParentObject(void)
+BaseObject *Operation::getParentObject()
 {
 	return(parent_obj);
 }
 
-vector<Permission *> Operation::getPermissions(void)
+vector<Permission *> Operation::getPermissions()
 {
 	return(permissions);
 }
 
-QString Operation::getXMLDefinition(void)
+QString Operation::getXMLDefinition()
 {
 	return(xml_definition);
 }
 
-bool Operation::isOperationValid(void)
+bool Operation::isOperationValid()
 {
 	return(operation_id==generateOperationId());
 }

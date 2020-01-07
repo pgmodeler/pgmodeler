@@ -90,7 +90,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
 }
 
-map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
 {
 	return(config_params);
 }
@@ -146,7 +146,7 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 	return(attribs);
 }
 
-vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
+vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
 {
 	vector<attribs_map> snippets;
 
@@ -263,7 +263,7 @@ void SnippetsConfigWidget::hideEvent(QHideEvent *)
 	enableEditMode(false);
 }
 
-void SnippetsConfigWidget::loadConfiguration(void)
+void SnippetsConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -291,7 +291,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	}
 }
 
-void SnippetsConfigWidget::resetForm(void)
+void SnippetsConfigWidget::resetForm()
 {
 	snippet_txt->clear();
 	id_edt->clear();
@@ -301,7 +301,7 @@ void SnippetsConfigWidget::resetForm(void)
 	placeholders_chk->setChecked(false);
 }
 
-attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
+attribs_map SnippetsConfigWidget::getSnippetAttributes()
 {
 	QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
 
@@ -317,7 +317,7 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
 						{Attributes::Contents, snippet_txt->toPlainText()} });
 }
 
-void SnippetsConfigWidget::editSnippet(void)
+void SnippetsConfigWidget::editSnippet()
 {
 	QString snip_id=snippets_cmb->currentData().toString();
 	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(Attributes::Object));
@@ -331,7 +331,7 @@ void SnippetsConfigWidget::editSnippet(void)
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 
-void SnippetsConfigWidget::handleSnippet(void)
+void SnippetsConfigWidget::handleSnippet()
 {
 	QString orig_id=snippets_cmb->currentData().toString();
 	attribs_map snippet;
@@ -352,14 +352,14 @@ void SnippetsConfigWidget::handleSnippet(void)
 	}
 }
 
-void SnippetsConfigWidget::removeSnippet(void)
+void SnippetsConfigWidget::removeSnippet()
 {
 	config_params.erase(snippets_cmb->currentData().toString());
 	filterSnippets(filter_cmb->currentIndex());
 	setConfigurationChanged(true);
 }
 
-void SnippetsConfigWidget::removeAllSnippets(void)
+void SnippetsConfigWidget::removeAllSnippets()
 {
 	Messagebox msg_box;
 
@@ -392,7 +392,7 @@ void SnippetsConfigWidget::enableEditMode(bool enable)
 	if(!enable) resetForm();
 }
 
-void SnippetsConfigWidget::enableSaveButtons(void)
+void SnippetsConfigWidget::enableSaveButtons()
 {
 	bool enable=(!id_edt->text().isEmpty() &&
 				 !label_edt->text().isEmpty() &&
@@ -426,7 +426,7 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 	}
 }
 
-void SnippetsConfigWidget::parseSnippet(void)
+void SnippetsConfigWidget::parseSnippet()
 {
 	Messagebox msg_box;
 
@@ -441,7 +441,7 @@ void SnippetsConfigWidget::parseSnippet(void)
 	}
 }
 
-void SnippetsConfigWidget::saveConfiguration(void)
+void SnippetsConfigWidget::saveConfiguration()
 { 
 	try
 	{
@@ -480,7 +480,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 	}
 }
 
-void SnippetsConfigWidget::restoreDefaults(void)
+void SnippetsConfigWidget::restoreDefaults()
 {
 	try
 	{

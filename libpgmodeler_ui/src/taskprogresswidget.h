@@ -44,8 +44,8 @@ class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 		void addIcon(unsigned id, const QIcon &ico);
 
 	public slots:
-		void show(void);
-		void close(void);
+		void show();
+		void close();
 		void updateProgress(int progress, unsigned icon_id);
 		void updateProgress(int progress, QString text, unsigned icon_id);
 };

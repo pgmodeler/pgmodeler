@@ -116,7 +116,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 		properties_tbw->setTabEnabled(2, checked);
 	});
 
-	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
+	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType()));
 
 	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
 		col_alias_edt->setEnabled(dynamic_cast<Column *>(ref_object_sel->getSelectedObject()));
@@ -208,17 +208,17 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-Reference ReferenceWidget::getReference(void)
+Reference ReferenceWidget::getReference()
 {
 	return(reference);
 }
 
-unsigned ReferenceWidget::getReferenceFlags(void)
+unsigned ReferenceWidget::getReferenceFlags()
 {
 	return(ref_flags);
 }
 
-void ReferenceWidget::applyConfiguration(void)
+void ReferenceWidget::applyConfiguration()
 {
 	try
 	{
@@ -328,7 +328,7 @@ void ReferenceWidget::duplicateColumn(int src_row, int new_row)
 	columns_tab->setRowData(columns_tab->getRowData(src_row), new_row);
 }
 
-void ReferenceWidget::selectReferenceType(void)
+void ReferenceWidget::selectReferenceType()
 {
 	//Marks if the select reference type treats a reference to an object
 	bool ref_obj=(ref_type_cmb->currentIndex()==static_cast<int>(Reference::ReferColumn));

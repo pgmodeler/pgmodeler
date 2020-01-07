@@ -18,7 +18,7 @@
 
 #include "foreignserver.h"
 
-ForeignServer::ForeignServer(void) : BaseObject()
+ForeignServer::ForeignServer() : BaseObject()
 {
 	obj_type = ObjectType::ForeignServer;
 	fdata_wrapper = nullptr;
@@ -44,17 +44,17 @@ void ForeignServer::setForeignDataWrapper(ForeignDataWrapper *fdw)
 	fdata_wrapper = fdw;
 }
 
-QString ForeignServer::getType(void)
+QString ForeignServer::getType()
 {
 	return(type);
 }
 
-QString ForeignServer::getVersion(void)
+QString ForeignServer::getVersion()
 {
 	return(version);
 }
 
-ForeignDataWrapper *ForeignServer::getForeignDataWrapper(void)
+ForeignDataWrapper *ForeignServer::getForeignDataWrapper()
 {
 	return(fdata_wrapper);
 }

@@ -152,7 +152,7 @@ void LineNumbersWidget::mouseReleaseEvent(QMouseEvent *)
 	has_selection = false;
 }
 
-QColor LineNumbersWidget::getBackgroundColor(void)
+QColor LineNumbersWidget::getBackgroundColor()
 {
 	return(LineNumbersWidget::bg_color);
 }

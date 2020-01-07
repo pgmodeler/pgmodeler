@@ -61,7 +61,7 @@ const QString SchemaParser::TokenLtEqOper=QString("<=");
 
 const QRegExp SchemaParser::AttribRegExp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
 
-SchemaParser::SchemaParser(void)
+SchemaParser::SchemaParser()
 {
 	line=column=comment_count=0;
 	ignore_unk_atribs=ignore_empty_atribs=false;
@@ -87,12 +87,12 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 		pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
-QString SchemaParser::getPgSQLVersion(void)
+QString SchemaParser::getPgSQLVersion()
 {
 	return(pgsql_version);
 }
 
-QStringList SchemaParser::extractAttributes(void)
+QStringList SchemaParser::extractAttributes()
 {
 	QStringList attribs;
 	int start=0, end=0;
@@ -123,7 +123,7 @@ QStringList SchemaParser::extractAttributes(void)
 	return(attribs);
 }
 
-void SchemaParser::restartParser(void)
+void SchemaParser::restartParser()
 {
 	/* Clears the buffer and resets the counters for line,
 		column and amount of comments */
@@ -220,7 +220,7 @@ void SchemaParser::loadFile(const QString &filename)
 	}
 }
 
-QString SchemaParser::getAttribute(void)
+QString SchemaParser::getAttribute()
 {
 	QString atrib, current_line;
 	bool start_attrib, end_attrib, error=false;
@@ -280,7 +280,7 @@ QString SchemaParser::getAttribute(void)
 	return(atrib);
 }
 
-QString SchemaParser::getWord(void)
+QString SchemaParser::getWord()
 {
 	QString word, current_line;
 
@@ -306,7 +306,7 @@ QString SchemaParser::getWord(void)
 	return(word);
 }
 
-QString SchemaParser::getPureText(void)
+QString SchemaParser::getPureText()
 {
 	QString text, current_line;
 	bool error=false;
@@ -359,7 +359,7 @@ QString SchemaParser::getPureText(void)
 	return(text);
 }
 
-QString SchemaParser::getConditional(void)
+QString SchemaParser::getConditional()
 {
 	QString conditional, current_line;
 	bool error=false;
@@ -398,7 +398,7 @@ QString SchemaParser::getConditional(void)
 	return(conditional);
 }
 
-QString SchemaParser::getMetaCharacter(void)
+QString SchemaParser::getMetaCharacter()
 {
 	QString meta, current_line;
 	bool error=false;
@@ -442,7 +442,7 @@ bool SchemaParser::isSpecialCharacter(char chr)
 		   chr==CharIniPlainText || chr==CharEndPlainText);
 }
 
-bool SchemaParser::evaluateComparisonExpr(void)
+bool SchemaParser::evaluateComparisonExpr()
 {
 	QString curr_line, attrib, value, oper, valid_op_chrs="=!<>fi";
 	bool error=false, end_eval=false, expr_is_true=true;
@@ -582,7 +582,7 @@ bool SchemaParser::evaluateComparisonExpr(void)
 	return(expr_is_true);
 }
 
-void SchemaParser::defineAttribute(void)
+void SchemaParser::defineAttribute()
 {
 	QString curr_line, attrib, value, new_attrib;
 	bool error=false, end_def=false, use_val_as_name=false;
@@ -681,7 +681,7 @@ void SchemaParser::defineAttribute(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void SchemaParser::unsetAttribute(void)
+void SchemaParser::unsetAttribute()
 {
 	QString curr_line, attrib;
 	bool end_def=false;
@@ -731,7 +731,7 @@ void SchemaParser::unsetAttribute(void)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
-bool SchemaParser::evaluateExpression(void)
+bool SchemaParser::evaluateExpression()
 {
 	QString current_line, cond, attrib, prev_cond;
 	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true, comp_true=true;

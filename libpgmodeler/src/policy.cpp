@@ -17,7 +17,7 @@
 */
 #include "policy.h"
 
-Policy::Policy(void) : TableObject()
+Policy::Policy() : TableObject()
 {
 	obj_type=ObjectType::Policy;
 	permissive = false;
@@ -50,7 +50,7 @@ void Policy::setPermissive(bool value)
 	permissive = value;
 }
 
-bool Policy::isPermissive(void)
+bool Policy::isPermissive()
 {
 	return(permissive);
 }
@@ -61,7 +61,7 @@ void Policy::setPolicyCommand(PolicyCmdType cmd)
 	policy_cmd = cmd;
 }
 
-PolicyCmdType Policy::getPolicyCommand(void)
+PolicyCmdType Policy::getPolicyCommand()
 {
 	return(policy_cmd);
 }
@@ -72,7 +72,7 @@ void Policy::setUsingExpression(const QString &expr)
 	using_expr = expr;
 }
 
-QString Policy::getUsingExpression(void)
+QString Policy::getUsingExpression()
 {
 	return(using_expr);
 }
@@ -83,7 +83,7 @@ void Policy::setCheckExpression(const QString &expr)
 	check_expr = expr;
 }
 
-QString Policy::getCheckExpression(void)
+QString Policy::getCheckExpression()
 {
 	return(check_expr);
 }
@@ -97,13 +97,13 @@ void Policy::addRole(Role *role)
 		roles.push_back(role);
 }
 
-void Policy::removeRoles(void)
+void Policy::removeRoles()
 {
 	roles.clear();
 	setCodeInvalidated(true);
 }
 
-vector<Role *> Policy::getRoles(void)
+vector<Role *> Policy::getRoles()
 {
 	return(roles);
 }

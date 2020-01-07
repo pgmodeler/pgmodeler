@@ -28,9 +28,9 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 
-	connect(new_name_edt, SIGNAL(returnPressed(void)), this, SLOT(applyRenaming(void)));
-	connect(apply_tb, SIGNAL(clicked(void)), this, SLOT(applyRenaming(void)));
-	connect(cancel_tb, SIGNAL(clicked(void)), this, SLOT(reject(void)));
+	connect(new_name_edt, SIGNAL(returnPressed()), this, SLOT(applyRenaming()));
+	connect(apply_tb, SIGNAL(clicked()), this, SLOT(applyRenaming()));
+	connect(cancel_tb, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
 void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list)
@@ -57,7 +57,7 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 	new_name_edt->setText(object->getName());
 }
 
-int ObjectRenameWidget::exec(void)
+int ObjectRenameWidget::exec()
 {
 	if(object && op_list)
 		return(QDialog::exec());
@@ -74,7 +74,7 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 	obj_name_lbl->clear();
 }
 
-void ObjectRenameWidget::applyRenaming(void)
+void ObjectRenameWidget::applyRenaming()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 

@@ -160,11 +160,11 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	show_sys_objs = toggle_disp_menu.addAction(tr("Show system objects"));
 	show_sys_objs->setCheckable(true);
-	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	connect(show_sys_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects()));
 
 	show_ext_objs = toggle_disp_menu.addAction(tr("Show extension objects"));
 	show_ext_objs->setCheckable(true);
-	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects(void)));
+	connect(show_ext_objs, SIGNAL(toggled(bool)), this, SLOT(listObjects()));
 
 	toggle_display_tb->setMenu(&toggle_disp_menu);
 
@@ -195,7 +195,7 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	objects_trw->installEventFilter(this);
 
-	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(listObjects(void)));
+	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(listObjects()));
 	connect(objects_trw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(handleObject(QTreeWidgetItem *,int)));
 	connect(objects_trw, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(showObjectProperties()));
 	connect(raw_attrib_names_chk, SIGNAL(toggled(bool)), this, SLOT(showObjectProperties()));
@@ -206,9 +206,9 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	connect(data_grid_tb, SIGNAL(clicked(bool)), this, SLOT(openDataGrid()));
 	connect(drop_db_tb, SIGNAL(clicked(bool)), this, SLOT(dropDatabase()));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll(void)));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
+	connect(collapse_all_tb, SIGNAL(clicked(bool)), objects_trw, SLOT(collapseAll()));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 
 	connect(runsql_tb, &QToolButton::clicked,
 			[&]() { emit s_sqlExecutionRequested(); });
@@ -983,12 +983,12 @@ void DatabaseExplorerWidget::setConnection(Connection conn, const QString &defau
 	this->default_db=(default_db.isEmpty() ? QString("postgres") : default_db);
 }
 
-Connection DatabaseExplorerWidget::getConnection(void)
+Connection DatabaseExplorerWidget::getConnection()
 {
 	return(connection);
 }
 
-void DatabaseExplorerWidget::clearObjectProperties(void)
+void DatabaseExplorerWidget::clearObjectProperties()
 {
 	properties_tbw->clearContents();
 	properties_tbw->setRowCount(0);
@@ -996,7 +996,7 @@ void DatabaseExplorerWidget::clearObjectProperties(void)
 	emit s_sourceCodeShowRequested(QString());
 }
 
-void DatabaseExplorerWidget::listObjects(void)
+void DatabaseExplorerWidget::listObjects()
 {
 	try
 	{
@@ -1042,7 +1042,7 @@ void DatabaseExplorerWidget::listObjects(void)
 	}
 }
 
-void DatabaseExplorerWidget::configureImportHelper(void)
+void DatabaseExplorerWidget::configureImportHelper()
 {
 	import_helper.setConnection(connection);
 	import_helper.setCurrentDatabase(connection.getConnectionParam(Connection::ParamDbName));
@@ -1748,7 +1748,7 @@ void DatabaseExplorerWidget::startObjectRename(QTreeWidgetItem *item)
 	}
 }
 
-void DatabaseExplorerWidget::finishObjectRename(void)
+void DatabaseExplorerWidget::finishObjectRename()
 {
 	Messagebox msg_box;
 
@@ -1787,7 +1787,7 @@ void DatabaseExplorerWidget::finishObjectRename(void)
 	}
 }
 
-void DatabaseExplorerWidget::cancelObjectRename(void)
+void DatabaseExplorerWidget::cancelObjectRename()
 {
 	if(rename_item)
 	{
@@ -1798,7 +1798,7 @@ void DatabaseExplorerWidget::cancelObjectRename(void)
 	}
 }
 
-void DatabaseExplorerWidget::loadObjectSource(void)
+void DatabaseExplorerWidget::loadObjectSource()
 {
 	QTreeWidgetItem *item=objects_trw->currentItem();
 
@@ -1964,7 +1964,7 @@ void DatabaseExplorerWidget::loadObjectSource(void)
 	}
 }
 
-void DatabaseExplorerWidget::filterObjects(void)
+void DatabaseExplorerWidget::filterObjects()
 {
 	DatabaseImportForm::filterObjects(objects_trw, filter_edt->text(),
 																		(by_oid_chk->isChecked() ? DatabaseImportForm::ObjectId : 0), false);
@@ -2009,7 +2009,7 @@ void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &
 	data_manip->show();
 }
 
-void DatabaseExplorerWidget::dropDatabase(void)
+void DatabaseExplorerWidget::dropDatabase()
 {
 	Messagebox msg_box;
 	QString dbname = connection.getConnectionParam(Connection::ParamDbName);

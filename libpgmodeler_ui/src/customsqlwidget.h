@@ -55,7 +55,7 @@ class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 		*action_tab_delete;
 		
 		//! \brief Configures the code template menus according to the loaded object
-		void configureMenus(void);
+		void configureMenus();
 		
 	public:
 		CustomSQLWidget(QWidget *parent = nullptr);
@@ -63,11 +63,11 @@ class CustomSQLWidget: public BaseObjectWidget, public Ui::CustomSQLWidget {
 		void setAttributes(DatabaseModel *model, BaseObject *object);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 		
 	private slots:
-		void addCommand(void);
-		void clearCode(void);
+		void addCommand();
+		void clearCode();
 };
 
 #endif

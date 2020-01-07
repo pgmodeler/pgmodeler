@@ -18,7 +18,7 @@
 
 #include "usermapping.h"
 
-UserMapping::UserMapping(void) : BaseObject()
+UserMapping::UserMapping() : BaseObject()
 {
 	obj_type = ObjectType::UserMapping;
 	foreign_server = nullptr;
@@ -34,7 +34,7 @@ void UserMapping::setForeignServer(ForeignServer *server)
 	setName("");
 }
 
-ForeignServer *UserMapping::getForeignServer(void)
+ForeignServer *UserMapping::getForeignServer()
 {
 	return(foreign_server);
 }

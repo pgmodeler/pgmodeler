@@ -18,7 +18,7 @@
 
 #include "foreigntable.h"
 
-ForeignTable::ForeignTable(void) : PhysicalTable()
+ForeignTable::ForeignTable() : PhysicalTable()
 {
 	obj_type = ObjectType::ForeignTable;
 	attributes[Attributes::Server] = QString();
@@ -28,7 +28,7 @@ ForeignTable::ForeignTable(void) : PhysicalTable()
 	setName(tr("new_foreign_table"));
 }
 
-ForeignTable::~ForeignTable(void)
+ForeignTable::~ForeignTable()
 {
 	destroyObjects();
 }
@@ -39,7 +39,7 @@ void ForeignTable::setForeignServer(ForeignServer *server)
 	foreign_server = server;
 }
 
-ForeignServer *ForeignTable::getForeignServer(void)
+ForeignServer *ForeignTable::getForeignServer()
 {
 	return(foreign_server);
 }

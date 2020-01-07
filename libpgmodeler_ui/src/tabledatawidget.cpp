@@ -131,7 +131,7 @@ void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_r
 	}
 }
 
-void TableDataWidget::duplicateRows(void)
+void TableDataWidget::duplicateRows()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
 
@@ -155,7 +155,7 @@ void TableDataWidget::duplicateRows(void)
 	}
 }
 
-void TableDataWidget::deleteRows(void)
+void TableDataWidget::deleteRows()
 {
 	QTableWidgetSelectionRange sel_range;
 
@@ -168,7 +168,7 @@ void TableDataWidget::deleteRows(void)
 	}
 }
 
-void TableDataWidget::deleteColumns(void)
+void TableDataWidget::deleteColumns()
 {
 	Messagebox msg_box;
 
@@ -218,7 +218,7 @@ void TableDataWidget::clearRows(bool confirm)
 	}
 }
 
-void TableDataWidget::clearColumns(void)
+void TableDataWidget::clearColumns()
 {
 	Messagebox msg_box;
 
@@ -291,7 +291,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 	}
 }
 
-void TableDataWidget::enableButtons(void)
+void TableDataWidget::enableButtons()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
 	bool cols_selected, rows_selected;
@@ -427,7 +427,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	configureColumnNamesMenu();
 }
 
-void TableDataWidget::configureColumnNamesMenu(void)
+void TableDataWidget::configureColumnNamesMenu()
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	QStringList col_names;
@@ -452,7 +452,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	col_names_menu.addAction(PlaceholderColumn);
 }
 
-void TableDataWidget::toggleWarningFrame(void)
+void TableDataWidget::toggleWarningFrame()
 {
 	bool has_inv_cols=false;
 
@@ -472,7 +472,7 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 	}
 }
 
-QString TableDataWidget::generateDataBuffer(void)
+QString TableDataWidget::generateDataBuffer()
 {
 	QStringList val_list, col_names, buffer;
 	QString value;
@@ -521,7 +521,7 @@ void TableDataWidget::showEvent(QShowEvent *)
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
 }
 
-void TableDataWidget::addRow(void)
+void TableDataWidget::addRow()
 {
 	int row=data_tbw->rowCount();
 	QTableWidgetItem *item = nullptr;
@@ -579,7 +579,7 @@ void TableDataWidget::addColumn(QAction *action)
 	}
 }
 
-void TableDataWidget::applyConfiguration(void)
+void TableDataWidget::applyConfiguration()
 {
 	try
 	{

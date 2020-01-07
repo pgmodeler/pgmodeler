@@ -237,7 +237,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	data_type->setAttributes(type, model);
 }
 
-void OperatorClassWidget::applyConfiguration(void)
+void OperatorClassWidget::applyConfiguration()
 {
 	try
 	{

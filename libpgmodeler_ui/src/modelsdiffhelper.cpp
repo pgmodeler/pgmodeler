@@ -32,7 +32,7 @@ const vector<QString> ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
 	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql };
 
-ModelsDiffHelper::ModelsDiffHelper(void)
+ModelsDiffHelper::ModelsDiffHelper()
 {
 	diff_canceled=false;
 	pgsql_version=PgSqlVersions::DefaulVersion;
@@ -51,7 +51,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OptDropMissingColsConstr]=false;
 }
 
-ModelsDiffHelper::~ModelsDiffHelper(void)
+ModelsDiffHelper::~ModelsDiffHelper()
 {
 	destroyTempObjects();
 }
@@ -72,7 +72,7 @@ void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
 	this->pgsql_version=pgsql_ver;
 }
 
-void ModelsDiffHelper::resetDiffCounter(void)
+void ModelsDiffHelper::resetDiffCounter()
 {  
 	diffs_counter[ObjectsDiffInfo::AlterObject]=0;
 	diffs_counter[ObjectsDiffInfo::DropObject]=0;
@@ -80,7 +80,7 @@ void ModelsDiffHelper::resetDiffCounter(void)
 	diffs_counter[ObjectsDiffInfo::IgnoreObject]=0;
 }
 
-QString ModelsDiffHelper::getDiffDefinition(void)
+QString ModelsDiffHelper::getDiffDefinition()
 {
 	return(diff_def);
 }
@@ -99,7 +99,7 @@ unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 	return(diffs_counter[diff_type]);
 }
 
-void ModelsDiffHelper::diffModels(void)
+void ModelsDiffHelper::diffModels()
 {
 	try
 	{
@@ -128,7 +128,7 @@ void ModelsDiffHelper::diffModels(void)
 	resetDiffCounter();
 }
 
-void ModelsDiffHelper::cancelDiff(void)
+void ModelsDiffHelper::cancelDiff()
 {
 	diff_canceled=true;
 }
@@ -622,7 +622,7 @@ bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject *object, 
 	return(found_diff);
 }
 
-void ModelsDiffHelper::processDiffInfos(void)
+void ModelsDiffHelper::processDiffInfos()
 {
 	BaseObject *object=nullptr;
 	Relationship *rel=nullptr;
@@ -989,7 +989,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 	}
 }
 
-void ModelsDiffHelper::destroyTempObjects(void)
+void ModelsDiffHelper::destroyTempObjects()
 {
 	BaseObject *tmp_obj=nullptr;
 

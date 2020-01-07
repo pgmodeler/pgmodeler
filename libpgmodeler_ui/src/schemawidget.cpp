@@ -67,7 +67,7 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 		color_picker->setColor(0, QColor(225,225,225));
 }
 
-void SchemaWidget::applyConfiguration(void)
+void SchemaWidget::applyConfiguration()
 {
 	try
 	{

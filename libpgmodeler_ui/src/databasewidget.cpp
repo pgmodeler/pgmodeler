@@ -116,7 +116,7 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 	}
 }
 
-void DatabaseWidget::applyConfiguration(void)
+void DatabaseWidget::applyConfiguration()
 {
 	try
 	{

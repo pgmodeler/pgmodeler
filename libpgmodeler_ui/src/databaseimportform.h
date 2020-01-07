@@ -65,7 +65,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void setParentItemChecked(QTreeWidgetItem *item);
 		
 		//! \brief Returns true when there is at least one item checked on the objects tree
-		bool hasCheckedItems(void);
+		bool hasCheckedItems();
 		
 		/*! \brief Returns the checked items oids on "obj_oids" vector. The second parameter
 		"col_oids" stores the columns oids for each selected table */
@@ -74,13 +74,13 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void finishImport(const QString &msg);
 		void showEvent(QShowEvent *);
 		void closeEvent(QCloseEvent *event);
-		void destroyModelWidget(void);
+		void destroyModelWidget();
 		
 		//! \brief Allocates the import thread and helper
-		void createThread(void);
+		void createThread();
 		
 		//! \brief Destroys both import thread and helper
-		void destroyThread(void);
+		void destroyThread();
 
 	public:
 		//! \brief Constants used to access the tree widget items data
@@ -95,7 +95,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectSource=9; //Only for gropus
 		
 		DatabaseImportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~DatabaseImportForm(void);
+		~DatabaseImportForm();
 		
 		void setModelWidget(ModelWidget *model);
 
@@ -103,7 +103,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		static void setLowVerbosity(bool value);
 		
 		//! \brief Returns the configured model widget
-		ModelWidget *getModelWidget(void);
+		ModelWidget *getModelWidget();
 		
 		//! \brief Fills a combo box with all available databases according to the configurations of the specified import helper
 		static void listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo);
@@ -129,26 +129,26 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 																											 const QString &schema=QString(), const QString &table=QString(), unsigned sort_by = 0);
 
 	private slots:
-		void importDatabase(void);
-		void listObjects(void);
-		void listDatabases(void);
+		void importDatabase();
+		void listObjects();
+		void listDatabases();
 		void updateProgress(int progress, QString msg, ObjectType obj_type);
-		void cancelImport(void);
-		void handleImportCanceled(void);
+		void cancelImport();
+		void handleImportCanceled();
 		void handleImportFinished(Exception e);
 		void captureThreadError(Exception e);
-		void filterObjects(void);
+		void filterObjects();
 		
 		//! \brief Toggles the check state for the specified item
 		void setItemCheckState(QTreeWidgetItem *item,int);
 		
 		//! \brief Toggles the check state for all items
-		void setItemsCheckState(void);
+		void setItemsCheckState();
 		
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
-		void s_connectionsUpdateRequest(void);
+		void s_connectionsUpdateRequest();
 };
 
 #endif

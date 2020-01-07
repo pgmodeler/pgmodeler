@@ -18,7 +18,7 @@
 
 #include "view.h"
 
-View::View(void) : BaseTable()
+View::View() : BaseTable()
 {
 	obj_type=ObjectType::View;
 	materialized=recursive=with_no_data=false;
@@ -35,7 +35,7 @@ View::View(void) : BaseTable()
 	attributes[Attributes::Columns]=QString();
 }
 
-View::~View(void)
+View::~View()
 {
 	ObjectType types[]={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index };
 	vector<TableObject *> *list=nullptr;
@@ -110,17 +110,17 @@ void View::setWithNoData(bool value)
 	with_no_data=(materialized ? value : false);
 }
 
-bool View::isMaterialized(void)
+bool View::isMaterialized()
 {
 	return(materialized);
 }
 
-bool View::isRecursive(void)
+bool View::isRecursive()
 {
 	return(recursive);
 }
 
-bool View::isWithNoData(void)
+bool View::isWithNoData()
 {
 	return(with_no_data);
 }
@@ -131,7 +131,7 @@ void View::setCommomTableExpression(const QString &expr)
 	cte_expression=expr;
 }
 
-bool View::hasDefinitionExpression(void)
+bool View::hasDefinitionExpression()
 {
 	vector<Reference>::iterator itr;
 	bool found=false;
@@ -146,7 +146,7 @@ bool View::hasDefinitionExpression(void)
 	return(found);
 }
 
-QString View::getCommomTableExpression(void)
+QString View::getCommomTableExpression()
 {
 	return(cte_expression);
 }
@@ -185,7 +185,7 @@ vector<unsigned> *View::getExpressionList(unsigned sql_type)
 		return(nullptr);
 }
 
-void View::generateColumns(void)
+void View::generateColumns()
 {
 	unsigned col_id = 0, col_count = 0, expr_idx = 0;
 	PhysicalTable *tab = nullptr;
@@ -256,7 +256,7 @@ void View::generateColumns(void)
 	}
 }
 
-vector<SimpleColumn> View::getColumns(void)
+vector<SimpleColumn> View::getColumns()
 {
 	return(columns);
 }
@@ -324,7 +324,7 @@ void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 	setCodeInvalidated(true);
 }
 
-unsigned View::getReferenceCount(void)
+unsigned View::getReferenceCount()
 {
 	return(references.size());
 }
@@ -417,7 +417,7 @@ void View::removeReference(unsigned ref_id)
 	setCodeInvalidated(true);
 }
 
-void View::removeReferences(void)
+void View::removeReferences()
 {
 	references.clear();
 	exp_select.clear();
@@ -471,7 +471,7 @@ int View::getReferenceIndex(Reference &ref, unsigned sql_type)
 		return(-1);
 }
 
-void View::setDefinitionAttribute(void)
+void View::setDefinitionAttribute()
 {
 	QString decl;
 
@@ -526,7 +526,7 @@ void View::setDefinitionAttribute(void)
 	attributes[Attributes::Definition]=decl;
 }
 
-void View::setReferencesAttribute(void)
+void View::setReferencesAttribute()
 {
 	QString str_aux;
 	QString attribs[]={ Attributes::SelectExp,
@@ -554,7 +554,7 @@ void View::setReferencesAttribute(void)
 	}
 }
 
-bool View::isReferRelationshipAddedColumn(void)
+bool View::isReferRelationshipAddedColumn()
 {
 	Column *column=nullptr;
 	unsigned count, i;
@@ -571,7 +571,7 @@ bool View::isReferRelationshipAddedColumn(void)
 	return(found);
 }
 
-vector<Column *> View::getRelationshipAddedColumns(void)
+vector<Column *> View::getRelationshipAddedColumns()
 {
 	vector<Column *> cols;
 	Column *col=nullptr;
@@ -671,7 +671,7 @@ QString View::getCodeDefinition(unsigned def_type)
 	return(BaseObject::__getCodeDefinition(def_type));
 }
 
-void View::setSQLObjectAttribute(void)
+void View::setSQLObjectAttribute()
 {
 	if(materialized)
 		attributes[Attributes::SqlObject]=QString("MATERIALIZED ") + BaseObject::getSQLName(ObjectType::View);
@@ -712,7 +712,7 @@ void View::setObjectListsCapacity(unsigned capacity)
   triggers.reserve(capacity/2);
 }
 
-unsigned View::getMaxObjectCount(void)
+unsigned View::getMaxObjectCount()
 {
   unsigned count = 0, max = references.size();
   vector<ObjectType> types = { ObjectType::Index, ObjectType::Rule, ObjectType::Trigger };
@@ -1020,12 +1020,12 @@ unsigned View::getObjectCount(ObjectType obj_type, bool)
 	return(!obj_list ? 0 : obj_list->size());
 }
 
-unsigned View::getTriggerCount(void)
+unsigned View::getTriggerCount()
 {
 	return(triggers.size());
 }
 
-unsigned View::getRuleCount(void)
+unsigned View::getRuleCount()
 {
 	return(rules.size());
 }
@@ -1049,7 +1049,7 @@ vector<TableObject *> *View::getObjectList(ObjectType obj_type)
 	return(nullptr);
 }
 
-void View::removeObjects(void)
+void View::removeObjects()
 {
 	while(!triggers.empty())
 	{

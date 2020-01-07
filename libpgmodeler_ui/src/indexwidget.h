@@ -45,11 +45,11 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseTable *parent_obj, Index *index);
 
 	private slots:
-		void selectIndexingType(void);
-		//void enableSortingOptions(void);
+		void selectIndexingType();
+		//void enableSortingOptions();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

@@ -24,10 +24,10 @@ class SyntaxHighlighterTest: public QObject {
     Q_OBJECT
 
   private slots:
-    void handleMultiLineComment(void);
+    void handleMultiLineComment();
 };
 
-void SyntaxHighlighterTest::handleMultiLineComment(void)
+void SyntaxHighlighterTest::handleMultiLineComment()
 {
   QDialog *dlg=new QDialog;
   QPlainTextEdit *edt=new QPlainTextEdit(dlg);

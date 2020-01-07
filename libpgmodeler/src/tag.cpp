@@ -20,7 +20,7 @@
 
 unsigned Tag::tag_id=3000;
 
-Tag::Tag(void)
+Tag::Tag()
 {
 	QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
 						  Attributes::TableTitle, Attributes::TableBody,

@@ -50,7 +50,7 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 		void editCommand(int row);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

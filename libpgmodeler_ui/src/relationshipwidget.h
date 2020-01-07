@@ -69,7 +69,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void listObjects(ObjectType obj_type);
 
 		//! \brief Lists the advanced objects in the repective table widget
-		void listAdvancedObjects(void);
+		void listAdvancedObjects();
 
 		/*! \brief Shows the object data in the specified table row. The table widget is idenfied by
 		 the current object type */
@@ -87,24 +87,24 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		RelationshipWidget(QWidget * parent = nullptr);
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
-		QSize getIdealSize(void);
+		QSize getIdealSize();
 
 	private slots:
-		void addObject(void);
+		void addObject();
 		void editObject(int row);
 		void removeObject(int row);
-		void removeObjects(void);
+		void removeObjects();
 		void showAdvancedObject(int row);
-		void selectCopyOptions(void);
-		void listSpecialPkColumns(void);
+		void selectCopyOptions();
+		void listSpecialPkColumns();
 		void duplicateObject(int curr_row, int new_row);
 		void useFKGlobalSettings(bool value);
 		void usePatternGlobalSettings(bool value);
-		void generateBoundingExpr(void);
+		void generateBoundingExpr();
 
 	public slots:
-		void applyConfiguration(void);
-		void cancelConfiguration(void);
+		void applyConfiguration();
+		void cancelConfiguration();
 
 		friend class ModelWidget;
 };

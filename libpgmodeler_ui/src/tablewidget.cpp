@@ -112,10 +112,10 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 		grid->setContentsMargins(4,4,4,4);
 		attributes_tbw->widget(i)->setLayout(grid);
 
-		connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+		connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
 		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
-		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
+		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
 		connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
@@ -485,7 +485,7 @@ void TableWidget::listObjects(ObjectType obj_type)
 	}
 }
 
-void TableWidget::handleObject(void)
+void TableWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
@@ -718,7 +718,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
-void TableWidget::removeObjects(void)
+void TableWidget::removeObjects()
 {
 	PhysicalTable *table=nullptr;
 	unsigned count, op_count=0, i;
@@ -894,7 +894,7 @@ void TableWidget::swapObjects(int idx1, int idx2)
 	}
 }
 
-void TableWidget::editData(void)
+void TableWidget::editData()
 {
 	BaseForm base_form(this);
 	TableDataWidget *tab_data_wgt=new TableDataWidget(this);
@@ -908,7 +908,7 @@ void TableWidget::editData(void)
 	GeneralConfigWidget::saveWidgetGeometry(&base_form, tab_data_wgt->metaObject()->className());
 }
 
-void TableWidget::applyConfiguration(void)
+void TableWidget::applyConfiguration()
 {
 	try
 	{
@@ -1066,7 +1066,7 @@ void TableWidget::applyConfiguration(void)
 	}
 }
 
-void TableWidget::cancelConfiguration(void)
+void TableWidget::cancelConfiguration()
 {
 	BaseObjectWidget::cancelChainedOperation();
 }

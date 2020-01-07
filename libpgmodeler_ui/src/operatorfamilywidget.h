@@ -37,7 +37,7 @@ class OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWi
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

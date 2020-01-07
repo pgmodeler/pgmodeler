@@ -18,7 +18,7 @@
 
 #include "eventtrigger.h"
 
-EventTrigger::EventTrigger(void)
+EventTrigger::EventTrigger()
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
@@ -80,18 +80,18 @@ void EventTrigger::removeFilter(const QString &variable)
 	setCodeInvalidated(true);
 }
 
-void EventTrigger::clearFilter(void)
+void EventTrigger::clearFilter()
 {
 	filter.clear();
 	setCodeInvalidated(true);
 }
 
-EventTriggerType EventTrigger::getEvent(void)
+EventTriggerType EventTrigger::getEvent()
 {
 	return(event);
 }
 
-Function *EventTrigger::getFunction(void)
+Function *EventTrigger::getFunction()
 {
 	return(function);
 }

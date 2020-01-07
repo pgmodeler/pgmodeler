@@ -110,7 +110,7 @@ void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Bas
 	}
 }
 
-void RuleWidget::applyConfiguration(void)
+void RuleWidget::applyConfiguration()
 {
 	try
 	{

@@ -40,7 +40,7 @@ void BaseConfigWidget::setConfigurationChanged(bool changed)
 	config_changed=changed;
 }
 
-bool BaseConfigWidget::isConfigurationChanged(void)
+bool BaseConfigWidget::isConfigurationChanged()
 {
 	return(config_changed);
 }

@@ -209,7 +209,7 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 	}
 }
 
-PgModelerCli::~PgModelerCli(void)
+PgModelerCli::~PgModelerCli()
 {
 	if(scene) delete scene;
 	delete model;
@@ -251,7 +251,7 @@ void PgModelerCli::configureConnection(bool extra_conn)
 	}
 }
 
-void PgModelerCli::initializeOptions(void)
+void PgModelerCli::initializeOptions()
 {
 	long_opts[Input]=true;
 	long_opts[Output]=true;
@@ -387,7 +387,7 @@ bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 	return(found);
 }
 
-void PgModelerCli::showMenu(void)
+void PgModelerCli::showMenu()
 {
 	out << endl;
 	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << endl;
@@ -601,7 +601,7 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 	}
 }
 
-int PgModelerCli::exec(void)
+int PgModelerCli::exec()
 {
 	try
 	{
@@ -706,7 +706,7 @@ void PgModelerCli::handleObjectRemoval(BaseObject *object)
 }
 
 
-void PgModelerCli::extractObjectXML(void)
+void PgModelerCli::extractObjectXML()
 {
 	QFile input;
 	QString buf, lin, def_xml, end_tag;
@@ -881,7 +881,7 @@ void PgModelerCli::extractObjectXML(void)
 	}
 }
 
-void PgModelerCli::recreateObjects(void)
+void PgModelerCli::recreateObjects()
 {
 	QStringList fail_objs, constr, list;
 	QString xml_def, aux_def, start_tag="<%1", end_tag="</%1>", aux_tag;
@@ -1266,7 +1266,7 @@ void PgModelerCli::fixOpClassesFamiliesReferences(QString &obj_xml)
 	while(pos >= 0);
 }
 
-void PgModelerCli::fixModel(void)
+void PgModelerCli::fixModel()
 {
 	printMessage(tr("Starting model fixing..."));
 	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
@@ -1280,7 +1280,7 @@ void PgModelerCli::fixModel(void)
 	printMessage(tr("Model successfully fixed!"));
 }
 
-void PgModelerCli::exportModel(void)
+void PgModelerCli::exportModel()
 {
 	printMessage(tr("Starting model export..."));
 	printMessage(tr("Loading input file: %1").arg(parsed_opts[Input]));
@@ -1341,7 +1341,7 @@ void PgModelerCli::exportModel(void)
 	printMessage(tr("Export successfully ended!\n"));
 }
 
-void PgModelerCli::importDatabase(void)
+void PgModelerCli::importDatabase()
 {
 	printMessage(tr("Starting database import..."));
 	printMessage(tr("Input database: %1").arg(connection.getConnectionId(true, true)));
@@ -1401,7 +1401,7 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 	}
 }
 
-void PgModelerCli::diffModelDatabase(void)
+void PgModelerCli::diffModelDatabase()
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
@@ -1542,7 +1542,7 @@ void PgModelerCli::diffModelDatabase(void)
 	printMessage(tr("Diff successfully ended!\n"));
 }
 
-void PgModelerCli::updateMimeType(void)
+void PgModelerCli::updateMimeType()
 {
 #ifndef Q_OS_MAC
 	try

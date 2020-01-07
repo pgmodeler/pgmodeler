@@ -125,9 +125,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(action_save, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
 	connect(action_save_as, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
 
-	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
-	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
-	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
+	connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearAll()));
+	connect(sql_cmd_txt, SIGNAL(textChanged()), this, SLOT(enableCommandButtons()));
+	connect(run_sql_tb, SIGNAL(clicked()), this, SLOT(runSQLCommand()));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
 	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
@@ -165,7 +165,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(stop_tb, SIGNAL(clicked(bool)), &sql_exec_hlp, SLOT(cancelCommand()), Qt::DirectConnection);
 }
 
-SQLExecutionWidget::~SQLExecutionWidget(void)
+SQLExecutionWidget::~SQLExecutionWidget()
 {
 	if(sql_exec_thread.isRunning())
 	{
@@ -226,7 +226,7 @@ void SQLExecutionWidget::setSQLCommand(const QString &sql)
 	sql_cmd_txt->setPlainText(sql);
 }
 
-void SQLExecutionWidget::enableCommandButtons(void)
+void SQLExecutionWidget::enableCommandButtons()
 {
 	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
 	find_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
@@ -471,7 +471,7 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 	sql_exec_thread.quit();
 }
 
-void SQLExecutionWidget::filterResults(void)
+void SQLExecutionWidget::filterResults()
 {
 	QModelIndexList list;
 	Qt::MatchFlags flags = Qt::MatchStartsWith;
@@ -595,7 +595,7 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	}
 }
 
-void SQLExecutionWidget::destroyResultModel(void)
+void SQLExecutionWidget::destroyResultModel()
 {
 	if(results_tbw->model())
 	{
@@ -607,7 +607,7 @@ void SQLExecutionWidget::destroyResultModel(void)
 	}
 }
 
-void SQLExecutionWidget::runSQLCommand(void)
+void SQLExecutionWidget::runSQLCommand()
 {
 	QString cmd=sql_cmd_txt->textCursor().selectedText();
 
@@ -633,7 +633,7 @@ void SQLExecutionWidget::runSQLCommand(void)
 																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), false);
 }
 
-void SQLExecutionWidget::saveCommands(void)
+void SQLExecutionWidget::saveCommands()
 {
 	bool browse_file = (sender() == action_save_as || filename_edt->text().isEmpty());
 	QString filename = filename_edt->text();
@@ -667,7 +667,7 @@ void SQLExecutionWidget::saveCommands(void)
 	}
 }
 
-void SQLExecutionWidget::loadCommands(void)
+void SQLExecutionWidget::loadCommands()
 {
 	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
@@ -733,7 +733,7 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	}
 }
 
-int SQLExecutionWidget::clearAll(void)
+int SQLExecutionWidget::clearAll()
 {
 	Messagebox msg_box;
 	int res = 0;
@@ -922,13 +922,13 @@ void SQLExecutionWidget::toggleOutputPane(bool visible)
 		v_splitter->setSizes({700, 300});
 }
 
-void SQLExecutionWidget::configureSnippets(void)
+void SQLExecutionWidget::configureSnippets()
 { 
 	SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
 	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
 }
 
-void SQLExecutionWidget::saveSQLHistory(void)
+void SQLExecutionWidget::saveSQLHistory()
 {
 	try
 	{
@@ -981,7 +981,7 @@ void SQLExecutionWidget::saveSQLHistory(void)
 	}
 }
 
-void SQLExecutionWidget::loadSQLHistory(void)
+void SQLExecutionWidget::loadSQLHistory()
 {
 	try
 	{
@@ -1027,7 +1027,7 @@ void SQLExecutionWidget::loadSQLHistory(void)
 	}
 }
 
-void SQLExecutionWidget::destroySQLHistory(void)
+void SQLExecutionWidget::destroySQLHistory()
 {
 	Messagebox msg_box;
 
@@ -1053,7 +1053,7 @@ void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 	SQLExecutionWidget::cmd_history_max_len = len;
 }
 
-int SQLExecutionWidget::getSQLHistoryMaxLength(void)
+int SQLExecutionWidget::getSQLHistoryMaxLength()
 {
 	return(SQLExecutionWidget::cmd_history_max_len);
 }
@@ -1075,7 +1075,7 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 	}
 }
 
-void SQLExecutionWidget::showHistoryContextMenu(void)
+void SQLExecutionWidget::showHistoryContextMenu()
 {
 	QMenu *ctx_menu=cmd_history_txt->createStandardContextMenu();
 	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), tr("Clear history"), ctx_menu),

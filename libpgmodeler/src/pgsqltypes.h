@@ -55,19 +55,19 @@ class BaseType{
 	public:
 		static constexpr unsigned Null=0;
 
-		BaseType(void);
+		BaseType();
 
 		//! \brief Returns the name of the type
-		QString operator ~ (void);
+		QString operator ~ ();
 
 		//! \brief Returns the code (id) of the type
-		unsigned operator ! (void);
+		unsigned operator ! ();
 
 		//! \brief Returns the code (id) of the type
-		unsigned getTypeId(void);
+		unsigned getTypeId();
 
 		//! \brief Returns the name of the type
-		QString getTypeName(void);
+		QString getTypeName();
 
 		bool operator == (BaseType &type);
 		bool operator == (unsigned type_id);
@@ -94,7 +94,7 @@ class ActionType: public BaseType{
 
 		ActionType(const QString &type_name);
 		ActionType(unsigned type_id);
-		ActionType(void);
+		ActionType();
 
 		static void getTypes(QStringList &type_list);
 
@@ -116,7 +116,7 @@ class ConstraintType: public BaseType{
 
 		ConstraintType(const QString &type_name);
 		ConstraintType(unsigned type_id);
-		ConstraintType(void);
+		ConstraintType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -137,7 +137,7 @@ class EventType: public BaseType{
 
 		EventType(const QString &type_name);
 		EventType(unsigned type_id);
-		EventType(void);
+		EventType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -160,7 +160,7 @@ class ExecutionType: public BaseType{
 
 		ExecutionType(const QString &type_name);
 		ExecutionType(unsigned type_id);
-		ExecutionType(void);
+		ExecutionType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);
@@ -179,7 +179,7 @@ class FunctionType: public BaseType{
 
 		FunctionType(const QString &type_name);
 		FunctionType(unsigned type_id);
-		FunctionType(void);
+		FunctionType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -201,7 +201,7 @@ class IndexingType: public BaseType{
 
 		IndexingType(const QString &type_name);
 		IndexingType(unsigned type_id);
-		IndexingType(void);
+		IndexingType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -230,7 +230,7 @@ class IntervalType: public BaseType{
 
 		IntervalType(const QString &type_name);
 		IntervalType(unsigned type_id);
-		IntervalType(void);
+		IntervalType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -305,16 +305,16 @@ class SpatialType: public BaseType{
 
 		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::NoVar);
 		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::NoVar);
-		SpatialType(void);
+		SpatialType();
 
 		void setVariation(unsigned var);
-		unsigned getVariation(void);
+		unsigned getVariation();
 
 		void setSRID(int srid);
-		int getSRID(void);
+		int getSRID();
 
 		static void getTypes(QStringList &type_list);
-		QString operator * (void);
+		QString operator * ();
 };
 
 class PgSqlType: public BaseType{
@@ -374,7 +374,7 @@ class PgSqlType: public BaseType{
 		void setUserType(void *ptype);
 
 	public:
-		PgSqlType(void);
+		PgSqlType();
 
 		/*! \brief Creates a type from a simple string containing the name of the type.
 				\note This method works in different way than PgSQLType::parserString() */
@@ -434,28 +434,28 @@ class PgSqlType: public BaseType{
 		void setIntervalType(IntervalType interv_type);
 		void setSpatialType(SpatialType spat_type);
 
-		unsigned getDimension(void);
-		unsigned getLength(void);
-		int getPrecision(void);
-		IntervalType getIntervalType(void);
-		SpatialType getSpatialType(void);
+		unsigned getDimension();
+		unsigned getLength();
+		int getPrecision();
+		IntervalType getIntervalType();
+		SpatialType getSpatialType();
 
-		bool isWithTimezone(void);
-		bool isPseudoType(void);
-		bool isOIDType(void);
-		bool isUserType(void);
-		bool isArrayType(void);
-		bool isGiSType(void);
-		bool isRangeType(void);
-		bool isSerialType(void);
-		bool isDateTimeType(void);
-		bool isNumericType(void);
-		bool isIntegerType(void);
-		bool isCharacterType(void);
-		bool isNetworkType(void);
-		bool isPolymorphicType(void);
-		bool hasVariableLength(void);
-		bool acceptsPrecision(void);
+		bool isWithTimezone();
+		bool isPseudoType();
+		bool isOIDType();
+		bool isUserType();
+		bool isArrayType();
+		bool isGiSType();
+		bool isRangeType();
+		bool isSerialType();
+		bool isDateTimeType();
+		bool isNumericType();
+		bool isIntegerType();
+		bool isCharacterType();
+		bool isNetworkType();
+		bool isPolymorphicType();
+		bool hasVariableLength();
+		bool acceptsPrecision();
 
 		//! \brief Indicates if the 'this' type can be casted to 'type'
 		bool canCastTo(PgSqlType type);
@@ -472,12 +472,12 @@ class PgSqlType: public BaseType{
 		 * the indexes of the types. This method is useful if one need to fully compare the types */
 		bool isExactTo(PgSqlType type);
 
-		PgSqlType getAliasType(void);
+		PgSqlType getAliasType();
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
-		QString operator ~ (void);
+		QString operator ~ ();
 
 		//! \brief Returns the SQL definition for the type
-		QString operator * (void);
+		QString operator * ();
 
 		unsigned operator << (void *ptype);
 		unsigned operator = (unsigned type_id);
@@ -502,13 +502,13 @@ class PgSqlType: public BaseType{
 
 		/*! \brief Returns the pointer to the user defined type which denotes the
 		 the pgsql type */
-		void *getUserTypeReference(void);
+		void *getUserTypeReference();
 
 		//! \brief Returns the configuration id for the user defined type
-		unsigned getUserTypeConfig(void);
+		unsigned getUserTypeConfig();
 
 		//! \brief Returns the code (id) of the type. This is equivalent to call !type
-		unsigned getTypeId(void);
+		unsigned getTypeId();
 
 		/*! \brief Returns the name of the type. This is equivalent to call ~type.
 		 * If incl_dimension is true then returns only the type name appending the dimension descriptor [] if the type's dimension is > 0.
@@ -516,7 +516,7 @@ class PgSqlType: public BaseType{
 		QString getTypeName(bool incl_dimension);
 
 		//! \brief Returns the name of the type in SQL form including length, precision and other parameters. This is equivalent to call *type
-		QString getSQLTypeName(void);
+		QString getSQLTypeName();
 
 		friend class Type;
 		friend class Domain;
@@ -540,7 +540,7 @@ class BehaviorType: public BaseType{
 
 		BehaviorType(const QString &type_name);
 		BehaviorType(unsigned type_id);
-		BehaviorType(void);
+		BehaviorType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -558,7 +558,7 @@ class SecurityType: public BaseType{
 
 		SecurityType(unsigned type_id);
 		SecurityType(const QString &type_name);
-		SecurityType(void);
+		SecurityType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -581,7 +581,7 @@ class LanguageType: public BaseType{
 
 		LanguageType(const QString &type_name);
 		LanguageType(unsigned type_id);
-		LanguageType(void);
+		LanguageType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned tipo_id);
@@ -594,7 +594,7 @@ class EncodingType: public BaseType{
 		static constexpr unsigned TypesCount=42;
 
 	public:
-		EncodingType(void);
+		EncodingType();
 		EncodingType(const QString &type);
 		EncodingType(const unsigned type_id);
 
@@ -619,7 +619,7 @@ class StorageType: public BaseType{
 		static constexpr unsigned Extended=Offset+2;
 		static constexpr unsigned Main=Offset+3;
 
-		StorageType(void);
+		StorageType();
 		StorageType(const QString &type_name);
 
 		static void getTypes(QStringList &type_list);
@@ -643,7 +643,7 @@ class MatchType: public BaseType{
 
 		MatchType(unsigned type_id);
 		MatchType(const QString &type_name);
-		MatchType(void);
+		MatchType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -661,7 +661,7 @@ class DeferralType: public BaseType{
 
 		DeferralType(unsigned type_id);
 		DeferralType(const QString &type_name);
-		DeferralType(void);
+		DeferralType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -691,7 +691,7 @@ class CategoryType: public BaseType{
 
 		CategoryType(unsigned type_id);
 		CategoryType(const QString &type_name);
-		CategoryType(void);
+		CategoryType();
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
@@ -710,7 +710,7 @@ class FiringType: public BaseType{
 
 		FiringType(const QString &type_name);
 		FiringType(unsigned type_id);
-		FiringType(void);
+		FiringType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);
@@ -730,7 +730,7 @@ class EventTriggerType: public BaseType{
 
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);
-		EventTriggerType(void);
+		EventTriggerType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);
@@ -748,7 +748,7 @@ class IdentityType: public BaseType{
 
 		IdentityType(const QString &type_name);
 		IdentityType(unsigned type_id);
-		IdentityType(void);
+		IdentityType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);
@@ -769,7 +769,7 @@ class PolicyCmdType: public BaseType {
 
 		PolicyCmdType(const QString &type_name);
 		PolicyCmdType(unsigned type_id);
-		PolicyCmdType(void);
+		PolicyCmdType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);
@@ -788,7 +788,7 @@ class PartitioningType: public BaseType {
 
 		PartitioningType(const QString &type_name);
 		PartitioningType(unsigned type_id);
-		PartitioningType(void);
+		PartitioningType();
 
 		static void getTypes(QStringList&type_list);
 		unsigned operator = (unsigned type_id);

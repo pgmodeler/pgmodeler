@@ -85,7 +85,7 @@ void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	}
 }
 
-void ForeignServerWidget::applyConfiguration(void)
+void ForeignServerWidget::applyConfiguration()
 {
 	try
 	{

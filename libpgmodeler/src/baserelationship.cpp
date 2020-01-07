@@ -73,7 +73,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 	}
 }
 
-void BaseRelationship::configureRelationship(void)
+void BaseRelationship::configureRelationship()
 {
 	obj_type=ObjectType::BaseRelationship;
 
@@ -157,7 +157,7 @@ void BaseRelationship::configureRelationship(void)
 		throw Exception(ErrorCode::AllocationObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-BaseRelationship::~BaseRelationship(void)
+BaseRelationship::~BaseRelationship()
 {
 	disconnectRelationship();
 
@@ -282,7 +282,7 @@ void BaseRelationship::setConnected(bool value)
 	}
 }
 
-void BaseRelationship::disconnectRelationship(void)
+void BaseRelationship::disconnectRelationship()
 {
 	if(connected)
 	{
@@ -291,7 +291,7 @@ void BaseRelationship::disconnectRelationship(void)
 	}
 }
 
-void BaseRelationship::connectRelationship(void)
+void BaseRelationship::connectRelationship()
 {
 	if(!connected)
 	{
@@ -309,22 +309,22 @@ Textbox *BaseRelationship::getLabel(unsigned label_id)
 	throw Exception(ErrorCode::RefLabelInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-unsigned BaseRelationship::getRelationshipType(void)
+unsigned BaseRelationship::getRelationshipType()
 {
 	return(rel_type);
 }
 
-bool BaseRelationship::isRelationshipConnected(void)
+bool BaseRelationship::isRelationshipConnected()
 {
 	return(connected);
 }
 
-bool BaseRelationship::isSelfRelationship(void)
+bool BaseRelationship::isSelfRelationship()
 {
 	return(dst_table==src_table);
 }
 
-void BaseRelationship::setRelationshipAttributes(void)
+void BaseRelationship::setRelationshipAttributes()
 {
 	unsigned count, i;
 	QString str_aux,
@@ -394,7 +394,7 @@ void BaseRelationship::setReferenceForeignKey(Constraint *ref_fk)
 	this->reference_fk = ref_fk;
 }
 
-Constraint *BaseRelationship::getReferenceForeignKey(void)
+Constraint *BaseRelationship::getReferenceForeignKey()
 {
 	return(reference_fk);
 }
@@ -456,18 +456,18 @@ void BaseRelationship::setCustomColor(const QColor &color)
 	custom_color=color;
 }
 
-QColor BaseRelationship::getCustomColor(void)
+QColor BaseRelationship::getCustomColor()
 {
 	return(custom_color);
 }
 
-void BaseRelationship::resetLabelsDistance(void)
+void BaseRelationship::resetLabelsDistance()
 {
 	for(unsigned i=0; i < 3; i++)
 		this->setLabelDistance(i, QPointF(DNaN,DNaN));
 }
 
-vector<QPointF> BaseRelationship::getPoints(void)
+vector<QPointF> BaseRelationship::getPoints()
 {
 	return(points);
 }
@@ -500,7 +500,7 @@ void BaseRelationship::operator = (BaseRelationship &rel)
 	this->setMandatoryTable(DstTable, rel.dst_mandatory);
 }
 
-QString BaseRelationship::getRelTypeAttribute(void)
+QString BaseRelationship::getRelTypeAttribute()
 {
 	switch(rel_type)
 	{
@@ -540,7 +540,7 @@ QString BaseRelationship::getRelationshipTypeName(unsigned rel_type, bool is_vie
   }
 }
 
-QString BaseRelationship::getRelationshipTypeName(void)
+QString BaseRelationship::getRelationshipTypeName()
 {
   return(getRelationshipTypeName(rel_type, src_table->getObjectType()==ObjectType::View));
 }

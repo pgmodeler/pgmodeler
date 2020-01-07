@@ -18,7 +18,7 @@
 
 #include "collation.h"
 
-Collation::Collation(void)
+Collation::Collation()
 {
 	obj_type=ObjectType::Collation;
 	encoding=BaseType::Null;
@@ -72,7 +72,7 @@ void Collation::setCollation(BaseObject *collation)
 	localization[0]=localization[1]=QString();
 }
 
-QString Collation::getLocale(void)
+QString Collation::getLocale()
 {
 	return(locale);
 }
@@ -85,7 +85,7 @@ QString Collation::getLocalization(unsigned lc_id)
 	return(localization[lc_id]);
 }
 
-EncodingType Collation::getEncoding(void)
+EncodingType Collation::getEncoding()
 {
 	return(encoding);
 }

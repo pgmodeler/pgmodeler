@@ -30,20 +30,20 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
 	connect(show_errors_tb,SIGNAL(toggled(bool)),show_raw_info_tb,SLOT(setVisible(bool)));
-	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList(void)));
+	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList()));
 
 	show_raw_info_tb->setVisible(false);
 	error_show_btns_wgt->setVisible(false);
 	custom_option_chk->setVisible(false);
 }
 
-void Messagebox::handleYesOkClick(void)
+void Messagebox::handleYesOkClick()
 {
 	exceptions_trw->clear();
 	accept();
 }
 
-void Messagebox::handleNoCancelClick(void)
+void Messagebox::handleNoCancelClick()
 {
 	exceptions_trw->clear();
 
@@ -59,7 +59,7 @@ void Messagebox::handleNoCancelClick(void)
 	}
 }
 
-bool Messagebox::isCancelled(void)
+bool Messagebox::isCancelled()
 {
 	return(cancelled);
 }
@@ -70,12 +70,12 @@ void Messagebox::setCustomOptionText(const QString &text)
 	custom_option_chk->setText(text);
 }
 
-bool Messagebox::isCustomOptionChecked(void)
+bool Messagebox::isCustomOptionChecked()
 {
 	return(custom_option_chk->isChecked());
 }
 
-void Messagebox::showExceptionList(void)
+void Messagebox::showExceptionList()
 {
 	if(show_errors_tb->isChecked())
 	{

@@ -67,29 +67,29 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		vector<AppearanceConfigItem> conf_items;
 		
 		//! \brief Loads the example model from file (conf/exampledb.dbm)
-		void loadExampleModel(void);
+		void loadExampleModel();
 		
 		//! \brief Updates the color configuration for the placeholder item
-		void updatePlaceholderItem(void);
+		void updatePlaceholderItem();
 		
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
-		~AppearanceConfigWidget(void);
+		~AppearanceConfigWidget();
 		
-		void saveConfiguration(void);
-		void loadConfiguration(void);
-		static map<QString, attribs_map> getConfigurationParams(void);
+		void saveConfiguration();
+		void loadConfiguration();
+		static map<QString, attribs_map> getConfigurationParams();
 		
 	private slots:
-		void enableConfigElement(void);
-		void applyFontStyle(void);
+		void enableConfigElement();
+		void applyFontStyle();
 		void applyElementColor(unsigned color_idx, QColor color);
 		
 		/*! \brief Disabled method */
 		void applyConfiguration(void){}
 		
 	public slots:
-		void restoreDefaults(void);
+		void restoreDefaults();
 };
 
 #endif

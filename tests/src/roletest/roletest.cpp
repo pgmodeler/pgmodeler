@@ -25,10 +25,10 @@ class RoleTest: public QObject {
     Q_OBJECT
 
   private slots:
-    void alterCommandEndsWithSemiColon(void);
+    void alterCommandEndsWithSemiColon();
 };
 
-void RoleTest::alterCommandEndsWithSemiColon(void)
+void RoleTest::alterCommandEndsWithSemiColon()
 {
   Role role1, role2;
   QString alter_cmd;

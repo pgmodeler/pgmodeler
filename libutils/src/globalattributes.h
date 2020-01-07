@@ -137,27 +137,27 @@ class GlobalAttributes {
 			static constexpr unsigned MaxObjectCount = 15;
 		#endif
 
-		static QString getSchemasRootDir(void);
+		static QString getSchemasRootDir();
 		//TODO: static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
-		static QString getTemporaryDir(void);
+		static QString getTemporaryDir();
 		//TODO: static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
 
-		static QString getTmplConfigurationDir(void);
+		static QString getTmplConfigurationDir();
 		//TODO: static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
 
-		static QString getConfigurationsDir(void);
+		static QString getConfigurationsDir();
 		//TODO: static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
 
-		static QString getSamplesDir(void);
-		static QString getLanguagesDir(void);
-		static QString getPluginsDir(void);
+		static QString getSamplesDir();
+		static QString getLanguagesDir();
+		static QString getPluginsDir();
 
-		static QString getSQLHighlightConfPath(void);
-		static QString getXMLHighlightConfPath(void);
-		static QString getPgModelerCHandlerPath(void);
-		static QString getPgModelerCLIPath(void);
-		static QString getPgModelerAppPath(void);
+		static QString getSQLHighlightConfPath();
+		static QString getXMLHighlightConfPath();
+		static QString getPgModelerCHandlerPath();
+		static QString getPgModelerCLIPath();
+		static QString getPgModelerAppPath();
 
 		friend class Application;
 		friend class PgModelerCli;

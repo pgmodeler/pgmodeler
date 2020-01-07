@@ -45,7 +45,7 @@ class Operator: public BaseObject {
 		merges;  //! \brief Indicates that the operator can execute a merge join
 
 	protected:
-		virtual void configureSearchAttributes(void);
+		virtual void configureSearchAttributes();
 
 	public:
 		static constexpr unsigned FuncOperator=0,
@@ -56,7 +56,7 @@ class Operator: public BaseObject {
 		OperCommutator=0,
 		OperNegator=1;
 
-		Operator(void);
+		Operator();
 
 		//! \brief Defines the name of the operator
 		void setName(const QString &name);
@@ -86,10 +86,10 @@ class Operator: public BaseObject {
 		Operator *getOperator(unsigned op_type);
 
 		//! \brief Returns whether the operator accepts hash join
-		bool isHashes(void);
+		bool isHashes();
 
 		//! \brief Returns whether the operator accepts merge join
-		bool isMerges(void);
+		bool isMerges();
 
 		//! \brief Validates the passed name using the naming rule for operators
 		static bool isValidName(const QString &name);

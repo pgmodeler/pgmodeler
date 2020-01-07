@@ -59,20 +59,20 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 	objs_parent_wgt->setEnabled(false);
 
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases(void)));
-	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects(void)));
-	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
-	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects(void)));
-	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects(void)));
-	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll(void)));
-	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll(void)));
+	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
+	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
+	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects()));
+	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
+	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
+	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
+	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
+	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
 	connect(db_objects_tw, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(setItemCheckState(QTreeWidgetItem*,int)));
-	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
-	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState(void)));
-	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects(void)));
-	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase(void)));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport(void)));
+	connect(select_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
+	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(setItemsCheckState()));
+	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
+	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase()));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport()));
 
 	connect(import_to_model_chk, &QCheckBox::toggled,
 			[&](bool checked){ create_model=!checked; });
@@ -94,7 +94,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 #endif
 }
 
-DatabaseImportForm::~DatabaseImportForm(void)
+DatabaseImportForm::~DatabaseImportForm()
 {
 	destroyThread();
 }
@@ -110,7 +110,7 @@ void DatabaseImportForm::setLowVerbosity(bool value)
 	low_verbosity = value;
 }
 
-void DatabaseImportForm::createThread(void)
+void DatabaseImportForm::createThread()
 {
 	import_thread=new QThread;
 	import_helper=new DatabaseImportHelper;
@@ -124,14 +124,14 @@ void DatabaseImportForm::createThread(void)
 		output_trw->setUniformRowHeights(false);
 	});
 
-	connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
+	connect(import_thread, SIGNAL(started()), import_helper, SLOT(importDatabase()));
 	connect(import_helper, SIGNAL(s_importCanceled()), this, SLOT(handleImportCanceled()));
 	connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 	connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 }
 
-void DatabaseImportForm::destroyThread(void)
+void DatabaseImportForm::destroyThread()
 {
 	if(import_thread)
 	{
@@ -172,7 +172,7 @@ void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
 	db_objects_tw->blockSignals(false);
 }
 
-void DatabaseImportForm::setItemsCheckState(void)
+void DatabaseImportForm::setItemsCheckState()
 {
 	QTreeWidgetItemIterator itr(db_objects_tw);
 	Qt::CheckState chk_state=(sender()==select_all_tb ? Qt::Checked : Qt::Unchecked);
@@ -189,7 +189,7 @@ void DatabaseImportForm::setItemsCheckState(void)
 	import_btn->setEnabled(hasCheckedItems());
 }
 
-void DatabaseImportForm::importDatabase(void)
+void DatabaseImportForm::importDatabase()
 {
 	try
 	{
@@ -264,7 +264,7 @@ void DatabaseImportForm::setParentItemChecked(QTreeWidgetItem *item)
 	}
 }
 
-bool DatabaseImportForm::hasCheckedItems(void)
+bool DatabaseImportForm::hasCheckedItems()
 {
 	QTreeWidgetItemIterator itr(db_objects_tw);
 	bool selected=false;
@@ -313,7 +313,7 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 	}
 }
 
-void DatabaseImportForm::listObjects(void)
+void DatabaseImportForm::listObjects()
 {
 	try
 	{
@@ -346,7 +346,7 @@ void DatabaseImportForm::listObjects(void)
 	}
 }
 
-void DatabaseImportForm::listDatabases(void)
+void DatabaseImportForm::listDatabases()
 {
 	try
 	{
@@ -425,7 +425,7 @@ void DatabaseImportForm::captureThreadError(Exception e)
 	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
-void DatabaseImportForm::filterObjects(void)
+void DatabaseImportForm::filterObjects()
 {
 	DatabaseImportForm::filterObjects(db_objects_tw,
 																		filter_edt->text(),
@@ -499,14 +499,14 @@ void DatabaseImportForm::filterObjects(QTreeWidget *tree_wgt, const QString &pat
 	tree_wgt->blockSignals(false);
 }
 
-void DatabaseImportForm::cancelImport(void)
+void DatabaseImportForm::cancelImport()
 {
 	import_helper->cancelImport();
 	cancel_btn->setEnabled(false);
 	database_cmb->setCurrentIndex(0);
 }
 
-void DatabaseImportForm::destroyModelWidget(void)
+void DatabaseImportForm::destroyModelWidget()
 {
 	if(create_model && model_wgt)
 	{
@@ -515,7 +515,7 @@ void DatabaseImportForm::destroyModelWidget(void)
 	}
 }
 
-void DatabaseImportForm::handleImportCanceled(void)
+void DatabaseImportForm::handleImportCanceled()
 {
 	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta"));
 	QString msg=tr("Importing process canceled by user!");
@@ -583,7 +583,7 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 		listDatabases();
 }
 
-ModelWidget *DatabaseImportForm::getModelWidget(void)
+ModelWidget *DatabaseImportForm::getModelWidget()
 {
 	if(create_model)
 		return(model_wgt);

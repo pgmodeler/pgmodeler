@@ -42,7 +42,7 @@ class EventTriggerWidget: public BaseObjectWidget, public Ui::EventTriggerWidget
 		void setAttributes(DatabaseModel *model, OperationList *op_list, EventTrigger *event_trig);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 		
 	private slots:
 		void handleTagValue(int row);

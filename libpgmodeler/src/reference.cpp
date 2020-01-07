@@ -18,7 +18,7 @@
 
 #include "reference.h"
 
-Reference::Reference(void)
+Reference::Reference()
 {
 	this->table=nullptr;
 	this->column=nullptr;
@@ -89,17 +89,17 @@ int Reference::getReferencedTableIndex(PhysicalTable *ref_table)
 	return(idx);
 }
 
-void Reference::clearReferencedTables(void)
+void Reference::clearReferencedTables()
 {
 	ref_tables.clear();
 }
 
-vector<PhysicalTable *> Reference::getReferencedTables(void)
+vector<PhysicalTable *> Reference::getReferencedTables()
 {
 	return(ref_tables);
 }
 
-bool Reference::isDefinitionExpression(void)
+bool Reference::isDefinitionExpression()
 {
 	return(is_def_expr);
 }
@@ -144,42 +144,42 @@ void Reference::addColumn(Column *col)
 	addColumn(col->getName(), col->getType(), col->getAlias());
 }
 
-void Reference::removeColumns(void)
+void Reference::removeColumns()
 {
 	columns.clear();
 }
 
-vector<SimpleColumn> Reference::getColumns(void)
+vector<SimpleColumn> Reference::getColumns()
 {
 	return(columns);
 }
 
-PhysicalTable *Reference::getTable(void)
+PhysicalTable *Reference::getTable()
 {
 	return(table);
 }
 
-Column *Reference::getColumn(void)
+Column *Reference::getColumn()
 {
 	return(column);
 }
 
-QString Reference::getColumnAlias(void)
+QString Reference::getColumnAlias()
 {
 	return(column_alias);
 }
 
-QString Reference::getAlias(void)
+QString Reference::getAlias()
 {
 	return(alias);
 }
 
-QString Reference::getExpression(void)
+QString Reference::getExpression()
 {
 	return(expression);
 }
 
-unsigned Reference::getReferenceType(void)
+unsigned Reference::getReferenceType()
 {
 	if(expression.isEmpty())
 		return(ReferColumn);
@@ -195,7 +195,7 @@ void Reference::setReferenceAlias(const QString &alias)
 	ref_alias = alias;
 }
 
-QString Reference::getReferenceAlias(void)
+QString Reference::getReferenceAlias()
 {
 	return(ref_alias);
 }
@@ -293,7 +293,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	return(sql_def);
 }
 
-QString Reference::getXMLDefinition(void)
+QString Reference::getXMLDefinition()
 {
 	attribs_map attribs, aux_attribs;
 	SchemaParser schparser;

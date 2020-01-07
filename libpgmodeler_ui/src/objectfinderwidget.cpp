@@ -51,13 +51,13 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
 
-	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
-	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
-	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject(void)));
-	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
-	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
+	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects()));
+	connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
+	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
+	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject()));
+	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
+	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
 
 	for(auto &attr : search_attribs_i18n)
 		search_attrs_cmb->addItem(attr);
@@ -81,7 +81,7 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 		return(QWidget::eventFilter(object, event));
 }
 
-void ObjectFinderWidget::hide(void)
+void ObjectFinderWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
@@ -109,7 +109,7 @@ void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 	}
 }
 
-void ObjectFinderWidget::fadeObjects(void)
+void ObjectFinderWidget::fadeObjects()
 {
 	if(!model_wgt)
 		return;
@@ -141,7 +141,7 @@ void ObjectFinderWidget::fadeObjects(void)
 	model_wgt->fadeObjects(other_objs, fade_listed);
 }
 
-void ObjectFinderWidget::selectObjects(void)
+void ObjectFinderWidget::selectObjects()
 {
 	if(!model_wgt)
 		return;
@@ -210,7 +210,7 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	result_tbw->setEnabled(enable);
 }
 
-void ObjectFinderWidget::clearResult(void)
+void ObjectFinderWidget::clearResult()
 {
 	selected_obj=nullptr;
 	found_objs.clear();
@@ -225,7 +225,7 @@ void ObjectFinderWidget::clearResult(void)
 	fade_btn->setEnabled(false);
 }
 
-void ObjectFinderWidget::findObjects(void)
+void ObjectFinderWidget::findObjects()
 {
 	if(model_wgt)
 	{
@@ -278,7 +278,7 @@ void ObjectFinderWidget::findObjects(void)
 	}
 }
 
-void ObjectFinderWidget::selectObject(void)
+void ObjectFinderWidget::selectObject()
 {
 	QTableWidgetItem *tab_item=result_tbw->item(result_tbw->currentRow(), 0);
 
@@ -315,7 +315,7 @@ void ObjectFinderWidget::selectObject(void)
 	}
 }
 
-void ObjectFinderWidget::editObject(void)
+void ObjectFinderWidget::editObject()
 {
 	if(selected_obj)
 	{
@@ -334,7 +334,7 @@ void ObjectFinderWidget::editObject(void)
 	}
 }
 
-void ObjectFinderWidget::setAllObjectsChecked(void)
+void ObjectFinderWidget::setAllObjectsChecked()
 {
 	bool checked=(sender()==select_all_btn);
 

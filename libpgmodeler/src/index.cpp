@@ -18,7 +18,7 @@
 
 #include "index.h"
 
-Index::Index(void)
+Index::Index()
 {
 	obj_type=ObjectType::Index;
 	index_attribs[Unique]=index_attribs[Concurrent]=
@@ -175,7 +175,7 @@ void Index::removeIndexElement(unsigned idx_elem)
 	setCodeInvalidated(true);
 }
 
-void Index::removeIndexElements(void)
+void Index::removeIndexElements()
 {
 	idx_elements.clear();
 	setCodeInvalidated(true);
@@ -189,12 +189,12 @@ IndexElement Index::getIndexElement(unsigned elem_idx)
 	return(idx_elements[elem_idx]);
 }
 
-vector<IndexElement> Index::getIndexElements(void)
+vector<IndexElement> Index::getIndexElements()
 {
 	return(idx_elements);
 }
 
-unsigned Index::getIndexElementCount(void)
+unsigned Index::getIndexElementCount()
 {
 	return(idx_elements.size());
 }
@@ -227,7 +227,7 @@ void Index::setPredicate(const QString &expr)
 	predicate=expr;
 }
 
-unsigned Index::getFillFactor(void)
+unsigned Index::getFillFactor()
 {
 	return(fill_factor);
 }
@@ -240,17 +240,17 @@ bool Index::getIndexAttribute(unsigned attrib_id)
 	return(index_attribs[attrib_id]);
 }
 
-IndexingType Index::getIndexingType(void)
+IndexingType Index::getIndexingType()
 {
 	return(indexing_type);
 }
 
-QString Index::getPredicate(void)
+QString Index::getPredicate()
 {
 	return(predicate);
 }
 
-bool Index::isReferRelationshipAddedColumn(void)
+bool Index::isReferRelationshipAddedColumn()
 {
 	vector<IndexElement>::iterator itr, itr_end;
 	Column *col=nullptr;
@@ -270,7 +270,7 @@ bool Index::isReferRelationshipAddedColumn(void)
 	return(found);
 }
 
-vector<Column *> Index::getRelationshipAddedColumns(void)
+vector<Column *> Index::getRelationshipAddedColumns()
 {
 	vector<Column *> cols;
 	Column *col=nullptr;
@@ -411,7 +411,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 	}
 }
 
-void Index::validateElements(void)
+void Index::validateElements()
 {
 	if(indexing_type!=IndexingType::Btree)
 	{

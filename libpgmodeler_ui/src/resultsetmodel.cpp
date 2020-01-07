@@ -172,7 +172,7 @@ void ResultSetModel::append(ResultSet &res)
 	}
 }
 
-bool ResultSetModel::isEmpty(void)
+bool ResultSetModel::isEmpty()
 {
 	return(row_count <= 0);
 }

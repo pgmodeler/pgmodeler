@@ -49,16 +49,16 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		type_cmb->installEventFilter(this);
 
-		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
+		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
 	}
 	catch(Exception &e)
 	{
@@ -83,7 +83,7 @@ bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void PgSQLTypeWidget::updateTypeFormat(void)
+void PgSQLTypeWidget::updateTypeFormat()
 {
 	try
 	{
@@ -210,7 +210,7 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsig
 	}
 }
 
-PgSqlType PgSQLTypeWidget::getPgSQLType(void)
+PgSqlType PgSQLTypeWidget::getPgSQLType()
 {
 	if(format_txt->toPlainText() == InvalidType)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);

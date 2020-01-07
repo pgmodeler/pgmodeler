@@ -63,7 +63,7 @@ void FindReplaceWidget::showEvent(QShowEvent *)
 	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
-void FindReplaceWidget::replaceText(void)
+void FindReplaceWidget::replaceText()
 {
 	QTextCursor cursor=text_edt->textCursor();
 
@@ -74,7 +74,7 @@ void FindReplaceWidget::replaceText(void)
 	}
 }
 
-void FindReplaceWidget::replaceAll(void)
+void FindReplaceWidget::replaceAll()
 {
 	QTextCursor orig_cursor, cursor=text_edt->textCursor();
 
@@ -88,7 +88,7 @@ void FindReplaceWidget::replaceAll(void)
 	text_edt->setTextCursor(orig_cursor);
 }
 
-void FindReplaceWidget::replaceFindText(void)
+void FindReplaceWidget::replaceFindText()
 {
 	if(text_edt->textCursor().hasSelection())
 	{

@@ -19,7 +19,7 @@
 #include "table.h"
 #include "pgmodelerns.h"
 
-Table::Table(void) : PhysicalTable()
+Table::Table() : PhysicalTable()
 {
 	obj_type = ObjectType::Table;
 	with_oid=unlogged=rls_enabled=rls_forced=false;
@@ -30,7 +30,7 @@ Table::Table(void) : PhysicalTable()
 	setName(tr("new_table"));
 }
 
-Table::~Table(void)
+Table::~Table()
 {
 	destroyObjects();
 }
@@ -275,17 +275,17 @@ Policy *Table::getPolicy(unsigned idx)
 	return(dynamic_cast<Policy *>(getObject(idx, ObjectType::Policy)));
 }
 
-unsigned Table::getIndexCount(void)
+unsigned Table::getIndexCount()
 {
 	return(indexes.size());
 }
 
-unsigned Table::getRuleCount(void)
+unsigned Table::getRuleCount()
 {
 	return(rules.size());
 }
 
-unsigned Table::getPolicyCount(void)
+unsigned Table::getPolicyCount()
 {
 	return(policies.size());
 }
@@ -308,17 +308,17 @@ void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Tab
 	}
 }
 
-bool Table::isUnlogged(void)
+bool Table::isUnlogged()
 {
 	return(unlogged);
 }
 
-bool Table::isRLSEnabled(void)
+bool Table::isRLSEnabled()
 {
 	return(rls_enabled);
 }
 
-bool Table::isRLSForced(void)
+bool Table::isRLSForced()
 {
 	return(rls_forced);
 }
@@ -329,7 +329,7 @@ void Table::setWithOIDs(bool value)
 	with_oid=value;
 }
 
-bool Table::isWithOIDs(void)
+bool Table::isWithOIDs()
 {
 	return(with_oid);
 }

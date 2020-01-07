@@ -53,7 +53,7 @@ bool Connection::print_sql=false;
 bool Connection::silence_conn_err=true;
 QStringList Connection::notices;
 
-Connection::Connection(void)
+Connection::Connection()
 {
 	connection=nullptr;
 	auto_browse_db=false;	
@@ -68,7 +68,7 @@ Connection::Connection(const attribs_map &params) : Connection()
 	setConnectionParams(params);
 }
 
-Connection::~Connection(void)
+Connection::~Connection()
 {
 	if(connection)
 	{
@@ -118,7 +118,7 @@ void Connection::setAutoBrowseDB(bool value)
 	auto_browse_db=value;
 }
 
-void Connection::generateConnectionString(void)
+void Connection::generateConnectionString()
 {
 	QString value, param_str = QString("%1=%2 ");
 
@@ -160,7 +160,7 @@ void Connection::noticeProcessor(void *, const char *message)
 	notices.push_back(QString(message));
 }
 
-void Connection::validateConnectionStatus(void)
+void Connection::validateConnectionStatus()
 {
 	if(cmd_exec_timeout > 0)
 	{
@@ -186,7 +186,7 @@ void Connection::setNoticeEnabled(bool value)
 	notice_enabled=value;
 }
 
-bool Connection::isNoticeEnabled(void)
+bool Connection::isNoticeEnabled()
 {
 	return(notice_enabled);
 }
@@ -196,7 +196,7 @@ void Connection::setPrintSQL(bool value)
 	print_sql=value;
 }
 
-bool Connection::isSQLPrinted(void)
+bool Connection::isSQLPrinted()
 {
 	return(print_sql);
 }
@@ -206,12 +206,12 @@ void Connection::setSilenceConnError(bool value)
 	silence_conn_err=value;
 }
 
-bool Connection::isConnErrorSilenced(void)
+bool Connection::isConnErrorSilenced()
 {
 	return(silence_conn_err);
 }
 
-void Connection::connect(void)
+void Connection::connect()
 {
 	/* If the connection string is not established indicates that the user
 		is trying to connect without configuring connection parameters,
@@ -255,7 +255,7 @@ void Connection::connect(void)
 		PQsetNoticeProcessor(connection, noticeProcessor, nullptr);
 }
 
-void Connection::close(void)
+void Connection::close()
 {
 	if(connection)
 	{
@@ -268,7 +268,7 @@ void Connection::close(void)
 	}
 }
 
-void Connection::reset(void)
+void Connection::reset()
 {
 	//Raise an erro in case the user try to reset a not opened connection
 	if(!connection)
@@ -283,12 +283,12 @@ QString Connection::getConnectionParam(const QString &param)
 	return(connection_params[param]);
 }
 
-attribs_map Connection::getConnectionParams(void) const
+attribs_map Connection::getConnectionParams() const
 {
 	return(connection_params);
 }
 
-attribs_map Connection::getServerInfo(void)
+attribs_map Connection::getServerInfo()
 {
 	attribs_map info;
 
@@ -302,7 +302,7 @@ attribs_map Connection::getServerInfo(void)
 	return(info);
 }
 
-QString Connection::getConnectionString(void)
+QString Connection::getConnectionString()
 {
 	return(connection_str);
 }
@@ -331,17 +331,17 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 		return(QString("%1%2 (%3%4)").arg(db_name, connection_params[ParamAlias], addr, port));
 }
 
-bool Connection::isStablished(void)
+bool Connection::isStablished()
 {
 	return(connection!=nullptr);
 }
 
-bool Connection::isConfigured(void)
+bool Connection::isConfigured()
 {
 	return(!connection_str.isEmpty());
 }
 
-bool Connection::isAutoBrowseDB(void)
+bool Connection::isAutoBrowseDB()
 {
 	return(auto_browse_db);
 }
@@ -380,7 +380,7 @@ QString  Connection::getPgSQLVersion(bool major_only)
 	return(fmt_ver);
 }
 
-QStringList Connection::getNotices(void)
+QStringList Connection::getNotices()
 {
 	return (notices);
 }
@@ -519,7 +519,7 @@ void Connection::operator = (const Connection &conn)
 		default_for_oper[idx]=conn.default_for_oper[idx];
 }
 
-void Connection::requestCancel(void)
+void Connection::requestCancel()
 {
 	if(!connection)
 		throw Exception(ErrorCode::OprNotAllocatedConnection, __PRETTY_FUNCTION__, __FILE__, __LINE__);

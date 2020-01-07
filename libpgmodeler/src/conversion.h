@@ -48,7 +48,7 @@ class Conversion: public BaseObject {
 		static constexpr unsigned SrcEncoding=0,
 		DstEncoding=1;
 
-		Conversion(void);
+		Conversion();
 
 		//! \brief Defines whether the conversion is the default for the encodings
 		void setDefault(bool value);
@@ -63,10 +63,10 @@ class Conversion: public BaseObject {
 		EncodingType getEncoding(unsigned encoding_idx);
 
 		//! \brief Returns the current used conversion function
-		Function *getConversionFunction(void);
+		Function *getConversionFunction();
 
 		//! \brief Returns if the conversion is the default for the envolved encodings
-		bool isDefault(void);
+		bool isDefault();
 
 		//! \brief Returns the SQL/XML code definition for the conversion
 		virtual QString getCodeDefinition(unsigned def_type) final;

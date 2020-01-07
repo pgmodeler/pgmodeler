@@ -18,7 +18,7 @@
 
 #include "column.h"
 
-Column::Column(void)
+Column::Column()
 {
 	obj_type=ObjectType::Column;
 	not_null=seq_cycle=false;
@@ -109,27 +109,27 @@ void Column::setNotNull(bool value)
 	not_null=value;
 }
 
-PgSqlType Column::getType(void)
+PgSqlType Column::getType()
 {
 	return(type);
 }
 
-IdentityType Column::getIdentityType(void)
+IdentityType Column::getIdentityType()
 {
 	return(identity_type);
 }
 
-bool Column::isNotNull(void)
+bool Column::isNotNull()
 {
 	return(not_null);
 }
 
-bool Column::isIdentity(void)
+bool Column::isIdentity()
 {
 	return(identity_type != BaseType::Null);
 }
 
-QString Column::getTypeReference(void)
+QString Column::getTypeReference()
 {
 	if(getParentTable())
 		return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
@@ -137,7 +137,7 @@ QString Column::getTypeReference(void)
 		return(QString());
 }
 
-QString Column::getDefaultValue(void)
+QString Column::getDefaultValue()
 {
 	return(default_value);
 }
@@ -158,7 +158,7 @@ void Column::setParentRelationship(BaseObject *parent_rel)
 	this->parent_rel=parent_rel;
 }
 
-BaseObject *Column::getParentRelationship(void)
+BaseObject *Column::getParentRelationship()
 {
 	return(parent_rel);
 }
@@ -187,37 +187,37 @@ void Column::setSequence(BaseObject *seq)
 	sequence=seq;
 }
 
-BaseObject *Column::getSequence(void)
+BaseObject *Column::getSequence()
 {
 	return(sequence);
 }
 
-bool Column::isIdSeqCycle(void)
+bool Column::isIdSeqCycle()
 {
 	return(seq_cycle);
 }
 
-QString Column::getIdSeqMaxValue(void)
+QString Column::getIdSeqMaxValue()
 {
 	return(seq_max_value);
 }
 
-QString Column::getIdSeqMinValue(void)
+QString Column::getIdSeqMinValue()
 {
 	return(seq_min_value);
 }
 
-QString Column::getIdSeqIncrement(void)
+QString Column::getIdSeqIncrement()
 {
 	return(seq_increment);
 }
 
-QString Column::getIdSeqStart(void)
+QString Column::getIdSeqStart()
 {
 	return(seq_start);
 }
 
-QString Column::getIdSeqCache(void)
+QString Column::getIdSeqCache()
 {
 	return(seq_cache);
 }
@@ -382,7 +382,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 	}
 }
 
-void Column::configureSearchAttributes(void)
+void Column::configureSearchAttributes()
 {
 	BaseObject::configureSearchAttributes();
 	search_attribs[Attributes::Type] = *type;

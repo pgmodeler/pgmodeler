@@ -71,7 +71,7 @@ class ElementsTableWidget: public QWidget {
 
 	public:
 		ElementsTableWidget(QWidget *parent = nullptr);
-		~ElementsTableWidget(void);
+		~ElementsTableWidget();
 
 		//! \brief Configures the grid based upon the template Class in use
 		template<class Class>

@@ -95,7 +95,7 @@ void SequenceWidget::setAttributes(DatabaseModel *model, Sequence *sequence)
 	}
 }
 
-void SequenceWidget::applyConfiguration(void)
+void SequenceWidget::applyConfiguration()
 {
 	try
 	{
@@ -119,7 +119,7 @@ void SequenceWidget::applyConfiguration(void)
 	}
 }
 
-void SequenceWidget::setDefaultValues(void)
+void SequenceWidget::setDefaultValues()
 {
 	Sequence *seq = dynamic_cast<Sequence *>(this->object);
 

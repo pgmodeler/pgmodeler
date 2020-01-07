@@ -18,7 +18,7 @@
 
 #include "operatorclass.h"
 
-OperatorClass::OperatorClass(void)
+OperatorClass::OperatorClass()
 {
 	obj_type=ObjectType::OpClass;
 	family=nullptr;
@@ -30,7 +30,7 @@ OperatorClass::OperatorClass(void)
 	attributes[Attributes::Default]=QString();
 }
 
-OperatorClass::~OperatorClass(void)
+OperatorClass::~OperatorClass()
 {
 	elements.clear();
 }
@@ -101,7 +101,7 @@ void OperatorClass::removeElement(unsigned elem_idx)
 	setCodeInvalidated(true);
 }
 
-void OperatorClass::removeElements(void)
+void OperatorClass::removeElements()
 {
 	elements.clear();
 	setCodeInvalidated(true);
@@ -136,27 +136,27 @@ bool OperatorClass::isElementExists(OperatorClassElement elem)
 	return(exists);
 }
 
-unsigned OperatorClass::getElementCount(void)
+unsigned OperatorClass::getElementCount()
 {
 	return(elements.size());
 }
 
-PgSqlType OperatorClass::getDataType(void)
+PgSqlType OperatorClass::getDataType()
 {
 	return(data_type);
 }
 
-OperatorFamily *OperatorClass::getFamily(void)
+OperatorFamily *OperatorClass::getFamily()
 {
 	return(family);
 }
 
-IndexingType OperatorClass::getIndexingType(void)
+IndexingType OperatorClass::getIndexingType()
 {
 	return(indexing_type);
 }
 
-bool OperatorClass::isDefault(void)
+bool OperatorClass::isDefault()
 {
 	return(is_default);
 }

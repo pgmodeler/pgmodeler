@@ -145,7 +145,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	}
 }
 
-void Application::createUserConfiguration(void)
+void Application::createUserConfiguration()
 {
 	QDir config_dir(GlobalAttributes::getConfigurationsDir());
 

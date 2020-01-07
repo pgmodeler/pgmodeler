@@ -94,10 +94,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		BehaviorType::getTypes(types);
 		behavior_cmb->addItems(types);
 
-		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage(void)));
+		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
@@ -170,7 +170,7 @@ void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 	showParameterData(new_param, table, new_row);
 }
 
-void FunctionWidget::showParameterForm(void)
+void FunctionWidget::showParameterForm()
 {
 	QObject *obj_sender=sender();
 	ObjectsTableWidget *table=nullptr;
@@ -347,14 +347,14 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	ret_type->setAttributes(aux_type, model);
 }
 
-void FunctionWidget::alternateReturnTypes(void)
+void FunctionWidget::alternateReturnTypes()
 {
 	QObject *obj_sender=sender();
 	ret_table_gb->setVisible(obj_sender==table_rb);
 	ret_type->setVisible(!ret_table_gb->isVisible());
 }
 
-void FunctionWidget::selectLanguage(void)
+void FunctionWidget::selectLanguage()
 {
 	bool c_lang;
 
@@ -382,7 +382,7 @@ void FunctionWidget::selectLanguage(void)
 	}
 }
 
-void FunctionWidget::validateConfiguredFunction(void)
+void FunctionWidget::validateConfiguredFunction()
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> obj_list;
@@ -491,7 +491,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 }
 
-void FunctionWidget::applyConfiguration(void)
+void FunctionWidget::applyConfiguration()
 {
 	try
 	{

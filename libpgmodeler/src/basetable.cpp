@@ -18,7 +18,7 @@
 
 #include "basetable.h"
 
-BaseTable::BaseTable(void)
+BaseTable::BaseTable()
 {
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
@@ -33,7 +33,7 @@ BaseTable::BaseTable(void)
 	resetCurrentPages();
 }
 
-void BaseTable::resetCurrentPages(void)
+void BaseTable::resetCurrentPages()
 {
 	curr_page[AttribsSection] = 0;
 	curr_page[ExtAttribsSection] = 0;
@@ -45,7 +45,7 @@ void BaseTable::setTag(Tag *tag)
 	this->tag=tag;
 }
 
-Tag *BaseTable::getTag(void)
+Tag *BaseTable::getTag()
 {
 	return(tag);
 }
@@ -75,7 +75,7 @@ void BaseTable::operator = (BaseTable &tab)
 	this->tag=tab.tag;
 }
 
-CollapseMode BaseTable::getCollapseMode(void)
+CollapseMode BaseTable::getCollapseMode()
 {
 	return(collapse_mode);
 }
@@ -89,7 +89,7 @@ void BaseTable::setPaginationEnabled(bool value)
 		resetCurrentPages();
 }
 
-bool BaseTable::isPaginationEnabled(void)
+bool BaseTable::isPaginationEnabled()
 {
 	return(pagination_enabled);
 }

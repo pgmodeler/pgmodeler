@@ -38,7 +38,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	});
 }
 
-void LayersWidget::updateLayers(void)
+void LayersWidget::updateLayers()
 {
 	QListWidgetItem *item = nullptr;
 
@@ -66,7 +66,7 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 	return(false);
 }
 
-void LayersWidget::updateActiveLayers(void)
+void LayersWidget::updateActiveLayers()
 {
 	QStringList active_layers;
 	QListWidgetItem *item = nullptr;
@@ -120,7 +120,7 @@ void LayersWidget::removeLayer(bool clear)
 	}
 }
 
-void LayersWidget::enableButtons(void)
+void LayersWidget::enableButtons()
 {
 	remove_tb->setEnabled(layers_lst->currentRow() > 0);
 	remove_all_tb->setEnabled(layers_lst->count() > 1);
@@ -177,7 +177,7 @@ void LayersWidget::startLayerRenaming(QListWidgetItem *item)
 	}
 }
 
-void LayersWidget::finishLayerRenaming(void)
+void LayersWidget::finishLayerRenaming()
 {
 	if(curr_item)
 	{

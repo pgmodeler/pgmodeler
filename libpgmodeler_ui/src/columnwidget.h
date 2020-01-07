@@ -43,10 +43,10 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column);
 		
 	private slots:
-		void editSequenceAttributes(void);
+		void editSequenceAttributes();
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

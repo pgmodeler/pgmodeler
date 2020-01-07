@@ -18,7 +18,7 @@
 
 #include "operator.h"
 
-Operator::Operator(void)
+Operator::Operator()
 {
 	unsigned i;
 
@@ -239,12 +239,12 @@ Operator *Operator::getOperator(unsigned op_type)
 	return(operators[op_type]);
 }
 
-bool Operator::isHashes(void)
+bool Operator::isHashes()
 {
 	return(hashes);
 }
 
-bool Operator::isMerges(void)
+bool Operator::isMerges()
 {
 	return(merges);
 }
@@ -337,7 +337,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
-void Operator::configureSearchAttributes(void)
+void Operator::configureSearchAttributes()
 {
 	QStringList arg_types;
 

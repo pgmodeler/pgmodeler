@@ -82,10 +82,10 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 			grid->setContentsMargins(4,4,4,4);
 			tabWidget->widget(tab_id)->setLayout(grid);
 
-			connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+			connect(tab, SIGNAL(s_rowsRemoved()), this, SLOT(removeObjects()));
 			connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
-			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
-			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
+			connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject()));
+			connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject()));
 			connect(tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateObject(int,int)));
 		}
 
@@ -130,19 +130,19 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		connect(references_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addReference(int)));
 		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));
 		connect(references_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateReference(int,int)));
-		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview(void)));
+		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview()));
 
 		connect(materialized_rb, SIGNAL(toggled(bool)), with_no_data_chk, SLOT(setEnabled(bool)));
 		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_sel, SLOT(setEnabled(bool)));
 		connect(materialized_rb, SIGNAL(toggled(bool)), tablespace_lbl, SLOT(setEnabled(bool)));
 
-		connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
-		connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview(void)));
-		connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview(void)));
-		connect(tablespace_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
-		connect(tablespace_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
-		connect(schema_sel, SIGNAL(s_objectSelected(void)), this, SLOT(updateCodePreview(void)));
-		connect(schema_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(updateCodePreview(void)));
+		connect(materialized_rb, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
+		connect(recursive_rb, SIGNAL(toggled(bool)),  this, SLOT(updateCodePreview()));
+		connect(with_no_data_chk, SIGNAL(toggled(bool)), this, SLOT(updateCodePreview()));
+		connect(tablespace_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
+		connect(tablespace_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
+		connect(schema_sel, SIGNAL(s_objectSelected()), this, SLOT(updateCodePreview()));
+		connect(schema_sel, SIGNAL(s_selectorCleared()), this, SLOT(updateCodePreview()));
 
 		configureTabOrder({ tag_sel, ordinary_rb, recursive_rb, with_no_data_chk, tabWidget });
 		setMinimumSize(660, 650);
@@ -174,7 +174,7 @@ int ViewWidget::openEditingForm(TableObject *object)
 	return(editing_form.exec());
 }
 
-void ViewWidget::handleObject(void)
+void ViewWidget::handleObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	TableObject *object=nullptr;
@@ -247,7 +247,7 @@ void ViewWidget::duplicateObject(int curr_row, int new_row)
 	}
 }
 
-void ViewWidget::removeObjects(void)
+void ViewWidget::removeObjects()
 {
 	View *view=nullptr;
 	unsigned count, op_count=0, i;
@@ -542,7 +542,7 @@ void ViewWidget::showReferenceData(Reference refer, unsigned ref_flags, unsigned
 	references_tab->setRowData(QVariant::fromValue<Reference>(refer), row);
 }
 
-void ViewWidget::updateCodePreview(void)
+void ViewWidget::updateCodePreview()
 {
 	try
 	{
@@ -694,7 +694,7 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	listObjects(ObjectType::Index);
 }
 
-void ViewWidget::applyConfiguration(void)
+void ViewWidget::applyConfiguration()
 {
 	try
 	{
@@ -754,7 +754,7 @@ void ViewWidget::applyConfiguration(void)
 	}
 }
 
-void ViewWidget::cancelConfiguration(void)
+void ViewWidget::cancelConfiguration()
 {
 	BaseObjectWidget::cancelChainedOperation();
 }

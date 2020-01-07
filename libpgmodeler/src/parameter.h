@@ -33,7 +33,7 @@ class Parameter: public Column {
 		bool is_in, is_out, is_variadic;
 
 	public:
-		Parameter(void);
+		Parameter();
 		Parameter(const QString &name, PgSqlType type, bool in = false, bool out = false, bool variadic = false);
 
 		void setType(PgSqlType type);
@@ -41,9 +41,9 @@ class Parameter: public Column {
 		void setOut(bool value);
 		void setVariadic(bool value);
 
-		bool isIn(void);
-		bool isOut(void);
-		bool isVariadic(void);
+		bool isIn();
+		bool isOut();
+		bool isVariadic();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
 		virtual QString getCodeDefinition(unsigned def_type) final;

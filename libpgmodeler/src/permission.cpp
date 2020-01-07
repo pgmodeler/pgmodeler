@@ -168,12 +168,12 @@ void Permission::setCascade(bool value)
 	cascade=(revoke && value);
 }
 
-bool Permission::isRevoke(void)
+bool Permission::isRevoke()
 {
 	return(revoke);
 }
 
-bool Permission::isCascade(void)
+bool Permission::isCascade()
 {
 	return(cascade);
 }
@@ -216,7 +216,7 @@ void Permission::removeRole(unsigned role_idx)
 	setCodeInvalidated(true);
 }
 
-void Permission::removeRoles(void)
+void Permission::removeRoles()
 {
 	roles.clear();
 	generatePermissionId();
@@ -231,17 +231,17 @@ Role *Permission::getRole(unsigned role_idx)
 	return(roles[role_idx]);
 }
 
-vector<Role *> Permission::getRoles(void)
+vector<Role *> Permission::getRoles()
 {
 	return(roles);
 }
 
-unsigned Permission::getRoleCount(void)
+unsigned Permission::getRoleCount()
 {
 	return(roles.size());
 }
 
-BaseObject *Permission::getObject(void)
+BaseObject *Permission::getObject()
 {
 	return(object);
 }
@@ -264,7 +264,7 @@ bool Permission::getGrantOption(unsigned priv_id)
 	return(grant_option[priv_id]);
 }
 
-QString Permission::getPermissionString(void)
+QString Permission::getPermissionString()
 {
 	QString str_priv;
 	unsigned i;
@@ -356,7 +356,7 @@ QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &pr
 	return(role);
 }
 
-void Permission::generatePermissionId(void)
+void Permission::generatePermissionId()
 {
 	vector<Role *>::iterator itr, itr_end;
 	vector<QString> addr_vect;

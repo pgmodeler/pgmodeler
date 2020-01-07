@@ -72,7 +72,7 @@ void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	}
 }
 
-void LanguageWidget::applyConfiguration(void)
+void LanguageWidget::applyConfiguration()
 {
 	try
 	{

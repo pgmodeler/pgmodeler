@@ -124,12 +124,12 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	grid->addWidget(color_picker, 3, 1, 1, 4);
 	grid->addWidget(viewp, 4 , 0, 1, 5);
 
-	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement(void)));
-	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle(void)));
-	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle(void)));
-	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
-	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
-	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle(void)));
+	connect(element_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableConfigElement()));
+	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(applyFontStyle()));
+	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(applyFontStyle()));
+	connect(bold_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
+	connect(underline_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
+	connect(italic_chk, SIGNAL(toggled(bool)), this, SLOT(applyFontStyle()));
 
 	connect(color_picker, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(applyElementColor(unsigned, QColor)));
 
@@ -140,7 +140,7 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : BaseConfigWid
 	});
 }
 
-AppearanceConfigWidget::~AppearanceConfigWidget(void)
+AppearanceConfigWidget::~AppearanceConfigWidget()
 {
 	scene->removeItem(placeholder);
 
@@ -150,12 +150,12 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
 	delete model;
 }
 
-map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
 	return(config_params);
 }
 
-void AppearanceConfigWidget::loadExampleModel(void)
+void AppearanceConfigWidget::loadExampleModel()
 {
 	try
 	{
@@ -226,7 +226,7 @@ void AppearanceConfigWidget::loadExampleModel(void)
 	}
 }
 
-void AppearanceConfigWidget::updatePlaceholderItem(void)
+void AppearanceConfigWidget::updatePlaceholderItem()
 {
 	placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 	QPen pen=BaseObjectView::getBorderStyle(Attributes::Placeholder);
@@ -234,7 +234,7 @@ void AppearanceConfigWidget::updatePlaceholderItem(void)
 	placeholder->setPen(pen);
 }
 
-void AppearanceConfigWidget::loadConfiguration(void)
+void AppearanceConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -266,7 +266,7 @@ void AppearanceConfigWidget::loadConfiguration(void)
 	}
 }
 
-void AppearanceConfigWidget::saveConfiguration(void)
+void AppearanceConfigWidget::saveConfiguration()
 {
 	try
 	{
@@ -333,7 +333,7 @@ void AppearanceConfigWidget::saveConfiguration(void)
 	}
 }
 
-void AppearanceConfigWidget::enableConfigElement(void)
+void AppearanceConfigWidget::enableConfigElement()
 {
 	//QPalette pal;
 	int idx=element_cmb->currentIndex();
@@ -412,7 +412,7 @@ void AppearanceConfigWidget::applyElementColor(unsigned color_idx, QColor color)
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::applyFontStyle(void)
+void AppearanceConfigWidget::applyFontStyle()
 {
 	QFont font;
 
@@ -431,7 +431,7 @@ void AppearanceConfigWidget::applyFontStyle(void)
 	setConfigurationChanged(true);
 }
 
-void AppearanceConfigWidget::restoreDefaults(void)
+void AppearanceConfigWidget::restoreDefaults()
 {
 	try
 	{

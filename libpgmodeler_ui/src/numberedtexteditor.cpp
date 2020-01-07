@@ -128,13 +128,13 @@ NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) 
 	setWordWrapMode(QTextOption::NoWrap);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
-	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers(void)));
+	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumbers()));
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumbersSize()));
 
 	setCustomContextMenuEnabled(true);
 }
 
-NumberedTextEditor::~NumberedTextEditor(void)
+NumberedTextEditor::~NumberedTextEditor()
 {
 	if(src_editor_proc.state() != QProcess::NotRunning)
 	{
@@ -187,7 +187,7 @@ void NumberedTextEditor::setTabDistance(double value)
 		tab_width=value;
 }
 
-double NumberedTextEditor::getTabDistance(void)
+double NumberedTextEditor::getTabDistance()
 {
 	if(tab_width == 0)
 		return(80);
@@ -208,7 +208,7 @@ void NumberedTextEditor::setSourceEditorAppArgs(const QString &args)
 	NumberedTextEditor::src_editor_app_args = args;
 }
 
-void NumberedTextEditor::showContextMenu(void)
+void NumberedTextEditor::showContextMenu()
 {
 	QMenu *ctx_menu;
 	QAction *act=nullptr;
@@ -238,12 +238,12 @@ void NumberedTextEditor::showContextMenu(void)
 	delete ctx_menu;
 }
 
-void NumberedTextEditor::changeSelectionToLower(void)
+void NumberedTextEditor::changeSelectionToLower()
 {
 	changeSelectionCase(true);
 }
 
-void NumberedTextEditor::changeSelectionToUpper(void)
+void NumberedTextEditor::changeSelectionToUpper()
 {
 	changeSelectionCase(false);
 }
@@ -268,12 +268,12 @@ void NumberedTextEditor::changeSelectionCase(bool lower)
 	}
 }
 
-void NumberedTextEditor::identSelectionRight(void)
+void NumberedTextEditor::identSelectionRight()
 {
 	identSelection(true);
 }
 
-void NumberedTextEditor::identSelectionLeft(void)
+void NumberedTextEditor::identSelectionLeft()
 {
 	identSelection(false);
 }
@@ -326,7 +326,7 @@ void NumberedTextEditor::identSelection(bool ident_right)
 	}
 }
 
-void NumberedTextEditor::loadFile(void)
+void NumberedTextEditor::loadFile()
 {
 	QFileDialog sql_file_dlg;
 
@@ -357,7 +357,7 @@ void NumberedTextEditor::loadFile(void)
 	}
 }
 
-void NumberedTextEditor::editSource(void)
+void NumberedTextEditor::editSource()
 {
 	QByteArray buffer;
 	QFile input;
@@ -398,7 +398,7 @@ void NumberedTextEditor::editSource(void)
 	src_editor_proc.waitForStarted();
 }
 
-void NumberedTextEditor::enableEditor(void)
+void NumberedTextEditor::enableEditor()
 {
 	editor_alert_wgt->setVisible(false);
 	load_file_btn->setEnabled(true);
@@ -428,7 +428,7 @@ void NumberedTextEditor::updateSource(int exit_code)
 	}
 }
 
-void NumberedTextEditor::handleProcessStart(void)
+void NumberedTextEditor::handleProcessStart()
 {
 	if(src_editor_proc.state() == QProcess::Running)
 	{
@@ -442,7 +442,7 @@ void NumberedTextEditor::handleProcessStart(void)
 	}
 }
 
-void NumberedTextEditor::handleProcessError(void)
+void NumberedTextEditor::handleProcessError()
 {
 	Messagebox msg_box;
 	QStringList errors = { src_editor_proc.errorString(),  src_editor_proc.readAllStandardError() };
@@ -466,13 +466,13 @@ void NumberedTextEditor::setReadOnly(bool ro)
 	QPlainTextEdit::setReadOnly(ro);
 }
 
-void NumberedTextEditor::setFocus(void)
+void NumberedTextEditor::setFocus()
 {
 	QPlainTextEdit::setFocus();
 	this->highlightCurrentLine();
 }
 
-void NumberedTextEditor::updateLineNumbers(void)
+void NumberedTextEditor::updateLineNumbers()
 {
 	line_number_wgt->setVisible(line_nums_visible);
 	if(!line_nums_visible) return;
@@ -515,7 +515,7 @@ void NumberedTextEditor::updateLineNumbers(void)
 		this->setTabStopDistance(NumberedTextEditor::getTabDistance());
 }
 
-void NumberedTextEditor::updateLineNumbersSize(void)
+void NumberedTextEditor::updateLineNumbersSize()
 {
 	int py = (handle_ext_files && top_widget ? top_widget->height() : 0);
 
@@ -535,7 +535,7 @@ void NumberedTextEditor::updateLineNumbersSize(void)
 		setViewportMargins(0, py, 0, 0);
 }
 
-int NumberedTextEditor::getLineNumbersWidth(void)
+int NumberedTextEditor::getLineNumbersWidth()
 {
 	int digits=1, max=qMax(1, blockCount());
 
@@ -579,7 +579,7 @@ void NumberedTextEditor::keyPressEvent(QKeyEvent *event)
 		QPlainTextEdit::keyPressEvent(event);
 }
 
-void NumberedTextEditor::highlightCurrentLine(void)
+void NumberedTextEditor::highlightCurrentLine()
 {
 	QList<QTextEdit::ExtraSelection> extraSelections;
 

@@ -18,7 +18,7 @@
 
 #include "element.h"
 
-Element::Element(void)
+Element::Element()
 {
 	column=nullptr;
 	operator_class=nullptr;
@@ -63,7 +63,7 @@ void Element::setSortingEnabled(bool value)
 	sorting_enabled=value;
 }
 
-bool Element::isSortingEnabled(void)
+bool Element::isSortingEnabled()
 {
 	return(sorting_enabled);
 }
@@ -76,17 +76,17 @@ bool Element::getSortingAttribute(unsigned attrib)
 	return(sorting_attibs[attrib]);
 }
 
-Column *Element::getColumn(void)
+Column *Element::getColumn()
 {
 	return(column);
 }
 
-QString Element::getExpression(void)
+QString Element::getExpression()
 {
 	return(expression);
 }
 
-OperatorClass *Element::getOperatorClass(void)
+OperatorClass *Element::getOperatorClass()
 {
 	return(operator_class);
 }

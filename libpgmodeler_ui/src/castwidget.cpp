@@ -79,7 +79,7 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 	trg_datatype->setAttributes(trg_type,model);
 }
 
-void CastWidget::applyConfiguration(void)
+void CastWidget::applyConfiguration()
 {
 	try
 	{

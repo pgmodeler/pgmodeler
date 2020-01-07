@@ -18,7 +18,7 @@
 
 #include "indexelement.h"
 
-IndexElement::IndexElement(void) : Element()
+IndexElement::IndexElement() : Element()
 {
 	collation=nullptr;
 }
@@ -28,7 +28,7 @@ void IndexElement::setCollation(Collation *collation)
 	this->collation=collation;
 }
 
-Collation *IndexElement::getCollation(void)
+Collation *IndexElement::getCollation()
 {
 	return(collation);
 }

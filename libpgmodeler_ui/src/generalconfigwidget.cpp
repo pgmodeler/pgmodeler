@@ -69,20 +69,20 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
-	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
+	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity()));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
-	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
+	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize()));
 	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateFontPreview()));
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateFontPreview()));
 
 	connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_numbers_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_highlight_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_highlight_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 	connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
@@ -271,7 +271,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	}
 }
 
-void GeneralConfigWidget::loadConfiguration(void)
+void GeneralConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -408,7 +408,7 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
   }
 }
 
-map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
 	return(config_params);
 }
@@ -480,7 +480,7 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 	return(false);
 }
 
-void GeneralConfigWidget::saveConfiguration(void)
+void GeneralConfigWidget::saveConfiguration()
 {
 	try
 	{
@@ -639,7 +639,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 	}
 }
 
-void GeneralConfigWidget::applyConfiguration(void)
+void GeneralConfigWidget::applyConfiguration()
 {
 	int unit=unity_cmb->currentIndex();
 	QFont fnt;
@@ -699,7 +699,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 }
 
-void GeneralConfigWidget::restoreDefaults(void)
+void GeneralConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -717,7 +717,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 	}
 }
 
-void GeneralConfigWidget::convertMarginUnity(void)
+void GeneralConfigWidget::convertMarginUnity()
 {
 	static int prev_unity=UnitMilimeters;
 	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
@@ -740,7 +740,7 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	prev_unity=unity_cmb->currentIndex();
 }
 
-void GeneralConfigWidget::updateFontPreview(void)
+void GeneralConfigWidget::updateFontPreview()
 {
 	QFont fnt;
 
@@ -763,7 +763,7 @@ void GeneralConfigWidget::updateFontPreview(void)
 	setConfigurationChanged(true);
 }
 
-void GeneralConfigWidget::selectPaperSize(void)
+void GeneralConfigWidget::selectPaperSize()
 {
 	bool visible=paper_cmb->currentIndex()==paper_cmb->count()-1;
 
@@ -774,7 +774,7 @@ void GeneralConfigWidget::selectPaperSize(void)
 	height_spb->setVisible(visible);
 }
 
-void GeneralConfigWidget::selectSourceEditor(void)
+void GeneralConfigWidget::selectSourceEditor()
 {
 	QFileDialog sel_editor_dlg;
 
@@ -789,7 +789,7 @@ void GeneralConfigWidget::selectSourceEditor(void)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
 }
 
-void GeneralConfigWidget::resetDialogsSizes(void)
+void GeneralConfigWidget::resetDialogsSizes()
 {
 	Messagebox msg_box;
 	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),

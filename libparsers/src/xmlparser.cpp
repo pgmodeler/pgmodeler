@@ -29,7 +29,7 @@ const QString XmlParser::CdataEnd("]]>");
 const QString XmlParser::CommentStart("<!--");
 const QString XmlParser::CommentEnd("-->");
 
-XmlParser::XmlParser(void)
+XmlParser::XmlParser()
 {
 	root_elem=nullptr;
 	curr_elem=nullptr;
@@ -38,13 +38,13 @@ XmlParser::XmlParser(void)
 	xmlInitParser();
 }
 
-XmlParser::~XmlParser(void)
+XmlParser::~XmlParser()
 {
 	restartParser();
 	xmlCleanupParser();
 }
 
-void XmlParser::removeDTD(void)
+void XmlParser::removeDTD()
 {
 	int pos1=-1, pos2=-1, pos3=-1, len;
 
@@ -152,7 +152,7 @@ void XmlParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 			 fmt_dtd_file + QString("\">\n");
 }
 
-void XmlParser::readBuffer(void)
+void XmlParser::readBuffer()
 {
 	QByteArray buffer;
 	QString msg, file;
@@ -208,7 +208,7 @@ void XmlParser::readBuffer(void)
 	}
 }
 
-void XmlParser::savePosition(void)
+void XmlParser::savePosition()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -216,7 +216,7 @@ void XmlParser::savePosition(void)
 	elems_stack.push(curr_elem);
 }
 
-void XmlParser::restorePosition(void)
+void XmlParser::restorePosition()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -241,7 +241,7 @@ void XmlParser::restorePosition(const xmlNode *elem)
 	curr_elem=const_cast<xmlNode *>(elem);
 }
 
-void XmlParser::restartNavigation(void)
+void XmlParser::restartNavigation()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -252,7 +252,7 @@ void XmlParser::restartNavigation(void)
 		elems_stack.pop();
 }
 
-void XmlParser::restartParser(void)
+void XmlParser::restartParser()
 {
 	root_elem=curr_elem=nullptr;
 	curr_line = 0;
@@ -339,7 +339,7 @@ bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
-bool XmlParser::hasAttributes(void)
+bool XmlParser::hasAttributes()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -347,7 +347,7 @@ bool XmlParser::hasAttributes(void)
 	return(curr_elem->properties!=nullptr);
 }
 
-QString XmlParser::getElementContent(void)
+QString XmlParser::getElementContent()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -361,7 +361,7 @@ QString XmlParser::getElementContent(void)
 		return(QString(reinterpret_cast<char *>(curr_elem->content)));
 }
 
-QString XmlParser::getElementName(void)
+QString XmlParser::getElementName()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -369,7 +369,7 @@ QString XmlParser::getElementName(void)
 	return(QString(reinterpret_cast<const char *>(curr_elem->name)));
 }
 
-xmlElementType XmlParser::getElementType(void)
+xmlElementType XmlParser::getElementType()
 {
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -377,7 +377,7 @@ xmlElementType XmlParser::getElementType(void)
 	return(curr_elem->type);
 }
 
-const xmlNode *XmlParser::getCurrentElement(void)
+const xmlNode *XmlParser::getCurrentElement()
 {
 	return(curr_elem);
 }
@@ -412,17 +412,17 @@ void XmlParser::getElementAttributes(attribs_map &attributes)
 	}
 }
 
-QString XmlParser::getLoadedFilename(void)
+QString XmlParser::getLoadedFilename()
 {
 	return(xml_doc_filename);
 }
 
-QString XmlParser::getXMLBuffer(void)
+QString XmlParser::getXMLBuffer()
 {
 	return(xml_buffer);
 }
 
-int XmlParser::getCurrentBufferLine(void)
+int XmlParser::getCurrentBufferLine()
 {
 	if(curr_elem)
 		return(curr_line);
@@ -430,7 +430,7 @@ int XmlParser::getCurrentBufferLine(void)
 		return(0);
 }
 
-int XmlParser::getBufferLineCount(void)
+int XmlParser::getBufferLineCount()
 {
 	if(xml_doc)
 	{

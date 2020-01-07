@@ -68,8 +68,8 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 			this->adjustSize();
 		}
 
-		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
-		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
+		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView()));
+		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 
 		obj_name_txt->installEventFilter(this);
@@ -97,7 +97,7 @@ bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 	return(QWidget::eventFilter(obj, evnt));
 }
 
-ObjectSelectorWidget::~ObjectSelectorWidget(void)
+ObjectSelectorWidget::~ObjectSelectorWidget()
 {
 	delete obj_view_wgt;
 }
@@ -107,12 +107,12 @@ void ObjectSelectorWidget::enableObjectCreation(bool value)
 	obj_view_wgt->enableObjectCreation(value);
 }
 
-BaseObject *ObjectSelectorWidget::getSelectedObject(void)
+BaseObject *ObjectSelectorWidget::getSelectedObject()
 {
 	return(selected_obj);
 }
 
-QString ObjectSelectorWidget::getSelectedObjectName(void)
+QString ObjectSelectorWidget::getSelectedObjectName()
 {
 	return(selected_obj->getSignature());
 }
@@ -176,7 +176,7 @@ void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 		setSelectedObject(obj_sel);
 }
 
-void ObjectSelectorWidget::clearSelector(void)
+void ObjectSelectorWidget::clearSelector()
 {
 	this->selected_obj=nullptr;
 	obj_name_txt->clear();
@@ -185,7 +185,7 @@ void ObjectSelectorWidget::clearSelector(void)
 	emit s_selectorChanged(false);
 }
 
-void ObjectSelectorWidget::showObjectView(void)
+void ObjectSelectorWidget::showObjectView()
 {
 	obj_name_txt->clearFocus();
 

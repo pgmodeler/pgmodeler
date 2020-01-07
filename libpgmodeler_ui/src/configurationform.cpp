@@ -37,15 +37,15 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 		confs_stw->addWidget(wgt_list[i]);
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
-	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
-	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
+	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(apply_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
+	connect(defaults_btn, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
 
 	icons_lst->setCurrentRow(GeneralConfWgt);
 	setMinimumSize(890, 740);
 }
 
-ConfigurationForm::~ConfigurationForm(void)
+ConfigurationForm::~ConfigurationForm()
 {
 	connections_conf->destroyConnections();
 }
@@ -60,7 +60,7 @@ void ConfigurationForm::showEvent(QShowEvent *)
 	snippets_conf->snippet_txt->updateLineNumbers();
 }
 
-void ConfigurationForm::reject(void)
+void ConfigurationForm::reject()
 {
 	try
 	{
@@ -84,7 +84,7 @@ void ConfigurationForm::reject(void)
 	QDialog::reject();
 }
 
-void ConfigurationForm::applyConfiguration(void)
+void ConfigurationForm::applyConfiguration()
 {
 	BaseConfigWidget *conf_wgt=nullptr;
 	bool curr_escape_comments = BaseObject::isEscapeComments();
@@ -106,7 +106,7 @@ void ConfigurationForm::applyConfiguration(void)
 	QDialog::accept();
 }
 
-void ConfigurationForm::loadConfiguration(void)
+void ConfigurationForm::loadConfiguration()
 {
 	BaseConfigWidget *config_wgt = nullptr;
 
@@ -138,7 +138,7 @@ void ConfigurationForm::loadConfiguration(void)
 	}
 }
 
-void ConfigurationForm::restoreDefaults(void)
+void ConfigurationForm::restoreDefaults()
 {
 	Messagebox msg_box;
 	msg_box.show(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),

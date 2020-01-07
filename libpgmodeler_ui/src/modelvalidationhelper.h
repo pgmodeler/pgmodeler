@@ -73,8 +73,8 @@ class ModelValidationHelper: public QObject {
 		void generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs);
 
 	public:
-		ModelValidationHelper(void);
-		~ModelValidationHelper(void);
+		ModelValidationHelper();
+		~ModelValidationHelper();
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
@@ -84,29 +84,29 @@ class ModelValidationHelper: public QObject {
 		void switchToFixMode(bool value);
 
 		//! \brief Returns if the validator is on fix mode
-		bool isInFixMode(void);
+		bool isInFixMode();
 
 		//! \brief Returns the error count (only when executing SQL validation)
-		unsigned getErrorCount(void);
+		unsigned getErrorCount();
 
 		//! \brief Returns the warning count
-		unsigned getWarningCount(void);
+		unsigned getWarningCount();
 
 		//! \brief Try to resolve the conflict specified by validation info
 		void resolveConflict(ValidationInfo &info);
 
-		bool isValidationCanceled(void);
+		bool isValidationCanceled();
 
 	private slots:
 		void redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
-		void emitValidationCanceled(void);
-		void emitValidationFinished(void);
+		void emitValidationCanceled();
+		void emitValidationFinished();
 
 	public slots:
-		void validateModel(void);
-		void applyFixes(void);
-		void cancelValidation(void);
+		void validateModel();
+		void applyFixes();
+		void cancelValidation();
 
 	signals:
 		//! \brief This signal is emitted when a validation info is generated
@@ -119,23 +119,23 @@ class ModelValidationHelper: public QObject {
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);
 
 		//! \brief This signal is emitted when the validation was sucessfully finished
-		void s_validationFinished(void);
+		void s_validationFinished();
 
 		//! \brief This signal is emitted when the validation was canceled by user
-		void s_validationCanceled(void);
+		void s_validationCanceled();
 
 		//! \brief This signal is emitted when the dbms export thread start to run
-		void s_sqlValidationStarted(void);
+		void s_sqlValidationStarted();
 
 		//! \brief This signal is emitted when the validator applied some fix on validation info
-		void s_fixApplied(void);
+		void s_fixApplied();
 
 		//! \brief This signal is emitted when the validator changes some objects id by swapping or update operations
 		void s_objectIdChanged(BaseObject *object);
 
 		/*! \brief This signal is emitted when the validator need the validation of relationship.
 		This process must be performed outside the current thread, this explains the usage of this signal */
-		void s_relsValidationRequested(void);
+		void s_relsValidationRequested();
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "excludeelement.h"
 
-ExcludeElement::ExcludeElement(void) : Element()
+ExcludeElement::ExcludeElement() : Element()
 {
 	_operator=nullptr;
 }
@@ -10,7 +10,7 @@ void ExcludeElement::setOperator(Operator *oper)
 	_operator=oper;
 }
 
-Operator *ExcludeElement::getOperator(void)
+Operator *ExcludeElement::getOperator()
 {
 	return(_operator);
 }

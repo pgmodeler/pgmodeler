@@ -99,7 +99,7 @@ QColor ColorPickerWidget::getColor(int color_idx)
 	return(colors[color_idx]);
 }
 
-unsigned ColorPickerWidget::getColorCount(void)
+unsigned ColorPickerWidget::getColorCount()
 {
 	return(colors.size());
 }
@@ -139,7 +139,7 @@ void ColorPickerWidget::setButtonVisible(unsigned idx, bool value)
 	buttons[idx]->setVisible(value);
 }
 
-void ColorPickerWidget::selectColor(void)
+void ColorPickerWidget::selectColor()
 {
 	QColorDialog color_dlg;
 	QToolButton *btn=qobject_cast<QToolButton *>(sender());
@@ -156,7 +156,7 @@ void ColorPickerWidget::selectColor(void)
 	}
 }
 
-void ColorPickerWidget::generateRandomColors(void)
+void ColorPickerWidget::generateRandomColors()
 {
 	QColor color;
 	uniform_int_distribution<unsigned> dist(0,255);

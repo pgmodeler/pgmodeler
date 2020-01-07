@@ -70,16 +70,16 @@ class BaseRelationship: public BaseGraphicObject  {
 		unsigned rel_type;
 
 		//! \brief Sets the attributes used on the generation of XML definition for relationship
-		void setRelationshipAttributes(void);
+		void setRelationshipAttributes();
 
 		//! \brief Makes the initial configuration creating the labels
-		void configureRelationship(void);
+		void configureRelationship();
 
 		//! \brief Marks the flag indicating that relationship is connected
-		void connectRelationship(void);
+		void connectRelationship();
 
 		//! \brief Uncheck the flag indicating that relationship is disconnected
-		void disconnectRelationship(void);
+		void disconnectRelationship();
 
 		//! \brief Toggles the connected flag and forces the tables/schemas/relationship update
 		void setConnected(bool value);
@@ -113,7 +113,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool dst_mandatory, bool src_mandatory);
 
-		~BaseRelationship(void);
+		~BaseRelationship();
 
 		//! \brief Sets the name of the relationship
 		void setName(const QString &name);
@@ -128,26 +128,26 @@ class BaseRelationship: public BaseGraphicObject  {
 		BaseTable *getTable(unsigned table_id);
 
 		//! \brief Returns the relationship type
-		unsigned getRelationshipType(void);
+		unsigned getRelationshipType();
 
 		//! \brief Returns the mandatory participation for the specified table (Via constants SRC_TABLE | DST_TABLE)
 		bool isTableMandatory(unsigned table_id);
 
 		//! \brief Returns the relationship connection state
-		bool isRelationshipConnected(void);
+		bool isRelationshipConnected();
 
 		/*! \brief Since base relationships doesn't has SQL code definition this method will return a empty
 		definition whenever the user try to generate a SQL for this object. */
 		virtual QString getCodeDefinition(unsigned def_type);
 
 		//! \brief Returns whether the table is linked to itself via relationship (self-relationship)
-		bool isSelfRelationship(void);
+		bool isSelfRelationship();
 
 		//! \brief Stores the points that defines the custom relationship line
 		void setPoints(const vector<QPointF> &points);
 
 		//! \brief Returns the relationship point list
-		vector<QPointF> getPoints(void);
+		vector<QPointF> getPoints();
 
 		//! \brief Sets the distance of the specified label in relation to its origin
 		void setLabelDistance(unsigned label_id, QPointF label_dist);
@@ -157,16 +157,16 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		void setCustomColor(const QColor &color);
 
-		QColor getCustomColor(void);
+		QColor getCustomColor();
 
-		void resetLabelsDistance(void);
+		void resetLabelsDistance();
 
-		Constraint *getReferenceForeignKey(void);
+		Constraint *getReferenceForeignKey();
 
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);
 
-		QString getRelTypeAttribute(void);
+		QString getRelTypeAttribute();
 
 		virtual void setCodeInvalidated(bool value);
 
@@ -174,7 +174,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		static QString getRelationshipTypeName(unsigned rel_type, bool is_view = false);
 
-		QString getRelationshipTypeName(void);
+		QString getRelationshipTypeName();
 
 		friend class DatabaseModel;
 		friend class RelationshipWidget;

@@ -98,10 +98,10 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		range_attribs_gb->setVisible(false);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
-		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
-		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
+		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
+		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
+		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
 		connect(enumerations_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleEnumeration(int)));
 		connect(enumerations_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleEnumeration(int)));
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
@@ -135,7 +135,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 	}
 }
 
-void TypeWidget::selectTypeConfiguration(void)
+void TypeWidget::selectTypeConfiguration()
 {
 	base_attribs_twg->setVisible(base_type_rb->isChecked());
 	enumerations_gb->setVisible(enumeration_rb->isChecked());
@@ -290,7 +290,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	element_type->setAttributes(elem_tp, model);
 }
 
-void TypeWidget::applyConfiguration(void)
+void TypeWidget::applyConfiguration()
 {
 	try
 	{

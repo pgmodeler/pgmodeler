@@ -23,7 +23,7 @@ TextPolygonItem::TextPolygonItem(QGraphicsItem *parent) : QGraphicsPolygonItem(p
 	text_item = new QGraphicsSimpleTextItem;
 }
 
-TextPolygonItem::~TextPolygonItem(void)
+TextPolygonItem::~TextPolygonItem()
 {
 	delete text_item;
 }
@@ -43,7 +43,7 @@ void TextPolygonItem::setTextBrush(const QBrush &brush)
 	text_item->setBrush(brush);
 }
 
-QRectF TextPolygonItem::getTextBoundingRect(void)
+QRectF TextPolygonItem::getTextBoundingRect()
 {
 	return(text_item->boundingRect());
 }

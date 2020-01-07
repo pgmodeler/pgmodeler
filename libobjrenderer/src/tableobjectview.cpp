@@ -41,7 +41,7 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 		delete obj_selection;
 }
 
-TableObjectView::~TableObjectView(void)
+TableObjectView::~TableObjectView()
 {
 	delete descriptor;
 
@@ -177,7 +177,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	}
 }
 
-void TableObjectView::configureObject(void)
+void TableObjectView::configureObject()
 {
 	if(this->getUnderlyingObject())
 	{
@@ -554,7 +554,7 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 	calculateBoundingRect();
 }
 
-void TableObjectView::calculateBoundingRect(void)
+void TableObjectView::calculateBoundingRect()
 {
 	double width = 0, height = 0, curr_w = 0, py = 0;
 
@@ -663,12 +663,12 @@ void TableObjectView::setFakeSelection(bool value)
 	update();
 }
 
-bool TableObjectView::hasFakeSelection(void)
+bool TableObjectView::hasFakeSelection()
 {
 	return(fake_selection);
 }
 
-void TableObjectView::configureObjectSelection(void)
+void TableObjectView::configureObjectSelection()
 {
 	QGraphicsItem *parent = this->parentItem();
 	RoundedRectItem *rect_item=nullptr;
@@ -723,7 +723,7 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	}
 }
 
-QRectF TableObjectView::boundingRect(void) const
+QRectF TableObjectView::boundingRect() const
 {
 	return(bounding_rect);
 }

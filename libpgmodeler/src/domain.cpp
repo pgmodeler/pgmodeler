@@ -18,7 +18,7 @@
 
 #include "domain.h"
 
-Domain::Domain(void)
+Domain::Domain()
 {
 	obj_type=ObjectType::Domain;
 	not_null=false;
@@ -51,12 +51,12 @@ void Domain::addCheckConstraint(const QString &name, const QString &expr)
 	setCodeInvalidated(true);
 }
 
-void Domain::removeCheckConstraints(void)
+void Domain::removeCheckConstraints()
 {
 	chk_constrs.clear();
 }
 
-attribs_map Domain::getCheckConstraints(void)
+attribs_map Domain::getCheckConstraints()
 {
 	return(chk_constrs);
 }
@@ -104,17 +104,17 @@ void Domain::setType(PgSqlType type)
 	this->type=type;
 }
 
-QString Domain::getDefaultValue(void)
+QString Domain::getDefaultValue()
 {
 	return(default_value);
 }
 
-bool Domain::isNotNull(void)
+bool Domain::isNotNull()
 {
 	return(not_null);
 }
 
-PgSqlType Domain::getType(void)
+PgSqlType Domain::getType()
 {
 	return(type);
 }

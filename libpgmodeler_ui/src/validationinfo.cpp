@@ -18,7 +18,7 @@
 
 #include "validationinfo.h"
 
-ValidationInfo::ValidationInfo(void)
+ValidationInfo::ValidationInfo()
 {
 	object=nullptr;
 	val_type=ValidationAborted;
@@ -59,27 +59,27 @@ ValidationInfo::ValidationInfo(const QString &msg)
 	errors.push_back(msg);
 }
 
-unsigned ValidationInfo::getValidationType(void)
+unsigned ValidationInfo::getValidationType()
 {
 	return(val_type);
 }
 
-BaseObject *ValidationInfo::getObject(void)
+BaseObject *ValidationInfo::getObject()
 {
 	return(object);
 }
 
-vector<BaseObject *> ValidationInfo::getReferences(void)
+vector<BaseObject *> ValidationInfo::getReferences()
 {
 	return(references);
 }
 
-QStringList ValidationInfo::getErrors(void)
+QStringList ValidationInfo::getErrors()
 {
 	return(errors);
 }
 
-bool ValidationInfo::isValid(void)
+bool ValidationInfo::isValid()
 {
 	return(((val_type==NoUniqueName || val_type==BrokenReference) && object) ||
 		   (val_type==SqlValidationError && !errors.empty()));

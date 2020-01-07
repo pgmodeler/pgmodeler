@@ -49,7 +49,7 @@ class Textbox: public BaseGraphicObject{
 		/*! \brief To define the content of the textboxes
 		 the method setComment() must be used and the getComment()
 		 method used to get the current text */
-		Textbox(void);
+		Textbox();
 
 		//! \brief Sets the attributes of the text
 		void setTextAttribute(unsigned attrib, bool value);
@@ -66,9 +66,9 @@ class Textbox: public BaseGraphicObject{
 		//! \brief Returns the current state of the passed text attribute
 		bool getTextAttribute(unsigned attrib);
 
-		QColor getTextColor(void);
+		QColor getTextColor();
 
-		double getFontSize(void);
+		double getFontSize();
 
 		//! \brief Copies the attributes between textboxes
 		void operator = (Textbox &txtbox);

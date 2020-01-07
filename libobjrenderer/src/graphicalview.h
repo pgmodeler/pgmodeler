@@ -36,7 +36,7 @@ class GraphicalView: public BaseTableView {
 		GraphicalView(View *view);
 
 	private slots:
-		void configureObject(void);
+		void configureObject();
 };
 
 #endif

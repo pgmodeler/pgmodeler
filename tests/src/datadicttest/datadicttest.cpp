@@ -24,11 +24,11 @@ class DataDictTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void generateASimpleDataDict(void);
-		void generateASplittedDataDictFromSampleModel(void);
+		void generateASimpleDataDict();
+		void generateASplittedDataDictFromSampleModel();
 };
 
-void DataDictTest::generateASimpleDataDict(void)
+void DataDictTest::generateASimpleDataDict()
 {	
 	DatabaseModel dbmodel;
 	Table *table = nullptr, *table1 = nullptr;
@@ -116,7 +116,7 @@ void DataDictTest::generateASimpleDataDict(void)
 	}
 }
 
-void DataDictTest::generateASplittedDataDictFromSampleModel(void)
+void DataDictTest::generateASplittedDataDictFromSampleModel()
 {
 	DatabaseModel dbmodel;
 	try

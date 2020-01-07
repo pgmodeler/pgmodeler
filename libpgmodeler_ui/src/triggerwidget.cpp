@@ -62,13 +62,13 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
-		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(updateColumnsCombo(void)));
+		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo()));
+		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(updateColumnsCombo()));
 		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
 		connect(constraint_rb, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent(void)));
+		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent()));
 
 		connect(insert_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
 		connect(delete_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
@@ -89,7 +89,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	}
 }
 
-void TriggerWidget::selectUpdateEvent(void)
+void TriggerWidget::selectUpdateEvent()
 {
 	if(!update_chk->isChecked())
 		columns_tab->removeRows();
@@ -118,7 +118,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 		firing_mode_cmb->setCurrentText(~FiringType(FiringType::After));
 }
 
-void TriggerWidget::enableTransitionTableNames(void)
+void TriggerWidget::enableTransitionTableNames()
 {
 	int num_evnts = 0;
 	QWidget *wgt = nullptr;
@@ -166,7 +166,7 @@ void TriggerWidget::addColumn(Column *column, int row)
 	}
 }
 
-void TriggerWidget::updateColumnsCombo(void)
+void TriggerWidget::updateColumnsCombo()
 {
 	Column *column=nullptr;
 	unsigned i, col_count=0;
@@ -273,7 +273,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	updateColumnsCombo();
 }
 
-void TriggerWidget::applyConfiguration(void)
+void TriggerWidget::applyConfiguration()
 {
 	try
 	{

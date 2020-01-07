@@ -18,7 +18,7 @@
 
 #include "language.h"
 
-Language::Language(void)
+Language::Language()
 {
 	obj_type=ObjectType::Language;
 	is_trusted=false;
@@ -100,7 +100,7 @@ Function * Language::getFunction(unsigned func_type)
 	return(functions[func_type]);
 }
 
-bool Language::isTrusted(void)
+bool Language::isTrusted()
 {
 	return(is_trusted);
 }

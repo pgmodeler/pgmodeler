@@ -67,7 +67,7 @@ void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag 
 	}
 }
 
-void TagWidget::applyConfiguration(void)
+void TagWidget::applyConfiguration()
 {
 	try
 	{

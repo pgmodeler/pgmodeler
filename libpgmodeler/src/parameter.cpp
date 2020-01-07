@@ -18,7 +18,7 @@
 
 #include "parameter.h"
 
-Parameter::Parameter(void)
+Parameter::Parameter()
 {
 	obj_type=ObjectType::Parameter;
 	is_in=is_out=is_variadic=false;
@@ -66,17 +66,17 @@ void Parameter::setVariadic(bool value)
 	if(value)	is_in=is_out=false;
 }
 
-bool Parameter::isIn(void)
+bool Parameter::isIn()
 {
 	return(is_in);
 }
 
-bool Parameter::isOut(void)
+bool Parameter::isOut()
 {
 	return(is_out);
 }
 
-bool Parameter::isVariadic(void)
+bool Parameter::isVariadic()
 {
 	return(is_variadic);
 }

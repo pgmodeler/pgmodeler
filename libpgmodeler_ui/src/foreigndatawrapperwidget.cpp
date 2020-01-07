@@ -100,7 +100,7 @@ void ForeignDataWrapperWidget::setAttributes(DatabaseModel *model, OperationList
 	}
 }
 
-void ForeignDataWrapperWidget::applyConfiguration(void)
+void ForeignDataWrapperWidget::applyConfiguration()
 {
 	try
 	{

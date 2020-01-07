@@ -47,10 +47,10 @@ class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void setDefaultValues(void);
+		void setDefaultValues();
 
 	friend class ColumnWidget;
 };

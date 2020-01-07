@@ -24,11 +24,11 @@ class SchemaParserTest: public QObject {
     Q_OBJECT
 
   private slots:
-		void testExpressionEvaluationWithCasts(void);
-		void testSetOperationInIf(void);
+		void testExpressionEvaluationWithCasts();
+		void testSetOperationInIf();
 };
 
-void SchemaParserTest::testExpressionEvaluationWithCasts(void)
+void SchemaParserTest::testExpressionEvaluationWithCasts()
 {
 	SchemaParser schparser;
 	QString buffer;
@@ -52,7 +52,7 @@ void SchemaParserTest::testExpressionEvaluationWithCasts(void)
 	}
 }
 
-void SchemaParserTest::testSetOperationInIf(void)
+void SchemaParserTest::testSetOperationInIf()
 {
 	SchemaParser schparser;
 	QString buffer;

@@ -6,7 +6,7 @@ ModelExportHelper::ModelExportHelper(QObject *parent) : QObject(parent)
 	resetExportParams();
 }
 
-void ModelExportHelper::resetExportParams(void)
+void ModelExportHelper::resetExportParams()
 {
 	sql_gen_progress=progress=0;
 	db_created=ignore_dup=drop_db=drop_objs=export_canceled=false;
@@ -649,7 +649,7 @@ void ModelExportHelper::saveGenAtlerCmdsStatus(DatabaseModel *db_model)
 	}
 }
 
-void ModelExportHelper::restoreGenAtlerCmdsStatus(void)
+void ModelExportHelper::restoreGenAtlerCmdsStatus()
 {
 	for(auto &itr : alter_cmds_status)
 		itr.first->setGenerateAlterCmds(itr.second);
@@ -754,7 +754,7 @@ void ModelExportHelper::generateTempObjectNames(DatabaseModel *db_model)
 	db_model->setCodesInvalidated();
 }
 
-void ModelExportHelper::restoreObjectNames(void)
+void ModelExportHelper::restoreObjectNames()
 {
 	for(auto &obj : orig_obj_names)
 		obj.first->setName(obj.second);
@@ -1131,7 +1131,7 @@ void ModelExportHelper::setExportToDataDictParams(DatabaseModel *db_model, const
 	this->splitted=splitted;
 }
 
-void ModelExportHelper::exportToDBMS(void)
+void ModelExportHelper::exportToDBMS()
 {
 	if(connection)
 	{
@@ -1152,7 +1152,7 @@ void ModelExportHelper::exportToDBMS(void)
 	}
 }
 
-void ModelExportHelper::exportToPNG(void)
+void ModelExportHelper::exportToPNG()
 {
 	try
 	{
@@ -1165,7 +1165,7 @@ void ModelExportHelper::exportToPNG(void)
 	}
 }
 
-void ModelExportHelper::exportToSVG(void)
+void ModelExportHelper::exportToSVG()
 {
 	try
 	{
@@ -1178,7 +1178,7 @@ void ModelExportHelper::exportToSVG(void)
 	}
 }
 
-void ModelExportHelper::exportToSQL(void)
+void ModelExportHelper::exportToSQL()
 {
 	try
 	{
@@ -1191,7 +1191,7 @@ void ModelExportHelper::exportToSQL(void)
 	}
 }
 
-void ModelExportHelper::exportToDataDict(void)
+void ModelExportHelper::exportToDataDict()
 {
 	try
 	{
@@ -1204,7 +1204,7 @@ void ModelExportHelper::exportToDataDict(void)
 	}
 }
 
-void ModelExportHelper::cancelExport(void)
+void ModelExportHelper::cancelExport()
 {
 	export_canceled=true;
 }

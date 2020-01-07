@@ -182,7 +182,7 @@ void GenericSQLWidget::updateObjectReference(int row)
 	}
 }
 
-void GenericSQLWidget::clearObjectReferenceForm(void)
+void GenericSQLWidget::clearObjectReferenceForm()
 {
 	object_sel->clearSelector();
 	ref_name_edt->clear();
@@ -191,7 +191,7 @@ void GenericSQLWidget::clearObjectReferenceForm(void)
 	objects_refs_tab->clearSelection();
 }
 
-void GenericSQLWidget::updateCodePreview(void)
+void GenericSQLWidget::updateCodePreview()
 {
 	try
 	{
@@ -223,7 +223,7 @@ void GenericSQLWidget::showObjectReferenceData(int row, BaseObject *object, cons
 	objects_refs_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(object)), row);
 }
 
-void GenericSQLWidget::applyConfiguration(void)
+void GenericSQLWidget::applyConfiguration()
 {
 	try
 	{

@@ -74,20 +74,20 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		delete_menu.addAction(action_tab_delete);
 		delete_menu.addAction(action_gen_delete);
 
-		connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearCode(void)));
-		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
-		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
-		connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
-		connect(delete_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand(void)));
-		connect(action_gen_insert, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_inc_serials, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_exc_serials, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_gen_select, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_tab_select, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_gen_update, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_tab_update, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_gen_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
-		connect(action_tab_delete, SIGNAL(triggered(void)), this, SLOT(addCommand(void)));
+		connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearCode()));
+		connect(insert_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
+		connect(select_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
+		connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
+		connect(delete_tb, SIGNAL(clicked(bool)), this, SLOT(addCommand()));
+		connect(action_gen_insert, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_inc_serials, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_exc_serials, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_gen_select, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_tab_select, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_gen_update, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_tab_update, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_gen_delete, SIGNAL(triggered()), this, SLOT(addCommand()));
+		connect(action_tab_delete, SIGNAL(triggered()), this, SLOT(addCommand()));
 
 		setMinimumSize(640, 480);
 	}
@@ -97,7 +97,7 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 	}
 }
 
-void CustomSQLWidget::configureMenus(void)
+void CustomSQLWidget::configureMenus()
 {
 	ObjectType obj_type=this->object->getObjectType();
 	QToolButton *btns[]={ insert_tb, select_tb , delete_tb, update_tb };
@@ -165,7 +165,7 @@ void CustomSQLWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
 }
 
-void CustomSQLWidget::applyConfiguration(void)
+void CustomSQLWidget::applyConfiguration()
 {
 	if(this->object->getObjectType()==ObjectType::Database)
 	{
@@ -180,7 +180,7 @@ void CustomSQLWidget::applyConfiguration(void)
 	emit s_closeRequested();
 }
 
-void CustomSQLWidget::addCommand(void)
+void CustomSQLWidget::addCommand()
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	BaseTable *base_table=dynamic_cast<BaseTable *>(this->object);
@@ -245,7 +245,7 @@ void CustomSQLWidget::addCommand(void)
 	sqlcode_txt->insertPlainText(cmd);
 }
 
-void CustomSQLWidget::clearCode(void)
+void CustomSQLWidget::clearCode()
 {
 	QPlainTextEdit *sqlcode_txt=(sqlcodes_twg->currentIndex()==0 ? append_sql_txt : prepend_sql_txt);
 	QTextCursor tc=sqlcode_txt->textCursor();

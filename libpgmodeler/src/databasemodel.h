@@ -184,7 +184,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
 		//! \brief Returns extra error info when loading database models
-		QString getErrorExtraInfo(void);
+		QString getErrorExtraInfo();
 
 		/*! \brief This method forces the indication that the model is being loaded or not by setting the attribute loading_model.
 		 * The attribute loading_model causes the model perform certain operations only when model starts/ends the loading process,
@@ -199,8 +199,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
-		QStringList getLayers(void);
-		QList<unsigned> getActiveLayers(void);
+		QStringList getLayers();
+		QList<unsigned> getActiveLayers();
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
@@ -217,28 +217,28 @@ class DatabaseModel:  public QObject, public BaseObject {
 		MetaObjsAliases=2048,	//! \brief Handle the object's aliases (graphical objects and table children objects) when save/load metadata file
 		MetaAllInfo=4095;	//! \brief Handle all metadata information about objects when save/load metadata file
 
-		DatabaseModel(void);
+		DatabaseModel();
 
 		//! \brief Creates a database model and assign the model widget which will manage this instance
 		explicit DatabaseModel(ModelWidget *model_wgt);
 
-		~DatabaseModel(void);
+		~DatabaseModel();
 
 		//! \brief Returns the model widget that is managing the current database instance
-		ModelWidget *getModelWidget(void);
+		ModelWidget *getModelWidget();
 
 		//! \brief Returns the complete object list according to the type
 		vector<BaseObject *> *getObjectList(ObjectType obj_type);
 
 		//! \brief Disconnects all the relationships in a ordered way
-		void disconnectRelationships(void);
+		void disconnectRelationships();
 
 		/*! \brief Detects and stores the XML for special objects (that is referencing columns created
 		 by relationship) in order to be reconstructed in a posterior moment */
-		void storeSpecialObjectsXML(void);
+		void storeSpecialObjectsXML();
 
 		//! \brief Validates all the relationship, propagating all column modifications over the tables
-		void validateRelationships(void);
+		void validateRelationships();
 
 		/*! \brief Returns an object seaching it by its name and on the group objects specified by "types".
 		 * If the types list is empty the method will return nullptr. */
@@ -304,45 +304,45 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setAllowConnections(bool value);
 
 		//! \brief Returns the current state of the sql appeding at end of entire model definition
-		bool isAppendAtEOD(void);
+		bool isAppendAtEOD();
 
 		//! \brief Returns the current state of the sql prepeding at beginning of entire model definition
-		bool isPrependedAtBOD(void);
+		bool isPrependedAtBOD();
 
-		bool isTemplate(void);
+		bool isTemplate();
 
-		bool isAllowConnections(void);
+		bool isAllowConnections();
 
 		//! \brief Destroys all the objects
-		void destroyObjects(void);
+		void destroyObjects();
 
 		//! \brief Returns the object count for the specified type
 		unsigned getObjectCount(ObjectType obj_type);
 
 		//! \brief Returns the object count for all object types.
-		unsigned getObjectCount(void);
+		unsigned getObjectCount();
 
-		unsigned getMaxObjectCount(void);
+		unsigned getMaxObjectCount();
 
 		//! \brief Retuns the specified localization value
 		QString getLocalization(unsigned localiz_id);
 
 		//! \brief Returns the connection limit
-		int getConnectionLimit(void);
+		int getConnectionLimit();
 
 		//! \brief Returns the template database
-		QString getTemplateDB(void);
+		QString getTemplateDB();
 
 		//! \brief Returns the model's author
-		QString getAuthor(void);
+		QString getAuthor();
 
 		//! \brief Returns the database enconding
-		EncodingType getEncoding(void);
+		EncodingType getEncoding();
 
 		BaseObject *getDefaultObject(ObjectType obj_type);
 
 		//! \brief Returns if the model is invalidated. When true its recommended to validate model using Model validation tool
-		bool isInvalidated(void);
+		bool isInvalidated();
 
 		//! \brief Indicate if the model invalidated
 		void setInvalidated(bool value);
@@ -546,47 +546,47 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void setBasicAttributes(BaseObject *object);
 
 		void configureDatabase(attribs_map &attribs);
-		PgSqlType createPgSQLType(void);
+		PgSqlType createPgSQLType();
 		BaseObject *createObject(ObjectType obj_type);
-		Role *createRole(void);
-		Tablespace *createTablespace(void);
-		Schema *createSchema(void);
-		Language *createLanguage(void);
-		Function *createFunction(void);
-		Parameter createParameter(void);
-		TypeAttribute createTypeAttribute(void);
-		Type *createType(void);
-		Domain *createDomain(void);
-		Cast *createCast(void);
-		Conversion *createConversion(void);
-		Operator *createOperator(void);
-		OperatorFamily *createOperatorFamily(void);
-		OperatorClass *createOperatorClass(void);
-		Aggregate *createAggregate(void);
-		Table *createTable(void);
-		Column *createColumn(void);
+		Role *createRole();
+		Tablespace *createTablespace();
+		Schema *createSchema();
+		Language *createLanguage();
+		Function *createFunction();
+		Parameter createParameter();
+		TypeAttribute createTypeAttribute();
+		Type *createType();
+		Domain *createDomain();
+		Cast *createCast();
+		Conversion *createConversion();
+		Operator *createOperator();
+		OperatorFamily *createOperatorFamily();
+		OperatorClass *createOperatorClass();
+		Aggregate *createAggregate();
+		Table *createTable();
+		Column *createColumn();
 		Sequence *createSequence(bool ignore_onwer=false);
-		View *createView(void);
-		Collation *createCollation(void);
-		Extension *createExtension(void);
-		Tag *createTag(void);
-		Permission *createPermission(void);
-		Textbox *createTextbox(void);
-		BaseRelationship *createRelationship(void);
+		View *createView();
+		Collation *createCollation();
+		Extension *createExtension();
+		Tag *createTag();
+		Permission *createPermission();
+		Textbox *createTextbox();
+		BaseRelationship *createRelationship();
 		Constraint *createConstraint(BaseObject *parent_obj);
-		Rule *createRule(void);
-		Index *createIndex(void);
-		Trigger *createTrigger(void);
-		Policy *createPolicy(void);
-		EventTrigger *createEventTrigger(void);
-		GenericSQL *createGenericSQL(void);
-		ForeignDataWrapper *createForeignDataWrapper(void);
-		ForeignServer *createForeignServer(void);
-		UserMapping *createUserMapping(void);
-		ForeignTable *createForeignTable(void);
+		Rule *createRule();
+		Index *createIndex();
+		Trigger *createTrigger();
+		Policy *createPolicy();
+		EventTrigger *createEventTrigger();
+		GenericSQL *createGenericSQL();
+		ForeignDataWrapper *createForeignDataWrapper();
+		ForeignServer *createForeignServer();
+		UserMapping *createUserMapping();
+		ForeignTable *createForeignTable();
 
 		template<class TableClass>
-		TableClass *createPhysicalTable(void);
+		TableClass *createPhysicalTable();
 
 		//! \brief Update views that reference the provided table forcing the column name deduction and redraw of the former objects
 		void updateViewsReferencingTable(PhysicalTable *table);
@@ -598,7 +598,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void updateTableFKRelationships(Table *table);
 
 		//! \brief Updates the fk relationships for all table on the model
-		void updateTablesFKRelationships(void);
+		void updateTablesFKRelationships();
 
 		/*! \brief Validates the removal of the specified column raising errors when the passed object
 		 is still being referecend */
@@ -658,17 +658,17 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 const QString &search_attr = Attributes::Name);
 
 		void setLastPosition(const QPoint &pnt);
-		QPoint getLastPosition(void);
+		QPoint getLastPosition();
 
 		void setLastZoomFactor(double zoom);
-		double getLastZoomFactor(void);
+		double getLastZoomFactor();
 
 		/*! \brief This method exposes the XML parser for the outside world. In order to create objects from xml code inside the current
 		 database model you need first get the parser (through this method), populate the parser with the desired XML and then call
 		 the create* method.
 
 		\note: This is not the better approach and certainly will be changed in future releases */
-		XmlParser *getXMLParser(void);
+		XmlParser *getXMLParser();
 
 		//! \brief Returns the ALTER definition between the current model and the provided one
 		virtual QString getAlterDefinition(BaseObject *object) final;

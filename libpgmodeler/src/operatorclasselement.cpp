@@ -18,7 +18,7 @@
 
 #include "operatorclasselement.h"
 
-OperatorClassElement::OperatorClassElement(void)
+OperatorClassElement::OperatorClassElement()
 {
 	element_type=OperatorElem;
 	function=nullptr;
@@ -90,32 +90,32 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 	this->element_type=StorageElem;
 }
 
-unsigned OperatorClassElement::getElementType(void)
+unsigned OperatorClassElement::getElementType()
 {
 	return(element_type);
 }
 
-Function *OperatorClassElement::getFunction(void)
+Function *OperatorClassElement::getFunction()
 {
 	return(function);
 }
 
-Operator *OperatorClassElement::getOperator(void)
+Operator *OperatorClassElement::getOperator()
 {
 	return(_operator);
 }
 
-OperatorFamily *OperatorClassElement::getOperatorFamily(void)
+OperatorFamily *OperatorClassElement::getOperatorFamily()
 {
 	return(op_family);
 }
 
-PgSqlType OperatorClassElement::getStorage(void)
+PgSqlType OperatorClassElement::getStorage()
 {
 	return(storage);
 }
 
-unsigned OperatorClassElement::getStrategyNumber(void)
+unsigned OperatorClassElement::getStrategyNumber()
 {
 	return(strategy_number);
 }

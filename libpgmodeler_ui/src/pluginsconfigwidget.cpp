@@ -35,14 +35,14 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
 	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
-	connect(open_fm_tb, SIGNAL(clicked(void)), this, SLOT(openRootPluginDiretory(void)));
+	connect(open_fm_tb, SIGNAL(clicked()), this, SLOT(openRootPluginDiretory()));
 
 	grid->setContentsMargins(4,4,4,4);
 	grid->addWidget(plugins_tab,0,0,1,1);
 	loaded_plugins_gb->setLayout(grid);
 }
 
-PluginsConfigWidget::~PluginsConfigWidget(void)
+PluginsConfigWidget::~PluginsConfigWidget()
 {
 	while(!plugins.empty())
 	{
@@ -51,7 +51,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 	}
 }
 
-void PluginsConfigWidget::openRootPluginDiretory(void)
+void PluginsConfigWidget::openRootPluginDiretory()
 {
 	QDesktopServices::openUrl(QUrl(QString("file://") + root_dir_edt->text()));
 }
@@ -61,7 +61,7 @@ void PluginsConfigWidget::showPluginInfo(int idx)
 	plugins[idx]->showPluginInfo();
 }
 
-void PluginsConfigWidget::loadConfiguration(void)
+void PluginsConfigWidget::loadConfiguration()
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
@@ -163,7 +163,7 @@ void PluginsConfigWidget::installPluginsActions(QMenu *menu, QObject *recv, cons
 			if(menu)
 				menu->addAction(*itr);
 
-			connect(*itr, SIGNAL(triggered(void)), recv, slot);
+			connect(*itr, SIGNAL(triggered()), recv, slot);
 			itr++;
 		}
 	}

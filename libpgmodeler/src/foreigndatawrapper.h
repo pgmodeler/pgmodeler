@@ -38,13 +38,13 @@ class ForeignDataWrapper: public BaseObject, public ForeignObject {
 		*validator_func;
 
 	public:
-		ForeignDataWrapper(void);
+		ForeignDataWrapper();
 
 		void setHandlerFunction(Function *func);
 		void setValidatorFunction(Function *func);
 
-		Function *getHandlerFunction(void);
-		Function *getValidatorFunction(void);
+		Function *getHandlerFunction();
+		Function *getValidatorFunction();
 
 		virtual QString getCodeDefinition(unsigned def_type);
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);

@@ -113,7 +113,7 @@ void PolicyWidget::selectRole(BaseObject *role, bool show_wgt)
 	}
 }
 
-void PolicyWidget::applyConfiguration(void)
+void PolicyWidget::applyConfiguration()
 {
 	try
 	{

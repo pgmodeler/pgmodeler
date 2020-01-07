@@ -49,7 +49,7 @@ class Language: public BaseObject{
 		HandlerFunc=1,
 		InlineFunc=2;
 
-		Language(void);
+		Language();
 
 		//! \brief Sets the language name
 		void setName(const QString &name);
@@ -61,7 +61,7 @@ class Language: public BaseObject{
 		void setFunction(Function *func, unsigned func_type);
 
 		//! \brief Returs the trusted state of the language
-		bool isTrusted(void);
+		bool isTrusted();
 
 		//! \brief Returns one of the auxiliary functions
 		Function *getFunction(unsigned func_type);

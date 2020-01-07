@@ -310,12 +310,12 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 	this->column_ids_pk_rel=cols;
 }
 
-vector<unsigned> Relationship::getSpecialPrimaryKeyCols(void)
+vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
 {
 	return(this->column_ids_pk_rel);
 }
 
-void Relationship::createSpecialPrimaryKey(void)
+void Relationship::createSpecialPrimaryKey()
 {
 	if(!column_ids_pk_rel.empty())
 	{
@@ -389,7 +389,7 @@ void Relationship::setTableNameRelNN(const QString &name)
 	}
 }
 
-QString Relationship::getTableNameRelNN(void)
+QString Relationship::getTableNameRelNN()
 {
 	return(tab_name_relnn);
 }
@@ -400,12 +400,12 @@ void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 	this->invalidated = true;
 }
 
-QString Relationship::getPartitionBoundingExpr(void)
+QString Relationship::getPartitionBoundingExpr()
 {
 	return(part_bounding_expr);
 }
 
-bool Relationship::isDeferrable(void)
+bool Relationship::isDeferrable()
 {
 	return(deferrable);
 }
@@ -416,7 +416,7 @@ void Relationship::setDeferralType(DeferralType defer_type)
 	this->invalidated=true;
 }
 
-DeferralType Relationship::getDeferralType(void)
+DeferralType Relationship::getDeferralType()
 {
 	return(deferral_type);
 }
@@ -585,7 +585,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	}
 }
 
-void Relationship::destroyObjects(void)
+void Relationship::destroyObjects()
 {
 	while(!rel_constraints.empty())
 	{
@@ -694,17 +694,17 @@ void Relationship::removeConstraint(unsigned constr_idx)
 	removeObject(constr_idx, ObjectType::Constraint);
 }
 
-vector<Column *> Relationship::getGeneratedColumns(void)
+vector<Column *> Relationship::getGeneratedColumns()
 {
 	return(gen_columns);
 }
 
-Table *Relationship::getGeneratedTable(void)
+Table *Relationship::getGeneratedTable()
 {
 	return(table_relnn);
 }
 
-vector<Constraint *> Relationship::getGeneratedConstraints(void)
+vector<Constraint *> Relationship::getGeneratedConstraints()
 {
 	vector<Constraint *> vect;
 
@@ -781,7 +781,7 @@ Column *Relationship::getAttribute(const QString &name)
 	return(dynamic_cast<Column *>(getObject(name,ObjectType::Column)));
 }
 
-vector<TableObject *> Relationship::getAttributes(void)
+vector<TableObject *> Relationship::getAttributes()
 {
 	return(rel_attributes);
 }
@@ -800,17 +800,17 @@ Constraint *Relationship::getConstraint(const QString &name)
 	return(dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint)));
 }
 
-vector<TableObject *> Relationship::getConstraints(void)
+vector<TableObject *> Relationship::getConstraints()
 {
 	return(rel_constraints);
 }
 
-unsigned Relationship::getAttributeCount(void)
+unsigned Relationship::getAttributeCount()
 {
 	return(rel_attributes.size());
 }
 
-unsigned Relationship::getConstraintCount(void)
+unsigned Relationship::getConstraintCount()
 {
 	return(rel_constraints.size());
 }
@@ -891,7 +891,7 @@ void Relationship::addConstraints(PhysicalTable *recv_tab)
 	}
 }
 
-void Relationship::addColumnsRelGenPart(void)
+void Relationship::addColumnsRelGenPart()
 {
 	PhysicalTable *src_tab=nullptr, *dst_tab=nullptr,
 			*parent_tab=nullptr, *aux_tab=nullptr;
@@ -1154,7 +1154,7 @@ void Relationship::addColumnsRelGenPart(void)
 	}
 }
 
-void Relationship::addConstraintsRelGenPart(void)
+void Relationship::addConstraintsRelGenPart()
 {
 	PhysicalTable *parent_tab=getReferenceTable(),
 								*child_tab=getReceiverTable();
@@ -1195,7 +1195,7 @@ void Relationship::addConstraintsRelGenPart(void)
 	}
 }
 
-void Relationship::connectRelationship(void)
+void Relationship::connectRelationship()
 {
 	try
 	{
@@ -1681,7 +1681,7 @@ void Relationship::copyColumns(PhysicalTable *ref_tab, PhysicalTable *recv_tab, 
 	}
 }
 
-void Relationship::addColumnsRel11(void)
+void Relationship::addColumnsRel11()
 {
 	Table *ref_tab=nullptr, *recv_tab=nullptr;
 
@@ -1761,7 +1761,7 @@ void Relationship::addColumnsRel11(void)
 	}
 }
 
-void Relationship::addColumnsRel1n(void)
+void Relationship::addColumnsRel1n()
 {
 	Table *ref_tab=nullptr, *recv_tab=nullptr;
 	bool not_null=false;
@@ -1838,7 +1838,7 @@ void Relationship::addColumnsRel1n(void)
 	}
 }
 
-void Relationship::addColumnsRelNn(void)
+void Relationship::addColumnsRelNn()
 {
 	Column *pk_col=nullptr;
 	Table *tab=nullptr, *tab1=nullptr;
@@ -1928,7 +1928,7 @@ void Relationship::addColumnsRelNn(void)
 	}
 }
 
-PhysicalTable *Relationship::getReferenceTable(void)
+PhysicalTable *Relationship::getReferenceTable()
 {
 	/* Many to Many relationships doesn't has only one reference table so
 		is returned nullptr */
@@ -1952,12 +1952,12 @@ void Relationship::setSiglePKColumn(bool value)
 	}
 }
 
-bool Relationship::isSiglePKColumn(void)
+bool Relationship::isSiglePKColumn()
 {
 	return(single_pk_column);
 }
 
-PhysicalTable *Relationship::getReceiverTable(void)
+PhysicalTable *Relationship::getReceiverTable()
 {
 	if(rel_type==Relationship11)
 	{
@@ -2316,7 +2316,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 	}
 }
 
-bool Relationship::isIdentifier(void)
+bool Relationship::isIdentifier()
 {
 	return(identifier);
 }
@@ -2329,12 +2329,12 @@ void Relationship::setCopyOptions(CopyOptions copy_op)
 		getReceiverTable()->setCopyTableOptions(copy_op);
 }
 
-CopyOptions Relationship::getCopyOptions(void)
+CopyOptions Relationship::getCopyOptions()
 {
 	return(copy_options);
 }
 
-bool Relationship::hasIndentifierAttribute(void)
+bool Relationship::hasIndentifierAttribute()
 {
 	vector<TableObject *>::iterator itr, itr_end;
 	Constraint *constr=nullptr;
@@ -2356,12 +2356,12 @@ bool Relationship::hasIndentifierAttribute(void)
 	return(found);
 }
 
-void Relationship::forceInvalidate(void)
+void Relationship::forceInvalidate()
 {
 	this->invalidated=true;
 }
 
-bool Relationship::isInvalidated(void)
+bool Relationship::isInvalidated()
 {
 	unsigned rel_cols_count=0, tab_cols_count=0, i=0, count=0;
 	PhysicalTable *table=nullptr, *table1=nullptr;
@@ -2771,7 +2771,7 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 }
 
 
-bool Relationship::isReferenceTableMandatory(void)
+bool Relationship::isReferenceTableMandatory()
 {
 	if(rel_type == BaseRelationship::Relationship11 && getReferenceTable() == dst_table && !src_mandatory)
 		return(dst_mandatory);
@@ -2780,7 +2780,7 @@ bool Relationship::isReferenceTableMandatory(void)
 					 (getReferenceTable() == dst_table && isTableMandatory(DstTable)));
 }
 
-bool Relationship::isReceiverTableMandatory(void)
+bool Relationship::isReceiverTableMandatory()
 {
 	if(rel_type == BaseRelationship::Relationship11 && getReferenceTable() == dst_table && !src_mandatory)
 		return(false);

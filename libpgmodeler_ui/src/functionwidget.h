@@ -61,7 +61,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row);
 
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
-		void validateConfiguredFunction(void);
+		void validateConfiguredFunction();
 
 	public:
 		FunctionWidget(QWidget * parent = nullptr);
@@ -69,14 +69,14 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func);
 
 	private slots:
-		void alternateReturnTypes(void);
+		void alternateReturnTypes();
 
 		/*! \brief Selects the language used by the function and if available loads the
 		syntax highlight configuration for the selected language. */
-		void selectLanguage(void);
+		void selectLanguage();
 
 		//! \brief Shows the parameter configuration form
-		void showParameterForm(void);
+		void showParameterForm();
 
 		//! \brief Shows the configured parameter on the table that called the form
 		void handleParameter(Parameter param, int result);
@@ -85,7 +85,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		void duplicateParameter(int curr_row, int new_row);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

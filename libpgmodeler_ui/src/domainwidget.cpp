@@ -111,7 +111,7 @@ void DomainWidget::editConstraint(int row)
 	check_expr_txt->setPlainText(constr_tab->getCellText(row, 1));
 }
 
-void DomainWidget::applyConfiguration(void)
+void DomainWidget::applyConfiguration()
 {
 	try
 	{

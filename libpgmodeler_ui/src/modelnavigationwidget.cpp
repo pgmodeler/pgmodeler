@@ -40,7 +40,7 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	close_tb->setToolTip(close_tb->toolTip() + QString(" (%1)").arg(close_tb->shortcut().toString()));
 }
 
-int ModelNavigationWidget::getCurrentIndex(void)
+int ModelNavigationWidget::getCurrentIndex()
 {
 	return(models_cmb->currentIndex());
 }
@@ -112,7 +112,7 @@ void ModelNavigationWidget::removeModel(int idx)
 	emit s_modelRemoved(idx);
 }
 
-void ModelNavigationWidget::setCurrentModel(void)
+void ModelNavigationWidget::setCurrentModel()
 {
     models_cmb->setToolTip(models_cmb->currentData().toString());
 
@@ -122,7 +122,7 @@ void ModelNavigationWidget::setCurrentModel(void)
       emit s_currentModelChanged(models_cmb->currentIndex());
 }
 
-void ModelNavigationWidget::enableNavigationButtons(void)
+void ModelNavigationWidget::enableNavigationButtons()
 {
 	previous_tb->setEnabled(models_cmb->currentIndex() > 0 && models_cmb->count() > 1);
 	next_tb->setEnabled(models_cmb->currentIndex() >= 0 && models_cmb->currentIndex()!=(models_cmb->count()-1));

@@ -30,7 +30,7 @@ QBrush ObjectsScene::grid;
 bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 
-ObjectsScene::ObjectsScene(void)
+ObjectsScene::ObjectsScene()
 {
 	layers.push_back(tr("Default layer"));
 	active_layers.push_back(layers.at(0));
@@ -70,7 +70,7 @@ ObjectsScene::ObjectsScene(void)
 	object_move_timer.setInterval(SceneMoveTimeout * 10);
 }
 
-ObjectsScene::~ObjectsScene(void)
+ObjectsScene::~ObjectsScene()
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
@@ -179,7 +179,7 @@ void ObjectsScene::removeLayer(const QString &name)
 	}
 }
 
-void ObjectsScene::removeLayers(void)
+void ObjectsScene::removeLayers()
 {
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
@@ -309,12 +309,12 @@ bool ObjectsScene::isLayerActive(unsigned layer_id)
 	return(active_layers.contains(layers[layer_id]));
 }
 
-QStringList ObjectsScene::getActiveLayers(void)
+QStringList ObjectsScene::getActiveLayers()
 {
 	return(active_layers);
 }
 
-QList<unsigned> ObjectsScene::getActiveLayersIds(void)
+QList<unsigned> ObjectsScene::getActiveLayersIds()
 {
 	QList<unsigned> list;
 
@@ -324,7 +324,7 @@ QList<unsigned> ObjectsScene::getActiveLayersIds(void)
 	return(list);
 }
 
-QStringList ObjectsScene::getLayers(void)
+QStringList ObjectsScene::getLayers()
 {
 	return(layers);
 }
@@ -335,7 +335,7 @@ unsigned ObjectsScene::getLayerId(const QString &name)
 	return(idx < 0 ? InvalidLayer : static_cast<unsigned>(idx));
 }
 
-void ObjectsScene::updateActiveLayers(void)
+void ObjectsScene::updateActiveLayers()
 {
 	setActiveLayers(active_layers);
 }
@@ -350,7 +350,7 @@ void ObjectsScene::setInvertRangeSelectionTrigger(bool invert)
 	ObjectsScene::invert_rangesel_trigger=invert;
 }
 
-bool ObjectsScene::isCornerMoveEnabled(void)
+bool ObjectsScene::isCornerMoveEnabled()
 {
 	return(ObjectsScene::corner_move);
 }
@@ -545,17 +545,17 @@ void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_
 	}
 }
 
-bool ObjectsScene::isAlignObjectsToGrid(void)
+bool ObjectsScene::isAlignObjectsToGrid()
 {
 	return(align_objs_grid);
 }
 
-bool ObjectsScene::isShowGrid(void)
+bool ObjectsScene::isShowGrid()
 {
 	return(show_grid);
 }
 
-bool ObjectsScene::isShowPageDelimiters(void)
+bool ObjectsScene::isShowPageDelimiters()
 {
 	return(show_page_delim);
 }
@@ -640,7 +640,7 @@ void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selecte
 		emit s_objectSelected(object, selected);
 }
 
-void ObjectsScene::handleChildrenSelectionChanged(void)
+void ObjectsScene::handleChildrenSelectionChanged()
 {
 	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
 
@@ -804,7 +804,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-bool ObjectsScene::mouseIsAtCorner(void)
+bool ObjectsScene::mouseIsAtCorner()
 {
 	QGraphicsView *view=getActiveViewport();
 
@@ -838,7 +838,7 @@ bool ObjectsScene::mouseIsAtCorner(void)
 		return(false);
 }
 
-QGraphicsView *ObjectsScene::getActiveViewport(void)
+QGraphicsView *ObjectsScene::getActiveViewport()
 {
 	QGraphicsView *view_p=nullptr;
 
@@ -854,7 +854,7 @@ QGraphicsView *ObjectsScene::getActiveViewport(void)
 	return(view_p);
 }
 
-void ObjectsScene::moveObjectScene(void)
+void ObjectsScene::moveObjectScene()
 {
 	if(scene_move_dx!=0 || scene_move_dy!=0)
 	{
@@ -1286,7 +1286,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 }
 
-void ObjectsScene::alignObjectsToGrid(void)
+void ObjectsScene::alignObjectsToGrid()
 {
 	QList<QGraphicsItem *> items=this->items();
 	RelationshipView *rel=nullptr;
@@ -1344,13 +1344,13 @@ void ObjectsScene::alignObjectsToGrid(void)
 	}
 }
 
-void ObjectsScene::update(void)
+void ObjectsScene::update()
 {
 	this->setBackgroundBrush(grid);
 	QGraphicsScene::update(this->sceneRect());
 }
 
-void ObjectsScene::clearTablesChildrenSelection(void)
+void ObjectsScene::clearTablesChildrenSelection()
 {
 	for(auto &tab_obj_view : tabs_sel_children)
 		tab_obj_view->clearChildrenSelection();
@@ -1358,7 +1358,7 @@ void ObjectsScene::clearTablesChildrenSelection(void)
 	tabs_sel_children.clear();
 }
 
-void ObjectsScene::clearSelection(void)
+void ObjectsScene::clearSelection()
 {
 	clearTablesChildrenSelection();
 	QGraphicsScene::clearSelection();
@@ -1418,27 +1418,27 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 	return(pages);
 }
 
-bool ObjectsScene::isRangeSelectionEnabled(void)
+bool ObjectsScene::isRangeSelectionEnabled()
 {
 	return(enable_range_sel);
 }
 
-bool ObjectsScene::isRangeSelectionTriggerInverted(void)
+bool ObjectsScene::isRangeSelectionTriggerInverted()
 {
 	return(invert_rangesel_trigger);
 }
 
-bool ObjectsScene::isRelationshipLineVisible(void)
+bool ObjectsScene::isRelationshipLineVisible()
 {
 	return(rel_line->isVisible());
 }
 
-bool ObjectsScene::isMovingObjects(void)
+bool ObjectsScene::isMovingObjects()
 {
 	return(moving_objs);
 }
 
-QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
+QList<QGraphicsItem *> ObjectsScene::selectedItems() const
 {
 	if(tabs_sel_children.empty())
 		return(QGraphicsScene::selectedItems());

@@ -57,8 +57,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
 
-	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(void)));
-	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip(void)));
+	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem()));
+	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip()));
 
 	connect(&popup_timer, &QTimer::timeout, [&](){
 		if(qualifying_level < 2)
@@ -262,7 +262,7 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
-void CodeCompletionWidget::clearCustomItems(void)
+void CodeCompletionWidget::clearCustomItems()
 {
 	custom_items.clear();
 }
@@ -306,7 +306,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	name_list->sortItems();
 }
 
-void CodeCompletionWidget::show(void)
+void CodeCompletionWidget::show()
 {
 	prev_txt_cur=code_field_txt->textCursor();
 	this->updateList();
@@ -337,7 +337,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 	}
 }
 
-void CodeCompletionWidget::updateList(void)
+void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
 	QString pattern;
@@ -490,7 +490,7 @@ void CodeCompletionWidget::updateList(void)
 	name_list->setFocus();
 }
 
-void CodeCompletionWidget::selectItem(void)
+void CodeCompletionWidget::selectItem()
 {
 	if(!name_list->selectedItems().isEmpty())
 	{
@@ -558,7 +558,7 @@ void CodeCompletionWidget::selectItem(void)
 		this->close();
 }
 
-void CodeCompletionWidget::showItemTooltip(void)
+void CodeCompletionWidget::showItemTooltip()
 {
 	QListWidgetItem *item=name_list->currentItem();
 
@@ -569,7 +569,7 @@ void CodeCompletionWidget::showItemTooltip(void)
 	}
 }
 
-void CodeCompletionWidget::close(void)
+void CodeCompletionWidget::close()
 {
 	name_list->clearSelection();
 	completion_wgt->close();

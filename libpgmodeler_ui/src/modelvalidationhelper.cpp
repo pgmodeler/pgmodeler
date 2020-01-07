@@ -18,7 +18,7 @@
 
 #include "modelvalidationhelper.h"
 
-ModelValidationHelper::ModelValidationHelper(void)
+ModelValidationHelper::ModelValidationHelper()
 {
 	warn_count=error_count=progress=0;
 	db_model=nullptr;
@@ -28,15 +28,15 @@ ModelValidationHelper::ModelValidationHelper(void)
 	export_thread=new QThread;
 	export_helper.moveToThread(export_thread);
 
-	connect(export_thread, SIGNAL(started(void)), &export_helper, SLOT(exportToDBMS(void)));
+	connect(export_thread, SIGNAL(started()), &export_helper, SLOT(exportToDBMS()));
 	connect(&export_helper, SIGNAL(s_progressUpdated(int,QString, ObjectType,QString,bool)),
 			this, SLOT(redirectExportProgress(int,QString,ObjectType,QString,bool)));
 
-	connect(&export_helper, SIGNAL(s_exportFinished(void)), this, SLOT(emitValidationFinished(void)));
+	connect(&export_helper, SIGNAL(s_exportFinished()), this, SLOT(emitValidationFinished()));
 	connect(&export_helper, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 }
 
-ModelValidationHelper::~ModelValidationHelper(void)
+ModelValidationHelper::~ModelValidationHelper()
 {
 	export_thread->quit();
 	export_thread->wait();
@@ -206,17 +206,17 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 	}
 }
 
-bool ModelValidationHelper::isValidationCanceled(void)
+bool ModelValidationHelper::isValidationCanceled()
 {
 	return(valid_canceled);
 }
 
-unsigned ModelValidationHelper::getWarningCount(void)
+unsigned ModelValidationHelper::getWarningCount()
 {
 	return(warn_count);
 }
 
-unsigned ModelValidationHelper::getErrorCount(void)
+unsigned ModelValidationHelper::getErrorCount()
 {
 	return(error_count);
 }
@@ -257,7 +257,7 @@ bool ModelValidationHelper::isInFixMode()
 	return(fix_mode);
 }
 
-void ModelValidationHelper::validateModel(void)
+void ModelValidationHelper::validateModel()
 {
 	if(!db_model)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -628,7 +628,7 @@ void ModelValidationHelper::validateModel(void)
 	}
 }
 
-void ModelValidationHelper::applyFixes(void)
+void ModelValidationHelper::applyFixes()
 {
 	if(fix_mode)
 	{
@@ -670,7 +670,7 @@ void ModelValidationHelper::applyFixes(void)
 	}
 }
 
-void ModelValidationHelper::cancelValidation(void)
+void ModelValidationHelper::cancelValidation()
 {
 	valid_canceled=true;
 	fix_mode=false;
@@ -696,7 +696,7 @@ void ModelValidationHelper::captureThreadError(Exception e)
 		emit s_validationFinished();
 }
 
-void ModelValidationHelper::emitValidationCanceled(void)
+void ModelValidationHelper::emitValidationCanceled()
 {
 	db_model->setInvalidated(!export_thread->isRunning());
 	export_thread->quit();
@@ -705,7 +705,7 @@ void ModelValidationHelper::emitValidationCanceled(void)
 	emit s_validationCanceled();
 }
 
-void ModelValidationHelper::emitValidationFinished(void)
+void ModelValidationHelper::emitValidationFinished()
 {
 	export_thread->quit();
 

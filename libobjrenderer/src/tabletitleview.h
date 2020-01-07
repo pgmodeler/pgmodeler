@@ -46,8 +46,8 @@ class TableTitleView: public BaseObjectView
 		void configureObject(void){}
 
 	public:
-		TableTitleView(void);
-		~TableTitleView(void);
+		TableTitleView();
+		~TableTitleView();
 
 		void configureObject(BaseGraphicObject *object);
 		void resizeTitle(double width, double height);

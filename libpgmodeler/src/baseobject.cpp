@@ -77,7 +77,7 @@ QString BaseObject::pgsql_ver=PgSqlVersions::DefaulVersion;
 bool BaseObject::use_cached_code=true;
 bool BaseObject::escape_comments=true;
 
-BaseObject::BaseObject(void)
+BaseObject::BaseObject()
 {
 	object_id=BaseObject::global_id++;
 	is_protected=system_obj=sql_disabled=false;
@@ -105,7 +105,7 @@ BaseObject::BaseObject(void)
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
-unsigned BaseObject::getGlobalId(void)
+unsigned BaseObject::getGlobalId()
 {
 	return(global_id);
 }
@@ -115,7 +115,7 @@ void BaseObject::setEscapeComments(bool value)
 	escape_comments = value;
 }
 
-bool BaseObject::isEscapeComments(void)
+bool BaseObject::isEscapeComments()
 {
 	return(escape_comments);
 }
@@ -345,7 +345,7 @@ void BaseObject::setDatabase(BaseObject *db)
 		this->database=db;
 }
 
-BaseObject *BaseObject::getDatabase(void)
+BaseObject *BaseObject::getDatabase()
 {
 	return(this->database);
 }
@@ -404,7 +404,7 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
 }
 
-bool BaseObject::acceptsSchema(void)
+bool BaseObject::acceptsSchema()
 {
 	return(BaseObject::acceptsSchema(this->obj_type));
 }
@@ -424,7 +424,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::ForeignTable);
 }
 
-bool BaseObject::acceptsOwner(void)
+bool BaseObject::acceptsOwner()
 {
 	return(BaseObject::acceptsOwner(this->obj_type));
 }
@@ -438,7 +438,7 @@ bool BaseObject::acceptsTablespace(ObjectType obj_type)
 			 obj_type==ObjectType::Database);
 }
 
-bool BaseObject::acceptsTablespace(void)
+bool BaseObject::acceptsTablespace()
 {
 	return(BaseObject::acceptsTablespace(this->obj_type));
 }
@@ -450,7 +450,7 @@ bool BaseObject::acceptsCollation(ObjectType obj_type)
 			 obj_type==ObjectType::TypeAttribute);
 }
 
-bool BaseObject::acceptsCollation(void)
+bool BaseObject::acceptsCollation()
 {
 	return(BaseObject::acceptsCollation(this->obj_type));
 }
@@ -496,17 +496,17 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 				 obj_type==ObjectType::ForeignTable);
 }
 
-bool BaseObject::acceptsCustomSQL(void)
+bool BaseObject::acceptsCustomSQL()
 {
 	return(BaseObject::acceptsCustomSQL(this->obj_type));
 }
 
-bool BaseObject::acceptsAlterCommand(void)
+bool BaseObject::acceptsAlterCommand()
 {
 	return(BaseObject::acceptsAlterCommand(this->obj_type));
 }
 
-bool BaseObject::acceptsDropCommand(void)
+bool BaseObject::acceptsDropCommand()
 {
 	return(BaseObject::acceptsDropCommand(this->obj_type));
 }
@@ -597,7 +597,7 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		return(this->obj_name);
 }
 
-QString BaseObject::getAlias(void)
+QString BaseObject::getAlias()
 {
 	return(this->alias);
 }
@@ -607,7 +607,7 @@ QString BaseObject::getSignature(bool format)
 	return(this->getName(format, true));
 }
 
-QString BaseObject::getComment(void)
+QString BaseObject::getComment()
 {
 	return(comment);
 }
@@ -627,62 +627,62 @@ QString BaseObject::getEscapedComment(bool escape_special_chars)
 	return(fmt_comm);
 }
 
-BaseObject *BaseObject::getSchema(void)
+BaseObject *BaseObject::getSchema()
 {
 	return(schema);
 }
 
-BaseObject *BaseObject::getOwner(void)
+BaseObject *BaseObject::getOwner()
 {
 	return(owner);
 }
 
-BaseObject *BaseObject::getTablespace(void)
+BaseObject *BaseObject::getTablespace()
 {
 	return(tablespace);
 }
 
-BaseObject *BaseObject::getCollation(void)
+BaseObject *BaseObject::getCollation()
 {
 	return(collation);
 }
 
-QString BaseObject::getAppendedSQL(void)
+QString BaseObject::getAppendedSQL()
 {
 	return(appended_sql);
 }
 
-QString BaseObject::getPrependedSQL(void)
+QString BaseObject::getPrependedSQL()
 {
 	return(prepended_sql);
 }
 
-ObjectType BaseObject::getObjectType(void)
+ObjectType BaseObject::getObjectType()
 {
 	return(obj_type);
 }
 
-QString BaseObject::getTypeName(void)
+QString BaseObject::getTypeName()
 {
 	return(BaseObject::getTypeName(this->obj_type));
 }
 
-QString BaseObject::getSchemaName(void)
+QString BaseObject::getSchemaName()
 {
 	return(BaseObject::getSchemaName(this->obj_type));
 }
 
-QString BaseObject::getSQLName(void)
+QString BaseObject::getSQLName()
 {
 	return(BaseObject::getSQLName(this->obj_type));
 }
 
-bool BaseObject::isProtected(void)
+bool BaseObject::isProtected()
 {
 	return(is_protected);
 }
 
-unsigned BaseObject::getObjectId(void)
+unsigned BaseObject::getObjectId()
 {
 	return(object_id);
 }
@@ -693,7 +693,7 @@ void BaseObject::setSQLDisabled(bool value)
 	sql_disabled=value;
 }
 
-bool BaseObject::isSQLDisabled(void)
+bool BaseObject::isSQLDisabled()
 {
 	return(sql_disabled);
 }
@@ -704,7 +704,7 @@ void BaseObject::setSystemObject(bool value)
 	system_obj=sql_disabled=value;
 }
 
-bool BaseObject::isSystemObject(void)
+bool BaseObject::isSystemObject()
 {
 	return(system_obj);
 }
@@ -915,7 +915,7 @@ void BaseObject::setAttribute(const QString &attrib, const QString &value)
 	attributes[attrib]=value;
 }
 
-void BaseObject::clearAttributes(void)
+void BaseObject::clearAttributes()
 {
 	attribs_map::iterator itr, itr_end;
 
@@ -1037,12 +1037,12 @@ void BaseObject::setPgSQLVersion(const QString &ver)
 	pgsql_ver=ver;
 }
 
-QString BaseObject::getPgSQLVersion(void)
+QString BaseObject::getPgSQLVersion()
 {
 	return(pgsql_ver);
 }
 
-attribs_map BaseObject::getSearchAttributes(void)
+attribs_map BaseObject::getSearchAttributes()
 {
 	return(search_attribs);
 }
@@ -1083,7 +1083,7 @@ void BaseObject::setCodeInvalidated(bool value)
 	}
 }
 
-void BaseObject::configureSearchAttributes(void)
+void BaseObject::configureSearchAttributes()
 {
 	search_attribs[Attributes::Name] = this->getName(false);
 	search_attribs[Attributes::Signature] = this->getSignature(false);
@@ -1093,7 +1093,7 @@ void BaseObject::configureSearchAttributes(void)
 	search_attribs[Attributes::Comment] = comment;
 }
 
-bool BaseObject::isCodeInvalidated(void)
+bool BaseObject::isCodeInvalidated()
 {
 	return(use_cached_code && code_invalidated);
 }

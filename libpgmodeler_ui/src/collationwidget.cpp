@@ -54,11 +54,11 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		lcctype_cmb->addItems(loc_list);
 		locale_cmb->addItems(loc_list);
 
-		connect(collation_sel, SIGNAL(s_objectSelected(void)), this, SLOT(resetFields(void)));
-		connect(collation_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(resetFields(void)));
-		connect(locale_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
-		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
-		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields(void)));
+		connect(collation_sel, SIGNAL(s_objectSelected()), this, SLOT(resetFields()));
+		connect(collation_sel, SIGNAL(s_selectorCleared()), this, SLOT(resetFields()));
+		connect(locale_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
+		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
+		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 
 		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
 
@@ -98,7 +98,7 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	}
 }
 
-void CollationWidget::resetFields(void)
+void CollationWidget::resetFields()
 {
 	//Block object's signals to evict an infinite call to this method
 	collation_sel->blockSignals(true);
@@ -142,7 +142,7 @@ void CollationWidget::resetFields(void)
 }
 
 
-void CollationWidget::applyConfiguration(void)
+void CollationWidget::applyConfiguration()
 {
 	try
 	{

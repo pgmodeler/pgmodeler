@@ -56,20 +56,20 @@ class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 		PluginsConfWgt=5;
 		
 		ConfigurationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~ConfigurationForm(void);
+		~ConfigurationForm();
 		
 		BaseConfigWidget *getConfigurationWidget(unsigned idx);
 		
 	public slots:
-		void applyConfiguration(void);
-		void loadConfiguration(void);
-		void reject(void);
+		void applyConfiguration();
+		void loadConfiguration();
+		void reject();
 		
 	private slots:
-		void restoreDefaults(void);
+		void restoreDefaults();
 
 	signals:
-		void s_invalidateModelsRequested(void);
+		void s_invalidateModelsRequested();
 };
 
 #endif

@@ -42,11 +42,11 @@ class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWi
 		void setAttributes(ModelWidget *model_wgt, BaseObject *object, BaseObject *parent_obj=nullptr);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void clearTables(void);
-		void updateObjectTables(void);
+		void clearTables();
+		void updateObjectTables();
 		void handleItemSelection(QTableWidgetItem *item);
 };
 

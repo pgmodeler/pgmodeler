@@ -48,7 +48,7 @@ class Tag: public BaseObject {
 		BorderColor=2,
 		ColorCount=3;
 
-		Tag(void);
+		Tag();
 
 		/*! \brief Set the tag name. Different from regular database model object there is no rule
 	when setting the name. The only exception is that the name cannot be greater than

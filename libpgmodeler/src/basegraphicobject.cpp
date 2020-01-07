@@ -18,7 +18,7 @@
 
 #include "basegraphicobject.h"
 
-BaseGraphicObject::BaseGraphicObject(void)
+BaseGraphicObject::BaseGraphicObject()
 {
 	is_modified=true;
 	is_faded_out=false;
@@ -66,22 +66,22 @@ void BaseGraphicObject::setFadedOut(bool value)
 	is_faded_out = value;
 }
 
-bool BaseGraphicObject::isModified(void)
+bool BaseGraphicObject::isModified()
 {
 	return(is_modified);
 }
 
-bool BaseGraphicObject::isFadedOut(void)
+bool BaseGraphicObject::isFadedOut()
 {
 	return(is_faded_out);
 }
 
-void BaseGraphicObject::setFadedOutAttribute(void)
+void BaseGraphicObject::setFadedOutAttribute()
 {
 	attributes[Attributes::FadedOut]=(is_faded_out ? Attributes::True : QString());
 }
 
-void BaseGraphicObject::setPositionAttribute(void)
+void BaseGraphicObject::setPositionAttribute()
 {
 	attributes[Attributes::XPos]=QString("%1").arg(position.x());
 	attributes[Attributes::YPos]=QString("%1").arg(position.y());
@@ -94,7 +94,7 @@ void  BaseGraphicObject::setPosition(QPointF pos)
 	position=pos;
 }
 
-QPointF BaseGraphicObject::getPosition(void)
+QPointF BaseGraphicObject::getPosition()
 {
 	return(position);
 }
@@ -113,7 +113,7 @@ void BaseGraphicObject::setReceiverObject(QObject *obj)
 	receiver_object=obj;
 }
 
-QObject *BaseGraphicObject::getOverlyingObject(void)
+QObject *BaseGraphicObject::getOverlyingObject()
 {
 	return(receiver_object);
 }
@@ -131,7 +131,7 @@ void BaseGraphicObject::setLayer(unsigned layer)
 	this->layer = layer;
 }
 
-unsigned BaseGraphicObject::getLayer(void)
+unsigned BaseGraphicObject::getLayer()
 {
 	return(layer);
 }

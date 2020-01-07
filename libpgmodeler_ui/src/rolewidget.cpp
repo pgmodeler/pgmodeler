@@ -45,7 +45,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	frame->setParent(this);
 
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
-	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
+	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection()));
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -77,7 +77,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData()));
 
 	setMinimumSize(580, 550);
 }
@@ -87,7 +87,7 @@ RoleWidget::~RoleWidget()
 	delete object_selection_wgt;
 }
 
-void RoleWidget::configureRoleSelection(void)
+void RoleWidget::configureRoleSelection()
 {
 	unsigned i;
 
@@ -96,11 +96,11 @@ void RoleWidget::configureRoleSelection(void)
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole(void)));
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole(void)));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole()));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole()));
 }
 
-void RoleWidget::selectMemberRole(void)
+void RoleWidget::selectMemberRole()
 {
 	object_selection_wgt->setObjectVisible(ObjectType::Role, true);
 	object_selection_wgt->setModel(this->model);
@@ -166,7 +166,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 	}
 }
 
-void RoleWidget::fillMembersTable(void)
+void RoleWidget::fillMembersTable()
 {
 	if(this->object)
 	{
@@ -194,7 +194,7 @@ void RoleWidget::fillMembersTable(void)
 	}
 }
 
-void RoleWidget::showSelectedRoleData(void)
+void RoleWidget::showSelectedRoleData()
 {
 	unsigned idx_tab;
 	int lin, idx_lin=-1;
@@ -245,7 +245,7 @@ void RoleWidget::showSelectedRoleData(void)
 	}
 }
 
-void RoleWidget::applyConfiguration(void)
+void RoleWidget::applyConfiguration()
 {
 	Role *role=nullptr, *aux_role=nullptr;
 	unsigned count, i, type_id,

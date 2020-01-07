@@ -20,7 +20,7 @@
 
 GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 {
-	connect(view, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(view, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
@@ -29,7 +29,7 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	this->configureObject();
 }
 
-void GraphicalView::configureObject(void)
+void GraphicalView::configureObject()
 {
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to

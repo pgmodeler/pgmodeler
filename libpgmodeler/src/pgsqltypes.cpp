@@ -250,7 +250,7 @@ QString BaseType::type_list[BaseType::TypesCount]=
   "HASH",
 };
 
-BaseType::BaseType(void)
+BaseType::BaseType()
 {
 	type_idx=BaseType::Null;
 }
@@ -326,22 +326,22 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	}
 }
 
-QString BaseType::operator ~ (void)
+QString BaseType::operator ~ ()
 {
 	return(type_list[type_idx]);
 }
 
-unsigned BaseType::operator ! (void)
+unsigned BaseType::operator ! ()
 {
 	return(type_idx);
 }
 
-unsigned BaseType::getTypeId(void)
+unsigned BaseType::getTypeId()
 {
 	return(type_idx);
 }
 
-QString BaseType::getTypeName(void)
+QString BaseType::getTypeName()
 {
 	return(type_list[type_idx]);
 }
@@ -379,7 +379,7 @@ ActionType::ActionType(const QString &type_name)
 	(*this)=type_name;
 }
 
-ActionType::ActionType(void)
+ActionType::ActionType()
 {
 	type_idx=Offset;
 }
@@ -417,7 +417,7 @@ ConstraintType::ConstraintType(const QString &type_name)
 	(*this)=type_name;
 }
 
-ConstraintType::ConstraintType(void)
+ConstraintType::ConstraintType()
 {
 	type_idx=Offset;
 }
@@ -445,7 +445,7 @@ unsigned ConstraintType::operator = (const QString &type_name)
 /********************
  * CLASS: EventType *
  ********************/
-EventType::EventType(void)
+EventType::EventType()
 {
 	type_idx=Offset;
 }
@@ -493,7 +493,7 @@ bool EventType::operator < (unsigned type_id) const
 /************************
  * CLASS: ExecutionType *
  ************************/
-ExecutionType::ExecutionType(void)
+ExecutionType::ExecutionType()
 {
 	type_idx=Offset;
 }
@@ -536,7 +536,7 @@ FunctionType::FunctionType(unsigned type_id)
 	(*this)=type_id;
 }
 
-FunctionType::FunctionType(void)
+FunctionType::FunctionType()
 {
 	type_idx=Offset;
 }
@@ -574,7 +574,7 @@ IndexingType::IndexingType(unsigned type_id)
 	(*this)=type_id;
 }
 
-IndexingType::IndexingType(void)
+IndexingType::IndexingType()
 {
 	type_idx=Offset;
 }
@@ -612,7 +612,7 @@ IntervalType::IntervalType(unsigned type_id)
 	(*this)=type_id;
 }
 
-IntervalType::IntervalType(void)
+IntervalType::IntervalType()
 {
 	type_idx=BaseType::Null;
 }
@@ -678,7 +678,7 @@ SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 	setSRID(srid);
 }
 
-SpatialType::SpatialType(void)
+SpatialType::SpatialType()
 {
 	type_idx=BaseType::Null;
 	variation=NoVar;
@@ -693,7 +693,7 @@ void SpatialType::setVariation(unsigned var)
 		variation=var;
 }
 
-unsigned SpatialType::getVariation(void)
+unsigned SpatialType::getVariation()
 {
 	return(variation);
 }
@@ -709,12 +709,12 @@ void SpatialType::setSRID(int srid)
 	this->srid=srid;
 }
 
-int SpatialType::getSRID(void)
+int SpatialType::getSRID()
 {
 	return(srid);
 }
 
-QString SpatialType::operator * (void)
+QString SpatialType::operator * ()
 {
 	if(this->type_idx!=BaseType::Null)
 	{
@@ -742,7 +742,7 @@ QString SpatialType::operator * (void)
  ********************/
 vector<UserTypeConfig> PgSqlType::user_types;
 
-PgSqlType::PgSqlType(void)
+PgSqlType::PgSqlType()
 {
 	type_idx=Offset;
 	length=0;
@@ -966,7 +966,7 @@ unsigned PgSqlType::operator = (const QString &type_name)
 	}
 }
 
-void *PgSqlType::getUserTypeReference(void)
+void *PgSqlType::getUserTypeReference()
 {
 	if(this->isUserType())
 		return(user_types[this->type_idx - (PseudoEnd + 1)].ptype);
@@ -974,7 +974,7 @@ void *PgSqlType::getUserTypeReference(void)
 		return(nullptr);
 }
 
-unsigned PgSqlType::getUserTypeConfig(void)
+unsigned PgSqlType::getUserTypeConfig()
 {
 	if(this->isUserType())
 		return(user_types[this->type_idx - (PseudoEnd + 1)].type_conf);
@@ -982,7 +982,7 @@ unsigned PgSqlType::getUserTypeConfig(void)
 		return(0);
 }
 
-unsigned PgSqlType::getTypeId(void)
+unsigned PgSqlType::getTypeId()
 {
 	return(!(*this));
 }
@@ -1004,7 +1004,7 @@ QString PgSqlType::getTypeName(bool incl_dimension)
 	return(~(*this));
 }
 
-QString PgSqlType::getSQLTypeName(void)
+QString PgSqlType::getSQLTypeName()
 {
 	return(*(*this));
 }
@@ -1064,27 +1064,27 @@ bool PgSqlType::operator == (void *ptype)
 	return(static_cast<int>(type_idx) == idx);
 }
 
-IntervalType PgSqlType::getIntervalType(void)
+IntervalType PgSqlType::getIntervalType()
 {
 	return(interval_type);
 }
 
-SpatialType PgSqlType::getSpatialType(void)
+SpatialType PgSqlType::getSpatialType()
 {
 	return(spatial_type);
 }
 
-bool PgSqlType::isWithTimezone(void)
+bool PgSqlType::isWithTimezone()
 {
 	return(with_timezone);
 }
 
-bool PgSqlType::isOIDType(void)
+bool PgSqlType::isOIDType()
 {
 	return(type_idx>=OidStart && type_idx<=OidEnd);
 }
 
-bool PgSqlType::isPseudoType(void)
+bool PgSqlType::isPseudoType()
 {
 	return(type_idx>=PseudoStart && type_idx<=PseudoEnd);
 }
@@ -1314,7 +1314,7 @@ void PgSqlType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_
 	}
 }
 
-QString PgSqlType::operator ~ (void)
+QString PgSqlType::operator ~ ()
 {
 	if(type_idx >= PseudoEnd + 1)
 		return(user_types[type_idx - (PseudoEnd + 1)].name);
@@ -1329,17 +1329,17 @@ QString PgSqlType::operator ~ (void)
 	}
 }
 
-bool PgSqlType::isArrayType(void)
+bool PgSqlType::isArrayType()
 {
 	return(dimension > 0);
 }
 
-bool PgSqlType::isUserType(void)
+bool PgSqlType::isUserType()
 {
 	return(type_idx > PseudoEnd);
 }
 
-bool PgSqlType::isNetworkType(void)
+bool PgSqlType::isNetworkType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1350,7 +1350,7 @@ bool PgSqlType::isNetworkType(void)
 					curr_type==QString("macaddr8")));
 }
 
-bool PgSqlType::isGiSType(void)
+bool PgSqlType::isGiSType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1360,7 +1360,7 @@ bool PgSqlType::isGiSType(void)
 					curr_type==QString("geometry_dump")));
 }
 
-bool PgSqlType::isRangeType(void)
+bool PgSqlType::isRangeType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1370,7 +1370,7 @@ bool PgSqlType::isRangeType(void)
 				curr_type==QString("tstzrange") || curr_type==QString("daterange")));
 }
 
-bool PgSqlType::isSerialType(void)
+bool PgSqlType::isSerialType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1380,7 +1380,7 @@ bool PgSqlType::isSerialType(void)
 				curr_type==QString("bigserial")));
 }
 
-bool PgSqlType::isDateTimeType(void)
+bool PgSqlType::isDateTimeType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1390,7 +1390,7 @@ bool PgSqlType::isDateTimeType(void)
 				 curr_type==QString("timetz") || curr_type==QString("timestamptz")));
 }
 
-bool PgSqlType::isNumericType(void)
+bool PgSqlType::isNumericType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1398,7 +1398,7 @@ bool PgSqlType::isNumericType(void)
 					(curr_type==QString("numeric") || curr_type==QString("decimal")));
 }
 
-bool PgSqlType::isIntegerType(void)
+bool PgSqlType::isIntegerType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1408,7 +1408,7 @@ bool PgSqlType::isIntegerType(void)
 				curr_type==QString("int8") || curr_type==QString("int2")));
 }
 
-bool PgSqlType::hasVariableLength(void)
+bool PgSqlType::hasVariableLength()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1420,7 +1420,7 @@ bool PgSqlType::hasVariableLength(void)
 				curr_type==QString("varbit")));
 }
 
-bool PgSqlType::isCharacterType(void)
+bool PgSqlType::isCharacterType()
 {
 	QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1429,7 +1429,7 @@ bool PgSqlType::isCharacterType(void)
 				 curr_type==QString("character varying") || curr_type==QString("text"));
 }
 
-bool PgSqlType::isPolymorphicType(void)
+bool PgSqlType::isPolymorphicType()
 {
 		QString curr_type=(!isUserType() ? type_list[this->type_idx] : QString());
 
@@ -1438,7 +1438,7 @@ bool PgSqlType::isPolymorphicType(void)
 				 curr_type==QString("anyrange") || curr_type==QString("\"any\""));
 }
 
-bool PgSqlType::acceptsPrecision(void)
+bool PgSqlType::acceptsPrecision()
 {
 	return(isNumericType() ||
 				(!isUserType() && type_list[this->type_idx]!=QString("date") && isDateTimeType()));
@@ -1524,7 +1524,7 @@ bool PgSqlType::isExactTo(PgSqlType type)
 				 this->spatial_type == type.spatial_type);
 }
 
-PgSqlType PgSqlType::getAliasType(void)
+PgSqlType PgSqlType::getAliasType()
 {
 	if(!isUserType())
 	{
@@ -1577,17 +1577,17 @@ void PgSqlType::setPrecision(int prec)
 	}
 }
 
-unsigned PgSqlType::getDimension(void)
+unsigned PgSqlType::getDimension()
 {
 	return(dimension);
 }
 
-unsigned PgSqlType::getLength(void)
+unsigned PgSqlType::getLength()
 {
 	return(length);
 }
 
-int PgSqlType::getPrecision(void)
+int PgSqlType::getPrecision()
 {
 	return(precision);
 }
@@ -1637,7 +1637,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 	}
 }
 
-QString PgSqlType::operator * (void)
+QString PgSqlType::operator * ()
 {
 	QString fmt_type, type, aux;
 	unsigned idx;
@@ -1706,7 +1706,7 @@ BehaviorType::BehaviorType(unsigned type_id)
 	(*this)=type_id;
 }
 
-BehaviorType::BehaviorType(void)
+BehaviorType::BehaviorType()
 {
 	type_idx=Offset;
 }
@@ -1739,7 +1739,7 @@ unsigned BehaviorType::operator = (const QString &type_name)
 /***********************
  * CLASS: SecurityType *
  ***********************/
-SecurityType::SecurityType(void)
+SecurityType::SecurityType()
 {
 	type_idx=Offset;
 }
@@ -1777,7 +1777,7 @@ unsigned SecurityType::operator = (const QString &type_name)
 /***********************
  * CLASS: LanguageType *
  ***********************/
-LanguageType::LanguageType(void)
+LanguageType::LanguageType()
 {
 	type_idx=Offset;
 }
@@ -1815,7 +1815,7 @@ unsigned LanguageType::operator = (const QString &type_name)
 /***********************
  * CLASS: EncodingType *
  ***********************/
-EncodingType::EncodingType(void)
+EncodingType::EncodingType()
 {
 	type_idx=Offset;
 }
@@ -1888,7 +1888,7 @@ bool EncodingType::operator != (unsigned type_id)
 /**********************
  * CLASS: StorageType *
  **********************/
-StorageType::StorageType(void)
+StorageType::StorageType()
 {
 	type_idx=Offset;
 }
@@ -1951,7 +1951,7 @@ bool StorageType::operator != (StorageType type)
 /********************
  * CLASS: MatchType *
  ********************/
-MatchType::MatchType(void)
+MatchType::MatchType()
 {
 	type_idx=Offset;
 }
@@ -1989,7 +1989,7 @@ unsigned MatchType::operator = (const QString &type_name)
 /***********************
  * CLASS: DeferralType *
  ***********************/
-DeferralType::DeferralType(void)
+DeferralType::DeferralType()
 {
 	type_idx=Offset;
 }
@@ -2027,7 +2027,7 @@ unsigned DeferralType::operator = (const QString &type_name)
 /***********************
  * CLASS: CategoryType *
  ***********************/
-CategoryType::CategoryType(void)
+CategoryType::CategoryType()
 {
 	type_idx=Offset;
 }
@@ -2065,7 +2065,7 @@ unsigned CategoryType::operator = (const QString &type_name)
 /*********************
  * CLASS: FiringType *
  *********************/
-FiringType::FiringType(void)
+FiringType::FiringType()
 {
 	type_idx=Offset;
 }
@@ -2103,7 +2103,7 @@ unsigned FiringType::operator = (const QString &type_name)
 /***************************
  * CLASS: EventTriggerType *
  ***************************/
-EventTriggerType::EventTriggerType(void)
+EventTriggerType::EventTriggerType()
 {
 	type_idx=Offset;
 }
@@ -2141,7 +2141,7 @@ unsigned EventTriggerType::operator = (const QString &type_name)
 /***************************
  * CLASS: IdentityMode *
  ***************************/
-IdentityType::IdentityType(void)
+IdentityType::IdentityType()
 {
 	type_idx=Offset;
 }
@@ -2179,7 +2179,7 @@ unsigned IdentityType::operator = (const QString &type_name)
 /***************************
  * CLASS: PolicyCmdType *
  ***************************/
-PolicyCmdType::PolicyCmdType(void)
+PolicyCmdType::PolicyCmdType()
 {
 	type_idx=Offset;
 }
@@ -2217,7 +2217,7 @@ unsigned PolicyCmdType::operator = (const QString &type_name)
 /***************************
  * CLASS: PartitioningType *
  ***************************/
-PartitioningType::PartitioningType(void)
+PartitioningType::PartitioningType()
 {
 	type_idx=Offset;
 }

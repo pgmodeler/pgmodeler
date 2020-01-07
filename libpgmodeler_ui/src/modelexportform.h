@@ -73,21 +73,21 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void exec(ModelWidget *model);
 
 	private slots:
-		void selectExportMode(void);
-		void exportModel(void);
-		void selectOutputFile(void);
+		void selectExportMode();
+		void exportModel();
+		void selectOutputFile();
 		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
-		void cancelExport(void);
-		void handleExportFinished(void);
-		void handleExportCanceled(void);
+		void cancelExport();
+		void handleExportFinished();
+		void handleExportCanceled();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void editConnections(void);
+		void editConnections();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
-		void s_connectionsUpdateRequest(void);
+		void s_connectionsUpdateRequest();
 };
 
 #endif

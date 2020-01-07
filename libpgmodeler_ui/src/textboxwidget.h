@@ -38,10 +38,10 @@ class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=nullptr, double obj_px=DNaN, double obj_py=DNaN);
 
 	private slots:
-		void selectTextColor(void);
+		void selectTextColor();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

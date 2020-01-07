@@ -108,62 +108,62 @@ QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &
 	return(fi.absoluteFilePath());
 }
 
-QString GlobalAttributes::getSchemasRootDir(void)
+QString GlobalAttributes::getSchemasRootDir()
 {
 	return(SchemasRootDir);
 }
 
-QString GlobalAttributes::getLanguagesDir(void)
+QString GlobalAttributes::getLanguagesDir()
 {
 	return(LanguagesDir);
 }
 
-QString GlobalAttributes::getPluginsDir(void)
+QString GlobalAttributes::getPluginsDir()
 {
 	return(PluginsDir);
 }
 
-QString GlobalAttributes::getTemporaryDir(void)
+QString GlobalAttributes::getTemporaryDir()
 {
 	return(TemporaryDir);
 }
 
-QString GlobalAttributes::getSamplesDir(void)
+QString GlobalAttributes::getSamplesDir()
 {
 	return(SamplesDir);
 }
 
-QString GlobalAttributes::getTmplConfigurationDir(void)
+QString GlobalAttributes::getTmplConfigurationDir()
 {
 	return(TmplConfigurationDir);
 }
 
-QString GlobalAttributes::getConfigurationsDir(void)
+QString GlobalAttributes::getConfigurationsDir()
 {
 	return(ConfigurationsDir);
 }
 
-QString GlobalAttributes::getSQLHighlightConfPath(void)
+QString GlobalAttributes::getSQLHighlightConfPath()
 {
 	return(SQLHighlightConfPath);
 }
 
-QString GlobalAttributes::getXMLHighlightConfPath(void)
+QString GlobalAttributes::getXMLHighlightConfPath()
 {
 	return(XMLHighlightConfPath);
 }
 
-QString GlobalAttributes::getPgModelerCHandlerPath(void)
+QString GlobalAttributes::getPgModelerCHandlerPath()
 {
 	return(PgModelerCHandlerPath);
 }
 
-QString GlobalAttributes::getPgModelerCLIPath(void)
+QString GlobalAttributes::getPgModelerCLIPath()
 {
 	return(PgModelerCLIPath);
 }
 
-QString GlobalAttributes::getPgModelerAppPath(void)
+QString GlobalAttributes::getPgModelerAppPath()
 {
 	return(PgModelerAppPath);
 }

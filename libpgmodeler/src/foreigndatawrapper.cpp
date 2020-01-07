@@ -18,7 +18,7 @@
 
 #include "foreigndatawrapper.h"
 
-ForeignDataWrapper::ForeignDataWrapper(void) : BaseObject()
+ForeignDataWrapper::ForeignDataWrapper() : BaseObject()
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
@@ -68,12 +68,12 @@ void ForeignDataWrapper::setValidatorFunction(Function *func)
 	validator_func = func;
 }
 
-Function *ForeignDataWrapper::getHandlerFunction(void)
+Function *ForeignDataWrapper::getHandlerFunction()
 {
 	return(handler_func);
 }
 
-Function *ForeignDataWrapper::getValidatorFunction(void)
+Function *ForeignDataWrapper::getValidatorFunction()
 {
 	return(validator_func);
 }

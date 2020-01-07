@@ -54,8 +54,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 
 		PgModelerUiNs::configureWidgetFont(protected_obj_lbl, PgModelerUiNs::MediumFontFactor);
 
-		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL(void)));
+		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
+		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
 
 		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, true, this);
 		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
@@ -101,7 +101,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 	}
 }
 
-BaseObjectWidget::~BaseObjectWidget(void)
+BaseObjectWidget::~BaseObjectWidget()
 {
 
 }
@@ -123,12 +123,12 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-ObjectType BaseObjectWidget::getHandledObjectType(void)
+ObjectType BaseObjectWidget::getHandledObjectType()
 {
 	return(handled_obj_type);
 }
 
-bool BaseObjectWidget::isHandledObjectProtected(void)
+bool BaseObjectWidget::isHandledObjectProtected()
 {
 	return(object_protected);
 }
@@ -258,12 +258,12 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 		QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
-BaseObject *BaseObjectWidget::getHandledObject(void)
+BaseObject *BaseObjectWidget::getHandledObject()
 {
 	return(object);
 }
 
-void BaseObjectWidget::cancelChainedOperation(void)
+void BaseObjectWidget::cancelChainedOperation()
 {
 	bool op_list_changed=false;
 
@@ -668,7 +668,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	return(alert_frm);
 }
 
-void BaseObjectWidget::editPermissions(void)
+void BaseObjectWidget::editPermissions()
 {
 	BaseObject *parent_obj=nullptr;
 	BaseForm parent_form(this);
@@ -686,7 +686,7 @@ void BaseObjectWidget::editPermissions(void)
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 }
 
-void BaseObjectWidget::editCustomSQL(void)
+void BaseObjectWidget::editCustomSQL()
 {
 	BaseForm parent_form(this);
 	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
@@ -699,7 +699,7 @@ void BaseObjectWidget::editCustomSQL(void)
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 }
 
-void BaseObjectWidget::applyConfiguration(void)
+void BaseObjectWidget::applyConfiguration()
 {
 	if(object)
 	{
@@ -806,7 +806,7 @@ void BaseObjectWidget::applyConfiguration(void)
 	}
 }
 
-void BaseObjectWidget::finishConfiguration(void)
+void BaseObjectWidget::finishConfiguration()
 {
 	try
 	{
@@ -904,7 +904,7 @@ void BaseObjectWidget::finishConfiguration(void)
 	}
 }
 
-void BaseObjectWidget::cancelConfiguration(void)
+void BaseObjectWidget::cancelConfiguration()
 {
 	if(!object)
 		return;
@@ -950,7 +950,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 	emit s_objectManipulated();
 }
 
-void BaseObjectWidget::registerNewObject(void)
+void BaseObjectWidget::registerNewObject()
 {
 	try
 	{

@@ -18,7 +18,7 @@
 
 #include "rule.h"
 
-Rule::Rule(void)
+Rule::Rule()
 {
 	execution_type=BaseType::Null;
 	obj_type=ObjectType::Rule;
@@ -29,7 +29,7 @@ Rule::Rule(void)
 	attributes[Attributes::Commands]=QString();
 }
 
-void Rule::setCommandsAttribute(void)
+void Rule::setCommandsAttribute()
 {
 	QString str_cmds;
 	unsigned i, qtd;
@@ -76,17 +76,17 @@ void Rule::addCommand(const QString &cmd)
 	}
 }
 
-EventType Rule::getEventType(void)
+EventType Rule::getEventType()
 {
 	return(event_type);
 }
 
-ExecutionType Rule::getExecutionType(void)
+ExecutionType Rule::getExecutionType()
 {
 	return(execution_type);
 }
 
-QString Rule::getConditionalExpression(void)
+QString Rule::getConditionalExpression()
 {
 	return(conditional_expr);
 }
@@ -100,7 +100,7 @@ QString Rule::getCommand(unsigned cmd_idx)
 	return(commands[cmd_idx]);
 }
 
-unsigned Rule::getCommandCount(void)
+unsigned Rule::getCommandCount()
 {
 	return(commands.size());
 }
@@ -115,7 +115,7 @@ void Rule::removeCommand(unsigned cmd_idx)
 	setCodeInvalidated(true);
 }
 
-void Rule::removeCommands(void)
+void Rule::removeCommands()
 {
 	commands.clear();
 	setCodeInvalidated(true);

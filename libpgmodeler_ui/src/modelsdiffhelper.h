@@ -87,7 +87,7 @@ class ModelsDiffHelper: public QObject {
 
 		/*! \brief Processes the generated diff infos resulting in a SQL buffer with the needed commands
 		to synchronize both model and database */
-		void processDiffInfos(void);
+		void processDiffInfos();
 
 		/*! \brief Generates the proper DROP and CREATE for the specified object and its references. This method
 		is used when the force_recreation is true and the object in the parameter is marked with an ALTER_OBJECT */
@@ -103,7 +103,7 @@ class ModelsDiffHelper: public QObject {
 		QString getCodeDefinition(BaseObject *object, bool drop_cmd);
 
 		//! \brief Destroy the temporary objects and clears the diff info list
-		void destroyTempObjects(void);
+		void destroyTempObjects();
 
 		BaseObject *getRelNNTable(const QString &obj_name, DatabaseModel *model);
 
@@ -144,8 +144,8 @@ class ModelsDiffHelper: public QObject {
 		except for columns and constraints. This option is only considered in the process when OPT_DONT_DROP_MISSING_OBJS is enabled. */
 		OptDropMissingColsConstr=9;
 
-		ModelsDiffHelper(void);
-		~ModelsDiffHelper(void);
+		ModelsDiffHelper();
+		~ModelsDiffHelper();
 
 		/*! \brief Configures the models to be compared. It is assumed that src_model is the reference model
 		from which all changes must be collected and applied to the database. The imp_model is the
@@ -162,24 +162,24 @@ class ModelsDiffHelper: public QObject {
 		unsigned getDiffTypeCount(unsigned diff_type);
 
 		//! \brief Reset all the diff info counters in order to restart the diff process
-		void resetDiffCounter(void);
+		void resetDiffCounter();
 
 		//! \brief Returns the diff containing all the SQL commands needed to synchronize the model and database
-		QString getDiffDefinition(void);
+		QString getDiffDefinition();
 
 	public slots:
-		void diffModels(void);
-		void cancelDiff(void);
+		void diffModels();
+		void cancelDiff();
 
 	signals:
 		//! \brief This singal is emitted whenever the diff progress changes
 		void s_progressUpdated(int progress, QString msg, ObjectType obj_type=ObjectType::BaseObject);
 
 		//! \brief This signal is emited when the diff has finished
-		void s_diffFinished(void);
+		void s_diffFinished();
 
 		//! \brief This signal is emited when the diff has been canceled
-		void s_diffCanceled(void);
+		void s_diffCanceled();
 
 		//! \brief This signal is emited when the diffhas encountered a critical error (only in thread mode)
 		void s_diffAborted(Exception e);

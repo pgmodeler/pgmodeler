@@ -34,13 +34,13 @@ class OperatorFamily: public BaseObject {
 		IndexingType indexing_type;
 
 	public:
-		OperatorFamily(void);
+		OperatorFamily();
 
 		//! \brief Sets the indexing type of the operator family
 		void setIndexingType(IndexingType idx_type);
 
 		//! \brief Returns the indexing type of the operator family
-		IndexingType getIndexingType(void);
+		IndexingType getIndexingType();
 
 		//! \brief Returns the SQL / XML code definition for the operator family
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;

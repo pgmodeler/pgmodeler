@@ -44,17 +44,17 @@ class CopyOptions {
 		Including=256,
 		Excluding=512;
 
-		CopyOptions(void);
+		CopyOptions();
 		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);
 
-		unsigned getCopyMode(void);
-		unsigned getCopyOptionsIds(void);
+		unsigned getCopyMode();
+		unsigned getCopyOptionsIds();
 
 		bool isOptionSet(unsigned op);
-		bool isIncluding(void);
-		bool isExcluding(void);
+		bool isIncluding();
+		bool isExcluding();
 
-		QString getSQLDefinition(void);
+		QString getSQLDefinition();
 		bool operator != (CopyOptions &cp);
 };
 

@@ -18,7 +18,7 @@
 
 #include "typeattribute.h"
 
-TypeAttribute::TypeAttribute(void)
+TypeAttribute::TypeAttribute()
 {
 	obj_type=ObjectType::TypeAttribute;
 }
@@ -29,7 +29,7 @@ void TypeAttribute::setType(PgSqlType type)
 	this->type=type;
 }
 
-PgSqlType TypeAttribute::getType(void)
+PgSqlType TypeAttribute::getType()
 {
 	return(type);
 }

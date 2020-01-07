@@ -18,7 +18,7 @@
 
 #include "schema.h"
 
-Schema::Schema(void)
+Schema::Schema()
 {
 	obj_type=ObjectType::Schema;
 	fill_color=QColor(225,225,225, 80);
@@ -46,7 +46,7 @@ void Schema::setFillColor(const QColor &color)
 	this->fill_color=color;
 }
 
-QColor Schema::getFillColor(void)
+QColor Schema::getFillColor()
 {
 	return(fill_color);
 }
@@ -57,7 +57,7 @@ void Schema::setRectVisible(bool value)
 	rect_visible=value;
 }
 
-bool Schema::isRectVisible(void)
+bool Schema::isRectVisible()
 {
 	return(rect_visible);
 }

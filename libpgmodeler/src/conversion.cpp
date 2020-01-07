@@ -18,7 +18,7 @@
 
 #include "conversion.h"
 
-Conversion::Conversion(void)
+Conversion::Conversion()
 {
 	obj_type=ObjectType::Conversion;
 	conversion_func=nullptr;
@@ -100,12 +100,12 @@ EncodingType Conversion::getEncoding(unsigned encoding_idx)
 	return(this->encodings[encoding_idx]);
 }
 
-Function *Conversion::getConversionFunction(void)
+Function *Conversion::getConversionFunction()
 {
 	return(conversion_func);
 }
 
-bool Conversion::isDefault(void)
+bool Conversion::isDefault()
 {
 	return(is_default);
 }

@@ -18,7 +18,7 @@
 
 #include "type.h"
 
-Type::Type(void)
+Type::Type()
 {
 	obj_type=ObjectType::Type;
 	setConfiguration(EnumerationType);
@@ -121,7 +121,7 @@ void Type::removeAttribute(unsigned attrib_idx)
 	setCodeInvalidated(true);
 }
 
-void Type::removeAttributes(void)
+void Type::removeAttributes()
 {
 	type_attribs.clear();
 	setCodeInvalidated(true);
@@ -173,7 +173,7 @@ void Type::removeEnumeration(unsigned enum_idx)
 	setCodeInvalidated(true);
 }
 
-void Type::removeEnumerations(void)
+void Type::removeEnumerations()
 {
 	enumerations.clear();
 	setCodeInvalidated(true);
@@ -509,7 +509,7 @@ TypeAttribute Type::getAttribute(unsigned attrib_idx)
 	return(type_attribs[attrib_idx]);
 }
 
-unsigned Type::getAttributeCount(void)
+unsigned Type::getAttributeCount()
 {
 	return(type_attribs.size());
 }
@@ -522,7 +522,7 @@ QString Type::getEnumeration(unsigned idx_enum)
 	return(enumerations[idx_enum]);
 }
 
-unsigned Type::getEnumerationCount(void)
+unsigned Type::getEnumerationCount()
 {
 	return(enumerations.size());
 }
@@ -535,72 +535,72 @@ Function *Type::getFunction(unsigned func_id)
 	return(functions[func_id]);
 }
 
-unsigned Type::getInternalLength(void)
+unsigned Type::getInternalLength()
 {
 	return(internal_len);
 }
 
-bool Type::isByValue(void)
+bool Type::isByValue()
 {
 	return(by_value);
 }
 
-PgSqlType Type::getAlignment(void)
+PgSqlType Type::getAlignment()
 {
 	return(alignment);
 }
 
-StorageType Type::getStorage(void)
+StorageType Type::getStorage()
 {
 	return(storage);
 }
 
-QString Type::getDefaultValue(void)
+QString Type::getDefaultValue()
 {
 	return(default_value);
 }
 
-PgSqlType Type::getElement(void)
+PgSqlType Type::getElement()
 {
 	return(element);
 }
 
-char Type::getDelimiter(void)
+char Type::getDelimiter()
 {
 	return(delimiter);
 }
 
-unsigned Type::getConfiguration(void)
+unsigned Type::getConfiguration()
 {
 	return(config);
 }
 
-CategoryType Type::getCategory(void)
+CategoryType Type::getCategory()
 {
 	return(category);
 }
 
-bool Type::isPreferred(void)
+bool Type::isPreferred()
 {
 	return(preferred);
 }
 
-bool Type::isCollatable(void)
+bool Type::isCollatable()
 {
 	return(collatable);
 }
 
-PgSqlType Type::getLikeType(void)
+PgSqlType Type::getLikeType()
 {
 	return(like_type);
 }
 
-PgSqlType Type::getSubtype(void)
+PgSqlType Type::getSubtype()
 {
 	return(subtype);
 }
 
-OperatorClass *Type::getSubtypeOpClass(void)
+OperatorClass *Type::getSubtypeOpClass()
 {
 	return(subtype_opclass);
 }

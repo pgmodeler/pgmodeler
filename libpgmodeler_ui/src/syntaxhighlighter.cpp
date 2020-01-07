@@ -80,7 +80,7 @@ bool SyntaxHighlighter::hasInitialAndFinalExprs(const QString &group)
 	return(initial_exprs.count(group) && final_exprs.count(group));
 }
 
-void SyntaxHighlighter::configureAttributes(void)
+void SyntaxHighlighter::configureAttributes()
 {
 	conf_loaded=false;
 }
@@ -344,12 +344,12 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 	return(match);
 }
 
-bool SyntaxHighlighter::isConfigurationLoaded(void)
+bool SyntaxHighlighter::isConfigurationLoaded()
 {
 	return(conf_loaded);
 }
 
-void SyntaxHighlighter::clearConfiguration(void)
+void SyntaxHighlighter::clearConfiguration()
 {
 	initial_exprs.clear();
 	final_exprs.clear();
@@ -602,7 +602,7 @@ vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, boo
 		return(vector<QRegExp>());
 }
 
-QChar SyntaxHighlighter::getCompletionTrigger(void)
+QChar SyntaxHighlighter::getCompletionTrigger()
 {
 	return(completion_trigger);
 }

@@ -1,6 +1,6 @@
 #include "extension.h"
 
-Extension::Extension(void)
+Extension::Extension()
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
@@ -67,7 +67,7 @@ void Extension::setVersion(unsigned ver, const QString &value)
 	versions[ver]=value;
 }
 
-bool Extension::handlesType(void)
+bool Extension::handlesType()
 {
 	return(handles_type);
 }

@@ -63,7 +63,7 @@ class Element {
 		static constexpr unsigned AscOrder=0,
 		NullsFirst=1;
 
-		Element(void);
+		Element();
 		virtual ~Element(void) {}
 
 		//! \brief Element configuration methods
@@ -80,13 +80,13 @@ class Element {
 		//! \brief Gets the curret state of the element sorting attribute
 		bool getSortingAttribute(unsigned attrib);
 
-		Column *getColumn(void);
-		QString getExpression(void);
-		OperatorClass *getOperatorClass(void);
+		Column *getColumn();
+		QString getExpression();
+		OperatorClass *getOperatorClass();
 		virtual Collation *getCollation(void){ return(nullptr); }
 		virtual Operator *getOperator(void){ return(nullptr); }
 
-		bool isSortingEnabled(void);
+		bool isSortingEnabled();
 
 		virtual QString getCodeDefinition(unsigned) { return(QString()); }
 		bool operator == (Element &elem);

@@ -20,7 +20,7 @@
 
 unsigned Role::role_id=0;
 
-Role::Role(void)
+Role::Role()
 {
 	obj_type=ObjectType::Role;
 	object_id=Role::role_id++;
@@ -309,17 +309,17 @@ unsigned Role::getRoleCount(unsigned role_type)
 	return(list->size());
 }
 
-unsigned Role::getConnectionLimit(void)
+unsigned Role::getConnectionLimit()
 {
 	return(conn_limit);
 }
 
-QString Role::getValidity(void)
+QString Role::getValidity()
 {
 	return(validity);
 }
 
-QString Role::getPassword(void)
+QString Role::getPassword()
 {
 	return(password);
 }

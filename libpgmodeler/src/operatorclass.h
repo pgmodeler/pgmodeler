@@ -55,8 +55,8 @@ class OperatorClass: public BaseObject {
 		void setElementsAttribute(unsigned def_type);
 
 	public:
-		OperatorClass(void);
-		~OperatorClass(void);
+		OperatorClass();
+		~OperatorClass();
 
 		//! \brief Sets the data type that the operator class works on
 		void setDataType(PgSqlType data_type);
@@ -75,14 +75,14 @@ class OperatorClass: public BaseObject {
 		void removeElement(unsigned elem_idx);
 		OperatorClassElement getElement(unsigned elem_idx);
 		bool isElementExists(OperatorClassElement elem);
-		void removeElements(void);
+		void removeElements();
 
 		//! \brief Methods used to obtain the class attributes
-		PgSqlType getDataType(void);
-		OperatorFamily *getFamily(void);
-		IndexingType getIndexingType(void);
-		bool isDefault(void);
-		unsigned getElementCount(void);
+		PgSqlType getDataType();
+		OperatorFamily *getFamily();
+		IndexingType getIndexingType();
+		bool isDefault();
+		unsigned getElementCount();
 
 		//! \brief Returns the SQL/XML code definition for operator class
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;

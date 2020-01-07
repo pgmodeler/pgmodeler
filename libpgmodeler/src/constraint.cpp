@@ -18,7 +18,7 @@
 
 #include "constraint.h"
 
-Constraint::Constraint(void)
+Constraint::Constraint()
 {
 	ref_table=nullptr;
 	obj_type=ObjectType::Constraint;
@@ -50,7 +50,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::Elements]=QString();
 }
 
-Constraint::~Constraint(void)
+Constraint::~Constraint()
 {
 	columns.clear();
 	ref_columns.clear();
@@ -261,12 +261,12 @@ void Constraint::setNoInherit(bool value)
 	no_inherit=value;
 }
 
-unsigned Constraint::getFillFactor(void)
+unsigned Constraint::getFillFactor()
 {
 	return(fill_factor);
 }
 
-ConstraintType Constraint::getConstraintType(void)
+ConstraintType Constraint::getConstraintType()
 {
 	return(constr_type);
 }
@@ -284,7 +284,7 @@ vector<Column *> Constraint::getColumns(unsigned col_type)
   return(col_type==SourceCols ? columns : ref_columns);
 }
 
-QString Constraint::getExpression(void)
+QString Constraint::getExpression()
 {
 	return(expression);
 }
@@ -324,7 +324,7 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
 	else return(nullptr);
 }
 
-BaseTable *Constraint::getReferencedTable(void)
+BaseTable *Constraint::getReferencedTable()
 {
 	return(ref_table);
 }
@@ -337,7 +337,7 @@ unsigned Constraint::getColumnCount(unsigned col_type)
 		return(columns.size());
 }
 
-void Constraint::removeColumns(void)
+void Constraint::removeColumns()
 {
 	setColumnsNotNull(false);
 	columns.clear();
@@ -379,22 +379,22 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 	}
 }
 
-DeferralType Constraint::getDeferralType(void)
+DeferralType Constraint::getDeferralType()
 {
 	return(deferral_type);
 }
 
-bool Constraint::isDeferrable(void)
+bool Constraint::isDeferrable()
 {
 	return(deferrable);
 }
 
-bool Constraint::isNoInherit(void)
+bool Constraint::isNoInherit()
 {
 	return(no_inherit);
 }
 
-bool Constraint::isReferRelationshipAddedColumn(void)
+bool Constraint::isReferRelationshipAddedColumn()
 {
 	vector<Column *>::iterator itr, itr_end;
 	vector<ExcludeElement>::iterator itr1, itr1_end;
@@ -435,7 +435,7 @@ bool Constraint::isReferRelationshipAddedColumn(void)
 	return(found);
 }
 
-vector<Column *> Constraint::getRelationshipAddedColumns(void)
+vector<Column *> Constraint::getRelationshipAddedColumns()
 {
 	Column *column=nullptr;
 	vector<Column *> cols;
@@ -460,7 +460,7 @@ vector<Column *> Constraint::getRelationshipAddedColumns(void)
 	return(cols);
 }
 
-MatchType Constraint::getMatchType(void)
+MatchType Constraint::getMatchType()
 {
 	return(match_type);
 }
@@ -480,7 +480,7 @@ int Constraint::getExcludeElementIndex(ExcludeElement elem)
 	return(found ? idx : -1);
 }
 
-vector<ExcludeElement> Constraint::getExcludeElements(void)
+vector<ExcludeElement> Constraint::getExcludeElements()
 {
 	return(excl_elements);
 }
@@ -587,7 +587,7 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 	setCodeInvalidated(true);
 }
 
-void Constraint::removeExcludeElements(void)
+void Constraint::removeExcludeElements()
 {
 	excl_elements.clear();
 	setCodeInvalidated(true);
@@ -613,7 +613,7 @@ ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
 	return(excl_elements[elem_idx]);
 }
 
-unsigned Constraint::getExcludeElementCount(void)
+unsigned Constraint::getExcludeElementCount()
 {
 	return(excl_elements.size());
 }
@@ -638,7 +638,7 @@ void Constraint::setIndexType(IndexingType index_type)
 	this->index_type=index_type;
 }
 
-IndexingType Constraint::getIndexType(void)
+IndexingType Constraint::getIndexType()
 {
 	return(index_type);
 }
@@ -648,7 +648,7 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 	return(getCodeDefinition(def_type, false));
 }
 
-void Constraint::setDeclInTableAttribute(void)
+void Constraint::setDeclInTableAttribute()
 {
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
 		attributes[Attributes::DeclInTable]=QString();

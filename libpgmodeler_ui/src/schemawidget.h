@@ -40,7 +40,7 @@ class SchemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

@@ -21,7 +21,7 @@
 
 TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(txtbox)
 {
-	connect(txtbox, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(txtbox, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	box=new QGraphicsPolygonItem;
 	text=new QGraphicsSimpleTextItem;
@@ -42,7 +42,7 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 	this->configureObject();
 }
 
-TextboxView::~TextboxView(void)
+TextboxView::~TextboxView()
 {
 	this->removeFromGroup(text_item);
 	delete text_item;
@@ -71,7 +71,7 @@ void TextboxView::setToolTip(const QString &tooltip)
 	txtbox_tooltip = tooltip;
 }
 
-void TextboxView::__configureObject(void)
+void TextboxView::__configureObject()
 {
 	Textbox *txtbox=dynamic_cast<Textbox *>(this->getUnderlyingObject());
 	QTextCharFormat fmt=font_config[Attributes::Global];
@@ -120,14 +120,14 @@ void TextboxView::__configureObject(void)
 		this->BaseObjectView::setToolTip(txtbox_tooltip);
 }
 
-void TextboxView::configureObject(void)
+void TextboxView::configureObject()
 {
 	this->__configureObject();
 	this->configureObjectShadow();
 	this->configureObjectSelection();
 }
 
-void TextboxView::configureObjectShadow(void)
+void TextboxView::configureObjectShadow()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_shadow);
 
@@ -137,7 +137,7 @@ void TextboxView::configureObjectShadow(void)
 	pol_item->setPos(3.5,3.5);
 }
 
-void TextboxView::configureObjectSelection(void)
+void TextboxView::configureObjectSelection()
 {
 	QGraphicsPolygonItem *pol_item=dynamic_cast<QGraphicsPolygonItem *>(obj_selection);
 

@@ -135,7 +135,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
-void ColumnWidget::editSequenceAttributes(void)
+void ColumnWidget::editSequenceAttributes()
 {
 	Column *col = dynamic_cast<Column *>(this->object);
 	Schema *schema = nullptr;
@@ -166,7 +166,7 @@ void ColumnWidget::editSequenceAttributes(void)
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 }
 
-void ColumnWidget::applyConfiguration(void)
+void ColumnWidget::applyConfiguration()
 {
 	try
 	{

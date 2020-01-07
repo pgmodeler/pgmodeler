@@ -25,7 +25,7 @@ PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : 
 	this->read_only = read_only;
 }
 
-PlainTextItemDelegate::~PlainTextItemDelegate(void)
+PlainTextItemDelegate::~PlainTextItemDelegate()
 {
 
 }

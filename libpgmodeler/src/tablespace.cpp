@@ -20,7 +20,7 @@
 
 unsigned Tablespace::tabspace_id=1000;
 
-Tablespace::Tablespace(void)
+Tablespace::Tablespace()
 {
 	obj_type=ObjectType::Tablespace;
 	attributes[Attributes::Directory]=QString();
@@ -53,7 +53,7 @@ void Tablespace::setDirectory(const QString &dir)
 	this->directory=dir_aux;
 }
 
-QString Tablespace::getDirectory(void)
+QString Tablespace::getDirectory()
 {
 	return(directory);
 }

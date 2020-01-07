@@ -22,7 +22,7 @@
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
-DatabaseModel::DatabaseModel(void)
+DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
 	object_id=DatabaseModel::dbmodel_id++;
@@ -90,13 +90,13 @@ DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
 	this->model_wgt=model_wgt;
 }
 
-DatabaseModel::~DatabaseModel(void)
+DatabaseModel::~DatabaseModel()
 {
 	this->blockSignals(true);
 	destroyObjects();
 }
 
-ModelWidget *DatabaseModel::getModelWidget(void)
+ModelWidget *DatabaseModel::getModelWidget()
 {
 	return(model_wgt);
 }
@@ -661,7 +661,7 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 	  return(obj_list->size());
 }
 
-unsigned DatabaseModel::getMaxObjectCount(void)
+unsigned DatabaseModel::getMaxObjectCount()
 {
 	vector<ObjectType> types = getObjectTypes(false, {ObjectType::Database});
   unsigned count = 0, max = 0;
@@ -675,7 +675,7 @@ unsigned DatabaseModel::getMaxObjectCount(void)
   return(max);
 }
 
-unsigned DatabaseModel::getObjectCount(void)
+unsigned DatabaseModel::getObjectCount()
 {
 	vector<ObjectType> types= getObjectTypes(false, {ObjectType::Database});
 	unsigned count=0;
@@ -694,17 +694,17 @@ QString DatabaseModel::getLocalization(unsigned localiz_id)
 	return(localizations[localiz_id]);
 }
 
-int DatabaseModel::getConnectionLimit(void)
+int DatabaseModel::getConnectionLimit()
 {
 	return(conn_limit);
 }
 
-QString DatabaseModel::getTemplateDB(void)
+QString DatabaseModel::getTemplateDB()
 {
 	return(template_db);
 }
 
-EncodingType DatabaseModel::getEncoding(void)
+EncodingType DatabaseModel::getEncoding()
 {
 	return(encoding);
 }
@@ -717,7 +717,7 @@ BaseObject *DatabaseModel::getDefaultObject(ObjectType obj_type)
 	return(default_objs[obj_type]);
 }
 
-QString DatabaseModel::getAuthor(void)
+QString DatabaseModel::getAuthor()
 {
 	return(author);
 }
@@ -735,7 +735,7 @@ void DatabaseModel::setProtected(bool value)
 	BaseObject::setProtected(value);
 }
 
-void DatabaseModel::destroyObjects(void)
+void DatabaseModel::destroyObjects()
 {
 	ObjectType graph_types[]={ ObjectType::Schema, ObjectType::BaseRelationship, ObjectType::Relationship,
 														 ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
@@ -1348,7 +1348,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 	}
 }
 
-void DatabaseModel::updateTablesFKRelationships(void)
+void DatabaseModel::updateTablesFKRelationships()
 {
 	vector<BaseObject *>::iterator itr=tables.begin();
 
@@ -1462,7 +1462,7 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	}
 }
 
-void DatabaseModel::disconnectRelationships(void)
+void DatabaseModel::disconnectRelationships()
 {
 	try
 	{
@@ -1497,7 +1497,7 @@ void DatabaseModel::disconnectRelationships(void)
 	}
 }
 
-void DatabaseModel::validateRelationships(void)
+void DatabaseModel::validateRelationships()
 {
 	vector<BaseObject *>::iterator itr, itr_end, itr_ant;
 	Relationship *rel=nullptr;
@@ -1895,7 +1895,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 	}
 }
 
-void DatabaseModel::storeSpecialObjectsXML(void)
+void DatabaseModel::storeSpecialObjectsXML()
 {
 	unsigned count=0, i=0, type_id=0;
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -3597,7 +3597,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	}
 }
 
-QString DatabaseModel::getErrorExtraInfo(void)
+QString DatabaseModel::getErrorExtraInfo()
 {
 	QString extra_info;
 
@@ -3655,7 +3655,7 @@ void DatabaseModel::setLastPosition(const QPoint &pnt)
 	last_pos=pnt;
 }
 
-QPoint DatabaseModel::getLastPosition(void)
+QPoint DatabaseModel::getLastPosition()
 {
 	return(last_pos);
 }
@@ -3665,12 +3665,12 @@ void DatabaseModel::setLastZoomFactor(double zoom)
 	last_zoom=zoom;
 }
 
-double DatabaseModel::getLastZoomFactor(void)
+double DatabaseModel::getLastZoomFactor()
 {
 	return(last_zoom);
 }
 
-Role *DatabaseModel::createRole(void)
+Role *DatabaseModel::createRole()
 {
 	attribs_map attribs, attribs_aux;
 	Role *role=nullptr, *ref_role=nullptr;
@@ -3770,7 +3770,7 @@ Role *DatabaseModel::createRole(void)
 	return(role);
 }
 
-Tablespace *DatabaseModel::createTablespace(void)
+Tablespace *DatabaseModel::createTablespace()
 {
 	attribs_map attribs;
 	Tablespace *tabspc=nullptr;
@@ -3791,7 +3791,7 @@ Tablespace *DatabaseModel::createTablespace(void)
 	return(tabspc);
 }
 
-Schema *DatabaseModel::createSchema(void)
+Schema *DatabaseModel::createSchema()
 {
 	Schema *schema=nullptr;
 	attribs_map attribs;
@@ -3815,7 +3815,7 @@ Schema *DatabaseModel::createSchema(void)
 	return(schema);
 }
 
-Language *DatabaseModel::createLanguage(void)
+Language *DatabaseModel::createLanguage()
 {
 	attribs_map attribs;
 	Language *lang=nullptr;
@@ -3891,7 +3891,7 @@ Language *DatabaseModel::createLanguage(void)
 	return(lang);
 }
 
-Function *DatabaseModel::createFunction(void)
+Function *DatabaseModel::createFunction()
 {
 	attribs_map attribs, attribs_aux;
 	Function *func=nullptr;
@@ -4044,7 +4044,7 @@ Function *DatabaseModel::createFunction(void)
 	return(func);
 }
 
-Parameter DatabaseModel::createParameter(void)
+Parameter DatabaseModel::createParameter()
 {
 	Parameter param;
 	attribs_map attribs;
@@ -4091,7 +4091,7 @@ Parameter DatabaseModel::createParameter(void)
 	return(param);
 }
 
-TypeAttribute DatabaseModel::createTypeAttribute(void)
+TypeAttribute DatabaseModel::createTypeAttribute()
 {
 	TypeAttribute tpattrib;
 	attribs_map attribs;
@@ -4153,7 +4153,7 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 	return(tpattrib);
 }
 
-PgSqlType DatabaseModel::createPgSQLType(void)
+PgSqlType DatabaseModel::createPgSQLType()
 {
 	attribs_map attribs;
 	unsigned length=1, dimension=0, type_idx=0;
@@ -4210,7 +4210,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	}
 }
 
-Type *DatabaseModel::createType(void)
+Type *DatabaseModel::createType()
 {
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
@@ -4393,7 +4393,7 @@ Type *DatabaseModel::createType(void)
 	return(type);
 }
 
-Domain *DatabaseModel::createDomain(void)
+Domain *DatabaseModel::createDomain()
 {
 	attribs_map attribs;
 	Domain *domain=nullptr;
@@ -4446,7 +4446,7 @@ Domain *DatabaseModel::createDomain(void)
 	return(domain);
 }
 
-Cast *DatabaseModel::createCast(void)
+Cast *DatabaseModel::createCast()
 {
 	attribs_map attribs;
 	Cast *cast=nullptr;
@@ -4519,7 +4519,7 @@ Cast *DatabaseModel::createCast(void)
 	return(cast);
 }
 
-Conversion *DatabaseModel::createConversion(void)
+Conversion *DatabaseModel::createConversion()
 {
 	attribs_map attribs;
 	Conversion *conv=nullptr;
@@ -4578,7 +4578,7 @@ Conversion *DatabaseModel::createConversion(void)
 	return(conv);
 }
 
-Operator *DatabaseModel::createOperator(void)
+Operator *DatabaseModel::createOperator()
 {
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
@@ -4673,7 +4673,7 @@ Operator *DatabaseModel::createOperator(void)
 	return(oper);
 }
 
-OperatorClass *DatabaseModel::createOperatorClass(void)
+OperatorClass *DatabaseModel::createOperatorClass()
 {
 	attribs_map attribs, attribs_aux;
 	map<QString, unsigned> elem_types;
@@ -4791,7 +4791,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	return(op_class);
 }
 
-OperatorFamily *DatabaseModel::createOperatorFamily(void)
+OperatorFamily *DatabaseModel::createOperatorFamily()
 {
 	attribs_map attribs;
 	OperatorFamily *op_family=nullptr;
@@ -4812,7 +4812,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 	return(op_family);
 }
 
-Aggregate *DatabaseModel::createAggregate(void)
+Aggregate *DatabaseModel::createAggregate()
 {
 	attribs_map attribs;
 	BaseObject *func=nullptr;
@@ -4881,7 +4881,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 	return(aggreg);
 }
 
-Table *DatabaseModel::createTable(void)
+Table *DatabaseModel::createTable()
 {
 	try
 	{
@@ -4903,7 +4903,7 @@ Table *DatabaseModel::createTable(void)
 	}
 }
 
-Column *DatabaseModel::createColumn(void)
+Column *DatabaseModel::createColumn()
 {
 	attribs_map attribs;
 	Column *column=nullptr;
@@ -5348,7 +5348,7 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	}
 }
 
-XmlParser *DatabaseModel::getXMLParser(void)
+XmlParser *DatabaseModel::getXMLParser()
 {
 	return(&xmlparser);
 }
@@ -5388,7 +5388,7 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 	}
 }
 
-Index *DatabaseModel::createIndex(void)
+Index *DatabaseModel::createIndex()
 {
 	attribs_map attribs;
 	Index *index=nullptr;
@@ -5465,7 +5465,7 @@ Index *DatabaseModel::createIndex(void)
 	return(index);
 }
 
-Rule *DatabaseModel::createRule(void)
+Rule *DatabaseModel::createRule()
 {
 	attribs_map attribs;
 	QStringList cmd_list;
@@ -5545,7 +5545,7 @@ Rule *DatabaseModel::createRule(void)
 	return(rule);
 }
 
-Trigger *DatabaseModel::createTrigger(void)
+Trigger *DatabaseModel::createTrigger()
 {
 	attribs_map attribs;
 	Trigger *trigger=nullptr;
@@ -5708,7 +5708,7 @@ Trigger *DatabaseModel::createTrigger(void)
 	return(trigger);
 }
 
-Policy *DatabaseModel::createPolicy(void)
+Policy *DatabaseModel::createPolicy()
 {
 	attribs_map attribs;
 	Policy *policy=nullptr;
@@ -5800,7 +5800,7 @@ Policy *DatabaseModel::createPolicy(void)
 	return(policy);
 }
 
-EventTrigger *DatabaseModel::createEventTrigger(void)
+EventTrigger *DatabaseModel::createEventTrigger()
 {
 	attribs_map attribs;
 	EventTrigger *event_trig=nullptr;
@@ -5860,7 +5860,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	return(event_trig);
 }
 
-GenericSQL *DatabaseModel::createGenericSQL(void)
+GenericSQL *DatabaseModel::createGenericSQL()
 {
 	GenericSQL *genericsql=nullptr;
 	attribs_map attribs;
@@ -5942,7 +5942,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	return(genericsql);
 }
 
-ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
+ForeignDataWrapper *DatabaseModel::createForeignDataWrapper()
 {
 	attribs_map attribs;
 	ForeignDataWrapper *fdw=nullptr;
@@ -6013,7 +6013,7 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	return(fdw);
 }
 
-ForeignServer *DatabaseModel::createForeignServer(void)
+ForeignServer *DatabaseModel::createForeignServer()
 {
 	attribs_map attribs;
 	ForeignServer *server = nullptr;
@@ -6069,7 +6069,7 @@ ForeignServer *DatabaseModel::createForeignServer(void)
 	return(server);
 }
 
-UserMapping *DatabaseModel::createUserMapping(void)
+UserMapping *DatabaseModel::createUserMapping()
 {
 	attribs_map attribs;
 	UserMapping *user_map = nullptr;
@@ -6125,7 +6125,7 @@ UserMapping *DatabaseModel::createUserMapping(void)
 	return(user_map);
 }
 
-ForeignTable *DatabaseModel::createForeignTable(void)
+ForeignTable *DatabaseModel::createForeignTable()
 {
 	ForeignTable *ftable = nullptr;
 
@@ -6286,7 +6286,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 	return(sequence);
 }
 
-View *DatabaseModel::createView(void)
+View *DatabaseModel::createView()
 {
 	attribs_map attribs, aux_attribs;
 	View *view=nullptr;
@@ -6511,7 +6511,7 @@ View *DatabaseModel::createView(void)
 	return(view);
 }
 
-Collation *DatabaseModel::createCollation(void)
+Collation *DatabaseModel::createCollation()
 {
 	Collation *collation=nullptr;
 	BaseObject *copy_coll=nullptr;
@@ -6565,7 +6565,7 @@ Collation *DatabaseModel::createCollation(void)
 	return(collation);
 }
 
-Extension *DatabaseModel::createExtension(void)
+Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
@@ -6589,7 +6589,7 @@ Extension *DatabaseModel::createExtension(void)
 	return(extension);
 }
 
-Tag *DatabaseModel::createTag(void)
+Tag *DatabaseModel::createTag()
 {
 	Tag *tag=nullptr;
 	attribs_map attribs;
@@ -6627,7 +6627,7 @@ Tag *DatabaseModel::createTag(void)
 	}
 }
 
-Textbox *DatabaseModel::createTextbox(void)
+Textbox *DatabaseModel::createTextbox()
 {
 	Textbox *txtbox=nullptr;
 	attribs_map attribs;
@@ -6660,7 +6660,7 @@ Textbox *DatabaseModel::createTextbox(void)
 	return(txtbox);
 }
 
-BaseRelationship *DatabaseModel::createRelationship(void)
+BaseRelationship *DatabaseModel::createRelationship()
 {
 	vector<unsigned> cols_special_pk;
 	attribs_map attribs, constr_attribs;
@@ -6969,7 +6969,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	return(base_rel);
 }
 
-Permission *DatabaseModel::createPermission(void)
+Permission *DatabaseModel::createPermission()
 {
 	Permission *perm=nullptr;
 	BaseObject *object=nullptr;
@@ -10077,7 +10077,7 @@ void DatabaseModel::setInvalidated(bool value)
 	this->invalidated=value;
 }
 
-bool DatabaseModel::isInvalidated(void)
+bool DatabaseModel::isInvalidated()
 {
 	return(invalidated);
 }
@@ -10114,22 +10114,22 @@ void DatabaseModel::setAllowConnections(bool value)
 	allow_conns = value;
 }
 
-bool  DatabaseModel::isAppendAtEOD(void)
+bool  DatabaseModel::isAppendAtEOD()
 {
 	return(append_at_eod);
 }
 
-bool DatabaseModel::isPrependedAtBOD(void)
+bool DatabaseModel::isPrependedAtBOD()
 {
 	return(prepend_at_bod);
 }
 
-bool DatabaseModel::isTemplate(void)
+bool DatabaseModel::isTemplate()
 {
 	return(is_template);
 }
 
-bool DatabaseModel::isAllowConnections(void)
+bool DatabaseModel::isAllowConnections()
 {
 	return(allow_conns);
 }
@@ -10777,7 +10777,7 @@ void DatabaseModel::setLayers(const QStringList &layers)
 	this->layers = layers;
 }
 
-QStringList DatabaseModel::getLayers(void)
+QStringList DatabaseModel::getLayers()
 {
 	return(layers);
 }
@@ -10787,13 +10787,13 @@ void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
 	active_layers = layers;
 }
 
-QList<unsigned> DatabaseModel::getActiveLayers(void)
+QList<unsigned> DatabaseModel::getActiveLayers()
 {
 	return(active_layers);
 }
 
 template<class TableClass>
-TableClass *DatabaseModel::createPhysicalTable(void)
+TableClass *DatabaseModel::createPhysicalTable()
 {
 	attribs_map attribs, aux_attribs;
 	QString elem;

@@ -49,8 +49,8 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	vbox->addWidget(sourcecode_txt);
 	sourcecode_gb->setLayout(vbox);
 
-	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(connectToServer(void)));
-	connect(refresh_tb, SIGNAL(clicked(void)), this, SLOT(connectToServer(void)));
+	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(connectToServer()));
+	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(connectToServer()));
 	connect(databases_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeDatabaseExplorer(int)));
 	connect(sql_exec_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeSQLExecutionTab(int)));
 	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(browseDatabase()));
@@ -89,7 +89,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 			});
 }
 
-SQLToolWidget::~SQLToolWidget(void)
+SQLToolWidget::~SQLToolWidget()
 {
 	databases_tbw->blockSignals(true);
 
@@ -113,7 +113,7 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 	return(QWidget::eventFilter(object, event));
 }
 
-void SQLToolWidget::updateTabs(void)
+void SQLToolWidget::updateTabs()
 {
 	SQLExecutionWidget *sql_exec_wgt=nullptr;
 
@@ -130,7 +130,7 @@ void SQLToolWidget::updateTabs(void)
 	}
 }
 
-void SQLToolWidget::configureSnippets(void)
+void SQLToolWidget::configureSnippets()
 {
 	SQLExecutionWidget *sql_exec_wgt=nullptr;
 
@@ -148,7 +148,7 @@ void SQLToolWidget::clearDatabases()
 	refresh_tb->setEnabled(false);
 }
 
-void SQLToolWidget::connectToServer(void)
+void SQLToolWidget::connectToServer()
 {
 	try
 	{
@@ -185,7 +185,7 @@ void SQLToolWidget::connectToServer(void)
 	}
 }
 
-void SQLToolWidget::disconnectFromDatabases(void)
+void SQLToolWidget::disconnectFromDatabases()
 {
 	try
 	{
@@ -241,7 +241,7 @@ void SQLToolWidget::handleDatabaseDropped(const QString &dbname)
 		}
 }
 
-DatabaseExplorerWidget *SQLToolWidget::browseDatabase(void)
+DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 {
 	try
 	{
@@ -426,7 +426,7 @@ void SQLToolWidget::showSnippet(const QString &snip)
 	}
 }
 
-bool SQLToolWidget::hasDatabasesBrowsed(void)
+bool SQLToolWidget::hasDatabasesBrowsed()
 {
 	return(databases_tbw->count() > 0);
 }

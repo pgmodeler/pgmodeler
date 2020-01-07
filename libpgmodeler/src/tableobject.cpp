@@ -18,7 +18,7 @@
 
 #include "tableobject.h"
 
-TableObject::TableObject(void)
+TableObject::TableObject()
 {
 	parent_table=nullptr;
 	decl_in_table=true;
@@ -30,7 +30,7 @@ void TableObject::setParentTable(BaseTable *table)
 	parent_table=table;
 }
 
-BaseTable *TableObject::getParentTable(void)
+BaseTable *TableObject::getParentTable()
 {
 	return(parent_table);
 }
@@ -42,7 +42,7 @@ void TableObject::setAddedByLinking(bool value)
 	add_by_copy=false;
 }
 
-bool TableObject::isAddedByLinking(void)
+bool TableObject::isAddedByLinking()
 {
 	return(add_by_linking);
 }
@@ -60,7 +60,7 @@ void TableObject::setDeclaredInTable(bool value)
 	decl_in_table=value;
 }
 
-bool TableObject::isAddedByGeneralization(void)
+bool TableObject::isAddedByGeneralization()
 {
 	return(add_by_generalization);
 }
@@ -72,17 +72,17 @@ void TableObject::setAddedByCopy(bool value)
 	add_by_linking=false;
 }
 
-bool TableObject::isAddedByCopy(void)
+bool TableObject::isAddedByCopy()
 {
 	return(add_by_copy);
 }
 
-bool TableObject::isAddedByRelationship(void)
+bool TableObject::isAddedByRelationship()
 {
 	return(add_by_linking || add_by_generalization || add_by_copy);
 }
 
-bool  TableObject::isDeclaredInTable(void)
+bool  TableObject::isDeclaredInTable()
 {
 	return(decl_in_table);
 }

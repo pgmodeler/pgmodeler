@@ -242,13 +242,13 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 	}
 }
 
-void DataManipulationForm::reject(void)
+void DataManipulationForm::reject()
 {
   GeneralConfigWidget::saveWidgetGeometry(this);
 	QDialog::reject();
 }
 
-void DataManipulationForm::clearItemsText(void)
+void DataManipulationForm::clearItemsText()
 {
 	for(auto &sel : results_tbw->selectedRanges())
 	{
@@ -260,7 +260,7 @@ void DataManipulationForm::clearItemsText(void)
 	}
 }
 
-void DataManipulationForm::listTables(void)
+void DataManipulationForm::listTables()
 {
 	table_cmb->clear();
 	csv_load_tb->setChecked(false);
@@ -280,7 +280,7 @@ void DataManipulationForm::listTables(void)
 	result_info_wgt->setVisible(false);
 }
 
-void DataManipulationForm::listColumns(void)
+void DataManipulationForm::listColumns()
 {
 	Catalog catalog;
 	Connection conn=Connection(tmpl_conn_params);
@@ -319,7 +319,7 @@ void DataManipulationForm::listColumns(void)
 
 }
 
-void DataManipulationForm::retrieveData(void)
+void DataManipulationForm::retrieveData()
 {
 	if(table_cmb->currentIndex() <= 0)
 		return;
@@ -473,7 +473,7 @@ void DataManipulationForm::retrieveData(void)
 	}
 }
 
-void DataManipulationForm::disableControlButtons(void)
+void DataManipulationForm::disableControlButtons()
 {
 	refresh_tb->setEnabled(schema_cmb->currentIndex() > 0 && table_cmb->currentIndex() > 0);
 	results_tbw->setRowCount(0);
@@ -490,7 +490,7 @@ void DataManipulationForm::disableControlButtons(void)
 	clearChangedRows();
 }
 
-void DataManipulationForm::enableRowControlButtons(void)
+void DataManipulationForm::enableRowControlButtons()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 	bool cols_selected, rows_selected;
@@ -515,7 +515,7 @@ void DataManipulationForm::enableRowControlButtons(void)
 	bulkedit_tb->setEnabled(sel_ranges.count() != 0);
 }
 
-void DataManipulationForm::resetAdvancedControls(void)
+void DataManipulationForm::resetAdvancedControls()
 {
 	ord_column_cmb->clear();
 	ord_columns_lst->clear();
@@ -525,7 +525,7 @@ void DataManipulationForm::resetAdvancedControls(void)
 	clear_ord_cols_tb->setEnabled(false);
 }
 
-void DataManipulationForm::addColumnToList(void)
+void DataManipulationForm::addColumnToList()
 {
 	if(ord_column_cmb->count() > 0)
 	{
@@ -540,7 +540,7 @@ void DataManipulationForm::addColumnToList(void)
 	}
 }
 
-void DataManipulationForm::enableColumnControlButtons(void)
+void DataManipulationForm::enableColumnControlButtons()
 {
 	clear_ord_cols_tb->setEnabled(ord_columns_lst->count() > 0);
 	add_ord_col_tb->setEnabled(ord_column_cmb->count() > 0);
@@ -551,7 +551,7 @@ void DataManipulationForm::enableColumnControlButtons(void)
 													 ord_columns_lst->currentRow() <= ord_columns_lst->count() - 2);
 }
 
-void DataManipulationForm::swapColumns(void)
+void DataManipulationForm::swapColumns()
 {
 	int curr_idx=0, new_idx=0;
 	QStringList items;
@@ -659,7 +659,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 	}
 }
 
-void DataManipulationForm::removeColumnFromList(void)
+void DataManipulationForm::removeColumnFromList()
 {
 	if(qApp->mouseButtons()==Qt::NoButton || qApp->mouseButtons()==Qt::LeftButton)
 	{
@@ -677,7 +677,7 @@ void DataManipulationForm::removeColumnFromList(void)
 	}
 }
 
-void DataManipulationForm::clearColumnList(void)
+void DataManipulationForm::clearColumnList()
 {
 	ord_column_cmb->clear();
 	ord_column_cmb->addItems(col_names);
@@ -1052,7 +1052,7 @@ void DataManipulationForm::markUpdateOnRow(QTableWidgetItem *item)
 	}
 }
 
-void DataManipulationForm::markDeleteOnRows(void)
+void DataManipulationForm::markDeleteOnRows()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 	QTableWidgetItem *item=nullptr;
@@ -1114,7 +1114,7 @@ void DataManipulationForm::addRow(bool focus_new_row)
 	}
 }
 
-void DataManipulationForm::duplicateRows(void)
+void DataManipulationForm::duplicateRows()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=results_tbw->selectedRanges();
 
@@ -1178,7 +1178,7 @@ void DataManipulationForm::removeNewRows(vector<int> ins_rows)
 	}
 }
 
-void DataManipulationForm::clearChangedRows(void)
+void DataManipulationForm::clearChangedRows()
 {
 	changed_rows.clear();
 	prev_row_colors.clear();
@@ -1228,17 +1228,17 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	data_manip->show();
 }
 
-void DataManipulationForm::browseReferrerTable(void)
+void DataManipulationForm::browseReferrerTable()
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), true);
 }
 
-void DataManipulationForm::browseReferencedTable(void)
+void DataManipulationForm::browseReferencedTable()
 {
 	browseTable(qobject_cast<QAction *>(sender())->data().toString(), false);
 }
 
-void DataManipulationForm::undoOperations(void)
+void DataManipulationForm::undoOperations()
 {
 	QTableWidgetItem *item=nullptr;
 	vector<int> rows, ins_rows;
@@ -1301,7 +1301,7 @@ void DataManipulationForm::insertRowOnTabPress(int curr_row, int curr_col, int p
 		addRow();
 }
 
-void DataManipulationForm::saveChanges(void)
+void DataManipulationForm::saveChanges()
 {
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: data manipulation save feature disabled warning."
@@ -1528,7 +1528,7 @@ void DataManipulationForm::setColumnsCheckState(Qt::CheckState state)
   results_tbw->blockSignals(false);
 }
 
-void DataManipulationForm::truncateTable(void)
+void DataManipulationForm::truncateTable()
 {
 	try
 	{
@@ -1564,14 +1564,14 @@ void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 	}
 }
 
-void DataManipulationForm::openNewWindow(void)
+void DataManipulationForm::openNewWindow()
 {
 	DataManipulationForm *data_manip = new DataManipulationForm;
 	data_manip->setAttributes(tmpl_conn_params, QString());
 	data_manip->show();
 }
 
-void DataManipulationForm::showPopupMenu(void)
+void DataManipulationForm::showPopupMenu()
 {
 	if(QApplication::mouseButtons()==Qt::RightButton)
 	{

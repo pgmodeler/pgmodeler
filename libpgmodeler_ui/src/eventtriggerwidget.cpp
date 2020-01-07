@@ -103,7 +103,7 @@ void EventTriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	filter_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-void EventTriggerWidget::applyConfiguration(void)
+void EventTriggerWidget::applyConfiguration()
 {
 	try
 	{

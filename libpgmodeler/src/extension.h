@@ -42,7 +42,7 @@ class Extension: public BaseObject {
 	public:
 		static constexpr unsigned CurVersion=0,
 		OldVersion=1;
-		Extension(void);
+		Extension();
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);
@@ -56,7 +56,7 @@ class Extension: public BaseObject {
 		void setVersion(unsigned ver, const QString &value);
 
 		//! \brief Returns if the extension handles a datatype
-		bool handlesType(void);
+		bool handlesType();
 
 		//! \brief Returns on of the versions of the extension
 		QString getVersion(unsigned ver);

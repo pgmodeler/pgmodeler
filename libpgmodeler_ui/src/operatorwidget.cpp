@@ -110,7 +110,7 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	arg_types[1]->setAttributes(right_type, model);
 }
 
-void OperatorWidget::applyConfiguration(void)
+void OperatorWidget::applyConfiguration()
 {
 	try
 	{

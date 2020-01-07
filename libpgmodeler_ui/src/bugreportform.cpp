@@ -32,8 +32,8 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 
 	PgModelerUiNs::configureWidgetFont(hint_lbl, PgModelerUiNs::MediumFontFactor);
 
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
-	connect(create_btn, SIGNAL(clicked(void)), this, SLOT(generateReport(void)));
+	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(close()));
+	connect(create_btn, SIGNAL(clicked()), this, SLOT(generateReport()));
 	connect(attach_mod_chk, SIGNAL(toggled(bool)), attach_tb, SLOT(setEnabled(bool)));
 	connect(attach_tb, SIGNAL(clicked()), this, SLOT(attachModel()));
 	connect(output_tb, SIGNAL(clicked()), this, SLOT(selectOutput()));
@@ -64,7 +64,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 	}
 }
 
-QByteArray BugReportForm::generateReportBuffer(void)
+QByteArray BugReportForm::generateReportBuffer()
 {
 	QByteArray buf;
 
@@ -78,13 +78,13 @@ QByteArray BugReportForm::generateReportBuffer(void)
 	return(buf);
 }
 
-void BugReportForm::generateReport(void)
+void BugReportForm::generateReport()
 { 
 	generateReport(generateReportBuffer());
 	this->accept();
 }
 
-void BugReportForm::enableGeneration(void)
+void BugReportForm::enableGeneration()
 {
 	create_btn->setEnabled(!output_edt->text().isEmpty() && !actions_txt->toPlainText().isEmpty());
 }
@@ -121,7 +121,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	}
 }
 
-void BugReportForm::attachModel(void)
+void BugReportForm::attachModel()
 {
 	QFileDialog file_dlg;
 
@@ -156,7 +156,7 @@ void BugReportForm::attachModel(void)
 	}
 }
 
-void BugReportForm::selectOutput(void)
+void BugReportForm::selectOutput()
 {
 	QFileDialog file_dlg;
 

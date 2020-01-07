@@ -18,7 +18,7 @@
 
 #include "resultset.h"
 
-ResultSet::ResultSet(void)
+ResultSet::ResultSet()
 {
 	sql_result=nullptr;
 	empty_result=false;
@@ -64,12 +64,12 @@ ResultSet::ResultSet(PGresult *sql_result)
 	}
 }
 
-ResultSet::~ResultSet(void)
+ResultSet::~ResultSet()
 {
 	clearResultSet();
 }
 
-void ResultSet::clearResultSet(void)
+void ResultSet::clearResultSet()
 {
 	/* Destroy the resultset of the object if it was not copied
 		to another class instance (see 'operator =') */
@@ -200,7 +200,7 @@ int ResultSet::getColumnSize(int column_idx)
 	return(PQgetlength(sql_result, current_tuple, column_idx));
 }
 
-attribs_map ResultSet::getTupleValues(void)
+attribs_map ResultSet::getTupleValues()
 {
 	attribs_map tup_vals;
 
@@ -213,7 +213,7 @@ attribs_map ResultSet::getTupleValues(void)
 	return(tup_vals);
 }
 
-int ResultSet::getTupleCount(void)
+int ResultSet::getTupleCount()
 {
 	//In case the result has some tuples
 	if(!empty_result)
@@ -225,12 +225,12 @@ int ResultSet::getTupleCount(void)
 		return(atoi(PQcmdTuples(sql_result)));
 }
 
-int ResultSet::getColumnCount(void)
+int ResultSet::getColumnCount()
 {
 	return(PQnfields(sql_result));
 }
 
-int ResultSet::getCurrentTuple(void)
+int ResultSet::getCurrentTuple()
 {
 	return(current_tuple);
 }
@@ -310,12 +310,12 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 	}
 }
 
-bool ResultSet::isEmpty(void)
+bool ResultSet::isEmpty()
 {
 	return(empty_result);
 }
 
-bool ResultSet::isValid(void)
+bool ResultSet::isValid()
 {
 	return(sql_result != nullptr);
 }

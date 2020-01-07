@@ -24,7 +24,7 @@ constexpr unsigned ObjectsDiffInfo::AlterObject;
 constexpr unsigned ObjectsDiffInfo::IgnoreObject;
 constexpr unsigned ObjectsDiffInfo::NoDifference;
 
-ObjectsDiffInfo::ObjectsDiffInfo(void)
+ObjectsDiffInfo::ObjectsDiffInfo()
 {
 	object=old_object=nullptr;
 	diff_type=NoDifference;
@@ -37,12 +37,12 @@ ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObj
 	this->old_object=new_object;
 }
 
-unsigned ObjectsDiffInfo::getDiffType(void)
+unsigned ObjectsDiffInfo::getDiffType()
 {
 	return(diff_type);
 }
 
-QString ObjectsDiffInfo::getInfoMessage(void)
+QString ObjectsDiffInfo::getInfoMessage()
 {
 	QString msg=QString("%1 `%2' (%3)"), obj_name;
 	BaseObject *ref_obj=nullptr;
@@ -97,7 +97,7 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 	return(msg);
 }
 
-QString ObjectsDiffInfo::getDiffTypeString(void)
+QString ObjectsDiffInfo::getDiffTypeString()
 {
 	if(diff_type==NoDifference)
 		return(QString());
@@ -111,12 +111,12 @@ QString ObjectsDiffInfo::getDiffTypeString(void)
 		return(QString("IGNORE"));
 }
 
-BaseObject *ObjectsDiffInfo::getObject(void)
+BaseObject *ObjectsDiffInfo::getObject()
 {
 	return(object);
 }
 
-BaseObject *ObjectsDiffInfo::getOldObject(void)
+BaseObject *ObjectsDiffInfo::getOldObject()
 {
 	return(old_object);
 }

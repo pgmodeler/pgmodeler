@@ -169,20 +169,20 @@ class PgModelerCli: public QApplication {
 		void parseOptions(attribs_map &parsed_opts);
 
 		//! \brief Shows the options menu
-		void showMenu(void);
+		void showMenu();
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
 
 		//! \brief Initializes the options maps
-		void initializeOptions(void);
+		void initializeOptions();
 
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */
-		void extractObjectXML(void);
+		void extractObjectXML();
 
 		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
-		void recreateObjects(void);
+		void recreateObjects();
 
 		//! \brief Fix some xml attributes and remove unused tags
 		void fixObjectAttributes(QString &obj_xml);
@@ -203,11 +203,11 @@ class PgModelerCli: public QApplication {
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);
 
-		void fixModel(void);
-		void exportModel(void);
-		void importDatabase(void);
-		void diffModelDatabase(void);
-		void updateMimeType(void);
+		void fixModel();
+		void exportModel();
+		void importDatabase();
+		void diffModelDatabase();
+		void updateMimeType();
 
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
@@ -216,8 +216,8 @@ class PgModelerCli: public QApplication {
 
 	public:
 		PgModelerCli(int argc, char **argv);
-		~PgModelerCli(void);
-		int exec(void);
+		~PgModelerCli();
+		int exec();
 
 	private slots:
 		void handleObjectAddition(BaseObject *);

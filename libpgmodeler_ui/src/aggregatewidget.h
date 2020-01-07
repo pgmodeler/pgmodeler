@@ -62,7 +62,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		void handleDataType(int row);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

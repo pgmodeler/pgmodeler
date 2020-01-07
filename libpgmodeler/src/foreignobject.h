@@ -40,13 +40,13 @@ class ForeignObject {
 		static const QString OptionsSeparator;
 		static const QString OptionValueSeparator;
 
-		ForeignObject(void);
+		ForeignObject();
 
 		void setOption(const QString &opt, const QString &value);
 		void setOptions(const attribs_map &options);
 		void removeOption(const QString &opt);
-		void removeOptions(void);
-		attribs_map getOptions(void);
+		void removeOptions();
+		attribs_map getOptions();
 
 		void getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs);
 };

@@ -25,7 +25,7 @@ const QString Sequence::MaxSmallNegativeValue("-32768");
 const QString Sequence::MaxBigPositiveValue("+9223372036854775807");
 const QString Sequence::MaxBigNegativeValue("-9223372036854775808");
 
-Sequence::Sequence(void)
+Sequence::Sequence()
 {
 	obj_type=ObjectType::Sequence;
 	cycle=false;
@@ -343,42 +343,42 @@ void Sequence::setOwnerColumn(Column *column)
 	setCodeInvalidated(true);
 }
 
-bool Sequence::isReferRelationshipAddedColumn(void)
+bool Sequence::isReferRelationshipAddedColumn()
 {
 	return(owner_col && owner_col->isAddedByRelationship());
 }
 
-bool Sequence::isCycle(void)
+bool Sequence::isCycle()
 {
 	return(cycle);
 }
 
-QString Sequence::getMaxValue(void)
+QString Sequence::getMaxValue()
 {
 	return(max_value);
 }
 
-QString Sequence::getMinValue(void)
+QString Sequence::getMinValue()
 {
 	return(min_value);
 }
 
-QString Sequence::getCache(void)
+QString Sequence::getCache()
 {
 	return(cache);
 }
 
-QString Sequence::getIncrement(void)
+QString Sequence::getIncrement()
 {
 	return(increment);
 }
 
-QString Sequence::getStart(void)
+QString Sequence::getStart()
 {
 	return(start);
 }
 
-Column *Sequence::getOwnerColumn(void)
+Column *Sequence::getOwnerColumn()
 {
 	return(owner_col);
 }

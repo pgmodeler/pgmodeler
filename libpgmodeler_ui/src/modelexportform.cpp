@@ -56,16 +56,16 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	incl_index_ht=new HintTextWidget(incl_index_hint, this);
 	incl_index_ht->setText(incl_index_hint->statusTip());
 
-	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
-	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
-	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
-	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode(void)));
+	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
 	connect(pgsqlvers_chk, SIGNAL(toggled(bool)), pgsqlvers1_cmb, SLOT(setEnabled(bool)));
-	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close(void)));
-	connect(select_file_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
-	connect(select_img_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
-	connect(select_dict_tb, SIGNAL(clicked(void)), this, SLOT(selectOutputFile(void)));
-	connect(export_btn, SIGNAL(clicked(void)), this, SLOT(exportModel(void)));
+	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
+	connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+	connect(select_img_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+	connect(select_dict_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+	connect(export_btn, SIGNAL(clicked()), this, SLOT(exportModel()));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
 
@@ -94,12 +94,12 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	});
 
 	connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
-	connect(&export_hlp, SIGNAL(s_exportFinished(void)), this, SLOT(handleExportFinished(void)));
-	connect(&export_hlp, SIGNAL(s_exportCanceled(void)), this, SLOT(handleExportCanceled(void)));
+	connect(&export_hlp, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
+	connect(&export_hlp, SIGNAL(s_exportCanceled()), this, SLOT(handleExportCanceled()));
 	connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport(void)));
-	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections(void)));
+	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport()));
+	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections()));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), page_by_page_chk, SLOT(setDisabled(bool)));
@@ -177,7 +177,7 @@ void ModelExportForm::updateProgress(int progress, QString msg, ObjectType obj_t
 	}
 }
 
-void ModelExportForm::exportModel(void)
+void ModelExportForm::exportModel()
 {
 	try
 	{
@@ -254,7 +254,7 @@ void ModelExportForm::exportModel(void)
 	}
 }
 
-void ModelExportForm::selectExportMode(void)
+void ModelExportForm::selectExportMode()
 {
 	QList<QRadioButton *> radios={ export_to_dbms_rb, export_to_img_rb, export_to_file_rb, export_to_dict_rb};
 	QWidgetList wgts={ export_to_dbms_wgt, export_to_img_wgt, export_to_file_wgt, export_to_dict_wgt };
@@ -275,7 +275,7 @@ void ModelExportForm::selectExportMode(void)
 							(export_to_dict_rb->isChecked() && !dict_edt->text().isEmpty()));
 }
 
-void ModelExportForm::selectOutputFile(void)
+void ModelExportForm::selectOutputFile()
 {
 	QFileDialog file_dlg;
 
@@ -350,13 +350,13 @@ void ModelExportForm::captureThreadError(Exception e)
 	throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 }
 
-void ModelExportForm::cancelExport(void)
+void ModelExportForm::cancelExport()
 {
 	export_hlp.cancelExport();
 	cancel_btn->setEnabled(false);
 }
 
-void ModelExportForm::handleExportCanceled(void)
+void ModelExportForm::handleExportCanceled()
 {
 	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta"));
 	QString msg=tr("Exporting process canceled by user!");
@@ -366,7 +366,7 @@ void ModelExportForm::handleExportCanceled(void)
 	PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico);
 }
 
-void ModelExportForm::handleExportFinished(void)
+void ModelExportForm::handleExportFinished()
 {
 	QPixmap ico=QPixmap(PgModelerUiNs::getIconPath("msgbox_info"));
 	QString msg=tr("Exporting process sucessfully ended!");
@@ -414,7 +414,7 @@ void ModelExportForm::closeEvent(QCloseEvent *event)
 		event->ignore();
 }
 
-void ModelExportForm::editConnections(void)
+void ModelExportForm::editConnections()
 {
 	try
 	{

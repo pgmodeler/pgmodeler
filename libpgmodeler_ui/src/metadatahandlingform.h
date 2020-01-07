@@ -54,12 +54,12 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 
 	private slots:
 		void updateProgress(int progress, QString msg, unsigned type_id);
-		void handleObjectsMetada(void);
-		void enableMetadataHandling(void);
-		void selectAllOptions(void);
+		void handleObjectsMetada();
+		void enableMetadataHandling();
+		void selectAllOptions();
 
 	signals:
-		void s_metadataHandled(void);
+		void s_metadataHandled();
 };
 
 #endif

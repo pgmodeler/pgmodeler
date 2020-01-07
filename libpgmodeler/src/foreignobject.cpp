@@ -23,7 +23,7 @@
 const QString ForeignObject::OptionsSeparator(",");
 const QString ForeignObject::OptionValueSeparator("=");
 
-ForeignObject::ForeignObject(void)
+ForeignObject::ForeignObject()
 {
 
 }
@@ -52,12 +52,12 @@ void ForeignObject::removeOption(const QString &opt)
 	options.erase(opt);
 }
 
-void ForeignObject::removeOptions(void)
+void ForeignObject::removeOptions()
 {
 	options.clear();
 }
 
-attribs_map ForeignObject::getOptions(void)
+attribs_map ForeignObject::getOptions()
 {
 	return(options);
 }

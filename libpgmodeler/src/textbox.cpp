@@ -18,7 +18,7 @@
 
 #include "textbox.h"
 
-Textbox::Textbox(void)
+Textbox::Textbox()
 {
 	obj_type=ObjectType::Textbox;
 	font_size=9.0;
@@ -86,7 +86,7 @@ void Textbox::setTextColor(const QColor &color)
 	text_color=color;
 }
 
-QColor Textbox::getTextColor(void)
+QColor Textbox::getTextColor()
 {
 	return(text_color);
 }
@@ -104,7 +104,7 @@ void Textbox::setFontSize(double size)
 	font_size=(size <= 0 ? 1 : size);
 }
 
-double Textbox::getFontSize(void)
+double Textbox::getFontSize()
 {
 	return(font_size);
 }

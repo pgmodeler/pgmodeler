@@ -42,7 +42,7 @@ class UserMappingWidget: public BaseObjectWidget, public Ui::UserMappingWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, UserMapping *user_map);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

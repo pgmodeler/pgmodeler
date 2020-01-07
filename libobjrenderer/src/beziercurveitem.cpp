@@ -93,17 +93,17 @@ void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert
 	this->setPath(path);
 }
 
-bool BezierCurveItem::isControlPointsInverted(void)
+bool BezierCurveItem::isControlPointsInverted()
 {
 	return(invert_cpoints);
 }
 
-bool BezierCurveItem::isSimpleCurve(void)
+bool BezierCurveItem::isSimpleCurve()
 {
 	return(simple_curve);
 }
 
-bool BezierCurveItem::isStraightLine(void)
+bool BezierCurveItem::isStraightLine()
 {
 	return(straight_line);
 }

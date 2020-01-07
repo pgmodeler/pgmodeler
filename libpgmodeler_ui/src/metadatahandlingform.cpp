@@ -95,7 +95,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(clear_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
 }
 
-void MetadataHandlingForm::enableMetadataHandling(void)
+void MetadataHandlingForm::enableMetadataHandling()
 {
 	extract_from_cmb->setVisible(!restore_rb->isChecked());
 	extract_from_lbl->setVisible(!restore_rb->isChecked());
@@ -108,7 +108,7 @@ void MetadataHandlingForm::enableMetadataHandling(void)
 													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty()))));
 }
 
-void MetadataHandlingForm::selectAllOptions(void)
+void MetadataHandlingForm::selectAllOptions()
 {
 	bool check = sender() == select_all_btn;
 	QCheckBox *checkbox = nullptr;
@@ -147,7 +147,7 @@ void MetadataHandlingForm::setModelWidgets(QList<ModelWidget *> models)
 	}
 }
 
-void MetadataHandlingForm::handleObjectsMetada(void)
+void MetadataHandlingForm::handleObjectsMetada()
 {
 	if(!backup_file_edt->text().isEmpty() &&
 		 backup_file_edt->text() == model_wgt->getFilename())

@@ -18,7 +18,7 @@
 
 #include "cast.h"
 
-Cast::Cast(void)
+Cast::Cast()
 {
 	obj_type=ObjectType::Cast;
 	cast_function=nullptr;
@@ -138,17 +138,17 @@ PgSqlType Cast::getDataType(unsigned type_idx)
 	return(this->types[type_idx]);
 }
 
-bool Cast::isInOut(void)
+bool Cast::isInOut()
 {
 	return(is_in_out);
 }
 
-Function *Cast::getCastFunction(void)
+Function *Cast::getCastFunction()
 {
 	return(cast_function);
 }
 
-unsigned Cast::getCastType(void)
+unsigned Cast::getCastType()
 {
 	return(cast_type);
 }
@@ -204,7 +204,7 @@ QString Cast::getSignature(bool)
 	return(BaseObject::getSignature(false));
 }
 
-void Cast::configureSearchAttributes(void)
+void Cast::configureSearchAttributes()
 {
 	QStringList arg_types;
 

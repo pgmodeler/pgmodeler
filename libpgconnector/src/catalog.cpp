@@ -63,7 +63,7 @@ map<ObjectType, QString> Catalog::name_fields=
 	{ObjectType::ForeignServer, "srvname"}, {ObjectType::ForeignTable, "relname"}
 };
 
-Catalog::Catalog(void)
+Catalog::Catalog()
 {
 	last_sys_oid=0;
 	setFilter(ExclExtensionObjs | ExclSystemObjs);
@@ -114,7 +114,7 @@ void Catalog::setConnection(Connection &conn)
 	}
 }
 
-void Catalog::closeConnection(void)
+void Catalog::closeConnection()
 {
 	connection.close();
 }
@@ -141,7 +141,7 @@ void Catalog::setFilter(unsigned filter)
 	}
 }
 
-unsigned Catalog::getLastSysObjectOID(void)
+unsigned Catalog::getLastSysObjectOID()
 {
 	return(last_sys_oid);
 }
@@ -280,7 +280,7 @@ unsigned Catalog::getObjectCount(ObjectType obj_type, const QString &sch_name, c
 	}
 }
 
-unsigned Catalog::getFilter(void)
+unsigned Catalog::getFilter()
 {
 	return(filter);
 }
@@ -659,7 +659,7 @@ QString Catalog::getObjectOID(const QString &name, ObjectType obj_type, const QS
 	}
 }
 
-attribs_map Catalog::getServerAttributes(void)
+attribs_map Catalog::getServerAttributes()
 {
 	attribs_map attribs;
 

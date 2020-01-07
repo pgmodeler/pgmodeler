@@ -45,8 +45,8 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 		element_grid->addWidget(warning_frame, element_grid->count()+1, 0, 1, 3);
 		warning_frame->setParent(this);
 
-		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
+		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
+		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject()));
 		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
 		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
 		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
@@ -187,12 +187,12 @@ void ElementWidget::setPartitionKey(PartitionKey *elem)
 	warning_frame->setVisible(true);
 }
 
-Element *ElementWidget::getElement(void)
+Element *ElementWidget::getElement()
 {
 	return(element);
 }
 
-void ElementWidget::applyConfiguration(void)
+void ElementWidget::applyConfiguration()
 {
 	element->setSortingEnabled(sorting_chk->isChecked());
 	element->setSortingAttribute(IndexElement::NullsFirst, nulls_first_chk->isChecked());
@@ -207,7 +207,7 @@ void ElementWidget::applyConfiguration(void)
 		element->setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
 }
 
-void ElementWidget::updateColumnsCombo(void)
+void ElementWidget::updateColumnsCombo()
 {
 	Table *table = dynamic_cast<Table *>(parent_obj);
 	Relationship *rel = dynamic_cast<Relationship *>(parent_obj);
@@ -247,7 +247,7 @@ void ElementWidget::updateColumnsCombo(void)
 	}
 }
 
-void ElementWidget::selectElementObject(void)
+void ElementWidget::selectElementObject()
 {
 	QObject *obj_sender=sender();
 

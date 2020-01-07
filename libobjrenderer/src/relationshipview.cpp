@@ -78,7 +78,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	this->configureObject();
 }
 
-RelationshipView::~RelationshipView(void)
+RelationshipView::~RelationshipView()
 {
 	QGraphicsItem *item=nullptr;
 	vector<vector<QGraphicsLineItem *> *> rel_lines = { &lines, &fk_lines, &pk_lines, &src_cf_lines, &dst_cf_lines };
@@ -150,7 +150,7 @@ void RelationshipView::setHideNameLabel(bool value)
 	hide_name_label=value;
 }
 
-bool RelationshipView::isNameLabelHidden(void)
+bool RelationshipView::isNameLabelHidden()
 {
 	return(hide_name_label);
 }
@@ -160,7 +160,7 @@ void RelationshipView::setCurvedLines(bool value)
 	use_curved_lines = value;
 }
 
-bool RelationshipView::isCurvedLines(void)
+bool RelationshipView::isCurvedLines()
 {
 	return(use_curved_lines);
 }
@@ -173,7 +173,7 @@ void RelationshipView::setCrowsFoot(bool value)
 		line_conn_mode=RelationshipView::ConnectTableEdges;
 }
 
-bool RelationshipView::isCrowsFoot(void)
+bool RelationshipView::isCrowsFoot()
 {
 	return(use_crows_foot);
 }
@@ -191,7 +191,7 @@ void RelationshipView::setLineConnectionMode(unsigned mode)
 	}
 }
 
-unsigned RelationshipView::getLineConnectinMode(void)
+unsigned RelationshipView::getLineConnectinMode()
 {
 	return(line_conn_mode);
 }
@@ -204,7 +204,7 @@ QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
 	return(conn_points[table_idx]);
 }
 
-BaseRelationship *RelationshipView::getUnderlyingObject(void)
+BaseRelationship *RelationshipView::getUnderlyingObject()
 {
 	return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject()));
 }
@@ -514,7 +514,7 @@ void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	BaseObjectView::mouseReleaseEvent(event);
 }
 
-void RelationshipView::disconnectTables(void)
+void RelationshipView::disconnectTables()
 {
 	if(tables[0] && tables[1])
 	{
@@ -533,7 +533,7 @@ void RelationshipView::disconnectTables(void)
 	}
 }
 
-void RelationshipView::connectTables(void)
+void RelationshipView::connectTables()
 {
 	if(tables[0] && tables[1])
 	{
@@ -542,16 +542,16 @@ void RelationshipView::connectTables(void)
 			tables[i]->disconnect(this);
 
 			if(BaseObjectView::isPlaceholderEnabled())
-				connect(tables[i], SIGNAL(s_relUpdateRequest(void)), this, SLOT(configureLine(void)));
+				connect(tables[i], SIGNAL(s_relUpdateRequest()), this, SLOT(configureLine()));
 			else
-				connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
+				connect(tables[i], SIGNAL(s_objectMoved()), this, SLOT(configureLine()));
 
-			connect(tables[i], SIGNAL(s_objectDimensionChanged(void)), this, SLOT(configureLine(void)));
+			connect(tables[i], SIGNAL(s_objectDimensionChanged()), this, SLOT(configureLine()));
 		}
 	}
 }
 
-void RelationshipView::configureObject(void)
+void RelationshipView::configureObject()
 {
 	BaseRelationship *rel_base=this->getUnderlyingObject();
 
@@ -565,10 +565,10 @@ void RelationshipView::configureObject(void)
 
 	configureLine();
 	connectTables();
-	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
+	connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine()));
 }
 
-void RelationshipView::configurePositionInfo(void)
+void RelationshipView::configurePositionInfo()
 {
 	if(this->isSelected())
 	{
@@ -578,7 +578,7 @@ void RelationshipView::configurePositionInfo(void)
 	}
 }
 
-void RelationshipView::configureLine(void)
+void RelationshipView::configureLine()
 {
 	//Reconnect the tables is the placeholder usage changes
 	if(using_placeholders!=BaseObjectView::isPlaceholderEnabled())
@@ -1274,7 +1274,7 @@ void RelationshipView::configureLine(void)
 	}
 }
 
-void RelationshipView::configureDescriptor(void)
+void RelationshipView::configureDescriptor()
 {
 	QLineF lin;
 	QPolygonF pol;
@@ -1449,7 +1449,7 @@ void RelationshipView::configureDescriptor(void)
 	obj_shadow->setVisible(descriptor->isVisible());
 }
 
-void RelationshipView::configureCrowsFootDescriptors(void)
+void RelationshipView::configureCrowsFootDescriptors()
 {
 	BaseRelationship * base_rel = dynamic_cast<BaseRelationship *>(this->getUnderlyingObject());
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
@@ -1711,7 +1711,7 @@ void RelationshipView::configureCrowsFootDescriptors(void)
 	}
 }
 
-void RelationshipView::configureAttributes(void)
+void RelationshipView::configureAttributes()
 {
 	Relationship *rel=dynamic_cast<Relationship *>(this->getUnderlyingObject());
 
@@ -1828,7 +1828,7 @@ void RelationshipView::configureAttributes(void)
 	}
 }
 
-void RelationshipView::configureLabels(void)
+void RelationshipView::configureLabels()
 {
 	double x=0,y=0;
 	QPointF pnt;
@@ -2037,7 +2037,7 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 	}
 }
 
-QRectF RelationshipView::__boundingRect(void)
+QRectF RelationshipView::__boundingRect()
 {
 	double x1=0, y1=0, x2=0, y2=0;
 	unsigned i, count;

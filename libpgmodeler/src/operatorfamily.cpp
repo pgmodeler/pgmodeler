@@ -18,7 +18,7 @@
 
 #include "operatorfamily.h"
 
-OperatorFamily::OperatorFamily(void)
+OperatorFamily::OperatorFamily()
 {
 	obj_type=ObjectType::OpFamily;
 	attributes[Attributes::IndexType]=QString();
@@ -30,7 +30,7 @@ void OperatorFamily::setIndexingType(IndexingType idx_type)
 	indexing_type=idx_type;
 }
 
-IndexingType OperatorFamily::getIndexingType(void)
+IndexingType OperatorFamily::getIndexingType()
 {
 	return(indexing_type);
 }

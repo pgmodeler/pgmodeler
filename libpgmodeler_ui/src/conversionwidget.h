@@ -40,7 +40,7 @@ class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
 	private slots:
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

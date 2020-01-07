@@ -56,7 +56,7 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	configureButtonsState();
 }
 
-AttributesTogglerItem::~AttributesTogglerItem(void)
+AttributesTogglerItem::~AttributesTogglerItem()
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		delete buttons[arr_id];
@@ -185,7 +185,7 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 	}
 }
 
-void AttributesTogglerItem::configureButtonsState(void)
+void AttributesTogglerItem::configureButtonsState()
 {
 	buttons[AttribsExpandBtn]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
 																				 collapse_mode == CollapseMode::AllAttribsCollapsed? 1 : ButtonMinOpacity);
@@ -235,7 +235,7 @@ void AttributesTogglerItem::setPaginationValues(unsigned section_id, unsigned cu
 	}
 }
 
-void AttributesTogglerItem::clearButtonsSelection(void)
+void AttributesTogglerItem::clearButtonsSelection()
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		btns_selected[arr_id] = false;
@@ -243,12 +243,12 @@ void AttributesTogglerItem::clearButtonsSelection(void)
 	this->update();
 }
 
-double AttributesTogglerItem::getButtonsWidth(void)
+double AttributesTogglerItem::getButtonsWidth()
 {
 	return(btns_width);
 }
 
-double AttributesTogglerItem::getButtonsHeight(void)
+double AttributesTogglerItem::getButtonsHeight()
 {
 	return(btns_height);
 }
@@ -338,7 +338,7 @@ void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 	}
 }
 
-void AttributesTogglerItem::createButtonPolygons(void)
+void AttributesTogglerItem::createButtonPolygons()
 {
 	if(!btn_polygons[0].isEmpty())
 		return;

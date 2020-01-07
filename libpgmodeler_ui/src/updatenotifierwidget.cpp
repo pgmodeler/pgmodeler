@@ -95,7 +95,7 @@ void UpdateNotifierWidget::activateLink(const QString &link)
 	emit s_visibilityChanged(false);
 }
 
-void UpdateNotifierWidget::checkForUpdate(void)
+void UpdateNotifierWidget::checkForUpdate()
 {
 	QUrl url(GlobalAttributes::PgModelerUpdateCheckURL + GlobalAttributes::PgModelerVersion);
 	QNetworkRequest req(url);

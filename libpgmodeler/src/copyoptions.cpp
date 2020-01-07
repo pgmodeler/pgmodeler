@@ -19,7 +19,7 @@
 #include "copyoptions.h"
 #include "baseobject.h"
 
-CopyOptions::CopyOptions(void)
+CopyOptions::CopyOptions()
 {
 	copy_mode = copy_op_ids = 0;
 }
@@ -33,7 +33,7 @@ CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 	this->copy_op_ids = copy_op_ids;
 }
 
-unsigned CopyOptions::getCopyMode(void)
+unsigned CopyOptions::getCopyMode()
 {
 	return(copy_mode);
 }
@@ -46,22 +46,22 @@ bool CopyOptions::isOptionSet(unsigned op)
 	return((copy_op_ids & op) == op);
 }
 
-bool CopyOptions::isIncluding(void)
+bool CopyOptions::isIncluding()
 {
 	return(copy_mode & Including);
 }
 
-bool CopyOptions::isExcluding(void)
+bool CopyOptions::isExcluding()
 {
 	return(copy_mode & Excluding);
 }
 
-unsigned CopyOptions::getCopyOptionsIds(void)
+unsigned CopyOptions::getCopyOptionsIds()
 {
 	return(copy_op_ids);
 }
 
-QString CopyOptions::getSQLDefinition(void)
+QString CopyOptions::getSQLDefinition()
 {
 	QString def, mode, op_name;
 	unsigned op_id,

@@ -20,11 +20,11 @@
 
 TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
-	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(table, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 	this->configureObject();
 }
 
-void TableView::configureObject(void)
+void TableView::configureObject()
 {
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to

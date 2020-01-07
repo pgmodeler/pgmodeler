@@ -19,7 +19,7 @@
 #include "genericsql.h"
 #include "tableobject.h"
 
-GenericSQL::GenericSQL(void)
+GenericSQL::GenericSQL()
 {
 	obj_type = ObjectType::GenericSql;
 	attributes[Attributes::Definition] = QString();
@@ -32,12 +32,12 @@ void GenericSQL::setDefinition(const QString &def)
 	definition = def;
 }
 
-QString GenericSQL::getDefinition(void)
+QString GenericSQL::getDefinition()
 {
 	return(definition);
 }
 
-vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences(void)
+vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 {
 	return(objects_refs);
 }
@@ -89,7 +89,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 	return(found);
 }
 
-bool GenericSQL::isReferRelationshipAddedObject(void)
+bool GenericSQL::isReferRelationshipAddedObject()
 {
 	bool found = false;
 	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
@@ -106,7 +106,7 @@ bool GenericSQL::isReferRelationshipAddedObject(void)
 	return(found);
 }
 
-vector<BaseObject *> GenericSQL::getReferencedObjects(void)
+vector<BaseObject *> GenericSQL::getReferencedObjects()
 {
 	vector<BaseObject *> ref_objs;
 
@@ -181,7 +181,7 @@ void GenericSQL::removeObjectReference(const QString &ref_name)
 	setCodeInvalidated(true);
 }
 
-void GenericSQL::removeObjectReferences(void)
+void GenericSQL::removeObjectReferences()
 {
 	objects_refs.clear();
 	setCodeInvalidated(true);
