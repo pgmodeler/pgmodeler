@@ -235,7 +235,7 @@ void NumberedTextEditor::showContextMenu(void)
 	}
 
 	ctx_menu->exec(QCursor::pos());
-	delete(ctx_menu);
+	delete ctx_menu;
 }
 
 void NumberedTextEditor::changeSelectionToLower(void)

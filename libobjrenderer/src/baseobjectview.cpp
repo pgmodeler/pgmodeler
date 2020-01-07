@@ -74,34 +74,34 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 		if(obj_shadow)
 		{
 			this->removeFromGroup(obj_shadow);
-			delete(obj_shadow);
+			delete obj_shadow;
 			obj_shadow=nullptr;
 		}
 
 		if(protected_icon)
 		{
 			this->removeFromGroup(protected_icon);
-			delete(protected_icon);
+			delete protected_icon;
 			protected_icon=nullptr;
 		}
 
 		if(pos_info_item)
 		{
 			this->removeFromGroup(pos_info_item);
-			delete(pos_info_item);
+			delete pos_info_item;
 			pos_info_item=nullptr;
 		}
 
 		if(sql_disabled_item)
 		{
 			this->removeFromGroup(sql_disabled_item);
-			delete(sql_disabled_item);
+			delete sql_disabled_item;
 			sql_disabled_item=nullptr;
 		}
 
 		if(placeholder)
 		{
-			delete(placeholder);
+			delete placeholder;
 			placeholder=nullptr;
 		}
 	}

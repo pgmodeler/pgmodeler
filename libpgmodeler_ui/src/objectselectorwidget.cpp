@@ -99,7 +99,7 @@ bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)
 {
-	delete(obj_view_wgt);
+	delete obj_view_wgt;
 }
 
 void ObjectSelectorWidget::enableObjectCreation(bool value)

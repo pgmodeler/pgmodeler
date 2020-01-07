@@ -20,8 +20,8 @@
 #include "exception.h"
 #include "attributes.h"
 
-const QString ForeignObject::OptionsSeparator = QString(",");
-const QString ForeignObject::OptionValueSeparator = QString("=");
+const QString ForeignObject::OptionsSeparator(",");
+const QString ForeignObject::OptionValueSeparator("=");
 
 ForeignObject::ForeignObject(void)
 {

@@ -340,15 +340,15 @@ void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 {
 	if(thread_id==SrcImportThread && src_import_thread)
 	{
-		delete(src_import_thread);
-		delete(src_import_helper);
+		delete src_import_thread;
+		delete src_import_helper;
 		src_import_thread=nullptr;
 		src_import_helper=nullptr;
 	}
 	else if(thread_id==ImportThread && import_thread)
 	{
-		delete(import_thread);
-		delete(import_helper);
+		delete import_thread;
+		delete import_helper;
 		import_thread=nullptr;
 		import_helper=nullptr;
 	}
@@ -356,19 +356,19 @@ void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 	{
 		diff_thread=nullptr;
 		diff_helper=nullptr;
-		delete(diff_thread);
-		delete(diff_helper);
+		delete diff_thread;
+		delete diff_helper;
 	}
 	else if(export_thread)
 	{
 		if(export_conn)
 		{
-			delete(export_conn);
+			delete export_conn;
 			export_conn=nullptr;
 		}
 
-		delete(export_thread);
-		delete(export_helper);
+		delete export_thread;
+		delete export_helper;
 		export_thread=nullptr;
 		export_helper=nullptr;
 	}
@@ -377,11 +377,11 @@ void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 void ModelDatabaseDiffForm::destroyModel(void)
 {
 	if(imported_model)
-		delete(imported_model);
+		delete imported_model;
 
 	if(source_model && source_model != loaded_model && src_database_rb->isChecked())
 	{
-		delete(source_model);
+		delete source_model;
 		source_model = nullptr;
 	}
 

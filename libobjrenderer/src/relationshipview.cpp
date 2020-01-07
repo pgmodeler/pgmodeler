@@ -88,13 +88,13 @@ RelationshipView::~RelationshipView(void)
 		this->removeFromGroup(curves.back());
 		item = curves.back();
 		curves.pop_back();
-		delete(item);
+		delete item;
 	}
 
 	for(int i=0; i < 2; i++)
 	{
 		this->removeFromGroup(line_circles[i]);
-		delete(line_circles[i]);
+		delete line_circles[i];
 	}
 
 	for(int i=0; i < 3; i++)
@@ -102,7 +102,7 @@ RelationshipView::~RelationshipView(void)
 		if(labels[i])
 		{
 			this->removeFromGroup(labels[i]);
-			delete(labels[i]);
+			delete labels[i];
 		}
 	}
 
@@ -111,7 +111,7 @@ RelationshipView::~RelationshipView(void)
 		item=attributes.back();
 		this->removeFromGroup(item);
 		attributes.pop_back();
-		delete(item);
+		delete item;
 	}
 
 	for(auto &lines : rel_lines)
@@ -121,12 +121,12 @@ RelationshipView::~RelationshipView(void)
 			item = lines->back();
 			this->removeFromGroup(item);
 			lines->pop_back();
-			delete(item);
+			delete item;
 		}
 	}
 
 	this->removeFromGroup(descriptor);
-	delete(descriptor);
+	delete descriptor;
 
 	for(int i =0; i < 2; i++)
 	{
@@ -136,11 +136,11 @@ RelationshipView::~RelationshipView(void)
 			{
 				cf_descriptors[i]->removeFromGroup(item);
 				this->removeFromGroup(item);
-				delete(item);
+				delete item;
 			}
 
 			this->removeFromGroup(cf_descriptors[i]);
-			delete(cf_descriptors[i]);
+			delete cf_descriptors[i];
 		}
 	}
 }
@@ -685,7 +685,7 @@ void RelationshipView::configureLine(void)
 						item=ref_lines[i]->back();
 						ref_lines[i]->pop_back();
 						this->removeFromGroup(item);
-						delete(item);
+						delete item;
 					}
 				}
 			}
@@ -835,7 +835,7 @@ void RelationshipView::configureLine(void)
 				item=graph_points.back();
 				graph_points.pop_back();
 				this->removeFromGroup(item);
-				delete(item);
+				delete item;
 				i--;
 			}
 		}
@@ -1088,7 +1088,7 @@ void RelationshipView::configureLine(void)
 					item=ref_lin->back();
 					ref_lin->pop_back();
 					this->removeFromGroup(item);
-					delete(item);
+					delete item;
 					i--;
 				}
 			}
@@ -1128,7 +1128,7 @@ void RelationshipView::configureLine(void)
 				item=lines.back();
 				lines.pop_back();
 				this->removeFromGroup(item);
-				delete(item);
+				delete item;
 				i1--;
 			}
 		}
@@ -1203,7 +1203,7 @@ void RelationshipView::configureLine(void)
 				curve=curves.back();
 				curves.pop_back();
 				this->removeFromGroup(curve);
-				delete(curve);
+				delete curve;
 				i1--;
 			}
 		}
@@ -1219,7 +1219,7 @@ void RelationshipView::configureLine(void)
 				curve=curves.back();
 				curves.pop_back();
 				this->removeFromGroup(curve);
-				delete(curve);
+				delete curve;
 			}
 		}
 
@@ -1822,7 +1822,7 @@ void RelationshipView::configureAttributes(void)
 			item=attributes.back();
 			attributes.pop_back();
 			this->removeFromGroup(item);
-			delete(item);
+			delete item;
 			i--;
 		}
 	}

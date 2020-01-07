@@ -45,7 +45,7 @@ View::~View(void)
 		list=getObjectList(types[i]);
 		while(!list->empty())
 		{
-			delete(list->back());
+			delete list->back();
 			list->pop_back();
 		}
 	}

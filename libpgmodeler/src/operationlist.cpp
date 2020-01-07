@@ -205,7 +205,7 @@ void OperationList::removeOperations(void)
 		if(!oper->isOperationValid())
 			invalid_objs.push_back(oper->getPoolObject());
 
-		delete(oper);
+		delete oper;
 		operations.pop_back();
 	}
 
@@ -240,7 +240,7 @@ void OperationList::removeOperations(void)
 				}
 
 				unallocated_objs[object]=true;
-				delete(object);
+				delete object;
 			}
 			else if(tab_obj && unallocated_objs.count(tab_obj)==0)
 			{
@@ -252,7 +252,7 @@ void OperationList::removeOperations(void)
 						(tab && unallocated_objs.count(tab)==0 && tab->getObjectIndex(tab_obj) < 0))
 				{
 					unallocated_objs[tab_obj]=true;
-					delete(tab_obj);
+					delete tab_obj;
 				}
 			}
 		}
@@ -283,7 +283,7 @@ void OperationList::validateOperations(void)
 		{
 			//Remove the operation
 			operations.erase(itr);
-			delete(oper);
+			delete oper;
 			itr=operations.begin();
 			itr_end=operations.end();
 		}
@@ -490,7 +490,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		if(operation)
 		{
 			removeFromPool(object_pool.size()-1);
-			delete(operation);
+			delete operation;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}

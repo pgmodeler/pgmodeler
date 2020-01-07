@@ -803,13 +803,13 @@ void DatabaseModel::destroyObjects(void)
 				dynamic_cast<Relationship *>(object)->destroyObjects();
 		}
 
-		delete(object);
+		delete object;
 	}
 
 	PgSqlType::removeUserTypes(this);
 
 	for(auto &perm : 	permissions)
-		delete(perm);
+		delete perm;
 
 	permissions.clear();
 
@@ -2025,7 +2025,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeSequence(sequence);
-				delete(sequence);
+				delete sequence;
 			}
 		}
 
@@ -2062,7 +2062,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						{
 							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XmlDefinition);
 							removeRelationship(rel);
-							delete(rel);
+							delete rel;
 						}
 					}
 				}
@@ -2074,11 +2074,11 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				{
 					xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XmlDefinition);
 					view->removeObject(obj);
-					delete(obj);
+					delete obj;
 				}
 
 				removeView(view);
-				delete(view);
+				delete view;
 			}
 		}
 
@@ -2097,7 +2097,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
 				removePermission(permission);
-				delete(permission);
+				delete permission;
 			}
 		}
 
@@ -2115,7 +2115,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeGenericSQL(generic_sql);
-				delete(generic_sql);
+				delete generic_sql;
 			}
 		}
 	}
@@ -3763,7 +3763,7 @@ Role *DatabaseModel::createRole(void)
 	}
 	catch(Exception &e)
 	{
-		if(role) delete(role);
+		if(role) delete role;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -3784,7 +3784,7 @@ Tablespace *DatabaseModel::createTablespace(void)
 	}
 	catch(Exception &e)
 	{
-		if(tabspc) delete(tabspc);
+		if(tabspc) delete tabspc;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -3808,7 +3808,7 @@ Schema *DatabaseModel::createSchema(void)
 	}
 	catch(Exception &e)
 	{
-		if(schema) delete(schema);
+		if(schema) delete schema;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -3884,7 +3884,7 @@ Language *DatabaseModel::createLanguage(void)
 	}
 	catch(Exception &e)
 	{
-		if(lang) delete(lang);
+		if(lang) delete lang;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4029,7 +4029,7 @@ Function *DatabaseModel::createFunction(void)
 		if(func)
 		{
 			str_aux=func->getName(true);
-			delete(func);
+			delete func;
 		}
 
 		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
@@ -4378,7 +4378,7 @@ Type *DatabaseModel::createType(void)
 		if(type)
 		{
 			str_aux=type->getName(true);
-			delete(type);
+			delete type;
 		}
 
 		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
@@ -4439,7 +4439,7 @@ Domain *DatabaseModel::createDomain(void)
 	}
 	catch(Exception &e)
 	{
-		if(domain) delete(domain);
+		if(domain) delete domain;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4512,7 +4512,7 @@ Cast *DatabaseModel::createCast(void)
 	}
 	catch(Exception &e)
 	{
-		if(cast) delete(cast);
+		if(cast) delete cast;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4571,7 +4571,7 @@ Conversion *DatabaseModel::createConversion(void)
 	}
 	catch(Exception &e)
 	{
-		if(conv) delete(conv);
+		if(conv) delete conv;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4666,7 +4666,7 @@ Operator *DatabaseModel::createOperator(void)
 	}
 	catch(Exception &e)
 	{
-		if(oper) delete(oper);
+		if(oper) delete oper;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4784,7 +4784,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	}
 	catch(Exception &e)
 	{
-		if(op_class) delete(op_class);
+		if(op_class) delete op_class;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4805,7 +4805,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 	}
 	catch(Exception &e)
 	{
-		if(op_family) delete(op_family);
+		if(op_family) delete op_family;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4874,7 +4874,7 @@ Aggregate *DatabaseModel::createAggregate(void)
 	}
 	catch(Exception &e)
 	{
-		if(aggreg) delete(aggreg);
+		if(aggreg) delete aggreg;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -4959,7 +4959,7 @@ Column *DatabaseModel::createColumn(void)
 	}
 	catch(Exception &e)
 	{
-		if(column) delete(column);
+		if(column) delete column;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5174,7 +5174,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	}
 	catch(Exception &e)
 	{
-		if(constr) delete(constr);
+		if(constr) delete constr;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5458,7 +5458,7 @@ Index *DatabaseModel::createIndex(void)
 	}
 	catch(Exception &e)
 	{
-		if(index) delete(index);
+		if(index) delete index;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5538,7 +5538,7 @@ Rule *DatabaseModel::createRule(void)
 	}
 	catch(Exception &e)
 	{
-		if(rule) delete(rule);
+		if(rule) delete rule;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5701,7 +5701,7 @@ Trigger *DatabaseModel::createTrigger(void)
 	}
 	catch(Exception &e)
 	{
-		if(trigger) delete(trigger);
+		if(trigger) delete trigger;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5793,7 +5793,7 @@ Policy *DatabaseModel::createPolicy(void)
 	}
 	catch(Exception &e)
 	{
-		if(policy) delete(policy);
+		if(policy) delete policy;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5853,7 +5853,7 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	}
 	catch(Exception &e)
 	{
-		if(event_trig) delete(event_trig);
+		if(event_trig) delete event_trig;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -5935,7 +5935,7 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	}
 	catch(Exception &e)
 	{
-		if(genericsql) delete(genericsql);
+		if(genericsql) delete genericsql;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6005,7 +6005,7 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	catch(Exception &e)
 	{
 		if(fdw)
-			delete(fdw);
+			delete fdw;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -6061,7 +6061,7 @@ ForeignServer *DatabaseModel::createForeignServer(void)
 	catch(Exception &e)
 	{
 		if(server)
-			delete(server);
+			delete server;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -6117,7 +6117,7 @@ UserMapping *DatabaseModel::createUserMapping(void)
 	catch(Exception &e)
 	{
 		if(user_map)
-			delete(user_map);
+			delete user_map;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -6175,7 +6175,7 @@ ForeignTable *DatabaseModel::createForeignTable(void)
 	}
 	catch(Exception &e)
 	{
-		if(ftable) delete(ftable);
+		if(ftable) delete ftable;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -6279,7 +6279,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 	}
 	catch(Exception &e)
 	{
-		if(sequence) delete(sequence);
+		if(sequence) delete sequence;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6401,7 +6401,7 @@ View *DatabaseModel::createView(void)
 									{
 										column = createColumn();
 										reference.addColumn(column);
-										delete(column);
+										delete column;
 									}
 									else if(elem == Attributes::RefTableTag)
 									{
@@ -6504,7 +6504,7 @@ View *DatabaseModel::createView(void)
 	}
 	catch(Exception &e)
 	{
-		if(view) delete(view);
+		if(view) delete view;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6558,7 +6558,7 @@ Collation *DatabaseModel::createCollation(void)
 	}
 	catch(Exception &e)
 	{
-		if(collation) delete(collation);
+		if(collation) delete collation;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6582,7 +6582,7 @@ Extension *DatabaseModel::createExtension(void)
 	}
 	catch(Exception &e)
 	{
-		if(extension) delete(extension);
+		if(extension) delete extension;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6622,7 +6622,7 @@ Tag *DatabaseModel::createTag(void)
 	}
 	catch(Exception &e)
 	{
-		if(tag) delete(tag);
+		if(tag) delete tag;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 }
@@ -6653,7 +6653,7 @@ Textbox *DatabaseModel::createTextbox(void)
 	}
 	catch(Exception &e)
 	{
-		if(txtbox) delete(txtbox);
+		if(txtbox) delete txtbox;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -6941,7 +6941,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	catch(Exception &e)
 	{
 		if(base_rel && base_rel->getObjectType()==ObjectType::Relationship)
-			delete(base_rel);
+			delete base_rel;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -7098,7 +7098,7 @@ Permission *DatabaseModel::createPermission(void)
 	}
 	catch(Exception &e)
 	{
-		if(perm) delete(perm);
+		if(perm) delete perm;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
@@ -10553,7 +10553,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						{
 							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
 																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
-							delete(new_object);
+							delete new_object;
 						}
 
 						new_object=nullptr;
@@ -10935,7 +10935,7 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 		QString extra_info=getErrorExtraInfo();
 		xmlparser.restorePosition();
 
-		if(table) delete(table);
+		if(table) delete table;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 

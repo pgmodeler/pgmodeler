@@ -163,7 +163,7 @@ BaseRelationship::~BaseRelationship(void)
 
 	//Unallocates the labels
 	for(unsigned i=0; i<3; i++)
-		if(lables[i]) delete(lables[i]);
+		if(lables[i]) delete lables[i];
 }
 
 void BaseRelationship::setName(const QString &name)

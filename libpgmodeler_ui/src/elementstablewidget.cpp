@@ -65,7 +65,7 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 ElementsTableWidget::~ElementsTableWidget(void)
 {
 	if(handled_elem)
-		delete(handled_elem);
+		delete handled_elem;
 }
 
 void ElementsTableWidget::showElementData(Element *elem, int elem_idx)

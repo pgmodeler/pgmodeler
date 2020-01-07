@@ -28,6 +28,8 @@ unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
+
+
 INCLUDEPATH += $$PWD/../libpgmodeler_ui \
                $$PWD/../libpgmodeler_ui/src \
                $$PWD/../libobjrenderer/src \

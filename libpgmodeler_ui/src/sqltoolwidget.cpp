@@ -370,14 +370,14 @@ void SQLToolWidget::closeDatabaseExplorer(int idx)
 	for(QWidget *wgt : sql_exec_wgts[db_explorer])
 	{
 		sql_exec_tbw->removeTab(sql_exec_tbw->indexOf(wgt));
-		delete(wgt);
+		delete wgt;
 	}
 
 	sql_exec_wgts.remove(db_explorer);
 	databases_tbw->removeTab(idx);
 
 	if(db_explorer)
-		delete(db_explorer);
+		delete db_explorer;
 }
 
 void SQLToolWidget::closeSQLExecutionTab(int idx)
@@ -403,7 +403,7 @@ void SQLToolWidget::closeSQLExecutionTab(int idx)
 	sql_exec_tbw->removeTab(idx);
 
 	if(sql_exec_wgt)
-		delete(sql_exec_wgt);
+		delete sql_exec_wgt;
 
 }
 

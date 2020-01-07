@@ -997,7 +997,7 @@ void ModelsDiffHelper::destroyTempObjects(void)
 	{
 		tmp_obj=tmp_objects.back();
 		tmp_objects.pop_back();
-		delete(tmp_obj);
+		delete tmp_obj;
 	}
 
 	diff_infos.clear();

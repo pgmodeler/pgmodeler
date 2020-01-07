@@ -49,8 +49,8 @@ SchemaView::~SchemaView(void)
 	this->removeFromGroup(box);
 	this->removeFromGroup(sch_name);
 
-	delete(box);
-	delete(sch_name);
+	delete box;
+	delete sch_name;
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)

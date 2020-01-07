@@ -234,7 +234,7 @@ void ModelExportHelper::exportToPNG(ObjectsScene *scene, const QString &filename
 			emit s_exportCanceled();
 
 		if(view!=viewp)
-			delete(view);
+			delete view;
 	}
 	catch(Exception &e)
 	{
@@ -270,7 +270,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 
 	QPainter *painter=new QPainter(&svg_gen);
 	scene->render(painter, QRectF(0, 0, scene_rect.size().width(), scene_rect.size().height()), scene_rect);
-	delete(painter);
+	delete painter;
 
 	//Restoring the scene settings
 	ObjectsScene::setGridOptions(shw_grd, align_objs, shw_dlm);

@@ -92,13 +92,13 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
 	this->removeFromGroup(tag_item);
-	delete(attribs_toggler);
-	delete(ext_attribs_body);
-	delete(ext_attribs);
-	delete(body);
-	delete(title);
-	delete(columns);
-	delete(tag_item);
+	delete attribs_toggler;
+	delete ext_attribs_body;
+	delete ext_attribs;
+	delete body;
+	delete title;
+	delete columns;
+	delete tag_item;
 }
 
 void BaseTableView::setHideExtAttributes(bool value)

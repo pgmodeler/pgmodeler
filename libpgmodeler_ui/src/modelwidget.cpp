@@ -531,10 +531,10 @@ ModelWidget::~ModelWidget(void)
 	tags_menu.clear();
 	break_rel_menu.clear();
 
-	delete(viewport);
-	delete(scene);
-	delete(op_list);
-	delete(db_model);
+	delete viewport;
+	delete scene;
+	delete op_list;
+	delete db_model;
 }
 
 void ModelWidget::setModified(bool value)

@@ -391,7 +391,7 @@ void ModelExportForm::finishExport(const QString &msg)
 	if(viewp)
 	{
 		export_thread->wait();
-		delete(viewp);
+		delete viewp;
 		viewp=nullptr;
 	}
 }

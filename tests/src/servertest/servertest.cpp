@@ -164,7 +164,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&owner);
 
 		if(server)
-			delete(server);
+			delete server;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

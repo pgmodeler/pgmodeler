@@ -20,11 +20,11 @@
 #include "pgmodelerns.h"
 #include <QApplication>
 
-const QString Relationship::SuffixSeparator=QString("_");
-const QString Relationship::SrcTabToken=QString("{st}");
-const QString Relationship::DstTabToken=QString("{dt}");
-const QString Relationship::GenTabToken=QString("{gt}");
-const QString Relationship::SrcColToken=QString("{sc}");
+const QString Relationship::SuffixSeparator("_");
+const QString Relationship::SrcTabToken("{st}");
+const QString Relationship::DstTabToken("{dt}");
+const QString Relationship::GenTabToken("{gt}");
+const QString Relationship::SrcColToken("{sc}");
 
 constexpr unsigned Relationship::SrcColPattern;
 constexpr unsigned Relationship::DstColPattern;
@@ -370,7 +370,7 @@ void Relationship::createSpecialPrimaryKey(void)
 		catch(Exception &)
 		{
 			//Case some error is raised deletes the special primary key
-			delete(pk_special);
+			delete pk_special;
 			pk_special=nullptr;
 		}
 	}
@@ -589,13 +589,13 @@ void Relationship::destroyObjects(void)
 {
 	while(!rel_constraints.empty())
 	{
-		delete(rel_constraints.back());
+		delete rel_constraints.back();
 		rel_constraints.pop_back();
 	}
 
 	while(!rel_attributes.empty())
 	{
-		delete(rel_attributes.back());
+		delete rel_attributes.back();
 		rel_attributes.pop_back();
 	}
 }
@@ -1105,7 +1105,7 @@ void Relationship::addColumnsRelGenPart(void)
 			//In case of duplicity error the temporary columns are destroyed
 			while(!columns.empty())
 			{
-				delete(columns.back());
+				delete columns.back();
 				columns.pop_back();
 			}
 
@@ -1269,7 +1269,7 @@ void Relationship::connectRelationship(void)
 	{
 		if(table_relnn)
 		{
-			delete(table_relnn);
+			delete table_relnn;
 			table_relnn=nullptr;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
@@ -1327,7 +1327,7 @@ void Relationship::configureIndentifierRel(PhysicalTable *recv_tab)
 			if(new_pk)
 			{
 				recv_tab->removeObject(pk_relident);
-				delete(pk_relident);
+				delete pk_relident;
 			}
 			else
 			{
@@ -1392,7 +1392,7 @@ void Relationship::addUniqueKey(PhysicalTable *recv_tab)
 		if(uq_rel11)
 		{
 			recv_tab->removeObject(uq_rel11);
-			delete(uq_rel11);
+			delete uq_rel11;
 			uq_rel11=nullptr;
 		}
 
@@ -1520,7 +1520,7 @@ void Relationship::addForeignKey(PhysicalTable *ref_tab, PhysicalTable *recv_tab
 		if(fk_rel1n)
 		{
 			recv_tab->removeObject(fk_rel1n);
-			delete(fk_rel1n);
+			delete fk_rel1n;
 			fk_rel1n=nullptr;
 		}
 
@@ -2006,7 +2006,7 @@ void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 		if(trigger->isReferRelationshipAddedColumn())
 		{
 			table->removeObject(trigger);
-			delete(trigger);
+			delete trigger;
 			count--; i--;
 			if(i < 0) i=0;
 		}
@@ -2022,7 +2022,7 @@ void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 			if(index->isReferRelationshipAddedColumn())
 			{
 				aux_table->removeObject(index);
-				delete(index);
+				delete index;
 				count--; i--;
 				if(i < 0) i=0;
 			}
@@ -2039,7 +2039,7 @@ void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
 				constr->isReferRelationshipAddedColumn())
 		{
 			table->removeObject(constr);
-			delete(constr);
+			delete constr;
 			count--; i--;
 			if(i < 0) i=0;
 		}
@@ -2148,7 +2148,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					while(!ck_constraints.empty())
 					{
 						table->removeObject(ck_constraints.back());
-						delete(ck_constraints.back());
+						delete ck_constraints.back();
 						ck_constraints.pop_back();
 					}
 				}
@@ -2193,7 +2193,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					{
 						//Destroy the foreign key
 						fk_rel1n->removeColumns();
-						delete(fk_rel1n);
+						delete fk_rel1n;
 						fk_rel1n=nullptr;
 					}
 
@@ -2202,7 +2202,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					{
 						table->removeConstraint(uq_rel11->getName());
 						uq_rel11->removeColumns();
-						delete(uq_rel11);
+						delete uq_rel11;
 						uq_rel11=nullptr;
 					}
 
@@ -2218,7 +2218,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 							table->removeConstraint(pk_relident->getName());
 
 						//Destroy the primary key
-						delete(pk);
+						delete pk;
 						pk_relident=nullptr;
 					}
 					else if(pk_special && table->getObjectIndex(pk_special) >= 0)
@@ -2244,7 +2244,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 						{
 							table_relnn->removeConstraint(constr->getName());
 							i--; count--;
-							delete(constr);
+							delete constr;
 						}
 					}
 				}
@@ -2278,7 +2278,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			//Destroy the special pk before the generated columns to avoid crashes
 			if(pk_special)
 			{
-				delete(pk_special);
+				delete pk_special;
 				pk_special=nullptr;
 			}
 
@@ -2294,7 +2294,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				table->removeColumn(column->getName());
 				itr++;
 
-				delete(column);
+				delete column;
 			}
 
 			gen_columns.clear();
@@ -2302,7 +2302,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 			if(table_relnn)
 			{
-				delete(table_relnn);
+				delete table_relnn;
 				table_relnn=nullptr;
 			}
 

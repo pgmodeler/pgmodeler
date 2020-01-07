@@ -202,7 +202,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		{
 			task_prog_wgt->close();
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete(task_prog_wgt);
+			delete task_prog_wgt;
 		}
 	}
 	catch(Exception &e)
@@ -211,7 +211,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		{
 			task_prog_wgt->close();
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete(task_prog_wgt);
+			delete task_prog_wgt;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

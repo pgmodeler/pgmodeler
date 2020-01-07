@@ -314,7 +314,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual(void)
 		xml_code = xml_code.simplified();
 
 		if(fdw)
-			delete(fdw);
+			delete fdw;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

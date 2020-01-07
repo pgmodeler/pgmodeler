@@ -22,6 +22,8 @@
 
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
+	GlobalAttributes::setSearchPath(this->applicationDirPath());
+
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
 	QFile ui_style(GlobalAttributes::getTmplConfigurationDir() +
 				   GlobalAttributes::DirSeparator +

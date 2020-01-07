@@ -137,9 +137,9 @@ void DatabaseImportForm::destroyThread(void)
 	{
 		import_thread->quit();
 		import_thread->wait();
-		delete(import_thread);
+		delete import_thread;
 		import_thread=nullptr;
-		delete(import_helper);
+		delete import_helper;
 		import_helper=nullptr;
 	}
 }
@@ -510,7 +510,7 @@ void DatabaseImportForm::destroyModelWidget(void)
 {
 	if(create_model && model_wgt)
 	{
-		delete(model_wgt);
+		delete model_wgt;
 		model_wgt=nullptr;
 	}
 }

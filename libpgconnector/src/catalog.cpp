@@ -17,15 +17,15 @@
 */
 #include "catalog.h"
 
-const QString Catalog::QueryList=QString("list");
-const QString Catalog::QueryAttribs=QString("attribs");
-const QString Catalog::CatalogSchemasDir=QString("catalog");
-const QString Catalog::PgSqlTrue=QString("t");
-const QString Catalog::PgSqlFalse=QString("f");
-const QString Catalog::BoolField=QString("_bool");
-const QString Catalog::ArrayPattern=QString("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
-const QString Catalog::GetExtensionObjsSql=QString("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
-const QString Catalog::PgModelerTempDbObj=QString("__pgmodeler_tmp");
+const QString Catalog::QueryList("list");
+const QString Catalog::QueryAttribs("attribs");
+const QString Catalog::CatalogSchemasDir("catalog");
+const QString Catalog::PgSqlTrue("t");
+const QString Catalog::PgSqlFalse("f");
+const QString Catalog::BoolField("_bool");
+const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
+const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
+const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 
 attribs_map Catalog::catalog_queries;
 

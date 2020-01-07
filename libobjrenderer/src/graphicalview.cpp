@@ -87,7 +87,7 @@ void GraphicalView::configureObject(void)
 		for(auto &item : columns->childItems())
 		{
 			columns->removeFromGroup(item);
-			delete(item);
+			delete item;
 		}
 	}
 	else
@@ -138,7 +138,7 @@ void GraphicalView::configureObject(void)
 		{
 			graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
 			columns->removeFromGroup(graph_ref);
-			delete(graph_ref);
+			delete graph_ref;
 			i--;
 		}
 
@@ -174,7 +174,7 @@ void GraphicalView::configureObject(void)
 		for(auto &item : ext_attribs->childItems())
 		{
 			ext_attribs->removeFromGroup(item);
-			delete(item);
+			delete item;
 		}
 	}
 	else
@@ -223,7 +223,7 @@ void GraphicalView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 			ext_attribs->removeFromGroup(col_item);
-			delete(col_item);
+			delete col_item;
 			i--;
 		}
 

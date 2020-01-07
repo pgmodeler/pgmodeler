@@ -38,17 +38,17 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 		lables[i]=new QGraphicsSimpleTextItem;
 
 	if(obj_selection)
-		delete(obj_selection);
+		delete obj_selection;
 }
 
 TableObjectView::~TableObjectView(void)
 {
-	delete(descriptor);
+	delete descriptor;
 
 	for(unsigned i=0; i < 3; i++)
-		delete(lables[i]);
+		delete lables[i];
 
-	delete(obj_selection);
+	delete obj_selection;
 }
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
@@ -70,7 +70,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		delete(descriptor);
+		delete descriptor;
 		descriptor=nullptr;
 	}
 

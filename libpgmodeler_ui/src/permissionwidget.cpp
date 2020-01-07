@@ -114,7 +114,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 PermissionWidget::~PermissionWidget(void)
 {
-	delete(object_selection_wgt);
+	delete object_selection_wgt;
 }
 
 void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, BaseObject *object)
@@ -286,7 +286,7 @@ void PermissionWidget::addPermission(void)
 		if(perm)
 		{
 			model->removePermission(perm);
-			delete(perm);
+			delete perm;
 		}
 
 		cancelOperation();
@@ -328,7 +328,7 @@ void PermissionWidget::updatePermission(void)
 							ErrorCode::AsgDuplicatedPermission,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		delete(perm_bkp);
+		delete perm_bkp;
 		perms_changed=true;
 		updateCodePreview();
 	}
@@ -336,8 +336,8 @@ void PermissionWidget::updatePermission(void)
 	{
 		(*permission)=(*perm_bkp);
 
-		delete(perm);
-		delete(perm_bkp);
+		delete perm;
+		delete perm_bkp;
 
 		cancelOperation();
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

@@ -45,7 +45,7 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
 TextboxView::~TextboxView(void)
 {
 	this->removeFromGroup(text_item);
-	delete(text_item);
+	delete text_item;
 }
 
 void TextboxView::setColorStyle(const QBrush &fill_style, const QPen &border_style)

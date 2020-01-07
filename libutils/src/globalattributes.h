@@ -74,6 +74,9 @@ class GlobalAttributes {
 			values does not exists the the fallback value is returned even if it not exists in the filesystem */
 		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val=QString());
 
+		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
+		static void setSearchPath(const QString &search_path);
+
 	public:
 		static const QString
 		PgModelerAppName,
@@ -131,20 +134,20 @@ class GlobalAttributes {
 
 		#ifdef DEMO_VERSION
 			//Maximum object creation counter for demo version
-			constexpr unsigned MaxObjectCount = 15;
+			static constexpr unsigned MaxObjectCount = 15;
 		#endif
 
 		static QString getSchemasRootDir(void);
-		//static QString getSchemaFilePath(const QString &subfolder, const QString &file);
+		//TODO: static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
 		static QString getTemporaryDir(void);
-		//static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
+		//TODO: static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
 
 		static QString getTmplConfigurationDir(void);
-		//static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
+		//TODO: static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
 
 		static QString getConfigurationsDir(void);
-		//static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
+		//TODO: static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
 
 		static QString getSamplesDir(void);
 		static QString getLanguagesDir(void);
@@ -155,6 +158,9 @@ class GlobalAttributes {
 		static QString getPgModelerCHandlerPath(void);
 		static QString getPgModelerCLIPath(void);
 		static QString getPgModelerAppPath(void);
+
+		friend class Application;
+		friend class PgModelerCli;
 };
 
 #endif

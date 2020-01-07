@@ -84,7 +84,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 RoleWidget::~RoleWidget()
 {
-	delete(object_selection_wgt);
+	delete object_selection_wgt;
 }
 
 void RoleWidget::configureRoleSelection(void)

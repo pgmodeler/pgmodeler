@@ -18,7 +18,7 @@
 
 #include "permission.h"
 
-const QString Permission::priv_codes=QString("rawdDxtCcTXU");
+const QString Permission::priv_codes("rawdDxtCcTXU");
 
 Permission::Permission(BaseObject *obj)
 {

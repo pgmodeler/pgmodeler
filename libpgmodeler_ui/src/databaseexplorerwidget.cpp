@@ -25,9 +25,9 @@
 #include "pgmodeleruins.h"
 #include "generalconfigwidget.h"
 
-const QString DatabaseExplorerWidget::DepNotDefined=QString();
+const QString DatabaseExplorerWidget::DepNotDefined;
 const QString DatabaseExplorerWidget::DepNotFound=QT_TR_NOOP("(not found, OID: %1)");
-const QString DatabaseExplorerWidget::ElemSeparator=QString("•");
+const QString DatabaseExplorerWidget::ElemSeparator("•");
 const QString DatabaseExplorerWidget::DefaultSourceCode=QString("-- %1 --").arg(QT_TR_NOOP("Source code not generated! Hit F7 or middle-click the item to load it."));
 
 const attribs_map DatabaseExplorerWidget::attribs_i18n {

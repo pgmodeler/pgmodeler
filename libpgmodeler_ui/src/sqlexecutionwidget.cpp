@@ -27,7 +27,7 @@
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
-const QString SQLExecutionWidget::ColumnNullValue = QString("␀");
+const QString SQLExecutionWidget::ColumnNullValue("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
@@ -602,7 +602,7 @@ void SQLExecutionWidget::destroyResultModel(void)
 		ResultSetModel *result_model = dynamic_cast<ResultSetModel *>(results_tbw->model());
 		results_tbw->blockSignals(true);
 		results_tbw->setModel(nullptr);
-		delete(result_model);
+		delete result_model;
 		results_tbw->blockSignals(false);
 	}
 }
@@ -1123,5 +1123,5 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 	else if(exec_act == action_toggle_find)
 		find_history_parent->setVisible(!find_history_parent->isVisible());
 
-	delete(ctx_menu);
+	delete ctx_menu;
 }

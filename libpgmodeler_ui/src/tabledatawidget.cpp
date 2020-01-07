@@ -21,7 +21,7 @@
 #include "bulkdataeditwidget.h"
 #include "sqlexecutionwidget.h"
 
-const QString TableDataWidget::PlaceholderColumn=QString("$placeholder$");
+const QString TableDataWidget::PlaceholderColumn("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {

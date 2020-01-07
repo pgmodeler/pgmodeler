@@ -104,7 +104,7 @@ void LayersWidget::removeLayer(bool clear)
 			while(layers_lst->count() > 1)
 			{
 				item = layers_lst->takeItem(layers_lst->count() - 1);
-				delete(item);
+				delete item;
 			}
 		}
 		else if(layers_lst->currentRow() > 0)
@@ -112,7 +112,7 @@ void LayersWidget::removeLayer(bool clear)
 			item = layers_lst->currentItem();
 			model->scene->removeLayer(item->text());
 			layers_lst->takeItem(layers_lst->currentRow());
-			delete(item);
+			delete item;
 		}
 
 		layers_lst->setCurrentRow(-1);

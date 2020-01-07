@@ -19,7 +19,7 @@
 #include "physicaltable.h"
 #include "pgmodelerns.h"
 
-const QString PhysicalTable::DataSeparator = QString("•");
+const QString PhysicalTable::DataSeparator("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
 PhysicalTable::PhysicalTable(void) : BaseTable()
@@ -51,7 +51,7 @@ void PhysicalTable::destroyObjects(void)
 
 	while(!list.empty())
 	{
-		delete(list.back());
+		delete list.back();
 		list.pop_back();
 	}
 

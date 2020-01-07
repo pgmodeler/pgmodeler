@@ -159,8 +159,8 @@ void ModelValidationWidget::destroyThread(bool force)
 	if(validation_thread && (force || validation_helper->getErrorCount()==0))
 	{
 		validation_thread->wait();
-		delete(validation_thread);
-		delete(validation_helper);
+		delete validation_thread;
+		delete validation_helper;
 		validation_thread=nullptr;
 		validation_helper=nullptr;
 	}

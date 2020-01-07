@@ -59,9 +59,9 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 AttributesTogglerItem::~AttributesTogglerItem(void)
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
-		delete(buttons[arr_id]);
+		delete buttons[arr_id];
 
-	delete(sel_rect);
+	delete sel_rect;
 }
 
 void AttributesTogglerItem::setButtonsBrush(const QBrush &brush)

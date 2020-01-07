@@ -22,7 +22,7 @@
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
-const QString ConnectionsConfigWidget::DefaultFor=QString("default-for-%1");
+const QString ConnectionsConfigWidget::DefaultFor("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
@@ -93,7 +93,7 @@ void ConnectionsConfigWidget::destroyConnections(void)
 		conn=connections.back();
 		connections.pop_back();
 		connections_cmb->removeItem(0);
-		delete(conn);
+		delete conn;
 	}
 }
 
@@ -238,7 +238,7 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 	catch(Exception &e)
 	{
 		if(new_conn)
-			delete(new_conn);
+			delete new_conn;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -272,7 +272,7 @@ void ConnectionsConfigWidget::handleConnection(void)
 	catch(Exception &e)
 	{
 		if(add_tb->isVisible())
-			delete(conn);
+			delete conn;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -286,7 +286,7 @@ void ConnectionsConfigWidget::removeConnection(void)
 		conn=connections.at(connections_cmb->currentIndex());
 		connections.erase(connections.begin() + connections_cmb->currentIndex());
 		connections_cmb->removeItem(connections_cmb->currentIndex());
-		delete(conn);
+		delete conn;
 		this->newConnection();
 		setConfigurationChanged(true);
 	}

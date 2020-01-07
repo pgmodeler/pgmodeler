@@ -75,7 +75,7 @@ PgModelerPlugin::PgModelerPlugin(void)
 
 PgModelerPlugin::~PgModelerPlugin(void)
 {
-	delete(plugin_info_frm);
+	delete plugin_info_frm;
 }
 
 void PgModelerPlugin::initPlugin(MainWindow *main_window)

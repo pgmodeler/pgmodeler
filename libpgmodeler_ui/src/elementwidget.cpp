@@ -278,7 +278,7 @@ template<class Class>
 void ElementWidget::createElement(Class *elem)
 {
 	if(element && !dynamic_cast<Class *>(element))
-		delete(element);
+		delete element;
 
 	if(!element)
 		element = new Class;

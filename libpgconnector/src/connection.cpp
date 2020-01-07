@@ -423,7 +423,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	result=*(new_res);
 
 	//Deallocate the new resultset
-	delete(new_res);
+	delete new_res;
 	PQclear(sql_res);
 }
 

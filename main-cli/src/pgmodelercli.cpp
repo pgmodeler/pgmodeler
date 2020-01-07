@@ -21,70 +21,72 @@
 QTextStream PgModelerCli::out(stdout);
 
 const QRegExp PgModelerCli::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
-const QString PgModelerCli::PasswordPlaceholder=QString("password=******");
+const QString PgModelerCli::PasswordPlaceholder("password=******");
 
-const QString PgModelerCli::Input=QString("--input");
-const QString PgModelerCli::Output=QString("--output");
-const QString PgModelerCli::InputDb=QString("--input-db");
-const QString PgModelerCli::ExportToFile=QString("--export-to-file");
-const QString PgModelerCli::ExportToPng=QString("--export-to-png");
-const QString PgModelerCli::ExportToSvg=QString("--export-to-svg");
-const QString PgModelerCli::ExportToDbms=QString("--export-to-dbms");
-const QString PgModelerCli::ExportToDict=QString("--export-to-dict");
-const QString PgModelerCli::ImportDb=QString("--import-db");
-const QString PgModelerCli::NoIndex=QString("--no-index");
-const QString PgModelerCli::Splitted=QString("--splitted");
-const QString PgModelerCli::Diff=QString("--diff");
-const QString PgModelerCli::DropDatabase=QString("--drop-database");
-const QString PgModelerCli::DropObjects=QString("--drop-objects");
-const QString PgModelerCli::PgSqlVer=QString("--pgsql-ver");
-const QString PgModelerCli::Help=QString("--help");
-const QString PgModelerCli::ShowGrid=QString("--show-grid");
-const QString PgModelerCli::ShowDelimiters=QString("--show-delimiters");
-const QString PgModelerCli::PageByPage=QString("--page-by-page");
-const QString PgModelerCli::IgnoreDuplicates=QString("--ignore-duplicates");
-const QString PgModelerCli::IgnoreErrorCodes=QString("--ignore-error-codes");
-const QString PgModelerCli::ConnAlias=QString("--conn-alias");
-const QString PgModelerCli::Host=QString("--host");
-const QString PgModelerCli::Port=QString("--port");
-const QString PgModelerCli::User=QString("--user");
-const QString PgModelerCli::Passwd=QString("--passwd");
-const QString PgModelerCli::InitialDb=QString("--initial-db");
-const QString PgModelerCli::Silent=QString("--silent");
-const QString PgModelerCli::ListConns=QString("--list-conns");
-const QString PgModelerCli::Simulate=QString("--simulate");
-const QString PgModelerCli::FixModel=QString("--fix-model");
-const QString PgModelerCli::FixTries=QString("--fix-tries");
-const QString PgModelerCli::ZoomFactor=QString("--zoom");
-const QString PgModelerCli::UseTmpNames=QString("--use-tmp-names");
-const QString PgModelerCli::DbmMimeType=QString("--dbm-mime-type");
-const QString PgModelerCli::Install=QString("install");
-const QString PgModelerCli::Uninstall=QString("uninstall");
-const QString PgModelerCli::IgnoreImportErrors=QString("--ignore-errors");
-const QString PgModelerCli::ImportSystemObjs=QString("--import-sys-objs");
-const QString PgModelerCli::ImportExtensionObjs=QString("--import-ext-objs");
-const QString PgModelerCli::DebugMode=QString("--debug-mode");
-const QString PgModelerCli::CompareTo=QString("--compare-to");
-const QString PgModelerCli::SaveDiff=QString("--save-diff");
-const QString PgModelerCli::ApplyDiff=QString("--apply-diff");
-const QString PgModelerCli::NoDiffPreview=QString("--no-diff-preview");
-const QString PgModelerCli::DropClusterObjs=QString("--drop-cluster-objs");
-const QString PgModelerCli::RevokePermissions=QString("--revoke-perms");
-const QString PgModelerCli::DropMissingObjs=QString("--drop-missing");
-const QString PgModelerCli::ForceDropColsConstrs=QString("--force-drop-cols");
-const QString PgModelerCli::RenameDb=QString("--rename-db");
-const QString PgModelerCli::TruncOnColsTypeChange=QString("--trunc-type-change");
-const QString PgModelerCli::NoSequenceReuse=QString("--no-sequence-reuse");
-const QString PgModelerCli::NoCascadeDropTrunc=QString("--no-cascade");
-const QString PgModelerCli::NoForceObjRecreation=QString("--no-force-recreation");
-const QString PgModelerCli::NoUnmodObjRecreation=QString("--no-unmod-recreation");
+const QString PgModelerCli::Input("--input");
+const QString PgModelerCli::Output("--output");
+const QString PgModelerCli::InputDb("--input-db");
+const QString PgModelerCli::ExportToFile("--export-to-file");
+const QString PgModelerCli::ExportToPng("--export-to-png");
+const QString PgModelerCli::ExportToSvg("--export-to-svg");
+const QString PgModelerCli::ExportToDbms("--export-to-dbms");
+const QString PgModelerCli::ExportToDict("--export-to-dict");
+const QString PgModelerCli::ImportDb("--import-db");
+const QString PgModelerCli::NoIndex("--no-index");
+const QString PgModelerCli::Splitted("--splitted");
+const QString PgModelerCli::Diff("--diff");
+const QString PgModelerCli::DropDatabase("--drop-database");
+const QString PgModelerCli::DropObjects("--drop-objects");
+const QString PgModelerCli::PgSqlVer("--pgsql-ver");
+const QString PgModelerCli::Help("--help");
+const QString PgModelerCli::ShowGrid("--show-grid");
+const QString PgModelerCli::ShowDelimiters("--show-delimiters");
+const QString PgModelerCli::PageByPage("--page-by-page");
+const QString PgModelerCli::IgnoreDuplicates("--ignore-duplicates");
+const QString PgModelerCli::IgnoreErrorCodes("--ignore-error-codes");
+const QString PgModelerCli::ConnAlias("--conn-alias");
+const QString PgModelerCli::Host("--host");
+const QString PgModelerCli::Port("--port");
+const QString PgModelerCli::User("--user");
+const QString PgModelerCli::Passwd("--passwd");
+const QString PgModelerCli::InitialDb("--initial-db");
+const QString PgModelerCli::Silent("--silent");
+const QString PgModelerCli::ListConns("--list-conns");
+const QString PgModelerCli::Simulate("--simulate");
+const QString PgModelerCli::FixModel("--fix-model");
+const QString PgModelerCli::FixTries("--fix-tries");
+const QString PgModelerCli::ZoomFactor("--zoom");
+const QString PgModelerCli::UseTmpNames("--use-tmp-names");
+const QString PgModelerCli::DbmMimeType("--dbm-mime-type");
+const QString PgModelerCli::Install("install");
+const QString PgModelerCli::Uninstall("uninstall");
+const QString PgModelerCli::IgnoreImportErrors("--ignore-errors");
+const QString PgModelerCli::ImportSystemObjs("--import-sys-objs");
+const QString PgModelerCli::ImportExtensionObjs("--import-ext-objs");
+const QString PgModelerCli::DebugMode("--debug-mode");
+const QString PgModelerCli::CompareTo("--compare-to");
+const QString PgModelerCli::SaveDiff("--save-diff");
+const QString PgModelerCli::ApplyDiff("--apply-diff");
+const QString PgModelerCli::NoDiffPreview("--no-diff-preview");
+const QString PgModelerCli::DropClusterObjs("--drop-cluster-objs");
+const QString PgModelerCli::RevokePermissions("--revoke-perms");
+const QString PgModelerCli::DropMissingObjs("--drop-missing");
+const QString PgModelerCli::ForceDropColsConstrs("--force-drop-cols");
+const QString PgModelerCli::RenameDb("--rename-db");
+const QString PgModelerCli::TruncOnColsTypeChange("--trunc-type-change");
+const QString PgModelerCli::NoSequenceReuse("--no-sequence-reuse");
+const QString PgModelerCli::NoCascadeDropTrunc("--no-cascade");
+const QString PgModelerCli::NoForceObjRecreation("--no-force-recreation");
+const QString PgModelerCli::NoUnmodObjRecreation("--no-unmod-recreation");
 
-const QString PgModelerCli::TagExpr=QString("<%1");
-const QString PgModelerCli::EndTagExpr=QString("</%1");
-const QString PgModelerCli::AttributeExpr=QString("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
+const QString PgModelerCli::TagExpr("<%1");
+const QString PgModelerCli::EndTagExpr("</%1");
+const QString PgModelerCli::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
 PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 {
+	GlobalAttributes::setSearchPath(this->applicationDirPath());
+
 	try
 	{
 		QString op, value;
@@ -96,6 +98,13 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 		scene=nullptr;
 		xmlparser=nullptr;
 		zoom=1;
+
+		export_hlp = new ModelExportHelper;
+		import_hlp = new DatabaseImportHelper;
+		diff_hlp = new ModelsDiffHelper;
+		conn_conf = new ConnectionsConfigWidget;
+		rel_conf = new RelationshipConfigWidget;
+		general_conf = new GeneralConfigWidget;
 
 		initializeOptions();
 
@@ -187,10 +196,10 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 
 			if(!silent_mode)
 			{
-				connect(&export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
-				connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(printIgnoredError(QString,QString,QString)));
-				connect(&import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
-				connect(&diff_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+				connect(export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
+				connect(export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(printIgnoredError(QString,QString,QString)));
+				connect(import_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
+				connect(diff_hlp, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString)));
 			}
 		}
 	}
@@ -202,8 +211,14 @@ PgModelerCli::PgModelerCli(int argc, char **argv) :  QApplication(argc, argv)
 
 PgModelerCli::~PgModelerCli(void)
 {
-	if(scene) delete(scene);
-	delete(model);
+	if(scene) delete scene;
+	delete model;
+	delete export_hlp;
+	delete import_hlp;
+	delete diff_hlp;
+	delete conn_conf;
+	delete rel_conf;
+	delete general_conf;
 }
 
 void PgModelerCli::printMessage(const QString &msg)
@@ -469,14 +484,14 @@ void PgModelerCli::parseOptions(attribs_map &opts)
 	//Loading connections
 	if(opts.count(ListConns) || opts.count(ExportToDbms) || opts.count(ImportDb) || opts.count(Diff))
 	{
-		conn_conf.loadConfiguration();
-		conn_conf.getConnections(connections, false);
+		conn_conf->loadConfiguration();
+		conn_conf->getConnections(connections, false);
 	}
 	//Loading general and relationship settings when exporting to image formats
 	else if(opts.count(ExportToPng) || opts.count(ExportToSvg))
 	{
-		general_conf.loadConfiguration();
-		rel_conf.loadConfiguration();
+		general_conf->loadConfiguration();
+		rel_conf->loadConfiguration();
 	}
 
 	if(opts.empty() || opts.count(Help))
@@ -1281,7 +1296,7 @@ void PgModelerCli::exportModel(void)
 	{
 		printMessage(tr("Export to PNG image: %1").arg(parsed_opts[Output]));
 
-		export_hlp.exportToPNG(scene, parsed_opts[Output], zoom,
+		export_hlp->exportToPNG(scene, parsed_opts[Output], zoom,
 								 parsed_opts.count(ShowGrid) > 0,
 								 parsed_opts.count(ShowDelimiters) > 0,
 								 parsed_opts.count(PageByPage) > 0);
@@ -1291,7 +1306,7 @@ void PgModelerCli::exportModel(void)
 	{
 		printMessage(tr("Export to SVG file: %1").arg(parsed_opts[Output]));
 
-		export_hlp.exportToSVG(scene, parsed_opts[Output],
+		export_hlp->exportToSVG(scene, parsed_opts[Output],
 													 parsed_opts.count(ShowGrid) > 0,
 													 parsed_opts.count(ShowDelimiters) > 0);
 	}
@@ -1299,13 +1314,13 @@ void PgModelerCli::exportModel(void)
 	else if(parsed_opts.count(ExportToFile))
 	{
 		printMessage(tr("Export to SQL script file: %1").arg(parsed_opts[Output]));
-		export_hlp.exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
+		export_hlp->exportToSQL(model, parsed_opts[Output], parsed_opts[PgSqlVer]);
 	}
 	//Export data dictionary
 	else if(parsed_opts.count(ExportToDict))
 	{
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
-		export_hlp.exportToDataDict(model, parsed_opts[Output], parsed_opts.count(NoIndex) == 0, parsed_opts.count(Splitted) > 0);
+		export_hlp->exportToDataDict(model, parsed_opts[Output], parsed_opts.count(NoIndex) == 0, parsed_opts.count(Splitted) > 0);
 	}
 	//Export to DBMS
 	else
@@ -1313,9 +1328,9 @@ void PgModelerCli::exportModel(void)
 		printMessage(tr("Export to DBMS: %1").arg(connection.getConnectionString().replace(PasswordRegExp, PasswordPlaceholder)));
 
 		if(parsed_opts.count(IgnoreErrorCodes))
-			export_hlp.setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
+			export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
-		export_hlp.exportToDBMS(model, connection, parsed_opts[PgSqlVer],
+		export_hlp->exportToDBMS(model, connection, parsed_opts[PgSqlVer],
 								parsed_opts.count(IgnoreDuplicates) > 0,
 								parsed_opts.count(DropDatabase) > 0,
 								parsed_opts.count(DropObjects) > 0,
@@ -1342,7 +1357,7 @@ void PgModelerCli::importDatabase(void)
 
 	printMessage(tr("Import successfully ended!\n"));
 
-	delete(model_wgt);
+	delete model_wgt;
 }
 
 void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
@@ -1367,8 +1382,8 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 
 		catalog.closeConnection();
 
-		import_hlp.setConnection(conn);
-		import_hlp.setImportOptions(parsed_opts.count(ImportSystemObjs) > 0,
+		import_hlp->setConnection(conn);
+		import_hlp->setImportOptions(parsed_opts.count(ImportSystemObjs) > 0,
 																parsed_opts.count(ImportExtensionObjs) > 0,
 																true,
 																parsed_opts.count(IgnoreImportErrors) > 0,
@@ -1376,9 +1391,9 @@ void PgModelerCli::importDatabase(DatabaseModel *model, Connection conn)
 																!parsed_opts.count(Diff), !parsed_opts.count(Diff));
 
 		model->createSystemObjects(true);
-		import_hlp.setSelectedOIDs(model, obj_oids, col_oids);
-		import_hlp.importDatabase();
-		import_hlp.closeConnection();
+		import_hlp->setSelectedOIDs(model, obj_oids, col_oids);
+		import_hlp->importDatabase();
+		import_hlp->closeConnection();
 	}
 	catch(Exception &e)
 	{
@@ -1416,31 +1431,31 @@ void PgModelerCli::diffModelDatabase(void)
 	printMessage(tr("Importing the database `%1'...").arg(dbname));
 	importDatabase(model_aux, extra_connection);
 
-	diff_hlp.setModels(model, model_aux);
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NoForceObjRecreation));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NoUnmodObjRecreation));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NoSequenceReuse));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
-	diff_hlp.setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
+	diff_hlp->setModels(model, model_aux);
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NoForceObjRecreation));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NoUnmodObjRecreation));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NoSequenceReuse));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptDontDropMissingObjs, !parsed_opts.count(DropMissingObjs));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptDropMissingColsConstr, !parsed_opts.count(ForceDropColsConstrs));
 
 	if(!parsed_opts[PgSqlVer].isEmpty())
-		diff_hlp.setPgSQLVersion(parsed_opts[PgSqlVer]);
+		diff_hlp->setPgSQLVersion(parsed_opts[PgSqlVer]);
 	else
 	{
 		extra_connection.connect();
-		diff_hlp.setPgSQLVersion(extra_connection.getPgSQLVersion(true));
+		diff_hlp->setPgSQLVersion(extra_connection.getPgSQLVersion(true));
 		extra_connection.close();
 	}
 
 	printMessage(tr("Comparing the generated models..."));
-	diff_hlp.diffModels();
+	diff_hlp->diffModels();
 
-	if(diff_hlp.getDiffDefinition().isEmpty())
+	if(diff_hlp->getDiffDefinition().isEmpty())
 		printMessage(tr("No differences were detected."));
 	else
 	{
@@ -1454,7 +1469,7 @@ void PgModelerCli::diffModelDatabase(void)
 			if(!output.open(QFile::WriteOnly))
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(parsed_opts[Output]),
 												ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__);
-			output.write(diff_hlp.getDiffDefinition().toUtf8());
+			output.write(diff_hlp->getDiffDefinition().toUtf8());
 			output.close();
 		}
 		else
@@ -1468,7 +1483,7 @@ void PgModelerCli::diffModelDatabase(void)
 
 				buff += "\n** Press ENTER to scroll the preview **\n";
 				buff += "\n### DIFF PREVIEW ###\n\n";
-				buff += diff_hlp.getDiffDefinition();
+				buff += diff_hlp->getDiffDefinition();
 				buff += "\n### END OF PREVIEW  ###\n\n";
 
 				preview.setString(&buff, QIODevice::ReadOnly);
@@ -1512,14 +1527,14 @@ void PgModelerCli::diffModelDatabase(void)
 			if(apply_diff)
 			{
 				printMessage(tr("Applying diff to the database `%1'...").arg(dbname));
-				export_hlp.setExportToDBMSParams(diff_hlp.getDiffDefinition(),
+				export_hlp->setExportToDBMSParams(diff_hlp->getDiffDefinition(),
 												 &extra_connection,
 												 parsed_opts[CompareTo], parsed_opts.count(IgnoreDuplicates));
 
 				if(parsed_opts.count(IgnoreErrorCodes))
-					export_hlp.setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
+					export_hlp->setIgnoredErrors(parsed_opts[IgnoreErrorCodes].split(','));
 
-				export_hlp.exportToDBMS();
+				export_hlp->exportToDBMS();
 			}
 		}
 	}

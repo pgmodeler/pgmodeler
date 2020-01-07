@@ -19,15 +19,15 @@
 #include "xmlparser.h"
 #include <QUrl>
 
-const QString XmlParser::CharAmp=QString("&amp;");
-const QString XmlParser::CharLt=QString("&lt;");
-const QString XmlParser::CharGt=QString("&gt;");
-const QString XmlParser::CharQuot=QString("&quot;");
-const QString XmlParser::CharApos=QString("&apos;");
-const QString XmlParser::CdataStart=QString("<![CDATA[");
-const QString XmlParser::CdataEnd=QString("]]>");
-const QString XmlParser::CommentStart=QString("<!--");
-const QString XmlParser::CommentEnd=QString("-->");
+const QString XmlParser::CharAmp("&amp;");
+const QString XmlParser::CharLt("&lt;");
+const QString XmlParser::CharGt("&gt;");
+const QString XmlParser::CharQuot("&quot;");
+const QString XmlParser::CharApos("&apos;");
+const QString XmlParser::CdataStart("<![CDATA[");
+const QString XmlParser::CdataEnd("]]>");
+const QString XmlParser::CommentStart("<!--");
+const QString XmlParser::CommentEnd("-->");
 
 XmlParser::XmlParser(void)
 {

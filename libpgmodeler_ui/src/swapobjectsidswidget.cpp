@@ -1,7 +1,7 @@
 #include "swapobjectsidswidget.h"
 #include "pgmodeleruins.h"
 
-const QString SwapObjectsIdsWidget::IdLabel = QString("ID: <strong>%1</strong>");
+const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {

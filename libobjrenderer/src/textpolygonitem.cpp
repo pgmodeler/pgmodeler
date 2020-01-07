@@ -25,7 +25,7 @@ TextPolygonItem::TextPolygonItem(QGraphicsItem *parent) : QGraphicsPolygonItem(p
 
 TextPolygonItem::~TextPolygonItem(void)
 {
-	delete(text_item);
+	delete text_item;
 }
 
 void TextPolygonItem::setText(const QString &text)

@@ -21,7 +21,7 @@
 #include <iostream>
 #include "pgmodeleruins.h"
 
-const QString ModelFixForm::PgModelerCli=QString("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

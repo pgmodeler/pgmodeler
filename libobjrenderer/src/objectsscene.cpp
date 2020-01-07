@@ -80,8 +80,8 @@ ObjectsScene::~ObjectsScene(void)
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
 
-	delete(selection_rect);
-	delete(rel_line);
+	delete selection_rect;
+	delete rel_line;
 
 	//Destroy the objects in the order defined on obj_types vector
 	for(auto &type : obj_types)
@@ -116,7 +116,7 @@ ObjectsScene::~ObjectsScene(void)
 	std::sort(removed_objs.begin(), removed_objs.end());
 	while(!removed_objs.empty())
 	{
-		delete(removed_objs.back());
+		delete removed_objs.back();
 		removed_objs.pop_back();
 	}
 }

@@ -160,7 +160,7 @@ void TableView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 			groups[obj_idx]->removeFromGroup(col_item);
-			delete(col_item);
+			delete col_item;
 			i--;
 		}
 

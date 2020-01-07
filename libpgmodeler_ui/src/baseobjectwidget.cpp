@@ -279,7 +279,7 @@ void BaseObjectWidget::cancelChainedOperation(void)
 	if(new_object && this->object)
 	{
 		if(!op_list_changed)
-			delete(this->object);
+			delete this->object;
 
 		this->object=nullptr;
 	}
@@ -927,7 +927,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
 			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
-				delete(this->object);
+				delete this->object;
 
 			this->object=nullptr;
 		}

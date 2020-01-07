@@ -33,9 +33,9 @@ TableTitleView::TableTitleView(void) : BaseObjectView(nullptr)
 
 TableTitleView::~TableTitleView(void)
 {
-	delete(schema_name);
-	delete(obj_name);
-	delete(box);
+	delete schema_name;
+	delete obj_name;
+	delete box;
 }
 
 void TableTitleView::configureObject(BaseGraphicObject *object)

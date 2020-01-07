@@ -189,7 +189,7 @@ void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&role);
 
 		if(usr_map)
-			delete(usr_map);
+			delete usr_map;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

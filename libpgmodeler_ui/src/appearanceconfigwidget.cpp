@@ -144,10 +144,10 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
 {
 	scene->removeItem(placeholder);
 
-	delete(placeholder);
-	delete(viewp);
-	delete(scene);
-	delete(model);
+	delete placeholder;
+	delete viewp;
+	delete scene;
+	delete model;
 }
 
 map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams(void)

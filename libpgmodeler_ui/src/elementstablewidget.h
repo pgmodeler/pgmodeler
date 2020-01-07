@@ -79,7 +79,7 @@ class ElementsTableWidget: public QWidget {
 		{
 			if(handled_elem && !dynamic_cast<Class *>(handled_elem))
 			{
-				delete(handled_elem);
+				delete handled_elem;
 				handled_elem = nullptr;
 			}
 

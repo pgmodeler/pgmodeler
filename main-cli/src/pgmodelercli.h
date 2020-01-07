@@ -46,13 +46,13 @@ class PgModelerCli: public QApplication {
 		XmlParser *xmlparser;
 
 		//! \brief Export helper object
-		ModelExportHelper export_hlp;
+		ModelExportHelper *export_hlp;
 
 		//! \brief Import helper object
-		DatabaseImportHelper import_hlp;
+		DatabaseImportHelper *import_hlp;
 
 		//! \brief Diff helper object
-		ModelsDiffHelper diff_hlp;
+		ModelsDiffHelper *diff_hlp;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -70,12 +70,12 @@ class PgModelerCli: public QApplication {
 		map<QString, Connection *> connections;
 
 		//! \brief Connection configuration widget used to load available connections from file
-		ConnectionsConfigWidget conn_conf;
+		ConnectionsConfigWidget *conn_conf;
 
 		//! \brief Relationship configuration widget used to load custom relationship settings
-		RelationshipConfigWidget rel_conf;
+		RelationshipConfigWidget *rel_conf;
 
-		GeneralConfigWidget general_conf;
+		GeneralConfigWidget *general_conf;
 
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;

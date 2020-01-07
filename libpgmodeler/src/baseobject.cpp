@@ -55,15 +55,15 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
-	QString("COLUMN"),  QString("CONSTRAINT"), QString("FUNCTION"),
-	QString("TRIGGER"), QString("INDEX"), QString("RULE"), QString("TABLE"),
-	QString("VIEW"), QString("DOMAIN"), QString("SCHEMA"), QString("AGGREGATE"),
-	QString("OPERATOR"), QString("SEQUENCE"), QString("ROLE"), QString("CONVERSION"),
-	QString("CAST"), QString("LANGUAGE"), QString("TYPE"), QString("TABLESPACE"),
-	QString("OPERATOR FAMILY"), QString("OPERATOR CLASS"), QString("DATABASE"),
-	QString("COLLATION"), QString("EXTENSION"), QString("EVENT TRIGGER"),
-	QString("POLICY"), QString("FOREIGN DATA WRAPPER"), QString("SERVER"),
-	QString("FOREIGN TABLE"), QString("USER MAPPING")
+	"COLUMN", "CONSTRAINT", "FUNCTION",
+	"TRIGGER", "INDEX", "RULE", "TABLE",
+	"VIEW", "DOMAIN", "SCHEMA", "AGGREGATE",
+	"OPERATOR", "SEQUENCE", "ROLE", "CONVERSION",
+	"CAST", "LANGUAGE", "TYPE", "TABLESPACE",
+	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
+	"COLLATION", "EXTENSION", "EVENT TRIGGER",
+	"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
+	"FOREIGN TABLE", "USER MAPPING"
 };
 
 /* Initializes the global id which is shared between instances

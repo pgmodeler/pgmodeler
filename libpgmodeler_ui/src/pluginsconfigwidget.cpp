@@ -46,7 +46,7 @@ PluginsConfigWidget::~PluginsConfigWidget(void)
 {
 	while(!plugins.empty())
 	{
-		delete(plugins.back());
+		delete plugins.back();
 		plugins.pop_back();
 	}
 }

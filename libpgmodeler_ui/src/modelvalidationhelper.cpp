@@ -40,7 +40,7 @@ ModelValidationHelper::~ModelValidationHelper(void)
 {
 	export_thread->quit();
 	export_thread->wait();
-	delete(export_thread);
+	delete export_thread;
 }
 
 void ModelValidationHelper::generateValidationInfo(unsigned val_type, BaseObject *object, vector<BaseObject *> refs)
