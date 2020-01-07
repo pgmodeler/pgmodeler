@@ -470,11 +470,11 @@ QSize RelationshipWidget::getIdealSize()
 
 	if(rel_type == BaseRelationship::RelationshipFk ||
 	   (BaseRelationship::RelationshipDep && this->object && this->object->getObjectType()==ObjectType::BaseRelationship))
-		return(QSize(640, 320));
+		return QSize(640, 320);
 	else if(BaseRelationship::RelationshipGen)
-		return(QSize(640, 520));
+		return QSize(640, 520);
 	else
-		return(QSize(640, 680));
+		return QSize(640, 680);
 }
 
 void RelationshipWidget::useFKGlobalSettings(bool value)
@@ -751,7 +751,7 @@ int RelationshipWidget::openEditingForm(TableObject *object, BaseObject *parent)
 	res = editing_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
 
-	return(res);
+	return res;
 }
 
 void RelationshipWidget::addObject()

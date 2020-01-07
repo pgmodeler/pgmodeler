@@ -58,7 +58,7 @@ void Domain::removeCheckConstraints()
 
 attribs_map Domain::getCheckConstraints()
 {
-	return(chk_constrs);
+	return chk_constrs;
 }
 
 void Domain::setName(const QString &name)
@@ -106,23 +106,23 @@ void Domain::setType(PgSqlType type)
 
 QString Domain::getDefaultValue()
 {
-	return(default_value);
+	return default_value;
 }
 
 bool Domain::isNotNull()
 {
-	return(not_null);
+	return not_null;
 }
 
 PgSqlType Domain::getType()
 {
-	return(type);
+	return type;
 }
 
 QString Domain::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attribs_map aux_attribs;
 
@@ -141,7 +141,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 void Domain::operator = (Domain &domain)
@@ -223,7 +223,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		}
 
 		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
-		return(alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{

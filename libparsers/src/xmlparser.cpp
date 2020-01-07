@@ -311,7 +311,7 @@ bool XmlParser::accessElement(unsigned elem_type)
 			curr_line = curr_elem->line;
 	}
 
-	return(has_elem);
+	return has_elem;
 }
 
 bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
@@ -323,19 +323,19 @@ bool XmlParser::hasElement(unsigned elem_type, xmlElementType xml_node_type)
 		/* Returns the verification if the current element has a parent.
 		 The element must be different from the root, because the root element
 		 is not connected to a parent */
-		return(curr_elem!=root_elem && curr_elem->parent!=nullptr &&
-														  (xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
+		return (curr_elem!=root_elem && curr_elem->parent!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->parent->type==xml_node_type)));
 	else if(elem_type==ChildElement)
 		//Returns the verification if the current element has children
-		return(curr_elem->children!=nullptr &&
-									(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
+		return (curr_elem->children!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->children->type==xml_node_type)));
 	else if(elem_type==NextElement)
-		return(curr_elem->next!=nullptr &&
-								(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
+		return (curr_elem->next!=nullptr &&
+						(xml_node_type==0 || (xml_node_type!=0 && curr_elem->next->type==xml_node_type)));
 	else
 		/* The second comparison in the expression is made for the root element
 		 because libxml2 places the previous element as the root itself */
-		return(curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
+		return (curr_elem->prev!=nullptr && curr_elem->prev!=root_elem &&
 															(xml_node_type==0 || (xml_node_type!=0 && curr_elem->prev->type==xml_node_type)));
 }
 
@@ -344,7 +344,7 @@ bool XmlParser::hasAttributes()
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_elem->properties!=nullptr);
+	return (curr_elem->properties != nullptr);
 }
 
 QString XmlParser::getElementContent()
@@ -355,10 +355,10 @@ QString XmlParser::getElementContent()
 	/* If the current element has  <![CDATA[]]> node returns the content of the CDATA instead
 	of return the content of the element itself */
 	if(curr_elem->next && curr_elem->next->type == XML_CDATA_SECTION_NODE)
-		return(QString(reinterpret_cast<char *>(curr_elem->next->content)));
+		return QString(reinterpret_cast<char *>(curr_elem->next->content));
 	else
 		//Return the content of the element when is not a CDATA node
-		return(QString(reinterpret_cast<char *>(curr_elem->content)));
+		return QString(reinterpret_cast<char *>(curr_elem->content));
 }
 
 QString XmlParser::getElementName()
@@ -366,7 +366,7 @@ QString XmlParser::getElementName()
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(QString(reinterpret_cast<const char *>(curr_elem->name)));
+	return QString(reinterpret_cast<const char *>(curr_elem->name));
 }
 
 xmlElementType XmlParser::getElementType()
@@ -374,12 +374,12 @@ xmlElementType XmlParser::getElementType()
 	if(!root_elem)
 		throw Exception(ErrorCode::OprNotAllocatedElementTree,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_elem->type);
+	return curr_elem->type;
 }
 
 const xmlNode *XmlParser::getCurrentElement()
 {
-	return(curr_elem);
+	return curr_elem;
 }
 
 void XmlParser::getElementAttributes(attribs_map &attributes)
@@ -414,20 +414,20 @@ void XmlParser::getElementAttributes(attribs_map &attributes)
 
 QString XmlParser::getLoadedFilename()
 {
-	return(xml_doc_filename);
+	return xml_doc_filename;
 }
 
 QString XmlParser::getXMLBuffer()
 {
-	return(xml_buffer);
+	return xml_buffer;
 }
 
 int XmlParser::getCurrentBufferLine()
 {
 	if(curr_elem)
-		return(curr_line);
+		return curr_line;
 	else
-		return(0);
+		return 0;
 }
 
 int XmlParser::getBufferLineCount()
@@ -444,13 +444,13 @@ int XmlParser::getBufferLineCount()
 		{
 			char hex_value[10] = "";
 			sprintf(hex_value, "%p", xml_doc->last->last->psvi);
-			return(static_cast<int>(strtol(hex_value, nullptr, 16)));
+			return static_cast<int>(strtol(hex_value, nullptr, 16));
 		}
 
-		return(xml_doc->last->last->line);
+		return xml_doc->last->last->line;
 	}
 	else
-		return(0);
+		return 0;
 }
 
 QString XmlParser::convertCharsToXMLEntities(QString buf)
@@ -544,5 +544,5 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 		lin.clear();
 	}
 
-	return(buf_aux);
+	return buf_aux;
 }

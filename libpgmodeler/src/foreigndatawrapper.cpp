@@ -70,23 +70,23 @@ void ForeignDataWrapper::setValidatorFunction(Function *func)
 
 Function *ForeignDataWrapper::getHandlerFunction()
 {
-	return(handler_func);
+	return handler_func;
 }
 
 Function *ForeignDataWrapper::getValidatorFunction()
 {
-	return(validator_func);
+	return validator_func;
 }
 
 QString ForeignDataWrapper::getCodeDefinition(unsigned def_type)
 {
-	return(getCodeDefinition(def_type, false));
+	return getCodeDefinition(def_type, false);
 }
 
 QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	QStringList fmt_options;
 	bool is_sql_def = (def_type == SchemaParser::SqlDefinition);
@@ -105,7 +105,7 @@ QString ForeignDataWrapper::getCodeDefinition(unsigned def_type, bool reduced_fo
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
+	return this->BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
@@ -137,7 +137,7 @@ QString ForeignDataWrapper::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

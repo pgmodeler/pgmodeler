@@ -59,7 +59,7 @@ class BaseTable: public BaseGraphicObject {
 		virtual Tag *getTag();
 
 		//! \brief Returns true if the provided table is considered a base table (Table, ForeignTable, View)
-		static bool isBaseTable(ObjectType obj_type);
+		static bool isBaseTable(ObjectType obj_tp);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		virtual void addObject(BaseObject *obj, int obj_idx=-1)=0;

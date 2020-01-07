@@ -89,7 +89,7 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 
 QString SchemaParser::getPgSQLVersion()
 {
-	return(pgsql_version);
+	return pgsql_version;
 }
 
 QStringList SchemaParser::extractAttributes()
@@ -120,7 +120,7 @@ QStringList SchemaParser::extractAttributes()
 	}
 
 	attribs.removeDuplicates();
-	return(attribs);
+	return attribs;
 }
 
 void SchemaParser::restartParser()
@@ -277,7 +277,7 @@ QString SchemaParser::getAttribute()
 						ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(atrib);
+	return atrib;
 }
 
 QString SchemaParser::getWord()
@@ -303,7 +303,7 @@ QString SchemaParser::getWord()
 		}
 	}
 
-	return(word);
+	return word;
 }
 
 QString SchemaParser::getPureText()
@@ -356,7 +356,7 @@ QString SchemaParser::getPureText()
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(text);
+	return text;
 }
 
 QString SchemaParser::getConditional()
@@ -395,7 +395,7 @@ QString SchemaParser::getConditional()
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(conditional);
+	return conditional;
 }
 
 QString SchemaParser::getMetaCharacter()
@@ -432,14 +432,14 @@ QString SchemaParser::getMetaCharacter()
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(meta);
+	return meta;
 }
 
 bool SchemaParser::isSpecialCharacter(char chr)
 {
-	return(chr==CharIniAttribute || chr==CharEndAttribute ||
-		   chr==CharIniConditional || chr==CharIniMetachar ||
-		   chr==CharIniPlainText || chr==CharEndPlainText);
+	return chr==CharIniAttribute || chr==CharEndAttribute ||
+			chr==CharIniConditional || chr==CharIniMetachar ||
+			chr==CharIniPlainText || chr==CharEndPlainText;
 }
 
 bool SchemaParser::evaluateComparisonExpr()
@@ -579,7 +579,7 @@ bool SchemaParser::evaluateComparisonExpr()
 						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(expr_is_true);
+	return expr_is_true;
 }
 
 void SchemaParser::defineAttribute()
@@ -869,7 +869,7 @@ bool SchemaParser::evaluateExpression()
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(expr_is_true);
+	return expr_is_true;
 }
 
 void SchemaParser::ignoreBlankChars(const QString &line)
@@ -896,7 +896,7 @@ char SchemaParser::translateMetaCharacter(const QString &meta)
 						ErrorCode::InvalidMetacharacter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(metas.at(meta));
+	return metas.at(meta);
 }
 
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
@@ -914,7 +914,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
-			return(getCodeDefinition(filename, attribs));
+			return getCodeDefinition(filename, attribs);
 		}
 		else
 		{
@@ -922,7 +922,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 					 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator + obj_name +
 					 GlobalAttributes::SchemaExt;
 
-			return(XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
+			return XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs));
 		}
 	}
 	catch(Exception &e)
@@ -1351,7 +1351,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 	restartParser();
 	ignore_unk_atribs=false;
 	ignore_empty_atribs=false;
-	return(object_def);
+	return object_def;
 }
 
 QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
@@ -1360,7 +1360,7 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	{
 		loadFile(filename);
 		attribs[Attributes::PgSqlVersion]=pgsql_version;
-		return(getCodeDefinition(attribs));
+		return getCodeDefinition(attribs);
 	}
 	catch(Exception &e)
 	{

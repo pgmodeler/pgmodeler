@@ -105,14 +105,13 @@ bool FindReplaceWidget::findText(const QString &text, bool, QTextDocument::FindF
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	if(regexp)
-		return(text_edt->find(QRegExp(text,
-									  ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
-										   Qt::CaseSensitive : Qt::CaseInsensitive)), flags));
+		return text_edt->find(QRegExp(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
+																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
 	else
-		return(text_edt->find(text, flags));
+		return text_edt->find(text, flags);
 #else
 #warning "Text find through regular expressions is available only in Qt 5.3 or above."
-	return(text_edt->find(text, flags));
+	return text_edt->find(text, flags);
 #endif
 }
 
@@ -147,5 +146,5 @@ bool FindReplaceWidget::findText(bool backward, bool cyclic)
 		found=findText(find_edt->text(), regexp_chk->isChecked(), flags);
 	}
 
-	return(found);
+	return found;
 }

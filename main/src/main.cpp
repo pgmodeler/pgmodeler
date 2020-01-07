@@ -144,12 +144,12 @@ int main(int argc, char **argv)
 		res=app.exec();
 		app.closeAllWindows();
 
-		return(res);
+		return res;
 	}
 	catch(Exception &e)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(enum_cast(e.getErrorCode()));
+		return enum_cast(e.getErrorCode());
 	}
 }

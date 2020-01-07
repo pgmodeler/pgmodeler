@@ -78,17 +78,17 @@ void Rule::addCommand(const QString &cmd)
 
 EventType Rule::getEventType()
 {
-	return(event_type);
+	return event_type;
 }
 
 ExecutionType Rule::getExecutionType()
 {
-	return(execution_type);
+	return execution_type;
 }
 
 QString Rule::getConditionalExpression()
 {
-	return(conditional_expr);
+	return conditional_expr;
 }
 
 QString Rule::getCommand(unsigned cmd_idx)
@@ -97,12 +97,12 @@ QString Rule::getCommand(unsigned cmd_idx)
 	if(cmd_idx >= commands.size())
 		throw Exception(ErrorCode::RefRuleCommandInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(commands[cmd_idx]);
+	return commands[cmd_idx];
 }
 
 unsigned Rule::getCommandCount()
 {
-	return(commands.size());
+	return commands.size();
 }
 
 void Rule::removeCommand(unsigned cmd_idx)
@@ -124,7 +124,7 @@ void Rule::removeCommands()
 QString Rule::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	setCommandsAttribute();
 	attributes[Attributes::Condition]=conditional_expr;
@@ -134,13 +134,13 @@ QString Rule::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Rule::getSignature(bool format)
 {
 	if(!getParentTable())
-		return(BaseObject::getSignature(format));
+		return BaseObject::getSignature(format);
 
-	return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }

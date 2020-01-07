@@ -52,7 +52,7 @@ void Policy::setPermissive(bool value)
 
 bool Policy::isPermissive()
 {
-	return(permissive);
+	return (permissive);
 }
 
 void Policy::setPolicyCommand(PolicyCmdType cmd)
@@ -63,7 +63,7 @@ void Policy::setPolicyCommand(PolicyCmdType cmd)
 
 PolicyCmdType Policy::getPolicyCommand()
 {
-	return(policy_cmd);
+	return (policy_cmd);
 }
 
 void Policy::setUsingExpression(const QString &expr)
@@ -74,7 +74,7 @@ void Policy::setUsingExpression(const QString &expr)
 
 QString Policy::getUsingExpression()
 {
-	return(using_expr);
+	return (using_expr);
 }
 
 void Policy::setCheckExpression(const QString &expr)
@@ -85,7 +85,7 @@ void Policy::setCheckExpression(const QString &expr)
 
 QString Policy::getCheckExpression()
 {
-	return(check_expr);
+	return (check_expr);
 }
 
 void Policy::addRole(Role *role)
@@ -105,13 +105,13 @@ void Policy::removeRoles()
 
 vector<Role *> Policy::getRoles()
 {
-	return(roles);
+	return (roles);
 }
 
 QString Policy::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return (code_def);
 
 	QStringList rol_names;
 
@@ -128,15 +128,15 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::CheckExp] = check_expr;
 	attributes[Attributes::Roles] = rol_names.join(QString(", "));
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return (BaseObject::__getCodeDefinition(def_type));
 }
 
 QString Policy::getSignature(bool format)
 {
 	if(!getParentTable())
-		return(BaseObject::getSignature(format));
+		return (BaseObject::getSignature(format));
 
-	return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }
 
 QString Policy::getAlterDefinition(BaseObject *object)
@@ -174,7 +174,7 @@ QString Policy::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Roles] = aux_rol_names.join(QString(", "));
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return (BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
 	}
 	catch(Exception &e)
 	{
@@ -184,6 +184,6 @@ QString Policy::getAlterDefinition(BaseObject *object)
 
 bool Policy::isRoleExists(Role *role)
 {
-	if(!role)	return(false);
-	return(std::find(roles.begin(), roles.end(), role) != roles.end());
+	if(!role)	return (false);
+	return (std::find(roles.begin(), roles.end(), role) != roles.end());
 }

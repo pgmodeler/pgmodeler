@@ -97,23 +97,23 @@ Function * Language::getFunction(unsigned func_type)
 	if(func_type > InlineFunc)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(functions[func_type]);
+	return functions[func_type];
 }
 
 bool Language::isTrusted()
 {
-	return(is_trusted);
+	return is_trusted;
 }
 
 QString Language::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	unsigned i;
 	QString attribs_func[3]={Attributes::ValidatorFunc,
@@ -139,6 +139,6 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 

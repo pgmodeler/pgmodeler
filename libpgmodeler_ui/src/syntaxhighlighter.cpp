@@ -55,7 +55,7 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 			 dynamic_cast<QKeyEvent *>(event)->key()==Qt::Key_Enter))
 	{
 		event->ignore();
-		return(true);
+		return (true);
 	}
 
 	/* If the user is about press Control to paste contents or Right mouse button in
@@ -72,12 +72,12 @@ bool SyntaxHighlighter::eventFilter(QObject *object, QEvent *event)
 			qApp->clipboard()->setText(qApp->clipboard()->mimeData()->text());
 	}
 
-	return(QSyntaxHighlighter::eventFilter(object, event));
+	return (QSyntaxHighlighter::eventFilter(object, event));
 }
 
 bool SyntaxHighlighter::hasInitialAndFinalExprs(const QString &group)
 {
-	return(initial_exprs.count(group) && final_exprs.count(group));
+	return (initial_exprs.count(group) && final_exprs.count(group));
 }
 
 void SyntaxHighlighter::configureAttributes()
@@ -274,7 +274,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		info->has_exprs=hasInitialAndFinalExprs(group);
 		info->group=group;
 
-		return(group);
+		return (group);
 	}
 	else
 	{
@@ -289,7 +289,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		}
 
 		if(!match)
-			return(QString());
+			return (QString());
 		else
 		{
 			info->group=group;
@@ -298,7 +298,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 				info->has_exprs=hasInitialAndFinalExprs(group);
 
 			info->is_expr_closed=false;
-			return(group);
+			return (group);
 		}
 	}
 }
@@ -341,12 +341,12 @@ bool SyntaxHighlighter::isWordMatchGroup(const QString &word, const QString &gro
 		if(match) break;
 	}
 
-	return(match);
+	return (match);
 }
 
 bool SyntaxHighlighter::isConfigurationLoaded()
 {
-	return(conf_loaded);
+	return (conf_loaded);
 }
 
 void SyntaxHighlighter::clearConfiguration()
@@ -597,14 +597,14 @@ vector<QRegExp> SyntaxHighlighter::getExpressions(const QString &group_name, boo
 	map<QString, vector<QRegExp> > *expr_map=(!final_expr ? &initial_exprs : &final_exprs);
 
 	if(expr_map->count(group_name) > 0)
-		return(expr_map->at(group_name));
+		return (expr_map->at(group_name));
 	else
-		return(vector<QRegExp>());
+		return (vector<QRegExp>());
 }
 
 QChar SyntaxHighlighter::getCompletionTrigger()
 {
-	return(completion_trigger);
+	return (completion_trigger);
 }
 
 void SyntaxHighlighter::setFormat(int start, int count, const QString &group)

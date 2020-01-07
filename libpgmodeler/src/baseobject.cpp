@@ -107,7 +107,7 @@ BaseObject::BaseObject()
 
 unsigned BaseObject::getGlobalId()
 {
-	return(global_id);
+	return global_id;
 }
 
 void BaseObject::setEscapeComments(bool value)
@@ -117,7 +117,7 @@ void BaseObject::setEscapeComments(bool value)
 
 bool BaseObject::isEscapeComments()
 {
-	return(escape_comments);
+	return escape_comments;
 }
 
 QString BaseObject::getTypeName(ObjectType obj_type)
@@ -126,14 +126,14 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return(QApplication::translate("BaseObject",obj_type_names[enum_cast(obj_type)].toStdString().c_str(),"", -1));
+		return QApplication::translate("BaseObject",obj_type_names[enum_cast(obj_type)].toStdString().c_str(),"", -1);
 	else
-		return(QString());
+		return QString();
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
 {
-	return(getTypeName(getObjectType(type_str)));
+	return getTypeName(getObjectType(type_str));
 }
 
 ObjectType BaseObject::getObjectType(const QString &type_name)
@@ -149,17 +149,17 @@ ObjectType BaseObject::getObjectType(const QString &type_name)
 		}
 	}
 
-	return(obj_type);
+	return obj_type;
 }
 
 QString BaseObject::getSchemaName(ObjectType obj_type)
 {
-	return(objs_schemas[enum_cast(obj_type)]);
+	return objs_schemas[enum_cast(obj_type)];
 }
 
 QString BaseObject::getSQLName(ObjectType obj_type)
 {
-	return(objs_sql[enum_cast(obj_type)]);
+	return objs_sql[enum_cast(obj_type)];
 }
 
 QString BaseObject::formatName(const QString &name, bool is_operator)
@@ -240,7 +240,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 	else if(is_formated)
 		frmt_name=name;
 
-	return(frmt_name);
+	return frmt_name;
 }
 
 bool BaseObject::isValidName(const QString &name)
@@ -258,7 +258,7 @@ bool BaseObject::isValidName(const QString &name)
 	In this case the starting and ending quotes are discarded from
 	the name in order to validate the length. */
 	if(name.isEmpty() || aux_name.size() > ObjectNameMaxLength)
-		return(false);
+		return false;
 	else
 	{
 		int i=0, len;
@@ -335,7 +335,7 @@ bool BaseObject::isValidName(const QString &name)
 			}
 		}
 
-		return(valid);
+		return valid;
 	}
 }
 
@@ -347,7 +347,7 @@ void BaseObject::setDatabase(BaseObject *db)
 
 BaseObject *BaseObject::getDatabase()
 {
-	return(this->database);
+	return this->database;
 }
 
 void BaseObject::setProtected(bool value)
@@ -395,7 +395,7 @@ void BaseObject::setComment(const QString &comment)
 
 bool BaseObject::acceptsSchema(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
+	return (obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::View  || obj_type==ObjectType::Domain ||
 			 obj_type==ObjectType::Aggregate || obj_type==ObjectType::Operator ||
 			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
@@ -406,12 +406,12 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 
 bool BaseObject::acceptsSchema()
 {
-	return(BaseObject::acceptsSchema(this->obj_type));
+	return (BaseObject::acceptsSchema(this->obj_type));
 }
 
 bool BaseObject::acceptsOwner(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
+	return (obj_type==ObjectType::Function || obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::Domain || obj_type==ObjectType::Schema ||
 			 obj_type==ObjectType::Aggregate || obj_type==ObjectType::Operator ||
 			 obj_type==ObjectType::Conversion || obj_type==ObjectType::Sequence ||
@@ -426,12 +426,12 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 
 bool BaseObject::acceptsOwner()
 {
-	return(BaseObject::acceptsOwner(this->obj_type));
+	return BaseObject::acceptsOwner(this->obj_type);
 }
 
 bool BaseObject::acceptsTablespace(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Index ||
+	return (obj_type==ObjectType::Index ||
 			 obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::View ||
 			 obj_type==ObjectType::Constraint ||
@@ -440,24 +440,24 @@ bool BaseObject::acceptsTablespace(ObjectType obj_type)
 
 bool BaseObject::acceptsTablespace()
 {
-	return(BaseObject::acceptsTablespace(this->obj_type));
+	return BaseObject::acceptsTablespace(this->obj_type);
 }
 
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Domain || obj_type==ObjectType::Column  ||
+	return (obj_type==ObjectType::Domain || obj_type==ObjectType::Column  ||
 			 obj_type==ObjectType::Collation || obj_type==ObjectType::Type ||
 			 obj_type==ObjectType::TypeAttribute);
 }
 
 bool BaseObject::acceptsCollation()
 {
-	return(BaseObject::acceptsCollation(this->obj_type));
+	return BaseObject::acceptsCollation(this->obj_type);
 }
 
 bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 {
-	return(obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint &&
+	return (obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint &&
 				 obj_type!=ObjectType::Relationship && obj_type!=ObjectType::Textbox && obj_type!=ObjectType::Parameter &&
 				 obj_type!=ObjectType::TypeAttribute && obj_type!=ObjectType::BaseRelationship  &&
 				 obj_type!=ObjectType::BaseObject && obj_type!=ObjectType::BaseTable && obj_type!=ObjectType::Permission &&
@@ -466,7 +466,7 @@ bool BaseObject::acceptsCustomSQL(ObjectType obj_type)
 
 bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Collation || obj_type==ObjectType::Column ||
+	return (obj_type==ObjectType::Collation || obj_type==ObjectType::Column ||
 				 obj_type==ObjectType::Domain || obj_type==ObjectType::EventTrigger ||
 				 obj_type==ObjectType::Extension || obj_type==ObjectType::Function ||
 				 obj_type==ObjectType::Index || obj_type==ObjectType::Role ||
@@ -479,7 +479,7 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 {
-	return(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Relationship &&
+	return (obj_type!=ObjectType::Permission && obj_type!=ObjectType::Relationship &&
 				obj_type!=ObjectType::Textbox && obj_type!=ObjectType::TypeAttribute &&
 				obj_type!=ObjectType::Parameter && obj_type!=ObjectType::BaseObject &&
 				obj_type!=ObjectType::Tag && obj_type!=ObjectType::BaseRelationship &&
@@ -488,7 +488,7 @@ bool BaseObject::acceptsDropCommand(ObjectType obj_type)
 
 bool BaseObject::acceptsAlias(ObjectType obj_type)
 {
-	return(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship ||
+	return (obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship ||
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Schema || obj_type==ObjectType::View ||
 				 obj_type == ObjectType::Column || obj_type == ObjectType::Constraint ||
 				 obj_type == ObjectType::Index || obj_type == ObjectType::Rule ||
@@ -498,17 +498,17 @@ bool BaseObject::acceptsAlias(ObjectType obj_type)
 
 bool BaseObject::acceptsCustomSQL()
 {
-	return(BaseObject::acceptsCustomSQL(this->obj_type));
+	return BaseObject::acceptsCustomSQL(this->obj_type);
 }
 
 bool BaseObject::acceptsAlterCommand()
 {
-	return(BaseObject::acceptsAlterCommand(this->obj_type));
+	return BaseObject::acceptsAlterCommand(this->obj_type);
 }
 
 bool BaseObject::acceptsDropCommand()
 {
-	return(BaseObject::acceptsDropCommand(this->obj_type));
+	return BaseObject::acceptsDropCommand(this->obj_type);
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -589,27 +589,27 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 			aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
 
 		if(!aux_name.isEmpty())
-			return(aux_name);
+			return aux_name;
 		else
-			return(this->obj_name);
+			return this->obj_name;
 	}
 	else
-		return(this->obj_name);
+		return this->obj_name;
 }
 
 QString BaseObject::getAlias()
 {
-	return(this->alias);
+	return this->alias;
 }
 
 QString BaseObject::getSignature(bool format)
 {
-	return(this->getName(format, true));
+	return this->getName(format, true);
 }
 
 QString BaseObject::getComment()
 {
-	return(comment);
+	return comment;
 }
 
 QString BaseObject::getEscapedComment(bool escape_special_chars)
@@ -624,67 +624,67 @@ QString BaseObject::getEscapedComment(bool escape_special_chars)
 	}
 
 	fmt_comm.replace(QChar('\''), QString("''"));
-	return(fmt_comm);
+	return fmt_comm;
 }
 
 BaseObject *BaseObject::getSchema()
 {
-	return(schema);
+	return schema;
 }
 
 BaseObject *BaseObject::getOwner()
 {
-	return(owner);
+	return owner;
 }
 
 BaseObject *BaseObject::getTablespace()
 {
-	return(tablespace);
+	return tablespace;
 }
 
 BaseObject *BaseObject::getCollation()
 {
-	return(collation);
+	return collation;
 }
 
 QString BaseObject::getAppendedSQL()
 {
-	return(appended_sql);
+	return appended_sql;
 }
 
 QString BaseObject::getPrependedSQL()
 {
-	return(prepended_sql);
+	return prepended_sql;
 }
 
 ObjectType BaseObject::getObjectType()
 {
-	return(obj_type);
+	return obj_type;
 }
 
 QString BaseObject::getTypeName()
 {
-	return(BaseObject::getTypeName(this->obj_type));
+	return BaseObject::getTypeName(this->obj_type);
 }
 
 QString BaseObject::getSchemaName()
 {
-	return(BaseObject::getSchemaName(this->obj_type));
+	return BaseObject::getSchemaName(this->obj_type);
 }
 
 QString BaseObject::getSQLName()
 {
-	return(BaseObject::getSQLName(this->obj_type));
+	return BaseObject::getSQLName(this->obj_type);
 }
 
 bool BaseObject::isProtected()
 {
-	return(is_protected);
+	return is_protected;
 }
 
 unsigned BaseObject::getObjectId()
 {
-	return(object_id);
+	return object_id;
 }
 
 void BaseObject::setSQLDisabled(bool value)
@@ -695,7 +695,7 @@ void BaseObject::setSQLDisabled(bool value)
 
 bool BaseObject::isSQLDisabled()
 {
-	return(sql_disabled);
+	return sql_disabled;
 }
 
 void BaseObject::setSystemObject(bool value)
@@ -706,7 +706,7 @@ void BaseObject::setSystemObject(bool value)
 
 bool BaseObject::isSystemObject()
 {
-	return(system_obj);
+	return system_obj;
 }
 
 void BaseObject::setBasicAttributes(bool format_name)
@@ -726,7 +726,7 @@ void BaseObject::setBasicAttributes(bool format_name)
 
 QString BaseObject::__getCodeDefinition(unsigned def_type)
 {
-	return(BaseObject::getCodeDefinition(def_type, false));
+	return BaseObject::getCodeDefinition(def_type, false);
 }
 
 QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
@@ -907,7 +907,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return(code_def);
+	return code_def;
 }
 
 void BaseObject::setAttribute(const QString &attrib, const QString &value)
@@ -1002,34 +1002,34 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 			vet_types.erase(itr);
 	}
 
-	return(vet_types);
+	return vet_types;
 }
 
 vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Database)
-		return(vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
+		return vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
 																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																	ObjectType::UserMapping });
+																	ObjectType::UserMapping };
 
 	if(obj_type==ObjectType::Schema)
-		return(vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
+		return vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
 																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
 																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
-																	ObjectType::Type, ObjectType::Table, ObjectType::View });
+																	ObjectType::Type, ObjectType::Table, ObjectType::View };
 
 	if(obj_type==ObjectType::Table)
-		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
-																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy });
+		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Rule,
+																	ObjectType::Trigger, ObjectType::Index, ObjectType::Policy };
 
 	if(obj_type==ObjectType::ForeignTable)
-		return(vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger });
+		return vector<ObjectType>()={	ObjectType::Column, ObjectType::Constraint, ObjectType::Trigger };
 
 	if(obj_type==ObjectType::View)
-		return(vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index});
+		return vector<ObjectType>()={ObjectType::Rule, ObjectType::Trigger, ObjectType::Index};
 
-	return(vector<ObjectType>()={});
+	return vector<ObjectType>()={};
 }
 
 void BaseObject::setPgSQLVersion(const QString &ver)
@@ -1039,12 +1039,12 @@ void BaseObject::setPgSQLVersion(const QString &ver)
 
 QString BaseObject::getPgSQLVersion()
 {
-	return(pgsql_ver);
+	return pgsql_ver;
 }
 
 attribs_map BaseObject::getSearchAttributes()
 {
-	return(search_attribs);
+	return search_attribs;
 }
 
 void BaseObject::enableCachedCode(bool value)
@@ -1095,7 +1095,7 @@ void BaseObject::configureSearchAttributes()
 
 bool BaseObject::isCodeInvalidated()
 {
-	return(use_cached_code && code_invalidated);
+	return (use_cached_code && code_invalidated);
 }
 
 bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_def2, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
@@ -1137,7 +1137,7 @@ bool BaseObject::isCodeDiffersFrom(const QString &xml_def1, const QString &xml_d
 		xml_defs[i]=xml.simplified();
 	}
 
-	return(xml_defs[0]!=xml_defs[1]);
+	return (xml_defs[0]!=xml_defs[1]);
 }
 
 bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
@@ -1149,9 +1149,9 @@ bool BaseObject::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 	try
 	{
-		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition),
+		return BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition),
 											 object->getCodeDefinition(SchemaParser::XmlDefinition),
-											 ignored_attribs, ignored_tags));
+											 ignored_attribs, ignored_tags);
 	}
 	catch(Exception &e)
 	{
@@ -1169,12 +1169,12 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 			 (def_type==SchemaParser::XmlDefinition  && reduced_form && !cached_reduced_code.isEmpty())))
 	{
 		if(def_type==SchemaParser::XmlDefinition  && reduced_form)
-			return(cached_reduced_code);
+			return cached_reduced_code;
 		else
-			return(cached_code[def_type]);
+			return cached_code[def_type];
 	}
 	else
-		return(QString());
+		return QString();
 }
 
 QString BaseObject::getDropDefinition(bool cascade)
@@ -1199,10 +1199,10 @@ QString BaseObject::getDropDefinition(bool cascade)
 
 			attribs[Attributes::Cascade]=(cascade ? Attributes::True : QString());
 
-			return(schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition));
+			return schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition);
 		}
 		else
-			return(QString());
+			return QString();
 	}
 	catch(Exception &e)
 	{
@@ -1222,7 +1222,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
 		schparser.ignoreEmptyAttributes(ignore_empty_attribs);
 		schparser.ignoreUnkownAttributes(ignore_ukn_attribs);
-		return(schparser.getCodeDefinition(alter_sch_dir.arg(sch_name), attribs));
+		return schparser.getCodeDefinition(alter_sch_dir.arg(sch_name), attribs);
 	}
 	catch(Exception &e)
 	{
@@ -1244,7 +1244,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
 {
-	return(getAlterDefinition(object, false));
+	return getAlterDefinition(object, false);
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
@@ -1291,7 +1291,7 @@ QString BaseObject::getAlterDefinition(BaseObject *object, bool ignore_name_diff
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 
-	return(alter);
+	return alter;
 }
 
 QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map attributes)
@@ -1313,10 +1313,10 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 
 			schparser.ignoreUnkownAttributes(true);
 			schparser.ignoreEmptyAttributes(true);
-			return(schparser.getCodeDefinition(Attributes::Comment, attributes, SchemaParser::SqlDefinition));
+			return schparser.getCodeDefinition(Attributes::Comment, attributes, SchemaParser::SqlDefinition);
 		}
 
-		return(QString());
+		return QString();
 	}
 	catch(Exception &e)
 	{

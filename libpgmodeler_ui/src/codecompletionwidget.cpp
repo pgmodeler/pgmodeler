@@ -116,7 +116,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				{
 					setQualifyingLevel(nullptr);
 					this->show();
-					return(true);
+					return true;
 				}
 				else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
 				{
@@ -130,7 +130,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 						 tc.selectedText().contains(completion_trigger))
 					{
 						event->ignore();
-						return(true);
+						return true;
 					}
 					else if(k_event->key()==Qt::Key_Space)
 					{
@@ -150,7 +150,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 			if(k_event->key()==Qt::Key_Escape)
 			{
 				this->close();
-				return(true);
+				return true;
 			}
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
 			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
@@ -173,7 +173,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 					this->show();
 				}
 
-				return(true);
+				return true;
 			}
 			//Filters other key press and redirects to the code input field
 			else if(k_event->key()!=Qt::Key_Up && k_event->key()!=Qt::Key_Down &&
@@ -184,12 +184,12 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 				QCoreApplication::sendEvent(code_field_txt, k_event);
 				this->updateList();
-				return(true);
+				return true;
 			}
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)

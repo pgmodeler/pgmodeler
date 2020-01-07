@@ -111,17 +111,17 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 
 unsigned DatabaseImportHelper::getLastSystemOID()
 {
-	return(catalog.getLastSysObjectOID());
+	return (catalog.getLastSysObjectOID());
 }
 
 QString DatabaseImportHelper::getCurrentDatabase()
 {
-	return(connection.getConnectionParam(Connection::ParamDbName));
+	return (connection.getConnectionParam(Connection::ParamDbName));
 }
 
 Catalog DatabaseImportHelper::getCatalog()
 {
-	return(catalog);
+	return (catalog);
 }
 
 attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString &schema, const QString &table, attribs_map extra_attribs)
@@ -129,7 +129,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	try
 	{
 		catalog.setFilter(import_filter);
-		return(catalog.getObjectsNames(obj_type, schema, table, extra_attribs));
+		return (catalog.getObjectsNames(obj_type, schema, table, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -142,7 +142,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 	try
 	{
 		catalog.setFilter(import_filter);
-		return(catalog.getObjectsNames(obj_types, schema, table, extra_attribs));
+		return (catalog.getObjectsNames(obj_types, schema, table, extra_attribs));
 	}
 	catch(Exception &e)
 	{
@@ -769,7 +769,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 		if(!attribs[Attributes::Comment].isEmpty())
 			xml_def=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::XmlDefinition);
 
-		return(xml_def);
+		return (xml_def);
 	}
 	catch(Exception &e)
 	{
@@ -852,7 +852,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				xml_def=QString(UnkownObjectOidXml).arg(oid);
 		}
 
-		return(xml_def);
+		return (xml_def);
 	}
 	catch(Exception &e)
 	{
@@ -924,7 +924,7 @@ QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
 
 	dump_str+=QString("---\n");
 
-	return(dump_str);
+	return (dump_str);
 }
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
@@ -2768,7 +2768,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 	unsigned obj_oid=oid.toUInt();
 
 	if(obj_oid==0)
-		return(QString());
+		return (QString());
 	else
 	{
 		attribs_map obj_attr;
@@ -2780,7 +2780,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			obj_attr=system_objs[obj_oid];
 
 		if(obj_attr.empty())
-			return(QString());
+			return (QString());
 		else
 		{
 			QString sch_name,
@@ -2847,7 +2847,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 					obj_name+=QString("(") + params.join(',') + QString(")");
 			}
 
-			return(obj_name);
+			return (obj_name);
 		}
 	}
 }
@@ -2862,7 +2862,7 @@ QStringList DatabaseImportHelper::getObjectNames(const QString &oid_vect, bool s
 			list[i]=getObjectName(list[i], signature_form);
 	}
 
-	return(list);
+	return (list);
 }
 
 QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QString &col_id_str, bool prepend_tab_name)
@@ -2878,7 +2878,7 @@ QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QS
 		col_name+=columns[tab_oid][col_id].at(Attributes::Name);
 	}
 
-	return(col_name);
+	return (col_name);
 }
 
 QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, const QString &col_id_vect, bool prepend_tab_name)
@@ -2903,7 +2903,7 @@ QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, con
 		}
 	}
 
-	return(col_names);
+	return (col_names);
 }
 
 QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml, attribs_map extra_attribs)
@@ -3011,10 +3011,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				schparser.ignoreUnkownAttributes(false);
 			}
 			else
-				return(obj_name);
+				return (obj_name);
 		}
 
-		return(xml_def);
+		return (xml_def);
 	}
 	catch(Exception &e)
 	{
@@ -3029,5 +3029,5 @@ QStringList DatabaseImportHelper::getTypes(const QString &oid_vect, bool generat
 	for(int i=0; i < list.size(); i++)
 		list[i]=getType(list[i], generate_xml);
 
-	return(list);
+	return (list);
 }

@@ -182,7 +182,7 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void SwapObjectsIdsWidget::showObjectId()

@@ -107,7 +107,7 @@ QTableWidgetItem *ObjectsTableWidget::getItem(unsigned row_idx, unsigned col_idx
 	if(col_idx >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ErrorCode::RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(table_tbw->item(row_idx, col_idx));
+	return (table_tbw->item(row_idx, col_idx));
 }
 
 void ObjectsTableWidget::adjustColumnToContents(int col)
@@ -219,12 +219,12 @@ void ObjectsTableWidget::setRowData(const QVariant &data, unsigned row_idx)
 
 unsigned ObjectsTableWidget::getColumnCount()
 {
-	return(table_tbw->columnCount());
+	return (table_tbw->columnCount());
 }
 
 unsigned ObjectsTableWidget::getRowCount()
 {
-	return(table_tbw->rowCount());
+	return (table_tbw->rowCount());
 }
 
 QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
@@ -235,17 +235,17 @@ QString ObjectsTableWidget::getHeaderLabel(unsigned col_idx)
 		throw Exception(ErrorCode::RefColObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->horizontalHeaderItem(col_idx);
-	return(item->text());
+	return (item->text());
 }
 
 QString ObjectsTableWidget::getCellText(unsigned row_idx, unsigned col_idx)
 {
-	return(getItem(row_idx, col_idx)->text());
+	return (getItem(row_idx, col_idx)->text());
 }
 
 Qt::CheckState ObjectsTableWidget::getCellCheckState(unsigned row_idx, unsigned col_idx)
 {
-	return(getItem(row_idx, col_idx)->checkState());
+	return (getItem(row_idx, col_idx)->checkState());
 }
 
 void ObjectsTableWidget::setCellCheckState(unsigned row_idx, unsigned col_idx, Qt::CheckState check_state)
@@ -265,7 +265,7 @@ void ObjectsTableWidget::setCellDisabled(unsigned row_idx, unsigned col_idx, boo
 
 bool ObjectsTableWidget::isCellDisabled(unsigned row_idx, unsigned col_idx)
 {
-	return(getItem(row_idx, col_idx)->flags() == Qt::NoItemFlags);
+	return (getItem(row_idx, col_idx)->flags() == Qt::NoItemFlags);
 }
 
 QVariant ObjectsTableWidget::getRowData(unsigned row_idx)
@@ -276,12 +276,12 @@ QVariant ObjectsTableWidget::getRowData(unsigned row_idx)
 		throw Exception(ErrorCode::RefRowObjectTabInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	item=table_tbw->verticalHeaderItem(row_idx);
-	return(item->data(Qt::UserRole));
+	return (item->data(Qt::UserRole));
 }
 
 int ObjectsTableWidget::getSelectedRow()
 {
-	return(table_tbw->currentRow());
+	return (table_tbw->currentRow());
 }
 
 int ObjectsTableWidget::getRowIndex(const QVariant &data)
@@ -301,9 +301,9 @@ int ObjectsTableWidget::getRowIndex(const QVariant &data)
 	}
 
 	if(!found)
-		return(-1);
+		return (-1);
 	else
-		return(i);
+		return (i);
 }
 
 void ObjectsTableWidget::addColumn(unsigned col_idx)

@@ -31,13 +31,13 @@ void TypeAttribute::setType(PgSqlType type)
 
 PgSqlType TypeAttribute::getType()
 {
-	return(type);
+	return type;
 }
 
 QString TypeAttribute::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
@@ -54,7 +54,7 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 void TypeAttribute::operator = (const TypeAttribute &tpattrib)

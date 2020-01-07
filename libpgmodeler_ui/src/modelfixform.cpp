@@ -87,7 +87,7 @@ int ModelFixForm::exec()
 	else
 		pgmodeler_cli_edt->setText(GlobalAttributes::getPgModelerCLIPath());
 
-	return(QDialog::exec());
+	return QDialog::exec();
 }
 
 void ModelFixForm::enableFix()

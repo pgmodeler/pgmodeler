@@ -85,12 +85,12 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 
 QKeySequence PgModelerPlugin::getPluginShortcut()
 {
-	return(QKeySequence());
+	return QKeySequence();
 }
 
 bool PgModelerPlugin::hasMenuAction()
 {
-	return (true);
+	return true;
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,

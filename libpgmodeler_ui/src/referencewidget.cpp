@@ -210,12 +210,12 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 
 Reference ReferenceWidget::getReference()
 {
-	return(reference);
+	return reference;
 }
 
 unsigned ReferenceWidget::getReferenceFlags()
 {
-	return(ref_flags);
+	return ref_flags;
 }
 
 void ReferenceWidget::applyConfiguration()

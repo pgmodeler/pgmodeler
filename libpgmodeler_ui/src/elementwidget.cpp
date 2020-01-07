@@ -189,7 +189,7 @@ void ElementWidget::setPartitionKey(PartitionKey *elem)
 
 Element *ElementWidget::getElement()
 {
-	return(element);
+	return element;
 }
 
 void ElementWidget::applyConfiguration()

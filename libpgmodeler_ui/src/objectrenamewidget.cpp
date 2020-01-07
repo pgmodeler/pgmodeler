@@ -60,9 +60,9 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 int ObjectRenameWidget::exec()
 {
 	if(object && op_list)
-		return(QDialog::exec());
+		return QDialog::exec();
 	else
-		return(QDialog::Rejected);
+		return QDialog::Rejected;
 }
 
 void ObjectRenameWidget::hideEvent(QHideEvent *)

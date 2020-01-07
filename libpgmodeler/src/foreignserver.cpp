@@ -46,28 +46,28 @@ void ForeignServer::setForeignDataWrapper(ForeignDataWrapper *fdw)
 
 QString ForeignServer::getType()
 {
-	return(type);
+	return type;
 }
 
 QString ForeignServer::getVersion()
 {
-	return(version);
+	return version;
 }
 
 ForeignDataWrapper *ForeignServer::getForeignDataWrapper()
 {
-	return(fdata_wrapper);
+	return fdata_wrapper;
 }
 
 QString ForeignServer::getCodeDefinition(unsigned def_type)
 {
-	return(getCodeDefinition(def_type, false));
+	return getCodeDefinition(def_type, false);
 }
 
 QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Version] = version;
 	attributes[Attributes::Type] = type;
@@ -83,7 +83,7 @@ QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
+	return this->BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString ForeignServer::getAlterDefinition(BaseObject *object)
@@ -100,7 +100,7 @@ QString ForeignServer::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Version] = server->version;
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

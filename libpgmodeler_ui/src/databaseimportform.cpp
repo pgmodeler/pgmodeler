@@ -276,7 +276,7 @@ bool DatabaseImportForm::hasCheckedItems()
 		++itr;
 	}
 
-	return(selected);
+	return selected;
 }
 
 void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
@@ -586,9 +586,9 @@ void DatabaseImportForm::showEvent(QShowEvent *)
 ModelWidget *DatabaseImportForm::getModelWidget()
 {
 	if(create_model)
-		return(model_wgt);
+		return model_wgt;
 	else
-		return(nullptr);
+		return nullptr;
 }
 
 void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QComboBox *dbcombo)
@@ -905,5 +905,5 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 	}
-	return(items_vect);
+	return items_vect;
 }

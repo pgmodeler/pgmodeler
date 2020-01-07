@@ -30,7 +30,7 @@ void IndexElement::setCollation(Collation *collation)
 
 Collation *IndexElement::getCollation()
 {
-	return(collation);
+	return collation;
 }
 
 QString IndexElement::getCodeDefinition(unsigned def_type)
@@ -49,6 +49,6 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::IndexElement,attributes, def_type));
+	return schparser.getCodeDefinition(Attributes::IndexElement,attributes, def_type);
 }
 

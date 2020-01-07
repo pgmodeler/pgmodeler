@@ -61,7 +61,7 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
-		int exec(void){ return(QDialog::Rejected); }
+		int exec(void){ return QDialog::Rejected; }
 
 	public:
 		ModelExportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);

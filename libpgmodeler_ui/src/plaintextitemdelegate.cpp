@@ -65,5 +65,5 @@ QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOption
 		qobject_cast<QLineEdit *>(editor)->setFrame(false);
 	}
 
-	return(editor);
+	return editor;
 }

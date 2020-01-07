@@ -32,7 +32,7 @@ void RoundedRectItem::setBorderRadius(double radius)
 
 double RoundedRectItem::getBorderRadius()
 {
-	return(radius);
+	return radius;
 }
 
 void RoundedRectItem::setRoundedCorners(unsigned corners)
@@ -46,12 +46,12 @@ void RoundedRectItem::setRoundedCorners(unsigned corners)
 
 unsigned RoundedRectItem::getRoundedCorners()
 {
-	return(corners);
+	return corners;
 }
 
 bool RoundedRectItem::isCornerRounded(unsigned corner)
 {
-	return((corners & corner)==corner);
+	return (corners & corner)==corner;
 }
 
 void RoundedRectItem::setRect(const QRectF &rect)
@@ -122,5 +122,5 @@ QVector<QPointF> RoundedRectItem::calculatePoints(QPointF start_pnt, double star
 			 (inc < 0 && ang < end_angle));
 	}
 
-	return(points);
+	return points;
 }

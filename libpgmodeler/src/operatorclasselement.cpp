@@ -92,32 +92,32 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 
 unsigned OperatorClassElement::getElementType()
 {
-	return(element_type);
+	return element_type;
 }
 
 Function *OperatorClassElement::getFunction()
 {
-	return(function);
+	return function;
 }
 
 Operator *OperatorClassElement::getOperator()
 {
-	return(_operator);
+	return _operator;
 }
 
 OperatorFamily *OperatorClassElement::getOperatorFamily()
 {
-	return(op_family);
+	return op_family;
 }
 
 PgSqlType OperatorClassElement::getStorage()
 {
-	return(storage);
+	return storage;
 }
 
 unsigned OperatorClassElement::getStrategyNumber()
 {
-	return(strategy_number);
+	return strategy_number;
 }
 
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
@@ -175,16 +175,16 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Definition]=storage.getCodeDefinition(def_type);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::Element,attributes, def_type));
+	return schparser.getCodeDefinition(Attributes::Element,attributes, def_type);
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)
 {
-	return(this->element_type == elem.element_type &&
-		   this->storage == elem.storage &&
-		   this->function == elem.function &&
-		   this->_operator == elem._operator &&
-		   this->strategy_number == elem.strategy_number &&
-		   this->op_family == elem.op_family);
+	return (this->element_type == elem.element_type &&
+					this->storage == elem.storage &&
+					this->function == elem.function &&
+					this->_operator == elem._operator &&
+					this->strategy_number == elem.strategy_number &&
+					this->op_family == elem.op_family);
 }
 

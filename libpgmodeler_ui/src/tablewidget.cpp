@@ -229,15 +229,15 @@ int TableWidget::openEditingForm(TableObject *object)
 	res = editing_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, object_wgt->metaObject()->className());
 
-	return(res);
+	return res;
 }
 
 ObjectsTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
-		return(objects_tab_map[obj_type]);
+		return objects_tab_map[obj_type];
 
-	return(nullptr);
+	return nullptr;
 }
 
 ObjectType TableWidget::getObjectType(QObject *sender)
@@ -260,7 +260,7 @@ ObjectType TableWidget::getObjectType(QObject *sender)
 		}
 	}
 
-	return(obj_type);
+	return obj_type;
 }
 
 void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, double pos_x, double pos_y)

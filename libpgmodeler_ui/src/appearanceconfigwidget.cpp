@@ -152,7 +152,7 @@ AppearanceConfigWidget::~AppearanceConfigWidget()
 
 map<QString, attribs_map> AppearanceConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 void AppearanceConfigWidget::loadExampleModel()

@@ -94,11 +94,11 @@ bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 			if(model_wgt)
 				model_wgt->configurePopupMenu({});
 
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ModelObjectsWidget::hide()
@@ -208,7 +208,7 @@ void ModelObjectsWidget::selectObject()
 
 QVariant ModelObjectsWidget::generateItemValue(BaseObject *object)
 {
-	return(QVariant::fromValue(reinterpret_cast<void *>(object)));
+	return QVariant::fromValue(reinterpret_cast<void *>(object));
 }
 
 QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTreeWidgetItem *root, bool update_perms)
@@ -319,7 +319,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 
 	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
-	return(item);
+	return item;
 }
 
 void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
@@ -800,7 +800,7 @@ void ModelObjectsWidget::updateDatabaseTree()
 
 BaseObject *ModelObjectsWidget::getSelectedObject()
 {
-	return(selected_object);
+	return selected_object;
 }
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
@@ -1012,10 +1012,10 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 			++itr;
 		}
 
-		return(item);
+		return item;
 	}
 	else
-		return(nullptr);
+		return nullptr;
 }
 
 void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)

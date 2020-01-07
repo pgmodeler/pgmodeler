@@ -55,17 +55,17 @@ void Tablespace::setDirectory(const QString &dir)
 
 QString Tablespace::getDirectory()
 {
-	return(directory);
+	return directory;
 }
 
 QString Tablespace::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(!directory.isEmpty())
 		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 

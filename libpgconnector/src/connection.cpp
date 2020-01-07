@@ -188,7 +188,7 @@ void Connection::setNoticeEnabled(bool value)
 
 bool Connection::isNoticeEnabled()
 {
-	return(notice_enabled);
+	return notice_enabled;
 }
 
 void Connection::setPrintSQL(bool value)
@@ -198,7 +198,7 @@ void Connection::setPrintSQL(bool value)
 
 bool Connection::isSQLPrinted()
 {
-	return(print_sql);
+	return print_sql;
 }
 
 void Connection::setSilenceConnError(bool value)
@@ -208,7 +208,7 @@ void Connection::setSilenceConnError(bool value)
 
 bool Connection::isConnErrorSilenced()
 {
-	return(silence_conn_err);
+	return silence_conn_err;
 }
 
 void Connection::connect()
@@ -280,12 +280,12 @@ void Connection::reset()
 
 QString Connection::getConnectionParam(const QString &param)
 {
-	return(connection_params[param]);
+	return connection_params[param];
 }
 
 attribs_map Connection::getConnectionParams() const
 {
-	return(connection_params);
+	return connection_params;
 }
 
 attribs_map Connection::getServerInfo()
@@ -299,12 +299,12 @@ attribs_map Connection::getServerInfo()
 	info[ServerVersion]=getPgSQLVersion();
 	info[ServerProtocol]=QString::number(PQprotocolVersion(connection));
 
-	return(info);
+	return info;
 }
 
 QString Connection::getConnectionString()
 {
-	return(connection_str);
+	return connection_str;
 }
 
 QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
@@ -312,7 +312,7 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 	QString addr, db_name, port;
 
 	if(!isConfigured())
-		return(QString());
+		return QString();
 
 	if(!connection_params[ParamServerFqdn].isEmpty())
 		addr=connection_params[ParamServerFqdn];
@@ -326,24 +326,24 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 		db_name = QString("%1@").arg(connection_params[ParamDbName]);
 
 	if(host_port_only)
-		return(QString("%1%2%3").arg(db_name, addr, port));
+		return QString("%1%2%3").arg(db_name, addr, port);
 	else
-		return(QString("%1%2 (%3%4)").arg(db_name, connection_params[ParamAlias], addr, port));
+		return QString("%1%2 (%3%4)").arg(db_name, connection_params[ParamAlias], addr, port);
 }
 
 bool Connection::isStablished()
 {
-	return(connection!=nullptr);
+	return (connection != nullptr);
 }
 
 bool Connection::isConfigured()
 {
-	return(!connection_str.isEmpty());
+	return !connection_str.isEmpty();
 }
 
 bool Connection::isAutoBrowseDB()
 {
-	return(auto_browse_db);
+	return auto_browse_db;
 }
 
 QString  Connection::getPgSQLVersion(bool major_only)
@@ -364,7 +364,7 @@ QString  Connection::getPgSQLVersion(bool major_only)
 				.arg(raw_ver.mid(3,1).toInt());
 
 		if(!major_only)
-			return(QString("%1.%2").arg(raw_ver.mid(0,2)).arg(raw_ver.mid(4,2).toInt()));
+			return QString("%1.%2").arg(raw_ver.mid(0,2)).arg(raw_ver.mid(4,2).toInt());
 	}
 	//For versions below or equal to 9.6
 	else
@@ -374,15 +374,15 @@ QString  Connection::getPgSQLVersion(bool major_only)
 				.arg(raw_ver.mid(2,2).toInt()/10);
 
 		if(!major_only)
-			return(QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1)));
+			return QString("%1.%2").arg(fmt_ver).arg(raw_ver.mid(4,1));
 	}
 
-	return(fmt_ver);
+	return fmt_ver;
 }
 
 QStringList Connection::getNotices()
 {
-	return (notices);
+	return notices;
 }
 
 void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
@@ -474,9 +474,9 @@ bool Connection::isDefaultForOperation(unsigned op_id)
 	if(op_id > OpNone)
 		throw Exception(ErrorCode::RefElementInvalidIndex,  __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	else if(op_id==OpNone)
-		return(false);
+		return false;
 
-	return(default_for_oper[op_id]);
+	return default_for_oper[op_id];
 }
 
 void Connection::switchToDatabase(const QString &dbname)

@@ -116,21 +116,21 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
 		{
 			applyConfiguration();
-			return(true);
+			return (true);
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return (QWidget::eventFilter(object, event));
 }
 
 ObjectType BaseObjectWidget::getHandledObjectType()
 {
-	return(handled_obj_type);
+	return (handled_obj_type);
 }
 
 bool BaseObjectWidget::isHandledObjectProtected()
 {
-	return(object_protected);
+	return (object_protected);
 }
 
 void BaseObjectWidget::showEvent(QShowEvent *)
@@ -260,7 +260,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 
 BaseObject *BaseObjectWidget::getHandledObject()
 {
-	return(object);
+	return (object);
 }
 
 void BaseObjectWidget::cancelChainedOperation()
@@ -529,13 +529,13 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
-		return(XmlParser::CharLt + QString("= ") + ini_ver);
+		return (XmlParser::CharLt + QString("= ") + ini_ver);
 	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return(XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
+		return (XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
 	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
-		return(XmlParser::CharGt + QString("= ") + ini_ver);
+		return (XmlParser::CharGt + QString("= ") + ini_ver);
 	else
-		return(QString());
+		return (QString());
 }
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
@@ -583,7 +583,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);
 
-	return(info_frm);
+	return (info_frm);
 }
 
 void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields,
@@ -665,7 +665,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	grid->setContentsMargins(4,4,4,4);
 
 	alert_frm->adjustSize();
-	return(alert_frm);
+	return (alert_frm);
 }
 
 void BaseObjectWidget::editPermissions()

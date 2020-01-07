@@ -53,12 +53,12 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 
 QStringList CsvLoadWidget::getCsvColumns()
 {
-	return(csv_columns);
+	return csv_columns;
 }
 
 QList<QStringList> CsvLoadWidget::getCsvRows()
 {
-	return(csv_rows);
+	return csv_rows;
 }
 
 void CsvLoadWidget::selectCsvFile()
@@ -157,7 +157,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 		}
 	}
 
-	return (csv_rows);
+	return csv_rows;
 }
 
 void CsvLoadWidget::loadCsvFile()
@@ -191,7 +191,7 @@ QString CsvLoadWidget::getSeparator()
 {
 	QStringList separators={ QString(";"), QString(","), QString(" "), QString("\t") };
 	separators += (separator_edt->text().isEmpty() ? QString(";") : separator_edt->text());
-	return(separators[separator_cmb->currentIndex()]);
+	return separators[separator_cmb->currentIndex()];
 }
 
 QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
@@ -212,12 +212,12 @@ QString CsvLoadWidget::getCsvBuffer(QString separator, QString line_break)
 
 	buffer+=rows.join(line_break);
 
-	return(buffer);
+	return buffer;
 }
 
 bool CsvLoadWidget::isColumnsInFirstRow()
 {
-	return(col_names_chk->isChecked());
+	return col_names_chk->isChecked();
 }
 
 void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row)

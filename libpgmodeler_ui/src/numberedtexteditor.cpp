@@ -189,12 +189,12 @@ void NumberedTextEditor::setTabDistance(double value)
 
 double NumberedTextEditor::getTabDistance()
 {
-	if(tab_width == 0)
-		return(80);
+	if(static_cast<int>(tab_width) == 0)
+		return 80;
 	else
 	{
 		QFontMetrics fm(default_font);
-		return(tab_width * fm.horizontalAdvance(' '));
+		return tab_width * fm.horizontalAdvance(' ');
 	}
 }
 
@@ -545,7 +545,7 @@ int NumberedTextEditor::getLineNumbersWidth()
 		++digits;
 	}
 
-	return(15 + fontMetrics().horizontalAdvance(QChar('9')) * digits);
+	return (15 + fontMetrics().horizontalAdvance(QChar('9')) * digits);
 }
 
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)

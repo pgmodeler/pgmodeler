@@ -59,7 +59,7 @@ void ForeignObject::removeOptions()
 
 attribs_map ForeignObject::getOptions()
 {
-	return(options);
+	return options;
 }
 
 void ForeignObject::getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs)
@@ -100,5 +100,5 @@ QString ForeignObject::getOptionsAttribute(unsigned def_type)
 																QString("%1 '%2'").arg(itr.first).arg(itr.second) :
 																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
 
-	return(fmt_options.join(OptionsSeparator));
+	return fmt_options.join(OptionsSeparator);
 }

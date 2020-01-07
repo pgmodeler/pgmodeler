@@ -95,25 +95,25 @@ void BezierCurveItem::setLine(const QLineF &line, bool simple_curve, bool invert
 
 bool BezierCurveItem::isControlPointsInverted()
 {
-	return(invert_cpoints);
+	return invert_cpoints;
 }
 
 bool BezierCurveItem::isSimpleCurve()
 {
-	return(simple_curve);
+	return simple_curve;
 }
 
 bool BezierCurveItem::isStraightLine()
 {
-	return(straight_line);
+	return straight_line;
 }
 
 bool BezierCurveItem::contains(const QPointF &pnt) const
 {
-	return(stroke.contains(pnt));
+	return stroke.contains(pnt);
 }
 
 bool BezierCurveItem::collidesWithPath(const QPainterPath &path, Qt::ItemSelectionMode) const
 {
-	return(stroke.intersects(path));
+	return stroke.intersects(path);
 }

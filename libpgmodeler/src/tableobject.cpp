@@ -32,7 +32,7 @@ void TableObject::setParentTable(BaseTable *table)
 
 BaseTable *TableObject::getParentTable()
 {
-	return(parent_table);
+	return parent_table;
 }
 
 void TableObject::setAddedByLinking(bool value)
@@ -44,7 +44,7 @@ void TableObject::setAddedByLinking(bool value)
 
 bool TableObject::isAddedByLinking()
 {
-	return(add_by_linking);
+	return add_by_linking;
 }
 
 void TableObject::setAddedByGeneralization(bool value)
@@ -62,7 +62,7 @@ void TableObject::setDeclaredInTable(bool value)
 
 bool TableObject::isAddedByGeneralization()
 {
-	return(add_by_generalization);
+	return add_by_generalization;
 }
 
 void TableObject::setAddedByCopy(bool value)
@@ -74,22 +74,22 @@ void TableObject::setAddedByCopy(bool value)
 
 bool TableObject::isAddedByCopy()
 {
-	return(add_by_copy);
+	return add_by_copy;
 }
 
 bool TableObject::isAddedByRelationship()
 {
-	return(add_by_linking || add_by_generalization || add_by_copy);
+	return (add_by_linking || add_by_generalization || add_by_copy);
 }
 
 bool  TableObject::isDeclaredInTable()
 {
-	return(decl_in_table);
+	return decl_in_table;
 }
 
 bool TableObject::isTableObject(ObjectType type)
 {
-	return(type==ObjectType::Column || type==ObjectType::Constraint || type==ObjectType::Trigger ||
+	return (type==ObjectType::Column || type==ObjectType::Constraint || type==ObjectType::Trigger ||
 			 type==ObjectType::Rule || type==ObjectType::Index || type==ObjectType::Policy);
 }
 
@@ -118,13 +118,13 @@ QString TableObject::getDropDefinition(bool cascade)
 
 	attributes[this->getSchemaName()]=Attributes::True;
 
-	return(BaseObject::getDropDefinition(cascade));
+	return BaseObject::getDropDefinition(cascade);
 }
 
 QString TableObject::getSignature(bool format)
 {
 	if(!parent_table)
-		return(BaseObject::getSignature(format));
+		return BaseObject::getSignature(format);
 
-	return(QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format)));
+	return QString("%1.%2").arg(parent_table->getSignature(format)).arg(this->getName(format));
 }

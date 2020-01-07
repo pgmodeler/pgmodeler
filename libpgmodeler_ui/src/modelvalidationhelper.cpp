@@ -208,17 +208,17 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 
 bool ModelValidationHelper::isValidationCanceled()
 {
-	return(valid_canceled);
+	return valid_canceled;
 }
 
 unsigned ModelValidationHelper::getWarningCount()
 {
-	return(warn_count);
+	return warn_count;
 }
 
 unsigned ModelValidationHelper::getErrorCount()
 {
-	return(error_count);
+	return error_count;
 }
 
 void ModelValidationHelper::redirectExportProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
@@ -254,7 +254,7 @@ void ModelValidationHelper::switchToFixMode(bool value)
 
 bool ModelValidationHelper::isInFixMode()
 {
-	return(fix_mode);
+	return fix_mode;
 }
 
 void ModelValidationHelper::validateModel()

@@ -60,11 +60,8 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 					different parameter counts so in order to import them correctly we remove the restriction
 					of one paramenter for this function */
 
-			/*return((func->getParameterCount()==1 ||
-								func->getParameter(0).getType().canCastTo(state_type));*/
-
-			return(func->getParameterCount() > 0 &&
-						 func->getParameter(0).getType().canCastTo(state_type));
+			return (func->getParameterCount() > 0 &&
+							func->getParameter(0).getType().canCastTo(state_type));
 		}
 		else
 		{
@@ -91,10 +88,10 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
 				cond2=(func->getParameter(i).getType().isPolymorphicType() ||
 							 func->getParameter(i).getType().canCastTo(data_types[i-1]));
 
-			return(cond1 && cond2);
+			return (cond1 && cond2);
 		}
 	}
-	else return(true);
+	else return true;
 }
 
 void Aggregate::setStateType(PgSqlType state_type)
@@ -183,7 +180,7 @@ void Aggregate::removeDataTypes()
 
 unsigned Aggregate::getDataTypeCount()
 {
-	return(data_types.size());
+	return data_types.size();
 }
 
 Function *Aggregate::getFunction(unsigned func_idx)
@@ -192,22 +189,22 @@ Function *Aggregate::getFunction(unsigned func_idx)
 	if(func_idx!=FinalFunc && func_idx!=TransitionFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(functions[func_idx]);
+	return functions[func_idx];
 }
 
 PgSqlType Aggregate::getStateType()
 {
-	return(state_type);
+	return state_type;
 }
 
 QString Aggregate::getInitialCondition()
 {
-	return(initial_condition);
+	return initial_condition;
 }
 
 Operator *Aggregate::getSortOperator()
 {
-	return(sort_operator);
+	return sort_operator;
 }
 
 PgSqlType Aggregate::getDataType(unsigned type_idx)
@@ -216,13 +213,13 @@ PgSqlType Aggregate::getDataType(unsigned type_idx)
 	if(type_idx >= data_types.size())
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(data_types[type_idx]);
+	return data_types[type_idx];
 }
 
 QString Aggregate::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	setTypesAttribute(def_type);
 
@@ -266,13 +263,13 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
 	else
 		attributes[Attributes::StateType]=state_type.getCodeDefinition(def_type,Attributes::StateType);
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Aggregate::getDropDefinition(bool cascade)
 {
 	setTypesAttribute(SchemaParser::SqlDefinition);
-	return(BaseObject::getDropDefinition(cascade));
+	return BaseObject::getDropDefinition(cascade);
 }
 
 QString Aggregate::getAlterDefinition(BaseObject *object)
@@ -280,7 +277,7 @@ QString Aggregate::getAlterDefinition(BaseObject *object)
 	try
 	{
 		setTypesAttribute(SchemaParser::SqlDefinition);
-		return(BaseObject::getAlterDefinition(object));
+		return BaseObject::getAlterDefinition(object);
 	}
 	catch(Exception &e)
 	{
@@ -300,7 +297,7 @@ QString Aggregate::getSignature(bool format)
 			types.push_back(tp.getCodeDefinition(SchemaParser::SqlDefinition));
 	}
 
-	return(BaseObject::getSignature(format) + QString("(%1)").arg(types.join(',')));
+	return BaseObject::getSignature(format) + QString("(%1)").arg(types.join(','));
 }
 
 void Aggregate::configureSearchAttributes()

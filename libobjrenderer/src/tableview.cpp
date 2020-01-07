@@ -273,7 +273,7 @@ QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already
-		return(this->getCenter());
+		return this->getCenter();
 
-	return(conn_points[tab_obj][pnt_type]);
+	return conn_points[tab_obj][pnt_type];
 }

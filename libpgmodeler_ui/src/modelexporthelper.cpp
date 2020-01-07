@@ -782,7 +782,7 @@ bool ModelExportHelper::isDuplicationError(const QString &error_code)
 									QString("42P07"), QString("42710"), QString("42701"),
 									QString("42P16")};
 
-	return(err_codes.contains(error_code));
+	return err_codes.contains(error_code);
 }
 
 void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &conn, bool drop_objs)

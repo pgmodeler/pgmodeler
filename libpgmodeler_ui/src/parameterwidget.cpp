@@ -99,6 +99,6 @@ void ParameterWidget::applyConfiguration()
 
 Parameter ParameterWidget::getParameter()
 {
-	return(parameter);
+	return parameter;
 }
 

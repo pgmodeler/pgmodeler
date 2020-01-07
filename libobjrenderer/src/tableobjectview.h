@@ -50,7 +50,7 @@ class TableObjectView: public BaseObjectView
 
 		QVariant itemChange(GraphicsItemChange, const QVariant &value)
 		{
-			return(value);
+			return value;
 		}
 
 		void calculateBoundingRect();

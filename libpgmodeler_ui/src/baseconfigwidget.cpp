@@ -42,7 +42,7 @@ void BaseConfigWidget::setConfigurationChanged(bool changed)
 
 bool BaseConfigWidget::isConfigurationChanged()
 {
-	return(config_changed);
+	return config_changed;
 }
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)

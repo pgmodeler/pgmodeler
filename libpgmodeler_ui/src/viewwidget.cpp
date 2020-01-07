@@ -156,9 +156,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 ObjectsTableWidget *ViewWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
-		return(objects_tab_map[obj_type]);
+		return objects_tab_map[obj_type];
 
-	return(nullptr);
+	return nullptr;
 }
 
 template<class Class, class WidgetClass>
@@ -171,7 +171,7 @@ int ViewWidget::openEditingForm(TableObject *object)
 														dynamic_cast<Class *>(object));
 	editing_form.setMainWidget(object_wgt);
 
-	return(editing_form.exec());
+	return editing_form.exec();
 }
 
 void ViewWidget::handleObject()
@@ -338,7 +338,7 @@ ObjectType ViewWidget::getObjectType(QObject *sender)
 		}
 	}
 
-	return(obj_type);
+	return obj_type;
 }
 
 void ViewWidget::showObjectData(TableObject *object, int row)
@@ -459,7 +459,7 @@ int ViewWidget::openReferenceForm(Reference ref, int row, bool update)
 	else if(!update)
 		references_tab->removeRow(row);
 
-	return(result);
+	return result;
 }
 
 unsigned ViewWidget::getReferenceFlag(int row)
@@ -484,7 +484,7 @@ unsigned ViewWidget::getReferenceFlag(int row)
 			ref_flags |= Reference::SqlReferEndExpr;
 	}
 
-	return(ref_flags);
+	return ref_flags;
 }
 
 void ViewWidget::editReference(int ref_idx)

@@ -42,20 +42,20 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 
 int ModelNavigationWidget::getCurrentIndex()
 {
-	return(models_cmb->currentIndex());
+	return models_cmb->currentIndex();
 }
 
 QString ModelNavigationWidget::getText(int idx)
 {
 	if(idx < 0 || idx >= models_cmb->count())
-		return(QString());
+		return QString();
 	else
-		return(models_cmb->itemText(idx));
+		return models_cmb->itemText(idx);
 }
 
 QList<ModelWidget *> ModelNavigationWidget::getModelWidgets()
 {
-	return(model_wgts);
+	return model_wgts;
 }
 
 void ModelNavigationWidget::addModel(ModelWidget *model)

@@ -80,7 +80,7 @@ bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void PgSQLTypeWidget::updateTypeFormat()
@@ -215,6 +215,6 @@ PgSqlType PgSQLTypeWidget::getPgSQLType()
 	if(format_txt->toPlainText() == InvalidType)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(type);
+	return type;
 }
 

@@ -296,13 +296,13 @@ bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)
 				finishObjectRename();
 			else
 				dropObject(objects_trw->currentItem(), k_event->modifiers()==Qt::ShiftModifier);
-			return(true);
+			return (true);
 		}
 		else
-			return(false);
+			return (false);
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return (QWidget::eventFilter(object, event));
 }
 
 attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
@@ -402,7 +402,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 																						.arg(attribs[Attributes::Signature]);
 	}
 
-	return(fmt_attribs);
+	return (fmt_attribs);
 }
 
 void DatabaseExplorerWidget::formatBooleanAttribs(attribs_map &attribs, QStringList bool_attrs)
@@ -859,7 +859,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 				attribs[Attributes::Oid].isEmpty() ||
 				attribs[Attributes::Oid]==QString("0") ||
 				attribs[Attributes::Name].isEmpty())
-			return(DepNotDefined);
+			return (DepNotDefined);
 		else
 		{
 			ObjectType obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
@@ -915,7 +915,7 @@ QString DatabaseExplorerWidget::formatObjectName(attribs_map &attribs)
 				obj_name+=QString("(%1)").arg(arg_types.join(','));
 			}
 
-			return(obj_name);
+			return (obj_name);
 		}
 	}
 	catch(Exception &e)
@@ -929,7 +929,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 	try
 	{
 		if(oids.isEmpty())
-			return(QStringList{ DepNotDefined });
+			return (QStringList{ DepNotDefined });
 		else
 		{
 			vector<attribs_map> attribs_vect;
@@ -950,7 +950,7 @@ QStringList DatabaseExplorerWidget::getObjectsNames(ObjectType obj_type, const Q
 			for(QString oid : oids)
 				names.push_back(formatObjectName(attrs_map[oid]));
 
-			return(names);
+			return (names);
 		}
 	}
 	catch(Exception &e)
@@ -964,11 +964,11 @@ QString DatabaseExplorerWidget::getObjectName(ObjectType obj_type, const QString
 	try
 	{
 		if(oid==QString("0") || oid.isEmpty())
-			return(DepNotDefined);
+			return (DepNotDefined);
 		else
 		{
 			attribs_map attribs=catalog.getObjectAttributes(obj_type, oid.toUInt(), sch_name, tab_name);
-			return(formatObjectName(attribs));
+			return (formatObjectName(attribs));
 		}
 	}
 	catch(Exception &e)
@@ -985,7 +985,7 @@ void DatabaseExplorerWidget::setConnection(Connection conn, const QString &defau
 
 Connection DatabaseExplorerWidget::getConnection()
 {
-	return(connection);
+	return (connection);
 }
 
 void DatabaseExplorerWidget::clearObjectProperties()
@@ -1258,7 +1258,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 			attribs[Attributes::Signature]=attribs[Attributes::Name];
 	}
 
-	return(attribs);
+	return (attribs);
 }
 
 void DatabaseExplorerWidget::dropObject(QTreeWidgetItem *item, bool cascade)
@@ -1379,7 +1379,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			conn.executeDDLCommand(truc_cmd);
 		}
 
-		return(msg_box.result()==QDialog::Accepted);
+		return (msg_box.result()==QDialog::Accepted);
 	}
 	catch(Exception &e)
 	{
@@ -1991,7 +1991,7 @@ QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseMode
 	for(auto &perm : perms)
 		source+=perm->getCodeDefinition(SchemaParser::SqlDefinition);
 
-	return(source);
+	return (source);
 }
 
 void DatabaseExplorerWidget::openDataGrid(const QString &schema, const QString &table, bool hide_views)

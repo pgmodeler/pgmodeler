@@ -410,16 +410,16 @@ void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
 
 map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
 {
   if(config_params.count(section_id) &&
 	 config_params[section_id].count(param_name))
-	return(config_params[section_id][param_name]);
+	return config_params[section_id][param_name];
   else
-	return(QString());
+	return QString();
 }
 
 void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
@@ -438,7 +438,7 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 {
 	if(!widget ||
 		 config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry] != Attributes::True)
-		return(false);
+		return false;
 
 	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
 	dlg_name = dlg_name.toLower();
@@ -464,7 +464,7 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 		/* If the current window geometry doesn't fit the screen(s) geometry
 		 * the default geometry of the window is used */
 		if(!scr_contains_geom)
-			return(false);
+			return false;
 
 		if(wgt_st.maximized)
 		{
@@ -474,10 +474,10 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 		else
 			widget->setGeometry(wgt_st.geometry);
 
-		return(true);
+		return true;
 	}
 
-	return(false);
+	return false;
 }
 
 void GeneralConfigWidget::saveConfiguration()

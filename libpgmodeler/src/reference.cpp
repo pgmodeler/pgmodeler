@@ -86,7 +86,7 @@ int Reference::getReferencedTableIndex(PhysicalTable *ref_table)
 	if(itr != ref_tables.end())
 		idx = itr - ref_tables.begin();
 
-	return(idx);
+	return (idx);
 }
 
 void Reference::clearReferencedTables()
@@ -96,12 +96,12 @@ void Reference::clearReferencedTables()
 
 vector<PhysicalTable *> Reference::getReferencedTables()
 {
-	return(ref_tables);
+	return (ref_tables);
 }
 
 bool Reference::isDefinitionExpression()
 {
-	return(is_def_expr);
+	return (is_def_expr);
 }
 
 void Reference::addColumn(const QString &name, PgSqlType type, const QString &alias)
@@ -151,40 +151,40 @@ void Reference::removeColumns()
 
 vector<SimpleColumn> Reference::getColumns()
 {
-	return(columns);
+	return (columns);
 }
 
 PhysicalTable *Reference::getTable()
 {
-	return(table);
+	return (table);
 }
 
 Column *Reference::getColumn()
 {
-	return(column);
+	return (column);
 }
 
 QString Reference::getColumnAlias()
 {
-	return(column_alias);
+	return (column_alias);
 }
 
 QString Reference::getAlias()
 {
-	return(alias);
+	return (alias);
 }
 
 QString Reference::getExpression()
 {
-	return(expression);
+	return (expression);
 }
 
 unsigned Reference::getReferenceType()
 {
 	if(expression.isEmpty())
-		return(ReferColumn);
+		return (ReferColumn);
 	else
-		return(ReferExpression);
+		return (ReferExpression);
 }
 
 void Reference::setReferenceAlias(const QString &alias)
@@ -197,7 +197,7 @@ void Reference::setReferenceAlias(const QString &alias)
 
 QString Reference::getReferenceAlias()
 {
-	return(ref_alias);
+	return (ref_alias);
 }
 
 QString Reference::getSQLDefinition(unsigned sql_type)
@@ -290,7 +290,7 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	}
 
 	sql_def=QString("   ") + sql_def;
-	return(sql_def);
+	return (sql_def);
 }
 
 QString Reference::getXMLDefinition()
@@ -333,7 +333,7 @@ QString Reference::getXMLDefinition()
 		}
 	}
 
-	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
+	return (schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
 }
 
 bool Reference::operator == (Reference &refer)
@@ -346,19 +346,19 @@ bool Reference::operator == (Reference &refer)
 	{
 		if(ref_type==ReferColumn)
 		{
-			return(this->table==refer.table &&
+			return (this->table==refer.table &&
 				   this->column==refer.column &&
 				   this->alias==refer.alias &&
 				   this->column_alias==refer.column_alias);
 		}
 		else
 		{
-			return(this->expression==refer.expression &&
+			return (this->expression==refer.expression &&
 				   this->alias==refer.alias &&
 				   this->is_def_expr==refer.is_def_expr);
 		}
 	}
 	else
-		return(false);
+		return (false);
 }
 

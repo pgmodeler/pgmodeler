@@ -87,7 +87,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 
 map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 void RelationshipConfigWidget::loadConfiguration()

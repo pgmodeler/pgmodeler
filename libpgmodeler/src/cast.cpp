@@ -135,34 +135,34 @@ PgSqlType Cast::getDataType(unsigned type_idx)
 	if(type_idx > DstType)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(this->types[type_idx]);
+	return this->types[type_idx];
 }
 
 bool Cast::isInOut()
 {
-	return(is_in_out);
+	return is_in_out;
 }
 
 Function *Cast::getCastFunction()
 {
-	return(cast_function);
+	return cast_function;
 }
 
 unsigned Cast::getCastType()
 {
-	return(cast_type);
+	return cast_type;
 }
 
 QString Cast::getDropDefinition(bool cascade)
 {
 	attributes[Attributes::Signature].replace(QString(","), QString(" AS "));
-	return(BaseObject::getDropDefinition(cascade));
+	return BaseObject::getDropDefinition(cascade);
 }
 
 QString Cast::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -195,13 +195,13 @@ QString Cast::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Cast::getSignature(bool)
 {
 	attributes[Attributes::Signature]=this->getName().remove(QString("cast"));
-	return(BaseObject::getSignature(false));
+	return BaseObject::getSignature(false);
 }
 
 void Cast::configureSearchAttributes()

@@ -536,12 +536,12 @@ bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout)
 		btn = dynamic_cast<QToolButton *>(layout->itemAt(i)->widget());
 
 		if(btn && btn->isChecked())
-			return(true);
+			return true;
 
 		i++;
 	}
 
-	return(false);
+	return false;
 }
 
 void MainWindow::showRightWidgetsBar()
@@ -1006,7 +1006,7 @@ void MainWindow::addModel(ModelWidget *model_wgt)
 
 int MainWindow::getModelCount()
 {
-	return(models_tbw->count());
+	return models_tbw->count();
 }
 
 ModelWidget *MainWindow::getModel(int idx)
@@ -1014,7 +1014,7 @@ ModelWidget *MainWindow::getModel(int idx)
 	if(idx < 0 || idx > models_tbw->count())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
+	return dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
 }
 
 void MainWindow::showMainMenu()
@@ -2130,5 +2130,5 @@ void MainWindow::addExecTabInSQLTool(const QString &sql_cmd)
 
 bool MainWindow::hasDbsListedInSQLTool()
 {
-	return(sql_tool_wgt->hasDatabasesBrowsed());
+	return sql_tool_wgt->hasDatabasesBrowsed();
 }

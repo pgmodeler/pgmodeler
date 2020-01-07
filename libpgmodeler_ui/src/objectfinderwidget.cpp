@@ -75,10 +75,10 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
 		find_btn->click();
-		return(true);
+		return true;
 	}
 	else
-		return(QWidget::eventFilter(object, event));
+		return QWidget::eventFilter(object, event);
 }
 
 void ObjectFinderWidget::hide()

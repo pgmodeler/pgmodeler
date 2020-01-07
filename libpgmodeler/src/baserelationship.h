@@ -86,7 +86,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		QString getCachedCode(unsigned def_type);
 
-		virtual QString getDropDefinition(bool) final { return(""); }
+		virtual QString getDropDefinition(bool) final { return ""; }
 
 		void setReferenceForeignKey(Constraint *reference_fk);
 
@@ -170,7 +170,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		virtual void setCodeInvalidated(bool value);
 
-		virtual QString getAlterDefinition(BaseObject *) { return(""); }
+		virtual QString getAlterDefinition(BaseObject *) { return ""; }
 
 		static QString getRelationshipTypeName(unsigned rel_type, bool is_view = false);
 

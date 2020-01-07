@@ -152,7 +152,7 @@ void BaseObjectView::setSourceObject(BaseObject *object)
 
 BaseObject *BaseObjectView::getUnderlyingObject()
 {
-	return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
+	return reinterpret_cast<BaseObject *>(this->data(0).value<void *>());
 }
 
 void BaseObjectView::loadObjectsStyle()
@@ -273,9 +273,9 @@ void BaseObjectView::setElementColor(const QString &id, QColor color, unsigned c
 QColor BaseObjectView::getElementColor(const QString &id, unsigned color_id)
 {
 	if(color_config.count(id) > 0 && color_id < 3)
-		return(color_config[id][color_id]);
+		return color_config[id][color_id];
 	else
-		return(QColor(0,0,0));
+		return QColor(0,0,0);
 }
 
 void BaseObjectView::getFillStyle(const QString &id, QColor &color1, QColor &color2)
@@ -310,7 +310,7 @@ QLinearGradient BaseObjectView::getFillStyle(const QString &id)
 		}
 	}
 
-	return(grad);
+	return grad;
 }
 
 QPen BaseObjectView::getBorderStyle(const QString &id)
@@ -332,15 +332,15 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 		}
 	}
 
-	return(pen);
+	return pen;
 }
 
 QTextCharFormat BaseObjectView::getFontStyle(const QString &id)
 {
 	if(font_config.count(id))
-		return(font_config[id]);
+		return font_config[id];
 	else
-		return(QTextCharFormat());
+		return QTextCharFormat();
 }
 
 void BaseObjectView::setPlaceholderEnabled(bool value)
@@ -350,7 +350,7 @@ void BaseObjectView::setPlaceholderEnabled(bool value)
 
 bool BaseObjectView::isPlaceholderEnabled()
 {
-	return(use_placeholder);
+	return use_placeholder;
 }
 
 void BaseObjectView::setCompactViewEnabled(bool value)
@@ -360,7 +360,7 @@ void BaseObjectView::setCompactViewEnabled(bool value)
 
 bool BaseObjectView::isCompactViewEnabled()
 {
-	return(compact_view);
+	return compact_view;
 }
 
 QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -388,7 +388,7 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject()), value.toBool());
 	}
 
-	return(value);
+	return value;
 }
 
 void BaseObjectView::setSelectionOrder(bool selected)
@@ -401,7 +401,7 @@ void BaseObjectView::setSelectionOrder(bool selected)
 
 QRectF BaseObjectView::boundingRect() const
 {
-	return(bounding_rect);
+	return bounding_rect;
 }
 
 void BaseObjectView::toggleProtectionIcon(bool value)
@@ -554,13 +554,13 @@ void BaseObjectView::__configureObject()
 
 unsigned BaseObjectView::getSelectionOrder()
 {
-	return(sel_order);
+	return sel_order;
 }
 
 QPointF BaseObjectView::getCenter()
 {
-	return(QPointF(this->pos().x() + this->boundingRect().width()/2.0,
-					 this->pos().y() + this->boundingRect().height()/2.0));
+	return QPointF(this->pos().x() + this->boundingRect().width()/2.0,
+								 this->pos().y() + this->boundingRect().height()/2.0);
 }
 
 void BaseObjectView::togglePlaceholder(bool visible)
@@ -587,7 +587,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 
 double BaseObjectView::getFontFactor()
 {
-	return(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize);
+	return font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize;
 }
 
 void BaseObjectView::setLayer(unsigned layer)
@@ -603,9 +603,9 @@ unsigned BaseObjectView::getLayer()
 	BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject());
 
 	if(graph_obj)
-		return(graph_obj->getLayer());
+		return graph_obj->getLayer();
 
-	return(0);
+	return 0;
 }
 
 double BaseObjectView::getScreenDpiFactor()
@@ -615,7 +615,7 @@ double BaseObjectView::getScreenDpiFactor()
 	double pixel_ratio = screen->devicePixelRatio();
 
 	if(factor < 1)
-		return (1);
+		return 1;
 
-	return(factor * pixel_ratio);
+	return factor * pixel_ratio;
 }

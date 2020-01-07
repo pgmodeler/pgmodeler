@@ -83,12 +83,12 @@ class Element {
 		Column *getColumn();
 		QString getExpression();
 		OperatorClass *getOperatorClass();
-		virtual Collation *getCollation(void){ return(nullptr); }
-		virtual Operator *getOperator(void){ return(nullptr); }
+		virtual Collation *getCollation(void){ return nullptr; }
+		virtual Operator *getOperator(void){ return nullptr; }
 
 		bool isSortingEnabled();
 
-		virtual QString getCodeDefinition(unsigned) { return(QString()); }
+		virtual QString getCodeDefinition(unsigned) { return ""; }
 		bool operator == (Element &elem);
 		bool operator ==(const Element &elem);
 };

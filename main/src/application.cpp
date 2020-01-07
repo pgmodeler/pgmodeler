@@ -129,19 +129,19 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
 	try
 	{
-		return(QApplication::notify(receiver,event));
+		return QApplication::notify(receiver,event);
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
 		msg_box.show(e);
-		return(false);
+		return false;
 	}
 	catch(...)
 	{
 		Messagebox msg_box;
 		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
-		return(false);
+		return false;
 	}
 }
 

@@ -63,7 +63,7 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 			startLayerRenaming(layers_lst->currentItem());
 	}
 
-	return(false);
+	return false;
 }
 
 void LayersWidget::updateActiveLayers()
@@ -163,7 +163,7 @@ QListWidgetItem *LayersWidget::addLayer(const QString &name)
 
 	enableButtons();
 
-	return(item);
+	return item;
 }
 
 void LayersWidget::startLayerRenaming(QListWidgetItem *item)

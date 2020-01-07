@@ -69,10 +69,10 @@ bool ColorPickerWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type()==QEvent::ToolTip && button && button!=random_color_tb)
 	{
 		QToolTip::showText(QCursor::pos(), button->toolTip());
-		return(true);
+		return true;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ColorPickerWidget::setColor(int color_idx, const QColor &color)
@@ -96,12 +96,12 @@ QColor ColorPickerWidget::getColor(int color_idx)
 	if(color_idx < 0 || color_idx >= colors.size())
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(colors[color_idx]);
+	return colors[color_idx];
 }
 
 unsigned ColorPickerWidget::getColorCount()
 {
-	return(colors.size());
+	return colors.size();
 }
 
 bool ColorPickerWidget::isButtonVisible(unsigned idx)
@@ -109,7 +109,7 @@ bool ColorPickerWidget::isButtonVisible(unsigned idx)
 	if(idx >= static_cast<unsigned>(buttons.size()))
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(buttons[idx]->isVisible());
+	return buttons[idx]->isVisible();
 }
 
 void ColorPickerWidget::setButtonToolTip(unsigned button_idx, const QString &tooltip)

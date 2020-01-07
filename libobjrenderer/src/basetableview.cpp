@@ -113,12 +113,12 @@ void BaseTableView::setHideTags(bool value)
 
 bool BaseTableView::isExtAttributesHidden()
 {
-	return(hide_ext_attribs);
+	return hide_ext_attribs;
 }
 
 bool BaseTableView::isTagsHidden()
 {
-	return(hide_tags);
+	return hide_tags;
 }
 
 QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -142,7 +142,7 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 		emit s_objectMoved();
 
 	BaseObjectView::itemChange(change, value);
-	return(value);
+	return value;
 }
 
 void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -219,7 +219,7 @@ unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(attribs_per_page[section_id]);
+	return attribs_per_page[section_id];
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -332,9 +332,9 @@ int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, boo
 	itr = std::find(vet_rels->begin(), vet_rels->end(), base_rel);
 
 	if(itr != vet_rels->end())
-		return(itr - vet_rels->begin());
+		return itr - vet_rels->begin();
 
-	return(-1);
+	return -1;
 }
 
 unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab)
@@ -350,7 +350,7 @@ unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst
 			count++;
 	}
 
-	return(count);
+	return count;
 }
 
 void BaseTableView::configureTag()
@@ -449,12 +449,12 @@ double BaseTableView::calculateWidth()
 														title->boundingRect().width() };
 
 	std::sort(widths.begin(), widths.end());
-	return (widths.back() + (2 * HorizSpacing));
+	return widths.back() + (2 * HorizSpacing);
 }
 
 int BaseTableView::getConnectRelsCount()
 {
-	return(connected_rels.size());
+	return connected_rels.size();
 }
 
 void BaseTableView::requestRelationshipsUpdate()
@@ -479,7 +479,7 @@ void BaseTableView::configureObjectShadow()
 
 QList<TableObjectView *> BaseTableView::getSelectedChidren()
 {
-	return(sel_child_objs);
+	return sel_child_objs;
 }
 
 void BaseTableView::clearChildrenSelection()
@@ -551,12 +551,12 @@ bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned tota
 
 		// Configure the attributes toggler item withe the calculated pagination parameters
 		attribs_toggler->setPaginationValues(section_id, curr_page, max_pages);
-		return(true);
+		return true;
 	}
 	else
 	{
 		attribs_toggler->setPaginationValues(section_id, 0, 0);
-		return(false);
+		return false;
 	}
 }
 

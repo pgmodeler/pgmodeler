@@ -229,7 +229,7 @@ Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 		}
 	}
 
-	return(param);
+	return param;
 }
 
 void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row)

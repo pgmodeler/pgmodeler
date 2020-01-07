@@ -590,9 +590,9 @@ QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(obj_idx == ObjDescriptor)
-		return(descriptor);
+		return descriptor;
 	else
-		return(lables[obj_idx - 1]);
+		return lables[obj_idx - 1];
 }
 
 QString TableObjectView::getConstraintString(Column *column)
@@ -639,9 +639,9 @@ QString TableObjectView::getConstraintString(Column *column)
 		if(!str_constr.isEmpty())
 			str_constr= ConstrDelimStart + ConstrSeparator + str_constr + ConstrDelimEnd;
 
-		return(str_constr);
+		return str_constr;
 	}
-	else return(QString());
+	else return QString();
 }
 
 void TableObjectView::setFakeSelection(bool value)
@@ -665,7 +665,7 @@ void TableObjectView::setFakeSelection(bool value)
 
 bool TableObjectView::hasFakeSelection()
 {
-	return(fake_selection);
+	return fake_selection;
 }
 
 void TableObjectView::configureObjectSelection()
@@ -725,6 +725,6 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 QRectF TableObjectView::boundingRect() const
 {
-	return(bounding_rect);
+	return bounding_rect;
 }
 

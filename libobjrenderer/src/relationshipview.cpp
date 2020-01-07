@@ -152,7 +152,7 @@ void RelationshipView::setHideNameLabel(bool value)
 
 bool RelationshipView::isNameLabelHidden()
 {
-	return(hide_name_label);
+	return hide_name_label;
 }
 
 void RelationshipView::setCurvedLines(bool value)
@@ -162,7 +162,7 @@ void RelationshipView::setCurvedLines(bool value)
 
 bool RelationshipView::isCurvedLines()
 {
-	return(use_curved_lines);
+	return use_curved_lines;
 }
 
 void RelationshipView::setCrowsFoot(bool value)
@@ -175,7 +175,7 @@ void RelationshipView::setCrowsFoot(bool value)
 
 bool RelationshipView::isCrowsFoot()
 {
-	return(use_crows_foot);
+	return use_crows_foot;
 }
 
 void RelationshipView::setLineConnectionMode(unsigned mode)
@@ -193,7 +193,7 @@ void RelationshipView::setLineConnectionMode(unsigned mode)
 
 unsigned RelationshipView::getLineConnectinMode()
 {
-	return(line_conn_mode);
+	return line_conn_mode;
 }
 
 QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
@@ -201,20 +201,20 @@ QPointF RelationshipView::getConnectionPoint(unsigned table_idx)
 	if(table_idx > 2)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(conn_points[table_idx]);
+	return conn_points[table_idx];
 }
 
 BaseRelationship *RelationshipView::getUnderlyingObject()
 {
-	return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject()));
+	return dynamic_cast<BaseRelationship *>(this->BaseObjectView::getUnderlyingObject());
 }
 
 TextboxView *RelationshipView::getLabel(unsigned lab_idx)
 {
 	if(lab_idx > BaseRelationship::RelNameLabel)
-		return(nullptr);
+		return nullptr;
 	else
-		return(labels[lab_idx]);
+		return labels[lab_idx];
 }
 
 QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -335,7 +335,7 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getUnderlyingObject()),	value.toBool());
 	}
 
-	return(value);
+	return value;
 }
 
 void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -2076,5 +2076,5 @@ QRectF RelationshipView::__boundingRect()
 		}
 	}
 
-	return(QRectF(x1, y1, x2, y2));
+	return QRectF(x1, y1, x2, y2);
 }

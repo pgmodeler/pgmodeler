@@ -182,7 +182,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::MouseButtonDblClick && object == v_splitter->handle(1))
 	{
 		output_tb->setChecked(!v_splitter->handle(1)->isEnabled());
-		return(true);
+		return true;
 	}
 	else if(event->type()== QEvent::MouseButtonPress &&
 					dynamic_cast<QMouseEvent *>(event)->button()==Qt::MiddleButton &&
@@ -190,7 +190,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 					cmd_history_txt->textCursor().hasSelection())
 	{
 		sql_cmd_txt->appendPlainText(cmd_history_txt->textCursor().selectedText());
-		return(true);
+		return true;
 	}
 	else if(event->type() == QEvent::Show && object == output_tbw->widget(2))
 	{
@@ -202,10 +202,10 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 			cmd_history_txt->updateLineNumbers();
 		}
 
-		return(true);
+		return true;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -752,17 +752,17 @@ int SQLExecutionWidget::clearAll()
 		export_tb->setEnabled(false);
 	}
 
-	return(res);
+	return res;
 }
 
 QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar(';'), true, true, true));
+	return generateBuffer(results_tbw, QChar(';'), true, true, true);
 }
 
 QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar('\t'), false, false, false));
+	return generateBuffer(results_tbw, QChar('\t'), false, false, false);
 }
 
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars)
@@ -771,7 +771,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!results_tbw->selectionModel())
-		return (QByteArray());
+		return QByteArray();
 
 	QAbstractItemModel *model = results_tbw->model();
 	QModelIndexList sel_indexes = results_tbw->selectionModel()->selectedIndexes();
@@ -848,7 +848,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 		buf.append('\n');
 	}
 
-	return(buf);
+	return buf;
 }
 
 void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
@@ -1055,7 +1055,7 @@ void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 
 int SQLExecutionWidget::getSQLHistoryMaxLength()
 {
-	return(SQLExecutionWidget::cmd_history_max_len);
+	return SQLExecutionWidget::cmd_history_max_len;
 }
 
 void SQLExecutionWidget::enableSQLExecution(bool enable)

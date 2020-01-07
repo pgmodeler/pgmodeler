@@ -120,15 +120,15 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 QVariant ElementsTableWidget::copyElementData(Element *elem)
 {
 	if(dynamic_cast<IndexElement *>(elem))
-		return(QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem)));
+		return QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem));
 
 	if(dynamic_cast<ExcludeElement *>(elem))
-		return(QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem)));
+		return QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem));
 
 	if(dynamic_cast<PartitionKey *>(elem))
-		return(QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem)));
+		return QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem));
 
-	return(QVariant());
+	return QVariant();
 }
 
 int ElementsTableWidget::openElementForm(Element *elem)
@@ -141,7 +141,7 @@ int ElementsTableWidget::openElementForm(Element *elem)
 	res = element_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&element_form, element_wgt->metaObject()->className());
 
-	return(res);
+	return res;
 }
 
 void ElementsTableWidget::editElement(int elem_idx)

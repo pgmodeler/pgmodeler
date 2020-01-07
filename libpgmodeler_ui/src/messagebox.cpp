@@ -61,7 +61,7 @@ void Messagebox::handleNoCancelClick()
 
 bool Messagebox::isCancelled()
 {
-	return(cancelled);
+	return cancelled;
 }
 
 void Messagebox::setCustomOptionText(const QString &text)
@@ -72,7 +72,7 @@ void Messagebox::setCustomOptionText(const QString &text)
 
 bool Messagebox::isCustomOptionChecked()
 {
-	return(custom_option_chk->isChecked());
+	return custom_option_chk->isChecked();
 }
 
 void Messagebox::showExceptionList()

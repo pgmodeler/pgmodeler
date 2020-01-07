@@ -35,7 +35,7 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels()
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return(QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+	return QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
 }
 
 int ModelRestorationForm::exec()
@@ -89,12 +89,12 @@ int ModelRestorationForm::exec()
 	tmp_files_tbw->resizeColumnsToContents();
 	tmp_files_tbw->resizeRowsToContents();
 
-	return(QDialog::exec());
+	return QDialog::exec();
 }
 
 bool ModelRestorationForm::hasTemporaryModels()
 {
-	return(!this->getTemporaryModels().isEmpty());
+	return !this->getTemporaryModels().isEmpty();
 }
 
 void ModelRestorationForm::removeTemporaryFiles()
@@ -142,6 +142,6 @@ QStringList ModelRestorationForm::getSelectedModels()
 	}
 
 	list.removeDuplicates();
-	return(list);
+	return list;
 }
 

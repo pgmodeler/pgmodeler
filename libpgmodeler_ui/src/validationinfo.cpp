@@ -61,26 +61,26 @@ ValidationInfo::ValidationInfo(const QString &msg)
 
 unsigned ValidationInfo::getValidationType()
 {
-	return(val_type);
+	return val_type;
 }
 
 BaseObject *ValidationInfo::getObject()
 {
-	return(object);
+	return object;
 }
 
 vector<BaseObject *> ValidationInfo::getReferences()
 {
-	return(references);
+	return references;
 }
 
 QStringList ValidationInfo::getErrors()
 {
-	return(errors);
+	return errors;
 }
 
 bool ValidationInfo::isValid()
 {
-	return(((val_type==NoUniqueName || val_type==BrokenReference) && object) ||
-		   (val_type==SqlValidationError && !errors.empty()));
+	return (((val_type==NoUniqueName || val_type==BrokenReference) && object) ||
+					(val_type==SqlValidationError && !errors.empty()));
 }

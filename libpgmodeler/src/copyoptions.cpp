@@ -35,7 +35,7 @@ CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 
 unsigned CopyOptions::getCopyMode()
 {
-	return(copy_mode);
+	return copy_mode;
 }
 
 bool CopyOptions::isOptionSet(unsigned op)
@@ -43,22 +43,22 @@ bool CopyOptions::isOptionSet(unsigned op)
 	if(op > All)
 		throw Exception(ErrorCode::RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return((copy_op_ids & op) == op);
+	return ((copy_op_ids & op) == op);
 }
 
 bool CopyOptions::isIncluding()
 {
-	return(copy_mode & Including);
+	return (copy_mode & Including);
 }
 
 bool CopyOptions::isExcluding()
 {
-	return(copy_mode & Excluding);
+	return (copy_mode & Excluding);
 }
 
 unsigned CopyOptions::getCopyOptionsIds()
 {
-	return(copy_op_ids);
+	return copy_op_ids;
 }
 
 QString CopyOptions::getSQLDefinition()
@@ -98,10 +98,10 @@ QString CopyOptions::getSQLDefinition()
 		}
 	}
 
-	return(def);
+	return def;
 }
 
 bool CopyOptions::operator != (CopyOptions &cp)
 {
-	return(this->copy_mode!= cp.copy_mode && this->copy_op_ids!=cp.copy_op_ids);
+	return (this->copy_mode!= cp.copy_mode && this->copy_op_ids!=cp.copy_op_ids);
 }

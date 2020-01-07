@@ -48,7 +48,7 @@ void Schema::setFillColor(const QColor &color)
 
 QColor Schema::getFillColor()
 {
-	return(fill_color);
+	return fill_color;
 }
 
 void Schema::setRectVisible(bool value)
@@ -59,18 +59,18 @@ void Schema::setRectVisible(bool value)
 
 bool Schema::isRectVisible()
 {
-	return(rect_visible);
+	return rect_visible;
 }
 
 QString Schema::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::FillColor]=fill_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
 	setFadedOutAttribute();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }

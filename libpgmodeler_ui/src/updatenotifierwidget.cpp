@@ -85,7 +85,7 @@ bool UpdateNotifierWidget::eventFilter(QObject *obj, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(obj, event));
+	return QWidget::eventFilter(obj, event);
 }
 
 void UpdateNotifierWidget::activateLink(const QString &link)

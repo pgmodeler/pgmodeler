@@ -231,15 +231,15 @@ namespace PgModelerNs {
 		};
 
 		if(word.isEmpty())
-			return(false);
+			return false;
 		else
 		{
 			QChar chr=word.at(0).toUpper();
 
 			if(!keywords.contains(chr))
-				return(false);
+				return false;
 			else
-				return(keywords[chr].contains(word.toUpper()));
+				return keywords[chr].contains(word.toUpper());
 		}
 	}
 }

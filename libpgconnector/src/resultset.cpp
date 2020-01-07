@@ -90,7 +90,7 @@ QString ResultSet::getColumnName(int column_idx)
 		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column name on the specified index
-	return(QString(PQfname(sql_result, column_idx)));
+	return QString(PQfname(sql_result, column_idx));
 }
 
 unsigned ResultSet::getColumnTypeId(int column_idx)
@@ -100,7 +100,7 @@ unsigned ResultSet::getColumnTypeId(int column_idx)
 		throw Exception(ErrorCode::RefTupleColumnInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column type id on the specified index
-	return(static_cast<unsigned>(PQftype(sql_result, column_idx)));
+	return static_cast<unsigned>(PQftype(sql_result, column_idx));
 }
 
 int ResultSet::getColumnIndex(const QString &column_name)
@@ -115,7 +115,7 @@ int ResultSet::getColumnIndex(const QString &column_name)
 	if(col_idx < 0)
 		throw Exception(ErrorCode::RefTupleColumnInvalidName, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	return(col_idx);
+	return col_idx;
 }
 
 int ResultSet::validateColumnName(const QString &column_name)
@@ -131,7 +131,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 			throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Get the column index through its name
-		return (getColumnIndex(column_name));
+		return getColumnIndex(column_name);
 	}
 	catch(Exception &e)
 	{
@@ -143,7 +143,7 @@ int ResultSet::validateColumnName(const QString &column_name)
 char *ResultSet::getColumnValue(const QString &column_name)
 {
 	//Returns the column value on the current tuple
-	return(PQgetvalue(sql_result, current_tuple, validateColumnName(column_name)));
+	return PQgetvalue(sql_result, current_tuple, validateColumnName(column_name));
 }
 
 void ResultSet::validateColumnIndex(int column_idx)
@@ -165,7 +165,7 @@ char *ResultSet::getColumnValue(int column_idx)
 	validateColumnIndex(column_idx);
 
 	//Returns the column value on the current tuple
-	return(PQgetvalue(sql_result, current_tuple, column_idx));
+	return PQgetvalue(sql_result, current_tuple, column_idx);
 }
 
 bool ResultSet::isColumnValueNull(int column_idx)
@@ -173,19 +173,19 @@ bool ResultSet::isColumnValueNull(int column_idx)
 	validateColumnIndex(column_idx);
 
 	//Returns the null state of the column on the current tuple
-	return(PQgetisnull(sql_result, current_tuple, column_idx));
+	return PQgetisnull(sql_result, current_tuple, column_idx);
 }
 
 bool ResultSet::isColumnValueNull(const QString &column_name)
 {
 	//Returns the null state of the column on the current tuple
-	return(PQgetisnull(sql_result, current_tuple, validateColumnName(column_name)));
+	return PQgetisnull(sql_result, current_tuple, validateColumnName(column_name));
 }
 
 int ResultSet::getColumnSize(const QString &column_name)
 {
 	//Returns the column value length on the current tuple
-	return(PQgetlength(sql_result, current_tuple, validateColumnName(column_name)));
+	return PQgetlength(sql_result, current_tuple, validateColumnName(column_name));
 }
 
 int ResultSet::getColumnSize(int column_idx)
@@ -197,7 +197,7 @@ int ResultSet::getColumnSize(int column_idx)
 		throw Exception(ErrorCode::RefInvalidTupleColumn, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Retorns the column value length on the current tuple
-	return(PQgetlength(sql_result, current_tuple, column_idx));
+	return PQgetlength(sql_result, current_tuple, column_idx);
 }
 
 attribs_map ResultSet::getTupleValues()
@@ -210,7 +210,7 @@ attribs_map ResultSet::getTupleValues()
 	for(int col=0; col < getColumnCount(); col++)
 		tup_vals[getColumnName(col)]=getColumnValue(col);
 
-	return(tup_vals);
+	return tup_vals;
 }
 
 int ResultSet::getTupleCount()
@@ -218,21 +218,21 @@ int ResultSet::getTupleCount()
 	//In case the result has some tuples
 	if(!empty_result)
 		//Returns the tuple count gathered after the SQL command
-		return(PQntuples(sql_result));
+		return PQntuples(sql_result);
 	else
 		/* Returns the line amount that were affected by the SQL command
 		 (only for INSERT, DELETE, UPDATE) */
-		return(atoi(PQcmdTuples(sql_result)));
+		return atoi(PQcmdTuples(sql_result));
 }
 
 int ResultSet::getColumnCount()
 {
-	return(PQnfields(sql_result));
+	return PQnfields(sql_result);
 }
 
 int ResultSet::getCurrentTuple()
 {
-	return(current_tuple);
+	return current_tuple;
 }
 
 bool ResultSet::isColumnBinaryFormat(const QString &column_name)
@@ -251,7 +251,7 @@ bool ResultSet::isColumnBinaryFormat(const QString &column_name)
 	/* Returns the column format in the current tuple.
 		According to libpq documentation, value = 0, indicates column text format,
 		value = 1 the column has binary format, the other values are reserved */
-	return(PQfformat(sql_result, col_idx)==1);
+	return (PQfformat(sql_result, col_idx) == 1);
 }
 
 bool ResultSet::isColumnBinaryFormat(int column_idx)
@@ -265,7 +265,7 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 	value = 1 the column has binary format, the other values are reserved.
 
 	One additional check is made, if the type of the column is bytea. */
-	return(PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
+	return (PQfformat(sql_result, column_idx)==1 || PQftype(sql_result, column_idx)==BYTEAOID);
 }
 
 bool ResultSet::accessTuple(unsigned tuple_type)
@@ -280,7 +280,7 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		throw Exception(ErrorCode::RefInvalidTuple, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(tuple_count==0)
-		return(false);
+		return false;
 	else
 	{
 		bool accessed=true;
@@ -306,18 +306,18 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 			break;
 		}
 
-		return(accessed);
+		return accessed;
 	}
 }
 
 bool ResultSet::isEmpty()
 {
-	return(empty_result);
+	return empty_result;
 }
 
 bool ResultSet::isValid()
 {
-	return(sql_result != nullptr);
+	return (sql_result != nullptr);
 }
 
 void ResultSet::operator = (ResultSet &res)

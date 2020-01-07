@@ -42,17 +42,17 @@ OperationList::~OperationList()
 
 unsigned OperationList::getCurrentSize()
 {
-	return(operations.size());
+	return operations.size();
 }
 
 unsigned OperationList::getMaximumSize()
 {
-	return(max_size);
+	return max_size;
 }
 
 int OperationList::getCurrentIndex()
 {
-	return(current_index);
+	return current_index;
 }
 
 void OperationList::startOperationChain()
@@ -103,8 +103,8 @@ void OperationList::ignoreOperationChain(bool value)
 
 bool OperationList::isOperationChainStarted()
 {
-	return(next_op_chain==Operation::ChainStart ||
-		   next_op_chain==Operation::ChainMiddle);
+	return (next_op_chain==Operation::ChainStart ||
+					next_op_chain==Operation::ChainMiddle);
 }
 
 bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
@@ -118,7 +118,7 @@ bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
 		itr++;
 	}
 
-	return(registered);
+	return registered;
 }
 
 bool OperationList::isRedoAvailable()
@@ -126,14 +126,14 @@ bool OperationList::isRedoAvailable()
 	/* The redo operation only can be performed
 		if the current index from the list of operations is at most
 		the penultimate element and the list can not be empty */
-	return(!operations.empty() && current_index < static_cast<int>(operations.size()));
+	return (!operations.empty() && current_index < static_cast<int>(operations.size()));
 }
 
 bool OperationList::isUndoAvailable()
 {
 	/* For the undo operation be performed is
 		enough that the list of operations is not empty */
-	return(!operations.empty() && current_index > 0);
+	return (!operations.empty() && current_index > 0);
 }
 
 void OperationList::setMaximumSize(unsigned max)
@@ -307,7 +307,7 @@ bool OperationList::isObjectOnPool(BaseObject *object)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
 void OperationList::removeFromPool(unsigned obj_idx)
@@ -483,7 +483,7 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		current_index=operations.size();
 
 		//Returns the last operation position as operation's ID
-		return(operations.size()-1);
+		return operations.size() -1;
 	}
 	catch(Exception &e)
 	{
@@ -561,7 +561,7 @@ unsigned OperationList::getChainSize()
 		}
 	}
 
-	return(size);
+	return size;
 }
 
 void OperationList::undoOperation()

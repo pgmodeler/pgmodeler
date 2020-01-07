@@ -36,7 +36,7 @@ void UserMapping::setForeignServer(ForeignServer *server)
 
 ForeignServer *UserMapping::getForeignServer()
 {
-	return(foreign_server);
+	return foreign_server;
 }
 
 void UserMapping::setOwner(BaseObject *role)
@@ -54,19 +54,19 @@ void UserMapping::setName(const QString &)
 
 QString UserMapping::getName(bool, bool)
 {
-	return(this->obj_name);
+	return this->obj_name;
 }
 
 QString UserMapping::getSignature(bool)
 {
-	return(QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : QString("public"))
-																		.arg(foreign_server ? foreign_server->getName() : QString()));
+	return QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : QString("public"))
+																		.arg(foreign_server ? foreign_server->getName() : QString());
 }
 
 QString UserMapping::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Role] = QString();
 	attributes[Attributes::Server] = QString();
@@ -81,7 +81,7 @@ QString UserMapping::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return(this->BaseObject::__getCodeDefinition(def_type));
+	return this->BaseObject::__getCodeDefinition(def_type);
 }
 
 QString UserMapping::getAlterDefinition(BaseObject *object)
@@ -90,7 +90,7 @@ QString UserMapping::getAlterDefinition(BaseObject *object)
 	{
 		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attributes);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -100,5 +100,5 @@ QString UserMapping::getAlterDefinition(BaseObject *object)
 
 QString UserMapping::getDropDefinition(bool)
 {
-	return(BaseObject::getDropDefinition(false));
+	return BaseObject::getDropDefinition(false);
 }

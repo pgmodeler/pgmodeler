@@ -105,7 +105,7 @@ bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ModelValidationWidget::createThread()
@@ -246,7 +246,7 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 
 bool ModelValidationWidget::isValidationRunning()
 {
-	return(validation_thread && validation_thread->isRunning());
+	return (validation_thread && validation_thread->isRunning());
 }
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)

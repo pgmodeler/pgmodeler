@@ -384,7 +384,7 @@ bool PgModelerCli::isOptionRecognized(QString &op, bool &accepts_val)
 	}
 
 	if(append_chr) op += '1';
-	return(found);
+	return found;
 }
 
 void PgModelerCli::showMenu()
@@ -621,7 +621,7 @@ int PgModelerCli::exec()
 				exportModel();
 		}
 
-		return(0);
+		return 0;
 	}
 	catch(Exception &e)
 	{
@@ -1592,7 +1592,7 @@ QStringList PgModelerCli::extractForeignKeys(QString &obj_xml)
 	}
 	while(pos >= 0 && pos < obj_xml.size());
 
-	return(constr_lst);
+	return constr_lst;
 }
 
 bool PgModelerCli::containsRelAttributes(const QString &str)
@@ -1612,7 +1612,7 @@ bool PgModelerCli::containsRelAttributes(const QString &str)
 	for(unsigned i=0; i < attribs.size() && !found; i++)
 		found=str.contains(attribs[i]);
 
-	return(found);
+	return found;
 }
 
 void PgModelerCli::handleMimeDatabase(bool uninstall)

@@ -110,10 +110,10 @@ bool ModelOverviewWidget::eventFilter(QObject *object, QEvent *event)
 		else
 			model->applyZoom(model->getCurrentZoom() + ModelWidget::ZoomIncrement);
 
-		return(false);
+		return false;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ModelOverviewWidget::updateOverview()

@@ -121,7 +121,7 @@ bool SchemaView::isChildrenSelected()
 		itr++;
 	}
 
-	return(selected);
+	return selected;
 }
 
 QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
@@ -137,17 +137,17 @@ QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const 
 			child->moveBy(dx, dy);
 	}
 
-	return(BaseObjectView::itemChange(change, value));
+	return BaseObjectView::itemChange(change, value);
 }
 
 unsigned SchemaView::getChildrenCount()
 {
-	return(children.size());
+	return children.size();
 }
 
 QList<BaseObjectView *> SchemaView::getChildren()
 {
-	return(children);
+	return children;
 }
 
 void SchemaView::togglePlaceholder(bool visible)

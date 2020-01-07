@@ -99,7 +99,7 @@ void ConnectionsConfigWidget::destroyConnections()
 
 map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 void ConnectionsConfigWidget::loadConfiguration()
@@ -545,10 +545,10 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 	for(Connection *conn : connections)
 	{
 		if(conn->getConnectionId() == conn_id)
-			return(conn);
+			return conn;
 	}
 
-	return(nullptr);
+	return nullptr;
 }
 
 void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
@@ -627,10 +627,10 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 
-		return(conn_saved);
+		return conn_saved;
 	}
 
-	return(false);
+	return false;
 }
 
 Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
@@ -646,5 +646,5 @@ Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
 		}
 	}
 
-	return(conn);
+	return conn;
 }

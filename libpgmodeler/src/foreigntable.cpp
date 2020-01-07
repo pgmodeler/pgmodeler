@@ -41,7 +41,7 @@ void ForeignTable::setForeignServer(ForeignServer *server)
 
 ForeignServer *ForeignTable::getForeignServer()
 {
-	return(foreign_server);
+	return foreign_server;
 }
 
 void ForeignTable::addObject(BaseObject *object, int obj_idx)
@@ -83,15 +83,15 @@ QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
-	return(PhysicalTable::__getCodeDefinition(def_type));
+	return PhysicalTable::__getCodeDefinition(def_type);
 }
 
 QString ForeignTable::getCodeDefinition(unsigned def_type)
 {
 	QString code_def = PhysicalTable::getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
-	return(__getCodeDefinition(def_type, false));
+	return __getCodeDefinition(def_type, false);
 }
 
 void ForeignTable::operator = (ForeignTable &tab)
@@ -107,7 +107,7 @@ QString ForeignTable::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attribs);
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

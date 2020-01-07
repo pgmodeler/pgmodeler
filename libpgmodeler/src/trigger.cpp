@@ -171,12 +171,12 @@ bool Trigger::isExecuteOnEvent(EventType event)
 	if(event==EventType::OnSelect)
 		throw Exception(ErrorCode::RefInvalidTriggerEvent,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(events.at(!event));
+	return (events.at(!event));
 }
 
 bool Trigger::isExecutePerRow()
 {
-	return(is_exec_per_row);
+	return (is_exec_per_row);
 }
 
 QString Trigger::getArgument(unsigned arg_idx)
@@ -185,7 +185,7 @@ QString Trigger::getArgument(unsigned arg_idx)
 	if(arg_idx>=arguments.size())
 		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(arguments[arg_idx]);
+	return (arguments[arg_idx]);
 }
 
 Column *Trigger::getColumn(unsigned col_idx)
@@ -194,32 +194,32 @@ Column *Trigger::getColumn(unsigned col_idx)
 	if(col_idx>=upd_columns.size())
 		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(upd_columns[col_idx]);
+	return (upd_columns[col_idx]);
 }
 
 unsigned Trigger::getArgumentCount()
 {
-	return(arguments.size());
+	return (arguments.size());
 }
 
 unsigned Trigger::getColumnCount()
 {
-	return(upd_columns.size());
+	return (upd_columns.size());
 }
 
 Function *Trigger::getFunction()
 {
-	return(function);
+	return (function);
 }
 
 QString Trigger::getCondition()
 {
-	return(condition);
+	return (condition);
 }
 
 FiringType Trigger::getFiringType()
 {
-	return(firing_type);
+	return (firing_type);
 }
 
 void Trigger::removeArgument(unsigned arg_idx)
@@ -270,17 +270,17 @@ void Trigger::setDeferrable(bool value)
 
 BaseTable *Trigger::getReferencedTable()
 {
-	return(referenced_table);
+	return (referenced_table);
 }
 
 DeferralType Trigger::getDeferralType()
 {
-	return(deferral_type);
+	return (deferral_type);
 }
 
 bool Trigger::isDeferrable()
 {
-	return(is_deferrable);
+	return (is_deferrable);
 }
 
 void Trigger::setConstraint(bool value)
@@ -303,12 +303,12 @@ QString Trigger::getTransitionTableName(unsigned tab_idx)
 	if(tab_idx > NewTableName)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(transition_tabs_names[tab_idx]);
+	return (transition_tabs_names[tab_idx]);
 }
 
 bool Trigger::isConstraint()
 {
-	return(is_constraint);
+	return (is_constraint);
 }
 
 bool Trigger::isReferRelationshipAddedColumn()
@@ -327,7 +327,7 @@ bool Trigger::isReferRelationshipAddedColumn()
 		itr++;
 	}
 
-	return(enc);
+	return (enc);
 }
 
 vector<Column *> Trigger::getRelationshipAddedColumns()
@@ -340,7 +340,7 @@ vector<Column *> Trigger::getRelationshipAddedColumns()
 			cols.push_back(col);
 	}
 
-	return(cols);
+	return (cols);
 }
 
 void Trigger::setBasicAttributes(unsigned def_type)
@@ -396,7 +396,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 QString Trigger::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return (code_def);
 
 	setBasicAttributes(def_type);
 
@@ -433,7 +433,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::NewTableName]=BaseObject::formatName(transition_tabs_names[NewTableName]);
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return (BaseObject::__getCodeDefinition(def_type));
 }
 
 void Trigger::validateTrigger()
@@ -480,7 +480,7 @@ void Trigger::validateTrigger()
 QString Trigger::getSignature(bool format)
 {
 	if(!getParentTable())
-		return(BaseObject::getSignature(format));
+		return (BaseObject::getSignature(format));
 
-	return(QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return (QString("%1 ON %2").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
 }

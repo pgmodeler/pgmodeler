@@ -92,15 +92,15 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 
 map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return (config_params);
 }
 
 attribs_map SnippetsConfigWidget::getSnippetById(const QString &snip_id)
 {
 	if(config_params.count(snip_id))
-		return(config_params[snip_id]);
+		return (config_params[snip_id]);
 	else
-		return(attribs_map());
+		return (attribs_map());
 }
 
 QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
@@ -115,7 +115,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 			ids.push_back(snip.second[Attributes::Id]);
 	}
 
-	return(ids);
+	return (ids);
 }
 
 vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
@@ -130,7 +130,7 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
 			snippets.push_back(snip.second);
 	}
 
-	return(snippets);
+	return (snippets);
 }
 
 QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
@@ -143,7 +143,7 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 			attribs.push_back(snip.second[attrib]);
 	}
 
-	return(attribs);
+	return (attribs);
 }
 
 vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
@@ -153,7 +153,7 @@ vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
 	for(auto &snip : config_params)
 		snippets.push_back(snip.second);
 
-	return(snippets);
+	return (snippets);
 }
 
 QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attribs)
@@ -163,7 +163,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 	QString buf=snippet[Attributes::Contents];
 
 	if(snippet[Attributes::Parsable]!=Attributes::True)
-		return(buf);
+		return (buf);
 
 	try
 	{
@@ -183,7 +183,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
-		return(schparser.getCodeDefinition(attribs));
+		return (schparser.getCodeDefinition(attribs));
 	}
 	catch(Exception &e)
 	{
@@ -197,15 +197,15 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 	{
 		try
 		{
-			return(parseSnippet(config_params[snip_id], attribs));
+			return (parseSnippet(config_params[snip_id], attribs));
 		}
 		catch(Exception &e)
 		{
-			return(tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage()));
+			return (tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage()));
 		}
 	}
 	else
-		return(QString());
+		return (QString());
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -252,10 +252,10 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 	if(!err_msg.isEmpty())
 	{
 		msg_box.show(err_msg, Messagebox::ErrorIcon, Messagebox::OkButton);
-		return(false);
+		return (false);
 	}
 	else
-		return(true);
+		return (true);
 }
 
 void SnippetsConfigWidget::hideEvent(QHideEvent *)
@@ -308,7 +308,7 @@ attribs_map SnippetsConfigWidget::getSnippetAttributes()
 	if(object_id.isEmpty())
 		object_id=Attributes::General;
 
-	return(attribs_map{ {Attributes::Id, id_edt->text()},
+	return (attribs_map{ {Attributes::Id, id_edt->text()},
 						{Attributes::Label, label_edt->text()},
 						{Attributes::Object, object_id},
 						{Attributes::Parsable, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
@@ -569,5 +569,5 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 bool SnippetsConfigWidget::isSnippetExists(const QString &snip_id)
 {
-	return(config_params.count(snip_id)!=0);
+	return (config_params.count(snip_id)!=0);
 }

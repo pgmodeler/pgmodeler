@@ -78,22 +78,22 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 
 int ResultSetModel::rowCount(const QModelIndex &) const
 {
-	return(row_count);
+	return (row_count);
 }
 
 int ResultSetModel::columnCount(const QModelIndex &) const
 {
-	return(col_count);
+	return (col_count);
 }
 
 QModelIndex ResultSetModel::index(int row, int column, const QModelIndex &parent) const
 {
-	return(QAbstractTableModel::index(row, column, parent));
+	return (QAbstractTableModel::index(row, column, parent));
 }
 
 QModelIndex ResultSetModel::parent(const QModelIndex &) const
 {
-	return(QModelIndex());
+	return (QModelIndex());
 }
 
 QVariant ResultSetModel::data(const QModelIndex &index, int role) const
@@ -101,13 +101,13 @@ QVariant ResultSetModel::data(const QModelIndex &index, int role) const
 	if(index.row() < row_count && index.column() < col_count)
 	{
 		if(role == Qt::DisplayRole)
-			return(item_data.at(index.row() * col_count + index.column()));
+			return (item_data.at(index.row() * col_count + index.column()));
 
 		if(role == Qt::TextAlignmentRole)
-			return(QVariant(Qt::AlignLeft | Qt::AlignVCenter));
+			return (QVariant(Qt::AlignLeft | Qt::AlignVCenter));
 	}
 
-	return(QVariant(QVariant::Invalid));
+	return (QVariant(QVariant::Invalid));
 }
 
 QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -115,24 +115,24 @@ QVariant ResultSetModel::headerData(int section, Qt::Orientation orientation, in
 	if(orientation == Qt::Horizontal)
 	{
 		if(section >= col_count)
-			return(QVariant(QVariant::Invalid));
+			return (QVariant(QVariant::Invalid));
 
 		if(role == Qt::DisplayRole)
-			return(header_data.at(section));
+			return (header_data.at(section));
 
 		if(role == Qt::ToolTipRole)
-			return(tooltip_data.at(section));
+			return (tooltip_data.at(section));
 
 		if(role == Qt::TextAlignmentRole)
-			return(QVariant(Qt::AlignLeft | Qt::AlignVCenter));
+			return (QVariant(Qt::AlignLeft | Qt::AlignVCenter));
 	}
 
-	return(QAbstractTableModel::headerData(section, orientation, role));
+	return (QAbstractTableModel::headerData(section, orientation, role));
 }
 
 Qt::ItemFlags ResultSetModel::flags(const QModelIndex &) const
 {
-	return(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled );
+	return (Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled );
 }
 
 void ResultSetModel::append(ResultSet &res)
@@ -174,6 +174,6 @@ void ResultSetModel::append(ResultSet &res)
 
 bool ResultSetModel::isEmpty()
 {
-	return(row_count <= 0);
+	return (row_count <= 0);
 }
 

@@ -114,7 +114,7 @@ OperatorClassElement OperatorClass::getElement(unsigned elem_idx)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Returns the element on the specified index
-	return(elements[elem_idx]);
+	return (elements[elem_idx]);
 }
 
 bool OperatorClass::isElementExists(OperatorClassElement elem)
@@ -133,43 +133,43 @@ bool OperatorClass::isElementExists(OperatorClassElement elem)
 		itr++;
 	}
 
-	return(exists);
+	return (exists);
 }
 
 unsigned OperatorClass::getElementCount()
 {
-	return(elements.size());
+	return (elements.size());
 }
 
 PgSqlType OperatorClass::getDataType()
 {
-	return(data_type);
+	return (data_type);
 }
 
 OperatorFamily *OperatorClass::getFamily()
 {
-	return(family);
+	return (family);
 }
 
 IndexingType OperatorClass::getIndexingType()
 {
-	return(indexing_type);
+	return (indexing_type);
 }
 
 bool OperatorClass::isDefault()
 {
-	return(is_default);
+	return (is_default);
 }
 
 QString OperatorClass::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return (this->getCodeDefinition(def_type, false));
 }
 
 QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return (code_def);
 
 	setElementsAttribute(def_type);
 	attributes[Attributes::IndexType]=(~indexing_type);
@@ -189,10 +189,10 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 
 	attributes[Attributes::Signature]=getSignature();
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return (BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
 QString OperatorClass::getSignature(bool format)
 {
-	return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+	return (BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
 }

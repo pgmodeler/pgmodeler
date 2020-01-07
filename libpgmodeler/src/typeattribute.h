@@ -31,7 +31,7 @@ class TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 
-		QString getCodeDefinition(unsigned, bool){ return(""); }
+		QString getCodeDefinition(unsigned, bool){ return ""; }
 
 	public:
 		TypeAttribute();

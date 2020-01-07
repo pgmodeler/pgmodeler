@@ -107,10 +107,10 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 		else
 			h_splitter->setSizes({315, 10000});
 
-		return(true);
+		return true;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void SQLToolWidget::updateTabs()
@@ -276,7 +276,7 @@ DatabaseExplorerWidget *SQLToolWidget::browseDatabase()
 			db_explorer_wgt->runsql_tb->click();
 		}
 
-		return(db_explorer_wgt);
+		return db_explorer_wgt;
 	}
 	catch(Exception &e)
 	{
@@ -293,7 +293,7 @@ SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 		Connection conn;
 
 		if(!db_explorer_wgt)
-			return(nullptr);
+			return nullptr;
 
 		sql_exec_wgt = new SQLExecutionWidget;
 		conn = db_explorer_wgt->getConnection();
@@ -304,7 +304,7 @@ SQLExecutionWidget *SQLToolWidget::addSQLExecutionTab(const QString &sql_cmd)
 		sql_exec_wgt->sql_cmd_txt->appendPlainText(sql_cmd);
 		sql_exec_wgts[db_explorer_wgt].push_back(sql_exec_wgt);
 
-		return(sql_exec_wgt);
+		return sql_exec_wgt;
 	}
 	catch(Exception &e)
 	{
@@ -428,5 +428,5 @@ void SQLToolWidget::showSnippet(const QString &snip)
 
 bool SQLToolWidget::hasDatabasesBrowsed()
 {
-	return(databases_tbw->count() > 0);
+	return (databases_tbw->count() > 0);
 }

@@ -40,7 +40,7 @@ using namespace std;
 template<typename Enum>
 constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
 {
-	return(static_cast<typename std::underlying_type_t<Enum>>(obj_type));
+	return static_cast<typename std::underlying_type_t<Enum>>(obj_type);
 }
 
 //! \brief This enum defines the global error codes used throughout the application

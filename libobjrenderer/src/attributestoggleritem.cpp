@@ -245,12 +245,12 @@ void AttributesTogglerItem::clearButtonsSelection()
 
 double AttributesTogglerItem::getButtonsWidth()
 {
-	return(btns_width);
+	return btns_width;
 }
 
 double AttributesTogglerItem::getButtonsHeight()
 {
-	return(btns_height);
+	return btns_height;
 }
 
 void AttributesTogglerItem::configureButtons(const QRectF &rect)

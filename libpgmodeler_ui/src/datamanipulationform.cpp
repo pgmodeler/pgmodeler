@@ -1378,7 +1378,7 @@ void DataManipulationForm::saveChanges()
 QString DataManipulationForm::getDMLCommand(int row)
 {
 	if(row < 0 || row >= results_tbw->rowCount())
-		return(QString());
+		return QString();
 
 	QString tab_name=QString("\"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText()),
 			upd_cmd=QString("UPDATE %1 SET %2 WHERE %3"),
@@ -1474,7 +1474,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 		}
 
 		if(col_list.isEmpty())
-			return(QString());
+			return QString();
 		else
 		{
 			if(op_type==OpUpdate)
@@ -1484,7 +1484,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 		}
 	}
 
-	return(fmt_cmd);
+	return fmt_cmd;
 }
 
 void DataManipulationForm::resizeEvent(QResizeEvent *event)

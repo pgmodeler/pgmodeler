@@ -90,11 +90,11 @@ bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 		if(focus_evnt->reason() == Qt::MouseFocusReason)
 		{
 			showObjectView();
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(obj, evnt));
+	return QWidget::eventFilter(obj, evnt);
 }
 
 ObjectSelectorWidget::~ObjectSelectorWidget()
@@ -109,12 +109,12 @@ void ObjectSelectorWidget::enableObjectCreation(bool value)
 
 BaseObject *ObjectSelectorWidget::getSelectedObject()
 {
-	return(selected_obj);
+	return selected_obj;
 }
 
 QString ObjectSelectorWidget::getSelectedObjectName()
 {
-	return(selected_obj->getSignature());
+	return selected_obj->getSignature();
 }
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)

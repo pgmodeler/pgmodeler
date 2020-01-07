@@ -111,43 +111,43 @@ void Column::setNotNull(bool value)
 
 PgSqlType Column::getType()
 {
-	return(type);
+	return type;
 }
 
 IdentityType Column::getIdentityType()
 {
-	return(identity_type);
+	return identity_type;
 }
 
 bool Column::isNotNull()
 {
-	return(not_null);
+	return not_null;
 }
 
 bool Column::isIdentity()
 {
-	return(identity_type != BaseType::Null);
+	return (identity_type != BaseType::Null);
 }
 
 QString Column::getTypeReference()
 {
 	if(getParentTable())
-		return(getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
+		return getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE");
 	else
-		return(QString());
+		return QString();
 }
 
 QString Column::getDefaultValue()
 {
-	return(default_value);
+	return (default_value);
 }
 
 QString Column::getOldName(bool format)
 {
 	if(format)
-		return(BaseObject::formatName(old_name));
+		return BaseObject::formatName(old_name);
 	else
-		return(old_name);
+		return old_name;
 }
 
 void Column::setParentRelationship(BaseObject *parent_rel)
@@ -160,7 +160,7 @@ void Column::setParentRelationship(BaseObject *parent_rel)
 
 BaseObject *Column::getParentRelationship()
 {
-	return(parent_rel);
+	return parent_rel;
 }
 
 void Column::setSequence(BaseObject *seq)
@@ -189,37 +189,37 @@ void Column::setSequence(BaseObject *seq)
 
 BaseObject *Column::getSequence()
 {
-	return(sequence);
+	return sequence;
 }
 
 bool Column::isIdSeqCycle()
 {
-	return(seq_cycle);
+	return seq_cycle;
 }
 
 QString Column::getIdSeqMaxValue()
 {
-	return(seq_max_value);
+	return seq_max_value;
 }
 
 QString Column::getIdSeqMinValue()
 {
-	return(seq_min_value);
+	return seq_min_value;
 }
 
 QString Column::getIdSeqIncrement()
 {
-	return(seq_increment);
+	return seq_increment;
 }
 
 QString Column::getIdSeqStart()
 {
-	return(seq_start);
+	return seq_start;
 }
 
 QString Column::getIdSeqCache()
 {
-	return(seq_cache);
+	return seq_cache;
 }
 
 void Column::setIdSeqAttributes(QString minv, QString maxv, QString inc, QString start, QString cache, bool cycle)
@@ -235,7 +235,7 @@ void Column::setIdSeqAttributes(QString minv, QString maxv, QString inc, QString
 QString Column::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
@@ -271,7 +271,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::NotNull]=(!not_null ? QString() : Attributes::True);
 	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : QString());
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Column::getAlterDefinition(BaseObject *object)
@@ -374,7 +374,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		alter_def = BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 		alter_def += getAlterCommentDefinition(object, attributes);
 
-		return(alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{

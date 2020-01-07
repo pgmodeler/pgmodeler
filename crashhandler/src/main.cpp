@@ -38,12 +38,12 @@ int main(int argc, char **argv)
 		crashhandler.show();
 		app.exec();
 
-		return(0);
+		return 0;
 	}
 	catch(Exception &e)
 	{
 		QTextStream out(stdout);
 		out << e.getExceptionsText();
-		return(enum_cast(e.getErrorCode()));
+		return enum_cast(e.getErrorCode());
 	}
 }

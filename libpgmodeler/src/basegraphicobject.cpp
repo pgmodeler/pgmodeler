@@ -68,12 +68,12 @@ void BaseGraphicObject::setFadedOut(bool value)
 
 bool BaseGraphicObject::isModified()
 {
-	return(is_modified);
+	return is_modified;
 }
 
 bool BaseGraphicObject::isFadedOut()
 {
-	return(is_faded_out);
+	return is_faded_out;
 }
 
 void BaseGraphicObject::setFadedOutAttribute()
@@ -96,7 +96,7 @@ void  BaseGraphicObject::setPosition(QPointF pos)
 
 QPointF BaseGraphicObject::getPosition()
 {
-	return(position);
+	return position;
 }
 
 void BaseGraphicObject::operator = (BaseGraphicObject &obj)
@@ -115,12 +115,12 @@ void BaseGraphicObject::setReceiverObject(QObject *obj)
 
 QObject *BaseGraphicObject::getOverlyingObject()
 {
-	return(receiver_object);
+	return receiver_object;
 }
 
 bool BaseGraphicObject::isGraphicObject(ObjectType type)
 {
-	return(type==ObjectType::Table || type==ObjectType::View || type==ObjectType::Relationship ||
+	return (type==ObjectType::Table || type==ObjectType::View || type==ObjectType::Relationship ||
 				 type==ObjectType::BaseRelationship || type==ObjectType::Textbox || type==ObjectType::Schema ||
 				 type==ObjectType::ForeignTable);
 }
@@ -133,5 +133,5 @@ void BaseGraphicObject::setLayer(unsigned layer)
 
 unsigned BaseGraphicObject::getLayer()
 {
-	return(layer);
+	return layer;
 }

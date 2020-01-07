@@ -225,7 +225,7 @@ QString Relationship::getNamePattern(unsigned pat_id)
 	if(pat_id > PkColPattern)
 		throw Exception(ErrorCode::RefInvalidNamePatternId,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(name_patterns[pat_id]);
+	return (name_patterns[pat_id]);
 }
 
 QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool use_alias)
@@ -262,7 +262,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 	if(name.size() > BaseObject::ObjectNameMaxLength)
 		name.remove(BaseObject::ObjectNameMaxLength, name.size());
 
-	return(name);
+	return (name);
 }
 
 void Relationship::setOriginalPrimaryKey(Constraint *pk)
@@ -312,7 +312,7 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 
 vector<unsigned> Relationship::getSpecialPrimaryKeyCols()
 {
-	return(this->column_ids_pk_rel);
+	return (this->column_ids_pk_rel);
 }
 
 void Relationship::createSpecialPrimaryKey()
@@ -391,7 +391,7 @@ void Relationship::setTableNameRelNN(const QString &name)
 
 QString Relationship::getTableNameRelNN()
 {
-	return(tab_name_relnn);
+	return (tab_name_relnn);
 }
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
@@ -402,12 +402,12 @@ void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 
 QString Relationship::getPartitionBoundingExpr()
 {
-	return(part_bounding_expr);
+	return (part_bounding_expr);
 }
 
 bool Relationship::isDeferrable()
 {
-	return(deferrable);
+	return (deferrable);
 }
 
 void Relationship::setDeferralType(DeferralType defer_type)
@@ -418,7 +418,7 @@ void Relationship::setDeferralType(DeferralType defer_type)
 
 DeferralType Relationship::getDeferralType()
 {
-	return(deferral_type);
+	return (deferral_type);
 }
 
 void Relationship::setActionType(ActionType act_type, unsigned act_id)
@@ -434,9 +434,9 @@ void Relationship::setActionType(ActionType act_type, unsigned act_id)
 ActionType Relationship::getActionType(unsigned act_id)
 {
 	if(act_id==Constraint::DeleteAction)
-		return(del_action);
+		return (del_action);
 	else
-		return(upd_action);
+		return (upd_action);
 }
 
 int Relationship::getObjectIndex(TableObject *object)
@@ -472,9 +472,9 @@ int Relationship::getObjectIndex(TableObject *object)
 	}
 
 	if(found)
-		return((itr-list->begin())-1);
+		return ((itr-list->begin())-1);
 	else
-		return(-1);
+		return (-1);
 }
 
 bool Relationship::isColumnExists(Column *column)
@@ -497,7 +497,7 @@ bool Relationship::isColumnExists(Column *column)
 		itr++;
 	}
 
-	return(found);
+	return (found);
 }
 
 void Relationship::addObject(TableObject *tab_obj, int obj_idx)
@@ -696,12 +696,12 @@ void Relationship::removeConstraint(unsigned constr_idx)
 
 vector<Column *> Relationship::getGeneratedColumns()
 {
-	return(gen_columns);
+	return (gen_columns);
 }
 
 Table *Relationship::getGeneratedTable()
 {
-	return(table_relnn);
+	return (table_relnn);
 }
 
 vector<Constraint *> Relationship::getGeneratedConstraints()
@@ -717,7 +717,7 @@ vector<Constraint *> Relationship::getGeneratedConstraints()
 	if(pk_relident)
 		vect.push_back(pk_relident);
 
-	return(vect);
+	return (vect);
 }
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
@@ -734,7 +734,7 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 	if(obj_idx >= list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(list->at(obj_idx));
+	return (list->at(obj_idx));
 }
 
 TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
@@ -762,9 +762,9 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 	}
 
 	if(found)
-		return(obj_aux);
+		return (obj_aux);
 	else
-		return(nullptr);
+		return (nullptr);
 }
 
 Column *Relationship::getAttribute(unsigned attrib_idx)
@@ -773,17 +773,17 @@ Column *Relationship::getAttribute(unsigned attrib_idx)
 	if(attrib_idx >= rel_attributes.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(dynamic_cast<Column *>(rel_attributes[attrib_idx]));
+	return (dynamic_cast<Column *>(rel_attributes[attrib_idx]));
 }
 
 Column *Relationship::getAttribute(const QString &name)
 {
-	return(dynamic_cast<Column *>(getObject(name,ObjectType::Column)));
+	return (dynamic_cast<Column *>(getObject(name,ObjectType::Column)));
 }
 
 vector<TableObject *> Relationship::getAttributes()
 {
-	return(rel_attributes);
+	return (rel_attributes);
 }
 
 Constraint *Relationship::getConstraint(unsigned constr_idx)
@@ -792,35 +792,35 @@ Constraint *Relationship::getConstraint(unsigned constr_idx)
 	if(constr_idx >= rel_constraints.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(dynamic_cast<Constraint *>(rel_constraints[constr_idx]));
+	return (dynamic_cast<Constraint *>(rel_constraints[constr_idx]));
 }
 
 Constraint *Relationship::getConstraint(const QString &name)
 {
-	return(dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint)));
+	return (dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint)));
 }
 
 vector<TableObject *> Relationship::getConstraints()
 {
-	return(rel_constraints);
+	return (rel_constraints);
 }
 
 unsigned Relationship::getAttributeCount()
 {
-	return(rel_attributes.size());
+	return (rel_attributes.size());
 }
 
 unsigned Relationship::getConstraintCount()
 {
-	return(rel_constraints.size());
+	return (rel_constraints.size());
 }
 
 unsigned Relationship::getObjectCount(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
-		return(rel_attributes.size());
+		return (rel_attributes.size());
 	else if(obj_type==ObjectType::Constraint)
-		return(rel_constraints.size());
+		return (rel_constraints.size());
 	else
 		throw Exception(ErrorCode::RefObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -1933,13 +1933,13 @@ PhysicalTable *Relationship::getReferenceTable()
 	/* Many to Many relationships doesn't has only one reference table so
 		is returned nullptr */
 	if(rel_type==RelationshipNn)
-		return(nullptr);
+		return (nullptr);
 	else
 	{
 		if(src_table==getReceiverTable())
-			return(dynamic_cast<PhysicalTable *>(dst_table));
+			return (dynamic_cast<PhysicalTable *>(dst_table));
 		else
-			return(dynamic_cast<PhysicalTable *>(src_table));
+			return (dynamic_cast<PhysicalTable *>(src_table));
 	}
 }
 
@@ -1954,7 +1954,7 @@ void Relationship::setSiglePKColumn(bool value)
 
 bool Relationship::isSiglePKColumn()
 {
-	return(single_pk_column);
+	return (single_pk_column);
 }
 
 PhysicalTable *Relationship::getReceiverTable()
@@ -1965,29 +1965,29 @@ PhysicalTable *Relationship::getReceiverTable()
 		 Case 2: (1,1) ---<>--- (0,1) */
 		if((!src_mandatory && !dst_mandatory) ||
 				(src_mandatory && !dst_mandatory))
-			return(dynamic_cast<PhysicalTable *>(dst_table));
+			return (dynamic_cast<PhysicalTable *>(dst_table));
 		/* Case 3: (0,1) ---<>--- (1,1) */
 		else if(!src_mandatory && dst_mandatory)
-			return(dynamic_cast<PhysicalTable *>(src_table));
+			return (dynamic_cast<PhysicalTable *>(src_table));
 		// Case 4: (1,1) ---<>--- (1,1)
 		else
 			/* Returns nullptr since this type of relationship isn't implemented. Refer to
 		 header file top comment for details */
-			return(nullptr);
+			return (nullptr);
 	}
 	/* For 1-n relationships, the table order is unchagned this means that
 		the columns are always included in the destination table */
 	else if(rel_type==Relationship1n)
-		return(dynamic_cast<PhysicalTable *>(dst_table));
+		return (dynamic_cast<PhysicalTable *>(dst_table));
 	/* For generalization / copy relationships the columns are always added
 		in the source table */
 	else if(rel_type==RelationshipGen ||
 			rel_type==RelationshipDep ||
 			rel_type==RelationshipPart)
-		return(dynamic_cast<PhysicalTable *>(src_table));
+		return (dynamic_cast<PhysicalTable *>(src_table));
 	//For n-n relationships, the columns are added in the table that represents the relationship (table_relnn)
 	else
-		return(dynamic_cast<PhysicalTable *>(table_relnn));
+		return (dynamic_cast<PhysicalTable *>(table_relnn));
 }
 
 void Relationship::removeTableObjectsRefCols(PhysicalTable *table)
@@ -2318,7 +2318,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
 bool Relationship::isIdentifier()
 {
-	return(identifier);
+	return (identifier);
 }
 
 void Relationship::setCopyOptions(CopyOptions copy_op)
@@ -2331,7 +2331,7 @@ void Relationship::setCopyOptions(CopyOptions copy_op)
 
 CopyOptions Relationship::getCopyOptions()
 {
-	return(copy_options);
+	return (copy_options);
 }
 
 bool Relationship::hasIndentifierAttribute()
@@ -2353,7 +2353,7 @@ bool Relationship::hasIndentifierAttribute()
 		itr++;
 	}
 
-	return(found);
+	return (found);
 }
 
 void Relationship::forceInvalidate()
@@ -2381,7 +2381,7 @@ bool Relationship::isInvalidated()
 			dynamic_cast<PhysicalTable *>(pk_relident->getParentTable())->removeObject(pk_relident);
 			pk_relident=nullptr;
 		}
-		return(true);
+		return (true);
 	}
 	else if(connected)
 	{
@@ -2389,7 +2389,7 @@ bool Relationship::isInvalidated()
 		renaming of all generated objects */
 		if((rel_type==Relationship11 || rel_type==Relationship1n || rel_type==RelationshipNn) &&
 				(src_tab_prev_name!=src_table->getName() || dst_tab_prev_name!=dst_table->getName()))
-			return(true);
+			return (true);
 
 		/* For relationships 1-1 and 1-n the verification for
 		 invalidation of the relationship is based on the comparison of
@@ -2578,16 +2578,16 @@ bool Relationship::isInvalidated()
 				}
 			}
 		}
-		return(!valid);
+		return (!valid);
 	}
 	else
-		return(true);
+		return (true);
 }
 
 QString Relationship::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return (code_def);
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -2632,7 +2632,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Table]=getReceiverTable()->getName(true);
 		}
 
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition));
+		return (this->BaseObject::__getCodeDefinition(SchemaParser::SqlDefinition));
 	}
 	else
 	{
@@ -2713,7 +2713,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		if(!reduced_form)
 			cached_reduced_code.clear();
 
-		return(this->BaseObject::getCodeDefinition(SchemaParser::XmlDefinition, reduced_form));
+		return (this->BaseObject::getCodeDefinition(SchemaParser::XmlDefinition, reduced_form));
 	}
 
 }
@@ -2744,7 +2744,7 @@ void Relationship::operator = (Relationship &rel)
 QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 {
 	if(rel_type != RelationshipGen && rel_type != RelationshipPart)
-		return(QString());
+		return (QString());
 
 	attributes[Attributes::Inherit]=QString();
 	attributes[Attributes::AncestorTable]=QString();
@@ -2767,24 +2767,24 @@ QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 		attributes[Attributes::PartitionBoundExpr]=getReceiverTable()->getPartitionBoundingExpr();
 	}
 
-	return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
+	return (BaseObject::getAlterDefinition(this->getSchemaName(), attributes));
 }
 
 
 bool Relationship::isReferenceTableMandatory()
 {
 	if(rel_type == BaseRelationship::Relationship11 && getReferenceTable() == dst_table && !src_mandatory)
-		return(dst_mandatory);
+		return (dst_mandatory);
 	else
-		return((getReferenceTable() == src_table && isTableMandatory(SrcTable)) ||
+		return ((getReferenceTable() == src_table && isTableMandatory(SrcTable)) ||
 					 (getReferenceTable() == dst_table && isTableMandatory(DstTable)));
 }
 
 bool Relationship::isReceiverTableMandatory()
 {
 	if(rel_type == BaseRelationship::Relationship11 && getReferenceTable() == dst_table && !src_mandatory)
-		return(false);
+		return (false);
 	else
-		return((getReceiverTable() == src_table && isTableMandatory(SrcTable)) ||
+		return ((getReceiverTable() == src_table && isTableMandatory(SrcTable)) ||
 					 (getReceiverTable() == dst_table && isTableMandatory(DstTable)));
 }

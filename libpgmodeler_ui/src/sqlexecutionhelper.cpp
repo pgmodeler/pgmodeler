@@ -36,17 +36,17 @@ void SQLExecutionHelper::setCommand(const QString &cmd)
 
 ResultSetModel *SQLExecutionHelper::getResultSetModel()
 {
-	return(result_model);
+	return result_model;
 }
 
 bool SQLExecutionHelper::isCancelled()
 {
-	return(cancelled);
+	return cancelled;
 }
 
 QStringList SQLExecutionHelper::getNotices()
 {
-	return(notices);
+	return notices;
 }
 
 void SQLExecutionHelper::executeCommand()

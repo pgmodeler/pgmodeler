@@ -45,7 +45,7 @@ void TextPolygonItem::setTextBrush(const QBrush &brush)
 
 QRectF TextPolygonItem::getTextBoundingRect()
 {
-	return(text_item->boundingRect());
+	return text_item->boundingRect();
 }
 
 void TextPolygonItem::setTextPos(const QPointF &pos)
@@ -65,7 +65,7 @@ void TextPolygonItem::setFont(const QFont &fnt)
 
 QFont TextPolygonItem::getFont()
 {
-	return(text_item->font());
+	return text_item->font();
 }
 
 void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

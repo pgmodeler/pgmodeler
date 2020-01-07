@@ -152,8 +152,8 @@ void ConfigurationForm::restoreDefaults()
 BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 {
 	if(idx >= static_cast<unsigned>(confs_stw->count()))
-		return(nullptr);
+		return nullptr;
 	else
-		return(qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx))));
+		return qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx)));
 }
 

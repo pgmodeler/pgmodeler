@@ -82,7 +82,7 @@ void ModelsDiffHelper::resetDiffCounter()
 
 QString ModelsDiffHelper::getDiffDefinition()
 {
-	return(diff_def);
+	return diff_def;
 }
 
 void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model)
@@ -96,7 +96,7 @@ unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 	if(diff_type >= ObjectsDiffInfo::NoDifference)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(diffs_counter[diff_type]);
+	return diffs_counter[diff_type];
 }
 
 void ModelsDiffHelper::diffModels()
@@ -460,7 +460,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
 		}
 	}
 
-	return(tab);
+	return tab;
 }
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
@@ -619,7 +619,7 @@ bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject *object, 
 		}
 	}
 
-	return(found_diff);
+	return found_diff;
 }
 
 void ModelsDiffHelper::processDiffInfos()
@@ -981,7 +981,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 				cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 		}
 
-		return(cmd);
+		return cmd;
 	}
 	catch(Exception &e)
 	{

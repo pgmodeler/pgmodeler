@@ -126,7 +126,7 @@ void HintTextWidget::setIconSize(unsigned icon_sz)
 
 QString HintTextWidget::getText()
 {
-	return(text_lbl->text());
+	return text_lbl->text();
 }
 
 bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
@@ -135,13 +135,13 @@ bool HintTextWidget::eventFilter(QObject *object, QEvent *event)
 	if(object==text_lbl && (event->type()==QEvent::MouseButtonDblClick || event->type()==QEvent::FocusOut))
 	{
 		hint_tb->setChecked(false);
-		return(true);
+		return true;
 	}
 	//Reconfigures the popup position when the parent is resized
 	else if(object==this->parent() && event->type()==QEvent::Resize)
 		setWidgetPosition();
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void HintTextWidget::showEvent(QShowEvent *)

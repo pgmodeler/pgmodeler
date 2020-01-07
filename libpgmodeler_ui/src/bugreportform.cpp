@@ -75,7 +75,7 @@ QByteArray BugReportForm::generateReportBuffer()
 		buf.append(model_txt->toPlainText().toUtf8());
 	buf.append(CharDelimiter);
 
-	return(buf);
+	return buf;
 }
 
 void BugReportForm::generateReport()

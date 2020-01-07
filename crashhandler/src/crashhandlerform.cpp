@@ -253,5 +253,5 @@ QByteArray CrashHandlerForm::generateReportBuffer()
 	buf.append(stack_txt->toPlainText().toUtf8());
 	buf.append(CharDelimiter);
 
-	return(buf);
+	return buf;
 }

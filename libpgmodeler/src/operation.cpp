@@ -41,7 +41,7 @@ QString Operation::generateOperationId()
 
 	//Generates an unique id through md5 hash
 	hash.addData(QByteArray(addr.toStdString().c_str()));
-	return(hash.result().toHex());
+	return hash.result().toHex();
 }
 
 void Operation::setObjectIndex(int idx)
@@ -89,45 +89,45 @@ void Operation::setXMLDefinition(const QString &xml_def)
 
 int Operation::getObjectIndex()
 {
-	return(object_idx);
+	return object_idx;
 }
 
 unsigned Operation::getChainType()
 {
-	return(chain_type);
+	return chain_type;
 }
 
 unsigned Operation::getOperationType()
 {
-	return(op_type);
+	return op_type;
 }
 
 BaseObject *Operation::getOriginalObject()
 {
-	return(original_obj);
+	return original_obj;
 }
 
 BaseObject *Operation::getPoolObject()
 {
-	return(pool_obj);
+	return pool_obj;
 }
 
 BaseObject *Operation::getParentObject()
 {
-	return(parent_obj);
+	return parent_obj;
 }
 
 vector<Permission *> Operation::getPermissions()
 {
-	return(permissions);
+	return permissions;
 }
 
 QString Operation::getXMLDefinition()
 {
-	return(xml_definition);
+	return xml_definition;
 }
 
 bool Operation::isOperationValid()
 {
-	return(operation_id==generateOperationId());
+	return (operation_id==generateOperationId());
 }
