@@ -213,12 +213,14 @@ QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &
 
 GlobalAttributes& GlobalAttributes::create(const QApplication& app)
 {
-	GlobalAttributes::get()._instance = new GlobalAttributes(app);
+	// TODO Consider throwing an exception in case of multiple calls, not designed to be.
+	if (!GlobalAttributes::_instance)
+		GlobalAttributes::_instance = new GlobalAttributes(app);
 
-	return *GlobalAttributes::get()._instance;
+	return *GlobalAttributes::_instance;
 }
 
 const GlobalAttributes& GlobalAttributes::get()
 {
-	return *GlobalAttributes::get()._instance;
+	return *GlobalAttributes::_instance;
 }

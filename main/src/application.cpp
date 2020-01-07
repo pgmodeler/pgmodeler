@@ -23,7 +23,7 @@
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	GlobalAttributes::get().create(*this);
+	GlobalAttributes::create(*this);
 
 	QFile ui_style(GlobalAttributes::get().TmplConfigurationDir +
 				   GlobalAttributes::get().DirSeparator +
