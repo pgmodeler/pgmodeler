@@ -64,7 +64,7 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	try
 	{
 		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		snippet_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 	}
 	catch(Exception &e)
 	{
@@ -445,7 +445,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 { 
 	try
 	{
-		QString root_dir=GlobalAttributes::TmplConfigurationDir +
+		QString root_dir=GlobalAttributes::getTmplConfigurationDir() +
 						 GlobalAttributes::DirSeparator,
 
 				snippet_sch=root_dir +

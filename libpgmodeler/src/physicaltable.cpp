@@ -1723,7 +1723,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	Constraint *constr = nullptr;
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+	QString dict_files_root = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
 			tab_dict_file = dict_files_root + Attributes::Table + GlobalAttributes::SchemaExt,
 			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,

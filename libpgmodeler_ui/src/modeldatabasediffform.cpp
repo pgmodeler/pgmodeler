@@ -105,7 +105,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
-		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		sqlcode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -689,7 +689,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
 			filename = file_edt->text();
 	else
 	{
-			tmp_sql_file.setFileTemplate(GlobalAttributes::TemporaryDir +
+			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryDir() +
 																	 GlobalAttributes::DirSeparator +
 																	 QString("diff_%1_XXXXXX.sql").arg(database));
 
@@ -1047,7 +1047,7 @@ void ModelDatabaseDiffForm::saveConfiguration(void)
 		QString preset_sch, root_dir;
 		QString presets;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
+		root_dir=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator;
 
 		preset_sch=root_dir +

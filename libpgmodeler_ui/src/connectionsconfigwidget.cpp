@@ -502,7 +502,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
-						schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
+						schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationDir() +
 													GlobalAttributes::DirSeparator +
 													GlobalAttributes::SchemasDir +
 													GlobalAttributes::DirSeparator +

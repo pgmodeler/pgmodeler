@@ -578,7 +578,7 @@ void DatabaseImportHelper::importDatabase(void)
 				QString log_name;
 
 				//Writing the erros to log file
-				log_name=GlobalAttributes::TemporaryDir +
+				log_name=GlobalAttributes::getTemporaryDir() +
 						 GlobalAttributes::DirSeparator +
 						 QString("%1_%2_%3.log").arg(dbmodel->getName())
 						 .arg(QString("import"))

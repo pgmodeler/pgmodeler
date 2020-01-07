@@ -1368,7 +1368,7 @@ bool DatabaseExplorerWidget::truncateTable(const QString &sch_name, const QStrin
 			//Generate the truncate command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			truc_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																					 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
 																					 Attributes::Truncate + GlobalAttributes::SchemaExt,
 																					 attribs);
@@ -1767,7 +1767,7 @@ void DatabaseExplorerWidget::finishObjectRename(void)
 			//Generate the drop command
 			schparser.ignoreEmptyAttributes(true);
 			schparser.ignoreUnkownAttributes(true);
-			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			rename_cmd=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 												   GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
 													 Attributes::Rename + GlobalAttributes::SchemaExt,
 												   attribs);

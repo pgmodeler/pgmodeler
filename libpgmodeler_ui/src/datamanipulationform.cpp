@@ -58,7 +58,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	PgModelerUiNs::configureWidgetFont(warning_lbl, PgModelerUiNs::MediumFontFactor);
 
 	filter_hl=new SyntaxHighlighter(filter_txt);
-	filter_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	filter_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	code_compl_wgt=new CodeCompletionWidget(filter_txt);
 	code_compl_wgt->configureCompletion(nullptr, filter_hl);

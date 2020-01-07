@@ -23,7 +23,7 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	setupUi(this);
 
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
-	QDir dir=QDir(GlobalAttributes::PluginsDir);
+	QDir dir=QDir(GlobalAttributes::getPluginsDir());
 
 	root_dir_edt->setText(dir.absolutePath());
 
@@ -65,7 +65,7 @@ void PluginsConfigWidget::loadConfiguration(void)
 {
 	vector<Exception> errors;
 	QString lib, plugin_name,
-			dir_plugins=GlobalAttributes::PluginsDir +
+			dir_plugins=GlobalAttributes::getPluginsDir() +
 						GlobalAttributes::DirSeparator;
 	QPluginLoader plugin_loader;
 	QStringList dir_list;

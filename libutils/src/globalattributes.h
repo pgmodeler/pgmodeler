@@ -36,102 +36,125 @@
 #include <QDate>
 #include <QStandardPaths>
 
-namespace GlobalAttributes {
-	extern const QString
-	PgModelerAppName,
-	PgModelerURI,
-	PgModelerReverseURI,
-	PgModelerVersion,
-	PgModelerBuildNumber,
-	PgModelerSite,
-	PgModelerSupport,
-	PgModelerSourceURL,
-	PgModelerDownloadURL,
-	PgModelerDonateURL,
-	PgModelerUpdateCheckURL,
+class GlobalAttributes {
+	private:
+		/*! \brief Environment variables used to reference the pgModeler directories.
 
-	BugReportEmail,
-	BugReportFile,
-	StacktraceFile,
+		 PGMODELER_SCHEMAS_DIR   --> "schemas" folder  (SQL/XML generation schema files)
+		 PGMODELER_CONF_DIR      --> "conf" folder    (user's own settings for pgModeler)
+		 PGMODELER_TMPL_CONF_DIR --> "conf" folder    (used as template settings and copied to user's settings)
+		 PGMODELER_LANG_DIR      --> "lang" folder    (ui translations)
+		 PGMODELER_PLUGINS_DIR   --> "plugins" folder (where plugins are installed)
+		 PGMODELER_TMP_DIR       --> "tmp" folder     (where temporary work are saved)
+		 PGMODELER_SAMPLES_DIR   --> "samples" folder (contains sample dbm files)
 
-	DirSeparator,
-	DefaultConfsDir,  //! \brief Directory name which holds the default pgModeler configuration
-	ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
-	SchemasDir,        //! \brief Default name for the schemas directory
-	SQLSchemaDir,     //! \brief Default name for the sql schemas directory
-	XMLSchemaDir,     //! \brief Default name for the xml schemas directory
-	DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
-	AlterSchemaDir,   //! \brief Default name for the alter schemas directory
-	SchemaExt,         //! \brief Default extension for schema files
-	ObjectDTDDir,     //! \brief Default directory for dtd files
-	ObjectDTDExt,     //! \brief Default extension for dtd files
-	RootDTD,           //! \brief Root DTD of model xml files
-	MetadataDTD,				//! \brief Root DTD of objects metadata xml files
-	ConfigurationExt,  //! \brief Default extension for configuration files
-	HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
+		 Additional vars are used to specify where to find crash handler, command line interface
+		 and main application.
 
-	CodeHighlightConf,  //! \brief Default name for the language highlight dtd
-	ObjectsStyleConf,   //! \brief Default name for the object style configuration file
-	GeneralConf,         //! \brief Default name for the general pgModeler configuration
-	ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
-	RelationshipsConf,   //! \brief Default name for the relationships configuration file
-	SnippetsConf,        //! \brief Default name for the code snippets configuration file
-	DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
+		 PGMODELER_CHANDLER_PATH --> Full path to pgmodeler-ch executable
+		 PGMODELER_CLI_PATH      --> Full path to pgmodeler-cli executable
+		 PGMDOELER_APP_PATH      --> Full path to pgmodeler executable */
 
-	SQLHighlightConf, //! \brief Configuration file for SQL language highlight
-	XMLHighlightConf, //! \brief Configuration file for XML language highlight
-	PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
-	SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
+		static QString
+		SchemasRootDir,
+		LanguagesDir,
+		PluginsDir,
+		TemporaryDir,
+		SamplesDir,
+		TmplConfigurationDir,
+		ConfigurationsDir,
+		SQLHighlightConfPath,
+		XMLHighlightConfPath,
+		PgModelerCHandlerPath,
+		PgModelerCLIPath,
+		PgModelerAppPath;
 
-	ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
-	UiStyleConf, //! \brief Configuration file ui style
+		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
+			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
+			values does not exists the the fallback value is returned even if it not exists in the filesystem */
+		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val=QString());
 
-	/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
-  the executable using -style option. This same style is applied to crash handler. */
-	DefaultQtStyle,
-	UiStyleOption;
+	public:
+		static const QString
+		PgModelerAppName,
+		PgModelerURI,
+		PgModelerReverseURI,
+		PgModelerVersion,
+		PgModelerBuildNumber,
+		PgModelerSite,
+		PgModelerSupport,
+		PgModelerSourceURL,
+		PgModelerDownloadURL,
+		PgModelerDonateURL,
+		PgModelerUpdateCheckURL,
 
+		BugReportEmail,
+		BugReportFile,
+		StacktraceFile,
 
-	/*! \brief Environment variables used to reference the pgModeler directories.
+		DirSeparator,
+		DefaultConfsDir,  //! \brief Directory name which holds the default pgModeler configuration
+		ConfsBackupsDir,  //! \brief Directory name which holds the pgModeler configuration backups
+		SchemasDir,        //! \brief Default name for the schemas directory
+		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
+		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
+		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
+		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
+		SchemaExt,         //! \brief Default extension for schema files
+		ObjectDTDDir,     //! \brief Default directory for dtd files
+		ObjectDTDExt,     //! \brief Default extension for dtd files
+		RootDTD,           //! \brief Root DTD of model xml files
+		MetadataDTD,				//! \brief Root DTD of objects metadata xml files
+		ConfigurationExt,  //! \brief Default extension for configuration files
+		HighlightFileSuffix, //! \brief Suffix of language highlight configuration files
 
-	 PGMODELER_SCHEMAS_DIR   --> "schemas" folder  (SQL/XML generation schema files)
-	 PGMODELER_CONF_DIR      --> "conf" folder    (user's own settings for pgModeler)
-	 PGMODELER_TMPL_CONF_DIR --> "conf" folder    (used as template settings and copied to user's settings)
-	 PGMODELER_LANG_DIR      --> "lang" folder    (ui translations)
-	 PGMODELER_PLUGINS_DIR   --> "plugins" folder (where plugins are installed)
-	 PGMODELER_TMP_DIR       --> "tmp" folder     (where temporary work are saved)
-	 PGMODELER_SAMPLES_DIR   --> "samples" folder (contains sample dbm files)
+		CodeHighlightConf,  //! \brief Default name for the language highlight dtd
+		ObjectsStyleConf,   //! \brief Default name for the object style configuration file
+		GeneralConf,         //! \brief Default name for the general pgModeler configuration
+		ConnectionsConf,     //! \brief Default name for the DBMS connection configuration file
+		RelationshipsConf,   //! \brief Default name for the relationships configuration file
+		SnippetsConf,        //! \brief Default name for the code snippets configuration file
+		DiffPresetsConf,     //! \brief Default name for the diff presets configuration file
 
-   Additional vars are used to specify where to find crash handler, command line interface
-   and main application.
+		SQLHighlightConf, //! \brief Configuration file for SQL language highlight
+		XMLHighlightConf, //! \brief Configuration file for XML language highlight
+		PatternHighlightConf, //! \brief Configuration file for name patterns highlight (relationship editing form)
+		SQLHistoryConf,		//! \brief Default name for the SQL commands history configuration file
 
-	 PGMODELER_CHANDLER_PATH --> Full path to pgmodeler-ch executable
-	 PGMODELER_CLI_PATH      --> Full path to pgmodeler-cli executable
-	 PGMDOELER_APP_PATH      --> Full path to pgmodeler executable */
+		ExampleModel, //! \brief Default name for the sample model loaded on appearence configuration form
+		UiStyleConf, //! \brief Configuration file ui style
 
-	extern const QString
-	SchemasRootDir,
-	LanguagesDir,
-	PluginsDir,
-	TemporaryDir,
-	SamplesDir,
-	TmplConfigurationDir,
-	ConfigurationsDir,
-	SQLHighlightConfPath,
-	XMLHighlightConfPath,
-	PgModelerCHandlerPath,
-	PgModelerCLIPath,
-	PgModelerAppPath;
+		/*! \brief Fusion is the default widget style for pgModeler. User can change this by calling
+		the executable using -style option. This same style is applied to crash handler. */
+		DefaultQtStyle,
+		UiStyleOption;
 
-#ifdef DEMO_VERSION
-	//Maximum object creation counter for demo version
-	extern const unsigned MaxObjectCount;
-#endif
+		#ifdef DEMO_VERSION
+			//Maximum object creation counter for demo version
+			constexpr unsigned MaxObjectCount = 15;
+		#endif
 
-	/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
-	  exists then the function will return 'default_value' if it exists. Finally, if both current value and default
-	  values does not exists the the fallback value is returned even if it not exists in the filesystem */
-	extern QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val=QString());
-}
+		static QString getSchemasRootDir(void);
+		//static QString getSchemaFilePath(const QString &subfolder, const QString &file);
+
+		static QString getTemporaryDir(void);
+		//static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
+
+		static QString getTmplConfigurationDir(void);
+		//static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
+
+		static QString getConfigurationsDir(void);
+		//static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
+
+		static QString getSamplesDir(void);
+		static QString getLanguagesDir(void);
+		static QString getPluginsDir(void);
+
+		static QString getSQLHighlightConfPath(void);
+		static QString getXMLHighlightConfPath(void);
+		static QString getPgModelerCHandlerPath(void);
+		static QString getPgModelerCLIPath(void);
+		static QString getPgModelerAppPath(void);
+};
 
 #endif

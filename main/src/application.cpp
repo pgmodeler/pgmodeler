@@ -23,7 +23,7 @@
 Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::TmplConfigurationDir +
+	QFile ui_style(GlobalAttributes::getTmplConfigurationDir() +
 				   GlobalAttributes::DirSeparator +
 				   GlobalAttributes::UiStyleConf +
 				   GlobalAttributes::ConfigurationExt);
@@ -41,22 +41,22 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	this->addLibraryPath(this->applicationDirPath());
 
 	//If pgModeler bundles plugins, add the root plugins path to lib search paths
-	if(dir.exists(GlobalAttributes::PluginsDir))
-		this->addLibraryPath(GlobalAttributes::PluginsDir);
+	if(dir.exists(GlobalAttributes::getPluginsDir()))
+		this->addLibraryPath(GlobalAttributes::getPluginsDir());
 
 	//Check if the temporary dir exists, if not, creates it.
-	if(!dir.exists(GlobalAttributes::TemporaryDir))
+	if(!dir.exists(GlobalAttributes::getTemporaryDir()))
 	{
-		if(!dir.mkdir(GlobalAttributes::TemporaryDir))
+		if(!dir.mkdir(GlobalAttributes::getTemporaryDir()))
 		{
 			Messagebox msg;
-			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::TemporaryDir),
+			msg.show(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(GlobalAttributes::getTemporaryDir()),
 												 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::ConfigurationsDir +
+	QString conf_file =	GlobalAttributes::getConfigurationsDir() +
 											GlobalAttributes::DirSeparator +
 											GlobalAttributes::GeneralConf +
 											GlobalAttributes::ConfigurationExt;
@@ -79,11 +79,11 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 
 	//Tries to load the main ui translation according to the system's locale
 	main_translator=new QTranslator(this);
-	main_translator->load(lang_id, GlobalAttributes::LanguagesDir);
+	main_translator->load(lang_id, GlobalAttributes::getLanguagesDir());
 	this->installTranslator(main_translator);
 
 	//Trying to load plugins translations
-	dir_list=QDir(GlobalAttributes::PluginsDir +
+	dir_list=QDir(GlobalAttributes::getPluginsDir() +
 								GlobalAttributes::DirSeparator,
 								QString("*"), QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
@@ -93,7 +93,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 		dir_list.pop_front();
 
 		//Configure the path to "lang" subdir at current plugin directory
-		plug_lang_dir=GlobalAttributes::PluginsDir +
+		plug_lang_dir=GlobalAttributes::getPluginsDir() +
 					  GlobalAttributes::DirSeparator + plugin_name +
 					  GlobalAttributes::DirSeparator + QString("lang") +
 					  GlobalAttributes::DirSeparator;
@@ -145,7 +145,7 @@ bool Application::notify(QObject *receiver, QEvent *event)
 
 void Application::createUserConfiguration(void)
 {
-	QDir config_dir(GlobalAttributes::ConfigurationsDir);
+	QDir config_dir(GlobalAttributes::getConfigurationsDir());
 
 	try
 	{
@@ -153,12 +153,12 @@ void Application::createUserConfiguration(void)
 		if(!config_dir.exists() ||
 				config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
 									 QDir::Files | QDir::NoDotAndDotDot).isEmpty())
-			copyFilesRecursively(GlobalAttributes::TmplConfigurationDir, GlobalAttributes::ConfigurationsDir);
+			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir());
 	}
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-		msg_box.show(e, tr("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::ConfigurationsDir, CONFDIR));
+		msg_box.show(e, tr("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::getConfigurationsDir(), CONFDIR));
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }

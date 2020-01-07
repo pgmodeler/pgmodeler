@@ -236,7 +236,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
 	}
 
-	confs_dir_edt->setText(GlobalAttributes::ConfigurationsDir);
+	confs_dir_edt->setText(GlobalAttributes::getConfigurationsDir());
 
 	connect(open_dir_tb, &QToolButton::clicked, [&](){
 		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
@@ -252,7 +252,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #endif
 
 	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::LanguagesDir +
+	QStringList langs = QDir(GlobalAttributes::getLanguagesDir() +
 													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
@@ -489,7 +489,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 		QString file_sch, root_dir, widget_sch;
 		int recent_mdl_idx = 0;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
+		root_dir=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator;
 
 		file_sch=root_dir +

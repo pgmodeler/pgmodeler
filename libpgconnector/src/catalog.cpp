@@ -161,7 +161,7 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 	if(catalog_queries.count(qry_id)==0)
 	{
 		QFile input;
-		input.setFileName(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+		input.setFileName(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 							CatalogSchemasDir + GlobalAttributes::DirSeparator +
 							qry_id + GlobalAttributes::SchemaExt);
 

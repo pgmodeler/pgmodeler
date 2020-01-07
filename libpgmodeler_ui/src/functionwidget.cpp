@@ -366,7 +366,7 @@ void FunctionWidget::selectLanguage(void)
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+			source_code_hl->loadConfiguration(GlobalAttributes::getConfigurationsDir() +
 												GlobalAttributes::DirSeparator +
 											  language_cmb->currentText() +
 												GlobalAttributes::HighlightFileSuffix +
@@ -374,7 +374,7 @@ void FunctionWidget::selectLanguage(void)
 		}
 		catch(Exception &)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+			source_code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		}
 
 		source_code_hl->rehighlight();

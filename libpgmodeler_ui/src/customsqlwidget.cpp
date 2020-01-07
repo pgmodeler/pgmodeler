@@ -32,11 +32,11 @@ CustomSQLWidget::CustomSQLWidget(QWidget *parent) : BaseObjectWidget(parent)
 		prepend_sql_txt=PgModelerUiNs::createNumberedTextEditor(prepend_sql_wgt, true);
 
 		append_sql_hl=new SyntaxHighlighter(append_sql_txt);
-		append_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		append_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		append_sql_cp=new CodeCompletionWidget(append_sql_txt, true);
 
 		prepend_sql_hl=new SyntaxHighlighter(prepend_sql_txt);
-		prepend_sql_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		prepend_sql_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		prepend_sql_cp=new CodeCompletionWidget(prepend_sql_txt, true);
 
 		name_edt->setReadOnly(true);

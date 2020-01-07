@@ -382,7 +382,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 		{
 			clearConfiguration();
 			xmlparser.restartParser();
-			xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+			xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
 								 GlobalAttributes::DirSeparator +
 								 GlobalAttributes::ObjectDTDDir +
 								 GlobalAttributes::DirSeparator +

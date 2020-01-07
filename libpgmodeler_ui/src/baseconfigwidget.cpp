@@ -50,7 +50,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 	//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::TmplConfigurationDir +
+	QString	sch_filename=GlobalAttributes::getTmplConfigurationDir() +
 						 GlobalAttributes::DirSeparator +
 						 GlobalAttributes::SchemasDir +
 						 GlobalAttributes::DirSeparator +
@@ -58,7 +58,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 						 GlobalAttributes::SchemaExt,
 
 			//Cofnigures the filename for the configuration file
-			cfg_filename=GlobalAttributes::ConfigurationsDir +
+			cfg_filename=GlobalAttributes::getConfigurationsDir() +
 						 GlobalAttributes::DirSeparator +
 						 conf_id +
 						 GlobalAttributes::ConfigurationExt;
@@ -104,13 +104,13 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	QString current_file, default_file;
 
 	//Build the path to the current configuration (conf/[conf_id].conf
-	current_file=GlobalAttributes::ConfigurationsDir +
+	current_file=GlobalAttributes::getConfigurationsDir() +
 				 GlobalAttributes::DirSeparator +
 				 conf_id +
 				 GlobalAttributes::ConfigurationExt;
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::TmplConfigurationDir +
+	default_file=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator +
 				 GlobalAttributes::DefaultConfsDir+
 				 GlobalAttributes::DirSeparator +
@@ -148,14 +148,14 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 	try
 	{
-		filename = GlobalAttributes::ConfigurationsDir +
+		filename = GlobalAttributes::getConfigurationsDir() +
 							 GlobalAttributes::DirSeparator +
 							 conf_id +
 							 GlobalAttributes::ConfigurationExt;
 
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::ObjectDTDDir +
 							 GlobalAttributes::DirSeparator +

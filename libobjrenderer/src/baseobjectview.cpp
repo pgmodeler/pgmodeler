@@ -163,14 +163,14 @@ void BaseObjectView::loadObjectsStyle(void)
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,
-			config_file=GlobalAttributes::ConfigurationsDir + GlobalAttributes::DirSeparator +
+			config_file=GlobalAttributes::getConfigurationsDir() + GlobalAttributes::DirSeparator +
 						GlobalAttributes::ObjectsStyleConf + GlobalAttributes::ConfigurationExt;
 	XmlParser xmlparser;
 
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::ObjectDTDDir +
 							 GlobalAttributes::DirSeparator +

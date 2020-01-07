@@ -31,7 +31,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		Ui_IndexWidget::setupUi(this);
 
 		predicate_hl=new SyntaxHighlighter(predicate_txt, false, true);
-		predicate_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		predicate_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		elements_tab = new ElementsTableWidget(this);
 

@@ -29,7 +29,7 @@ ElementWidget::ElementWidget(QWidget *parent) : QWidget(parent)
 
 		setupUi(this);
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false, true);
-		elem_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		elem_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		parent_obj=nullptr;
 		op_class_sel=new ObjectSelectorWidget(ObjectType::OpClass, true, this);

@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 		QTranslator translator;
 
 		//Loads the ui translation for crashhandler
-		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
+		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
 		app.installTranslator(&translator);
 
 		CrashHandlerForm crashhandler(args.size() > 1 && args[1]==CrashHandlerForm::AnalysisMode);

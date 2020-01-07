@@ -39,7 +39,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
-		pattern_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+		pattern_hl->loadConfiguration(GlobalAttributes::getConfigurationsDir() +
 									  GlobalAttributes::DirSeparator +
 									  GlobalAttributes::PatternHighlightConf +
 									  GlobalAttributes::ConfigurationExt);
@@ -134,7 +134,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 	{
 		QString patterns_sch, root_dir;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
+		root_dir=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator;
 
 		patterns_sch=root_dir +

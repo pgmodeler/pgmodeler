@@ -35,7 +35,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, true);
-		format_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		this->adjustSize();
 
 		IntervalType::getTypes(interval_lst);

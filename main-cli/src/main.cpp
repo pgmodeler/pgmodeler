@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		PgModelerCli pgmodeler_cli(argc, argv);
 
 		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
+		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
 
 		//Installs the translator on the application
 		pgmodeler_cli.installTranslator(&translator);

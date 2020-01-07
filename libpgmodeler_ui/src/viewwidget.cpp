@@ -40,14 +40,14 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Vi
 		code_txt=new NumberedTextEditor(this);
 		code_txt->setReadOnly(true);
 		code_hl=new SyntaxHighlighter(code_txt);
-		code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(code_prev_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(code_txt);
 
 		cte_expression_txt=new NumberedTextEditor(this, true);
 		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt);
-		cte_expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		cte_expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		vbox=new QVBoxLayout(cte_tab);
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(cte_expression_txt);

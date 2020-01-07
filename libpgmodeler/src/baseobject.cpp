@@ -791,7 +791,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
-					QString filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					QString filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 									 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
 									 Attributes::Owner + GlobalAttributes::SchemaExt;
 
@@ -1215,7 +1215,7 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	try
 	{
 		SchemaParser schparser;
-		QString alter_sch_dir=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+		QString alter_sch_dir=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 								GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
 								QString("%1") + GlobalAttributes::SchemaExt;
 

@@ -1110,7 +1110,7 @@ QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
 {
 	attribs_map attribs, aux_attrs;
 	QStringList tab_names, col_names;
-	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+	QString dict_files_root = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
 			view_dict_file = dict_files_root + getSchemaName() + GlobalAttributes::SchemaExt,
 			col_dict_file = dict_files_root + Attributes::Column + GlobalAttributes::SchemaExt,

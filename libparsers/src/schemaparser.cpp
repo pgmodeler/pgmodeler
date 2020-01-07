@@ -908,7 +908,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 		if(def_type==SqlDefinition)
 		{
 			//Formats the filename
-			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 					 GlobalAttributes::SQLSchemaDir + GlobalAttributes::DirSeparator + obj_name + GlobalAttributes::SchemaExt;
 
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
@@ -918,7 +918,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 		}
 		else
 		{
-			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 					 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator + obj_name +
 					 GlobalAttributes::SchemaExt;
 
