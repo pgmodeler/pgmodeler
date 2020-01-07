@@ -36,9 +36,6 @@ Application::Application(int &argc, char **argv) : QApplication(argc,argv)
 	//Creating the initial user's configuration
 	createUserConfiguration();
 
-	//Changing the current working dir to the executable's directory in
-	QDir::setCurrent(this->applicationDirPath());
-
 	//Adding paths which executable will find plugins and it's dependecies
 	this->addLibraryPath(this->applicationDirPath());
 
