@@ -20,7 +20,7 @@
 #include <QCoreApplication>
 #include <QTextStream>
 
-const QString GlobalAttributes::PgModelerVersion = QString("0.9.3-alpha")
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.3-alpha")
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
 #if defined(SNAPSHOT_BUILD)
