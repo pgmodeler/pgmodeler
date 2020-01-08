@@ -258,7 +258,7 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 		itr++;
 	}
 
-	return (found);
+	return found;
 }
 
 bool Role::getOption(unsigned op_type)
@@ -266,7 +266,7 @@ bool Role::getOption(unsigned op_type)
 	if(op_type > OpBypassRls)
 		throw Exception(ErrorCode::AsgValueInvalidRoleOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (options[op_type]);
+	return options[op_type];
 }
 
 Role *Role::getRole(unsigned role_type, unsigned role_idx)
@@ -288,7 +288,7 @@ Role *Role::getRole(unsigned role_type, unsigned role_idx)
 	if(role_idx > list->size())
 		throw Exception(ErrorCode::RefRoleInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (list->at(role_idx));
+	return list->at(role_idx);
 }
 
 unsigned Role::getRoleCount(unsigned role_type)
@@ -303,25 +303,24 @@ unsigned Role::getRoleCount(unsigned role_type)
 		default:
 			//Raises an error if the role type is invalid
 			throw Exception(ErrorCode::RefInvalidRoleType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		break;
 	}
 
-	return (list->size());
+	return list->size();
 }
 
 unsigned Role::getConnectionLimit()
 {
-	return (conn_limit);
+	return conn_limit;
 }
 
 QString Role::getValidity()
 {
-	return (validity);
+	return validity;
 }
 
 QString Role::getPassword()
 {
-	return (password);
+	return password;
 }
 
 QString Role::getCodeDefinition(unsigned def_type)
@@ -332,7 +331,7 @@ QString Role::getCodeDefinition(unsigned def_type)
 QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return (code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	unsigned i;
 	QString op_attribs[]={ Attributes::Superuser, Attributes::CreateDb,
@@ -353,7 +352,7 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
 
-	return (BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
@@ -390,7 +389,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 
 		copyAttributes(attribs);
 
-		return (BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

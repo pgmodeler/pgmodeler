@@ -93,12 +93,12 @@ void PhysicalTable::setCopyTableOptions(CopyOptions like_op)
 
 PhysicalTable *PhysicalTable::getCopyTable()
 {
-	return (copy_table);
+	return copy_table;
 }
 
 CopyOptions PhysicalTable::getCopyTableOptions()
 {
-	return (copy_op);
+	return copy_op;
 }
 
 void PhysicalTable::setPartitioningType(PartitioningType part_type)
@@ -115,12 +115,12 @@ void PhysicalTable::setPartitioningType(PartitioningType part_type)
 
 PartitioningType PhysicalTable::getPartitioningType()
 {
-  return (partitioning_type);
+	return partitioning_type;
 }
 
 PhysicalTable *PhysicalTable::getPartitionedTable()
 {
-	return (partitioned_table);
+	return partitioned_table;
 }
 
 void PhysicalTable::setProtected(bool value)
@@ -340,15 +340,15 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 vector<TableObject *> *PhysicalTable::getObjectList(ObjectType obj_type)
 {
 	if(obj_type==ObjectType::Column)
-		return (&columns);
+		return &columns;
 
 	if(obj_type==ObjectType::Constraint)
-		return (&constraints);
+		return &constraints;
 
 	if(obj_type==ObjectType::Trigger)
-		return (&triggers);
+		return &triggers;
 
-	return (nullptr);
+	return nullptr;
 }
 
 void PhysicalTable::addObject(BaseObject *obj, int obj_idx)
@@ -528,12 +528,12 @@ void PhysicalTable::setPartitionBoundingExpr(const QString part_bound_expr)
 
 QString PhysicalTable::getPartitionBoundingExpr()
 {
-	return (part_bounding_expr);
+	return part_bounding_expr;
 }
 
 vector<PhysicalTable *> PhysicalTable::getPartionTables()
 {
-	return (partition_tables);
+	return partition_tables;
 }
 
 bool PhysicalTable::isPartitionTableExists(PhysicalTable *table, bool compare_names)
@@ -582,7 +582,7 @@ void PhysicalTable::removePartitionTable(PhysicalTable *tab)
 int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names)
 {
 	if(!tab)
-		return (-1);
+		return -1;
 
 	vector<PhysicalTable *>::iterator itr = partition_tables.begin();
 
@@ -595,7 +595,7 @@ int PhysicalTable::getPartitionTableIndex(PhysicalTable *tab, bool compare_names
 	}
 
 	if(itr == partition_tables.end())
-		return (-1);
+		return -1;
 
 	return (itr - partition_tables.begin());
 }
@@ -849,7 +849,7 @@ int PhysicalTable::getObjectIndex(const QString &name, ObjectType obj_type)
 {
 	int idx;
 	getObject(name, obj_type, idx);
-	return (idx);
+	return idx;
 }
 
 int PhysicalTable::getObjectIndex(BaseObject *obj)
@@ -859,10 +859,10 @@ int PhysicalTable::getObjectIndex(BaseObject *obj)
 	vector<TableObject *>::iterator itr, itr_end;
 	bool found=false;
 
-	if(!obj) return (-1);
+	if(!obj) return -1;
 
 	obj_list = getObjectList(obj->getObjectType());
-	if(!obj_list) return (-1);
+	if(!obj_list) return -1;
 
 	itr=obj_list->begin();
 	itr_end=obj_list->end();
@@ -877,7 +877,7 @@ int PhysicalTable::getObjectIndex(BaseObject *obj)
 	if(found)
 		return (itr-obj_list->begin());
 	else
-		return (-1);
+		return -1;
 }
 
 BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type)
@@ -947,7 +947,7 @@ BaseObject *PhysicalTable::getObject(const QString &name, ObjectType obj_type, i
 	else
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (object);
+	return object;
 }
 
 BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
@@ -960,17 +960,17 @@ BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
 		if(obj_idx >= ancestor_tables.size())
 			throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		return (ancestor_tables[obj_idx]);
+		return ancestor_tables[obj_idx];
 	}
 	else
 	{
 		obj_list = getObjectList(obj_type);
 
 		if(!obj_list)
-			return (nullptr);
+			return nullptr;
 
 		if(obj_idx < obj_list->size())
-			return (obj_list->at(obj_idx));
+			return obj_list->at(obj_idx);
 
 		//Raises an error if the object index is out of bound
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -980,12 +980,12 @@ BaseObject *PhysicalTable::getObject(unsigned obj_idx, ObjectType obj_type)
 PhysicalTable *PhysicalTable::getAncestorTable(const QString &name)
 {
 	int idx;
-	return (dynamic_cast<PhysicalTable *>(getObject(name, ObjectType::Table, idx)));
+	return dynamic_cast<PhysicalTable *>(getObject(name, ObjectType::Table, idx));
 }
 
 PhysicalTable *PhysicalTable::getAncestorTable(unsigned idx)
 {
-	return (dynamic_cast<PhysicalTable *>(getObject(idx, ObjectType::Table)));
+	return dynamic_cast<PhysicalTable *>(getObject(idx, ObjectType::Table));
 }
 
 Constraint *PhysicalTable::getPrimaryKey()
@@ -1000,7 +1000,7 @@ Constraint *PhysicalTable::getPrimaryKey()
 		pk=(constr->getConstraintType()==ConstraintType::PrimaryKey ? constr : nullptr);
 	}
 
-	return (pk);
+	return pk;
 }
 
 Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
@@ -1008,7 +1008,7 @@ Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
 	if(!ref_old_name)
 	{
 		int idx;
-		return (dynamic_cast<Column *>(getObject(name, ObjectType::Column, idx)));
+		return dynamic_cast<Column *>(getObject(name, ObjectType::Column, idx));
 	}
 	else
 	{
@@ -1029,55 +1029,55 @@ Column *PhysicalTable::getColumn(const QString &name, bool ref_old_name)
 		}
 
 		if(!found) column=nullptr;
-		return (column);
+		return column;
 	}
 }
 
 Column *PhysicalTable::getColumn(unsigned idx)
 {
-	return (dynamic_cast<Column *>(getObject(idx,ObjectType::Column)));
+	return dynamic_cast<Column *>(getObject(idx,ObjectType::Column));
 }
 
 Trigger *PhysicalTable::getTrigger(const QString &name)
 {
 	int idx;
-	return (dynamic_cast<Trigger *>(getObject(name,ObjectType::Trigger,idx)));
+	return dynamic_cast<Trigger *>(getObject(name,ObjectType::Trigger,idx));
 }
 
 Trigger *PhysicalTable::getTrigger(unsigned idx)
 {
-	return (dynamic_cast<Trigger *>(getObject(idx,ObjectType::Trigger)));
+	return dynamic_cast<Trigger *>(getObject(idx,ObjectType::Trigger));
 }
 
 Constraint *PhysicalTable::getConstraint(const QString &name)
 {
 	int idx;
-	return (dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint,idx)));
+	return dynamic_cast<Constraint *>(getObject(name,ObjectType::Constraint,idx));
 }
 
 Constraint *PhysicalTable::getConstraint(unsigned idx)
 {
-	return (dynamic_cast<Constraint *>(getObject(idx,ObjectType::Constraint)));
+	return dynamic_cast<Constraint *>(getObject(idx,ObjectType::Constraint));
 }
 
 unsigned PhysicalTable::getColumnCount()
 {
-	return (columns.size());
+	return columns.size();
 }
 
 unsigned PhysicalTable::getTriggerCount()
 {
-	return (triggers.size());
+	return triggers.size();
 }
 
 unsigned PhysicalTable::getConstraintCount()
 {
-	return (constraints.size());
+	return constraints.size();
 }
 
 unsigned PhysicalTable::getAncestorTableCount()
 {
-	return (ancestor_tables.size());
+	return ancestor_tables.size();
 }
 
 unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
@@ -1086,13 +1086,13 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(isPhysicalTable(obj_type))
-		return (ancestor_tables.size());
+		return ancestor_tables.size();
 	else
 	{
 		vector<TableObject *> *list=nullptr;
 		list = getObjectList(obj_type);
 
-		if(!list) return (0);
+		if(!list) return 0;
 
 		if(!inc_added_by_rel)
 		{
@@ -1107,10 +1107,10 @@ unsigned PhysicalTable::getObjectCount(ObjectType obj_type, bool inc_added_by_re
 				itr++;
 			}
 
-			return (count);
+			return count;
 		}
 		else
-			return (list->size());
+			return list->size();
 	}
 }
 
@@ -1286,7 +1286,7 @@ bool PhysicalTable::isConstraintRefColumn(Column *column, ConstraintType constr_
 		}
 	}
 
-	return (found);
+	return found;
 }
 
 bool PhysicalTable::isPartitionKeyRefColumn(Column *column)
@@ -1305,7 +1305,7 @@ bool PhysicalTable::isPartitionKeyRefColumn(Column *column)
 		}
 	}
 
-	return (found);
+	return found;
 }
 
 void PhysicalTable::setGenerateAlterCmds(bool value)
@@ -1329,7 +1329,7 @@ void PhysicalTable::setGenerateAlterCmds(bool value)
 
 bool PhysicalTable::isGenerateAlterCmds()
 {
-	return (gen_alter_cmds);
+	return gen_alter_cmds;
 }
 
 void PhysicalTable::updateAlterCmdsStatus()
@@ -1425,7 +1425,7 @@ bool PhysicalTable::isReferRelationshipAddedObject()
 		}
 	}
 
-	return (found);
+	return found;
 }
 
 bool PhysicalTable::isPartition()
@@ -1561,12 +1561,12 @@ vector<BaseObject *> PhysicalTable::getObjects(const vector<ObjectType> &excl_ty
 		list.insert(list.end(), getObjectList(type)->begin(), getObjectList(type)->end()) ;
 	}
 
-	return (list);
+	return list;
 }
 
 vector<PartitionKey> PhysicalTable::getPartitionKeys()
 {
-  return (partition_keys);
+	return partition_keys;
 }
 
 void PhysicalTable::setCodeInvalidated(bool value)
@@ -1590,7 +1590,7 @@ void PhysicalTable::setInitialData(const QString &value)
 
 QString PhysicalTable::getInitialData()
 {
-	return (initial_data);
+	return initial_data;
 }
 
 QString PhysicalTable::getInitialDataCommands()
@@ -1635,10 +1635,10 @@ QString PhysicalTable::getInitialDataCommands()
 			col_values.clear();
 		}
 
-		return (commands.join('\n'));
+		return commands.join('\n');
 	}
 
-	return (QString());
+	return QString();
 }
 
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
@@ -1692,7 +1692,7 @@ QString PhysicalTable::createInsertCommand(const QStringList &col_names, const Q
 									.arg(val_list.join(", ")).arg(Attributes::DdlEndToken);
 	}
 
-	return (fmt_cmd);
+	return fmt_cmd;
 }
 
 void PhysicalTable::setObjectListsCapacity(unsigned capacity)
@@ -1714,7 +1714,7 @@ unsigned PhysicalTable::getMaxObjectCount()
 		if(count > max) max = count;
 	}
 
-	return (max);
+	return max;
 }
 
 QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attribs)
@@ -1809,5 +1809,5 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	}
 
 	schparser.ignoreEmptyAttributes(true);
-	return (schparser.getCodeDefinition(tab_dict_file, attribs));
+	return schparser.getCodeDefinition(tab_dict_file, attribs);
 }

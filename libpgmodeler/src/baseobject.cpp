@@ -406,7 +406,7 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 
 bool BaseObject::acceptsSchema()
 {
-	return (BaseObject::acceptsSchema(this->obj_type));
+	return BaseObject::acceptsSchema(this->obj_type);
 }
 
 bool BaseObject::acceptsOwner(ObjectType obj_type)

@@ -139,7 +139,7 @@ QString Column::getTypeReference()
 
 QString Column::getDefaultValue()
 {
-	return (default_value);
+	return default_value;
 }
 
 QString Column::getOldName(bool format)

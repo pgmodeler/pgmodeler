@@ -47,7 +47,7 @@ Sequence::Sequence()
 bool Sequence::isZeroValue(const QString &value)
 {
 	if(value.isEmpty())
-		return (false);
+		return false;
 
 	unsigned i, count;
 	bool is_zero;
@@ -62,18 +62,18 @@ bool Sequence::isZeroValue(const QString &value)
 		i++;
 	}
 
-	return (is_zero);
+	return is_zero;
 }
 
 bool Sequence::isValidValue(const QString &value)
 {
 	if(value.isEmpty())
-		return (false);
+		return false;
 
 	/* To be valid the value can be start with + or -, have only numbers and
 		it's length must not exceed the MAX_POSITIVE_VALUE length */
 	if(value.size() > MaxBigPositiveValue.size())
-		return (false);
+		return false;
 	else
 	{
 		unsigned i, count;
@@ -94,7 +94,7 @@ bool Sequence::isValidValue(const QString &value)
 		}
 
 		if(!is_num) is_valid=false;
-		return (is_valid);
+		return is_valid;
 	}
 }
 
@@ -125,13 +125,13 @@ QString Sequence::formatValue(const QString &value)
 		fmt_value+=value.mid(i, count);
 	}
 
-	return (fmt_value);
+	return fmt_value;
 }
 
 int Sequence::compareValues(QString value1, QString value2)
 {
 	if(value1==value2 || value1.isEmpty() || value2.isEmpty())
-		return (0);
+		return 0;
 	else
 	{
 		char ops[2]={'\0','\0'};
@@ -168,13 +168,13 @@ int Sequence::compareValues(QString value1, QString value2)
 		}
 
 		if(ops[0]==ops[1] && value1==value2)
-			return (0);
+			return 0;
 		else if((ops[0]=='-' && ops[1]=='-' && value1 > value2) ||
 				(ops[0]=='+' && ops[1]=='+' && value1 < value2) ||
 				(ops[0]=='-' && ops[1]=='+'))
-			return (-1);
+			return -1;
 		else
-			return (1);
+			return 1;
 	}
 }
 
@@ -350,43 +350,43 @@ bool Sequence::isReferRelationshipAddedColumn()
 
 bool Sequence::isCycle()
 {
-	return (cycle);
+	return cycle;
 }
 
 QString Sequence::getMaxValue()
 {
-	return (max_value);
+	return max_value;
 }
 
 QString Sequence::getMinValue()
 {
-	return (min_value);
+	return min_value;
 }
 
 QString Sequence::getCache()
 {
-	return (cache);
+	return cache;
 }
 
 QString Sequence::getIncrement()
 {
-	return (increment);
+	return increment;
 }
 
 QString Sequence::getStart()
 {
-	return (start);
+	return start;
 }
 
 Column *Sequence::getOwnerColumn()
 {
-	return (owner_col);
+	return owner_col;
 }
 
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return (code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	PhysicalTable *table=nullptr;
 
@@ -409,7 +409,7 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 	attributes[Attributes::Cache]=cache;
 	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
 
-	return (BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Sequence::getAlterDefinition(BaseObject *object)
@@ -465,7 +465,7 @@ QString Sequence::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Cycle]=(seq->cycle ? Attributes::True : Attributes::Unset);
 
 		copyAttributes(attribs);
-		return (BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

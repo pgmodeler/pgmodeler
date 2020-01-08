@@ -584,12 +584,12 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		else
 			this->applyZoom(this->current_zoom + zoom_inc);
 
-		return (true);
+		return true;
 	}
 	else if(event->type() == QEvent::KeyPress && k_event->modifiers()==Qt::AltModifier)
 	{
 		this->keyPressEvent(k_event);
-		return (true);
+		return true;
 	}
 	else if((object == magnifier_area_lbl || object == magnifier_frm) &&
 					(event->type() == QEvent::MouseMove || event->type() == QEvent::KeyRelease))
@@ -599,7 +599,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		else if(k_event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
 			showMagnifierArea(false);
 
-		return (true);
+		return true;
 	}
 	else if(object == magnifier_frm && event->type() == QEvent::MouseButtonPress)
 	{
@@ -612,7 +612,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		gm_event->setScenePos(viewport->mapToScene(viewport->mapFromGlobal(QCursor::pos())));
 		qApp->postEvent(scene, gm_event);
 
-		return (true);
+		return true;
 	}
 	else if(object == scene && m_event)
 	{
@@ -640,7 +640,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->horizontalScrollBar()->setValue(dx);
 			viewport->verticalScrollBar()->setValue(dy);
 
-			return (true);
+			return true;
 		}
 		else if(m_event->button() == Qt::NoButton && event->type() == QEvent::GraphicsSceneMouseMove)
 		{
@@ -653,7 +653,7 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->setDragMode(QGraphicsView::ScrollHandDrag);
 			QApplication::restoreOverrideCursor();
 			QApplication::setOverrideCursor(Qt::OpenHandCursor);
-			return (true);
+			return true;
 		}
 		//Deactivating the panning mode
 		else if(m_event->button() == Qt::MiddleButton && event->type() == QEvent::GraphicsSceneMouseRelease)
@@ -662,11 +662,11 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			viewport->setDragMode(QGraphicsView::NoDrag);
 			QApplication::restoreOverrideCursor();
 			QApplication::restoreOverrideCursor();
-			return (true);
+			return true;
 		}
 	}
 
-	return (QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
@@ -738,11 +738,11 @@ bool ModelWidget::saveLastCanvasPosition()
 			db_model->setLastPosition(QPoint(viewport->horizontalScrollBar()->value(),
 											 viewport->verticalScrollBar()->value()));
 			db_model->setLastZoomFactor(this->current_zoom);
-			return (true);
+			return true;
 		}
 	}
 
-	return (false);
+	return false;
 }
 
 void ModelWidget::setUpdatesEnabled(bool value)
@@ -788,7 +788,7 @@ void ModelWidget::applyZoom(double zoom)
 
 double ModelWidget::getCurrentZoom()
 {
-	return (current_zoom);
+	return current_zoom;
 }
 
 void ModelWidget::handleObjectAddition(BaseObject *object)
@@ -1686,12 +1686,12 @@ void ModelWidget::saveModel(const QString &filename)
 
 QString ModelWidget::getFilename()
 {
-	return (this->filename);
+	return this->filename;
 }
 
 QString ModelWidget::getTempFilename()
 {
-	return (this->tmp_filename);
+	return this->tmp_filename;
 }
 
 int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
@@ -1718,7 +1718,7 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 	res = editing_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, class_name);
 
-	return (res);
+	return res;
 }
 
 template<class Class, class WidgetClass>
@@ -1726,7 +1726,7 @@ int ModelWidget::openEditingForm(BaseObject *object)
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<Class *>(object));
-	return (openEditingForm(object_wgt));
+	return openEditingForm(object_wgt);
 }
 
 template<class Class, class WidgetClass, class ParentClass>
@@ -1734,7 +1734,7 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj)
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<ParentClass *>(parent_obj), dynamic_cast<Class *>(object));
-	return (openEditingForm(object_wgt));
+	return openEditingForm(object_wgt);
 }
 
 template<class Class, class WidgetClass, class ParentClass>
@@ -1742,7 +1742,7 @@ int ModelWidget::openEditingForm(BaseObject *object, BaseObject *parent_obj, con
 {
 	WidgetClass *object_wgt=new WidgetClass;
 	object_wgt->setAttributes(db_model, op_list, dynamic_cast<ParentClass *>(parent_obj), dynamic_cast<Class *>(object), pos.x(), pos.y());
-	return (openEditingForm(object_wgt));
+	return openEditingForm(object_wgt);
 }
 
 int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *schema, const QPointF &pos)
@@ -1754,7 +1754,7 @@ int ModelWidget::openTableEditingForm(ObjectType tab_type, PhysicalTable *object
 	else
 		tab_wgt->setAttributes(db_model, op_list, schema, dynamic_cast<ForeignTable *>(object), pos.x(), pos.y());
 
-	return (openEditingForm(tab_wgt));
+	return openEditingForm(tab_wgt);
 }
 
 void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseObject *parent_obj, const QPointF &pos)
@@ -4210,27 +4210,27 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 
 bool ModelWidget::isModified()
 {
-	return (modified);
+	return modified;
 }
 
 DatabaseModel *ModelWidget::getDatabaseModel()
 {
-	return (db_model);
+	return db_model;
 }
 
 ObjectsScene *ModelWidget::getObjectsScene()
 {
-	return (scene);
+	return scene;
 }
 
 QGraphicsView *ModelWidget::getViewport()
 {
-	return (viewport);
+	return viewport;
 }
 
 OperationList *ModelWidget::getOperationList()
 {
-	return (op_list);
+	return op_list;
 }
 
 void ModelWidget::setSaveLastCanvasPosition(bool value)
@@ -4913,7 +4913,7 @@ QRectF ModelWidget::rearrangeTablesHierarchically(BaseTableView *root, vector<Ba
 		}
 	}
 
-	return (QRectF(root->pos(), QPointF(px1, py1)));
+	return QRectF(root->pos(), QPointF(px1, py1));
 }
 
 void ModelWidget::rearrangeTablesInSchema(Schema *schema, QPointF start)

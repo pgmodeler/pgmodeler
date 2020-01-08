@@ -186,17 +186,17 @@ IndexElement Index::getIndexElement(unsigned elem_idx)
 	if(elem_idx >= idx_elements.size())
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (idx_elements[elem_idx]);
+	return idx_elements[elem_idx];
 }
 
 vector<IndexElement> Index::getIndexElements()
 {
-	return (idx_elements);
+	return idx_elements;
 }
 
 unsigned Index::getIndexElementCount()
 {
-	return (idx_elements.size());
+	return idx_elements.size();
 }
 
 void Index::setIndexAttribute(unsigned attrib_id, bool value)
@@ -229,7 +229,7 @@ void Index::setPredicate(const QString &expr)
 
 unsigned Index::getFillFactor()
 {
-	return (fill_factor);
+	return fill_factor;
 }
 
 bool Index::getIndexAttribute(unsigned attrib_id)
@@ -237,17 +237,17 @@ bool Index::getIndexAttribute(unsigned attrib_id)
 	if(attrib_id > Buffering)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (index_attribs[attrib_id]);
+	return index_attribs[attrib_id];
 }
 
 IndexingType Index::getIndexingType()
 {
-	return (indexing_type);
+	return indexing_type;
 }
 
 QString Index::getPredicate()
 {
-	return (predicate);
+	return predicate;
 }
 
 bool Index::isReferRelationshipAddedColumn()
@@ -267,7 +267,7 @@ bool Index::isReferRelationshipAddedColumn()
 		itr++;
 	}
 
-	return (found);
+	return found;
 }
 
 vector<Column *> Index::getRelationshipAddedColumns()
@@ -283,7 +283,7 @@ vector<Column *> Index::getRelationshipAddedColumns()
 			cols.push_back(col);
 	}
 
-	return (cols);
+	return cols;
 }
 
 bool Index::isReferCollation(Collation *collation)
@@ -291,7 +291,7 @@ bool Index::isReferCollation(Collation *collation)
 	vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
-	if(!collation) return (false);
+	if(!collation) return false;
 
 	itr=idx_elements.begin();
 	itr_end=idx_elements.end();
@@ -303,7 +303,7 @@ bool Index::isReferCollation(Collation *collation)
 		itr++;
 	}
 
-	return (found);
+	return found;
 }
 
 bool Index::isReferColumn(Column *column)
@@ -311,7 +311,7 @@ bool Index::isReferColumn(Column *column)
 	vector<IndexElement>::iterator itr, itr_end;
 	bool found=false;
 
-	if(!column) return (false);
+	if(!column) return false;
 
 	itr=idx_elements.begin();
 	itr_end=idx_elements.end();
@@ -322,13 +322,13 @@ bool Index::isReferColumn(Column *column)
 		itr++;
 	}
 
-	return (found);
+	return found;
 }
 
 QString Index::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return (code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	setIndexElementsAttribute(def_type);
 	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : QString());
@@ -364,15 +364,15 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!isReferRelationshipAddedColumn())
 		attributes[Attributes::DeclInTable]=Attributes::True;
 
-	return (BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Index::getSignature(bool format)
 {
 	if(!getParentTable() || !getParentTable()->getSchema())
-		return (BaseObject::getSignature(format));
+		return BaseObject::getSignature(format);
 
-	return (QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format)));
+	return QString("%1.%2").arg(getParentTable()->getSchema()->getName(format)).arg(this->getName(format));
 }
 
 QString Index::getAlterDefinition(BaseObject *object)
@@ -403,7 +403,7 @@ QString Index::getAlterDefinition(BaseObject *object)
 		}
 
 		copyAttributes(attribs);
-		return (BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

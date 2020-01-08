@@ -39,7 +39,7 @@ ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObj
 
 unsigned ObjectsDiffInfo::getDiffType()
 {
-	return (diff_type);
+	return diff_type;
 }
 
 QString ObjectsDiffInfo::getInfoMessage()
@@ -66,7 +66,7 @@ QString ObjectsDiffInfo::getInfoMessage()
 		obj_name=ref_obj->getSignature();
 
 	if(diff_type==NoDifference)
-		return (QString());
+		return QString();
 	else if(diff_type==DropObject)
 	{
 		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
@@ -94,36 +94,36 @@ QString ObjectsDiffInfo::getInfoMessage()
 
 	}
 
-	return (msg);
+	return msg;
 }
 
 QString ObjectsDiffInfo::getDiffTypeString()
 {
 	if(diff_type==NoDifference)
-		return (QString());
+		return QString();
 	else if(diff_type==DropObject)
-		return (QString("DROP"));
+		return QString("DROP");
 	else if(diff_type==CreateObject)
-		return (QString("CREATE"));
+		return QString("CREATE");
 	else if(diff_type==AlterObject)
-		return (QString("ALTER"));
+		return QString("ALTER");
 	else
-		return (QString("IGNORE"));
+		return QString("IGNORE");
 }
 
 BaseObject *ObjectsDiffInfo::getObject()
 {
-	return (object);
+	return object;
 }
 
 BaseObject *ObjectsDiffInfo::getOldObject()
 {
-	return (old_object);
+	return old_object;
 }
 
 bool ObjectsDiffInfo::operator == (ObjectsDiffInfo &info)
 {
 	return (this->diff_type==info.diff_type &&
-		   this->object==info.object &&
-		   this->old_object==info.old_object);
+					this->object==info.object &&
+					this->old_object==info.old_object);
 }

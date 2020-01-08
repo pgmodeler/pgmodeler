@@ -358,7 +358,7 @@ void Exception::configureException(const QString &msg, ErrorCode error_code, con
 
 QString Exception::getErrorMessage()
 {
-	return (error_msg);
+	return error_msg;
 }
 
 QString Exception::getErrorMessage(ErrorCode error_code)
@@ -367,42 +367,42 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return (QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1));
+		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 	else
-		return (QString());
+		return QString();
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
 	if(enum_cast(error_code) < ErrorCount)
-		return (messages[enum_cast(error_code)][ErrorCodeId]);
+		return messages[enum_cast(error_code)][ErrorCodeId];
 	else
-		return (QString());
+		return QString();
 }
 
 QString Exception::getMethod()
 {
-	return (method);
+	return method;
 }
 
 QString Exception::getFile()
 {
-	return (file);
+	return file;
 }
 
 QString Exception::getLine()
 {
-	return (QString("%1").arg(line));
+	return QString("%1").arg(line);
 }
 
 ErrorCode Exception::getErrorCode()
 {
-	return (error_code);
+	return error_code;
 }
 
 QString Exception::getExtraInfo()
 {
-	return (extra_info);
+	return extra_info;
 }
 
 void Exception::addException(Exception &exception)
@@ -471,6 +471,6 @@ QString Exception::getExceptionsText()
 		}
 	}
 
-	return (exceptions_txt);
+	return exceptions_txt;
 }
 

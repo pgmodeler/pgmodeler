@@ -260,7 +260,7 @@ QString BaseType::getTypeString(unsigned type_id)
 	if(type_id > TypesCount)
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (type_list[type_id]);
+	return type_list[type_id];
 }
 
 void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
@@ -304,7 +304,7 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	bool found=false;
 
 	if(type_name.isEmpty())
-		return (BaseType::Null);
+		return BaseType::Null;
 	else
 	{
 		QString aux_name, tp_name=type_name;
@@ -320,30 +320,33 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 		}
 
 		if(found)
-		{ idx--; return (idx); }
+		{
+			idx--;
+			return idx;
+		}
 		else
-			return (BaseType::Null);
+			return BaseType::Null;
 	}
 }
 
 QString BaseType::operator ~ ()
 {
-	return (type_list[type_idx]);
+	return type_list[type_idx];
 }
 
 unsigned BaseType::operator ! ()
 {
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned BaseType::getTypeId()
 {
-	return (type_idx);
+	return type_idx;
 }
 
 QString BaseType::getTypeName()
 {
-	return (type_list[type_idx]);
+	return type_list[type_idx];
 }
 
 bool BaseType::operator == (BaseType &type)
@@ -392,7 +395,7 @@ void ActionType::getTypes(QStringList &type_list)
 unsigned ActionType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned ActionType::operator = (const QString &type_name)
@@ -401,7 +404,7 @@ unsigned ActionType::operator = (const QString &type_name)
 
 	type_idx=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_idx,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 /*************************
@@ -430,7 +433,7 @@ void ConstraintType::getTypes(QStringList &type_list)
 unsigned ConstraintType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned ConstraintType::operator = (const QString &type_name)
@@ -439,7 +442,7 @@ unsigned ConstraintType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /********************
@@ -468,7 +471,7 @@ void EventType::getTypes(QStringList &type_list)
 unsigned EventType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned EventType::operator = (const QString &type_name)
@@ -477,7 +480,7 @@ unsigned EventType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 bool EventType::operator < (EventType type) const
@@ -516,7 +519,7 @@ void ExecutionType::getTypes(QStringList &type_list)
 unsigned ExecutionType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned ExecutionType::operator = (const QString &type_name)
@@ -525,7 +528,7 @@ unsigned ExecutionType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -554,7 +557,7 @@ void FunctionType::getTypes(QStringList &tipos)
 unsigned FunctionType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned FunctionType::operator = (const QString &type_name)
@@ -563,7 +566,7 @@ unsigned FunctionType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -592,7 +595,7 @@ void IndexingType::getTypes(QStringList &type_list)
 unsigned IndexingType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned IndexingType::operator = (const QString &type_name)
@@ -601,7 +604,7 @@ unsigned IndexingType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -630,7 +633,7 @@ void IntervalType::getTypes(QStringList &type_list)
 unsigned IntervalType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned IntervalType::operator = (const QString &type_name)
@@ -639,7 +642,7 @@ unsigned IntervalType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /**********************
@@ -695,7 +698,7 @@ void SpatialType::setVariation(unsigned var)
 
 unsigned SpatialType::getVariation()
 {
-	return (variation);
+	return variation;
 }
 
 void SpatialType::getTypes(QStringList &type_list)
@@ -711,7 +714,7 @@ void SpatialType::setSRID(int srid)
 
 int SpatialType::getSRID()
 {
-	return (srid);
+	return srid;
 }
 
 QString SpatialType::operator * ()
@@ -734,7 +737,7 @@ QString SpatialType::operator * ()
 			return (QString("(%1%2)").arg(type_list[type_idx]).arg(var_str));
 	}
 	else
-		return (QString());
+		return QString();
 }
 
 /********************
@@ -909,7 +912,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 		else if(!sptype.isEmpty())
 			type.setSpatialType(SpatialType(sptype, srid));
 
-		return (type);
+		return type;
 	}
 	catch(Exception &e)
 	{
@@ -942,7 +945,7 @@ unsigned PgSqlType::operator = (unsigned type_id)
 	else if(type_id==0)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned PgSqlType::operator = (const QString &type_name)
@@ -957,12 +960,12 @@ unsigned PgSqlType::operator = (const QString &type_name)
 	else if(type_idx!=0)
 	{
 		BaseType::setType(type_idx,Offset,TypesCount);
-		return (type_idx);
+		return type_idx;
 	}
 	else
 	{
 		setUserType(usr_type_idx);
-		return (usr_type_idx);
+		return usr_type_idx;
 	}
 }
 
@@ -971,7 +974,7 @@ void *PgSqlType::getUserTypeReference()
 	if(this->isUserType())
 		return (user_types[this->type_idx - (PseudoEnd + 1)].ptype);
 	else
-		return (nullptr);
+		return nullptr;
 }
 
 unsigned PgSqlType::getUserTypeConfig()
@@ -979,12 +982,12 @@ unsigned PgSqlType::getUserTypeConfig()
 	if(this->isUserType())
 		return (user_types[this->type_idx - (PseudoEnd + 1)].type_conf);
 	else
-		return (0);
+		return 0;
 }
 
 unsigned PgSqlType::getTypeId()
 {
-	return (!(*this));
+	return !(*this);
 }
 
 QString PgSqlType::getTypeName(bool incl_dimension)
@@ -998,21 +1001,21 @@ QString PgSqlType::getTypeName(bool incl_dimension)
 		if(type!=QString("void") && dimension > 0)
 			type+=QString("[]").repeated(dimension);
 
-		return (type);
+		return type;
 	}
 
-	return (~(*this));
+	return ~(*this);
 }
 
 QString PgSqlType::getSQLTypeName()
 {
-	return (*(*this));
+	return *(*this);
 }
 
 bool PgSqlType::isRegistered(const QString &type, void *pmodel)
 {
 	if(getBaseTypeIndex(type)!=BaseType::Null)
-		return (true);
+		return true;
 	else
 		return (getUserTypeIndex(type, nullptr, pmodel)!=BaseType::Null);
 }
@@ -1066,17 +1069,17 @@ bool PgSqlType::operator == (void *ptype)
 
 IntervalType PgSqlType::getIntervalType()
 {
-	return (interval_type);
+	return interval_type;
 }
 
 SpatialType PgSqlType::getSpatialType()
 {
-	return (spatial_type);
+	return spatial_type;
 }
 
 bool PgSqlType::isWithTimezone()
 {
-	return (with_timezone);
+	return with_timezone;
 }
 
 bool PgSqlType::isOIDType()
@@ -1092,7 +1095,7 @@ bool PgSqlType::isPseudoType()
 unsigned PgSqlType::operator << (void *ptype)
 {
 	setUserType(ptype);
-	return (type_idx);
+	return type_idx;
 }
 
 void PgSqlType::setIntervalType(IntervalType interv_type)
@@ -1235,7 +1238,7 @@ unsigned PgSqlType::getBaseTypeIndex(const QString &type_name)
 	aux_name.remove(QString("[]"));
 	aux_name.remove(QRegExp(QString("( )(with)(out)?(.)*")));
 	aux_name=aux_name.trimmed();
-	return (getType(aux_name,Offset,TypesCount));
+	return getType(aux_name,Offset,TypesCount);
 }
 
 unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
@@ -1262,9 +1265,9 @@ unsigned PgSqlType::getUserTypeIndex(const QString &type_name, void *ptype, void
 		if(itr!=itr_end)
 			return (PseudoEnd + 1 + idx);
 		else
-			return (BaseType::Null);
+			return BaseType::Null;
 	}
-	else return (BaseType::Null);
+	else return BaseType::Null;
 }
 
 QString PgSqlType::getUserTypeName(unsigned type_id)
@@ -1279,7 +1282,7 @@ QString PgSqlType::getUserTypeName(unsigned type_id)
 			(type_id >= lim1 && type_id < lim2))
 		return (PgSqlType::user_types[type_id - lim1].name);
 	else
-		return (QString());
+		return QString();
 }
 
 void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
@@ -1325,7 +1328,7 @@ QString PgSqlType::operator ~ ()
 		if(with_timezone && (name==QString("time") || name==QString("timestamp")))
 			 name+=QString(" with time zone");
 
-		return (name);
+		return name;
 	}
 }
 
@@ -1469,9 +1472,9 @@ bool PgSqlType::canCastTo(PgSqlType type)
 		((((*this)==QString("integer") || (*this)==QString("int4")) && type==QString("abstime")) ||
 		 (((*this)==QString("abstime") && (type==QString("integer") || type==QString("int4"))))))
 
-		return (true);
+		return true;
 
-	return (false);
+	return false;
 }
 
 bool PgSqlType::isEquivalentTo(PgSqlType type)
@@ -1492,7 +1495,7 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 
 	//If the types are equal there is no need to perform further operations
 	if(*this==type)
-		return (true);
+		return true;
 
 	//Getting the index which the this type is in
 	for(QStringList list : types)
@@ -1509,8 +1512,8 @@ bool PgSqlType::isEquivalentTo(PgSqlType type)
 	}
 
 	return (this_idx < types.size() && type_idx < types.size() &&
-		   this_idx==type_idx &&
-				 this->isArrayType()==type.isArrayType());
+					this_idx==type_idx &&
+					this->isArrayType()==type.isArrayType());
 }
 
 bool PgSqlType::isExactTo(PgSqlType type)
@@ -1538,7 +1541,7 @@ PgSqlType PgSqlType::getAliasType()
 			return (PgSqlType(type_list[this->type_idx]));
 	}
 	else
-		return (*this);
+		return *this;
 }
 
 void PgSqlType::setDimension(unsigned dim)
@@ -1579,23 +1582,23 @@ void PgSqlType::setPrecision(int prec)
 
 unsigned PgSqlType::getDimension()
 {
-	return (dimension);
+	return dimension;
 }
 
 unsigned PgSqlType::getLength()
 {
-	return (length);
+	return length;
 }
 
 int PgSqlType::getPrecision()
 {
-	return (precision);
+	return precision;
 }
 
 QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return (*(*this));
+		return *(*this);
 	else
 	{
 		attribs_map attribs;
@@ -1633,7 +1636,7 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		if(with_timezone)
 			attribs[Attributes::WithTimezone]=Attributes::True;
 
-		return (schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type));
+		return schparser.getCodeDefinition(Attributes::PgSqlBaseType, attribs, def_type);
 	}
 }
 
@@ -1695,7 +1698,7 @@ QString PgSqlType::operator * ()
 			fmt_type+=QString("[]");
 	}
 
-	return (fmt_type);
+	return fmt_type;
 }
 
 /***********************
@@ -1724,7 +1727,7 @@ void BehaviorType::getTypes(QStringList &type_list)
 unsigned BehaviorType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned BehaviorType::operator = (const QString &type_name)
@@ -1733,7 +1736,7 @@ unsigned BehaviorType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -1762,7 +1765,7 @@ void SecurityType::getTypes(QStringList &tipos)
 unsigned SecurityType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned SecurityType::operator = (const QString &type_name)
@@ -1771,7 +1774,7 @@ unsigned SecurityType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -1800,7 +1803,7 @@ void LanguageType::getTypes(QStringList &tipos)
 unsigned LanguageType::operator = (unsigned tipo_id)
 {
 	BaseType::setType(tipo_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned LanguageType::operator = (const QString &type_name)
@@ -1809,7 +1812,7 @@ unsigned LanguageType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -1838,7 +1841,7 @@ void EncodingType::getTypes(QStringList &tipos)
 unsigned EncodingType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned EncodingType::operator = (const QString &type_name)
@@ -1847,7 +1850,7 @@ unsigned EncodingType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 bool EncodingType::operator == (const char *type_name)
@@ -1906,7 +1909,7 @@ void StorageType::getTypes(QStringList &tipos)
 unsigned StorageType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned StorageType::operator = (const QString &type_name)
@@ -1915,7 +1918,7 @@ unsigned StorageType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 bool StorageType::operator == (const char *type_name)
@@ -1974,7 +1977,7 @@ void MatchType::getTypes(QStringList &tipos)
 unsigned MatchType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned MatchType::operator = (const QString &type_name)
@@ -1983,7 +1986,7 @@ unsigned MatchType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -2012,7 +2015,7 @@ void DeferralType::getTypes(QStringList &tipos)
 unsigned DeferralType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned DeferralType::operator = (const QString &type_name)
@@ -2021,7 +2024,7 @@ unsigned DeferralType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***********************
@@ -2050,7 +2053,7 @@ void CategoryType::getTypes(QStringList &tipos)
 unsigned CategoryType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned CategoryType::operator = (const QString &type_name)
@@ -2059,7 +2062,7 @@ unsigned CategoryType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /*********************
@@ -2088,7 +2091,7 @@ void FiringType::getTypes(QStringList &tipos)
 unsigned FiringType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned FiringType::operator = (const QString &type_name)
@@ -2097,7 +2100,7 @@ unsigned FiringType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***************************
@@ -2126,7 +2129,7 @@ void EventTriggerType::getTypes(QStringList &tipos)
 unsigned EventTriggerType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned EventTriggerType::operator = (const QString &type_name)
@@ -2135,7 +2138,7 @@ unsigned EventTriggerType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***************************
@@ -2164,7 +2167,7 @@ void IdentityType::getTypes(QStringList &tipos)
 unsigned IdentityType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned IdentityType::operator = (const QString &type_name)
@@ -2173,7 +2176,7 @@ unsigned IdentityType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***************************
@@ -2202,7 +2205,7 @@ void PolicyCmdType::getTypes(QStringList &tipos)
 unsigned PolicyCmdType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned PolicyCmdType::operator = (const QString &type_name)
@@ -2211,7 +2214,7 @@ unsigned PolicyCmdType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
 
 /***************************
@@ -2240,7 +2243,7 @@ void PartitioningType::getTypes(QStringList &tipos)
 unsigned PartitioningType::operator = (unsigned type_id)
 {
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_idx);
+	return type_idx;
 }
 
 unsigned PartitioningType::operator = (const QString &type_name)
@@ -2249,6 +2252,5 @@ unsigned PartitioningType::operator = (const QString &type_name)
 
 	type_id=BaseType::getType(type_name, Offset, TypesCount);
 	BaseType::setType(type_id,Offset,TypesCount);
-	return (type_id);
+	return type_id;
 }
-

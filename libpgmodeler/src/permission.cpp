@@ -114,13 +114,13 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 				((obj_type==ObjectType::ForeignDataWrapper ||  obj_type==ObjectType::ForeignServer) && priv_id==PrivUsage));
 	}
 
-	return (result);
+	return result;
 }
 
 bool Permission::isRoleExists(Role *role)
 {
-	if(!role)	return (false);
-	return (std::find(roles.begin(), roles.end(), role) != roles.end());
+	if(!role)	return false;
+	return std::find(roles.begin(), roles.end(), role) != roles.end();
 }
 
 void Permission::addRole(Role *role)
@@ -170,18 +170,18 @@ void Permission::setCascade(bool value)
 
 bool Permission::isRevoke()
 {
-	return (revoke);
+	return revoke;
 }
 
 bool Permission::isCascade()
 {
-	return (cascade);
+	return cascade;
 }
 
 bool Permission::isSimilarTo(Permission *perm)
 {
 	if(!perm)
-		return (false);
+		return false;
 
 	QStringList rol_names, fmt_rol_names;
 	vector<vector<Role *>*> vect_roles={ &this->roles, &perm->roles };
@@ -199,10 +199,10 @@ bool Permission::isSimilarTo(Permission *perm)
 	}
 
 	return (((object==aux_object) ||
-			(object && aux_object && object->getSignature()==aux_object->getSignature())) &&
-		   this->getPermissionString()==perm->getPermissionString() &&
-		   this->revoke==perm->revoke &&
-		   fmt_rol_names[0]==fmt_rol_names[1]);
+					 (object && aux_object && object->getSignature()==aux_object->getSignature())) &&
+					this->getPermissionString()==perm->getPermissionString() &&
+					this->revoke==perm->revoke &&
+					fmt_rol_names[0]==fmt_rol_names[1]);
 
 }
 
@@ -228,22 +228,22 @@ Role *Permission::getRole(unsigned role_idx)
 	if(role_idx > roles.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (roles[role_idx]);
+	return roles[role_idx];
 }
 
 vector<Role *> Permission::getRoles()
 {
-	return (roles);
+	return roles;
 }
 
 unsigned Permission::getRoleCount()
 {
-	return (roles.size());
+	return roles.size();
 }
 
 BaseObject *Permission::getObject()
 {
-	return (object);
+	return object;
 }
 
 bool Permission::getPrivilege(unsigned priv_id)
@@ -252,7 +252,7 @@ bool Permission::getPrivilege(unsigned priv_id)
 	if(priv_id > PrivUsage)
 		throw Exception(ErrorCode::RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (privileges[priv_id]);
+	return privileges[priv_id];
 }
 
 bool Permission::getGrantOption(unsigned priv_id)
@@ -261,7 +261,7 @@ bool Permission::getGrantOption(unsigned priv_id)
 	if(priv_id > PrivUsage)
 		throw Exception(ErrorCode::RefInvalidPrivilegeType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (grant_option[priv_id]);
+	return grant_option[priv_id];
 }
 
 QString Permission::getPermissionString()
@@ -299,7 +299,7 @@ QString Permission::getPermissionString()
 			str_priv.append(QChar('*'));
 	}
 
-	return (str_priv);
+	return str_priv;
 }
 
 QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &privs, vector<unsigned> &gop_privs)
@@ -353,7 +353,7 @@ QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &pr
 		}
 	}
 
-	return (role);
+	return role;
 }
 
 void Permission::generatePermissionId()
@@ -411,7 +411,7 @@ void Permission::generatePermissionId()
 QString Permission::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return (code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	unsigned i, count;
 	ObjectType obj_type;
@@ -483,7 +483,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Roles].remove(attributes[Attributes::Roles].size()-1,1);
 
-	return (BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Permission::getSignature(bool format)
@@ -504,7 +504,7 @@ QString Permission::getSignature(bool format)
 
 	words=this->obj_name.split("_");
 	signature=words[0] + QChar(':') + signature + QString(" [id:%1]").arg(words[1]);
-	return (signature);
+	return signature;
 }
 
 QString Permission::getDropDefinition(bool cascade)
@@ -519,7 +519,7 @@ QString Permission::getDropDefinition(bool cascade)
 		this->setRevoke(revoke);
 		this->setCascade(this->cascade);
 
-		return (def);
+		return def;
 	}
 	catch(Exception &e)
 	{

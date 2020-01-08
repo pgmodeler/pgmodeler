@@ -91,7 +91,7 @@ int Type::getAttributeIndex(const QString &attrib_name)
 		itr++;
 	}
 
-	return (idx);
+	return idx;
 }
 
 void Type::addAttribute(TypeAttribute attrib)
@@ -141,7 +141,7 @@ bool Type::isEnumerationExists(const QString &enum_name)
 		itr++;
 	}
 
-	return (found);
+	return found;
 }
 
 void Type::addEnumeration(const QString &enum_name)
@@ -506,12 +506,12 @@ TypeAttribute Type::getAttribute(unsigned attrib_idx)
 	if(attrib_idx >= type_attribs.size())
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (type_attribs[attrib_idx]);
+	return type_attribs[attrib_idx];
 }
 
 unsigned Type::getAttributeCount()
 {
-	return (type_attribs.size());
+	return type_attribs.size();
 }
 
 QString Type::getEnumeration(unsigned idx_enum)
@@ -519,12 +519,12 @@ QString Type::getEnumeration(unsigned idx_enum)
 	if(idx_enum >= enumerations.size())
 		throw Exception(ErrorCode::RefEnumerationInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (enumerations[idx_enum]);
+	return enumerations[idx_enum];
 }
 
 unsigned Type::getEnumerationCount()
 {
-	return (enumerations.size());
+	return enumerations.size();
 }
 
 Function *Type::getFunction(unsigned func_id)
@@ -532,88 +532,88 @@ Function *Type::getFunction(unsigned func_id)
 	if(func_id >= sizeof(functions)/sizeof(Function *))
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return (functions[func_id]);
+	return functions[func_id];
 }
 
 unsigned Type::getInternalLength()
 {
-	return (internal_len);
+	return internal_len;
 }
 
 bool Type::isByValue()
 {
-	return (by_value);
+	return by_value;
 }
 
 PgSqlType Type::getAlignment()
 {
-	return (alignment);
+	return alignment;
 }
 
 StorageType Type::getStorage()
 {
-	return (storage);
+	return storage;
 }
 
 QString Type::getDefaultValue()
 {
-	return (default_value);
+	return default_value;
 }
 
 PgSqlType Type::getElement()
 {
-	return (element);
+	return element;
 }
 
 char Type::getDelimiter()
 {
-	return (delimiter);
+	return delimiter;
 }
 
 unsigned Type::getConfiguration()
 {
-	return (config);
+	return config;
 }
 
 CategoryType Type::getCategory()
 {
-	return (category);
+	return category;
 }
 
 bool Type::isPreferred()
 {
-	return (preferred);
+	return preferred;
 }
 
 bool Type::isCollatable()
 {
-	return (collatable);
+	return collatable;
 }
 
 PgSqlType Type::getLikeType()
 {
-	return (like_type);
+	return like_type;
 }
 
 PgSqlType Type::getSubtype()
 {
-	return (subtype);
+	return subtype;
 }
 
 OperatorClass *Type::getSubtypeOpClass()
 {
-	return (subtype_opclass);
+	return subtype_opclass;
 }
 
 QString Type::getCodeDefinition(unsigned def_type)
 {
-	return (this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return (code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(config==EnumerationType)
 	{
@@ -704,7 +704,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return (BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Type::getAlterDefinition(BaseObject *object)
@@ -801,7 +801,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 			}
 		}
 
-		return (alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{
