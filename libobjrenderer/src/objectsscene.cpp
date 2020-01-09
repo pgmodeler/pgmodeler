@@ -371,64 +371,37 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 	QGraphicsScene::setSceneRect(0, 0, rect.width(), rect.height());
 }
 
-QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only)
+QRectF ObjectsScene::itemsBoundingRect(bool override, bool selected_only, QList<QGraphicsItem *> objs)
 {
-	if(!seek_only_db_objs)
+	if(!override)
 		return(QGraphicsScene::itemsBoundingRect());
+
+	QList<QGraphicsItem *> items;
+	if (selected_only)
+		items=this->selectedItems();
+	else
+		items=objs;
+
+	QRectF rect;
+	QPolygonF polygon;
+	if(dynamic_cast<RelationshipView *>(items.front()))
+		rect=dynamic_cast<RelationshipView *>(items.front())->__boundingRect();
 	else
 	{
-		QRectF rect=QGraphicsScene::itemsBoundingRect();
-		QList<QGraphicsItem *> items= (selected_only ? this->selectedItems() : this->items());
-		double x=rect.width(), y=rect.height(), x2 = -10000, y2 = -10000;
-		BaseObjectView *obj_view=nullptr;
-		QPointF pnt;
-		BaseGraphicObject *graph_obj=nullptr;
-
-		for(auto &item : items)
-		{
-			obj_view=dynamic_cast<BaseObjectView *>(item);
-
-			if(obj_view && obj_view->isVisible())
-			{
-				graph_obj=dynamic_cast<BaseGraphicObject *>(obj_view->getUnderlyingObject());
-
-				if(graph_obj)
-				{
-					if(graph_obj->getObjectType()!=ObjectType::Relationship &&
-							graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-						pnt=graph_obj->getPosition();
-					else
-						pnt=dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().topLeft();
-
-					if(pnt.x() < x)
-						x=pnt.x();
-
-					if(pnt.y() < y)
-						y=pnt.y();
-
-					if(selected_only)
-					{
-						if(graph_obj->getObjectType()!=ObjectType::Relationship &&
-							 graph_obj->getObjectType()!=ObjectType::BaseRelationship)
-							pnt = pnt + dynamic_cast<BaseObjectView *>(obj_view)->boundingRect().bottomRight();
-						else
-							pnt = pnt +  dynamic_cast<RelationshipView *>(obj_view)->__boundingRect().bottomRight();
-
-						if(pnt.x() > x2)
-							x2 = pnt.x();
-
-						if(pnt.y() > y2)
-							y2 = pnt.y();
-					}
-				}
-			}
-		}
-
-		if(selected_only)
-			return(QRectF(QPointF(x, y), QPointF(x2, y2)));
-		else
-			return(QRectF(QPointF(x, y), rect.bottomRight()));
+		auto item=dynamic_cast<BaseObjectView *>(items.front());
+		rect=QRectF(item->mapToScene(item->boundingRect()).boundingRect());
 	}
+
+	for(const auto &item : items)
+	{
+		if(auto rel_view=dynamic_cast<RelationshipView *>(item))
+			rect=rect.united(rel_view->__boundingRect());
+		else
+			rect=rect.united(item->mapToScene(
+				dynamic_cast<BaseObjectView *>(item)->boundingRect()).boundingRect());
+	}
+
+	return rect;
 }
 
 void ObjectsScene::setGridSize(unsigned size)

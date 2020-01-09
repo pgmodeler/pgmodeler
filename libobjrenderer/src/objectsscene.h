@@ -230,7 +230,7 @@ class ObjectsScene: public QGraphicsScene {
 		Currently this parameter is ignored when using seek_only_db_objs = false
 
 		Note: using this method with seek_only_db_objs=true can be time expensive depending on the size of the model so use it wisely. */
-		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false);
+		QRectF itemsBoundingRect(bool seek_only_db_objs=false, bool selected_only = false, QList<QGraphicsItem *> objs = {nullptr});
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, const QSizeF &margin, unsigned &h_page_cnt, unsigned &v_page_cnt);
