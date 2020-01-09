@@ -168,7 +168,7 @@ void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
 
 		//If the user clicks the extended attributes toggler
-		if(!this->isSelected() && event->buttons()==Qt::LeftButton && event->modifiers() == Qt::NoModifier &&
+		if(event->buttons()==Qt::LeftButton && event->modifiers() == Qt::NoModifier &&
 			 attribs_toggler->isVisible() && attribs_toggler->boundingRect().contains(pnt))
 			attribs_toggler->setButtonSelected(pnt, true);
 
@@ -235,12 +235,13 @@ void BaseTableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 	/* Case the table itself is not selected shows the child selector
 		at mouse position */
-	if(!this->isSelected())
+	QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
+	if(!this->isSelected() ||
+			attribs_toggler->boundingRect().contains(pnt))
 	{
 		QList<QGraphicsItem *> items;
 		double cols_height, item_idx, ext_height=0;
 		QRectF rect, rect1;
-		QPointF pnt = attribs_toggler->mapFromScene(event->scenePos());
 
 		items.append(columns->childItems());
 
