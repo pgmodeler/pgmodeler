@@ -2039,27 +2039,16 @@ void RelationshipView::configureLabelPosition(unsigned label_id, double x, doubl
 
 QRectF RelationshipView::__boundingRect()
 {
-	double x1=0, y1=0, x2=0, y2=0;
-	unsigned i, count;
-	QPointF p;
-	QRectF rect;
+	unsigned i;
+	QRectF rect, brect;
 	vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getUnderlyingObject())->getPoints();
 
-	//The reference size will be the relationship descriptor dimension
-	x1=descriptor->pos().x();
-	y1=descriptor->pos().y();
-	x2=descriptor->pos().x() + descriptor->boundingRect().width();
-	y2=descriptor->pos().y() + descriptor->boundingRect().height();
+	brect = QRectF(QPointF(descriptor->pos().x(), descriptor->pos().y()), descriptor->boundingRect().size());
 
-	//Checks if some point is out of reference dimension
-	count=points.size();
-	for(i=0; i < count; i++)
+	for(auto &p : points)
 	{
-		p=points[i];
-		if(x1 > p.x()) x1=p.x() - GraphicPointRadius;
-		if(y1 > p.y()) y1=p.y() - GraphicPointRadius;
-		if(x2 < p.x()) x2=p.x() + GraphicPointRadius;
-		if(y2 < p.y()) y2=p.y() + GraphicPointRadius;
+		brect = rect.united(QRectF(p.x() - GraphicPointRadius, p.y() - GraphicPointRadius,
+															 p.x() + GraphicPointRadius, p.y() + GraphicPointRadius));
 	}
 
 	//Checks if some label is out of reference dimension
@@ -2069,12 +2058,9 @@ QRectF RelationshipView::__boundingRect()
 		{
 			rect.setTopLeft(labels[i]->scenePos());
 			rect.setSize(labels[i]->boundingRect().size());
-			if(x1 > rect.left()) x1=rect.left();
-			if(y1 > rect.top()) y1=rect.top();
-			if(x2 < rect.right()) x2=rect.right();
-			if(y2 < rect.bottom()) y2=rect.bottom();
+			brect = brect.united(rect);
 		}
 	}
 
-	return QRectF(x1, y1, x2, y2);
+	return brect;
 }
