@@ -34,6 +34,7 @@
 #include "htmlitemdelegate.h"
 #include "numberedtexteditor.h"
 #include "baseconfigwidget.h"
+#include "fileselectorwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -45,6 +46,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		static bool low_verbosity;
 
 		static map<QString, attribs_map> config_params;
+
+		FileSelectorWidget *fsel_wgt;
 
 		QEventLoop event_loop;
 
@@ -165,7 +168,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void handleDiffFinished();
 		void handleExportFinished();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void selectOutputFile();
 		void importDatabase(unsigned thread_id);
 		void diffModels();
 		void exportDiff(bool confirm=true);

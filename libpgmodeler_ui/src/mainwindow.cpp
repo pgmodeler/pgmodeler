@@ -610,8 +610,9 @@ void MainWindow::fixModel(const QString &filename)
 	if(!filename.isEmpty())
 	{
 		QFileInfo fi(filename);
-		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.in_fsel_wgt->setText(fi.absoluteFilePath());
+		model_fix_form.out_fsel_wgt->setText(fi.absolutePath() +
+							GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
 	PgModelerUiNs::resizeDialog(&model_fix_form);

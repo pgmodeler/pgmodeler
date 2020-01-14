@@ -31,6 +31,7 @@
 #include "hinttextwidget.h"
 #include "colorpickerwidget.h"
 #include "numberedtexteditor.h"
+#include "fileselectorwidget.h"
 
 class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
@@ -69,6 +70,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
+		FileSelectorWidget *s_fsel_wgt, *c_fsel_wgt;
+
 	public:
 		//! \brief Maximum number of files listed as recent models
 		static constexpr int MaxRecentModels=15;
@@ -92,7 +95,6 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void applyConfiguration();
 		void restoreDefaults();
 		void selectPaperSize();
-		void selectSourceEditor();
 
 	private slots:
 		void convertMarginUnity();

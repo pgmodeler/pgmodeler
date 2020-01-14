@@ -987,40 +987,6 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="backup_file_edt">
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="select_file_tb">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Select file</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="3" column="2">
            <widget class="QComboBox" name="extract_from_cmb"/>
           </item>
@@ -1216,6 +1182,9 @@
              <bool>false</bool>
             </property>
            </widget>
+          </item>
+          <item row="6" column="1" colspan="2">
+           <widget class="QWidget" name="fsel" native="true"/>
           </item>
          </layout>
         </widget>

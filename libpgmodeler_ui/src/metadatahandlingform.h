@@ -30,6 +30,7 @@
 #include "modelwidget.h"
 #include "htmlitemdelegate.h"
 #include "hinttextwidget.h"
+#include "fileselectorwidget.h"
 
 class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	private:
@@ -38,6 +39,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 		ModelWidget *model_wgt;
 		HtmlItemDelegate *htmlitem_deleg;
 		QTreeWidgetItem *root_item;
+		FileSelectorWidget *fsel_wgt;
 
 		HintTextWidget *db_metadata_ht, *objs_positioning_ht, *objs_protection_ht,
 		*objs_sql_disabled_ht, *custom_sql_ht, *textbox_objs_ht, *tag_objs_ht,
@@ -45,7 +47,6 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 		*objs_collapse_mode_ht, *generic_sql_objs_ht, *extract_only_ht, *objs_aliases_ht;
 
 		void showEvent(QShowEvent *);
-		void selectFile(bool is_output);
 
 	public:
 		MetadataHandlingForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -57,6 +58,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 		void handleObjectsMetada();
 		void enableMetadataHandling();
 		void selectAllOptions();
+		void updateFileSelector();
 
 	signals:
 		void s_metadataHandled();

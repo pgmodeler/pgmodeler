@@ -27,3 +27,7 @@ obj/*
 plugins
 plugins/*
 release/*
+docs/*
+main/pgmodeler
+main-cli/pgmodeler-cli
+crashhandler/pgmodeler-ch

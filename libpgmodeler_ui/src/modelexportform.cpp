@@ -22,12 +22,18 @@
 #include "pgmodeleruins.h"
 
 bool ModelExportForm::low_verbosity = false;
+extern FileSelector FSel_SQLOutput, FSel_DirectoryOutput;
 
 ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	model=nullptr;
 	viewp=nullptr;
+
 	setupUi(this);
+
+	sql_fsel_wgt=new FileSelectorWidget(fsel_s, this, new FileSelector{FileSelector::Out, FileSelector::Sql});
+	graphics_fsel_wgt=new FileSelectorWidget(fsel_g, this, new FileSelector{FileSelector::Out, FileSelector::Png});
+	ddict_fsel_wgt=new FileSelectorWidget(fsel_d, this, new FileSelector{FileSelector::Out, FileSelector::Directory});
 
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
@@ -62,13 +68,17 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
 	connect(pgsqlvers_chk, SIGNAL(toggled(bool)), pgsqlvers1_cmb, SLOT(setEnabled(bool)));
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
-	connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
-	connect(select_img_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
-	connect(select_dict_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
+	connect(png_rb, SIGNAL(toggled(bool)), this, SLOT(updateGraphicsFileSelector(bool)));
+	connect(svg_rb, SIGNAL(toggled(bool)), this, SLOT(updateGraphicsFileSelector(bool)));
+	connect(page_by_page_chk, SIGNAL(toggled(bool)), this, SLOT(updateGraphicsFileSelector(bool)));
+	connect(standalone_rb, SIGNAL(toggled(bool)), this, SLOT(updateDictFileSelector(bool)));
+	connect(splitted_rb, SIGNAL(toggled(bool)), this, SLOT(updateDictFileSelector(bool)));
 	connect(export_btn, SIGNAL(clicked()), this, SLOT(exportModel()));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_db_rb, SLOT(setEnabled(bool)));
 	connect(drop_chk, SIGNAL(toggled(bool)), drop_objs_rb, SLOT(setEnabled(bool)));
-
+	connect(sql_fsel_wgt, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
+	connect(graphics_fsel_wgt, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
+	connect(ddict_fsel_wgt, SIGNAL(s_fileSelected(QString)), this, SLOT(enableExport()));
 	connect(export_thread, &QThread::started,
 	[&](){
 
@@ -99,6 +109,10 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	connect(&export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 	connect(&export_hlp, SIGNAL(s_exportAborted(Exception)), this, SLOT(captureThreadError(Exception)));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelExport()));
+	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
+	connect(export_to_dict_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
 	connect(connections_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(editConnections()));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_cmb, SLOT(setDisabled(bool)));
 	connect(svg_rb, SIGNAL(toggled(bool)), zoom_lbl, SLOT(setDisabled(bool)));
@@ -132,7 +146,12 @@ void ModelExportForm::exec(ModelWidget *model)
 		this->model=model;
 		ConnectionsConfigWidget::fillConnectionsComboBox(connections_cmb, true, Connection::OpExport);
 		selectExportMode();
+		sql_fsel_wgt->setText(model->getDatabaseModel()->getName() + QString(".sql"));
+		updateDictFileSelector(true);
+		updateGraphicsFileSelector(true);
 		QDialog::exec();
+
+
 	}
 }
 
@@ -193,12 +212,12 @@ void ModelExportForm::exportModel()
 			viewp=new QGraphicsView(model->scene);
 
 			if(png_rb->isChecked())
-				export_hlp.setExportToPNGParams(model->scene, viewp, image_edt->text(),
+				export_hlp.setExportToPNGParams(model->scene, viewp, graphics_fsel_wgt->text(),
 																				zoom_cmb->itemData(zoom_cmb->currentIndex()).toDouble(),
 																				show_grid_chk->isChecked(), show_delim_chk->isChecked(),
 																				page_by_page_chk->isChecked());
 			else
-				export_hlp.setExportToSVGParams(model->scene, image_edt->text(),
+				export_hlp.setExportToSVGParams(model->scene, graphics_fsel_wgt->text(),
 																				show_grid_chk->isChecked(),
 																				show_delim_chk->isChecked());
 
@@ -215,13 +234,18 @@ void ModelExportForm::exportModel()
 			//Exporting to sql file
 			if(export_to_file_rb->isChecked())
 			{
-				progress_lbl->setText(tr("Saving file '%1'").arg(file_edt->text()));
-				export_hlp.setExportToSQLParams(model->db_model, file_edt->text(), pgsqlvers_cmb->currentText());
+				progress_lbl->setText(tr("Saving file '%1'").arg(sql_fsel_wgt->text()));
+				export_hlp.setExportToSQLParams(model->db_model,
+												sql_fsel_wgt->text(),
+												pgsqlvers_cmb->currentText());
 				export_thread->start();
 			}
 			else if(export_to_dict_rb->isChecked())
 			{
-				export_hlp.setExportToDataDictParams(model->db_model, dict_edt->text(), incl_index_chk->isChecked(), splitted_rb->isChecked());
+				export_hlp.setExportToDataDictParams(model->db_model,
+													 ddict_fsel_wgt->text(),
+													 incl_index_chk->isChecked(),
+													 splitted_rb->isChecked());
 				export_thread->start();
 			}
 			//Exporting directly to DBMS
@@ -270,72 +294,12 @@ void ModelExportForm::selectExportMode()
 
 	pgsqlvers1_cmb->setEnabled(export_to_dbms_rb->isChecked() && pgsqlvers_chk->isChecked());
 	export_btn->setEnabled((export_to_dbms_rb->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1) ||
-							(export_to_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-							(export_to_img_rb->isChecked() && !image_edt->text().isEmpty()) ||
-							(export_to_dict_rb->isChecked() && !dict_edt->text().isEmpty()));
+							(export_to_file_rb->isChecked() && !sql_fsel_wgt->text().isEmpty()) ||
+							(export_to_img_rb->isChecked() && !graphics_fsel_wgt->text().isEmpty()) ||
+							(export_to_dict_rb->isChecked() && !ddict_fsel_wgt->text().isEmpty()));
 }
 
-void ModelExportForm::selectOutputFile()
-{
-	QFileDialog file_dlg;
 
-	file_dlg.setWindowTitle(tr("Export model as..."));
-
-	file_dlg.setFileMode(QFileDialog::AnyFile);
-	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-	file_dlg.setModal(true);
-
-	if(export_to_file_rb->isChecked())
-	{
-		file_dlg.setNameFilter(tr("SQL script (*.sql);;All files (*.*)"));
-		file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".sql"));
-	}
-	else if(export_to_dict_rb->isChecked())
-	{
-		if(splitted_rb->isChecked())
-		{
-			file_dlg.setFileMode(QFileDialog::DirectoryOnly);
-			file_dlg.setNameFilter(QString());
-		}
-		else
-		{
-			file_dlg.setNameFilter(tr("HTML file (*.html);;All files (*.*)"));
-			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".html"));
-		}
-	}
-	else
-	{
-		if(png_rb->isChecked())
-		{
-			file_dlg.setNameFilter(tr("Portable Network Graphics (*.png);;All files (*.*)"));
-			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".png"));
-		}
-		else
-		{
-			file_dlg.setNameFilter(tr("Scalable Vector Graphics (*.svg);;All files (*.*)"));
-			file_dlg.selectFile(model->getDatabaseModel()->getName() + QString(".svg"));
-		}
-	}
-
-	if(file_dlg.exec()==QFileDialog::Accepted)
-	{
-		QString file;
-
-		if(!file_dlg.selectedFiles().isEmpty())
-			file = file_dlg.selectedFiles().at(0);
-
-		if(export_to_file_rb->isChecked())
-			file_edt->setText(file);
-		else if(export_to_dict_rb->isChecked())
-			dict_edt->setText(file);
-		else
-			image_edt->setText(file);
-	}
-
-	export_btn->setEnabled(!file_edt->text().isEmpty() ||
-												 !dict_edt->text().isEmpty() ||
-												 !image_edt->text().isEmpty());
-}
 
 void ModelExportForm::captureThreadError(Exception e)
 {
@@ -433,4 +397,34 @@ void ModelExportForm::editConnections()
 	export_btn->setEnabled(export_to_dbms_rb->isChecked() &&
 						   connections_cmb->currentIndex() > 0 &&
 						   connections_cmb->currentIndex()!=connections_cmb->count()-1);
+}
+
+void ModelExportForm::enableExport()
+{
+	export_btn->setEnabled(!sql_fsel_wgt->text().isEmpty() ||
+							 !graphics_fsel_wgt->text().isEmpty() ||
+							 !ddict_fsel_wgt->text().isEmpty());
+}
+
+void ModelExportForm::updateDictFileSelector(bool change)
+{
+	if(!change) return;
+
+	if(splitted_rb->isChecked())
+		ddict_fsel_wgt->reloadFileSelector(new FileSelector{FileSelector::Out,FileSelector::Directory});
+	else
+		ddict_fsel_wgt->reloadFileSelector(new FileSelector{FileSelector::Out,FileSelector::Html});
+}
+
+void ModelExportForm::updateGraphicsFileSelector(bool change)
+{
+	if(!change) return;
+
+	if(png_rb->isChecked())
+		if(page_by_page_chk->isChecked())
+			graphics_fsel_wgt->reloadFileSelector(new FileSelector{FileSelector::Out,FileSelector::Directory});
+		else
+			graphics_fsel_wgt->reloadFileSelector(new FileSelector{FileSelector::Out,FileSelector::Png});
+	else
+		graphics_fsel_wgt->reloadFileSelector(new FileSelector{FileSelector::Out,FileSelector::Svg});
 }

@@ -24,6 +24,7 @@
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
 	setupUi(this);
+	fsel_wgt=new FileSelectorWidget(fsel, this, new FileSelector{FileSelector::In, FileSelector::Csv});
 	separator_edt->setVisible(false);
 
 	if(!cols_in_first_row)
@@ -38,7 +39,6 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 		col_names_chk->setChecked(true);
 	}
 
-	connect(select_file_tb, SIGNAL(clicked(bool)), this, SLOT(selectCsvFile()));
 	connect(txt_delim_chk, SIGNAL(toggled(bool)), txt_delim_edt, SLOT(setEnabled(bool)));
 	connect(load_btn, SIGNAL(clicked(bool)), this, SLOT(loadCsvFile()));
 
@@ -46,8 +46,8 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 			separator_edt->setVisible(separator_cmb->currentIndex() == separator_cmb->count()-1);
 	});
 
-	connect(file_edt, &QLineEdit::textChanged, [&](){
-		load_btn->setEnabled(!file_edt->text().isEmpty());
+	connect(fsel_wgt, &FileSelectorWidget::s_fileSelected, [&](){
+		load_btn->setEnabled(!fsel_wgt->text().isEmpty());
 	});
 }
 
@@ -59,25 +59,6 @@ QStringList CsvLoadWidget::getCsvColumns()
 QList<QStringList> CsvLoadWidget::getCsvRows()
 {
 	return csv_rows;
-}
-
-void CsvLoadWidget::selectCsvFile()
-{
-	QFileDialog file_dlg;
-
-	file_dlg.setWindowTitle(tr("Load CSV file"));
-	file_dlg.setModal(true);
-	file_dlg.setNameFilter(tr("Comma-separted values (*.csv);;All files (*.*)"));
-
-	if(file_dlg.exec()==QFileDialog::Accepted)
-	{
-		QString file;
-
-		if(!file_dlg.selectedFiles().isEmpty())
-			file = file_dlg.selectedFiles().at(0);
-
-		file_edt->setText(file);
-	}
 }
 
 QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols)
@@ -165,10 +146,10 @@ void CsvLoadWidget::loadCsvFile()
 	QFile file;
 	QString csv_buffer;
 
-	file.setFileName(file_edt->text());
+	file.setFileName(fsel_wgt->text());
 
 	if(!file.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_edt->text()),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(fsel_wgt->text()),
 										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	csv_columns.clear();
@@ -183,7 +164,7 @@ void CsvLoadWidget::loadCsvFile()
 																 col_names_chk->isChecked(), csv_columns);
 	}
 
-	file_edt->clear();
+	fsel_wgt->setText("");
 	emit s_csvFileLoaded();
 }
 

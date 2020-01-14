@@ -28,6 +28,7 @@
 #include "ui_csvloadwidget.h"
 #include "hinttextwidget.h"
 #include <QWidget>
+#include "fileselectorwidget.h"
 
 class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:
@@ -40,6 +41,8 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 
 		//! \brief Holds the rows extracted from the csv file
 		QList<QStringList> csv_rows;
+
+		FileSelectorWidget *fsel_wgt;
 
 	public:
 		CsvLoadWidget(QWidget * parent = nullptr, bool cols_in_first_row = true);
@@ -69,7 +72,6 @@ class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 		static QList<QStringList> loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols);
 
 	private slots:
-		void selectCsvFile();
 		void loadCsvFile();
 
 	signals:

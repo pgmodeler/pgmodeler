@@ -108,7 +108,7 @@ void BugReportForm::generateReport(const QByteArray &buf)
 	{
 		QByteArray comp_buf;
 
-		//Compress the buffer (using zlib) in a compression rate at 8
+		//Compress the buffer (using zlib) with a compression rate of 8
 		comp_buf=qCompress(buf, 8);
 
 		//Saves the buffer

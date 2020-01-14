@@ -31,6 +31,7 @@
 #include "modelexporthelper.h"
 #include "hinttextwidget.h"
 #include "htmlitemdelegate.h"
+#include "fileselectorwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
@@ -58,6 +59,8 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht,
 		*ignore_error_codes_ht, *mode_ht, *incl_index_ht;
 
+		FileSelectorWidget *graphics_fsel_wgt, *sql_fsel_wgt, *ddict_fsel_wgt;
+
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
@@ -75,7 +78,6 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private slots:
 		void selectExportMode();
 		void exportModel();
-		void selectOutputFile();
 		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
 		void cancelExport();
@@ -83,6 +85,9 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void handleExportCanceled();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
 		void editConnections();
+		void updateDictFileSelector(bool change);
+		void updateGraphicsFileSelector(bool change);
+		void enableExport();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings

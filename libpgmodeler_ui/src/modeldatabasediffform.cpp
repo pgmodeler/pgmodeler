@@ -27,10 +27,13 @@ map<QString, attribs_map> ModelDatabaseDiffForm::config_params;
 
 ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags flags) : BaseConfigWidget (parent)
 {
+	extern FileSelector FSel_SQLOutput;
 	try
 	{
 		setupUi(this);
 		setWindowFlags(flags);
+
+		fsel_wgt=new FileSelectorWidget(fsel, this, new FileSelector{FileSelector::Out, FileSelector::Sql});
 
 		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
@@ -125,13 +128,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
 		connect(store_in_file_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
 		connect(apply_on_server_rb, SIGNAL(clicked()), this, SLOT(enableDiffMode()));
-		connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+		connect(fsel_wgt, SIGNAL(s_fileSelected(QString)), this, SLOT(enableDiffMode()));
 		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableDiffMode()));
 		connect(generate_btn, SIGNAL(clicked()), this, SLOT(generateDiff()));
 		connect(close_btn, SIGNAL(clicked()), this, SLOT(close()));
-		connect(store_in_file_rb, SIGNAL(clicked(bool)), store_in_file_wgt, SLOT(setEnabled(bool)));
-		connect(select_file_tb, SIGNAL(clicked()), this, SLOT(selectOutputFile()));
-		connect(file_edt, SIGNAL(textChanged(QString)), this, SLOT(enableDiffMode()));
+		connect(store_in_file_rb, SIGNAL(toggled(bool)), fsel, SLOT(setEnabled(bool)));
 		connect(force_recreation_chk, SIGNAL(toggled(bool)), recreate_unmod_chk, SLOT(setEnabled(bool)));
 		connect(dont_drop_missing_objs_chk, SIGNAL(toggled(bool)), drop_missing_cols_constr_chk, SLOT(setEnabled(bool)));
 		connect(create_tb, SIGNAL(toggled(bool)), this, SLOT(filterDiffInfos()));
@@ -447,13 +448,13 @@ void ModelDatabaseDiffForm::listDatabases()
 
 void ModelDatabaseDiffForm::enableDiffMode()
 {
-	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
+	fsel_wgt->setEnabled(store_in_file_rb->isChecked());
 
 	generate_btn->setEnabled(database_cmb->currentIndex() > 0 &&
-													 ((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
-														(src_model_rb->isChecked() && loaded_model)) &&
-													 ((store_in_file_rb->isChecked() && !file_edt->text().isEmpty()) ||
-														(apply_on_server_rb->isChecked())));
+							((src_database_rb->isChecked() && src_database_cmb->currentIndex() > 0) ||
+								(src_model_rb->isChecked() && loaded_model)) &&
+							((store_in_file_rb->isChecked() && !fsel_wgt->text().isEmpty()) ||
+								(apply_on_server_rb->isChecked())));
 }
 
 void ModelDatabaseDiffForm::generateDiff()
@@ -686,7 +687,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool()
 	cancelOperation(true);
 
 	if(store_in_file_rb->isChecked())
-			filename = file_edt->text();
+			filename = fsel_wgt->text();
 	else
 	{
 			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryDir() +
@@ -728,16 +729,16 @@ void ModelDatabaseDiffForm::saveDiffToFile()
 	{
 		QFile output;
 
-		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
+		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(fsel_wgt->text()));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("salvar")));
 		import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 		step_pb->setValue(90);
 		progress_pb->setValue(100);
 
-		output.setFileName(file_edt->text());
+		output.setFileName(fsel_wgt->text());
 
 		if(!output.open(QFile::WriteOnly))
-			captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_edt->text()),
+			captureThreadError(Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(fsel_wgt->text()),
 																	 ErrorCode::FileDirectoryNotWritten, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 
 		output.write(sqlcode_txt->toPlainText().toUtf8());
@@ -995,30 +996,6 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 
 	if(item)
 		item->setHidden(!btn->isChecked());
-}
-
-void ModelDatabaseDiffForm::selectOutputFile()
-{
-	QFileDialog file_dlg;
-
-	file_dlg.setWindowTitle(tr("Save diff as..."));
-	file_dlg.setFileMode(QFileDialog::AnyFile);
-	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
-	file_dlg.setModal(true);
-	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
-
-	if(source_model)
-		file_dlg.selectFile(source_model->getName() + QString("-diff.sql"));
-
-	if(file_dlg.exec()==QFileDialog::Accepted)
-	{
-		QString file;
-
-		if(!file_dlg.selectedFiles().isEmpty())
-			file = file_dlg.selectedFiles().at(0);
-
-		file_edt->setText(file);
-	}
 }
 
 void ModelDatabaseDiffForm::loadConfiguration()
