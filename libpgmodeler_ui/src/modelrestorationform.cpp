@@ -35,12 +35,17 @@ ModelRestorationForm::ModelRestorationForm(QWidget *parent, Qt::WindowFlags f) :
 QStringList ModelRestorationForm::getTemporaryModels()
 {
 	//Returns if there is some .dbm file on the tmp dir
-	return QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList();
+	QStringList list = QDir(GlobalAttributes::getTemporaryDir(), QString("*.dbm"), QDir::Time, QDir::Files | QDir::NoDotAndDotDot).entryList();
+
+	for(auto &file : ignored_files)
+		list.removeAll(file);
+
+	return list;
 }
 
 int ModelRestorationForm::exec()
 {
-	QStringList file_list=this->getTemporaryModels(), tmp_info;
+	QStringList file_list = this->getTemporaryModels(), tmp_info;
 	QFileInfo info;
 	QTableWidgetItem *item=nullptr;
 	QFile input;
@@ -90,6 +95,11 @@ int ModelRestorationForm::exec()
 	tmp_files_tbw->resizeRowsToContents();
 
 	return QDialog::exec();
+}
+
+void ModelRestorationForm::setIgnoredFiles(const QStringList &list)
+{
+	ignored_files = list;
 }
 
 bool ModelRestorationForm::hasTemporaryModels()

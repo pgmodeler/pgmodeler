@@ -480,7 +480,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::restoreTemporaryModels()
 {
+	QStringList ignored_files;
+
+	/* If we have loaded models prior the execution of the restoration form
+	 * (e.g, the user has started pgModeler from a double click on a .dbm file)
+	 * we just need to ignore their temp files so the restoration form shows just files
+	 * created on a previous session */
+	for(int idx = 0; idx < models_tbw->count(); idx++)
+		ignored_files += QFileInfo(dynamic_cast<ModelWidget *>(models_tbw->widget(idx))->getTempFilename()).fileName();
+
 	PgModelerUiNs::resizeDialog(restoration_form);
+	restoration_form->setIgnoredFiles(ignored_files);
 
 	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())

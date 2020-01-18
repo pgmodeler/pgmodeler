@@ -36,6 +36,8 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 
 		HintTextWidget * keep_models_ht;
 
+		QStringList ignored_files;
+
 	public:
 		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
@@ -47,6 +49,9 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 
 	public slots:
 		int exec();
+
+		//! \brief List of files to be ignored by the restoration form
+		void setIgnoredFiles(const QStringList &list);
 
 		//! \brief Clears the tmp/ dir by removing all temporary files (*.dbm, *.dbk, *.omf, *.sql. *.log)
 		void removeTemporaryFiles();

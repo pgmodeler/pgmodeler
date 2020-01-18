@@ -127,6 +127,9 @@ int main(int argc, char **argv)
 		//Creates the main form
 		MainWindow fmain;
 
+		fmain.show();
+		splash.finish(&fmain);
+
 		//Loading models via command line on MacOSX are disabled until the file association work correclty on that system
 #ifndef Q_OS_MAC
 		QStringList params=app.arguments();
@@ -137,9 +140,7 @@ int main(int argc, char **argv)
 			fmain.loadModels(params);
 #endif
 
-		fmain.show();
-		splash.finish(&fmain);
-		res=app.exec();
+		res = app.exec();
 		app.closeAllWindows();
 
 		return res;
