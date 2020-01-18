@@ -26,14 +26,14 @@ OperationListWidget::OperationListWidget(QWidget *parent) : QWidget(parent)
 	setModel(nullptr);
 
 	operations_tw->headerItem()->setHidden(true);
-	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation(void)));
-	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation(void)));
-	connect(rem_operations_tb,SIGNAL(clicked()),this,SLOT(removeOperations(void)));
+	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation()));
+	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation()));
+	connect(rem_operations_tb,SIGNAL(clicked()),this,SLOT(removeOperations()));
 	connect(operations_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),this,SLOT(selectItem(QTreeWidgetItem *, int)));
-	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+	connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
 }
 
-void OperationListWidget::hide(void)
+void OperationListWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
@@ -53,7 +53,7 @@ void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
 	}
 }
 
-void OperationListWidget::updateOperationList(void)
+void OperationListWidget::updateOperationList()
 {
 	content_wgt->setEnabled(this->model_wgt!=nullptr);
 
@@ -107,22 +107,22 @@ void OperationListWidget::updateOperationList(void)
 			if(op_type==Operation::ObjectCreated)
 			{
 				op_icon=QString("criado");
-				op_name=trUtf8("created");
+				op_name=tr("created");
 			}
 			else if(op_type==Operation::ObjectRemoved)
 			{
 				op_icon=QString("removido");
-				op_name=trUtf8("removed");
+				op_name=tr("removed");
 			}
 			else if(op_type==Operation::ObjectModified)
 			{
 				op_icon=QString("modificado");
-				op_name=trUtf8("modified");
+				op_name=tr("modified");
 			}
 			else if(op_type==Operation::ObjectMoved)
 			{
 				op_icon=QString("movimentado");
-				op_name=trUtf8("moved");
+				op_name=tr("moved");
 			}
 
 			item1=new QTreeWidgetItem(item);
@@ -149,7 +149,7 @@ void OperationListWidget::setModel(ModelWidget *model)
 	updateOperationList();
 }
 
-void OperationListWidget::undoOperation(void)
+void OperationListWidget::undoOperation()
 {
 	try
 	{
@@ -174,7 +174,7 @@ void OperationListWidget::undoOperation(void)
 	}
 }
 
-void OperationListWidget::redoOperation(void)
+void OperationListWidget::redoOperation()
 {
 	try
 	{
@@ -198,12 +198,12 @@ void OperationListWidget::redoOperation(void)
 	}
 }
 
-void OperationListWidget::removeOperations(void)
+void OperationListWidget::removeOperations()
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Operation history exclusion"),
-				 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
+	msg_box.show(tr("Operation history exclusion"),
+				 tr("Delete the executed operations history is an irreversible action, do you want to continue?"),
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 
@@ -215,7 +215,7 @@ void OperationListWidget::removeOperations(void)
 	}
 }
 
-void OperationListWidget::notifyUpdateOnModel(void)
+void OperationListWidget::notifyUpdateOnModel()
 {
 	updateOperationList();
 	emit s_operationExecuted();

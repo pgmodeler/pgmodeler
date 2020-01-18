@@ -18,7 +18,7 @@
 
 #include "pgmodelerplugin.h"
 
-PgModelerPlugin::PgModelerPlugin(void)
+PgModelerPlugin::PgModelerPlugin()
 {
 	QGridLayout *gridLayout=nullptr;
 	QSpacerItem *verticalSpacer=nullptr;
@@ -73,9 +73,9 @@ PgModelerPlugin::PgModelerPlugin(void)
 	plugin_info_frm->setMainWidget(widget);
 }
 
-PgModelerPlugin::~PgModelerPlugin(void)
+PgModelerPlugin::~PgModelerPlugin()
 {
-	delete(plugin_info_frm);
+	delete plugin_info_frm;
 }
 
 void PgModelerPlugin::initPlugin(MainWindow *main_window)
@@ -83,14 +83,14 @@ void PgModelerPlugin::initPlugin(MainWindow *main_window)
 	this->main_window = main_window;
 }
 
-QKeySequence PgModelerPlugin::getPluginShortcut(void)
+QKeySequence PgModelerPlugin::getPluginShortcut()
 {
-	return(QKeySequence());
+	return QKeySequence();
 }
 
-bool PgModelerPlugin::hasMenuAction(void)
+bool PgModelerPlugin::hasMenuAction()
 {
-	return (true);
+	return true;
 }
 
 void PgModelerPlugin::configurePluginInfo(const QString &title, const QString &version, const QString &author,

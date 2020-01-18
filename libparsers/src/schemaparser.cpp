@@ -61,7 +61,7 @@ const QString SchemaParser::TokenLtEqOper=QString("<=");
 
 const QRegExp SchemaParser::AttribRegExp=QRegExp("^([a-z])([a-z]*|(\\d)*|(\\-)*|(_)*)+", Qt::CaseInsensitive);
 
-SchemaParser::SchemaParser(void)
+SchemaParser::SchemaParser()
 {
 	line=column=comment_count=0;
 	ignore_unk_atribs=ignore_empty_atribs=false;
@@ -87,12 +87,12 @@ void SchemaParser::setPgSQLVersion(const QString &pgsql_ver)
 		pgsql_version=PgSqlVersions::DefaulVersion;
 }
 
-QString SchemaParser::getPgSQLVersion(void)
+QString SchemaParser::getPgSQLVersion()
 {
-	return(pgsql_version);
+	return pgsql_version;
 }
 
-QStringList SchemaParser::extractAttributes(void)
+QStringList SchemaParser::extractAttributes()
 {
 	QStringList attribs;
 	int start=0, end=0;
@@ -120,10 +120,10 @@ QStringList SchemaParser::extractAttributes(void)
 	}
 
 	attribs.removeDuplicates();
-	return(attribs);
+	return attribs;
 }
 
-void SchemaParser::restartParser(void)
+void SchemaParser::restartParser()
 {
 	/* Clears the buffer and resets the counters for line,
 		column and amount of comments */
@@ -220,7 +220,7 @@ void SchemaParser::loadFile(const QString &filename)
 	}
 }
 
-QString SchemaParser::getAttribute(void)
+QString SchemaParser::getAttribute()
 {
 	QString atrib, current_line;
 	bool start_attrib, end_attrib, error=false;
@@ -277,10 +277,10 @@ QString SchemaParser::getAttribute(void)
 						ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(atrib);
+	return atrib;
 }
 
-QString SchemaParser::getWord(void)
+QString SchemaParser::getWord()
 {
 	QString word, current_line;
 
@@ -303,10 +303,10 @@ QString SchemaParser::getWord(void)
 		}
 	}
 
-	return(word);
+	return word;
 }
 
-QString SchemaParser::getPureText(void)
+QString SchemaParser::getPureText()
 {
 	QString text, current_line;
 	bool error=false;
@@ -356,10 +356,10 @@ QString SchemaParser::getPureText(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(text);
+	return text;
 }
 
-QString SchemaParser::getConditional(void)
+QString SchemaParser::getConditional()
 {
 	QString conditional, current_line;
 	bool error=false;
@@ -395,10 +395,10 @@ QString SchemaParser::getConditional(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(conditional);
+	return conditional;
 }
 
-QString SchemaParser::getMetaCharacter(void)
+QString SchemaParser::getMetaCharacter()
 {
 	QString meta, current_line;
 	bool error=false;
@@ -432,17 +432,17 @@ QString SchemaParser::getMetaCharacter(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(meta);
+	return meta;
 }
 
 bool SchemaParser::isSpecialCharacter(char chr)
 {
-	return(chr==CharIniAttribute || chr==CharEndAttribute ||
-		   chr==CharIniConditional || chr==CharIniMetachar ||
-		   chr==CharIniPlainText || chr==CharEndPlainText);
+	return chr==CharIniAttribute || chr==CharEndAttribute ||
+			chr==CharIniConditional || chr==CharIniMetachar ||
+			chr==CharIniPlainText || chr==CharEndPlainText;
 }
 
-bool SchemaParser::evaluateComparisonExpr(void)
+bool SchemaParser::evaluateComparisonExpr()
 {
 	QString curr_line, attrib, value, oper, valid_op_chrs="=!<>fi";
 	bool error=false, end_eval=false, expr_is_true=true;
@@ -579,10 +579,10 @@ bool SchemaParser::evaluateComparisonExpr(void)
 						.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(expr_is_true);
+	return expr_is_true;
 }
 
-void SchemaParser::defineAttribute(void)
+void SchemaParser::defineAttribute()
 {
 	QString curr_line, attrib, value, new_attrib;
 	bool error=false, end_def=false, use_val_as_name=false;
@@ -681,7 +681,7 @@ void SchemaParser::defineAttribute(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void SchemaParser::unsetAttribute(void)
+void SchemaParser::unsetAttribute()
 {
 	QString curr_line, attrib;
 	bool end_def=false;
@@ -731,7 +731,7 @@ void SchemaParser::unsetAttribute(void)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
-bool SchemaParser::evaluateExpression(void)
+bool SchemaParser::evaluateExpression()
 {
 	QString current_line, cond, attrib, prev_cond;
 	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true, comp_true=true;
@@ -869,7 +869,7 @@ bool SchemaParser::evaluateExpression(void)
 						ErrorCode::InvalidSyntax,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(expr_is_true);
+	return expr_is_true;
 }
 
 void SchemaParser::ignoreBlankChars(const QString &line)
@@ -896,7 +896,7 @@ char SchemaParser::translateMetaCharacter(const QString &meta)
 						ErrorCode::InvalidMetacharacter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	return(metas.at(meta));
+	return metas.at(meta);
 }
 
 QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &attribs, unsigned def_type)
@@ -908,21 +908,21 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 		if(def_type==SqlDefinition)
 		{
 			//Formats the filename
-			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 					 GlobalAttributes::SQLSchemaDir + GlobalAttributes::DirSeparator + obj_name + GlobalAttributes::SchemaExt;
 
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
-			return(getCodeDefinition(filename, attribs));
+			return getCodeDefinition(filename, attribs);
 		}
 		else
 		{
-			filename=GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 					 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator + obj_name +
 					 GlobalAttributes::SchemaExt;
 
-			return(XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
+			return XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs));
 		}
 	}
 	catch(Exception &e)
@@ -1351,7 +1351,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 	restartParser();
 	ignore_unk_atribs=false;
 	ignore_empty_atribs=false;
-	return(object_def);
+	return object_def;
 }
 
 QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &attribs)
@@ -1360,7 +1360,7 @@ QString SchemaParser::getCodeDefinition(const QString &filename, attribs_map &at
 	{
 		loadFile(filename);
 		attribs[Attributes::PgSqlVersion]=pgsql_version;
-		return(getCodeDefinition(attribs));
+		return getCodeDefinition(attribs);
 	}
 	catch(Exception &e)
 	{

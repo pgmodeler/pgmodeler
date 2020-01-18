@@ -55,7 +55,7 @@ class ElementWidget: public QWidget, public Ui::ElementWidget {
 		*operator_sel;
 		
 		//! \brief Updates the column combobox with the existent columns on parent table
-		void updateColumnsCombo(void);
+		void updateColumnsCombo();
 		
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj);
 
@@ -79,13 +79,13 @@ class ElementWidget: public QWidget, public Ui::ElementWidget {
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, Element *elem);
 
 		//! \brief Returns the configured element
-		Element *getElement(void);
+		Element *getElement();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 				
 	private slots:
-		void selectElementObject(void);
+		void selectElementObject();
 };
 
 #endif

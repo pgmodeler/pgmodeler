@@ -17,31 +17,20 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
+\ingroup libutils
+\class Application
+\brief This class inherits from QApplication and just sets up a search path in order to initialize GlobalAttribute static class
+\note <strong>Creation date:</strong> 30/08/2007
 */
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
-#include "baseobject.h"
+#include <QApplication>
 
-class TypeAttribute: public BaseObject {
-	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
-
+class Application: public QApplication {
 	public:
-		TypeAttribute();
-
-		void setType(PgSqlType type);
-		PgSqlType getType();
-
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		Application(int & argc, char ** argv);
 };
 
 #endif

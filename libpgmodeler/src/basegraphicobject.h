@@ -61,15 +61,15 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
-		void setPositionAttribute(void);
+		void setPositionAttribute();
 
 		//! \brief Defines the receveir objects that represents the 'this' object on the QGraphicsScene
 		void setReceiverObject(QObject *obj);
 
-		void setFadedOutAttribute(void);
+		void setFadedOutAttribute();
 
 	public:
-		BaseGraphicObject(void);
+		BaseGraphicObject();
 		~BaseGraphicObject(void){}
 
 		/*! \brief Sets whether the object is protected or not (method overloading
@@ -95,10 +95,10 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		void setFadedOut(bool value);
 
 		//! \brief Returns the modified status of the object
-		bool isModified(void);
+		bool isModified();
 
 		//! \brief Returns the fade out status of the object
-		bool isFadedOut(void);
+		bool isFadedOut();
 
 		//! \brief Returns the current position of the object
 		QPointF getPosition();
@@ -107,7 +107,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		void operator = (BaseGraphicObject &obj);
 
 		//! \brief Gets the current overlying (top object, scene object) that graphically represents the 'this' object
-		QObject *getOverlyingObject(void);
+		QObject *getOverlyingObject();
 
 		//! \brief Returns the code definition of the object
 		virtual QString getCodeDefinition(unsigned)=0;
@@ -119,11 +119,11 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		void setLayer(unsigned layer);
 
 		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer(void);
+		unsigned getLayer();
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method
-		void s_objectModified(void);
+		void s_objectModified();
 		//! \brief Signal emitted when the user calls the setProtected() method
 		void s_objectProtected(bool);
 

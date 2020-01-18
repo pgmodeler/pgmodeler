@@ -53,7 +53,7 @@ void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~(op_family->getIndexingType())));
 }
 
-void OperatorFamilyWidget::applyConfiguration(void)
+void OperatorFamilyWidget::applyConfiguration()
 {
 	try
 	{

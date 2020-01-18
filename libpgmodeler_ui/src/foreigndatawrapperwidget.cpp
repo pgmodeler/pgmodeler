@@ -30,10 +30,10 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 		func_validator_sel=nullptr;
 
 		func_handler_ht = new HintTextWidget(func_handler_hint, this);
-		func_handler_ht->setText(trUtf8("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
+		func_handler_ht->setText(tr("The handler function must have the following signature:  <strong>fdw_handler</strong> <em>function_name</em>()"));
 
 		func_validator_ht = new HintTextWidget(func_validator_hint, this);
-		func_validator_ht->setText(trUtf8("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
+		func_validator_ht->setText(tr("The validator function must have the following signature: <em>function_name</em>(<strong>text[]</strong>,<strong>oid</strong>). The return type of ths function is ignored."));
 
 		func_handler_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
 		func_validator_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
@@ -52,8 +52,8 @@ ForeignDataWrapperWidget::ForeignDataWrapperWidget(QWidget *parent): BaseObjectW
 																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
 		options_tab->setCellsEditable(true);
 		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(trUtf8("Option"), 0);
-		options_tab->setHeaderLabel(trUtf8("Value"), 1);
+		options_tab->setHeaderLabel(tr("Option"), 0);
+		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(4,4,4,4);
@@ -100,7 +100,7 @@ void ForeignDataWrapperWidget::setAttributes(DatabaseModel *model, OperationList
 	}
 }
 
-void ForeignDataWrapperWidget::applyConfiguration(void)
+void ForeignDataWrapperWidget::applyConfiguration()
 {
 	try
 	{

@@ -47,18 +47,18 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 	public:
 		RelationshipConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration(void);
-		void loadConfiguration(void);
-		static map<QString, attribs_map> getConfigurationParams(void);
+		void saveConfiguration();
+		void loadConfiguration();
+		static map<QString, attribs_map> getConfigurationParams();
 
 	public slots:
-		void applyConfiguration(void);
-		void restoreDefaults(void);
+		void applyConfiguration();
+		void restoreDefaults();
 
 	private slots:
-		void fillNamePatterns(void);
-		void updatePattern(void);
-		void enableConnModePreview(void);
+		void fillNamePatterns();
+		void updatePattern();
+		void enableConnModePreview();
 
 };
 

@@ -41,21 +41,21 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
 
-	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject(void)));
-	connect(objectslist_tbw,SIGNAL(itemPressed(QTableWidgetItem*)),this, SLOT(selectObject(void)));
-	connect(expand_all_tb, SIGNAL(clicked(void)), objectstree_tw, SLOT(expandAll(void)));
-	connect(collapse_all_tb, SIGNAL(clicked(void)), this, SLOT(collapseAll(void)));
+	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject()));
+	connect(objectslist_tbw,SIGNAL(itemPressed(QTableWidgetItem*)),this, SLOT(selectObject()));
+	connect(expand_all_tb, SIGNAL(clicked()), objectstree_tw, SLOT(expandAll()));
+	connect(collapse_all_tb, SIGNAL(clicked()), this, SLOT(collapseAll()));
 
 	if(!simplified_view)
 	{
 		widgets_conf.setValue(QString("splitterSize"), splitter->saveState());
-		connect(options_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+		connect(options_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
 		connect(visibleobjects_lst,SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setObjectVisible(QListWidgetItem*)));
 		connect(select_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
 		connect(clear_all_tb,SIGNAL(clicked(bool)), this, SLOT(setAllObjectsVisible(bool)));
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject(void)));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject(void)));
-		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide(void)));
+		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(editObject()));
+		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(editObject()));
+		connect(hide_tb, SIGNAL(clicked(bool)), this, SLOT(hide()));
 
 		ObjectFinderWidget::updateObjectTypeList(visibleobjects_lst);
 		setAllObjectsVisible(true);
@@ -67,14 +67,14 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setMinimumSize(250, 300);
 		setWindowModality(Qt::ApplicationModal);
 		setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
-		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
-		connect(select_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
-		connect(cancel_tb,SIGNAL(clicked(void)),this,SLOT(close(void)));
+		connect(objectstree_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close()));
+		connect(objectslist_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close()));
+		connect(select_tb,SIGNAL(clicked()),this,SLOT(close()));
+		connect(cancel_tb,SIGNAL(clicked()),this,SLOT(close()));
 	}
 
-	connect(tree_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
-	connect(list_view_tb,SIGNAL(clicked(void)),this,SLOT(changeObjectsView(void)));
+	connect(tree_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
+	connect(list_view_tb,SIGNAL(clicked()),this,SLOT(changeObjectsView()));
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 	connect(by_id_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 }
@@ -94,27 +94,27 @@ bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 			if(model_wgt)
 				model_wgt->configurePopupMenu({});
 
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void ModelObjectsWidget::hide(void)
+void ModelObjectsWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
 }
 
 
-void ModelObjectsWidget::showObjectMenu(void)
+void ModelObjectsWidget::showObjectMenu()
 {
 	if(selected_object && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
 		model_wgt->popup_menu.exec(QCursor::pos());
 }
 
-void ModelObjectsWidget::editObject(void)
+void ModelObjectsWidget::editObject()
 {
 	if(selected_object && model_wgt && !simplified_view)
 	{
@@ -138,7 +138,7 @@ void ModelObjectsWidget::editObject(void)
 	}
 }
 
-void ModelObjectsWidget::selectObject(void)
+void ModelObjectsWidget::selectObject()
 {
 	ObjectType obj_type=ObjectType::BaseObject;
 	ModelWidget *model_wgt=nullptr;
@@ -165,7 +165,7 @@ void ModelObjectsWidget::selectObject(void)
 				obj_type!=ObjectType::Index && obj_type!=ObjectType::Trigger && obj_type!=ObjectType::Permission)
 		{
 			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-						trUtf8("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
+						tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
@@ -208,7 +208,7 @@ void ModelObjectsWidget::selectObject(void)
 
 QVariant ModelObjectsWidget::generateItemValue(BaseObject *object)
 {
-	return(QVariant::fromValue(reinterpret_cast<void *>(object)));
+	return QVariant::fromValue(reinterpret_cast<void *>(object));
 }
 
 QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTreeWidgetItem *root, bool update_perms)
@@ -319,7 +319,7 @@ QTreeWidgetItem *ModelObjectsWidget::createItemForObject(BaseObject *object, QTr
 
 	item->setIcon(0, QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(obj_type) + str_aux)));
 
-	return(item);
+	return item;
 }
 
 void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
@@ -379,7 +379,7 @@ void ModelObjectsWidget::setAllObjectsVisible(bool value)
 	updateObjectsView();
 }
 
-void ModelObjectsWidget::changeObjectsView(void)
+void ModelObjectsWidget::changeObjectsView()
 {
 	if(sender()==tree_view_tb || sender()==list_view_tb)
 	{
@@ -403,7 +403,7 @@ void ModelObjectsWidget::changeObjectsView(void)
 	collapse_all_tb->setEnabled(tree_view_tb->isChecked());
 }
 
-void ModelObjectsWidget::collapseAll(void)
+void ModelObjectsWidget::collapseAll()
 {
 	QTreeWidgetItem *root=objectstree_tw->topLevelItem(0);
 	objectstree_tw->collapseAll();
@@ -412,7 +412,7 @@ void ModelObjectsWidget::collapseAll(void)
 		root->setExpanded(true);
 }
 
-void ModelObjectsWidget::filterObjects(void)
+void ModelObjectsWidget::filterObjects()
 {
 	if(tree_view_tb->isChecked())
 	{
@@ -436,7 +436,7 @@ void ModelObjectsWidget::filterObjects(void)
 	}
 }
 
-void ModelObjectsWidget::updateObjectsView(void)
+void ModelObjectsWidget::updateObjectsView()
 {
   updateDatabaseTree();
   updateObjectsList();
@@ -445,7 +445,7 @@ void ModelObjectsWidget::updateObjectsView(void)
 	filterObjects();
 }
 
-void ModelObjectsWidget::updateObjectsList(void)
+void ModelObjectsWidget::updateObjectsList()
 {
 	vector<BaseObject *> objects;
 
@@ -705,7 +705,7 @@ void ModelObjectsWidget::updatePermissionTree(QTreeWidgetItem *root, BaseObject 
 	}
 }
 
-void ModelObjectsWidget::updateDatabaseTree(void)
+void ModelObjectsWidget::updateDatabaseTree()
 {
 	if(!db_model)
 		objectstree_tw->clear();
@@ -798,9 +798,9 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 	}
 }
 
-BaseObject *ModelObjectsWidget::getSelectedObject(void)
+BaseObject *ModelObjectsWidget::getSelectedObject()
 {
-	return(selected_object);
+	return selected_object;
 }
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
@@ -808,7 +808,7 @@ void ModelObjectsWidget::enableObjectCreation(bool value)
   enable_obj_creation=value;
 }
 
-void ModelObjectsWidget::close(void)
+void ModelObjectsWidget::close()
 {
 	QObject *obj_sender=sender();
 
@@ -913,7 +913,8 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	{
 		QPoint pos_dif;
 		QDesktopWidget desktop;
-		QRect ret=desktop.screenGeometry();
+		//QRect ret=desktop.screenGeometry();
+		QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
 		int px, py;
 
 		pos_dif=pos1-pos;
@@ -1011,10 +1012,10 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 			++itr;
 		}
 
-		return(item);
+		return item;
 	}
 	else
-		return(nullptr);
+		return nullptr;
 }
 
 void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
@@ -1025,7 +1026,7 @@ void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
 	if(item)
 	{
 		objectstree_tw->blockSignals(true);
-		objectstree_tw->setItemSelected(item, true);
+		item->setSelected(true);
 		objectstree_tw->setCurrentItem(item);
 		objectstree_tw->scrollToItem(item);
 		selected_object=obj;

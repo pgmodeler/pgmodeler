@@ -38,7 +38,7 @@ class ExtensionWidget: public BaseObjectWidget, public Ui::ExtensionWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Extension *ext);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

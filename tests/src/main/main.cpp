@@ -46,5 +46,5 @@ int main(int, char **argv)
     if(result!=0) break;
   }
 
-  return(result);
+	return result;
 }

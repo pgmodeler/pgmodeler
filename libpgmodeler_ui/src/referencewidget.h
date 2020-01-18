@@ -59,14 +59,14 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		explicit ReferenceWidget(QWidget *parent = nullptr);
 
 		void setAttributes(Reference ref, unsigned ref_flags, DatabaseModel *model);
-		Reference getReference(void);
-		unsigned getReferenceFlags(void);
+		Reference getReference();
+		unsigned getReferenceFlags();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void selectReferenceType(void);
+		void selectReferenceType();
 		void addColumn(int row);
 		void addRefTable(int row);
 		void updateColumn(int row);
@@ -74,7 +74,7 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 		void duplicateColumn(int src_row, int new_row);
 
 	signals:
-		void s_closeRequested(void);
+		void s_closeRequested();
 };
 
 #endif

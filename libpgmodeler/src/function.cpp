@@ -18,7 +18,7 @@
 
 #include "function.h"
 
-Function::Function(void)
+Function::Function()
 {
 	return_type=PgSqlType(QString("void"));
 	language=nullptr;
@@ -259,64 +259,64 @@ void Function::setSourceCode(const QString &src_code)
 	this->source_code=src_code;
 }
 
-PgSqlType Function::getReturnType(void)
+PgSqlType Function::getReturnType()
 {
-	return(return_type);
+	return return_type;
 }
 
-FunctionType Function::getFunctionType(void)
+FunctionType Function::getFunctionType()
 {
-	return(function_type);
+	return function_type;
 }
 
-BaseObject *Function::getLanguage(void)
+BaseObject *Function::getLanguage()
 {
-	return(language);
+	return language;
 }
 
-unsigned Function::getParameterCount(void)
+unsigned Function::getParameterCount()
 {
-	return(parameters.size());
+	return parameters.size();
 }
 
-unsigned Function::getReturnedTableColumnCount(void)
+unsigned Function::getReturnedTableColumnCount()
 {
-	return(ret_table_columns.size());
+	return ret_table_columns.size();
 }
 
-bool Function::isReturnSetOf(void)
+bool Function::isReturnSetOf()
 {
-	return(returns_setof);
+	return returns_setof;
 }
 
-bool Function::isReturnTable(void)
+bool Function::isReturnTable()
 {
-	return(ret_table_columns.size() > 0);
+	return (ret_table_columns.size() > 0);
 }
 
-bool Function::isWindowFunction(void)
+bool Function::isWindowFunction()
 {
-	return(is_wnd_function);
+	return is_wnd_function;
 }
 
-bool Function::isLeakProof(void)
+bool Function::isLeakProof()
 {
-	return(is_leakproof);
+	return is_leakproof;
 }
 
-SecurityType Function::getSecurityType(void)
+SecurityType Function::getSecurityType()
 {
-	return(security_type);
+	return security_type;
 }
 
-BehaviorType Function::getBehaviorType(void)
+BehaviorType Function::getBehaviorType()
 {
-	return(behavior_type);
+	return behavior_type;
 }
 
-QString Function::getSourceCode(void)
+QString Function::getSourceCode()
 {
-	return(source_code);
+	return source_code;
 }
 
 Parameter Function::getParameter(unsigned param_idx)
@@ -325,7 +325,7 @@ Parameter Function::getParameter(unsigned param_idx)
 	if(param_idx>=parameters.size())
 		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(parameters[param_idx]);
+	return parameters[param_idx];
 }
 
 Parameter Function::getReturnedTableColumn(unsigned column_idx)
@@ -334,36 +334,36 @@ Parameter Function::getReturnedTableColumn(unsigned column_idx)
 	if(column_idx>=ret_table_columns.size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(ret_table_columns[column_idx]);
+	return ret_table_columns[column_idx];
 }
 
-unsigned Function::getExecutionCost(void)
+unsigned Function::getExecutionCost()
 {
-	return(execution_cost);
+	return execution_cost;
 }
 
-unsigned Function::getRowAmount(void)
+unsigned Function::getRowAmount()
 {
-	return(row_amount);
+	return row_amount;
 }
 
-QString Function::getLibrary(void)
+QString Function::getLibrary()
 {
-	return(library);
+	return library;
 }
 
-QString Function::getSymbol(void)
+QString Function::getSymbol()
 {
-	return(symbol);
+	return symbol;
 }
 
-void Function::removeParameters(void)
+void Function::removeParameters()
 {
 	parameters.clear();
 	createSignature();
 }
 
-void Function::removeReturnedTableColumns(void)
+void Function::removeReturnedTableColumns()
 {
 	ret_table_columns.clear();
 	setCodeInvalidated(true);
@@ -417,7 +417,7 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 
 QString Function::getSignature(bool)
 {
-	return(signature);
+	return signature;
 }
 
 void Function::createSignature(bool format, bool prepend_schema)
@@ -450,13 +450,13 @@ void Function::createSignature(bool format, bool prepend_schema)
 
 QString Function::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	setParametersAttribute(def_type);
 
@@ -494,7 +494,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::Definition]=source_code;
 
 	attributes[Attributes::Signature]=signature;
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Function::getAlterDefinition(BaseObject *object)
@@ -545,7 +545,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 		copyAttributes(attribs);
 
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -553,7 +553,7 @@ QString Function::getAlterDefinition(BaseObject *object)
 	}
 }
 
-void Function::configureSearchAttributes(void)
+void Function::configureSearchAttributes()
 {
 	QStringList param_types;
 

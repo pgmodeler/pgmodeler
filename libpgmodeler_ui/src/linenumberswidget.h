@@ -69,7 +69,7 @@ class LineNumbersWidget : public QWidget {
 		//! \brief Configures the lines for both font and widget's background
 		static void setColors(const QColor &font_color, const QColor &bg_color);
 
-		static QColor getBackgroundColor(void);
+		static QColor getBackgroundColor();
 };
 
 #endif

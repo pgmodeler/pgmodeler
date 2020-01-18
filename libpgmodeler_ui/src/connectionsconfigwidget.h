@@ -51,16 +51,16 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
-		void updateConnectionsCombo(void);
+		void updateConnectionsCombo();
 		
 	public:
 		ConnectionsConfigWidget(QWidget * parent = nullptr);
-		~ConnectionsConfigWidget(void);
+		~ConnectionsConfigWidget();
 		
-		void saveConfiguration(void);
-		void loadConfiguration(void);
+		void saveConfiguration();
+		void loadConfiguration();
 		
-		static map<QString, attribs_map> getConfigurationParams(void);
+		static map<QString, attribs_map> getConfigurationParams();
 		
 		//! \brief Fills the passed map with all the loaded connections.
 		static void getConnections(map<QString, Connection *> &conns, bool inc_hosts=true);
@@ -78,20 +78,20 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		static Connection *getDefaultConnection(unsigned operation);
 		
 	protected:
-		void destroyConnections(void);
+		void destroyConnections();
 		
 	public slots:
-		void restoreDefaults(void);
+		void restoreDefaults();
 		
 	private slots:
-		void newConnection(void);
-		void duplicateConnection(void);
-		void handleConnection(void);
-		void editConnection(void);
-		void testConnection(void);
-		void removeConnection(void);
-		void enableCertificates(void);
-		void enableConnectionTest(void);
+		void newConnection();
+		void duplicateConnection();
+		void handleConnection();
+		void editConnection();
+		void testConnection();
+		void removeConnection();
+		void enableCertificates();
+		void enableConnectionTest();
 		void applyConfiguration(void){}
 		
 		friend class ConfigurationForm;

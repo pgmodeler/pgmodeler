@@ -70,7 +70,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		void editElement(int lin_idx);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

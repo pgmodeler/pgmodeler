@@ -61,17 +61,17 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 	private slots:
 		//! \brief Shows only the fields related to the selected constraint type
-		void selectConstraintType(void);
+		void selectConstraintType();
 		
 		//! \brief Selects the referenced table as well updates the combo containing the referenced table columns
-		void selectReferencedTable(void);
+		void selectReferencedTable();
 		
 		void addColumn(int row);
 		void removeColumn(int);
-		void removeColumns(void);
+		void removeColumns();
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

@@ -38,7 +38,7 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	});
 }
 
-void LayersWidget::updateLayers(void)
+void LayersWidget::updateLayers()
 {
 	QListWidgetItem *item = nullptr;
 
@@ -63,10 +63,10 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 			startLayerRenaming(layers_lst->currentItem());
 	}
 
-	return(false);
+	return false;
 }
 
-void LayersWidget::updateActiveLayers(void)
+void LayersWidget::updateActiveLayers()
 {
 	QStringList active_layers;
 	QListWidgetItem *item = nullptr;
@@ -89,10 +89,10 @@ void LayersWidget::removeLayer(bool clear)
 	Messagebox msg_box;
 
 	if(clear)
-		msg_box.show(trUtf8("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("This action will delete all layers (except the default one) and the objects in them will be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 	else
-		msg_box.show(trUtf8("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
+		msg_box.show(tr("Delete the selected layer will cause objects in it to be moved to the default layer. Do you want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
@@ -104,7 +104,7 @@ void LayersWidget::removeLayer(bool clear)
 			while(layers_lst->count() > 1)
 			{
 				item = layers_lst->takeItem(layers_lst->count() - 1);
-				delete(item);
+				delete item;
 			}
 		}
 		else if(layers_lst->currentRow() > 0)
@@ -112,7 +112,7 @@ void LayersWidget::removeLayer(bool clear)
 			item = layers_lst->currentItem();
 			model->scene->removeLayer(item->text());
 			layers_lst->takeItem(layers_lst->currentRow());
-			delete(item);
+			delete item;
 		}
 
 		layers_lst->setCurrentRow(-1);
@@ -120,7 +120,7 @@ void LayersWidget::removeLayer(bool clear)
 	}
 }
 
-void LayersWidget::enableButtons(void)
+void LayersWidget::enableButtons()
 {
 	remove_tb->setEnabled(layers_lst->currentRow() > 0);
 	remove_all_tb->setEnabled(layers_lst->count() > 1);
@@ -147,7 +147,7 @@ void LayersWidget::setModel(ModelWidget *model)
 QListWidgetItem *LayersWidget::addLayer(const QString &name)
 {
 	QListWidgetItem *item = nullptr;
-	QString aux_name = name.isEmpty() ? trUtf8("New layer") : name;
+	QString aux_name = name.isEmpty() ? tr("New layer") : name;
 
 	aux_name = model->scene->addLayer(aux_name);
 	item = new QListWidgetItem(aux_name);
@@ -163,7 +163,7 @@ QListWidgetItem *LayersWidget::addLayer(const QString &name)
 
 	enableButtons();
 
-	return(item);
+	return item;
 }
 
 void LayersWidget::startLayerRenaming(QListWidgetItem *item)
@@ -177,7 +177,7 @@ void LayersWidget::startLayerRenaming(QListWidgetItem *item)
 	}
 }
 
-void LayersWidget::finishLayerRenaming(void)
+void LayersWidget::finishLayerRenaming()
 {
 	if(curr_item)
 	{

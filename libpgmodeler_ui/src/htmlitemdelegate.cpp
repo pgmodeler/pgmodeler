@@ -25,7 +25,7 @@ HtmlItemDelegate::HtmlItemDelegate(QObject *parent) : PlainTextItemDelegate(pare
 
 }
 
-HtmlItemDelegate::~HtmlItemDelegate(void)
+HtmlItemDelegate::~HtmlItemDelegate()
 {
 
 }

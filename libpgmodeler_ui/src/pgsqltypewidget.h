@@ -57,7 +57,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 								   bool oid_types=true, bool pseudo_types=true);
 
 	private slots:
-		void updateTypeFormat(void);
+		void updateTypeFormat();
 
 	public slots:
 		void setAttributes(PgSqlType type, DatabaseModel *model,
@@ -65,7 +65,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 						   bool oid_types=true, bool pseudo_types=true);
 
 		//! \brief Returns the PostgreSQL type configured via form
-		PgSqlType getPgSQLType(void);
+		PgSqlType getPgSQLType();
 };
 
 #endif

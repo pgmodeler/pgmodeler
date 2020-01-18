@@ -39,7 +39,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
-		pattern_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+		pattern_hl->loadConfiguration(GlobalAttributes::getConfigurationsDir() +
 									  GlobalAttributes::DirSeparator +
 									  GlobalAttributes::PatternHighlightConf +
 									  GlobalAttributes::ConfigurationExt);
@@ -63,17 +63,17 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	deferral_cmb->addItems(list);
 
 	ActionType::getTypes(list);
-	list.push_front(trUtf8("Default"));
+	list.push_front(tr("Default"));
 	del_action_cmb->addItems(list);
 	upd_action_cmb->addItems(list);
 
 	for(int i=0; i < rel_types.size(); i++)
 		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
 
-	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
+	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
 
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -85,12 +85,12 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 }
 
-map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
-void RelationshipConfigWidget::loadConfiguration(void)
+void RelationshipConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -128,13 +128,13 @@ void RelationshipConfigWidget::loadConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::saveConfiguration(void)
+void RelationshipConfigWidget::saveConfiguration()
 {  
 	try
 	{
 		QString patterns_sch, root_dir;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
+		root_dir=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator;
 
 		patterns_sch=root_dir +
@@ -176,7 +176,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::applyConfiguration(void)
+void RelationshipConfigWidget::applyConfiguration()
 {
 	RelationshipView::setCrowsFoot(crows_foot_rb->isChecked());
 
@@ -191,7 +191,7 @@ void RelationshipConfigWidget::applyConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::restoreDefaults(void)
+void RelationshipConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -205,7 +205,7 @@ void RelationshipConfigWidget::restoreDefaults(void)
 	}
 }
 
-void RelationshipConfigWidget::fillNamePatterns(void)
+void RelationshipConfigWidget::fillNamePatterns()
 {
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
@@ -248,7 +248,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	}
 }
 
-void RelationshipConfigWidget::updatePattern(void)
+void RelationshipConfigWidget::updatePattern()
 {
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
@@ -264,7 +264,7 @@ void RelationshipConfigWidget::updatePattern(void)
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();
 }
 
-void RelationshipConfigWidget::enableConnModePreview(void)
+void RelationshipConfigWidget::enableConnModePreview()
 {
 	crows_foot_lbl->setEnabled(crows_foot_rb->isChecked());
 	conn_cnt_pnts_lbl->setEnabled(center_pnts_rb->isChecked());

@@ -54,15 +54,15 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 		/* Forcing the widget to indicate that the handled object is not protected
 		even if it IS protected. This will avoid the ok button of the parent dialog
 		to be disabled */
-		virtual bool isHandledObjectProtected(void){ return(false); }
+		virtual bool isHandledObjectProtected(void){ return false; }
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
 		void generateSourceCode(int=0);
 		void setSourceCodeTab(int=0);
-		void saveSQLCode(void);
+		void saveSQLCode();
 };
 
 #endif

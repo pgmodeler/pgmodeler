@@ -15,33 +15,10 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+#include "application.h"
+#include "globalattributes.h"
 
-/**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
-
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
-
-#include "baseobject.h"
-
-class TypeAttribute: public BaseObject {
-	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
-
-	public:
-		TypeAttribute();
-
-		void setType(PgSqlType type);
-		PgSqlType getType();
-
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
-};
-
-#endif
+Application::Application(int &argc, char **argv) : QApplication(argc,argv)
+{
+	GlobalAttributes::setSearchPath(this->applicationDirPath());
+}

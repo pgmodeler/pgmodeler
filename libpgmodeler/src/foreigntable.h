@@ -34,11 +34,11 @@ class ForeignTable: public PhysicalTable, public ForeignObject {
 		ForeignServer *foreign_server;
 
 	public:
-		ForeignTable(void);
-		~ForeignTable(void);
+		ForeignTable();
+		~ForeignTable();
 
 		void setForeignServer(ForeignServer *server);
-		ForeignServer *getForeignServer(void);
+		ForeignServer *getForeignServer();
 
 		/*! \brief Adds an child object to the foreign table.
 		 * This will raise an error if the user try to add constraints other than CHECK,

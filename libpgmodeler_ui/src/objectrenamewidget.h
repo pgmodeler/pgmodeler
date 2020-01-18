@@ -52,10 +52,10 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 		void setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list);
 
 	public slots:
-		int exec(void);
+		int exec();
 
 	private slots:
-		void applyRenaming(void);
+		void applyRenaming();
 };
 
 #endif

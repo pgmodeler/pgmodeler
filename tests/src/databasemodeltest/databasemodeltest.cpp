@@ -24,11 +24,11 @@ class DatabaseModelTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void saveObjectsMetadata(void);
-		void loadObjectsMetadata(void);
+		void saveObjectsMetadata();
+		void loadObjectsMetadata();
 };
 
-void DatabaseModelTest::saveObjectsMetadata(void)
+void DatabaseModelTest::saveObjectsMetadata()
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);
@@ -51,7 +51,7 @@ void DatabaseModelTest::saveObjectsMetadata(void)
 	QCOMPARE(QFileInfo(output).exists(), true);
 }
 
-void DatabaseModelTest::loadObjectsMetadata(void)
+void DatabaseModelTest::loadObjectsMetadata()
 {
 	DatabaseModel dbmodel;
 	QTextStream out(stdout);

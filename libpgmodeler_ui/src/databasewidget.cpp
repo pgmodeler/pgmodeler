@@ -34,12 +34,12 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		def_owner_sel=new ObjectSelectorWidget(ObjectType::Role, true, this);
 		def_tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, true, this);
 
-		frame=generateInformationFrame(trUtf8("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
+		frame=generateInformationFrame(tr("The fields <strong>LC_COLLATE</strong> and <strong>LC_CTYPE</strong> have pre-configured values based upon the running system. You can freely modify those values if you intend to export the model to another host."));
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(0)->layout());
 		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), grid->count()+1, 0);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 
-		frame=generateInformationFrame(trUtf8("Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model."));
+		frame=generateInformationFrame(tr("Use the above fields to specify the default attributes assigned to new objects created on the database model. Leaving a field empty will cause PostgreSQL to use the default values when exporting the model."));
 		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
 
 		grid->addWidget(def_collation_sel, 0, 1);
@@ -52,7 +52,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		//Configures the encoding combobox
 		EncodingType::getTypes(encodings);
-		encodings.push_front(trUtf8("Default"));
+		encodings.push_front(tr("Default"));
 		encoding_cmb->addItems(encodings);
 
 		//Configures the localizations combobox
@@ -64,7 +64,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		loc_list.removeDuplicates();
 		loc_list.sort();
-		loc_list.push_front(trUtf8("Default"));
+		loc_list.push_front(tr("Default"));
 
 		lccollate_cmb->addItems(loc_list);
 		lcctype_cmb->addItems(loc_list);
@@ -116,7 +116,7 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 	}
 }
 
-void DatabaseWidget::applyConfiguration(void)
+void DatabaseWidget::applyConfiguration()
 {
 	try
 	{
@@ -132,12 +132,12 @@ void DatabaseWidget::applyConfiguration(void)
 		else
 			model->setEncoding(EncodingType(BaseType::Null));
 
-		if(lccollate_cmb->currentText()!=trUtf8("Default"))
+		if(lccollate_cmb->currentText()!=tr("Default"))
 			model->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());
 		else
 			model->setLocalization(Collation::LcCollate, QString());
 
-		if(lcctype_cmb->currentText()!=trUtf8("Default"))
+		if(lcctype_cmb->currentText()!=tr("Default"))
 			model->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
 		else
 			model->setLocalization(Collation::LcCtype, QString());

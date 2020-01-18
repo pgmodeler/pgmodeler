@@ -35,15 +35,15 @@ class Schema: public BaseGraphicObject {
 		bool rect_visible;
 
 	public:
-		Schema(void);
+		Schema();
 
 		void setName(const QString &name);
 
 		void setFillColor(const QColor &color);
-		QColor getFillColor(void);
+		QColor getFillColor();
 
 		void setRectVisible(bool value);
-		bool isRectVisible(void);
+		bool isRectVisible();
 
 		virtual QString getCodeDefinition(unsigned def_type) final;
 };

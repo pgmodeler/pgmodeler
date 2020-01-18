@@ -50,20 +50,20 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		return_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 										 ObjectsTableWidget::UpdateButton, true, this);
 		return_tab->setColumnCount(2);
-		return_tab->setHeaderLabel(trUtf8("Column"), 0);
+		return_tab->setHeaderLabel(tr("Column"), 0);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		return_tab->setHeaderLabel(trUtf8("Type"), 1);
+		return_tab->setHeaderLabel(tr("Type"), 1);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 											 ObjectsTableWidget::UpdateButton, true, this);
 		parameters_tab->setColumnCount(4);
-		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
+		parameters_tab->setHeaderLabel(tr("Name"),0);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("parameter")),0);
-		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
+		parameters_tab->setHeaderLabel(tr("Type"),1);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
-		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
+		parameters_tab->setHeaderLabel(tr("Mode"),2);
+		parameters_tab->setHeaderLabel(tr("Default Value"),3);
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);
@@ -94,10 +94,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		BehaviorType::getTypes(types);
 		behavior_cmb->addItems(types);
 
-		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage(void)));
+		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
@@ -170,7 +170,7 @@ void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 	showParameterData(new_param, table, new_row);
 }
 
-void FunctionWidget::showParameterForm(void)
+void FunctionWidget::showParameterForm()
 {
 	QObject *obj_sender=sender();
 	ObjectsTableWidget *table=nullptr;
@@ -229,7 +229,7 @@ Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 		}
 	}
 
-	return(param);
+	return param;
 }
 
 void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row)
@@ -347,14 +347,14 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	ret_type->setAttributes(aux_type, model);
 }
 
-void FunctionWidget::alternateReturnTypes(void)
+void FunctionWidget::alternateReturnTypes()
 {
 	QObject *obj_sender=sender();
 	ret_table_gb->setVisible(obj_sender==table_rb);
 	ret_type->setVisible(!ret_table_gb->isVisible());
 }
 
-void FunctionWidget::selectLanguage(void)
+void FunctionWidget::selectLanguage()
 {
 	bool c_lang;
 
@@ -366,7 +366,7 @@ void FunctionWidget::selectLanguage(void)
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
+			source_code_hl->loadConfiguration(GlobalAttributes::getConfigurationsDir() +
 												GlobalAttributes::DirSeparator +
 											  language_cmb->currentText() +
 												GlobalAttributes::HighlightFileSuffix +
@@ -374,7 +374,7 @@ void FunctionWidget::selectLanguage(void)
 		}
 		catch(Exception &)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+			source_code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		}
 
 		source_code_hl->rehighlight();
@@ -382,7 +382,7 @@ void FunctionWidget::selectLanguage(void)
 	}
 }
 
-void FunctionWidget::validateConfiguredFunction(void)
+void FunctionWidget::validateConfiguredFunction()
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> obj_list;
@@ -491,7 +491,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 }
 
-void FunctionWidget::applyConfiguration(void)
+void FunctionWidget::applyConfiguration()
 {
 	try
 	{

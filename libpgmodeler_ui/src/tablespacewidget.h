@@ -37,7 +37,7 @@ class TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

@@ -40,28 +40,28 @@ class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 		ModelRestorationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 		//! \brief Returns the list of temporary files existant on tmp/ dir
-		QStringList getTemporaryModels(void);
+		QStringList getTemporaryModels();
 
 		//! \brief Returns the list of temporary files selected to be restored
-		QStringList getSelectedModels(void);
+		QStringList getSelectedModels();
 
 	public slots:
-		int exec(void);
+		int exec();
 
 		//! \brief Clears the tmp/ dir by removing all temporary files (*.dbm, *.dbk, *.omf, *.sql. *.log)
-		void removeTemporaryFiles(void);
+		void removeTemporaryFiles();
 
 		//! \brief Clears the tmp/ dir removing all temporary models (*.dbm)
-		void removeTemporaryModels(void);
+		void removeTemporaryModels();
 
 		//! \brief Remove only the specified temp model
 		void removeTemporaryModel(const QString &tmp_model);
 
 		//! \brief Checks if there is at least one temporary file on tmp/ dir
-		bool hasTemporaryModels(void);
+		bool hasTemporaryModels();
 
 	private slots:
-		void enableRestoration(void);
+		void enableRestoration();
 };
 
 #endif

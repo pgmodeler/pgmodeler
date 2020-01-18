@@ -18,7 +18,7 @@
 
 #include "eventtrigger.h"
 
-EventTrigger::EventTrigger(void)
+EventTrigger::EventTrigger()
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
@@ -80,34 +80,34 @@ void EventTrigger::removeFilter(const QString &variable)
 	setCodeInvalidated(true);
 }
 
-void EventTrigger::clearFilter(void)
+void EventTrigger::clearFilter()
 {
 	filter.clear();
 	setCodeInvalidated(true);
 }
 
-EventTriggerType EventTrigger::getEvent(void)
+EventTriggerType EventTrigger::getEvent()
 {
-	return(event);
+	return event;
 }
 
-Function *EventTrigger::getFunction(void)
+Function *EventTrigger::getFunction()
 {
-	return(function);
+	return function;
 }
 
 QStringList EventTrigger::getFilter(const QString &variable)
 {
 	if(filter.count(variable))
-		return(filter.at(variable));
+		return filter.at(variable);
 	else
-		return(QStringList());
+		return QStringList();
 }
 
 QString EventTrigger::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Event]=~event;
 
@@ -136,7 +136,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 												   .arg(Attributes::Values).arg(flt.second.join(','));
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString EventTrigger::getAlterDefinition(BaseObject *object)
@@ -144,7 +144,7 @@ QString EventTrigger::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
 	}
 	catch(Exception &e)
 	{

@@ -54,8 +54,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 
 		PgModelerUiNs::configureWidgetFont(protected_obj_lbl, PgModelerUiNs::MediumFontFactor);
 
-		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL(void)));
+		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions()));
+		connect(append_sql_tb, SIGNAL(clicked(bool)),this, SLOT(editCustomSQL()));
 
 		schema_sel=new ObjectSelectorWidget(ObjectType::Schema, true, this);
 		collation_sel=new ObjectSelectorWidget(ObjectType::Collation, true, this);
@@ -101,7 +101,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 	}
 }
 
-BaseObjectWidget::~BaseObjectWidget(void)
+BaseObjectWidget::~BaseObjectWidget()
 {
 
 }
@@ -116,21 +116,21 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
 		{
 			applyConfiguration();
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-ObjectType BaseObjectWidget::getHandledObjectType(void)
+ObjectType BaseObjectWidget::getHandledObjectType()
 {
-	return(handled_obj_type);
+	return handled_obj_type;
 }
 
-bool BaseObjectWidget::isHandledObjectProtected(void)
+bool BaseObjectWidget::isHandledObjectProtected()
 {
-	return(object_protected);
+	return object_protected;
 }
 
 void BaseObjectWidget::showEvent(QShowEvent *)
@@ -178,7 +178,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
-		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("Required field. Leaving this empty will raise errors!"));
+		widget->setToolTip(widget->toolTip() + str_aux + tr("Required field. Leaving this empty will raise errors!"));
 	}
 }
 
@@ -258,12 +258,12 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 		QWidget::setTabOrder(tab_order[idx], tab_order[idx+1]);
 }
 
-BaseObject *BaseObjectWidget::getHandledObject(void)
+BaseObject *BaseObjectWidget::getHandledObject()
 {
-	return(object);
+	return object;
 }
 
-void BaseObjectWidget::cancelChainedOperation(void)
+void BaseObjectWidget::cancelChainedOperation()
 {
 	bool op_list_changed=false;
 
@@ -279,7 +279,7 @@ void BaseObjectWidget::cancelChainedOperation(void)
 	if(new_object && this->object)
 	{
 		if(!op_list_changed)
-			delete(this->object);
+			delete this->object;
 
 		this->object=nullptr;
 	}
@@ -529,13 +529,13 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UntilVersion && !ini_ver.isEmpty())
-		return(XmlParser::CharLt + QString("= ") + ini_ver);
+		return (XmlParser::CharLt + QString("= ") + ini_ver);
 	else if(ver_interv_id==VersionsInterval && !ini_ver.isEmpty() && !end_ver.isEmpty())
-		return(XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
+		return (XmlParser::CharGt + QString("= ") + ini_ver + XmlParser::CharAmp + XmlParser::CharLt + QString("= ") + end_ver);
 	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
-		return(XmlParser::CharGt + QString("= ") + ini_ver);
+		return (XmlParser::CharGt + QString("= ") + ini_ver);
 	else
-		return(QString());
+		return QString();
 }
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
@@ -583,7 +583,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);
 
-	return(info_frm);
+	return info_frm;
 }
 
 void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidget *> > &fields,
@@ -598,7 +598,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 		{
 			if(values && values->count(wgt) > 0)
 			{
-				field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
+				field_name+=QString("<br/>") + tr("Value(s)") + QString(": (");
 				for(auto value : values->at(wgt))
 				{
 					field_name += value;
@@ -611,7 +611,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 
 			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
 			wgt->setToolTip(QString("<em>") +
-											trUtf8("Version ") +
+											tr("Version ") +
 											itr.first + QString(" %1</em>").arg(field_name));
 		}
 	}
@@ -658,17 +658,17 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
+	msg_lbl->setText(tr("The <em style='color: %1'><strong>highlighted</strong></em> fields in the form or one of their values are available only on specific PostgreSQL versions. \
 							Generating SQL code for versions other than those specified in the fields' tooltips may create incompatible code.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);
 
 	alert_frm->adjustSize();
-	return(alert_frm);
+	return alert_frm;
 }
 
-void BaseObjectWidget::editPermissions(void)
+void BaseObjectWidget::editPermissions()
 {
 	BaseObject *parent_obj=nullptr;
 	BaseForm parent_form(this);
@@ -686,7 +686,7 @@ void BaseObjectWidget::editPermissions(void)
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, permission_wgt->metaObject()->className());
 }
 
-void BaseObjectWidget::editCustomSQL(void)
+void BaseObjectWidget::editCustomSQL()
 {
 	BaseForm parent_form(this);
 	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
@@ -699,7 +699,7 @@ void BaseObjectWidget::editCustomSQL(void)
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, customsql_wgt->metaObject()->className());
 }
 
-void BaseObjectWidget::applyConfiguration(void)
+void BaseObjectWidget::applyConfiguration()
 {
 	if(object)
 	{
@@ -806,7 +806,7 @@ void BaseObjectWidget::applyConfiguration(void)
 	}
 }
 
-void BaseObjectWidget::finishConfiguration(void)
+void BaseObjectWidget::finishConfiguration()
 {
 	try
 	{
@@ -904,7 +904,7 @@ void BaseObjectWidget::finishConfiguration(void)
 	}
 }
 
-void BaseObjectWidget::cancelConfiguration(void)
+void BaseObjectWidget::cancelConfiguration()
 {
 	if(!object)
 		return;
@@ -927,7 +927,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 		if(!BaseTable::isBaseTable(obj_type) && obj_type != ObjectType::Relationship)
 		{
 			if(!op_list->isObjectRegistered(this->object, Operation::ObjectCreated))
-				delete(this->object);
+				delete this->object;
 
 			this->object=nullptr;
 		}
@@ -950,7 +950,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 	emit s_objectManipulated();
 }
 
-void BaseObjectWidget::registerNewObject(void)
+void BaseObjectWidget::registerNewObject()
 {
 	try
 	{

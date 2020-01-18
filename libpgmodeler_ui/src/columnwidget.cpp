@@ -39,7 +39,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 		hl_default_value=nullptr;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
-		hl_default_value->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, true, this);
 		sequence_sel->setEnabled(false);
@@ -135,7 +135,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
-void ColumnWidget::editSequenceAttributes(void)
+void ColumnWidget::editSequenceAttributes()
 {
 	Column *col = dynamic_cast<Column *>(this->object);
 	Schema *schema = nullptr;
@@ -166,7 +166,7 @@ void ColumnWidget::editSequenceAttributes(void)
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 }
 
-void ColumnWidget::applyConfiguration(void)
+void ColumnWidget::applyConfiguration()
 {
 	try
 	{

@@ -105,7 +105,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
 
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
-		sqlcode_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		sqlcode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		pgsql_ver_cmb->addItems(PgSqlVersions::AllVersions);
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -191,7 +191,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 	}
 }
 
-ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
+ModelDatabaseDiffForm::~ModelDatabaseDiffForm()
 {
 	destroyThread(ImportThread);
 	destroyThread(DiffThread);
@@ -199,7 +199,7 @@ ModelDatabaseDiffForm::~ModelDatabaseDiffForm(void)
 	destroyModel();
 }
 
-void ModelDatabaseDiffForm::exec(void)
+void ModelDatabaseDiffForm::exec()
 {
 	show();
 	loadConfiguration();
@@ -212,11 +212,11 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 	{
 		source_model=loaded_model=model_wgt->getDatabaseModel();
 		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(QFileInfo(model_wgt->getFilename()).fileName()));
-		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? trUtf8("model not saved yet") : model_wgt->getFilename());
+		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? tr("model not saved yet") : model_wgt->getFilename());
 	}
 	else
 	{
-		src_model_name_lbl->setText(trUtf8("(none)"));
+		src_model_name_lbl->setText(tr("(none)"));
 		src_model_name_lbl->setToolTip("");
 		src_database_rb->setChecked(true);
 		src_model_rb->setEnabled(false);
@@ -228,7 +228,7 @@ void ModelDatabaseDiffForm::setLowVerbosity(bool value)
 	low_verbosity = value;
 }
 
-bool ModelDatabaseDiffForm::isThreadsRunning(void)
+bool ModelDatabaseDiffForm::isThreadsRunning()
 {
 	return ((import_thread && import_thread->isRunning()) ||
 					(src_import_thread && src_import_thread->isRunning()) ||
@@ -236,7 +236,7 @@ bool ModelDatabaseDiffForm::isThreadsRunning(void)
 					(export_thread && export_thread->isRunning()));
 }
 
-void ModelDatabaseDiffForm::resetForm(void)
+void ModelDatabaseDiffForm::resetForm()
 {
 	ConnectionsConfigWidget::fillConnectionsComboBox(src_connections_cmb, true);
 	src_connections_cmb->setEnabled(src_connections_cmb->count() > 0);
@@ -286,7 +286,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		src_import_helper=new DatabaseImportHelper;
 		src_import_helper->moveToThread(src_import_thread);
 
-		connect(src_import_thread, SIGNAL(started(void)), src_import_helper, SLOT(importDatabase()));
+		connect(src_import_thread, SIGNAL(started()), src_import_helper, SLOT(importDatabase()));
 		connect(src_import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 		connect(src_import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 		connect(src_import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
@@ -297,7 +297,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		import_helper=new DatabaseImportHelper;
 		import_helper->moveToThread(import_thread);
 
-		connect(import_thread, SIGNAL(started(void)), import_helper, SLOT(importDatabase()));
+		connect(import_thread, SIGNAL(started()), import_helper, SLOT(importDatabase()));
 		connect(import_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)), Qt::BlockingQueuedConnection);
 		connect(import_helper, SIGNAL(s_importFinished(Exception)), this, SLOT(handleImportFinished(Exception)));
 		connect(import_helper, SIGNAL(s_importAborted(Exception)), this, SLOT(captureThreadError(Exception)));
@@ -308,7 +308,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 		diff_helper=new ModelsDiffHelper;
 		diff_helper->moveToThread(diff_thread);
 
-		connect(diff_thread, SIGNAL(started(void)), diff_helper, SLOT(diffModels()));
+		connect(diff_thread, SIGNAL(started()), diff_helper, SLOT(diffModels()));
 		connect(diff_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType)), this, SLOT(updateProgress(int,QString,ObjectType)));
 		connect(diff_helper, SIGNAL(s_diffFinished()), this, SLOT(handleDiffFinished()));
 		connect(diff_helper, SIGNAL(s_diffAborted(Exception)), this, SLOT(captureThreadError(Exception)));
@@ -328,7 +328,7 @@ void ModelDatabaseDiffForm::createThread(unsigned thread_id)
 							exportDiff(false);
 			});
 
-		connect(export_thread, SIGNAL(started(void)), export_helper, SLOT(exportToDBMS()));
+		connect(export_thread, SIGNAL(started()), export_helper, SLOT(exportToDBMS()));
 		connect(export_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString)), this, SLOT(updateProgress(int,QString,ObjectType,QString)), Qt::BlockingQueuedConnection);
 		connect(export_helper, SIGNAL(s_errorIgnored(QString,QString, QString)), this, SLOT(handleErrorIgnored(QString,QString,QString)));
 		connect(export_helper, SIGNAL(s_exportFinished()), this, SLOT(handleExportFinished()));
@@ -340,15 +340,15 @@ void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 {
 	if(thread_id==SrcImportThread && src_import_thread)
 	{
-		delete(src_import_thread);
-		delete(src_import_helper);
+		delete src_import_thread;
+		delete src_import_helper;
 		src_import_thread=nullptr;
 		src_import_helper=nullptr;
 	}
 	else if(thread_id==ImportThread && import_thread)
 	{
-		delete(import_thread);
-		delete(import_helper);
+		delete import_thread;
+		delete import_helper;
 		import_thread=nullptr;
 		import_helper=nullptr;
 	}
@@ -356,46 +356,46 @@ void ModelDatabaseDiffForm::destroyThread(unsigned thread_id)
 	{
 		diff_thread=nullptr;
 		diff_helper=nullptr;
-		delete(diff_thread);
-		delete(diff_helper);
+		delete diff_thread;
+		delete diff_helper;
 	}
 	else if(export_thread)
 	{
 		if(export_conn)
 		{
-			delete(export_conn);
+			delete export_conn;
 			export_conn=nullptr;
 		}
 
-		delete(export_thread);
-		delete(export_helper);
+		delete export_thread;
+		delete export_helper;
 		export_thread=nullptr;
 		export_helper=nullptr;
 	}
 }
 
-void ModelDatabaseDiffForm::destroyModel(void)
+void ModelDatabaseDiffForm::destroyModel()
 {
 	if(imported_model)
-		delete(imported_model);
+		delete imported_model;
 
 	if(source_model && source_model != loaded_model && src_database_rb->isChecked())
 	{
-		delete(source_model);
+		delete source_model;
 		source_model = nullptr;
 	}
 
 	imported_model=nullptr;
 }
 
-void ModelDatabaseDiffForm::clearOutput(void)
+void ModelDatabaseDiffForm::clearOutput()
 {
 	output_trw->clear();
 	src_import_item=import_item=diff_item=export_item=nullptr;
 
-	step_lbl->setText(trUtf8("Waiting process to start..."));
+	step_lbl->setText(tr("Waiting process to start..."));
 	step_ico_lbl->setPixmap(QPixmap());
-	progress_lbl->setText(trUtf8("Waiting process to start..."));
+	progress_lbl->setText(tr("Waiting process to start..."));
 	progress_ico_lbl->setPixmap(QPixmap());
 
 	step_pb->setValue(0);
@@ -407,7 +407,7 @@ void ModelDatabaseDiffForm::clearOutput(void)
 	ignore_tb->setText(QString("0"));
 }
 
-void ModelDatabaseDiffForm::listDatabases(void)
+void ModelDatabaseDiffForm::listDatabases()
 {
 	QComboBox *conn_cmb = (sender() == src_connections_cmb ? src_connections_cmb : connections_cmb),
 			*db_cmb = (conn_cmb == src_connections_cmb ? src_database_cmb : database_cmb);
@@ -445,7 +445,7 @@ void ModelDatabaseDiffForm::listDatabases(void)
 	}
 }
 
-void ModelDatabaseDiffForm::enableDiffMode(void)
+void ModelDatabaseDiffForm::enableDiffMode()
 {
 	store_in_file_wgt->setEnabled(store_in_file_rb->isChecked());
 
@@ -456,7 +456,7 @@ void ModelDatabaseDiffForm::enableDiffMode(void)
 														(apply_on_server_rb->isChecked())));
 }
 
-void ModelDatabaseDiffForm::generateDiff(void)
+void ModelDatabaseDiffForm::generateDiff()
 {
 	// Cancel any pending preset editing before run the diff
 	togglePresetConfiguration(false);
@@ -472,7 +472,7 @@ void ModelDatabaseDiffForm::generateDiff(void)
 	curr_step = 1;
 
 	if(low_verbosity)
-		PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
+		PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
 																				QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
 	if(src_model_rb->isChecked())
@@ -520,7 +520,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 
 		conn.switchToDatabase(db_cmb->currentText());
 
-		step_lbl->setText(trUtf8("Step %1/%2: Importing database <strong>%3</strong>...")
+		step_lbl->setText(tr("Step %1/%2: Importing database <strong>%3</strong>...")
 											.arg(curr_step)
 											.arg(total_steps)
 											.arg(conn.getConnectionId(true, true)));
@@ -565,11 +565,11 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 	}
 }
 
-void ModelDatabaseDiffForm::diffModels(void)
+void ModelDatabaseDiffForm::diffModels()
 {
 	createThread(DiffThread);
 
-	step_lbl->setText(trUtf8("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
+	step_lbl->setText(tr("Step %1/%2: Comparing <strong>%3</strong> and <strong>%4</strong>...")
 						.arg(curr_step)
 						.arg(total_steps)
 					  .arg(source_model->getName())
@@ -612,10 +612,10 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
-		msg_box.show(trUtf8("Confirmation"),
-					 trUtf8(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
+		msg_box.show(tr("Confirmation"),
+					 tr(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 trUtf8("Apply diff"), trUtf8("Preview diff"), QString(),
+					 tr("Apply diff"), tr("Preview diff"), QString(),
 					 PgModelerUiNs::getIconPath("diff"), PgModelerUiNs::getIconPath("codigosql"));
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
@@ -626,7 +626,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		settings_tbw->setCurrentIndex(1);
 		apply_on_server_btn->setEnabled(true);
 
-		step_lbl->setText(trUtf8("Step %1/%2: Exporting diff to database <strong>%3@%4</strong>...")
+		step_lbl->setText(tr("Step %1/%2: Exporting diff to database <strong>%3@%4</strong>...")
 											.arg(curr_step)
 											.arg(total_steps)
 											.arg(imported_model->getName())
@@ -655,12 +655,12 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		apply_on_server_btn->setVisible(true);
 		output_trw->collapseItem(diff_item);
 		PgModelerUiNs::createOutputTreeItem(output_trw,
-											trUtf8("Diff process paused. Waiting user action..."),
+											tr("Diff process paused. Waiting user action..."),
 											QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr);
 	}
 }
 
-void ModelDatabaseDiffForm::filterDiffInfos(void)
+void ModelDatabaseDiffForm::filterDiffInfos()
 {
 	QToolButton *btn=dynamic_cast<QToolButton *>(sender());
 	map<QToolButton *, unsigned> diff_types={ {create_tb, ObjectsDiffInfo::CreateObject},
@@ -671,11 +671,11 @@ void ModelDatabaseDiffForm::filterDiffInfos(void)
 	for(int i=0; i < diff_item->childCount(); i++)
 	{
 		if(diff_item->child(i)->data(0, Qt::UserRole).toUInt()==diff_types[btn])
-			output_trw->setItemHidden(diff_item->child(i), !btn->isChecked());
+			diff_item->child(i)->setHidden(!btn->isChecked());
 	}
 }
 
-void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
+void ModelDatabaseDiffForm::loadDiffInSQLTool()
 {
 	QString database = database_cmb->currentText(), filename;
 	QFile out_tmp_file;
@@ -689,7 +689,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
 			filename = file_edt->text();
 	else
 	{
-			tmp_sql_file.setFileTemplate(GlobalAttributes::TemporaryDir +
+			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryDir() +
 																	 GlobalAttributes::DirSeparator +
 																	 QString("diff_%1_XXXXXX.sql").arg(database));
 
@@ -713,7 +713,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool(void)
 	close();
 }
 
-void ModelDatabaseDiffForm::resetButtons(void)
+void ModelDatabaseDiffForm::resetButtons()
 {
 	buttons_wgt->setEnabled(true);
 	cancel_btn->setEnabled(false);
@@ -722,13 +722,13 @@ void ModelDatabaseDiffForm::resetButtons(void)
 	enableDiffMode();
 }
 
-void ModelDatabaseDiffForm::saveDiffToFile(void)
+void ModelDatabaseDiffForm::saveDiffToFile()
 {
 	if(!sqlcode_txt->toPlainText().isEmpty())
 	{
 		QFile output;
 
-		step_lbl->setText(trUtf8("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
+		step_lbl->setText(tr("Saving diff to file <strong>%1</strong>").arg(file_edt->text()));
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("salvar")));
 		import_item=PgModelerUiNs::createOutputTreeItem(output_trw, step_lbl->text(), *step_ico_lbl->pixmap(), nullptr);
 		step_pb->setValue(90);
@@ -747,12 +747,12 @@ void ModelDatabaseDiffForm::saveDiffToFile(void)
 	finishDiff();
 }
 
-void ModelDatabaseDiffForm::finishDiff(void)
+void ModelDatabaseDiffForm::finishDiff()
 {
 	cancelOperation(false);
 
-	step_lbl->setText(trUtf8("Diff process sucessfully ended!"));
-	progress_lbl->setText(trUtf8("No operations left."));
+	step_lbl->setText(tr("Diff process sucessfully ended!"));
+	progress_lbl->setText(tr("No operations left."));
 
 	step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 	progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
@@ -766,8 +766,8 @@ void ModelDatabaseDiffForm::cancelOperation(bool cancel_by_user)
 {
 	if(cancel_by_user)
 	{
-		step_lbl->setText(trUtf8("Operation cancelled by the user."));
-		progress_lbl->setText(trUtf8("No operations left."));
+		step_lbl->setText(tr("Operation cancelled by the user."));
+		progress_lbl->setText(tr("No operations left."));
 
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
@@ -809,7 +809,7 @@ void ModelDatabaseDiffForm::captureThreadError(Exception e)
 	QTreeWidgetItem *item=nullptr;
 
 	cancelOperation(false);
-	progress_lbl->setText(trUtf8("Process aborted due to errors!"));
+	progress_lbl->setText(tr("Process aborted due to errors!"));
 	progress_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_erro")));
 
 	item=PgModelerUiNs::createOutputTreeItem(output_trw, PgModelerUiNs::formatMessage(e.getErrorMessage()), *progress_ico_lbl->pixmap(), nullptr, false, true);
@@ -841,7 +841,7 @@ void ModelDatabaseDiffForm::handleImportFinished(Exception e)
 	}
 }
 
-void ModelDatabaseDiffForm::handleDiffFinished(void)
+void ModelDatabaseDiffForm::handleDiffFinished()
 {
 	curr_step++;
 	sqlcode_txt->setPlainText(diff_helper->getDiffDefinition());
@@ -852,7 +852,7 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
 	{
 		QString code=sqlcode_txt->toPlainText();
 		code=code.mid(0, code.size()/2);
-		code+=trUtf8("\n\n-- SQL code purposely truncated at this point in demo version!");
+		code+=tr("\n\n-- SQL code purposely truncated at this point in demo version!");
 		sqlcode_txt->setPlainText(code);
 	}
 #endif
@@ -868,10 +868,10 @@ void ModelDatabaseDiffForm::handleDiffFinished(void)
 		finishDiff();
 
 	if(sqlcode_txt->toPlainText().isEmpty())
-		sqlcode_txt->setPlainText(trUtf8("-- No differences were detected between model and database. --"));
+		sqlcode_txt->setPlainText(tr("-- No differences were detected between model and database. --"));
 }
 
-void ModelDatabaseDiffForm::handleExportFinished(void)
+void ModelDatabaseDiffForm::handleExportFinished()
 {
 	export_thread->quit();
 	export_thread->wait();
@@ -883,7 +883,7 @@ void ModelDatabaseDiffForm::handleErrorIgnored(QString err_code, QString err_msg
 {
 	QTreeWidgetItem *item=nullptr;
 
-	item=PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
+	item=PgModelerUiNs::createOutputTreeItem(output_trw, tr("Error code <strong>%1</strong> found and ignored. Proceeding with export.").arg(err_code),
 											 QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")),
 											 export_item, false);
 
@@ -994,18 +994,18 @@ void ModelDatabaseDiffForm::updateDiffInfo(ObjectsDiffInfo diff_info)
 		btn->setText(QString::number(diff_helper->getDiffTypeCount(diff_type)));
 
 	if(item)
-		output_trw->setItemHidden(item, !btn->isChecked());
+		item->setHidden(!btn->isChecked());
 }
 
-void ModelDatabaseDiffForm::selectOutputFile(void)
+void ModelDatabaseDiffForm::selectOutputFile()
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setWindowTitle(trUtf8("Save diff as..."));
+	file_dlg.setWindowTitle(tr("Save diff as..."));
 	file_dlg.setFileMode(QFileDialog::AnyFile);
 	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 	file_dlg.setModal(true);
-	file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
 
 	if(source_model)
 		file_dlg.selectFile(source_model->getName() + QString("-diff.sql"));
@@ -1021,7 +1021,7 @@ void ModelDatabaseDiffForm::selectOutputFile(void)
 	}
 }
 
-void ModelDatabaseDiffForm::loadConfiguration(void)
+void ModelDatabaseDiffForm::loadConfiguration()
 {
 	try
 	{
@@ -1031,15 +1031,15 @@ void ModelDatabaseDiffForm::loadConfiguration(void)
 	catch(Exception &e)
 	{
 		Messagebox msg_box;
-		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-								 Messagebox::AlertIcon, Messagebox::YesNoButtons, trUtf8("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
 
 		if(msg_box.result() == QDialog::Accepted)
 			restoreDefaults();
 	}
 }
 
-void ModelDatabaseDiffForm::saveConfiguration(void)
+void ModelDatabaseDiffForm::saveConfiguration()
 {
 	try
 	{
@@ -1047,7 +1047,7 @@ void ModelDatabaseDiffForm::saveConfiguration(void)
 		QString preset_sch, root_dir;
 		QString presets;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
+		root_dir=GlobalAttributes::getTmplConfigurationDir() +
 				 GlobalAttributes::DirSeparator;
 
 		preset_sch=root_dir +
@@ -1074,7 +1074,7 @@ void ModelDatabaseDiffForm::saveConfiguration(void)
 	}
 }
 
-void ModelDatabaseDiffForm::applyConfiguration(void)
+void ModelDatabaseDiffForm::applyConfiguration()
 {
 	presets_cmb->clear();
 	presets_cmb->blockSignals(true);
@@ -1087,12 +1087,12 @@ void ModelDatabaseDiffForm::applyConfiguration(void)
 	selectPreset();
 }
 
-void ModelDatabaseDiffForm::restoreDefaults(void)
+void ModelDatabaseDiffForm::restoreDefaults()
 {
 	try
 	{
 		Messagebox msg_box;
-		msg_box.show(trUtf8("Do you really want to restore the default settings?"),
+		msg_box.show(tr("Do you really want to restore the default settings?"),
 								 Messagebox::ConfirmIcon,	Messagebox::YesNoButtons);
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1109,7 +1109,7 @@ void ModelDatabaseDiffForm::restoreDefaults(void)
 	}
 }
 
-void ModelDatabaseDiffForm::selectPreset(void)
+void ModelDatabaseDiffForm::selectPreset()
 {
 	attribs_map conf = config_params[presets_cmb->currentText()];
 	QStringList db_name;
@@ -1199,7 +1199,7 @@ void ModelDatabaseDiffForm::togglePresetConfiguration(bool toggle, bool is_edit)
 		preset_name_edt->setFocus();
 }
 
-void ModelDatabaseDiffForm::enablePresetButtons(void)
+void ModelDatabaseDiffForm::enablePresetButtons()
 {
 	presets_cmb->setEnabled(presets_cmb->count() > 0);
 	edit_preset_tb->setEnabled(presets_cmb->isEnabled());
@@ -1207,11 +1207,11 @@ void ModelDatabaseDiffForm::enablePresetButtons(void)
 	save_preset_tb->setEnabled(presets_cmb->isEnabled());
 }
 
-void ModelDatabaseDiffForm::removePreset(void)
+void ModelDatabaseDiffForm::removePreset()
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	msg_box.show(tr("Are you sure do you want to remove the selected diff preset?"), Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
 	{
@@ -1221,7 +1221,7 @@ void ModelDatabaseDiffForm::removePreset(void)
 	}
 }
 
-void ModelDatabaseDiffForm::savePreset(void)
+void ModelDatabaseDiffForm::savePreset()
 {
 	QString name, fmt_name;
 	attribs_map conf;

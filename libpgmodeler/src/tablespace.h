@@ -36,7 +36,7 @@ class Tablespace: public BaseObject{
 		QString directory;
 
 	public:
-		Tablespace(void);
+		Tablespace();
 
 		void setName(const QString &name);
 
@@ -44,7 +44,7 @@ class Tablespace: public BaseObject{
 		void setDirectory(const QString &dir);
 
 		//! \brief Returns the directory where the tablespace resides
-		QString getDirectory(void);
+		QString getDirectory();
 
 		//! \brief Returns the SQL / XML code for the tablespace
 		virtual QString getCodeDefinition(unsigned def_type) final;

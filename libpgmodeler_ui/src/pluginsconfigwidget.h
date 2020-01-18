@@ -51,10 +51,10 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
-		~PluginsConfigWidget(void);
+		~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
-		void loadConfiguration(void);
+		void loadConfiguration();
 
 		/*! \brief Install the created actions on menu. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */
@@ -65,7 +65,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	private slots:
 		void showPluginInfo(int idx);
-		void openRootPluginDiretory(void);
+		void openRootPluginDiretory();
 };
 
 #endif

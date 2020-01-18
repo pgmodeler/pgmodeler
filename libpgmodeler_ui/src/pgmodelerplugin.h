@@ -64,9 +64,9 @@ class PgModelerPlugin {
 		*description_lbl;
 
 	public:
-		PgModelerPlugin(void);
+		PgModelerPlugin();
 
-		virtual ~PgModelerPlugin(void);
+		virtual ~PgModelerPlugin();
 
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
@@ -94,11 +94,11 @@ class PgModelerPlugin {
 
 		/*! \brief Returns the plugin's action shortcut
 		 * The default implementation is to return an empty shortcut */
-		virtual QKeySequence getPluginShortcut(void);
+		virtual QKeySequence getPluginShortcut();
 
 		/*! \brief Indicates if the plugin's has an action to be installed in a Qmenu instance
 		 * The default implementation is to indicate the presence of an action */
-		virtual bool hasMenuAction(void);
+		virtual bool hasMenuAction();
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,

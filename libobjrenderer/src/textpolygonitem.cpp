@@ -23,9 +23,9 @@ TextPolygonItem::TextPolygonItem(QGraphicsItem *parent) : QGraphicsPolygonItem(p
 	text_item = new QGraphicsSimpleTextItem;
 }
 
-TextPolygonItem::~TextPolygonItem(void)
+TextPolygonItem::~TextPolygonItem()
 {
-	delete(text_item);
+	delete text_item;
 }
 
 void TextPolygonItem::setText(const QString &text)
@@ -43,9 +43,9 @@ void TextPolygonItem::setTextBrush(const QBrush &brush)
 	text_item->setBrush(brush);
 }
 
-QRectF TextPolygonItem::getTextBoundingRect(void)
+QRectF TextPolygonItem::getTextBoundingRect()
 {
-	return(text_item->boundingRect());
+	return text_item->boundingRect();
 }
 
 void TextPolygonItem::setTextPos(const QPointF &pos)
@@ -65,7 +65,7 @@ void TextPolygonItem::setFont(const QFont &fnt)
 
 QFont TextPolygonItem::getFont()
 {
-	return(text_item->font());
+	return text_item->font();
 }
 
 void TextPolygonItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

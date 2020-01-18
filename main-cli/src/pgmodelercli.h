@@ -18,13 +18,14 @@
 
 /**
 \ingroup pgmodeler-cli
-\class PgModelerCli
+\class PgModelerCliApp
 \brief Implements the operations export models whitout use the graphical interface
 */
 
-#ifndef PGMODELER_CLI_H
-#define PGMODELER_CLI_H
+#ifndef PGMODELER_CLI_APP_H
+#define PGMODELER_CLI_APP_H
 
+#include "application.h"
 #include <QObject>
 #include <QTextStream>
 #include <QCoreApplication>
@@ -39,20 +40,20 @@
 #include "databaseimporthelper.h"
 #include "modelsdiffhelper.h"
 
-class PgModelerCli: public QApplication {
+class PgModelerCliApp: public Application {
 	private:
 		Q_OBJECT
 
 		XmlParser *xmlparser;
 
 		//! \brief Export helper object
-		ModelExportHelper export_hlp;
+		ModelExportHelper *export_hlp;
 
 		//! \brief Import helper object
-		DatabaseImportHelper import_hlp;
+		DatabaseImportHelper *import_hlp;
 
 		//! \brief Diff helper object
-		ModelsDiffHelper diff_hlp;
+		ModelsDiffHelper *diff_hlp;
 
 		//! \brief Reference database model
 		DatabaseModel *model;
@@ -70,12 +71,12 @@ class PgModelerCli: public QApplication {
 		map<QString, Connection *> connections;
 
 		//! \brief Connection configuration widget used to load available connections from file
-		ConnectionsConfigWidget conn_conf;
+		ConnectionsConfigWidget *conn_conf;
 
 		//! \brief Relationship configuration widget used to load custom relationship settings
-		RelationshipConfigWidget rel_conf;
+		RelationshipConfigWidget *rel_conf;
 
-		GeneralConfigWidget general_conf;
+		GeneralConfigWidget *general_conf;
 
 		//! \brief Creates an standard out to handles QStrings
 		static QTextStream out;
@@ -169,20 +170,20 @@ class PgModelerCli: public QApplication {
 		void parseOptions(attribs_map &parsed_opts);
 
 		//! \brief Shows the options menu
-		void showMenu(void);
+		void showMenu();
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
 
 		//! \brief Initializes the options maps
-		void initializeOptions(void);
+		void initializeOptions();
 
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */
-		void extractObjectXML(void);
+		void extractObjectXML();
 
 		//! \brief Recreates the objects from the obj_xml list fixing the creation order for them
-		void recreateObjects(void);
+		void recreateObjects();
 
 		//! \brief Fix some xml attributes and remove unused tags
 		void fixObjectAttributes(QString &obj_xml);
@@ -203,11 +204,11 @@ class PgModelerCli: public QApplication {
 		only over operator classes, indexes and constraints */
 		void fixOpClassesFamiliesReferences(QString &obj_xml);
 
-		void fixModel(void);
-		void exportModel(void);
-		void importDatabase(void);
-		void diffModelDatabase(void);
-		void updateMimeType(void);
+		void fixModel();
+		void exportModel();
+		void importDatabase();
+		void diffModelDatabase();
+		void updateMimeType();
 
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
@@ -215,9 +216,9 @@ class PgModelerCli: public QApplication {
 		void printMessage(const QString &msg);
 
 	public:
-		PgModelerCli(int argc, char **argv);
-		~PgModelerCli(void);
-		int exec(void);
+		PgModelerCliApp(int argc, char **argv);
+		~PgModelerCliApp();
+		int exec();
 
 	private slots:
 		void handleObjectAddition(BaseObject *);

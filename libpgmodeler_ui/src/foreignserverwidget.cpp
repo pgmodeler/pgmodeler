@@ -38,8 +38,8 @@ ForeignServerWidget::ForeignServerWidget(QWidget *parent): BaseObjectWidget(pare
 																				 (ObjectsTableWidget::EditButton | ObjectsTableWidget::UpdateButton), true, this);
 		options_tab->setCellsEditable(true);
 		options_tab->setColumnCount(2);
-		options_tab->setHeaderLabel(trUtf8("Option"), 0);
-		options_tab->setHeaderLabel(trUtf8("Value"), 1);
+		options_tab->setHeaderLabel(tr("Option"), 0);
+		options_tab->setHeaderLabel(tr("Value"), 1);
 
 		hbox = new QHBoxLayout;
 		hbox->setContentsMargins(4,4,4,4);
@@ -85,7 +85,7 @@ void ForeignServerWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	}
 }
 
-void ForeignServerWidget::applyConfiguration(void)
+void ForeignServerWidget::applyConfiguration()
 {
 	try
 	{

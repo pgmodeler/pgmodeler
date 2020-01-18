@@ -24,13 +24,13 @@ class UserMappingTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void generatesNameCorrectly(void);
-		void codeGeneratedIsWellFormed(void);
-		void modelReturnsDepsAndRefsForUserMapping(void);
-		void modelCreatesUserMappingfromXMLandResultingXMLisEqual(void);
+		void generatesNameCorrectly();
+		void codeGeneratedIsWellFormed();
+		void modelReturnsDepsAndRefsForUserMapping();
+		void modelCreatesUserMappingfromXMLandResultingXMLisEqual();
 };
 
-void UserMappingTest::generatesNameCorrectly(void)
+void UserMappingTest::generatesNameCorrectly()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -57,7 +57,7 @@ void UserMappingTest::generatesNameCorrectly(void)
 	QCOMPARE(usr_mapping.getName(), "public@");
 }
 
-void UserMappingTest::codeGeneratedIsWellFormed(void)
+void UserMappingTest::codeGeneratedIsWellFormed()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -104,7 +104,7 @@ QString xml_code =QString(
 	}
 }
 
-void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
+void UserMappingTest::modelReturnsDepsAndRefsForUserMapping()
 {
 	DatabaseModel model;
 	ForeignDataWrapper fdw;
@@ -147,7 +147,7 @@ void UserMappingTest::modelReturnsDepsAndRefsForUserMapping(void)
 	}
 }
 
-void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
+void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual()
 {
 	DatabaseModel model;
 	ForeignDataWrapper fdw;
@@ -189,7 +189,7 @@ void UserMappingTest::modelCreatesUserMappingfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&role);
 
 		if(usr_map)
-			delete(usr_map);
+			delete usr_map;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

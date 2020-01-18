@@ -48,9 +48,9 @@ class FindReplaceWidget: public QWidget, public Ui::FindReplaceWidget {
 		FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget * parent = nullptr);
 		
 	public slots:
-		void replaceText(void);
-		void replaceAll(void);
-		void replaceFindText(void);
+		void replaceText();
+		void replaceAll();
+		void replaceFindText();
 };
 
 #endif

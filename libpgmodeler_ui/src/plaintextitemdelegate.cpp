@@ -25,7 +25,7 @@ PlainTextItemDelegate::PlainTextItemDelegate(QObject *parent, bool read_only) : 
 	this->read_only = read_only;
 }
 
-PlainTextItemDelegate::~PlainTextItemDelegate(void)
+PlainTextItemDelegate::~PlainTextItemDelegate()
 {
 
 }
@@ -65,5 +65,5 @@ QWidget *PlainTextItemDelegate::createEditor(QWidget *parent, const QStyleOption
 		qobject_cast<QLineEdit *>(editor)->setFrame(false);
 	}
 
-	return(editor);
+	return editor;
 }

@@ -43,7 +43,7 @@ class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 		void setAttributes(DatabaseModel *model);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

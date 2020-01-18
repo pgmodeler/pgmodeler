@@ -86,8 +86,8 @@ class PhysicalTable: public BaseTable {
 		void setColumnsAttribute(unsigned def_type, bool incl_rel_added_cols);
 		void setConstraintsAttribute(unsigned def_type);
 		void setCommentAttribute(TableObject *tab_obj);
-		void setAncestorTableAttribute(void);
-		void setRelObjectsIndexesAttribute(void);		
+		void setAncestorTableAttribute();
+		void setRelObjectsIndexesAttribute();		
 
 		//! \brief Adds an ancestor table
 		void addAncestorTable(PhysicalTable *tab, int idx=-1);
@@ -111,7 +111,7 @@ class PhysicalTable: public BaseTable {
 
 		/*! \brief Updates the "decl_in_table" status for columns/constraints
 		indicating if ALTER commands must be generated or not */
-		void updateAlterCmdsStatus(void);
+		void updateAlterCmdsStatus();
 
 		void saveRelObjectsIndexes(ObjectType obj_type);
 		void restoreRelObjectsIndexes(ObjectType obj_type);
@@ -120,7 +120,7 @@ class PhysicalTable: public BaseTable {
 		QString createInsertCommand(const QStringList &col_names, const QStringList &values);
 
 		//! \brief Performs the destruction of all children objects and internal lists clearing
-		void destroyObjects(void);
+		void destroyObjects();
 
 	public:
 		//! \brief Default char for data separator in initial-data tag
@@ -129,7 +129,7 @@ class PhysicalTable: public BaseTable {
 		//! \brief Default char for data line break in initial-data tag
 		DataLineBreak;
 
-		PhysicalTable(void);
+		PhysicalTable();
 		~PhysicalTable(void){}
 
 		//! \brief Returns true if the provided table is considered a physical table (Table, ForeignTable, PhysicalTable)
@@ -148,19 +148,19 @@ class PhysicalTable: public BaseTable {
 		void setCopyTableOptions(CopyOptions copy_op);
 
 		//! \brief Returns the copy table
-		PhysicalTable *getCopyTable(void);
+		PhysicalTable *getCopyTable();
 
 		//! \brief Get the copy table options
-		CopyOptions getCopyTableOptions(void);
+		CopyOptions getCopyTableOptions();
 
 		//! \brief Defines if the partitioning type of the table
 		virtual void setPartitioningType(PartitioningType part_type);
 
 		//! \brief Returns the current partitioning type defined for the table
-		PartitioningType getPartitioningType(void);
+		PartitioningType getPartitioningType();
 
 		//! \brief Returns the partitioned table which this table is a partition of
-		PhysicalTable *getPartitionedTable(void);
+		PhysicalTable *getPartitionedTable();
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		void addObject(BaseObject *obj, int obj_idx=-1);
@@ -196,10 +196,10 @@ class PhysicalTable: public BaseTable {
 		void setPartitionBoundingExpr(const QString part_bound_expr);
 
 		//! \brief Returns the partition bounding expression
-		QString getPartitionBoundingExpr(void);
+		QString getPartitionBoundingExpr();
 
 		//! \brief Returns the partition tables
-		vector<PhysicalTable *> getPartionTables(void);
+		vector<PhysicalTable *> getPartionTables();
 
 		//! \brief Returs if the provided table is amongst the partitions
 		bool isPartitionTableExists(PhysicalTable *table, bool compare_names);
@@ -208,7 +208,7 @@ class PhysicalTable: public BaseTable {
 		void addPartitionKeys(vector<PartitionKey> &part_keys);
 
 		//! \brief Remove all partition keys configured for the table
-		void removePartitionKeys(void);
+		void removePartitionKeys();
 
 		/*! \brief Gets a column through its name. The boolean parameter is used
 		 to search columns referencing their old names */
@@ -236,19 +236,19 @@ class PhysicalTable: public BaseTable {
 		PhysicalTable *getAncestorTable(unsigned idx);
 
 		//! \brief Returns the primary key of the table. Returns nullptr when it doesn't exists
-		Constraint *getPrimaryKey(void);
+		Constraint *getPrimaryKey();
 
 		//! \brief Gets the column count
-		unsigned getColumnCount(void);
+		unsigned getColumnCount();
 
 		//! \brief Gets the constraint count
-		unsigned getConstraintCount(void);
+		unsigned getConstraintCount();
 
 		//! \brief Gets the trigger count
-		unsigned getTriggerCount(void);
+		unsigned getTriggerCount();
 
 		//! \brief Gets the ancestor table count
-		unsigned getAncestorTableCount(void);
+		unsigned getAncestorTableCount();
 
 		/*! \brief Gets the the count for the specified object type. The boolean parameter indicates
 		 that objects added by relationship must be counted */
@@ -287,7 +287,7 @@ class PhysicalTable: public BaseTable {
 		vector<BaseObject *> getObjects(const vector<ObjectType> &excl_types = {});
 
 		//! \brief Returns all the partition keys used by the table
-		vector<PartitionKey> getPartitionKeys(void);
+		vector<PartitionKey> getPartitionKeys();
 
 		//! \brief Protects the table and its aggregated objects against modification
 		void setProtected(bool value);
@@ -296,7 +296,7 @@ class PhysicalTable: public BaseTable {
 		void setGenerateAlterCmds(bool value);
 
 		//! \brief Returns the current status of generation of ALTER commands for columns and constraints
-		bool isGenerateAlterCmds(void);
+		bool isGenerateAlterCmds();
 
 		/*! \brief Returns if the specified column is referenced by one of the constraints on table.
 		 The user must specify the constraint type */
@@ -310,13 +310,13 @@ class PhysicalTable: public BaseTable {
 		void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
 
 		//! \brief Returns if the table references objects added by relationship
-		bool isReferRelationshipAddedObject(void);
+		bool isReferRelationshipAddedObject();
 		
 		//! \brief Returns if the table is a partition of another table
-		bool isPartition(void);
+		bool isPartition();
 
 		//! \brief Returns if the table is a partitioned. This is the same as getPartitioningType() != BaseType::null
-		bool isPartitioned(void);
+		bool isPartitioned();
 
 		//! \brief Copy the attributes between two tables
 		void operator = (PhysicalTable &table);
@@ -331,12 +331,12 @@ class PhysicalTable: public BaseTable {
 		void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
 
 		//! \brief Save the current index of the objects created by relationship
-		void saveRelObjectsIndexes(void);
+		void saveRelObjectsIndexes();
 
 		/*! \brief Restore the position of the objects created by relationships.
 		This method must be used with caution since it generate a new list of object replacing
 		the original inside the table. Also this method can be slow in huge tables */
-		void restoreRelObjectsIndexes(void);
+		void restoreRelObjectsIndexes();
 
 		//! \brief Creates custom index from rel. created object using a name and index vectors as input.
 		void setRelObjectsIndexes(const vector<QString> &obj_names, const vector<unsigned> &idxs, ObjectType obj_type);
@@ -354,11 +354,11 @@ class PhysicalTable: public BaseTable {
 		void setInitialData(const QString &value);
 
 		//! \brief Returns the table's initial data in raw format
-		QString getInitialData(void);
+		QString getInitialData();
 
 		/*! \brief Translate the CSV-like initial data to a set of INSERT commands.
 		In invalid columns exist in the buffer they will be rejected when generating the commands */
-		QString getInitialDataCommands(void);
+		QString getInitialDataCommands();
 
 		/*! \brief Generates the table's SQL code considering adding the relationship added object or not.
 		 * Note if the method is called with incl_rel_added_objs = true it can produce an SQL/XML code
@@ -368,7 +368,7 @@ class PhysicalTable: public BaseTable {
 
 		virtual void setObjectListsCapacity(unsigned capacity);
 
-		virtual unsigned getMaxObjectCount(void);
+		virtual unsigned getMaxObjectCount();
 
 		virtual QString getDataDictionary(bool splitted, attribs_map extra_attribs = {});
 

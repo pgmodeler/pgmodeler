@@ -26,31 +26,30 @@
 
 /**
 \ingroup main
-\class Application
+\class PgModelerApp
 \brief This class inherits from QApplication and has the notify() method modified
  to treat the exceptions raised by pgModeler components.
-\note <strong>Creation date:</strong> 30/08/2007
 */
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef PGMODELER_APP_H
+#define PGMODELER_APP_H
 
-#include <QApplication>
+#include "application.h"
 #include <QTextStream>
 #include <QTranslator>
 #include <QFile>
 
-class Application: public QApplication {
+class PgModelerApp: public Application {
 	private:
 		/*! \brief Creates the pgModeler's configuration dir on user's home folder.
 		The output path is platform dependant and is ruled by GlobalAttributes::CONFIGURATIONS_DIR */
-		void createUserConfiguration(void);
+		void createUserConfiguration();
 
 		//! \brief Copy files from a path to another recursively
 		void copyFilesRecursively(const QString &src_path, const QString &dst_path);
 
 	public:
-		Application(int & argc, char ** argv);
+		PgModelerApp(int & argc, char ** argv);
 		bool notify(QObject * receiver, QEvent * event);
 };
 

@@ -20,10 +20,10 @@
 #include "exception.h"
 #include "attributes.h"
 
-const QString ForeignObject::OptionsSeparator = QString(",");
-const QString ForeignObject::OptionValueSeparator = QString("=");
+const QString ForeignObject::OptionsSeparator(",");
+const QString ForeignObject::OptionValueSeparator("=");
 
-ForeignObject::ForeignObject(void)
+ForeignObject::ForeignObject()
 {
 
 }
@@ -52,14 +52,14 @@ void ForeignObject::removeOption(const QString &opt)
 	options.erase(opt);
 }
 
-void ForeignObject::removeOptions(void)
+void ForeignObject::removeOptions()
 {
 	options.clear();
 }
 
-attribs_map ForeignObject::getOptions(void)
+attribs_map ForeignObject::getOptions()
 {
-	return(options);
+	return options;
 }
 
 void ForeignObject::getAlteredAttributes(ForeignObject *object, attribs_map &fo_attribs)
@@ -100,5 +100,5 @@ QString ForeignObject::getOptionsAttribute(unsigned def_type)
 																QString("%1 '%2'").arg(itr.first).arg(itr.second) :
 																QString("%1%2%3").arg(itr.first).arg(OptionValueSeparator).arg(itr.second);
 
-	return(fmt_options.join(OptionsSeparator));
+	return fmt_options.join(OptionsSeparator);
 }

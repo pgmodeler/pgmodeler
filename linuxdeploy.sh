@@ -4,7 +4,7 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.12.3/5.12.3/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt-5.14.0/5.14.0/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 
@@ -27,7 +27,7 @@ LOG="$PWD/linuxdeploy.log"
 QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g' | cut -s -f2`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 
 STARTUP_SCRIPT="start-pgmodeler.sh"
 MIME_UPDATE_SCRIPT="dbm-mime-type.sh"

@@ -18,7 +18,7 @@
 
 #include "pgsqltypewidget.h"
 
-const QString PgSQLTypeWidget::InvalidType = QString("invalid_type");
+const QString PgSQLTypeWidget::InvalidType("invalid_type");
 
 PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidget(parent)
 {
@@ -35,7 +35,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		format_hl=nullptr;
 		format_hl=new SyntaxHighlighter(format_txt, true);
-		format_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		this->adjustSize();
 
 		IntervalType::getTypes(interval_lst);
@@ -44,21 +44,21 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 
 		SpatialType::getTypes(spatial_lst);
 		spatial_lst.sort();
-		spatial_cmb->addItem(trUtf8("NONE"));
+		spatial_cmb->addItem(tr("NONE"));
 		spatial_cmb->addItems(spatial_lst);
 
 		type_cmb->installEventFilter(this);
 
-		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat(void)));
-		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat(void)));
-		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat(void)));
+		connect(type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(precision_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(length_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(dimension_sb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(interval_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(spatial_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(updateTypeFormat()));
+		connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(updateTypeFormat()));
+		connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(updateTypeFormat()));
 	}
 	catch(Exception &e)
 	{
@@ -80,10 +80,10 @@ bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void PgSQLTypeWidget::updateTypeFormat(void)
+void PgSQLTypeWidget::updateTypeFormat()
 {
 	try
 	{
@@ -210,11 +210,11 @@ void PgSQLTypeWidget::setAttributes(PgSqlType type, DatabaseModel *model,  unsig
 	}
 }
 
-PgSqlType PgSQLTypeWidget::getPgSQLType(void)
+PgSqlType PgSQLTypeWidget::getPgSQLType()
 {
 	if(format_txt->toPlainText() == InvalidType)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(type);
+	return type;
 }
 

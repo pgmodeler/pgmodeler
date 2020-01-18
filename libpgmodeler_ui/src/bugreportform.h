@@ -41,7 +41,7 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		static constexpr char CharDelimiter = static_cast<char>(3);
 		
 		//! \brief Generates an uncompressed buffer based upon the data in fields
-		virtual QByteArray generateReportBuffer(void);
+		virtual QByteArray generateReportBuffer();
 		
 		//! \brief Generates the bug report file from uncompressed buffer
 		void generateReport(const QByteArray &buf);
@@ -50,12 +50,12 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		BugReportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 	public slots:
-		void generateReport(void);
+		void generateReport();
 		
 	private slots:
-		void enableGeneration(void);
-		void attachModel(void);
-		void selectOutput(void);
+		void enableGeneration();
+		void attachModel();
+		void selectOutput();
 };
 
 #endif

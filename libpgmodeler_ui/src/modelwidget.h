@@ -181,7 +181,7 @@ class ModelWidget: public QWidget {
 		void configureSubmenu(BaseObject *object);
 
 		//! \brief Configures the submenu related to fade in/out operations
-		void configureFadeMenu(void);
+		void configureFadeMenu();
 
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
@@ -198,7 +198,7 @@ class ModelWidget: public QWidget {
 		 * overlaping. This method causes the schema rectangle to be enabled. */
 		void rearrangeTablesInSchema(Schema *schema, QPointF start);
 
-		void updateMagnifierArea(void);
+		void updateMagnifierArea();
 
 		void showMagnifierArea(bool show);
 
@@ -276,7 +276,7 @@ class ModelWidget: public QWidget {
 		bool eventFilter(QObject *object, QEvent *event);
 
 		//! \brief Cancel the creation of a new object (only for graphical objects)
-		void cancelObjectAddition(void);
+		void cancelObjectAddition();
 
 		//! \brief Disables the model actions when some new object action is active
 		void enableModelActions(bool value);
@@ -296,23 +296,23 @@ class ModelWidget: public QWidget {
 		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
-		~ModelWidget(void);
+		~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
 		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
 
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
-		void adjustSceneSize(void);
+		void adjustSceneSize();
 
 		//! \brief Set the model as modified forcing it to be redrawn
 		void setModified(bool value);
 
 		//! \brief Returns the loaded database model filename
-		QString getFilename(void);
+		QString getFilename();
 
 		//! \brief Returns the temporary (security copy) of the currently loaded model
-		QString getTempFilename(void);
+		QString getTempFilename();
 
 		//! \brief Shows the editing form according to the passed object type
 		void showObjectForm(ObjectType obj_type, BaseObject *object=nullptr, BaseObject *parent_obj=nullptr, const QPointF &pos=QPointF(DNaN, DNaN));
@@ -321,22 +321,22 @@ class ModelWidget: public QWidget {
 		void applyZoom(double zoom);
 
 		//! \brief Returns the current zoom factor applied to the model
-		double getCurrentZoom(void);
+		double getCurrentZoom();
 
 		//! \brief Returns if the model is modified or not
-		bool isModified(void);
+		bool isModified();
 
 		//! \brief Returns the reference database model
-		DatabaseModel *getDatabaseModel(void);
+		DatabaseModel *getDatabaseModel();
 
 		//! \brief Returns the object scene used by the model
-		ObjectsScene *getObjectsScene(void);
+		ObjectsScene *getObjectsScene();
 
 		//! \brief Returns the scene view used by the model
-		QGraphicsView *getViewport(void);
+		QGraphicsView *getViewport();
 
 		//! \brief Returns the operation list used by database model
-		OperationList *getOperationList(void);
+		OperationList *getOperationList();
 
 		//! \brief Defines if any instance of ModelWidget must restore the last saved editing position on canvas
 		static void setSaveLastCanvasPosition(bool value);
@@ -351,32 +351,32 @@ class ModelWidget: public QWidget {
 		static void setMinimumObjectOpacity(unsigned min_opacity);
 
 		//! \brief Restore the last editing position on canvas as well the zoom factor
-		void restoreLastCanvasPosition(void);
+		void restoreLastCanvasPosition();
 
 		/*! \brief Save the last editing position on canvas as well the zoom factor. This method return true when
 		the current values was saved on the database model */
-		bool saveLastCanvasPosition(void);
+		bool saveLastCanvasPosition();
 
 		void setUpdatesEnabled(bool value);
 
-		void updateRenderHints(void);
+		void updateRenderHints();
 
 		/*! \brief Updates the opacity factor of the objects faded in the model. This method should be called
 		whenever the min_object_opacity changes */
-		void updateObjectsOpacity(void);
+		void updateObjectsOpacity();
 
 		/*! \brief Rearrange table/view/textboxes in the canvas in such way to provide better visualization
 		 * of the whole model. Currently only hierachical arrangement is possible. See rearrangeTablesHierarchically() */
-		void rearrangeTablesHierarchically(void);
+		void rearrangeTablesHierarchically();
 
 		/*! \brief Reorganizes the schemas over the scene in a grid form. The parameters are: an origin point,
 		number of tables per row, schemas per row and a object spacing */
 		void rearrangeSchemasInGrid(unsigned tabs_per_row = 0, unsigned sch_per_row = 0, QPointF origin = QPointF(50, 50), double obj_spacing = 50);
 
 		//! \brief Arrange all tables it their schemas randomly (scattered)
-		void rearrangeTablesInSchemas(void);
+		void rearrangeTablesInSchemas();
 
-		void emitSceneInteracted(void);
+		void emitSceneInteracted();
 
 	private slots:
 		//! \brief Handles the signals that indicates the object creation on the reference database model
@@ -398,49 +398,49 @@ class ModelWidget: public QWidget {
 		void configureObjectMenu(BaseObject *object);
 
 		//! \brief Shows the configured popup menu
-		void showObjectMenu(void);
+		void showObjectMenu();
 
 		//! \brief Shows the widget containing the dependencies and references to the object
-		void showDependenciesReferences(void);
+		void showDependenciesReferences();
 
 		//! \brief Triggers the object editing
-		void editObject(void);
+		void editObject();
 
 		//! \brief Toggles the protection of the selected objects
-		void protectObject(void);
+		void protectObject();
 
 		//! \brief Triggers the quick rename action
-		void renameObject(void);
+		void renameObject();
 
 		//! \brief Move the selected object to a schema (selectable via menu)
-		void moveToSchema(void);
+		void moveToSchema();
 
 		//! \brief Move the selected object to a layer (selectable via menu)
-		void moveToLayer(void);
+		void moveToLayer();
 
 		//! \brief Quickly changes the object's owner via popup menu
-		void changeOwner(void);
+		void changeOwner();
 
 		//! \brief Quickly sets the table's tag via popup menu
-		void setTag(void);
+		void setTag();
 
 		//! \brief Triggers the permission editing form
-		void editPermissions(void);
+		void editPermissions();
 
 		//! \brief Selects all the graphical objects under the selected schema
-		void selectSchemaChildren(void);
+		void selectSchemaChildren();
 
 		//! \brief Selects all the tables and views that references the selected tag
-		void selectTaggedTables(void);
+		void selectTaggedTables();
 
 		//! \brief Removes the selected objects
 		void removeObjects(bool cascade = false);
 
 		//! \brief Removes the selected objects in cascade model. This is the same as call removeObjects(true).
-		void removeObjectsCascade(void);
+		void removeObjectsCascade();
 
 		//! \brief Selects all the graphical objects on the scene
-		void selectAllObjects(void);
+		void selectAllObjects();
 
 		//! \brief Copies all the selected objects
 		void copyObjects(bool duplicate_mode = false);
@@ -449,89 +449,89 @@ class ModelWidget: public QWidget {
 		void pasteObjects(bool duplicate_mode = false);
 
 		//! \brief Duplicate the selected table object in its parent table
-		void duplicateObject(void);
+		void duplicateObject();
 
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
-		void cutObjects(void);
+		void cutObjects();
 
 		//! \brief Converts the Many to Many relationship generating a table and two additional relationships.
-		void convertRelationshipNN(void);
+		void convertRelationshipNN();
 
 		//! \brief Loads the selected object source code on the source code widget.
-		void showSourceCode(void);
+		void showSourceCode();
 
 		//! \brief Adds a new object onto the selected model/table/schema
-		void addNewObject(void);
+		void addNewObject();
 
 		//! \brief Triggers the sql insertion widget for the current database model
-		void editCustomSQL(void);
+		void editCustomSQL();
 
 		//! \brief Configures the selected object vector whenever the selection changes on the scene
-		void configureObjectSelection(void);
+		void configureObjectSelection();
 
 		/*! \brief Creates a sequence based upon the selected column. This method changes the default value
 		for the column as well the type. */
-		void createSequenceFromColumn(void);
+		void createSequenceFromColumn();
 
 		/*! \brief Creates a serial data type based upon the selected column data type. The prerequisite to create a serial data type
 		is that the column's type is an integer one (smallint, int, bigint) and the default value is a function call
 		to nextval('myseq'::regclass) */
-		void convertIntegerToSerial(void);
+		void convertIntegerToSerial();
 
 		//! \brief Break the relationship line in one or two straight angles (see BREAK_??? constants)
-		void breakRelationshipLine(void);
+		void breakRelationshipLine();
 
 		//! \brief Removes any user added point from relationship
-		void removeRelationshipPoints(void);
+		void removeRelationshipPoints();
 
 		//! \brief Highlights the object stored on the action that triggers the slot
-		void highlightObject(void);
+		void highlightObject();
 
-		void toggleNewObjectOverlay(void);
+		void toggleNewObjectOverlay();
 
-		void adjustOverlayPosition(void);
+		void adjustOverlayPosition();
 
-		void toggleObjectSQL(void);
+		void toggleObjectSQL();
 
-		void fadeObjectsIn(void);
+		void fadeObjectsIn();
 
-		void fadeObjectsOut(void);
+		void fadeObjectsOut();
 
-		void setCollapseMode(void);
+		void setCollapseMode();
 
-		void togglePagination(void);
+		void togglePagination();
 
-		void toggleSchemasRectangles(void);
+		void toggleSchemasRectangles();
 
-		void swapObjectsIds(void);
+		void swapObjectsIds();
 
-		void jumpToTable(void);
+		void jumpToTable();
 
-		void editTableData(void);
+		void editTableData();
 
-		void updateModelLayers(void);
+		void updateModelLayers();
 
 	public slots:
 		void loadModel(const QString &filename);
 		void saveModel(const QString &filename);
-		void saveModel(void);
+		void saveModel();
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
-		void update(void);
+		void update();
 
 	signals:
-		void s_objectModified(void);
-		void s_objectsMoved(void);
-		void s_objectCreated(void);
-		void s_objectRemoved(void);
+		void s_objectModified();
+		void s_objectsMoved();
+		void s_objectCreated();
+		void s_objectRemoved();
 		void s_zoomModified(double);
-		void s_modelResized(void);
+		void s_modelResized();
 
 		//! \brief Signal emitted whenever a object is created / edited using the form
-		void s_objectManipulated(void);
+		void s_objectManipulated();
 
 		/*! \brief Signal emitted whenever the user open an object in its editing form but cancel the operation
 		by closing the form */
-		void s_manipulationCanceled(void);
+		void s_manipulationCanceled();
 
 		/*! \brief Signal emitted whenever the scene suffered an interaction.
 		 * This version carries the interacted object in the scene */

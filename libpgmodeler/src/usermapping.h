@@ -34,10 +34,10 @@ class UserMapping: public BaseObject, public ForeignObject {
 		ForeignServer *foreign_server;
 
 	public:
-		UserMapping(void);
+		UserMapping();
 
 		void setForeignServer(ForeignServer *server);
-		ForeignServer *getForeignServer(void);
+		ForeignServer *getForeignServer();
 
 		virtual void setName(const QString &);
 		virtual void setOwner(BaseObject *role);

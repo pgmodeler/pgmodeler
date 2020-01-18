@@ -26,10 +26,10 @@ class LineNumbersTest: public QObject {
     Q_OBJECT
 
   private slots:
-		void handleLineSelectionUsingMouse(void);
+		void handleLineSelectionUsingMouse();
 };
 
-void LineNumbersTest::handleLineSelectionUsingMouse(void)
+void LineNumbersTest::handleLineSelectionUsingMouse()
 {
   QDialog *dlg=new QDialog;
 	NumberedTextEditor *edt=new NumberedTextEditor(dlg);

@@ -18,7 +18,7 @@
 
 #include "partitionkey.h"
 
-PartitionKey::PartitionKey(void)
+PartitionKey::PartitionKey()
 {
 	collation = nullptr;
 }
@@ -28,9 +28,9 @@ void PartitionKey::setCollation(Collation *collation)
 	this->collation=collation;
 }
 
-Collation *PartitionKey::getCollation(void)
+Collation *PartitionKey::getCollation()
 {
-	return(collation);
+	return collation;
 }
 
 QString PartitionKey::getCodeDefinition(unsigned def_type)
@@ -49,5 +49,5 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 			attribs[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type));
+	return schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type);
 }

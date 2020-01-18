@@ -30,9 +30,9 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		Ui_TypeWidget::setupUi(this);
 		configureFormLayout(type_grid, ObjectType::Type);
 
-		like_type=new PgSQLTypeWidget(this, trUtf8("Like Type"));
-		element_type=new PgSQLTypeWidget(this, trUtf8("Element Type"));
-		range_subtype=new PgSQLTypeWidget(this, trUtf8("Subtype"));
+		like_type=new PgSQLTypeWidget(this, tr("Like Type"));
+		element_type=new PgSQLTypeWidget(this, tr("Element Type"));
+		range_subtype=new PgSQLTypeWidget(this, tr("Subtype"));
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		grid->addWidget(like_type,6,0,1,0);
@@ -55,11 +55,11 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 
 		attributes_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 		attributes_tab->setColumnCount(3);
-		attributes_tab->setHeaderLabel(trUtf8("Name"),0);
+		attributes_tab->setHeaderLabel(tr("Name"),0);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-		attributes_tab->setHeaderLabel(trUtf8("Type"),1);
+		attributes_tab->setHeaderLabel(tr("Type"),1);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		attributes_tab->setHeaderLabel(trUtf8("Collation"),2);
+		attributes_tab->setHeaderLabel(tr("Collation"),2);
 		attributes_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("collation")),2);
 
 		grid=dynamic_cast<QGridLayout *>(attributes_gb->layout());
@@ -74,7 +74,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		attributes_gb->setVisible(false);
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(0)->layout());
-		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
+		frame=generateInformationFrame(tr("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
 
 		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), grid->count()+1,0);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
@@ -92,16 +92,16 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		}
 
 		grid->addWidget(range_subtype,3,0,1,2);
-		frame=generateInformationFrame(trUtf8("The functions to be assigned to a range type should have the following signatures:<br/><br/><strong>Canonical:</strong> <em>any function(any)</em> <br/><strong>Subtype Diff:</strong> <em>double precision function(subtype, subtype)</em>"));
+		frame=generateInformationFrame(tr("The functions to be assigned to a range type should have the following signatures:<br/><br/><strong>Canonical:</strong> <em>any function(any)</em> <br/><strong>Subtype Diff:</strong> <em>double precision function(subtype, subtype)</em>"));
 		grid->addItem(new QSpacerItem(20, 1, QSizePolicy::Minimum, QSizePolicy::Expanding),4,0);
 		grid->addWidget(frame, 5, 0, 1, 0);
 
 		range_attribs_gb->setVisible(false);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
-		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
-		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration(void)));
+		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
+		connect(base_type_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
+		connect(composite_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
+		connect(enumeration_rb, SIGNAL(toggled(bool)), this, SLOT(selectTypeConfiguration()));
 		connect(enumerations_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleEnumeration(int)));
 		connect(enumerations_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleEnumeration(int)));
 		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleAttribute(int)));
@@ -135,7 +135,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 	}
 }
 
-void TypeWidget::selectTypeConfiguration(void)
+void TypeWidget::selectTypeConfiguration()
 {
 	base_attribs_twg->setVisible(base_type_rb->isChecked());
 	enumerations_gb->setVisible(enumeration_rb->isChecked());
@@ -290,7 +290,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	element_type->setAttributes(elem_tp, model);
 }
 
-void TypeWidget::applyConfiguration(void)
+void TypeWidget::applyConfiguration()
 {
 	try
 	{

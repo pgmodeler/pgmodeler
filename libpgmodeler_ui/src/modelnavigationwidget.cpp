@@ -40,22 +40,22 @@ ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 	close_tb->setToolTip(close_tb->toolTip() + QString(" (%1)").arg(close_tb->shortcut().toString()));
 }
 
-int ModelNavigationWidget::getCurrentIndex(void)
+int ModelNavigationWidget::getCurrentIndex()
 {
-	return(models_cmb->currentIndex());
+	return models_cmb->currentIndex();
 }
 
 QString ModelNavigationWidget::getText(int idx)
 {
 	if(idx < 0 || idx >= models_cmb->count())
-		return(QString());
+		return QString();
 	else
-		return(models_cmb->itemText(idx));
+		return models_cmb->itemText(idx);
 }
 
 QList<ModelWidget *> ModelNavigationWidget::getModelWidgets()
 {
-	return(model_wgts);
+	return model_wgts;
 }
 
 void ModelNavigationWidget::addModel(ModelWidget *model)
@@ -70,7 +70,7 @@ void ModelNavigationWidget::addModel(ModelWidget *model)
 		tooltip=model->getFilename();
 
 		if(tooltip.isEmpty())
-			tooltip=trUtf8("(model not saved yet)");
+			tooltip=tr("(model not saved yet)");
 
 		models_cmb->addItem(model->getDatabaseModel()->getName(), tooltip);
 		models_cmb->setCurrentIndex(models_cmb->count()-1);
@@ -112,7 +112,7 @@ void ModelNavigationWidget::removeModel(int idx)
 	emit s_modelRemoved(idx);
 }
 
-void ModelNavigationWidget::setCurrentModel(void)
+void ModelNavigationWidget::setCurrentModel()
 {
     models_cmb->setToolTip(models_cmb->currentData().toString());
 
@@ -122,7 +122,7 @@ void ModelNavigationWidget::setCurrentModel(void)
       emit s_currentModelChanged(models_cmb->currentIndex());
 }
 
-void ModelNavigationWidget::enableNavigationButtons(void)
+void ModelNavigationWidget::enableNavigationButtons()
 {
 	previous_tb->setEnabled(models_cmb->currentIndex() > 0 && models_cmb->count() > 1);
 	next_tb->setEnabled(models_cmb->currentIndex() >= 0 && models_cmb->currentIndex()!=(models_cmb->count()-1));

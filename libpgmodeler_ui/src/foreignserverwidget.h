@@ -42,7 +42,7 @@ class ForeignServerWidget: public BaseObjectWidget, public Ui::ForeignServerWidg
 		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignServer *server);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

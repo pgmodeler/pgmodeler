@@ -16,11 +16,13 @@ windows: DESTDIR = $$PWD
 HEADERS += src/exception.h \
            src/globalattributes.h \
            src/pgsqlversions.h \
-    src/doublenan.h
+	   src/doublenan.h \
+	   src/application.h
 
 SOURCES += src/exception.cpp \
            src/globalattributes.cpp \
-           src/pgsqlversions.cpp
+	   src/pgsqlversions.cpp \
+	   src/application.cpp
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR

@@ -36,15 +36,15 @@ class ForeignServer: public BaseObject, public ForeignObject {
 		QString type, version;
 
 	public:
-		ForeignServer(void);
+		ForeignServer();
 
 		void setType(const QString &type);
 		void setVersion(const QString &version);
 		void setForeignDataWrapper(ForeignDataWrapper *fdw);
 
-		QString getType(void);
-		QString getVersion(void);
-		ForeignDataWrapper *getForeignDataWrapper(void);
+		QString getType();
+		QString getVersion();
+		ForeignDataWrapper *getForeignDataWrapper();
 
 		virtual QString getCodeDefinition(unsigned def_type);
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);

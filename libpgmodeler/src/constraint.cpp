@@ -18,7 +18,7 @@
 
 #include "constraint.h"
 
-Constraint::Constraint(void)
+Constraint::Constraint()
 {
 	ref_table=nullptr;
 	obj_type=ObjectType::Constraint;
@@ -50,7 +50,7 @@ Constraint::Constraint(void)
 	attributes[Attributes::Elements]=QString();
 }
 
-Constraint::~Constraint(void)
+Constraint::~Constraint()
 {
 	columns.clear();
 	ref_columns.clear();
@@ -109,7 +109,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
@@ -140,7 +140,7 @@ bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 		}
 	}
 
-	return(found);
+	return found;
 }
 
 void Constraint::addColumn(Column *column, unsigned col_type)
@@ -261,32 +261,32 @@ void Constraint::setNoInherit(bool value)
 	no_inherit=value;
 }
 
-unsigned Constraint::getFillFactor(void)
+unsigned Constraint::getFillFactor()
 {
-	return(fill_factor);
+	return fill_factor;
 }
 
-ConstraintType Constraint::getConstraintType(void)
+ConstraintType Constraint::getConstraintType()
 {
-	return(constr_type);
+	return constr_type;
 }
 
 ActionType Constraint::getActionType(unsigned act_id)
 {
 	if(act_id==DeleteAction)
-		return(del_action);
+		return del_action;
 	else
-	  return(upd_action);
+		return upd_action;
 }
 
 vector<Column *> Constraint::getColumns(unsigned col_type)
 {
-  return(col_type==SourceCols ? columns : ref_columns);
+  return (col_type==SourceCols ? columns : ref_columns);
 }
 
-QString Constraint::getExpression(void)
+QString Constraint::getExpression()
 {
-	return(expression);
+	return expression;
 }
 
 Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
@@ -299,7 +299,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 	if(col_idx>=col_list->size())
 		throw Exception(ErrorCode::RefColumnInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(col_list->at(col_idx));
+	return col_list->at(col_idx);
 }
 
 Column *Constraint::getColumn(const QString &name, unsigned col_type)
@@ -320,24 +320,24 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
 		else break;
 	}
 
-	if(found) return(*itr_col);
-	else return(nullptr);
+	if(found) return *itr_col;
+	else return nullptr;
 }
 
-BaseTable *Constraint::getReferencedTable(void)
+BaseTable *Constraint::getReferencedTable()
 {
-	return(ref_table);
+	return ref_table;
 }
 
 unsigned Constraint::getColumnCount(unsigned col_type)
 {
 	if(col_type==ReferencedCols)
-		return(ref_columns.size());
+		return ref_columns.size();
 	else
-		return(columns.size());
+		return columns.size();
 }
 
-void Constraint::removeColumns(void)
+void Constraint::removeColumns()
 {
 	setColumnsNotNull(false);
 	columns.clear();
@@ -379,22 +379,22 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
 	}
 }
 
-DeferralType Constraint::getDeferralType(void)
+DeferralType Constraint::getDeferralType()
 {
-	return(deferral_type);
+	return deferral_type;
 }
 
-bool Constraint::isDeferrable(void)
+bool Constraint::isDeferrable()
 {
-	return(deferrable);
+	return deferrable;
 }
 
-bool Constraint::isNoInherit(void)
+bool Constraint::isNoInherit()
 {
-	return(no_inherit);
+	return no_inherit;
 }
 
-bool Constraint::isReferRelationshipAddedColumn(void)
+bool Constraint::isReferRelationshipAddedColumn()
 {
 	vector<Column *>::iterator itr, itr_end;
 	vector<ExcludeElement>::iterator itr1, itr1_end;
@@ -432,10 +432,10 @@ bool Constraint::isReferRelationshipAddedColumn(void)
 		itr1++;
 	}
 
-	return(found);
+	return found;
 }
 
-vector<Column *> Constraint::getRelationshipAddedColumns(void)
+vector<Column *> Constraint::getRelationshipAddedColumns()
 {
 	Column *column=nullptr;
 	vector<Column *> cols;
@@ -457,12 +457,12 @@ vector<Column *> Constraint::getRelationshipAddedColumns(void)
 			cols.push_back(column);
 	}
 
-	return(cols);
+	return cols;
 }
 
-MatchType Constraint::getMatchType(void)
+MatchType Constraint::getMatchType()
 {
-	return(match_type);
+	return match_type;
 }
 
 
@@ -477,12 +477,12 @@ int Constraint::getExcludeElementIndex(ExcludeElement elem)
 		if(!found) idx++;
 	}
 
-	return(found ? idx : -1);
+	return (found ? idx : -1);
 }
 
-vector<ExcludeElement> Constraint::getExcludeElements(void)
+vector<ExcludeElement> Constraint::getExcludeElements()
 {
-	return(excl_elements);
+	return excl_elements;
 }
 
 void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
@@ -587,7 +587,7 @@ void Constraint::removeExcludeElement(unsigned elem_idx)
 	setCodeInvalidated(true);
 }
 
-void Constraint::removeExcludeElements(void)
+void Constraint::removeExcludeElements()
 {
 	excl_elements.clear();
 	setCodeInvalidated(true);
@@ -610,12 +610,12 @@ ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
 	if(elem_idx >= excl_elements.size())
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(excl_elements[elem_idx]);
+	return excl_elements[elem_idx];
 }
 
-unsigned Constraint::getExcludeElementCount(void)
+unsigned Constraint::getExcludeElementCount()
 {
-	return(excl_elements.size());
+	return excl_elements.size();
 }
 
 void Constraint::setExcludeElementsAttribute(unsigned def_type)
@@ -638,17 +638,17 @@ void Constraint::setIndexType(IndexingType index_type)
 	this->index_type=index_type;
 }
 
-IndexingType Constraint::getIndexType(void)
+IndexingType Constraint::getIndexType()
 {
-	return(index_type);
+	return index_type;
 }
 
 QString Constraint::getCodeDefinition(unsigned def_type)
 {
-	return(getCodeDefinition(def_type, false));
+	return getCodeDefinition(def_type, false);
 }
 
-void Constraint::setDeclInTableAttribute(void)
+void Constraint::setDeclInTableAttribute()
 {
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
 		attributes[Attributes::DeclInTable]=QString();
@@ -659,7 +659,7 @@ void Constraint::setDeclInTableAttribute(void)
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!inc_addedbyrel && !code_def.isEmpty()) return(code_def);
+	if(!inc_addedbyrel && !code_def.isEmpty()) return code_def;
 
 	QString attrib;
 
@@ -727,21 +727,21 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	else
 		attributes[Attributes::Factor]=QString();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Constraint::getDropDefinition(bool cascade)
 {
 	setDeclInTableAttribute();
-	return(TableObject::getDropDefinition(cascade));
+	return TableObject::getDropDefinition(cascade);
 }
 
 QString Constraint::getSignature(bool format)
 {
 	if(!getParentTable())
-		return(BaseObject::getSignature(format));
+		return BaseObject::getSignature(format);
 
-	return(QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true)));
+	return QString("%1 ON %2 ").arg(this->getName(format)).arg(getParentTable()->getSignature(true));
 }
 
 bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ignored_attribs, const vector<QString> &ignored_tags)
@@ -753,9 +753,9 @@ bool Constraint::isCodeDiffersFrom(BaseObject *object, const vector<QString> &ig
 
 	try
 	{
-		return(BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition, true),
+		return BaseObject::isCodeDiffersFrom(this->getCodeDefinition(SchemaParser::XmlDefinition, true),
 											 object->getCodeDefinition(SchemaParser::XmlDefinition, true),
-											 ignored_attribs, ignored_tags));
+											 ignored_attribs, ignored_tags);
 	}
 	catch(Exception &e)
 	{

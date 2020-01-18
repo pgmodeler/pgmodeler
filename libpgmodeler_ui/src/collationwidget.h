@@ -37,10 +37,10 @@ class CollationWidget: public BaseObjectWidget, public Ui::CollationWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Collation *collation);
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 		
 	private slots:
-		void resetFields(void);
+		void resetFields();
 };
 
 #endif

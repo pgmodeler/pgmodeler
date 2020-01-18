@@ -79,10 +79,10 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		void updatePermissionTree(QTreeWidgetItem *root, BaseObject *object);
 
 		//! \brief Updates the whole database object tree
-		void updateDatabaseTree(void);
+		void updateDatabaseTree();
 
 		//! \brief Updates the whole object list
-		void updateObjectsList(void);
+		void updateObjectsList();
 
 		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);
@@ -101,7 +101,7 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	public:
 		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = nullptr);
 
-		BaseObject *getSelectedObject(void);
+		BaseObject *getSelectedObject();
 
 		//! \brief Enables the object creation in simplified view by exposing the popup menu "New [object]"
 		void enableObjectCreation(bool value);
@@ -119,20 +119,20 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 	public slots:
 		void setModel(ModelWidget *model_wgt);
 		void setModel(DatabaseModel *db_model);
-		void changeObjectsView(void);
-		void updateObjectsView(void);
+		void changeObjectsView();
+		void updateObjectsView();
 		void setObjectVisible(ObjectType obj_type, bool visible);
-		void close(void);
-		void hide(void);
+		void close();
+		void hide();
 
 	private slots:
 		void setObjectVisible(QListWidgetItem *item);
 		void setAllObjectsVisible(bool value);
-		void selectObject(void);
-		void showObjectMenu(void);
-		void editObject(void);
-		void collapseAll(void);
-		void filterObjects(void);
+		void selectObject();
+		void showObjectMenu();
+		void editObject();
+		void collapseAll();
+		void filterObjects();
 		void selectCreatedObject(BaseObject *obj);
 
 	signals:

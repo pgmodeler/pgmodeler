@@ -122,22 +122,22 @@ class CodeCompletionWidget: public QWidget
 		void insertCustomItems(const QStringList &names, const QString &tooltip, ObjectType obj_type);
 		
 		//! \brief Clear the custom added items
-		void clearCustomItems(void);
+		void clearCustomItems();
 		
 	public slots:
 		//! \brief Updates the completion list based upon the typed word
-		void updateList(void);
+		void updateList();
 		
 		//! \brief Shows the configured completion list
-		void show(void);
+		void show();
 		
 		//! \brief Close without select any item on completion list
-		void close(void);
+		void close();
 		
 		//! \brief Selects an item and closes the completion list
-		void selectItem(void);
+		void selectItem();
 		
-		void showItemTooltip(void);
+		void showItemTooltip();
 		
 	signals:
 		//! \brief This signal is emitted whenever a word is placed into the parent textbox through the completion popup.

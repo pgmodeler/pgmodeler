@@ -18,7 +18,7 @@
 
 #include "basetable.h"
 
-BaseTable::BaseTable(void)
+BaseTable::BaseTable()
 {
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
@@ -33,7 +33,7 @@ BaseTable::BaseTable(void)
 	resetCurrentPages();
 }
 
-void BaseTable::resetCurrentPages(void)
+void BaseTable::resetCurrentPages()
 {
 	curr_page[AttribsSection] = 0;
 	curr_page[ExtAttribsSection] = 0;
@@ -45,23 +45,23 @@ void BaseTable::setTag(Tag *tag)
 	this->tag=tag;
 }
 
-Tag *BaseTable::getTag(void)
+Tag *BaseTable::getTag()
 {
-	return(tag);
+	return tag;
 }
 
-bool BaseTable::isBaseTable(ObjectType obj_type)
+bool BaseTable::isBaseTable(ObjectType obj_tp)
 {
-	return(obj_type == ObjectType::Table ||
-				 obj_type == ObjectType::ForeignTable ||
-				 obj_type == ObjectType::View);
+	return (obj_tp == ObjectType::Table ||
+				 obj_tp == ObjectType::ForeignTable ||
+				 obj_tp == ObjectType::View);
 }
 
 QString BaseTable::getAlterDefinition(BaseObject *object)
 {
 	try
 	{
-		return(BaseObject::getAlterDefinition(object));
+		return BaseObject::getAlterDefinition(object);
 	}
 	catch(Exception &e)
 	{
@@ -75,9 +75,9 @@ void BaseTable::operator = (BaseTable &tab)
 	this->tag=tab.tag;
 }
 
-CollapseMode BaseTable::getCollapseMode(void)
+CollapseMode BaseTable::getCollapseMode()
 {
-	return(collapse_mode);
+	return collapse_mode;
 }
 
 void BaseTable::setPaginationEnabled(bool value)
@@ -89,9 +89,9 @@ void BaseTable::setPaginationEnabled(bool value)
 		resetCurrentPages();
 }
 
-bool BaseTable::isPaginationEnabled(void)
+bool BaseTable::isPaginationEnabled()
 {
-	return(pagination_enabled);
+	return pagination_enabled;
 }
 
 void BaseTable::setCurrentPage(unsigned section_id, unsigned value)
@@ -108,7 +108,7 @@ unsigned BaseTable::getCurrentPage(unsigned section_id)
 	if(section_id > ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(curr_page[section_id]);
+	return curr_page[section_id];
 }
 
 void BaseTable::setCollapseMode(CollapseMode coll_mode)

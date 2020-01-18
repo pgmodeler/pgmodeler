@@ -42,24 +42,24 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 		//! \brief Source and destination object selectors
 		ObjectSelectorWidget *src_object_sel, *dst_object_sel;
 
-		void fillCreationOrderGrid(void);
+		void fillCreationOrderGrid();
 		bool eventFilter(QObject *object, QEvent *event);
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~SwapObjectsIdsWidget(void);
+		~SwapObjectsIdsWidget();
 		void setModel(DatabaseModel *model);
 		void setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct);
 
 	private slots:
-		void showObjectId(void);
-		void swapObjectsIds(void);
-		void filterObjects(void);
+		void showObjectId();
+		void swapObjectsIds();
+		void filterObjects();
 		void selectItem(QTableWidgetItem *item);
-		void clearSelectors(void);
+		void clearSelectors();
 
 	signals:
-		void s_objectsIdsSwapped(void);
+		void s_objectsIdsSwapped();
 };
 
 #endif

@@ -40,7 +40,7 @@ using namespace std;
 template<typename Enum>
 constexpr std::underlying_type_t<Enum> enum_cast (Enum obj_type) noexcept
 {
-	return(static_cast<typename std::underlying_type_t<Enum>>(obj_type));
+	return static_cast<typename std::underlying_type_t<Enum>>(obj_type);
 }
 
 //! \brief This enum defines the global error codes used throughout the application
@@ -341,7 +341,7 @@ class Exception {
 	public:
 		static unsigned constexpr MaximumStackSize = 50;
 
-		Exception(void);
+		Exception();
 		Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
 		Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 		Exception(const QString &msg, ErrorCode error_code, const QString &method, const QString &file, int line, Exception *exception=nullptr, const QString &extra_info=QString());
@@ -350,20 +350,20 @@ class Exception {
 		Exception(ErrorCode error_code, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info=QString());
 
 		~Exception(void){}
-		QString getErrorMessage(void);
+		QString getErrorMessage();
 		static QString getErrorMessage(ErrorCode error_code);
 		static QString getErrorCode(ErrorCode error_code);
-		QString getMethod(void);
-		QString getFile(void);
-		QString getLine(void);
-		ErrorCode getErrorCode(void);
-		QString getExtraInfo(void);
+		QString getMethod();
+		QString getFile();
+		QString getLine();
+		ErrorCode getErrorCode();
+		QString getExtraInfo();
 
 		//! \brief Gets the full exception stack
 		void getExceptionsList(vector<Exception> &list);
 
 		//! \brief Gets the exception stack in a formatted text
-		QString getExceptionsText(void);
+		QString getExceptionsText();
 };
 
 #endif

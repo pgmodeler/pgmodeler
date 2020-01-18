@@ -1,7 +1,7 @@
 #include "swapobjectsidswidget.h"
 #include "pgmodeleruins.h"
 
-const QString SwapObjectsIdsWidget::IdLabel = QString("ID: <strong>%1</strong>");
+const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
@@ -50,10 +50,10 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		setModel(nullptr);
 
-		connect(src_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
-		connect(dst_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
-		connect(src_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
-		connect(dst_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
+		connect(src_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
+		connect(dst_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
+		connect(src_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
+		connect(dst_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
 
 		connect(swap_values_tb, &QToolButton::clicked,
 		[&](){
@@ -107,7 +107,7 @@ void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject
 	dst_object_sel->setSelectedObject(dst_objct);
 }
 
-void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
+void SwapObjectsIdsWidget::fillCreationOrderGrid()
 {
 	objects_tbw->clearContents();
 	objects_tbw->setRowCount(0);
@@ -182,10 +182,10 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void SwapObjectsIdsWidget::showObjectId(void)
+void SwapObjectsIdsWidget::showObjectId()
 {
 	QLabel *ico_lbl=nullptr, *id_lbl=nullptr;
 	BaseObject *sel_obj=nullptr;
@@ -226,7 +226,7 @@ void SwapObjectsIdsWidget::showObjectId(void)
 													dst_object_sel->getSelectedObject());
 }
 
-void SwapObjectsIdsWidget::swapObjectsIds(void)
+void SwapObjectsIdsWidget::swapObjectsIds()
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 			*dst_obj=dst_object_sel->getSelectedObject();
@@ -281,7 +281,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	}
 }
 
-void SwapObjectsIdsWidget::filterObjects(void)
+void SwapObjectsIdsWidget::filterObjects()
 {
 	BaseObject *object = nullptr;
 	bool is_rel = false, is_sys_obj = false;
@@ -324,7 +324,7 @@ void SwapObjectsIdsWidget::selectItem(QTableWidgetItem *item)
 	}
 }
 
-void SwapObjectsIdsWidget::clearSelectors(void)
+void SwapObjectsIdsWidget::clearSelectors()
 {
 	selector_idx = 0;
 	src_object_sel->clearSelector();

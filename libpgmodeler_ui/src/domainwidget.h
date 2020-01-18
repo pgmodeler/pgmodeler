@@ -47,7 +47,7 @@ class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 		void editConstraint(int row);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

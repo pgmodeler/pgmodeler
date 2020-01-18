@@ -47,7 +47,7 @@ class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataW
 		void setAttributes(DatabaseModel *model, OperationList *op_list, ForeignDataWrapper *fdw);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

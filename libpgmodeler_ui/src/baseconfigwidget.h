@@ -68,7 +68,7 @@ class BaseConfigWidget: public QWidget {
 		BaseConfigWidget(QWidget *parent = nullptr);
 		~BaseConfigWidget(void){}
 		
-		bool isConfigurationChanged(void);
+		bool isConfigurationChanged();
 		
 		//! \brief Applies the configuration to object
 		virtual void applyConfiguration(void)=0;

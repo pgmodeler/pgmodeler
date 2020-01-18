@@ -39,13 +39,13 @@ class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 	public:
 		ParameterWidget(QWidget * parent = nullptr);
 		void setAttributes(Parameter parameter, DatabaseModel *model);
-		Parameter getParameter(void);
+		Parameter getParameter();
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void enableVariadic(void);
+		void enableVariadic();
 };
 
 #endif

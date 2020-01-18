@@ -18,7 +18,7 @@
 
 #include "textbox.h"
 
-Textbox::Textbox(void)
+Textbox::Textbox()
 {
 	obj_type=ObjectType::Textbox;
 	font_size=9.0;
@@ -33,11 +33,11 @@ Textbox::Textbox(void)
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return(QString());
+		return QString();
 	else
 	{
 		QString code_def=getCachedCode(def_type, false);
-		if(!code_def.isEmpty()) return(code_def);
+		if(!code_def.isEmpty()) return code_def;
 
 		setPositionAttribute();
 		setFadedOutAttribute();
@@ -57,7 +57,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 		attributes[Attributes::Layer]=QString::number(layer);
 
-		return(this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition));
+		return this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition);
 	}
 }
 
@@ -86,9 +86,9 @@ void Textbox::setTextColor(const QColor &color)
 	text_color=color;
 }
 
-QColor Textbox::getTextColor(void)
+QColor Textbox::getTextColor()
 {
-	return(text_color);
+	return text_color;
 }
 
 bool Textbox::getTextAttribute(unsigned attrib)
@@ -96,7 +96,7 @@ bool Textbox::getTextAttribute(unsigned attrib)
 	if(attrib > UnderlineText)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(text_attributes[attrib]);
+	return text_attributes[attrib];
 }
 
 void Textbox::setFontSize(double size)
@@ -104,8 +104,7 @@ void Textbox::setFontSize(double size)
 	font_size=(size <= 0 ? 1 : size);
 }
 
-double Textbox::getFontSize(void)
+double Textbox::getFontSize()
 {
-	return(font_size);
+	return font_size;
 }
-

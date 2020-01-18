@@ -50,10 +50,10 @@ class TableObjectView: public BaseObjectView
 
 		QVariant itemChange(GraphicsItemChange, const QVariant &value)
 		{
-			return(value);
+			return value;
 		}
 
-		void calculateBoundingRect(void);
+		void calculateBoundingRect();
 
 	public:
 		static const QString	ConstrDelimEnd,
@@ -73,7 +73,7 @@ class TableObjectView: public BaseObjectView
 		ConstrAliasLabel = 3;
 
 		TableObjectView(TableObject *object=nullptr);
-		~TableObjectView(void);
+		~TableObjectView();
 
 		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);
@@ -82,7 +82,7 @@ class TableObjectView: public BaseObjectView
 		void configureObject(const SimpleColumn &col);
 
 		//! \brief Configures the object as a table object
-		void configureObject(void);
+		void configureObject();
 
 		//! \brief Sets the horizontal position of the specified child object (index)
 		void setChildObjectXPos(unsigned obj_idx, double px);
@@ -95,12 +95,12 @@ class TableObjectView: public BaseObjectView
 		static QString getConstraintString(Column *column);
 
 		void setFakeSelection(bool value);
-		bool hasFakeSelection(void);
+		bool hasFakeSelection();
 
 		virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
 		virtual QRectF boundingRect(void) const;
-		virtual void configureObjectSelection(void);
+		virtual void configureObjectSelection();
 		void configureObjectShadow(void) = delete;
 };
 

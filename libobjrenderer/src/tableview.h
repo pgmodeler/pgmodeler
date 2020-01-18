@@ -41,7 +41,7 @@ class TableView: public BaseTableView {
 		QPointF getConnectionPoints(TableObject *tab_obj, unsigned pnt_type);
 
 	private slots:
-		void configureObject(void);
+		void configureObject();
 };
 
 #endif

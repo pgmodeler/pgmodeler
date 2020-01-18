@@ -62,14 +62,14 @@ class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, GenericSQL *genericsql=nullptr);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
-		void updateCodePreview(void);
+		void updateCodePreview();
 		void addObjectReference(int row);
 		void editObjectReference(int row);
 		void updateObjectReference(int row);
-		void clearObjectReferenceForm(void);
+		void clearObjectReferenceForm();
 };
 
 #endif

@@ -31,14 +31,14 @@ class ExcludeElement: public Element {
 		Operator *_operator;
 
 	public:
-		ExcludeElement(void);
+		ExcludeElement();
 		virtual ~ExcludeElement(void) {}
 
 		//! \brief Defines the operator used by the exclude element
 		void setOperator(Operator *oper);
 
 		//! \brief Returns the operator used by the exclude element
-		Operator *getOperator(void);
+		Operator *getOperator();
 
 		virtual QString getCodeDefinition(unsigned def_type) final;
 

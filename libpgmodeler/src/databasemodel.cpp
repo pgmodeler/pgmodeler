@@ -22,7 +22,7 @@
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
-DatabaseModel::DatabaseModel(void)
+DatabaseModel::DatabaseModel()
 {
 	this->model_wgt=nullptr;
 	object_id=DatabaseModel::dbmodel_id++;
@@ -32,7 +32,7 @@ DatabaseModel::DatabaseModel(void)
 	allow_conns = true;
 
 	encoding=BaseType::Null;
-	BaseObject::setName(QObject::trUtf8("new_database"));
+	BaseObject::setName(QObject::tr("new_database"));
 
 	default_objs[ObjectType::Schema]=nullptr;
 	default_objs[ObjectType::Role]=nullptr;
@@ -90,15 +90,15 @@ DatabaseModel::DatabaseModel(ModelWidget *model_wgt):DatabaseModel()
 	this->model_wgt=model_wgt;
 }
 
-DatabaseModel::~DatabaseModel(void)
+DatabaseModel::~DatabaseModel()
 {
 	this->blockSignals(true);
 	destroyObjects();
 }
 
-ModelWidget *DatabaseModel::getModelWidget(void)
+ModelWidget *DatabaseModel::getModelWidget()
 {
-	return(model_wgt);
+	return model_wgt;
 }
 
 void DatabaseModel::setEncoding(EncodingType encod)
@@ -136,9 +136,9 @@ void DatabaseModel::setAuthor(const QString &author)
 vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 {
 	if(obj_lists.count(obj_type) == 0)
-		return(nullptr);
+		return nullptr;
 
-	return(obj_lists[obj_type]);
+	return obj_lists[obj_type];
 }
 
 void DatabaseModel::addObject(BaseObject *object, int obj_idx)
@@ -373,7 +373,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 #warning "DEMO VERSION: database model object creation limit."
 	obj_list=getObjectList(obj_type);
 	if(obj_list && obj_list->size() >= GlobalAttributes::MaxObjectCount)
-		throw Exception(trUtf8("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
+		throw Exception(tr("The demonstration version can create only `%1' instances of each object type! You've reach this limit for the type: `%2'")
 						.arg(GlobalAttributes::MaxObjectCount)
 						.arg(BaseObject::getTypeName(obj_type)),
 						ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -561,7 +561,7 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
 		itr++;
 	}
 
-	return(sel_list);
+	return sel_list;
 }
 
 vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
@@ -580,7 +580,7 @@ vector<BaseObject *> DatabaseModel::getObjects(BaseObject *schema)
 		}
 	}
 
-	return(sel_list);
+	return sel_list;
 }
 
 BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
@@ -619,7 +619,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 		else obj_idx=-1;
 	}
 
-	return(object);
+	return object;
 }
 
 BaseObject *DatabaseModel::getObject(const QString &name, const vector<ObjectType> &types)
@@ -632,7 +632,7 @@ BaseObject *DatabaseModel::getObject(const QString &name, const vector<ObjectTyp
 		if(object) break;
 	}
 
-	return(object);
+	return object;
 }
 
 BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
@@ -646,7 +646,7 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 	else if(obj_idx >= obj_list->size())
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
-		return(obj_list->at(obj_idx));
+		return obj_list->at(obj_idx);
 }
 
 unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
@@ -658,10 +658,10 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 	if(!obj_list)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
-	  return(obj_list->size());
+		return obj_list->size();
 }
 
-unsigned DatabaseModel::getMaxObjectCount(void)
+unsigned DatabaseModel::getMaxObjectCount()
 {
 	vector<ObjectType> types = getObjectTypes(false, {ObjectType::Database});
   unsigned count = 0, max = 0;
@@ -672,10 +672,10 @@ unsigned DatabaseModel::getMaxObjectCount(void)
 	 if(count > max) max = count;
   }
 
-  return(max);
+	return max;
 }
 
-unsigned DatabaseModel::getObjectCount(void)
+unsigned DatabaseModel::getObjectCount()
 {
 	vector<ObjectType> types= getObjectTypes(false, {ObjectType::Database});
 	unsigned count=0;
@@ -683,7 +683,7 @@ unsigned DatabaseModel::getObjectCount(void)
 	for(auto &type : types)
 		count+=getObjectList(type)->size();
 
-	return(count);
+	return count;
 }
 
 QString DatabaseModel::getLocalization(unsigned localiz_id)
@@ -691,22 +691,22 @@ QString DatabaseModel::getLocalization(unsigned localiz_id)
 	if(localiz_id > Collation::LcCollate)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(localizations[localiz_id]);
+	return localizations[localiz_id];
 }
 
-int DatabaseModel::getConnectionLimit(void)
+int DatabaseModel::getConnectionLimit()
 {
-	return(conn_limit);
+	return conn_limit;
 }
 
-QString DatabaseModel::getTemplateDB(void)
+QString DatabaseModel::getTemplateDB()
 {
-	return(template_db);
+	return template_db;
 }
 
-EncodingType DatabaseModel::getEncoding(void)
+EncodingType DatabaseModel::getEncoding()
 {
-	return(encoding);
+	return encoding;
 }
 
 BaseObject *DatabaseModel::getDefaultObject(ObjectType obj_type)
@@ -714,12 +714,12 @@ BaseObject *DatabaseModel::getDefaultObject(ObjectType obj_type)
 	if(default_objs.count(obj_type)==0)
 		throw Exception(ErrorCode::RefObjectInvalidType, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(default_objs[obj_type]);
+	return default_objs[obj_type];
 }
 
-QString DatabaseModel::getAuthor(void)
+QString DatabaseModel::getAuthor()
 {
-	return(author);
+	return author;
 }
 
 void DatabaseModel::setProtected(bool value)
@@ -735,7 +735,7 @@ void DatabaseModel::setProtected(bool value)
 	BaseObject::setProtected(value);
 }
 
-void DatabaseModel::destroyObjects(void)
+void DatabaseModel::destroyObjects()
 {
 	ObjectType graph_types[]={ ObjectType::Schema, ObjectType::BaseRelationship, ObjectType::Relationship,
 														 ObjectType::Table, ObjectType::ForeignTable, ObjectType::View };
@@ -803,13 +803,13 @@ void DatabaseModel::destroyObjects(void)
 				dynamic_cast<Relationship *>(object)->destroyObjects();
 		}
 
-		delete(object);
+		delete object;
 	}
 
 	PgSqlType::removeUserTypes(this);
 
 	for(auto &perm : 	permissions)
-		delete(perm);
+		delete perm;
 
 	permissions.clear();
 
@@ -845,12 +845,12 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
 
 Table *DatabaseModel::getTable(unsigned obj_idx)
 {
-	return(dynamic_cast<Table *>(getObject(obj_idx, ObjectType::Table)));
+	return dynamic_cast<Table *>(getObject(obj_idx, ObjectType::Table));
 }
 
 Table *DatabaseModel::getTable(const QString &name)
 {
-	return(dynamic_cast<Table *>(getObject(name, ObjectType::Table)));
+	return dynamic_cast<Table *>(getObject(name, ObjectType::Table));
 }
 
 void DatabaseModel::removeTable(Table *table, int obj_idx)
@@ -882,12 +882,12 @@ void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
 
 Sequence *DatabaseModel::getSequence(unsigned obj_idx)
 {
-	return(dynamic_cast<Sequence *>(getObject(obj_idx, ObjectType::Sequence)));
+	return dynamic_cast<Sequence *>(getObject(obj_idx, ObjectType::Sequence));
 }
 
 Sequence *DatabaseModel::getSequence(const QString &name)
 {
-	return(dynamic_cast<Sequence *>(getObject(name, ObjectType::Sequence)));
+	return dynamic_cast<Sequence *>(getObject(name, ObjectType::Sequence));
 }
 
 void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
@@ -916,12 +916,12 @@ void DatabaseModel::addCollation(Collation *collation, int obj_idx)
 
 Collation *DatabaseModel::getCollation(unsigned obj_idx)
 {
-	return(dynamic_cast<Collation *>(getObject(obj_idx, ObjectType::Collation)));
+	return dynamic_cast<Collation *>(getObject(obj_idx, ObjectType::Collation));
 }
 
 Collation *DatabaseModel::getCollation(const QString &name)
 {
-	return(dynamic_cast<Collation *>(getObject(name, ObjectType::Collation)));
+	return dynamic_cast<Collation *>(getObject(name, ObjectType::Collation));
 }
 
 void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
@@ -953,12 +953,12 @@ void DatabaseModel::addExtension(Extension *extension, int obj_idx)
 
 Extension *DatabaseModel::getExtension(unsigned obj_idx)
 {
-	return(dynamic_cast<Extension *>(getObject(obj_idx, ObjectType::Collation)));
+	return dynamic_cast<Extension *>(getObject(obj_idx, ObjectType::Collation));
 }
 
 Extension *DatabaseModel::getExtension(const QString &name)
 {
-	return(dynamic_cast<Extension *>(getObject(name, ObjectType::Extension)));
+	return dynamic_cast<Extension *>(getObject(name, ObjectType::Extension));
 }
 
 void DatabaseModel::addTag(Tag *tag, int obj_idx)
@@ -987,12 +987,12 @@ void DatabaseModel::removeTag(Tag *tag, int obj_idx)
 
 Tag *DatabaseModel::getTag(unsigned obj_idx)
 {
-	return(dynamic_cast<Tag *>(getObject(obj_idx, ObjectType::Tag)));
+	return dynamic_cast<Tag *>(getObject(obj_idx, ObjectType::Tag));
 }
 
 Tag *DatabaseModel::getTag(const QString &name)
 {
-	return(dynamic_cast<Tag *>(getObject(name, ObjectType::Tag)));
+	return dynamic_cast<Tag *>(getObject(name, ObjectType::Tag));
 }
 
 void DatabaseModel::addEventTrigger(EventTrigger *evnttrig, int obj_idx)
@@ -1021,12 +1021,12 @@ void DatabaseModel::removeEventTrigger(EventTrigger *evnttrig, int obj_idx)
 
 EventTrigger *DatabaseModel::getEventTrigger(unsigned obj_idx)
 {
-	return(dynamic_cast<EventTrigger *>(getObject(obj_idx, ObjectType::EventTrigger)));
+	return dynamic_cast<EventTrigger *>(getObject(obj_idx, ObjectType::EventTrigger));
 }
 
 EventTrigger *DatabaseModel::getEventTrigger(const QString &name)
 {
-	return(dynamic_cast<EventTrigger *>(getObject(name, ObjectType::EventTrigger)));
+	return dynamic_cast<EventTrigger *>(getObject(name, ObjectType::EventTrigger));
 }
 
 void DatabaseModel::addGenericSQL(GenericSQL *genericsql, int obj_idx)
@@ -1055,12 +1055,12 @@ void DatabaseModel::removeGenericSQL(GenericSQL *genericsql, int obj_idx)
 
 GenericSQL *DatabaseModel::getGenericSQL(unsigned obj_idx)
 {
-	return(dynamic_cast<GenericSQL *>(getObject(obj_idx, ObjectType::GenericSql)));
+	return dynamic_cast<GenericSQL *>(getObject(obj_idx, ObjectType::GenericSql));
 }
 
 GenericSQL *DatabaseModel::getGenericSQL(const QString &name)
 {
-	return(dynamic_cast<GenericSQL *>(getObject(name, ObjectType::GenericSql)));
+	return dynamic_cast<GenericSQL *>(getObject(name, ObjectType::GenericSql));
 }
 
 void DatabaseModel::addForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, int obj_idx)
@@ -1089,12 +1089,12 @@ void DatabaseModel::removeForeignDataWrapper(ForeignDataWrapper *fdata_wrapper, 
 
 ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(unsigned obj_idx)
 {
-	return(dynamic_cast<ForeignDataWrapper *>(getObject(obj_idx, ObjectType::ForeignDataWrapper)));
+	return dynamic_cast<ForeignDataWrapper *>(getObject(obj_idx, ObjectType::ForeignDataWrapper));
 }
 
 ForeignDataWrapper *DatabaseModel::getForeignDataWrapper(const QString &name)
 {
-	return(dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper)));
+	return dynamic_cast<ForeignDataWrapper *>(getObject(name, ObjectType::ForeignDataWrapper));
 }
 
 void DatabaseModel::addForeignServer(ForeignServer *server, int obj_idx)
@@ -1123,12 +1123,12 @@ void DatabaseModel::removeForeignServer(ForeignServer *server, int obj_idx)
 
 ForeignServer *DatabaseModel::getForeignServer(unsigned obj_idx)
 {
-	return(dynamic_cast<ForeignServer *>(getObject(obj_idx, ObjectType::ForeignServer)));
+	return dynamic_cast<ForeignServer *>(getObject(obj_idx, ObjectType::ForeignServer));
 }
 
 ForeignServer *DatabaseModel::getForeignServer(const QString &name)
 {
-	return(dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer)));
+	return dynamic_cast<ForeignServer *>(getObject(name, ObjectType::ForeignServer));
 }
 
 void DatabaseModel::addUserMapping(UserMapping *usrmap, int obj_idx)
@@ -1157,12 +1157,12 @@ void DatabaseModel::removeUserMapping(UserMapping *usrmap, int obj_idx)
 
 UserMapping *DatabaseModel::getUserMapping(unsigned obj_idx)
 {
-	return(dynamic_cast<UserMapping *>(getObject(obj_idx, ObjectType::UserMapping)));
+	return dynamic_cast<UserMapping *>(getObject(obj_idx, ObjectType::UserMapping));
 }
 
 UserMapping *DatabaseModel::getUserMapping(const QString &name)
 {
-	return(dynamic_cast<UserMapping *>(getObject(name, ObjectType::UserMapping)));
+	return dynamic_cast<UserMapping *>(getObject(name, ObjectType::UserMapping));
 }
 
 void DatabaseModel::addForeignTable(ForeignTable *table, int obj_idx)
@@ -1182,12 +1182,12 @@ void DatabaseModel::addForeignTable(ForeignTable *table, int obj_idx)
 
 ForeignTable *DatabaseModel::getForeignTable(unsigned obj_idx)
 {
-	return(dynamic_cast<ForeignTable *>(getObject(obj_idx, ObjectType::ForeignTable)));
+	return dynamic_cast<ForeignTable *>(getObject(obj_idx, ObjectType::ForeignTable));
 }
 
 ForeignTable *DatabaseModel::getForeignTable(const QString &name)
 {
-	return(dynamic_cast<ForeignTable *>(getObject(name, ObjectType::ForeignTable)));
+	return dynamic_cast<ForeignTable *>(getObject(name, ObjectType::ForeignTable));
 }
 
 void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
@@ -1236,12 +1236,12 @@ void DatabaseModel::addView(View *view, int obj_idx)
 
 View *DatabaseModel::getView(unsigned obj_idx)
 {
-	return(dynamic_cast<View *>(getObject(obj_idx, ObjectType::View)));
+	return dynamic_cast<View *>(getObject(obj_idx, ObjectType::View));
 }
 
 View *DatabaseModel::getView(const QString &name)
 {
-	return(dynamic_cast<View *>(getObject(name, ObjectType::View)));
+	return dynamic_cast<View *>(getObject(name, ObjectType::View));
 }
 
 void DatabaseModel::removeView(View *view, int obj_idx)
@@ -1348,7 +1348,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 	}
 }
 
-void DatabaseModel::updateTablesFKRelationships(void)
+void DatabaseModel::updateTablesFKRelationships()
 {
 	vector<BaseObject *>::iterator itr=tables.begin();
 
@@ -1462,7 +1462,7 @@ void DatabaseModel::updateViewRelationships(View *view, bool force_rel_removal)
 	}
 }
 
-void DatabaseModel::disconnectRelationships(void)
+void DatabaseModel::disconnectRelationships()
 {
 	try
 	{
@@ -1497,7 +1497,7 @@ void DatabaseModel::disconnectRelationships(void)
 	}
 }
 
-void DatabaseModel::validateRelationships(void)
+void DatabaseModel::validateRelationships()
 {
 	vector<BaseObject *>::iterator itr, itr_end, itr_ant;
 	Relationship *rel=nullptr;
@@ -1895,7 +1895,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 	}
 }
 
-void DatabaseModel::storeSpecialObjectsXML(void)
+void DatabaseModel::storeSpecialObjectsXML()
 {
 	unsigned count=0, i=0, type_id=0;
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -2025,7 +2025,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeSequence(sequence);
-				delete(sequence);
+				delete sequence;
 			}
 		}
 
@@ -2062,7 +2062,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 						{
 							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XmlDefinition);
 							removeRelationship(rel);
-							delete(rel);
+							delete rel;
 						}
 					}
 				}
@@ -2074,11 +2074,11 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 				{
 					xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XmlDefinition);
 					view->removeObject(obj);
-					delete(obj);
+					delete obj;
 				}
 
 				removeView(view);
-				delete(view);
+				delete view;
 			}
 		}
 
@@ -2097,7 +2097,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
 				removePermission(permission);
-				delete(permission);
+				delete permission;
 			}
 		}
 
@@ -2115,7 +2115,7 @@ void DatabaseModel::storeSpecialObjectsXML(void)
 			{
 				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeGenericSQL(generic_sql);
-				delete(generic_sql);
+				delete generic_sql;
 			}
 		}
 	}
@@ -2260,7 +2260,7 @@ BaseRelationship *DatabaseModel::getRelationship(unsigned obj_idx, ObjectType re
 	if(rel_type!=ObjectType::Relationship && rel_type!=ObjectType::BaseRelationship)
 		throw Exception(ErrorCode::ObtObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(dynamic_cast<BaseRelationship *>(getObject(obj_idx, rel_type)));
+	return dynamic_cast<BaseRelationship *>(getObject(obj_idx, rel_type));
 }
 
 BaseRelationship *DatabaseModel::getRelationship(const QString &name)
@@ -2270,7 +2270,7 @@ BaseRelationship *DatabaseModel::getRelationship(const QString &name)
 	if(!rel)
 		rel=dynamic_cast<BaseRelationship *>(getObject(name, ObjectType::Relationship));
 
-	return(rel);
+	return rel;
 }
 
 BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab, Constraint *ref_fk)
@@ -2318,7 +2318,7 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *
 		}
 	}
 
-	return(rel);
+	return rel;
 }
 
 vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
@@ -2339,7 +2339,7 @@ vector<BaseRelationship *> DatabaseModel::getRelationships(BaseTable *tab)
 			aux_rels.push_back(base_rel);
 	}
 
-	return(aux_rels);
+	return aux_rels;
 }
 
 void DatabaseModel::addTextbox(Textbox *txtbox, int obj_idx)
@@ -2368,12 +2368,12 @@ void DatabaseModel::removeTextbox(Textbox *txtbox, int obj_idx)
 
 Textbox *DatabaseModel::getTextbox(unsigned obj_idx)
 {
-	return(dynamic_cast<Textbox *>(getObject(obj_idx, ObjectType::Textbox)));
+	return dynamic_cast<Textbox *>(getObject(obj_idx, ObjectType::Textbox));
 }
 
 Textbox *DatabaseModel::getTextbox(const QString &name)
 {
-	return(dynamic_cast<Textbox *>(getObject(name, ObjectType::Textbox)));
+	return dynamic_cast<Textbox *>(getObject(name, ObjectType::Textbox));
 }
 
 void DatabaseModel::addSchema(Schema *schema, int obj_idx)
@@ -2390,12 +2390,12 @@ void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 
 Schema *DatabaseModel::getSchema(unsigned obj_idx)
 {
-	return(dynamic_cast<Schema *>(getObject(obj_idx, ObjectType::Schema)));
+	return dynamic_cast<Schema *>(getObject(obj_idx, ObjectType::Schema));
 }
 
 Schema *DatabaseModel::getSchema(const QString &name)
 {
-	return(dynamic_cast<Schema *>(getObject(name, ObjectType::Schema)));
+	return dynamic_cast<Schema *>(getObject(name, ObjectType::Schema));
 }
 
 void DatabaseModel::removeSchema(Schema *schema, int obj_idx)
@@ -2424,12 +2424,12 @@ void DatabaseModel::addRole(Role *role, int obj_idx)
 
 Role *DatabaseModel::getRole(unsigned obj_idx)
 {
-	return(dynamic_cast<Role *>(getObject(obj_idx, ObjectType::Role)));
+	return dynamic_cast<Role *>(getObject(obj_idx, ObjectType::Role));
 }
 
 Role *DatabaseModel::getRole(const QString &name)
 {
-	return(dynamic_cast<Role *>(getObject(name, ObjectType::Role)));
+	return dynamic_cast<Role *>(getObject(name, ObjectType::Role));
 }
 
 void DatabaseModel::removeRole(Role *role, int obj_idx)
@@ -2458,12 +2458,12 @@ void DatabaseModel::addTablespace(Tablespace *tabspc, int obj_idx)
 
 Tablespace *DatabaseModel::getTablespace(unsigned obj_idx)
 {
-	return(dynamic_cast<Tablespace *>(getObject(obj_idx, ObjectType::Tablespace)));
+	return dynamic_cast<Tablespace *>(getObject(obj_idx, ObjectType::Tablespace));
 }
 
 Tablespace *DatabaseModel::getTablespace(const QString &name)
 {
-	return(dynamic_cast<Tablespace *>(getObject(name, ObjectType::Tablespace)));
+	return dynamic_cast<Tablespace *>(getObject(name, ObjectType::Tablespace));
 }
 
 void DatabaseModel::removeTablespace(Tablespace *tabspc, int obj_idx)
@@ -2504,12 +2504,12 @@ void DatabaseModel::removeCast(Cast *cast, int obj_idx)
 
 Cast *DatabaseModel::getCast(unsigned obj_idx)
 {
-	return(dynamic_cast<Cast *>(getObject(obj_idx, ObjectType::Cast)));
+	return dynamic_cast<Cast *>(getObject(obj_idx, ObjectType::Cast));
 }
 
 Cast *DatabaseModel::getCast(const QString &name)
 {
-	return(dynamic_cast<Cast *>(getObject(name, ObjectType::Cast)));
+	return dynamic_cast<Cast *>(getObject(name, ObjectType::Cast));
 }
 
 void DatabaseModel::addConversion(Conversion *conv, int obj_idx)
@@ -2538,13 +2538,12 @@ void DatabaseModel::removeConversion(Conversion *conv, int obj_idx)
 
 Conversion *DatabaseModel::getConversion(unsigned obj_idx)
 {
-	return(dynamic_cast<Conversion *>(getObject(obj_idx,
-												ObjectType::Conversion)));
+	return dynamic_cast<Conversion *>(getObject(obj_idx, ObjectType::Conversion));
 }
 
 Conversion *DatabaseModel::getConversion(const QString &name)
 {
-	return(dynamic_cast<Conversion *>(getObject(name, ObjectType::Conversion)));
+	return dynamic_cast<Conversion *>(getObject(name, ObjectType::Conversion));
 }
 
 void DatabaseModel::addLanguage(Language *lang, int obj_idx)
@@ -2561,12 +2560,12 @@ void DatabaseModel::addLanguage(Language *lang, int obj_idx)
 
 Language *DatabaseModel::getLanguage(unsigned obj_idx)
 {
-	return(dynamic_cast<Language *>(getObject(obj_idx, ObjectType::Language)));
+	return dynamic_cast<Language *>(getObject(obj_idx, ObjectType::Language));
 }
 
 Language *DatabaseModel::getLanguage(const QString &name)
 {
-	return(dynamic_cast<Language *>(getObject(name, ObjectType::Language)));
+	return dynamic_cast<Language *>(getObject(name, ObjectType::Language));
 }
 
 void DatabaseModel::removeLanguage(Language *lang, int obj_idx)
@@ -2595,12 +2594,12 @@ void DatabaseModel::addFunction(Function *func, int obj_idx)
 
 Function *DatabaseModel::getFunction(unsigned obj_idx)
 {
-	return(dynamic_cast<Function *>(getObject(obj_idx, ObjectType::Function)));
+	return dynamic_cast<Function *>(getObject(obj_idx, ObjectType::Function));
 }
 
 Function *DatabaseModel::getFunction(const QString &signature)
 {
-	return(dynamic_cast<Function *>(getObject(signature, ObjectType::Function)));
+	return dynamic_cast<Function *>(getObject(signature, ObjectType::Function));
 }
 
 void DatabaseModel::removeFunction(Function *func, int obj_idx)
@@ -2629,12 +2628,12 @@ void DatabaseModel::addAggregate(Aggregate *aggreg, int obj_idx)
 
 Aggregate *DatabaseModel::getAggregate(unsigned obj_idx)
 {
-	return(dynamic_cast<Aggregate *>(getObject(obj_idx, ObjectType::Aggregate)));
+	return dynamic_cast<Aggregate *>(getObject(obj_idx, ObjectType::Aggregate));
 }
 
 Aggregate *DatabaseModel::getAggregate(const QString &name)
 {
-	return(dynamic_cast<Aggregate *>(getObject(name, ObjectType::Aggregate)));
+	return dynamic_cast<Aggregate *>(getObject(name, ObjectType::Aggregate));
 }
 
 void DatabaseModel::removeAggregate(Aggregate *aggreg, int obj_idx)
@@ -2706,12 +2705,12 @@ void DatabaseModel::removeDomain(Domain *domain, int obj_idx)
 
 Domain *DatabaseModel::getDomain(unsigned obj_idx)
 {
-	return(dynamic_cast<Domain *>(getObject(obj_idx, ObjectType::Domain)));
+	return dynamic_cast<Domain *>(getObject(obj_idx, ObjectType::Domain));
 }
 
 Domain *DatabaseModel::getDomain(const QString &name)
 {
-	return(dynamic_cast<Domain *>(getObject(name, ObjectType::Domain)));
+	return dynamic_cast<Domain *>(getObject(name, ObjectType::Domain));
 }
 
 void DatabaseModel::addOperatorFamily(OperatorFamily *op_family, int obj_idx)
@@ -2728,12 +2727,12 @@ void DatabaseModel::addOperatorFamily(OperatorFamily *op_family, int obj_idx)
 
 OperatorFamily *DatabaseModel::getOperatorFamily(unsigned obj_idx)
 {
-	return(dynamic_cast<OperatorFamily *>(getObject(obj_idx, ObjectType::OpFamily)));
+	return dynamic_cast<OperatorFamily *>(getObject(obj_idx, ObjectType::OpFamily));
 }
 
 OperatorFamily *DatabaseModel::getOperatorFamily(const QString &name)
 {
-	return(dynamic_cast<OperatorFamily *>(getObject(name, ObjectType::OpFamily)));
+	return dynamic_cast<OperatorFamily *>(getObject(name, ObjectType::OpFamily));
 }
 
 void DatabaseModel::removeOperatorFamily(OperatorFamily *op_family, int obj_idx)
@@ -2774,12 +2773,12 @@ void DatabaseModel::removeOperatorClass(OperatorClass *op_class, int obj_idx)
 
 OperatorClass *DatabaseModel::getOperatorClass(unsigned obj_idx)
 {
-	return(dynamic_cast<OperatorClass *>(getObject(obj_idx, ObjectType::OpClass)));
+	return dynamic_cast<OperatorClass *>(getObject(obj_idx, ObjectType::OpClass));
 }
 
 OperatorClass *DatabaseModel::getOperatorClass(const QString &name)
 {
-	return(dynamic_cast<OperatorClass *>(getObject(name, ObjectType::OpClass)));
+	return dynamic_cast<OperatorClass *>(getObject(name, ObjectType::OpClass));
 }
 
 void DatabaseModel::addOperator(Operator *oper, int obj_idx)
@@ -2808,12 +2807,12 @@ void DatabaseModel::removeOperator(Operator *oper, int obj_idx)
 
 Operator *DatabaseModel::getOperator(unsigned obj_idx)
 {
-	return(dynamic_cast<Operator *>(getObject(obj_idx, ObjectType::Operator)));
+	return dynamic_cast<Operator *>(getObject(obj_idx, ObjectType::Operator));
 }
 
 Operator *DatabaseModel::getOperator(const QString &signature)
 {
-	return(dynamic_cast<Operator *>(getObject(signature, ObjectType::Operator)));
+	return dynamic_cast<Operator *>(getObject(signature, ObjectType::Operator));
 }
 
 void DatabaseModel::addType(Type *type, int obj_idx)
@@ -2872,12 +2871,12 @@ void DatabaseModel::removeType(Type *type, int obj_idx)
 
 Type *DatabaseModel::getType(unsigned obj_idx)
 {
-	return(dynamic_cast<Type *>(getObject(obj_idx, ObjectType::Type)));
+	return dynamic_cast<Type *>(getObject(obj_idx, ObjectType::Type));
 }
 
 Type *DatabaseModel::getType(const QString &name)
 {
-	return(dynamic_cast<Type *>(getObject(name, ObjectType::Type)));
+	return dynamic_cast<Type *>(getObject(name, ObjectType::Type));
 }
 
 void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
@@ -3098,26 +3097,26 @@ int DatabaseModel::getPermissionIndex(Permission *perm, bool exact_match)
 		}
 	}
 
-	return(perm_idx);
+	return perm_idx;
 }
 
 BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type)
 {
 	int idx;
-	return(getObject(name, obj_type, idx));
+	return getObject(name, obj_type, idx);
 }
 
 int DatabaseModel::getObjectIndex(const QString &name, ObjectType obj_type)
 {
 	int idx;
 	getObject(name, obj_type, idx);
-	return(idx);
+	return idx;
 }
 
 int DatabaseModel::getObjectIndex(BaseObject *object)
 {
 	if(!object)
-		return(-1);
+		return -1;
 	else
 	{
 		ObjectType obj_type=object->getObjectType();
@@ -3141,9 +3140,9 @@ int DatabaseModel::getObjectIndex(BaseObject *object)
 			}
 
 			if(found)
-				return(itr-obj_list->begin());
+				return itr - obj_list->begin();
 			else
-				return(-1);
+				return -1;
 		}
 	}
 }
@@ -3178,12 +3177,12 @@ void DatabaseModel::loadModel(const QString &filename)
 		map<ObjectType, QString> def_objs;
 
 		//Configuring the path to the base path for objects DTD
-		dtd_file=GlobalAttributes::SchemasRootDir +
-				 GlobalAttributes::DirSeparator +
-				 GlobalAttributes::XMLSchemaDir +
-				 GlobalAttributes::DirSeparator +
-				 GlobalAttributes::ObjectDTDDir +
-				 GlobalAttributes::DirSeparator;
+		dtd_file=GlobalAttributes::getSchemasRootDir() +
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::XMLSchemaDir +
+						 GlobalAttributes::DirSeparator +
+						 GlobalAttributes::ObjectDTDDir +
+						 GlobalAttributes::DirSeparator;
 
 		try
 		{
@@ -3274,7 +3273,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										found_inh_rel=true;
 
 									emit s_objectLoaded((xmlparser.getCurrentBufferLine()/static_cast<double>(xmlparser.getBufferLineCount()))*100,
-														trUtf8("Loading: `%1' (%2)")
+														tr("Loading: `%1' (%2)")
 														.arg(object->getName())
 														.arg(object->getTypeName()),
 														enum_cast(obj_type));
@@ -3284,7 +3283,7 @@ void DatabaseModel::loadModel(const QString &filename)
 							}
 							catch(Exception &e)
 							{
-								QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+								QString info_adicional=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 								throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
 							}
 						}
@@ -3321,24 +3320,24 @@ void DatabaseModel::loadModel(const QString &filename)
 			//If there are relationship make a relationship validation to recreate any special object left behind
 			if(!relationships.empty())
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				storeSpecialObjectsXML();
 				disconnectRelationships();
 				validateRelationships();
 			}
 
 			this->setInvalidated(false);
-			emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+			emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 
 			//Doing another relationship validation when there are inheritances to avoid incomplete tables
 			if(found_inh_rel)
 			{
-				emit s_objectLoaded(100, trUtf8("Validating relationships..."), enum_cast(ObjectType::Relationship));
+				emit s_objectLoaded(100, tr("Validating relationships..."), enum_cast(ObjectType::Relationship));
 				validateRelationships();
 			}
 
 			updateTablesFKRelationships();
-			emit s_objectLoaded(100, trUtf8("Rendering database model..."), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Rendering database model..."), enum_cast(ObjectType::BaseObject));
 			this->setObjectsModified();
 		}
 		catch(Exception &e)
@@ -3347,7 +3346,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			loading_model=false;
 
 			if(xmlparser.getCurrentElement())
-				extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+				extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 			if(e.getErrorCode()>=ErrorCode::InvalidSyntax)
 			{
@@ -3437,7 +3436,7 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createForeignTable();
 	}
 
-	return(object);
+	return object;
 }
 
 void DatabaseModel::setBasicAttributes(BaseObject *object)
@@ -3597,12 +3596,12 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	}
 }
 
-QString DatabaseModel::getErrorExtraInfo(void)
+QString DatabaseModel::getErrorExtraInfo()
 {
 	QString extra_info;
 
 	if(!xmlparser.getLoadedFilename().isEmpty())
-		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename())
+		extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename())
 				   .arg(xmlparser.getCurrentElement()->line);
 	else
 		extra_info=xmlparser.getXMLBuffer();
@@ -3655,9 +3654,9 @@ void DatabaseModel::setLastPosition(const QPoint &pnt)
 	last_pos=pnt;
 }
 
-QPoint DatabaseModel::getLastPosition(void)
+QPoint DatabaseModel::getLastPosition()
 {
-	return(last_pos);
+	return last_pos;
 }
 
 void DatabaseModel::setLastZoomFactor(double zoom)
@@ -3665,12 +3664,12 @@ void DatabaseModel::setLastZoomFactor(double zoom)
 	last_zoom=zoom;
 }
 
-double DatabaseModel::getLastZoomFactor(void)
+double DatabaseModel::getLastZoomFactor()
 {
-	return(last_zoom);
+	return last_zoom;
 }
 
-Role *DatabaseModel::createRole(void)
+Role *DatabaseModel::createRole()
 {
 	attribs_map attribs, attribs_aux;
 	Role *role=nullptr, *ref_role=nullptr;
@@ -3763,14 +3762,14 @@ Role *DatabaseModel::createRole(void)
 	}
 	catch(Exception &e)
 	{
-		if(role) delete(role);
+		if(role) delete role;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(role);
+	return role;
 }
 
-Tablespace *DatabaseModel::createTablespace(void)
+Tablespace *DatabaseModel::createTablespace()
 {
 	attribs_map attribs;
 	Tablespace *tabspc=nullptr;
@@ -3784,14 +3783,14 @@ Tablespace *DatabaseModel::createTablespace(void)
 	}
 	catch(Exception &e)
 	{
-		if(tabspc) delete(tabspc);
+		if(tabspc) delete tabspc;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(tabspc);
+	return tabspc;
 }
 
-Schema *DatabaseModel::createSchema(void)
+Schema *DatabaseModel::createSchema()
 {
 	Schema *schema=nullptr;
 	attribs_map attribs;
@@ -3808,14 +3807,14 @@ Schema *DatabaseModel::createSchema(void)
 	}
 	catch(Exception &e)
 	{
-		if(schema) delete(schema);
+		if(schema) delete schema;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(schema);
+	return schema;
 }
 
-Language *DatabaseModel::createLanguage(void)
+Language *DatabaseModel::createLanguage()
 {
 	attribs_map attribs;
 	Language *lang=nullptr;
@@ -3884,14 +3883,14 @@ Language *DatabaseModel::createLanguage(void)
 	}
 	catch(Exception &e)
 	{
-		if(lang) delete(lang);
+		if(lang) delete lang;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(lang);
+	return lang;
 }
 
-Function *DatabaseModel::createFunction(void)
+Function *DatabaseModel::createFunction()
 {
 	attribs_map attribs, attribs_aux;
 	Function *func=nullptr;
@@ -4029,7 +4028,7 @@ Function *DatabaseModel::createFunction(void)
 		if(func)
 		{
 			str_aux=func->getName(true);
-			delete(func);
+			delete func;
 		}
 
 		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
@@ -4041,10 +4040,10 @@ Function *DatabaseModel::createFunction(void)
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(func);
+	return func;
 }
 
-Parameter DatabaseModel::createParameter(void)
+Parameter DatabaseModel::createParameter()
 {
 	Parameter param;
 	attribs_map attribs;
@@ -4088,10 +4087,10 @@ Parameter DatabaseModel::createParameter(void)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
-	return(param);
+	return param;
 }
 
-TypeAttribute DatabaseModel::createTypeAttribute(void)
+TypeAttribute DatabaseModel::createTypeAttribute()
 {
 	TypeAttribute tpattrib;
 	attribs_map attribs;
@@ -4150,10 +4149,10 @@ TypeAttribute DatabaseModel::createTypeAttribute(void)
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
-	return(tpattrib);
+	return tpattrib;
 }
 
-PgSqlType DatabaseModel::createPgSQLType(void)
+PgSqlType DatabaseModel::createPgSQLType()
 {
 	attribs_map attribs;
 	unsigned length=1, dimension=0, type_idx=0;
@@ -4197,7 +4196,7 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 	type_idx=PgSqlType::getBaseTypeIndex(name);
 	if(type_idx!=PgSqlType::Null)
 	{
-		return(PgSqlType(name, dimension, length, precision, with_timezone, interv_type, spatial_type));
+		return PgSqlType(name, dimension, length, precision, with_timezone, interv_type, spatial_type);
 	}
 	else
 	{
@@ -4206,11 +4205,11 @@ PgSqlType DatabaseModel::createPgSQLType(void)
 			throw Exception(ErrorCode::RefUserTypeInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		type_idx=PgSqlType::getUserTypeIndex(name, ptype);
-		return(PgSqlType(type_idx, dimension, length, precision, with_timezone, interv_type, spatial_type));
+		return PgSqlType(type_idx, dimension, length, precision, with_timezone, interv_type, spatial_type);
 	}
 }
 
-Type *DatabaseModel::createType(void)
+Type *DatabaseModel::createType()
 {
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
@@ -4378,7 +4377,7 @@ Type *DatabaseModel::createType(void)
 		if(type)
 		{
 			str_aux=type->getName(true);
-			delete(type);
+			delete type;
 		}
 
 		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
@@ -4390,10 +4389,10 @@ Type *DatabaseModel::createType(void)
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(type);
+	return type;
 }
 
-Domain *DatabaseModel::createDomain(void)
+Domain *DatabaseModel::createDomain()
 {
 	attribs_map attribs;
 	Domain *domain=nullptr;
@@ -4439,14 +4438,14 @@ Domain *DatabaseModel::createDomain(void)
 	}
 	catch(Exception &e)
 	{
-		if(domain) delete(domain);
+		if(domain) delete domain;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(domain);
+	return domain;
 }
 
-Cast *DatabaseModel::createCast(void)
+Cast *DatabaseModel::createCast()
 {
 	attribs_map attribs;
 	Cast *cast=nullptr;
@@ -4512,14 +4511,14 @@ Cast *DatabaseModel::createCast(void)
 	}
 	catch(Exception &e)
 	{
-		if(cast) delete(cast);
+		if(cast) delete cast;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(cast);
+	return cast;
 }
 
-Conversion *DatabaseModel::createConversion(void)
+Conversion *DatabaseModel::createConversion()
 {
 	attribs_map attribs;
 	Conversion *conv=nullptr;
@@ -4571,14 +4570,14 @@ Conversion *DatabaseModel::createConversion(void)
 	}
 	catch(Exception &e)
 	{
-		if(conv) delete(conv);
+		if(conv) delete conv;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(conv);
+	return conv;
 }
 
-Operator *DatabaseModel::createOperator(void)
+Operator *DatabaseModel::createOperator()
 {
 	attribs_map attribs;
 	map<QString, unsigned> func_types;
@@ -4666,14 +4665,14 @@ Operator *DatabaseModel::createOperator(void)
 	}
 	catch(Exception &e)
 	{
-		if(oper) delete(oper);
+		if(oper) delete oper;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(oper);
+	return oper;
 }
 
-OperatorClass *DatabaseModel::createOperatorClass(void)
+OperatorClass *DatabaseModel::createOperatorClass()
 {
 	attribs_map attribs, attribs_aux;
 	map<QString, unsigned> elem_types;
@@ -4784,14 +4783,14 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 	}
 	catch(Exception &e)
 	{
-		if(op_class) delete(op_class);
+		if(op_class) delete op_class;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(op_class);
+	return op_class;
 }
 
-OperatorFamily *DatabaseModel::createOperatorFamily(void)
+OperatorFamily *DatabaseModel::createOperatorFamily()
 {
 	attribs_map attribs;
 	OperatorFamily *op_family=nullptr;
@@ -4805,14 +4804,14 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 	}
 	catch(Exception &e)
 	{
-		if(op_family) delete(op_family);
+		if(op_family) delete op_family;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(op_family);
+	return op_family;
 }
 
-Aggregate *DatabaseModel::createAggregate(void)
+Aggregate *DatabaseModel::createAggregate()
 {
 	attribs_map attribs;
 	BaseObject *func=nullptr;
@@ -4874,14 +4873,14 @@ Aggregate *DatabaseModel::createAggregate(void)
 	}
 	catch(Exception &e)
 	{
-		if(aggreg) delete(aggreg);
+		if(aggreg) delete aggreg;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(aggreg);
+	return aggreg;
 }
 
-Table *DatabaseModel::createTable(void)
+Table *DatabaseModel::createTable()
 {
 	try
 	{
@@ -4895,7 +4894,7 @@ Table *DatabaseModel::createTable(void)
 		table->setRLSForced(attribs[Attributes::RlsForced]==Attributes::True);
 		table->setWithOIDs(attribs[Attributes::Oids]==Attributes::True);
 
-		return(table);
+		return table;
 	}
 	catch(Exception &e)
 	{
@@ -4903,7 +4902,7 @@ Table *DatabaseModel::createTable(void)
 	}
 }
 
-Column *DatabaseModel::createColumn(void)
+Column *DatabaseModel::createColumn()
 {
 	attribs_map attribs;
 	Column *column=nullptr;
@@ -4959,11 +4958,11 @@ Column *DatabaseModel::createColumn(void)
 	}
 	catch(Exception &e)
 	{
-		if(column) delete(column);
+		if(column) delete column;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(column);
+	return column;
 }
 
 Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
@@ -5174,11 +5173,11 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	}
 	catch(Exception &e)
 	{
-		if(constr) delete(constr);
+		if(constr) delete constr;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(constr);
+	return constr;
 }
 
 void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj)
@@ -5348,9 +5347,9 @@ void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObjec
 	}
 }
 
-XmlParser *DatabaseModel::getXMLParser(void)
+XmlParser *DatabaseModel::getXMLParser()
 {
-	return(&xmlparser);
+	return &xmlparser;
 }
 
 QString DatabaseModel::getAlterDefinition(BaseObject *object)
@@ -5380,7 +5379,7 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 		alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), aux_attribs, true, false);
 		alter_def+=BaseObject::getAlterDefinition(object);
 
-		return(alter_def);
+		return alter_def;
 	}
 	catch(Exception &e)
 	{
@@ -5388,7 +5387,7 @@ QString DatabaseModel::getAlterDefinition(BaseObject *object)
 	}
 }
 
-Index *DatabaseModel::createIndex(void)
+Index *DatabaseModel::createIndex()
 {
 	attribs_map attribs;
 	Index *index=nullptr;
@@ -5458,14 +5457,14 @@ Index *DatabaseModel::createIndex(void)
 	}
 	catch(Exception &e)
 	{
-		if(index) delete(index);
+		if(index) delete index;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(index);
+	return index;
 }
 
-Rule *DatabaseModel::createRule(void)
+Rule *DatabaseModel::createRule()
 {
 	attribs_map attribs;
 	QStringList cmd_list;
@@ -5538,14 +5537,14 @@ Rule *DatabaseModel::createRule(void)
 	}
 	catch(Exception &e)
 	{
-		if(rule) delete(rule);
+		if(rule) delete rule;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(rule);
+	return rule;
 }
 
-Trigger *DatabaseModel::createTrigger(void)
+Trigger *DatabaseModel::createTrigger()
 {
 	attribs_map attribs;
 	Trigger *trigger=nullptr;
@@ -5701,14 +5700,14 @@ Trigger *DatabaseModel::createTrigger(void)
 	}
 	catch(Exception &e)
 	{
-		if(trigger) delete(trigger);
+		if(trigger) delete trigger;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(trigger);
+	return trigger;
 }
 
-Policy *DatabaseModel::createPolicy(void)
+Policy *DatabaseModel::createPolicy()
 {
 	attribs_map attribs;
 	Policy *policy=nullptr;
@@ -5793,14 +5792,14 @@ Policy *DatabaseModel::createPolicy(void)
 	}
 	catch(Exception &e)
 	{
-		if(policy) delete(policy);
+		if(policy) delete policy;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(policy);
+	return policy;
 }
 
-EventTrigger *DatabaseModel::createEventTrigger(void)
+EventTrigger *DatabaseModel::createEventTrigger()
 {
 	attribs_map attribs;
 	EventTrigger *event_trig=nullptr;
@@ -5853,14 +5852,14 @@ EventTrigger *DatabaseModel::createEventTrigger(void)
 	}
 	catch(Exception &e)
 	{
-		if(event_trig) delete(event_trig);
+		if(event_trig) delete event_trig;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(event_trig);
+	return event_trig;
 }
 
-GenericSQL *DatabaseModel::createGenericSQL(void)
+GenericSQL *DatabaseModel::createGenericSQL()
 {
 	GenericSQL *genericsql=nullptr;
 	attribs_map attribs;
@@ -5935,14 +5934,14 @@ GenericSQL *DatabaseModel::createGenericSQL(void)
 	}
 	catch(Exception &e)
 	{
-		if(genericsql) delete(genericsql);
+		if(genericsql) delete genericsql;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(genericsql);
+	return genericsql;
 }
 
-ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
+ForeignDataWrapper *DatabaseModel::createForeignDataWrapper()
 {
 	attribs_map attribs;
 	ForeignDataWrapper *fdw=nullptr;
@@ -6005,15 +6004,15 @@ ForeignDataWrapper *DatabaseModel::createForeignDataWrapper(void)
 	catch(Exception &e)
 	{
 		if(fdw)
-			delete(fdw);
+			delete fdw;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(fdw);
+	return fdw;
 }
 
-ForeignServer *DatabaseModel::createForeignServer(void)
+ForeignServer *DatabaseModel::createForeignServer()
 {
 	attribs_map attribs;
 	ForeignServer *server = nullptr;
@@ -6061,15 +6060,15 @@ ForeignServer *DatabaseModel::createForeignServer(void)
 	catch(Exception &e)
 	{
 		if(server)
-			delete(server);
+			delete server;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(server);
+	return server;
 }
 
-UserMapping *DatabaseModel::createUserMapping(void)
+UserMapping *DatabaseModel::createUserMapping()
 {
 	attribs_map attribs;
 	UserMapping *user_map = nullptr;
@@ -6117,15 +6116,15 @@ UserMapping *DatabaseModel::createUserMapping(void)
 	catch(Exception &e)
 	{
 		if(user_map)
-			delete(user_map);
+			delete user_map;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(user_map);
+	return user_map;
 }
 
-ForeignTable *DatabaseModel::createForeignTable(void)
+ForeignTable *DatabaseModel::createForeignTable()
 {
 	ForeignTable *ftable = nullptr;
 
@@ -6171,11 +6170,11 @@ ForeignTable *DatabaseModel::createForeignTable(void)
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		return(ftable);
+		return ftable;
 	}
 	catch(Exception &e)
 	{
-		if(ftable) delete(ftable);
+		if(ftable) delete ftable;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -6279,14 +6278,14 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 	}
 	catch(Exception &e)
 	{
-		if(sequence) delete(sequence);
+		if(sequence) delete sequence;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(sequence);
+	return sequence;
 }
 
-View *DatabaseModel::createView(void)
+View *DatabaseModel::createView()
 {
 	attribs_map attribs, aux_attribs;
 	View *view=nullptr;
@@ -6401,7 +6400,7 @@ View *DatabaseModel::createView(void)
 									{
 										column = createColumn();
 										reference.addColumn(column);
-										delete(column);
+										delete column;
 									}
 									else if(elem == Attributes::RefTableTag)
 									{
@@ -6504,14 +6503,14 @@ View *DatabaseModel::createView(void)
 	}
 	catch(Exception &e)
 	{
-		if(view) delete(view);
+		if(view) delete view;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(view);
+	return view;
 }
 
-Collation *DatabaseModel::createCollation(void)
+Collation *DatabaseModel::createCollation()
 {
 	Collation *collation=nullptr;
 	BaseObject *copy_coll=nullptr;
@@ -6558,14 +6557,14 @@ Collation *DatabaseModel::createCollation(void)
 	}
 	catch(Exception &e)
 	{
-		if(collation) delete(collation);
+		if(collation) delete collation;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(collation);
+	return collation;
 }
 
-Extension *DatabaseModel::createExtension(void)
+Extension *DatabaseModel::createExtension()
 {
 	Extension *extension=nullptr;
 	attribs_map attribs;
@@ -6582,14 +6581,14 @@ Extension *DatabaseModel::createExtension(void)
 	}
 	catch(Exception &e)
 	{
-		if(extension) delete(extension);
+		if(extension) delete extension;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(extension);
+	return extension;
 }
 
-Tag *DatabaseModel::createTag(void)
+Tag *DatabaseModel::createTag()
 {
 	Tag *tag=nullptr;
 	attribs_map attribs;
@@ -6618,16 +6617,16 @@ Tag *DatabaseModel::createTag(void)
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		return(tag);
+		return tag;
 	}
 	catch(Exception &e)
 	{
-		if(tag) delete(tag);
+		if(tag) delete tag;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 }
 
-Textbox *DatabaseModel::createTextbox(void)
+Textbox *DatabaseModel::createTextbox()
 {
 	Textbox *txtbox=nullptr;
 	attribs_map attribs;
@@ -6653,14 +6652,14 @@ Textbox *DatabaseModel::createTextbox(void)
 	}
 	catch(Exception &e)
 	{
-		if(txtbox) delete(txtbox);
+		if(txtbox) delete txtbox;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(txtbox);
+	return txtbox;
 }
 
-BaseRelationship *DatabaseModel::createRelationship(void)
+BaseRelationship *DatabaseModel::createRelationship()
 {
 	vector<unsigned> cols_special_pk;
 	attribs_map attribs, constr_attribs;
@@ -6941,7 +6940,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 	catch(Exception &e)
 	{
 		if(base_rel && base_rel->getObjectType()==ObjectType::Relationship)
-			delete(base_rel);
+			delete base_rel;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
@@ -6966,10 +6965,10 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 		base_rel->blockSignals(false);
 	}
 
-	return(base_rel);
+	return base_rel;
 }
 
-Permission *DatabaseModel::createPermission(void)
+Permission *DatabaseModel::createPermission()
 {
 	Permission *perm=nullptr;
 	BaseObject *object=nullptr;
@@ -7098,11 +7097,11 @@ Permission *DatabaseModel::createPermission(void)
 	}
 	catch(Exception &e)
 	{
-		if(perm) delete(perm);
+		if(perm) delete perm;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
 	}
 
-	return(perm);
+	return perm;
 }
 
 void DatabaseModel::validateColumnRemoval(Column *column)
@@ -7237,7 +7236,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		if(def_type==SchemaParser::SqlDefinition && prepend_at_bod)
 			this->prepended_sql=bkp_prepended_sql;
 
-		return(def);
+		return def;
 	}
 	catch(Exception &e)
 	{
@@ -7249,7 +7248,7 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, true));
+	return this->getCodeDefinition(def_type, true);
 }
 
 QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
@@ -7259,7 +7258,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	bool sql_disabled=false;
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
-			msg=trUtf8("Generating %1 code: `%2' (%3)"),
+			msg=tr("Generating %1 code: `%2' (%3)"),
 			attrib=Attributes::Objects, attrib_aux,
 			def_type_str=(def_type==SchemaParser::SqlDefinition ? QString("SQL") : QString("XML"));
 	Type *usr_type=nullptr;
@@ -7451,7 +7450,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	if(append_at_eod && def_type==SchemaParser::SqlDefinition)
 		def+=QString("-- Appended SQL commands --\n") +	this->appended_sql + QChar('\n') + Attributes::DdlEndToken;
 
-	return(def);
+	return def;
 }
 
 map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, bool incl_relnn_objs, bool incl_rel1n_constrs)
@@ -7661,7 +7660,7 @@ map<unsigned, BaseObject *> DatabaseModel::getCreationOrder(unsigned def_type, b
 		i++;
 	}
 
-	return(objects_map);
+	return objects_map;
 }
 
 
@@ -7750,7 +7749,7 @@ void DatabaseModel::__getObjectDependencies(BaseObject *object, vector<BaseObjec
 vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool only_children)
 {
 	if(!object)
-		return(vector<BaseObject *>());
+		return vector<BaseObject *>();
 
 	map<unsigned, BaseObject *> objs_map;
 	vector<BaseObject *> objs, children;
@@ -7874,7 +7873,7 @@ vector<BaseObject *> DatabaseModel::getCreationOrder(BaseObject *object, bool on
 		objs.insert(objs.end(), perms.begin(), perms.end());
 	}
 
-	return(objs);
+	return objs;
 }
 
 void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
@@ -9820,25 +9819,25 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSqlType type)
 	switch(type.getUserTypeConfig())
 	{
 		case UserTypeConfig::BaseType:
-		return(this->getObject(*type, ObjectType::Type));
+		return this->getObject(*type, ObjectType::Type);
 
 		case UserTypeConfig::DomainType:
-		return(this->getObject(*type, ObjectType::Domain));
+		return this->getObject(*type, ObjectType::Domain);
 
 		case UserTypeConfig::TableType:
-		return(this->getObject(*type, ObjectType::Table));
+		return this->getObject(*type, ObjectType::Table);
 
 		case UserTypeConfig::ViewType:
-		return(this->getObject(*type, ObjectType::View));
+		return this->getObject(*type, ObjectType::View);
 
 		case UserTypeConfig::SequenceType:
-		return(this->getObject(*type, ObjectType::Sequence));
+		return this->getObject(*type, ObjectType::Sequence);
 
 		case UserTypeConfig::ExtensionType:
-		return(this->getObject(*type, ObjectType::Extension));
+		return this->getObject(*type, ObjectType::Extension);
 
 		default:
-		return(nullptr);
+		return nullptr;
 	}
 }
 
@@ -10069,7 +10068,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<O
 	end=std::unique(list.begin(), list.end());
 	list.erase(end, list.end());
 
-	return(list);
+	return list;
 }
 
 void DatabaseModel::setInvalidated(bool value)
@@ -10077,9 +10076,9 @@ void DatabaseModel::setInvalidated(bool value)
 	this->invalidated=value;
 }
 
-bool DatabaseModel::isInvalidated(void)
+bool DatabaseModel::isInvalidated()
 {
-	return(invalidated);
+	return invalidated;
 }
 
 void  DatabaseModel::setAppendAtEOD(bool value)
@@ -10114,24 +10113,24 @@ void DatabaseModel::setAllowConnections(bool value)
 	allow_conns = value;
 }
 
-bool  DatabaseModel::isAppendAtEOD(void)
+bool  DatabaseModel::isAppendAtEOD()
 {
-	return(append_at_eod);
+	return append_at_eod;
 }
 
-bool DatabaseModel::isPrependedAtBOD(void)
+bool DatabaseModel::isPrependedAtBOD()
 {
-	return(prepend_at_bod);
+	return prepend_at_bod;
 }
 
-bool DatabaseModel::isTemplate(void)
+bool DatabaseModel::isTemplate()
 {
-	return(is_template);
+	return is_template;
 }
 
-bool DatabaseModel::isAllowConnections(void)
+bool DatabaseModel::isAllowConnections()
 {
-	return(allow_conns);
+	return allow_conns;
 }
 
 void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned options)
@@ -10270,7 +10269,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(obj_type==ObjectType::Textbox || obj_type==ObjectType::Tag || obj_type == ObjectType::GenericSql)
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
-														trUtf8("Saving object `%1' (%2)")
+														tr("Saving object `%1' (%2)")
 														.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				objs_def+=object->getCodeDefinition(SchemaParser::XmlDefinition);
@@ -10349,7 +10348,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]=
-								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+								schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
 					}
@@ -10376,7 +10375,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]+=
-								schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+								schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
 					}
@@ -10391,13 +10390,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 							aux_attribs[Attributes::YPos]=QString::number(pnt.y());
 							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
-							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-																																									 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																									 Attributes::Position + GlobalAttributes::SchemaExt, aux_attribs);
+							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
+																																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																						Attributes::Position + GlobalAttributes::SchemaExt, aux_attribs);
 
-							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								Attributes::Label + GlobalAttributes::SchemaExt, aux_attribs);
+							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
+																																				 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
+																																				 Attributes::Label + GlobalAttributes::SchemaExt, aux_attribs);
 						}
 					}
 				}
@@ -10407,12 +10406,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																																							 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																																							 QString(Attributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																																								QString(Attributes::PrependedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
 			}
@@ -10436,12 +10435,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
-														trUtf8("Saving metadata of the object `%1' (%2)")
+														tr("Saving metadata of the object `%1' (%2)")
 														.arg(object->getSignature()).arg(object->getTypeName()), enum_cast(obj_type));
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+										schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																								Attributes::Info + GlobalAttributes::SchemaExt, attribs));
 			}
@@ -10455,15 +10454,15 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
-			buf.append(schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 																						 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
 																						 Attributes::Metadata + GlobalAttributes::SchemaExt, attribs));
 			output.write(buf.data(),buf.size());
 
-			emit s_objectLoaded(100, trUtf8("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
 		}
 		else
-			emit s_objectLoaded(100, trUtf8("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
+			emit s_objectLoaded(100, tr("Process successfully ended but no metadata was saved!"), enum_cast(ObjectType::BaseObject));
 
 		output.close();
 	}
@@ -10478,7 +10477,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned options)
 {
 	QString elem_name, aux_elem, obj_name, ref_type,
-			dtd_file=GlobalAttributes::SchemasRootDir +
+			dtd_file=GlobalAttributes::getSchemasRootDir() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::XMLSchemaDir +
 							 GlobalAttributes::DirSeparator +
@@ -10545,15 +10544,15 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 						if(getObjectIndex(new_object->getName(), obj_type) < 0)
 						{
-							emit s_objectLoaded(progress, trUtf8("Creating object `%1' (%2)")
+							emit s_objectLoaded(progress, tr("Creating object `%1' (%2)")
 																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(obj_type));
 							addObject(new_object);
 						}
 						else
 						{
-							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) already exists. Ignoring.")
+							emit s_objectLoaded(progress, tr("Object `%1' (%2) already exists. Ignoring.")
 																	.arg(new_object->getName()).arg(new_object->getTypeName()), enum_cast(ObjectType::BaseObject));
-							delete(new_object);
+							delete new_object;
 						}
 
 						new_object=nullptr;
@@ -10617,7 +10616,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 
 						if(object)
 						{
-							emit s_objectLoaded(progress, trUtf8("Loading metadata for object `%1' (%2)")
+							emit s_objectLoaded(progress, tr("Loading metadata for object `%1' (%2)")
 																	.arg(object->getName()).arg(object->getTypeName()), enum_cast(obj_type));
 
 							if(!object->isSystemObject() &&
@@ -10746,7 +10745,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 						}
 						else if(!object)
 						{
-							emit s_objectLoaded(progress, trUtf8("Object `%1' (%2) not found. Ignoring metadata.")
+							emit s_objectLoaded(progress, tr("Object `%1' (%2) not found. Ignoring metadata.")
 																	.arg(obj_name).arg(BaseObject::getTypeName(obj_type)), enum_cast(ObjectType::BaseObject));
 						}
 
@@ -10758,7 +10757,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 			while(xmlparser.accessElement(XmlParser::NextElement));
 		}
 
-		emit s_objectLoaded(100, trUtf8("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
+		emit s_objectLoaded(100, tr("Metadata file successfully loaded!"), enum_cast(ObjectType::BaseObject));
 		setObjectsModified();
 	}
 	catch(Exception &e)
@@ -10766,7 +10765,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 		QString extra_info;
 
 		if(xmlparser.getCurrentElement())
-			extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
+			extra_info=QString(QObject::tr("%1 (line: %2)")).arg(xmlparser.getLoadedFilename()).arg(xmlparser.getCurrentElement()->line);
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
@@ -10777,9 +10776,9 @@ void DatabaseModel::setLayers(const QStringList &layers)
 	this->layers = layers;
 }
 
-QStringList DatabaseModel::getLayers(void)
+QStringList DatabaseModel::getLayers()
 {
-	return(layers);
+	return layers;
 }
 
 void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
@@ -10787,13 +10786,13 @@ void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
 	active_layers = layers;
 }
 
-QList<unsigned> DatabaseModel::getActiveLayers(void)
+QList<unsigned> DatabaseModel::getActiveLayers()
 {
-	return(active_layers);
+	return active_layers;
 }
 
 template<class TableClass>
-TableClass *DatabaseModel::createPhysicalTable(void)
+TableClass *DatabaseModel::createPhysicalTable()
 {
 	attribs_map attribs, aux_attribs;
 	QString elem;
@@ -10935,11 +10934,11 @@ TableClass *DatabaseModel::createPhysicalTable(void)
 		QString extra_info=getErrorExtraInfo();
 		xmlparser.restorePosition();
 
-		if(table) delete(table);
+		if(table) delete table;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
-	return(table);
+	return table;
 }
 
 void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool splitted)
@@ -10951,7 +10950,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	QString styles, id, index, items, buffer;
 	attribs_map attribs, aux_attribs;
 	QStringList index_list;
-	QString dict_files_root = GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
+	QString dict_files_root = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
 														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
 			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
 			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt,

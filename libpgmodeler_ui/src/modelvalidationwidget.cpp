@@ -29,7 +29,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
-		version_cmb->addItem(trUtf8("Autodetect"));
+		version_cmb->addItem(tr("Autodetect"));
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
 		options_frm->setVisible(false);
@@ -45,17 +45,17 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		use_unique_names_ht=new HintTextWidget(use_unique_names_hint, this);
 		use_unique_names_ht->setText(use_tmp_names_chk->statusTip());
 
-		connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-		connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearOutput(void)));
+		connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
+		connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearOutput()));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), use_tmp_names_chk, SLOT(setEnabled(bool)));
-		connect(validate_btn, SIGNAL(clicked(void)), this, SLOT(validateModel(void)));
-		connect(fix_btn, SIGNAL(clicked(void)), this, SLOT(applyFixes(void)));
-		connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(cancelValidation(void)));
+		connect(validate_btn, SIGNAL(clicked()), this, SLOT(validateModel()));
+		connect(fix_btn, SIGNAL(clicked()), this, SLOT(applyFixes()));
+		connect(cancel_btn, SIGNAL(clicked()), this, SLOT(cancelValidation()));
 		connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(editConnections()));
-		connect(swap_ids_btn, SIGNAL(clicked(void)), this, SLOT(swapObjectsIds(void)));
+		connect(swap_ids_btn, SIGNAL(clicked()), this, SLOT(swapObjectsIds()));
 
 		connect(sql_validation_chk, &QCheckBox::toggled, [&](){
 			configureValidation();
@@ -105,10 +105,10 @@ bool ModelValidationWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void ModelValidationWidget::createThread(void)
+void ModelValidationWidget::createThread()
 {
 	if(!validation_thread)
 	{
@@ -124,20 +124,20 @@ void ModelValidationWidget::createThread(void)
 			output_trw->setUniformRowHeights(false);
 		});
 
-		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
-		connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(applyFixes(void)));
-		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(updateGraphicalObjects(void)));
-		connect(validation_thread, SIGNAL(finished(void)), this, SLOT(destroyThread(void)));
+		connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
+		connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(applyFixes()));
+		connect(validation_thread, SIGNAL(finished()), this, SLOT(updateGraphicalObjects()));
+		connect(validation_thread, SIGNAL(finished()), this, SLOT(destroyThread()));
 
 		connect(validation_helper, SIGNAL(s_validationInfoGenerated(ValidationInfo)), this, SLOT(updateValidation(ValidationInfo)), Qt::QueuedConnection);
 		connect(validation_helper, SIGNAL(s_progressUpdated(int,QString,ObjectType,QString,bool)), this, SLOT(updateProgress(int,QString,ObjectType,QString,bool)), Qt::BlockingQueuedConnection);
 		connect(validation_helper, SIGNAL(s_objectProcessed(QString,ObjectType)), this, SLOT(updateObjectName(QString,ObjectType)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_validationFinished(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_validationCanceled(void)), this, SLOT(reenableValidation(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_sqlValidationStarted(void)), this, SLOT(handleSQLValidationStarted(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_fixApplied(void)), this, SLOT(clearOutput(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_fixApplied(void)), prog_info_wgt, SLOT(show(void)), Qt::QueuedConnection);
-		connect(validation_helper, SIGNAL(s_relsValidationRequested(void)), this, SLOT(validateRelationships(void)));
+		connect(validation_helper, SIGNAL(s_validationFinished()), this, SLOT(reenableValidation()), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_validationCanceled()), this, SLOT(reenableValidation()), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_sqlValidationStarted()), this, SLOT(handleSQLValidationStarted()), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_fixApplied()), this, SLOT(clearOutput()), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_fixApplied()), prog_info_wgt, SLOT(show()), Qt::QueuedConnection);
+		connect(validation_helper, SIGNAL(s_relsValidationRequested()), this, SLOT(validateRelationships()));
 
 		connect(validation_helper, &ModelValidationHelper::s_validationCanceled, [&](){
 			emit s_validationCanceled();
@@ -159,20 +159,20 @@ void ModelValidationWidget::destroyThread(bool force)
 	if(validation_thread && (force || validation_helper->getErrorCount()==0))
 	{
 		validation_thread->wait();
-		delete(validation_thread);
-		delete(validation_helper);
+		delete validation_thread;
+		delete validation_helper;
 		validation_thread=nullptr;
 		validation_helper=nullptr;
 	}
 }
 
-void ModelValidationWidget::hide(void)
+void ModelValidationWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
 }
 
-void ModelValidationWidget::reenableValidation(void)
+void ModelValidationWidget::reenableValidation()
 {
 	if(!validation_helper->isInFixMode())
 	{
@@ -192,7 +192,7 @@ void ModelValidationWidget::reenableValidation(void)
 	}
 }
 
-void ModelValidationWidget::emitValidationInProgress(void)
+void ModelValidationWidget::emitValidationInProgress()
 {
 	clearOutput();
 	emit s_validationInProgress(true);
@@ -208,7 +208,7 @@ void ModelValidationWidget::emitValidationInProgress(void)
 	swap_ids_btn->setEnabled(false);
 }
 
-void ModelValidationWidget::clearOutput(void)
+void ModelValidationWidget::clearOutput()
 {
 	output_trw->clear();
 	clear_btn->setEnabled(false);
@@ -221,7 +221,7 @@ void ModelValidationWidget::clearOutput(void)
 	error_count_lbl->setText(QString("%1").arg(0));
 }
 
-void ModelValidationWidget::cancelValidation(void)
+void ModelValidationWidget::cancelValidation()
 {
 	validation_helper->cancelValidation();
 	validation_thread->quit();
@@ -244,9 +244,9 @@ void ModelValidationWidget::setModel(ModelWidget *model_wgt)
 	destroyThread(true);
 }
 
-bool ModelValidationWidget::isValidationRunning(void)
+bool ModelValidationWidget::isValidationRunning()
 {
-	return(validation_thread && validation_thread->isRunning());
+	return (validation_thread && validation_thread->isRunning());
 }
 
 void ModelValidationWidget::updateValidation(ValidationInfo val_info)
@@ -269,7 +269,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	label->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 	if(val_info.getValidationType()==ValidationInfo::BrokenReference)
-		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
+		label->setText(tr("The object <strong>%1</strong> <em>(%2)</em> [id: %3] is being referenced by <strong>%4</strong> object(s) before its creation.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getObject()->getObjectId())
@@ -284,7 +284,7 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 			str_aux=QString(" owned by table <strong>%1</strong> ").arg(tab_obj->getParentTable()->getName(true).remove('"'));
 		}
 
-		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> [id: %3]%4 is referencing columns created by <strong>%5</strong> relationship(s) but is created before them.")
+		label->setText(tr("The object <strong>%1</strong> <em>(%2)</em> [id: %3]%4 is referencing columns created by <strong>%5</strong> relationship(s) but is created before them.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getObject()->getObjectId())
@@ -303,23 +303,23 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 		else
 			ref_name=val_info.getObject()->getName(true).remove('"');
 
-		label->setText(trUtf8("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object name(s).")
+		label->setText(tr("The object <strong>%1</strong> <em>(%2)</em> has a name that conflicts with <strong>%3</strong> object name(s).")
 					   .arg(ref_name)
 					   .arg(val_info.getObject()->getTypeName())
 					   .arg(val_info.getReferences().size()));
 
 	}
 	else if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
-		label->setText(trUtf8("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and needs to be relocated.")
+		label->setText(tr("The relationship <strong>%1</strong> [id: %2] is in a permanent invalidation state and needs to be relocated.")
 					   .arg(val_info.getObject()->getName(true).remove('"'))
 					   .arg(val_info.getObject()->getObjectId()));
 	else if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
-		label->setText(trUtf8("SQL validation failed due to the error(s) below. <strong>NOTE:</strong><em> Errors during SQL validation don't invalidate the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
+		label->setText(tr("SQL validation failed due to the error(s) below. <strong>NOTE:</strong><em> Errors during SQL validation don't invalidate the model but may affect operations like <strong>export</strong> and <strong>diff</strong>.</em>"));
 	else if(val_info.getValidationType() == ValidationInfo::MissingExtension)
 	{
 		Column *col = dynamic_cast<Column *>(val_info.getObject());
 
-		label->setText(trUtf8("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
+		label->setText(tr("The column <strong>%1</strong> on <strong>%2</strong> <em>(%3)</em> is referencing the geospatial data type <strong>%4</strong> but the <strong>postgis</strong> extension is not present in the model!")
 									 .arg(col->getName())
 									 .arg(col->getParentTable()->getSignature(true))
 									 .arg(BaseObject::getTypeName(ObjectType::Table))
@@ -361,12 +361,12 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 
 		if(val_info.getValidationType()==ValidationInfo::BrokenRelConfig)
 		{
-			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
+			PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> try to swap the relationship by another ones that somehow are linked to it through generated columns or constraints to solve this issue. Note that other objects may be lost in the swap process."),
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
 		}
 		else if(val_info.getValidationType()==ValidationInfo::MissingExtension)
 		{
-			PgModelerUiNs::createOutputTreeItem(output_trw, trUtf8("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
+			PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>HINT:</strong> Create the extension in the model or let it be created by applying the needed fixes."),
 																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), item);
 		}
 		else
@@ -407,25 +407,25 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 							label2->setTextInteractionFlags(Qt::TextSelectableByMouse);
 							pal.setColor(QPalette::Text, QColor(255,0,0));
 							label2->setPalette(pal);
-							label2->setText(trUtf8("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
+							label2->setText(tr("<em>The above object was created by a relationship. Change the name pattern on it's generator relationship. Fix will not be applied!</em>"));
 							output_trw->setItemWidget(item2, 0, label2);
 							item1->setExpanded(true);
 						}
 					}
 
-					label1->setText(trUtf8("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
+					label1->setText(tr("Conflicting object: <strong>%1</strong> <em>(%2)</em>.")
 									.arg(ref_name.remove('"'))
 									.arg(ref_obj->getTypeName()));
 				}
 				else
 				{
 					if(val_info.getValidationType()==ValidationInfo::SpObjBrokenReference)
-						label1->setText(trUtf8("Relationship: <strong>%1</strong> [id: %2].")
+						label1->setText(tr("Relationship: <strong>%1</strong> [id: %2].")
 										.arg(ref_name.remove('"'))
 										.arg(ref_obj->getObjectId()));
 					else
 					{
-						label1->setText(trUtf8("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
+						label1->setText(tr("Referrer object: <strong>%1</strong> <em>(%2)</em> [id: %3].")
 										.arg(ref_name.remove('"'))
 										.arg(ref_obj->getTypeName())
 										.arg(ref_obj->getObjectId()));
@@ -448,14 +448,14 @@ void ModelValidationWidget::updateValidation(ValidationInfo val_info)
 	error_lbl->setEnabled(validation_helper->getErrorCount() > 0);
 	warn_count_lbl->setText(QString("%1").arg(validation_helper->getWarningCount()));
 	error_count_lbl->setText(QString("%1").arg(validation_helper->getErrorCount()));
-	output_trw->setItemHidden(item, false);
+	item->setHidden(false);
 	output_trw->scrollToBottom();
 
 	if(val_info.getValidationType()==ValidationInfo::SqlValidationError)
 		emit s_validationFinished(validation_helper->getErrorCount() != 0);
 }
 
-void ModelValidationWidget::validateModel(void)
+void ModelValidationWidget::validateModel()
 {
 	createThread();
 	configureValidation();
@@ -464,13 +464,13 @@ void ModelValidationWidget::validateModel(void)
 	validation_thread->start();
 }
 
-void ModelValidationWidget::applyFixes(void)
+void ModelValidationWidget::applyFixes()
 {
 	emitValidationInProgress();
 	validation_helper->switchToFixMode(true);
-	disconnect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
+	disconnect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
 	validation_thread->start();
-	connect(validation_thread, SIGNAL(started(void)), validation_helper, SLOT(validateModel(void)));
+	connect(validation_thread, SIGNAL(started()), validation_helper, SLOT(validateModel()));
 }
 
 void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen)
@@ -496,7 +496,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 			warn_lbl->setEnabled(true);
 			warn_count_lbl->setText(QString::number(1));
 			PgModelerUiNs::createOutputTreeItem(output_trw,
-												trUtf8("SQL validation not executed! No connection defined."),
+												tr("SQL validation not executed! No connection defined."),
 												QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")));
 		}		
 		else
@@ -506,7 +506,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		}
 
 		PgModelerUiNs::createOutputTreeItem(output_trw,
-											trUtf8("Database model successfully validated."),
+											tr("Database model successfully validated."),
 											QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
 		emit s_validationFinished(validation_helper->getErrorCount() != 0);
@@ -532,7 +532,7 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 		else
 		{
 			ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("codigosql")));
-			object_lbl->setText(trUtf8("Running SQL commands on server..."));
+			object_lbl->setText(tr("Running SQL commands on server..."));
 
 			item=PgModelerUiNs::createOutputTreeItem(output_trw, msg, ico, nullptr, false);
 
@@ -544,11 +544,11 @@ void ModelValidationWidget::updateProgress(int prog, QString msg, ObjectType obj
 
 void ModelValidationWidget::updateObjectName(QString obj_name, ObjectType obj_type)
 {
-	object_lbl->setText(trUtf8("Processing object: %1").arg(PgModelerUiNs::formatMessage(obj_name)));
+	object_lbl->setText(tr("Processing object: %1").arg(PgModelerUiNs::formatMessage(obj_name)));
 	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
-void ModelValidationWidget::configureValidation(void)
+void ModelValidationWidget::configureValidation()
 {
 	if(model_wgt && validation_helper)
 	{
@@ -584,7 +584,7 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 	}
 }
 
-void ModelValidationWidget::validateRelationships(void)
+void ModelValidationWidget::validateRelationships()
 {
 	try
 	{
@@ -598,7 +598,7 @@ void ModelValidationWidget::validateRelationships(void)
 	}
 }
 
-void ModelValidationWidget::updateGraphicalObjects(void)
+void ModelValidationWidget::updateGraphicalObjects()
 {
 	if(!graph_objects.empty())
 	{
@@ -618,7 +618,7 @@ void ModelValidationWidget::updateGraphicalObjects(void)
 	}
 }
 
-void ModelValidationWidget::editConnections(void)
+void ModelValidationWidget::editConnections()
 {
 	if(connections_cmb->currentIndex()==connections_cmb->count()-1)
 	{
@@ -627,14 +627,14 @@ void ModelValidationWidget::editConnections(void)
 	}
 }
 
-void ModelValidationWidget::handleSQLValidationStarted(void)
+void ModelValidationWidget::handleSQLValidationStarted()
 {
 	options_btn->setEnabled(false);
 	clear_btn->setEnabled(false);
 	options_frm->setEnabled(false);
 }
 
-void ModelValidationWidget::swapObjectsIds(void)
+void ModelValidationWidget::swapObjectsIds()
 {
 	BaseForm parent_form(this);
 	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
@@ -646,7 +646,7 @@ void ModelValidationWidget::swapObjectsIds(void)
 	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 }
 
-void ModelValidationWidget::selectObject(void)
+void ModelValidationWidget::selectObject()
 {
 	QTreeWidgetItem *item = output_trw->currentItem();
 

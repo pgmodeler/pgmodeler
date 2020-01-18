@@ -40,7 +40,7 @@ class NewObjectOverlayWidget: public QWidget, public Ui::NewObjectOverlayWidget 
 	public:
 		explicit NewObjectOverlayWidget(ModelWidget * parent);
 		void setSelectedObjects(vector<BaseObject *> &sel_objs);
-		void configureOverlayButtons(void);
+		void configureOverlayButtons();
 };
 
 #endif

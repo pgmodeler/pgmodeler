@@ -271,7 +271,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvDataDictDirectory", QT_TR_NOOP("Failed to save the data dictionary into `%1'! Make sure that the provided path points to a directory or if the user has write permissions over it!")}
 };
 
-Exception::Exception(void)
+Exception::Exception()
 {
 	configureException(QString(),ErrorCode::Custom,QString(),QString(),-1,QString());
 }
@@ -356,9 +356,9 @@ void Exception::configureException(const QString &msg, ErrorCode error_code, con
 	this->extra_info=QString(extra_info);
 }
 
-QString Exception::getErrorMessage(void)
+QString Exception::getErrorMessage()
 {
-	return(error_msg);
+	return error_msg;
 }
 
 QString Exception::getErrorMessage(ErrorCode error_code)
@@ -367,42 +367,42 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return(QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1));
+		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 	else
-		return(QString());
+		return QString();
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
 {
 	if(enum_cast(error_code) < ErrorCount)
-		return(messages[enum_cast(error_code)][ErrorCodeId]);
+		return messages[enum_cast(error_code)][ErrorCodeId];
 	else
-		return(QString());
+		return QString();
 }
 
-QString Exception::getMethod(void)
+QString Exception::getMethod()
 {
-	return(method);
+	return method;
 }
 
-QString Exception::getFile(void)
+QString Exception::getFile()
 {
-	return(file);
+	return file;
 }
 
-QString Exception::getLine(void)
+QString Exception::getLine()
 {
-	return(QString("%1").arg(line));
+	return QString("%1").arg(line);
 }
 
-ErrorCode Exception::getErrorCode(void)
+ErrorCode Exception::getErrorCode()
 {
-	return(error_code);
+	return error_code;
 }
 
-QString Exception::getExtraInfo(void)
+QString Exception::getExtraInfo()
 {
-	return(extra_info);
+	return extra_info;
 }
 
 void Exception::addException(Exception &exception)
@@ -430,7 +430,7 @@ void Exception::getExceptionsList(vector<Exception> &list)
 							 this->method,this->file,this->line,nullptr,this->extra_info));
 }
 
-QString Exception::getExceptionsText(void)
+QString Exception::getExceptionsText()
 {
 	vector<Exception> exceptions;
 	vector<Exception>::reverse_iterator itr, itr_end;
@@ -471,6 +471,6 @@ QString Exception::getExceptionsText(void)
 		}
 	}
 
-	return(exceptions_txt);
+	return exceptions_txt;
 }
 

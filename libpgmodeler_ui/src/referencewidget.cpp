@@ -33,14 +33,14 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	used_in_ht->setText(select_from_chk->statusTip());
 
 	ref_object_ht=new HintTextWidget(ref_object_hint, this);
-	ref_object_ht->setText(trUtf8("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
+	ref_object_ht->setText(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 
 	alias_ht=new HintTextWidget(alias_hint, this);
 	alias_ht->setText(alias_edt->statusTip());
 
 	expression_txt=new NumberedTextEditor(this, true);
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
-	expression_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	expression_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
 	ref_object_sel->enableObjectCreation(false);
@@ -57,13 +57,13 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	columns_tab = new ObjectsTableWidget(ObjectsTableWidget::AllButtons, true, this);
 	columns_tab->setColumnCount(3);
-	columns_tab->setHeaderLabel(trUtf8("Name"), 0);
+	columns_tab->setHeaderLabel(tr("Name"), 0);
 	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+	columns_tab->setHeaderLabel(tr("Type"), 1);
 	columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-	columns_tab->setHeaderLabel(trUtf8("Alias"), 2);
+	columns_tab->setHeaderLabel(tr("Alias"), 2);
 
-	QFrame *info_frm=BaseObjectWidget::generateInformationFrame(trUtf8("This tab can be used to inform the columns that the view owns. This is just a convenience to make the visualization of this kind of object more intuitive. If no column is specified here the columns of the view displayed in the canvas will be a fragment of the expression defined in the previous tab."));
+	QFrame *info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the columns that the view owns. This is just a convenience to make the visualization of this kind of object more intuitive. If no column is specified here the columns of the view displayed in the canvas will be a fragment of the expression defined in the previous tab."));
 	QVBoxLayout *vbox =  dynamic_cast<QVBoxLayout *>(properties_tbw->widget(1)->layout());
 
 	vbox->addWidget(pgsqltype_wgt);
@@ -76,9 +76,9 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 																																				ObjectsTableWidget::DuplicateButton|
 																																				ObjectsTableWidget::EditButton), true, this);
 	ref_tables_tab->setColumnCount(3);
-	ref_tables_tab->setHeaderLabel(trUtf8("Name"), 0);
+	ref_tables_tab->setHeaderLabel(tr("Name"), 0);
 	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("uid")),0);
-	ref_tables_tab->setHeaderLabel(trUtf8("Schema"), 1);
+	ref_tables_tab->setHeaderLabel(tr("Schema"), 1);
 	ref_tables_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("schema")),1);
 
 	ref_table_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable }, true, this);
@@ -88,7 +88,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	hbox->addWidget(ref_table_lbl);
 	hbox->addWidget(ref_table_sel);
 
-	info_frm=BaseObjectWidget::generateInformationFrame(trUtf8("This tab can be used to inform the tables that the view references. This is just a convenience to make the visualization of this kind of object more intuitive. If no table is specified here no relationship will be displayed in the canvas. Note that no validation will be done to check if the provided tables are really referenced by the view."));
+	info_frm=BaseObjectWidget::generateInformationFrame(tr("This tab can be used to inform the tables that the view references. This is just a convenience to make the visualization of this kind of object more intuitive. If no table is specified here no relationship will be displayed in the canvas. Note that no validation will be done to check if the provided tables are really referenced by the view."));
 	vbox = new QVBoxLayout;
 	vbox->setContentsMargins(4,4,4,4);
 	vbox->addLayout(hbox);
@@ -116,7 +116,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 		properties_tbw->setTabEnabled(2, checked);
 	});
 
-	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType(void)));
+	connect(ref_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectReferenceType()));
 
 	connect(ref_object_sel, &ObjectSelectorWidget::s_objectSelected, [&](){
 		col_alias_edt->setEnabled(dynamic_cast<Column *>(ref_object_sel->getSelectedObject()));
@@ -208,17 +208,17 @@ void ReferenceWidget::setAttributes(Reference ref, unsigned ref_flags, DatabaseM
 	ref_tables_tab->setButtonsEnabled(ObjectsTableWidget::AddButton, false);
 }
 
-Reference ReferenceWidget::getReference(void)
+Reference ReferenceWidget::getReference()
 {
-	return(reference);
+	return reference;
 }
 
-unsigned ReferenceWidget::getReferenceFlags(void)
+unsigned ReferenceWidget::getReferenceFlags()
 {
-	return(ref_flags);
+	return ref_flags;
 }
 
-void ReferenceWidget::applyConfiguration(void)
+void ReferenceWidget::applyConfiguration()
 {
 	try
 	{
@@ -328,7 +328,7 @@ void ReferenceWidget::duplicateColumn(int src_row, int new_row)
 	columns_tab->setRowData(columns_tab->getRowData(src_row), new_row);
 }
 
-void ReferenceWidget::selectReferenceType(void)
+void ReferenceWidget::selectReferenceType()
 {
 	//Marks if the select reference type treats a reference to an object
 	bool ref_obj=(ref_type_cmb->currentIndex()==static_cast<int>(Reference::ReferColumn));

@@ -25,7 +25,7 @@ void ExtensionWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 	}
 }
 
-void ExtensionWidget::applyConfiguration(void)
+void ExtensionWidget::applyConfiguration()
 {
 	try
 	{

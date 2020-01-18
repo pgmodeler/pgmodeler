@@ -76,7 +76,7 @@ class Sequence: public BaseObject {
 		MaxBigPositiveValue,
 		MaxBigNegativeValue;
 
-		Sequence(void);
+		Sequence();
 
 		//! \brief Defines if the sequence is a cycle
 		void setCycle(bool value);
@@ -102,20 +102,20 @@ class Sequence: public BaseObject {
 		 the column parent table schema */
 		void setSchema(BaseObject *schema);
 
-		bool isCycle(void);
-		QString getMaxValue(void);
-		QString getMinValue(void);
-		QString getIncrement(void);
-		QString getStart(void);
-		QString getCache(void);
-		Column *getOwnerColumn(void);
+		bool isCycle();
+		QString getMaxValue();
+		QString getMinValue();
+		QString getIncrement();
+		QString getStart();
+		QString getCache();
+		Column *getOwnerColumn();
 
 		/*! \brief Returns whether the sequence references columns added
 		 by relationship. This method is used as auxiliary
 		 to control which sequence reference columns added by the
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
-		bool isReferRelationshipAddedColumn(void);
+		bool isReferRelationshipAddedColumn();
 
 		//! \brief Makes a copy between two sequences
 		void operator = (Sequence &seq);

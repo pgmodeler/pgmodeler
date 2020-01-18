@@ -73,13 +73,13 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 
 	public slots:
 		//! \brief Updates the overview (only if the widget is visible)
-		void updateOverview(void);
+		void updateOverview();
 
 		//! \brief Resizes the frame that represents the visualization window
-		void resizeWindowFrame(void);
+		void resizeWindowFrame();
 
 		//! \brief Resizes the whole overview widget
-		void resizeOverview(void);
+		void resizeOverview();
 
 		//! \brief Updates the overview zoom factor
 		void updateZoomFactor(double zoom);

@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "application.h"
+#include "pgmodelerapp.h"
 #include "mainwindow.h"
 
 #ifndef Q_OS_WIN
@@ -38,12 +38,12 @@ void startCrashHandler(int signal)
 	symbols = backtrace_symbols(stack, stack_size);
 #endif
 
-	cmd=QString("\"%1\"").arg(GlobalAttributes::PgModelerCHandlerPath) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
+	cmd=QString("\"%1\"").arg(GlobalAttributes::getPgModelerCHandlerPath()) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
 
 	//Creates the stacktrace file
-	output.setFileName(GlobalAttributes::TemporaryDir +
-					   GlobalAttributes::DirSeparator +
-					   GlobalAttributes::StacktraceFile);
+	output.setFileName(GlobalAttributes::getTemporaryDir() +
+										 GlobalAttributes::DirSeparator +
+										 GlobalAttributes::StacktraceFile);
 	output.open(QFile::WriteOnly);
 
 	if(output.isOpen())
@@ -104,14 +104,14 @@ int main(int argc, char **argv)
 		for(int i=0; i < argc && !using_style; i++)
 			using_style=QString(argv[i]).contains("-style");
 
-		Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+		PgModelerApp::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 		//High DPI suport via application attributes is available only from Qt 5.6.0
 		#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 			Application::setAttribute(Qt::AA_EnableHighDpiScaling);
 		#endif
 
-		Application app(argc,argv);
+		PgModelerApp app(argc,argv);
 		int res=0;
 
 		//If no custom style is specified we force the usage of Fusion (the default for Qt and pgModeler)
@@ -144,12 +144,12 @@ int main(int argc, char **argv)
 		res=app.exec();
 		app.closeAllWindows();
 
-		return(res);
+		return res;
 	}
 	catch(Exception &e)
 	{
 		QTextStream ts(stdout);
 		ts << e.getExceptionsText();
-		return(enum_cast(e.getErrorCode()));
+		return enum_cast(e.getErrorCode());
 	}
 }

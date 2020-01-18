@@ -76,22 +76,22 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void s_visibilityChanged(bool);
 		
 	public slots:
-		void hide(void);
-		void clearResult(void);
-		void findObjects(void);
+		void hide();
+		void clearResult();
+		void findObjects();
 
 	private slots:
 		//! \brief Opens the editing form of the selected object
-		void editObject(void);
+		void editObject();
 
 		//! \brief Selects a object on result list
-		void selectObject(void);
+		void selectObject();
 
-		void setAllObjectsChecked(void);
+		void setAllObjectsChecked();
 
-		void fadeObjects(void);
+		void fadeObjects();
 
-		void selectObjects(void);
+		void selectObjects();
 };
 
 #endif

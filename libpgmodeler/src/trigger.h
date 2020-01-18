@@ -78,7 +78,7 @@ class Trigger: public TableObject{
 	public:
 		static constexpr unsigned OldTableName=0, NewTableName=1;
 
-		Trigger(void);
+		Trigger();
 
 		/*! \brief Adds a column as a firing condition (only when the event UPDATE is used).
 		 The columns added by this method must belongs to the trigger owner table. */
@@ -127,7 +127,7 @@ class Trigger: public TableObject{
 		bool isExecuteOnEvent(EventType event);
 
 		//! \brief Returns the current EXECUTE PER ROW state
-		bool isExecutePerRow(void);
+		bool isExecutePerRow();
 
 		//! \brief Gets one reference column by its index
 		Column *getColumn(unsigned col_idx);
@@ -136,53 +136,53 @@ class Trigger: public TableObject{
 		QString getArgument(unsigned arg_idx);
 
 		//! \brief Gets the trigger firing condition
-		QString getCondition(void);
+		QString getCondition();
 
 		//! \brief Returns the function executed by the trigger
-		Function *getFunction(void);
+		Function *getFunction();
 
 		//! \brief Returns the trigger argument count
-		unsigned getArgumentCount(void);
+		unsigned getArgumentCount();
 
 		//! \brief Returns the reference column count
-		unsigned getColumnCount(void);
+		unsigned getColumnCount();
 
 		//! \brief Returns when the trigger executes
-		FiringType getFiringType(void);
+		FiringType getFiringType();
 
 		//! \brief Remove an argument using its index
 		void removeArgument(unsigned arg_idx);
 
 		//! \brief Remove all arguments
-		void removeArguments(void);
+		void removeArguments();
 
 		//! \brief Remove all referenced columns
-		void removeColumns(void);
+		void removeColumns();
 
 		//! \brief Returns the referenced table
-		BaseTable *getReferencedTable(void);
+		BaseTable *getReferencedTable();
 
 		//! \brief Returns the deferral type of the constraint trigger
-		DeferralType getDeferralType(void);
+		DeferralType getDeferralType();
 
 		//! \brief Returns if the constraint trigger is deferrable or not
-		bool isDeferrable(void);
+		bool isDeferrable();
 
 		//! \brief Returns if the trigger is configured as a constraint trigger
-		bool isConstraint(void);
+		bool isConstraint();
 
 		/*! \brief Returns whether the trigger references columns added
 		 by relationship. This method is used as auxiliary
 		 to control which triggers reference columns added by the
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
-		bool isReferRelationshipAddedColumn(void);
+		bool isReferRelationshipAddedColumn();
 
 		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns(void);
+		vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns the SQL / XML definition for the trigger
 		virtual QString getCodeDefinition(unsigned def_type) final;
@@ -190,7 +190,7 @@ class Trigger: public TableObject{
 		/*! \brief Validates the trigger attributes according to the docs.
 		This method is executed whenever the trigger is added to a table or view.
 		Normally the user don't need to call it explicitly */
-		void validateTrigger(void);
+		void validateTrigger();
 
 		virtual QString getSignature(bool format=true) final;
 };
