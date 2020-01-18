@@ -1636,12 +1636,10 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
 	QString str_aux,
 
 			//Configures the path to the application logo
-			exec_icon=QDir(GlobalAttributes::getTmplConfigurationDir() +
-							 GlobalAttributes::DirSeparator + QString("pgmodeler_logo.png")).absolutePath(),
+			exec_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_logo.png"),
 
 			//Configures the path to the document logo
-			dbm_icon=QDir(GlobalAttributes::getTmplConfigurationDir() +
-							GlobalAttributes::DirSeparator + QString("pgmodeler_dbm.png")).absolutePath(),
+			dbm_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_dbm.png"),
 
 			//Path to directory that register mime types
 			mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
@@ -1649,15 +1647,13 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
 			//Path to the file that associates apps to mimetypes
 			mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
 
-			base_conf_dir=GlobalAttributes::getTmplConfigurationDir() + GlobalAttributes::DirSeparator +
-							GlobalAttributes::SchemasDir + GlobalAttributes::DirSeparator,
-
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 			files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
 						mime_db_dir + QString("/packages/application-dbm.xml") },
 
-			schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SchemaExt,
-							base_conf_dir + QString("application-dbm") + GlobalAttributes::SchemaExt };
+			schemas[] = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
+										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt) };
+
 	QByteArray buf, buf_aux;
 	QFile out;
 

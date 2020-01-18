@@ -23,10 +23,9 @@
 PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 {
 	QTranslator *main_translator=nullptr, *plugin_translator=nullptr;
-	QFile ui_style(GlobalAttributes::getTmplConfigurationDir() +
-				   GlobalAttributes::DirSeparator +
-				   GlobalAttributes::UiStyleConf +
-				   GlobalAttributes::ConfigurationExt);
+	QFile ui_style(GlobalAttributes::getTmplConfigurationFilePath("",
+																																GlobalAttributes::UiStyleConf +
+																																GlobalAttributes::ConfigurationExt));
 	QString plugin_name, plug_lang_dir, plug_lang_file;
 	QStringList dir_list;
 	QDir dir;

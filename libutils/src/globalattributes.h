@@ -19,7 +19,7 @@
 /**
 \ingroup libutils
 \namespace GlobalAttributes
-\brief Definition of GlobalAttributes namespace wich stores a series of static strings constants used
+\brief Definition of GlobalAttributes class which stores a series of static strings constants used
  to reference the global configuration attributes of the software.
 \note <strong>Creation date:</strong> 14/05/2010
 */
@@ -155,7 +155,11 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the template "conf" folder in pgModeler's installation
 		static QString getTmplConfigurationDir();
-		//TODO: static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
+
+		/*! \brief Returns the path to the template file at template "conf" folder in pgModeler's installation
+		 * This method will not append any extension to the file since this folder has several kinds of
+		 * files inside it, so, the user must inform the file with its extension */
+		static QString getTmplConfigurationFilePath(const QString &subfolder, const QString &file);
 
 		//! \brief Returns the path to the "conf" folder in user's local storage
 		static QString getConfigurationsDir();

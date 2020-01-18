@@ -1042,17 +1042,12 @@ void ModelDatabaseDiffForm::saveConfiguration()
 	try
 	{
 		attribs_map attribs;
-		QString preset_sch, root_dir;
+		QString preset_sch;
 		QString presets;
 
-		root_dir=GlobalAttributes::getTmplConfigurationDir() +
-				 GlobalAttributes::DirSeparator;
-
-		preset_sch=root_dir +
-				 GlobalAttributes::SchemasDir +
-				 GlobalAttributes::DirSeparator +
-				 Attributes::Preset +
-				 GlobalAttributes::SchemaExt;
+		preset_sch=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																															Attributes::Preset +
+																															GlobalAttributes::SchemaExt);
 
 		for(auto &conf : config_params)
 		{

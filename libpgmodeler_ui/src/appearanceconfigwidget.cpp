@@ -167,9 +167,7 @@ void AppearanceConfigWidget::loadExampleModel()
 
 		if(model->getObjectCount()==0)
 		{
-			model->loadModel(GlobalAttributes::getTmplConfigurationDir() +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ExampleModel);
+			model->loadModel(GlobalAttributes::getTmplConfigurationFilePath("", GlobalAttributes::ExampleModel));
 
 			count=model->getObjectCount(ObjectType::Table);
 			for(i=0; i < count; i++)

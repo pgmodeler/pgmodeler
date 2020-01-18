@@ -50,12 +50,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 	//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::getTmplConfigurationDir() +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::SchemasDir +
-						 GlobalAttributes::DirSeparator +
-						 conf_id +
-						 GlobalAttributes::SchemaExt,
+	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																			conf_id + GlobalAttributes::SchemaExt),
 
 			//Cofnigures the filename for the configuration file
 			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
@@ -105,13 +101,9 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	current_file=GlobalAttributes::getConfigurationFilePath(conf_id);
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::getTmplConfigurationDir() +
-				 GlobalAttributes::DirSeparator +
-				 GlobalAttributes::DefaultConfsDir+
-				 GlobalAttributes::DirSeparator +
-				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
-
+	default_file=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::DefaultConfsDir,
+																															conf_id +
+																															GlobalAttributes::ConfigurationExt);
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
 		throw Exception(Exception::getErrorMessage(ErrorCode::DefaultConfigNotRestored).arg(default_file),
@@ -147,13 +139,17 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
+		/* xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::ObjectDTDDir +
 							 GlobalAttributes::DirSeparator +
 							 conf_id +
 							 GlobalAttributes::ObjectDTDExt,
-							 conf_id);
+							 conf_id); */
+
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				conf_id + GlobalAttributes::ObjectDTDExt),
+												 conf_id);
 
 		xmlparser.loadXMLFile(filename);
 

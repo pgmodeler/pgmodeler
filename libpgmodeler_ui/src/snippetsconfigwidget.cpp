@@ -445,14 +445,8 @@ void SnippetsConfigWidget::saveConfiguration()
 { 
 	try
 	{
-		QString root_dir=GlobalAttributes::getTmplConfigurationDir() +
-						 GlobalAttributes::DirSeparator,
-
-				snippet_sch=root_dir +
-							GlobalAttributes::SchemasDir +
-							GlobalAttributes::DirSeparator +
-							Attributes::Snippet +
-							GlobalAttributes::SchemaExt;
+		QString snippet_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																				 Attributes::Snippet + GlobalAttributes::SchemaExt);
 
 		attribs_map attribs;
 		ObjectType obj_type;

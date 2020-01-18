@@ -486,23 +486,16 @@ void GeneralConfigWidget::saveConfiguration()
 	{
 		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir, widget_sch;
+		QString file_sch, widget_sch;
 		int recent_mdl_idx = 0;
 
-		root_dir=GlobalAttributes::getTmplConfigurationDir() +
-				 GlobalAttributes::DirSeparator;
+		file_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																														 Attributes::File +
+																														 GlobalAttributes::SchemaExt);
 
-		file_sch=root_dir +
-				 GlobalAttributes::SchemasDir +
-				 GlobalAttributes::DirSeparator +
-				 Attributes::File +
-				 GlobalAttributes::SchemaExt;
-
-		widget_sch=root_dir +
-				   GlobalAttributes::SchemasDir +
-				   GlobalAttributes::DirSeparator +
-				   Attributes::Widget +
-				   GlobalAttributes::SchemaExt;
+		widget_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																															Attributes::Widget +
+																															GlobalAttributes::SchemaExt);
 
 		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());

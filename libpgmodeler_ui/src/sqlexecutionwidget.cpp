@@ -943,20 +943,14 @@ void SQLExecutionWidget::saveSQLHistory()
 			attribs[Attributes::Connection] = hist.first;
 			attribs[Attributes::Commands] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
-			commands += schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationDir() +
-																							GlobalAttributes::DirSeparator +
-																							GlobalAttributes::SchemasDir +
-																							GlobalAttributes::DirSeparator +
-																							Attributes::Commands +
-																							GlobalAttributes::SchemaExt, attribs);
+			commands += schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																														 Attributes::Commands +
+																																														 GlobalAttributes::SchemaExt), attribs);
 		}
 
-		schparser.loadFile(GlobalAttributes::getTmplConfigurationDir() +
-											 GlobalAttributes::DirSeparator +
-											 GlobalAttributes::SchemasDir +
-											 GlobalAttributes::DirSeparator +
-											 GlobalAttributes::SQLHistoryConf +
-											 GlobalAttributes::SchemaExt);
+		schparser.loadFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																			GlobalAttributes::SQLHistoryConf +
+																																			GlobalAttributes::SchemaExt));
 
 		attribs.clear();
 		attribs[Attributes::Commands] = commands;
@@ -985,12 +979,9 @@ void SQLExecutionWidget::loadSQLHistory()
 		XmlParser xmlparser;
 		attribs_map attribs;
 
-		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
-												 GlobalAttributes::DirSeparator +
-												 GlobalAttributes::ObjectDTDDir +
-												 GlobalAttributes::DirSeparator +
-												 GlobalAttributes::SQLHistoryConf +
-												 GlobalAttributes::ObjectDTDExt,
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				GlobalAttributes::SQLHistoryConf +
+																																				GlobalAttributes::ObjectDTDExt),
 												 GlobalAttributes::SQLHistoryConf);
 
 		xmlparser.loadXMLFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));

@@ -129,18 +129,11 @@ void RelationshipConfigWidget::saveConfiguration()
 {  
 	try
 	{
-		QString patterns_sch, root_dir;
+		QString patterns_sch;
 
-		root_dir=GlobalAttributes::getTmplConfigurationDir() +
-				 GlobalAttributes::DirSeparator;
-
-		patterns_sch=root_dir +
-					 GlobalAttributes::SchemasDir +
-					 GlobalAttributes::DirSeparator +
-					 Attributes::Patterns +
-					 GlobalAttributes::SchemaExt;
-
-
+		patterns_sch=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																Attributes::Patterns +
+																																GlobalAttributes::SchemaExt);
 		if(crows_foot_rb->isChecked())
 			config_params[Attributes::Connection][Attributes::Mode]=Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())

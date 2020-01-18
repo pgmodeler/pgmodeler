@@ -169,12 +169,12 @@ void BaseObjectView::loadObjectsStyle()
 	try
 	{
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectDTDDir +
-							 GlobalAttributes::DirSeparator +
-							 GlobalAttributes::ObjectsStyleConf +
-							 GlobalAttributes::ObjectDTDExt, GlobalAttributes::ObjectsStyleConf);
+
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				GlobalAttributes::ObjectsStyleConf +
+																																				GlobalAttributes::ObjectDTDExt),
+												 GlobalAttributes::ObjectsStyleConf);
+
 		xmlparser.loadXMLFile(config_file);
 
 		if(xmlparser.accessElement(XmlParser::ChildElement))
