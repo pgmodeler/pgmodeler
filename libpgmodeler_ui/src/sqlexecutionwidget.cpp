@@ -963,10 +963,7 @@ void SQLExecutionWidget::saveSQLHistory()
 		buffer.append(schparser.getCodeDefinition(attribs));
 
 
-		file.setFileName(GlobalAttributes::getConfigurationsDir() +
-										 GlobalAttributes::DirSeparator +
-										 GlobalAttributes::SQLHistoryConf +
-										 GlobalAttributes::ConfigurationExt);
+		file.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 
 		if(!file.open(QFile::WriteOnly))
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file.fileName()),
@@ -996,10 +993,7 @@ void SQLExecutionWidget::loadSQLHistory()
 												 GlobalAttributes::ObjectDTDExt,
 												 GlobalAttributes::SQLHistoryConf);
 
-		xmlparser.loadXMLFile(GlobalAttributes::getConfigurationsDir() +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::SQLHistoryConf +
-													GlobalAttributes::ConfigurationExt);
+		xmlparser.loadXMLFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 
 		cmd_history.clear();
 
@@ -1036,11 +1030,7 @@ void SQLExecutionWidget::destroySQLHistory()
 
 	if(msg_box.result() == QDialog::Accepted)
 	{
-		QFile::remove(GlobalAttributes::getConfigurationsDir() +
-									GlobalAttributes::DirSeparator +
-									GlobalAttributes::SQLHistoryConf +
-									GlobalAttributes::ConfigurationExt);
-
+		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
 	}
 }

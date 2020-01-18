@@ -58,10 +58,8 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 						 GlobalAttributes::SchemaExt,
 
 			//Cofnigures the filename for the configuration file
-			cfg_filename=GlobalAttributes::getConfigurationsDir() +
-						 GlobalAttributes::DirSeparator +
-						 conf_id +
-						 GlobalAttributes::ConfigurationExt;
+			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
+
 	QFile output(cfg_filename);
 	attribs_map attribs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -104,10 +102,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	QString current_file, default_file;
 
 	//Build the path to the current configuration (conf/[conf_id].conf
-	current_file=GlobalAttributes::getConfigurationsDir() +
-				 GlobalAttributes::DirSeparator +
-				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
+	current_file=GlobalAttributes::getConfigurationFilePath(conf_id);
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
 	default_file=GlobalAttributes::getTmplConfigurationDir() +
@@ -148,10 +143,7 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 	try
 	{
-		filename = GlobalAttributes::getConfigurationsDir() +
-							 GlobalAttributes::DirSeparator +
-							 conf_id +
-							 GlobalAttributes::ConfigurationExt;
+		filename = GlobalAttributes::getConfigurationFilePath(conf_id);
 
 		config_params.clear();
 		xmlparser.restartParser();

@@ -159,7 +159,10 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "conf" folder in user's local storage
 		static QString getConfigurationsDir();
-		//TODO: static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
+
+		/*! \brief Returns the path to a config file under "conf" folder at user's local storage.
+		 * There's no need to specify the extension (.conf) since the method will automatically append it. */
+		static QString getConfigurationFilePath(const QString &file);
 
 		//! \brief Returns the path to the "samples" folder in pgModeler's installation
 		static QString getSamplesDir();

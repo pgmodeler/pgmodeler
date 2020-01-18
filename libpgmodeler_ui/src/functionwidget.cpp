@@ -366,11 +366,9 @@ void FunctionWidget::selectLanguage()
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::getConfigurationsDir() +
-												GlobalAttributes::DirSeparator +
-											  language_cmb->currentText() +
-												GlobalAttributes::HighlightFileSuffix +
-												GlobalAttributes::ConfigurationExt);
+			source_code_hl->loadConfiguration(
+						GlobalAttributes::getConfigurationFilePath(language_cmb->currentText() +
+																											 GlobalAttributes::HighlightFileSuffix));
 		}
 		catch(Exception &)
 		{

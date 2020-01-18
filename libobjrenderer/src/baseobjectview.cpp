@@ -163,8 +163,7 @@ void BaseObjectView::loadObjectsStyle()
 	map<QString, QTextCharFormat>::iterator itr;
 	QStringList list;
 	QString elem,
-			config_file=GlobalAttributes::getConfigurationsDir() + GlobalAttributes::DirSeparator +
-						GlobalAttributes::ObjectsStyleConf + GlobalAttributes::ConfigurationExt;
+			config_file=GlobalAttributes::getConfigurationFilePath(GlobalAttributes::ObjectsStyleConf);
 	XmlParser xmlparser;
 
 	try

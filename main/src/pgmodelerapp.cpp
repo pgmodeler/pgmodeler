@@ -56,10 +56,7 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	}
 
 	//Trying to identify if the user defined a custom UI language in the pgmodeler.conf file
-	QString conf_file =	GlobalAttributes::getConfigurationsDir() +
-											GlobalAttributes::DirSeparator +
-											GlobalAttributes::GeneralConf +
-											GlobalAttributes::ConfigurationExt;
+	QString conf_file =	GlobalAttributes::getConfigurationFilePath(GlobalAttributes::GeneralConf);
 	QFile input;
 	QString lang_id = QLocale::system().name();
 

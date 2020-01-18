@@ -155,6 +155,12 @@ QString GlobalAttributes::getConfigurationsDir()
 	return ConfigurationsDir;
 }
 
+QString GlobalAttributes::getConfigurationFilePath(const QString &file)
+{
+	return ConfigurationsDir + GlobalAttributes::DirSeparator +
+				 file + GlobalAttributes::ConfigurationExt;
+}
+
 QString GlobalAttributes::getSQLHighlightConfPath()
 {
 	return SQLHighlightConfPath;
