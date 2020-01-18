@@ -908,9 +908,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 		if(def_type==SqlDefinition)
 		{
 			//Formats the filename
-			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-					 GlobalAttributes::SQLSchemaDir + GlobalAttributes::DirSeparator + obj_name + GlobalAttributes::SchemaExt;
-
+			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::SQLSchemaDir, obj_name);
 			attribs[Attributes::PgSqlVersion]=pgsql_version;
 
 			//Try to get the object definitin from the specified path
@@ -918,10 +916,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, attribs_map &a
 		}
 		else
 		{
-			filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-					 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator + obj_name +
-					 GlobalAttributes::SchemaExt;
-
+			filename = GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, obj_name);
 			return XmlParser::convertCharsToXMLEntities(getCodeDefinition(filename, attribs));
 		}
 	}

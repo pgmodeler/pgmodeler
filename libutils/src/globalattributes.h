@@ -101,6 +101,7 @@ class GlobalAttributes {
 		SchemasDir,        //! \brief Default name for the schemas directory
 		SQLSchemaDir,     //! \brief Default name for the sql schemas directory
 		XMLSchemaDir,     //! \brief Default name for the xml schemas directory
+		CatalogSchemasDir,//! \brief Default name for the catalog schemas directory
 		DataDictSchemaDir,//! \brief Default name for the data dictionary schemas directory
 		AlterSchemaDir,   //! \brief Default name for the alter schemas directory
 		SchemaExt,         //! \brief Default extension for schema files
@@ -139,7 +140,9 @@ class GlobalAttributes {
 
 		//! \brief Returns the path to the "schemas" folder
 		static QString getSchemasRootDir();
-		//TODO: static QString getSchemaFilePath(const QString &subfolder, const QString &file);
+
+		//! \brief Returns the path to a schema file under "schemas" folder
+		static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage
 		static QString getTemporaryDir();

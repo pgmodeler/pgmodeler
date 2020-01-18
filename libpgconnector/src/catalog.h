@@ -38,7 +38,6 @@ class Catalog {
 
 		static const QString QueryList,	//! \brief Executes a list command on catalog
 		QueryAttribs, //! \brief Executes a attribute retrieving command on catalog
-		CatalogSchemasDir, //! \brief Default catalog schemas directory
 		PgSqlTrue, //! \brief Replacement for true 't' boolean value
 		PgSqlFalse, //! \brief Replacement for false 'f' boolean value
 		BoolField,     //! \brief Suffix for boolean fields.

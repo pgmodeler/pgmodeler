@@ -49,6 +49,7 @@ const QString GlobalAttributes::ConfsBackupsDir("backups");
 const QString GlobalAttributes::SchemasDir("schemas");
 const QString GlobalAttributes::SQLSchemaDir("sql");
 const QString GlobalAttributes::XMLSchemaDir("xml");
+const QString GlobalAttributes::CatalogSchemasDir("catalog");
 const QString GlobalAttributes::DataDictSchemaDir("datadict");
 const QString GlobalAttributes::AlterSchemaDir("alter");
 const QString GlobalAttributes::SchemaExt(".sch");
@@ -111,6 +112,12 @@ QString GlobalAttributes::getPathFromEnv(const QString &varname, const QString &
 QString GlobalAttributes::getSchemasRootDir()
 {
 	return SchemasRootDir;
+}
+
+QString GlobalAttributes::getSchemaFilePath(const QString &subfolder, const QString &file)
+{
+	return getSchemasRootDir() + DirSeparator + subfolder +
+				 DirSeparator + file + GlobalAttributes::SchemaExt;
 }
 
 QString GlobalAttributes::getLanguagesDir()

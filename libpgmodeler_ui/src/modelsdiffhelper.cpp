@@ -925,9 +925,8 @@ void ModelsDiffHelper::processDiffInfos()
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);
-			diff_def=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-												 Attributes::Diff + GlobalAttributes::SchemaExt, attribs);
+			diff_def=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Diff),
+																					 attribs);
 		}
 
 		if(diff_def.isEmpty())

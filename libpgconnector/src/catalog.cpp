@@ -19,7 +19,6 @@
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
-const QString Catalog::CatalogSchemasDir("catalog");
 const QString Catalog::PgSqlTrue("t");
 const QString Catalog::PgSqlFalse("f");
 const QString Catalog::BoolField("_bool");
@@ -161,9 +160,7 @@ void Catalog::loadCatalogQuery(const QString &qry_id)
 	if(catalog_queries.count(qry_id)==0)
 	{
 		QFile input;
-		input.setFileName(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-							CatalogSchemasDir + GlobalAttributes::DirSeparator +
-							qry_id + GlobalAttributes::SchemaExt);
+		input.setFileName(GlobalAttributes::getSchemaFilePath(GlobalAttributes::CatalogSchemasDir, qry_id));
 
 		if(!input.open(QFile::ReadOnly))
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(input.fileName()),

@@ -791,9 +791,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				if(obj_type!=ObjectType::Tablespace && obj_type!=ObjectType::Database && obj_type!=ObjectType::UserMapping)
 				{
 					SchemaParser sch_parser;
-					QString filename=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-									 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-									 Attributes::Owner + GlobalAttributes::SchemaExt;
+					QString filename=GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Owner);
 
 					sch_parser.ignoreUnkownAttributes(true);
 					attributes[Attributes::Owner]=sch_parser.getCodeDefinition(filename, attributes);
@@ -1215,14 +1213,12 @@ QString BaseObject::getAlterDefinition(QString sch_name, attribs_map &attribs, b
 	try
 	{
 		SchemaParser schparser;
-		QString alter_sch_dir=GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-								GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-								QString("%1") + GlobalAttributes::SchemaExt;
+		QString alter_sch_file=GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, sch_name);
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
 		schparser.ignoreEmptyAttributes(ignore_empty_attribs);
 		schparser.ignoreUnkownAttributes(ignore_ukn_attribs);
-		return schparser.getCodeDefinition(alter_sch_dir.arg(sch_name), attribs);
+		return schparser.getCodeDefinition(alter_sch_file, attribs);
 	}
 	catch(Exception &e)
 	{

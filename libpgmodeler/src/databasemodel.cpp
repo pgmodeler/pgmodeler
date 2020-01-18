@@ -10348,9 +10348,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
+								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+																						attribs);
 					}
 				}
 				else
@@ -10375,9 +10374,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 						schparser.ignoreUnkownAttributes(true);
 						attribs[Attributes::Position]+=
-								schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						Attributes::Position + GlobalAttributes::SchemaExt, attribs);
+								schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+																						attribs);
 					}
 
 					//Saving the labels' custom positions
@@ -10390,13 +10388,12 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 							aux_attribs[Attributes::YPos]=QString::number(pnt.y());
 							aux_attribs[Attributes::RefType]=labels_attrs[id];
 
-							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																																						GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																						Attributes::Position + GlobalAttributes::SchemaExt, aux_attribs);
+							aux_attribs[Attributes::Position]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Position),
+																																						aux_attribs);
 
-							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																																				 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																				 Attributes::Label + GlobalAttributes::SchemaExt, aux_attribs);
+							attribs[Attributes::Position]+=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath( GlobalAttributes::XMLSchemaDir, Attributes::Label),
+																																				 aux_attribs);
+
 						}
 					}
 				}
@@ -10406,14 +10403,14 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			if(save_custom_sql)
 			{
 				if(!object->getAppendedSQL().isEmpty())
-					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																																							 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																							 QString(Attributes::AppendedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+					attribs[Attributes::AppendedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, QString(Attributes::AppendedSql).remove(QChar('-'))),
+																																			 attribs);
+
 
 				if(!object->getPrependedSQL().isEmpty())
-					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																																								QString(Attributes::PrependedSql).remove(QChar('-')) + GlobalAttributes::SchemaExt, attribs);
+					attribs[Attributes::PrependedSql]=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir,	QString(Attributes::PrependedSql).remove(QChar('-'))),
+																																				attribs);
+
 			}
 
 			/* The object's metadata code will be generated only if one of the key attributes
@@ -10440,9 +10437,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 
 				schparser.ignoreUnkownAttributes(true);
 				objs_def+=XmlParser::convertCharsToXMLEntities(
-										schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																								GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																								Attributes::Info + GlobalAttributes::SchemaExt, attribs));
+										schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Info),
+																								attribs));
 			}
 			else
 				idx++;
@@ -10454,9 +10450,9 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 		{
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
-			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-																						 GlobalAttributes::XMLSchemaDir + GlobalAttributes::DirSeparator +
-																						 Attributes::Metadata + GlobalAttributes::SchemaExt, attribs));
+			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
+																						 attribs));
+
 			output.write(buf.data(),buf.size());
 
 			emit s_objectLoaded(100, tr("Metadata file successfully saved!"), enum_cast(ObjectType::BaseObject));
@@ -10950,12 +10946,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	QString styles, id, index, items, buffer;
 	attribs_map attribs, aux_attribs;
 	QStringList index_list;
-	QString dict_files_root = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator +
-														GlobalAttributes::DataDictSchemaDir + GlobalAttributes::DirSeparator,
-			dict_sch_file = dict_files_root + GlobalAttributes::DataDictSchemaDir + GlobalAttributes::SchemaExt,
-			style_sch_file = dict_files_root + Attributes::Styles + GlobalAttributes::SchemaExt,
-			item_sch_file = dict_files_root + Attributes::Item + GlobalAttributes::SchemaExt,
-			index_sch_file = dict_files_root + Attributes::Index + GlobalAttributes::SchemaExt;
+	QString dict_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, GlobalAttributes::DataDictSchemaDir),
+			style_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Styles),
+			item_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Item),
+			index_sch_file = GlobalAttributes::getSchemaFilePath(GlobalAttributes::DataDictSchemaDir, Attributes::Index);
 
 	objects.assign(tables.begin(), tables.end());
 	objects.insert(objects.end(), foreign_tables.begin(), foreign_tables.end());
