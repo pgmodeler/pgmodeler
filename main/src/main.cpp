@@ -41,9 +41,7 @@ void startCrashHandler(int signal)
 	cmd=QString("\"%1\"").arg(GlobalAttributes::getPgModelerCHandlerPath()) + QString(" -style ") + GlobalAttributes::DefaultQtStyle;
 
 	//Creates the stacktrace file
-	output.setFileName(GlobalAttributes::getTemporaryDir() +
-										 GlobalAttributes::DirSeparator +
-										 GlobalAttributes::StacktraceFile);
+	output.setFileName(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::StacktraceFile));
 	output.open(QFile::WriteOnly);
 
 	if(output.isOpen())

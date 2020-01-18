@@ -116,7 +116,7 @@ QString GlobalAttributes::getSchemasRootDir()
 
 QString GlobalAttributes::getSchemaFilePath(const QString &subfolder, const QString &file)
 {
-	return getSchemasRootDir() + DirSeparator + subfolder +
+	return SchemasRootDir + DirSeparator + subfolder +
 				 DirSeparator + file + GlobalAttributes::SchemaExt;
 }
 
@@ -133,6 +133,11 @@ QString GlobalAttributes::getPluginsDir()
 QString GlobalAttributes::getTemporaryDir()
 {
 	return TemporaryDir;
+}
+
+QString GlobalAttributes::getTemporaryFilePath(const QString &file)
+{
+	return TemporaryDir + GlobalAttributes::DirSeparator + file;
 }
 
 QString GlobalAttributes::getSamplesDir()

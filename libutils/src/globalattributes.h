@@ -141,12 +141,17 @@ class GlobalAttributes {
 		//! \brief Returns the path to the "schemas" folder
 		static QString getSchemasRootDir();
 
-		//! \brief Returns the path to a schema file under "schemas" folder
+		/*! \brief Returns the path to a schema file under "schemas" folder.
+		 * Since this method only operates over schemas folder there's no need to
+		 * provide a file with extension because the method already appends the extension .sch
+		 * automatically. */
 		static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
 		//! \brief Returns the path to the "tmp" folder in user's local storage
 		static QString getTemporaryDir();
-		//TODO: static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
+
+		//! \brief Returns the path to a temp file under "tmp" folder at user's local storage
+		static QString getTemporaryFilePath(const QString &file);
 
 		//! \brief Returns the path to the template "conf" folder in pgModeler's installation
 		static QString getTmplConfigurationDir();

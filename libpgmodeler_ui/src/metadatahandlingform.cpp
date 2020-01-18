@@ -190,9 +190,10 @@ void MetadataHandlingForm::handleObjectsMetada()
 			else
 			{
 				//Configuring the temporary metadata file
-				tmp_file.setFileTemplate(GlobalAttributes::getTemporaryDir() +
-																 GlobalAttributes::DirSeparator +
-																 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
+				tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(
+																	 QString("%1_metadata_XXXXXX.%2")
+																	 .arg(extract_model->getName())
+																	 .arg(QString("omf"))));
 
 				tmp_file.open();
 				metadata_file=tmp_file.fileName();

@@ -55,8 +55,7 @@ BugReportForm::BugReportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
 		QFile input;
 
 		//Opens the last modified model file showing it on the proper widget
-		input.setFileName(GlobalAttributes::getTemporaryDir() +
-											GlobalAttributes::DirSeparator + list[0]);
+		input.setFileName(GlobalAttributes::getTemporaryFilePath(list[0]));
 
 		input.open(QFile::ReadOnly);
 		model_txt->setPlainText(QString(input.readAll()));

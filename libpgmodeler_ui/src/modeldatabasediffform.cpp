@@ -689,9 +689,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool()
 			filename = file_edt->text();
 	else
 	{
-			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryDir() +
-																	 GlobalAttributes::DirSeparator +
-																	 QString("diff_%1_XXXXXX.sql").arg(database));
+			tmp_sql_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(QString("diff_%1_XXXXXX.sql").arg(database)));
 
 			tmp_sql_file.open();
 			filename = tmp_sql_file.fileName();
