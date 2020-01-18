@@ -83,6 +83,9 @@ const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
+const QString MsgFileAssociated=QT_TR_NOOP("Database model files (.dbm) are already associated to pgModeler!");
+const QString MsgNoFileAssociation=QT_TR_NOOP("There is no file association related to pgModeler and .dbm files!");
+
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
 	try
@@ -1615,23 +1618,30 @@ bool PgModelerCliApp::containsRelAttributes(const QString &str)
 
 void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 {
-	SchemaParser schparser;
-	QString msg_file_associated=tr("Database model files (.dbm) are already associated to pgModeler!"),
-			msg_no_association=tr("There is no file association related to pgModeler and .dbm files!");
-
 	printMessage(tr("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
 
-#ifdef Q_OS_LINUX
+	#ifdef Q_OS_LINUX
+		handleLinuxMimeDatabase(uninstall);
+	#else
+		#ifdef Q_OS_WIN
+			handleWindowsMimeDatabase(uninstall);
+		#endif
+	#endif
+}
+
+void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
+{
+	SchemaParser schparser;
 	attribs_map attribs;
 	QString str_aux,
 
 			//Configures the path to the application logo
 			exec_icon=QDir(GlobalAttributes::getTmplConfigurationDir() +
-						   GlobalAttributes::DirSeparator + QString("pgmodeler_logo.png")).absolutePath(),
+							 GlobalAttributes::DirSeparator + QString("pgmodeler_logo.png")).absolutePath(),
 
 			//Configures the path to the document logo
 			dbm_icon=QDir(GlobalAttributes::getTmplConfigurationDir() +
-						  GlobalAttributes::DirSeparator + QString("pgmodeler_dbm.png")).absolutePath(),
+							GlobalAttributes::DirSeparator + QString("pgmodeler_dbm.png")).absolutePath(),
 
 			//Path to directory that register mime types
 			mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
@@ -1640,25 +1650,25 @@ void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 			mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
 
 			base_conf_dir=GlobalAttributes::getTmplConfigurationDir() + GlobalAttributes::DirSeparator +
-						  GlobalAttributes::SchemasDir + GlobalAttributes::DirSeparator,
+							GlobalAttributes::SchemasDir + GlobalAttributes::DirSeparator,
 
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
 			files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
 						mime_db_dir + QString("/packages/application-dbm.xml") },
 
 			schemas[] = { base_conf_dir + QString("desktop") + GlobalAttributes::SchemaExt,
-						  base_conf_dir + QString("application-dbm") + GlobalAttributes::SchemaExt };
+							base_conf_dir + QString("application-dbm") + GlobalAttributes::SchemaExt };
 	QByteArray buf, buf_aux;
 	QFile out;
 
 	//When installing, check if the necessary file exists. If exists, raises an error and abort.
 	if(!uninstall && (QFileInfo(files[0]).exists() || QFileInfo(files[1]).exists()))
 	{
-		throw Exception(msg_file_associated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(uninstall && (!QFileInfo(files[0]).exists() && !QFileInfo(files[1]).exists()))
 	{
-		throw Exception(msg_no_association, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else if(!uninstall)
 	{
@@ -1734,7 +1744,7 @@ void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 				{
 					//Updates the application/dbm mime association
 					if(!uninstall && (str_aux.contains(QString("[Added Associations]")) ||
-									  str_aux.contains(QString("[Default Applications]"))))
+										str_aux.contains(QString("[Default Applications]"))))
 						str_aux.append(QString("\napplication/dbm=pgModeler.desktop;\n"));
 					else
 						str_aux+=QString("\n");
@@ -1761,18 +1771,21 @@ void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
-#else
-#ifdef Q_OS_WIN
+}
+
+void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall)
+{
+	SchemaParser schparser;
 
 	//Checking if the .dbm registry key exists
 	QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
-    QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath());
+	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath());
 
 	//If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
 	if(uninstall && dbm_ext.value(QString("Default")).toString().isEmpty())
-        throw Exception(msg_no_association, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(MsgNoFileAssociation, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(!uninstall && !dbm_ext.value(QString("Default")).toString().isEmpty())
-        throw Exception(msg_file_associated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(MsgFileAssociated, ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
 		if(!uninstall)
@@ -1811,7 +1824,4 @@ void PgModelerCliApp::handleMimeDatabase(bool uninstall)
 		s.sync();
 		itr++;
 	}
-
-#endif
-#endif
 }

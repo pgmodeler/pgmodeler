@@ -137,26 +137,44 @@ class GlobalAttributes {
 			static constexpr unsigned MaxObjectCount = 15;
 		#endif
 
+		//! \brief Returns the path to the "schemas" folder
 		static QString getSchemasRootDir();
 		//TODO: static QString getSchemaFilePath(const QString &subfolder, const QString &file);
 
+		//! \brief Returns the path to the "tmp" folder in user's local storage
 		static QString getTemporaryDir();
 		//TODO: static QString getTemporaryFilePath(const QString &subfolder, const QString &file);
 
+		//! \brief Returns the path to the template "conf" folder in pgModeler's installation
 		static QString getTmplConfigurationDir();
 		//TODO: static QString getTmplTemporaryFilePath(const QString &subfolder, const QString &file);
 
+		//! \brief Returns the path to the "conf" folder in user's local storage
 		static QString getConfigurationsDir();
 		//TODO: static QString getConfigurationFilePath(const QString &subfolder, const QString &file);
 
+		//! \brief Returns the path to the "samples" folder in pgModeler's installation
 		static QString getSamplesDir();
+
+		//! \brief Returns the path to the "lang" folder in pgModeler's installation
 		static QString getLanguagesDir();
+
+		//! \brief Returns the path to the "plugins" folder in pgModeler's installation
 		static QString getPluginsDir();
 
+		//! \brief Returns the path to the "sql-highlight.conf" file in user's local storage
 		static QString getSQLHighlightConfPath();
+
+		//! \brief Returns the path to the "xml-highlight.conf" file in user's local storage
 		static QString getXMLHighlightConfPath();
+
+		//! \brief Returns the path to the "pgmodeler-ch" (crash handler) executable
 		static QString getPgModelerCHandlerPath();
+
+		//! \brief Returns the path to the "pgmodeler-cli" (command line interface) executable
 		static QString getPgModelerCLIPath();
+
+		//! \brief Returns the path to the "pgmodeler" (main application) executable
 		static QString getPgModelerAppPath();
 
 		friend class Application;

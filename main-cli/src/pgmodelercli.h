@@ -164,7 +164,10 @@ class PgModelerCliApp: public Application {
 
 		TagExpr,
 		EndTagExpr,
-		AttributeExpr;
+		AttributeExpr,
+
+		MsgFileAssociated,
+		MsgNoFileAssociation;
 
 		//! \brief Parsers the options and executes the action specified by them
 		void parseOptions(attribs_map &parsed_opts);
@@ -214,6 +217,9 @@ class PgModelerCliApp: public Application {
 		void importDatabase(DatabaseModel *model, Connection conn);
 
 		void printMessage(const QString &msg);
+
+		void handleLinuxMimeDatabase(bool uninstall);
+		void handleWindowsMimeDatabase(bool uninstall);
 
 	public:
 		PgModelerCliApp(int argc, char **argv);
