@@ -166,7 +166,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		static void setRequiredField(QWidget *widget);
 		
 		//! \brief Filters the ENTER/RETURN key press forcing the button "Apply" to be clicked
-		bool eventFilter(QObject *object, QEvent *event);
+		bool eventFilter(QObject *obj, QEvent *event);
 
 		//! \brief Returns the kind of database object handled
 		ObjectType getHandledObjectType();

@@ -113,7 +113,9 @@ bool BaseObjectWidget::eventFilter(QObject *object, QEvent *event)
 	{
 		QKeyEvent *kevent=dynamic_cast<QKeyEvent *>(event);
 
-		if(kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter)
+		// If the object is protected we avoid accepting the enter hit
+		if(!protected_obj_frm->isVisible() &&
+			 (kevent->key()==Qt::Key_Return || kevent->key()==Qt::Key_Enter))
 		{
 			applyConfiguration();
 			return true;
