@@ -4648,8 +4648,12 @@ void ModelWidget::swapObjectsIds()
 			emit s_objectManipulated();
 	});
 
-	parent_form.apply_ok_btn->setVisible(true);
-	parent_form.setMainWidget(swap_ids_wgt);
+	parent_form.setMainWidget(swap_ids_wgt, SLOT(swapObjectsIds()));
+	parent_form.setButtonConfiguration(Messagebox::OkCancelButtons);
+	parent_form.apply_ok_btn->setEnabled(false);
+	parent_form.apply_ok_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("swapobjs")));
+	parent_form.apply_ok_btn->setText(tr("Swap ids"));
+	connect(swap_ids_wgt, SIGNAL(s_objectsIdsSwapReady(bool)), parent_form.apply_ok_btn, SLOT(setEnabled(bool)));
 
 	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
 	parent_form.exec();

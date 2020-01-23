@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
+    <width>608</width>
     <height>567</height>
    </rect>
   </property>
@@ -99,7 +99,7 @@
     <rect>
      <x>4</x>
      <y>49</y>
-     <width>45</width>
+     <width>51</width>
      <height>18</height>
     </rect>
    </property>
@@ -108,6 +108,12 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
    </property>
    <property name="text">
     <string>Before:</string>
@@ -276,14 +282,14 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>80</y>
-     <width>115</width>
-     <height>29</height>
+     <x>330</x>
+     <y>10</y>
+     <width>31</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -311,79 +317,32 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+     <normaloff>:/icones/icones/swapvals.png</normaloff>:/icones/icones/swapvals.png</iconset>
    </property>
    <property name="iconSize">
     <size>
      <width>22</width>
-     <height>22</height>
+     <height>44</height>
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
-   </property>
-  </widget>
-  <widget class="QToolButton" name="swap_ids_tb">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>80</y>
-     <width>115</width>
-     <height>29</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::StrongFocus</enum>
-   </property>
-   <property name="toolTip">
-    <string>Swap the object ids changing their creation order</string>
-   </property>
-   <property name="text">
-    <string>Swap ids</string>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/swapobjs.png</normaloff>:/icones/icones/swapobjs.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>22</width>
-     <height>22</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
   </widget>
   <widget class="QWidget" name="filter_wgt" native="true">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>50</x>
      <y>160</y>
-     <width>274</width>
-     <height>44</height>
+     <width>487</width>
+     <height>32</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="leftMargin">
@@ -399,25 +358,12 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QLabel" name="filter_lbl">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Filter:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QLineEdit" name="filter_edt">
       <property name="enabled">
        <bool>true</bool>
+      </property>
+      <property name="placeholderText">
+       <string>Filter by name</string>
       </property>
       <property name="clearButtonEnabled">
        <bool>true</bool>
@@ -426,6 +372,12 @@
     </item>
     <item>
      <widget class="QCheckBox" name="hide_sys_objs_chk">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Hide system objects</string>
       </property>
@@ -436,6 +388,12 @@
     </item>
     <item>
      <widget class="QCheckBox" name="hide_rels_chk">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Hide relationships</string>
       </property>
@@ -479,11 +437,11 @@
    <attribute name="horizontalHeaderCascadingSectionResizes">
     <bool>true</bool>
    </attribute>
-   <attribute name="horizontalHeaderDefaultSectionSize">
-    <number>96</number>
-   </attribute>
    <attribute name="horizontalHeaderMinimumSectionSize">
     <number>30</number>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>96</number>
    </attribute>
    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
     <bool>true</bool>
@@ -497,14 +455,14 @@
    <attribute name="verticalHeaderCascadingSectionResizes">
     <bool>false</bool>
    </attribute>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>25</number>
+   </attribute>
    <attribute name="verticalHeaderDefaultSectionSize">
     <number>28</number>
    </attribute>
    <attribute name="verticalHeaderHighlightSections">
     <bool>false</bool>
-   </attribute>
-   <attribute name="verticalHeaderMinimumSectionSize">
-    <number>25</number>
    </attribute>
    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
     <bool>false</bool>
@@ -572,6 +530,53 @@
       <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
     </property>
    </column>
+  </widget>
+  <widget class="QToolButton" name="filter_btn">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>110</y>
+     <width>78</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Defines the search filter</string>
+   </property>
+   <property name="text">
+    <string>Filter</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/filter.png</normaloff>:/icones/icones/filter.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
   </widget>
  </widget>
  <resources>

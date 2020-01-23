@@ -8,8 +8,9 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission, ObjectType::Role, ObjectType::Textbox,
-																   ObjectType::Column, ObjectType::Constraint });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
+																															 ObjectType::Role, ObjectType::Textbox,
+																															 ObjectType::Column, ObjectType::Constraint });
 		setupUi(this);
 
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -29,27 +30,25 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		swap_objs_grid->addWidget(create_lbl, 0, 0);
 		swap_objs_grid->addWidget(src_object_sel, 0, 1);
-		swap_objs_grid->addWidget(src_id_lbl, 0, 2);
-		swap_objs_grid->addWidget(src_ico_lbl, 0, 3);
+		swap_objs_grid->addWidget(swap_values_tb, 0, 2, 2, 1);
+		swap_objs_grid->addWidget(src_id_lbl, 0, 3);
+		swap_objs_grid->addWidget(src_ico_lbl, 0, 4);
 
 		swap_objs_grid->addWidget(before_lbl, 1, 0);
 		swap_objs_grid->addWidget(dst_object_sel, 1, 1);
-		swap_objs_grid->addWidget(dst_id_lbl, 1, 2);
-		swap_objs_grid->addWidget(dst_ico_lbl, 1, 3);
+		swap_objs_grid->addWidget(dst_id_lbl, 1, 3);
+		swap_objs_grid->addWidget(dst_ico_lbl, 1, 4);
 
-		QHBoxLayout *hlayout=new QHBoxLayout;
-		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
-		hlayout->addWidget(swap_values_tb);
-		hlayout->addWidget(swap_ids_tb);
-		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
+		swap_objs_grid->addWidget(filter_btn, 2, 0, 1, 1);
+		swap_objs_grid->addWidget(filter_wgt, 2, 1, 1, 4);
 
-		swap_objs_grid->addLayout(hlayout, 2, 0, 1, 4);
-		swap_objs_grid->addWidget(filter_wgt, swap_objs_grid->count(), 0, 1, 4);
-		swap_objs_grid->addWidget(objects_tbw, swap_objs_grid->count(), 0, 1, 4);
-		swap_objs_grid->addWidget(alert_frm, swap_objs_grid->count(), 0, 1, 4);
+		swap_objs_grid->addWidget(objects_tbw, 3, 0, 1, 5);
+		swap_objs_grid->addWidget(alert_frm, 4, 0, 1, 5);
 
 		setModel(nullptr);
+		filter_wgt->setVisible(false);
 
+		connect(filter_btn, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
 		connect(src_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
 		connect(dst_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
 		connect(src_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
@@ -70,7 +69,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		setMinimumSize(640,480);
 
-		connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
+		//connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
 		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
@@ -105,6 +104,7 @@ void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject
 {
 	src_object_sel->setSelectedObject(src_object);
 	dst_object_sel->setSelectedObject(dst_objct);
+	selector_idx = (src_object && !dst_objct ? 1 : 0);
 }
 
 void SwapObjectsIdsWidget::fillCreationOrderGrid()
@@ -222,8 +222,8 @@ void SwapObjectsIdsWidget::showObjectId()
 	swap_values_tb->setEnabled(src_object_sel->getSelectedObject() &&
 														 dst_object_sel->getSelectedObject());
 
-	swap_ids_tb->setEnabled(src_object_sel->getSelectedObject() &&
-													dst_object_sel->getSelectedObject());
+	emit s_objectsIdsSwapReady(src_object_sel->getSelectedObject() &&
+														 dst_object_sel->getSelectedObject());
 }
 
 void SwapObjectsIdsWidget::swapObjectsIds()
