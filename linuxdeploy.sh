@@ -29,9 +29,6 @@ QT_IFW_ROOT=/opt/qt-ifw-3.0.4
 # Detecting current pgModeler version
 DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
 
-STARTUP_SCRIPT="start-pgmodeler.sh"
-MIME_UPDATE_SCRIPT="dbm-mime-type.sh"
-ENV_VARS_SCRIPT="pgmodeler.vars"
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
 INSTALL_ROOT="/opt/pgmodeler"
@@ -46,7 +43,7 @@ INSTALLER_CONFIG="config.xml"
 INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
-DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/lib/qtplugins"
+DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/qtplugins"
 BUILD_DATE=`date '+%Y%m%d'`
 
 SNAPSHOT_OPT='-snapshot'
@@ -79,16 +76,16 @@ SHAREDIR="$PREFIX"
 QMAKE_ARGS="$QMAKE_ARGS \
 	    PREFIX=$PREFIX \
 	    BINDIR=$BINDIR \
-            PRIVATEBINDIR=$PRIVATEBINDIR \
-            PRIVATELIBDIR=$PRIVATELIBDIR \
-            LANGDIR=$LANGDIR \
-            SAMPLESDIR=$SAMPLESDIR \
-            SCHEMASDIR=$SCHEMASDIR \
-            PLUGINSDIR=$PLUGINSDIR \
-            CONFDIR=$CONFDIR \
-            DOCDIR=$DOCDIR \
-            SHAREDIR=$SHAREDIR \
-            TEMPDIR=$TEMPDIR"
+        PRIVATEBINDIR=$PRIVATEBINDIR \
+        PRIVATELIBDIR=$PRIVATELIBDIR \
+        LANGDIR=$LANGDIR \
+        SAMPLESDIR=$SAMPLESDIR \
+        SCHEMASDIR=$SCHEMASDIR \
+        PLUGINSDIR=$PLUGINSDIR \
+        CONFDIR=$CONFDIR \
+        DOCDIR=$DOCDIR \
+        SHAREDIR=$SHAREDIR \
+        TEMPDIR=$TEMPDIR"
             
 for param in $@; do
  if [[ "$param" == "$BUILD_ALL_OPT" ]]; then
@@ -305,7 +302,7 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
  mkdir $DEP_PLUGINS_DIR
  echo "[Paths]" > $QT_CONF
  echo "Prefix=." >> $QT_CONF
- echo "Plugins=lib/qtplugins" >> $QT_CONF
+ echo "Plugins=qtplugins" >> $QT_CONF
  echo "Libraries=." >> $QT_CONF
 
  #Copies the qt plugins to build/qtplugins
@@ -326,28 +323,6 @@ if [ $BUNDLE_QT_LIBS = 1 ]; then
    fi     
  done
 
-fi
-
-echo "Copying scripts..."
-cp -v $STARTUP_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp -v $MIME_UPDATE_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-cp -v $ENV_VARS_SCRIPT "$BUILD_DIR/$INSTALL_ROOT" >> $LOG 2>&1
-
-if [ $? -ne 0 ]; then
-    echo
-    echo "** Failed to copy scripts!"
-    echo
-    exit 1
-fi
-
-chmod +x "$BUILD_DIR/$INSTALL_ROOT/$STARTUP_SCRIPT"
-chmod +x "$BUILD_DIR/$INSTALL_ROOT/$MIME_UPDATE_SCRIPT"
-
-if [ $? -ne 0 ]; then
-    echo
-    echo "** Failed to set permisions to scripts!"
-    echo
-    exit 1
 fi
 
 if [ $DEMO_VERSION = 0 ]; then
