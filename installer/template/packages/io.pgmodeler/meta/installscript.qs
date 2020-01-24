@@ -33,12 +33,10 @@ Component.prototype.createOperations = function()
 			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
 		}
 		else {			
-			start_script=installdir + "/" + "start-pgmodeler.sh";
-			mime_update=installdir + "/" + "dbm-mime-type.sh";
-			component.addOperation("Execute", "chmod", "+x", start_script, "errormessage=** Could not set executable flag for file " + start_script);
-			component.addOperation("Execute", "chmod", "+x", mime_update, "errormessage=** Could not set executable flag for file " + mime_update);
-			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "uninstall");
-			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "install");
+			start_script=installdir + "/" + "pgmodeler";
+			mime_update=installdir + "/" + "pgmodeler-cli";
+			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
+			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
 		}
     } catch (e) {
         print(e);
@@ -60,7 +58,7 @@ finishInstall = function()
 
     if(installer.status == QInstaller.Success)
     {
-        var page = gui.pageWidgetByObjectName( "FinishedPage" );
+       /* var page = gui.pageWidgetByObjectName( "FinishedPage" );
 		
 		if (systemInfo.productType === "windows" || systemInfo.productType === "osx") {
 			page.FinishMessageWidget.textEdit.visible=false;
@@ -69,6 +67,6 @@ finishInstall = function()
 		else {
 			var info_txt=page.FinishMessageWidget.textEdit.html.replace("{installdir}",installer.value("TargetDir"));
 			page.FinishMessageWidget.textEdit.html=info_txt;
-		}
+		} */
     }
 }
