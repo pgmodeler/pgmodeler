@@ -7286,7 +7286,16 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				usr_type=dynamic_cast<Type *>(type);
 
 				if(usr_type->getConfiguration()==Type::BaseType)
+				{
 					usr_type->convertFunctionParameters();
+
+					//Generating the shell type declaration (only for base types)
+					attribs_aux[Attributes::ShellTypes] += usr_type->getCodeDefinition(def_type, true);
+
+					/* Forcing the code invalidation for the type so the complete definition can be
+					 * generated in the below iteration */
+					usr_type->setCodeInvalidated(true);
+				}
 			}
 		}
 
@@ -7298,12 +7307,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			if(obj_type==ObjectType::Type && def_type==SchemaParser::SqlDefinition)
 			{
 				usr_type=dynamic_cast<Type *>(object);
-
-				//Generating the shell type declaration (only for base types)
-				if(usr_type->getConfiguration()==Type::BaseType)
-					attribs_aux[Attributes::ShellTypes]+=usr_type->getCodeDefinition(def_type, true);
-				else
-					attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
+				attribs_aux[attrib]+=usr_type->getCodeDefinition(def_type);
 			}
 			else if(obj_type==ObjectType::Database)
 			{
