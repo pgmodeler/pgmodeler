@@ -100,12 +100,12 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 		xmlparser=nullptr;
 		zoom=1;
 
-		export_hlp = new ModelExportHelper;
-		import_hlp = new DatabaseImportHelper;
-		diff_hlp = new ModelsDiffHelper;
-		conn_conf = new ConnectionsConfigWidget;
-		rel_conf = new RelationshipConfigWidget;
-		general_conf = new GeneralConfigWidget;
+		export_hlp = nullptr;
+		import_hlp = nullptr;
+		diff_hlp = nullptr;
+		conn_conf = nullptr;
+		rel_conf = nullptr;
+		general_conf = nullptr;
 
 		initializeOptions();
 
@@ -195,7 +195,7 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 				extra_connection.setConnectionParam(Connection::ParamDbName, parsed_opts[CompareTo]);
 			}
 
-			if(!silent_mode)
+			if(!silent_mode && export_hlp && import_hlp && diff_hlp)
 			{
 				connect(export_hlp, SIGNAL(s_progressUpdated(int,QString)), this, SLOT(updateProgress(int,QString)));
 				connect(export_hlp, SIGNAL(s_errorIgnored(QString,QString,QString)), this, SLOT(printIgnoredError(QString,QString,QString)));
@@ -212,14 +212,28 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 PgModelerCliApp::~PgModelerCliApp()
 {
-	if(scene) delete scene;
+	if(scene)
+		delete scene;
+
 	delete model;
-	delete export_hlp;
-	delete import_hlp;
-	delete diff_hlp;
-	delete conn_conf;
-	delete rel_conf;
-	delete general_conf;
+
+	if(export_hlp)
+		delete export_hlp;
+
+	if(import_hlp)
+		delete import_hlp;
+
+	if(diff_hlp)
+		delete diff_hlp;
+
+	if(conn_conf)
+		delete conn_conf;
+
+	if(rel_conf)
+		delete rel_conf;
+
+	if(general_conf)
+		delete general_conf;
 }
 
 void PgModelerCliApp::printMessage(const QString &msg)
@@ -485,14 +499,29 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 	//Loading connections
 	if(opts.count(ListConns) || opts.count(ExportToDbms) || opts.count(ImportDb) || opts.count(Diff))
 	{
+		conn_conf = new ConnectionsConfigWidget;
 		conn_conf->loadConfiguration();
 		conn_conf->getConnections(connections, false);
 	}
 	//Loading general and relationship settings when exporting to image formats
 	else if(opts.count(ExportToPng) || opts.count(ExportToSvg))
 	{
+		general_conf = new GeneralConfigWidget;
+		rel_conf = new RelationshipConfigWidget;
+
 		general_conf->loadConfiguration();
 		rel_conf->loadConfiguration();
+	}
+
+	//Creating the export/import/diff helpers when one of the operations are specified
+	if(opts.count(ExportToDbms) || opts.count(ExportToFile) ||
+		 opts.count(ExportToPng) || opts.count(ExportToSvg) ||
+		 opts.count(ExportToDict) || opts.count(ImportDb) ||
+		 opts.count(Diff))
+	{
+		export_hlp = new ModelExportHelper;
+		import_hlp = new DatabaseImportHelper;
+		diff_hlp = new ModelsDiffHelper;
 	}
 
 	if(opts.empty() || opts.count(Help))
