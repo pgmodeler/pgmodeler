@@ -18,19 +18,22 @@ Component.prototype.createOperations = function()
         component.createOperations();
 
         var installdir=installer.value("TargetDir");
+		var startmenu=installer.value("StartMenuDir").slice(installer.value("StartMenuDir").lastIndexOf("\\"), installer.value("StartMenuDir").length);
+		var startmenu_path=installer.value("AllUsersStartMenuProgramsPath") + startmenu;
 
         if(systemInfo.productType === "osx") {
             return;
         }
         else if (systemInfo.productType === "windows") {
-		
-			component.addOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", "@StartMenuDir@/pgModeler.lnk",
-            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/pgmodeler.exe",
-            "iconId=0", "description=PostgreSQL Database Modeler");
+			component.addElevatedOperation("Mkdir", startmenu_path);
+			component.addElevatedOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", 
+											startmenu_path + "/pgModeler.lnk",		
+											"workingDirectory=@TargetDir@", "iconPath=@TargetDir@/pgmodeler.exe",
+											"iconId=0", "description=PostgreSQL Database Modeler");
 			
-			//mime_update=installdir + "/" + "pgmodeler-cli.exe";    
-			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
-			//component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
+			mime_update=installdir + "/" + "pgmodeler-cli.exe";    
+			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
+			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
 		}
 		else {			
 			start_script=installdir + "/" + "pgmodeler";
