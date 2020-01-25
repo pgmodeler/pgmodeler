@@ -194,7 +194,15 @@ double NumberedTextEditor::getTabDistance()
 	else
 	{
 		QFontMetrics fm(default_font);
-		return tab_width * fm.horizontalAdvance(' ');
+		int chr_width = 0;
+
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+			chr_width = fm.width(' ');
+		#else
+			chr_width = fm.horizontalAdvance(' ');
+		#endif
+
+		return tab_width * chr_width;
 	}
 }
 
@@ -484,7 +492,8 @@ void NumberedTextEditor::updateLineNumbers()
 			top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top()),
 			bottom = top +  static_cast<int>(blockBoundingRect(block).height()),
 			dy = top;
-	unsigned first_line=0, line_count=0;
+	unsigned first_line=0, line_count=0;	
+	double tab_stop_dist = 0;
 
 	// Calculates the visible lines by iterating over the visible/valid text blocks.
 	while(block.isValid())
@@ -509,8 +518,20 @@ void NumberedTextEditor::updateLineNumbers()
 
 	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
 
-	if(round(this->tabStopDistance()) != round(NumberedTextEditor::getTabDistance()))
-		this->setTabStopDistance(NumberedTextEditor::getTabDistance());
+	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		tab_stop_dist = this->tabStopWidth();
+	#else
+		tab_stop_dist = this->tabStopDistance();
+	#endif
+
+	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
+	{
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+			this->setTabStopWidth(NumberedTextEditor::getTabDistance());
+		#else
+			this->setTabStopDistance(NumberedTextEditor::getTabDistance());
+		#endif
+	}
 }
 
 void NumberedTextEditor::updateLineNumbersSize()
@@ -535,7 +556,8 @@ void NumberedTextEditor::updateLineNumbersSize()
 
 int NumberedTextEditor::getLineNumbersWidth()
 {
-	int digits=1, max=qMax(1, blockCount());
+	int digits=1, max=qMax(1, blockCount()),
+			chr_width = 0;
 
 	while(max >= 10)
 	{
@@ -543,7 +565,13 @@ int NumberedTextEditor::getLineNumbersWidth()
 		++digits;
 	}
 
-	return (15 + fontMetrics().horizontalAdvance(QChar('9')) * digits);
+	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		chr_width = fontMetrics().width(QChar('9'));
+	#else
+		chr_width = fontMetrics().horizontalAdvance(QChar('9'));
+	#endif
+
+	return (15 + chr_width * digits);
 }
 
 void NumberedTextEditor::resizeEvent(QResizeEvent *event)

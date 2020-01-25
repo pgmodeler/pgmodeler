@@ -37,7 +37,12 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=PgModelerUiNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
+	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabDistance());
+	#else
+		cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
+	#endif
+
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);

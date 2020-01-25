@@ -60,6 +60,7 @@ const QString PgModelerCliApp::UseTmpNames("--use-tmp-names");
 const QString PgModelerCliApp::DbmMimeType("--dbm-mime-type");
 const QString PgModelerCliApp::Install("install");
 const QString PgModelerCliApp::Uninstall("uninstall");
+const QString PgModelerCliApp::SystemWide("--system-wide");
 const QString PgModelerCliApp::IgnoreImportErrors("--ignore-errors");
 const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
 const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
@@ -320,6 +321,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[ExportToDict]=false;
 	long_opts[NoIndex]=false;
 	long_opts[Splitted]=false;
+	long_opts[SystemWide]=false;
 
 	short_opts[Input]=QString("-if");
 	short_opts[Output]=QString("-of");
@@ -374,6 +376,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[NoUnmodObjRecreation]=QString("-nu");
 	short_opts[NoIndex]=QString("-ni");
 	short_opts[Splitted]=QString("-sp");
+	short_opts[SystemWide]=QString("-sw");
 }
 
 bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
@@ -482,6 +485,7 @@ void PgModelerCliApp::showMenu()
 #ifndef Q_OS_MAC
 	out << tr("Miscellaneous options: ") << endl;
 	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
+	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << endl;
 	out << endl;
 #endif
 
@@ -1579,7 +1583,7 @@ void PgModelerCliApp::updateMimeType()
 	{
 		printMessage(tr("Starting mime update..."));
 
-		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall);
+		handleMimeDatabase(parsed_opts[DbmMimeType]==Uninstall, parsed_opts.count(SystemWide) != 0);
 
 		printMessage(tr("Mime database successfully updated!\n"));
 	}
@@ -1645,24 +1649,26 @@ bool PgModelerCliApp::containsRelAttributes(const QString &str)
 	return found;
 }
 
-void PgModelerCliApp::handleMimeDatabase(bool uninstall)
+void PgModelerCliApp::handleMimeDatabase(bool uninstall, bool system_wide)
 {
 	printMessage(tr("Mime database operation: %1").arg(uninstall ? QString("uninstall") : QString("install")));
 
 	#ifdef Q_OS_LINUX
-		handleLinuxMimeDatabase(uninstall);
+		handleLinuxMimeDatabase(uninstall, system_wide);
 	#else
 		#ifdef Q_OS_WIN
-			handleWindowsMimeDatabase(uninstall);
+			handleWindowsMimeDatabase(uninstall, system_wide);
 		#endif
 	#endif
 }
 
-void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
+void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 {
 	SchemaParser schparser;
 	attribs_map attribs;
 	QString str_aux,
+
+			share_path = !system_wide ? QDir::homePath() + QString("/.local/share") : QString("/usr/share"),
 
 			//Configures the path to the application logo
 			exec_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_logo.png"),
@@ -1671,14 +1677,14 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
 			dbm_icon=GlobalAttributes::getTmplConfigurationFilePath("", "pgmodeler_dbm.png"),
 
 			//Path to directory that register mime types
-			mime_db_dir=QDir::homePath() + QString("/.local/share/mime"),
+			mime_db_dir=QString("%1/mime").arg(share_path),
 
 			//Path to the file that associates apps to mimetypes
-			mimeapps=QDir::homePath() + QString("/.local/share/applications/mimeapps.list"),
+			mimeapps=QString("%1/applications/mimeapps.list").arg(share_path),
 
 			//Files generated after update file association (application-dbm.xml and pgModeler.desktop)
-			files[] = { QDir::homePath() + QString("/.local/share/applications/pgModeler.desktop"),
-						mime_db_dir + QString("/packages/application-dbm.xml") },
+			files[] = { QString("%1/applications/pgModeler.desktop").arg(share_path),
+									mime_db_dir + QString("/packages/application-dbm.xml") },
 
 			schemas[] = { GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("desktop") + GlobalAttributes::SchemaExt),
 										GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir, QString("application-dbm") + GlobalAttributes::SchemaExt) };
@@ -1697,12 +1703,8 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
 	}
 	else if(!uninstall)
 	{
-		QString startup_script=QString("%1/start-pgmodeler.sh")
-								 .arg(QFileInfo(GlobalAttributes::getPgModelerAppPath()).absolutePath());
-
 		attribs[Attributes::WorkingDir]=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-		attribs[Attributes::Application]=(QFileInfo(startup_script).exists() ?
-													 startup_script : GlobalAttributes::getPgModelerAppPath());
+		attribs[Attributes::Application]=GlobalAttributes::getPgModelerAppPath();
 		attribs[Attributes::Icon]=exec_icon;
 	}
 
@@ -1798,7 +1800,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall)
 	}
 }
 
-void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall)
+void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide)
 {
 	SchemaParser schparser;
 

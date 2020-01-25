@@ -61,7 +61,7 @@ linux {
   # The default prefix is /usr/local
   !defined(PREFIX, var):        PREFIX = /usr/local
   !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
-  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
   !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
   !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
