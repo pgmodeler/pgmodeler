@@ -1803,9 +1803,10 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide)
 {
 	SchemaParser schparser;
+    QString base_reg_key = system_wide ? QString("HKEY_LOCAL_MACHINE\\SOFTWARE") : QString("HKEY_CURRENT_USER\\Software");
 
 	//Checking if the .dbm registry key exists
-	QSettings dbm_ext(QString("HKEY_CURRENT_USER\\Software\\Classes\\.dbm"), QSettings::NativeFormat);
+    QSettings dbm_ext(QString("%1\\Classes\\.dbm").arg(base_reg_key), QSettings::NativeFormat);
 	QString exe_path=QDir::toNativeSeparators(GlobalAttributes::getPgModelerAppPath());
 
 	//If there is no value assigned to .dbm/Default key and the user wants to uninstall file association, raises an error
@@ -1826,10 +1827,10 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 	//Other registry keys values
 	map<QString, QStringList> confs = {
-		{ QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file"), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
-		{ QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\DefaultIcon"), { QString("Default") , QString("%1,1").arg(exe_path) } },
-		{ QString("\\HKEY_CURRENT_USER\\Software\\Classes\\dbm_auto_file\\shell\\open\\command"), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
-		{ QString("\\HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm"), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
+        { QString("\\%1\\Classes\\dbm_auto_file").arg(base_reg_key), { QString("FriendlyTypeName") , QString("pgModeler Database Model") } },
+        { QString("\\%1\\Classes\\dbm_auto_file\\DefaultIcon").arg(base_reg_key), { QString("Default") , QString("%1,1").arg(exe_path) } },
+        { QString("\\%1\\Classes\\dbm_auto_file\\shell\\open\\command").arg(base_reg_key), { QString("Default") , QString("\"%1\" \"%2\"").arg(exe_path).arg("%1") } },
+        { QString("\\%1\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.dbm").arg(base_reg_key), { QString("OpenWithList/a"), QString("pgmodeler.exe"), QString("OpenWithList/MRUList"), QString("a")} }
 	};
 
 	map<QString, QStringList>::iterator itr;
