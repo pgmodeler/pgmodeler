@@ -636,14 +636,8 @@ void ModelValidationWidget::handleSQLValidationStarted()
 
 void ModelValidationWidget::swapObjectsIds()
 {
-	BaseForm parent_form(this);
-	SwapObjectsIdsWidget *swap_ids_wgt=new SwapObjectsIdsWidget;
-	swap_ids_wgt->setModel(model_wgt->getDatabaseModel());
-	parent_form.setMainWidget(swap_ids_wgt);
-
-	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
-	parent_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&parent_form, swap_ids_wgt->metaObject()->className());
+	if(model_wgt)
+		model_wgt->swapObjectsIds();
 }
 
 void ModelValidationWidget::selectObject()
