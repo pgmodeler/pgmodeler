@@ -21,7 +21,9 @@ Makefile
 
 build/*
 dist/*
-installer/*
+installer/template/packages/io.pgmodeler/data
+installer/template/packages/io.pgmodeler/meta/package.xml
+installer/template/config/config.xml
 moc/*
 obj/*
 plugins

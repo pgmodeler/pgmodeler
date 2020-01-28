@@ -62,9 +62,9 @@ linux {
   !defined(PREFIX, var):        PREFIX = /usr/local
   !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
-  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
-  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
+  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgModeler
+  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgModeler/plugins
+  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgModeler
   !defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
   !defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
   !defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
@@ -104,7 +104,7 @@ macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var):        PREFIX = /Applications/pgmodeler.app/Contents
+  !defined(PREFIX, var):        PREFIX = /Applications/pgModeler.app/Contents
   !defined(BINDIR, var):        BINDIR = $$PREFIX/MacOS
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$BINDIR
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/Frameworks

@@ -26,6 +26,7 @@ function Component()
 		gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.checked=false;
 	}
 
+	setExtraOptions();
 }
 
 Component.prototype.isDefault = function()
@@ -40,51 +41,53 @@ Component.prototype.createOperations = function()
         // call the base create operations function
         component.createOperations();
 	
-        var installdir=installer.value("TargetDir");
+        var installdir = installer.value("TargetDir");
+        var mime_update = installdir + "/" + "pgmodeler-cli";
 
         if(systemInfo.productType === "osx") {
             return;
         }
         else if (systemInfo.productType === "windows") 
 		{
-			var startmenu=installer.value("StartMenuDir").slice(installer.value("StartMenuDir").lastIndexOf("\\"), installer.value("StartMenuDir").length);
-			var startmenu_path=installer.value("AllUsersStartMenuProgramsPath") + startmenu;
+            mime_update += ".exe";  
+            
+			var startmenu = installer.value("StartMenuDir").slice(installer.value("StartMenuDir").lastIndexOf("\\"), installer.value("StartMenuDir").length);
+			var startmenu_path = installer.value("AllUsersStartMenuProgramsPath") + startmenu;
 			
-			component.addElevatedOperation("Mkdir", startmenu_path);
-			component.addElevatedOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", 
-											startmenu_path + "/pgModeler.lnk",		
-											"workingDirectory=@TargetDir@", "iconPath=@TargetDir@/pgmodeler.exe",
-											"iconId=0", "description=PostgreSQL Database Modeler");
-			
-			mime_update=installdir + "/" + "pgmodeler-cli.exe";    
-			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
-			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
+            if(installer.value("create_start_menu")  === "true")
+            {
+                
+                component.addElevatedOperation("Mkdir", startmenu_path);
+                component.addElevatedOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", 
+                                                startmenu_path + "/pgModeler.lnk",		
+                                                "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/pgmodeler.exe",
+                                                "iconId=0", "description=PostgreSQL Database Modeler");
+            }
 		}
 		else 
-		{			
-			start_script=installdir + "/" + "pgmodeler";
+		{						
 			mime_update=installdir + "/" + "pgmodeler-cli";
-			var ignored_errors = "{-1,0,127,255}";
-			var param1 = "-platform";
+		}
+
+		if(installer.value("update_mime") === "true")
+		{		
+            var ignored_errors = "{-1,0,127,255}";
+  			var param1 = "-platform";
 			var param2 = "offscreen";
 			var param3 = "-mt";
-			
-			if(installer.value("update_mime") === true)
-			{
-				console.log("** UPDATE MIME **");
-				
-				if(installer.value("all_users")  === true)
-				{					
-					component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall", "-sw");
-					component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install", "-sw");
-				}
-				else 
-				{
-					component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall");
-					component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install");	
-				}				
+
+            if(installer.value("all_users")  === "true")
+			{					
+				component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall", "-sw");
+				component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install", "-sw");
 			}
+			else 
+			{
+				component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall");
+				component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install");	
+			}				
 		}
+		
     } catch (e) {
         print(e);
     }
@@ -116,12 +119,11 @@ setExtraOptions = function()
 	var wgt = gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget;
 	installer.setValue("all_users", wgt.all_users_rb.checked);
 	installer.setValue("update_mime", wgt.associate_dbm_chk.checked);
-	installer.setValue("create_start_menu", wgt.create_start_menu_chk.checked);	
+	installer.setValue("create_start_menu", wgt.create_start_menu_chk.checked);	    
 }
 
 finishInstall = function()
 {
-    //Getting the "Finished" page in order to detect if the "Run program" check box is marked
     var page = gui.pageWidgetByObjectName( "FinishedPage" );
 	var label = page.FinishMessageWidget.label;
 	
