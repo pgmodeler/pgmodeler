@@ -12,20 +12,28 @@ function Component()
 	installer.addWizardPageItem( component, "ExtraOptionsWidget", QInstaller.TargetDirectory);
     installer.addWizardPageItem( component, "FinishMessageWidget", QInstaller.InstallationFinished );
 
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.current_user_rb.clicked.connect(this, setInstallDir);
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.all_users_rb.clicked.connect(this, setInstallDir);
+	var pageTarget = gui.pageById(QInstaller.TargetDirectory);
 	
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.current_user_rb.clicked.connect(this, setExtraOptions);
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.all_users_rb.clicked.connect(this, setExtraOptions);
-	
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.associate_dbm_chk.clicked.connect(this, setExtraOptions);
-	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.clicked.connect(this, setExtraOptions);	
+	pageTarget.ExtraOptionsWidget.current_user_rb.clicked.connect(this, setInstallDir);
+	pageTarget.ExtraOptionsWidget.all_users_rb.clicked.connect(this, setInstallDir);	
+	pageTarget.ExtraOptionsWidget.current_user_rb.clicked.connect(this, setExtraOptions);
+	pageTarget.ExtraOptionsWidget.all_users_rb.clicked.connect(this, setExtraOptions);	
+	pageTarget.ExtraOptionsWidget.associate_dbm_chk.clicked.connect(this, setExtraOptions);
+	pageTarget.ExtraOptionsWidget.create_start_menu_chk.clicked.connect(this, setExtraOptions);	
 	
 	if (systemInfo.productType !== "windows") {
-		gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.visible=false;
-		gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.checked=false;
+		pageTarget.ExtraOptionsWidget.create_start_menu_chk.visible=false;
+		pageTarget.ExtraOptionsWidget.create_start_menu_chk.checked=false;
+	}
+	
+	if (installer.isUninstaller()) {
+		var pageIntro = gui.pageById(QInstaller.Introduction);		
+		
+		pageIntro.findChild("PackageManagerRadioButton").visible=false;
+		pageIntro.UpdaterRadioButton.visible=false;
 	}
 
+	installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
 	setExtraOptions();
 }
 
@@ -55,8 +63,7 @@ Component.prototype.createOperations = function()
 			var startmenu_path = installer.value("AllUsersStartMenuProgramsPath") + startmenu;
 			
             if(installer.value("create_start_menu")  === "true")
-            {
-                
+            {   
                 component.addElevatedOperation("Mkdir", startmenu_path);
                 component.addElevatedOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", 
                                                 startmenu_path + "/pgModeler.lnk",		
@@ -72,19 +79,24 @@ Component.prototype.createOperations = function()
 		if(installer.value("update_mime") === "true")
 		{		
             var ignored_errors = "{-1,0,127,255}";
-  			var param1 = "-platform";
-			var param2 = "offscreen";
-			var param3 = "-mt";
 
             if(installer.value("all_users")  === "true")
 			{					
-				component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall", "-sw");
-				component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install", "-sw");
+	  			var param1 = "";
+				var param2 = "";
+
+				if(systemInfo.productType === "linux") {
+					param1 = "-platform";
+					param2 = "offscreen";
+				}
+
+				component.addElevatedOperation("Execute", ignored_errors, mime_update, "-mt", "uninstall", "-sw", param1, param2);
+				component.addElevatedOperation("Execute", ignored_errors, mime_update, "-mt", "install", "-sw", param1, param2);
 			}
 			else 
 			{
-				component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall");
-				component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install");	
+				component.addOperation("Execute", ignored_errors, mime_update, "-mt", "uninstall");
+				component.addOperation("Execute", ignored_errors, mime_update, "-mt", "install");	
 			}				
 		}
 		
@@ -109,7 +121,13 @@ setInstallDir = function()
 		page.TargetDirectoryLineEdit.text =  installer.value("defaultTarget");
 	}
 	else {
-		page.TargetDirectoryLineEdit.text = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) + "/pgModeler";
+		var install_dir = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) + "/pgModeler";
+		
+		if (systemInfo.productType === "windows") {
+			install_dir =  install_dir.replace(/\//g,'\\');
+		}
+		
+		page.TargetDirectoryLineEdit.text = install_dir;
 	}
 	
 }
@@ -117,14 +135,20 @@ setInstallDir = function()
 setExtraOptions = function()
 {
 	var wgt = gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget;
+	
 	installer.setValue("all_users", wgt.all_users_rb.checked);
 	installer.setValue("update_mime", wgt.associate_dbm_chk.checked);
-	installer.setValue("create_start_menu", wgt.create_start_menu_chk.checked);	    
+	installer.setValue("create_start_menu", wgt.create_start_menu_chk.checked);	  
+
+	if (systemInfo.productType === "windows") 
+	{
+		installer.setDefaultPageVisible(QInstaller.StartMenuSelection, wgt.create_start_menu_chk.checked);
+	}
 }
 
 finishInstall = function()
 {
-    var page = gui.pageWidgetByObjectName( "FinishedPage" );
+    var page = gui.pageById(QInstaller.InstallationFinished);
 	var label = page.FinishMessageWidget.label;
 	
 	if(installer.status !== QInstaller.Success) {
