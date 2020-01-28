@@ -31,8 +31,8 @@ DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 
 
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
-INSTALL_ROOT="/opt/pgmodeler"
-FMT_PREFIX="\/opt\/pgmodeler"
+INSTALL_ROOT="/opt/pgModeler"
+FMT_PREFIX="\/opt\/pgModeler"
 INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
 INSTALLER_CONF_DIR="$PWD/installer/template/config"
 INSTALLER_PKG_DIR="$PWD/installer/template/packages"
@@ -144,7 +144,8 @@ else
                imageformats/libqtiff.so \
                imageformats/libqwbmp.so \
                printsupport/libcupsprintersupport.so \
-               platforms/libqxcb.so"
+               platforms/libqxcb.so \
+               platforms/libqoffscreen.so"
 
   #Needed Qt libs
   QT_LIBS="libQt5DBus.so.5 \
@@ -380,6 +381,7 @@ if [ $GEN_INST_PKG = 1 ]; then
   fi 
    
   # Packaging installation
+  echo "$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR '$DIST_DIR/$PKGNAME.run'"
   $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
 
  if [ $? -ne 0 ]; then

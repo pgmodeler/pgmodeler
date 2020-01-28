@@ -1,8 +1,31 @@
 function Component()
 {
     // constructor
-    installer.installationFinished.connect(this, finishInstall);
+	if (systemInfo.productType === "windows") {
+		installer.setValue("defaultTarget", "C:\\Program Files\\pgModeler");
+	}
+	else {
+		installer.setValue("defaultTarget", "/opt/pgModeler");
+	}
+	
+	installer.installationFinished.connect(this, finishInstall);
+	installer.addWizardPageItem( component, "ExtraOptionsWidget", QInstaller.TargetDirectory);
     installer.addWizardPageItem( component, "FinishMessageWidget", QInstaller.InstallationFinished );
+
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.current_user_rb.clicked.connect(this, setInstallDir);
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.all_users_rb.clicked.connect(this, setInstallDir);
+	
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.current_user_rb.clicked.connect(this, setExtraOptions);
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.all_users_rb.clicked.connect(this, setExtraOptions);
+	
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.associate_dbm_chk.clicked.connect(this, setExtraOptions);
+	gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.clicked.connect(this, setExtraOptions);	
+	
+	if (systemInfo.productType !== "windows") {
+		gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.visible=false;
+		gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget.create_start_menu_chk.checked=false;
+	}
+
 }
 
 Component.prototype.isDefault = function()
@@ -16,15 +39,17 @@ Component.prototype.createOperations = function()
     try {
         // call the base create operations function
         component.createOperations();
-
+	
         var installdir=installer.value("TargetDir");
-		var startmenu=installer.value("StartMenuDir").slice(installer.value("StartMenuDir").lastIndexOf("\\"), installer.value("StartMenuDir").length);
-		var startmenu_path=installer.value("AllUsersStartMenuProgramsPath") + startmenu;
 
         if(systemInfo.productType === "osx") {
             return;
         }
-        else if (systemInfo.productType === "windows") {
+        else if (systemInfo.productType === "windows") 
+		{
+			var startmenu=installer.value("StartMenuDir").slice(installer.value("StartMenuDir").lastIndexOf("\\"), installer.value("StartMenuDir").length);
+			var startmenu_path=installer.value("AllUsersStartMenuProgramsPath") + startmenu;
+			
 			component.addElevatedOperation("Mkdir", startmenu_path);
 			component.addElevatedOperation("CreateShortcut", "@TargetDir@/pgmodeler.exe", 
 											startmenu_path + "/pgModeler.lnk",		
@@ -35,11 +60,30 @@ Component.prototype.createOperations = function()
 			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
 			component.addElevatedOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
 		}
-		else {			
+		else 
+		{			
 			start_script=installdir + "/" + "pgmodeler";
 			mime_update=installdir + "/" + "pgmodeler-cli";
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "uninstall");
-			component.addOperation("Execute", "{-1,0,127,255}", mime_update, "-mt", "install");
+			var ignored_errors = "{-1,0,127,255}";
+			var param1 = "-platform";
+			var param2 = "offscreen";
+			var param3 = "-mt";
+			
+			if(installer.value("update_mime") === true)
+			{
+				console.log("** UPDATE MIME **");
+				
+				if(installer.value("all_users")  === true)
+				{					
+					component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall", "-sw");
+					component.addElevatedOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install", "-sw");
+				}
+				else 
+				{
+					component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "uninstall");
+					component.addOperation("Execute", ignored_errors, mime_update, param1, param2, param3, "install");	
+				}				
+			}
 		}
     } catch (e) {
         print(e);
@@ -54,22 +98,43 @@ Component.prototype.beginInstallation = function()
     component.beginInstallation();
 }
 
+setInstallDir = function()
+{
+	var page = gui.pageById(QInstaller.TargetDirectory);
+	
+	if(page.ExtraOptionsWidget.all_users_rb.checked) {
+		page.TargetDirectoryLineEdit.text =  installer.value("defaultTarget");
+	}
+	else {
+		page.TargetDirectoryLineEdit.text = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) + "/pgModeler";
+	}
+	
+}
+
+setExtraOptions = function()
+{
+	var wgt = gui.pageById(QInstaller.TargetDirectory).ExtraOptionsWidget;
+	installer.setValue("all_users", wgt.all_users_rb.checked);
+	installer.setValue("update_mime", wgt.associate_dbm_chk.checked);
+	installer.setValue("create_start_menu", wgt.create_start_menu_chk.checked);	
+}
+
 finishInstall = function()
 {
     //Getting the "Finished" page in order to detect if the "Run program" check box is marked
     var page = gui.pageWidgetByObjectName( "FinishedPage" );
-
-    if(installer.status == QInstaller.Success)
-    {
-       /* var page = gui.pageWidgetByObjectName( "FinishedPage" );
-		
-		if (systemInfo.productType === "windows" || systemInfo.productType === "osx") {
-			page.FinishMessageWidget.textEdit.visible=false;
-			page.FinishMessageWidget.label.visible=false;
-		}
-		else {
-			var info_txt=page.FinishMessageWidget.textEdit.html.replace("{installdir}",installer.value("TargetDir"));
-			page.FinishMessageWidget.textEdit.html=info_txt;
-		} */
+	var label = page.FinishMessageWidget.label;
+	
+	if(installer.status !== QInstaller.Success) {
+		label.styleSheet="color: red";
+	}
+	
+    if(installer.status === QInstaller.Failure)
+    {			
+		page.FinishMessageWidget.label.text="Failed to install pgModeler!";
     }
+    else if(installer.status === QInstaller.Canceled) 
+	{
+		page.FinishMessageWidget.label.text="Installation canceled by the user!";
+	}
 }
