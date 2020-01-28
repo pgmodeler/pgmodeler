@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>106</height>
+    <width>517</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,31 +38,11 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="spacing">
+    <number>6</number>
+   </property>
    <item row="0" column="0">
-    <widget class="QCheckBox" name="associate_dbm_chk">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string>Associate pgModeler to *.dbm files</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="create_start_menu_chk">
-     <property name="text">
-      <string>Create start menu entry</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label">
        <property name="sizePolicy">
@@ -72,7 +52,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Applies to:</string>
+        <string>Installation mode:</string>
        </property>
       </widget>
      </item>
@@ -84,8 +64,11 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">margin-left: 20px;</string>
+       </property>
        <property name="text">
-        <string>All users</string>
+        <string>All users of this computer</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -100,8 +83,11 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="styleSheet">
+        <string notr="true">margin-left: 20px;</string>
+       </property>
        <property name="text">
-        <string>Current user</string>
+        <string>Current user only</string>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -109,6 +95,29 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="associate_dbm_chk">
+     <property name="styleSheet">
+      <string notr="true">margin-top: 10px;</string>
+     </property>
+     <property name="text">
+      <string>Associate pgModeler executable to *.dbm files</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="create_start_menu_chk">
+     <property name="text">
+      <string>Create start menu entry</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
