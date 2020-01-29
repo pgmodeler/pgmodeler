@@ -31,8 +31,8 @@ DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 
 
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"
-INSTALL_ROOT="/opt/pgmodeler"
-FMT_PREFIX="\/opt\/pgmodeler"
+INSTALL_ROOT="/opt/pgModeler"
+FMT_PREFIX="\/opt\/pgModeler"
 INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
 INSTALLER_CONF_DIR="$PWD/installer/template/config"
 INSTALLER_PKG_DIR="$PWD/installer/template/packages"
@@ -44,7 +44,8 @@ INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 QT_CONF="$BUILD_DIR/$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$BUILD_DIR/$INSTALL_ROOT/qtplugins"
-BUILD_DATE=`date '+%Y%m%d'`
+BUILD_DATE=`date '+%Y-%m-%d'`
+BUILD_NUM=`date '+%Y%m%d'`
 
 SNAPSHOT_OPT='-snapshot'
 GEN_INSTALLER_OPT='-gen-installer'
@@ -60,7 +61,7 @@ BUNDLE_QT_LIBS=1
 BUILD_ALL=0
 
 # pgModeler output paths settings
-PREFIX="/opt/pgmodeler"
+PREFIX=$INSTALL_ROOT
 BINDIR=$PREFIX
 PRIVATEBINDIR=$PREFIX
 PRIVATELIBDIR="$PREFIX/lib"
@@ -103,7 +104,7 @@ for param in $@; do
  if [[ "$param" == "$SNAPSHOT_OPT" ]]; then
    SNAPSHOT=1
    QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
-   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_DATE}"
+   DEPLOY_VER="${DEPLOY_VER}_snapshot${BUILD_NUM}"
  fi
  
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
@@ -144,7 +145,8 @@ else
                imageformats/libqtiff.so \
                imageformats/libqwbmp.so \
                printsupport/libcupsprintersupport.so \
-               platforms/libqxcb.so"
+               platforms/libqxcb.so \
+               platforms/libqoffscreen.so"
 
   #Needed Qt libs
   QT_LIBS="libQt5DBus.so.5 \
@@ -371,13 +373,23 @@ if [ $GEN_INST_PKG = 1 ]; then
  
   # Configuing installer scripts before packaging
   cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
-  
+    
   if [ $? -ne 0 ]; then
     echo
     echo "** Failed to create the installer config file!"
     echo
     exit 1
   fi 
+  
+  cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
+  
+  if [ $? -ne 0 ]; then
+    echo
+    echo "** Failed to create the installer package info file!"
+    echo
+    exit 1
+  fi 
+  
    
   # Packaging installation
   $QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_DIR/$PKGNAME.run" >> $LOG 2>&1
