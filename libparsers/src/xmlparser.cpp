@@ -467,17 +467,22 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 		lin = ts.readLine();
 		lin += "\n";
 
+		// Ignoring the xml header
 		if(lin.indexOf("<?xml") >= 0)
 		{
 			fmt_buf += lin;
 			continue;
 		}
 
+		// Checking if the current line has at least one attribute in form (attr="value")
 		attr_start = -1;
 		attr_start = attr_regexp.indexIn(lin);
 
 		if(attr_start >= 0)
 		{
+			/* Checking the presence of <![[CDATA ]]> tag in the current line.
+			 * In case of finding it we need to perform specific operation to avoid
+			 * replacing contents within that tag */
 			cdata_start = lin.indexOf(CdataStart);
 			cdata_end = lin.indexOf(CdataEnd);
 			start = min<int>(cdata_start, cdata_end);
@@ -495,6 +500,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 						//The attribute is at right of the CDATA tag
 						(end >= 0 && attr_start > end && attr_end > end)))
 				{
+					// Calculates the initial position where the value to be retrived is (in that case rigth after attrib=")
 					pos = attr_start + attr_regexp.matchedLength();
 					count = attr_end - pos;
 					value = lin.mid(pos, count);
@@ -502,6 +508,8 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 				else
 					break;
 
+				/* If the extracted value has one of the expected special chars
+				 * in order to perform the replacemnt to xml entities */
 				if(value.contains(QRegExp("(&|\\<|\\>|\")")))
 				{
 					if(!value.contains(CharQuot) && !value.contains(CharLt) &&
@@ -513,10 +521,11 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 						value.replace('<', CharLt);
 						value.replace('>', CharGt);
 
-					//Puts on the original XML definition the modified string
+					//Puts in the original XML definition the modified string
 					lin.replace(pos, count, value);
 				}
 
+				// Moving the position to the next attribute in the line (if existent)
 				pos += value.length() + 1;
 				attr_start = attr_regexp.indexIn(lin, pos);
 				value.clear();
