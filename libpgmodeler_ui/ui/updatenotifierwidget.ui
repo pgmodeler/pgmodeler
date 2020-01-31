@@ -12,14 +12,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>280</height>
+    <width>500</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>450</width>
-    <height>280</height>
+    <width>500</width>
+    <height>400</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -78,7 +78,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Update found!</string>
+         <string>Update available!</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -258,7 +258,13 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="changelog_txt">
+          <widget class="QTextBrowser" name="changelog_txt">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
@@ -275,7 +281,13 @@
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            <set>Qt::TextBrowserInteraction</set>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+           <property name="openLinks">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
