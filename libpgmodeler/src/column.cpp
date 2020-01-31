@@ -303,7 +303,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		else
 			def_val=col->default_value;
 
-		if(this->default_value!=def_val)
+		if(this->default_value.simplified().toLower() != def_val.simplified().toLower())
 			attribs[Attributes::DefaultValue]=(def_val.isEmpty() ? Attributes::Unset : def_val);
 
 		if(this->not_null!=col->not_null)

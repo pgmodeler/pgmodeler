@@ -176,7 +176,7 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::OldName]=QString();
 		attributes[Attributes::NewName]=QString();
 
-		if(this->default_value!=domain->default_value)
+		if(this->default_value.simplified().toLower()!=domain->default_value.simplified().toLower())
 			attributes[Attributes::DefaultValue]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::Unset);
 
 		if(this->not_null!=domain->not_null)
