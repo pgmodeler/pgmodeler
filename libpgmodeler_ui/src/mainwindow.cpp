@@ -178,10 +178,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(central_wgt->support_tb, SIGNAL(clicked()), this, SLOT(openSupport()));
 
 #ifndef NO_UPDATE_CHECK
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)));
-	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)));
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setVisible(bool)), Qt::QueuedConnection);
+	connect(update_notifier_wgt, SIGNAL(s_updateAvailable(bool)), action_update_found, SLOT(setChecked(bool)), Qt::QueuedConnection);
+	connect(update_notifier_wgt, SIGNAL(s_visibilityChanged(bool)), action_update_found, SLOT(setChecked(bool)), Qt::QueuedConnection);
+	connect(action_update_found,SIGNAL(toggled(bool)),this,SLOT(toggleUpdateNotifier(bool)), Qt::QueuedConnection);
 	connect(action_check_update,SIGNAL(triggered()), update_notifier_wgt, SLOT(checkForUpdate()));
 #endif
 
@@ -1790,7 +1790,7 @@ void MainWindow::toggleUpdateNotifier(bool show)
 #ifndef NO_UPDATE_CHECK
 	if(show)
 	{
-		setFloatingWidgetPos(update_notifier_wgt, qobject_cast<QAction *>(sender()), control_tb, false);
+		setFloatingWidgetPos(update_notifier_wgt,  qobject_cast<QAction *>(sender()), control_tb, false);
 		action_about->setChecked(false);
 		action_donate->setChecked(false);
 	}
