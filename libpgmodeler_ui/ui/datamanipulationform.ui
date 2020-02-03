@@ -254,6 +254,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
          </property>
@@ -281,6 +284,9 @@
          <property name="columnCount">
           <number>0</number>
          </property>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>true</bool>
          </attribute>
@@ -304,9 +310,6 @@
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>25</number>
-         </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>false</bool>
          </attribute>
         </widget>
         <widget class="QTabWidget" name="filter_tbw">
