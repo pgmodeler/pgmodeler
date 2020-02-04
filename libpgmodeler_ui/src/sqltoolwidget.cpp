@@ -32,13 +32,18 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 
 	sql_exec_corner_btn = new QToolButton;
 	sql_exec_corner_btn->setIcon(QPixmap(PgModelerUiNs::getIconPath("newtab")));
-	sql_exec_corner_btn->setIconSize(QSize(18, 18));
-	sql_exec_corner_btn->setStyleSheet("QToolButton { margin-left: 4px; margin-bottom: 4px; padding: 2px; }");
-	sql_exec_corner_btn->setShortcut(QKeySequence("Ctrl+T"));
-	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(sql_exec_corner_btn->shortcut().toString()));
-	sql_exec_tbw->setCornerWidget(sql_exec_corner_btn, Qt::TopRightCorner);
+	sql_exec_corner_btn->setIconSize(QSize(22, 21));
+	sql_exec_corner_btn->setToolTip(tr("Add a new execution tab for the current database (%1)").arg(QKeySequence("Ctrl+T").toString()));
 
-	QVBoxLayout *vbox=new QVBoxLayout;
+	QVBoxLayout *vbox = new QVBoxLayout;
+	QWidget *corner_wgt = new QWidget;
+
+	vbox->addWidget(sql_exec_corner_btn);
+	vbox->setContentsMargins(2,0,0,2);
+	corner_wgt->setLayout(vbox);
+	sql_exec_tbw->setCornerWidget(corner_wgt, Qt::TopRightCorner);
+
+	vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
 	sourcecode_txt->setReadOnly(true);
 

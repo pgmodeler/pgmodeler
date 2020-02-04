@@ -170,7 +170,7 @@
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/runsqldb.png</normaloff>:/icones/icones/runsqldb.png</iconset>
+         <normaloff>:/icones/icones/newtab.png</normaloff>:/icones/icones/newtab.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -179,7 +179,7 @@
         </size>
        </property>
        <property name="shortcut">
-        <string>Ctrl+F6</string>
+        <string>Ctrl+T</string>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
