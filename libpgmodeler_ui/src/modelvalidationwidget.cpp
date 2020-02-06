@@ -39,12 +39,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		validation_helper=nullptr;
 		this->setModel(nullptr);
 
-		sql_validation_ht=new HintTextWidget(sql_validation_hint, this);
-		sql_validation_ht->setText(sql_validation_chk->statusTip());
-
-		use_unique_names_ht=new HintTextWidget(use_unique_names_hint, this);
-		use_unique_names_ht->setText(use_tmp_names_chk->statusTip());
-
 		connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
 		connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearOutput()));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
