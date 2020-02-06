@@ -35,27 +35,6 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	export_thread=new QThread(this);
 	export_hlp.moveToThread(export_thread);
 
-	pgsqlvers_ht=new HintTextWidget(pgsqlvers_hint, this);
-	pgsqlvers_ht->setText(pgsqlvers_chk->statusTip());
-
-	drop_ht=new HintTextWidget(drop_hint, this);
-	drop_ht->setText(drop_chk->statusTip());
-
-	ignore_dup_ht=new HintTextWidget(ignore_dup_hint, this);
-	ignore_dup_ht->setText(ignore_dup_chk->statusTip());
-
-	page_by_page_ht=new HintTextWidget(page_by_page_hint, this);
-	page_by_page_ht->setText(page_by_page_chk->statusTip());
-
-	ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
-	ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
-
-	mode_ht=new HintTextWidget(mode_hint, this);
-	mode_ht->setText(mode_hint->statusTip());
-
-	incl_index_ht=new HintTextWidget(incl_index_hint, this);
-	incl_index_ht->setText(incl_index_hint->statusTip());
-
 	connect(export_to_file_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
 	connect(export_to_dbms_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
 	connect(export_to_img_rb, SIGNAL(clicked()), this, SLOT(selectExportMode()));
