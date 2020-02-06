@@ -477,8 +477,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string/>
+              </property>
               <property name="statusTip">
-               <string>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</string>
+               <string/>
               </property>
               <property name="text">
                <string>Filter:</string>
@@ -490,6 +493,9 @@
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="toolTip">
+               <string>Filters the currently loaded items in the tree by using a pattern and matching their names. If &lt;strong&gt;By OID&lt;/strong&gt; is checked the pattern is interpreted as an integer value that represents the object id (OID). &lt;br&gt;&lt;br/&gt;&lt;strong&gt;HINT:&lt;/strong&gt; if you need to search the entire database use the full refresh (&lt;strong&gt;Ctrl+F5&lt;/strong&gt;) prior the filtering.</string>
+              </property>
               <property name="clearButtonEnabled">
                <bool>true</bool>
               </property>
@@ -499,28 +505,6 @@
              <widget class="QCheckBox" name="by_oid_chk">
               <property name="text">
                <string>By OID</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="filter_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>

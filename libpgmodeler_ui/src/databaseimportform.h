@@ -27,7 +27,6 @@
 
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
-#include "hinttextwidget.h"
 #include "htmlitemdelegate.h"
 #include <QTimer>
 
@@ -43,10 +42,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		HtmlItemDelegate *htmlitem_del;
 		
 		bool create_model;
-		
-		HintTextWidget *rand_color_ht, *auto_res_deps_ht, *imp_sys_objs_ht,
-		*imp_ext_objs_ht, *debug_mode_ht, *ignore_errors_ht, *import_to_model_ht;
-		
+			
 		/*! \brief Model widget allocated during the import. In case of success this model
 		will be transferred to the main window or destroyed in case of failure */
 		ModelWidget *model_wgt;

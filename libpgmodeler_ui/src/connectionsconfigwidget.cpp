@@ -28,15 +28,6 @@ ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigW
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
 
-	auto_browse_ht=new HintTextWidget(auto_browse_hint, this);
-	auto_browse_ht->setText(auto_browse_chk->statusTip());
-
-	other_params_ht=new HintTextWidget(other_params_hint, this);
-	other_params_ht->setText(other_params_edt->statusTip());
-
-	default_for_ops_ht=new HintTextWidget(default_for_ops_hint, this);
-	default_for_ops_ht->setText(tr("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
-
 	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates()));
 
 	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));

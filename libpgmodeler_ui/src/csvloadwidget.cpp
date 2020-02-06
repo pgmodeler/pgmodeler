@@ -26,14 +26,8 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 	setupUi(this);
 	separator_edt->setVisible(false);
 
-	if(!cols_in_first_row)
+	if(cols_in_first_row)
 	{
-		col_names_ht=new HintTextWidget(col_names_hint, this);
-		col_names_ht->setText(col_names_chk->statusTip());
-	}
-	else
-	{
-		col_names_ht=nullptr;
 		col_names_chk->setVisible(false);
 		col_names_chk->setChecked(true);
 	}

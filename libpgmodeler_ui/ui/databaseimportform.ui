@@ -163,8 +163,11 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Resolve some of the object's dependencies by querying the catalog when a needed object does not exists on the loaded set. In some cases it's necessary to combine this option with others below. This option does not applies to database level objects like role, tablespace and language as well for data types, extensions.</string>
+                   <string/>
                   </property>
                   <property name="whatsThis">
                    <string/>
@@ -174,28 +177,6 @@
                   </property>
                   <property name="checked">
                    <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="auto_res_deps_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -224,8 +205,11 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;All catalog queries as well the created objects' source code are printed to standard output (stdout).&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>All catalog queries as well the created objects' source code are printed to standard output (stdout).</string>
+                   <string/>
                   </property>
                   <property name="whatsThis">
                    <string/>
@@ -235,64 +219,23 @@
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QWidget" name="debug_mode_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
               <item row="2" column="0" colspan="3">
                <layout class="QHBoxLayout" name="horizontalLayout_11">
                 <item>
                  <widget class="QCheckBox" name="import_to_model_chk">
+                  <property name="toolTip">
+                   <string>&lt;p&gt;Create all imported objects in the current working model instead of create a new one.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Create all imported objects in the current working model instead of create a new one.</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>Import objects to the working model</string>
                   </property>
                   <property name="checked">
                    <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="import_to_model_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -308,36 +251,17 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;Enables the import of system built-in objects. It's recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Enables the import of system built-in objects. It's recommend to select only those objects that are directly referenced by the ones to be imported. WARNING: Try to import a huge set of system objects can bloat the resultant model or even crash pgModeler due to memory/cpu overuse.</string>
+                   <string/>
                   </property>
                   <property name="whatsThis">
                    <string/>
                   </property>
                   <property name="text">
                    <string>Import system objects</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="imp_sys_objs_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -353,36 +277,17 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt;Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Enables the import of objects created by extensions. Generally there is no need to check this option but if there are objects in the database that directly references this category of objects this mode must be enabled.</string>
+                   <string/>
                   </property>
                   <property name="whatsThis">
                    <string/>
                   </property>
                   <property name="text">
                    <string>Import extension objects</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="imp_ext_objs_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -398,36 +303,17 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;p&gt; pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string> pgModeler ignores import errors and will try to create as many as possible objects. By checking this option the import operation will not be aborted but an incomplete model will be constructed. This option generates a log file on pgModeler's temp directory.</string>
+                   <string/>
                   </property>
                   <property name="whatsThis">
                    <string/>
                   </property>
                   <property name="text">
                    <string>Ignore import errors</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="ignore_errors_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>
@@ -460,36 +346,17 @@
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <item>
                  <widget class="QCheckBox" name="rand_rel_color_chk">
+                  <property name="toolTip">
+                   <string>&lt;p&gt;Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.&lt;/p&gt;</string>
+                  </property>
                   <property name="statusTip">
-                   <string>Random colors will be assigned to imported relationships facilitating the identification of links between tables mainly in large models.</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>Random colors for relationships</string>
                   </property>
                   <property name="checked">
                    <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="rand_color_hint" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>22</width>
-                    <height>22</height>
-                   </size>
                   </property>
                  </widget>
                 </item>

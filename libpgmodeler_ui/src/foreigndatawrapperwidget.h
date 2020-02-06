@@ -27,7 +27,6 @@
 
 #include "baseobjectwidget.h"
 #include "ui_foreigndatawrapperwidget.h"
-#include "hinttextwidget.h"
 #include "objectstablewidget.h"
 
 class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataWrapperWidget {
@@ -36,9 +35,6 @@ class ForeignDataWrapperWidget: public BaseObjectWidget, public Ui::ForeignDataW
 
 		ObjectSelectorWidget *func_handler_sel,
 		*func_validator_sel;
-
-		HintTextWidget *func_handler_ht,
-		*func_validator_ht;
 
 		ObjectsTableWidget *options_tab;
 

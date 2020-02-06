@@ -250,9 +250,6 @@ DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)
 
 	refresh_tb->setPopupMode(QToolButton::InstantPopup);
 	refresh_tb->setMenu(refresh_menu);
-
-	filter_ht=new HintTextWidget(filter_hint, this);
-	filter_ht->setText(filter_lbl->statusTip());
 }
 
 bool DatabaseExplorerWidget::eventFilter(QObject *object, QEvent *event)

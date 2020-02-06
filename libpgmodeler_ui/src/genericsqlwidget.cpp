@@ -29,15 +29,6 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
 
-	ref_name_ht = new HintTextWidget(ref_name_hint, this);
-	ref_name_ht->setText(ref_name_edt->statusTip());
-
-	use_signature_ht = new HintTextWidget(use_signature_hint, this);
-	use_signature_ht->setText(use_signature_chk->statusTip());
-
-	format_name_ht = new HintTextWidget(format_name_hint, this);
-	format_name_ht->setText(format_name_chk->statusTip());
-
 	definition_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
 	definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());

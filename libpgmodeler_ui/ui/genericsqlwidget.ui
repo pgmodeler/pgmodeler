@@ -112,37 +112,21 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLineEdit" name="ref_name_edt">
+           <property name="toolTip">
+            <string>&lt;p&gt;The name of the reference to an object. All occurences of the reference enclosed by &lt;strong&gt;{}&lt;/strong&gt; are replaced by the referenced object's name or signature in the generic SQL object's code.&lt;/p&gt;</string>
+           </property>
            <property name="statusTip">
-            <string>The name of the reference to an object. All occurences of the reference enclosed by &lt;strong&gt;{}&lt;/strong&gt; are replaced by the referenced object's name or signature in the generic SQL object's code.</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="ref_name_hint" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
+            <string/>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="use_signature_chk">
+           <property name="toolTip">
+            <string>&lt;p&gt;Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.&lt;/p&gt;</string>
+           </property>
            <property name="statusTip">
-            <string>Use the referenced object's signature instead of its name. For some objects like functions, casts, operators and some others the signature will include parameters types and some other information.</string>
+            <string/>
            </property>
            <property name="text">
             <string>Use signature</string>
@@ -150,56 +134,15 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="use_signature_hint" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="format_name_chk">
+           <property name="toolTip">
+            <string>&lt;p&gt;The referenced object's name or signature will be automatically quoted when special characters are found. Additionally, for schema qualified objects, the name of the parent schema is prepended to the referenced object's name or signature. This will avoid common SQL syntax errors or loss of semantics.&lt;/p&gt;</string>
+           </property>
            <property name="statusTip">
-            <string>The referenced object's name or signature will be automatically quoted when special characters are found. Additionally, for schema qualified objects, the name of the parent schema is prepended to the referenced object's name or signature. This will avoid common SQL syntax errors or loss of semantics.</string>
+            <string/>
            </property>
            <property name="text">
             <string>Format name</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="format_name_hint" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
            </property>
           </widget>
          </item>

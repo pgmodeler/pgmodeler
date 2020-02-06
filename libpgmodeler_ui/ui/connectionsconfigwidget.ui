@@ -433,6 +433,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>&lt;p&gt;Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user.&lt;/p&gt;</string>
+            </property>
             <property name="text">
              <string>Default for:</string>
             </property>
@@ -536,33 +539,14 @@
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
              <widget class="QLineEdit" name="other_params_edt">
-              <property name="statusTip">
+              <property name="toolTip">
                <string>Specify additional connection parameters in the form [param]=[value]. These parameters are described in the &lt;strong&gt;libpq&lt;/strong&gt; chapter at PostgreSQL docs.</string>
+              </property>
+              <property name="statusTip">
+               <string/>
               </property>
               <property name="clearButtonEnabled">
                <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="other_params_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -612,6 +596,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QCheckBox" name="diff_chk">
+              <property name="toolTip">
+               <string/>
+              </property>
               <property name="text">
                <string>Diff</string>
               </property>
@@ -635,28 +622,6 @@
              <widget class="QCheckBox" name="validation_chk">
               <property name="text">
                <string>Validation</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="default_for_ops_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -698,33 +663,14 @@
             </item>
             <item>
              <widget class="QCheckBox" name="auto_browse_chk">
-              <property name="statusTip">
+              <property name="toolTip">
                <string>Automatically browses the named database when using this connection to manage databases on &lt;strong&gt;Manage&lt;/strong&gt; view.</string>
+              </property>
+              <property name="statusTip">
+               <string/>
               </property>
               <property name="text">
                <string>Auto browse</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="auto_browse_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
               </property>
              </widget>
             </item>

@@ -129,36 +129,17 @@
         </property>
         <item>
          <widget class="QCheckBox" name="col_names_chk">
+          <property name="toolTip">
+           <string>&lt;p&gt;Use the first row as column names in the CSV file. By unchecking this option the first row is used as data.&lt;/p&gt;</string>
+          </property>
           <property name="statusTip">
-           <string>Use the first row as column names in the CSV file. By unchecking this option the first row is used as data.</string>
+           <string/>
           </property>
           <property name="text">
            <string>Columns in the first row</string>
           </property>
           <property name="checked">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="col_names_hint" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
           </property>
          </widget>
         </item>
