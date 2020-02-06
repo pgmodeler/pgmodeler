@@ -138,66 +138,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
 	config_params[Attributes::Configuration][Attributes::LowVerbosity]=QString();
 
-	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
-	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
-
-	confirm_validation_ht=new HintTextWidget(confirm_validation_hint, this);
-	confirm_validation_ht->setText(confirm_validation_chk->statusTip());
-
-	corner_move_ht=new HintTextWidget(corner_move_hint, this);
-	corner_move_ht->setText(corner_move_chk->statusTip());
-
-	save_last_pos_ht=new HintTextWidget(save_last_pos_hint, this);
-	save_last_pos_ht->setText(save_last_pos_chk->statusTip());
-
-	invert_rangesel_ht=new HintTextWidget(invert_rangesel_hint, this);
-	invert_rangesel_ht->setText(invert_rangesel_chk->statusTip());
-
-	disable_smooth_ht=new HintTextWidget(disable_smooth_hint, this);
-	disable_smooth_ht->setText(disable_smooth_chk->statusTip());
-
-	hide_ext_attribs_ht=new HintTextWidget(hide_ext_attribs_hint, this);
-	hide_ext_attribs_ht->setText(hide_ext_attribs_chk->statusTip());
-
-	hide_table_tags_ht=new HintTextWidget(hide_table_tags_hint, this);
-	hide_table_tags_ht->setText(hide_table_tags_chk->statusTip());
-
-	hide_rel_name_ht=new HintTextWidget(hide_rel_name_hint, this);
-	hide_rel_name_ht->setText(hide_rel_name_chk->statusTip());
-
-	code_completion_ht=new HintTextWidget(code_completion_hint, this);
-	code_completion_ht->setText(code_completion_chk->statusTip());
-
-	use_placeholders_ht=new HintTextWidget(use_placeholders_hint, this);
-	use_placeholders_ht->setText(use_placeholders_chk->statusTip());
-
-	min_obj_opacity_ht=new HintTextWidget(min_obj_opacity_hint, this);
-	min_obj_opacity_ht->setText(min_obj_opacity_spb->statusTip());
-
-	autosave_ht=new HintTextWidget(autosave_hint, this);
-	autosave_ht->setText(autosave_interv_chk->statusTip());
-
-	op_history_ht=new HintTextWidget(op_history_hint, this);
-	op_history_ht->setText(oplist_size_spb->statusTip());
-
-	ui_language_ht=new HintTextWidget(ui_language_hint, this);
-	ui_language_ht->setText(ui_language_cmb->statusTip());
-
-	grid_size_ht=new HintTextWidget(grid_size_hint, this);
-	grid_size_ht->setText(grid_size_spb->statusTip());
-
-	use_curved_lines_ht=new HintTextWidget(use_curved_lines_hint, this);
-	use_curved_lines_ht->setText(use_curved_lines_chk->statusTip());
-
-	attribs_per_page_ht=new HintTextWidget(attributes_per_page_hint, this);
-	attribs_per_page_ht->setText(attribs_per_page_spb->statusTip());
-
-	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
-	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
-
-	escape_comments_ht = new HintTextWidget(escape_comments_hint, this);
-	escape_comments_ht->setText(escape_comments_chk->statusTip());
-
 	selectPaperSize();
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();

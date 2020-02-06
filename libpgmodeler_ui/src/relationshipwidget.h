@@ -29,7 +29,6 @@
 #include "ui_relationshipwidget.h"
 #include "objectstablewidget.h"
 #include "colorpickerwidget.h"
-#include "hinttextwidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
@@ -41,9 +40,6 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		ConstraintsTab=3,
 		SpecialPkTab=4,
 		AdvancedTab=5;
-
-		HintTextWidget *gen_tab_name_ht, *ref_table_ht, *recv_table_ht,
-		*identifier_ht, *single_pk_ht, *default_part_ht;
 
 		ColorPickerWidget *color_picker;
 

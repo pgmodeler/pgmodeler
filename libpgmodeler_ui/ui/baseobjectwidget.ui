@@ -538,8 +538,11 @@ This will disable the code of all child and referrer objects.</string>
      <height>16777215</height>
     </size>
    </property>
+   <property name="toolTip">
+    <string>&lt;p&gt;This is a more friendly name for the object. When displaying the model in compact view this is the name shown for the object instead of its real name. If this field is empty the real name will be displayed anyway.&lt;/p&gt;</string>
+   </property>
    <property name="statusTip">
-    <string>This is a more friendly name for the object. When displaying the model in compact view this is the name shown for the object instead of its real name. If this field is empty the real name will be displayed anyway.</string>
+    <string/>
    </property>
    <property name="text">
     <string/>
@@ -572,61 +575,6 @@ This will disable the code of all child and referrer objects.</string>
    <property name="text">
     <string>Alias:</string>
    </property>
-  </widget>
-  <widget class="QWidget" name="alias_hint_wgt" native="true">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>120</y>
-     <width>31</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <property name="spacing">
-     <number>6</number>
-    </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="QWidget" name="alias_hint" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-   </layout>
   </widget>
  </widget>
  <tabstops>

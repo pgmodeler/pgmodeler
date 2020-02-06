@@ -38,21 +38,6 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 									 src_fk_pattern_txt, dst_fk_pattern_txt,
 									 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
 
-		gen_tab_name_ht=new HintTextWidget(gen_tab_name_hint, this);
-		gen_tab_name_ht->setText(relnn_tab_name_edt->statusTip());
-
-		ref_table_ht=new HintTextWidget(ref_table_hint, this);
-		recv_table_ht=new HintTextWidget(recv_table_hint, this);
-
-		identifier_ht=new HintTextWidget(identifier_hint, this);
-		identifier_ht->setText(identifier_chk->statusTip());
-
-		single_pk_ht=new HintTextWidget(single_pk_hint, this);
-		single_pk_ht->setText(single_pk_chk->statusTip());
-
-		default_part_ht=new HintTextWidget(default_part_hint, this);
-		default_part_ht->setText(default_part_chk->statusTip());
-
 		table1_hl=nullptr;
 		table1_hl=new SyntaxHighlighter(ref_table_txt, true);
 		table1_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -265,14 +250,14 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		if(base_rel->getRelationshipType()!=BaseRelationship::RelationshipFk)
 		{
 			ref_table_lbl->setText(tr("Referer View:"));
-			ref_table_ht->setText(tr("Referer view references one or more columns of a table to construct it's own columns."));
-			recv_table_ht->setText(tr("Referenced table has its columns referenced by a view in order to construct the columns of this latter."));
+			ref_table_txt->setToolTip(tr("<p>Referer view references one or more columns of a table to construct it's own columns.</p>"));
+			recv_table_txt->setToolTip(tr("<p>Referenced table has its columns referenced by a view in order to construct the columns of this latter.</p>"));
 		}
 		else
 		{
 			ref_table_lbl->setText(tr("Referer Table:"));
-			ref_table_ht->setText(tr("Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship."));
-			recv_table_ht->setText(tr("Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship."));
+			ref_table_txt->setToolTip(tr("<p>Referer table references one or more columns of a table through foreign keys. This is the (n) side of relationship.</p>"));
+			recv_table_txt->setToolTip(tr("<p>Referenced table has its columns referenced by a table's foreign key. This is the (1) side of relationship.</p>"));
 		}
 
 		recv_table_lbl->setText(tr("Referenced Table:"));
@@ -284,22 +269,22 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	{
 		if(rel_type == BaseRelationship::RelationshipPart)
 		{
-		  ref_table_lbl->setText(tr("Partitioned Table:"));
-		  ref_table_ht->setText(tr("Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined."));
+			ref_table_lbl->setText(tr("Partitioned Table:"));
+			ref_table_txt->setToolTip(tr("<p>Partitioned table is the one which is splitted into smaller pieces (partitions). This table is where the partitioning strategy or type is defined.</p>"));
 
-		  recv_table_lbl->setText(tr("Partition Table:"));
-		  recv_table_ht->setText(tr("Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table."));
+			recv_table_lbl->setText(tr("Partition Table:"));
+			recv_table_txt->setToolTip(tr("<p>Partition table is the one attached to a partitioned table in which operations over data will be routed (according to the paritionig rule) when trying to handle the partitioned table.</p>"));
 
-		  ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
-		  recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
+			ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
+			recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
 		}
 		else if(rel_type!=BaseRelationship::RelationshipNn)
 		{
 			ref_table_lbl->setText(tr("Reference Table:"));
-			ref_table_ht->setText(tr("Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship."));
+			ref_table_txt->setToolTip(tr("<p>Reference table has the columns from its primary key will copied to the receiver table in order to represent the linking between them. This is the (1) side of relationship.</p>"));
 
 			recv_table_lbl->setText(tr("Receiver Table:"));
-			recv_table_ht->setText(tr("Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship."));
+			recv_table_txt->setToolTip(tr("<p>Receiver (or referer) table will receive the generated columns and the foreign key in order to represent the linking between them. This is the (n) side of relationship.</p>"));
 
 			ref_table_txt->setPlainText(aux_rel->getReferenceTable()->getName(true));
 			recv_table_txt->setPlainText(aux_rel->getReceiverTable()->getName(true));
@@ -307,9 +292,9 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		else
 		{
 			ref_table_lbl->setText(tr("Reference Table:"));
-			ref_table_ht->setText(tr("In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table."));
+			ref_table_txt->setToolTip(tr("<p>In many-to-many relationships both tables are used as reference to generate the table that represents the linking. Columns from both tables are copied to the resultant table and two foreign keys are created as well in order to reference each participant table.</p>"));
 			recv_table_lbl->setText(tr("Reference Table:"));
-			recv_table_ht->setText(ref_table_ht->getText());
+			recv_table_txt->setToolTip(ref_table_txt->toolTip());
 			ref_table_txt->setPlainText(base_rel->getTable(BaseRelationship::SrcTable)->getName(true));
 			recv_table_txt->setPlainText(base_rel->getTable(BaseRelationship::DstTable)->getName(true));
 		}
@@ -414,7 +399,6 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 	relnn_tab_name_lbl->setVisible(relnn);
 	relnn_tab_name_edt->setVisible(relnn);
-	gen_tab_name_hint->setVisible(relnn);
 
 	part_bound_expr_gb->setVisible(rel_type==BaseRelationship::RelationshipPart);
 
