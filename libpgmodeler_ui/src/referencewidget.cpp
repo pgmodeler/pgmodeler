@@ -24,19 +24,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 
 	model = nullptr;
-
 	ref_flags = 0;
-	ref_alias_ht=new HintTextWidget(ref_alias_hint, this);
-	ref_alias_ht->setText(ref_alias_edt->statusTip());
-
-	used_in_ht=new HintTextWidget(used_in_hint, this);
-	used_in_ht->setText(select_from_chk->statusTip());
-
-	ref_object_ht=new HintTextWidget(ref_object_hint, this);
-	ref_object_ht->setText(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
-
-	alias_ht=new HintTextWidget(alias_hint, this);
-	alias_ht->setText(alias_edt->statusTip());
 
 	expression_txt=new NumberedTextEditor(this, true);
 	expression_hl=new SyntaxHighlighter(expression_txt, false, true);
@@ -44,6 +32,7 @@ ReferenceWidget::ReferenceWidget(QWidget *parent) : QWidget(parent)
 
 	ref_object_sel=new ObjectSelectorWidget({ ObjectType::Table, ObjectType::ForeignTable, ObjectType::Column }, true, this);
 	ref_object_sel->enableObjectCreation(false);
+	ref_object_sel->setToolTip(tr("To reference all columns of a table select only a table in the object selector, this is the same as write <em><strong>[schema].[table].*</strong></em>. In order to reference a only a single column of a table select a column object in the selector."));
 	expression_cp=new CodeCompletionWidget(expression_txt, true);
 
 	QGridLayout *grid = dynamic_cast<QGridLayout *>(properties_tbw->widget(0)->layout());

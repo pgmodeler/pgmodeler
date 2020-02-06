@@ -33,8 +33,6 @@ class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
 		Q_OBJECT
 
-		HintTextWidget *ref_alias_ht, *used_in_ht, *ref_object_ht, *alias_ht;
-
 		NumberedTextEditor *expression_txt;
 
 		SyntaxHighlighter *expression_hl;

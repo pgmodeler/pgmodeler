@@ -467,6 +467,9 @@ unsigned ViewWidget::getReferenceFlag(int row)
 	QString flags_str = references_tab->getCellText(row, 3);
 	unsigned ref_flags = 0;
 
+	if(flags_str.isEmpty())
+		return 0;
+
 	if(flags_str[4] == '1')
 		ref_flags = Reference::SqlViewDefinition;
 	else

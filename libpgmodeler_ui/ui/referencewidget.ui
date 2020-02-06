@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
+    <width>871</width>
     <height>263</height>
    </rect>
   </property>
@@ -84,8 +84,8 @@
        </item>
        <item row="1" column="1" colspan="4">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0" rowspan="2">
-          <widget class="QCheckBox" name="select_from_chk">
+         <item row="0" column="2" rowspan="2">
+          <widget class="QCheckBox" name="after_where_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -98,15 +98,25 @@
             </font>
            </property>
            <property name="toolTip">
-            <string/>
-           </property>
-           <property name="statusTip">
-            <string>&lt;strong&gt;SELECT&lt;/strong&gt;&lt;br/&gt;The reference will be used as part of the SELECT statement to retrieve columns or expressions that will compose the view's columns.&lt;br/&gt;&lt;strong&gt;FROM&lt;/strong&gt;&lt;br/&gt;The reference is used in the FROM portion of the command in order to reference tables or construct JOIN statements.&lt;br/&gt;&lt;strong&gt;WHERE&lt;/strong&gt;&lt;br/&gt;The reference will be used as part of the WHERE clause in form of conditional expression. &lt;br/&gt;&lt;strong&gt;GROUP/HAVING&lt;/strong&gt;&lt;br/&gt;The reference will be appended to the very end of the view's definition. This is useful when using GROUP BY/HAVING statements.&lt;br/&gt;&lt;strong&gt;View definition&lt;/strong&gt;&lt;br/&gt;The reference's expression is used exclusively as the view's definition.&lt;br/&gt;</string>
+            <string>&lt;p&gt;The reference will be used as part of the WHERE clause in form of conditional expression. &lt;/p&gt;</string>
            </property>
            <property name="text">
-            <string>SELECT</string>
+            <string>WHERE</string>
            </property>
           </widget>
+         </item>
+         <item row="0" column="6" rowspan="2">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item row="0" column="1" rowspan="2">
           <widget class="QCheckBox" name="from_where_chk">
@@ -127,26 +137,11 @@
              <italic>false</italic>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;p&gt;The reference is used in the FROM portion of the command in order to reference tables or construct JOIN statements.&lt;/p&gt;</string>
+           </property>
            <property name="text">
             <string>FROM</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" rowspan="2">
-          <widget class="QCheckBox" name="after_where_chk">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <italic>false</italic>
-            </font>
-           </property>
-           <property name="text">
-            <string>WHERE</string>
            </property>
           </widget>
          </item>
@@ -163,23 +158,13 @@
              <italic>false</italic>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;p&gt;The reference will be appended to the very end of the view's definition. This is useful when using GROUP BY/HAVING statements.&lt;/p&gt;</string>
+           </property>
            <property name="text">
             <string>GROUP/HAVING</string>
            </property>
           </widget>
-         </item>
-         <item row="0" column="7" rowspan="2">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="0" column="4" rowspan="2" colspan="2">
           <widget class="QCheckBox" name="view_def_chk">
@@ -189,30 +174,35 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>&lt;p&gt;The reference's expression is used exclusively as the view's definition.&lt;/p&gt;</string>
+           </property>
            <property name="text">
             <string>View Definition</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="6" rowspan="2">
-          <widget class="QWidget" name="used_in_hint" native="true">
+         <item row="0" column="0" rowspan="2">
+          <widget class="QCheckBox" name="select_from_chk">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
+           <property name="font">
+            <font>
+             <italic>false</italic>
+            </font>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
+           <property name="toolTip">
+            <string>&lt;p&gt;The reference will be used as part of the SELECT statement to retrieve columns or expressions that will compose the view's columns.&lt;/p&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>SELECT</string>
            </property>
           </widget>
          </item>
@@ -273,36 +263,17 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>&lt;p&gt;This is a more friendly description for the reference. When displaying the model in compact view this is the text shown for the reference instead of its real description. If this field is empty the real description will be displayed anyway.&lt;/p&gt;</string>
+           </property>
            <property name="statusTip">
-            <string>This is a more friendly description for the reference. When displaying the model in compact view this is the text shown for the reference instead of its real description. If this field is empty the real description will be displayed anyway.</string>
+            <string/>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="clearButtonEnabled">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="ref_alias_hint" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
            </property>
           </widget>
          </item>
@@ -441,28 +412,6 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="4">
-        <widget class="QWidget" name="ref_object_hint" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -490,6 +439,37 @@
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="1" colspan="3">
+          <widget class="QLineEdit" name="name_edt">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="statusTip">
+            <string>This is the name of the object in the PostgreSQL database.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="name_lbl">
            <property name="sizePolicy">
@@ -523,12 +503,15 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>&lt;p&gt;This is a more friendly name for the column. When displaying the model in compact view this is the name shown for the column instead of its real name. If this field is empty the real name will be displayed anyway.&lt;/p&gt;</string>
+           </property>
            <property name="text">
             <string>Alias:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="1" column="1" colspan="3">
           <widget class="QLineEdit" name="alias_edt">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -548,88 +531,11 @@
              <height>16777215</height>
             </size>
            </property>
-           <property name="statusTip">
-            <string>This is a more friendly name for the column. When displaying the model in compact view this is the name shown for the column instead of its real name. If this field is empty the real name will be displayed anyway.</string>
-           </property>
-           <property name="text">
+           <property name="toolTip">
             <string/>
            </property>
-           <property name="clearButtonEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QWidget" name="alias_hint_wgt" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QWidget" name="alias_hint" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="QLineEdit" name="name_edt">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="statusTip">
-            <string>This is the name of the object in the PostgreSQL database.</string>
+            <string/>
            </property>
            <property name="text">
             <string/>
@@ -678,7 +584,6 @@
   <tabstop>col_alias_edt</tabstop>
   <tabstop>expr_alias_edt</tabstop>
   <tabstop>name_edt</tabstop>
-  <tabstop>alias_edt</tabstop>
  </tabstops>
  <resources/>
  <connections/>
