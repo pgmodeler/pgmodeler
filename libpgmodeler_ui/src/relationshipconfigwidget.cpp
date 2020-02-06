@@ -44,18 +44,6 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
-	fk_to_pk_ht=new HintTextWidget(fk_to_pk_hint, this);
-	fk_to_pk_ht->setText(fk_to_pk_rb->statusTip());
-
-	center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
-	center_pnts_ht->setText(center_pnts_rb->statusTip());
-
-	tab_edges_ht=new HintTextWidget(tab_edges_hint, this);
-	tab_edges_ht->setText(tab_edges_rb->statusTip());
-
-	crows_foot_ht=new HintTextWidget(crows_foot_hint, this);
-	crows_foot_ht->setText(crows_foot_rb->statusTip());
-
 	DeferralType::getTypes(list);
 	deferral_cmb->addItems(list);
 

@@ -25,7 +25,6 @@
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
 #include "objectselectorwidget.h"
-#include "hinttextwidget.h"
 #include "pgsqltypewidget.h"
 #include "objectstablewidget.h"
 

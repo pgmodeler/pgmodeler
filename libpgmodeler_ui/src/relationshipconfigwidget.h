@@ -30,7 +30,6 @@
 #include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "relationshipview.h"
-#include "hinttextwidget.h"
 
 class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:
@@ -39,8 +38,6 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 		static map<QString, attribs_map> config_params;
 
 		map<QString, attribs_map> patterns;
-
-		HintTextWidget *fk_to_pk_ht, *center_pnts_ht, *tab_edges_ht, *crows_foot_ht;
 
 		void hideEvent(QHideEvent *);
 
