@@ -29,7 +29,6 @@
 #include "schemaparser.h"
 #include "modelwidget.h"
 #include "modelexporthelper.h"
-#include "hinttextwidget.h"
 #include "htmlitemdelegate.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
@@ -54,9 +53,6 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 
 		//! \brief Auxiliary viewport passed to export helper when dealing with PNG export
 		QGraphicsView *viewp;
-
-		HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht,
-		*ignore_error_codes_ht, *mode_ht, *incl_index_ht;
 
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);

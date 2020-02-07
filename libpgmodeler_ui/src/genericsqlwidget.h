@@ -30,13 +30,10 @@
 #include "codecompletionwidget.h"
 #include "objectstablewidget.h"
 #include "objectselectorwidget.h"
-#include "hinttextwidget.h"
 
 class GenericSQLWidget: public BaseObjectWidget, public Ui::GenericSQLWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *ref_name_ht, *use_signature_ht, *format_name_ht;
 
 		NumberedTextEditor *definition_txt, *preview_txt;
 

@@ -29,7 +29,6 @@
 #include "modelsdiffhelper.h"
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
-#include "hinttextwidget.h"
 #include "syntaxhighlighter.h"
 #include "htmlitemdelegate.h"
 #include "numberedtexteditor.h"
@@ -54,15 +53,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
-
-		//! \brief Hint texts used on the diff options
-		HintTextWidget *apply_on_server_ht, *store_in_file_ht,
-		*import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
-		*trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
-		*cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
-		*keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht,
-		*preserve_db_name_ht, *dont_drop_missing_objs_ht,
-		*ignore_error_codes_ht, *drop_missing_cols_constr_ht;
 
 		//! \brief Syntax highlighter used on the diff preview tab
 		SyntaxHighlighter *sqlcode_hl;

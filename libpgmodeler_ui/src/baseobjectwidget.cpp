@@ -62,9 +62,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		tablespace_sel=new ObjectSelectorWidget(ObjectType::Tablespace, true, this);
 		owner_sel=new ObjectSelectorWidget(ObjectType::Role, true, this);
 
-		alias_ht=new HintTextWidget(alias_hint, this);
-		alias_ht->setText(alias_edt->statusTip());
-
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName("objetobase_grid");
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
@@ -73,7 +70,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 		baseobject_grid->addWidget(id_ico_wgt, 1, 2, 1, 3);
 		baseobject_grid->addWidget(logical_name_lbl, 2, 0, 1, 1);
 		baseobject_grid->addWidget(alias_edt, 2, 1, 1, 1);
-		baseobject_grid->addWidget(alias_hint_wgt, 2, 2, 1, 3);
 		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
 		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
@@ -225,7 +221,7 @@ void BaseObjectWidget::configureTabOrder(vector<QWidget *> widgets)
 	int idx=0, cnt=0;
 
 	widgets.insert(widgets.begin(),
-	{ name_edt, alias_edt, alias_ht, schema_sel , collation_sel, owner_sel, tablespace_sel,
+	{ name_edt, alias_edt, schema_sel , collation_sel, owner_sel, tablespace_sel,
 	  comment_edt, append_sql_tb, edt_perms_tb, disable_sql_chk });
 
 	for(auto &wgt : widgets)
@@ -453,7 +449,6 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 															obj_type!=ObjectType::Parameter);
 
 	alias_edt->setVisible(BaseObject::acceptsAlias(obj_type));
-	alias_hint_wgt->setVisible(BaseObject::acceptsAlias(obj_type));
 	logical_name_lbl->setVisible(BaseObject::acceptsAlias(obj_type));
 
 	edt_perms_tb->setVisible(Permission::acceptsPermission(obj_type));

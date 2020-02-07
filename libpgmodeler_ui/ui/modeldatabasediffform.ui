@@ -678,8 +678,11 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
                     <widget class="QCheckBox" name="pgsql_ver_chk">
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Override the PostgreSQL version when generating the diff code. The default is to use the same version as the input database (detected automatically).&lt;/p&gt;</string>
+                     </property>
                      <property name="statusTip">
-                      <string>Override the PostgreSQL version when generating the diff code. The default is to use the same version as the input database (detected automatically).</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>Use PostgreSQL:</string>
@@ -693,28 +696,6 @@
                      </property>
                      <property name="statusTip">
                       <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="pgsql_ver_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
                      </property>
                     </widget>
                    </item>
@@ -749,36 +730,17 @@
                        <height>0</height>
                       </size>
                      </property>
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Compares the model and the input database storing the diff in a SQL file for later usage.&lt;/p&gt;</string>
+                     </property>
                      <property name="statusTip">
-                      <string>Compares the model and the input database storing the diff in a SQL file for later usage.</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>Store in S&amp;QL file</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="store_in_file_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
                      </property>
                     </widget>
                    </item>
@@ -910,36 +872,17 @@
                        <height>0</height>
                       </size>
                      </property>
+                     <property name="toolTip">
+                      <string>&lt;p&gt;Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.&lt;/p&gt;</string>
+                     </property>
                      <property name="statusTip">
-                      <string>Compares the model and the input database generating a diff and applying it directly to the latter. &lt;strong&gt;WARNING:&lt;/strong&gt; this mode causes irreversible changes on the database and in case of failure the original structure is not restored, so make sure to have a backup before proceed.</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>Appl&amp;y on server</string>
                      </property>
                      <property name="checked">
                       <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="apply_on_server_hint" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
                      </property>
                     </widget>
                    </item>
@@ -1005,38 +948,16 @@
                  <item>
                   <widget class="QCheckBox" name="keep_cluster_objs_chk">
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;Database cluster level objects like roles and tablespaces will not be dropped.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>Database cluster level objects like roles and tablespaces will not be dropped.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Keep cluster objects</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="keep_cluster_objs_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1047,38 +968,16 @@
                  <item>
                   <widget class="QCheckBox" name="keep_obj_perms_chk">
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;Permissions already set on database objects will be kept. The ones configured on the model will be applied to the database.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>Permissions already set on database objects will be kept. The ones configured on the model will be applied to the database.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Keep object's permissions</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="keep_obj_perms_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1089,38 +988,16 @@
                  <item row="0" column="0" colspan="2">
                   <widget class="QCheckBox" name="dont_drop_missing_objs_chk">
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when diff a partial model against the complete database.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when diff a partial model against the complete database.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Do not drop missing objects</string>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QWidget" name="dont_drop_missing_objs_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1152,38 +1029,16 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;Force the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>Force the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Drop missing columns and constraints</string>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QWidget" name="drop_missing_cols_constr_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1194,38 +1049,16 @@
                  <item>
                   <widget class="QCheckBox" name="preserve_db_name_chk">
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;No command to rename the destination database will be generated even the model's name differ from database name.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>No command to rename the destination database will be generated even the model's name differ from database name.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Preserve database name</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="preserve_db_name_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1239,38 +1072,16 @@
                     <bool>true</bool>
                    </property>
                    <property name="toolTip">
-                    <string/>
+                    <string>&lt;p&gt;For DROP command, the objects that depends on an object to be dropped will be deleted as well. For TRUNCATE command, tables that are linked to a table to be truncated will be truncate too. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can affect more objects than listed in the output or diff preview.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
-                    <string>For DROP command, the objects that depends on an object to be dropped will be deleted as well. For TRUNCATE command, tables that are linked to a table to be truncated will be truncate too. &lt;strong&gt;NOTE:&lt;/strong&gt; this option can affect more objects than listed in the output or diff preview.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Drop or truncate in cascade mode</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="drop_cascade_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1286,33 +1097,14 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="toolTip">
+                    <string>&lt;p&gt;Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.&lt;/p&gt;</string>
+                   </property>
                    <property name="statusTip">
-                    <string>Clears the data of all tables which will have columns modified. This is useful to avoid errors related to type casting. &lt;strong&gt;WARNING:&lt;/strong&gt; DO NOT use this option on production servers and always make a backup before use it.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Truncate tables before alter columns</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="trunc_tables_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1328,8 +1120,11 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="toolTip">
+                    <string>&lt;p&gt;Serial columns are converted to integer and having the default value changed  to &lt;strong&gt;nextval(sequence)&lt;/strong&gt; function call. By default, a new sequence is created for each serial column but checking this option sequences matching the name on column's default value will be reused and will not be dropped.&lt;/p&gt;</string>
+                   </property>
                    <property name="statusTip">
-                    <string>Serial columns are converted to integer and having the default value changed  to &lt;strong&gt;nextval(sequence)&lt;/strong&gt; function call. By default, a new sequence is created for each serial column but checking this option sequences matching the name on column's default value will be reused and will not be dropped.</string>
+                    <string/>
                    </property>
                    <property name="text">
                     <string>Reuse sequences on serial columns</string>
@@ -1339,73 +1134,29 @@
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QWidget" name="reuse_sequences_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </item>
                <item>
                 <layout class="QGridLayout" name="gridLayout_8">
-                 <item row="1" column="1">
-                  <widget class="QCheckBox" name="recreate_unmod_chk">
+                 <item row="0" column="0" colspan="2">
+                  <widget class="QCheckBox" name="force_recreation_chk">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                   <property name="toolTip">
+                    <string>&lt;p&gt;Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
                    </property>
                    <property name="text">
-                    <string>Recreate only unmodifiable objects</string>
+                    <string>Force recreation of objects</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
                    </property>
                    <property name="checked">
                     <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QWidget" name="force_recreation_hint" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -1425,47 +1176,28 @@
                    </property>
                   </spacer>
                  </item>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QCheckBox" name="force_recreation_chk">
+                 <item row="1" column="1">
+                  <widget class="QCheckBox" name="recreate_unmod_chk">
                    <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="statusTip">
-                    <string>Instead of use an ALTER command to modify certain kind of objects a DROP and CREATE will be used in order to do a full modification. This option does not affects the database object.</string>
-                   </property>
-                   <property name="text">
-                    <string>Force recreation of objects</string>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
-                   </property>
-                   <property name="checked">
                     <bool>false</bool>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QWidget" name="recreate_unmod_hint" native="true">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
+                   <property name="toolTip">
+                    <string>Recreates only objects that can't be changed through ALTER commands according to pgModeler implementation not the PostgreSQL one. &lt;br/&gt;Currently, these objects are:&lt;br/&gt;&lt;br/&gt;aggregate, cast, constraint, collation, conversion, language, operator, operator class, operator family, rule, trigger and view.</string>
                    </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
+                   <property name="statusTip">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>Recreate only unmodifiable objects</string>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -1532,35 +1264,13 @@
                        </sizepolicy>
                       </property>
                       <property name="toolTip">
-                       <string/>
+                       <string>&lt;p&gt;Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.&lt;/p&gt;</string>
                       </property>
                       <property name="statusTip">
-                       <string>Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.</string>
+                       <string/>
                       </property>
                       <property name="text">
                        <string>Import system objects</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="import_sys_objs_hint" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
                       </property>
                      </widget>
                     </item>
@@ -1577,35 +1287,13 @@
                        </sizepolicy>
                       </property>
                       <property name="toolTip">
-                       <string/>
+                       <string>&lt;p&gt;Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.&lt;/p&gt;</string>
                       </property>
                       <property name="statusTip">
-                       <string>Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.</string>
+                       <string/>
                       </property>
                       <property name="text">
                        <string>Import extension objects</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="import_ext_objs_hint" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
                       </property>
                      </widget>
                     </item>
@@ -1622,35 +1310,13 @@
                        </sizepolicy>
                       </property>
                       <property name="toolTip">
-                       <string/>
+                       <string>&lt;p&gt;Ignores as many as possible errors on import step. This option generates an incomplete diff.&lt;/p&gt;</string>
                       </property>
                       <property name="statusTip">
-                       <string>Ignores as many as possible errors on import step. This option generates an incomplete diff.</string>
+                       <string/>
                       </property>
                       <property name="text">
                        <string>Ignore import errors</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="ignore_errors_hint" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
                       </property>
                      </widget>
                     </item>
@@ -1688,35 +1354,13 @@
                        </sizepolicy>
                       </property>
                       <property name="toolTip">
-                       <string/>
+                       <string>&lt;p&gt;Ignores errors generated by duplicated objects when exporting the diff to database.&lt;/p&gt;</string>
                       </property>
                       <property name="statusTip">
-                       <string>Ignores errors generated by duplicated objects when exporting the diff to database.</string>
+                       <string/>
                       </property>
                       <property name="text">
                        <string>Ignore duplicity errors</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QWidget" name="ignore_duplic_hint" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
                       </property>
                      </widget>
                     </item>
@@ -1724,29 +1368,17 @@
                   </item>
                   <item>
                    <layout class="QGridLayout" name="gridLayout_7">
-                    <item row="0" column="2">
-                     <widget class="QWidget" name="ignore_extra_errors_hint" native="true">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
+                    <item row="1" column="0" colspan="3">
+                     <widget class="QLineEdit" name="error_codes_edt">
+                      <property name="enabled">
+                       <bool>false</bool>
                       </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>22</width>
-                        <height>22</height>
-                       </size>
+                      <property name="clearButtonEnabled">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="0" colspan="2">
+                    <item row="0" column="0" colspan="3">
                      <widget class="QCheckBox" name="ignore_error_codes_chk">
                       <property name="enabled">
                        <bool>true</bool>
@@ -1757,21 +1389,14 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="toolTip">
+                       <string>&lt;p&gt;This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.&lt;/p&gt;</string>
+                      </property>
                       <property name="statusTip">
-                       <string>This advanced option causes pgModeler to ignore extra errors by their numeric codes. These errors must be informed in the input below and separeted by space. For the complete list of error codes check the PostgreSQL docs, section &lt;strong&gt; Appendix A. PostgreSQL Error Codes&lt;/strong&gt;. &lt;strong&gt;WARNING:&lt;/strong&gt; use this option with extreme care since it can interfere in final export result.</string>
+                       <string/>
                       </property>
                       <property name="text">
                        <string>Ignore error codes</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="3">
-                     <widget class="QLineEdit" name="error_codes_edt">
-                      <property name="enabled">
-                       <bool>false</bool>
-                      </property>
-                      <property name="clearButtonEnabled">
-                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>

@@ -28,7 +28,6 @@
 #include "ui_databaseexplorerwidget.h"
 #include "databaseimporthelper.h"
 #include "schemaparser.h"
-#include "hinttextwidget.h"
 
 class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget {
 	private:
@@ -71,8 +70,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		QTreeWidgetItem *rename_item;
 		
-		HintTextWidget *filter_ht;
-
 		unsigned sort_column;
 
 		void configureImportHelper();

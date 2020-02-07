@@ -517,33 +517,14 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="statusTip">
+          <property name="toolTip">
            <string>Parsable or dynamic snippets are written in the &lt;strong&gt;schema micro language&lt;/strong&gt; syntax. When using a parsable snippet the attributes surrounded in &lt;strong&gt;{}&lt;/strong&gt; will be replaced by the selected object's matching attributes.</string>
+          </property>
+          <property name="statusTip">
+           <string/>
           </property>
           <property name="text">
            <string>Parsable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="parsable_hint" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
           </property>
          </widget>
         </item>
@@ -574,33 +555,14 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="statusTip">
+          <property name="toolTip">
            <string>When handling parsable snippets empty attributes will be replaced by a value in the format &lt;strong&gt;{attribute}&lt;/strong&gt;. Note that this option can affect the semantics of the resulting snippet.</string>
+          </property>
+          <property name="statusTip">
+           <string/>
           </property>
           <property name="text">
            <string>Placeholders</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="placeholders_hint" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
           </property>
          </widget>
         </item>

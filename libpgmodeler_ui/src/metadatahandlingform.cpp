@@ -28,51 +28,6 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	settings_tbw->setTabEnabled(1, false);
 	apply_btn->setEnabled(false);
 
-	db_metadata_ht=new HintTextWidget(db_metadata_hint, this);
-	db_metadata_ht->setText(db_metadata_chk->statusTip());
-
-	objs_positioning_ht=new HintTextWidget(objs_positioning_hint, this);
-	objs_positioning_ht->setText(objs_positioning_chk->statusTip());
-
-	objs_protection_ht=new HintTextWidget(objs_protection_hint, this);
-	objs_protection_ht->setText(objs_protection_chk->statusTip());
-
-	objs_sql_disabled_ht=new HintTextWidget(objs_sql_disabled_hint, this);
-	objs_sql_disabled_ht->setText(objs_sql_disabled_chk->statusTip());
-
-	objs_fadedout_ht=new HintTextWidget(objs_fadedout_hint, this);
-	objs_fadedout_ht->setText(objs_fadedout_chk->statusTip());
-
-	objs_collapse_mode_ht=new HintTextWidget(objs_collapse_mode_hint, this);
-	objs_collapse_mode_ht->setText(objs_collapse_mode_chk->statusTip());
-
-	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
-	custom_sql_ht->setText(custom_sql_chk->statusTip());
-
-	textbox_objs_ht=new HintTextWidget(textbox_objs_hint, this);
-	textbox_objs_ht->setText(textbox_objs_chk->statusTip());
-
-	tag_objs_ht=new HintTextWidget(tag_objs_hint, this);
-	tag_objs_ht->setText(tag_objs_chk->statusTip());
-
-	custom_colors_ht=new HintTextWidget(custom_colors_hint, this);
-	custom_colors_ht->setText(custom_colors_chk->statusTip());
-
-	extract_restore_ht=new HintTextWidget(extract_restore_hint, this);
-	extract_restore_ht->setText(extract_restore_rb->statusTip());
-
-	extract_only_ht=new HintTextWidget(extract_only_hint, this);
-	extract_only_ht->setText(extract_only_rb->statusTip());
-
-	restore_ht=new HintTextWidget(restore_hint, this);
-	restore_ht->setText(restore_rb->statusTip());
-
-	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
-	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
-
-	objs_aliases_ht=new HintTextWidget(objs_aliases_hint, this);
-	objs_aliases_ht->setText(objs_aliases_chk->statusTip());
-
 	htmlitem_deleg=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 

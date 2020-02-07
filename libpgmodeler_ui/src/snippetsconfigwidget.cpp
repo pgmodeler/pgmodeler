@@ -53,12 +53,6 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
 
-	parsable_ht=new HintTextWidget(parsable_hint, this);
-	parsable_ht->setText(parsable_chk->statusTip());
-
-	placeholders_ht=new HintTextWidget(placeholders_hint, this);
-	placeholders_ht->setText(placeholders_chk->statusTip());
-
 	snippet_txt=PgModelerUiNs::createNumberedTextEditor(snippet_wgt);
 
 	try

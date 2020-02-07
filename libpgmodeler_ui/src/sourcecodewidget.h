@@ -27,7 +27,6 @@
 
 #include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"
-#include "hinttextwidget.h"
 #include "numberedtexteditor.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
@@ -43,8 +42,6 @@ class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
 
 		SyntaxHighlighter *hl_sqlcode,
 		*hl_xmlcode;
-
-		HintTextWidget *code_options_ht;
 
 	public:
 		SourceCodeWidget(QWidget * parent = nullptr);

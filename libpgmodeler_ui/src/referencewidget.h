@@ -25,15 +25,12 @@
 #include "syntaxhighlighter.h"
 #include "codecompletionwidget.h"
 #include "objectselectorwidget.h"
-#include "hinttextwidget.h"
 #include "pgsqltypewidget.h"
 #include "objectstablewidget.h"
 
 class ReferenceWidget : public QWidget, Ui::ReferenceWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *ref_alias_ht, *used_in_ht, *ref_object_ht, *alias_ht;
 
 		NumberedTextEditor *expression_txt;
 

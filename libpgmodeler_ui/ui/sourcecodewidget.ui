@@ -194,6 +194,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>&lt;strong&gt;Original:&lt;/strong&gt; displays only the original object's SQL code.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; displays the original code including all dependencies needed to properly create the selected object.&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Children:&lt;/strong&gt; displays the original code including all object's children SQL code. This option is used only by schemas, tables and views.</string>
+           </property>
            <property name="statusTip">
             <string/>
            </property>
@@ -212,28 +215,6 @@
              <string>Original + children's SQL</string>
             </property>
            </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="code_options_hint" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
           </widget>
          </item>
          <item>

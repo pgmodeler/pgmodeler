@@ -41,12 +41,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
 
-		code_options_ht=new HintTextWidget(code_options_hint, this);
-		code_options_ht->setText(
-					tr("<strong>Original:</strong> displays only the original object's SQL code.<br/><br/>\
-						   <strong>Dependencies:</strong> displays the original code including all dependencies needed to properly create the selected object.<br/><br/>\
-						   <strong>Children:</strong> displays the original code including all object's children SQL code. This option is used only by schemas, tables and views."));
-
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
 		connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));

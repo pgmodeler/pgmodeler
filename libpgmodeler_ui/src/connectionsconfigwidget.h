@@ -29,14 +29,11 @@
 #include "baseconfigwidget.h"
 #include "connection.h"
 #include "messagebox.h"
-#include "hinttextwidget.h"
 
 class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsConfigWidget {
 	private:
 		Q_OBJECT
 		
-		HintTextWidget *auto_browse_ht, *default_for_ops_ht, *other_params_ht;
-
 		static const QString DefaultFor;
 		
 		//! \brief Stores the connections created by the user

@@ -29,7 +29,6 @@
 #include "baseconfigwidget.h"
 #include "syntaxhighlighter.h"
 #include "baseobject.h"
-#include "hinttextwidget.h"
 #include "numberedtexteditor.h"
 
 class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWidget {
@@ -45,8 +44,6 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		NumberedTextEditor *snippet_txt;
 
 		SyntaxHighlighter *snippet_hl;
-
-		HintTextWidget *parsable_ht, *placeholders_ht;
 
 		//! \brief Fills the snippet combobox with previously loaded snippet map
 		void fillSnippetsCombo(map<QString, attribs_map> &config);

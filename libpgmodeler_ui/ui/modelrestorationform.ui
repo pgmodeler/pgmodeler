@@ -234,36 +234,17 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>&lt;p&gt;pgModeler will try to recover the selected models but will not destroy them in case of loading failure. This option serves as a last resort in order to try to recover the database model. Temporary models will last until the application is closed so the user must try to manually recover the files before exit pgModeler.&lt;/p&gt;</string>
+          </property>
           <property name="statusTip">
-           <string>pgModeler will try to recover the selected models but will not destroy them in case of loading failure. This option serves as a last resort in order to try to recover the database model. Temporary models will last until the application is closed so the user must try to manually recover the files before exit pgModeler.</string>
+           <string/>
           </property>
           <property name="text">
            <string>Keep temporary models in case of restoration failure</string>
           </property>
           <property name="checked">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QWidget" name="keep_models_hint" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>22</width>
-            <height>22</height>
-           </size>
           </property>
          </widget>
         </item>

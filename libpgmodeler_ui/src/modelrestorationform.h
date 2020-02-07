@@ -26,15 +26,12 @@
 #define MODEL_RESTORATION_FORM_H
 
 #include <QtWidgets>
-#include "hinttextwidget.h"
 #include "globalattributes.h"
 #include "ui_modelrestorationform.h"
 
 class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
-
-		HintTextWidget * keep_models_ht;
 
 		QStringList ignored_files;
 

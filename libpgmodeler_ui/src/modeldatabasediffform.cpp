@@ -49,61 +49,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		process_paused=false;
 		diff_progress=curr_step=total_steps=0;
 
-		apply_on_server_ht=new HintTextWidget(apply_on_server_hint, this);
-		apply_on_server_ht->setText(apply_on_server_rb->statusTip());
-
-		store_in_file_ht=new HintTextWidget(store_in_file_hint, this);
-		store_in_file_ht->setText(store_in_file_rb->statusTip());
-
-		import_sys_objs_ht=new HintTextWidget(import_sys_objs_hint, this);
-		import_sys_objs_ht->setText(import_sys_objs_chk->statusTip());
-
-		import_ext_objs_ht=new HintTextWidget(import_ext_objs_hint, this);
-		import_ext_objs_ht->setText(import_ext_objs_chk->statusTip());
-
-		keep_cluster_objs_ht=new HintTextWidget(keep_cluster_objs_hint, this);
-		keep_cluster_objs_ht->setText(keep_cluster_objs_chk->statusTip());
-
-		trunc_tables_ht=new HintTextWidget(trunc_tables_hint, this);
-		trunc_tables_ht->setText(trunc_tables_chk->statusTip());
-
-		ignore_errors_ht=new HintTextWidget(ignore_errors_hint, this);
-		ignore_errors_ht->setText(ignore_errors_chk->statusTip());
-
-		force_recreation_ht=new HintTextWidget(force_recreation_hint, this);
-		force_recreation_ht->setText(force_recreation_chk->statusTip());
-
-		recreate_unmod_ht=new HintTextWidget(recreate_unmod_hint, this);
-		recreate_unmod_ht->setText("Recreates only objects that can't be changed through ALTER commands according to pgModeler implementation not the PostgreSQL one.\
-								   Currently, those objects are:<br/><br/>aggregate, cast, constraint, collation, conversion, language, operator, operator class, operator family, rule, trigger and view.");
-
-		cascade_mode_ht=new HintTextWidget(drop_cascade_hint, this);
-		cascade_mode_ht->setText(cascade_mode_chk->statusTip());
-
-		pgsql_ver_ht=new HintTextWidget(pgsql_ver_hint, this);
-		pgsql_ver_ht->setText(pgsql_ver_chk->statusTip());
-
-		keep_obj_perms_ht=new HintTextWidget(keep_obj_perms_hint, this);
-		keep_obj_perms_ht->setText(keep_obj_perms_chk->statusTip());
-
-		ignore_duplic_ht=new HintTextWidget(ignore_duplic_hint, this);
-		ignore_duplic_ht->setText(ignore_duplic_chk->statusTip());
-
-		reuse_sequences_ht=new HintTextWidget(reuse_sequences_hint, this);
-		reuse_sequences_ht->setText(reuse_sequences_chk->statusTip());
-
-		preserve_db_name_ht=new HintTextWidget(preserve_db_name_hint, this);
-		preserve_db_name_ht->setText(preserve_db_name_chk->statusTip());
-
-		dont_drop_missing_objs_ht=new HintTextWidget(dont_drop_missing_objs_hint, this);
-		dont_drop_missing_objs_ht->setText(dont_drop_missing_objs_chk->statusTip());
-
-		drop_missing_cols_constr_ht=new HintTextWidget(drop_missing_cols_constr_hint, this);
-		drop_missing_cols_constr_ht->setText(drop_missing_cols_constr_chk->statusTip());
-
-		ignore_error_codes_ht=new HintTextWidget(ignore_extra_errors_hint, this);
-		ignore_error_codes_ht->setText(ignore_error_codes_chk->statusTip());
-
 		sqlcode_hl=new SyntaxHighlighter(sqlcode_txt);
 		sqlcode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 

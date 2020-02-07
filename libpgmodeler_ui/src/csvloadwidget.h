@@ -26,14 +26,11 @@
 #define CSV_LOAD_WIDGET_H
 
 #include "ui_csvloadwidget.h"
-#include "hinttextwidget.h"
 #include <QWidget>
 
 class CsvLoadWidget : public QWidget, Ui::CsvLoadWidget {
 	private:
 		Q_OBJECT
-
-		HintTextWidget *col_names_ht;
 
 		//! \brief Holds the names of columns extracted from the csv file
 		QStringList csv_columns;
