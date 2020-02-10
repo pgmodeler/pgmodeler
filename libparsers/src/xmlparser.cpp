@@ -490,7 +490,7 @@ QString XmlParser::convertCharsToXMLEntities(QString buf)
 
 			do
 			{
-				attr_end = attr_end_regexp.indexIn(lin, attr_start);
+				attr_end = attr_end_regexp.indexIn(lin, attr_start + attr_regexp.matchedLength());
 
 				if(attr_start >= 0 && attr_end >= 0 &&
 					 //CDATA absent in the current line
