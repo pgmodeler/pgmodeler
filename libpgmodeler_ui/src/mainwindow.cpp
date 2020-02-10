@@ -253,6 +253,46 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	connect(action_compact_view, SIGNAL(toggled(bool)), this, SLOT(toggleCompactView()));
 
+	QToolButton *tool_btn2 = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_align_distrib_tables));
+	tool_btn2->setMenu(&align_menu);
+	tool_btn2->setPopupMode(QToolButton::InstantPopup);
+
+	align_menu.addAction(tr("Align top"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(0)->setIcon(QIcon(QString(":icones/icones/align_top.png")));
+	align_menu.actions().at(0)->setToolTip(QString("Align tables top"));
+
+	align_menu.addAction(tr("Align at vertical center"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(1)->setIcon(QIcon(QString(":icones/icones/align_vert_center.png")));
+	align_menu.actions().at(1)->setToolTip(QString("Align tables at vertical center"));
+
+	align_menu.addAction(tr("Align bottom"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(2)->setIcon(QIcon(QString(":icones/icones/align_bottom.png")));
+	align_menu.actions().at(2)->setToolTip(QString("Align tables bottom"));
+
+	align_menu.addAction(tr("Distribute vertically"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(3)->setIcon(QIcon(QString(":icones/icones/distrib_vert.png")));
+	align_menu.actions().at(3)->setToolTip(QString("Distribute tables vertically"));
+
+	align_menu.addSeparator();
+
+	align_menu.addAction(tr("Align left"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(5)->setIcon(QIcon(QString(":icones/icones/align_left.png")));
+	align_menu.actions().at(5)->setToolTip(QString("Align tables left"));
+
+	align_menu.addAction(tr("Align at horizontal center"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(6)->setIcon(QIcon(QString(":icones/icones/align_horiz_center.png")));
+	align_menu.actions().at(6)->setToolTip(QString("Align tables at horizontal center"));
+
+	align_menu.addAction(tr("Align right"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(7)->setIcon(QIcon(QString(":icones/icones/align_right.png")));
+	align_menu.actions().at(7)->setToolTip(QString("Align tables right"));
+
+	align_menu.addAction(tr("Distribute horizontally"), this, SLOT(alignDistributeObjects()));
+	align_menu.actions().at(8)->setIcon(QIcon(QString(":icones/icones/distrib_horiz.png")));
+	align_menu.actions().at(8)->setToolTip(QString("Distribute tables horizontally"));
+
+	connect(action_stack_on_top, SIGNAL(triggered(bool)), this, SLOT(stackObjectsOnTop()));
+
 	window_title=this->windowTitle() + QString(" ") + GlobalAttributes::PgModelerVersion;
 
 #ifdef DEMO_VERSION
@@ -1052,9 +1092,6 @@ void MainWindow::setCurrentModel()
 	removeModelActions();
 
 	edit_menu->clear();
-	edit_menu->addAction(action_undo);
-	edit_menu->addAction(action_redo);
-	edit_menu->addSeparator();
 
 	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
@@ -1066,6 +1103,8 @@ void MainWindow::setCurrentModel()
 	models_tbw->setCurrentIndex(model_nav_wgt->getCurrentIndex());
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 	action_arrange_objects->setEnabled(current_model != nullptr);
+	action_align_distrib_tables->setEnabled(current_model != nullptr);
+	action_stack_on_top->setEnabled(current_model != nullptr);
 
 	if(current_model)
 	{
@@ -1115,12 +1154,25 @@ void MainWindow::setCurrentModel()
 			PgModelerUiNs::createDropShadow(btn);
 		}
 
+		edit_menu->addAction(action_undo);
+		edit_menu->addAction(action_redo);
+		edit_menu->addSeparator();
+
 		edit_menu->addAction(current_model->action_copy);
 		edit_menu->addAction(current_model->action_cut);
 		edit_menu->addAction(current_model->action_duplicate);
 		edit_menu->addAction(current_model->action_paste);
 		edit_menu->addAction(current_model->action_remove);
 		edit_menu->addAction(current_model->action_cascade_del);
+		edit_menu->addSeparator();
+
+		edit_menu->addAction(action_alin_objs_grade);
+		edit_menu->addAction(action_arrange_objects);
+		action_arrange_objects->setMenu(&arrange_menu);
+		edit_menu->addAction(action_align_distrib_tables);
+		action_align_distrib_tables->setMenu(&align_menu);
+		edit_menu->addAction(action_stack_on_top);
+		edit_menu->addSeparator();
 
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
@@ -1160,7 +1212,6 @@ void MainWindow::setCurrentModel()
 	else
 		this->setWindowTitle(window_title);
 
-	edit_menu->addSeparator();
 	edit_menu->addAction(action_configuration);
 
 	updateToolsState();
@@ -2070,6 +2121,46 @@ void MainWindow::arrangeObjects()
 			current_model->rearrangeTablesInSchemas();
 
 		QApplication::restoreOverrideCursor();
+	}
+}
+
+void MainWindow::alignDistributeObjects(void)
+{
+	if(!current_model || current_model->selected_objects.size()<2)
+			return;
+
+	current_model->scene->emit s_objectsMoved(false);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	if(sender() == align_menu.actions().at(0))
+		current_model->alignTablesTop();
+	else if(sender() == align_menu.actions().at(1))
+		current_model->alignTablesVerticalCenter();
+	else if(sender() == align_menu.actions().at(2))
+		current_model->alignTablesBottom();
+	else if(sender() == align_menu.actions().at(3))
+		current_model->distributeTablesVertically();
+	else if(sender() == align_menu.actions().at(5))
+		current_model->alignTablesLeft();
+	else if(sender() == align_menu.actions().at(6))
+		current_model->alignTablesHorizontalCenter();
+	else if(sender() == align_menu.actions().at(7))
+		current_model->alignTablesRight();
+	else if(sender() == align_menu.actions().at(8))
+		current_model->distributeTablesHorizontally();
+
+	QApplication::restoreOverrideCursor();
+	// This will, among others, update the operation history and the schemas.
+	current_model->scene->emit s_objectsMoved(true);
+}
+
+void MainWindow::stackObjectsOnTop(void)
+{
+	if(!current_model) return;
+	if(current_model->stackTablesOnTop())
+	{
+		emit s_currentModelChanged(current_model);
+		current_model->scene->emit s_objectsMoved(true);
 	}
 }
 

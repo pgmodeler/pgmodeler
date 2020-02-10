@@ -262,6 +262,15 @@
         <file>icones/foreigntable.png</file>
         <file>icones/foreigntable_grp.png</file>
         <file>icones/swapvals.png</file>
+        <file>icones/align_top.png</file>
+        <file>icones/align_vert_center.png</file>
+        <file>icones/align_bottom.png</file>
+        <file>icones/distrib_horiz.png</file>
+        <file>icones/align_left.png</file>
+        <file>icones/align_horiz_center.png</file>
+        <file>icones/align_right.png</file>
+        <file>icones/distrib_vert.png</file>
+
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

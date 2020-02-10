@@ -725,7 +725,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -741,18 +741,18 @@
     <addaction name="action_new_model"/>
     <addaction name="action_load_model"/>
     <addaction name="action_recent_models"/>
-    <addaction name="action_fix_model"/>
-    <addaction name="action_handle_metadata"/>
     <addaction name="action_close_model"/>
     <addaction name="action_save_model"/>
     <addaction name="action_save_as"/>
     <addaction name="action_save_all"/>
-    <addaction name="separator"/>
     <addaction name="action_print"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="action_export"/>
     <addaction name="action_diff"/>
+    <addaction name="action_handle_metadata"/>
+    <addaction name="separator"/>
+    <addaction name="action_fix_model"/>
     <addaction name="separator"/>
     <addaction name="action_restore_session"/>
     <addaction name="separator"/>
@@ -763,8 +763,6 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="action_undo"/>
-    <addaction name="action_redo"/>
     <addaction name="separator"/>
     <addaction name="action_configuration"/>
     <addaction name="separator"/>
@@ -783,17 +781,15 @@
     <property name="title">
      <string>&amp;Show</string>
     </property>
-    <addaction name="action_show_grid"/>
-    <addaction name="action_show_delimiters"/>
-    <addaction name="action_alin_objs_grade"/>
     <addaction name="separator"/>
     <addaction name="action_normal_zoom"/>
     <addaction name="action_inc_zoom"/>
     <addaction name="action_dec_zoom"/>
-    <addaction name="separator"/>
-    <addaction name="action_arrange_objects"/>
-    <addaction name="action_compact_view"/>
     <addaction name="action_overview"/>
+    <addaction name="separator"/>
+    <addaction name="action_show_grid"/>
+    <addaction name="action_show_delimiters"/>
+    <addaction name="action_compact_view"/>
    </widget>
    <widget class="QMenu" name="plugins_menu">
     <property name="enabled">
@@ -859,6 +855,10 @@
    <addaction name="action_import"/>
    <addaction name="action_export"/>
    <addaction name="action_diff"/>
+   <addaction name="action_handle_metadata"/>
+   <addaction name="separator"/>
+   <addaction name="action_fix_model"/>
+   <addaction name="separator"/>
    <addaction name="action_configuration"/>
   </widget>
   <widget class="QToolBar" name="control_tb">
@@ -914,8 +914,6 @@
    <addaction name="action_new_model"/>
    <addaction name="action_load_model"/>
    <addaction name="action_recent_models"/>
-   <addaction name="action_fix_model"/>
-   <addaction name="action_handle_metadata"/>
    <addaction name="action_save_model"/>
    <addaction name="action_save_as"/>
    <addaction name="action_print"/>
@@ -924,11 +922,14 @@
    <addaction name="action_normal_zoom"/>
    <addaction name="action_inc_zoom"/>
    <addaction name="action_overview"/>
-   <addaction name="action_arrange_objects"/>
    <addaction name="action_show_delimiters"/>
    <addaction name="action_show_grid"/>
-   <addaction name="action_alin_objs_grade"/>
    <addaction name="action_compact_view"/>
+   <addaction name="separator"/>
+   <addaction name="action_alin_objs_grade"/>
+   <addaction name="action_arrange_objects"/>
+   <addaction name="action_align_distrib_tables"/>
+   <addaction name="action_stack_on_top"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_new_model">
@@ -1369,6 +1370,9 @@
    </property>
   </action>
   <action name="action_fix_model">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
@@ -1549,7 +1553,7 @@
      <normaloff>:/icones/icones/objmetadata.png</normaloff>:/icones/icones/objmetadata.png</iconset>
    </property>
    <property name="text">
-    <string>Objects me&amp;tadata</string>
+    <string>Metadata</string>
    </property>
    <property name="toolTip">
     <string>Objects metadata</string>
@@ -1598,6 +1602,35 @@
    </property>
    <property name="toolTip">
     <string>Addition action over the model</string>
+   </property>
+  </action>
+  <action name="action_align_distrib_tables">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/align_top.png</normaloff>:/icones/icones/align_top.png</iconset>
+   </property>
+   <property name="text">
+    <string>Align / distribute tables</string>
+   </property>
+   <property name="toolTip">
+    <string>Align or distribute tables</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action_stack_on_top">
+   <property name="text">
+    <string>Stack on top</string>
+   </property>
+   <property name="toolTip">
+    <string>Stack selected element on top of its siblings.</string>
    </property>
   </action>
  </widget>

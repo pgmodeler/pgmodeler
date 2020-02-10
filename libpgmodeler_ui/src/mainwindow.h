@@ -56,7 +56,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		static constexpr int GeneralActionsCount=8;
+		static constexpr int GeneralActionsCount=12;
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
@@ -143,6 +143,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		sample_mdls_menu,
 
 		arrange_menu,
+
+		align_menu,
 
 		more_actions_menu;
 
@@ -305,6 +307,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void handleObjectsMetadata();
 		void restoreTemporaryModels();
 		void arrangeObjects();
+		void alignDistributeObjects(void);
+		void stackObjectsOnTop(void);
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
 
