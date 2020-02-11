@@ -23,10 +23,12 @@
 #include "sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
+int MainWindow::GeneralActionsCount=0;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
+	GeneralActionsCount = general_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -46,7 +48,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hbox->setContentsMargins(4,4,4,4);
 	scene_info_parent->setLayout(hbox);
 
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
+	fix_menu.addAction(action_fix_model);
+	fix_menu.addAction(action_handle_metadata);
+
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
+	tool_btn->setMenu(&fix_menu);
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
