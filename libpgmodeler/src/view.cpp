@@ -665,6 +665,7 @@ QString View::getCodeDefinition(unsigned def_type)
 		setPositionAttribute();
 		setFadedOutAttribute();
 		setReferencesAttribute();
+		attributes[Attributes::ZValue]=QString::number(z_value);
 		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
 	}
 

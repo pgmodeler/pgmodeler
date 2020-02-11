@@ -17,6 +17,7 @@
   %if {rls-enabled} %then [ rls-enabled=] "true" %end
   %if {rls-forced} %then [ rls-forced=] "true" %end
   %if {max-obj-count} %then [ max-obj-count=] "{max-obj-count}" %end
+  %if {z-value} %then [ z-value=] "{z-value}" %end
 > $br
 
  {schema}

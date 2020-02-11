@@ -71,6 +71,8 @@ class TextboxView: public BaseObjectView {
 
 		void setToolTip(const QString &tooltip);
 
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
 	protected slots:
 		virtual void configureObject();
 };

@@ -37,6 +37,10 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Constants used to control the object stacking method
+		static constexpr int BringToFront = 1,
+		SendToBack = -1;
+
 		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
@@ -202,6 +206,10 @@ class ModelWidget: public QWidget {
 
 		void showMagnifierArea(bool show);
 
+		/*! \brief Move the selected objects in the Z coordenate either to bottom or top.
+		 * The direction is defined by the constants BringToTop or SendToBottom. */
+		void moveObjectsInZStack(int direction);
+
 	protected:
 		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
 		BreakHorizNinetyDegrees=1, //Break horizontally the line in one 90° angle
@@ -258,7 +266,9 @@ class ModelWidget: public QWidget {
 		*action_hide_schemas_rects,
 		*action_edit_data,
 		*action_database_category,
-		*action_schema_category;
+		*action_schema_category,
+		*action_bring_to_front,
+		*action_send_to_back;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -517,6 +527,9 @@ class ModelWidget: public QWidget {
 		void saveModel();
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
 		void update();
+
+		void bringToFront();
+		void sendToBack();
 
 	signals:
 		void s_objectModified();

@@ -36,7 +36,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-	this->setZValue(-5);
+	this->setZValue(-100);
 
 	this->configureObject();
 	all_selected=false;

@@ -447,6 +447,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
+	action_send_to_back=new QAction(QIcon(PgModelerUiNs::getIconPath("baixo")), tr("Send to back"), this);
+	action_bring_to_front=new QAction(QIcon(PgModelerUiNs::getIconPath("cima")), tr("Bring to front"), this);
+
+	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
+	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
+
 	connect(action_edit_data, SIGNAL(triggered(bool)), this, SLOT(editTableData()));
 	connect(&zoom_info_timer, SIGNAL(timeout()), zoom_info_lbl, SLOT(hide()));
 	connect(action_source_code, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
@@ -1610,6 +1616,16 @@ void ModelWidget::update()
 	updateRenderHints();
 	scene->update();
 	QWidget::update();
+}
+
+void ModelWidget::bringToFront()
+{
+	moveObjectsInZStack(BringToFront);
+}
+
+void ModelWidget::sendToBack()
+{
+	moveObjectsInZStack(SendToBack);
 }
 
 void ModelWidget::saveModel()
@@ -3691,6 +3707,68 @@ void ModelWidget::setAllCollapseMode(CollapseMode mode)
 	this->setModified(true);
 }
 
+void ModelWidget::moveObjectsInZStack(int direction)
+{
+	BaseObjectView *obj_view = nullptr;
+	BaseTableView *tab_view = nullptr;
+	TextboxView *tbox_view = nullptr;
+	QList<QGraphicsItem *> items;
+	int zval = 0;
+	bool changed = false;
+
+	op_list->startOperationChain();
+
+	for(auto &obj : selected_objects)
+	{
+		// Ignoring if the object is not a table or textbox
+		if(!BaseTable::isBaseTable(obj->getObjectType()) &&
+			 obj->getObjectType() != ObjectType::Textbox)
+			continue;
+
+		obj_view = dynamic_cast<BaseObjectView *>(dynamic_cast<BaseGraphicObject *>(obj)->getOverlyingObject());
+
+		// We'll check the items around the one we selected to move in the z stack
+		items = obj_view->collidingItems();
+
+		if(!obj_view->collidingItems().isEmpty())
+		{
+			zval = obj_view->zValue();
+
+			for(auto &item : items)
+			{
+				tab_view  = dynamic_cast<BaseTableView *>(item);
+				tbox_view  = dynamic_cast<TextboxView *>(item);
+
+				// Ignoring if the object is not a table or textbox
+				if(!tab_view && !tbox_view)
+					continue;
+
+				if((direction == BringToFront && zval < item->zValue()) ||
+					 (direction == SendToBack && zval > item->zValue()))
+					zval = item->zValue();
+			}
+
+			op_list->registerObject(obj_view->getUnderlyingObject(), Operation::ObjectModified);
+
+			zval += (1 * direction);
+
+			if(zval < BaseGraphicObject::MinZValue)
+				zval = BaseGraphicObject::MinZValue;
+			else if(zval > BaseGraphicObject::MaxZValue)
+				zval = BaseGraphicObject::MaxZValue;
+
+			obj_view->setZValue(zval);
+			changed = true;
+		}
+	}
+
+	op_list->finishOperationChain();
+	setModified(changed);
+
+	if(changed)
+		emit s_objectModified();
+}
+
 void ModelWidget::setCollapseMode()
 {
 	CollapseMode mode = static_cast<CollapseMode>(dynamic_cast<QAction *>(sender())->data().toUInt());
@@ -3814,6 +3892,9 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	this->enableModelActions(false);
 	this->selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
+
+	popup_menu.addAction(action_bring_to_front);
+	popup_menu.addAction(action_send_to_back);
 
 	if(objects.size() <= 1)
 	{

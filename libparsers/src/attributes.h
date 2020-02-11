@@ -658,7 +658,8 @@ namespace Attributes {
 	WordSeparators,
 	WorkingDir,
 	XPos,
-	YPos;
+	YPos,
+	ZValue;
 }
 
 #endif

@@ -121,6 +121,8 @@ class BaseTable: public BaseGraphicObject {
 
 		bool isPaginationEnabled();
 
+		virtual void setZValue(int z_value);
+
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
