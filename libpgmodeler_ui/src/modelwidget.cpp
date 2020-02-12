@@ -447,8 +447,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
-	action_send_to_back=new QAction(QIcon(PgModelerUiNs::getIconPath("baixo")), tr("Send to back"), this);
-	action_bring_to_front=new QAction(QIcon(PgModelerUiNs::getIconPath("cima")), tr("Bring to front"), this);
+	action_move_objs=new QAction(QIcon(PgModelerUiNs::getIconPath("moveobjs")), tr("Move"), this);
+	action_send_to_back=new QAction(QIcon(PgModelerUiNs::getIconPath("sendtoback")), tr("Send to back"), this);
+	action_bring_to_front=new QAction(QIcon(PgModelerUiNs::getIconPath("bringtofront")), tr("Bring to front"), this);
+	move_objs_menu.addAction(action_send_to_back);
+	move_objs_menu.addAction(action_bring_to_front);
+	action_move_objs->setMenu(&move_objs_menu);
 
 	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
 	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
@@ -3298,7 +3302,7 @@ void ModelWidget::enableModelActions(bool value)
 	action_quick_actions->setEnabled(value);
 }
 
-void ModelWidget::configureSubmenu(BaseObject *object)
+void ModelWidget::configureQuickMenu(BaseObject *object)
 {
 	QAction *act=nullptr;
 	vector<BaseObject *> sel_objs;
@@ -3873,14 +3877,274 @@ void ModelWidget::updateObjectsOpacity()
 	}
 }
 
+void ModelWidget::configureConstraintsMenu(TableObject *tab_obj)
+{
+	if(!tab_obj)
+		return;
+
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
+
+	if(tab_obj->getObjectType()==ObjectType::Column)
+	{
+		unsigned count = table->getConstraintCount();
+		Constraint *constr = nullptr;
+		QString str_aux;
+		QAction *action = nullptr;
+		QMenu *submenu;
+		QList<QMenu *> submenus;
+
+		for(unsigned i=0; i < count; i++)
+		{
+			constr=table->getConstraint(i);
+			if(constr->isColumnReferenced(dynamic_cast<Column *>(tab_obj), false))
+			{
+				switch(!constr->getConstraintType())
+				{
+					case ConstraintType::PrimaryKey: str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey); break;
+					case ConstraintType::ForeignKey: str_aux=QString("_%1").arg(TableObjectView::TextForeignKey); break;
+					case ConstraintType::Check: str_aux=QString("_%1").arg(TableObjectView::TextCheck); break;
+					case ConstraintType::Unique: str_aux=QString("_%1").arg(TableObjectView::TextUnique); break;
+					case ConstraintType::Exclude: str_aux=QString("_%1").arg(TableObjectView::TextExclude); break;
+				}
+
+				//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
+				submenu=new QMenu(&popup_menu);
+				submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
+				submenu->setTitle(constr->getName());
+
+				action=new QAction(dynamic_cast<QObject *>(submenu));
+				action->setIcon(QPixmap(PgModelerUiNs::getIconPath("editar")));
+				action->setText(tr("Properties"));
+				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+				connect(action, SIGNAL(triggered(bool)), this, SLOT(editObject()));
+				submenu->addAction(action);
+
+				action=new QAction(dynamic_cast<QObject *>(submenu));
+				action->setIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")));
+				action->setText(tr("Source code"));
+				action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+				connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
+				submenu->addAction(action);
+
+				if(!constr->isAddedByRelationship())
+				{
+					if(!constr->getParentTable()->isProtected())
+					{
+						action=new QAction(dynamic_cast<QObject *>(&popup_menu));
+						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+						connect(action, SIGNAL(triggered(bool)), this, SLOT(protectObject()));
+						submenu->addAction(action);
+
+						if(constr->isProtected())
+						{
+							action->setIcon(QPixmap(PgModelerUiNs::getIconPath("desbloqobjeto")));
+							action->setText(tr("Unprotect"));
+						}
+						else
+						{
+							action->setIcon(QPixmap(PgModelerUiNs::getIconPath("bloqobjeto")));
+							action->setText(tr("Protect"));
+						}
+					}
+
+					action=new QAction(dynamic_cast<QObject *>(submenu));
+					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("excluir")));
+					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+					action->setText(tr("Delete"));
+					submenu->addAction(action);
+					connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
+
+					action=new QAction(dynamic_cast<QObject *>(submenu));
+					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("delcascade")));
+					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
+					action->setText(tr("Del. cascade"));
+					submenu->addAction(action);
+					connect(action, SIGNAL(triggered()), this, SLOT(removeObjectsCascade()));
+				}
+				submenus.push_back(submenu);
+			}
+		}
+
+		//Adding the constraint submenus to the main popup menu
+		if(!submenus.empty())
+		{
+			submenu=new QMenu(&popup_menu);
+			submenu->setTitle(tr("Constraints"));
+			submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
+
+			for(auto &menu : submenus)
+				submenu->addMenu(menu);
+
+			popup_menu.insertMenu(action_edit, submenu);
+		}
+	}
+
+}
+
+void ModelWidget::configureBasicActions(BaseObject *obj)
+{
+	if(!obj)
+		return;
+
+	BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
+	ObjectType obj_type=obj->getObjectType();
+	QAction *action = nullptr;
+
+	configureQuickMenu(obj);
+	popup_menu.addAction(action_edit);
+
+	if((obj_type==ObjectType::Schema && obj->isSystemObject()) ||
+			(!obj->isProtected() && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
+															 obj_type==ObjectType::Relationship || obj_type==ObjectType::Schema ||
+															 obj_type == ObjectType::Tag)))
+	{
+		if(BaseTable::isBaseTable(obj_type))
+		{
+			for(auto type : BaseObject::getChildObjectTypes(obj_type))
+				new_object_menu.addAction(actions_new_objects[type]);
+
+			if(obj_type==ObjectType::Table)
+				new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
+
+			action_new_object->setMenu(&new_object_menu);
+			popup_menu.insertAction(action_quick_actions, action_new_object);
+		}
+		else if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
+		{
+			if(obj_type==ObjectType::Relationship)
+			{
+				new_object_menu.addAction(actions_new_objects[ObjectType::Column]);
+				new_object_menu.addAction(actions_new_objects[ObjectType::Constraint]);
+
+				action_new_object->setMenu(&new_object_menu);
+				popup_menu.insertAction(action_quick_actions, action_new_object);
+			}
+
+			if(rel->getRelationshipType()==Relationship::RelationshipNn)
+			{
+				action_convert_relnn->setData(QVariant::fromValue<void *>(rel));
+				popup_menu.addAction(action_convert_relnn);
+			}
+
+			if(!rel->isSelfRelationship())
+			{
+				if(rel->getPoints().empty())
+				{
+					action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
+					popup_menu.addAction(action_break_rel_line);
+				}
+				else
+				{
+					action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
+					popup_menu.addAction(action_remove_rel_points);
+				}
+
+				popup_menu.addAction(action_jump_to_table);
+				jump_to_tab_menu.clear();
+
+				action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
+																						rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, SLOT(jumpToTable()));
+				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SrcTable))));
+
+				action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
+																						rel->getTable(BaseRelationship::DstTable)->getSignature(), this, SLOT(jumpToTable()));
+				action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DstTable))));
+			}
+		}
+		else if(obj_type == ObjectType::Schema)
+		{
+			for(auto type : BaseObject::getChildObjectTypes(ObjectType::Schema))
+				new_object_menu.addAction(actions_new_objects[type]);
+
+			action_new_object->setMenu(&new_object_menu);
+			popup_menu.insertAction(action_quick_actions, action_new_object);
+
+			popup_menu.addAction(action_sel_sch_children);
+			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
+		}
+		else if(obj_type == ObjectType::Tag)
+		{
+			popup_menu.addAction(action_sel_tagged_tabs);
+			action_sel_tagged_tabs->setData(QVariant::fromValue<void *>(obj));
+		}
+	}
+
+	/* Adding the action to highlight the object only when the sender is not one of the
+	the objects that calls this method from inside the ModelWidget instance. This action
+	is mainly used when the user wants to find a graphical object from the ModelObjects dockwidget*/
+	if((sender()!=this && sender()!=scene) && dynamic_cast<BaseGraphicObject *>(obj))
+	{
+		popup_menu.addAction(action_select_object);
+		action_select_object->setData(QVariant::fromValue<void *>(obj));
+	}
+
+	action_edit->setData(QVariant::fromValue<void *>(obj));
+	action_source_code->setData(QVariant::fromValue<void *>(obj));
+	action_deps_refs->setData(QVariant::fromValue<void *>(obj));
+	TableObject *tab_obj = dynamic_cast<TableObject *>(obj);
+
+	if(tab_obj &&  tab_obj->getObjectType()==ObjectType::Column)
+	{
+		Column *col=dynamic_cast<Column *>(tab_obj);
+
+		if(tab_obj->isAddedByRelationship())
+		{
+			action_parent_rel->setData(QVariant::fromValue<void *>(dynamic_cast<Column *>(tab_obj)->getParentRelationship()));
+			popup_menu.addAction(action_parent_rel);
+		}
+		else if(col->getType().isSerialType())
+		{
+			action_create_seq_col->setData(QVariant::fromValue<void *>(col));
+			popup_menu.addAction(action_create_seq_col);
+		}
+		else if(col->getType().isIntegerType())
+		{
+			action_conv_int_serial->setData(QVariant::fromValue<void *>(col));
+			popup_menu.addAction(action_conv_int_serial);
+		}
+	}
+
+	popup_menu.addSeparator();
+	popup_menu.addAction(action_source_code);
+
+	if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
+		popup_menu.addAction(action_deps_refs);
+}
+
+void ModelWidget::configureDatabaseActions()
+{
+	new_object_menu.addAction(action_database_category);
+	new_object_menu.addAction(action_schema_category);
+	new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
+	new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
+	new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
+	new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
+	action_new_object->setMenu(&new_object_menu);
+	popup_menu.addAction(action_new_object);
+
+	configureQuickMenu(db_model);
+
+	action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
+	action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
+
+	popup_menu.addAction(action_edit);
+
+	popup_menu.addSeparator();
+	popup_menu.addAction(action_source_code);
+
+	if(db_model->isProtected())
+		popup_menu.addAction(action_unprotect);
+	else
+		popup_menu.addAction(action_protect);
+
+	if(scene->items().count() > 1)
+		popup_menu.addAction(action_select_all);
+}
+
 void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 {
-	QMenu *submenu=nullptr;
-	PhysicalTable *table=nullptr;
 	unsigned count, i;
 	vector<QMenu *> submenus;
-	Constraint *constr=nullptr;
-	QAction *action=nullptr;
 	TableObject *tab_obj=nullptr;
 	QString str_aux;
 	bool protected_obj=false, model_protected=db_model->isProtected();
@@ -3893,172 +4157,19 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	this->selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
 
-	popup_menu.addAction(action_bring_to_front);
-	popup_menu.addAction(action_send_to_back);
-
 	if(objects.size() <= 1)
 	{
 		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() || (objects.size()==1 && objects[0]==db_model))
+			configureDatabaseActions();
+		else if(objects.size() == 1)
 		{
-			new_object_menu.addAction(action_database_category);
-			new_object_menu.addAction(action_schema_category);
-			new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
-			new_object_menu.addAction(actions_new_objects[ObjectType::GenericSql]);
-			new_object_menu.addAction(actions_new_objects[ObjectType::Tag]);
-			new_object_menu.addAction(actions_new_objects[ObjectType::Textbox]);
-			action_new_object->setMenu(&new_object_menu);
-			popup_menu.addAction(action_new_object);
-
-			configureSubmenu(db_model);
-
-			action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
-			action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
-
-			popup_menu.addAction(action_edit);
-
-			popup_menu.addSeparator();
-			popup_menu.addAction(action_source_code);
-
-			if(db_model->isProtected())
-				popup_menu.addAction(action_unprotect);
-			else
-				popup_menu.addAction(action_protect);
-
-			if(scene->items().count() > 1)
-				popup_menu.addAction(action_select_all);
-		}
-		else if(objects.size()==1)
-		{
-			BaseObject *obj=objects[0];
-			BaseRelationship *rel=dynamic_cast<BaseRelationship *>(obj);
-			ObjectType obj_type=obj->getObjectType();
-
-			configureSubmenu(obj);
-			popup_menu.addAction(action_edit);
-
-			if((obj_type==ObjectType::Schema && obj->isSystemObject()) ||
-					(!obj->isProtected() && (BaseTable::isBaseTable(obj_type) || obj_type==ObjectType::BaseRelationship ||
-																	 obj_type==ObjectType::Relationship || obj_type==ObjectType::Schema ||
-																	 obj_type == ObjectType::Tag)))
-			{
-				if(BaseTable::isBaseTable(obj_type))
-				{
-					for(auto type : BaseObject::getChildObjectTypes(obj_type))
-						new_object_menu.addAction(actions_new_objects[type]);
-
-					if(obj_type==ObjectType::Table)
-						new_object_menu.addAction(actions_new_objects[ObjectType::Relationship]);
-
-					action_new_object->setMenu(&new_object_menu);
-					popup_menu.insertAction(action_quick_actions, action_new_object);
-				}
-				else if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
-				{
-					if(obj_type==ObjectType::Relationship)
-					{
-						new_object_menu.addAction(actions_new_objects[ObjectType::Column]);
-						new_object_menu.addAction(actions_new_objects[ObjectType::Constraint]);
-
-						action_new_object->setMenu(&new_object_menu);
-						popup_menu.insertAction(action_quick_actions, action_new_object);
-					}
-
-					if(rel->getRelationshipType()==Relationship::RelationshipNn)
-					{
-						action_convert_relnn->setData(QVariant::fromValue<void *>(rel));
-						popup_menu.addAction(action_convert_relnn);
-					}
-
-					if(!rel->isSelfRelationship())
-					{
-						if(rel->getPoints().empty())
-						{
-							action_break_rel_line->setData(QVariant::fromValue<void *>(rel));
-							popup_menu.addAction(action_break_rel_line);
-						}
-						else
-						{
-							action_remove_rel_points->setData(QVariant::fromValue<void *>(rel));
-							popup_menu.addAction(action_remove_rel_points);
-						}
-
-						popup_menu.addAction(action_jump_to_table);
-						jump_to_tab_menu.clear();
-
-						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::SrcTable)->getObjectType())),
-																								rel->getTable(BaseRelationship::SrcTable)->getSignature(), this, SLOT(jumpToTable()));
-						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::SrcTable))));
-
-						action = jump_to_tab_menu.addAction(QIcon(PgModelerUiNs::getIconPath(rel->getTable(BaseRelationship::DstTable)->getObjectType())),
-																								rel->getTable(BaseRelationship::DstTable)->getSignature(), this, SLOT(jumpToTable()));
-						action->setData(QVariant::fromValue<void *>(reinterpret_cast<void *>(rel->getTable(BaseRelationship::DstTable))));
-					}
-				}
-				else if(obj_type == ObjectType::Schema)
-				{
-					for(auto type : BaseObject::getChildObjectTypes(ObjectType::Schema))
-						new_object_menu.addAction(actions_new_objects[type]);
-
-					action_new_object->setMenu(&new_object_menu);
-					popup_menu.insertAction(action_quick_actions, action_new_object);
-
-					popup_menu.addAction(action_sel_sch_children);
-					action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
-				}
-				else if(obj_type == ObjectType::Tag)
-				{
-					popup_menu.addAction(action_sel_tagged_tabs);
-					action_sel_tagged_tabs->setData(QVariant::fromValue<void *>(obj));
-				}
-			}
-
-			/* Adding the action to highlight the object only when the sender is not one of the
-			the objects that calls this method from inside the ModelWidget instance. This action
-			is mainly used when the user wants to find a graphical object from the ModelObjects dockwidget*/
-			if((sender()!=this && sender()!=scene) && dynamic_cast<BaseGraphicObject *>(obj))
-			{
-				popup_menu.addAction(action_select_object);
-				action_select_object->setData(QVariant::fromValue<void *>(obj));
-			}
-
-			action_edit->setData(QVariant::fromValue<void *>(obj));
-			action_source_code->setData(QVariant::fromValue<void *>(obj));
-			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
-			tab_obj=dynamic_cast<TableObject *>(obj);
-
-			if(tab_obj &&  tab_obj->getObjectType()==ObjectType::Column)
-			{
-				Column *col=dynamic_cast<Column *>(tab_obj);
-
-				if(tab_obj->isAddedByRelationship())
-				{
-					action_parent_rel->setData(QVariant::fromValue<void *>(dynamic_cast<Column *>(tab_obj)->getParentRelationship()));
-					popup_menu.addAction(action_parent_rel);
-				}
-				else if(col->getType().isSerialType())
-				{
-					action_create_seq_col->setData(QVariant::fromValue<void *>(col));
-					popup_menu.addAction(action_create_seq_col);
-				}
-				else if(col->getType().isIntegerType())
-				{
-					action_conv_int_serial->setData(QVariant::fromValue<void *>(col));
-					popup_menu.addAction(action_conv_int_serial);
-				}
-			}
-
-			popup_menu.addSeparator();
-			popup_menu.addAction(action_source_code);
-
-			if(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship()))
-				popup_menu.addAction(action_deps_refs);
+			tab_obj = dynamic_cast<TableObject *>(objects.front());
+			configureBasicActions(objects.front());
 		}
 	}
 	else
-	{
-		configureSubmenu(nullptr);
-	}
+		configureQuickMenu(nullptr);
 
 	if(objects.size() > 1)
 	{
@@ -4124,6 +4235,12 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 			popup_menu.addAction(action_schemas_rects);
 	}
 
+	if((objects.size() == 1 &&
+			(BaseTable::isBaseTable(objects[0]->getObjectType()) ||
+			 objects[0]->getObjectType() == ObjectType::Textbox)) ||
+		 (objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()))
+		popup_menu.addAction(action_move_objs);
+
 	if(!tab_obj &&
 		 (objects.empty() || (objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()) ||
 			(objects.size() == 1 && (objects[0]->getObjectType() == ObjectType::Database ||
@@ -4175,101 +4292,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	}
 
 	//If the table object is a column creates a special menu to acess the constraints that is applied to the column
-	if(tab_obj)
-	{
-		table=dynamic_cast<PhysicalTable *>(tab_obj->getParentTable());
-
-		if(tab_obj->getObjectType()==ObjectType::Column)
-		{
-			count=table->getConstraintCount();
-
-			for(i=0; i < count; i++)
-			{
-				constr=table->getConstraint(i);
-				if(constr->isColumnReferenced(dynamic_cast<Column *>(tab_obj), false))
-				{
-					switch(!constr->getConstraintType())
-					{
-						case ConstraintType::PrimaryKey: str_aux=QString("_%1").arg(TableObjectView::TextPrimaryKey); break;
-						case ConstraintType::ForeignKey: str_aux=QString("_%1").arg(TableObjectView::TextForeignKey); break;
-						case ConstraintType::Check: str_aux=QString("_%1").arg(TableObjectView::TextCheck); break;
-						case ConstraintType::Unique: str_aux=QString("_%1").arg(TableObjectView::TextUnique); break;
-						case ConstraintType::Exclude: str_aux=QString("_%1").arg(TableObjectView::TextExclude); break;
-					}
-
-					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
-					submenu=new QMenu(&popup_menu);
-					submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + str_aux)));
-					submenu->setTitle(constr->getName());
-
-					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("editar")));
-					action->setText(tr("Properties"));
-					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-					connect(action, SIGNAL(triggered(bool)), this, SLOT(editObject()));
-					submenu->addAction(action);
-
-					action=new QAction(dynamic_cast<QObject *>(submenu));
-					action->setIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")));
-					action->setText(tr("Source code"));
-					action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-					connect(action, SIGNAL(triggered(bool)), this, SLOT(showSourceCode()));
-					submenu->addAction(action);
-
-					if(!constr->isAddedByRelationship())
-					{
-						if(!constr->getParentTable()->isProtected())
-						{
-							action=new QAction(dynamic_cast<QObject *>(&popup_menu));
-							action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-							connect(action, SIGNAL(triggered(bool)), this, SLOT(protectObject()));
-							submenu->addAction(action);
-
-							if(constr->isProtected())
-							{
-								action->setIcon(QPixmap(PgModelerUiNs::getIconPath("desbloqobjeto")));
-								action->setText(tr("Unprotect"));
-							}
-							else
-							{
-								action->setIcon(QPixmap(PgModelerUiNs::getIconPath("bloqobjeto")));
-								action->setText(tr("Protect"));
-							}
-						}
-
-						action=new QAction(dynamic_cast<QObject *>(submenu));
-						action->setIcon(QPixmap(PgModelerUiNs::getIconPath("excluir")));
-						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-						action->setText(tr("Delete"));
-						submenu->addAction(action);
-						connect(action, SIGNAL(triggered()), this, SLOT(removeObjects()));
-
-						action=new QAction(dynamic_cast<QObject *>(submenu));
-						action->setIcon(QPixmap(PgModelerUiNs::getIconPath("delcascade")));
-						action->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(constr)));
-						action->setText(tr("Del. cascade"));
-						submenu->addAction(action);
-						connect(action, SIGNAL(triggered()), this, SLOT(removeObjectsCascade()));
-					}
-					submenus.push_back(submenu);
-				}
-			}
-
-			//Adding the constraint submenus to the main popup menu
-			if(!submenus.empty())
-			{
-				submenu=new QMenu(&popup_menu);
-				submenu->setTitle(tr("Constraints"));
-				submenu->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Constraint) + QString("_grp"))));
-				count=submenus.size();
-				for(i=0; i < count; i++)
-					submenu->addMenu(submenus[i]);
-
-				popup_menu.insertMenu(action_edit, submenu);
-			}
-		}
-	}
-
+	configureConstraintsMenu(tab_obj);
 
 	//Enable the popup actions that are visible
 	QList<QAction *> actions=popup_menu.actions();

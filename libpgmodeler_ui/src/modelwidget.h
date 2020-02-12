@@ -131,7 +131,9 @@ class ModelWidget: public QWidget {
 
 		database_category_menu,
 
-		schema_category_menu;
+		schema_category_menu,
+
+		move_objs_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -182,10 +184,19 @@ class ModelWidget: public QWidget {
 		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 
 		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *object);
+		void configureQuickMenu(BaseObject *object);
 
 		//! \brief Configures the submenu related to fade in/out operations
 		void configureFadeMenu();
+
+		//! \brief Configures the constraints submenu related to a column
+		void configureConstraintsMenu(TableObject *tab_obj);
+
+		//! \brief Configures the basic actions in the popup menu for a single object
+		void configureBasicActions(BaseObject *obj);
+
+		//! \brief Configures the basic actions in the popup menu for the database object
+		void configureDatabaseActions();
 
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
@@ -268,7 +279,8 @@ class ModelWidget: public QWidget {
 		*action_database_category,
 		*action_schema_category,
 		*action_bring_to_front,
-		*action_send_to_back;
+		*action_send_to_back,
+		*action_move_objs;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;

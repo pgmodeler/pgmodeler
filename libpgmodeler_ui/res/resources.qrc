@@ -263,6 +263,9 @@
         <file>icones/foreigntable_grp.png</file>
         <file>icones/swapvals.png</file>
         <file>icones/fix.png</file>
+        <file>icones/bringtofront.png</file>
+        <file>icones/sendtoback.png</file>
+        <file>icones/moveobjs.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>
