@@ -629,7 +629,9 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 		if(event->type() == QEvent::GraphicsSceneMouseMove)
 		{
 			emit s_sceneInteracted(m_event->scenePos());
-			emitSceneInteracted();
+
+			if(!selected_objects.empty())
+				emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
 		}
 
 		//Forcing the panning mode using the middle mouse button
@@ -4153,8 +4155,8 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 	quick_actions_menu.clear();
 	popup_menu.clear();
 
-	this->enableModelActions(false);
-	this->selected_objects=objects;
+	enableModelActions(false);
+	selected_objects=objects;
 	new_object_menu.setEnabled(!this->db_model->isProtected());
 
 	if(objects.size() <= 1)

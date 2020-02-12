@@ -292,6 +292,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Executes one of the pending operations (save, export, diff) after validate the model
 		void executePendingOperation(bool valid_error);
 
+		//! \brief Configures the "More" actions in the general toolbar by usinge the current_model's popup menu
+		void configureMoreActionsMenu();
+
 		void fixModel(const QString &filename=QString());
 		void showRightWidgetsBar();
 		void showBottomWidgetsBar();
