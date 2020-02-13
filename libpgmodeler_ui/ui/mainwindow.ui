@@ -1590,7 +1590,7 @@
     <string>Toggle the compact view on the model(s)</string>
    </property>
   </action>
-  <action name="action_other_actions">
+  <action name="action_more_actions">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/moreactions.png</normaloff>:/icones/icones/moreactions.png</iconset>

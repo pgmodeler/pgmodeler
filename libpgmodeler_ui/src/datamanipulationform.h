@@ -123,6 +123,8 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 
 		void clearItemsText();
 
+		void sortResults(int column, Qt::SortOrder order);
+
 		//! \brief List the tables based upon the current schema
 		void listTables();
 		
@@ -145,13 +147,13 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void enableColumnControlButtons();
 		
 		//! \brief Add a column to the "order by" list
-		void addColumnToList();
+		void addSortColumnToList();
 		
 		//! \brief Remove a column from the "order by" list
-		void removeColumnFromList();
+		void removeSortColumnFromList();
 		
 		//! \brief Clears the "order by" list
-		void clearColumnList();
+		void clearSortColumnList();
 		
 		//! \brief Toggles the sort mode between ASC and DESC when right clicking on a element at order by list
 		void changeOrderMode(QListWidgetItem *item);

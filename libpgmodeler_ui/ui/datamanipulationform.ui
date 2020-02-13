@@ -294,7 +294,7 @@
           <number>30</number>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
@@ -310,6 +310,9 @@
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>25</number>
+         </attribute>
+         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+          <bool>false</bool>
          </attribute>
         </widget>
         <widget class="QTabWidget" name="filter_tbw">
