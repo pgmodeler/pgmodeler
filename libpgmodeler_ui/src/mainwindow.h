@@ -56,7 +56,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
-		static constexpr int GeneralActionsCount=8;
+		static int GeneralActionsCount;
 
 		static constexpr int WelcomeView=0,
 		DesignView=1,
@@ -144,7 +144,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		arrange_menu,
 
-		more_actions_menu;
+		more_actions_menu,
+
+		fix_menu;
 
 		//! \brief QMainWindow::closeEvent() overload: Saves the configurations before close the application
 		void closeEvent(QCloseEvent *event);
@@ -289,6 +291,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Executes one of the pending operations (save, export, diff) after validate the model
 		void executePendingOperation(bool valid_error);
+
+		//! \brief Configures the "More" actions in the general toolbar by usinge the current_model's popup menu
+		void configureMoreActionsMenu();
 
 		void fixModel(const QString &filename=QString());
 		void showRightWidgetsBar();

@@ -70,6 +70,8 @@ class Textbox: public BaseGraphicObject{
 
 		double getFontSize();
 
+		virtual void setZValue(int z_value);
+
 		//! \brief Copies the attributes between textboxes
 		void operator = (Textbox &txtbox);
 };

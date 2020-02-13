@@ -23,10 +23,12 @@
 #include "sqlexecutionwidget.h"
 
 bool MainWindow::confirm_validation=true;
+int MainWindow::GeneralActionsCount=0;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	setupUi(this);
+	GeneralActionsCount = general_tb->actions().size();
 
 	map<QString, attribs_map >confs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -46,7 +48,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	hbox->setContentsMargins(4,4,4,4);
 	scene_info_parent->setLayout(hbox);
 
-	QToolButton *tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
+	fix_menu.addAction(action_fix_model);
+	fix_menu.addAction(action_handle_metadata);
+
+	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
+	tool_btn->setMenu(&fix_menu);
+	tool_btn->setPopupMode(QToolButton::InstantPopup);
+
+	tool_btn = qobject_cast<QToolButton *>(control_tb->widgetForAction(action_arrange_objects));
 	tool_btn->setMenu(&arrange_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
 	arrange_menu.addAction(tr("Grid"), this, SLOT(arrangeObjects()));
@@ -87,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		action_plugins->setEnabled(!plugins_menu->isEmpty());
 		action_plugins->setMenu(plugins_menu);
 
-		action_other_actions->setMenu(&more_actions_menu);
+		action_more_actions->setMenu(&more_actions_menu);
 
 		confs=GeneralConfigWidget::getConfigurationParams();
 		itr=confs.begin();
@@ -1096,13 +1105,10 @@ void MainWindow::setCurrentModel()
 		tool_btn=qobject_cast<QToolButton *>(general_tb->widgetForAction(current_model->action_source_code));
 		btns.push_back(tool_btn);
 
-		more_actions_menu.clear();
-		more_actions_menu.addAction(current_model->action_select_all);
-		more_actions_menu.addAction(current_model->action_fade);
-		more_actions_menu.addAction(current_model->action_collapse_mode);
-		more_actions_menu.addAction(current_model->action_edit_creation_order);
-		general_tb->addAction(action_other_actions);
-		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_other_actions));
+		configureMoreActionsMenu();
+		general_tb->addAction(action_more_actions);
+
+		tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_more_actions));
 		tool_btn->setPopupMode(QToolButton::InstantPopup);
 		btns.push_back(tool_btn);
 
@@ -1127,7 +1133,6 @@ void MainWindow::setCurrentModel()
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
-		//connect(current_model, SIGNAL(s_manipulationCanceled()),this, SLOT(updateDockWidgets()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_manipulationCanceled()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified()),this, SLOT(updateDockWidgets()), Qt::UniqueConnection);
@@ -1138,6 +1143,7 @@ void MainWindow::setCurrentModel()
 		connect(current_model, SIGNAL(s_zoomModified(double)), this, SLOT(updateToolsState()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified()), this, SLOT(updateModelTabName()), Qt::UniqueConnection);
 
+		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), this, SLOT(configureMoreActionsMenu()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_sceneInteracted(BaseObjectView*)), scene_info_wgt, SLOT(updateSelectedObject(BaseObjectView*)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_sceneInteracted(int,QRectF)), scene_info_wgt, SLOT(updateSelectedObjects(int,QRectF)), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_sceneInteracted(QPointF)), scene_info_wgt, SLOT(updateMousePosition(QPointF)), Qt::UniqueConnection);
@@ -2108,6 +2114,21 @@ void MainWindow::toggleLayersWidget(bool show)
 	layers_wgt->move(btn_pos.x() + general_tb->width(),
 									 tb_pos.y() - layers_wgt->height() * 0.80);
 	layers_wgt->setVisible(show);
+}
+
+void MainWindow::configureMoreActionsMenu()
+{
+	if(!current_model)
+		return;
+
+	QList<QAction *> actions = current_model->popup_menu.actions();
+
+	more_actions_menu.clear();
+	actions.removeOne(current_model->action_new_object);
+	actions.removeOne(current_model->action_quick_actions);
+	actions.removeOne(current_model->action_edit);
+	actions.removeOne(current_model->action_source_code);
+	more_actions_menu.addActions(actions);
 }
 
 void MainWindow::switchView(int view)

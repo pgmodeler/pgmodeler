@@ -3453,11 +3453,13 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	xmlparser.getElementAttributes(attribs);
-
 	obj_type_aux=object->getObjectType();
 
 	if(obj_type_aux!=ObjectType::Cast && obj_type_aux != ObjectType::UserMapping)
 		object->setName(attribs[Attributes::Name]);
+
+	if(BaseGraphicObject::isGraphicObject(obj_type_aux) && !attribs[Attributes::ZValue].isEmpty())
+		dynamic_cast<BaseGraphicObject *>(object)->setZValue(attribs[Attributes::ZValue].toInt());
 
 	if(BaseObject::acceptsAlias(obj_type_aux))
 		object->setAlias(attribs[Attributes::Alias]);
@@ -3581,13 +3583,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				.arg(BaseObject::getTypeName(obj_type)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!object->getSchema() &&
-			(obj_type_aux==ObjectType::Function || obj_type_aux==ObjectType::Table ||
-			 obj_type_aux==ObjectType::View  || obj_type_aux==ObjectType::Domain ||
-			 obj_type_aux==ObjectType::Aggregate || obj_type_aux==ObjectType::Operator ||
-			 obj_type_aux==ObjectType::Sequence || obj_type_aux==ObjectType::Conversion ||
-			 obj_type_aux==ObjectType::Type || obj_type_aux==ObjectType::OpFamily ||
-			 obj_type_aux==ObjectType::OpClass))
+	else if(!object->getSchema() && BaseObject::acceptsSchema(obj_type_aux))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvObjectAllocationNoSchema)
 						.arg(object->getName())

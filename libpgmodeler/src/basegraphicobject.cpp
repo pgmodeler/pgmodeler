@@ -27,8 +27,10 @@ BaseGraphicObject::BaseGraphicObject()
 	attributes[Attributes::Position]=QString();
 	attributes[Attributes::FadedOut]=QString();
 	attributes[Attributes::Layer]=QString();
+	attributes[Attributes::ZValue]=QString();
 	receiver_object=nullptr;
-	layer = 0;
+	layer = 0;	
+	z_value=0;
 }
 
 void BaseGraphicObject::setProtected(bool value)
@@ -103,6 +105,7 @@ void BaseGraphicObject::operator = (BaseGraphicObject &obj)
 {
 	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(obj);
 	this->position=obj.position;
+	this->z_value=obj.z_value;
 }
 
 void BaseGraphicObject::setReceiverObject(QObject *obj)
@@ -134,4 +137,19 @@ void BaseGraphicObject::setLayer(unsigned layer)
 unsigned BaseGraphicObject::getLayer()
 {
 	return layer;
+}
+
+void BaseGraphicObject::setZValue(int z_value)
+{
+	if(z_value < MinZValue)
+		z_value = MinZValue;
+	else if(z_value > MaxZValue)
+		z_value = MaxZValue;
+
+	this->z_value = z_value;
+}
+
+int BaseGraphicObject::getZValue()
+{
+	return z_value;
 }

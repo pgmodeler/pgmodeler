@@ -28,6 +28,7 @@ BaseTable::BaseTable()
 	attributes[Attributes::Pagination]=QString();
 	attributes[Attributes::AttribsPage]=QString();
 	attributes[Attributes::ExtAttribsPage]=QString();
+	attributes[Attributes::ZValue]=QString();
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	resetCurrentPages();
@@ -115,4 +116,10 @@ void BaseTable::setCollapseMode(CollapseMode coll_mode)
 {
 	setCodeInvalidated(collapse_mode != coll_mode);
 	collapse_mode = coll_mode;
+}
+
+void BaseTable::setZValue(int z_value)
+{
+	setCodeInvalidated(this->z_value != z_value);
+	BaseGraphicObject::setZValue(z_value);
 }

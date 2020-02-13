@@ -3,31 +3,16 @@
 #          Code generation can be broken if incorrect changes are made.
 [<textbox name=] "{name}" [ layer=]"{layer}"
 
- %if {protected} %then 
-  [ protected=] "true"
- %end
-
- %if {italic} %then 
-  [ italic=] "true"
- %end
-
- %if {bold} %then 
-  [ bold=] "true"
- %end
-
- %if {underline} %then
-  [ underline=] "true"
- %end
-
- %if {color} %then
-  [ color=] "{color}"
- %end
+ %if {protected} %then [ protected=] "true" %end
+ %if {italic} %then [ italic=] "true" %end
+ %if {bold} %then [ bold=] "true" %end
+ %if {underline} %then [ underline=] "true" %end
+ %if {color} %then [ color=] "{color}" %end
+ %if {faded-out} %then [ faded-out=] "true" %end
+ %if {z-value} %then [ z-value=] "{z-value}" %end
  
- %if {faded-out} %then
-  [ faded-out=] "true"
- %end
-
-  [ font-size=] "{font-size}"
+ [ font-size=] "{font-size}"
+  
  > $br
 
  {position}

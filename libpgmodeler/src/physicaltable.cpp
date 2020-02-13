@@ -1386,6 +1386,7 @@ void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_ob
 		setFadedOutAttribute();
 		attributes[Attributes::InitialData]=initial_data;
 		attributes[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
+		attributes[Attributes::ZValue]=QString::number(z_value);
 	}
 	else
 		attributes[Attributes::InitialData]=getInitialDataCommands();

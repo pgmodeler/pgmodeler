@@ -73,8 +73,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 		this->addToGroup(line_circles[i]);
 	}
 
-	//Relationship has the minor Z, being on the bottom of scene object's stack
-	this->setZValue(-1);
+	this->setZValue(-99);
 	this->configureObject();
 }
 

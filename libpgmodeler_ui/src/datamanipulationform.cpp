@@ -157,11 +157,11 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listColumns()));
 	connect(table_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(retrieveData()));
 	connect(refresh_tb, SIGNAL(clicked()), this, SLOT(retrieveData()));
-	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addColumnToList()));
-	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeColumnFromList()));
+	connect(add_ord_col_tb, SIGNAL(clicked()), this, SLOT(addSortColumnToList()));
+	connect(ord_columns_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(removeSortColumnFromList()));
 	connect(ord_columns_lst, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(changeOrderMode(QListWidgetItem*)));
-	connect(rem_ord_col_tb, SIGNAL(clicked()), this, SLOT(removeColumnFromList()));
-	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearColumnList()));
+	connect(rem_ord_col_tb, SIGNAL(clicked()), this, SLOT(removeSortColumnFromList()));
+	connect(clear_ord_cols_tb, SIGNAL(clicked()), this, SLOT(clearSortColumnList()));
 	connect(results_tbw, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(markUpdateOnRow(QTableWidgetItem *)));
 	connect(delete_tb, SIGNAL(clicked()), this, SLOT(markDeleteOnRows()));
 	connect(add_tb, SIGNAL(clicked()), this, SLOT(addRow()));
@@ -198,6 +198,7 @@ DataManipulationForm::DataManipulationForm(QWidget * parent, Qt::WindowFlags f):
 
 	connect(results_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(enableRowControlButtons()));
 	connect(csv_load_wgt, SIGNAL(s_csvFileLoaded()), this, SLOT(loadDataFromCsv()));
+	connect(results_tbw->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortResults(int,Qt::SortOrder)));
 }
 
 void DataManipulationForm::setAttributes(Connection conn, const QString curr_schema, const QString curr_table, const QString &filter)
@@ -258,6 +259,18 @@ void DataManipulationForm::clearItemsText()
 				results_tbw->item(row,col)->setText("");
 		}
 	}
+}
+
+void DataManipulationForm::sortResults(int column, Qt::SortOrder order)
+{
+	clearSortColumnList();
+	ord_column_cmb->setCurrentIndex(column);
+	asc_rb->setChecked(order == Qt::SortOrder::AscendingOrder);
+	desc_rb->setChecked(order == Qt::SortOrder::DescendingOrder);
+	addSortColumnToList();
+	retrieveData();
+	results_tbw->horizontalHeader()->setSortIndicator(column, order);
+	results_tbw->horizontalHeader()->setSortIndicatorShown(true);
 }
 
 void DataManipulationForm::listTables()
@@ -525,7 +538,7 @@ void DataManipulationForm::resetAdvancedControls()
 	clear_ord_cols_tb->setEnabled(false);
 }
 
-void DataManipulationForm::addColumnToList()
+void DataManipulationForm::addSortColumnToList()
 {
 	if(ord_column_cmb->count() > 0)
 	{
@@ -659,7 +672,7 @@ void DataManipulationForm::loadDataFromCsv(bool load_from_clipboard, bool force_
 	}
 }
 
-void DataManipulationForm::removeColumnFromList()
+void DataManipulationForm::removeSortColumnFromList()
 {
 	if(qApp->mouseButtons()==Qt::NoButton || qApp->mouseButtons()==Qt::LeftButton)
 	{
@@ -677,7 +690,7 @@ void DataManipulationForm::removeColumnFromList()
 	}
 }
 
-void DataManipulationForm::clearColumnList()
+void DataManipulationForm::clearSortColumnList()
 {
 	ord_column_cmb->clear();
 	ord_column_cmb->addItems(col_names);

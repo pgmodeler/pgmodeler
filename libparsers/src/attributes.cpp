@@ -640,6 +640,7 @@ namespace Attributes {
 	WordSeparators("word-separators"),
 	WorkingDir("working-dir"),
 	XPos("x"),
-	YPos("y");
+	YPos("y"),
+	ZValue("z-value");
 }
 

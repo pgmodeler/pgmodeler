@@ -37,6 +37,10 @@ class ModelWidget: public QWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Constants used to control the object stacking method
+		static constexpr int BringToFront = 1,
+		SendToBack = -1;
+
 		XmlParser *xmlparser;
 
 		NewObjectOverlayWidget *new_obj_overlay_wgt;
@@ -127,7 +131,9 @@ class ModelWidget: public QWidget {
 
 		database_category_menu,
 
-		schema_category_menu;
+		schema_category_menu,
+
+		move_objs_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -178,10 +184,19 @@ class ModelWidget: public QWidget {
 		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 
 		//! \brief Configures the submenu related to the object
-		void configureSubmenu(BaseObject *object);
+		void configureQuickMenu(BaseObject *object);
 
 		//! \brief Configures the submenu related to fade in/out operations
 		void configureFadeMenu();
+
+		//! \brief Configures the constraints submenu related to a column
+		void configureConstraintsMenu(TableObject *tab_obj);
+
+		//! \brief Configures the basic actions in the popup menu for a single object
+		void configureBasicActions(BaseObject *obj);
+
+		//! \brief Configures the basic actions in the popup menu for the database object
+		void configureDatabaseActions();
 
 		//! \brief Fades in our out the object types held by the specified action
 		void fadeObjects(QAction *action, bool fade_in);
@@ -201,6 +216,10 @@ class ModelWidget: public QWidget {
 		void updateMagnifierArea();
 
 		void showMagnifierArea(bool show);
+
+		/*! \brief Move the selected objects in the Z coordenate either to bottom or top.
+		 * The direction is defined by the constants BringToTop or SendToBottom. */
+		void moveObjectsInZStack(int direction);
 
 	protected:
 		static constexpr unsigned BreakVertNinetyDegrees=0, //Break vertically the line in one 90° angle
@@ -258,7 +277,10 @@ class ModelWidget: public QWidget {
 		*action_hide_schemas_rects,
 		*action_edit_data,
 		*action_database_category,
-		*action_schema_category;
+		*action_schema_category,
+		*action_bring_to_front,
+		*action_send_to_back,
+		*action_move_objs;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -517,6 +539,9 @@ class ModelWidget: public QWidget {
 		void saveModel();
 		void printModel(QPrinter *printer, bool print_grid, bool print_page_nums);
 		void update();
+
+		void bringToFront();
+		void sendToBack();
 
 	signals:
 		void s_objectModified();

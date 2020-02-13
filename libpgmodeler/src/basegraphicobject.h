@@ -59,6 +59,9 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		//! \brief This attributes holds the layer in which the object is visible.
 		unsigned layer;
 
+		//! \brief Stores the table's Z position in the canvas
+		int z_value;
+
 		/*! \brief Method that defines the objects position attributes used in generation
 		 of XML code definition */
 		void setPositionAttribute();
@@ -69,6 +72,9 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		void setFadedOutAttribute();
 
 	public:
+		static constexpr int MaxZValue = 50,
+		MinZValue = -50;
+
 		BaseGraphicObject();
 		~BaseGraphicObject(void){}
 
@@ -120,6 +126,10 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
 		//! \brief Returns the layer in which the object is visible
 		unsigned getLayer();
+
+		virtual void setZValue(int z_value);
+
+		int getZValue();
 
 	signals:
 		//! \brief Signal emitted when the user calls the setModified() method

@@ -137,6 +137,11 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 			pending_geom_update = false;
 		}
 	}
+	else if(change == ItemZValueHasChanged)
+	{
+		BaseTable *tab = dynamic_cast<BaseTable *>(getUnderlyingObject());
+		tab->setZValue(this->zValue());
+	}
 
 	if(change==ItemPositionHasChanged)
 		emit s_objectMoved();
@@ -434,6 +439,7 @@ void BaseTableView::__configureObject(double width)
 						tr("Connected rels: %1").arg(this->getConnectRelsCount());
 
 	this->setToolTip(this->table_tooltip);
+	this->setZValue(tab->getZValue());
 
 	configureObjectSelection();
 	configureObjectShadow();

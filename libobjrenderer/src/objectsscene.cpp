@@ -676,8 +676,13 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		}
 
 		if(obj)
-		{
+		{		
 			obj->setVisible(isLayerActive(obj->getLayer()));
+
+			// Relationships and schemas don't have their z value changed
+			if(!rel && !dynamic_cast<SchemaView *>(item))
+				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
+
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
 		}
 

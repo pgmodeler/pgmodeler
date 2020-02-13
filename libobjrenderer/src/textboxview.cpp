@@ -114,6 +114,7 @@ void TextboxView::__configureObject()
 	this->bounding_rect.setTopLeft(text_item->boundingRect().topLeft());
 	this->bounding_rect.setBottomRight(text_item->boundingRect().bottomRight());
 
+	this->setZValue(dynamic_cast<Textbox *>(getUnderlyingObject())->getZValue());
 	BaseObjectView::__configureObject();
 
 	if(!txtbox_tooltip.isEmpty())
@@ -145,4 +146,15 @@ void TextboxView::configureObjectSelection()
 	pol_item->setPos(0,0);
 	pol_item->setBrush(this->getFillStyle(Attributes::ObjSelection));
 	pol_item->setPen(this->getBorderStyle(Attributes::ObjSelection));
+}
+
+QVariant TextboxView::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if(change == ItemZValueHasChanged)
+	{
+		Textbox *txtbox = dynamic_cast<Textbox *>(getUnderlyingObject());
+		txtbox->setZValue(zValue());
+	}
+
+	return BaseObjectView::itemChange(change, value);
 }

@@ -56,6 +56,7 @@ QString Textbox::getCodeDefinition(unsigned def_type)
 
 		attributes[Attributes::FontSize]=QString("%1").arg(font_size);
 		attributes[Attributes::Layer]=QString::number(layer);
+		attributes[Attributes::ZValue]=QString::number(z_value);
 
 		return this->BaseObject::__getCodeDefinition(SchemaParser::XmlDefinition);
 	}
@@ -107,4 +108,10 @@ void Textbox::setFontSize(double size)
 double Textbox::getFontSize()
 {
 	return font_size;
+}
+
+void Textbox::setZValue(int z_value)
+{
+	setCodeInvalidated(this->z_value != z_value);
+	BaseGraphicObject::setZValue(z_value);
 }

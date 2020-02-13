@@ -574,6 +574,7 @@ void BaseObjectView::togglePlaceholder(bool visible)
 			QPen pen=BaseObjectView::getBorderStyle(Attributes::Placeholder);
 			pen.setStyle(Qt::DashLine);
 
+			placeholder->setZValue(this->zValue() - 1);
 			placeholder->setBrush(BaseObjectView::getFillStyle(Attributes::Placeholder));
 			placeholder->setPen(pen);
 			placeholder->setRect(QRectF(QPointF(0,0),this->bounding_rect.size()));
