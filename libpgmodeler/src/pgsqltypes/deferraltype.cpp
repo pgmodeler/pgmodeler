@@ -52,3 +52,8 @@ unsigned DeferralType::operator = (const QString &type_name)
 	BaseType::setType(type_id,Offset,TypesCount);
 	return type_id;
 }
+
+QString DeferralType::operator ~ ()
+{
+	return type_list[type_idx];
+}

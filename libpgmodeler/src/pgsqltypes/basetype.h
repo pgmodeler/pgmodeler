@@ -42,23 +42,28 @@ class BaseType{
 		/*! \brief Sets an id to the type according to the limit stablished by the attribute
 		 offset and type_count from each class */
 		void setType(unsigned type_id, unsigned offset, unsigned count);
+		void setType(unsigned type_id, const QStringList &type_list);
 
 		//! \brief Checks if the type id is valid according to the offset/count for the class
 		bool isTypeValid(unsigned type_id, unsigned offset, unsigned count);
+		bool isTypeValid(unsigned type_id, const QStringList &type_list);
 
 		//! \brief Returns the string list for all types on the specified interval (offset-count)
 		static void getTypes(QStringList &types, unsigned offset, unsigned count);
 
 		//! \brief Returns the type id searching by its name. Returns BaseType::null when not found
 		static unsigned getType(const QString &type_name, unsigned offset, unsigned count);
+		static unsigned getType(const QString &type_name, const QStringList &type_list);
 
 	public:
 		static constexpr unsigned Null=0;
 
 		BaseType();
 
+		virtual ~BaseType();
+
 		//! \brief Returns the name of the type
-		QString operator ~ ();
+		virtual QString operator ~ () = 0;
 
 		//! \brief Returns the code (id) of the type
 		unsigned operator ! ();
@@ -67,7 +72,7 @@ class BaseType{
 		unsigned getTypeId();
 
 		//! \brief Returns the name of the type
-		QString getTypeName();
+		//QString getTypeName();
 
 		bool operator == (BaseType &type);
 		bool operator == (unsigned type_id);

@@ -64,6 +64,7 @@ class SpatialType: public BaseType{
 
 		static void getTypes(QStringList &type_list);
 		QString operator * ();
+		virtual QString operator ~();
 };
 
 #endif 

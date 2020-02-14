@@ -490,8 +490,8 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::ReturnsSetOf]=(returns_setof ? Attributes::True : QString());
 	attributes[Attributes::WindowFunc]=(is_wnd_function ? Attributes::True : QString());
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : QString());
-	attributes[Attributes::SecurityType]=(~security_type);
-	attributes[Attributes::BehaviorType]=(~behavior_type);
+	attributes[Attributes::SecurityType]=~security_type;
+	attributes[Attributes::BehaviorType]=~behavior_type;
 	attributes[Attributes::Definition]=source_code;
 
 	attributes[Attributes::Signature]=signature;

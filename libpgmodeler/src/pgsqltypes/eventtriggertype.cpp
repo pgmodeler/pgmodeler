@@ -52,3 +52,8 @@ unsigned EventTriggerType::operator = (const QString &type_name)
 	BaseType::setType(type_id,Offset,TypesCount);
 	return type_id;
 }
+
+QString EventTriggerType::operator ~ ()
+{
+	return type_list[type_idx];
+}

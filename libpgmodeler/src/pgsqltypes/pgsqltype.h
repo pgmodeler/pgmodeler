@@ -187,7 +187,7 @@ class PgSqlType: public BaseType{
 
 		PgSqlType getAliasType();
 		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
-		QString operator ~ ();
+		virtual QString operator ~ ();
 
 		//! \brief Returns the SQL definition for the type
 		QString operator * ();

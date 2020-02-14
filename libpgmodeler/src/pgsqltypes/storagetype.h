@@ -48,6 +48,7 @@ class StorageType: public BaseType{
 		bool operator == (const char *type_name);
 		bool operator != (const QString &type_name);
 		bool operator != (StorageType type);
+		virtual QString operator ~();
 };
 
 

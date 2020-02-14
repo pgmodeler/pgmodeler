@@ -62,3 +62,8 @@ bool EventType::operator < (unsigned type_id) const
 {
 	return (type_idx < type_id);
 }
+
+QString EventType::operator ~ ()
+{
+	return type_list[type_idx];
+}

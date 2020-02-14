@@ -92,8 +92,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		FunctionType::getTypes(types);
 		func_type_cmb->addItems(types);
 
-		BehaviorType::getTypes(types);
-		behavior_cmb->addItems(types);
+		behavior_cmb->addItems(BehaviorType::getTypes());
 
 		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
 		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));

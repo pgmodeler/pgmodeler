@@ -78,7 +78,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		DeferralType::getTypes(list);
 		deferral_cmb->addItems(list);
 
-		ActionType::getTypes(list);
+		list = ActionType::getTypes();
 		on_delete_cmb->addItems(list);
 		on_update_cmb->addItems(list);
 

@@ -29,21 +29,21 @@
 
 class BehaviorType: public BaseType{
 	private:
-		static constexpr unsigned Offset=152;
-		static constexpr unsigned TypesCount=3;
+		static QStringList type_names;
 
 	public:
-		static constexpr unsigned CalledOnNullInput=Offset;
-		static constexpr unsigned ReturnsNullOnNullInput=Offset+1;
-		static constexpr unsigned Strict=Offset+2;
+		static constexpr unsigned CalledOnNullInput = 0,
+		ReturnsNullOnNullInput = 1,
+		Strict = 2;
 
 		BehaviorType(const QString &type_name);
 		BehaviorType(unsigned type_id);
 		BehaviorType();
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+		virtual QString operator ~();
 };
 
 #endif

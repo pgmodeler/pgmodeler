@@ -29,27 +29,24 @@
 
 class ActionType: public BaseType{
 	private:
-		//! \brief Initial position of the names related to the class on BaseType::type_list
-		static constexpr unsigned Offset=1;
-
-		//! \brief Type count for the class related to the list
-		static constexpr unsigned TypesCount=5;
+		static QStringList type_names;
 
 	public:
-		static constexpr unsigned NoAction=Offset;
-		static constexpr unsigned Restrict=Offset+1;
-		static constexpr unsigned Cascade=Offset+2;
-		static constexpr unsigned SetNull=Offset+3;
-		static constexpr unsigned SetDefault=Offset+4;
+		static constexpr unsigned NoAction = 0,
+		Restrict = 1,
+		Cascade = 2,
+		SetNull = 3,
+		SetDefault = 4;
 
 		ActionType(const QString &type_name);
 		ActionType(unsigned type_id);
 		ActionType();
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+		virtual QString operator ~();
 };
 
 #endif

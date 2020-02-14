@@ -77,3 +77,8 @@ bool StorageType::operator != (StorageType type)
 {
 	return (this->type_idx!=type.type_idx);
 }
+
+QString StorageType::operator ~ ()
+{
+	return type_list[type_idx];
+}

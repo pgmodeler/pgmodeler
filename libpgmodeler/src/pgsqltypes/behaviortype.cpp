@@ -18,14 +18,21 @@
 
 #include "behaviortype.h"
 
+QStringList BehaviorType::type_names =
+{
+	"CALLED ON NULL INPUT",
+	"RETURNS NULL ON NULL INPUT",
+	"STRICT"
+};
+
 BehaviorType::BehaviorType(unsigned type_id)
 {
-	(*this)=type_id;
+	(*this) = type_id;
 }
 
 BehaviorType::BehaviorType()
 {
-	type_idx=Offset;
+	type_idx = CalledOnNullInput;
 }
 
 BehaviorType::BehaviorType(const QString &type_name)
@@ -33,22 +40,25 @@ BehaviorType::BehaviorType(const QString &type_name)
 	(*this)=type_name;
 }
 
-void BehaviorType::getTypes(QStringList &type_list)
+QStringList BehaviorType::getTypes()
 {
-	BaseType::getTypes(type_list,Offset,TypesCount);
+	return type_names;
 }
 
 unsigned BehaviorType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	BaseType::setType(type_id, type_names);
 	return type_idx;
 }
 
 unsigned BehaviorType::operator = (const QString &type_name)
 {
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
+	unsigned type_id = BaseType::getType(type_name, type_names);
+	BaseType::setType(type_id, type_names);
 	return type_id;
+}
+
+QString BehaviorType::operator ~ ()
+{
+	return type_names[type_idx];
 }

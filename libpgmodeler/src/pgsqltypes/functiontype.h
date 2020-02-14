@@ -44,6 +44,7 @@ class FunctionType: public BaseType{
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
+		virtual QString operator ~();
 };
 
 #endif 

@@ -87,3 +87,8 @@ bool EncodingType::operator != (unsigned type_id)
 {
 	return (this->type_idx!=type_id);
 }
+
+QString EncodingType::operator ~ ()
+{
+	return type_list[type_idx];
+}

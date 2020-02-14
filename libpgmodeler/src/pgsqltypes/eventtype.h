@@ -44,6 +44,8 @@ class EventType: public BaseType{
 		EventType();
 
 		static void getTypes(QStringList &type_list);
+
+		virtual QString operator ~ ();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
 

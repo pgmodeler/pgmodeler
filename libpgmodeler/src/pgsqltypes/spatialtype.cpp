@@ -109,3 +109,8 @@ QString SpatialType::operator * ()
 	else
 		return QString();
 }
+
+QString SpatialType::operator ~ ()
+{
+	return type_list[type_idx];
+}

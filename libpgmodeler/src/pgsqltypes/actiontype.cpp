@@ -18,37 +18,49 @@
 
 #include "actiontype.h"
 
+QStringList ActionType::type_names =
+{
+	"NO ACTION",
+	"RESTRICT",
+	"CASCADE",
+	"SET NULL",
+	"SET DEFAULT"
+};
+
 ActionType::ActionType(unsigned type_id)
 {
-	(*this)=type_id;
+	(*this) = type_id;
 }
 
 ActionType::ActionType(const QString &type_name)
 {
-	(*this)=type_name;
+	(*this) = type_name;
 }
 
 ActionType::ActionType()
 {
-	type_idx=Offset;
+	type_idx = NoAction;
 }
 
-void ActionType::getTypes(QStringList &type_list)
+QStringList ActionType::getTypes()
 {
-	BaseType::getTypes(type_list,Offset,TypesCount);
+	return type_names;
 }
 
 unsigned ActionType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	BaseType::setType(type_id, type_names);
 	return type_idx;
 }
 
 unsigned ActionType::operator = (const QString &type_name)
 {
-	unsigned type_idx;
-
-	type_idx=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_idx,Offset,TypesCount);
+	unsigned type_idx = BaseType::getType(type_name, type_names);
+	BaseType::setType(type_idx, type_names);
 	return type_idx;
+}
+
+QString ActionType::operator ~ ()
+{
+	return type_names[type_idx];
 }

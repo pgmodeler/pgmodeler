@@ -240,6 +240,11 @@ BaseType::BaseType()
 	type_idx=BaseType::Null;
 }
 
+BaseType::~BaseType()
+{
+
+}
+
 QString BaseType::getTypeString(unsigned type_id)
 {
 	if(type_id > TypesCount)
@@ -260,10 +265,28 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 		type_idx=type_id;
 }
 
+void BaseType::setType(unsigned type_id, const QStringList &type_list)
+{
+	//Raises an error if the type count is invalid
+	if(type_list.isEmpty())
+		throw Exception(ErrorCode::ObtTypesInvalidQuantity,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the type id is invalid
+	else if(!isTypeValid(type_id, type_list))
+		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else
+		type_idx=type_id;
+}
+
 bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
 {
 	//Returns if the type id is valid according to the specified interval (offset-count)
 	return ((type_id>=offset && type_id<=(offset+count-1)) || type_id==BaseType::Null);
+}
+
+bool BaseType::isTypeValid(unsigned type_id, const QStringList &type_list)
+{
+	//Returns if the type id is valid according to the specified interval (offset-count)
+	return (type_id < static_cast<unsigned>(type_list.size()) || type_id==BaseType::Null);
 }
 
 void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
@@ -314,6 +337,21 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
 	}
 }
 
+unsigned BaseType::getType(const QString &type_name, const QStringList &type_list)
+{
+	if(type_name.isEmpty())
+		return BaseType::Null;
+	else
+	{
+		int idx = type_list.indexOf(type_name);
+
+		if(idx >= 0)
+			return idx;
+
+		return BaseType::Null;
+	}
+}
+
 QString BaseType::operator ~ ()
 {
 	return type_list[type_idx];
@@ -329,10 +367,10 @@ unsigned BaseType::getTypeId()
 	return type_idx;
 }
 
-QString BaseType::getTypeName()
+/*QString BaseType::getTypeName()
 {
 	return type_list[type_idx];
-}
+} */
 
 bool BaseType::operator == (BaseType &type)
 {

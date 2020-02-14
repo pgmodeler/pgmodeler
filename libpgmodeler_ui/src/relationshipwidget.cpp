@@ -130,7 +130,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
 		vlayout->addWidget(frame);
 
-		ActionType::getTypes(list);
+		list = ActionType::getTypes();
 		list.push_front(tr("Default"));
 		del_action_cmb->addItems(list);
 		upd_action_cmb->addItems(list);

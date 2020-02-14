@@ -45,6 +45,7 @@ class EncodingType: public BaseType{
 		bool operator != (const QString &type_name);
 		bool operator != (EncodingType type);
 		bool operator != (unsigned tipo_id);
+		virtual QString operator ~();
 };
 
 #endif 
