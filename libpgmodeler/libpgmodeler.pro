@@ -15,6 +15,7 @@ windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
 	   src/cast.h \
+	   src/defaultlanguages.h \
 	   src/function.h \
 	   src/language.h \
 	   src/operator.h \

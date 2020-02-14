@@ -18,6 +18,7 @@
 
 #include "databasemodel.h"
 #include "pgmodelerns.h"
+#include "defaultlanguages.h"
 #include <QtDebug>
 
 unsigned DatabaseModel::dbmodel_id=2000;
@@ -9905,7 +9906,8 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	Schema *public_sch=nullptr, *pg_catalog=nullptr;
 	Language *lang=nullptr;
 	Tablespace *tbspace=nullptr;
-	LanguageType lang_types[]={ LanguageType::C, LanguageType::Sql, LanguageType::PlPgsql, LanguageType::Internal };
+	QStringList langs={ DefaultLanguages::C, DefaultLanguages::Sql,
+											DefaultLanguages::PlPgsql, DefaultLanguages::Internal };
 	Role *postgres=nullptr;
 	Collation *collation=nullptr;
 	QString collnames[]={ "default", "C", "POSIX" };
@@ -9939,12 +9941,12 @@ void DatabaseModel::createSystemObjects(bool create_public)
 		addCollation(collation);
 	}
 
-	for(unsigned i=0; i < sizeof(lang_types)/sizeof(LanguageType); i++)
+	for(auto &lang_name : langs)
 	{
-		if(getObjectIndex(~LanguageType(lang_types[i]), ObjectType::Language) < 0)
+		if(getObjectIndex(lang_name, ObjectType::Language) < 0)
 		{
-			lang=new Language;
-			lang->BaseObject::setName(~LanguageType(lang_types[i]));
+			lang = new Language;
+			lang->BaseObject::setName(lang_name);
 			lang->setSystemObject(true);
 			addLanguage(lang);
 		}

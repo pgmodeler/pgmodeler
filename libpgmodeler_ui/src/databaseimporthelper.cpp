@@ -17,6 +17,7 @@
 */
 
 #include "databaseimporthelper.h"
+#include "defaultlanguages.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 
@@ -1145,7 +1146,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
-		if(getObjectName(attribs[Attributes::Language])==~LanguageType("c"))
+		if(getObjectName(attribs[Attributes::Language]).toLower() == DefaultLanguages::C)
 		{
 			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();

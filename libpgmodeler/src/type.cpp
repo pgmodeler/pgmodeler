@@ -17,6 +17,7 @@
 */
 
 #include "type.h"
+#include "defaultlanguages.h"
 
 Type::Type()
 {
@@ -210,8 +211,6 @@ void Type::setConfiguration(unsigned conf)
 void Type::setFunction(unsigned func_id, Function *func)
 {
 	unsigned param_count=0;
-	LanguageType lang;
-	lang=LanguageType::C;
 	unsigned funcs_len=sizeof(functions)/sizeof(Function *);
 
 	//Raises an error if the function id is invalid
@@ -239,8 +238,8 @@ void Type::setFunction(unsigned func_id, Function *func)
 		/* Raises an error if the function language is not C.
 		 Functions assigned to base type must be written in C */
 		if((func_id!=CanonicalFunc && func_id!=SubtypeDiffFunc) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::C) &&
-				func->getLanguage()->getName()!=~LanguageType(LanguageType::Internal))
+				func->getLanguage()->getName().toLower() != DefaultLanguages::C &&
+				func->getLanguage()->getName().toLower() != DefaultLanguages::Internal)
 			throw Exception(ErrorCode::AsgFunctionInvalidLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		/* Raises an error if the parameter count for INPUT and RECV functions

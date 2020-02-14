@@ -22,6 +22,7 @@
 #include "taskprogresswidget.h"
 #include "pgmodeleruins.h"
 #include "pgmodelerns.h"
+#include "defaultlanguages.h"
 
 bool DatabaseImportForm::low_verbosity = false;
 
@@ -829,9 +830,9 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 					else if((obj_type==ObjectType::Tablespace && (name==QString("pg_default") || name==QString("pg_global"))) ||
 									(obj_type==ObjectType::Role && (name==QString("postgres"))) ||
 									(obj_type==ObjectType::Schema && (name==QString("pg_catalog") || name==QString("public"))) ||
-									(obj_type==ObjectType::Language && (name==~LanguageType(LanguageType::C) ||
-																							name==~LanguageType(LanguageType::Sql) ||
-																							name==~LanguageType(LanguageType::PlPgsql))))
+									(obj_type==ObjectType::Language && (name.toLower() == DefaultLanguages::C ||
+																											name.toLower() == DefaultLanguages::Sql ||
+																											name.toLower() == DefaultLanguages::PlPgsql)))
 					{
 						item->setFont(0, grp_fnt);
 						item->setForeground(0, BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());

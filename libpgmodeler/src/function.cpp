@@ -17,6 +17,7 @@
 */
 
 #include "function.h"
+#include "defaultlanguages.h"
 
 Function::Function()
 {
@@ -173,7 +174,7 @@ void Function::setRowAmount(unsigned row_amount)
 
 void Function::setLibrary(const QString &library)
 {
-	if(language->getName().toLower()!=~LanguageType("c"))
+	if(language->getName().toLower() != DefaultLanguages::C)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRefLibraryFuncLanguageNotC)
 						.arg(this->getSignature()),
 						ErrorCode::AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -184,7 +185,7 @@ void Function::setLibrary(const QString &library)
 
 void Function::setSymbol(const QString &symbol)
 {
-	if(language->getName().toLower()!=~LanguageType("c"))
+	if(language->getName().toLower() != DefaultLanguages::C)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRefLibraryFuncLanguageNotC)
 						.arg(this->getSignature()),
 						ErrorCode::AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -250,7 +251,7 @@ void Function::setBehaviorType(BehaviorType behav_type)
 
 void Function::setSourceCode(const QString &src_code)
 {
-	if(language && language->getName().toLower()==~LanguageType("c"))
+	if(language && language->getName().toLower() == DefaultLanguages::C)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgSourceCodeFuncCLanguage)
 						.arg(this->getSignature()),
 						ErrorCode::AsgSourceCodeFuncCLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -477,7 +478,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
 		}
 
-		if(language->getName()==~LanguageType(LanguageType::C))
+		if(language->getName().toLower() == DefaultLanguages::C)
 		{
 			attributes[Attributes::Symbol]=symbol;
 			attributes[Attributes::Library]=library;
