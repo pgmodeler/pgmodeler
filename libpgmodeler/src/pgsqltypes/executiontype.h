@@ -17,32 +17,32 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+\ingroup libpgmodeler/pgsqltypes
+\class ExecutionType
+\brief Implements the operations to manipulate rule execution modes.
+**/
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef EXECUTION_TYPE
+#define EXECUTION_TYPE
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+#include "basetype.h"
 
-class TypeAttribute: public BaseObject {
+class ExecutionType: public BaseType{
 	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		static constexpr unsigned Offset=16;
+		static constexpr unsigned TypesCount=2;
 
 	public:
-		TypeAttribute();
+		static constexpr unsigned Also=Offset;
+		static constexpr unsigned Instead=Offset+1;
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+		ExecutionType(const QString &type_name);
+		ExecutionType(unsigned type_id);
+		ExecutionType();
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
 };
 
-#endif
+#endif 

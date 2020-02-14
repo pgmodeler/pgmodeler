@@ -16,33 +16,39 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-/**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+#include "functiontype.h"
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+FunctionType::FunctionType(unsigned type_id)
+{
+	(*this)=type_id;
+}
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+FunctionType::FunctionType()
+{
+	type_idx=Offset;
+}
 
-class TypeAttribute: public BaseObject {
-	private:
-		PgSqlType type;
+FunctionType::FunctionType(const QString &type_name)
+{
+	(*this)=type_name;
+}
 
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+void FunctionType::getTypes(QStringList &tipos)
+{
+	BaseType::getTypes(tipos,Offset,TypesCount);
+}
 
-	public:
-		TypeAttribute();
+unsigned FunctionType::operator = (unsigned type_id)
+{
+	BaseType::setType(type_id,Offset,TypesCount);
+	return type_idx;
+}
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+unsigned FunctionType::operator = (const QString &type_name)
+{
+	unsigned type_id;
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
-};
-
-#endif
+	type_id=BaseType::getType(type_name, Offset, TypesCount);
+	BaseType::setType(type_id,Offset,TypesCount);
+	return type_id;
+}

@@ -28,6 +28,9 @@
 #include "schema.h"
 #include "role.h"
 #include "parameter.h"
+#include "pgsqltypes/behaviortype.h"
+#include "pgsqltypes/functiontype.h"
+#include "pgsqltypes/securitytype.h"
 
 class Function: public BaseObject {
 	private:

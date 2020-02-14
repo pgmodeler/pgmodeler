@@ -24,6 +24,7 @@
 #ifndef PHYSICAL_TABLE_H
 #define PHYSICAL_TABLE_H
 
+#include <QStringList>
 #include "basegraphicobject.h"
 #include "basetable.h"
 #include "column.h"
@@ -33,7 +34,7 @@
 #include "role.h"
 #include "partitionkey.h"
 #include "copyoptions.h"
-#include <QStringList>
+#include "pgsqltypes/partitioningtype.h"
 
 class PhysicalTable: public BaseTable {
 	protected:

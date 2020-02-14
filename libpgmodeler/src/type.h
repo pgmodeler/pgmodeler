@@ -32,6 +32,8 @@
 #include "role.h"
 #include "typeattribute.h"
 #include "operatorclass.h"
+#include "pgsqltypes/storagetype.h"
+#include "pgsqltypes/categorytype.h"
 
 class Type: public BaseObject {
 	private:

@@ -17,32 +17,32 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+\ingroup libpgmodeler/pgsqltypes
+\class IdentityType
+\brief Implements the operations to manipulate identity columns behavior.
+**/
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef IDENTITY_TYPE
+#define IDENTITY_TYPE
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+#include "basetype.h"
 
-class TypeAttribute: public BaseObject {
+class IdentityType: public BaseType{
 	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		static constexpr unsigned Offset=245;
+		static constexpr unsigned TypesCount=2;
 
 	public:
-		TypeAttribute();
+		static constexpr unsigned Always=Offset;
+		static constexpr unsigned ByDefault=Offset+1;
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+		IdentityType(const QString &type_name);
+		IdentityType(unsigned type_id);
+		IdentityType();
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
 };
 
-#endif
+#endif 

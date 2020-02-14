@@ -26,7 +26,7 @@
 #define COLLATION_H
 
 #include "baseobject.h"
-#include "pgsqltypes.h"
+#include "pgsqltypes/encodingtype.h"
 
 class Collation : public BaseObject {
 	private:

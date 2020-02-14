@@ -28,6 +28,7 @@
 
 #include "baseobject.h"
 #include "schema.h"
+#include "pgsqltypes/pgsqltype.h"
 
 class Domain: public BaseObject{
 	private:

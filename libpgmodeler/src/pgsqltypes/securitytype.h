@@ -17,32 +17,32 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+\ingroup libpgmodeler/pgsqltypes
+\class SecurityType
+\brief Implements the operations to manipulate function's security types.
+**/
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef SECURITY_TYPE
+#define SECURITY_TYPE
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+#include "basetype.h"
 
-class TypeAttribute: public BaseObject {
+class SecurityType: public BaseType{
 	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		static constexpr unsigned Offset=155;
+		static constexpr unsigned TypesCount=2;
 
 	public:
-		TypeAttribute();
+		static constexpr unsigned Invoker=Offset;
+		static constexpr unsigned Definer=Offset+1;
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+		SecurityType(unsigned type_id);
+		SecurityType(const QString &type_name);
+		SecurityType();
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		static void getTypes(QStringList &type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
 };
 
-#endif
+#endif 

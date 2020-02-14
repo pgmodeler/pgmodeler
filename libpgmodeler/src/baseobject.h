@@ -27,7 +27,6 @@
 
 #include "attributes.h"
 #include "exception.h"
-#include "pgsqltypes.h"
 #include "schemaparser.h"
 #include "xmlparser.h"
 #include <map>

@@ -27,7 +27,6 @@
 
 #include "ui_relationshipconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "relationshipview.h"
 

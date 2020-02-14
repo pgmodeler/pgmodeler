@@ -27,6 +27,7 @@
 
 #include "baseobject.h"
 #include "function.h"
+#include "pgsqltypes/eventtriggertype.h"
 
 class EventTrigger: public BaseObject {
 	private:

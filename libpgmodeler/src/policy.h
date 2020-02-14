@@ -27,6 +27,7 @@
 
 #include "tableobject.h"
 #include "role.h"
+#include "pgsqltypes/policycmdtype.h"
 
 class Policy : public TableObject {
 	private:

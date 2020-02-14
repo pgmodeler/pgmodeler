@@ -1,4 +1,5 @@
 #include "extension.h"
+#include "pgsqltypes/pgsqltype.h"
 
 Extension::Extension()
 {

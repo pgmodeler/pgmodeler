@@ -29,6 +29,7 @@
 #include "baseobject.h"
 #include "function.h"
 #include "role.h"
+#include "pgsqltypes/encodingtype.h"
 
 class Conversion: public BaseObject {
 	private:

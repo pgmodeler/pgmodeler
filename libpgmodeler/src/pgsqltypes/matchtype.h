@@ -17,32 +17,33 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+\ingroup libpgmodeler/pgsqltypes
+\class MatchType
+\brief Implements the operations to manipulate constraints matching mode.
+**/
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef MATCH_TYPE
+#define MATCH_TYPE
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+#include "basetype.h"
 
-class TypeAttribute: public BaseObject {
+class MatchType: public BaseType{
 	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		static constexpr unsigned Offset=203;
+		static constexpr unsigned TypesCount=3;
 
 	public:
-		TypeAttribute();
+		static constexpr unsigned Full=Offset;
+		static constexpr unsigned Partial=Offset+1;
+		static constexpr unsigned Simple=Offset+2;
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+		MatchType(unsigned type_id);
+		MatchType(const QString &type_name);
+		MatchType();
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		static void getTypes(QStringList &type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
 };
 
-#endif
+#endif 

@@ -27,6 +27,8 @@
 #define COLUMN_H
 
 #include "tableobject.h"
+#include "pgsqltypes/pgsqltype.h"
+#include "pgsqltypes/identitytype.h"
 
 class Column: public TableObject{
 	protected:

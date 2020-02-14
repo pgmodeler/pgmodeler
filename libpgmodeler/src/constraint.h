@@ -30,6 +30,10 @@
 #include "tablespace.h"
 #include "column.h"
 #include "excludeelement.h"
+#include "pgsqltypes/constrainttype.h"
+#include "pgsqltypes/deferraltype.h"
+#include "pgsqltypes/matchtype.h"
+#include "pgsqltypes/actiontype.h"
 
 class Constraint: public TableObject{
 	private:

@@ -17,32 +17,33 @@
 */
 
 /**
-\ingroup libpgmodeler
-\class TypeArgument
-\brief Implements the operations to manipulate user defined types arguments.
-*/
+\ingroup libpgmodeler/pgsqltypes
+\class PartitioningType
+\brief Implements the operations to manipulate table partitining types.
+**/
 
-#ifndef TYPE_ARGUMENT_H
-#define TYPE_ARGUMENT_H
+#ifndef PARTITIONING_TYPE
+#define PARTITIONING_TYPE
 
-#include "baseobject.h"
-#include "pgsqltypes/pgsqltype.h"
+#include "basetype.h"
 
-class TypeAttribute: public BaseObject {
+class PartitioningType: public BaseType {
 	private:
-		PgSqlType type;
-
-		QString getCodeDefinition(unsigned, bool){ return ""; }
+		static constexpr unsigned Offset=252;
+		static constexpr unsigned TypesCount=3;
 
 	public:
-		TypeAttribute();
+		static constexpr unsigned Range=Offset;
+		static constexpr unsigned List=Offset+1;
+		static constexpr unsigned Hash=Offset+2;
 
-		void setType(PgSqlType type);
-		PgSqlType getType();
+		PartitioningType(const QString &type_name);
+		PartitioningType(unsigned type_id);
+		PartitioningType();
 
-		//! \brief Returns the SQL / XML code definition for the parameter
-		virtual QString getCodeDefinition(unsigned def_type) final;
-		void operator = (const TypeAttribute &tpattrib);
+		static void getTypes(QStringList&type_list);
+		unsigned operator = (unsigned type_id);
+		unsigned operator = (const QString &type_name);
 };
 
-#endif
+#endif 

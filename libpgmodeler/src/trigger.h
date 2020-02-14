@@ -28,6 +28,9 @@
 
 #include "tableobject.h"
 #include "function.h"
+#include "pgsqltypes/firingtype.h"
+#include "pgsqltypes/eventtype.h"
+#include "pgsqltypes/deferraltype.h"
 
 class Trigger: public TableObject{
 	private:

@@ -27,6 +27,7 @@
 #define OPERATOR_FAMILY_H
 
 #include "baseobject.h"
+#include "pgsqltypes/indexingtype.h"
 
 class OperatorFamily: public BaseObject {
 	private:
