@@ -137,18 +137,8 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
-	//Types used by the class LanguageType
-	//offsets 157 to 163
-	"sql",
-	"c",
-	"plpgsql",
-	"pltcl",
-	"plperl",
-	"plpython",
-	"internal",
-
 	//Types used by the class EncodingType
-	//offsets 164 to 205
+	//offsets 157 to 198
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
 	"EUC_KR", "EUC_TW", "GB18030", "GBK",
 	"ISO_8859_5", "ISO_8859_6", "ISO_8859_7", "ISO_8859_8",
@@ -161,25 +151,25 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	"WIN1254", "WIN1255", "WIN1256", "WIN1257", "WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 206 to 209
+	//offsets 199 to 202
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 210 to 212
+	//offsets 203 to 205
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 213 to 214
+	//offsets 206 to 207
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 215 to 228 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 208 to 221 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -196,7 +186,7 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 229 to 231
+	//offsets 222 to 224
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -205,7 +195,7 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	These types accepts variations Z, M e ZM.
 	> Example: POINT, POINTZ, POINTM, POINTZM
 	Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 232 to 247
+	//offsets 225 to 240
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -224,19 +214,19 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	"MULTISURFACE",
 
 	//Types used by the class EventTriggerType
-	//offsets 248 to 251
+	//offsets 241 to 244
 	"ddl_command_start",
 	"ddl_command_end",
 	"sql_drop",
 	"table_rewrite",
 
 	//Types used by the class IdentityType
-	//offsets 252 to 253
+	//offsets 245 to 246
 	"ALWAYS",
 	"BY DEFAULT",
 
 	//Types used by the class PolicyCmdType
-	//offsets 254 to 258
+	//offsets 247 to 251
 	"ALL",
 	"SELECT",
 	"INSERT",
@@ -244,7 +234,7 @@ QString BaseType::type_list[BaseType::TypesCount]=
 	"UPDATE",
 
   //Types used by the class PartitioningType
-	//offsets 259 to 261
+	//offsets 252 to 254
   "RANGE",
   "LIST",
   "HASH",
@@ -1769,44 +1759,6 @@ unsigned SecurityType::operator = (unsigned type_id)
 }
 
 unsigned SecurityType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-/***********************
- * CLASS: LanguageType *
- ***********************/
-LanguageType::LanguageType()
-{
-	type_idx=Offset;
-}
-
-LanguageType::LanguageType(unsigned type_id)
-{
-	(*this)=type_id;
-}
-
-LanguageType::LanguageType(const QString &type_name)
-{
-	(*this)=type_name;
-}
-
-void LanguageType::getTypes(QStringList &tipos)
-{
-	BaseType::getTypes(tipos,Offset,TypesCount);
-}
-
-unsigned LanguageType::operator = (unsigned tipo_id)
-{
-	BaseType::setType(tipo_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned LanguageType::operator = (const QString &type_name)
 {
 	unsigned type_id;
 
