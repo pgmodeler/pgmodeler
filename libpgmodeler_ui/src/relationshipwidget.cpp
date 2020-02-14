@@ -115,8 +115,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		configureFormLayout(relationship_grid, ObjectType::Relationship);
 
-		DeferralType::getTypes(list);
-		deferral_cmb->addItems(list);
+		deferral_cmb->addItems(DeferralType::getTypes());
 
 		frame=generateInformationFrame(tr("Available tokens to define name patterns:<br/>\
 					<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \

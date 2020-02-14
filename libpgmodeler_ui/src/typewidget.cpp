@@ -111,8 +111,7 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ty
 		StorageType::getTypes(list);
 		storage_cmb->addItems(list);
 
-		CategoryType::getTypes(list);
-		category_cmb->addItems(list);
+		category_cmb->addItems(CategoryType::getTypes());
 
 		setRequiredField(range_subtype);
 		setRequiredField(input_lbl);

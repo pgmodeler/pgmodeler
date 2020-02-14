@@ -69,14 +69,12 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 		configureFormLayout(constraint_grid, ObjectType::Constraint);
 
-		ConstraintType::getTypes(list);
-		constr_type_cmb->addItems(list);
+		constr_type_cmb->addItems(ConstraintType::getTypes());
 
 		MatchType::getTypes(list);
 		match_cmb->addItems(list);
 
-		DeferralType::getTypes(list);
-		deferral_cmb->addItems(list);
+		deferral_cmb->addItems(DeferralType::getTypes());
 
 		list = ActionType::getTypes();
 		on_delete_cmb->addItems(list);

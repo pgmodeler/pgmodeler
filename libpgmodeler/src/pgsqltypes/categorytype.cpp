@@ -18,9 +18,30 @@
 
 #include "categorytype.h"
 
+QStringList CategoryType::type_names =
+{
+	"", // Reserved for null value
+
+	//See table 44-43 on PostgreSQL 8.4 documentation
+	"U", //User-defined types
+	"A", //Array types
+	"B", //Boolean types
+	"C", //Composite types
+	"D", //Date/time types
+	"E", //Enum types
+	"G", //Geometric types
+	"I", //Network address types
+	"N", //Numeric types
+	"P", //Pseudo-types
+	"S", //String types
+	"T", //Timespan types
+	"V", //Bit-string types
+	"X", //Unknown type
+};
+
 CategoryType::CategoryType()
 {
-	type_idx=Offset;
+	type_idx = UserDefined;
 }
 
 CategoryType::CategoryType(const QString &type_name)
@@ -33,27 +54,25 @@ CategoryType::CategoryType(unsigned type_id)
 	(*this)=type_id;
 }
 
-void CategoryType::getTypes(QStringList &tipos)
+QStringList CategoryType::getTypes()
 {
-	BaseType::getTypes(tipos,Offset,TypesCount);
+	return BaseType::getTypes(type_names);
 }
 
 unsigned CategoryType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	BaseType::setType(type_id, type_names);
 	return type_idx;
 }
 
 unsigned CategoryType::operator = (const QString &type_name)
 {
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
+	unsigned type_id = BaseType::getType(type_name, type_names);
+	BaseType::setType(type_id, type_names);
 	return type_id;
 }
 
 QString CategoryType::operator ~ ()
 {
-	return type_list[type_idx];
+	return type_names[type_idx];
 }

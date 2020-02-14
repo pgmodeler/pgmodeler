@@ -44,8 +44,7 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
-	DeferralType::getTypes(list);
-	deferral_cmb->addItems(list);
+	deferral_cmb->addItems(DeferralType::getTypes());
 
 	list = ActionType::getTypes();
 	list.push_front(tr("Default"));

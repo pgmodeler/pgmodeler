@@ -51,7 +51,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		frame->setParent(attributes_twg->widget(1));
 
 		//Configures the encoding combobox
-		EncodingType::getTypes(encodings);
+		encodings = EncodingType::getTypes();
 		encodings.push_front(tr("Default"));
 		encoding_cmb->addItems(encodings);
 

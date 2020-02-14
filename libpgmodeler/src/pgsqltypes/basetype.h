@@ -51,6 +51,9 @@ class BaseType{
 		//! \brief Returns the string list for all types on the specified interval (offset-count)
 		static void getTypes(QStringList &types, unsigned offset, unsigned count);
 
+		//! \brief Returns the string list for all types after removing the BaseType::null ("") reserved item
+		static QStringList getTypes(const QStringList &type_list);
+
 		//! \brief Returns the type id searching by its name. Returns BaseType::null when not found
 		static unsigned getType(const QString &type_name, unsigned offset, unsigned count);
 		static unsigned getType(const QString &type_name, const QStringList &type_list);

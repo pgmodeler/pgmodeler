@@ -52,8 +52,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
-		DeferralType::getTypes(list);
-		deferral_type_cmb->addItems(list);
+		deferral_type_cmb->addItems(DeferralType::getTypes());
 
 		FiringType::getTypes(list);
 		firing_mode_cmb->addItems(list);

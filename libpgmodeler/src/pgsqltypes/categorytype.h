@@ -29,30 +29,29 @@
 
 class CategoryType: public BaseType{
 	private:
-		static constexpr unsigned Offset=208;
-		static constexpr unsigned TypesCount=14;
+		static QStringList type_names;
 
 	public:
-		static constexpr unsigned UserDefined=Offset;
-		static constexpr unsigned Array=Offset+1;
-		static constexpr unsigned Boolean=Offset+2;
-		static constexpr unsigned Composite=Offset+3;
-		static constexpr unsigned DateTime=Offset+4;
-		static constexpr unsigned Enumeration=Offset+5;
-		static constexpr unsigned Geometric=Offset+6;
-		static constexpr unsigned NetworkAddr=Offset+7;
-		static constexpr unsigned Numeric=Offset+8;
-		static constexpr unsigned PseudoTypes=Offset+9;
-		static constexpr unsigned Stringt=Offset+10;
-		static constexpr unsigned Timespan=Offset+11;
-		static constexpr unsigned BitString=Offset+12;
-		static constexpr unsigned Unknown=Offset+13;
+		static constexpr unsigned UserDefined = 1,
+		Array = 2,
+		Boolean = 3,
+		Composite = 4,
+		DateTime = 5,
+		Enumeration = 6,
+		Geometric = 7,
+		NetworkAddr = 8,
+		Numeric = 9,
+		PseudoTypes = 10,
+		Stringt = 11,
+		Timespan = 12,
+		BitString = 13,
+		Unknown = 14;
 
 		CategoryType(unsigned type_id);
 		CategoryType(const QString &type_name);
 		CategoryType();
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
 		virtual QString operator ~();

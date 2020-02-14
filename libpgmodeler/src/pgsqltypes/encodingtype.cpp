@@ -18,14 +18,28 @@
 
 #include "encodingtype.h"
 
+QStringList EncodingType::type_names = {
+	"", // Reserved for BaseType::null
+	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
+	"EUC_KR", "EUC_TW", "GB18030", "GBK",
+	"ISO_8859_5", "ISO_8859_6", "ISO_8859_7", "ISO_8859_8",
+	"JOHAB", "KOI8R", "KOI8U", "LATIN1",
+	"LATIN2", "LATIN3", "LATIN4", "LATIN5",
+	"LATIN6", "LATIN7", "LATIN8", "LATIN9",
+	"LATIN10", "MULE_INTERNAL", "SJIS", "SHIFT_JIS_2004",
+	"SQL_ASCII", "UHC", "WIN866", "WIN874",
+	"WIN1250", "WIN1251", "WIN1252", "WIN1253",
+	"WIN1254", "WIN1255", "WIN1256", "WIN1257", "WIN1258"
+};
+
 EncodingType::EncodingType()
 {
-	type_idx=Offset;
+	type_idx = 1;
 }
 
 EncodingType::EncodingType(const QString &type)
 {
-	(*this)=type;
+	(*this) = type;
 }
 
 EncodingType::EncodingType(const unsigned type_id)
@@ -33,44 +47,32 @@ EncodingType::EncodingType(const unsigned type_id)
 	(*this)=type_id;
 }
 
-void EncodingType::getTypes(QStringList &tipos)
+QStringList EncodingType::getTypes()
 {
-	BaseType::getTypes(tipos,Offset,TypesCount);
+	return BaseType::getTypes(type_names);
 }
 
 unsigned EncodingType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	BaseType::setType(type_id, type_names);
 	return type_idx;
 }
 
 unsigned EncodingType::operator = (const QString &type_name)
 {
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
+	unsigned type_id = BaseType::getType(type_name, type_names);
+	BaseType::setType(type_id, type_names);
 	return type_id;
 }
 
 bool EncodingType::operator == (const char *type_name)
 {
-	return ((*this)==QString(type_name));
+	return ((*this) == QString(type_name));
 }
 
 bool EncodingType::operator == (const QString &type_name)
 {
-	unsigned idx,total;
-	bool found=false;
-
-	total=Offset + TypesCount;
-
-	for(idx=Offset; idx<total && !found; idx++)
-		found=(type_name==BaseType::type_list[idx]);
-
-	if(found) idx--;
-
-	return (type_idx==idx);
+	return (type_idx == static_cast<unsigned>(type_names.indexOf(type_name)));
 }
 
 bool EncodingType::operator != (const QString &type_name)
@@ -80,15 +82,15 @@ bool EncodingType::operator != (const QString &type_name)
 
 bool EncodingType::operator != (EncodingType type)
 {
-	return (this->type_idx!=type.type_idx);
+	return (this->type_idx != type.type_idx);
 }
 
 bool EncodingType::operator != (unsigned type_id)
 {
-	return (this->type_idx!=type_id);
+	return (this->type_idx != type_id);
 }
 
 QString EncodingType::operator ~ ()
 {
-	return type_list[type_idx];
+	return type_names[type_idx];
 }

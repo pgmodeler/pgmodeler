@@ -32,11 +32,11 @@ class ActionType: public BaseType{
 		static QStringList type_names;
 
 	public:
-		static constexpr unsigned NoAction = 0,
-		Restrict = 1,
-		Cascade = 2,
-		SetNull = 3,
-		SetDefault = 4;
+		static constexpr unsigned NoAction = 1,
+		Restrict = 2,
+		Cascade = 3,
+		SetNull = 4,
+		SetDefault = 5;
 
 		ActionType(const QString &type_name);
 		ActionType(unsigned type_id);

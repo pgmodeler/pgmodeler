@@ -20,6 +20,7 @@
 
 QStringList ActionType::type_names =
 {
+	"", // Reserved for BaseType::null
 	"NO ACTION",
 	"RESTRICT",
 	"CASCADE",
@@ -44,7 +45,7 @@ ActionType::ActionType()
 
 QStringList ActionType::getTypes()
 {
-	return type_names;
+	return BaseType::getTypes(type_names);
 }
 
 unsigned ActionType::operator = (unsigned type_id)

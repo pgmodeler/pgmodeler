@@ -29,15 +29,14 @@
 
 class EncodingType: public BaseType{
 	private:
-		static constexpr unsigned Offset=157;
-		static constexpr unsigned TypesCount=42;
+		static QStringList type_names;
 
 	public:
 		EncodingType();
 		EncodingType(const QString &type);
 		EncodingType(const unsigned type_id);
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
 		bool operator == (const QString &type_name);

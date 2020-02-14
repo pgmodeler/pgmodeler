@@ -29,18 +29,17 @@
 
 class DeferralType: public BaseType{
 	private:
-		static constexpr unsigned Offset=206;
-		static constexpr unsigned TypesCount=2;
+		static QStringList type_names;
 
 	public:
-		static constexpr unsigned Immediate=Offset;
-		static constexpr unsigned Deferred=Offset+1;
+		static constexpr unsigned Immediate = 1,
+		Deferred = 2;
 
 		DeferralType(unsigned type_id);
 		DeferralType(const QString &type_name);
 		DeferralType();
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
 		virtual QString operator ~();

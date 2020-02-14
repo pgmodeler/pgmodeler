@@ -18,42 +18,50 @@
 
 #include "constrainttype.h"
 
+QStringList ConstraintType::type_names =
+{
+	"", // Reserved for BaseType::null
+	"PRIMARY KEY",
+	"FOREIGN KEY",
+	"CHECK",
+	"UNIQUE",
+	"EXCLUDE",
+};
+
 ConstraintType::ConstraintType(unsigned type_id)
 {
-	(*this)=type_id;
+	(*this) = type_id;
 }
 
 ConstraintType::ConstraintType(const QString &type_name)
 {
-	(*this)=type_name;
+	(*this) = type_name;
 }
 
 ConstraintType::ConstraintType()
 {
-	type_idx=Offset;
+	type_idx = PrimaryKey;
 }
 
-void ConstraintType::getTypes(QStringList &type_list)
+QStringList ConstraintType::getTypes()
 {
-	BaseType::getTypes(type_list,Offset,TypesCount);
+	return BaseType::getTypes(type_names);
 }
 
 unsigned ConstraintType::operator = (unsigned type_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	BaseType::setType(type_id, type_names);
 	return type_idx;
 }
 
 unsigned ConstraintType::operator = (const QString &type_name)
 {
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
+	unsigned type_id = BaseType::getType(type_name, type_names);
+	BaseType::setType(type_id, type_names);
 	return type_id;
 }
 
 QString ConstraintType::operator ~ ()
 {
-	return type_list[type_idx];
+	return type_names[type_idx];
 }

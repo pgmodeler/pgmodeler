@@ -29,21 +29,20 @@
 
 class ConstraintType: public BaseType{
 	private:
-		static constexpr unsigned Offset=6;
-		static constexpr unsigned TypesCount=5;
+		static QStringList type_names;
 
 	public:
-		static constexpr unsigned PrimaryKey=Offset;
-		static constexpr unsigned ForeignKey=Offset+1;
-		static constexpr unsigned Check=Offset+2;
-		static constexpr unsigned Unique=Offset+3;
-		static constexpr unsigned Exclude=Offset+4;
+		static constexpr unsigned PrimaryKey = 1,
+		ForeignKey = 2,
+		Check = 3,
+		Unique = 4,
+		Exclude= 5;
 
 		ConstraintType(const QString &type_name);
 		ConstraintType(unsigned type_id);
 		ConstraintType();
 
-		static void getTypes(QStringList &type_list);
+		static QStringList getTypes();
 		unsigned operator = (unsigned type_id);
 		unsigned operator = (const QString &type_name);
 		virtual QString operator ~();

@@ -306,6 +306,13 @@ void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
 	}
 }
 
+QStringList BaseType::getTypes(const QStringList &type_list)
+{
+	QStringList types = type_list;
+	types.removeAll("");
+	return types;
+}
+
 unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned count)
 {
 	unsigned idx,total;

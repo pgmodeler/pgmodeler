@@ -20,6 +20,7 @@
 
 QStringList BehaviorType::type_names =
 {
+	"", // Reserved for BaseType::null
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT"
@@ -42,7 +43,7 @@ BehaviorType::BehaviorType(const QString &type_name)
 
 QStringList BehaviorType::getTypes()
 {
-	return type_names;
+	return BaseType::getTypes(type_names);
 }
 
 unsigned BehaviorType::operator = (unsigned type_id)

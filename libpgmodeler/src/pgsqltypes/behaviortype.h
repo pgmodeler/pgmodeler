@@ -32,9 +32,9 @@ class BehaviorType: public BaseType{
 		static QStringList type_names;
 
 	public:
-		static constexpr unsigned CalledOnNullInput = 0,
-		ReturnsNullOnNullInput = 1,
-		Strict = 2;
+		static constexpr unsigned CalledOnNullInput = 1,
+		ReturnsNullOnNullInput = 2,
+		Strict = 3;
 
 		BehaviorType(const QString &type_name);
 		BehaviorType(unsigned type_id);

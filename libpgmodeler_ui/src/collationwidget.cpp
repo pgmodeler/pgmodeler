@@ -35,7 +35,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		configureFormLayout(collation_grid, ObjectType::Collation);
 
 		//Configures the encoding combobox
-		EncodingType::getTypes(encodings);
+		encodings = EncodingType::getTypes();
 		encodings.push_front(tr("Not defined"));
 		encoding_cmb->addItems(encodings);
 
