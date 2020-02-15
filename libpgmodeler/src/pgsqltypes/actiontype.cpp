@@ -18,9 +18,11 @@
 
 #include "actiontype.h"
 
-QStringList ActionType::type_names =
+template<>
+QStringList ActionType::TemplateType<ActionType>::type_names =
 {
 	"", // Reserved for BaseType::null
+
 	"NO ACTION",
 	"RESTRICT",
 	"CASCADE",
@@ -30,38 +32,15 @@ QStringList ActionType::type_names =
 
 ActionType::ActionType(unsigned type_id)
 {
-	(*this) = type_id;
+	setType(type_id);
 }
 
 ActionType::ActionType(const QString &type_name)
 {
-	(*this) = type_name;
+	setType(type_name);
 }
 
 ActionType::ActionType()
 {
 	type_idx = NoAction;
-}
-
-QStringList ActionType::getTypes()
-{
-	return BaseType::getTypes(type_names);
-}
-
-unsigned ActionType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id, type_names);
-	return type_idx;
-}
-
-unsigned ActionType::operator = (const QString &type_name)
-{
-	unsigned type_idx = BaseType::getType(type_name, type_names);
-	BaseType::setType(type_idx, type_names);
-	return type_idx;
-}
-
-QString ActionType::operator ~ ()
-{
-	return type_names[type_idx];
 }

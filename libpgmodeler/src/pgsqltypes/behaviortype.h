@@ -25,12 +25,9 @@
 #ifndef BEHAVIOR_TYPE
 #define BEHAVIOR_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class BehaviorType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class BehaviorType: public TemplateType<BehaviorType>{
 	public:
 		static constexpr unsigned CalledOnNullInput = 1,
 		ReturnsNullOnNullInput = 2,
@@ -39,11 +36,6 @@ class BehaviorType: public BaseType{
 		BehaviorType(const QString &type_name);
 		BehaviorType(unsigned type_id);
 		BehaviorType();
-
-		static QStringList getTypes();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif

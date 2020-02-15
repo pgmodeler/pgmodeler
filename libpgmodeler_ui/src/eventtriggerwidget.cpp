@@ -51,9 +51,7 @@ EventTriggerWidget::EventTriggerWidget(QWidget *parent): BaseObjectWidget(parent
 
 	configureTabOrder({ event_cmb, function_sel, tag_edt, filter_tab });
 
-	QStringList list;
-	EventTriggerType::getTypes(list);
-	event_cmb->addItems(list);
+	event_cmb->addItems(EventTriggerType::getTypes());
 
 	connect(filter_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleTagValue(int)));
 	connect(filter_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleTagValue(int)));

@@ -18,42 +18,28 @@
 
 #include "eventtriggertype.h"
 
+template<>
+QStringList EventTriggerType::TemplateType<EventTriggerType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"ddl_command_start",
+	"ddl_command_end",
+	"sql_drop",
+	"table_rewrite"
+};
+
 EventTriggerType::EventTriggerType()
 {
-	type_idx=Offset;
+	type_idx = DdlCommandStart;
 }
 
 EventTriggerType::EventTriggerType(unsigned type_id)
 {
-	(*this)=type_id;
+	setType(type_id);
 }
 
 EventTriggerType::EventTriggerType(const QString &type_name)
 {
-	(*this)=type_name;
-}
-
-void EventTriggerType::getTypes(QStringList &tipos)
-{
-	BaseType::getTypes(tipos,Offset,TypesCount);
-}
-
-unsigned EventTriggerType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned EventTriggerType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-QString EventTriggerType::operator ~ ()
-{
-	return type_list[type_idx];
+	setType(type_name);
 }

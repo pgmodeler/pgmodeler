@@ -48,6 +48,7 @@ HEADERS += src/textbox.h \
 	   src/pgsqltypes/securitytype.h \
 	   src/pgsqltypes/spatialtype.h \
 	   src/pgsqltypes/storagetype.h \
+	   src/pgsqltypes/templatetype.h \
 	   src/pgsqltypes/usertypeconfig.h \
 	   src/role.h \
 	   src/constraint.h \

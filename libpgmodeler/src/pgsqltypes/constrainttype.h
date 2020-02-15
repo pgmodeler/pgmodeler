@@ -25,12 +25,9 @@
 #ifndef CONSTRAINT_TYPE
 #define CONSTRAINT_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class ConstraintType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class ConstraintType: public TemplateType<ConstraintType>{
 	public:
 		static constexpr unsigned PrimaryKey = 1,
 		ForeignKey = 2,
@@ -41,11 +38,6 @@ class ConstraintType: public BaseType{
 		ConstraintType(const QString &type_name);
 		ConstraintType(unsigned type_id);
 		ConstraintType();
-
-		static QStringList getTypes();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

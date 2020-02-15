@@ -25,26 +25,19 @@
 #ifndef ENCODING_TYPE
 #define ENCODING_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class EncodingType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class EncodingType: public TemplateType<EncodingType>{
 	public:
 		EncodingType();
-		EncodingType(const QString &type);
-		EncodingType(const unsigned type_id);
+		EncodingType(const QString &type_name);
+		EncodingType(unsigned type_id);
 
-		static QStringList getTypes();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
 		bool operator == (const QString &type_name);
 		bool operator == (const char *type_name);
 		bool operator != (const QString &type_name);
 		bool operator != (EncodingType type);
 		bool operator != (unsigned tipo_id);
-		virtual QString operator ~();
 };
 
 #endif 

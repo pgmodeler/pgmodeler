@@ -237,7 +237,7 @@ QString BaseType::type_list[BaseType::TypesCount]=
 
 BaseType::BaseType()
 {
-	type_idx=BaseType::Null;
+	type_idx = BaseType::Null;
 }
 
 BaseType::~BaseType()
@@ -265,7 +265,7 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 		type_idx=type_id;
 }
 
-void BaseType::setType(unsigned type_id, const QStringList &type_list)
+unsigned BaseType::setType(unsigned type_id, const QStringList &type_list)
 {
 	//Raises an error if the type count is invalid
 	if(type_list.isEmpty())
@@ -273,8 +273,14 @@ void BaseType::setType(unsigned type_id, const QStringList &type_list)
 	//Raises an error if the type id is invalid
 	else if(!isTypeValid(type_id, type_list))
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-		type_idx=type_id;
+
+	type_idx = type_id;
+	return type_idx;
+}
+
+unsigned BaseType::setType(const QString &type_name, const QStringList &type_list)
+{
+	return setType(static_cast<unsigned>(type_list.indexOf(type_name)), type_list);
 }
 
 bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
@@ -353,10 +359,18 @@ unsigned BaseType::getType(const QString &type_name, const QStringList &type_lis
 		int idx = type_list.indexOf(type_name);
 
 		if(idx >= 0)
-			return idx;
+			return static_cast<unsigned>(idx);
 
 		return BaseType::Null;
 	}
+}
+
+QString BaseType::getTypeName(unsigned type_id, const QStringList &type_list)
+{
+	if(type_id > static_cast<unsigned>(type_list.size()))
+		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return type_list[static_cast<int>(type_id)];
 }
 
 QString BaseType::operator ~ ()

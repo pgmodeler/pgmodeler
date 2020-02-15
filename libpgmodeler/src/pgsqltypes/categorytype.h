@@ -25,12 +25,9 @@
 #ifndef CATEGORY_TYPE
 #define CATEGORY_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class CategoryType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class CategoryType: public TemplateType<CategoryType>{
 	public:
 		static constexpr unsigned UserDefined = 1,
 		Array = 2,
@@ -50,11 +47,6 @@ class CategoryType: public BaseType{
 		CategoryType(unsigned type_id);
 		CategoryType(const QString &type_name);
 		CategoryType();
-
-		static QStringList getTypes();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif

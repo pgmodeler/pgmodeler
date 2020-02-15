@@ -25,12 +25,9 @@
 #ifndef DEFERRAL_TYPE
 #define DEFERRAL_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class DeferralType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class DeferralType: public TemplateType<DeferralType>{
 	public:
 		static constexpr unsigned Immediate = 1,
 		Deferred = 2;
@@ -38,11 +35,6 @@ class DeferralType: public BaseType{
 		DeferralType(unsigned type_id);
 		DeferralType(const QString &type_name);
 		DeferralType();
-
-		static QStringList getTypes();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif

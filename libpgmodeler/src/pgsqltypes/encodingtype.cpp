@@ -18,8 +18,10 @@
 
 #include "encodingtype.h"
 
-QStringList EncodingType::type_names = {
+template<>
+QStringList EncodingType::TemplateType<EncodingType>::type_names = {
 	"", // Reserved for BaseType::null
+
 	"UTF8", "BIG5", "EUC_CN", "EUC_JP", "EUC_JIS_2004",
 	"EUC_KR", "EUC_TW", "GB18030", "GBK",
 	"ISO_8859_5", "ISO_8859_6", "ISO_8859_7", "ISO_8859_8",
@@ -37,32 +39,14 @@ EncodingType::EncodingType()
 	type_idx = 1;
 }
 
-EncodingType::EncodingType(const QString &type)
+EncodingType::EncodingType(const QString &type_name)
 {
-	(*this) = type;
+	setType(type_name);
 }
 
-EncodingType::EncodingType(const unsigned type_id)
+EncodingType::EncodingType(unsigned type_id)
 {
-	(*this)=type_id;
-}
-
-QStringList EncodingType::getTypes()
-{
-	return BaseType::getTypes(type_names);
-}
-
-unsigned EncodingType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id, type_names);
-	return type_idx;
-}
-
-unsigned EncodingType::operator = (const QString &type_name)
-{
-	unsigned type_id = BaseType::getType(type_name, type_names);
-	BaseType::setType(type_id, type_names);
-	return type_id;
+	setType(type_id);
 }
 
 bool EncodingType::operator == (const char *type_name)
@@ -77,7 +61,7 @@ bool EncodingType::operator == (const QString &type_name)
 
 bool EncodingType::operator != (const QString &type_name)
 {
-	return (!((*this)==type_name));
+	return !((*this) == type_name);
 }
 
 bool EncodingType::operator != (EncodingType type)
@@ -88,9 +72,4 @@ bool EncodingType::operator != (EncodingType type)
 bool EncodingType::operator != (unsigned type_id)
 {
 	return (this->type_idx != type_id);
-}
-
-QString EncodingType::operator ~ ()
-{
-	return type_names[type_idx];
 }

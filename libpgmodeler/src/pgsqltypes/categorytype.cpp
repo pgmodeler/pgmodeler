@@ -18,7 +18,8 @@
 
 #include "categorytype.h"
 
-QStringList CategoryType::type_names =
+template<>
+QStringList CategoryType::TemplateType<CategoryType>::type_names =
 {
 	"", // Reserved for null value
 
@@ -39,40 +40,17 @@ QStringList CategoryType::type_names =
 	"X", //Unknown type
 };
 
-CategoryType::CategoryType()
-{
-	type_idx = UserDefined;
-}
-
 CategoryType::CategoryType(const QString &type_name)
 {
-	(*this)=type_name;
+	setType(type_name);
 }
 
 CategoryType::CategoryType(unsigned type_id)
 {
-	(*this)=type_id;
+	setType(type_id);
 }
 
-QStringList CategoryType::getTypes()
+CategoryType::CategoryType()
 {
-	return BaseType::getTypes(type_names);
-}
-
-unsigned CategoryType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id, type_names);
-	return type_idx;
-}
-
-unsigned CategoryType::operator = (const QString &type_name)
-{
-	unsigned type_id = BaseType::getType(type_name, type_names);
-	BaseType::setType(type_id, type_names);
-	return type_id;
-}
-
-QString CategoryType::operator ~ ()
-{
-	return type_names[type_idx];
+	type_idx = UserDefined;
 }

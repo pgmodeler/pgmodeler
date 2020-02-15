@@ -32,7 +32,7 @@
 #include <QRegExp>
 
 class BaseType{
-	protected:
+	protected:	
 		static constexpr unsigned TypesCount=262;
 		static QString type_list[TypesCount];
 
@@ -42,7 +42,8 @@ class BaseType{
 		/*! \brief Sets an id to the type according to the limit stablished by the attribute
 		 offset and type_count from each class */
 		void setType(unsigned type_id, unsigned offset, unsigned count);
-		void setType(unsigned type_id, const QStringList &type_list);
+		unsigned setType(unsigned type_id, const QStringList &type_list);
+		unsigned setType(const QString &type_name, const QStringList &type_list);
 
 		//! \brief Checks if the type id is valid according to the offset/count for the class
 		bool isTypeValid(unsigned type_id, unsigned offset, unsigned count);
@@ -58,6 +59,9 @@ class BaseType{
 		static unsigned getType(const QString &type_name, unsigned offset, unsigned count);
 		static unsigned getType(const QString &type_name, const QStringList &type_list);
 
+		//! \brief Returns the type name/string at the specified type_idx
+		static QString getTypeName(unsigned type_id, const QStringList &type_list);
+
 	public:
 		static constexpr unsigned Null=0;
 
@@ -66,7 +70,7 @@ class BaseType{
 		virtual ~BaseType();
 
 		//! \brief Returns the name of the type
-		virtual QString operator ~ () = 0;
+		virtual QString operator ~ ();
 
 		//! \brief Returns the code (id) of the type
 		unsigned operator ! ();
@@ -84,5 +88,4 @@ class BaseType{
 
 		static QString getTypeString(unsigned type_id);
 };
-
 #endif

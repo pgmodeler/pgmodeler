@@ -25,12 +25,9 @@
 #ifndef ACTION_TYPE
 #define ACTION_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class ActionType: public BaseType{
-	private:
-		static QStringList type_names;
-
+class ActionType: public TemplateType<ActionType>{
 	public:
 		static constexpr unsigned NoAction = 1,
 		Restrict = 2,
@@ -41,12 +38,6 @@ class ActionType: public BaseType{
 		ActionType(const QString &type_name);
 		ActionType(unsigned type_id);
 		ActionType();
-
-		static QStringList getTypes();
-
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif

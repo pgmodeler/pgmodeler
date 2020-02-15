@@ -25,27 +25,18 @@
 #ifndef EVENT_TRIGGER_TYPE
 #define EVENT_TRIGGER_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class EventTriggerType: public BaseType{
-	private:
-		static constexpr unsigned Offset=241;
-		static constexpr unsigned TypesCount=4;
-
+class EventTriggerType: public TemplateType<EventTriggerType>{
 	public:
-		static constexpr unsigned DdlCommandStart=Offset;
-		static constexpr unsigned DdlCommandEnd=Offset+1;
-		static constexpr unsigned SqlDrop=Offset+2;
-		static constexpr unsigned TableRewrite=Offset+3;
+		static constexpr unsigned DdlCommandStart = 1,
+		DdlCommandEnd = 2,
+		SqlDrop = 3,
+		TableRewrite = 4;
 
 		EventTriggerType(const QString &type_name);
 		EventTriggerType(unsigned type_id);
 		EventTriggerType();
-
-		static void getTypes(QStringList&type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 
