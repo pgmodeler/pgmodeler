@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,42 +18,26 @@
 
 #include "executiontype.h"
 
+template<>
+QStringList ExecutionType::TemplateType<ExecutionType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"ALSO",
+	"INSTEAD"
+};
+
 ExecutionType::ExecutionType()
 {
-	type_idx=Offset;
+	type_idx = Also;
 }
 
 ExecutionType::ExecutionType(unsigned type_id)
 {
-	(*this)=type_id;
+	setType(type_id);
 }
 
 ExecutionType::ExecutionType(const QString &type_name)
 {
-	(*this)=type_name;
-}
-
-void ExecutionType::getTypes(QStringList &type_list)
-{
-	BaseType::getTypes(type_list,Offset,TypesCount);
-}
-
-unsigned ExecutionType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned ExecutionType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-QString ExecutionType::operator ~ ()
-{
-	return type_list[type_idx];
+	setType(type_name);
 }

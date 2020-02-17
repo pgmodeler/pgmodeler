@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 {
 	try
 	{
-		QStringList types;
 		QGridLayout *grid=nullptr, *grid1=nullptr;
 		QVBoxLayout *vlayout=nullptr;
 		QSpacerItem *spacer=nullptr;
@@ -86,12 +85,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
-		SecurityType::getTypes(types);
-		security_cmb->addItems(types);
-
-		FunctionType::getTypes(types);
-		func_type_cmb->addItems(types);
-
+		security_cmb->addItems(SecurityType::getTypes());
+		func_type_cmb->addItems(FunctionType::getTypes());
 		behavior_cmb->addItems(BehaviorType::getTypes());
 
 		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,28 +25,19 @@
 #ifndef POLICY_CMD_TYPE
 #define POLICY_CMD_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class PolicyCmdType: public BaseType {
-	private:
-		static constexpr unsigned Offset=247;
-		static constexpr unsigned TypesCount=5;
-
+class PolicyCmdType: public TemplateType<PolicyCmdType> {
 	public:
-		static constexpr unsigned All=Offset;
-		static constexpr unsigned Select=Offset+1;
-		static constexpr unsigned Insert=Offset+2;
-		static constexpr unsigned Update=Offset+3;
-		static constexpr unsigned Delete=Offset+4;
+		static constexpr unsigned All = 1,
+		Select = 2,
+		Insert = 3,
+		Update = 4,
+		Delete = 5;
 
 		PolicyCmdType(const QString &type_name);
 		PolicyCmdType(unsigned type_id);
 		PolicyCmdType();
-
-		static void getTypes(QStringList&type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		Ui_ColumnWidget::setupUi(this);
 		edit_seq_btn->setVisible(false);
 
-		IdentityType::getTypes(list);
-		identity_type_cmb->addItems(list);
+		identity_type_cmb->addItems(IdentityType::getTypes());
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);

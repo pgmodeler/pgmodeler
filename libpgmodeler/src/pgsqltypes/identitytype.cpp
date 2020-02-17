@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,42 +18,26 @@
 
 #include "identitytype.h"
 
+template<>
+QStringList IdentityType::TemplateType<IdentityType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"ALWAYS",
+	"BY DEFAULT"
+};
+
 IdentityType::IdentityType()
 {
-	type_idx=Offset;
+	type_idx = Always;
 }
 
 IdentityType::IdentityType(unsigned type_id)
 {
-	(*this)=type_id;
+	setType(type_id);
 }
 
 IdentityType::IdentityType(const QString &type_name)
 {
-	(*this)=type_name;
-}
-
-void IdentityType::getTypes(QStringList &tipos)
-{
-	BaseType::getTypes(tipos,Offset,TypesCount);
-}
-
-unsigned IdentityType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned IdentityType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-QString IdentityType::operator ~ ()
-{
-	return type_list[type_idx];
+	setType(type_name);
 }

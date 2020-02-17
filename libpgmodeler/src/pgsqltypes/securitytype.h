@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,25 +25,16 @@
 #ifndef SECURITY_TYPE
 #define SECURITY_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class SecurityType: public BaseType{
-	private:
-		static constexpr unsigned Offset=155;
-		static constexpr unsigned TypesCount=2;
-
+class SecurityType: public TemplateType<SecurityType>{
 	public:
-		static constexpr unsigned Invoker=Offset;
-		static constexpr unsigned Definer=Offset+1;
+		static constexpr unsigned Invoker = 1,
+		Definer = 2;
 
 		SecurityType(unsigned type_id);
 		SecurityType(const QString &type_name);
 		SecurityType();
-
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

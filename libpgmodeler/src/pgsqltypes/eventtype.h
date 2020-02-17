@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,31 +25,21 @@
 #ifndef EVENT_TYPE
 #define EVENT_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class EventType: public BaseType{
-	private:
-		static constexpr unsigned Offset=11;
-		static constexpr unsigned TypesCount=5;
-
+class EventType: public TemplateType<EventType>{
 	public:
-		static constexpr unsigned OnSelect=Offset;
-		static constexpr unsigned OnInsert=Offset+1;
-		static constexpr unsigned OnDelete=Offset+2;
-		static constexpr unsigned OnUpdate=Offset+3;
-		static constexpr unsigned OnTruncate=Offset+4;
+		static constexpr unsigned OnSelect = 1,
+		OnInsert = 2,
+		OnDelete = 3,
+		OnUpdate = 4,
+		OnTruncate = 5;
 
 		EventType(const QString &type_name);
 		EventType(unsigned type_id);
 		EventType();
 
-		static void getTypes(QStringList &type_list);
-
-		virtual QString operator ~ ();
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-
-		/*! \brief These two operators where created to permit the use the
+		/*! \brief These two operators were created to permit the use of the
 		 class EventType on STL containers (specially maps) */
 		bool operator < (EventType type) const;
 		bool operator < (unsigned type_id) const;

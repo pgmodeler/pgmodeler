@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,26 +25,17 @@
 #ifndef PARTITIONING_TYPE
 #define PARTITIONING_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class PartitioningType: public BaseType {
-	private:
-		static constexpr unsigned Offset=252;
-		static constexpr unsigned TypesCount=3;
-
+class PartitioningType: public TemplateType<PartitioningType> {
 	public:
-		static constexpr unsigned Range=Offset;
-		static constexpr unsigned List=Offset+1;
-		static constexpr unsigned Hash=Offset+2;
+		static constexpr unsigned Range = 1,
+		List = 2,
+		Hash = 3;
 
 		PartitioningType(const QString &type_name);
 		PartitioningType(unsigned type_id);
 		PartitioningType();
-
-		static void getTypes(QStringList&type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

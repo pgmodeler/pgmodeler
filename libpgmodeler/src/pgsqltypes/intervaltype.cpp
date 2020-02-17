@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,42 +18,28 @@
 
 #include "intervaltype.h"
 
+template<>
+QStringList IntervalType::TemplateType<IntervalType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"YEAR", "MONTH", "DAY", "HOUR",
+	"MINUTE", "SECOND","YEAR TO MONTH",
+	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
+	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND"
+};
+
 IntervalType::IntervalType(unsigned type_id)
 {
-	(*this)=type_id;
+	setType(type_id);
 }
 
 IntervalType::IntervalType()
 {
-	type_idx=BaseType::Null;
+	type_idx = Null;
 }
 
 IntervalType::IntervalType(const QString &type_name)
 {
-	(*this)=type_name;
-}
-
-void IntervalType::getTypes(QStringList &type_list)
-{
-	BaseType::getTypes(type_list,Offset,TypesCount);
-}
-
-unsigned IntervalType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned IntervalType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-QString IntervalType::operator ~ ()
-{
-	return type_list[type_idx];
+	setType(type_name);
 }

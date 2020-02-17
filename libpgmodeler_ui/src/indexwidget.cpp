@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 {
 	try
 	{
-		QStringList list;
 		QGridLayout *grid=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > values_map;
@@ -41,9 +40,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 		tabWidget->widget(1)->setLayout(grid);
 
 		configureFormLayout(index_grid, ObjectType::Index);
-
-		IndexingType::getTypes(list);
-		indexing_cmb->addItems(list);
+		indexing_cmb->addItems(IndexingType::getTypes());
 
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion92)].push_back(buffering_chk);
 		fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
@@ -56,7 +53,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::
 
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType()));
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
-		//connect(elements_tab, SIGNAL(s_elementHandled(int)), this, SLOT(enableSortingOptions()));
 
 		configureTabOrder();
 		selectIndexingType();

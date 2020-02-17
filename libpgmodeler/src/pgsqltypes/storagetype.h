@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,30 +25,23 @@
 #ifndef STORAGE_TYPE
 #define STORAGE_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class StorageType: public BaseType{
-	private:
-		static constexpr unsigned Offset=199;
-		static constexpr unsigned TypesCount=4;
-
+class StorageType: public TemplateType<StorageType>{
 	public:
-		static constexpr unsigned Plain=Offset;
-		static constexpr unsigned External=Offset+1;
-		static constexpr unsigned Extended=Offset+2;
-		static constexpr unsigned Main=Offset+3;
+		static constexpr unsigned Plain = 1,
+		External = 2,
+		Extended = 3,
+		Main = 4;
 
 		StorageType();
 		StorageType(const QString &type_name);
+		StorageType(unsigned type_id);
 
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
 		bool operator == (const QString &type_name);
 		bool operator == (const char *type_name);
 		bool operator != (const QString &type_name);
 		bool operator != (StorageType type);
-		virtual QString operator ~();
 };
 
 

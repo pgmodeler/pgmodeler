@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,9 +53,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
 		deferral_type_cmb->addItems(DeferralType::getTypes());
-
-		FiringType::getTypes(list);
-		firing_mode_cmb->addItems(list);
+		firing_mode_cmb->addItems(FiringType::getTypes());
 
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ PgSqlType PgSqlType::parseString(const QString &str)
 	PgSqlType type;
 
 	//Checking if the string contains one of interval types
-	IntervalType::getTypes(intervals);
+	intervals = IntervalType::getTypes();
 	while(!intervals.isEmpty())
 	{
 		interv=intervals.back();

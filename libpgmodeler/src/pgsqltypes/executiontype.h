@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,25 +25,16 @@
 #ifndef EXECUTION_TYPE
 #define EXECUTION_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class ExecutionType: public BaseType{
-	private:
-		static constexpr unsigned Offset=16;
-		static constexpr unsigned TypesCount=2;
-
+class ExecutionType: public TemplateType<ExecutionType>{
 	public:
-		static constexpr unsigned Also=Offset;
-		static constexpr unsigned Instead=Offset+1;
+		static constexpr unsigned Also = 1,
+		Instead = 2;
 
 		ExecutionType(const QString &type_name);
 		ExecutionType(unsigned type_id);
 		ExecutionType();
-
-		static void getTypes(QStringList&type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

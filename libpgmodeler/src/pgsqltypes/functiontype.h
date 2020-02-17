@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,26 +25,17 @@
 #ifndef FUNCTION_TYPE
 #define FUNCTION_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class FunctionType: public BaseType{
-	private:
-		static constexpr unsigned Offset=18;
-		static constexpr unsigned TypesCount=3;
-
+class FunctionType: public TemplateType<FunctionType>{
 	public:
-		static constexpr unsigned Volatile=Offset;
-		static constexpr unsigned Stable=Offset+1;
-		static constexpr unsigned Immutable=Offset+2;
+		static constexpr unsigned Volatile = 1,
+		Stable = 2,
+		Immutable= 3;
 
 		FunctionType(const QString &type_name);
 		FunctionType(unsigned type_id);
 		FunctionType();
-
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

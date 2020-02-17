@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,25 +25,16 @@
 #ifndef IDENTITY_TYPE
 #define IDENTITY_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class IdentityType: public BaseType{
-	private:
-		static constexpr unsigned Offset=245;
-		static constexpr unsigned TypesCount=2;
-
+class IdentityType: public TemplateType<IdentityType>{
 	public:
-		static constexpr unsigned Always=Offset;
-		static constexpr unsigned ByDefault=Offset+1;
+		static constexpr unsigned Always = 1,
+		ByDefault = 2;
 
 		IdentityType(const QString &type_name);
 		IdentityType(unsigned type_id);
 		IdentityType();
-
-		static void getTypes(QStringList&type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

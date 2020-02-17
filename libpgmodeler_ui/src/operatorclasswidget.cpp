@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 {
 	try
 	{
-		QStringList tipos;
 		QGridLayout *grid=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > values_map;
@@ -83,12 +82,11 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
 		selectElementType(0);
-		IndexingType::getTypes(tipos);
-		indexing_cmb->addItems(tipos);
+		indexing_cmb->addItems(IndexingType::getTypes());
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-							operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
 
 		setMinimumSize(640, 730);
 	}

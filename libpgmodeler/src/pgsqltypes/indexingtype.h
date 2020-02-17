@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,29 +25,20 @@
 #ifndef INDEXING_TYPE
 #define INDEXING_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class IndexingType: public BaseType{
-	private:
-		static constexpr unsigned Offset=21;
-		static constexpr unsigned TypesCount=6;
-
+class IndexingType: public TemplateType<IndexingType>{
 	public:
-		static constexpr unsigned Btree=Offset;
-		static constexpr unsigned Gist=Offset+1;
-		static constexpr unsigned Hash=Offset+2;
-		static constexpr unsigned Gin=Offset+3;
-		static constexpr unsigned Spgist=Offset+4;
-		static constexpr unsigned Brin=Offset+5;
+		static constexpr unsigned Btree = 1,
+		Gist = 2,
+		Hash = 3,
+		Gin = 4,
+		Spgist = 5,
+		Brin = 6;
 
 		IndexingType(const QString &type_name);
 		IndexingType(unsigned type_id);
 		IndexingType();
-
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

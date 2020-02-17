@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,36 +25,27 @@
 #ifndef INTERVAL_TYPE
 #define INTERVAL_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class IntervalType: public BaseType{
-	private:
-		static constexpr unsigned Offset=139;
-		static constexpr unsigned TypesCount=13;
-
+class IntervalType: public TemplateType<IntervalType>{
 	public:
-		static constexpr unsigned Year=Offset;
-		static constexpr unsigned Month=Offset+1;
-		static constexpr unsigned Day=Offset+2;
-		static constexpr unsigned Hour=Offset+3;
-		static constexpr unsigned Minute=Offset+4;
-		static constexpr unsigned Second=Offset+5;
-		static constexpr unsigned YearToMonth=Offset+6;
-		static constexpr unsigned DayToHour=Offset+7;
-		static constexpr unsigned DayToMinute=Offset+8;
-		static constexpr unsigned DayToSecond=Offset+9;
-		static constexpr unsigned HourToMinute=Offset+10;
-		static constexpr unsigned HourToSecond=Offset+11;
-		static constexpr unsigned MinuteToSecond=Offset+12;
+		static constexpr unsigned Year = 1,
+		Month = 2,
+		Day = 3,
+		Hour= 4,
+		Minute = 5,
+		Second = 6,
+		YearToMonth = 7,
+		DayToHour = 8,
+		DayToMinute = 9,
+		DayToSecond = 10,
+		HourToMinute = 11,
+		HourToSecond = 12,
+		MinuteToSecond = 13;
 
 		IntervalType(const QString &type_name);
 		IntervalType(unsigned type_id);
 		IntervalType();
-
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 

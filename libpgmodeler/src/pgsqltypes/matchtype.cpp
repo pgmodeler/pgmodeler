@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,42 +18,27 @@
 
 #include "matchtype.h"
 
+template<>
+QStringList MatchType::TemplateType<MatchType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"MATCH FULL",
+	"MATCH PARTIAL",
+	"MATCH SIMPLE"
+};
+
 MatchType::MatchType()
 {
-	type_idx=Offset;
+	type_idx = Full;
 }
 
 MatchType::MatchType(const QString &type_name)
 {
-	(*this)=type_name;
+	setType(type_name);
 }
 
 MatchType::MatchType(unsigned type_id)
 {
-	(*this)=type_id;
-}
-
-void MatchType::getTypes(QStringList &tipos)
-{
-	BaseType::getTypes(tipos,Offset,TypesCount);
-}
-
-unsigned MatchType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned MatchType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
-}
-
-QString MatchType::operator ~ ()
-{
-	return type_list[type_idx];
+	setType(type_id);
 }

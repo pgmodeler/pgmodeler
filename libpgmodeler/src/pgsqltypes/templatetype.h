@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 \class TemplateBaseType
 \brief Implements the basic operations to handle specialized types derived from BaseType.
 
-In order to use this class in order to reuse its implementation on derivated classes we need to
+In order to reuse this class' implementation on derivated classes we need to
 use CRTP (Curiosly Recurring Template Pattern) which allows Base classes to access Derived classes
 members and attributes. In the particular case of this class we need to create a new static type_names
 attribute for each time the class is derived. See the derived classes any class *Type derived from TemplateType

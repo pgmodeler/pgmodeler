@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,39 +18,31 @@
 
 #include "eventtype.h"
 
+template<>
+QStringList EventType::TemplateType<EventType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"ON SELECT",
+	"ON INSERT",
+	"ON DELETE",
+	"ON UPDATE",
+	"ON TRUNCATE"
+};
+
 EventType::EventType()
 {
-	type_idx=Offset;
+	type_idx = OnSelect;
 }
 
 EventType::EventType(const QString &type_name)
 {
-	(*this)=type_name;
+	setType(type_name);
 }
 
 EventType::EventType(unsigned type_id)
 {
-	(*this)=type_id;
-}
-
-void EventType::getTypes(QStringList &type_list)
-{
-	BaseType::getTypes(type_list,Offset,TypesCount);
-}
-
-unsigned EventType::operator = (unsigned type_id)
-{
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_idx;
-}
-
-unsigned EventType::operator = (const QString &type_name)
-{
-	unsigned type_id;
-
-	type_id=BaseType::getType(type_name, Offset, TypesCount);
-	BaseType::setType(type_id,Offset,TypesCount);
-	return type_id;
+	setType(type_id);
 }
 
 bool EventType::operator < (EventType type) const
@@ -61,9 +53,4 @@ bool EventType::operator < (EventType type) const
 bool EventType::operator < (unsigned type_id) const
 {
 	return (type_idx < type_id);
-}
-
-QString EventType::operator ~ ()
-{
-	return type_list[type_idx];
 }

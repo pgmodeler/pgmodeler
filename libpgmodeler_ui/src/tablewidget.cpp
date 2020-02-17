@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -200,7 +200,7 @@ TableWidget::TableWidget(QWidget *parent, ObjectType tab_type): BaseObjectWidget
 	grid = dynamic_cast<QGridLayout *>(attributes_tbw->widget(6)->layout());
 	grid->addWidget(partition_keys_tab, 1, 0, 1, 2);
 
-	PartitioningType::getTypes(part_types);
+	part_types = PartitioningType::getTypes();
 	part_types.push_front(tr("None"));
 	partitioning_type_cmb->addItems(part_types);
 

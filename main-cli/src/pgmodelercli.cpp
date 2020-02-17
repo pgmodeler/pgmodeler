@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1262,7 +1262,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 	obj_xml.replace(TagExpr.arg(ref_obj_name) + QString(" name="),
 					TagExpr.arg(ref_obj_name) + QString(" signature="));
 
-	IndexingType::getTypes(index_types);
+	index_types = IndexingType::getTypes();
 
 	do
 	{
@@ -1280,7 +1280,7 @@ void PgModelerCliApp::fixOpClassesFamiliesReferences(QString &obj_xml)
 			//Transforming xml entity for quote into the char
 			obj_name.replace(XmlParser::CharQuot, QString("\""));
 
-			for(QString idx_type : index_types)
+			for(auto &idx_type : index_types)
 			{
 				//Building a name by appe
 				aux_obj_name=signature.arg(obj_name).arg(idx_type);

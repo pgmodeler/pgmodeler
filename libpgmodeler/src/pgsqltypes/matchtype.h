@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,26 +25,17 @@
 #ifndef MATCH_TYPE
 #define MATCH_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class MatchType: public BaseType{
-	private:
-		static constexpr unsigned Offset=203;
-		static constexpr unsigned TypesCount=3;
-
+class MatchType: public TemplateType<MatchType>{
 	public:
-		static constexpr unsigned Full=Offset;
-		static constexpr unsigned Partial=Offset+1;
-		static constexpr unsigned Simple=Offset+2;
+		static constexpr unsigned Full = 1,
+		Partial = 2,
+		Simple = 3;
 
 		MatchType(unsigned type_id);
 		MatchType(const QString &type_name);
 		MatchType();
-
-		static void getTypes(QStringList &type_list);
-		unsigned operator = (unsigned type_id);
-		unsigned operator = (const QString &type_name);
-		virtual QString operator ~();
 };
 
 #endif 
