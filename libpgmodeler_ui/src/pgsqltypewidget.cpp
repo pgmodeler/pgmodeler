@@ -153,7 +153,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 			combo->addItem(types[idx], QVariant(PgSqlType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
-		PgSqlType::getTypes(types, oid_types, pseudo_types);
+		types = PgSqlType::getTypes(oid_types, pseudo_types);
 		types.sort();
 		combo->addItems(types);
 	}

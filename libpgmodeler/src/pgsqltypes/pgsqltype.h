@@ -29,19 +29,17 @@
 #include "usertypeconfig.h"
 #include "intervaltype.h"
 #include "spatialtype.h"
+#include "templatetype.h"
 
-class PgSqlType: public BaseType{
+class PgSqlType: public TemplateType<PgSqlType>{
 	private:
-		static constexpr unsigned Offset=27;
-		static constexpr unsigned TypesCount=112;
-
 		//! \brief Offset for oid types
-		static constexpr unsigned OidStart=109;
-		static constexpr unsigned OidEnd=123;
+		static constexpr unsigned OidStart = 83,
+		OidEnd = 97;
 
 		//! \brief Offset for pseudo types
-		static constexpr unsigned PseudoStart=124;
-		static constexpr unsigned PseudoEnd=138;
+		static constexpr unsigned PseudoStart = 98,
+		PseudoEnd = 112;
 
 		//! \brief Configuration for user defined types
 		static vector<UserTypeConfig> user_types;
@@ -55,8 +53,7 @@ class PgSqlType: public BaseType{
 		//! \brief Type's precison (used by numeric/decimal)
 		int precision;
 
-		/*! \brief Indicates that the type (when used as timestamp or time) must
-		 considers timezones */
+		//! \brief Indicates that the type (when used as timestamp or time) must considers timezones
 		bool with_timezone;
 
 		//! \brief Time interval used by 'interval' type
@@ -83,8 +80,21 @@ class PgSqlType: public BaseType{
 		//! \brief Returns the name of the type using its id
 		static QString getUserTypeName(unsigned type_id);
 
-		void setUserType(unsigned type_id);
-		void setUserType(void *ptype);
+		/*! \brief Sets the type based on the user defined type id. This
+		 * method searches exclusively on the user_types vector */
+		unsigned setUserType(unsigned type_id);
+
+		/*! \brief Sets the type based on the object (user defined type) address. This
+		 * method searches exclusively on the user_types vector */
+		unsigned setUserType(void *ptype);
+
+		/*! \brief Sets the type based on the id. This version also looks into the user_types vector
+		 * in order to check if the type id being assigend belongs to an user defined type */
+		unsigned setType(unsigned type_id);
+
+		/*! \brief Sets the type based on the name. This version also looks into the user_types vector
+		 * in order to check if the name being assigend belongs to an user defined type */
+		unsigned setType(const QString &type_name);
 
 	public:
 		PgSqlType();
@@ -138,7 +148,7 @@ class PgSqlType: public BaseType{
 
 		static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
 		static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
-		static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);
+		static QStringList getTypes(bool oids = true, bool pseudos = true);
 
 		void setDimension(unsigned dim);
 		void setLength(unsigned len);
@@ -208,13 +218,11 @@ class PgSqlType: public BaseType{
 		//! \brief Compares the index of the "this" with the provided type reference. If an exact match is needed use isExactTo()
 		bool operator == (void *ptype);
 
-		// The methods below are just the oposite of the == versions
 		bool operator != (const QString &type_name);
 		bool operator != (PgSqlType type);
 		bool operator != (unsigned type_idx);
 
-		/*! \brief Returns the pointer to the user defined type which denotes the
-		 the pgsql type */
+		//! \brief Returns the pointer to the user defined type which denotes the the pgsql type
 		void *getUserTypeReference();
 
 		//! \brief Returns the configuration id for the user defined type
