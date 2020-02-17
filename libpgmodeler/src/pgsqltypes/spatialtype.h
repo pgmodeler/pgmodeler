@@ -25,32 +25,30 @@
 #ifndef SPATIAL_TYPE
 #define SPATIAL_TYPE
 
-#include "basetype.h"
+#include "templatetype.h"
 
-class SpatialType: public BaseType{
+class SpatialType: public TemplateType<SpatialType>{
 	private:
 		unsigned variation;
-		static constexpr unsigned Offset=225;
-		static constexpr unsigned TypesCount=16;
 
 		/*! \brief Used in conjunction with spatial_type, and denotes the SRID value
 	 for the spatial type. This value goes from -1 to n. */
 		int srid;
 
 	public:
-		static constexpr unsigned NoVar=0;
-		static constexpr unsigned VarZ=1;
-		static constexpr unsigned VarM=2;
-		static constexpr unsigned VarZm=3;
+		static constexpr unsigned NoVar = 0,
+		VarZ = 1,
+		VarM = 2,
+		VarZm = 3;
 
-		static constexpr unsigned Point=Offset;
-		static constexpr unsigned LineString=Offset+1;
-		static constexpr unsigned Polygon=Offset+2;
-		static constexpr unsigned MultiPoint=Offset+3;
-		static constexpr unsigned MultiLineString=Offset+4;
-		static constexpr unsigned MultiPolygon=Offset+5;
-		static constexpr unsigned Geometry=Offset+6;
-		static constexpr unsigned GeometryCollection=Offset+7;
+		static constexpr unsigned Point = 1,
+		LineString = 2,
+		Polygon = 3,
+		MultiPoint = 4,
+		MultiLineString = 5,
+		MultiPolygon = 6,
+		Geometry = 7,
+		GeometryCollection = 8;
 
 		SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::NoVar);
 		SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::NoVar);
@@ -62,9 +60,7 @@ class SpatialType: public BaseType{
 		void setSRID(int srid);
 		int getSRID();
 
-		static void getTypes(QStringList &type_list);
 		QString operator * ();
-		virtual QString operator ~();
 };
 
 #endif 

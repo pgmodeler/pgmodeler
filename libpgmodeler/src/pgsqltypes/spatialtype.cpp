@@ -18,6 +18,21 @@
 
 #include "spatialtype.h"
 
+template<>
+QStringList SpatialType::TemplateType<SpatialType>::type_names =
+{
+	"", // Reserved for BaseType::null
+
+	"POINT",	"LINESTRING",
+	"POLYGON",	"MULTIPOINT",
+	"MULTILINESTRING",	"MULTIPOLYGON",
+	"GEOMETRY",	"GEOMETRYCOLLECTION",
+	"POLYHEDRALSURFACE",	"TRIANGLE",
+	"TIN",	"CIRCULARSTRING",
+	"COMPOUNDCURVE",	"CURVEPOLYGON",
+	"MULTICURVE",	"MULTISURFACE",
+};
+
 SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_id)
 {
 	QString name=type_name;
@@ -38,15 +53,14 @@ SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_
 		name.remove(QString("Z"));
 	}
 
-	BaseType::setType(BaseType::getType(name, Offset, TypesCount),
-						Offset, TypesCount);
+	setType(type_name);
 	setVariation(variation_id);
 	setSRID(srid);
 }
 
 SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 {
-	BaseType::setType(type_id,Offset,TypesCount);
+	setType(type_id);
 	setVariation(var_id);
 	setSRID(srid);
 }
@@ -71,11 +85,6 @@ unsigned SpatialType::getVariation()
 	return variation;
 }
 
-void SpatialType::getTypes(QStringList &type_list)
-{
-	BaseType::getTypes(type_list,Offset,TypesCount);
-}
-
 void SpatialType::setSRID(int srid)
 {
 	if(srid < -1) srid=-1;
@@ -89,7 +98,7 @@ int SpatialType::getSRID()
 
 QString SpatialType::operator * ()
 {
-	if(this->type_idx!=BaseType::Null)
+	if(type_idx != Null)
 	{
 		QString var_str;
 
@@ -102,15 +111,10 @@ QString SpatialType::operator * ()
 		}
 
 		if(srid > 0)
-			return (QString("(%1%2, %3)").arg(type_list[type_idx]).arg(var_str)).arg(srid);
+			return (QString("(%1%2, %3)").arg(type_names[type_idx]).arg(var_str)).arg(srid);
 		else
-			return (QString("(%1%2)").arg(type_list[type_idx]).arg(var_str));
+			return (QString("(%1%2)").arg(type_names[type_idx]).arg(var_str));
 	}
 	else
 		return QString();
-}
-
-QString SpatialType::operator ~ ()
-{
-	return type_list[type_idx];
 }

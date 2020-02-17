@@ -42,7 +42,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		interval_cmb->addItem("");
 		interval_cmb->addItems(interval_lst);
 
-		SpatialType::getTypes(spatial_lst);
+		spatial_lst = SpatialType::getTypes();
 		spatial_lst.sort();
 		spatial_cmb->addItem(tr("NONE"));
 		spatial_cmb->addItems(spatial_lst);
@@ -69,16 +69,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(event->type() == QEvent::KeyRelease && object == type_cmb)
-	{
-		try
-		{
-			updateTypeFormat();
-		}
-		catch(Exception &)
-		{
-			format_txt->setPlainText(InvalidType);
-		}
-	}
+		updateTypeFormat();
 
 	return QWidget::eventFilter(object, event);
 }
@@ -138,9 +129,9 @@ void PgSQLTypeWidget::updateTypeFormat()
 
 		format_txt->setPlainText(*type);
 	}
-	catch(Exception &e)
+	catch(Exception &)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		format_txt->setPlainText(InvalidType);
 	}
 }
 
