@@ -196,7 +196,8 @@ void  ModelValidationHelper::resolveConflict(ValidationInfo &info)
 		else if(info.getValidationType()==ValidationInfo::MissingExtension && !db_model->getExtension(QString("postgis")))
 		{
 			Extension *extension = new Extension();
-			extension->setName(QString("postgis"));
+			extension->setName("postgis");
+			extension->setSchema(db_model->getSchema("public"));
 			db_model->addExtension(extension);
 		}
 	}

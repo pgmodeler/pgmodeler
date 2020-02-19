@@ -109,7 +109,8 @@ void PgSQLTypeWidget::updateTypeFormat()
 		if(spatial_cmb->isVisible())
 		{
 			SpatialType spatial_tp;
-			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
+			QString sp_type_name = spatial_cmb->currentIndex() > 0 ? spatial_cmb->currentText() : "";
+			spatial_tp = SpatialType(sp_type_name, srid_spb->value());
 
 			if(var_z_chk->isChecked() && var_m_chk->isChecked())
 				spatial_tp.setVariation(SpatialType::VarZm);

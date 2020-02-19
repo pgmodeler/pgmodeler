@@ -676,14 +676,29 @@ bool PgSqlType::isNetworkType()
 					curr_type==QString("macaddr8")));
 }
 
+bool PgSqlType::isGiSType(const QString &type_name)
+{
+	return (type_name==QString("geography") ||
+					type_name==QString("geometry") ||
+					type_name==QString("geometry_dump"));
+}
+
+bool PgSqlType::isBoxType()
+{
+	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
+	return (!isUserType() && isBoxType(curr_type));
+}
+
+bool PgSqlType::isBoxType(const QString &type_name)
+{
+	return (type_name==QString("box2d") ||
+					type_name==QString("box3d"));
+}
+
 bool PgSqlType::isGiSType()
 {
 	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
-
-	return (!isUserType() &&
-				 (curr_type==QString("geography") ||
-					curr_type==QString("geometry") ||
-					curr_type==QString("geometry_dump")));
+	return (!isUserType() && isGiSType(curr_type));
 }
 
 bool PgSqlType::isRangeType()

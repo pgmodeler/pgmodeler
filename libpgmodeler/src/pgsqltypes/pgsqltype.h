@@ -168,7 +168,13 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isOIDType();
 		bool isUserType();
 		bool isArrayType();
+
 		bool isGiSType();
+		static bool isGiSType(const QString &type_name);
+
+		bool isBoxType();
+		static bool isBoxType(const QString &type_name);
+
 		bool isRangeType();
 		bool isSerialType();
 		bool isDateTimeType();
