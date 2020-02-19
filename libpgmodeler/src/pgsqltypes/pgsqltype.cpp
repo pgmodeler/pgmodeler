@@ -255,9 +255,9 @@ QStringList PgSqlType::getTypes(bool oids, bool pseudos)
 	QStringList type_list;
 	unsigned total = type_names.size();
 
-	for(unsigned idx = 0; idx < total; idx++)
+	for(unsigned idx = 1; idx < total; idx++)
 	{
-		if(idx<OidStart ||
+		if(idx < OidStart ||
 			 (oids && idx >= OidStart && idx <= OidEnd) ||
 			 (pseudos && idx >= PseudoStart && idx <= PseudoEnd))
 			type_list.push_back(type_names[idx]);
