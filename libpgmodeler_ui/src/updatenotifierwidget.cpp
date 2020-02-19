@@ -164,7 +164,7 @@ void UpdateNotifierWidget::handleUpdateChecked(QNetworkReply *reply)
 							 Messagebox::ErrorIcon, Messagebox::OkButton);
 			}
 
-			delete(update_chk_reply);
+			update_chk_reply->deleteLater();
 			update_chk_reply=nullptr;
 		}
 	}
