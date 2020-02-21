@@ -46,6 +46,7 @@ SQLToolWidget::SQLToolWidget(QWidget * parent) : QWidget(parent)
 	vbox=new QVBoxLayout;
 	sourcecode_txt=new NumberedTextEditor(sourcecode_gb);
 	sourcecode_txt->setReadOnly(true);
+	sourcecode_txt->installEventFilter(this);
 
 	sourcecode_hl=new SyntaxHighlighter(sourcecode_txt);
 	sourcecode_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
@@ -113,6 +114,14 @@ bool SQLToolWidget::eventFilter(QObject *object, QEvent *event)
 			h_splitter->setSizes({315, 10000});
 
 		return true;
+	}
+	else if(event->type() == QEvent::MouseButtonPress &&
+					dynamic_cast<QMouseEvent *>(event)->button()==Qt::MiddleButton &&
+					object == sourcecode_txt &&
+					sourcecode_txt->textCursor().hasSelection())
+	{
+			showSnippet(sourcecode_txt->textCursor().selectedText());
+			return true;
 	}
 
 	return QWidget::eventFilter(object, event);
