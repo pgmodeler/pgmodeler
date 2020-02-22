@@ -1373,7 +1373,7 @@
      <normaloff>:/icones/icones/fixobject.png</normaloff>:/icones/icones/fixobject.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Model structure</string>
+    <string>&amp;Model's structure</string>
    </property>
    <property name="toolTip">
     <string>Performs the model structure fix routine</string>

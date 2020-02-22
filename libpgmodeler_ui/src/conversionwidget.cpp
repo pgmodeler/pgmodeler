@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	try
 	{
 		QFrame *frame=nullptr;
-		QStringList encodings;
-
 		Ui_ConversionWidget::setupUi(this);
 
 		conv_func_sel=nullptr;
@@ -42,9 +40,8 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		EncodingType::getTypes(encodings);
-		src_encoding_cmb->addItems(encodings);
-		trg_encoding_cmb->addItems(encodings);
+		src_encoding_cmb->addItems(EncodingType::getTypes());
+		trg_encoding_cmb->addItems(EncodingType::getTypes());
 
 		configureTabOrder({ src_encoding_cmb, trg_encoding_cmb, conv_func_sel });
 

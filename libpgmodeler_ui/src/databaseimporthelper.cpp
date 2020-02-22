@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "databaseimporthelper.h"
+#include "defaultlanguages.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 
@@ -1145,7 +1146,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
-		if(getObjectName(attribs[Attributes::Language])==~LanguageType("c"))
+		if(getObjectName(attribs[Attributes::Language]).toLower() == DefaultLanguages::C)
 		{
 			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();
@@ -2501,6 +2502,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 	Column col;
 	QString type_def, unknown_obj_xml, type_name, def_val;
 	map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+	static QStringList sp_types = SpatialType::getTypes();
 
 	if(tab_oid == 0)
 		return;
@@ -2533,28 +2535,45 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 		/* If the type has an entry on the types map and its OID is greater than system object oids,
 	 means that it's a user defined type, thus, there is the need to check if the type
 	 is registered. */
-		if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+		if(types.count(type_oid) !=0 && type_oid > catalog.getLastSysObjectOID())
 		{
 			/* Building the type name prepending the schema name in order to search it on
 			 * the user defined types list at PgSQLType class */
-			type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-			type_name+=QString(".");
+			QString sch_name = BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
+			sch_name += QString(".");
+			type_name.clear();
 
-			if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+			/* Special verification for PostGiS types: if the current type is a gis based one
+			 * (geometry, geography, box3d or box2d) we override the usage of the current type
+			 * and force the use of the pgModeler built-in one. */
+			if((PgSqlType::isGiSType(types[type_oid][Attributes::Name]) ||
+					PgSqlType::isBoxType(types[type_oid][Attributes::Name])) &&
+				 types[type_oid][Attributes::Configuration] == Attributes::BaseType &&
+				 types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::UserDefined))
 			{
-				int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-				QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
-				type_name+=BaseObject::formatName(aux_name, false);
-				type_name+=QString("[]").repeated(dim);
+				type_name = itr->second[Attributes::Type];
+				type_name.remove(sch_name);
+				is_type_registered = true;
 			}
 			else
-				type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+			{
+				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+				{
+					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
+					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					type_name+=BaseObject::formatName(aux_name, false);
+					type_name+=QString("[]").repeated(dim);
+				}
+				else
+					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
 
-			is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+				type_name.prepend(sch_name);
+				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+			}
 		}
 		else
 		{
-			type_name=itr->second[Attributes::Type];
+			type_name = itr->second[Attributes::Type];
 			is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
 		}
 

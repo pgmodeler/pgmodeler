@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "eventtrigger.h"
+#include "defaultlanguages.h"
 
 EventTrigger::EventTrigger()
 {
@@ -50,7 +51,7 @@ void EventTrigger::setFunction(Function *func)
 						.arg(BaseObject::getTypeName(ObjectType::EventTrigger)),
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
-	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::Sql))
+	else if(func->getLanguage()->getName().toLower() == DefaultLanguages::Sql)
 		throw Exception(ErrorCode::AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(function != func);

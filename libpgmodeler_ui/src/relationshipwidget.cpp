@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -115,8 +115,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 
 		configureFormLayout(relationship_grid, ObjectType::Relationship);
 
-		DeferralType::getTypes(list);
-		deferral_cmb->addItems(list);
+		deferral_cmb->addItems(DeferralType::getTypes());
 
 		frame=generateInformationFrame(tr("Available tokens to define name patterns:<br/>\
 					<strong>%1</strong> = Reference (source) primary key column name. <em>(Ignored on constraint patterns)</em><br/> \
@@ -130,7 +129,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		vlayout=dynamic_cast<QVBoxLayout *>(name_patterns_grp->layout());
 		vlayout->addWidget(frame);
 
-		ActionType::getTypes(list);
+		list = ActionType::getTypes();
 		list.push_front(tr("Default"));
 		del_action_cmb->addItems(list);
 		upd_action_cmb->addItems(list);

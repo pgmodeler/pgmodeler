@@ -15,6 +15,7 @@ windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
 	   src/cast.h \
+	   src/defaultlanguages.h \
 	   src/function.h \
 	   src/language.h \
 	   src/operator.h \
@@ -25,6 +26,30 @@ HEADERS += src/textbox.h \
 	   src/aggregate.h \
 	   src/permission.h \
 	   src/databasemodel.h \
+	   src/pgsqltypes/actiontype.h \
+	   src/pgsqltypes/basetype.h \
+	   src/pgsqltypes/behaviortype.h \
+	   src/pgsqltypes/categorytype.h \
+	   src/pgsqltypes/constrainttype.h \
+	   src/pgsqltypes/deferraltype.h \
+	   src/pgsqltypes/encodingtype.h \
+	   src/pgsqltypes/eventtriggertype.h \
+	   src/pgsqltypes/eventtype.h \
+	   src/pgsqltypes/executiontype.h \
+	   src/pgsqltypes/firingtype.h \
+	   src/pgsqltypes/functiontype.h \
+	   src/pgsqltypes/identitytype.h \
+	   src/pgsqltypes/indexingtype.h \
+	   src/pgsqltypes/intervaltype.h \
+	   src/pgsqltypes/matchtype.h \
+	   src/pgsqltypes/partitioningtype.h \
+	   src/pgsqltypes/pgsqltype.h \
+	   src/pgsqltypes/policycmdtype.h \
+	   src/pgsqltypes/securitytype.h \
+	   src/pgsqltypes/spatialtype.h \
+	   src/pgsqltypes/storagetype.h \
+	   src/pgsqltypes/templatetype.h \
+	   src/pgsqltypes/usertypeconfig.h \
 	   src/role.h \
 	   src/constraint.h \
 	   src/type.h \
@@ -33,7 +58,6 @@ HEADERS += src/textbox.h \
 	   src/baseobject.h \
 	   src/rule.h \
 	   src/sequence.h \
-	   src/pgsqltypes.h \
 	   src/conversion.h \
 	   src/schema.h \
 	   src/indexelement.h \
@@ -71,6 +95,28 @@ HEADERS += src/textbox.h \
 
 SOURCES +=  src/textbox.cpp \
 	    src/domain.cpp \
+	    src/pgsqltypes/actiontype.cpp \
+	    src/pgsqltypes/basetype.cpp \
+	    src/pgsqltypes/behaviortype.cpp \
+	    src/pgsqltypes/categorytype.cpp \
+	    src/pgsqltypes/constrainttype.cpp \
+	    src/pgsqltypes/deferraltype.cpp \
+	    src/pgsqltypes/encodingtype.cpp \
+	    src/pgsqltypes/eventtriggertype.cpp \
+	    src/pgsqltypes/eventtype.cpp \
+	    src/pgsqltypes/executiontype.cpp \
+	    src/pgsqltypes/firingtype.cpp \
+	    src/pgsqltypes/functiontype.cpp \
+	    src/pgsqltypes/identitytype.cpp \
+	    src/pgsqltypes/indexingtype.cpp \
+	    src/pgsqltypes/intervaltype.cpp \
+	    src/pgsqltypes/matchtype.cpp \
+	    src/pgsqltypes/partitioningtype.cpp \
+	    src/pgsqltypes/pgsqltype.cpp \
+	    src/pgsqltypes/policycmdtype.cpp \
+	    src/pgsqltypes/securitytype.cpp \
+	    src/pgsqltypes/spatialtype.cpp \
+	    src/pgsqltypes/storagetype.cpp \
 	    src/trigger.cpp \
 	    src/basegraphicobject.cpp \
 	    src/baserelationship.cpp \
@@ -81,7 +127,6 @@ SOURCES +=  src/textbox.cpp \
 	    src/index.cpp \
 	    src/operator.cpp \
 	    src/constraint.cpp \
-	    src/pgsqltypes.cpp \
 	    src/schema.cpp \
 	    src/language.cpp \
 	    src/role.cpp \

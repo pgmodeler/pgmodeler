@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,21 +69,14 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 		configureFormLayout(constraint_grid, ObjectType::Constraint);
 
-		ConstraintType::getTypes(list);
-		constr_type_cmb->addItems(list);
+		constr_type_cmb->addItems(ConstraintType::getTypes());
+		match_cmb->addItems(MatchType::getTypes());
+		deferral_cmb->addItems(DeferralType::getTypes());
+		indexing_cmb->addItems(IndexingType::getTypes());
 
-		MatchType::getTypes(list);
-		match_cmb->addItems(list);
-
-		DeferralType::getTypes(list);
-		deferral_cmb->addItems(list);
-
-		ActionType::getTypes(list);
+		list = ActionType::getTypes();
 		on_delete_cmb->addItems(list);
 		on_update_cmb->addItems(list);
-
-		IndexingType::getTypes(list);
-		indexing_cmb->addItems(list);
 
 		info_frm=generateInformationFrame(tr("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
@@ -97,7 +90,6 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
 		warn_frm->setParent(this);
 
-		//connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration()));
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType()));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));

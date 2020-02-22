@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 
 #include "functionwidget.h"
 #include "baseform.h"
+#include "defaultlanguages.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Function)
 {
 	try
 	{
-		QStringList types;
 		QGridLayout *grid=nullptr, *grid1=nullptr;
 		QVBoxLayout *vlayout=nullptr;
 		QSpacerItem *spacer=nullptr;
@@ -85,14 +85,9 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
-		SecurityType::getTypes(types);
-		security_cmb->addItems(types);
-
-		FunctionType::getTypes(types);
-		func_type_cmb->addItems(types);
-
-		BehaviorType::getTypes(types);
-		behavior_cmb->addItems(types);
+		security_cmb->addItems(SecurityType::getTypes());
+		func_type_cmb->addItems(FunctionType::getTypes());
+		behavior_cmb->addItems(BehaviorType::getTypes());
 
 		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
 		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
@@ -279,7 +274,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	list.sort();
 	language_cmb->addItems(list);
-	language_cmb->setCurrentText(~LanguageType(LanguageType::Sql));
+	language_cmb->setCurrentText(DefaultLanguages::Sql);
 
 	if(func)
 	{
@@ -358,7 +353,7 @@ void FunctionWidget::selectLanguage()
 {
 	bool c_lang;
 
-	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::C));
+	c_lang=(language_cmb->currentText() == DefaultLanguages::C);
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
@@ -530,7 +525,7 @@ void FunctionWidget::applyConfiguration()
 		}
 
 
-		if(language_cmb->currentText()==~LanguageType(LanguageType::C))
+		if(language_cmb->currentText() == DefaultLanguages::C)
 		{
 			func->setLibrary(library_edt->text());
 			func->setSymbol(symbol_edt->text());

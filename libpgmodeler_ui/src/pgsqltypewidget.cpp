@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 		format_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		this->adjustSize();
 
-		IntervalType::getTypes(interval_lst);
+		interval_lst = IntervalType::getTypes();
 		interval_cmb->addItem("");
 		interval_cmb->addItems(interval_lst);
 
-		SpatialType::getTypes(spatial_lst);
+		spatial_lst = SpatialType::getTypes();
 		spatial_lst.sort();
 		spatial_cmb->addItem(tr("NONE"));
 		spatial_cmb->addItems(spatial_lst);
@@ -69,16 +69,7 @@ PgSQLTypeWidget::PgSQLTypeWidget(QWidget *parent, const QString &label) : QWidge
 bool PgSQLTypeWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(event->type() == QEvent::KeyRelease && object == type_cmb)
-	{
-		try
-		{
-			updateTypeFormat();
-		}
-		catch(Exception &)
-		{
-			format_txt->setPlainText(InvalidType);
-		}
-	}
+		updateTypeFormat();
 
 	return QWidget::eventFilter(object, event);
 }
@@ -118,7 +109,8 @@ void PgSQLTypeWidget::updateTypeFormat()
 		if(spatial_cmb->isVisible())
 		{
 			SpatialType spatial_tp;
-			spatial_tp=SpatialType(spatial_cmb->currentText(), srid_spb->value());
+			QString sp_type_name = spatial_cmb->currentIndex() > 0 ? spatial_cmb->currentText() : "";
+			spatial_tp = SpatialType(sp_type_name, srid_spb->value());
 
 			if(var_z_chk->isChecked() && var_m_chk->isChecked())
 				spatial_tp.setVariation(SpatialType::VarZm);
@@ -138,9 +130,9 @@ void PgSQLTypeWidget::updateTypeFormat()
 
 		format_txt->setPlainText(*type);
 	}
-	catch(Exception &e)
+	catch(Exception &)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		format_txt->setPlainText(InvalidType);
 	}
 }
 
@@ -162,7 +154,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 			combo->addItem(types[idx], QVariant(PgSqlType::getUserTypeIndex(types[idx],nullptr,model)));
 
 		//Getting the built-in type adding them into the combo
-		PgSqlType::getTypes(types, oid_types, pseudo_types);
+		types = PgSqlType::getTypes(oid_types, pseudo_types);
 		types.sort();
 		combo->addItems(types);
 	}
