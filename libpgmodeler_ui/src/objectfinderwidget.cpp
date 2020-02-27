@@ -214,6 +214,7 @@ void ObjectFinderWidget::clearResult()
 {
 	selected_obj=nullptr;
 	found_objs.clear();
+	selected_objs.clear();
 
 	result_tbw->clearContents();
 	result_tbw->setRowCount(0);
@@ -284,32 +285,65 @@ void ObjectFinderWidget::selectObject()
 
 	if(tab_item)
 	{
-		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+		vector<BaseObject *>::iterator itr;
+		BaseGraphicObject *graph_obj = nullptr;
+		BaseObjectView *obj_view = nullptr;
+		TableObject *tab_obj = nullptr;
+		BaseObject *selected_obj = reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
 
-		if(QApplication::mouseButtons()!=Qt::RightButton)
+		itr = std::find(selected_objs.begin(), selected_objs.end(), selected_obj);
+
+		if(tab_item->isSelected() && itr == selected_objs.end())
+			selected_objs.push_back(selected_obj);
+		else if(!tab_item->isSelected())
 		{
-			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
-			TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+			// Removing the selection from the item in the scene if it's a graphical object
+			graph_obj = dynamic_cast<BaseGraphicObject *>(selected_obj);
+			tab_obj = dynamic_cast<TableObject *>(selected_obj);
 
 			if(tab_obj && !graph_obj)
-				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+				graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
 
 			if(graph_obj)
 			{
-				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+				obj_view = dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+				obj_view->setSelected(false);
+			}
 
-				if(obj)
+			selected_objs.erase(itr);
+		}
+
+		/* If the current only one row selection we clear the scene's selection
+		 * in order to force items to be drawn again without the selection rectangle */
+		if(result_tbw->selectedRanges().size() == 1)
+			model_wgt->scene->clearSelection();
+
+		if(QApplication::mouseButtons() != Qt::RightButton)
+		{
+			for(auto &obj : selected_objs)
+			{
+				graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+				tab_obj = dynamic_cast<TableObject *>(obj);
+
+				if(tab_obj && !graph_obj)
+					graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+
+				if(graph_obj)
 				{
-				  model_wgt->scene->clearSelection();
-				  model_wgt->viewport->centerOn(obj);
-				  obj->setSelected(true);
+					obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
+
+					if(obj_view)
+					{
+						model_wgt->viewport->centerOn(obj_view);
+						obj_view->setSelected(true);
+					}
 				}
 			}
 		}
 		//Showing the popup menu for the selected object in the result set
 		else
 		{
-			model_wgt->configureObjectMenu(selected_obj);
+			model_wgt->configurePopupMenu(selected_objs);
 			model_wgt->showObjectMenu();
 		}
 	}
