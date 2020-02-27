@@ -38,6 +38,8 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 		//! \brief Object to be renamed
 		BaseObject *object;
 
+		vector<BaseObject *> objects;
+
 		//! \brief Operation list used to register the modification over object
 		OperationList *op_list;
 
@@ -50,11 +52,13 @@ class ObjectRenameWidget: public QDialog, public Ui::ObjectRenameWidget {
 		ObjectRenameWidget(QWidget *parent);
 
 		void setAttributes(BaseObject *object, DatabaseModel *model, OperationList *op_list);
+		void setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list);
 
 	public slots:
 		int exec();
 
 	private slots:
+		void __applyRenaming();
 		void applyRenaming();
 };
 

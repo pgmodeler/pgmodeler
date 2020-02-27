@@ -201,7 +201,7 @@ void ModelObjectsWidget::selectObject()
 	if(obj_type!=ObjectType::Permission && selected_object && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
-		model_wgt->configureObjectMenu(selected_object);
+		model_wgt->configurePopupMenu(selected_object);
 		showObjectMenu();
 	}
 }

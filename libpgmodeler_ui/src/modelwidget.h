@@ -180,9 +180,6 @@ class ModelWidget: public QWidget {
 		//! \brief Opens a editing form specific for tables and foreign tables
 		int openTableEditingForm(ObjectType tab_type, PhysicalTable *object, Schema *parent_obj, const QPointF &pos);
 
-		//! \brief Configures the popup menu according the the selected objects list
-		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
-
 		//! \brief Configures the submenu related to the object
 		void configureQuickMenu(BaseObject *object);
 
@@ -417,7 +414,10 @@ class ModelWidget: public QWidget {
 		void handleObjectDoubleClick(BaseGraphicObject *object);
 
 		//! \brief Configures the popup menu specific for the passed object
-		void configureObjectMenu(BaseObject *object);
+		void configurePopupMenu(BaseObject *object);
+
+		//! \brief Configures the popup menu according the the selected objects list
+		void configurePopupMenu(const vector<BaseObject *> &objects=vector<BaseObject *>());
 
 		//! \brief Shows the configured popup menu
 		void showObjectMenu();

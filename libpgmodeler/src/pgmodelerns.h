@@ -92,13 +92,13 @@ namespace PgModelerNs {
 		aux_name=obj_name;
 
 		//Check if the object's new name conflicts with some of the objects within the list
-		while(itr!=itr_end)
+		while(itr != itr_end)
 		{
-			aux_obj=(*itr);
+			aux_obj = (*itr);
 			itr++;
 
 			//If a conflicting object is found
-			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name)==aux_name)
+			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name) == aux_name)
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type==ObjectType::Operator)
