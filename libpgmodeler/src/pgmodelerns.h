@@ -91,10 +91,11 @@ namespace PgModelerNs {
 
 			//Append the id of the object on its name (this is not applied to operators)
 			if(obj_type!=ObjectType::Operator)
-				obj_name+=QString("_") + id;
+				obj_name += QString("_") + id;
 		}
 
-		aux_name=obj_name;
+		obj_name.remove('"');
+		aux_name = obj_name;
 
 		//Check if the object's new name conflicts with some of the objects within the list
 		while(itr != itr_end)
@@ -106,7 +107,7 @@ namespace PgModelerNs {
 				continue;
 
 			//If a conflicting object is found
-			if(aux_obj->getName(fmt_name) == aux_name)
+			if(aux_obj->getName(fmt_name).remove('"') == aux_name)
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type==ObjectType::Operator)
@@ -129,10 +130,7 @@ namespace PgModelerNs {
 
 		// If using name formatting option we need to strip the schema name from the generated name
 		if(fmt_name && obj->getSchema())
-		{
 			obj_name.remove(QString("%1.").arg(obj->getSchema()->getName()));
-			obj_name.remove('\"');
-		}
 
 		return(obj_name);
 	}
