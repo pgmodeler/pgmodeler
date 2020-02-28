@@ -27,9 +27,13 @@ ObjectRenameWidget::ObjectRenameWidget(QWidget * parent) : QDialog(parent)
 	setupUi(this);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 
-	connect(new_name_edt, SIGNAL(returnPressed()), this, SLOT(applyRenaming()));
+	connect(new_name_edt, SIGNAL(returnPressed()), apply_tb, SLOT(click()));
 	connect(apply_tb, SIGNAL(clicked()), this, SLOT(applyRenaming()));
 	connect(cancel_tb, SIGNAL(clicked()), this, SLOT(reject()));
+
+	connect(new_name_edt, &QLineEdit::textChanged, [&](){
+		apply_tb->setEnabled(!new_name_edt->text().isEmpty());
+	});
 }
 
 void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
@@ -60,9 +64,9 @@ void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel 
 	}
 	else
 	{
-		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("table_grp")));
+		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 		obj_icon_lbl->setToolTip("");
-		rename_lbl->setText(tr("Renaming <strong>%1</strong> object(s)").arg(objs.size()));
+		rename_lbl->setText(tr("Rename <strong>%1</strong> selected object(s) to:").arg(objs.size()));
 		to_lbl->setVisible(false);
 		obj_name_lbl->setVisible(false);
 	}
@@ -103,6 +107,7 @@ void ObjectRenameWidget::applyRenaming()
 			QString fmt_name, new_name;
 			vector<BaseObject *> ref_objs, obj_list;
 			vector<TableObject *> tab_objs;
+			map<ObjectType, vector<BaseObject *>> obj_map;
 
 			op_list->startOperationChain();
 
@@ -128,22 +133,24 @@ void ObjectRenameWidget::applyRenaming()
 					//For database child object, generate an unique name among the other objects of the same type in the database
 					else
 					{
-						if(!BaseTable::isBaseTable(obj_type))
-							obj_list = *model->getObjectList(obj_type);
-						else
+						if(!BaseTable::isBaseTable(obj_type) && obj_map.count(obj_type) == 0)
+							obj_map[obj_type] = *model->getObjectList(obj_type);
+						else if(obj_map.count(ObjectType::BaseTable) == 0)
 						{
-								obj_list = *model->getObjectList(ObjectType::Table);
+								obj_map[ObjectType::BaseTable] = *model->getObjectList(ObjectType::Table);
 
-								obj_list.insert(obj_list.end(),
+								obj_map[ObjectType::BaseTable].insert(obj_map[ObjectType::BaseTable].end(),
 																model->getObjectList(ObjectType::View)->begin(),
 																model->getObjectList(ObjectType::View)->end());
 
-								obj_list.insert(obj_list.end(),
+								obj_map[ObjectType::BaseTable].insert(obj_map[ObjectType::BaseTable].end(),
 																model->getObjectList(ObjectType::ForeignTable)->begin(),
 																model->getObjectList(ObjectType::ForeignTable)->end());
 						}
 
-						new_name = PgModelerNs::generateUniqueName<BaseObject>(object, obj_list, true, "", false, true);
+						new_name = PgModelerNs::generateUniqueName<BaseObject>(object,
+																																	 BaseTable::isBaseTable(obj_type) ? obj_map[ObjectType::BaseTable] : obj_map[obj_type],
+																																	 true, "", false, true);
 					}
 				}
 
