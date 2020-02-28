@@ -470,7 +470,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_paste, SIGNAL(triggered(bool)),this,SLOT(pasteObjects()));
 	connect(action_cut, SIGNAL(triggered(bool)),this,SLOT(cutObjects()));
 	connect(action_duplicate, SIGNAL(triggered(bool)),this,SLOT(duplicateObject()));
-	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObject()));
+	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObjects()));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions()));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren()));
 	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables()));
@@ -2000,11 +2000,8 @@ void ModelWidget::cancelObjectAddition()
 	this->configurePopupMenu(this->selected_objects);
 }
 
-void ModelWidget::renameObject()
+void ModelWidget::renameObjects()
 {
-	QAction *act = dynamic_cast<QAction *>(sender());
-	BaseObject *obj = reinterpret_cast<BaseObject *>(act->data().value<void *>());
-
 	try
 	{
 		ObjectRenameWidget objectrename_wgt(this);

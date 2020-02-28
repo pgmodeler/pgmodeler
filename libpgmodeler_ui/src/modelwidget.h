@@ -432,7 +432,7 @@ class ModelWidget: public QWidget {
 		void protectObject();
 
 		//! \brief Triggers the quick rename action
-		void renameObject();
+		void renameObjects();
 
 		//! \brief Move the selected object to a schema (selectable via menu)
 		void moveToSchema();

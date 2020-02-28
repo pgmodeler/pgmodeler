@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>81</height>
+    <width>400</width>
+    <height>80</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
+    <width>400</width>
     <height>0</height>
    </size>
   </property>
@@ -142,7 +142,7 @@
       <item row="1" column="2">
        <widget class="QLabel" name="obj_name_lbl">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -150,7 +150,6 @@
         <property name="font">
          <font>
           <weight>75</weight>
-          <italic>true</italic>
           <bold>true</bold>
          </font>
         </property>
@@ -159,57 +158,18 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
-       <widget class="QLabel" name="to_lbl">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>to:</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="rename_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
         <property name="text">
          <string>Rename</string>
         </property>
        </widget>
-      </item>
-      <item row="1" column="4">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>30</width>
-          <height>15</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="2" column="1" colspan="4">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -223,11 +183,6 @@
             <width>0</width>
             <height>30</height>
            </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
           </property>
           <property name="clearButtonEnabled">
            <bool>true</bool>
@@ -287,6 +242,19 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="1" column="3" colspan="2">
+       <widget class="QLabel" name="to_lbl">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>to:</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

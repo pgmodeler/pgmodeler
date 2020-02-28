@@ -124,8 +124,15 @@ namespace PgModelerNs {
 			}
 		}
 
-		if(aux_name!=obj_name)
-			obj_name=aux_name;
+		if(aux_name != obj_name)
+			obj_name = aux_name;
+
+		// If using name formatting option we need to strip the schema name from the generated name
+		if(fmt_name && obj->getSchema())
+		{
+			obj_name.remove(QString("%1.").arg(obj->getSchema()->getName()));
+			obj_name.remove('\"');
+		}
 
 		return(obj_name);
 	}
