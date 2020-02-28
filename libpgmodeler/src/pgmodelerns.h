@@ -49,10 +49,15 @@ namespace PgModelerNs {
 	extern bool isReservedKeyword(const QString &word);
 
 	/*! \brief Generates a unique name based upon the specified object and the list of objects of the same type.
-  User can specify a suffix for the generated name as well if the comparison inside the method must be done with
-	formated names. The last optinal parameter indicates that the suffix should be used only in case of conflicts */
+	 * User can specify a suffix for the generated name as well if the comparison inside the method must be done with
+	 * formated names. The optinal parameter use_suf_on_conflict indicates that the suffix should be used only in case of conflicts.
+	 * Now, the discard_input_obj is used to indicate if the input object should be considered or not in the unique name generation, in this case,
+	 * when false the name of the input object (obj) will always be compared to itself if it is present in the provided list. When that
+	 * parameter is true the comparison is not made. */
 	template <class Class>
-	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector, bool fmt_name=false, const QString &suffix=QString(), bool use_suf_on_conflict=false)
+	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,
+														 bool fmt_name = false, const QString &suffix = QString(),
+														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
 		unsigned counter=0;
 		int len=0;
@@ -97,8 +102,11 @@ namespace PgModelerNs {
 			aux_obj = (*itr);
 			itr++;
 
+			if(discard_input_obj && aux_obj == obj)
+				continue;
+
 			//If a conflicting object is found
-			if(/*aux_obj!=obj &&*/ aux_obj->getName(fmt_name) == aux_name)
+			if(aux_obj->getName(fmt_name) == aux_name)
 			{
 				//For operators is appended a '?' on the name
 				if(obj_type==ObjectType::Operator)

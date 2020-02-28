@@ -2002,23 +2002,24 @@ void ModelWidget::cancelObjectAddition()
 
 void ModelWidget::renameObject()
 {
-	QAction *act=dynamic_cast<QAction *>(sender());
-	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+	QAction *act = dynamic_cast<QAction *>(sender());
+	BaseObject *obj = reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
-/*	if(obj && obj->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-						.arg(obj->getName()).arg(obj->getTypeName()),
-						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__); */
-
-	ObjectRenameWidget objectrename_wgt(this);
-	//objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
-	objectrename_wgt.setAttributes(selected_objects, this->db_model, this->op_list);
-	objectrename_wgt.exec();
-
-	if(objectrename_wgt.result()==QDialog::Accepted)
+	try
 	{
-		this->modified=true;
-		emit s_objectModified();
+		ObjectRenameWidget objectrename_wgt(this);
+		objectrename_wgt.setAttributes(selected_objects, this->db_model, this->op_list);
+		objectrename_wgt.exec();
+
+		if(objectrename_wgt.result() == QDialog::Accepted)
+		{
+			this->modified = true;
+			emit s_objectModified();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 

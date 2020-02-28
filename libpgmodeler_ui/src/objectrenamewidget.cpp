@@ -59,7 +59,7 @@ void ObjectRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model,
 
 void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel *model, OperationList *op_list)
 {
-	if(objs.size() == 1)
+	/* if(objs.size() == 1)
 	{
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getSchemaName())));
 		obj_icon_lbl->setToolTip(object->getTypeName());
@@ -68,10 +68,20 @@ void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel 
 	{
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("table_grp")));
 		obj_icon_lbl->setToolTip("");
+	} */
+
+#warning "Check if the list has protected object and/or relationship created one and raise error not allowing any further renaming!"
+
+	for(auto &obj : objects)
+	{
+		if(obj && obj->isSystemObject())
+				throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
+												.arg(obj->getName()).arg(obj->getTypeName()),
+												ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	this->adjustSize();
-	this->objects = objs;
+	adjustSize();
+	objects = objs;
 	this->op_list = op_list;
 	this->model = model;
 
@@ -246,13 +256,13 @@ void ObjectRenameWidget::__applyRenaming()
 					if(tab_obj)
 					{
 						tab_objs = *dynamic_cast<PhysicalTable *>(tab_obj->getParentTable())->getObjectList(obj_type);
-						new_name = PgModelerNs::generateUniqueName<TableObject>(object, tab_objs);
+						new_name = PgModelerNs::generateUniqueName<TableObject>(object, tab_objs, false, "", false, true);
 					}
 					//For database child object, generate an unique name among the other objects of the same type in the database
 					else
 					{
 						obj_list = *model->getObjectList(obj_type);
-						new_name = PgModelerNs::generateUniqueName<BaseObject>(object, obj_list);
+						new_name = PgModelerNs::generateUniqueName<BaseObject>(object, obj_list, false, "", false, true);
 					}
 				}
 
