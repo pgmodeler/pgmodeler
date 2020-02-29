@@ -90,10 +90,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void selectObject();
 
 		void setAllObjectsChecked();
-
 		void fadeObjects();
-
 		void selectObjects();
+		void showObjectMenu();
 };
 
 #endif

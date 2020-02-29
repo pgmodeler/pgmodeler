@@ -66,7 +66,7 @@ void ObjectRenameWidget::setAttributes(vector<BaseObject *> objs, DatabaseModel 
 	{
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
 		obj_icon_lbl->setToolTip("");
-		rename_lbl->setText(tr("Rename <strong>%1</strong> selected object(s) to:").arg(objs.size()));
+		rename_lbl->setText(tr("Rename <strong>%1</strong> object(s) to:").arg(objs.size()));
 		to_lbl->setVisible(false);
 		obj_name_lbl->setVisible(false);
 	}
@@ -103,12 +103,25 @@ void ObjectRenameWidget::applyRenaming()
 		//Apply the new name only when its not empty and its differs from the original one
 		if(!new_name_edt->text().isEmpty())
 		{
+			if(objects.size() > 1)
+			{
+				Messagebox msg_box;
+				msg_box.show(tr("<strong>CAUTION:</strong> You're about to rename multiple objects at once! This operation may cause irreversible changes to other objects not necessarily selected. Do you really want to proceed?"),
+										 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+				if(msg_box.result() == QDialog::Rejected)
+					return;
+			}
+
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
 			QString fmt_name, new_name;
 			vector<BaseObject *> ref_objs, obj_list;
 			vector<TableObject *> tab_objs;
 			map<ObjectType, vector<BaseObject *>> obj_map;
+			bool revalidate_rels = false;
+
+			op_list->startOperationChain();
 
 			for(auto &object : objects)
 			{
@@ -175,15 +188,11 @@ void ObjectRenameWidget::applyRenaming()
 					Column *col=dynamic_cast<Column *>(tab_obj);
 
 					/* If the object is a column and some primary key on table is referencing it
-					 * the model relationship will be revalidated */
+					 * the relationships will be revalidated */
 					if(col && tab)
-					{
-						model->validateRelationships();
-						model->updateViewsReferencingTable(tab);
-					}
+						revalidate_rels = true;
 
 					base_tab->setModified(true);
-					base_tab->setCodeInvalidated(true);
 					dynamic_cast<Schema *>(base_tab->getSchema())->setModified(true);
 				}
 
@@ -196,15 +205,17 @@ void ObjectRenameWidget::applyRenaming()
 					{
 						col=dynamic_cast<Column *>(obj);
 						col->getParentTable()->setModified(true);
-						col->setCodeInvalidated(true);
 					}
-					else
-						obj->setCodeInvalidated(true);
 				}
 
 				renamed_objs++;
 			}
 
+			if(revalidate_rels)
+				model->validateRelationships();
+
+			model->setCodesInvalidated();
+			op_list->finishOperationChain();
 			accept();
 		}
 	}

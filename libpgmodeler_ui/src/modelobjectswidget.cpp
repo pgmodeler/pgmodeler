@@ -116,7 +116,7 @@ void ModelObjectsWidget::hide()
 void ModelObjectsWidget::showObjectMenu()
 {
 	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
-		model_wgt->popup_menu.exec(QCursor::pos());
+		model_wgt->showObjectMenu();
 }
 
 void ModelObjectsWidget::editObject()

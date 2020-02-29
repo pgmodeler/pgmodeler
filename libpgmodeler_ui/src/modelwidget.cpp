@@ -2003,7 +2003,12 @@ void ModelWidget::cancelObjectAddition()
 void ModelWidget::renameObjects()
 {
 	ObjectRenameWidget objectrename_wgt(this);
-	objectrename_wgt.setAttributes(selected_objects, this->db_model, this->op_list);
+
+	if(selected_objects.empty())
+		objectrename_wgt.setAttributes({ db_model }, db_model, op_list);
+	else
+		objectrename_wgt.setAttributes(selected_objects, db_model, op_list);
+
 	objectrename_wgt.exec();
 
 	if(objectrename_wgt.result() == QDialog::Accepted)
