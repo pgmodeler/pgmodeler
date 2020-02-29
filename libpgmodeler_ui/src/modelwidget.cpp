@@ -2002,21 +2002,14 @@ void ModelWidget::cancelObjectAddition()
 
 void ModelWidget::renameObjects()
 {
-	try
-	{
-		ObjectRenameWidget objectrename_wgt(this);
-		objectrename_wgt.setAttributes(selected_objects, this->db_model, this->op_list);
-		objectrename_wgt.exec();
+	ObjectRenameWidget objectrename_wgt(this);
+	objectrename_wgt.setAttributes(selected_objects, this->db_model, this->op_list);
+	objectrename_wgt.exec();
 
-		if(objectrename_wgt.result() == QDialog::Accepted)
-		{
-			this->modified = true;
-			emit s_objectModified();
-		}
-	}
-	catch(Exception &e)
+	if(objectrename_wgt.result() == QDialog::Accepted)
 	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		this->modified = true;
+		emit s_objectModified();
 	}
 }
 
@@ -3279,7 +3272,12 @@ void ModelWidget::showObjectMenu()
 
 void ModelWidget::configurePopupMenu(BaseObject *object)
 {
-	configurePopupMenu(vector<BaseObject *>{ object });
+	vector<BaseObject *> vet_obj;
+
+	if(object)
+		vet_obj.push_back(object);
+
+	configurePopupMenu(vet_obj);
 }
 
 void ModelWidget::enableModelActions(bool value)

@@ -96,6 +96,7 @@ void ObjectRenameWidget::hideEvent(QHideEvent *)
 void ObjectRenameWidget::applyRenaming()
 {
 	ObjectType obj_type = ObjectType::BaseObject;
+	unsigned renamed_objs = 0;
 
 	try
 	{
@@ -108,8 +109,6 @@ void ObjectRenameWidget::applyRenaming()
 			vector<BaseObject *> ref_objs, obj_list;
 			vector<TableObject *> tab_objs;
 			map<ObjectType, vector<BaseObject *>> obj_map;
-
-			op_list->startOperationChain();
 
 			for(auto &object : objects)
 			{
@@ -202,9 +201,10 @@ void ObjectRenameWidget::applyRenaming()
 					else
 						obj->setCodeInvalidated(true);
 				}
+
+				renamed_objs++;
 			}
 
-			op_list->finishOperationChain();
 			accept();
 		}
 	}
@@ -216,5 +216,10 @@ void ObjectRenameWidget::applyRenaming()
 			op_list->removeLastOperation();
 
 		msg_box.show(e);
+
+		if(renamed_objs > 0)
+			accept();
+		else
+			reject();
 	}
 }

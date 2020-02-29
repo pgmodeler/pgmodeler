@@ -212,14 +212,14 @@
              <property name="columnCount">
               <number>1</number>
              </property>
-             <attribute name="headerDefaultSectionSize">
-              <number>50</number>
-             </attribute>
              <attribute name="headerMinimumSectionSize">
               <number>50</number>
              </attribute>
+             <attribute name="headerDefaultSectionSize">
+              <number>50</number>
+             </attribute>
              <attribute name="headerStretchLastSection">
-              <bool>false</bool>
+              <bool>true</bool>
              </attribute>
              <column>
               <property name="text">
@@ -295,7 +295,7 @@
               <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderDefaultSectionSize">
-              <number>20</number>
+              <number>28</number>
              </attribute>
              <attribute name="verticalHeaderHighlightSections">
               <bool>false</bool>

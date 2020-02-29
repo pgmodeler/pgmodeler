@@ -291,6 +291,14 @@ void ObjectFinderWidget::selectObject()
 		TableObject *tab_obj = nullptr;
 		BaseObject *selected_obj = reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
 
+		/* If the current only one row selection we clear the scene's selection
+		 * in order to force items to be drawn again without the selection rectangle */
+		if(result_tbw->selectedRanges().size() == 1)
+		{
+			selected_objs.clear();
+			model_wgt->scene->clearSelection();
+		}
+
 		itr = std::find(selected_objs.begin(), selected_objs.end(), selected_obj);
 
 		if(tab_item->isSelected() && itr == selected_objs.end())
@@ -312,11 +320,6 @@ void ObjectFinderWidget::selectObject()
 
 			selected_objs.erase(itr);
 		}
-
-		/* If the current only one row selection we clear the scene's selection
-		 * in order to force items to be drawn again without the selection rectangle */
-		if(result_tbw->selectedRanges().size() == 1)
-			model_wgt->scene->clearSelection();
 
 		if(QApplication::mouseButtons() != Qt::RightButton)
 		{
