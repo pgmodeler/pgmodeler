@@ -318,6 +318,7 @@ void ObjectFinderWidget::selectObject()
 	}
 
 	model_wgt->configurePopupMenu(selected_objs);
+	model_wgt->emitSceneInteracted();
 }
 
 void ObjectFinderWidget::showObjectMenu()

@@ -229,6 +229,7 @@ void ModelObjectsWidget::selectObject()
 	{
 		model_wgt->scene->clearSelection();
 		model_wgt->configurePopupMenu(selected_objs);
+		model_wgt->emitSceneInteracted();
 	}
 }
 
