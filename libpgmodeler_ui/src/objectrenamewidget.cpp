@@ -113,18 +113,27 @@ void ObjectRenameWidget::applyRenaming()
 					return;
 			}
 
+			map<unsigned, BaseObject *> sel_objs_map;
+			map<unsigned, BaseObject *>::reverse_iterator itr;
 			BaseGraphicObject *graph_obj = nullptr;
 			TableObject *tab_obj = nullptr;
 			QString fmt_name, new_name;
 			vector<BaseObject *> ref_objs, obj_list;
 			vector<TableObject *> tab_objs;
 			map<ObjectType, vector<BaseObject *>> obj_map;
+			BaseObject *object = nullptr;
 			bool revalidate_rels = false;
 
-			op_list->startOperationChain();
+			/* First we need to store object in a ordered map using the objects ids as key
+			 * This is done because the renaming will be performed from the major id to the
+			 * minor id. This will diminish the risk of permanent object invalidation of
+			 * special objects (which reference relationship added fields)	*/
+			for(auto &obj : objects)
+				sel_objs_map[obj->getObjectId()] = obj;
 
-			for(auto &object : objects)
+			for(itr = sel_objs_map.rbegin(); itr != sel_objs_map.rend(); itr++)
 			{
+				object = itr->second;
 				new_name = new_name_edt->text();
 				obj_type = object->getObjectType();
 				graph_obj = dynamic_cast<BaseGraphicObject *>(object);
@@ -215,7 +224,6 @@ void ObjectRenameWidget::applyRenaming()
 				model->validateRelationships();
 
 			model->setCodesInvalidated();
-			op_list->finishOperationChain();
 			accept();
 		}
 	}
