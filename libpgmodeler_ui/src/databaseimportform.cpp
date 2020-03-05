@@ -621,7 +621,7 @@ void DatabaseImportForm::listDatabases(DatabaseImportHelper &import_helper, QCom
 }
 
 void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
-																		 bool disable_empty_grps, bool create_db_item, bool create_dummy_item, unsigned sort_by)
+																		 bool disable_empty_grps, bool create_db_item, bool create_dummy_item, int sort_by)
 {
 	TaskProgressWidget task_prog_wgt;
 
@@ -734,7 +734,7 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 }
 
 vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types, bool checkable_items,
-																																bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table, unsigned sort_by)
+																																bool disable_empty_grps, QTreeWidgetItem *root, const QString &schema, const QString &table)
 {
 	vector<QTreeWidgetItem *> items_vect;
 
@@ -876,7 +876,6 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 			}
 
 			tree_wgt->addTopLevelItems(groups_list);
-			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
 			tree_wgt->setUpdatesEnabled(true);
 			tree_wgt->blockSignals(false);
 		}
