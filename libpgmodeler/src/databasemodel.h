@@ -218,6 +218,26 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getFdwReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
 		void getServerReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
 
+		void getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getOperatorDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getRelationshipDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getSequenceDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getColumnDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTriggerDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getPhysicalTableDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+
+
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
@@ -707,7 +727,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
 		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
-
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

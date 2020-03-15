@@ -7911,6 +7911,434 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	}
 }
 
+void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
+	unsigned i, cnt;
+	OperatorClassElement elem;
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(opclass->getFamily())
+		getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
+
+	cnt=opclass->getElementCount();
+
+	for(i=0; i < cnt; i++)
+	{
+		elem=opclass->getElement(i);
+
+		if(elem.getFunction())
+			getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
+
+		if(elem.getOperator())
+			getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
+
+		if(elem.getOperatorFamily())
+			getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
+
+		if(elem.getStorage().isUserType())
+		{
+			usr_type=getObjectPgSQLType(elem.getStorage());
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Cast *cast=dynamic_cast<Cast *>(object);
+	BaseObject *usr_type=nullptr;
+
+	for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
+	{
+		usr_type=getObjectPgSQLType(cast->getDataType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Function *func=dynamic_cast<Function *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
+	unsigned count, i;
+
+	if(!func->isSystemObject())
+		getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	count=func->getParameterCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	count=func->getReturnedTableColumnCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned count, i;
+
+	for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
+		getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+
+	usr_type=getObjectPgSQLType(aggreg->getStateType());
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(aggreg->getSortOperator())
+		getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
+
+	count=aggreg->getDataTypeCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(aggreg->getDataType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Language *lang=dynamic_cast<Language *>(object);
+
+	for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
+	{
+		if(lang->getFunction(i))
+			getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Operator *oper=dynamic_cast<Operator *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned i;
+
+	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
+	{
+		if(oper->getFunction(i))
+			getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
+	}
+
+	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
+	{
+		usr_type=getObjectPgSQLType(oper->getArgumentType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
+	{
+		if(oper->getOperator(i))
+			getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Role *role=dynamic_cast<Role *>(object);
+	unsigned i, i1, count,
+			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+
+	for(i=0; i < 3; i++)
+	{
+		count=role->getRoleCount(role_types[i]);
+		for(i1=0; i1 < count; i1++)
+			getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getRelationshipDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Relationship *rel=dynamic_cast<Relationship *>(object);
+	BaseObject *usr_type=nullptr;
+	Constraint *constr=nullptr;
+	unsigned i, count;
+
+	getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
+	getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
+
+	count=rel->getAttributeCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	count=rel->getConstraintCount();
+	for(i=0; i < count; i++)
+	{
+		constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
+
+		if(constr->getTablespace())
+			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getSequenceDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Sequence *seq=dynamic_cast<Sequence *>(object);
+	if(seq->getOwnerColumn())
+		getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getColumnDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Column *col=dynamic_cast<Column *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(col->getType()),
+			*sequence=col->getSequence();
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(sequence)
+		getObjectDependecies(sequence, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getTriggerDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Trigger *trig=dynamic_cast<Trigger *>(object);
+
+	if(trig->getReferencedTable())
+		getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
+
+	if(trig->getFunction())
+		getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Index *index=dynamic_cast<Index *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned i, count=index->getIndexElementCount();
+
+	for(i=0; i < count; i++)
+	{
+		if(index->getIndexElement(i).getOperatorClass())
+			getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
+
+		if(index->getIndexElement(i).getColumn())
+		{
+			usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
+
+			if(usr_type)
+				getObjectDependecies(usr_type, deps, inc_indirect_deps);
+		}
+
+		if(index->getIndexElement(i).getCollation())
+			getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Policy *pol=dynamic_cast<Policy *>(object);
+
+	for(auto role : pol->getRoles())
+		getObjectDependecies(role, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
+	Table *aux_tab = dynamic_cast<Table *>(object);
+	ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
+	BaseObject *usr_type=nullptr,  *seq=nullptr;
+	Constraint *constr=nullptr;
+	Trigger *trig=nullptr;
+	Index *index=nullptr;
+	Column *col=nullptr;
+	Policy *pol=nullptr;
+	unsigned count, i, count1, i1;
+
+	count=tab->getColumnCount();
+	for(i=0; i < count; i++)
+	{
+		col=tab->getColumn(i);
+		usr_type=getObjectPgSQLType(col->getType());
+		seq=col->getSequence();
+
+		if(!col->isAddedByLinking())
+		{
+			if(usr_type)
+				getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+			if(seq)
+				getObjectDependecies(seq, deps, inc_indirect_deps);
+		}
+	}
+
+	count=tab->getConstraintCount();
+	for(i=0; i < count; i++)
+	{
+		constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
+		count1=constr->getExcludeElementCount();
+
+		for(i1=0; i1 < count1; i1++)
+		{
+			if(constr->getExcludeElement(i1).getOperator())
+				getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
+
+			if(constr->getExcludeElement(i1).getOperatorClass())
+				getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+		}
+
+		if(inc_indirect_deps &&
+				!constr->isAddedByLinking() &&
+				constr->getConstraintType()==ConstraintType::ForeignKey)
+			getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
+
+		if(!constr->isAddedByLinking() && constr->getTablespace())
+			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
+	}
+
+	count=tab->getTriggerCount();
+	for(i=0; i < count; i++)
+	{
+		trig=dynamic_cast<Trigger *>(tab->getTrigger(i));
+		if(trig->getReferencedTable())
+			getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
+
+		if(trig->getFunction())
+			getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
+	}
+
+	if(ftable)
+	{
+		getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
+	}
+
+	if(aux_tab)
+	{
+		count=aux_tab->getIndexCount();
+		for(i=0; i < count; i++)
+		{
+			index=dynamic_cast<Index *>(aux_tab->getIndex(i));
+			count1=index->getIndexElementCount();
+
+			for(i1=0; i1 < count1; i1++)
+			{
+				if(index->getIndexElement(i1).getOperatorClass())
+					getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+
+				if(index->getIndexElement(i1).getColumn())
+				{
+					usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
+
+					if(usr_type)
+						getObjectDependecies(usr_type, deps, inc_indirect_deps);
+				}
+
+				if(index->getIndexElement(i1).getCollation())
+					getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
+			}
+		}
+
+		count=aux_tab->getPolicyCount();
+		for(i=0; i < count; i++)
+		{
+			pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
+
+			for(auto role : pol->getRoles())
+				getObjectDependecies(role, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Type *usr_type=dynamic_cast<Type *>(object);
+	BaseObject *aux_type=nullptr;
+	unsigned count, i;
+
+	if(usr_type->getConfiguration()==Type::BaseType)
+	{
+		aux_type=getObjectPgSQLType(usr_type->getLikeType());
+
+		if(aux_type)
+			getObjectDependecies(aux_type, deps, inc_indirect_deps);
+
+		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
+			getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
+	}
+	else if(usr_type->getConfiguration()==Type::CompositeType)
+	{
+		count=usr_type->getAttributeCount();
+		for(i=0; i < count; i++)
+		{
+			aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
+
+			if(aux_type)
+				getObjectDependecies(aux_type, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	View *view=dynamic_cast<View *>(object);
+	unsigned i, count;
+
+	count=view->getReferenceCount();
+	for(i=0; i < count; i++)
+	{
+		if(view->getReference(i).getTable())
+			getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
+	}
+
+	for(i=0; i < view->getTriggerCount(); i++)
+		getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
+
+	for(i=0; i < view->getTriggerCount(); i++)
+	{
+		if(view->getTrigger(i)->getReferencedTable())
+			getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
+	vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
+	for(auto &obj : ref_objs)
+		getObjectDependecies(obj, deps, inc_indirect_deps);
+}
+
 void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	//Case the object is allocated and is not included in the dependecies list
@@ -7922,8 +8350,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 		{
 			ObjectType obj_type=object->getObjectType();
 
-			/* if the object has a schema, tablespace and owner applies the
-		 dependecy search in these objects */
 			if(object->getSchema())
 				getObjectDependecies(object->getSchema(), deps, inc_indirect_deps);
 
@@ -7936,463 +8362,78 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			if(object->getCollation())
 				getObjectDependecies(object->getCollation(), deps, inc_indirect_deps);
 
-			//** Getting the dependecies for operator class **
 			if(obj_type==ObjectType::OpClass)
-			{
-				OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
-				unsigned i, cnt;
-				OperatorClassElement elem;
+				getOpClassDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Domain)
+				getDomainDependencies(object, deps, inc_indirect_deps);
 
-				if(opclass->getFamily())
-					getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Conversion)
+				getObjectDependecies(dynamic_cast<Conversion *>(object)->getConversionFunction(), deps, inc_indirect_deps);
 
-				cnt=opclass->getElementCount();
+			if(obj_type==ObjectType::Cast)
+				getCastDependencies(object, deps, inc_indirect_deps);
 
-				for(i=0; i < cnt; i++)
-				{
-					elem=opclass->getElement(i);
-
-					if(elem.getFunction())
-						getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
-
-					if(elem.getOperator())
-						getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
-
-					if(elem.getOperatorFamily())
-						getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
-
-					if(elem.getStorage().isUserType())
-					{
-						usr_type=getObjectPgSQLType(elem.getStorage());
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for domain **
-			else if(obj_type==ObjectType::Domain)
-			{
-				BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
-
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for conversion **
-			else if(obj_type==ObjectType::Conversion)
-			{
-				Function *func=dynamic_cast<Conversion *>(object)->getConversionFunction();
-				getObjectDependecies(func, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for cast **
-			else if(obj_type==ObjectType::Cast)
-			{
-				Cast *cast=dynamic_cast<Cast *>(object);
-				BaseObject *usr_type=nullptr;
-
-				for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
-				{
-					usr_type=getObjectPgSQLType(cast->getDataType(i));
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for event trigger **
-			else if(obj_type==ObjectType::EventTrigger)
-			{
+			if(obj_type==ObjectType::EventTrigger)
 				getObjectDependecies(dynamic_cast<EventTrigger *>(object)->getFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for function **
-			else if(obj_type==ObjectType::Function)
-			{
-				Function *func=dynamic_cast<Function *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
-				unsigned count, i;
 
-				if(!func->isSystemObject())
-					getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Function)
+				getFunctionDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Aggregate)
+				getAggregateDependencies(object, deps, inc_indirect_deps);
 
-				count=func->getParameterCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+			if(obj_type==ObjectType::Language)
+				getLanguageDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
+			if(obj_type==ObjectType::Operator)
+				getOperatorDependencies(object, deps, inc_indirect_deps);
 
-				count=func->getReturnedTableColumnCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
+			if(obj_type==ObjectType::Role)
+				getRoleDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for aggregate **
-			else if(obj_type==ObjectType::Aggregate)
-			{
-				Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned count, i;
+			if(obj_type==ObjectType::Relationship)
+				getRelationshipDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
-					getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Sequence)
+				getSequenceDependencies(object, deps, inc_indirect_deps);
 
-				usr_type=getObjectPgSQLType(aggreg->getStateType());
+			if(obj_type==ObjectType::Column)
+				getColumnDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Trigger)
+				getTriggerDependencies(object, deps, inc_indirect_deps);
 
-				if(aggreg->getSortOperator())
-					getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Index)
+				getIndexDependencies(object, deps, inc_indirect_deps);
 
-				count=aggreg->getDataTypeCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(aggreg->getDataType(i));
+			if(obj_type==ObjectType::Policy)
+				getPolicyDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for language **
-			else if(obj_type==ObjectType::Language)
-			{
-				Language *lang=dynamic_cast<Language *>(object);
+			if(PhysicalTable::isPhysicalTable(obj_type))
+				getPhysicalTableDependencies(object, deps, inc_indirect_deps);
 
-				for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
-				{
-					if(lang->getFunction(i))
-						getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for operator **
-			else if(obj_type==ObjectType::Operator)
-			{
-				Operator *oper=dynamic_cast<Operator *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned i;
+			if(obj_type==ObjectType::Type)
+				getTypeDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-				{
-					if(oper->getFunction(i))
-						getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
-				}
+			if(obj_type==ObjectType::View)
+			 getViewDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
-				{
-					usr_type=getObjectPgSQLType(oper->getArgumentType(i));
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
-				{
-					if(oper->getOperator(i))
-						getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for role **
-			else if(obj_type==ObjectType::Role)
-			{
-				Role *role=dynamic_cast<Role *>(object);
-				unsigned i, i1, count,
-						role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
-
-				for(i=0; i < 3; i++)
-				{
-					count=role->getRoleCount(role_types[i]);
-					for(i1=0; i1 < count; i1++)
-						getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for relationships **
-			else if(obj_type==ObjectType::Relationship)
-			{
-				Relationship *rel=dynamic_cast<Relationship *>(object);
-				BaseObject *usr_type=nullptr;
-				Constraint *constr=nullptr;
-				unsigned i, count;
-
-				getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
-				getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
-
-				count=rel->getAttributeCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				count=rel->getConstraintCount();
-				for(i=0; i < count; i++)
-				{
-					constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
-
-					if(constr->getTablespace())
-						getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for sequence **
-			else if(obj_type==ObjectType::Sequence)
-			{
-				Sequence *seq=dynamic_cast<Sequence *>(object);
-				if(seq->getOwnerColumn())
-					getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for column **
-			else if(obj_type==ObjectType::Column)
-			{
-				Column *col=dynamic_cast<Column *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(col->getType()),
-						*sequence=col->getSequence();
-
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-				if(sequence)
-					getObjectDependecies(sequence, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for trigger **
-			else if(obj_type==ObjectType::Trigger)
-			{
-				Trigger *trig=dynamic_cast<Trigger *>(object);
-
-				if(trig->getReferencedTable())
-					getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-				if(trig->getFunction())
-					getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for index **
-			else if(obj_type==ObjectType::Index)
-			{
-				Index *index=dynamic_cast<Index *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned i, count=index->getIndexElementCount();
-
-				for(i=0; i < count; i++)
-				{
-					if(index->getIndexElement(i).getOperatorClass())
-						getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
-
-					if(index->getIndexElement(i).getColumn())
-					{
-						usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
-
-						if(usr_type)
-							getObjectDependecies(usr_type, deps, inc_indirect_deps);
-					}
-
-					if(index->getIndexElement(i).getCollation())
-						getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
-				}
-			}
-			else if(obj_type==ObjectType::Policy)
-			{
-				Policy *pol=dynamic_cast<Policy *>(object);
-
-				for(auto role : pol->getRoles())
-					getObjectDependecies(role, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for table / foreign table **
-			else if(PhysicalTable::isPhysicalTable(obj_type))
-			{
-				PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
-				Table *aux_tab = dynamic_cast<Table *>(object);
-				ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
-				BaseObject *usr_type=nullptr,  *seq=nullptr;
-				Constraint *constr=nullptr;
-				Trigger *trig=nullptr;
-				Index *index=nullptr;
-				Column *col=nullptr;
-				Policy *pol=nullptr;
-				unsigned count, i, count1, i1;
-
-				count=tab->getColumnCount();
-				for(i=0; i < count; i++)
-				{
-					col=tab->getColumn(i);
-					usr_type=getObjectPgSQLType(col->getType());
-					seq=col->getSequence();
-
-					if(!col->isAddedByLinking())
-					{
-						if(usr_type)
-							getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-						if(seq)
-							getObjectDependecies(seq, deps, inc_indirect_deps);
-					}
-				}
-
-				count=tab->getConstraintCount();
-				for(i=0; i < count; i++)
-				{
-					constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
-					count1=constr->getExcludeElementCount();
-
-					for(i1=0; i1 < count1; i1++)
-					{
-						if(constr->getExcludeElement(i1).getOperator())
-							getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
-
-						if(constr->getExcludeElement(i1).getOperatorClass())
-							getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-					}
-
-					if(inc_indirect_deps &&
-							!constr->isAddedByLinking() &&
-							constr->getConstraintType()==ConstraintType::ForeignKey)
-						getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
-
-					if(!constr->isAddedByLinking() && constr->getTablespace())
-						getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-				}
-
-				count=tab->getTriggerCount();
-				for(i=0; i < count; i++)
-				{
-					trig=dynamic_cast<Trigger *>(tab->getTrigger(i));
-					if(trig->getReferencedTable())
-						getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-					if(trig->getFunction())
-						getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-				}
-
-				if(ftable)
-				{
-					getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
-				}
-
-				if(aux_tab)
-				{
-					count=aux_tab->getIndexCount();
-					for(i=0; i < count; i++)
-					{
-						index=dynamic_cast<Index *>(aux_tab->getIndex(i));
-						count1=index->getIndexElementCount();
-
-						for(i1=0; i1 < count1; i1++)
-						{
-							if(index->getIndexElement(i1).getOperatorClass())
-								getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-
-							if(index->getIndexElement(i1).getColumn())
-							{
-								usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
-
-								if(usr_type)
-									getObjectDependecies(usr_type, deps, inc_indirect_deps);
-							}
-
-							if(index->getIndexElement(i1).getCollation())
-								getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
-						}
-					}
-
-					count=aux_tab->getPolicyCount();
-					for(i=0; i < count; i++)
-					{
-						pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
-
-						for(auto role : pol->getRoles())
-							getObjectDependecies(role, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for user defined type **
-			else if(obj_type==ObjectType::Type)
-			{
-				Type *usr_type=dynamic_cast<Type *>(object);
-				BaseObject *aux_type=nullptr;
-				unsigned count, i;
-
-				if(usr_type->getConfiguration()==Type::BaseType)
-				{
-					aux_type=getObjectPgSQLType(usr_type->getLikeType());
-
-					if(aux_type)
-						getObjectDependecies(aux_type, deps, inc_indirect_deps);
-
-					for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-						getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
-				}
-				else if(usr_type->getConfiguration()==Type::CompositeType)
-				{
-					count=usr_type->getAttributeCount();
-					for(i=0; i < count; i++)
-					{
-						aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
-
-						if(aux_type)
-							getObjectDependecies(aux_type, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for view **
-			else if(obj_type==ObjectType::View)
-			{
-				View *view=dynamic_cast<View *>(object);
-				unsigned i, count;
-
-				count=view->getReferenceCount();
-				for(i=0; i < count; i++)
-				{
-					if(view->getReference(i).getTable())
-						getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
-				}
-
-				for(i=0; i < view->getTriggerCount(); i++)
-					getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
-
-				for(i=0; i < view->getTriggerCount(); i++)
-				{
-					if(view->getTrigger(i)->getReferencedTable())
-						getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for foreign data wrapper **
-			else if(obj_type == ObjectType::ForeignDataWrapper)
+			if(obj_type == ObjectType::ForeignDataWrapper)
 			{
 				ForeignDataWrapper *fdw = dynamic_cast<ForeignDataWrapper *>(object);
 				getObjectDependecies(fdw->getHandlerFunction(), deps, inc_indirect_deps);
 				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
 			}
-			//** Getting the dependecies for server **
-			else if(obj_type == ObjectType::ForeignServer)
-			{
-				ForeignServer *server = dynamic_cast<ForeignServer *>(object);
-				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for generic sql **
-			else if(obj_type==ObjectType::GenericSql)
-			{
-				GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
-				vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
-				for(auto &obj : ref_objs)
-					getObjectDependecies(obj, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for user mapping **
-			else if(obj_type==ObjectType::UserMapping)
-			{
-				UserMapping *usr_map = dynamic_cast<UserMapping *>(object);
-				getObjectDependecies(usr_map->getForeignServer(), deps, inc_indirect_deps);
-			}
+
+			if(obj_type == ObjectType::ForeignServer)
+				getObjectDependecies(dynamic_cast<ForeignServer *>(object)->getForeignDataWrapper(), deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::GenericSql)
+				getGenericSQLDependencies(object, deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::UserMapping)
+				getObjectDependecies(dynamic_cast<UserMapping *>(object)->getForeignServer(), deps, inc_indirect_deps);
 
 			if(BaseTable::isBaseTable(obj_type))
 			{
