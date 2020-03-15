@@ -53,8 +53,9 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 
 	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects()));
 	connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
-	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
+	connect(result_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(selectObject()));
 	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject()));
+	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
 	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
 	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
 	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
@@ -214,6 +215,7 @@ void ObjectFinderWidget::clearResult()
 {
 	selected_obj=nullptr;
 	found_objs.clear();
+	selected_objs.clear();
 
 	result_tbw->clearContents();
 	result_tbw->setRowCount(0);
@@ -280,39 +282,49 @@ void ObjectFinderWidget::findObjects()
 
 void ObjectFinderWidget::selectObject()
 {
-	QTableWidgetItem *tab_item=result_tbw->item(result_tbw->currentRow(), 0);
+	BaseGraphicObject *graph_obj = nullptr;
+	BaseObjectView *obj_view = nullptr;
+	TableObject *tab_obj = nullptr;
 
-	if(tab_item)
+	selected_objs.clear();
+	model_wgt->scene->clearSelection();
+
+	for(auto &item : result_tbw->selectedItems())
 	{
-		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+		if(item->column() != 0)
+			continue;
 
-		if(QApplication::mouseButtons()!=Qt::RightButton)
+		selected_objs.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
+	}
+
+	for(auto &obj : selected_objs)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		tab_obj = dynamic_cast<TableObject *>(obj);
+
+		if(tab_obj && !graph_obj)
+			graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+
+		if(graph_obj)
 		{
-			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
-			TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+			obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
-			if(tab_obj && !graph_obj)
-				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
-
-			if(graph_obj)
+			if(obj_view)
 			{
-				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
-
-				if(obj)
-				{
-				  model_wgt->scene->clearSelection();
-				  model_wgt->viewport->centerOn(obj);
-				  obj->setSelected(true);
-				}
+				model_wgt->viewport->centerOn(obj_view);
+				obj_view->setSelected(true);
 			}
 		}
-		//Showing the popup menu for the selected object in the result set
-		else
-		{
-			model_wgt->configureObjectMenu(selected_obj);
-			model_wgt->showObjectMenu();
-		}
 	}
+
+	model_wgt->configurePopupMenu(selected_objs);
+	model_wgt->emitSceneInteracted();
+}
+
+void ObjectFinderWidget::showObjectMenu()
+{
+	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton)
+		model_wgt->showObjectMenu();
 }
 
 void ObjectFinderWidget::editObject()

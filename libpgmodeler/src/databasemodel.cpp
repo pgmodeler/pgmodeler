@@ -824,6 +824,9 @@ void DatabaseModel::destroyObjects()
 		for(auto type : rem_obj_types)
 			getObjectList(type)->clear();
 	}
+
+	for(auto &inv_obj : invalid_special_objs)
+		delete inv_obj;
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)
@@ -2026,7 +2029,8 @@ void DatabaseModel::storeSpecialObjectsXML()
 			{
 				xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeSequence(sequence);
-				delete sequence;
+				invalid_special_objs.push_back(sequence);
+				//delete sequence;
 			}
 		}
 
@@ -2063,7 +2067,8 @@ void DatabaseModel::storeSpecialObjectsXML()
 						{
 							xml_special_objs[rel->getObjectId()]=rel->getCodeDefinition(SchemaParser::XmlDefinition);
 							removeRelationship(rel);
-							delete rel;
+							invalid_special_objs.push_back(rel);
+							//delete rel;
 						}
 					}
 				}
@@ -2075,11 +2080,13 @@ void DatabaseModel::storeSpecialObjectsXML()
 				{
 					xml_special_objs[obj->getObjectId()]=obj->getCodeDefinition(SchemaParser::XmlDefinition);
 					view->removeObject(obj);
-					delete obj;
+					invalid_special_objs.push_back(obj);
+					//delete obj;
 				}
 
 				removeView(view);
-				delete view;
+				invalid_special_objs.push_back(view);
+				//delete view;
 			}
 		}
 
@@ -2098,7 +2105,8 @@ void DatabaseModel::storeSpecialObjectsXML()
 			{
 				xml_special_objs[permission->getObjectId()]=permission->getCodeDefinition(SchemaParser::XmlDefinition);
 				removePermission(permission);
-				delete permission;
+				invalid_special_objs.push_back(permission);
+				//delete permission;
 			}
 		}
 
@@ -2116,7 +2124,8 @@ void DatabaseModel::storeSpecialObjectsXML()
 			{
 				xml_special_objs[generic_sql->getObjectId()] = generic_sql->getCodeDefinition(SchemaParser::XmlDefinition);
 				removeGenericSQL(generic_sql);
-				delete generic_sql;
+				invalid_special_objs.push_back(generic_sql);
+				//delete generic_sql;
 			}
 		}
 	}

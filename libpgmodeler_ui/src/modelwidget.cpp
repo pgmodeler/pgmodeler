@@ -470,7 +470,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_paste, SIGNAL(triggered(bool)),this,SLOT(pasteObjects()));
 	connect(action_cut, SIGNAL(triggered(bool)),this,SLOT(cutObjects()));
 	connect(action_duplicate, SIGNAL(triggered(bool)),this,SLOT(duplicateObject()));
-	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObject()));
+	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObjects()));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions()));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren()));
 	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables()));
@@ -498,7 +498,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_objectsMoved(bool)), this, SLOT(handleObjectsMovement(bool)));
 	connect(scene, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(handleObjectModification(BaseGraphicObject*)));
 	connect(scene, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(handleObjectDoubleClick(BaseGraphicObject*)));
-	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configureObjectMenu(BaseObject *)));
+	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configurePopupMenu(BaseObject *)));
 	connect(scene, SIGNAL(s_popupMenuRequested()), this, SLOT(showObjectMenu()));
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection()));
 	connect(scene, SIGNAL(s_childrenSelectionChanged()), this, SLOT(configureObjectSelection()));
@@ -2000,23 +2000,20 @@ void ModelWidget::cancelObjectAddition()
 	this->configurePopupMenu(this->selected_objects);
 }
 
-void ModelWidget::renameObject()
+void ModelWidget::renameObjects()
 {
-	QAction *act=dynamic_cast<QAction *>(sender());
-	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
-
-	if(obj->isSystemObject())
-		throw Exception(Exception::getErrorMessage(ErrorCode::OprReservedObject)
-						.arg(obj->getName()).arg(obj->getTypeName()),
-						ErrorCode::OprReservedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
 	ObjectRenameWidget objectrename_wgt(this);
-	objectrename_wgt.setAttributes(obj, this->db_model, this->op_list);
+
+	if(selected_objects.empty())
+		objectrename_wgt.setAttributes({ db_model }, db_model, op_list);
+	else
+		objectrename_wgt.setAttributes(selected_objects, db_model, op_list);
+
 	objectrename_wgt.exec();
 
-	if(objectrename_wgt.result()==QDialog::Accepted)
+	if(objectrename_wgt.result() == QDialog::Accepted)
 	{
-		this->modified=true;
+		this->modified = true;
 		emit s_objectModified();
 	}
 }
@@ -3278,11 +3275,14 @@ void ModelWidget::showObjectMenu()
 	}
 }
 
-void ModelWidget::configureObjectMenu(BaseObject *object)
+void ModelWidget::configurePopupMenu(BaseObject *object)
 {
-	vector<BaseObject *> vet;
-	vet.push_back(object);
-	this->configurePopupMenu(vet);
+	vector<BaseObject *> vet_obj;
+
+	if(object)
+		vet_obj.push_back(object);
+
+	configurePopupMenu(vet_obj);
 }
 
 void ModelWidget::enableModelActions(bool value)
@@ -3314,7 +3314,7 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 	if(object)
 		sel_objs.push_back(object);
 	else
-		sel_objs=selected_objects;
+		sel_objs = selected_objects;
 
 	/* Determining if one or more selected objects accepts schema, owner or are table/views,
 	 this is done to correctly show the actions to the user */
@@ -3433,9 +3433,9 @@ void ModelWidget::configureQuickMenu(BaseObject *object)
 		}
 
 		//Display the quick rename action is a single object is selected
-		if(object && obj_type!=ObjectType::Cast)
+		if((object && obj_type != ObjectType::Cast) || (sel_objs.size() > 1))
 		{
-			quick_actions_menu.addAction(action_rename);
+			quick_actions_menu.addAction(action_rename);			
 			action_rename->setData(QVariant::fromValue<void *>(object));
 		}
 

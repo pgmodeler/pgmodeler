@@ -42,7 +42,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		 * populate the combo box used to select which attribute will be used to search objects */
 		search_attribs_i18n;
 
-		vector<BaseObject *> found_objs;
+		vector<BaseObject *> found_objs,
+
+		selected_objs;
 
 		QMenu select_menu, fade_menu;
 
@@ -88,10 +90,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void selectObject();
 
 		void setAllObjectsChecked();
-
 		void fadeObjects();
-
 		void selectObjects();
+		void showObjectMenu();
 };
 
 #endif

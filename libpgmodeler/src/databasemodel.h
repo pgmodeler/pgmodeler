@@ -142,6 +142,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 when revalidating the relationships */
 		map<unsigned, QString> xml_special_objs;
 
+		/*! \brief Stores the special objects considered invalid after a relationships revalidation.
+		 * This vector is destroyed only when the model is destroyed too in order to avoid segfaults */
+		vector<BaseObject *> invalid_special_objs;
+
 		//! \brief Indicates if the model is being loaded
 		bool loading_model,
 

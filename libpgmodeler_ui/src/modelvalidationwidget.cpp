@@ -644,7 +644,7 @@ void ModelValidationWidget::selectObject()
 
 		if(selected_obj && QApplication::mouseButtons() == Qt::RightButton)
 		{
-			model_wgt->configureObjectMenu(selected_obj);
+			model_wgt->configurePopupMenu(selected_obj);
 			model_wgt->showObjectMenu();
 		}
 	}

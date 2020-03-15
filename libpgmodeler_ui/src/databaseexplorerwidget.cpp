@@ -1454,11 +1454,11 @@ void DatabaseExplorerWidget::updateItem(QTreeWidgetItem *item)
 
 			//Updates the group type only
 			if(obj_id==0 || (!BaseTable::isBaseTable(obj_type) && obj_type!=ObjectType::Schema))
-				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name, sort_column);
+				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw, { obj_type }, false, false, root, sch_name, tab_name);
 			else
 				//Updates all child objcts when the selected object is a schema or table or view
 				gen_items=DatabaseImportForm::updateObjectsTree(import_helper, objects_trw,
-																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name, sort_column);
+																BaseObject::getChildObjectTypes(obj_type), false, false, root, sch_name, tab_name);
 
 			//Creating dummy items for schemas and tables
 			if(obj_type==ObjectType::Schema || BaseTable::isBaseTable(obj_type))

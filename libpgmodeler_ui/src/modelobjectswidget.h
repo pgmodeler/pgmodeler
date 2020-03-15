@@ -49,8 +49,8 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		of the widget is to allow the object management */
 		enable_obj_creation;
 
-		//! \brief Stores the reference to the object currently selected on the tree/list
-		BaseObject *selected_object;
+		//! \brief Stores the objects currently selected on the tree/list
+		vector<BaseObject *> selected_objs;
 
 		/*! \brief Stores the  initial splitter size to be used in conjunction with the
 		object type visualization buttons */

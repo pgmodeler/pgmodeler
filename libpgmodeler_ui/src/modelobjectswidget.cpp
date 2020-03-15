@@ -37,12 +37,14 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 	options_tb->setVisible(!simplified_view);
 	visibleobjects_grp->setVisible(false);
 	filter_wgt->setVisible(simplified_view);
-
-	selected_object=nullptr;
 	splitter->handle(1)->setEnabled(false);
 
-	connect(objectstree_tw,SIGNAL(itemPressed(QTreeWidgetItem*,int)),this, SLOT(selectObject()));
-	connect(objectslist_tbw,SIGNAL(itemPressed(QTableWidgetItem*)),this, SLOT(selectObject()));
+	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(selectObject()));
+	connect(objectstree_tw, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(showObjectMenu()));
+	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject()));
+	connect(objectslist_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
+	connect(objectstree_tw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
+	connect(objectslist_tbw,SIGNAL(itemSelectionChanged()),this, SLOT(selectObject()));
 	connect(expand_all_tb, SIGNAL(clicked()), objectstree_tw, SLOT(expandAll()));
 	connect(collapse_all_tb, SIGNAL(clicked()), this, SLOT(collapseAll()));
 
@@ -61,6 +63,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 		setAllObjectsVisible(true);
 		objectslist_tbw->installEventFilter(this);
 		objectstree_tw->installEventFilter(this);
+		objectslist_tbw->setSelectionMode(QAbstractItemView::ExtendedSelection);
+		objectstree_tw->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	}
 	else
 	{
@@ -82,7 +86,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : 
 bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 {
 	if(event->type() == QEvent::FocusOut &&
-			(object==objectslist_tbw || object==objectstree_tw))
+		 (object==objectslist_tbw || object==objectstree_tw))
 	{
 		QFocusEvent *evnt=dynamic_cast<QFocusEvent *>(event);
 
@@ -90,9 +94,10 @@ bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 		{
 			objectslist_tbw->clearSelection();
 			objectstree_tw->clearSelection();
+			selected_objs.clear();
 
 			if(model_wgt)
-				model_wgt->configurePopupMenu({});
+				model_wgt->configurePopupMenu(nullptr);
 
 			return true;
 		}
@@ -110,20 +115,20 @@ void ModelObjectsWidget::hide()
 
 void ModelObjectsWidget::showObjectMenu()
 {
-	if(selected_object && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
-		model_wgt->popup_menu.exec(QCursor::pos());
+	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
+		model_wgt->showObjectMenu();
 }
 
 void ModelObjectsWidget::editObject()
 {
-	if(selected_object && model_wgt && !simplified_view)
+	if(selected_objs.size() == 1 && model_wgt && !simplified_view)
 	{
 		//If the user double-clicked the item "Permission (n)" on tree view
 		if(sender()==objectstree_tw && objectstree_tw->currentItem() &&
-				objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
+			 objectstree_tw->currentItem()->data(1, Qt::UserRole).toUInt() == enum_cast(ObjectType::Permission))
 			model_wgt->showObjectForm(ObjectType::Permission, reinterpret_cast<BaseObject *>(objectstree_tw->currentItem()->data(0, Qt::UserRole).value<void *>()));
 		//If the user double-clicked a permission on  list view
-		else if(sender()==objectslist_tbw && objectslist_tbw->currentRow() >= 0)
+		else if(sender() == objectslist_tbw && objectslist_tbw->currentRow() >= 0)
 		{
 			BaseObject *obj=reinterpret_cast<Permission *>(objectslist_tbw->item(objectslist_tbw->currentRow(), 0)->data(Qt::UserRole).value<void *>());
 			Permission *perm=dynamic_cast<Permission *>(obj);
@@ -140,36 +145,47 @@ void ModelObjectsWidget::editObject()
 
 void ModelObjectsWidget::selectObject()
 {
-	ObjectType obj_type=ObjectType::BaseObject;
-	ModelWidget *model_wgt=nullptr;
+	BaseObject *selected_obj = nullptr;
+	ObjectType obj_type = ObjectType::BaseObject;
+	ModelWidget *model_wgt = nullptr;
+
+	selected_objs.clear();
 
 	if(!simplified_view && this->model_wgt)
-		model_wgt=this->model_wgt;
+		model_wgt = this->model_wgt;
 	else if(simplified_view)
-		model_wgt=db_model->getModelWidget();
+		model_wgt = db_model->getModelWidget();
 
 	if(tree_view_tb->isChecked())
 	{
-		QTreeWidgetItem *tree_item=objectstree_tw->currentItem();
+		QTreeWidgetItem *tree_item = objectstree_tw->currentItem();
 
 		if(tree_item)
 		{
-			obj_type=static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
-			selected_object=reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+			obj_type = static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+			selected_obj = reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+
+			for(auto &item : objectstree_tw->selectedItems())
+			{
+				selected_obj = reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+
+				if(selected_obj)
+					selected_objs.push_back(selected_obj);
+			}
 		}
 
 		//If user select a group item popups a "New [OBJECT]" menu
 		if((!simplified_view || (simplified_view && enable_obj_creation)) &&
-				!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
-				obj_type!=ObjectType::Column && obj_type!=ObjectType::Constraint && obj_type!=ObjectType::Rule &&
-				obj_type!=ObjectType::Index && obj_type!=ObjectType::Trigger && obj_type!=ObjectType::Permission)
+				!selected_obj && QApplication::mouseButtons() == Qt::RightButton &&
+				obj_type != ObjectType::Column && obj_type != ObjectType::Constraint && obj_type != ObjectType::Rule &&
+				obj_type != ObjectType::Index && obj_type != ObjectType::Trigger && obj_type != ObjectType::Permission)
 		{
 			QAction act(QPixmap(PgModelerUiNs::getIconPath(obj_type)),
-						tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
+									tr("New") + QString(" ") + BaseObject::getTypeName(obj_type), nullptr);
 			QMenu popup;
 
 			//If not a relationship, connect the action to the addNewObject method of the model wiget
-			if(obj_type!=ObjectType::Relationship)
+			if(obj_type != ObjectType::Relationship)
 			{
 				act.setData(QVariant(enum_cast(obj_type)));
 				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
@@ -183,8 +199,8 @@ void ModelObjectsWidget::selectObject()
 
 			popup.addAction(&act);
 			popup.exec(QCursor::pos());
-			disconnect(&act,nullptr,model_wgt,nullptr);
-			disconnect(model_wgt->getDatabaseModel(),nullptr, this,nullptr);
+			disconnect(&act, nullptr, model_wgt, nullptr);
+			disconnect(model_wgt->getDatabaseModel(), nullptr, this, nullptr);
 		}
 	}
 	else
@@ -193,16 +209,27 @@ void ModelObjectsWidget::selectObject()
 
 		if(tab_item)
 		{
-			selected_object=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
-			obj_type=selected_object->getObjectType();
+			selected_obj = reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+			obj_type = selected_obj->getObjectType();
+
+			for(auto &item : objectslist_tbw->selectedItems())
+			{
+				if(item->column() !=0 )
+					continue;
+
+				selected_obj = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
+
+				if(selected_obj)
+					selected_objs.push_back(selected_obj);
+			}
 		}
 	}
 
-	if(obj_type!=ObjectType::Permission && selected_object && !simplified_view)
+	if(obj_type != ObjectType::Permission && !selected_objs.empty() && !simplified_view)
 	{
 		model_wgt->scene->clearSelection();
-		model_wgt->configureObjectMenu(selected_object);
-		showObjectMenu();
+		model_wgt->configurePopupMenu(selected_objs);
+		model_wgt->emitSceneInteracted();
 	}
 }
 
@@ -438,11 +465,12 @@ void ModelObjectsWidget::filterObjects()
 
 void ModelObjectsWidget::updateObjectsView()
 {
-  updateDatabaseTree();
-  updateObjectsList();
+	selected_objs.clear();
+	updateDatabaseTree();
+	updateObjectsList();
 
-  if(!filter_edt->text().isEmpty())
-	filterObjects();
+	if(!filter_edt->text().isEmpty())
+		filterObjects();
 }
 
 void ModelObjectsWidget::updateObjectsList()
@@ -459,10 +487,11 @@ void ModelObjectsWidget::updateObjectsList()
 				visible_types.push_back(tp.first);
 		}
 
-		objects=db_model->findObjects(QString(), visible_types, false, false, false);
+		objects = db_model->findObjects(QString(), visible_types, false, false, false);
 	}
 
 	ObjectFinderWidget::updateObjectTable(objectslist_tbw, objects);
+	objectslist_tbw->clearSelection();
 }
 
 void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
@@ -800,7 +829,10 @@ void ModelObjectsWidget::updateDatabaseTree()
 
 BaseObject *ModelObjectsWidget::getSelectedObject()
 {
-	return selected_object;
+	if(!simplified_view || selected_objs.size() != 1)
+		return nullptr;
+
+	return selected_objs[0];
 }
 
 void ModelObjectsWidget::enableObjectCreation(bool value)
@@ -812,18 +844,22 @@ void ModelObjectsWidget::close()
 {
 	QObject *obj_sender=sender();
 
-	if(obj_sender==cancel_tb)
-		selected_object=nullptr;
+	if(obj_sender == cancel_tb)
+		selected_objs.clear();
 	else
 	{
 		QVariant data;
+		BaseObject *selected_obj = nullptr;
 
 		if(tree_view_tb->isChecked() && objectstree_tw->currentItem())
-			data=objectstree_tw->currentItem()->data(0,Qt::UserRole);
+			data = objectstree_tw->currentItem()->data(0,Qt::UserRole);
 		else if(objectslist_tbw->currentItem())
-			data=objectslist_tbw->currentItem()->data(Qt::UserRole);
+			data = objectslist_tbw->currentItem()->data(Qt::UserRole);
 
-		selected_object=reinterpret_cast<BaseObject *>(data.value<void *>());
+		selected_obj = reinterpret_cast<BaseObject *>(data.value<void *>());
+
+		if(selected_obj && std::find(selected_objs.begin(), selected_objs.end(), selected_obj) == selected_objs.end())
+			selected_objs.push_back(selected_obj);
 	}
 
 	QWidget::close();
@@ -899,7 +935,7 @@ void ModelObjectsWidget::closeEvent(QCloseEvent *)
 		this->resize(this->minimumSize());
 	}
 
-	emit s_visibilityChanged(selected_object, !this->isVisible());
+	emit s_visibilityChanged(getSelectedObject(), !this->isVisible());
 }
 
 void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
@@ -913,7 +949,6 @@ void ModelObjectsWidget::mouseMoveEvent(QMouseEvent *)
 	{
 		QPoint pos_dif;
 		QDesktopWidget desktop;
-		//QRect ret=desktop.screenGeometry();
 		QRect ret=qApp->screens().at(desktop.screenNumber(this))->geometry();
 		int px, py;
 
@@ -1021,7 +1056,7 @@ QTreeWidgetItem *ModelObjectsWidget::getTreeItem(BaseObject *object)
 void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
 {
 	updateObjectsView();
-	QTreeWidgetItem *item=getTreeItem(obj);
+	QTreeWidgetItem *item = getTreeItem(obj);
 
 	if(item)
 	{
@@ -1029,7 +1064,6 @@ void ModelObjectsWidget::selectCreatedObject(BaseObject *obj)
 		item->setSelected(true);
 		objectstree_tw->setCurrentItem(item);
 		objectstree_tw->scrollToItem(item);
-		selected_object=obj;
 		select_tb->setFocus();
 		objectstree_tw->blockSignals(false);
 	}

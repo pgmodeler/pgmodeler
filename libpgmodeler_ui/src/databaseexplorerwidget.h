@@ -70,7 +70,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		QTreeWidgetItem *rename_item;
 		
-		unsigned sort_column;
+		int sort_column;
 
 		void configureImportHelper();
 		
