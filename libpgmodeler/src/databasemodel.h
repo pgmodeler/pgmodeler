@@ -200,6 +200,24 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Set the initial capacity of the objects list for a optimized memory usage
 		void setObjectListsCapacity(unsigned capacity);
 
+		void getViewReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode);
+		void getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getFunctionReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getSchemaReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getUserDefTypesReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getRoleReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getTablespaceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getLanguageReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOperatorReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getCollationReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOpFamilyReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getColumnReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getTagReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getSequenceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getFdwReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getServerReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
@@ -689,6 +707,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
 		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
+
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
