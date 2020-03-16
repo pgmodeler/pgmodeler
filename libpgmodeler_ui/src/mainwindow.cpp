@@ -763,6 +763,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 				recent_mdls_menu.clear();
 			}
+			else
+				conf_wgt->removeConfigurationParam(QRegExp(QString("(%1)(.)+").arg(Attributes::Recent)));
 
 			//Saving dock widgets settings
 			storeDockWidgetsSettings();
