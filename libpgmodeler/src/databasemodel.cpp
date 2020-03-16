@@ -7911,6 +7911,434 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 	}
 }
 
+void DatabaseModel::getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
+	unsigned i, cnt;
+	OperatorClassElement elem;
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(opclass->getFamily())
+		getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
+
+	cnt=opclass->getElementCount();
+
+	for(i=0; i < cnt; i++)
+	{
+		elem=opclass->getElement(i);
+
+		if(elem.getFunction())
+			getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
+
+		if(elem.getOperator())
+			getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
+
+		if(elem.getOperatorFamily())
+			getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
+
+		if(elem.getStorage().isUserType())
+		{
+			usr_type=getObjectPgSQLType(elem.getStorage());
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Cast *cast=dynamic_cast<Cast *>(object);
+	BaseObject *usr_type=nullptr;
+
+	for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
+	{
+		usr_type=getObjectPgSQLType(cast->getDataType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Function *func=dynamic_cast<Function *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
+	unsigned count, i;
+
+	if(!func->isSystemObject())
+		getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	count=func->getParameterCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	count=func->getReturnedTableColumnCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned count, i;
+
+	for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
+		getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+
+	usr_type=getObjectPgSQLType(aggreg->getStateType());
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(aggreg->getSortOperator())
+		getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
+
+	count=aggreg->getDataTypeCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(aggreg->getDataType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Language *lang=dynamic_cast<Language *>(object);
+
+	for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
+	{
+		if(lang->getFunction(i))
+			getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getOperatorDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Operator *oper=dynamic_cast<Operator *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned i;
+
+	for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
+	{
+		if(oper->getFunction(i))
+			getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
+	}
+
+	for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
+	{
+		usr_type=getObjectPgSQLType(oper->getArgumentType(i));
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
+	{
+		if(oper->getOperator(i))
+			getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Role *role=dynamic_cast<Role *>(object);
+	unsigned i, i1, count,
+			role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
+
+	for(i=0; i < 3; i++)
+	{
+		count=role->getRoleCount(role_types[i]);
+		for(i1=0; i1 < count; i1++)
+			getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getRelationshipDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Relationship *rel=dynamic_cast<Relationship *>(object);
+	BaseObject *usr_type=nullptr;
+	Constraint *constr=nullptr;
+	unsigned i, count;
+
+	getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
+	getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
+
+	count=rel->getAttributeCount();
+	for(i=0; i < count; i++)
+	{
+		usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
+
+		if(usr_type)
+			getObjectDependecies(usr_type, deps, inc_indirect_deps);
+	}
+
+	count=rel->getConstraintCount();
+	for(i=0; i < count; i++)
+	{
+		constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
+
+		if(constr->getTablespace())
+			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getSequenceDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Sequence *seq=dynamic_cast<Sequence *>(object);
+	if(seq->getOwnerColumn())
+		getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getColumnDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Column *col=dynamic_cast<Column *>(object);
+	BaseObject *usr_type=getObjectPgSQLType(col->getType()),
+			*sequence=col->getSequence();
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	if(sequence)
+		getObjectDependecies(sequence, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getTriggerDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Trigger *trig=dynamic_cast<Trigger *>(object);
+
+	if(trig->getReferencedTable())
+		getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
+
+	if(trig->getFunction())
+		getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Index *index=dynamic_cast<Index *>(object);
+	BaseObject *usr_type=nullptr;
+	unsigned i, count=index->getIndexElementCount();
+
+	for(i=0; i < count; i++)
+	{
+		if(index->getIndexElement(i).getOperatorClass())
+			getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
+
+		if(index->getIndexElement(i).getColumn())
+		{
+			usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
+
+			if(usr_type)
+				getObjectDependecies(usr_type, deps, inc_indirect_deps);
+		}
+
+		if(index->getIndexElement(i).getCollation())
+			getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Policy *pol=dynamic_cast<Policy *>(object);
+
+	for(auto role : pol->getRoles())
+		getObjectDependecies(role, deps, inc_indirect_deps);
+}
+
+void DatabaseModel::getPhysicalTableDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
+	Table *aux_tab = dynamic_cast<Table *>(object);
+	ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
+	BaseObject *usr_type=nullptr,  *seq=nullptr;
+	Constraint *constr=nullptr;
+	Trigger *trig=nullptr;
+	Index *index=nullptr;
+	Column *col=nullptr;
+	Policy *pol=nullptr;
+	unsigned count, i, count1, i1;
+
+	count=tab->getColumnCount();
+	for(i=0; i < count; i++)
+	{
+		col=tab->getColumn(i);
+		usr_type=getObjectPgSQLType(col->getType());
+		seq=col->getSequence();
+
+		if(!col->isAddedByLinking())
+		{
+			if(usr_type)
+				getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+			if(seq)
+				getObjectDependecies(seq, deps, inc_indirect_deps);
+		}
+	}
+
+	count=tab->getConstraintCount();
+	for(i=0; i < count; i++)
+	{
+		constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
+		count1=constr->getExcludeElementCount();
+
+		for(i1=0; i1 < count1; i1++)
+		{
+			if(constr->getExcludeElement(i1).getOperator())
+				getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
+
+			if(constr->getExcludeElement(i1).getOperatorClass())
+				getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+		}
+
+		if(inc_indirect_deps &&
+				!constr->isAddedByLinking() &&
+				constr->getConstraintType()==ConstraintType::ForeignKey)
+			getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
+
+		if(!constr->isAddedByLinking() && constr->getTablespace())
+			getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
+	}
+
+	count=tab->getTriggerCount();
+	for(i=0; i < count; i++)
+	{
+		trig=dynamic_cast<Trigger *>(tab->getTrigger(i));
+		if(trig->getReferencedTable())
+			getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
+
+		if(trig->getFunction())
+			getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
+	}
+
+	if(ftable)
+	{
+		getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
+	}
+
+	if(aux_tab)
+	{
+		count=aux_tab->getIndexCount();
+		for(i=0; i < count; i++)
+		{
+			index=dynamic_cast<Index *>(aux_tab->getIndex(i));
+			count1=index->getIndexElementCount();
+
+			for(i1=0; i1 < count1; i1++)
+			{
+				if(index->getIndexElement(i1).getOperatorClass())
+					getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+
+				if(index->getIndexElement(i1).getColumn())
+				{
+					usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
+
+					if(usr_type)
+						getObjectDependecies(usr_type, deps, inc_indirect_deps);
+				}
+
+				if(index->getIndexElement(i1).getCollation())
+					getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
+			}
+		}
+
+		count=aux_tab->getPolicyCount();
+		for(i=0; i < count; i++)
+		{
+			pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
+
+			for(auto role : pol->getRoles())
+				getObjectDependecies(role, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Type *usr_type=dynamic_cast<Type *>(object);
+	BaseObject *aux_type=nullptr;
+	unsigned count, i;
+
+	if(usr_type->getConfiguration()==Type::BaseType)
+	{
+		aux_type=getObjectPgSQLType(usr_type->getLikeType());
+
+		if(aux_type)
+			getObjectDependecies(aux_type, deps, inc_indirect_deps);
+
+		for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
+			getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
+	}
+	else if(usr_type->getConfiguration()==Type::CompositeType)
+	{
+		count=usr_type->getAttributeCount();
+		for(i=0; i < count; i++)
+		{
+			aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
+
+			if(aux_type)
+				getObjectDependecies(aux_type, deps, inc_indirect_deps);
+		}
+	}
+}
+
+void DatabaseModel::getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	View *view=dynamic_cast<View *>(object);
+	unsigned i, count;
+
+	count=view->getReferenceCount();
+	for(i=0; i < count; i++)
+	{
+		if(view->getReference(i).getTable())
+			getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
+	}
+
+	for(i=0; i < view->getTriggerCount(); i++)
+		getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
+
+	for(i=0; i < view->getTriggerCount(); i++)
+	{
+		if(view->getTrigger(i)->getReferencedTable())
+			getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
+	}
+}
+
+void DatabaseModel::getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
+	vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
+	for(auto &obj : ref_objs)
+		getObjectDependecies(obj, deps, inc_indirect_deps);
+}
+
 void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	//Case the object is allocated and is not included in the dependecies list
@@ -7922,8 +8350,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 		{
 			ObjectType obj_type=object->getObjectType();
 
-			/* if the object has a schema, tablespace and owner applies the
-		 dependecy search in these objects */
 			if(object->getSchema())
 				getObjectDependecies(object->getSchema(), deps, inc_indirect_deps);
 
@@ -7936,463 +8362,78 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 			if(object->getCollation())
 				getObjectDependecies(object->getCollation(), deps, inc_indirect_deps);
 
-			//** Getting the dependecies for operator class **
 			if(obj_type==ObjectType::OpClass)
-			{
-				OperatorClass *opclass=dynamic_cast<OperatorClass *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(opclass->getDataType());
-				unsigned i, cnt;
-				OperatorClassElement elem;
+				getOpClassDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Domain)
+				getDomainDependencies(object, deps, inc_indirect_deps);
 
-				if(opclass->getFamily())
-					getObjectDependecies(opclass->getFamily(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Conversion)
+				getObjectDependecies(dynamic_cast<Conversion *>(object)->getConversionFunction(), deps, inc_indirect_deps);
 
-				cnt=opclass->getElementCount();
+			if(obj_type==ObjectType::Cast)
+				getCastDependencies(object, deps, inc_indirect_deps);
 
-				for(i=0; i < cnt; i++)
-				{
-					elem=opclass->getElement(i);
-
-					if(elem.getFunction())
-						getObjectDependecies(elem.getFunction(), deps, inc_indirect_deps);
-
-					if(elem.getOperator())
-						getObjectDependecies(elem.getOperator(), deps, inc_indirect_deps);
-
-					if(elem.getOperatorFamily())
-						getObjectDependecies(elem.getOperatorFamily(), deps, inc_indirect_deps);
-
-					if(elem.getStorage().isUserType())
-					{
-						usr_type=getObjectPgSQLType(elem.getStorage());
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for domain **
-			else if(obj_type==ObjectType::Domain)
-			{
-				BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
-
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for conversion **
-			else if(obj_type==ObjectType::Conversion)
-			{
-				Function *func=dynamic_cast<Conversion *>(object)->getConversionFunction();
-				getObjectDependecies(func, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for cast **
-			else if(obj_type==ObjectType::Cast)
-			{
-				Cast *cast=dynamic_cast<Cast *>(object);
-				BaseObject *usr_type=nullptr;
-
-				for(unsigned i=Cast::SrcType; i <= Cast::DstType; i++)
-				{
-					usr_type=getObjectPgSQLType(cast->getDataType(i));
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for event trigger **
-			else if(obj_type==ObjectType::EventTrigger)
-			{
+			if(obj_type==ObjectType::EventTrigger)
 				getObjectDependecies(dynamic_cast<EventTrigger *>(object)->getFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for function **
-			else if(obj_type==ObjectType::Function)
-			{
-				Function *func=dynamic_cast<Function *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
-				unsigned count, i;
 
-				if(!func->isSystemObject())
-					getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Function)
+				getFunctionDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Aggregate)
+				getAggregateDependencies(object, deps, inc_indirect_deps);
 
-				count=func->getParameterCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+			if(obj_type==ObjectType::Language)
+				getLanguageDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
+			if(obj_type==ObjectType::Operator)
+				getOperatorDependencies(object, deps, inc_indirect_deps);
 
-				count=func->getReturnedTableColumnCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
+			if(obj_type==ObjectType::Role)
+				getRoleDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for aggregate **
-			else if(obj_type==ObjectType::Aggregate)
-			{
-				Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned count, i;
+			if(obj_type==ObjectType::Relationship)
+				getRelationshipDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Aggregate::FinalFunc; i <= Aggregate::TransitionFunc; i++)
-					getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Sequence)
+				getSequenceDependencies(object, deps, inc_indirect_deps);
 
-				usr_type=getObjectPgSQLType(aggreg->getStateType());
+			if(obj_type==ObjectType::Column)
+				getColumnDependencies(object, deps, inc_indirect_deps);
 
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Trigger)
+				getTriggerDependencies(object, deps, inc_indirect_deps);
 
-				if(aggreg->getSortOperator())
-					getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
+			if(obj_type==ObjectType::Index)
+				getIndexDependencies(object, deps, inc_indirect_deps);
 
-				count=aggreg->getDataTypeCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(aggreg->getDataType(i));
+			if(obj_type==ObjectType::Policy)
+				getPolicyDependencies(object, deps, inc_indirect_deps);
 
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for language **
-			else if(obj_type==ObjectType::Language)
-			{
-				Language *lang=dynamic_cast<Language *>(object);
+			if(PhysicalTable::isPhysicalTable(obj_type))
+				getPhysicalTableDependencies(object, deps, inc_indirect_deps);
 
-				for(unsigned i=Language::ValidatorFunc; i <= Language::InlineFunc; i++)
-				{
-					if(lang->getFunction(i))
-						getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for operator **
-			else if(obj_type==ObjectType::Operator)
-			{
-				Operator *oper=dynamic_cast<Operator *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned i;
+			if(obj_type==ObjectType::Type)
+				getTypeDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Operator::FuncOperator; i <= Operator::FuncRestrict; i++)
-				{
-					if(oper->getFunction(i))
-						getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
-				}
+			if(obj_type==ObjectType::View)
+			 getViewDependencies(object, deps, inc_indirect_deps);
 
-				for(i=Operator::LeftArg; i <= Operator::RightArg; i++)
-				{
-					usr_type=getObjectPgSQLType(oper->getArgumentType(i));
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				for(i=Operator::OperCommutator; i <= Operator::OperNegator; i++)
-				{
-					if(oper->getOperator(i))
-						getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for role **
-			else if(obj_type==ObjectType::Role)
-			{
-				Role *role=dynamic_cast<Role *>(object);
-				unsigned i, i1, count,
-						role_types[3]={ Role::RefRole, Role::MemberRole, Role::AdminRole };
-
-				for(i=0; i < 3; i++)
-				{
-					count=role->getRoleCount(role_types[i]);
-					for(i1=0; i1 < count; i1++)
-						getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for relationships **
-			else if(obj_type==ObjectType::Relationship)
-			{
-				Relationship *rel=dynamic_cast<Relationship *>(object);
-				BaseObject *usr_type=nullptr;
-				Constraint *constr=nullptr;
-				unsigned i, count;
-
-				getObjectDependecies(rel->getTable(Relationship::SrcTable), deps, inc_indirect_deps);
-				getObjectDependecies(rel->getTable(Relationship::DstTable), deps, inc_indirect_deps);
-
-				count=rel->getAttributeCount();
-				for(i=0; i < count; i++)
-				{
-					usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
-
-					if(usr_type)
-						getObjectDependecies(usr_type, deps, inc_indirect_deps);
-				}
-
-				count=rel->getConstraintCount();
-				for(i=0; i < count; i++)
-				{
-					constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
-
-					if(constr->getTablespace())
-						getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for sequence **
-			else if(obj_type==ObjectType::Sequence)
-			{
-				Sequence *seq=dynamic_cast<Sequence *>(object);
-				if(seq->getOwnerColumn())
-					getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for column **
-			else if(obj_type==ObjectType::Column)
-			{
-				Column *col=dynamic_cast<Column *>(object);
-				BaseObject *usr_type=getObjectPgSQLType(col->getType()),
-						*sequence=col->getSequence();
-
-				if(usr_type)
-					getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-				if(sequence)
-					getObjectDependecies(sequence, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for trigger **
-			else if(obj_type==ObjectType::Trigger)
-			{
-				Trigger *trig=dynamic_cast<Trigger *>(object);
-
-				if(trig->getReferencedTable())
-					getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-				if(trig->getFunction())
-					getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for index **
-			else if(obj_type==ObjectType::Index)
-			{
-				Index *index=dynamic_cast<Index *>(object);
-				BaseObject *usr_type=nullptr;
-				unsigned i, count=index->getIndexElementCount();
-
-				for(i=0; i < count; i++)
-				{
-					if(index->getIndexElement(i).getOperatorClass())
-						getObjectDependecies(index->getIndexElement(i).getOperatorClass(), deps, inc_indirect_deps);
-
-					if(index->getIndexElement(i).getColumn())
-					{
-						usr_type=getObjectPgSQLType(index->getIndexElement(i).getColumn()->getType());
-
-						if(usr_type)
-							getObjectDependecies(usr_type, deps, inc_indirect_deps);
-					}
-
-					if(index->getIndexElement(i).getCollation())
-						getObjectDependecies(index->getIndexElement(i).getCollation(), deps, inc_indirect_deps);
-				}
-			}
-			else if(obj_type==ObjectType::Policy)
-			{
-				Policy *pol=dynamic_cast<Policy *>(object);
-
-				for(auto role : pol->getRoles())
-					getObjectDependecies(role, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for table / foreign table **
-			else if(PhysicalTable::isPhysicalTable(obj_type))
-			{
-				PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object);
-				Table *aux_tab = dynamic_cast<Table *>(object);
-				ForeignTable *ftable = dynamic_cast<ForeignTable *>(tab);
-				BaseObject *usr_type=nullptr,  *seq=nullptr;
-				Constraint *constr=nullptr;
-				Trigger *trig=nullptr;
-				Index *index=nullptr;
-				Column *col=nullptr;
-				Policy *pol=nullptr;
-				unsigned count, i, count1, i1;
-
-				count=tab->getColumnCount();
-				for(i=0; i < count; i++)
-				{
-					col=tab->getColumn(i);
-					usr_type=getObjectPgSQLType(col->getType());
-					seq=col->getSequence();
-
-					if(!col->isAddedByLinking())
-					{
-						if(usr_type)
-							getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-						if(seq)
-							getObjectDependecies(seq, deps, inc_indirect_deps);
-					}
-				}
-
-				count=tab->getConstraintCount();
-				for(i=0; i < count; i++)
-				{
-					constr=dynamic_cast<Constraint *>(tab->getConstraint(i));
-					count1=constr->getExcludeElementCount();
-
-					for(i1=0; i1 < count1; i1++)
-					{
-						if(constr->getExcludeElement(i1).getOperator())
-							getObjectDependecies(constr->getExcludeElement(i1).getOperator(), deps, inc_indirect_deps);
-
-						if(constr->getExcludeElement(i1).getOperatorClass())
-							getObjectDependecies(constr->getExcludeElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-					}
-
-					if(inc_indirect_deps &&
-							!constr->isAddedByLinking() &&
-							constr->getConstraintType()==ConstraintType::ForeignKey)
-						getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
-
-					if(!constr->isAddedByLinking() && constr->getTablespace())
-						getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
-				}
-
-				count=tab->getTriggerCount();
-				for(i=0; i < count; i++)
-				{
-					trig=dynamic_cast<Trigger *>(tab->getTrigger(i));
-					if(trig->getReferencedTable())
-						getObjectDependecies(trig->getReferencedTable(), deps, inc_indirect_deps);
-
-					if(trig->getFunction())
-						getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-				}
-
-				if(ftable)
-				{
-					getObjectDependecies(ftable->getForeignServer(), deps, inc_indirect_deps);
-				}
-
-				if(aux_tab)
-				{
-					count=aux_tab->getIndexCount();
-					for(i=0; i < count; i++)
-					{
-						index=dynamic_cast<Index *>(aux_tab->getIndex(i));
-						count1=index->getIndexElementCount();
-
-						for(i1=0; i1 < count1; i1++)
-						{
-							if(index->getIndexElement(i1).getOperatorClass())
-								getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-
-							if(index->getIndexElement(i1).getColumn())
-							{
-								usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
-
-								if(usr_type)
-									getObjectDependecies(usr_type, deps, inc_indirect_deps);
-							}
-
-							if(index->getIndexElement(i1).getCollation())
-								getObjectDependecies(index->getIndexElement(i1).getCollation(), deps, inc_indirect_deps);
-						}
-					}
-
-					count=aux_tab->getPolicyCount();
-					for(i=0; i < count; i++)
-					{
-						pol=dynamic_cast<Policy *>(aux_tab->getPolicy(i));
-
-						for(auto role : pol->getRoles())
-							getObjectDependecies(role, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for user defined type **
-			else if(obj_type==ObjectType::Type)
-			{
-				Type *usr_type=dynamic_cast<Type *>(object);
-				BaseObject *aux_type=nullptr;
-				unsigned count, i;
-
-				if(usr_type->getConfiguration()==Type::BaseType)
-				{
-					aux_type=getObjectPgSQLType(usr_type->getLikeType());
-
-					if(aux_type)
-						getObjectDependecies(aux_type, deps, inc_indirect_deps);
-
-					for(i=Type::InputFunc; i <= Type::AnalyzeFunc; i++)
-						getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
-				}
-				else if(usr_type->getConfiguration()==Type::CompositeType)
-				{
-					count=usr_type->getAttributeCount();
-					for(i=0; i < count; i++)
-					{
-						aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
-
-						if(aux_type)
-							getObjectDependecies(aux_type, deps, inc_indirect_deps);
-					}
-				}
-			}
-			//** Getting the dependecies for view **
-			else if(obj_type==ObjectType::View)
-			{
-				View *view=dynamic_cast<View *>(object);
-				unsigned i, count;
-
-				count=view->getReferenceCount();
-				for(i=0; i < count; i++)
-				{
-					if(view->getReference(i).getTable())
-						getObjectDependecies(view->getReference(i).getTable(), deps, inc_indirect_deps);
-				}
-
-				for(i=0; i < view->getTriggerCount(); i++)
-					getObjectDependecies(view->getTrigger(i), deps, inc_indirect_deps);
-
-				for(i=0; i < view->getTriggerCount(); i++)
-				{
-					if(view->getTrigger(i)->getReferencedTable())
-						getObjectDependecies(view->getTrigger(i)->getReferencedTable(), deps, inc_indirect_deps);
-				}
-			}
-			//** Getting the dependecies for foreign data wrapper **
-			else if(obj_type == ObjectType::ForeignDataWrapper)
+			if(obj_type == ObjectType::ForeignDataWrapper)
 			{
 				ForeignDataWrapper *fdw = dynamic_cast<ForeignDataWrapper *>(object);
 				getObjectDependecies(fdw->getHandlerFunction(), deps, inc_indirect_deps);
 				getObjectDependecies(fdw->getValidatorFunction(), deps, inc_indirect_deps);
 			}
-			//** Getting the dependecies for server **
-			else if(obj_type == ObjectType::ForeignServer)
-			{
-				ForeignServer *server = dynamic_cast<ForeignServer *>(object);
-				getObjectDependecies(server->getForeignDataWrapper(), deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for generic sql **
-			else if(obj_type==ObjectType::GenericSql)
-			{
-				GenericSQL *generic_sql = dynamic_cast<GenericSQL *>(object);
-				vector<BaseObject *> ref_objs = generic_sql->getReferencedObjects();
-				for(auto &obj : ref_objs)
-					getObjectDependecies(obj, deps, inc_indirect_deps);
-			}
-			//** Getting the dependecies for user mapping **
-			else if(obj_type==ObjectType::UserMapping)
-			{
-				UserMapping *usr_map = dynamic_cast<UserMapping *>(object);
-				getObjectDependecies(usr_map->getForeignServer(), deps, inc_indirect_deps);
-			}
+
+			if(obj_type == ObjectType::ForeignServer)
+				getObjectDependecies(dynamic_cast<ForeignServer *>(object)->getForeignDataWrapper(), deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::GenericSql)
+				getGenericSQLDependencies(object, deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::UserMapping)
+				getObjectDependecies(dynamic_cast<UserMapping *>(object)->getForeignServer(), deps, inc_indirect_deps);
 
 			if(BaseTable::isBaseTable(obj_type))
 			{
@@ -8402,6 +8443,1273 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 					deps.push_back(tab->getTag());
 			}
 		}
+	}
+}
+
+void DatabaseModel::getViewReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode)
+{
+	View *view=dynamic_cast<View *>(object);
+	vector<BaseObject *> tab_objs=view->getObjects();
+	refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
+
+	if(!exclusion_mode)
+	{
+		vector<BaseRelationship *> base_rels=getRelationships(view);
+		while(!base_rels.empty())
+		{
+			refs.push_back(base_rels.back());
+			base_rels.pop_back();
+		}
+	}
+}
+
+void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
+	Sequence *seq=nullptr;
+	Constraint *constr=nullptr;
+	PhysicalTable *tab=nullptr;
+	Trigger *gat=nullptr;
+	BaseRelationship *base_rel=nullptr;
+	View *view=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<TableObject *> *tab_objs;
+	unsigned i, count;
+	vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
+	vector<BaseObject *> tabs;
+
+	for(auto &type : tab_obj_types)
+	{
+		if(obj_type == ObjectType::ForeignTable && type != ObjectType::Trigger)
+			continue;
+
+		tab_objs=table->getObjectList(type);
+		refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
+	}
+
+	itr=relationships.begin();
+	itr_end=relationships.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		base_rel=dynamic_cast<BaseRelationship *>(*itr);
+		if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+				base_rel->getTable(BaseRelationship::DstTable)==table)
+		{
+			refer=true;
+			refs.push_back(base_rel);
+		}
+		itr++;
+	}
+
+	itr=base_relationships.begin();
+	itr_end=base_relationships.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		base_rel=dynamic_cast<BaseRelationship *>(*itr);
+		if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
+				(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+				 base_rel->getTable(BaseRelationship::DstTable)==table))
+		{
+			refer=true;
+			refs.push_back(base_rel);
+		}
+		itr++;
+	}
+
+	itr=sequences.begin();
+	itr_end=sequences.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		seq=dynamic_cast<Sequence *>(*itr);
+		if(seq->getOwnerColumn() &&
+				seq->getOwnerColumn()->getParentTable()==table)
+		{
+			refer=true;
+			refs.push_back(seq);
+		}
+
+		itr++;
+	}
+
+	tabs = tables;
+	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+	itr= tabs.begin();
+	itr_end = tabs.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		tab = dynamic_cast<PhysicalTable *>(*itr);
+
+		count=tab->getConstraintCount();
+		for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
+		{
+			constr=tab->getConstraint(i);
+			//If a constraint references its own parent table it'll not be included on the references list
+			if(constr->getConstraintType()==ConstraintType::ForeignKey &&
+					constr->getParentTable()!=constr->getReferencedTable() &&
+					constr->getReferencedTable()==table)
+			{
+				refer=true;
+				refs.push_back(constr);
+			}
+		}
+
+		count=tab->getTriggerCount();
+		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+		{
+			gat=tab->getTrigger(i);
+			if(gat->getReferencedTable()==table)
+			{
+				refer=true;
+				refs.push_back(gat);
+			}
+		}
+
+		itr++;
+	}
+
+	itr=views.begin();
+	itr_end=views.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		view=dynamic_cast<View *>(*itr);
+
+		if(view->isReferencingTable(table))
+		{
+			refer=true;
+			refs.push_back(view);
+		}
+
+		itr++;
+	}
+
+	/* As base relationship are created automatically by the model they aren't considered
+	as a reference to the table in exclusion mode */
+	itr=base_relationships.begin();
+	itr_end=base_relationships.end();
+
+	while(itr!=itr_end && !exclusion_mode)// || (exclusion_mode && !refer)))
+	{
+		base_rel=dynamic_cast<BaseRelationship *>(*itr);
+
+		if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
+				base_rel->getTable(BaseRelationship::DstTable)==table)
+		{
+			refer=true;
+			refs.push_back(base_rel);
+		}
+		itr++;
+	}
+}
+
+void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	Function *func=dynamic_cast<Function *>(object);
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
+													ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
+													ObjectType::Table, ObjectType::Type, ObjectType::Language,
+													ObjectType::ForeignDataWrapper, ObjectType::ForeignTable };
+	unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
+	PhysicalTable *tab=nullptr;
+	Aggregate *aggreg=nullptr;
+	Operator *oper=nullptr;
+	Trigger *trig=nullptr;
+	Type *type=nullptr;
+	Language *lang=nullptr;
+	OperatorClass *opclass=nullptr;
+	ForeignDataWrapper *fdw=nullptr;
+
+	for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		if(obj_types[i]==ObjectType::Cast)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::EventTrigger)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<EventTrigger *>(*itr)->getFunction()==func)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::Conversion)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<Conversion *>(*itr)->getConversionFunction()==func)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::Aggregate)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				aggreg=dynamic_cast<Aggregate *>(*itr);
+
+				if(aggreg->getFunction(Aggregate::FinalFunc)==func ||
+						aggreg->getFunction(Aggregate::TransitionFunc)==func)
+				{
+					refer=true;
+					refs.push_back(aggreg);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::Operator)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				oper=dynamic_cast<Operator *>(*itr);
+
+				if(oper->getFunction(Operator::FuncOperator)==func ||
+						oper->getFunction(Operator::FuncJoin)==func  ||
+						oper->getFunction(Operator::FuncRestrict)==func)
+				{
+					refer=true;
+					refs.push_back(oper);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::OpClass)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				opclass=dynamic_cast<OperatorClass *>(*itr);
+				count=opclass->getElementCount();
+
+				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					if(opclass->getElement(i1).getFunction()==func)
+					{
+						refer=true;
+						refs.push_back(opclass);
+					}
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::Table ||
+						obj_types[i]==ObjectType::ForeignTable)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				tab=dynamic_cast<PhysicalTable *>(*itr);
+				itr++;
+				count=tab->getTriggerCount();
+
+				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					trig=tab->getTrigger(i1);
+
+					if(trig->getFunction()==func)
+					{
+						refer=true;
+						refs.push_back(trig);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Type)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				type=dynamic_cast<Type *>(*itr);
+				itr++;
+
+				for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					if(type->getFunction(i1)==func)
+					{
+						refer=true;
+						refs.push_back(type);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Language)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				lang=dynamic_cast<Language *>(*itr);
+				itr++;
+
+				if(lang->getFunction(Language::HandlerFunc)==func ||
+						lang->getFunction(Language::ValidatorFunc)==func ||
+						lang->getFunction(Language::InlineFunc)==func)
+				{
+					refer=true;
+					refs.push_back(lang);
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::ForeignDataWrapper)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				fdw=dynamic_cast<ForeignDataWrapper *>(*itr);
+				itr++;
+
+				if(fdw->getHandlerFunction() == func || fdw->getValidatorFunction() == func)
+				{
+					refer=true;
+					refs.push_back(fdw);
+				}
+			}
+		}
+	}
+}
+
+void DatabaseModel::getSchemaReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType obj_types[12]={ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
+														ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
+														ObjectType::Sequence, ObjectType::Conversion,
+														ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
+	unsigned i;
+
+	for(i=0; i < 12 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if((*itr)->getSchema()==object)
+			{
+				refer=true;
+				refs.push_back(*itr);
+			}
+			itr++;
+		}
+	}
+}
+
+void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType obj_types[]={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
+													ObjectType::Cast,	ObjectType::Domain, ObjectType::Function, ObjectType::Aggregate,
+													ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
+	unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
+	OperatorClass *op_class=nullptr;
+	OperatorClassElement elem;
+	PhysicalTable *tab=nullptr;
+	Column *col=nullptr;
+	Cast *cast=nullptr;
+	Domain *dom=nullptr;
+	Function *func=nullptr;
+	Aggregate *aggreg=nullptr;
+	Operator *oper=nullptr;
+	Type *type=nullptr;
+	Relationship *rel=nullptr;
+	void *ptr_pgsqltype=nullptr;
+
+	switch(obj_type)
+	{
+		case ObjectType::Type: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
+		case ObjectType::Domain: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
+		case ObjectType::Sequence: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
+		case ObjectType::Extension: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
+		case ObjectType::View: ptr_pgsqltype=dynamic_cast<View*>(object); break;
+		case ObjectType::ForeignTable: ptr_pgsqltype=dynamic_cast<ForeignTable*>(object); break;
+		default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
+	}
+
+	for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		if(obj_types[i]==ObjectType::Relationship)
+		{
+			bool added;
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				added=false;
+				rel=dynamic_cast<Relationship *>(*itr);
+				itr++;
+
+				count=rel->getAttributeCount();
+				for(i1=0; i1 < count && !added; i1++)
+				{
+					col=rel->getAttribute(i1);
+
+					if(col->getType()==ptr_pgsqltype)
+					{
+						added=refer=true;
+						refs.push_back(rel);
+					}
+				}
+			}
+		}
+		else if(PhysicalTable::isPhysicalTable(obj_types[i]))
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				tab=dynamic_cast<PhysicalTable *>(*itr);
+				itr++;
+
+				count=tab->getColumnCount();
+				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					col=tab->getColumn(i1);
+
+					if(!col->isAddedByRelationship() &&
+						 (col->getType()==ptr_pgsqltype ||
+							//Special case for postgis extension
+							(obj_type == ObjectType::Extension && object->getName() == QString("postgis") && col->getType().isGiSType())))
+					{
+						refer=true;
+						refs.push_back(col);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::OpClass)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				op_class=dynamic_cast<OperatorClass *>(*itr);
+				itr++;
+
+				if(op_class->getDataType()==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(op_class);
+				}
+
+				for(i1=0; i1 < op_class->getElementCount() && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					elem=op_class->getElement(i1);
+					if(elem.getStorage()==ptr_pgsqltype)
+					{
+						refer=true;
+						refs.push_back(op_class);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Domain)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				dom=dynamic_cast<Domain *>(*itr);
+				itr++;
+
+				if(dom->getType()==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(dom);
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Type)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				type=dynamic_cast<Type *>(*itr);
+				itr++;
+
+				if(type->getAlignment()==ptr_pgsqltype ||
+						type->getElement()==ptr_pgsqltype ||
+						type->getLikeType()==ptr_pgsqltype ||
+						type->getSubtype()==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(type);
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Aggregate)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				aggreg=dynamic_cast<Aggregate *>(*itr);
+				itr++;
+
+				count=aggreg->getDataTypeCount();
+				for(i1=0; i1 < count  && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					if(aggreg->getDataType(i1)==ptr_pgsqltype)
+					{
+						refer=true;
+						refs.push_back(aggreg);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Function)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				func=dynamic_cast<Function *>(*itr);
+				itr++;
+
+				if(func->getReturnType()==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(func);
+				}
+				else
+				{
+					count=func->getParameterCount();
+					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+					{
+						if(func->getParameter(i1).getType()==ptr_pgsqltype)
+						{
+							refer=true;
+							refs.push_back(func);
+						}
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Operator)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				oper=dynamic_cast<Operator *>(*itr);
+				itr++;
+
+				if(oper->getArgumentType(Operator::LeftArg)==ptr_pgsqltype ||
+						oper->getArgumentType(Operator::RightArg)==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(oper);
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Cast)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				cast=dynamic_cast<Cast *>(*itr);
+				itr++;
+
+				if(cast->getDataType(Cast::SrcType)==ptr_pgsqltype ||
+						cast->getDataType(Cast::DstType)==ptr_pgsqltype)
+				{
+					refer=true;
+					refs.push_back(cast);
+				}
+			}
+		}
+	}
+}
+
+void DatabaseModel::getRoleReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<ObjectType> obj_types = {
+								ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::Domain,
+								ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
+								ObjectType::Sequence, ObjectType::Conversion,
+								ObjectType::Language, ObjectType::Tablespace,
+								ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
+								ObjectType::UserMapping };
+	vector<ObjectType>::iterator itr_tp, itr_tp_end;
+	unsigned i,i1, count;
+	Role *role_aux=nullptr;
+	Role *role=dynamic_cast<Role *>(object);
+	unsigned role_types[3]={Role::RefRole, Role::MemberRole, Role::AdminRole};
+	Permission *perm=nullptr;
+
+	//Check if the role is being referencend by permissions
+	itr=permissions.begin();
+	itr_end=permissions.end();
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		perm=dynamic_cast<Permission *>(*itr);
+		itr++;
+
+		if(perm->isRoleExists(role))
+		{
+			refer=true;
+			refs.push_back(perm);
+		}
+	}
+
+	//Check if the role is being referenced in other roles
+	itr=roles.begin();
+	itr_end=roles.end();
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		role_aux=dynamic_cast<Role *>(*itr);
+		itr++;
+
+		for(i1=0; i1 < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+		{
+			count=role_aux->getRoleCount(role_types[i1]);
+			for(i=0; i < count && !refer; i++)
+			{
+				if(role_aux->getRole(role_types[i1], i)==role)
+				{
+					refer=true;
+					refs.push_back(role_aux);
+				}
+			}
+		}
+	}
+
+	itr_tp = obj_types.begin();
+	itr_tp_end = obj_types.end();
+
+	while(itr_tp != itr_tp_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		obj_list=getObjectList(*itr_tp);
+		itr_tp++;
+
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if((*itr)->getOwner()==role)
+			{
+				refer=true;
+				refs.push_back(*itr);
+			}
+
+			if((*itr)->getObjectType() == ObjectType::Table)
+			{
+				for(auto obj : *(dynamic_cast<Table *>(*itr))->getObjectList(ObjectType::Policy))
+				{
+					if(dynamic_cast<Policy *>(obj)->isRoleExists(role))
+					{
+						refer=true;
+						refs.push_back(obj);
+					}
+				}
+			}
+
+			itr++;
+		}
+	}
+
+	//Special case: check if the role to be removed is the owner of the database
+	if((!exclusion_mode || (exclusion_mode && !refer)) && this->getOwner()==role)
+	{
+		refer=true;
+		refs.push_back(this);
+	}
+}
+
+void DatabaseModel::getTablespaceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	unsigned i, count;
+	Table *tab=nullptr;
+	Index *ind=nullptr;
+	Constraint *rest=nullptr;
+
+	itr=tables.begin();
+	itr_end=tables.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		tab=dynamic_cast<Table *>(*itr);
+
+		if(tab->getTablespace()==object)
+		{
+			refer=true;
+			refs.push_back(tab);
+		}
+
+		count=tab->getIndexCount();
+		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+		{
+			ind=tab->getIndex(i);
+			if(ind->getTablespace()==object)
+			{
+				refer=true;
+				refs.push_back(ind);
+			}
+		}
+
+		count=tab->getConstraintCount();
+		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+		{
+			rest=tab->getConstraint(i);
+			if(rest->getTablespace()==object)
+			{
+				refer=true;
+				refs.push_back(rest);
+			}
+		}
+
+		itr++;
+	}
+
+	if((!exclusion_mode || (exclusion_mode && !refer)) && this->BaseObject::getTablespace()==object)
+	{
+		refer=true;
+		refs.push_back(this);
+	}
+}
+
+void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	Function *func=nullptr;
+
+	itr=functions.begin();
+	itr_end=functions.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		func=dynamic_cast<Function *>(*itr);
+		if(func->getLanguage()==object)
+		{
+			refer=true;
+			refs.push_back(func);
+		}
+		itr++;
+	}
+}
+
+void DatabaseModel::getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	Type *usertype=nullptr;
+	Index *ind=nullptr;
+	Constraint *constr=nullptr;
+	Table *table=nullptr;
+	ForeignTable *ftable=nullptr;
+
+	itr=types.begin();
+	itr_end=types.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		usertype=dynamic_cast<Type *>(*itr);
+
+		if(usertype->getSubtypeOpClass()==object)
+		{
+			refer=true;
+			refs.push_back(usertype);
+		}
+		itr++;
+	}
+
+	itr=tables.begin();
+	itr_end=tables.end();
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		table=dynamic_cast<Table *>(*itr);
+
+		//Checking if the indexes are referencing the operator class
+		for(unsigned idx=0; idx < table->getIndexCount() &&
+			(!exclusion_mode || (exclusion_mode && !refer)); idx++)
+		{
+			ind=table->getIndex(idx);
+
+			for(unsigned id_elem=0; id_elem < ind->getIndexElementCount() &&
+				(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
+			{
+				if(ind->getIndexElement(id_elem).getOperatorClass()==object)
+				{
+					refer=true;
+					refs.push_back(ind);
+				}
+			}
+		}
+
+		//Checking if the constraints are referencing the operator class
+		for(unsigned idx=0; idx < table->getConstraintCount() &&
+			(!exclusion_mode || (exclusion_mode && !refer)); idx++)
+		{
+			constr=table->getConstraint(idx);
+
+			for(unsigned id_elem=0; id_elem < constr->getExcludeElementCount() &&
+				(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
+			{
+				if(constr->getExcludeElement(id_elem).getOperatorClass()==object)
+				{
+					refer=true;
+					refs.push_back(constr);
+				}
+			}
+		}
+
+		//Checking if the partition keys are referencing the operator class
+		for(auto &part_key : table->getPartitionKeys())
+		{
+			if(part_key.getOperatorClass() == object)
+			{
+				refer = true;
+				refs.push_back(table);
+				break;
+			}
+		}
+
+		itr++;
+	}
+
+
+	itr=foreign_tables.begin();
+	itr_end=foreign_tables.end();
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		ftable=dynamic_cast<ForeignTable *>(*itr);
+
+		//Checking if the partition keys are referencing the operator class
+		for(auto &part_key : ftable->getPartitionKeys())
+		{
+			if(part_key.getOperatorClass() == object)
+			{
+				refer = true;
+				refs.push_back(ftable);
+				break;
+			}
+		}
+
+		itr++;
+	}
+}
+
+void DatabaseModel::getOperatorReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType obj_types[]={ObjectType::OpClass,
+													ObjectType::Aggregate,
+													ObjectType::Operator,
+													ObjectType::Table };
+	unsigned i, i1, count;
+	OperatorClass *op_class=nullptr;
+	Operator *oper_aux=nullptr, *oper=dynamic_cast<Operator *>(object);
+	Table *table=nullptr;
+	Constraint *constr=nullptr;
+
+	for(i=0; i < 4 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		if(obj_types[i]==ObjectType::OpClass)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				op_class=dynamic_cast<OperatorClass *>(*itr);
+				itr++;
+
+				count=op_class->getElementCount();
+				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					if(op_class->getElement(i1).getOperator()==oper)
+					{
+						refer=true;
+						refs.push_back(op_class);
+					}
+				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Aggregate)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<Aggregate *>(*itr)->getSortOperator()==oper)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+		else if(obj_types[i]==ObjectType::Operator)
+		{
+			while(itr!=itr_end && !refer)
+			{
+				oper_aux=dynamic_cast<Operator *>(*itr);
+				itr++;
+
+				for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
+					(!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					if(oper_aux->getOperator(i1)==oper)
+					{
+						refer=true;
+						refs.push_back(oper_aux);
+					}
+				}
+			}
+		}
+		else
+		{
+			while(itr!=itr_end && !refer)
+			{
+				table=dynamic_cast<Table *>(*itr);
+				itr++;
+
+				count=table->getConstraintCount();
+				for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+				{
+					constr=table->getConstraint(i1);
+
+					if(constr->getConstraintType()==ConstraintType::Exclude)
+					{
+						for(auto &elem : constr->getExcludeElements())
+						{
+							if(elem.getOperator()==oper)
+							{
+								refer=true;
+								refs.push_back(constr);
+								if(exclusion_mode) break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void DatabaseModel::getCollationReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	ObjectType  obj_types[]={ ObjectType::Domain, ObjectType::Collation, ObjectType::Type },
+			tab_obj_types[]={ ObjectType::Column, ObjectType::Index };
+	unsigned i, count;
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<TableObject *> *tab_obj_list=nullptr;
+	vector<TableObject *>::iterator tab_itr, tab_itr_end;
+	TableObject *tab_obj=nullptr;
+	PhysicalTable *table = nullptr;
+
+	count=sizeof(obj_types)/sizeof(ObjectType);
+	for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if((*itr)->getCollation()==object)
+			{
+				refer=true;
+				refs.push_back(*itr);
+			}
+
+			itr++;
+		}
+	}
+
+	count=sizeof(tab_obj_types)/sizeof(ObjectType);
+	vector<BaseObject *> tabs;
+
+	tabs.insert(tabs.end(), tables.begin(), tables.end());
+	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+	itr=tabs.begin();
+	itr_end=tabs.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		table = dynamic_cast<PhysicalTable *>(*itr);
+
+		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+		{
+			tab_obj_list = table->getObjectList(tab_obj_types[i]);
+			if(!tab_obj_list) continue;
+
+			tab_itr=tab_obj_list->begin();
+			tab_itr_end=tab_obj_list->end();
+
+			while(tab_itr!=tab_itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				tab_obj=(*tab_itr);
+				if((tab_obj->getObjectType()==ObjectType::Column && tab_obj->getCollation()==object) ||
+						(tab_obj->getObjectType()==ObjectType::Index &&
+						 dynamic_cast<Index *>(tab_obj)->isReferCollation(dynamic_cast<Collation *>(object))))
+				{
+					refer=true;
+					refs.push_back(*tab_itr);
+				}
+				tab_itr++;
+			}
+		}
+
+		//Checking if the partition keys are referencing the operator class
+		for(auto &part_key : table->getPartitionKeys())
+		{
+			if(part_key.getCollation() == object)
+			{
+				refer = true;
+				refs.push_back(table);
+				break;
+			}
+		}
+
+		itr++;
+	}
+}
+
+void DatabaseModel::getOpFamilyReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
+
+	itr=op_classes.begin();
+	itr_end=op_classes.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		if(dynamic_cast<OperatorClass *>(*itr)->getFamily()==op_family)
+		{
+			refer=true;
+			refs.push_back(*itr);
+		}
+		itr++;
+	}
+}
+
+void DatabaseModel::getColumnReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	Column *column=dynamic_cast<Column *>(object);
+	vector<BaseObject *> *obj_list=nullptr;
+	vector<BaseObject *>::iterator itr, itr_end;
+	ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table,
+														ObjectType::ForeignTable, ObjectType::Relationship };
+	unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
+
+	for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		obj_list=getObjectList(obj_types[i]);
+		itr=obj_list->begin();
+		itr_end=obj_list->end();
+
+		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if((obj_types[i]==ObjectType::Sequence && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==column) ||
+					(obj_types[i]==ObjectType::View && dynamic_cast<View *>(*itr)->isReferencingColumn(column)))
+			{
+				refer=true;
+				refs.push_back(*itr);
+			}
+			else if(obj_types[i]==ObjectType::Table || obj_types[i]==ObjectType::ForeignTable)
+			{
+				PhysicalTable *tab=dynamic_cast<PhysicalTable *>(*itr);
+				Table *aux_tab = dynamic_cast<Table *>(tab);
+				unsigned count, idx, count1, i1;
+				Trigger *trig=nullptr;
+				Index *index=nullptr;
+				Constraint *constr=nullptr;
+				vector<PartitionKey> part_keys;
+
+				count=tab->getConstraintCount();
+				for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+				{
+					constr=tab->getConstraint(idx);
+					if(constr->isColumnReferenced(column))
+					{
+						refer=true;
+						refs.push_back(constr);
+					}
+				}
+
+				if(aux_tab)
+				{
+					count=aux_tab->getIndexCount();
+					for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+					{
+						index=aux_tab->getIndex(idx);
+						if(index->isReferColumn(column))
+						{
+							refer=true;
+							refs.push_back(index);
+						}
+					}
+				}
+
+				count=tab->getTriggerCount();
+				for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+				{
+					trig=tab->getTrigger(idx);
+					count1=trig->getColumnCount();
+
+					for(i1=0; i1 < count1 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
+					{
+						if(trig->getColumn(i1)==column)
+						{
+							refer=true;
+							refs.push_back(trig);
+						}
+					}
+				}
+
+				part_keys = tab->getPartitionKeys();
+				for(auto &part_key : part_keys)
+				{
+					if(part_key.getColumn() == column)
+					{
+						refer = true;
+						refs.push_back(tab);
+						break;
+					}
+				}
+			}
+			else if(obj_types[i]==ObjectType::Relationship)
+			{
+				Relationship *rel=dynamic_cast<Relationship *>(*itr);
+				unsigned constr_cnt, idx;
+
+				constr_cnt=rel->getConstraintCount();
+				for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
+				{
+					if(rel->getConstraint(idx)->isColumnReferenced(column))
+					{
+						refer=true;
+						refs.push_back(rel);
+					}
+				}
+			}
+
+			itr++;
+		}
+	}
+}
+
+void DatabaseModel::getTagReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> list;
+	Tag *tag=dynamic_cast<Tag *>(object);
+
+	list.assign(tables.begin(), tables.end());
+	list.insert(list.end(), foreign_tables.begin(), foreign_tables.end());
+	list.insert(list.end(), views.begin(), views.end());
+
+	itr=list.begin();
+	itr_end=list.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		if(dynamic_cast<BaseTable *>(*itr)->getTag()==tag)
+		{
+			refer=true;
+			refs.push_back(*itr);
+		}
+		itr++;
+	}
+}
+
+void DatabaseModel::getSequenceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	PhysicalTable *table=nullptr;
+	vector<TableObject *> *cols=nullptr;
+	vector<TableObject *>::iterator itr, itr_end;
+	vector<BaseObject *> tabs;
+	unsigned i = 0, cnt = 0;
+
+	tabs = tables;
+	tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
+	cnt = tabs.size();
+
+	for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+	{
+		table=dynamic_cast<PhysicalTable *>(tabs[i]);
+		cols=table->getObjectList(ObjectType::Column);
+		itr=cols->begin();
+		itr_end=cols->end();
+
+		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+		{
+			if(dynamic_cast<Column *>(*itr)->getSequence()==object)
+			{
+				refer=true;
+				refs.push_back(*itr);
+			}
+			itr++;
+		}
+	}
+}
+
+void DatabaseModel::getFdwReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> list;
+	ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
+
+	itr=foreign_servers.begin();
+	itr_end=foreign_servers.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
+		{
+			refer=true;
+			refs.push_back(*itr);
+		}
+		itr++;
+	}
+}
+
+void DatabaseModel::getServerReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
+{
+	vector<BaseObject *>::iterator itr, itr_end;
+	vector<BaseObject *> list;
+	ForeignServer *srv=dynamic_cast<ForeignServer *>(object);
+
+	itr=usermappings.begin();
+	itr_end=usermappings.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		if(dynamic_cast<UserMapping *>(*itr)->getForeignServer() == srv)
+		{
+			refer=true;
+			refs.push_back(*itr);
+		}
+		itr++;
+	}
+
+	itr=foreign_tables.begin();
+	itr_end=foreign_tables.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		if(dynamic_cast<ForeignTable *>(*itr)->getForeignServer() == srv)
+		{
+			refer=true;
+			refs.push_back(*itr);
+		}
+		itr++;
 	}
 }
 
@@ -8442,1273 +9750,57 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 	}
 
 	if(obj_type==ObjectType::View && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		View *view=dynamic_cast<View *>(object);
-		vector<BaseObject *> tab_objs=view->getObjects();
-		refs.insert(refs.end(), tab_objs.begin(), tab_objs.end());
-
-		if(!exclusion_mode)
-		{
-			vector<BaseRelationship *> base_rels=getRelationships(view);
-			while(!base_rels.empty())
-			{
-				refs.push_back(base_rels.back());
-				base_rels.pop_back();
-			}
-		}
-	}
+		getViewReferences(object, refs, exclusion_mode);
 
 	if(PhysicalTable::isPhysicalTable(obj_type) && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
-		Sequence *seq=nullptr;
-		Constraint *constr=nullptr;
-		PhysicalTable *tab=nullptr;
-		Trigger *gat=nullptr;
-		BaseRelationship *base_rel=nullptr;
-		View *view=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<TableObject *> *tab_objs;
-		unsigned i, count;
-		vector<ObjectType> tab_obj_types={ ObjectType::Trigger, ObjectType::Rule, ObjectType::Index, ObjectType::Policy };
-		vector<BaseObject *> tabs;
-
-		for(auto &type : tab_obj_types)
-		{
-			if(obj_type == ObjectType::ForeignTable && type != ObjectType::Trigger)
-				continue;
-
-			tab_objs=table->getObjectList(type);
-			refs.insert(refs.end(), tab_objs->begin(), tab_objs->end());
-		}
-
-		itr=relationships.begin();
-		itr_end=relationships.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-			if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-					base_rel->getTable(BaseRelationship::DstTable)==table)
-			{
-				refer=true;
-				refs.push_back(base_rel);
-			}
-			itr++;
-		}
-
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-			if(base_rel->getRelationshipType()==BaseRelationship::RelationshipFk &&
-					(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-					 base_rel->getTable(BaseRelationship::DstTable)==table))
-			{
-				refer=true;
-				refs.push_back(base_rel);
-			}
-			itr++;
-		}
-
-		itr=sequences.begin();
-		itr_end=sequences.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			seq=dynamic_cast<Sequence *>(*itr);
-			if(seq->getOwnerColumn() &&
-					seq->getOwnerColumn()->getParentTable()==table)
-			{
-				refer=true;
-				refs.push_back(seq);
-			}
-
-			itr++;
-		}
-
-		tabs = tables;
-		tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-		itr= tabs.begin();
-		itr_end = tabs.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			tab = dynamic_cast<PhysicalTable *>(*itr);
-
-			count=tab->getConstraintCount();
-			for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
-			{
-				constr=tab->getConstraint(i);
-				//If a constraint references its own parent table it'll not be included on the references list
-				if(constr->getConstraintType()==ConstraintType::ForeignKey &&
-						constr->getParentTable()!=constr->getReferencedTable() &&
-						constr->getReferencedTable()==table)
-				{
-					refer=true;
-					refs.push_back(constr);
-				}
-			}
-
-			count=tab->getTriggerCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-			{
-				gat=tab->getTrigger(i);
-				if(gat->getReferencedTable()==table)
-				{
-					refer=true;
-					refs.push_back(gat);
-				}
-			}
-
-			itr++;
-		}
-
-		itr=views.begin();
-		itr_end=views.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			view=dynamic_cast<View *>(*itr);
-
-			if(view->isReferencingTable(table))
-			{
-				refer=true;
-				refs.push_back(view);
-			}
-
-			itr++;
-		}
-
-		/* As base relationship are created automatically by the model they aren't considered
-		as a reference to the table in exclusion mode */
-		itr=base_relationships.begin();
-		itr_end=base_relationships.end();
-
-		while(itr!=itr_end && !exclusion_mode)// || (exclusion_mode && !refer)))
-		{
-			base_rel=dynamic_cast<BaseRelationship *>(*itr);
-
-			if(base_rel->getTable(BaseRelationship::SrcTable)==table ||
-					base_rel->getTable(BaseRelationship::DstTable)==table)
-			{
-				refer=true;
-				refs.push_back(base_rel);
-			}
-			itr++;
-		}
-	}
+		getPhysicalTableReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Function && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		Function *func=dynamic_cast<Function *>(object);
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
-														ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
-														ObjectType::Table, ObjectType::Type, ObjectType::Language,
-														ObjectType::ForeignDataWrapper, ObjectType::ForeignTable };
-		unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
-		PhysicalTable *tab=nullptr;
-		Aggregate *aggreg=nullptr;
-		Operator *oper=nullptr;
-		Trigger *trig=nullptr;
-		Type *type=nullptr;
-		Language *lang=nullptr;
-		OperatorClass *opclass=nullptr;
-		ForeignDataWrapper *fdw=nullptr;
-
-		for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			if(obj_types[i]==ObjectType::Cast)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
-					{
-						refer=true;
-						refs.push_back(*itr);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::EventTrigger)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					if(dynamic_cast<EventTrigger *>(*itr)->getFunction()==func)
-					{
-						refer=true;
-						refs.push_back(*itr);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::Conversion)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					if(dynamic_cast<Conversion *>(*itr)->getConversionFunction()==func)
-					{
-						refer=true;
-						refs.push_back(*itr);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::Aggregate)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					aggreg=dynamic_cast<Aggregate *>(*itr);
-
-					if(aggreg->getFunction(Aggregate::FinalFunc)==func ||
-							aggreg->getFunction(Aggregate::TransitionFunc)==func)
-					{
-						refer=true;
-						refs.push_back(aggreg);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::Operator)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					oper=dynamic_cast<Operator *>(*itr);
-
-					if(oper->getFunction(Operator::FuncOperator)==func ||
-							oper->getFunction(Operator::FuncJoin)==func  ||
-							oper->getFunction(Operator::FuncRestrict)==func)
-					{
-						refer=true;
-						refs.push_back(oper);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::OpClass)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					opclass=dynamic_cast<OperatorClass *>(*itr);
-					count=opclass->getElementCount();
-
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(opclass->getElement(i1).getFunction()==func)
-						{
-							refer=true;
-							refs.push_back(opclass);
-						}
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::Table ||
-							obj_types[i]==ObjectType::ForeignTable)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					tab=dynamic_cast<PhysicalTable *>(*itr);
-					itr++;
-					count=tab->getTriggerCount();
-
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						trig=tab->getTrigger(i1);
-
-						if(trig->getFunction()==func)
-						{
-							refer=true;
-							refs.push_back(trig);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Type)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					type=dynamic_cast<Type *>(*itr);
-					itr++;
-
-					for(i1=Type::InputFunc; i1 <= Type::AnalyzeFunc && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(type->getFunction(i1)==func)
-						{
-							refer=true;
-							refs.push_back(type);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Language)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					lang=dynamic_cast<Language *>(*itr);
-					itr++;
-
-					if(lang->getFunction(Language::HandlerFunc)==func ||
-							lang->getFunction(Language::ValidatorFunc)==func ||
-							lang->getFunction(Language::InlineFunc)==func)
-					{
-						refer=true;
-						refs.push_back(lang);
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::ForeignDataWrapper)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					fdw=dynamic_cast<ForeignDataWrapper *>(*itr);
-					itr++;
-
-					if(fdw->getHandlerFunction() == func || fdw->getValidatorFunction() == func)
-					{
-						refer=true;
-						refs.push_back(fdw);
-					}
-				}
-			}
-		}
-	}
+		getFunctionReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Schema && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		ObjectType obj_types[12]={ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::View,
-															ObjectType::Domain, ObjectType::Aggregate, ObjectType::Operator,
-															ObjectType::Sequence, ObjectType::Conversion,
-															ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass};
-		unsigned i;
-
-		for(i=0; i < 12 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if((*itr)->getSchema()==object)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-	}
+		getSchemaReferences(object, refs, refer, exclusion_mode);
 
 	if((obj_type==ObjectType::Type || obj_type==ObjectType::Domain || obj_type==ObjectType::Sequence ||
 			obj_type==ObjectType::Extension || BaseTable::isBaseTable(obj_type))
 			&& (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		ObjectType obj_types[]={ObjectType::Table, ObjectType::ForeignTable, ObjectType::OpClass,
-														ObjectType::Cast,	ObjectType::Domain, ObjectType::Function, ObjectType::Aggregate,
-														ObjectType::Operator, ObjectType::Type, ObjectType::Relationship };
-		unsigned i, i1, count, tp_count = sizeof(obj_types)/sizeof(ObjectType);
-		OperatorClass *op_class=nullptr;
-		OperatorClassElement elem;
-		PhysicalTable *tab=nullptr;
-		Column *col=nullptr;
-		Cast *cast=nullptr;
-		Domain *dom=nullptr;
-		Function *func=nullptr;
-		Aggregate *aggreg=nullptr;
-		Operator *oper=nullptr;
-		Type *type=nullptr;
-		Relationship *rel=nullptr;
-		void *ptr_pgsqltype=nullptr;
-
-		switch(obj_type)
-		{
-			case ObjectType::Type: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
-			case ObjectType::Domain: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
-			case ObjectType::Sequence: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
-			case ObjectType::Extension: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
-			case ObjectType::View: ptr_pgsqltype=dynamic_cast<View*>(object); break;
-			case ObjectType::ForeignTable: ptr_pgsqltype=dynamic_cast<ForeignTable*>(object); break;
-			default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
-		}
-
-		for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			if(obj_types[i]==ObjectType::Relationship)
-			{
-				bool added;
-
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					added=false;
-					rel=dynamic_cast<Relationship *>(*itr);
-					itr++;
-
-					count=rel->getAttributeCount();
-					for(i1=0; i1 < count && !added; i1++)
-					{
-						col=rel->getAttribute(i1);
-
-						if(col->getType()==ptr_pgsqltype)
-						{
-							added=refer=true;
-							refs.push_back(rel);
-						}
-					}
-				}
-			}
-			else if(PhysicalTable::isPhysicalTable(obj_types[i]))
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					tab=dynamic_cast<PhysicalTable *>(*itr);
-					itr++;
-
-					count=tab->getColumnCount();
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						col=tab->getColumn(i1);
-
-						if(!col->isAddedByRelationship() &&
-							 (col->getType()==ptr_pgsqltype ||
-								//Special case for postgis extension
-								(obj_type == ObjectType::Extension && object->getName() == QString("postgis") && col->getType().isGiSType())))
-						{
-							refer=true;
-							refs.push_back(col);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::OpClass)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					op_class=dynamic_cast<OperatorClass *>(*itr);
-					itr++;
-
-					if(op_class->getDataType()==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(op_class);
-					}
-
-					for(i1=0; i1 < op_class->getElementCount() && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						elem=op_class->getElement(i1);
-						if(elem.getStorage()==ptr_pgsqltype)
-						{
-							refer=true;
-							refs.push_back(op_class);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Domain)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					dom=dynamic_cast<Domain *>(*itr);
-					itr++;
-
-					if(dom->getType()==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(dom);
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Type)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					type=dynamic_cast<Type *>(*itr);
-					itr++;
-
-					if(type->getAlignment()==ptr_pgsqltype ||
-							type->getElement()==ptr_pgsqltype ||
-							type->getLikeType()==ptr_pgsqltype ||
-							type->getSubtype()==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(type);
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Aggregate)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					aggreg=dynamic_cast<Aggregate *>(*itr);
-					itr++;
-
-					count=aggreg->getDataTypeCount();
-					for(i1=0; i1 < count  && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(aggreg->getDataType(i1)==ptr_pgsqltype)
-						{
-							refer=true;
-							refs.push_back(aggreg);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Function)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					func=dynamic_cast<Function *>(*itr);
-					itr++;
-
-					if(func->getReturnType()==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(func);
-					}
-					else
-					{
-						count=func->getParameterCount();
-						for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-						{
-							if(func->getParameter(i1).getType()==ptr_pgsqltype)
-							{
-								refer=true;
-								refs.push_back(func);
-							}
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Operator)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					oper=dynamic_cast<Operator *>(*itr);
-					itr++;
-
-					if(oper->getArgumentType(Operator::LeftArg)==ptr_pgsqltype ||
-							oper->getArgumentType(Operator::RightArg)==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(oper);
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Cast)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					cast=dynamic_cast<Cast *>(*itr);
-					itr++;
-
-					if(cast->getDataType(Cast::SrcType)==ptr_pgsqltype ||
-							cast->getDataType(Cast::DstType)==ptr_pgsqltype)
-					{
-						refer=true;
-						refs.push_back(cast);
-					}
-				}
-			}
-		}
-	}
+		getUserDefTypesReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Role && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<ObjectType> obj_types = {
-									ObjectType::Function, ObjectType::Table, ObjectType::ForeignTable, ObjectType::Domain,
-									ObjectType::Aggregate, ObjectType::Schema, ObjectType::Operator,
-									ObjectType::Sequence, ObjectType::Conversion,
-									ObjectType::Language, ObjectType::Tablespace,
-									ObjectType::Type, ObjectType::OpFamily, ObjectType::OpClass,
-									ObjectType::UserMapping };
-		vector<ObjectType>::iterator itr_tp, itr_tp_end;
-		unsigned i,i1, count;
-		Role *role_aux=nullptr;
-		Role *role=dynamic_cast<Role *>(object);
-		unsigned role_types[3]={Role::RefRole, Role::MemberRole, Role::AdminRole};
-		Permission *perm=nullptr;
-
-		//Check if the role is being referencend by permissions
-		itr=permissions.begin();
-		itr_end=permissions.end();
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			perm=dynamic_cast<Permission *>(*itr);
-			itr++;
-
-			if(perm->isRoleExists(role))
-			{
-				refer=true;
-				refs.push_back(perm);
-			}
-		}
-
-		//Check if the role is being referenced in other roles
-		itr=roles.begin();
-		itr_end=roles.end();
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			role_aux=dynamic_cast<Role *>(*itr);
-			itr++;
-
-			for(i1=0; i1 < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-			{
-				count=role_aux->getRoleCount(role_types[i1]);
-				for(i=0; i < count && !refer; i++)
-				{
-					if(role_aux->getRole(role_types[i1], i)==role)
-					{
-						refer=true;
-						refs.push_back(role_aux);
-					}
-				}
-			}
-		}
-
-		itr_tp = obj_types.begin();
-		itr_tp_end = obj_types.end();
-
-		while(itr_tp != itr_tp_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			obj_list=getObjectList(*itr_tp);
-			itr_tp++;
-
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if((*itr)->getOwner()==role)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-
-				if((*itr)->getObjectType() == ObjectType::Table)
-				{
-					for(auto obj : *(dynamic_cast<Table *>(*itr))->getObjectList(ObjectType::Policy))
-					{
-						if(dynamic_cast<Policy *>(obj)->isRoleExists(role))
-						{
-							refer=true;
-							refs.push_back(obj);
-						}
-					}
-				}
-
-				itr++;
-			}
-		}
-
-		//Special case: check if the role to be removed is the owner of the database
-		if((!exclusion_mode || (exclusion_mode && !refer)) && this->getOwner()==role)
-		{
-			refer=true;
-			refs.push_back(this);
-		}
-	}
+		getRoleReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Tablespace && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		unsigned i, count;
-		Table *tab=nullptr;
-		Index *ind=nullptr;
-		Constraint *rest=nullptr;
-
-		itr=tables.begin();
-		itr_end=tables.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			tab=dynamic_cast<Table *>(*itr);
-
-			if(tab->getTablespace()==object)
-			{
-				refer=true;
-				refs.push_back(tab);
-			}
-
-			count=tab->getIndexCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-			{
-				ind=tab->getIndex(i);
-				if(ind->getTablespace()==object)
-				{
-					refer=true;
-					refs.push_back(ind);
-				}
-			}
-
-			count=tab->getConstraintCount();
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-			{
-				rest=tab->getConstraint(i);
-				if(rest->getTablespace()==object)
-				{
-					refer=true;
-					refs.push_back(rest);
-				}
-			}
-
-			itr++;
-		}
-
-		if((!exclusion_mode || (exclusion_mode && !refer)) && this->BaseObject::getTablespace()==object)
-		{
-			refer=true;
-			refs.push_back(this);
-		}
-	}
+		getTablespaceReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Language && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		Function *func=nullptr;
-
-		itr=functions.begin();
-		itr_end=functions.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			func=dynamic_cast<Function *>(*itr);
-			if(func->getLanguage()==object)
-			{
-				refer=true;
-				refs.push_back(func);
-			}
-			itr++;
-		}
-	}
+		getLanguageReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::OpClass && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		Type *usertype=nullptr;
-		Index *ind=nullptr;
-		Constraint *constr=nullptr;
-		Table *table=nullptr;
-		ForeignTable *ftable=nullptr;
-
-		itr=types.begin();
-		itr_end=types.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			usertype=dynamic_cast<Type *>(*itr);
-
-			if(usertype->getSubtypeOpClass()==object)
-			{
-				refer=true;
-				refs.push_back(usertype);
-			}
-			itr++;
-		}
-
-		itr=tables.begin();
-		itr_end=tables.end();
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			table=dynamic_cast<Table *>(*itr);
-
-			//Checking if the indexes are referencing the operator class
-			for(unsigned idx=0; idx < table->getIndexCount() &&
-				(!exclusion_mode || (exclusion_mode && !refer)); idx++)
-			{
-				ind=table->getIndex(idx);
-
-				for(unsigned id_elem=0; id_elem < ind->getIndexElementCount() &&
-					(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
-				{
-					if(ind->getIndexElement(id_elem).getOperatorClass()==object)
-					{
-						refer=true;
-						refs.push_back(ind);
-					}
-				}
-			}
-
-			//Checking if the constraints are referencing the operator class
-			for(unsigned idx=0; idx < table->getConstraintCount() &&
-				(!exclusion_mode || (exclusion_mode && !refer)); idx++)
-			{
-				constr=table->getConstraint(idx);
-
-				for(unsigned id_elem=0; id_elem < constr->getExcludeElementCount() &&
-					(!exclusion_mode || (exclusion_mode && !refer)); id_elem++)
-				{
-					if(constr->getExcludeElement(id_elem).getOperatorClass()==object)
-					{
-						refer=true;
-						refs.push_back(constr);
-					}
-				}
-			}
-
-			//Checking if the partition keys are referencing the operator class
-			for(auto &part_key : table->getPartitionKeys())
-			{
-				if(part_key.getOperatorClass() == object)
-				{
-					refer = true;
-					refs.push_back(table);
-					break;
-				}
-			}
-
-			itr++;
-		}
-
-
-		itr=foreign_tables.begin();
-		itr_end=foreign_tables.end();
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			ftable=dynamic_cast<ForeignTable *>(*itr);
-
-			//Checking if the partition keys are referencing the operator class
-			for(auto &part_key : ftable->getPartitionKeys())
-			{
-				if(part_key.getOperatorClass() == object)
-				{
-					refer = true;
-					refs.push_back(ftable);
-					break;
-				}
-			}
-
-			itr++;
-		}
-	}
+		getOpClassReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Operator && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		ObjectType obj_types[]={ObjectType::OpClass,
-														ObjectType::Aggregate,
-														ObjectType::Operator,
-														ObjectType::Table };
-		unsigned i, i1, count;
-		OperatorClass *op_class=nullptr;
-		Operator *oper_aux=nullptr, *oper=dynamic_cast<Operator *>(object);
-		Table *table=nullptr;
-		Constraint *constr=nullptr;
-
-		for(i=0; i < 4 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			if(obj_types[i]==ObjectType::OpClass)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					op_class=dynamic_cast<OperatorClass *>(*itr);
-					itr++;
-
-					count=op_class->getElementCount();
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(op_class->getElement(i1).getOperator()==oper)
-						{
-							refer=true;
-							refs.push_back(op_class);
-						}
-					}
-				}
-			}
-			else if(obj_types[i]==ObjectType::Aggregate)
-			{
-				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					if(dynamic_cast<Aggregate *>(*itr)->getSortOperator()==oper)
-					{
-						refer=true;
-						refs.push_back(*itr);
-					}
-					itr++;
-				}
-			}
-			else if(obj_types[i]==ObjectType::Operator)
-			{
-				while(itr!=itr_end && !refer)
-				{
-					oper_aux=dynamic_cast<Operator *>(*itr);
-					itr++;
-
-					for(i1=Operator::OperCommutator; i1 <= Operator::OperNegator &&
-						(!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						if(oper_aux->getOperator(i1)==oper)
-						{
-							refer=true;
-							refs.push_back(oper_aux);
-						}
-					}
-				}
-			}
-			else
-			{
-				while(itr!=itr_end && !refer)
-				{
-					table=dynamic_cast<Table *>(*itr);
-					itr++;
-
-					count=table->getConstraintCount();
-					for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-					{
-						constr=table->getConstraint(i1);
-
-						if(constr->getConstraintType()==ConstraintType::Exclude)
-						{
-							for(auto &elem : constr->getExcludeElements())
-							{
-								if(elem.getOperator()==oper)
-								{
-									refer=true;
-									refs.push_back(constr);
-									if(exclusion_mode) break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+		getOperatorReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::OpFamily && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
-
-		itr=op_classes.begin();
-		itr_end=op_classes.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<OperatorClass *>(*itr)->getFamily()==op_family)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
+		getOpFamilyReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Collation && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		ObjectType  obj_types[]={ ObjectType::Domain, ObjectType::Collation, ObjectType::Type },
-				tab_obj_types[]={ ObjectType::Column, ObjectType::Index };
-		unsigned i, count;
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<TableObject *> *tab_obj_list=nullptr;
-		vector<TableObject *>::iterator tab_itr, tab_itr_end;
-		TableObject *tab_obj=nullptr;
-		PhysicalTable *table = nullptr;
-
-		count=sizeof(obj_types)/sizeof(ObjectType);
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if((*itr)->getCollation()==object)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-
-				itr++;
-			}
-		}
-
-		count=sizeof(tab_obj_types)/sizeof(ObjectType);
-		vector<BaseObject *> tabs;
-
-		tabs.insert(tabs.end(), tables.begin(), tables.end());
-		tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-		itr=tabs.begin();
-		itr_end=tabs.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			table = dynamic_cast<PhysicalTable *>(*itr);
-
-			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-			{
-				tab_obj_list = table->getObjectList(tab_obj_types[i]);
-				if(!tab_obj_list) continue;
-
-				tab_itr=tab_obj_list->begin();
-				tab_itr_end=tab_obj_list->end();
-
-				while(tab_itr!=tab_itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-				{
-					tab_obj=(*tab_itr);
-					if((tab_obj->getObjectType()==ObjectType::Column && tab_obj->getCollation()==object) ||
-							(tab_obj->getObjectType()==ObjectType::Index &&
-							 dynamic_cast<Index *>(tab_obj)->isReferCollation(dynamic_cast<Collation *>(object))))
-					{
-						refer=true;
-						refs.push_back(*tab_itr);
-					}
-					tab_itr++;
-				}
-			}
-
-			//Checking if the partition keys are referencing the operator class
-			for(auto &part_key : table->getPartitionKeys())
-			{
-				if(part_key.getCollation() == object)
-				{
-					refer = true;
-					refs.push_back(table);
-					break;
-				}
-			}
-
-			itr++;
-		}
-	}
+		getCollationReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Column && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		Column *column=dynamic_cast<Column *>(object);
-		vector<BaseObject *> *obj_list=nullptr;
-		vector<BaseObject *>::iterator itr, itr_end;
-		ObjectType  obj_types[]={ ObjectType::Sequence, ObjectType::View, ObjectType::Table,
-															ObjectType::ForeignTable, ObjectType::Relationship };
-		unsigned i, count=sizeof(obj_types)/sizeof(ObjectType);
-
-		for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			obj_list=getObjectList(obj_types[i]);
-			itr=obj_list->begin();
-			itr_end=obj_list->end();
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if((obj_types[i]==ObjectType::Sequence && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==column) ||
-						(obj_types[i]==ObjectType::View && dynamic_cast<View *>(*itr)->isReferencingColumn(column)))
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				else if(obj_types[i]==ObjectType::Table || obj_types[i]==ObjectType::ForeignTable)
-				{
-					PhysicalTable *tab=dynamic_cast<PhysicalTable *>(*itr);
-					Table *aux_tab = dynamic_cast<Table *>(tab);
-					unsigned count, idx, count1, i1;
-					Trigger *trig=nullptr;
-					Index *index=nullptr;
-					Constraint *constr=nullptr;
-					vector<PartitionKey> part_keys;
-
-					count=tab->getConstraintCount();
-					for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-					{
-						constr=tab->getConstraint(idx);
-						if(constr->isColumnReferenced(column))
-						{
-							refer=true;
-							refs.push_back(constr);
-						}
-					}
-
-					if(aux_tab)
-					{
-						count=aux_tab->getIndexCount();
-						for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-						{
-							index=aux_tab->getIndex(idx);
-							if(index->isReferColumn(column))
-							{
-								refer=true;
-								refs.push_back(index);
-							}
-						}
-					}
-
-					count=tab->getTriggerCount();
-					for(idx=0; idx < count && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-					{
-						trig=tab->getTrigger(idx);
-						count1=trig->getColumnCount();
-
-						for(i1=0; i1 < count1 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
-						{
-							if(trig->getColumn(i1)==column)
-							{
-								refer=true;
-								refs.push_back(trig);
-							}
-						}
-					}
-
-					part_keys = tab->getPartitionKeys();
-					for(auto &part_key : part_keys)
-					{
-						if(part_key.getColumn() == column)
-						{
-							refer = true;
-							refs.push_back(tab);
-							break;
-						}
-					}
-				}
-				else if(obj_types[i]==ObjectType::Relationship)
-				{
-					Relationship *rel=dynamic_cast<Relationship *>(*itr);
-					unsigned constr_cnt, idx;
-
-					constr_cnt=rel->getConstraintCount();
-					for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
-					{
-						if(rel->getConstraint(idx)->isColumnReferenced(column))
-						{
-							refer=true;
-							refs.push_back(rel);
-						}
-					}
-				}
-
-				itr++;
-			}
-		}
-	}
+		getColumnReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Tag && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<BaseObject *> list;
-		Tag *tag=dynamic_cast<Tag *>(object);
-
-		list.assign(tables.begin(), tables.end());
-		list.insert(list.end(), foreign_tables.begin(), foreign_tables.end());
-		list.insert(list.end(), views.begin(), views.end());
-
-		itr=list.begin();
-		itr_end=list.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<BaseTable *>(*itr)->getTag()==tag)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
+		getTagReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::Sequence && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		PhysicalTable *table=nullptr;
-		vector<TableObject *> *cols=nullptr;
-		vector<TableObject *>::iterator itr, itr_end;
-		vector<BaseObject *> tabs;
-		unsigned i = 0, cnt = 0;
-
-		tabs = tables;
-		tabs.insert(tabs.end(), foreign_tables.begin(), foreign_tables.end());
-		cnt = tabs.size();
-
-		for(i=0; i < cnt && (!exclusion_mode || (exclusion_mode && !refer)); i++)
-		{
-			table=dynamic_cast<PhysicalTable *>(tabs[i]);
-			cols=table->getObjectList(ObjectType::Column);
-			itr=cols->begin();
-			itr_end=cols->end();
-
-			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-			{
-				if(dynamic_cast<Column *>(*itr)->getSequence()==object)
-				{
-					refer=true;
-					refs.push_back(*itr);
-				}
-				itr++;
-			}
-		}
-	}
+		getSequenceReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::ForeignDataWrapper && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<BaseObject *> list;
-		ForeignDataWrapper *fdw=dynamic_cast<ForeignDataWrapper *>(object);
-
-		itr=foreign_servers.begin();
-		itr_end=foreign_servers.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<ForeignServer *>(*itr)->getForeignDataWrapper() == fdw)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
+		getFdwReferences(object, refs, refer, exclusion_mode);
 
 	if(obj_type==ObjectType::ForeignServer && (!exclusion_mode || (exclusion_mode && !refer)))
-	{
-		vector<BaseObject *>::iterator itr, itr_end;
-		vector<BaseObject *> list;
-		ForeignServer *srv=dynamic_cast<ForeignServer *>(object);
-
-		itr=usermappings.begin();
-		itr_end=usermappings.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<UserMapping *>(*itr)->getForeignServer() == srv)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-
-		itr=foreign_tables.begin();
-		itr_end=foreign_tables.end();
-
-		while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
-		{
-			if(dynamic_cast<ForeignTable *>(*itr)->getForeignServer() == srv)
-			{
-				refer=true;
-				refs.push_back(*itr);
-			}
-			itr++;
-		}
-	}
+		getServerReferences(object, refs, refer, exclusion_mode);
 
 	// Checking if any generic SQL object is referencing the object passed
 	vector<BaseObject *>::iterator itr = genericsqls.begin(),

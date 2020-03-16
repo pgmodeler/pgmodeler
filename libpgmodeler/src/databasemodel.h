@@ -200,6 +200,44 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Set the initial capacity of the objects list for a optimized memory usage
 		void setObjectListsCapacity(unsigned capacity);
 
+		void getViewReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode);
+		void getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getFunctionReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getSchemaReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getUserDefTypesReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getRoleReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getTablespaceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getLanguageReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOperatorReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getCollationReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getOpFamilyReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getColumnReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getTagReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getSequenceReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getFdwReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+		void getServerReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode);
+
+		void getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getOperatorDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getRoleDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getRelationshipDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getSequenceDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getColumnDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTriggerDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getIndexDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getPolicyDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getPhysicalTableDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+
+
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
