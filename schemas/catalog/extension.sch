@@ -30,7 +30,15 @@
 		   END
 	    FROM pg_depend AS _dp
 	    LEFT JOIN pg_extension AS _ex ON _ex.oid=_dp.objid
-	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text SIMILAR TO '(' || ex.extnamespace::regnamespace::text || '.)?(' || ex.extname  || ')'
+	    WHERE  _dp.refobjid = ex.oid AND _dp.objid::regtype::text SIMILAR TO '(' || ]
+                
+        %if ({pgsql-ver} >=f "9.5") %then
+            ex.extnamespace::regnamespace::text 
+        %else
+            [ (SELECT nspname FROM pg_namespace WHERE oid = ex.extnamespace) ]
+        %end
+        
+      [ || '.)?(' || ex.extname  || ')'
 	    AND _dp.classid::regclass::text = 'pg_type') AS handles_type_bool, ]
 
 	  ({comment}) [ AS comment ]
