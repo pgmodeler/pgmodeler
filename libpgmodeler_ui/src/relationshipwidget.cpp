@@ -410,7 +410,10 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			rel_attribs_tbw->addTab(tabs[i], tab_labels[i]);
 	}
 	else if(relgen_dep && base_rel->getObjectType()==ObjectType::Relationship && !has_foreign_tab)
+	{
+		rel_attribs_tbw->addTab(tabs[SettingsTab], tab_labels[SettingsTab]);
 		rel_attribs_tbw->addTab(tabs[SpecialPkTab], tab_labels[SpecialPkTab]);
+	}
 
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
 			(base_rel->getObjectType()==ObjectType::BaseRelationship &&
