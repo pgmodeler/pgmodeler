@@ -542,7 +542,7 @@ void MainWindow::restoreTemporaryModels()
 	}
 }
 
-bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout)
+bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ignored_wgts)
 {
 	int i = 0;
 	bool show = false;
@@ -553,11 +553,13 @@ bool MainWindow::isToolButtonsChecked(QHBoxLayout *layout)
 	while(layout && layout->itemAt(i) && !show)
 	{
 		btn = dynamic_cast<QToolButton *>(layout->itemAt(i)->widget());
+		i++;
+
+		if(ignored_wgts.contains(btn))
+			continue;
 
 		if(btn && btn->isChecked())
 			return true;
-
-		i++;
 	}
 
 	return false;
@@ -570,7 +572,7 @@ void MainWindow::showRightWidgetsBar()
 
 void MainWindow::showBottomWidgetsBar()
 {
-	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout));
+	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout, {layers_btn}));
 }
 
 void MainWindow::restoreLastSession()

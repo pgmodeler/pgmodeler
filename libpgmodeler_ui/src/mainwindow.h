@@ -171,7 +171,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		/*! \brief This method determines if the provided layout has togglable buttons and one of them are checked.
 		 * This is an auxiliary method used to determine if widget bars (bottom or right) can be displayed based upon
 		 * the current button toggle state. */
-		bool isToolButtonsChecked(QHBoxLayout *layout);
+		bool isToolButtonsChecked(QHBoxLayout *layout, const QWidgetList &ignored_wgts = QWidgetList());
 
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
