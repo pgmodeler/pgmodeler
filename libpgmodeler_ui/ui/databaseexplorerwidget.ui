@@ -51,7 +51,7 @@
         <string>Toggle the display of filter widget as well the system/extension objects.</string>
        </property>
        <property name="text">
-        <string>Data &amp;Grid</string>
+        <string>Filter</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -62,9 +62,6 @@
          <width>22</width>
          <height>22</height>
         </size>
-       </property>
-       <property name="shortcut">
-        <string>Alt+G</string>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
@@ -585,11 +582,11 @@
          <attribute name="horizontalHeaderVisible">
           <bool>false</bool>
          </attribute>
-         <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>100</number>
-         </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>25</number>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>100</number>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
@@ -598,7 +595,7 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>26</number>
+          <number>28</number>
          </attribute>
          <attribute name="verticalHeaderStretchLastSection">
           <bool>false</bool>
