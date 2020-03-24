@@ -267,6 +267,7 @@
         <file>icones/sendtoback.png</file>
         <file>icones/moveobjs.png</file>
         <file>icones/bndrect.png</file>
+        <file>icones/stacking.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

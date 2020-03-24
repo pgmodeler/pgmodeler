@@ -447,12 +447,12 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(selectAllObjects()));
 	}
 
-	action_move_objs=new QAction(QIcon(PgModelerUiNs::getIconPath("moveobjs")), tr("Move"), this);
+	action_stacking=new QAction(QIcon(PgModelerUiNs::getIconPath("stacking")), tr("Stacking"), this);
 	action_send_to_back=new QAction(QIcon(PgModelerUiNs::getIconPath("sendtoback")), tr("Send to back"), this);
 	action_bring_to_front=new QAction(QIcon(PgModelerUiNs::getIconPath("bringtofront")), tr("Bring to front"), this);
-	move_objs_menu.addAction(action_send_to_back);
-	move_objs_menu.addAction(action_bring_to_front);
-	action_move_objs->setMenu(&move_objs_menu);
+	stacking_menu.addAction(action_send_to_back);
+	stacking_menu.addAction(action_bring_to_front);
+	action_stacking->setMenu(&stacking_menu);
 
 	connect(action_send_to_back, SIGNAL(triggered(bool)), this, SLOT(sendToBack()));
 	connect(action_bring_to_front, SIGNAL(triggered(bool)), this, SLOT(bringToFront()));
@@ -4241,7 +4241,7 @@ void ModelWidget::configurePopupMenu(const vector<BaseObject *> &objects)
 			(BaseTable::isBaseTable(objects[0]->getObjectType()) ||
 			 objects[0]->getObjectType() == ObjectType::Textbox)) ||
 		 (objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()))
-		popup_menu.addAction(action_move_objs);
+		popup_menu.addAction(action_stacking);
 
 	if(!tab_obj &&
 		 (objects.empty() || (objects.size() > 1 && !scene->hasOnlyTableChildrenSelection()) ||

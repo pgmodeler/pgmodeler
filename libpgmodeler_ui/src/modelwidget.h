@@ -133,7 +133,7 @@ class ModelWidget: public QWidget {
 
 		schema_category_menu,
 
-		move_objs_menu;
+		stacking_menu;
 
 		//! \brief Stores the selected object on the scene
 		vector<BaseObject *> selected_objects;
@@ -277,7 +277,7 @@ class ModelWidget: public QWidget {
 		*action_schema_category,
 		*action_bring_to_front,
 		*action_send_to_back,
-		*action_move_objs;
+		*action_stacking;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
