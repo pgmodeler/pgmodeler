@@ -3,7 +3,7 @@ Change Log
 
 v0.9.3-alpha
 ------
-<em>Release date: March 27, 2020</em><br/>
+<em>Release date: March 26, 2020</em><br/>
 
 * [New] Added support to multiselection in ModelObjectsWidget.
 * [New] Added an optional parameter in PgModelerNs::generateUniqueName to avoid comparing the input object.

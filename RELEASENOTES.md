@@ -1,10 +1,10 @@
 v0.9.3-alpha
 ------
 
-<em>Release date: March 27, 2020</em><br/>
+<em>Release date: March 26, 2020</em><br/>
 <em>Changes since: <strong>v0.9.2</strong></em><br/>
 
-<strong>Summary:</strong> after bringing some important improvements on 0.9.2 it's time to start another round of polishing all features available in pgModeler. This way, 0.9.3 development will be more focused on improvements of what already exists than the creation new features. Of course, this will not prevent that some new functionality on the tool can be implemented, they will be just less prioritized. <br/>
+<strong>Summary:</strong> after bringing some important improvements on 0.9.2 it's time to start another round of polishing all features available in pgModeler. This way, 0.9.3 development will be more focused on improvements of what already exists than the creation of new features. Of course, this will not prevent that some new functionality on the tool can be implemented, they will be just less prioritized. <br/>
 
 This release brings some requests related to database model design, which includes, bulk objects' renaming, multiselection on object finder and model objects and the introduction of the objects' Z-stack handling, a.k.a, "send to back" and "bring to front".<br/>
 
@@ -12,7 +12,7 @@ Several bugs were fixed which were mainly related to reverse engineering and dif
 
 There were some important changes too, many of them related to code refactoring that the users will not notice but will improve code maintainance since it reflects on fast response on bug fixes and new features.<br/>
 
-The deployment processes were improved, the code now compiles without problems in Qt 5.14.x as well previous Qt versions. Additionally, the installer were almost all rewritten in order to provide a better experience for paying users who depends on binary packages. <br/>
+The deployment processes were improved, the code now compiles without problems in Qt 5.14.x as well previous Qt versions. Additionally, the installer were almost all rewritten in order to provide a better experience for users who depend on binary packages. <br/>
 
 Finally, in total, there were 77 change log entries in this version and some of them are detailed below. For the complete list of changes/fixes, please, read the CHANGELOG.md. <br/>
 
