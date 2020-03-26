@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		Ui_OperatorWidget::setupUi(this);
 
 		arg_types[0]=nullptr;
-		arg_types[0]=new PgSQLTypeWidget(this, trUtf8("Left Argument Type"));
+		arg_types[0]=new PgSQLTypeWidget(this, tr("Left Argument Type"));
 		arg_types[1]=nullptr;
-		arg_types[1]=new PgSQLTypeWidget(this, trUtf8("Right Argument Type"));
+		arg_types[1]=new PgSQLTypeWidget(this, tr("Right Argument Type"));
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(4,4,4,4);
@@ -41,7 +41,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, Object
 
 		grid->addItem(new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding), 2, 0);
 
-		frame=generateInformationFrame(trUtf8("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
+		frame=generateInformationFrame(tr("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
 		grid->addWidget(frame, 3, 0);
 		attributes_twg->widget(0)->setLayout(grid);
 
@@ -110,7 +110,7 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	arg_types[1]->setAttributes(right_type, model);
 }
 
-void OperatorWidget::applyConfiguration(void)
+void OperatorWidget::applyConfiguration()
 {
 	try
 	{

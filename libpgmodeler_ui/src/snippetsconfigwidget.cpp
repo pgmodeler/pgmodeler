@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ const QRegExp SnippetsConfigWidget::IdFormatRegExp=QRegExp(QString("^([a-z])([a-
 SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	QPixmap ico;
-	QString gen_purpose=trUtf8("General purpose");
+	QString gen_purpose=tr("General purpose");
 	map<QString, ObjectType> types_map;
 	vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Relationship, ObjectType::Tag, ObjectType::Textbox,
 																														 ObjectType::Permission, ObjectType::BaseRelationship });
@@ -50,21 +50,15 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	applies_to_cmb->setCurrentIndex(0);
 
 	filter_cmb->insertItem(0, gen_purpose, enum_cast(ObjectType::BaseObject));
-	filter_cmb->insertItem(0, trUtf8("All snippets"));
+	filter_cmb->insertItem(0, tr("All snippets"));
 	filter_cmb->setCurrentIndex(0);
-
-	parsable_ht=new HintTextWidget(parsable_hint, this);
-	parsable_ht->setText(parsable_chk->statusTip());
-
-	placeholders_ht=new HintTextWidget(placeholders_hint, this);
-	placeholders_ht->setText(placeholders_chk->statusTip());
 
 	snippet_txt=PgModelerUiNs::createNumberedTextEditor(snippet_wgt);
 
 	try
 	{
 		snippet_hl=new SyntaxHighlighter(snippet_txt);
-		snippet_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		snippet_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 	}
 	catch(Exception &e)
 	{
@@ -90,17 +84,17 @@ SnippetsConfigWidget::SnippetsConfigWidget(QWidget * parent) : BaseConfigWidget(
 	connect(parsable_chk, SIGNAL(toggled(bool)), placeholders_chk, SLOT(setEnabled(bool)));
 }
 
-map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> SnippetsConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 attribs_map SnippetsConfigWidget::getSnippetById(const QString &snip_id)
 {
 	if(config_params.count(snip_id))
-		return(config_params[snip_id]);
+		return config_params[snip_id];
 	else
-		return(attribs_map());
+		return attribs_map();
 }
 
 QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
@@ -115,7 +109,7 @@ QStringList SnippetsConfigWidget::getSnippetsIdsByObject(ObjectType obj_type)
 			ids.push_back(snip.second[Attributes::Id]);
 	}
 
-	return(ids);
+	return ids;
 }
 
 vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_type)
@@ -130,7 +124,7 @@ vector<attribs_map> SnippetsConfigWidget::getSnippetsByObject(ObjectType obj_typ
 			snippets.push_back(snip.second);
 	}
 
-	return(snippets);
+	return snippets;
 }
 
 QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
@@ -143,17 +137,17 @@ QStringList SnippetsConfigWidget::getAllSnippetsAttribute(const QString &attrib)
 			attribs.push_back(snip.second[attrib]);
 	}
 
-	return(attribs);
+	return attribs;
 }
 
-vector<attribs_map> SnippetsConfigWidget::getAllSnippets(void)
+vector<attribs_map> SnippetsConfigWidget::getAllSnippets()
 {
 	vector<attribs_map> snippets;
 
 	for(auto &snip : config_params)
 		snippets.push_back(snip.second);
 
-	return(snippets);
+	return snippets;
 }
 
 QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attribs)
@@ -163,7 +157,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 	QString buf=snippet[Attributes::Contents];
 
 	if(snippet[Attributes::Parsable]!=Attributes::True)
-		return(buf);
+		return buf;
 
 	try
 	{
@@ -183,7 +177,7 @@ QString SnippetsConfigWidget::parseSnippet(attribs_map snippet, attribs_map attr
 
 		schparser.ignoreEmptyAttributes(true);
 		schparser.ignoreUnkownAttributes(true);
-		return(schparser.getCodeDefinition(attribs));
+		return schparser.getCodeDefinition(attribs);
 	}
 	catch(Exception &e)
 	{
@@ -197,15 +191,15 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 	{
 		try
 		{
-			return(parseSnippet(config_params[snip_id], attribs));
+			return parseSnippet(config_params[snip_id], attribs);
 		}
 		catch(Exception &e)
 		{
-			return(trUtf8("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage()));
+			return tr("/* Error parsing the snippet '%1':\n\n %2 */").arg(snip_id, e.getErrorMessage());
 		}
 	}
 	else
-		return(QString());
+		return QString();
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -223,13 +217,13 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 			err_msg;
 
 	if(!orig_id.isEmpty() && snip_id!=orig_id && config_params.count(snip_id)!=0)
-		err_msg=trUtf8("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
+		err_msg=tr("Duplicated snippet id <strong>%1</strong> detected. Please, specify a different one!").arg(snip_id);
 	else if(!IdFormatRegExp.exactMatch(snip_id))
-		err_msg=trUtf8("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
+		err_msg=tr("Invalid ID pattern detected <strong>%1</strong>. This one must start with at leat one letter and be composed by letters, numbers and/or underscore!").arg(snip_id);
 	else if(attribs[Attributes::Label].isEmpty())
-		err_msg=trUtf8("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+		err_msg=tr("Empty label for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Contents].isEmpty())
-		err_msg=trUtf8("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
+		err_msg=tr("Empty code for snippet <strong>%1</strong>. Please, specify a value for it!").arg(snip_id);
 	else if(attribs[Attributes::Parsable]==Attributes::True)
 	{
 		try
@@ -245,17 +239,17 @@ bool SnippetsConfigWidget::isSnippetValid(attribs_map &attribs, const QString &o
 		}
 		catch(Exception &e)
 		{
-			err_msg=trUtf8("The dynamic snippet contains syntax error(s). Additional info: <br/><em>%1</em>").arg(e.getErrorMessage());
+			err_msg=tr("The dynamic snippet contains syntax error(s). Additional info: <br/><em>%1</em>").arg(e.getErrorMessage());
 		}
 	}
 
 	if(!err_msg.isEmpty())
 	{
 		msg_box.show(err_msg, Messagebox::ErrorIcon, Messagebox::OkButton);
-		return(false);
+		return false;
 	}
 	else
-		return(true);
+		return true;
 }
 
 void SnippetsConfigWidget::hideEvent(QHideEvent *)
@@ -263,7 +257,7 @@ void SnippetsConfigWidget::hideEvent(QHideEvent *)
 	enableEditMode(false);
 }
 
-void SnippetsConfigWidget::loadConfiguration(void)
+void SnippetsConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -291,7 +285,7 @@ void SnippetsConfigWidget::loadConfiguration(void)
 	}
 }
 
-void SnippetsConfigWidget::resetForm(void)
+void SnippetsConfigWidget::resetForm()
 {
 	snippet_txt->clear();
 	id_edt->clear();
@@ -301,23 +295,23 @@ void SnippetsConfigWidget::resetForm(void)
 	placeholders_chk->setChecked(false);
 }
 
-attribs_map SnippetsConfigWidget::getSnippetAttributes(void)
+attribs_map SnippetsConfigWidget::getSnippetAttributes()
 {
 	QString object_id=BaseObject::getSchemaName(static_cast<ObjectType>(applies_to_cmb->currentData().toUInt()));
 
 	if(object_id.isEmpty())
 		object_id=Attributes::General;
 
-	return(attribs_map{ {Attributes::Id, id_edt->text()},
+	return attribs_map{ {Attributes::Id, id_edt->text()},
 						{Attributes::Label, label_edt->text()},
 						{Attributes::Object, object_id},
 						{Attributes::Parsable, (parsable_chk->isChecked() ? Attributes::True : Attributes::False)},
 						{Attributes::Placeholders, (parsable_chk->isChecked() && placeholders_chk->isChecked() ?
 						 Attributes::True : Attributes::False)},
-						{Attributes::Contents, snippet_txt->toPlainText()} });
+						{Attributes::Contents, snippet_txt->toPlainText()} };
 }
 
-void SnippetsConfigWidget::editSnippet(void)
+void SnippetsConfigWidget::editSnippet()
 {
 	QString snip_id=snippets_cmb->currentData().toString();
 	ObjectType obj_type=BaseObject::getObjectType(config_params[snip_id].at(Attributes::Object));
@@ -331,7 +325,7 @@ void SnippetsConfigWidget::editSnippet(void)
 	applies_to_cmb->setCurrentText(BaseObject::getTypeName(obj_type));
 }
 
-void SnippetsConfigWidget::handleSnippet(void)
+void SnippetsConfigWidget::handleSnippet()
 {
 	QString orig_id=snippets_cmb->currentData().toString();
 	attribs_map snippet;
@@ -352,18 +346,18 @@ void SnippetsConfigWidget::handleSnippet(void)
 	}
 }
 
-void SnippetsConfigWidget::removeSnippet(void)
+void SnippetsConfigWidget::removeSnippet()
 {
 	config_params.erase(snippets_cmb->currentData().toString());
 	filterSnippets(filter_cmb->currentIndex());
 	setConfigurationChanged(true);
 }
 
-void SnippetsConfigWidget::removeAllSnippets(void)
+void SnippetsConfigWidget::removeAllSnippets()
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Do you really want to remove all snippets?"),
+	msg_box.show(tr("Do you really want to remove all snippets?"),
 				 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -392,7 +386,7 @@ void SnippetsConfigWidget::enableEditMode(bool enable)
 	if(!enable) resetForm();
 }
 
-void SnippetsConfigWidget::enableSaveButtons(void)
+void SnippetsConfigWidget::enableSaveButtons()
 {
 	bool enable=(!id_edt->text().isEmpty() &&
 				 !label_edt->text().isEmpty() &&
@@ -426,14 +420,14 @@ void SnippetsConfigWidget::filterSnippets(int idx)
 	}
 }
 
-void SnippetsConfigWidget::parseSnippet(void)
+void SnippetsConfigWidget::parseSnippet()
 {
 	Messagebox msg_box;
 
 	try
 	{
 		parseSnippet(getSnippetAttributes(), attribs_map());
-		msg_box.show(trUtf8("No syntax errors found in the snippet."), Messagebox::InfoIcon);
+		msg_box.show(tr("No syntax errors found in the snippet."), Messagebox::InfoIcon);
 	}
 	catch(Exception &e)
 	{
@@ -441,18 +435,12 @@ void SnippetsConfigWidget::parseSnippet(void)
 	}
 }
 
-void SnippetsConfigWidget::saveConfiguration(void)
+void SnippetsConfigWidget::saveConfiguration()
 { 
 	try
 	{
-		QString root_dir=GlobalAttributes::TmplConfigurationDir +
-						 GlobalAttributes::DirSeparator,
-
-				snippet_sch=root_dir +
-							GlobalAttributes::SchemasDir +
-							GlobalAttributes::DirSeparator +
-							Attributes::Snippet +
-							GlobalAttributes::SchemaExt;
+		QString snippet_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																				 Attributes::Snippet + GlobalAttributes::SchemaExt);
 
 		attribs_map attribs;
 		ObjectType obj_type;
@@ -467,7 +455,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 			for(auto &snip : snippets)
 			{
 				attribs[Attributes::Snippet]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
+						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(snippet_sch, snip));
 			}
 		}
 
@@ -480,7 +468,7 @@ void SnippetsConfigWidget::saveConfiguration(void)
 	}
 }
 
-void SnippetsConfigWidget::restoreDefaults(void)
+void SnippetsConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -531,7 +519,7 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 			if(type_name.isEmpty())
 			{
 				ico=QPixmap();
-				type_name=trUtf8("General");
+				type_name=tr("General");
 			}
 			else
 				ico=QPixmap(PgModelerUiNs::getIconPath(object));
@@ -569,5 +557,5 @@ void SnippetsConfigWidget::configureSnippetsMenu(QMenu *snip_menu, vector<Object
 
 bool SnippetsConfigWidget::isSnippetExists(const QString &snip_id)
 {
-	return(config_params.count(snip_id)!=0);
+	return (config_params.count(snip_id)!=0);
 }

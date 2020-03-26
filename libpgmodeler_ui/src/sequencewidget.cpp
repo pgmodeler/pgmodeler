@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		sequence_grid->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum,QSizePolicy::Expanding), sequence_grid->count(), 0);
 		configureTabOrder();
 
-		def_values_cmb->addItem(trUtf8("User defined"));
+		def_values_cmb->addItem(tr("User defined"));
 		def_values_cmb->addItem(QString("smallserial"));
 		def_values_cmb->addItem(QString("serial"));
 		def_values_cmb->addItem(QString("bigserial"));
@@ -95,7 +95,7 @@ void SequenceWidget::setAttributes(DatabaseModel *model, Sequence *sequence)
 	}
 }
 
-void SequenceWidget::applyConfiguration(void)
+void SequenceWidget::applyConfiguration()
 {
 	try
 	{
@@ -119,7 +119,7 @@ void SequenceWidget::applyConfiguration(void)
 	}
 }
 
-void SequenceWidget::setDefaultValues(void)
+void SequenceWidget::setDefaultValues()
 {
 	Sequence *seq = dynamic_cast<Sequence *>(this->object);
 

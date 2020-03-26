@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ void FindReplaceWidget::showEvent(QShowEvent *)
 	replace_edt->setVisible(!text_edt->isReadOnly());
 }
 
-void FindReplaceWidget::replaceText(void)
+void FindReplaceWidget::replaceText()
 {
 	QTextCursor cursor=text_edt->textCursor();
 
@@ -74,7 +74,7 @@ void FindReplaceWidget::replaceText(void)
 	}
 }
 
-void FindReplaceWidget::replaceAll(void)
+void FindReplaceWidget::replaceAll()
 {
 	QTextCursor orig_cursor, cursor=text_edt->textCursor();
 
@@ -88,7 +88,7 @@ void FindReplaceWidget::replaceAll(void)
 	text_edt->setTextCursor(orig_cursor);
 }
 
-void FindReplaceWidget::replaceFindText(void)
+void FindReplaceWidget::replaceFindText()
 {
 	if(text_edt->textCursor().hasSelection())
 	{
@@ -105,14 +105,13 @@ bool FindReplaceWidget::findText(const QString &text, bool, QTextDocument::FindF
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	if(regexp)
-		return(text_edt->find(QRegExp(text,
-									  ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
-										   Qt::CaseSensitive : Qt::CaseInsensitive)), flags));
+		return text_edt->find(QRegExp(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
+																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
 	else
-		return(text_edt->find(text, flags));
+		return text_edt->find(text, flags);
 #else
 #warning "Text find through regular expressions is available only in Qt 5.3 or above."
-	return(text_edt->find(text, flags));
+	return text_edt->find(text, flags);
 #endif
 }
 
@@ -147,5 +146,5 @@ bool FindReplaceWidget::findText(bool backward, bool cyclic)
 		found=findText(find_edt->text(), regexp_chk->isChecked(), flags);
 	}
 
-	return(found);
+	return found;
 }

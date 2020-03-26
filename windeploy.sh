@@ -3,7 +3,7 @@
 LOG=windeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/PgModelerVersion=QString("//g' | sed 's/")//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g'`
 DEPLOY_VER=${DEPLOY_VER/PGMODELER_VERSION=\"/}
 DEPLOY_VER=`echo ${DEPLOY_VER/\",/} | tr -d ' '`
 
@@ -17,7 +17,7 @@ SNAPSHOT_OPT='-snapshot'
 SNAPSHOT=0
 
 # Installer settings
-FMT_PREFIX="C:\/Program Files\/pgmodeler"
+FMT_PREFIX="C:\/Program Files\/pgModeler"
 INSTALLER_APP_VER=`echo $DEPLOY_VER | cut -d '-' -f1`
 INSTALLER_CONF_DIR="$PWD/installer/template/config"
 INSTALLER_PKG_DIR="$PWD/installer/template/packages"
@@ -38,7 +38,7 @@ X86_BUILD=1
 WIN_BITS="32"
 DEST_ARCH="x86"
 
-for param in $@; do 
+for param in $@; do
  if [[ "$param" == "$DEMO_VERSION_OPT" ]]; then
    DEMO_VERSION=1
  fi
@@ -66,17 +66,17 @@ else
 fi
 
 # Settings for x64 build
-if [ $X64_BUILD = 1 ]; then		
-	QT_ROOT="/c/msys_64/mingw64"
-	MINGW_ROOT="/c/msys_64/mingw64/bin"
+if [ $X64_BUILD = 1 ]; then
+	QT_ROOT="/c/msys64/mingw64"
+	MINGW_ROOT="/c/msys64/mingw64/bin"
 	DEP_LIBS="$DEP_LIBS \
 			$MINGW_ROOT/libssl-1_1-x64.dll \
 			$MINGW_ROOT/libcrypto-1_1-x64.dll \
-			$MINGW_ROOT/libgcc_s_seh-1.dll"	
+			$MINGW_ROOT/libgcc_s_seh-1.dll"
 # Settings for x86 build
 else
-	QT_ROOT="/c/msys_64/mingw32"
-	MINGW_ROOT="/c/msys_64/mingw32/bin"
+	QT_ROOT="/c/msys64/mingw32"
+	MINGW_ROOT="/c/msys64/mingw32/bin"
 	DEP_LIBS="$DEP_LIBS \
 			$MINGW_ROOT/libssl-1_1.dll \
 			$MINGW_ROOT/libcrypto-1_1.dll \
@@ -88,8 +88,7 @@ QT_INSTALL_VERSION='5.12.3'
 QT_BASE_VERSION='5.12.3'
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
-QT_IFW_ROOT=/c/qt-ifw
-PGSQL_ROOT=$MINGW_ROOT  
+PGSQL_ROOT=$MINGW_ROOT
 QMAKE_ARGS="-r -spec win32-g++ CONFIG+=release \
 		  XML_INC+=$MINGW_ROOT/../include/libxml2 \
 		  XML_LIB+=$MINGW_ROOT/libxml2-2.dll \
@@ -102,7 +101,7 @@ fi
 
 if [ $SNAPSHOT = 1 ]; then
  QMAKE_ARGS="$QMAKE_ARGS SNAPSHOT_BUILD+=true"
-fi 
+fi
 
 
 PKGFILE=$PKGNAME.exe
@@ -113,8 +112,9 @@ QT_CONF="$INSTALL_ROOT/qt.conf"
 DEP_PLUGINS_DIR="$INSTALL_ROOT/qtplugins"
 PLUGINS="dummy xml2object"
 
-# Common dependency libraries 
+# Common dependency libraries
 DEP_LIBS="$DEP_LIBS \
+		$MINGW_ROOT/libdouble-conversion.dll \
 		$MINGW_ROOT/libicuin*.dll \
 		$MINGW_ROOT/libicuuc*.dll \
 		$MINGW_ROOT/libicudt*.dll \
@@ -128,6 +128,7 @@ DEP_LIBS="$DEP_LIBS \
 		$MINGW_ROOT/libbz2-1.dll \
 		$MINGW_ROOT/libstdc++-6.dll \
 		$MINGW_ROOT/libwinpthread-1.dll \
+		$MINGW_ROOT/libzstd.dll \
 		$MINGW_ROOT/zlib1.dll \
 		$MINGW_ROOT/libpq.dll \
 		$MINGW_ROOT/libxml2-2.dll \
@@ -140,7 +141,7 @@ DEP_LIBS="$DEP_LIBS \
 		$QMAKE_ROOT/Qt5PrintSupport.dll \
 		$QMAKE_ROOT/Qt5Network.dll \
 		$QMAKE_ROOT/Qt5Svg.dll "
-		  
+
 #Dependency qt plugins copied to build dir
 DEP_PLUGINS="imageformats/qicns.dll \
 			 imageformats/qico.dll \
@@ -152,7 +153,7 @@ DEP_PLUGINS="imageformats/qicns.dll \
 			 imageformats/qwebp.dll \
 			 platforms/qwindows.dll \
 			 printsupport/windowsprintersupport.dll"
-		 
+
 export PATH=$QMAKE_ROOT:$MINGW_ROOT:$PATH
 
 clear
@@ -199,9 +200,8 @@ fi
 echo "Building for arch: $DEST_ARCH"
 echo "Cleaning previous compilation..."
 
-if [ $BUILD_ALL -eq 1 ]; then
-  rm -r $DIST_ROOT/* > $LOG 2>&1
-fi
+mkdir -p "${DIST_ROOT}"   > $LOG 2>&1
+rm    -r "${DIST_ROOT}/*" > $LOG 2>&1
 
 rm -r build/* > $LOG 2>&1
 $MINGW_ROOT/mingw32-make.exe distclean >> $LOG 2>&1
@@ -259,7 +259,7 @@ for plug in $DEP_PLUGINS; do
 	pdir=`dirname $plug`
 	mkdir -p $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
 	cp $QT_PLUGINS_ROOT/$plug $DEP_PLUGINS_DIR/$pdir >> $LOG 2>&1
-	
+
 	if [ $? -ne 0 ]; then
 		echo
 		echo "** Installation failed!"
@@ -278,28 +278,28 @@ if [ $? -ne 0 ]; then
     echo "** Failed to configure installer data dir!"
     echo
     exit 1
-fi   
+fi
 
 # Configuing installer scripts before packaging
 cat $INSTALLER_CONF_DIR/$INSTALLER_TMPL_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{prefix}/$FMT_PREFIX/g" > $INSTALLER_CONF_DIR/$INSTALLER_CONFIG
-  
+
 if [ $? -ne 0 ]; then
   echo
   echo "** Failed to create the installer config file!"
   echo
   exit 1
-fi 
+fi
 
 cat $INSTALLER_META_DIR/$INSTALLER_TMPL_PKG_CONFIG | sed -e "s/{version}/$INSTALLER_APP_VER/g" | sed -e "s/{date}/$BUILD_DATE/g" > $INSTALLER_META_DIR/$INSTALLER_PKG_CONFIG
-   
+
 if [ $? -ne 0 ]; then
    echo
    echo "** Failed to create the package info file!"
    echo
    exit 1
-fi  
+fi
 
-$QT_IFW_ROOT/bin/binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
+binarycreator -v -c $INSTALLER_CONF_DIR/config.xml -p $INSTALLER_PKG_DIR "$DIST_ROOT/$PKGNAME.exe" >> $LOG 2>&1
 
 if [ $? -ne 0 ]; then
   echo
@@ -314,11 +314,11 @@ echo "pgModeler successfully deployed!"
 echo
 
 if [ $BUILD_ALL -eq 1 ]; then
- EXTRA_OPT="" 
-   
+ EXTRA_OPT=""
+
  if [ $SNAPSHOT = 1 ]; then
     EXTRA_OPT="$SNAPSHOT_OPT"
- fi  
-   
+ fi
+
  sh windeploy.sh -demo-version $BUILD_ARCH_PARAM $EXTRA_OPT
 fi

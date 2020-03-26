@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@ class Catalog {
 
 		static const QString QueryList,	//! \brief Executes a list command on catalog
 		QueryAttribs, //! \brief Executes a attribute retrieving command on catalog
-		CatalogSchemasDir, //! \brief Default catalog schemas directory
 		PgSqlTrue, //! \brief Replacement for true 't' boolean value
 		PgSqlFalse, //! \brief Replacement for false 'f' boolean value
 		BoolField,     //! \brief Suffix for boolean fields.
@@ -122,7 +121,7 @@ class Catalog {
 		QString createOidFilter(const vector<unsigned> &oids);
 
 	public:
-		Catalog(void);
+		Catalog();
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
@@ -150,13 +149,13 @@ class Catalog {
 		/*! \brief Closes the connection used by the catalog.
 	Once this method is called the user must call setConnection() again or the
 	catalog queries will fail */
-		void closeConnection(void);
+		void closeConnection();
 
 		//! \brief Configures the catalog query filter
 		void setFilter(unsigned filter);
 
 		//! \brief Returns the last system object oid registered on the database
-		unsigned getLastSysObjectOID(void);
+		unsigned getLastSysObjectOID();
 
 		//! \brief Returns if the specified oid is amongst the system objects' oids
 		bool isSystemObject(unsigned oid);
@@ -169,7 +168,7 @@ class Catalog {
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the current filter configuration for the catalog
-		unsigned getFilter(void);
+		unsigned getFilter();
 
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
@@ -205,7 +204,7 @@ class Catalog {
 		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = QString(), const QString &table = QString());
 
 		//! brief This special method returns some server's attributes read from pg_settings
-		attribs_map getServerAttributes(void);
+		attribs_map getServerAttributes();
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
@@ -227,7 +226,7 @@ class Catalog {
 		static void enableCachedQueries(bool value);
 
 		//! \brief Returns the current status of cached catalog queries
-		static bool isCachedQueriesEnabled(void);
+		static bool isCachedQueriesEnabled();
 
 		//! \brief Performs the copy between two catalogs
 		void operator = (const Catalog &catalog);

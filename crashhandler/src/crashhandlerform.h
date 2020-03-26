@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ class CrashHandlerForm: public BugReportForm {
 		void setAnalysisMode(bool value);
 
 		//! \brief Generates a report buffer containing the issue details, model and stacktrace
-		QByteArray generateReportBuffer(void);
+		QByteArray generateReportBuffer();
 
 	public:
 		//! \brief Analysis mode argument
@@ -64,8 +64,8 @@ class CrashHandlerForm: public BugReportForm {
 		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 	private slots:
-		void loadReport(void);
-		void saveModel(void);
+		void loadReport();
+		void saveModel();
 };
 
 #endif

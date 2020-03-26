@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class GenericSQL: public BaseObject{
 		};
 
 		//! \brief Returns a copy of the objects references list
-		vector<ObjectRefConfig> getObjectsReferences(void);
+		vector<ObjectRefConfig> getObjectsReferences();
 
 	private:
 		//! \brief The SQL definition of the generic object
@@ -61,15 +61,15 @@ class GenericSQL: public BaseObject{
 		void validateObjectReference(ObjectRefConfig ref, bool ignore_duplic);
 
 	public:
-		GenericSQL(void);
+		GenericSQL();
 
 		void setDefinition(const QString &def);
-		QString getDefinition(void);
+		QString getDefinition();
 
 		void addObjectReference(BaseObject *object, const QString &ref_name, bool use_signature, bool format_name);
 		void updateObjectReference(const QString &ref_name, BaseObject *object, const QString &new_ref_name, bool use_signature, bool format_name);
 		void removeObjectReference(const QString &ref_name);
-		void removeObjectReferences(void);
+		void removeObjectReferences();
 
 		//! \brief Returns true when the provided object is being referenced by the generic SQL object
 		bool isObjectReferenced(BaseObject *object);
@@ -79,12 +79,12 @@ class GenericSQL: public BaseObject{
 		 * to control which generic SQL object references objects added by the
 		 * relationship in order to avoid referece breaking due constants
 		 * connections and disconnections of relationships */
-		bool isReferRelationshipAddedObject(void);
+		bool isReferRelationshipAddedObject();
 
 		/*! \brief Returns a list of objectes being referenced by the generic object.
 		 * For performance reasons this method doesn't eliminate duplicated values in
 		 * the retunring list*/
-		vector<BaseObject *> getReferencedObjects(void);
+		vector<BaseObject *> getReferencedObjects();
 
 		virtual QString getCodeDefinition(unsigned def_type);
 

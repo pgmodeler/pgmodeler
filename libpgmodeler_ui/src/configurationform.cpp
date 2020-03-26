@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,15 +37,15 @@ ConfigurationForm::ConfigurationForm(QWidget *parent, Qt::WindowFlags f) : QDial
 		confs_stw->addWidget(wgt_list[i]);
 
 	connect(icons_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
-	connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
-	connect(apply_btn, SIGNAL(clicked(void)), this, SLOT(applyConfiguration(void)));
-	connect(defaults_btn, SIGNAL(clicked(void)), this, SLOT(restoreDefaults(void)));
+	connect(cancel_btn, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(apply_btn, SIGNAL(clicked()), this, SLOT(applyConfiguration()));
+	connect(defaults_btn, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
 
 	icons_lst->setCurrentRow(GeneralConfWgt);
 	setMinimumSize(890, 740);
 }
 
-ConfigurationForm::~ConfigurationForm(void)
+ConfigurationForm::~ConfigurationForm()
 {
 	connections_conf->destroyConnections();
 }
@@ -60,7 +60,7 @@ void ConfigurationForm::showEvent(QShowEvent *)
 	snippets_conf->snippet_txt->updateLineNumbers();
 }
 
-void ConfigurationForm::reject(void)
+void ConfigurationForm::reject()
 {
 	try
 	{
@@ -84,7 +84,7 @@ void ConfigurationForm::reject(void)
 	QDialog::reject();
 }
 
-void ConfigurationForm::applyConfiguration(void)
+void ConfigurationForm::applyConfiguration()
 {
 	BaseConfigWidget *conf_wgt=nullptr;
 	bool curr_escape_comments = BaseObject::isEscapeComments();
@@ -106,7 +106,7 @@ void ConfigurationForm::applyConfiguration(void)
 	QDialog::accept();
 }
 
-void ConfigurationForm::loadConfiguration(void)
+void ConfigurationForm::loadConfiguration()
 {
 	BaseConfigWidget *config_wgt = nullptr;
 
@@ -128,8 +128,8 @@ void ConfigurationForm::loadConfiguration(void)
 			else
 			{
 				Exception ex = Exception(Exception::getErrorMessage(ErrorCode::ConfigurationNotLoaded).arg(e.getExtraInfo()),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(trUtf8("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-										 Messagebox::AlertIcon, Messagebox::YesNoButtons, trUtf8("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+				msg_box.show(ex, QString("%1 %2").arg(ex.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
+										 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
 
 				if(msg_box.result() == QDialog::Accepted)
 					config_wgt->restoreDefaults();
@@ -138,10 +138,10 @@ void ConfigurationForm::loadConfiguration(void)
 	}
 }
 
-void ConfigurationForm::restoreDefaults(void)
+void ConfigurationForm::restoreDefaults()
 {
 	Messagebox msg_box;
-	msg_box.show(trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
+	msg_box.show(tr("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
 				 Messagebox::ConfirmIcon,
 				 Messagebox::YesNoButtons);
 
@@ -152,8 +152,8 @@ void ConfigurationForm::restoreDefaults(void)
 BaseConfigWidget *ConfigurationForm::getConfigurationWidget(unsigned idx)
 {
 	if(idx >= static_cast<unsigned>(confs_stw->count()))
-		return(nullptr);
+		return nullptr;
 	else
-		return(qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx))));
+		return qobject_cast<BaseConfigWidget *>(confs_stw->widget(static_cast<unsigned>(idx)));
 }
 

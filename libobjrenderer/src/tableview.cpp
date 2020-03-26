@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 
 TableView::TableView(PhysicalTable *table) : BaseTableView(table)
 {
-	connect(table, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(table, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 	this->configureObject();
 }
 
-void TableView::configureObject(void)
+void TableView::configureObject()
 {
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
@@ -160,7 +160,7 @@ void TableView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 			groups[obj_idx]->removeFromGroup(col_item);
-			delete(col_item);
+			delete col_item;
 			i--;
 		}
 
@@ -243,10 +243,10 @@ void TableView::configureObject(void)
 	BaseTableView::__configureObject(width);
 
 	if(table->isPartitioned())
-		table_tooltip += QString("\n%1 (%2)").arg(trUtf8("Partitioned")).arg(~table->getPartitioningType());
+		table_tooltip += QString("\n%1 (%2)").arg(tr("Partitioned")).arg(~table->getPartitioningType());
 
 	if(table->isPartition())
-		table_tooltip += QString("\n%1 of %2").arg(trUtf8("Partition")).arg(table->getPartitionedTable()->getSignature(true));
+		table_tooltip += QString("\n%1 of %2").arg(tr("Partition")).arg(table->getPartitionedTable()->getSignature(true));
 
 	if(!table->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(table->getAlias());
@@ -273,7 +273,7 @@ QPointF TableView::getConnectionPoints(TableObject *tab_obj, unsigned pnt_type)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(conn_points.count(tab_obj)==0)
 		//Returns the center point in case of the connection point of the table object wasn't calculated already
-		return(this->getCenter());
+		return this->getCenter();
 
-	return(conn_points[tab_obj][pnt_type]);
+	return conn_points[tab_obj][pnt_type];
 }

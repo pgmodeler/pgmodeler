@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -86,10 +86,10 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color);
 
 		//! \brief Returns the table column count
-		unsigned getColumnCount(void);
+		unsigned getColumnCount();
 
 		//! \brief Returns the table row count
-		unsigned getRowCount(void);
+		unsigned getRowCount();
 
 		//! \brief Returns the specified column header label
 		QString getHeaderLabel(unsigned col_idx);
@@ -118,7 +118,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void addRow(unsigned lin_idx);
 
 		//! \brief Returns the row index currently selected
-		int getSelectedRow(void);
+		int getSelectedRow();
 
 		/*! \brief Returns the row index search it through the specified row data. If
 		no row is found returns -1 */
@@ -134,41 +134,41 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 
 	private slots:
 		//! \brief Moves a row up or down according to the button that triggers the slot
-		void moveRows(void);
+		void moveRows();
 
 		//! \brief Removes the currently selected line
-		void removeRow(void);
+		void removeRow();
 
 		//! \brief Duplicate the selected row creating a new item in the end of the grid
-		void duplicateRow(void);
+		void duplicateRow();
 
 		/*! \brief This method does not execute any action, only emit a signal indicating that the row
 		is ready to the edition. The edit operation must be implemented by the user and be connected to
 		the emitted signal. */
-		void editRow(void);
+		void editRow();
 
 		/*! \brief This method does not execute any action, only emit a signal indicating that the row
 		is ready to the update. The update operation must be implemented by the user and be connected to
 		the emitted signal. */
-		void updateRow(void);
+		void updateRow();
 
 		//! \brief Enables the handle buttons according to the selected row
-		void setButtonsEnabled(void);
+		void setButtonsEnabled();
 
-		void emitRowSelected(void);
+		void emitRowSelected();
 
 	public slots:
 		//! \brief Adds a new row at the end of the table
-		void addRow(void);
+		void addRow();
 
 		//! \brief Removes all the rows from table
-		void removeRows(void);
+		void removeRows();
 
 		//! \brief Remove the specified row
 		void removeRow(unsigned row_idx);
 
 		//! \brief Clears the row selection disabling the buttons if necessary
-		void clearSelection(void);
+		void clearSelection();
 
 		//! \brief Selects the specified row
 		void selectRow(int lin_idx);
@@ -186,7 +186,7 @@ class ObjectsTableWidget: public QWidget, public Ui::ObjectsTableWidget {
 		void s_rowsMoved(int,int);
 
 		//! \brief Signal emitted when all rows are removed from table
-		void s_rowsRemoved(void);
+		void s_rowsRemoved();
 
 		//! \brief Signal emitted when a single row is removed. The row index is sent together with the signal
 		void s_rowRemoved(int);

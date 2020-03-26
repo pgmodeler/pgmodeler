@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,18 +37,18 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 																				(ObjectsTableWidget::UpdateButton | ObjectsTableWidget::DuplicateButton), true, this);
 
 		elements_tab->setColumnCount(7);
-		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
+		elements_tab->setHeaderLabel(tr("Element"), 0);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
+		elements_tab->setHeaderLabel(tr("Type"), 1);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
+		elements_tab->setHeaderLabel(tr("Operator"), 2);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("operator")),2);
-		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
+		elements_tab->setHeaderLabel(tr("Operator Class"), 3);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opclass")),3);
-		elements_tab->setHeaderLabel(trUtf8("Collation"), 4);
+		elements_tab->setHeaderLabel(tr("Collation"), 4);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("collation")),4);
-		elements_tab->setHeaderLabel(trUtf8("Sorting"), 5);
-		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 6);
+		elements_tab->setHeaderLabel(tr("Sorting"), 5);
+		elements_tab->setHeaderLabel(tr("Nulls First"), 6);
 
 		vbox->setContentsMargins(4,4,4,4);
 		vbox->addWidget(elements_tab);
@@ -62,10 +62,10 @@ ElementsTableWidget::ElementsTableWidget(QWidget *parent) : QWidget(parent)
 	}
 }
 
-ElementsTableWidget::~ElementsTableWidget(void)
+ElementsTableWidget::~ElementsTableWidget()
 {
 	if(handled_elem)
-		delete(handled_elem);
+		delete handled_elem;
 }
 
 void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
@@ -81,7 +81,7 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 	else
 	{
 		elements_tab->setCellText(elem->getExpression(), elem_idx, 0);
-		elements_tab->setCellText(trUtf8("Expression"), elem_idx, 1);
+		elements_tab->setCellText(tr("Expression"), elem_idx, 1);
 	}
 
 	elements_tab->clearCellText(elem_idx, 2);
@@ -99,14 +99,14 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 	if(elem->isSortingEnabled())
 	{
 		if(elem->getSortingAttribute(IndexElement::AscOrder))
-			elements_tab->setCellText(trUtf8("Ascending"), elem_idx, 5);
+			elements_tab->setCellText(tr("Ascending"), elem_idx, 5);
 		else
-			elements_tab->setCellText(trUtf8("Descending"), elem_idx, 5);
+			elements_tab->setCellText(tr("Descending"), elem_idx, 5);
 
 		if(elem->getSortingAttribute(IndexElement::NullsFirst))
-			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 6);
+			elements_tab->setCellText(tr("Yes"), elem_idx, 6);
 		else
-			elements_tab->setCellText(trUtf8("No"), elem_idx, 6);
+			elements_tab->setCellText(tr("No"), elem_idx, 6);
 	}
 	else
 	{
@@ -120,15 +120,15 @@ void ElementsTableWidget::showElementData(Element *elem, int elem_idx)
 QVariant ElementsTableWidget::copyElementData(Element *elem)
 {
 	if(dynamic_cast<IndexElement *>(elem))
-		return(QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem)));
+		return QVariant::fromValue<IndexElement>(*dynamic_cast<IndexElement *>(elem));
 
 	if(dynamic_cast<ExcludeElement *>(elem))
-		return(QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem)));
+		return QVariant::fromValue<ExcludeElement>(*dynamic_cast<ExcludeElement *>(elem));
 
 	if(dynamic_cast<PartitionKey *>(elem))
-		return(QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem)));
+		return QVariant::fromValue<PartitionKey>(*dynamic_cast<PartitionKey *>(elem));
 
-	return(QVariant());
+	return QVariant();
 }
 
 int ElementsTableWidget::openElementForm(Element *elem)
@@ -141,7 +141,7 @@ int ElementsTableWidget::openElementForm(Element *elem)
 	res = element_form.exec();
 	GeneralConfigWidget::saveWidgetGeometry(&element_form, element_wgt->metaObject()->className());
 
-	return(res);
+	return res;
 }
 
 void ElementsTableWidget::editElement(int elem_idx)

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,20 +30,20 @@ Messagebox::Messagebox(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 	connect(cancel_btn,SIGNAL(clicked()),this,SLOT(handleNoCancelClick()));
 	connect(show_errors_tb,SIGNAL(clicked()),this,SLOT(showExceptionList()));
 	connect(show_errors_tb,SIGNAL(toggled(bool)),show_raw_info_tb,SLOT(setVisible(bool)));
-	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList(void)));
+	connect(show_raw_info_tb,SIGNAL(toggled(bool)),this,SLOT(showExceptionList()));
 
 	show_raw_info_tb->setVisible(false);
 	error_show_btns_wgt->setVisible(false);
 	custom_option_chk->setVisible(false);
 }
 
-void Messagebox::handleYesOkClick(void)
+void Messagebox::handleYesOkClick()
 {
 	exceptions_trw->clear();
 	accept();
 }
 
-void Messagebox::handleNoCancelClick(void)
+void Messagebox::handleNoCancelClick()
 {
 	exceptions_trw->clear();
 
@@ -59,9 +59,9 @@ void Messagebox::handleNoCancelClick(void)
 	}
 }
 
-bool Messagebox::isCancelled(void)
+bool Messagebox::isCancelled()
 {
-	return(cancelled);
+	return cancelled;
 }
 
 void Messagebox::setCustomOptionText(const QString &text)
@@ -70,12 +70,12 @@ void Messagebox::setCustomOptionText(const QString &text)
 	custom_option_chk->setText(text);
 }
 
-bool Messagebox::isCustomOptionChecked(void)
+bool Messagebox::isCustomOptionChecked()
 {
-	return(custom_option_chk->isChecked());
+	return custom_option_chk->isChecked();
 }
 
-void Messagebox::showExceptionList(void)
+void Messagebox::showExceptionList()
 {
 	if(show_errors_tb->isChecked())
 	{
@@ -132,14 +132,14 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 	if(!yes_lbl.isEmpty())
 		yes_ok_btn->setText(yes_lbl);
 	else
-		yes_ok_btn->setText(buttons==OkButton ? trUtf8("&Ok") : trUtf8("&Yes"));
+		yes_ok_btn->setText(buttons==OkButton ? tr("&Ok") : tr("&Yes"));
 
 	yes_ok_btn->setIcon(!yes_ico.isEmpty() ? QIcon(yes_ico) : QPixmap(PgModelerUiNs::getIconPath("confirmar")));
 
-	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : trUtf8("&No"));
+	no_btn->setText(!no_lbl.isEmpty() ? no_lbl : tr("&No"));
 	no_btn->setIcon(!no_ico.isEmpty() ? QIcon(no_ico) : QPixmap(PgModelerUiNs::getIconPath("fechar1")));
 
-	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : trUtf8("&Cancel"));
+	cancel_btn->setText(!cancel_lbl.isEmpty() ? cancel_lbl : tr("&Cancel"));
 	cancel_btn->setIcon(!cancel_ico.isEmpty() ? QIcon(cancel_ico) : QPixmap(PgModelerUiNs::getIconPath("cancelar")));
 
 	no_btn->setVisible(buttons==YesNoButtons || buttons==AllButtons);
@@ -150,19 +150,19 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 		switch(icon_type)
 		{
 			case ErrorIcon:
-				aux_title=trUtf8("Error");
+				aux_title=tr("Error");
 			break;
 
 			case AlertIcon:
-				aux_title=trUtf8("Alert");
+				aux_title=tr("Alert");
 			break;
 
 			case InfoIcon:
-				aux_title=trUtf8("Information");
+				aux_title=tr("Information");
 			break;
 
 			case ConfirmIcon:
-				aux_title=trUtf8("Confirmation");
+				aux_title=tr("Confirmation");
 			break;
 		}
 	}

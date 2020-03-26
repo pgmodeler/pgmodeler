@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,19 +21,19 @@
 BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
-    this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) ^ Qt::WindowContextHelpButtonHint);
+	this->setWindowFlags((this->windowFlags() | Qt::WindowMinMaxButtonsHint) ^ Qt::WindowContextHelpButtonHint);
 }
 
 void BaseForm::setButtonConfiguration(unsigned button_conf)
 {
 	if(button_conf==Messagebox::OkCancelButtons)
 	{
-		apply_ok_btn->setText(trUtf8("&Apply"));
+		apply_ok_btn->setText(tr("&Apply"));
 		cancel_btn->setVisible(true);
 	}
 	else
 	{
-		apply_ok_btn->setText(trUtf8("&Ok"));
+		apply_ok_btn->setText(tr("&Ok"));
 		cancel_btn->setVisible(false);
 	}
 }
@@ -128,7 +128,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	if(!widget)	return;
 
 	if(widget->getHandledObjectType()!=ObjectType::BaseObject && widget->windowTitle().isEmpty())
-		setWindowTitle(trUtf8("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
+		setWindowTitle(tr("%1 properties").arg(BaseObject::getTypeName(widget->getHandledObjectType())));
 	else
 		setWindowTitle(widget->windowTitle());
 
@@ -142,7 +142,7 @@ void BaseForm::setMainWidget(BaseObjectWidget *widget)
 	connect(widget, SIGNAL(s_closeRequested()), this, SLOT(accept()));
 }
 
-void BaseForm::setMainWidget(QWidget *widget)
+void BaseForm::setMainWidget(QWidget *widget, const char *accept_slot, const char *reject_slot)
 {
 	if(!widget)	return;
 
@@ -150,6 +150,13 @@ void BaseForm::setMainWidget(QWidget *widget)
 	resizeForm(widget);
 	setButtonConfiguration(Messagebox::OkButton);
 
-	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+	if(!reject_slot)
+		connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(reject()));
+	else
+		connect(cancel_btn, SIGNAL(clicked(bool)), widget, reject_slot);
+
+	if(!accept_slot)
+		connect(apply_ok_btn, SIGNAL(clicked(bool)), this, SLOT(accept()));
+	else
+		connect(apply_ok_btn, SIGNAL(clicked(bool)), widget, accept_slot);
 }

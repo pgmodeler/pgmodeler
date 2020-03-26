@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	configureFormLayout(textbox_grid, ObjectType::Textbox);
 
 	text_txt->removeEventFilter(this);
-	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
+	connect(color_select_tb, SIGNAL(clicked()), this, SLOT(selectTextColor()));
 
 	setMinimumSize(500, 200);
 }
@@ -47,12 +47,12 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	BaseObjectWidget::setAttributes(model, op_list, txtbox, nullptr, obj_px, obj_py);
 }
 
-void TextboxWidget::selectTextColor(void)
+void TextboxWidget::selectTextColor()
 {
 	QColorDialog color_dlg;
 	QPalette palette;
 
-	color_dlg.setWindowTitle(trUtf8("Select text color"));
+	color_dlg.setWindowTitle(tr("Select text color"));
 	color_dlg.setCurrentColor(color_select_tb->palette().color(QPalette::Button));
 	color_dlg.exec();
 
@@ -63,7 +63,7 @@ void TextboxWidget::selectTextColor(void)
 	}
 }
 
-void TextboxWidget::applyConfiguration(void)
+void TextboxWidget::applyConfiguration()
 {
 	try
 	{

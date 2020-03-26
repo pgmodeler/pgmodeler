@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "copyoptions.h"
 #include "baseobject.h"
 
-CopyOptions::CopyOptions(void)
+CopyOptions::CopyOptions()
 {
 	copy_mode = copy_op_ids = 0;
 }
@@ -33,9 +33,9 @@ CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
 	this->copy_op_ids = copy_op_ids;
 }
 
-unsigned CopyOptions::getCopyMode(void)
+unsigned CopyOptions::getCopyMode()
 {
-	return(copy_mode);
+	return copy_mode;
 }
 
 bool CopyOptions::isOptionSet(unsigned op)
@@ -43,25 +43,25 @@ bool CopyOptions::isOptionSet(unsigned op)
 	if(op > All)
 		throw Exception(ErrorCode::RefInvalidLikeOptionType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return((copy_op_ids & op) == op);
+	return ((copy_op_ids & op) == op);
 }
 
-bool CopyOptions::isIncluding(void)
+bool CopyOptions::isIncluding()
 {
-	return(copy_mode & Including);
+	return (copy_mode & Including);
 }
 
-bool CopyOptions::isExcluding(void)
+bool CopyOptions::isExcluding()
 {
-	return(copy_mode & Excluding);
+	return (copy_mode & Excluding);
 }
 
-unsigned CopyOptions::getCopyOptionsIds(void)
+unsigned CopyOptions::getCopyOptionsIds()
 {
-	return(copy_op_ids);
+	return copy_op_ids;
 }
 
-QString CopyOptions::getSQLDefinition(void)
+QString CopyOptions::getSQLDefinition()
 {
 	QString def, mode, op_name;
 	unsigned op_id,
@@ -98,10 +98,10 @@ QString CopyOptions::getSQLDefinition(void)
 		}
 	}
 
-	return(def);
+	return def;
 }
 
 bool CopyOptions::operator != (CopyOptions &cp)
 {
-	return(this->copy_mode!= cp.copy_mode && this->copy_op_ids!=cp.copy_op_ids);
+	return (this->copy_mode!= cp.copy_mode && this->copy_op_ids!=cp.copy_op_ids);
 }

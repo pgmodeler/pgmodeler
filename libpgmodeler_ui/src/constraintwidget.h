@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,17 +61,17 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		
 	private slots:
 		//! \brief Shows only the fields related to the selected constraint type
-		void selectConstraintType(void);
+		void selectConstraintType();
 		
 		//! \brief Selects the referenced table as well updates the combo containing the referenced table columns
-		void selectReferencedTable(void);
+		void selectReferencedTable();
 		
 		void addColumn(int row);
 		void removeColumn(int);
-		void removeColumns(void);
+		void removeColumns();
 		
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

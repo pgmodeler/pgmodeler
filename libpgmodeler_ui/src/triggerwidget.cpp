@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		Ui_TriggerWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		columns_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 										  (ObjectsTableWidget::EditButton |
@@ -43,32 +43,29 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 		trigger_grid->addWidget(function_sel, 3, 1, 1, 5);
 
 		columns_tab->setColumnCount(2);
-		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		columns_tab->setHeaderLabel(tr("Column"), 0);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		columns_tab->setHeaderLabel(tr("Type"), 1);
 		columns_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(arguments_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(2)->layout())->addWidget(ref_table_sel, 1, 1, 1, 1);
 
-		DeferralType::getTypes(list);
-		deferral_type_cmb->addItems(list);
-
-		FiringType::getTypes(list);
-		firing_mode_cmb->addItems(list);
+		deferral_type_cmb->addItems(DeferralType::getTypes());
+		firing_mode_cmb->addItems(FiringType::getTypes());
 
 		configureFormLayout(trigger_grid, ObjectType::Trigger);
 
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
-		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(updateColumnsCombo(void)));
+		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo()));
+		connect(columns_tab, SIGNAL(s_rowsRemoved()), this, SLOT(updateColumnsCombo()));
 		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
 		connect(constraint_rb, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
-		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent(void)));
+		connect(update_chk, SIGNAL(toggled(bool)), this, SLOT(selectUpdateEvent()));
 
 		connect(insert_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
 		connect(delete_chk, SIGNAL(toggled(bool)), this, SLOT(enableTransitionTableNames()));
@@ -89,7 +86,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, ObjectTy
 	}
 }
 
-void TriggerWidget::selectUpdateEvent(void)
+void TriggerWidget::selectUpdateEvent()
 {
 	if(!update_chk->isChecked())
 		columns_tab->removeRows();
@@ -118,7 +115,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 		firing_mode_cmb->setCurrentText(~FiringType(FiringType::After));
 }
 
-void TriggerWidget::enableTransitionTableNames(void)
+void TriggerWidget::enableTransitionTableNames()
 {
 	int num_evnts = 0;
 	QWidget *wgt = nullptr;
@@ -166,7 +163,7 @@ void TriggerWidget::addColumn(Column *column, int row)
 	}
 }
 
-void TriggerWidget::updateColumnsCombo(void)
+void TriggerWidget::updateColumnsCombo()
 {
 	Column *column=nullptr;
 	unsigned i, col_count=0;
@@ -273,7 +270,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 	updateColumnsCombo();
 }
 
-void TriggerWidget::applyConfiguration(void)
+void TriggerWidget::applyConfiguration()
 {
 	try
 	{

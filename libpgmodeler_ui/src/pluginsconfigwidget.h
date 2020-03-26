@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,21 +51,21 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
-		~PluginsConfigWidget(void);
+		~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
-		void loadConfiguration(void);
+		void loadConfiguration();
 
 		/*! \brief Install the created actions on menu. Additionally the user must specify the
 		 receiver object and slot executed when the actions is activated */
 		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
 
 		//*! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
-		void initPlugins(QMainWindow *main_window);
+		void initPlugins(MainWindow *main_window);
 
 	private slots:
 		void showPluginInfo(int idx);
-		void openRootPluginDiretory(void);
+		void openRootPluginDiretory();
 };
 
 #endif

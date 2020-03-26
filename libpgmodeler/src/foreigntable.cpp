@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
 
 #include "foreigntable.h"
 
-ForeignTable::ForeignTable(void) : PhysicalTable()
+ForeignTable::ForeignTable() : PhysicalTable()
 {
 	obj_type = ObjectType::ForeignTable;
 	attributes[Attributes::Server] = QString();
 	attributes[Attributes::Options] = QString();
 	foreign_server = nullptr;
 
-	setName(trUtf8("new_foreign_table"));
+	setName(tr("new_foreign_table"));
 }
 
-ForeignTable::~ForeignTable(void)
+ForeignTable::~ForeignTable()
 {
 	destroyObjects();
 }
@@ -39,9 +39,9 @@ void ForeignTable::setForeignServer(ForeignServer *server)
 	foreign_server = server;
 }
 
-ForeignServer *ForeignTable::getForeignServer(void)
+ForeignServer *ForeignTable::getForeignServer()
 {
-	return(foreign_server);
+	return foreign_server;
 }
 
 void ForeignTable::addObject(BaseObject *object, int obj_idx)
@@ -83,15 +83,15 @@ QString ForeignTable::__getCodeDefinition(unsigned def_type, bool incl_rel_added
 	}
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
-	return(PhysicalTable::__getCodeDefinition(def_type));
+	return PhysicalTable::__getCodeDefinition(def_type);
 }
 
 QString ForeignTable::getCodeDefinition(unsigned def_type)
 {
 	QString code_def = PhysicalTable::getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
-	return(__getCodeDefinition(def_type, false));
+	return __getCodeDefinition(def_type, false);
 }
 
 void ForeignTable::operator = (ForeignTable &tab)
@@ -107,7 +107,7 @@ QString ForeignTable::getAlterDefinition(BaseObject *object)
 		attributes[Attributes::AlterCmds] = BaseObject::getAlterDefinition(object);
 		getAlteredAttributes(dynamic_cast<ForeignObject *>(object), attribs);
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

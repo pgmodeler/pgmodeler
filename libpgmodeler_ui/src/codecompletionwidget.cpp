@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	name_list->setSortingEnabled(false);
 
 	persistent_chk=new QCheckBox(completion_wgt);
-	persistent_chk->setText(trUtf8("Make &persistent"));
-	persistent_chk->setToolTip(trUtf8("Makes the widget closable only by ESC key or mouse click on other controls."));
+	persistent_chk->setText(tr("Make &persistent"));
+	persistent_chk->setToolTip(tr("Makes the widget closable only by ESC key or mouse click on other controls."));
 	persistent_chk->setFocusPolicy(Qt::NoFocus);
 
 	QVBoxLayout *vbox=new QVBoxLayout(completion_wgt);
@@ -57,8 +57,8 @@ CodeCompletionWidget::CodeCompletionWidget(QPlainTextEdit *code_field_txt, bool 
 	db_model=nullptr;
 	setQualifyingLevel(nullptr);
 
-	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem(void)));
-	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip(void)));
+	connect(name_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(selectItem()));
+	connect(name_list, SIGNAL(currentRowChanged(int)), this, SLOT(showItemTooltip()));
 
 	connect(&popup_timer, &QTimer::timeout, [&](){
 		if(qualifying_level < 2)
@@ -116,7 +116,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 				{
 					setQualifyingLevel(nullptr);
 					this->show();
-					return(true);
+					return true;
 				}
 				else if(k_event->key()==Qt::Key_Space || k_event->key()==Qt::Key_Backspace || k_event->key()==Qt::Key_Delete)
 				{
@@ -130,7 +130,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 						 tc.selectedText().contains(completion_trigger))
 					{
 						event->ignore();
-						return(true);
+						return true;
 					}
 					else if(k_event->key()==Qt::Key_Space)
 					{
@@ -150,7 +150,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 			if(k_event->key()==Qt::Key_Escape)
 			{
 				this->close();
-				return(true);
+				return true;
 			}
 			//Filters the ENTER/RETURN press to close the code completion widget select the name
 			else if(k_event->key()==Qt::Key_Enter || k_event->key()==Qt::Key_Return)
@@ -173,7 +173,7 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 					this->show();
 				}
 
-				return(true);
+				return true;
 			}
 			//Filters other key press and redirects to the code input field
 			else if(k_event->key()!=Qt::Key_Up && k_event->key()!=Qt::Key_Down &&
@@ -184,12 +184,12 @@ bool CodeCompletionWidget::eventFilter(QObject *object, QEvent *event)
 
 				QCoreApplication::sendEvent(code_field_txt, k_event);
 				this->updateList();
-				return(true);
+				return true;
 			}
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void CodeCompletionWidget::configureCompletion(DatabaseModel *db_model, SyntaxHighlighter *syntax_hl, const QString &keywords_grp)
@@ -262,7 +262,7 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 		insertCustomItem(name, tooltip, QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 }
 
-void CodeCompletionWidget::clearCustomItems(void)
+void CodeCompletionWidget::clearCustomItems()
 {
 	custom_items.clear();
 }
@@ -306,7 +306,7 @@ void CodeCompletionWidget::populateNameList(vector<BaseObject *> &objects, QStri
 	name_list->sortItems();
 }
 
-void CodeCompletionWidget::show(void)
+void CodeCompletionWidget::show()
 {
 	prev_txt_cur=code_field_txt->textCursor();
 	this->updateList();
@@ -337,7 +337,7 @@ void CodeCompletionWidget::setQualifyingLevel(BaseObject *obj)
 	}
 }
 
-void CodeCompletionWidget::updateList(void)
+void CodeCompletionWidget::updateList()
 {
 	QListWidgetItem *item=nullptr;
 	QString pattern;
@@ -447,7 +447,7 @@ void CodeCompletionWidget::updateList(void)
 		for(int i=0; i < list.size(); i++)
 		{
 			item=new QListWidgetItem(QPixmap(PgModelerUiNs::getIconPath("keyword")), list[i]);
-			item->setToolTip(trUtf8("SQL Keyword"));
+			item->setToolTip(tr("SQL Keyword"));
 			name_list->addItem(item);
 		}
 
@@ -478,19 +478,19 @@ void CodeCompletionWidget::updateList(void)
 
 	if(name_list->count()==0)
 	{
-		name_list->addItem(trUtf8("(no items found.)"));
+		name_list->addItem(tr("(no items found.)"));
 		name_list->item(0)->setFlags(Qt::NoItemFlags);
 		QToolTip::hideText();
 	}
 	else
-		name_list->setItemSelected(name_list->item(0), true);
+		name_list->item(0)->setSelected(true);
 
 	//Sets the list position right below of text cursor
 	completion_wgt->move(code_field_txt->mapToGlobal(code_field_txt->cursorRect().topLeft() + QPoint(0,20)));
 	name_list->setFocus();
 }
 
-void CodeCompletionWidget::selectItem(void)
+void CodeCompletionWidget::selectItem()
 {
 	if(!name_list->selectedItems().isEmpty())
 	{
@@ -558,7 +558,7 @@ void CodeCompletionWidget::selectItem(void)
 		this->close();
 }
 
-void CodeCompletionWidget::showItemTooltip(void)
+void CodeCompletionWidget::showItemTooltip()
 {
 	QListWidgetItem *item=name_list->currentItem();
 
@@ -569,7 +569,7 @@ void CodeCompletionWidget::showItemTooltip(void)
 	}
 }
 
-void CodeCompletionWidget::close(void)
+void CodeCompletionWidget::close()
 {
 	name_list->clearSelection();
 	completion_wgt->close();

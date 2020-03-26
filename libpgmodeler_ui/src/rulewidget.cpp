@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,28 +28,25 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ru
 		Ui_RuleWidget::setupUi(this);
 
 		cond_expr_hl=new SyntaxHighlighter(cond_expr_txt, false, true);
-		cond_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		cond_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		command_hl=new SyntaxHighlighter(comando_txt, false, true);
-		command_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		command_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		command_cp=new CodeCompletionWidget(comando_txt);
 
 		commands_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
-		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
+		commands_tab->setHeaderLabel(tr("SQL command"),0);
 		commands_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigosql")),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
-		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
+		frame=generateInformationFrame(tr("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
 		rule_grid->addWidget(frame, rule_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
 		configureFormLayout(rule_grid, ObjectType::Rule);
 
-		EventType::getTypes(list);
-		event_cmb->addItems(list);
-
-		ExecutionType::getTypes(list);
-		exec_type_cmb->addItems(list);
+		event_cmb->addItems(EventType::getTypes());
+		exec_type_cmb->addItems(ExecutionType::getTypes());
 
 		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
@@ -110,7 +107,7 @@ void RuleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Bas
 	}
 }
 
-void RuleWidget::applyConfiguration(void)
+void RuleWidget::applyConfiguration()
 {
 	try
 	{

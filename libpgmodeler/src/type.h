@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 #include "role.h"
 #include "typeattribute.h"
 #include "operatorclass.h"
+#include "pgsqltypes/storagetype.h"
+#include "pgsqltypes/categorytype.h"
 
 class Type: public BaseObject {
 	private:
@@ -121,7 +123,7 @@ class Type: public BaseObject {
 		CanonicalFunc=7,
 		SubtypeDiffFunc=8;
 
-		Type(void);
+		Type();
 
 		//! \brief Sets the type name
 		void setName(const QString &name);
@@ -141,7 +143,7 @@ class Type: public BaseObject {
 		void removeAttribute(unsigned attrib_idx);
 
 		//! \brief Removes all attributes from the type (only for composite type)
-		void removeAttributes(void);
+		void removeAttributes();
 
 		//! \brief Adds an enumeration to the type (only for enumeration type)
 		void addEnumeration(const QString &enum_name);
@@ -150,7 +152,7 @@ class Type: public BaseObject {
 		void removeEnumeration(unsigned enum_idx);
 
 		//! \brief Removes all enumerations from the type (only for enumeration type)
-		void removeEnumerations(void);
+		void removeEnumerations();
 
 		//! \brief Sets on function to the type (only for base type)
 		void setFunction(unsigned func_id, Function *func);
@@ -194,25 +196,25 @@ class Type: public BaseObject {
 		//! \brief Sets the subtype operator class (only for range type)
 		void setSubtypeOpClass(OperatorClass *opclass);
 
-		PgSqlType getSubtype(void);
-		OperatorClass *getSubtypeOpClass(void);
+		PgSqlType getSubtype();
+		OperatorClass *getSubtypeOpClass();
 		TypeAttribute getAttribute(unsigned attrib_idx);
-		unsigned getAttributeCount(void);
+		unsigned getAttributeCount();
 		QString getEnumeration(unsigned idx_enum);
-		unsigned getEnumerationCount(void);
-		unsigned getConfiguration(void);
-		CategoryType getCategory(void);
-		bool isPreferred(void);
-		PgSqlType getLikeType(void);
+		unsigned getEnumerationCount();
+		unsigned getConfiguration();
+		CategoryType getCategory();
+		bool isPreferred();
+		PgSqlType getLikeType();
 		Function *getFunction(unsigned func_id);
-		unsigned getInternalLength(void);
-		bool isByValue(void);
-		bool isCollatable(void);
-		PgSqlType getAlignment(void);
-		StorageType getStorage(void);
-		QString getDefaultValue(void);
-		PgSqlType getElement(void);
-		char getDelimiter(void);
+		unsigned getInternalLength();
+		bool isByValue();
+		bool isCollatable();
+		PgSqlType getAlignment();
+		StorageType getStorage();
+		QString getDefaultValue();
+		PgSqlType getElement();
+		char getDelimiter();
 
 		/*! \brief Returns the SQL / XML definition for the type. If the boolean
 		 parameter is set the code definition is generated in a

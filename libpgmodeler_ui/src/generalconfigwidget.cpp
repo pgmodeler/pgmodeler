@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,17 +45,17 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	Ui_GeneralConfigWidget::setupUi(this);
 
 	line_numbers_cp=new ColorPickerWidget(1, this);
-	line_numbers_cp->setButtonToolTip(0, trUtf8("Line numbers' font color"));
+	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
 
 	line_numbers_bg_cp=new ColorPickerWidget(1, this);
-	line_numbers_bg_cp->setButtonToolTip(0, trUtf8("Line numbers' background color"));
+	line_numbers_bg_cp->setButtonToolTip(0, tr("Line numbers' background color"));
 
 	line_highlight_cp=new ColorPickerWidget(1, this);
-	line_highlight_cp->setButtonToolTip(0, trUtf8("Highlighted line color"));
+	line_highlight_cp->setButtonToolTip(0, tr("Highlighted line color"));
 
 	font_preview_txt=new NumberedTextEditor(this);
 	font_preview_txt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	font_preview_txt->setPlainText(trUtf8("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
+	font_preview_txt->setPlainText(tr("The little brown fox jumps over the lazy dog") + QString("\n\ttext with tab «") + QString("\n0123456789\n.()[]{};"));
 
 	QBoxLayout *layout=new QBoxLayout(QBoxLayout::LeftToRight);
 	QGridLayout *grid=dynamic_cast<QGridLayout *>(code_font_gb->layout());
@@ -69,20 +69,20 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	for(int i=0; i < count; i++)
 		paper_cmb->setItemData(i, QVariant(paper_ids[i]));
 
-	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity(void)));
+	connect(unity_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(convertMarginUnity()));
 	connect(autosave_interv_chk, SIGNAL(toggled(bool)), autosave_interv_spb, SLOT(setEnabled(bool)));
-	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize(void)));
+	connect(paper_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPaperSize()));
 	connect(font_size_spb, SIGNAL(valueChanged(double)), this, SLOT(updateFontPreview()));
 	connect(font_cmb, SIGNAL(currentFontChanged(QFont)), this, SLOT(updateFontPreview()));
 
 	connect(line_numbers_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_numbers_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(line_numbers_bg_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_numbers_bg_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(line_highlight_cp, SIGNAL(s_colorChanged(unsigned, QColor)), this, SLOT(updateFontPreview()));
-	connect(line_highlight_cp, SIGNAL(s_colorsChanged(void)), this, SLOT(updateFontPreview()));
+	connect(line_highlight_cp, SIGNAL(s_colorsChanged()), this, SLOT(updateFontPreview()));
 
 	connect(disp_line_numbers_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 	connect(hightlight_lines_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
@@ -138,66 +138,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
 	config_params[Attributes::Configuration][Attributes::LowVerbosity]=QString();
 
-	simp_obj_creation_ht=new HintTextWidget(simp_obj_creation_hint, this);
-	simp_obj_creation_ht->setText(simple_obj_creation_chk->statusTip());
-
-	confirm_validation_ht=new HintTextWidget(confirm_validation_hint, this);
-	confirm_validation_ht->setText(confirm_validation_chk->statusTip());
-
-	corner_move_ht=new HintTextWidget(corner_move_hint, this);
-	corner_move_ht->setText(corner_move_chk->statusTip());
-
-	save_last_pos_ht=new HintTextWidget(save_last_pos_hint, this);
-	save_last_pos_ht->setText(save_last_pos_chk->statusTip());
-
-	invert_rangesel_ht=new HintTextWidget(invert_rangesel_hint, this);
-	invert_rangesel_ht->setText(invert_rangesel_chk->statusTip());
-
-	disable_smooth_ht=new HintTextWidget(disable_smooth_hint, this);
-	disable_smooth_ht->setText(disable_smooth_chk->statusTip());
-
-	hide_ext_attribs_ht=new HintTextWidget(hide_ext_attribs_hint, this);
-	hide_ext_attribs_ht->setText(hide_ext_attribs_chk->statusTip());
-
-	hide_table_tags_ht=new HintTextWidget(hide_table_tags_hint, this);
-	hide_table_tags_ht->setText(hide_table_tags_chk->statusTip());
-
-	hide_rel_name_ht=new HintTextWidget(hide_rel_name_hint, this);
-	hide_rel_name_ht->setText(hide_rel_name_chk->statusTip());
-
-	code_completion_ht=new HintTextWidget(code_completion_hint, this);
-	code_completion_ht->setText(code_completion_chk->statusTip());
-
-	use_placeholders_ht=new HintTextWidget(use_placeholders_hint, this);
-	use_placeholders_ht->setText(use_placeholders_chk->statusTip());
-
-	min_obj_opacity_ht=new HintTextWidget(min_obj_opacity_hint, this);
-	min_obj_opacity_ht->setText(min_obj_opacity_spb->statusTip());
-
-	autosave_ht=new HintTextWidget(autosave_hint, this);
-	autosave_ht->setText(autosave_interv_chk->statusTip());
-
-	op_history_ht=new HintTextWidget(op_history_hint, this);
-	op_history_ht->setText(oplist_size_spb->statusTip());
-
-	ui_language_ht=new HintTextWidget(ui_language_hint, this);
-	ui_language_ht->setText(ui_language_cmb->statusTip());
-
-	grid_size_ht=new HintTextWidget(grid_size_hint, this);
-	grid_size_ht->setText(grid_size_spb->statusTip());
-
-	use_curved_lines_ht=new HintTextWidget(use_curved_lines_hint, this);
-	use_curved_lines_ht->setText(use_curved_lines_chk->statusTip());
-
-	attribs_per_page_ht=new HintTextWidget(attributes_per_page_hint, this);
-	attribs_per_page_ht->setText(attribs_per_page_spb->statusTip());
-
-	reduce_verbosity_ht = new HintTextWidget(low_verbosity_hint, this);
-	reduce_verbosity_ht->setText(low_verbosity_chk->statusTip());
-
-	escape_comments_ht = new HintTextWidget(escape_comments_hint, this);
-	escape_comments_ht->setText(escape_comments_chk->statusTip());
-
 	selectPaperSize();
 
 	QList<QCheckBox *> chk_boxes=this->findChildren<QCheckBox *>();
@@ -236,7 +176,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
 	}
 
-	confs_dir_edt->setText(GlobalAttributes::ConfigurationsDir);
+	confs_dir_edt->setText(GlobalAttributes::getConfigurationsDir());
 
 	connect(open_dir_tb, &QToolButton::clicked, [&](){
 		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
@@ -252,12 +192,12 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 #endif
 
 	//Retrieving the available UI dictionaries
-	QStringList langs = QDir(GlobalAttributes::LanguagesDir +
+	QStringList langs = QDir(GlobalAttributes::getLanguagesDir() +
 													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
 	langs.replaceInStrings(QString(".qm"), QString());
-	ui_language_cmb->addItem(trUtf8("System default"));
+	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
 	for(QString lang : langs)
@@ -271,7 +211,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	}
 }
 
-void GeneralConfigWidget::loadConfiguration(void)
+void GeneralConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -390,36 +330,36 @@ void GeneralConfigWidget::addConfigurationParam(const QString &param, const attr
 
 void GeneralConfigWidget::removeConfigurationParam(const QRegExp &param_reg)
 {
-  map<QString, attribs_map>::iterator itr, itr_end;
+	map<QString, attribs_map>::iterator itr, itr_end;
 
-  itr=config_params.begin();
-  itr_end=config_params.end();
+	itr=config_params.begin();
+	itr_end=config_params.end();
 
-  while(itr!=itr_end)
-  {
-	if(param_reg.exactMatch(itr->first))
+	while(itr!=itr_end)
 	{
-	  config_params.erase(itr);
-	  itr=config_params.begin();
-	  itr_end=config_params.end();
-	}
+		if(param_reg.exactMatch(itr->first))
+		{
+			config_params.erase(itr);
+			itr=config_params.begin();
+			itr_end=config_params.end();
+		}
 
-	itr++;
-  }
+		itr++;
+	}
 }
 
-map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> GeneralConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
 QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, const QString &param_name)
 {
   if(config_params.count(section_id) &&
 	 config_params[section_id].count(param_name))
-	return(config_params[section_id][param_name]);
+	return config_params[section_id][param_name];
   else
-	return(QString());
+	return QString();
 }
 
 void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
@@ -438,7 +378,7 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 {
 	if(!widget ||
 		 config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry] != Attributes::True)
-		return(false);
+		return false;
 
 	QString dlg_name = custom_wgt_name.isEmpty() ? widget->metaObject()->className() : custom_wgt_name;
 	dlg_name = dlg_name.toLower();
@@ -464,7 +404,7 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 		/* If the current window geometry doesn't fit the screen(s) geometry
 		 * the default geometry of the window is used */
 		if(!scr_contains_geom)
-			return(false);
+			return false;
 
 		if(wgt_st.maximized)
 		{
@@ -474,35 +414,28 @@ bool GeneralConfigWidget::restoreWidgetGeometry(QWidget *widget, const QString &
 		else
 			widget->setGeometry(wgt_st.geometry);
 
-		return(true);
+		return true;
 	}
 
-	return(false);
+	return false;
 }
 
-void GeneralConfigWidget::saveConfiguration(void)
+void GeneralConfigWidget::saveConfiguration()
 {
 	try
 	{
 		attribs_map attribs;
 		map<QString, attribs_map >::iterator itr, itr_end;
-		QString file_sch, root_dir, widget_sch;
+		QString file_sch, widget_sch;
 		int recent_mdl_idx = 0;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
-				 GlobalAttributes::DirSeparator;
+		file_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																														 Attributes::File +
+																														 GlobalAttributes::SchemaExt);
 
-		file_sch=root_dir +
-				 GlobalAttributes::SchemasDir +
-				 GlobalAttributes::DirSeparator +
-				 Attributes::File +
-				 GlobalAttributes::SchemaExt;
-
-		widget_sch=root_dir +
-				   GlobalAttributes::SchemasDir +
-				   GlobalAttributes::DirSeparator +
-				   Attributes::Widget +
-				   GlobalAttributes::SchemaExt;
+		widget_sch = GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																															Attributes::Widget +
+																															GlobalAttributes::SchemaExt);
 
 		config_params[Attributes::Configuration][Attributes::GridSize]=QString::number(grid_size_spb->value());
 		config_params[Attributes::Configuration][Attributes::OpListSize]=QString::number(oplist_size_spb->value());
@@ -581,13 +514,13 @@ void GeneralConfigWidget::saveConfiguration(void)
 			if((itr->first).contains(QRegExp(QString("(") + Attributes::File + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::File]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 			}
 			//Checking if the current attribute is a file to be stored in a <recent-models> tag
 			else if(recent_mdl_idx < MaxRecentModels && (itr->first).contains(QRegExp(QString("(") + Attributes::Recent + QString(")([0-9]+)"))))
 			{
 				config_params[Attributes::Configuration][Attributes::RecentModels]+=
-						schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
+						XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(file_sch, itr->second));
 
 				recent_mdl_idx++;
 			}
@@ -639,7 +572,7 @@ void GeneralConfigWidget::saveConfiguration(void)
 	}
 }
 
-void GeneralConfigWidget::applyConfiguration(void)
+void GeneralConfigWidget::applyConfiguration()
 {
 	int unit=unity_cmb->currentIndex();
 	QFont fnt;
@@ -699,7 +632,7 @@ void GeneralConfigWidget::applyConfiguration(void)
 	ModelExportForm::setLowVerbosity(low_verbosity_chk->isChecked());
 }
 
-void GeneralConfigWidget::restoreDefaults(void)
+void GeneralConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -717,7 +650,7 @@ void GeneralConfigWidget::restoreDefaults(void)
 	}
 }
 
-void GeneralConfigWidget::convertMarginUnity(void)
+void GeneralConfigWidget::convertMarginUnity()
 {
 	static int prev_unity=UnitMilimeters;
 	double conv_factor[]={1.0, 2.83, 0.04, 0.1},
@@ -740,7 +673,7 @@ void GeneralConfigWidget::convertMarginUnity(void)
 	prev_unity=unity_cmb->currentIndex();
 }
 
-void GeneralConfigWidget::updateFontPreview(void)
+void GeneralConfigWidget::updateFontPreview()
 {
 	QFont fnt;
 
@@ -751,7 +684,7 @@ void GeneralConfigWidget::updateFontPreview(void)
 	NumberedTextEditor::setLineNumbersVisible(disp_line_numbers_chk->isChecked());
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
-	NumberedTextEditor::setTabWidth(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
+	NumberedTextEditor::setTabDistance(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 
 	font_preview_txt->setReadOnly(false);
@@ -763,7 +696,7 @@ void GeneralConfigWidget::updateFontPreview(void)
 	setConfigurationChanged(true);
 }
 
-void GeneralConfigWidget::selectPaperSize(void)
+void GeneralConfigWidget::selectPaperSize()
 {
 	bool visible=paper_cmb->currentIndex()==paper_cmb->count()-1;
 
@@ -774,14 +707,14 @@ void GeneralConfigWidget::selectPaperSize(void)
 	height_spb->setVisible(visible);
 }
 
-void GeneralConfigWidget::selectSourceEditor(void)
+void GeneralConfigWidget::selectSourceEditor()
 {
 	QFileDialog sel_editor_dlg;
 
 	sel_editor_dlg.setFileMode(QFileDialog::ExistingFile);
-	sel_editor_dlg.setNameFilter(trUtf8("All files (*.*)"));
+	sel_editor_dlg.setNameFilter(tr("All files (*.*)"));
 	sel_editor_dlg.setModal(true);
-	sel_editor_dlg.setWindowTitle(trUtf8("Load file"));
+	sel_editor_dlg.setWindowTitle(tr("Load file"));
 	sel_editor_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 	sel_editor_dlg.exec();
 
@@ -789,10 +722,10 @@ void GeneralConfigWidget::selectSourceEditor(void)
 		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
 }
 
-void GeneralConfigWidget::resetDialogsSizes(void)
+void GeneralConfigWidget::resetDialogsSizes()
 {
 	Messagebox msg_box;
-	msg_box.show(trUtf8("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
+	msg_box.show(tr("This action will reset all dialogs to their default size and positions on the screen! Do you really want to proceed?"),
 						Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)

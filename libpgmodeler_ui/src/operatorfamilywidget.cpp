@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, ObjectType::OpFamily);
 
-	IndexingType::getTypes(types);
-	indexing_cmb->addItems(types);
+	indexing_cmb->addItems(IndexingType::getTypes());
 
 	setRequiredField(indexing_lbl);
 	fields_map[BaseObjectWidget::generateVersionsInterval(BaseObjectWidget::AfterVersion, PgSqlVersions::PgSqlVersion95)].push_back(indexing_lbl);
@@ -53,7 +52,7 @@ void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~(op_family->getIndexingType())));
 }
 
-void OperatorFamilyWidget::applyConfiguration(void)
+void OperatorFamilyWidget::applyConfiguration()
 {
 	try
 	{

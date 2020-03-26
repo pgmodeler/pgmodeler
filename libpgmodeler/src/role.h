@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class Role: public BaseObject {
 		MemberRole=20,
 		AdminRole=30;
 
-		Role(void);
+		Role();
 
 		//! \brief Sets one option for the role (Via OP_??? constants)
 		void setOption(unsigned op_type, bool value);
@@ -110,13 +110,13 @@ class Role: public BaseObject {
 		unsigned getRoleCount(unsigned role_type);
 
 		//! \brief Returns the connection limit for the role
-		unsigned getConnectionLimit(void);
+		unsigned getConnectionLimit();
 
 		//! \brief Returns the validity date for the role
-		QString getValidity(void);
+		QString getValidity();
 
 		//! \brief Returns the role password
-		QString getPassword(void);
+		QString getPassword();
 
 		//! \brief Returns the SQL / XML definition for the role
 		virtual QString getCodeDefinition(unsigned def_type) final;

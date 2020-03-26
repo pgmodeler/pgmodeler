@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "messagebox.h"
 #include "pgmodeleruins.h"
 
-const QString CrashHandlerForm::AnalysisMode=QString("-analysis-mode");
+const QString CrashHandlerForm::AnalysisMode("-analysis-mode");
 
 CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::WindowFlags f) : BugReportForm(parent, f)
 {
@@ -29,7 +29,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	QWidget *wgt=new QWidget;
 	QHBoxLayout *layout=new QHBoxLayout;
 
-	setWindowTitle(trUtf8("Crash Handler"));
+	setWindowTitle(tr("Crash Handler"));
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
@@ -41,12 +41,10 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	wgt->setLayout(layout);
 
 	logo_lbl->setPixmap(QPixmap(QString(":/imagens/imagens/crashhandler.png")));
-	report_twg->addTab(wgt, trUtf8("Stack trace"));
+	report_twg->addTab(wgt, tr("Stack trace"));
 
 	//Open for reading the stack trace file generated on the last crash
-	input.setFileName(GlobalAttributes::TemporaryDir +
-					  GlobalAttributes::DirSeparator +
-					  GlobalAttributes::StacktraceFile);
+	input.setFileName(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::StacktraceFile));
 	input.open(QFile::ReadOnly);
 
 	if(input.isOpen())
@@ -56,9 +54,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 		//Removes the stack trace file
 		QDir stack_file;
-		stack_file.remove(GlobalAttributes::TemporaryDir +
-						  GlobalAttributes::DirSeparator +
-						  GlobalAttributes::StacktraceFile);
+		stack_file.remove(GlobalAttributes::getTemporaryFilePath(GlobalAttributes::StacktraceFile));
 
 		//Shows the stacktrace loaded on the widget
 		stack_txt->setPlainText(buf);
@@ -73,7 +69,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	layout->setContentsMargins(0, 0, 0, 0);
 
 	input_lbl=new QLabel(input_wgt);
-	input_lbl->setText(trUtf8("Input:"));
+	input_lbl->setText(tr("Input:"));
 	layout->addWidget(input_lbl);
 
 	input_edt=new QLineEdit(input_wgt);
@@ -86,7 +82,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	load_tb->setSizePolicy(output_tb->sizePolicy());
 	load_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	load_tb->setIconSize(output_tb->iconSize());
-	load_tb->setToolTip(trUtf8("Load report file for analysis"));
+	load_tb->setToolTip(tr("Load report file for analysis"));
 	layout->addWidget(load_tb);
 
 	save_tb=new QToolButton(input_wgt);
@@ -94,7 +90,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	save_tb->setSizePolicy(output_tb->sizePolicy());
 	save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
 	save_tb->setIconSize(output_tb->iconSize());
-	save_tb->setToolTip(trUtf8("Save the attached model file on the filesystem"));
+	save_tb->setToolTip(tr("Save the attached model file on the filesystem"));
 	attach_wgt->layout()->addWidget(save_tb);
 
 	report_tab_lt->removeWidget(details_gb);
@@ -108,8 +104,8 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 
 	setAnalysisMode(analysis_mode);
 
-	connect(load_tb, SIGNAL(clicked(void)), this, SLOT(loadReport(void)));
-	connect(save_tb, SIGNAL(clicked(void)), this, SLOT(saveModel(void)));
+	connect(load_tb, SIGNAL(clicked()), this, SLOT(loadReport()));
+	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveModel()));
 }
 
 void CrashHandlerForm::loadReport(const QString &filename)
@@ -165,14 +161,14 @@ void CrashHandlerForm::loadReport(const QString &filename)
 	}
 }
 
-void CrashHandlerForm::loadReport(void)
+void CrashHandlerForm::loadReport()
 {
 	QFileDialog file_dlg;
 
 	try
 	{
-		file_dlg.setNameFilter(trUtf8("pgModeler bug report (*.bug);;All files (*.*)"));
-		file_dlg.setWindowTitle(trUtf8("Load report"));
+		file_dlg.setNameFilter(tr("pgModeler bug report (*.bug);;All files (*.*)"));
+		file_dlg.setWindowTitle(tr("Load report"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
@@ -189,15 +185,15 @@ void CrashHandlerForm::loadReport(void)
 	}
 }
 
-void CrashHandlerForm::saveModel(void)
+void CrashHandlerForm::saveModel()
 {
 	QFileDialog file_dlg;
 
 	try
 	{
 		file_dlg.setDefaultSuffix(QString("dbm"));
-		file_dlg.setWindowTitle(trUtf8("Save model"));
-		file_dlg.setNameFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
+		file_dlg.setWindowTitle(tr("Save model"));
+		file_dlg.setNameFilter(tr("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.setModal(true);
@@ -237,21 +233,21 @@ void CrashHandlerForm::setAnalysisMode(bool value)
 
 	if(value)
 	{
-		title_lbl->setText(trUtf8("Crash handler"));
-		msg_lbl->setText(trUtf8("Bug report analysis mode activated."));
+		title_lbl->setText(tr("Crash handler"));
+		msg_lbl->setText(tr("Bug report analysis mode activated."));
 	}
 	else
 	{
-		title_lbl->setText(trUtf8("Oops! pgModeler just crashed!"));
-		msg_lbl->setText(trUtf8("We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software."));
+		title_lbl->setText(tr("Oops! pgModeler just crashed!"));
+		msg_lbl->setText(tr("We apologize for what happened! It is clear that a nasty bug caused that. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software."));
 	}
 }
 
-QByteArray CrashHandlerForm::generateReportBuffer(void)
+QByteArray CrashHandlerForm::generateReportBuffer()
 {
 	QByteArray buf=BugReportForm::generateReportBuffer();
 	buf.append(stack_txt->toPlainText().toUtf8());
 	buf.append(CharDelimiter);
 
-	return(buf);
+	return buf;
 }

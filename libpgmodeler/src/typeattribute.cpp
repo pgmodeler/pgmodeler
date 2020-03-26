@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "typeattribute.h"
 
-TypeAttribute::TypeAttribute(void)
+TypeAttribute::TypeAttribute()
 {
 	obj_type=ObjectType::TypeAttribute;
 }
@@ -29,15 +29,15 @@ void TypeAttribute::setType(PgSqlType type)
 	this->type=type;
 }
 
-PgSqlType TypeAttribute::getType(void)
+PgSqlType TypeAttribute::getType()
 {
-	return(type);
+	return type;
 }
 
 QString TypeAttribute::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::Name]=BaseObject::formatName(obj_name);
@@ -54,7 +54,7 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 void TypeAttribute::operator = (const TypeAttribute &tpattrib)

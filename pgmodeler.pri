@@ -61,7 +61,7 @@ linux {
   # The default prefix is /usr/local
   !defined(PREFIX, var):        PREFIX = /usr/local
   !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
-  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/lib/pgmodeler/bin
+  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
   !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
   !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
@@ -72,7 +72,8 @@ linux {
   !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
 
   # Specifies where to find the libraries at runtime
-  QMAKE_RPATHDIR += $$PRIVATELIBDIR
+  RELATIVE_PRIVATELIBDIR = $$relative_path($$PRIVATELIBDIR, $$BINDIR)
+  QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\' -Wl,-rpath,\'\$$ORIGIN/$$RELATIVE_PRIVATELIBDIR\'"
 
   # Forcing the display of some warnings
   CONFIG(debug, debug|release): QMAKE_CXXFLAGS += "-Wall -Wextra -Wuninitialized"
@@ -103,7 +104,7 @@ macx {
   CONFIG -= app_bundle
 
   # The default prefix is ./build/pgmodeler.app/Contents
-  !defined(PREFIX, var):        PREFIX = /Applications/pgmodeler.app/Contents
+  !defined(PREFIX, var):        PREFIX = /Applications/pgModeler.app/Contents
   !defined(BINDIR, var):        BINDIR = $$PREFIX/MacOS
   !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$BINDIR
   !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/Frameworks
@@ -157,10 +158,10 @@ macx {
 }
 
 windows {
-  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/msys_64/mingw64/bin/libpq.dll
-  !defined(PGSQL_INC, var): PGSQL_INC = C:/msys_64/mingw64/include
-  !defined(XML_INC, var): XML_INC = C:/msys_64/mingw64/include/libxml2
-  !defined(XML_LIB, var): XML_LIB = C:/msys_64/mingw64/bin/libxml2-2.dll
+  !defined(PGSQL_LIB, var): PGSQL_LIB = C:/msys64/mingw64/bin/libpq.dll
+  !defined(PGSQL_INC, var): PGSQL_INC = C:/msys64/mingw64/include
+  !defined(XML_INC, var): XML_INC = C:/msys64/mingw64/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = C:/msys64/mingw64/bin/libxml2-2.dll
 
   # Workaround to solve bug of timespec struct on MingW + PostgreSQL < 9.4
   QMAKE_CXXFLAGS+="-DHAVE_STRUCT_TIMESPEC"

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "schema.h"
 
-Schema::Schema(void)
+Schema::Schema()
 {
 	obj_type=ObjectType::Schema;
 	fill_color=QColor(225,225,225, 80);
@@ -46,9 +46,9 @@ void Schema::setFillColor(const QColor &color)
 	this->fill_color=color;
 }
 
-QColor Schema::getFillColor(void)
+QColor Schema::getFillColor()
 {
-	return(fill_color);
+	return fill_color;
 }
 
 void Schema::setRectVisible(bool value)
@@ -57,20 +57,20 @@ void Schema::setRectVisible(bool value)
 	rect_visible=value;
 }
 
-bool Schema::isRectVisible(void)
+bool Schema::isRectVisible()
 {
-	return(rect_visible);
+	return rect_visible;
 }
 
 QString Schema::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::FillColor]=fill_color.name();
 	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
 	setFadedOutAttribute();
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }

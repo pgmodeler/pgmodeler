@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 #include "baseobject.h"
 #include "function.h"
+#include "pgsqltypes/eventtriggertype.h"
 
 class EventTrigger: public BaseObject {
 	private:
@@ -43,7 +44,7 @@ class EventTrigger: public BaseObject {
 		map<QString, QStringList> filter;
 
 	public:
-		EventTrigger(void);
+		EventTrigger();
 
 		void setEvent(EventTriggerType evnt_type);
 		void setFunction(Function *func);
@@ -51,10 +52,10 @@ class EventTrigger: public BaseObject {
 		void setFilter(const QString &variable, const QString &value);
 
 		void removeFilter(const QString &variable);
-		void clearFilter(void);
+		void clearFilter();
 
-		EventTriggerType getEvent(void);
-		Function *getFunction(void);
+		EventTriggerType getEvent();
+		Function *getFunction();
 		QStringList getFilter(const QString &variable);
 
 		virtual QString getCodeDefinition(unsigned def_type) final;

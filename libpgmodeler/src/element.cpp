@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "element.h"
 
-Element::Element(void)
+Element::Element()
 {
 	column=nullptr;
 	operator_class=nullptr;
@@ -63,9 +63,9 @@ void Element::setSortingEnabled(bool value)
 	sorting_enabled=value;
 }
 
-bool Element::isSortingEnabled(void)
+bool Element::isSortingEnabled()
 {
-	return(sorting_enabled);
+	return sorting_enabled;
 }
 
 bool Element::getSortingAttribute(unsigned attrib)
@@ -73,22 +73,22 @@ bool Element::getSortingAttribute(unsigned attrib)
 	if(attrib > NullsFirst)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(sorting_attibs[attrib]);
+	return sorting_attibs[attrib];
 }
 
-Column *Element::getColumn(void)
+Column *Element::getColumn()
 {
-	return(column);
+	return column;
 }
 
-QString Element::getExpression(void)
+QString Element::getExpression()
 {
-	return(expression);
+	return expression;
 }
 
-OperatorClass *Element::getOperatorClass(void)
+OperatorClass *Element::getOperatorClass()
 {
-	return(operator_class);
+	return operator_class;
 }
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
@@ -117,7 +117,7 @@ void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 
 bool Element::isEqualsTo(Element &elem)
 {
-  return(this->column == elem.column &&
+  return (this->column == elem.column &&
 		 this->expression == elem.expression &&
 		 this->operator_class == elem.operator_class &&
 		 this->sorting_enabled == elem.sorting_enabled &&
@@ -127,10 +127,10 @@ bool Element::isEqualsTo(Element &elem)
 
 bool Element::operator == (Element &elem)
 {
-  return(isEqualsTo(elem));
+	return isEqualsTo(elem);
 }
 
 bool Element::operator == (const Element &elem)
 {
-  return(isEqualsTo(const_cast<Element &>(elem)));
+	return isEqualsTo(const_cast<Element &>(elem));
 }

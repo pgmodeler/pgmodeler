@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,8 @@
 
 #include "ui_relationshipconfigwidget.h"
 #include "baseconfigwidget.h"
-#include "pgsqltypes.h"
 #include "syntaxhighlighter.h"
 #include "relationshipview.h"
-#include "hinttextwidget.h"
 
 class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::RelationshipConfigWidget {
 	private:
@@ -40,25 +38,23 @@ class RelationshipConfigWidget:  public BaseConfigWidget, public Ui::Relationshi
 
 		map<QString, attribs_map> patterns;
 
-		HintTextWidget *fk_to_pk_ht, *center_pnts_ht, *tab_edges_ht, *crows_foot_ht;
-
 		void hideEvent(QHideEvent *);
 
 	public:
 		RelationshipConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration(void);
-		void loadConfiguration(void);
-		static map<QString, attribs_map> getConfigurationParams(void);
+		void saveConfiguration();
+		void loadConfiguration();
+		static map<QString, attribs_map> getConfigurationParams();
 
 	public slots:
-		void applyConfiguration(void);
-		void restoreDefaults(void);
+		void applyConfiguration();
+		void restoreDefaults();
 
 	private slots:
-		void fillNamePatterns(void);
-		void updatePattern(void);
-		void enableConnModePreview(void);
+		void fillNamePatterns();
+		void updatePattern();
+		void enableConnModePreview();
 
 };
 

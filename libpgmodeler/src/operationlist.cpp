@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,27 +35,27 @@ OperationList::OperationList(DatabaseModel *model)
 	operations.reserve(max_size);
 }
 
-OperationList::~OperationList(void)
+OperationList::~OperationList()
 {
 	removeOperations();
 }
 
-unsigned OperationList::getCurrentSize(void)
+unsigned OperationList::getCurrentSize()
 {
-	return(operations.size());
+	return operations.size();
 }
 
-unsigned OperationList::getMaximumSize(void)
+unsigned OperationList::getMaximumSize()
 {
-	return(max_size);
+	return max_size;
 }
 
-int OperationList::getCurrentIndex(void)
+int OperationList::getCurrentIndex()
 {
-	return(current_index);
+	return current_index;
 }
 
-void OperationList::startOperationChain(void)
+void OperationList::startOperationChain()
 {
 	/* If the chaining is started and the user try it initializes
 		again, the earlier chaining is finished */
@@ -67,7 +67,7 @@ void OperationList::startOperationChain(void)
 	next_op_chain=Operation::ChainStart;
 }
 
-void OperationList::finishOperationChain(void)
+void OperationList::finishOperationChain()
 {
 	/* If the chain is not ignored indicates that the next
 		element of the list no longer will be part of chaining */
@@ -101,10 +101,10 @@ void OperationList::ignoreOperationChain(bool value)
 	ignore_chain=value;
 }
 
-bool OperationList::isOperationChainStarted(void)
+bool OperationList::isOperationChainStarted()
 {
-	return(next_op_chain==Operation::ChainStart ||
-		   next_op_chain==Operation::ChainMiddle);
+	return (next_op_chain==Operation::ChainStart ||
+					next_op_chain==Operation::ChainMiddle);
 }
 
 bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
@@ -118,22 +118,22 @@ bool OperationList::isObjectRegistered(BaseObject *object, unsigned op_type)
 		itr++;
 	}
 
-	return(registered);
+	return registered;
 }
 
-bool OperationList::isRedoAvailable(void)
+bool OperationList::isRedoAvailable()
 {
 	/* The redo operation only can be performed
 		if the current index from the list of operations is at most
 		the penultimate element and the list can not be empty */
-	return(!operations.empty() && current_index < static_cast<int>(operations.size()));
+	return (!operations.empty() && current_index < static_cast<int>(operations.size()));
 }
 
-bool OperationList::isUndoAvailable(void)
+bool OperationList::isUndoAvailable()
 {
 	/* For the undo operation be performed is
 		enough that the list of operations is not empty */
-	return(!operations.empty() && current_index > 0);
+	return (!operations.empty() && current_index > 0);
 }
 
 void OperationList::setMaximumSize(unsigned max)
@@ -186,7 +186,7 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 	}
 }
 
-void OperationList::removeOperations(void)
+void OperationList::removeOperations()
 {
 	BaseObject *object=nullptr;
 	TableObject *tab_obj=nullptr;
@@ -205,7 +205,7 @@ void OperationList::removeOperations(void)
 		if(!oper->isOperationValid())
 			invalid_objs.push_back(oper->getPoolObject());
 
-		delete(oper);
+		delete oper;
 		operations.pop_back();
 	}
 
@@ -240,7 +240,7 @@ void OperationList::removeOperations(void)
 				}
 
 				unallocated_objs[object]=true;
-				delete(object);
+				delete object;
 			}
 			else if(tab_obj && unallocated_objs.count(tab_obj)==0)
 			{
@@ -252,7 +252,7 @@ void OperationList::removeOperations(void)
 						(tab && unallocated_objs.count(tab)==0 && tab->getObjectIndex(tab_obj) < 0))
 				{
 					unallocated_objs[tab_obj]=true;
-					delete(tab_obj);
+					delete tab_obj;
 				}
 			}
 		}
@@ -265,7 +265,7 @@ void OperationList::removeOperations(void)
 	unallocated_objs.clear();
 }
 
-void OperationList::validateOperations(void)
+void OperationList::validateOperations()
 {
 	vector<Operation *>::iterator itr, itr_end;
 	Operation *oper=nullptr;
@@ -283,7 +283,7 @@ void OperationList::validateOperations(void)
 		{
 			//Remove the operation
 			operations.erase(itr);
-			delete(oper);
+			delete oper;
 			itr=operations.begin();
 			itr_end=operations.end();
 		}
@@ -307,7 +307,7 @@ bool OperationList::isObjectOnPool(BaseObject *object)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
 void OperationList::removeFromPool(unsigned obj_idx)
@@ -483,14 +483,14 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		current_index=operations.size();
 
 		//Returns the last operation position as operation's ID
-		return(operations.size()-1);
+		return operations.size() -1;
 	}
 	catch(Exception &e)
 	{
 		if(operation)
 		{
 			removeFromPool(object_pool.size()-1);
-			delete(operation);
+			delete operation;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
@@ -519,11 +519,11 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
 	else
 	{
 		obj_type=ObjectType::BaseObject;
-		obj_name=trUtf8("(invalid object)");
+		obj_name=tr("(invalid object)");
 	}
 }
 
-unsigned OperationList::getChainSize(void)
+unsigned OperationList::getChainSize()
 {
 	int i=current_index-1;
 	unsigned size=0;
@@ -561,10 +561,10 @@ unsigned OperationList::getChainSize(void)
 		}
 	}
 
-	return(size);
+	return size;
 }
 
-void OperationList::undoOperation(void)
+void OperationList::undoOperation()
 {
 	if(isUndoAvailable())
 	{
@@ -623,7 +623,7 @@ void OperationList::undoOperation(void)
 	}
 }
 
-void OperationList::redoOperation(void)
+void OperationList::redoOperation()
 {
 	if(isRedoAvailable())
 	{
@@ -927,7 +927,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 	}
 }
 
-void OperationList::removeLastOperation(void)
+void OperationList::removeLastOperation()
 {
 	if(!operations.empty())
 	{

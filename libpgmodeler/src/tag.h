@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class Tag: public BaseObject {
 		BorderColor=2,
 		ColorCount=3;
 
-		Tag(void);
+		Tag();
 
 		/*! \brief Set the tag name. Different from regular database model object there is no rule
 	when setting the name. The only exception is that the name cannot be greater than

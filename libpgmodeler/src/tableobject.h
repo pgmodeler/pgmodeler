@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,13 +65,13 @@ class TableObject: public BaseObject {
 		void setDeclaredInTable(bool value);
 
 	public:
-		TableObject(void);
+		TableObject();
 
 		//! \brief Defines the parent table for the object
 		virtual void setParentTable(BaseTable *table);
 
 		//! \brief Returns the object parent table
-		BaseTable *getParentTable(void);
+		BaseTable *getParentTable();
 
 		/*! \brief This method is purely virtual to force the derived classes
 	overload this method. This also makes class TableObject
@@ -83,19 +83,19 @@ class TableObject: public BaseObject {
 		virtual QString getSignature(bool format = true);
 
 		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
-		bool isAddedByLinking(void);
+		bool isAddedByLinking();
 
 		//! \brief Returns whether the object was added by generalization
-		bool isAddedByGeneralization(void);
+		bool isAddedByGeneralization();
 
 		//! \brief Returns whether the object was added by copy relationship
-		bool isAddedByCopy(void);
+		bool isAddedByCopy();
 
 		/*! \brief Returns whether the object was added by relationship (covering all the
 		 possible relationship types) */
-		bool isAddedByRelationship(void);
+		bool isAddedByRelationship();
 
-		bool isDeclaredInTable(void);
+		bool isDeclaredInTable();
 
 		//! \brief Returns if the passed type is a table child object (column, constraint, index, rule, trigger)
 		static bool isTableObject(ObjectType type);

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ const vector<QString> ModelsDiffHelper::ObjectsIgnoredTags = {
 	Attributes::Role, Attributes::Tablespace, Attributes::Collation,
 	Attributes::Position,	Attributes::AppendedSql,	Attributes::PrependedSql };
 
-ModelsDiffHelper::ModelsDiffHelper(void)
+ModelsDiffHelper::ModelsDiffHelper()
 {
 	diff_canceled=false;
 	pgsql_version=PgSqlVersions::DefaulVersion;
@@ -51,7 +51,7 @@ ModelsDiffHelper::ModelsDiffHelper(void)
 	diff_opts[OptDropMissingColsConstr]=false;
 }
 
-ModelsDiffHelper::~ModelsDiffHelper(void)
+ModelsDiffHelper::~ModelsDiffHelper()
 {
 	destroyTempObjects();
 }
@@ -72,7 +72,7 @@ void ModelsDiffHelper::setPgSQLVersion(const QString pgsql_ver)
 	this->pgsql_version=pgsql_ver;
 }
 
-void ModelsDiffHelper::resetDiffCounter(void)
+void ModelsDiffHelper::resetDiffCounter()
 {  
 	diffs_counter[ObjectsDiffInfo::AlterObject]=0;
 	diffs_counter[ObjectsDiffInfo::DropObject]=0;
@@ -80,9 +80,9 @@ void ModelsDiffHelper::resetDiffCounter(void)
 	diffs_counter[ObjectsDiffInfo::IgnoreObject]=0;
 }
 
-QString ModelsDiffHelper::getDiffDefinition(void)
+QString ModelsDiffHelper::getDiffDefinition()
 {
-	return(diff_def);
+	return diff_def;
 }
 
 void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_model)
@@ -96,10 +96,10 @@ unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 	if(diff_type >= ObjectsDiffInfo::NoDifference)
 		throw Exception(ErrorCode::RefElementInvalidIndex ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(diffs_counter[diff_type]);
+	return diffs_counter[diff_type];
 }
 
-void ModelsDiffHelper::diffModels(void)
+void ModelsDiffHelper::diffModels()
 {
 	try
 	{
@@ -128,7 +128,7 @@ void ModelsDiffHelper::diffModels(void)
 	resetDiffCounter();
 }
 
-void ModelsDiffHelper::cancelDiff(void)
+void ModelsDiffHelper::cancelDiff()
 {
 	diff_canceled=true;
 }
@@ -257,7 +257,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 					 (diff_type!=ObjectsDiffInfo::DropObject)))
 			{
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-															 trUtf8("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+															 tr("Processing object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 															 object->getObjectType());
 
 				//Processing objects that are not database, table child object (they are processed further)
@@ -377,7 +377,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			{
 				generateDiffInfo(ObjectsDiffInfo::IgnoreObject, object);
 				emit s_progressUpdated(prog + ((idx/static_cast<double>(obj_order.size())) * factor),
-									   trUtf8("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
+									   tr("Skipping object `%1' (%2)...").arg(object->getSignature()).arg(object->getTypeName()),
 									   object->getObjectType());
 
 				if(diff_canceled)
@@ -460,7 +460,7 @@ BaseObject *ModelsDiffHelper::getRelNNTable(const QString &obj_name, DatabaseMod
 		}
 	}
 
-	return(tab);
+	return tab;
 }
 
 void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object)
@@ -619,10 +619,10 @@ bool ModelsDiffHelper::isDiffInfoExists(unsigned diff_type, BaseObject *object, 
 		}
 	}
 
-	return(found_diff);
+	return found_diff;
 }
 
-void ModelsDiffHelper::processDiffInfos(void)
+void ModelsDiffHelper::processDiffInfos()
 {
 	BaseObject *object=nullptr;
 	Relationship *rel=nullptr;
@@ -649,7 +649,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 		BaseObject::setPgSQLVersion(pgsql_version);
 
 		if(!diff_infos.empty())
-			emit s_progressUpdated(0, trUtf8("Processing diff infos..."));
+			emit s_progressUpdated(0, tr("Processing diff infos..."));
 
 		//Reuniting the schema names to inject a SET search_path command
 		for(auto &schema : *imported_model->getObjectList(ObjectType::Schema))
@@ -677,7 +677,7 @@ void ModelsDiffHelper::processDiffInfos(void)
 			col=dynamic_cast<Column *>(object);
 
 			emit s_progressUpdated((idx++/static_cast<double>(diff_infos.size())) * 100,
-								   trUtf8("Processing `%1' info for object `%2' (%3)...")
+								   tr("Processing `%1' info for object `%2' (%3)...")
 								   .arg(diff.getDiffTypeString()).arg(object->getSignature()).arg(object->getTypeName()),
 								   obj_type);
 
@@ -925,15 +925,14 @@ void ModelsDiffHelper::processDiffInfos(void)
 
 			//Generating the whole diff buffer
 			schparser.setPgSQLVersion(pgsql_version);
-			diff_def=schparser.getCodeDefinition(GlobalAttributes::SchemasRootDir + GlobalAttributes::DirSeparator +
-												 GlobalAttributes::AlterSchemaDir + GlobalAttributes::DirSeparator +
-												 Attributes::Diff + GlobalAttributes::SchemaExt, attribs);
+			diff_def=schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::AlterSchemaDir, Attributes::Diff),
+																					 attribs);
 		}
 
 		if(diff_def.isEmpty())
-			emit s_progressUpdated(100, trUtf8("No differences between the model and database."));
+			emit s_progressUpdated(100, tr("No differences between the model and database."));
 		else
-			emit s_progressUpdated(100, trUtf8("Preparing diff code..."));
+			emit s_progressUpdated(100, tr("Preparing diff code..."));
 
 		//Restoring the global PostgreSQL version
 		BaseObject::setPgSQLVersion(curr_pgsql_ver);
@@ -981,7 +980,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 				cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 		}
 
-		return(cmd);
+		return cmd;
 	}
 	catch(Exception &e)
 	{
@@ -989,7 +988,7 @@ QString ModelsDiffHelper::getCodeDefinition(BaseObject *object, bool drop_cmd)
 	}
 }
 
-void ModelsDiffHelper::destroyTempObjects(void)
+void ModelsDiffHelper::destroyTempObjects()
 {
 	BaseObject *tmp_obj=nullptr;
 
@@ -997,7 +996,7 @@ void ModelsDiffHelper::destroyTempObjects(void)
 	{
 		tmp_obj=tmp_objects.back();
 		tmp_objects.pop_back();
-		delete(tmp_obj);
+		delete tmp_obj;
 	}
 
 	diff_infos.clear();

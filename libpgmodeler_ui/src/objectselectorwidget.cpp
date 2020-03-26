@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 		if(install_highlighter)
 		{
 			obj_name_hl=new SyntaxHighlighter(obj_name_txt, true);
-			obj_name_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+			obj_name_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		}
 		else
 		{
@@ -68,8 +68,8 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 			this->adjustSize();
 		}
 
-		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
-		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
+		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView()));
+		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
 		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 
 		obj_name_txt->installEventFilter(this);
@@ -90,16 +90,16 @@ bool ObjectSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 		if(focus_evnt->reason() == Qt::MouseFocusReason)
 		{
 			showObjectView();
-			return(true);
+			return true;
 		}
 	}
 
-	return(QWidget::eventFilter(obj, evnt));
+	return QWidget::eventFilter(obj, evnt);
 }
 
-ObjectSelectorWidget::~ObjectSelectorWidget(void)
+ObjectSelectorWidget::~ObjectSelectorWidget()
 {
-	delete(obj_view_wgt);
+	delete obj_view_wgt;
 }
 
 void ObjectSelectorWidget::enableObjectCreation(bool value)
@@ -107,14 +107,14 @@ void ObjectSelectorWidget::enableObjectCreation(bool value)
 	obj_view_wgt->enableObjectCreation(value);
 }
 
-BaseObject *ObjectSelectorWidget::getSelectedObject(void)
+BaseObject *ObjectSelectorWidget::getSelectedObject()
 {
-	return(selected_obj);
+	return selected_obj;
 }
 
-QString ObjectSelectorWidget::getSelectedObjectName(void)
+QString ObjectSelectorWidget::getSelectedObjectName()
 {
-	return(selected_obj->getSignature());
+	return selected_obj->getSignature();
 }
 
 void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
@@ -176,7 +176,7 @@ void ObjectSelectorWidget::showSelectedObject(BaseObject *obj_sel, bool)
 		setSelectedObject(obj_sel);
 }
 
-void ObjectSelectorWidget::clearSelector(void)
+void ObjectSelectorWidget::clearSelector()
 {
 	this->selected_obj=nullptr;
 	obj_name_txt->clear();
@@ -185,7 +185,7 @@ void ObjectSelectorWidget::clearSelector(void)
 	emit s_selectorChanged(false);
 }
 
-void ObjectSelectorWidget::showObjectView(void)
+void ObjectSelectorWidget::showObjectView()
 {
 	obj_name_txt->clearFocus();
 
@@ -193,7 +193,7 @@ void ObjectSelectorWidget::showObjectView(void)
 		obj_view_wgt->setObjectVisible(sel_obj_types[i], true);
 
 	if(sel_obj_types.size()==1)
-		obj_view_wgt->setWindowTitle(trUtf8("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
+		obj_view_wgt->setWindowTitle(tr("Select %1").arg(BaseObject::getTypeName(sel_obj_types[0]).toLower()));
 
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,13 +53,13 @@ class BaseTable: public BaseGraphicObject {
 		static constexpr unsigned AttribsSection = 0,
 		ExtAttribsSection = 1;
 
-		BaseTable(void);
+		BaseTable();
 
 		virtual void setTag(Tag *tag);
-		virtual Tag *getTag(void);
+		virtual Tag *getTag();
 
 		//! \brief Returns true if the provided table is considered a base table (Table, ForeignTable, View)
-		static bool isBaseTable(ObjectType obj_type);
+		static bool isBaseTable(ObjectType obj_tp);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
 		virtual void addObject(BaseObject *obj, int obj_idx=-1)=0;
@@ -112,20 +112,22 @@ class BaseTable: public BaseGraphicObject {
 		 * the setModified(true) should be called */
 		void setCollapseMode(CollapseMode coll_mode);
 
-		CollapseMode getCollapseMode(void);
+		CollapseMode getCollapseMode();
 
 		/*! \brief Defines the pagination enabling for the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
 		void setPaginationEnabled(bool value);
 
-		bool isPaginationEnabled(void);
+		bool isPaginationEnabled();
+
+		virtual void setZValue(int z_value);
 
 		/*! \brief Defines the current page visible on the table. Calling this method direclty
 		 * will not update the geometry of the graphical representation of this object. For that,
 		 * the setModified(true) should be called */
 		void setCurrentPage(unsigned section_id, unsigned value);
-		void resetCurrentPages(void);
+		void resetCurrentPages();
 		unsigned getCurrentPage(unsigned section_id);
 
 		/*! \brief Returns the data dictionary definition of the table (in HTML format).

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #define COLLATION_H
 
 #include "baseobject.h"
-#include "pgsqltypes.h"
+#include "pgsqltypes/encodingtype.h"
 
 class Collation : public BaseObject {
 	private:
@@ -51,7 +51,7 @@ class Collation : public BaseObject {
 		static constexpr unsigned LcCtype=0,
 		LcCollate=1;
 
-		Collation(void);
+		Collation();
 
 		/*! \brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
@@ -68,9 +68,9 @@ class Collation : public BaseObject {
 		//! \brief Defines the base encoding for the collation
 		void setEncoding(EncodingType encoding);
 
-		QString getLocale(void);
+		QString getLocale();
 		QString getLocalization(unsigned lc_id);
-		EncodingType getEncoding(void);
+		EncodingType getEncoding();
 
 		//! \brief Returns the SQL / XML definition for the collation.
 		virtual QString getCodeDefinition(unsigned def_type) final;

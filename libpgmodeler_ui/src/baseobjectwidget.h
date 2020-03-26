@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 #include "ui_baseobjectwidget.h"
 #include "pgsqltypewidget.h"
 #include "pgmodeleruins.h"
-#include "hinttextwidget.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -55,8 +54,6 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		bool object_protected;
 
 		QHBoxLayout *misc_btns_lt;
-
-		HintTextWidget *alias_ht;
 
 		//! \brief Store the kind of object being handled by the widget (configured in the constructor)
 		ObjectType handled_obj_type;
@@ -111,14 +108,14 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		/*! \brief Starts a object configuration, alocating a new one if necessary, registering
 			the object on the operation list. This method doens't applies to database model edition */
 		template<class Class>
-		void startConfiguration(void);
+		void startConfiguration();
 		
 		/*! \brief Finishes the edition / creation of object, registering it on the operation list
 			and inserts is on the parent object */
-		void finishConfiguration(void);
+		void finishConfiguration();
 			
 		//! \brief Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
-		virtual void applyConfiguration(void);
+		virtual void applyConfiguration();
 		
 		void showEvent(QShowEvent *);
 		
@@ -136,7 +133,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		void configureTabOrder(vector<QWidget *> widgets={});
 
-		BaseObject *getHandledObject(void);
+		BaseObject *getHandledObject();
 			
 	public:
 		//! \brief Constants used to generate version intervals for version alert frame
@@ -146,7 +143,7 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		
 		BaseObjectWidget(QWidget * parent = nullptr, ObjectType obj_type=ObjectType::BaseObject);
 		
-		virtual ~BaseObjectWidget(void);
+		virtual ~BaseObjectWidget();
 		
 		//! \brief Generates a string containing the specified version interval
 		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver=QString());
@@ -166,33 +163,33 @@ class BaseObjectWidget: public QWidget, public Ui::BaseObjectWidget {
 		static void setRequiredField(QWidget *widget);
 		
 		//! \brief Filters the ENTER/RETURN key press forcing the button "Apply" to be clicked
-		bool eventFilter(QObject *object, QEvent *event);
+		bool eventFilter(QObject *obj, QEvent *event);
 
 		//! \brief Returns the kind of database object handled
-		ObjectType getHandledObjectType(void);
+		ObjectType getHandledObjectType();
 
-		virtual bool isHandledObjectProtected(void);
+		virtual bool isHandledObjectProtected();
 		
 	protected slots:
-		void editPermissions(void);
-		void editCustomSQL(void);
+		void editPermissions();
+		void editCustomSQL();
 		
 		//! \brief Register the new object in the operation history if it is not registered already
-		void registerNewObject(void);
+		void registerNewObject();
 
 		/*! \brief Aborts the object configuration, deallocation it if necessary or restoring it to
 			its previous configuration */
-		virtual void cancelConfiguration(void);
+		virtual void cancelConfiguration();
 
 		//! \brief Executes the proper actions to cancel chained operations.
-		virtual void cancelChainedOperation(void);
+		virtual void cancelChainedOperation();
 		
 	signals:
 		//! \brief Signal emitted whenever a object is created / edited using the form
-		void s_objectManipulated(void);
+		void s_objectManipulated();
 
 		//! \brief Signal emitted whenever the object editing was successful and the form need to be closed
-		void s_closeRequested(void);
+		void s_closeRequested();
 
 	friend class BaseForm;
 	friend class ModelWidget;

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ class Permission: public BaseObject {
 		/*! \brief Generates a unique identifier for permission using the attribute
 			'name' of base class BaseObject. This is only used to avoid
 			 duplicate permissions in the model */
-		void generatePermissionId(void);
+		void generatePermissionId();
 
 	public:
 		//! \brief Constants used to reference the privileges
@@ -116,19 +116,19 @@ class Permission: public BaseObject {
 		void removeRole(unsigned role_idx);
 
 		//! \brief Remove all roles from the permission
-		void removeRoles(void);
+		void removeRoles();
 
 		//! \brief Gets the role count associated to the permission
-		unsigned getRoleCount(void);
+		unsigned getRoleCount();
 
 		//! \brief Gets one role from permission using its index
 		Role *getRole(unsigned role_idx);
 
 		//! \brief Returns all the roles that is used by the permission
-		vector<Role *> getRoles(void);
+		vector<Role *> getRoles();
 
 		//! \brief Gets the object that is subject to the privileges
-		BaseObject *getObject(void);
+		BaseObject *getObject();
 
 		//! \brief Gets the actual state of the GRANT OPTION for the given privilege
 		bool getGrantOption(unsigned priv_id);
@@ -139,7 +139,7 @@ class Permission: public BaseObject {
 		/*! \brief Returns a string containing all the privileges
 		 configured as the internal format of permissions
 		 as documented on PostgreSQL GRANT command */
-		QString getPermissionString(void);
+		QString getPermissionString();
 
 		/*! \brief Parses the permission string (e.g. postgres=arwdDxt/postgres) and returns the role name
 		which owns the permission. The parameter vectors stores the ordinary privileges as well the GRANT OPTION privileges */
@@ -147,8 +147,8 @@ class Permission: public BaseObject {
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
-		bool isRevoke(void);
-		bool isCascade(void);
+		bool isRevoke();
+		bool isCascade();
 
 		//! \brief Returns the the specified permission is semantically the same as this permission
 		bool isSimilarTo(Permission *perm);

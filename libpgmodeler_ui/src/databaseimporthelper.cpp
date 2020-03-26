@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 */
 
 #include "databaseimporthelper.h"
+#include "defaultlanguages.h"
 
-const QString DatabaseImportHelper::UnkownObjectOidXml=QString("\t<!--[ unknown object OID=%1 ]-->\n");
+const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 
 DatabaseImportHelper::DatabaseImportHelper(QObject *parent) : QObject(parent)
 {
@@ -45,7 +46,7 @@ void DatabaseImportHelper::setConnection(Connection &conn)
 	}
 }
 
-void DatabaseImportHelper::closeConnection(void)
+void DatabaseImportHelper::closeConnection()
 {
 	connection.close();
 	catalog.closeConnection();
@@ -109,19 +110,19 @@ void DatabaseImportHelper::setImportOptions(bool import_sys_objs, bool import_ex
 		import_filter=Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes | Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs;
 }
 
-unsigned DatabaseImportHelper::getLastSystemOID(void)
+unsigned DatabaseImportHelper::getLastSystemOID()
 {
-	return(catalog.getLastSysObjectOID());
+	return catalog.getLastSysObjectOID();
 }
 
-QString DatabaseImportHelper::getCurrentDatabase(void)
+QString DatabaseImportHelper::getCurrentDatabase()
 {
-	return(connection.getConnectionParam(Connection::ParamDbName));
+	return connection.getConnectionParam(Connection::ParamDbName);
 }
 
-Catalog DatabaseImportHelper::getCatalog(void)
+Catalog DatabaseImportHelper::getCatalog()
 {
-	return(catalog);
+	return catalog;
 }
 
 attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString &schema, const QString &table, attribs_map extra_attribs)
@@ -129,7 +130,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 	try
 	{
 		catalog.setFilter(import_filter);
-		return(catalog.getObjectsNames(obj_type, schema, table, extra_attribs));
+		return catalog.getObjectsNames(obj_type, schema, table, extra_attribs);
 	}
 	catch(Exception &e)
 	{
@@ -142,7 +143,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 	try
 	{
 		catalog.setFilter(import_filter);
-		return(catalog.getObjectsNames(obj_types, schema, table, extra_attribs));
+		return catalog.getObjectsNames(obj_types, schema, table, extra_attribs);
 	}
 	catch(Exception &e)
 	{
@@ -150,7 +151,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 	}
 }
 
-void DatabaseImportHelper::swapSequencesTablesIds(void)
+void DatabaseImportHelper::swapSequencesTablesIds()
 {
 	BaseObject *table=nullptr, *sequence=nullptr;
 	map<QString, QString>::iterator itr;
@@ -167,7 +168,7 @@ void DatabaseImportHelper::swapSequencesTablesIds(void)
 	}
 }
 
-void DatabaseImportHelper::retrieveSystemObjects(void)
+void DatabaseImportHelper::retrieveSystemObjects()
 {
 	int progress=0;
 	vector<attribs_map>::iterator itr;
@@ -180,7 +181,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	for(i=0; i < cnt && !import_canceled; i++)
 	{
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
+								 tr("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
 							   sys_objs[i]);
 
 		if(sys_objs[i]!=ObjectType::Type)
@@ -213,7 +214,7 @@ void DatabaseImportHelper::retrieveSystemObjects(void)
 	}
 }
 
-void DatabaseImportHelper::retrieveUserObjects(void)
+void DatabaseImportHelper::retrieveUserObjects()
 {
 	int progress=0;
 	map<ObjectType, vector<unsigned>>::iterator oid_itr=object_oids.begin();
@@ -230,7 +231,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 	while(oid_itr!=object_oids.end() && !import_canceled)
 	{
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
+								 tr("Retrieving objects... `%1'").arg(BaseObject::getTypeName(oid_itr->first)),
 							   oid_itr->first);
 
 		objects=catalog.getObjectsAttributes(oid_itr->first, QString(), QString(), oid_itr->second);
@@ -256,7 +257,7 @@ void DatabaseImportHelper::retrieveUserObjects(void)
 		names=getObjectName(QString::number(col_itr->first)).split(".");
 
 		emit s_progressUpdated(progress,
-								 trUtf8("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
+								 tr("Retrieving columns of table `%1.%2', oid `%3'...").arg(names[0]).arg(names[1]).arg(col_itr->first),
 							   ObjectType::Column);
 
 		if(names.size() > 1)
@@ -289,7 +290,7 @@ void DatabaseImportHelper::retrieveTableColumns(const QString &sch_name, const Q
 	}
 }
 
-void DatabaseImportHelper::createObjects(void)
+void DatabaseImportHelper::createObjects()
 {
 	int progress=0;
 	attribs_map attribs;
@@ -311,7 +312,7 @@ void DatabaseImportHelper::createObjects(void)
 				 in order to be created later */
 			if(obj_type!=ObjectType::Constraint)
 			{
-				emit s_progressUpdated(progress, trUtf8("Creating object `%1' (%2), oid `%3'...")
+				emit s_progressUpdated(progress, tr("Creating object `%1' (%2), oid `%3'...")
 															.arg(attribs[Attributes::Name])
 															.arg(BaseObject::getTypeName(obj_type))
 															.arg(attribs[Attributes::Oid]),
@@ -361,7 +362,7 @@ void DatabaseImportHelper::createObjects(void)
 				itr++;
 
 				emit s_progressUpdated(progress,
-										 trUtf8("Trying to recreate object `%1' (%2), oid `%3'...")
+										 tr("Trying to recreate object `%1' (%2), oid `%3'...")
 										.arg(attribs[Attributes::Name])
 										.arg(BaseObject::getTypeName(obj_type))
 										.arg(attribs[Attributes::Oid]),
@@ -385,7 +386,7 @@ void DatabaseImportHelper::createObjects(void)
 
 			if(tries >= max_tries)
 				emit s_progressUpdated(progress,
-									   trUtf8("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
+									   tr("Import failed to recreate some objects in `%1' tries.").arg(max_tries),
 									   ObjectType::BaseObject);
 
 			if(!import_canceled)
@@ -406,7 +407,7 @@ void DatabaseImportHelper::createObjects(void)
 	#endif
 }
 
-void DatabaseImportHelper::createConstraints(void)
+void DatabaseImportHelper::createConstraints()
 {
 	int progress=0;
 	attribs_map attribs;
@@ -425,7 +426,7 @@ void DatabaseImportHelper::createConstraints(void)
 					 attribs[Attributes::Inherited]!=Attributes::True))
 			{
 				emit s_progressUpdated(progress,
-										 trUtf8("Creating object `%1' (%2)...")
+										 tr("Creating object `%1' (%2)...")
 									   .arg(attribs[Attributes::Name])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint)),
 						ObjectType::Constraint);
@@ -445,7 +446,7 @@ void DatabaseImportHelper::createConstraints(void)
 	}
 }
 
-void DatabaseImportHelper::createPermissions(void)
+void DatabaseImportHelper::createPermissions()
 {
 	attribs_map attribs;
 
@@ -454,7 +455,7 @@ void DatabaseImportHelper::createPermissions(void)
 		unsigned i=0, progress=0;
 		vector<unsigned>::iterator itr, itr_obj=obj_perms.begin();
 		map<unsigned, vector<unsigned>>::iterator itr_cols=col_perms.begin();
-		QString msg=trUtf8("Creating permissions for object `%1' (%2)...");
+		QString msg=tr("Creating permissions for object `%1' (%2)...");
 		ObjectType obj_type;
 
 		//Create the object level permission
@@ -472,7 +473,7 @@ void DatabaseImportHelper::createPermissions(void)
 			progress=((i++)/static_cast<double>(obj_perms.size())) * 100;
 		}
 
-		emit s_progressUpdated(progress, trUtf8("Creating columns permissions..."), ObjectType::Permission);
+		emit s_progressUpdated(progress, tr("Creating columns permissions..."), ObjectType::Permission);
 		//Create the column level permission
 		i=0;
 		while(itr_cols!=col_perms.end() && !import_canceled)
@@ -504,7 +505,7 @@ void DatabaseImportHelper::createPermissions(void)
 	}
 }
 
-void DatabaseImportHelper::updateFKRelationships(void)
+void DatabaseImportHelper::updateFKRelationships()
 {
 	int progress=0;
 	vector<BaseObject *>::iterator itr_tab, itr_tab_end;
@@ -523,7 +524,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 			tab=dynamic_cast<Table *>(*itr_tab);
 
 			emit s_progressUpdated(progress,
-									 trUtf8("Updating relationships of `%1' (%2)...")
+									 tr("Updating relationships of `%1' (%2)...")
 								   .arg(tab->getName())
 								   .arg(BaseObject::getTypeName(ObjectType::Table)),
 								   ObjectType::Table);
@@ -540,7 +541,7 @@ void DatabaseImportHelper::updateFKRelationships(void)
 	}
 }
 
-void DatabaseImportHelper::importDatabase(void)
+void DatabaseImportHelper::importDatabase()
 {
 	try
 	{
@@ -564,7 +565,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 		if(!inherited_cols.empty())
 		{
-			emit s_progressUpdated(100, trUtf8("Validating relationships..."), ObjectType::Relationship);
+			emit s_progressUpdated(100, tr("Validating relationships..."), ObjectType::Relationship);
 			dbmodel->validateRelationships();
 		}
 
@@ -578,11 +579,9 @@ void DatabaseImportHelper::importDatabase(void)
 				QString log_name;
 
 				//Writing the erros to log file
-				log_name=GlobalAttributes::TemporaryDir +
-						 GlobalAttributes::DirSeparator +
-						 QString("%1_%2_%3.log").arg(dbmodel->getName())
-						 .arg(QString("import"))
-						 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd_hhmmss")));
+				log_name=GlobalAttributes::getTemporaryFilePath(QString("%1_%2_%3.log").arg(dbmodel->getName())
+																												.arg(QString("import"))
+																												.arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd_hhmmss"))));
 
 				import_log.setFileName(log_name);
 				import_log.open(QFile::WriteOnly);
@@ -592,7 +591,7 @@ void DatabaseImportHelper::importDatabase(void)
 
 				import_log.close();
 
-				emit s_importFinished(Exception(trUtf8("The database import ended but some errors were generated and saved into the log file `%1'. This file will last until pgModeler quit.").arg(log_name),
+				emit s_importFinished(Exception(tr("The database import ended but some errors were generated and saved into the log file `%1'. This file will last until pgModeler quit.").arg(log_name),
 												__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
 			else
@@ -650,7 +649,7 @@ void DatabaseImportHelper::importDatabase(void)
 	}
 }
 
-void DatabaseImportHelper::cancelImport(void)
+void DatabaseImportHelper::cancelImport()
 {
 	import_canceled=true;
 }
@@ -769,7 +768,7 @@ QString DatabaseImportHelper::getComment(attribs_map &attribs)
 		if(!attribs[Attributes::Comment].isEmpty())
 			xml_def=schparser.getCodeDefinition(Attributes::Comment, attribs, SchemaParser::XmlDefinition);
 
-		return(xml_def);
+		return xml_def;
 	}
 	catch(Exception &e)
 	{
@@ -852,7 +851,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 				xml_def=QString(UnkownObjectOidXml).arg(oid);
 		}
 
-		return(xml_def);
+		return xml_def;
 	}
 	catch(Exception &e)
 	{
@@ -887,7 +886,7 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 	}
 }
 
-void DatabaseImportHelper::resetImportParameters(void)
+void DatabaseImportHelper::resetImportParameters()
 {
 	Connection::setPrintSQL(false);
 	import_canceled=false;
@@ -924,7 +923,7 @@ QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
 
 	dump_str+=QString("---\n");
 
-	return(dump_str);
+	return dump_str;
 }
 
 void DatabaseImportHelper::createTablespace(attribs_map &attribs)
@@ -939,7 +938,7 @@ void DatabaseImportHelper::createTablespace(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(tabspc) delete(tabspc);
+		if(tabspc) delete tabspc;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -962,7 +961,7 @@ void DatabaseImportHelper::createSchema(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(schema) delete(schema);
+		if(schema) delete schema;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -987,7 +986,7 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(role) delete(role);
+		if(role) delete role;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1029,7 +1028,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(dom) delete(dom);
+		if(dom) delete dom;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1047,7 +1046,7 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(ext) delete(ext);
+		if(ext) delete ext;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1147,10 +1146,22 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
-		if(getObjectName(attribs[Attributes::Language])==~LanguageType("c"))
+		if(getObjectName(attribs[Attributes::Language]).toLower() == DefaultLanguages::C)
 		{
 			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
 			attribs[Attributes::Definition]=QString();
+		}
+		else
+		{
+			/* Removing extra \n from the beggining and from the end of the fucntion's definition.
+			 * Some functions come from the catalogs with a extra \n appended/prepended in the field prosrc in which we get the functions source.
+			 * This way if repeatedely export and import a model the amount of \n at the beginning and end of the source
+			 * will increase leading to an unecessary addition of new lines to the functions source. */
+			if(attribs[Attributes::Definition].startsWith(QChar::LineFeed))
+				attribs[Attributes::Definition].remove(0, 1);
+
+			if(attribs[Attributes::Definition].endsWith(QChar::LineFeed))
+				attribs[Attributes::Definition].remove(attribs[Attributes::Definition].length() - 1, 1);
 		}
 
 		//Get the language reference code
@@ -1175,7 +1186,7 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(func) delete(func);
+		if(func) delete func;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1212,7 +1223,7 @@ void DatabaseImportHelper::createLanguage(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(lang) delete(lang);
+		if(lang) delete lang;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1230,7 +1241,7 @@ void DatabaseImportHelper::createOperatorFamily(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(opfam) delete(opfam);
+		if(opfam) delete opfam;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1312,7 +1323,7 @@ void DatabaseImportHelper::createOperatorClass(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(opclass) delete(opclass);
+		if(opclass) delete opclass;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1371,7 +1382,7 @@ void DatabaseImportHelper::createOperator(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(oper) delete(oper);
+		if(oper) delete oper;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1389,7 +1400,7 @@ void DatabaseImportHelper::createCollation(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(coll) delete(coll);
+		if(coll) delete coll;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1410,7 +1421,7 @@ void DatabaseImportHelper::createCast(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(cast) delete(cast);
+		if(cast) delete cast;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1429,7 +1440,7 @@ void DatabaseImportHelper::createConversion(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(conv) delete(conv);
+		if(conv) delete conv;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1500,7 +1511,7 @@ void DatabaseImportHelper::createSequence(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(seq) delete(seq);
+		if(seq) delete seq;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1547,7 +1558,7 @@ void DatabaseImportHelper::createAggregate(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(agg) delete(agg);
+		if(agg) delete agg;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1632,7 +1643,7 @@ void DatabaseImportHelper::createType(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(type) delete(type);
+		if(type) delete type;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1747,7 +1758,7 @@ void DatabaseImportHelper::createTable(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(table) delete(table);
+		if(table) delete table;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1843,7 +1854,7 @@ void DatabaseImportHelper::createView(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(view) delete(view);
+		if(view) delete view;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -1878,7 +1889,7 @@ void DatabaseImportHelper::createRule(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(rule) delete(rule);
+		if(rule) delete rule;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2167,7 +2178,7 @@ void DatabaseImportHelper::createForeignDataWrapper(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(fdw) delete(fdw);
+		if(fdw) delete fdw;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2188,7 +2199,7 @@ void DatabaseImportHelper::createForeignServer(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(server) delete(server);
+		if(server) delete server;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2209,7 +2220,7 @@ void DatabaseImportHelper::createUserMapping(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(usr_map) delete(usr_map);
+		if(usr_map) delete usr_map;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2266,7 +2277,7 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 	}
 	catch(Exception &e)
 	{
-		if(ftable) delete(ftable);
+		if(ftable) delete ftable;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
 						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
@@ -2364,7 +2375,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 					}
 					catch(Exception &e)
 					{
-						if(perm) delete(perm);
+						if(perm) delete perm;
 
 						if(ignore_errors)
 							errors.push_back(Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs)));
@@ -2377,7 +2388,7 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createTableInheritances(void)
+void DatabaseImportHelper::createTableInheritances()
 {
 	//Creating table inheiritances
 	if(dbmodel->getObjectCount(ObjectType::Table) > 0 && !import_canceled)
@@ -2385,7 +2396,7 @@ void DatabaseImportHelper::createTableInheritances(void)
 		try
 		{
 			emit s_progressUpdated(90,
-								   trUtf8("Creating table inheritances..."),
+								   tr("Creating table inheritances..."),
 								   ObjectType::Relationship);
 			__createTableInheritances();
 		}
@@ -2399,7 +2410,7 @@ void DatabaseImportHelper::createTableInheritances(void)
 	}
 }
 
-void DatabaseImportHelper::createTablePartitionings(void)
+void DatabaseImportHelper::createTablePartitionings()
 {
 	if(imported_tables.empty())
 		return;
@@ -2411,7 +2422,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 		Relationship *rel_part = nullptr;
 
 		emit s_progressUpdated(95,
-								 trUtf8("Creating table partitionings..."),
+								 tr("Creating table partitionings..."),
 								 ObjectType::Relationship);
 
 		// Creating the paritioning relationships
@@ -2441,7 +2452,7 @@ void DatabaseImportHelper::createTablePartitionings(void)
 	}
 }
 
-void DatabaseImportHelper::destroyDetachedColumns(void)
+void DatabaseImportHelper::destroyDetachedColumns()
 {
 	if(inherited_cols.empty() || import_canceled)
 		return;
@@ -2452,7 +2463,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 	dbmodel->disconnectRelationships();
 
 	emit s_progressUpdated(100,
-						   trUtf8("Destroying unused detached columns..."),
+						   tr("Destroying unused detached columns..."),
 						   ObjectType::Column);
 
 	//Destroying detached columns before create inheritances
@@ -2467,7 +2478,7 @@ void DatabaseImportHelper::destroyDetachedColumns(void)
 				//Removing the column from the parent table and destroying it since they will be recreated by inheritances
 				parent_tab=dynamic_cast<PhysicalTable *>(col->getParentTable());
 				parent_tab->removeObject(col);
-				delete(col);
+				delete col;
 			}
 			catch(Exception &e)
 			{
@@ -2491,6 +2502,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 	Column col;
 	QString type_def, unknown_obj_xml, type_name, def_val;
 	map<unsigned, attribs_map>::iterator itr, itr1, itr_end;
+	static QStringList sp_types = SpatialType::getTypes();
 
 	if(tab_oid == 0)
 		return;
@@ -2523,28 +2535,45 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 		/* If the type has an entry on the types map and its OID is greater than system object oids,
 	 means that it's a user defined type, thus, there is the need to check if the type
 	 is registered. */
-		if(types.count(type_oid)!=0 && type_oid > catalog.getLastSysObjectOID())
+		if(types.count(type_oid) !=0 && type_oid > catalog.getLastSysObjectOID())
 		{
 			/* Building the type name prepending the schema name in order to search it on
 			 * the user defined types list at PgSQLType class */
-			type_name=BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
-			type_name+=QString(".");
+			QString sch_name = BaseObject::formatName(getObjectName(types[type_oid][Attributes::Schema], true), false);
+			sch_name += QString(".");
+			type_name.clear();
 
-			if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+			/* Special verification for PostGiS types: if the current type is a gis based one
+			 * (geometry, geography, box3d or box2d) we override the usage of the current type
+			 * and force the use of the pgModeler built-in one. */
+			if((PgSqlType::isGiSType(types[type_oid][Attributes::Name]) ||
+					PgSqlType::isBoxType(types[type_oid][Attributes::Name])) &&
+				 types[type_oid][Attributes::Configuration] == Attributes::BaseType &&
+				 types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::UserDefined))
 			{
-				int dim = types[type_oid][Attributes::Name].count(QString("[]"));
-				QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
-				type_name+=BaseObject::formatName(aux_name, false);
-				type_name+=QString("[]").repeated(dim);
+				type_name = itr->second[Attributes::Type];
+				type_name.remove(sch_name);
+				is_type_registered = true;
 			}
 			else
-				type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
+			{
+				if(types[type_oid][Attributes::Category] == ~CategoryType(CategoryType::Array))
+				{
+					int dim = types[type_oid][Attributes::Name].count(QString("[]"));
+					QString aux_name = types[type_oid][Attributes::Name].remove(QString("[]"));
+					type_name+=BaseObject::formatName(aux_name, false);
+					type_name+=QString("[]").repeated(dim);
+				}
+				else
+					type_name+=BaseObject::formatName(types[type_oid][Attributes::Name], false);
 
-			is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+				type_name.prepend(sch_name);
+				is_type_registered=PgSqlType::isRegistered(type_name, dbmodel);
+			}
 		}
 		else
 		{
-			type_name=itr->second[Attributes::Type];
+			type_name = itr->second[Attributes::Type];
 			is_type_registered=(types.count(type_oid)!=0 && PgSqlType::isRegistered(type_name, dbmodel));
 		}
 
@@ -2605,14 +2634,14 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 	}
 }
 
-void DatabaseImportHelper::assignSequencesToColumns(void)
+void DatabaseImportHelper::assignSequencesToColumns()
 {
 	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
 	vector<BaseObject *> tables;
 
 	emit s_progressUpdated(100,
-							 trUtf8("Assigning sequences to columns..."),
+							 tr("Assigning sequences to columns..."),
 						   ObjectType::Sequence);
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);
@@ -2659,7 +2688,7 @@ void DatabaseImportHelper::assignSequencesToColumns(void)
 	}
 }
 
-void DatabaseImportHelper::__createTableInheritances(void)
+void DatabaseImportHelper::__createTableInheritances()
 {
 	vector<unsigned> table_oids;
 	Relationship *rel=nullptr;
@@ -2721,7 +2750,7 @@ void DatabaseImportHelper::__createTableInheritances(void)
 				}
 				catch(Exception &e)
 				{
-					if(rel) delete(rel);
+					if(rel) delete rel;
 
 					if(ignore_errors)
 						errors.push_back(e);
@@ -2756,7 +2785,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 	unsigned obj_oid=oid.toUInt();
 
 	if(obj_oid==0)
-		return(QString());
+		return QString();
 	else
 	{
 		attribs_map obj_attr;
@@ -2768,7 +2797,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			obj_attr=system_objs[obj_oid];
 
 		if(obj_attr.empty())
-			return(QString());
+			return QString();
 		else
 		{
 			QString sch_name,
@@ -2835,7 +2864,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 					obj_name+=QString("(") + params.join(',') + QString(")");
 			}
 
-			return(obj_name);
+			return obj_name;
 		}
 	}
 }
@@ -2850,7 +2879,7 @@ QStringList DatabaseImportHelper::getObjectNames(const QString &oid_vect, bool s
 			list[i]=getObjectName(list[i], signature_form);
 	}
 
-	return(list);
+	return list;
 }
 
 QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QString &col_id_str, bool prepend_tab_name)
@@ -2866,7 +2895,7 @@ QString DatabaseImportHelper::getColumnName(const QString &tab_oid_str, const QS
 		col_name+=columns[tab_oid][col_id].at(Attributes::Name);
 	}
 
-	return(col_name);
+	return col_name;
 }
 
 QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, const QString &col_id_vect, bool prepend_tab_name)
@@ -2891,7 +2920,7 @@ QStringList DatabaseImportHelper::getColumnNames(const QString &tab_oid_str, con
 		}
 	}
 
-	return(col_names);
+	return col_names;
 }
 
 QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml, attribs_map extra_attribs)
@@ -2999,10 +3028,10 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 				schparser.ignoreUnkownAttributes(false);
 			}
 			else
-				return(obj_name);
+				return obj_name;
 		}
 
-		return(xml_def);
+		return xml_def;
 	}
 	catch(Exception &e)
 	{
@@ -3017,5 +3046,5 @@ QStringList DatabaseImportHelper::getTypes(const QString &oid_vect, bool generat
 	for(int i=0; i < list.size(); i++)
 		list[i]=getType(list[i], generate_xml);
 
-	return(list);
+	return list;
 }

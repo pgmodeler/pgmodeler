@@ -254,6 +254,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
          </property>
@@ -281,6 +284,9 @@
          <property name="columnCount">
           <number>0</number>
          </property>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>true</bool>
          </attribute>
@@ -288,7 +294,7 @@
           <number>30</number>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
@@ -300,12 +306,12 @@
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>26</number>
+          <number>28</number>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>25</number>
          </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
+         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
         </widget>
@@ -448,9 +454,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Ins</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -485,9 +488,6 @@
                      <width>20</width>
                      <height>20</height>
                     </size>
-                   </property>
-                   <property name="shortcut">
-                    <string>Del</string>
                    </property>
                   </widget>
                  </item>
@@ -524,9 +524,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Del</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -562,9 +559,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Del</string>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -599,9 +593,6 @@
                      <width>20</width>
                      <height>20</height>
                     </size>
-                   </property>
-                   <property name="shortcut">
-                    <string>Del</string>
                    </property>
                   </widget>
                  </item>

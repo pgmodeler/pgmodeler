@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ void SceneInfoWidget::updateSelectedObject(BaseObjectView *object)
 	if(!object)
 	{
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("fechar1")));
-		obj_name_lbl->setText(trUtf8("No selection"));
-		obj_pos_info_lbl->setText(trUtf8("N/A"));
+		obj_name_lbl->setText(tr("No selection"));
+		obj_pos_info_lbl->setText(tr("N/A"));
 	}
 	else
 	{
@@ -69,7 +69,7 @@ void SceneInfoWidget::updateSelectedObjects(int obj_count, const QRectF &objs_re
 		rect = QRect(0,0,0,0);
 
 	obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("seltodos")));
-	obj_name_lbl->setText(trUtf8("Sel. objects: %1").arg(obj_count));
+	obj_name_lbl->setText(tr("Sel. objects: %1").arg(obj_count));
 	obj_pos_info_lbl->setText(QString("(%1, %2) [w: %3, h: %4]")
 														.arg(rect.left())
 														.arg(rect.top())

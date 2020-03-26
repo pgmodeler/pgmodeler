@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 
 #include "attributes.h"
 #include "exception.h"
-#include "pgsqltypes.h"
 #include "schemaparser.h"
 #include "xmlparser.h"
 #include <map>
@@ -217,7 +216,7 @@ class BaseObject {
 		static void updateObjectId(BaseObject *obj);
 
 		//! \brief Clears all the attributes used by the SchemaParser
-		void clearAttributes(void);
+		void clearAttributes();
 
 		/*! \brief Returns the cached code for the specified code type. This method returns an empty
 		 string in case of no code is cached */
@@ -250,12 +249,12 @@ class BaseObject {
 		 * to avoid excessive allocation/deallocation by resizing the vectors due to insert operation */
 		static constexpr unsigned DefMaxObjectCount=20;
 
-		BaseObject(void);
+		BaseObject();
 		BaseObject(bool system_obj);
 		virtual ~BaseObject(void){}
 
 		//! \brief Returns the reference to the database that owns the object
-		BaseObject *getDatabase(void);
+		BaseObject *getDatabase();
 
 		/*! \brief Defines a specific attribute in the attribute list used to generate the code definition.
 		 This method can be used when a class needs to directly write some attributes of
@@ -291,11 +290,11 @@ class BaseObject {
 		static QString getSQLName(ObjectType obj_type);
 
 		//! \brief Returns the current value of the global object id counter
-		static unsigned getGlobalId(void);
+		static unsigned getGlobalId();
 
 		static void setEscapeComments(bool value);
 
-		static bool isEscapeComments(void);
+		static bool isEscapeComments();
 
 		//! \brief Defines the comment of the object that will be attached to its SQL definition
 		virtual void setComment(const QString &comment);
@@ -337,13 +336,13 @@ class BaseObject {
 		void setPrependedSQL(const QString &sql);
 
 		//! \brief Returns if the generated SQL is commented
-		bool isSQLDisabled(void);
+		bool isSQLDisabled();
 
 		//! \brief Defines if the object is a system protected object
 		virtual void setSystemObject(bool value);
 
 		//! \brief Returns if the object is a system protected object
-		bool isSystemObject(void);
+		bool isSystemObject();
 
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (using quotes when there is uppercase char or extended utf-8),
@@ -351,51 +350,51 @@ class BaseObject {
 		virtual QString getName(bool format=false, bool prepend_schema=true);
 
 		//! \brief Returns the object's alias (user friendly) name
-		virtual QString getAlias(void);
+		virtual QString getAlias();
 
 		//! \brief Returns the name of the object with schema name (when available) prepended by default
 		virtual QString getSignature(bool format=true);
 
 		//! \brief Returns the object's comment (in raw form)
-		QString getComment(void);
+		QString getComment();
 
 		/*! \brief Returns the object's comment in such way that the quotes are escaped as well,
 		 * if escape_special_chars is true, any line break and tabulation is returned in form \n and \t */
 		QString getEscapedComment(bool escape_special_chars);
 
 		//! \brief Returns the object's type
-		ObjectType getObjectType(void);
+		ObjectType getObjectType();
 
 		//! \brief Returns the object's type name
-		QString getTypeName(void);
+		QString getTypeName();
 
 		//! \brief Returns the object's schema name used to generate code definition
-		QString getSchemaName(void);
+		QString getSchemaName();
 
 		//! \brief Returns the keyword related to the object type
-		QString getSQLName(void);
+		QString getSQLName();
 
 		//! \brief Returns the schema that the objects is part
-		BaseObject *getSchema(void);
+		BaseObject *getSchema();
 
 		//! \brief Returns the owner of the object
-		BaseObject *getOwner(void);
+		BaseObject *getOwner();
 
 		//! \brief Returns the tablespace that the object is part
-		BaseObject *getTablespace(void);
+		BaseObject *getTablespace();
 
 		//! \brief Returns the collation that the object makes use
-		BaseObject *getCollation(void);
+		BaseObject *getCollation();
 
-		QString getAppendedSQL(void);
+		QString getAppendedSQL();
 
-		QString getPrependedSQL(void);
+		QString getPrependedSQL();
 
 		//! \brief Returns the object's generated id
-		unsigned getObjectId(void);
+		unsigned getObjectId();
 
 		//! \brief Returns if the object is protected or not
-		bool isProtected(void);
+		bool isProtected();
 
 		//! \brief Assigns an object to other copiyng all the attributes correctly
 		virtual void operator = (BaseObject &obj);
@@ -449,25 +448,25 @@ class BaseObject {
 		static bool acceptsAlias(ObjectType obj_type);
 
 		//! \brief Returns if the object accepts to have a schema assigned
-		bool acceptsSchema(void);
+		bool acceptsSchema();
 
 		//! \brief Returns if the object accepts to have an owner assigned
-		bool acceptsOwner(void);
+		bool acceptsOwner();
 
 		//! \brief Returns if the object accepts to have a tablespace assigned
-		bool acceptsTablespace(void);
+		bool acceptsTablespace();
 
 		//! \brief Returns if the object accepts to have a collation assigned
-		bool acceptsCollation(void);
+		bool acceptsCollation();
 
 		//! \brief Returns if the object accepts to have appended sql commands
-		bool acceptsCustomSQL(void);
+		bool acceptsCustomSQL();
 
 		//! \brief Returns if the object accepts the use of ALTER commands to have its attributes changed
-		bool acceptsAlterCommand(void);
+		bool acceptsAlterCommand();
 
 		//! \brief Returns if the object accepts the use of DROP commands
-		bool acceptsDropCommand(void);
+		bool acceptsDropCommand();
 
 		/*! \brief Marks the current cached code as invalid and forces its regenaration.
 				Some key attributes / setters in the base classes BaseObject, BaseTable and BaseRelationship
@@ -476,10 +475,10 @@ class BaseObject {
 				This method has no effect when the cached code support is disables. See enableCachedCode() */
 		virtual void setCodeInvalidated(bool value);
 
-		virtual void configureSearchAttributes(void);
+		virtual void configureSearchAttributes();
 
 		//! \brief Returns if the code (sql and xml) is invalidated
-		bool isCodeInvalidated(void);
+		bool isCodeInvalidated();
 
 		/*! \brief Compares the xml code between the "this" object and another one. The user can specify which attributes
 		and tags must be ignored when makin the comparison. NOTE: only the name for attributes and tags must be informed */
@@ -507,10 +506,10 @@ class BaseObject {
 		static void setPgSQLVersion(const QString &ver);
 
 		//! \brief Returns the current version for SQL code generation
-		static QString getPgSQLVersion(void);
+		static QString getPgSQLVersion();
 
 		//! \brief Returns the set of attributes used by the search mechanism
-		attribs_map getSearchAttributes(void);
+		attribs_map getSearchAttributes();
 
 		friend class DatabaseModel;
 		friend class ModelValidationHelper;

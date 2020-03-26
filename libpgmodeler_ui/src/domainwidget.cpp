@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 		check_expr_hl=nullptr;
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false, true);
-		check_expr_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		check_expr_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
@@ -39,10 +39,10 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		constr_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ (ObjectsTableWidget::DuplicateButton), true, this);
 		constr_tab->setColumnCount(2);
 
-		constr_tab->setHeaderLabel(trUtf8("Name"), 0);
+		constr_tab->setHeaderLabel(tr("Name"), 0);
 		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("constraint_ck")), 0);
 
-		constr_tab->setHeaderLabel(trUtf8("Expression"), 1);
+		constr_tab->setHeaderLabel(tr("Expression"), 1);
 		constr_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("codigofonte")), 1);
 
 		grid = dynamic_cast<QGridLayout *>(dom_attribs_tbw->widget(1)->layout());
@@ -111,7 +111,7 @@ void DomainWidget::editConstraint(int row)
 	check_expr_txt->setPlainText(constr_tab->getCellText(row, 1));
 }
 
-void DomainWidget::applyConfiguration(void)
+void DomainWidget::applyConfiguration()
 {
 	try
 	{

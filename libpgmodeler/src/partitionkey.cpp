@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "partitionkey.h"
 
-PartitionKey::PartitionKey(void)
+PartitionKey::PartitionKey()
 {
 	collation = nullptr;
 }
@@ -28,9 +28,9 @@ void PartitionKey::setCollation(Collation *collation)
 	this->collation=collation;
 }
 
-Collation *PartitionKey::getCollation(void)
+Collation *PartitionKey::getCollation()
 {
-	return(collation);
+	return collation;
 }
 
 QString PartitionKey::getCodeDefinition(unsigned def_type)
@@ -49,5 +49,5 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 			attribs[Attributes::Collation]=collation->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type));
+	return schparser.getCodeDefinition(Attributes::PartitionKey, attribs, def_type);
 }

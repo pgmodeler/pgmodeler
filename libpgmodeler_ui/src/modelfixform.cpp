@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <iostream>
 #include "pgmodeleruins.h"
 
-const QString ModelFixForm::PgModelerCli=QString("pgmodeler-cli");
+const QString ModelFixForm::PgModelerCli("pgmodeler-cli");
 
 ModelFixForm::ModelFixForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -66,18 +66,18 @@ void ModelFixForm::hideEvent(QHideEvent *)
 	invalid_cli_lbl->setVisible(false);
 	input_file_edt->clear();
 	output_file_edt->clear();
-	output_txt->setPlainText(trUtf8("Waiting process to start..."));
+	output_txt->setPlainText(tr("Waiting process to start..."));
 	load_model_chk->setChecked(true);
 }
 
-int ModelFixForm::exec(void)
+int ModelFixForm::exec()
 {
-	QFileInfo fi(GlobalAttributes::PgModelerCLIPath);
+	QFileInfo fi(GlobalAttributes::getPgModelerCLIPath());
 
 	//Show an warning if the cli command doesn't exists
 	if(!fi.exists())
 	{
-		not_found_lbl->setText(trUtf8("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
+		not_found_lbl->setText(tr("Could not locate <strong>%1</strong> tool on <strong>%2</strong>. The fix process can't continue! Please check pgModeler installation or try to manually specify the command below.")
 							   .arg(PgModelerCli).arg(fi.absoluteDir().absolutePath()));
 		message_frm->setVisible(true);
 		pgmodeler_cli_lbl->setVisible(true);
@@ -85,12 +85,12 @@ int ModelFixForm::exec(void)
 		sel_cli_exe_tb->setVisible(true);
 	}
 	else
-		pgmodeler_cli_edt->setText(GlobalAttributes::PgModelerCLIPath);
+		pgmodeler_cli_edt->setText(GlobalAttributes::getPgModelerCLIPath());
 
-	return(QDialog::exec());
+	return QDialog::exec();
 }
 
-void ModelFixForm::enableFix(void)
+void ModelFixForm::enableFix()
 {
 	if(!pgmodeler_cli_edt->text().isEmpty())
 	{
@@ -112,7 +112,7 @@ void ModelFixForm::enableFix(void)
 						!invalid_cli_lbl->isVisible());
 }
 
-void ModelFixForm::fixModel(void)
+void ModelFixForm::fixModel()
 {
 	QString cmd=QString("\"%1\"");
 
@@ -131,7 +131,7 @@ void ModelFixForm::fixModel(void)
 	pgmodeler_cli_proc.start(cmd);
 }
 
-void ModelFixForm::selectFile(void)
+void ModelFixForm::selectFile()
 {
 	QObject *sender_obj=sender();
 	QFileDialog file_dlg;
@@ -148,7 +148,7 @@ void ModelFixForm::selectFile(void)
 
 		file_dlg.selectFile(cli_cmd);
 		file_dlg.setFileMode(QFileDialog::ExistingFile);
-		file_dlg.setNameFilter(trUtf8("pgModeler command line tool (%1)").arg(cli_cmd));
+		file_dlg.setNameFilter(tr("pgModeler command line tool (%1)").arg(cli_cmd));
 		file_dlg.setWindowTitle(QString("Browse pgmodeler-cli command..."));
 	}
 	else
@@ -167,7 +167,7 @@ void ModelFixForm::selectFile(void)
 		txt->setText(file_dlg.selectedFiles().at(0));
 }
 
-void ModelFixForm::updateOutput(void)
+void ModelFixForm::updateOutput()
 {
 	QTextCursor cursor;
 	QString txt=output_txt->toPlainText();

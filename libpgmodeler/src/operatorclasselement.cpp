@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "operatorclasselement.h"
 
-OperatorClassElement::OperatorClassElement(void)
+OperatorClassElement::OperatorClassElement()
 {
 	element_type=OperatorElem;
 	function=nullptr;
@@ -90,34 +90,34 @@ void OperatorClassElement::setStorage(PgSqlType storage)
 	this->element_type=StorageElem;
 }
 
-unsigned OperatorClassElement::getElementType(void)
+unsigned OperatorClassElement::getElementType()
 {
-	return(element_type);
+	return element_type;
 }
 
-Function *OperatorClassElement::getFunction(void)
+Function *OperatorClassElement::getFunction()
 {
-	return(function);
+	return function;
 }
 
-Operator *OperatorClassElement::getOperator(void)
+Operator *OperatorClassElement::getOperator()
 {
-	return(_operator);
+	return _operator;
 }
 
-OperatorFamily *OperatorClassElement::getOperatorFamily(void)
+OperatorFamily *OperatorClassElement::getOperatorFamily()
 {
-	return(op_family);
+	return op_family;
 }
 
-PgSqlType OperatorClassElement::getStorage(void)
+PgSqlType OperatorClassElement::getStorage()
 {
-	return(storage);
+	return storage;
 }
 
-unsigned OperatorClassElement::getStrategyNumber(void)
+unsigned OperatorClassElement::getStrategyNumber()
 {
-	return(strategy_number);
+	return strategy_number;
 }
 
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
@@ -175,16 +175,16 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Definition]=storage.getCodeDefinition(def_type);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::Element,attributes, def_type));
+	return schparser.getCodeDefinition(Attributes::Element,attributes, def_type);
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)
 {
-	return(this->element_type == elem.element_type &&
-		   this->storage == elem.storage &&
-		   this->function == elem.function &&
-		   this->_operator == elem._operator &&
-		   this->strategy_number == elem.strategy_number &&
-		   this->op_family == elem.op_family);
+	return (this->element_type == elem.element_type &&
+					this->storage == elem.storage &&
+					this->function == elem.function &&
+					this->_operator == elem._operator &&
+					this->strategy_number == elem.strategy_number &&
+					this->op_family == elem.op_family);
 }
 

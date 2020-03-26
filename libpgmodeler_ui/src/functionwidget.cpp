@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 
 #include "functionwidget.h"
 #include "baseform.h"
+#include "defaultlanguages.h"
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Function)
 {
 	try
 	{
-		QStringList types;
 		QGridLayout *grid=nullptr, *grid1=nullptr;
 		QVBoxLayout *vlayout=nullptr;
 		QSpacerItem *spacer=nullptr;
@@ -50,20 +50,20 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		return_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 										 ObjectsTableWidget::UpdateButton, true, this);
 		return_tab->setColumnCount(2);
-		return_tab->setHeaderLabel(trUtf8("Column"), 0);
+		return_tab->setHeaderLabel(tr("Column"), 0);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("column")),0);
-		return_tab->setHeaderLabel(trUtf8("Type"), 1);
+		return_tab->setHeaderLabel(tr("Type"), 1);
 		return_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
 		parameters_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^
 											 ObjectsTableWidget::UpdateButton, true, this);
 		parameters_tab->setColumnCount(4);
-		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
+		parameters_tab->setHeaderLabel(tr("Name"),0);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("parameter")),0);
-		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
+		parameters_tab->setHeaderLabel(tr("Type"),1);
 		parameters_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
-		parameters_tab->setHeaderLabel(trUtf8("Mode"),2);
-		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
+		parameters_tab->setHeaderLabel(tr("Mode"),2);
+		parameters_tab->setHeaderLabel(tr("Default Value"),3);
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);
@@ -85,19 +85,14 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, Object
 		grid->addWidget(frame, grid->count()+1, 0, 1, 5);
 		frame->setParent(func_config_twg->widget(0));
 
-		SecurityType::getTypes(types);
-		security_cmb->addItems(types);
+		security_cmb->addItems(SecurityType::getTypes());
+		func_type_cmb->addItems(FunctionType::getTypes());
+		behavior_cmb->addItems(BehaviorType::getTypes());
 
-		FunctionType::getTypes(types);
-		func_type_cmb->addItems(types);
-
-		BehaviorType::getTypes(types);
-		behavior_cmb->addItems(types);
-
-		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
-		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage(void)));
+		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes()));
+		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
@@ -170,7 +165,7 @@ void FunctionWidget::duplicateParameter(int curr_row, int new_row)
 	showParameterData(new_param, table, new_row);
 }
 
-void FunctionWidget::showParameterForm(void)
+void FunctionWidget::showParameterForm()
 {
 	QObject *obj_sender=sender();
 	ObjectsTableWidget *table=nullptr;
@@ -229,7 +224,7 @@ Parameter FunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row)
 		}
 	}
 
-	return(param);
+	return param;
 }
 
 void FunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row)
@@ -279,7 +274,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	list.sort();
 	language_cmb->addItems(list);
-	language_cmb->setCurrentText(~LanguageType(LanguageType::Sql));
+	language_cmb->setCurrentText(DefaultLanguages::Sql);
 
 	if(func)
 	{
@@ -347,18 +342,18 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	ret_type->setAttributes(aux_type, model);
 }
 
-void FunctionWidget::alternateReturnTypes(void)
+void FunctionWidget::alternateReturnTypes()
 {
 	QObject *obj_sender=sender();
 	ret_table_gb->setVisible(obj_sender==table_rb);
 	ret_type->setVisible(!ret_table_gb->isVisible());
 }
 
-void FunctionWidget::selectLanguage(void)
+void FunctionWidget::selectLanguage()
 {
 	bool c_lang;
 
-	c_lang=(language_cmb->currentText()==~LanguageType(LanguageType::C));
+	c_lang=(language_cmb->currentText() == DefaultLanguages::C);
 	source_code_frm->setVisible(!c_lang);
 	library_frm->setVisible(c_lang);
 
@@ -366,15 +361,13 @@ void FunctionWidget::selectLanguage(void)
 	{
 		try
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
-												GlobalAttributes::DirSeparator +
-											  language_cmb->currentText() +
-												GlobalAttributes::HighlightFileSuffix +
-												GlobalAttributes::ConfigurationExt);
+			source_code_hl->loadConfiguration(
+						GlobalAttributes::getConfigurationFilePath(language_cmb->currentText() +
+																											 GlobalAttributes::HighlightFileSuffix));
 		}
 		catch(Exception &)
 		{
-			source_code_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+			source_code_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 		}
 
 		source_code_hl->rehighlight();
@@ -382,7 +375,7 @@ void FunctionWidget::selectLanguage(void)
 	}
 }
 
-void FunctionWidget::validateConfiguredFunction(void)
+void FunctionWidget::validateConfiguredFunction()
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	vector<BaseObject *> obj_list;
@@ -491,7 +484,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	}
 }
 
-void FunctionWidget::applyConfiguration(void)
+void FunctionWidget::applyConfiguration()
 {
 	try
 	{
@@ -532,7 +525,7 @@ void FunctionWidget::applyConfiguration(void)
 		}
 
 
-		if(language_cmb->currentText()==~LanguageType(LanguageType::C))
+		if(language_cmb->currentText() == DefaultLanguages::C)
 		{
 			func->setLibrary(library_edt->text());
 			func->setSymbol(symbol_edt->text());

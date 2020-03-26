@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,9 +40,9 @@ void BaseConfigWidget::setConfigurationChanged(bool changed)
 	config_changed=changed;
 }
 
-bool BaseConfigWidget::isConfigurationChanged(void)
+bool BaseConfigWidget::isConfigurationChanged()
 {
-	return(config_changed);
+	return config_changed;
 }
 
 void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, attribs_map> &config_params)
@@ -50,18 +50,12 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 	QByteArray buf;
 
 	//Configures the schema filename for the configuration
-	QString	sch_filename=GlobalAttributes::TmplConfigurationDir +
-						 GlobalAttributes::DirSeparator +
-						 GlobalAttributes::SchemasDir +
-						 GlobalAttributes::DirSeparator +
-						 conf_id +
-						 GlobalAttributes::SchemaExt,
+	QString	sch_filename=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																			conf_id + GlobalAttributes::SchemaExt),
 
 			//Cofnigures the filename for the configuration file
-			cfg_filename=GlobalAttributes::ConfigurationsDir +
-						 GlobalAttributes::DirSeparator +
-						 conf_id +
-						 GlobalAttributes::ConfigurationExt;
+			cfg_filename = GlobalAttributes::getConfigurationFilePath(conf_id);
+
 	QFile output(cfg_filename);
 	attribs_map attribs;
 	map<QString, attribs_map >::iterator itr, itr_end;
@@ -79,7 +73,7 @@ void BaseConfigWidget::saveConfiguration(const QString &conf_id, map<QString, at
 
 		//Generates the configuration from the schema file
 		schparser.ignoreEmptyAttributes(true);
-		buf.append(schparser.convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)));
+		buf.append(XmlParser::convertCharsToXMLEntities(schparser.getCodeDefinition(sch_filename, attribs)));
 		output.open(QFile::WriteOnly);
 
 		if(!output.isOpen())
@@ -104,19 +98,12 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 	QString current_file, default_file;
 
 	//Build the path to the current configuration (conf/[conf_id].conf
-	current_file=GlobalAttributes::ConfigurationsDir +
-				 GlobalAttributes::DirSeparator +
-				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
+	current_file=GlobalAttributes::getConfigurationFilePath(conf_id);
 
 	//Build the path to the default configuration file (conf/defaults/[conf_id].conf
-	default_file=GlobalAttributes::TmplConfigurationDir +
-				 GlobalAttributes::DirSeparator +
-				 GlobalAttributes::DefaultConfsDir+
-				 GlobalAttributes::DirSeparator +
-				 conf_id +
-				 GlobalAttributes::ConfigurationExt;
-
+	default_file=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::DefaultConfsDir,
+																															conf_id +
+																															GlobalAttributes::ConfigurationExt);
 	//Raises an error if the default file doesn't exists
 	if(!QFile::exists(default_file))
 		throw Exception(Exception::getErrorMessage(ErrorCode::DefaultConfigNotRestored).arg(default_file),
@@ -137,7 +124,7 @@ void BaseConfigWidget::restoreDefaults(const QString &conf_id, bool silent)
 		if(bkp_saved && !silent)
 		{
 			Messagebox msg_box;
-			msg_box.show(trUtf8("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::InfoIcon);
+			msg_box.show(tr("A backup of the previous settings was saved into <strong>%1</strong>!").arg(bkp_filename), Messagebox::InfoIcon);
 		}
 	}
 }
@@ -148,20 +135,21 @@ void BaseConfigWidget::loadConfiguration(const QString &conf_id, map<QString, at
 
 	try
 	{
-		filename = GlobalAttributes::ConfigurationsDir +
-							 GlobalAttributes::DirSeparator +
-							 conf_id +
-							 GlobalAttributes::ConfigurationExt;
+		filename = GlobalAttributes::getConfigurationFilePath(conf_id);
 
 		config_params.clear();
 		xmlparser.restartParser();
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
+		/* xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationDir() +
 							 GlobalAttributes::DirSeparator +
 							 GlobalAttributes::ObjectDTDDir +
 							 GlobalAttributes::DirSeparator +
 							 conf_id +
 							 GlobalAttributes::ObjectDTDExt,
-							 conf_id);
+							 conf_id); */
+
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				conf_id + GlobalAttributes::ObjectDTDExt),
+												 conf_id);
 
 		xmlparser.loadXMLFile(filename);
 

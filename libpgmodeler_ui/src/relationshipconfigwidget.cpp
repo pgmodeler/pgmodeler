@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,41 +39,25 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	for(int i=0; i < pattern_fields.size(); i++)
 	{
 		pattern_hl=new SyntaxHighlighter(pattern_fields[i], true);
-		pattern_hl->loadConfiguration(GlobalAttributes::ConfigurationsDir +
-									  GlobalAttributes::DirSeparator +
-									  GlobalAttributes::PatternHighlightConf +
-									  GlobalAttributes::ConfigurationExt);
+		pattern_hl->loadConfiguration(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::PatternHighlightConf));
 
 		connect(pattern_fields[i], SIGNAL(textChanged()), this, SLOT(updatePattern()));
 	}
 
-	fk_to_pk_ht=new HintTextWidget(fk_to_pk_hint, this);
-	fk_to_pk_ht->setText(fk_to_pk_rb->statusTip());
+	deferral_cmb->addItems(DeferralType::getTypes());
 
-	center_pnts_ht=new HintTextWidget(center_pnts_hint, this);
-	center_pnts_ht->setText(center_pnts_rb->statusTip());
-
-	tab_edges_ht=new HintTextWidget(tab_edges_hint, this);
-	tab_edges_ht->setText(tab_edges_rb->statusTip());
-
-	crows_foot_ht=new HintTextWidget(crows_foot_hint, this);
-	crows_foot_ht->setText(crows_foot_rb->statusTip());
-
-	DeferralType::getTypes(list);
-	deferral_cmb->addItems(list);
-
-	ActionType::getTypes(list);
-	list.push_front(trUtf8("Default"));
+	list = ActionType::getTypes();
+	list.push_front(tr("Default"));
 	del_action_cmb->addItems(list);
 	upd_action_cmb->addItems(list);
 
 	for(int i=0; i < rel_types.size(); i++)
 		rel_type_cmb->addItem(BaseRelationship::getRelationshipTypeName(rel_types_id[i]), rel_types[i]);
 
-	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
-	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview(void)));
+	connect(crows_foot_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(fk_to_pk_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(center_pnts_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
+	connect(tab_edges_rb, SIGNAL(toggled(bool)), this, SLOT(enableConnModePreview()));
 
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
 	connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -85,12 +69,12 @@ RelationshipConfigWidget::RelationshipConfigWidget(QWidget * parent) : BaseConfi
 	connect(deferral_cmb, &QComboBox::currentTextChanged, [&](){ setConfigurationChanged(true); });
 }
 
-map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> RelationshipConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
-void RelationshipConfigWidget::loadConfiguration(void)
+void RelationshipConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -128,22 +112,15 @@ void RelationshipConfigWidget::loadConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::saveConfiguration(void)
+void RelationshipConfigWidget::saveConfiguration()
 {  
 	try
 	{
-		QString patterns_sch, root_dir;
+		QString patterns_sch;
 
-		root_dir=GlobalAttributes::TmplConfigurationDir +
-				 GlobalAttributes::DirSeparator;
-
-		patterns_sch=root_dir +
-					 GlobalAttributes::SchemasDir +
-					 GlobalAttributes::DirSeparator +
-					 Attributes::Patterns +
-					 GlobalAttributes::SchemaExt;
-
-
+		patterns_sch=GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																Attributes::Patterns +
+																																GlobalAttributes::SchemaExt);
 		if(crows_foot_rb->isChecked())
 			config_params[Attributes::Connection][Attributes::Mode]=Attributes::CrowsFoot;
 		else if(fk_to_pk_rb->isChecked())
@@ -176,7 +153,7 @@ void RelationshipConfigWidget::saveConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::applyConfiguration(void)
+void RelationshipConfigWidget::applyConfiguration()
 {
 	RelationshipView::setCrowsFoot(crows_foot_rb->isChecked());
 
@@ -191,7 +168,7 @@ void RelationshipConfigWidget::applyConfiguration(void)
 	}
 }
 
-void RelationshipConfigWidget::restoreDefaults(void)
+void RelationshipConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -205,7 +182,7 @@ void RelationshipConfigWidget::restoreDefaults(void)
 	}
 }
 
-void RelationshipConfigWidget::fillNamePatterns(void)
+void RelationshipConfigWidget::fillNamePatterns()
 {
 	QString rel_type=rel_type_cmb->currentData().toString();
 	bool relnn=false, reldep=false, relgen=false;
@@ -248,7 +225,7 @@ void RelationshipConfigWidget::fillNamePatterns(void)
 	}
 }
 
-void RelationshipConfigWidget::updatePattern(void)
+void RelationshipConfigWidget::updatePattern()
 {
 	QPlainTextEdit *input=qobject_cast<QPlainTextEdit *>(sender());
 	QString rel_type=rel_type_cmb->currentData().toString();
@@ -264,7 +241,7 @@ void RelationshipConfigWidget::updatePattern(void)
 	patterns[rel_type][inputs_map[input]]=input->toPlainText();
 }
 
-void RelationshipConfigWidget::enableConnModePreview(void)
+void RelationshipConfigWidget::enableConnModePreview()
 {
 	crows_foot_lbl->setEnabled(crows_foot_rb->isChecked());
 	conn_cnt_pnts_lbl->setEnabled(center_pnts_rb->isChecked());

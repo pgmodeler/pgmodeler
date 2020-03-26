@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "bulkdataeditwidget.h"
 #include "sqlexecutionwidget.h"
 
-const QString TableDataWidget::PlaceholderColumn=QString("$placeholder$");
+const QString TableDataWidget::PlaceholderColumn("$placeholder$");
 
 TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::BaseObject)
 {
@@ -131,7 +131,7 @@ void TableDataWidget::insertRowOnTabPress(int curr_row, int curr_col, int prev_r
 	}
 }
 
-void TableDataWidget::duplicateRows(void)
+void TableDataWidget::duplicateRows()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
 
@@ -155,7 +155,7 @@ void TableDataWidget::duplicateRows(void)
 	}
 }
 
-void TableDataWidget::deleteRows(void)
+void TableDataWidget::deleteRows()
 {
 	QTableWidgetSelectionRange sel_range;
 
@@ -168,11 +168,11 @@ void TableDataWidget::deleteRows(void)
 	}
 }
 
-void TableDataWidget::deleteColumns(void)
+void TableDataWidget::deleteColumns()
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("Delete columns is an irreversible action! Do you really want to proceed?"),
+	msg_box.show(tr("Delete columns is an irreversible action! Do you really want to proceed?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -207,7 +207,7 @@ void TableDataWidget::clearRows(bool confirm)
 	Messagebox msg_box;
 
 	if(confirm)
-		msg_box.show(trUtf8("Remove all rows is an irreversible action! Do you really want to proceed?"),
+		msg_box.show(tr("Remove all rows is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
@@ -218,11 +218,11 @@ void TableDataWidget::clearRows(bool confirm)
 	}
 }
 
-void TableDataWidget::clearColumns(void)
+void TableDataWidget::clearColumns()
 {
 	Messagebox msg_box;
 
-		msg_box.show(trUtf8("Remove all columns is an irreversible action! Do you really want to proceed?"),
+		msg_box.show(tr("Remove all columns is an irreversible action! Do you really want to proceed?"),
 								 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -259,7 +259,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 			{
 				item->setFlags(Qt::NoItemFlags);
 				item->setForeground(QColor(Qt::red));
-				item->setToolTip(trUtf8("Unknown column"));
+				item->setToolTip(tr("Unknown column"));
 			}
 			else
 			{
@@ -291,7 +291,7 @@ void TableDataWidget::changeColumnName(int col_idx)
 	}
 }
 
-void TableDataWidget::enableButtons(void)
+void TableDataWidget::enableButtons()
 {
 	QList<QTableWidgetSelectionRange> sel_ranges=data_tbw->selectedRanges();
 	bool cols_selected, rows_selected;
@@ -374,9 +374,9 @@ void TableDataWidget::populateDataGrid(const QString &data)
 			invalid_cols.push_back(col);
 
 			if(!column)
-				item->setToolTip(trUtf8("Unknown column"));
+				item->setToolTip(tr("Unknown column"));
 			else
-				item->setToolTip(trUtf8("Duplicated column"));
+				item->setToolTip(tr("Duplicated column"));
 		}
 		else
 			item->setToolTip(QString("%1 [%2]").arg(col_name).arg(~column->getType()));
@@ -427,7 +427,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	configureColumnNamesMenu();
 }
 
-void TableDataWidget::configureColumnNamesMenu(void)
+void TableDataWidget::configureColumnNamesMenu()
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(this->object);
 	QStringList col_names;
@@ -452,7 +452,7 @@ void TableDataWidget::configureColumnNamesMenu(void)
 	col_names_menu.addAction(PlaceholderColumn);
 }
 
-void TableDataWidget::toggleWarningFrame(void)
+void TableDataWidget::toggleWarningFrame()
 {
 	bool has_inv_cols=false;
 
@@ -467,12 +467,12 @@ void TableDataWidget::setItemInvalid(QTableWidgetItem *item)
 	if(item)
 	{
 		item->setData(Qt::UserRole, item->background());
-		item->setBackgroundColor(QColor(QString("#FFC0C0")));
+		item->setBackground(QColor(QString("#FFC0C0")));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 
-QString TableDataWidget::generateDataBuffer(void)
+QString TableDataWidget::generateDataBuffer()
 {
 	QStringList val_list, col_names, buffer;
 	QString value;
@@ -506,9 +506,9 @@ QString TableDataWidget::generateDataBuffer(void)
 	}
 
 	if(buffer.size() <= 1)
-		return(QString());
+		return QString();
 
-	return(buffer.join(Table::DataLineBreak));
+	return buffer.join(Table::DataLineBreak);
 }
 
 void TableDataWidget::enterEvent(QEvent *)
@@ -521,7 +521,7 @@ void TableDataWidget::showEvent(QShowEvent *)
 	paste_tb->setEnabled(!qApp->clipboard()->text().isEmpty());
 }
 
-void TableDataWidget::addRow(void)
+void TableDataWidget::addRow()
 {
 	int row=data_tbw->rowCount();
 	QTableWidgetItem *item = nullptr;
@@ -579,7 +579,7 @@ void TableDataWidget::addColumn(QAction *action)
 	}
 }
 
-void TableDataWidget::applyConfiguration(void)
+void TableDataWidget::applyConfiguration()
 {
 	try
 	{

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "collation.h"
 
-Collation::Collation(void)
+Collation::Collation()
 {
 	obj_type=ObjectType::Collation;
 	encoding=BaseType::Null;
@@ -72,9 +72,9 @@ void Collation::setCollation(BaseObject *collation)
 	localization[0]=localization[1]=QString();
 }
 
-QString Collation::getLocale(void)
+QString Collation::getLocale()
 {
-	return(locale);
+	return locale;
 }
 
 QString Collation::getLocalization(unsigned lc_id)
@@ -82,23 +82,23 @@ QString Collation::getLocalization(unsigned lc_id)
 	if(lc_id > LcCollate)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(localization[lc_id]);
+	return localization[lc_id];
 }
 
-EncodingType Collation::getEncoding(void)
+EncodingType Collation::getEncoding()
 {
-	return(encoding);
+	return encoding;
 }
 
 QString Collation::getCodeDefinition(unsigned def_type)
 {
-	return(getCodeDefinition(def_type, false));
+	return getCodeDefinition(def_type, false);
 }
 
 QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(!locale.isEmpty())
 	{
@@ -127,7 +127,7 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	}
 
 	attributes[Attributes::Encoding]=~encoding;
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Collation::getAlterDefinition(BaseObject *object)
@@ -135,7 +135,7 @@ QString Collation::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
 	}
 	catch(Exception &e)
 	{

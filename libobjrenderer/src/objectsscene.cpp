@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ QBrush ObjectsScene::grid;
 bool ObjectsScene::corner_move=true;
 bool ObjectsScene::invert_rangesel_trigger=false;
 
-ObjectsScene::ObjectsScene(void)
+ObjectsScene::ObjectsScene()
 {
-	layers.push_back(trUtf8("Default layer"));
+	layers.push_back(tr("Default layer"));
 	active_layers.push_back(layers.at(0));
 
 	moving_objs=move_scene=false;
@@ -70,7 +70,7 @@ ObjectsScene::ObjectsScene(void)
 	object_move_timer.setInterval(SceneMoveTimeout * 10);
 }
 
-ObjectsScene::~ObjectsScene(void)
+ObjectsScene::~ObjectsScene()
 {
 	QGraphicsItemGroup *item=nullptr;
 	QList<QGraphicsItem *> items;
@@ -80,8 +80,8 @@ ObjectsScene::~ObjectsScene(void)
 	this->removeItem(selection_rect);
 	this->removeItem(rel_line);
 
-	delete(selection_rect);
-	delete(rel_line);
+	delete selection_rect;
+	delete rel_line;
 
 	//Destroy the objects in the order defined on obj_types vector
 	for(auto &type : obj_types)
@@ -116,7 +116,7 @@ ObjectsScene::~ObjectsScene(void)
 	std::sort(removed_objs.begin(), removed_objs.end());
 	while(!removed_objs.empty())
 	{
-		delete(removed_objs.back());
+		delete removed_objs.back();
 		removed_objs.pop_back();
 	}
 }
@@ -139,31 +139,31 @@ QString ObjectsScene::formatLayerName(const QString &name)
 	while(layers.contains(fmt_name))
 		fmt_name = QString("%1 %2").arg(name).arg(QString::number(idx++));
 
-	return(fmt_name);
+	return fmt_name;
 }
 
 QString ObjectsScene::addLayer(const QString &name)
 {
 	if(name.isEmpty())
-		return(QString());
+		return QString();
 
 	QString fmt_name = formatLayerName(name);
 	layers.push_back(fmt_name);
 
 	emit s_layersChanged();
-	return(fmt_name);
+	return fmt_name;
 }
 
 QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 {
 	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
-		return (QString());
+		return QString();
 
 	if(name != layers[idx])
 		layers[idx] = formatLayerName(name);
 
 	emit s_layersChanged();
-	return(layers[idx]);
+	return layers[idx];
 }
 
 void ObjectsScene::removeLayer(const QString &name)
@@ -179,7 +179,7 @@ void ObjectsScene::removeLayer(const QString &name)
 	}
 }
 
-void ObjectsScene::removeLayers(void)
+void ObjectsScene::removeLayers()
 {
 	BaseObjectView *obj_view = nullptr;
 	QString def_layer = layers[DefaultLayer];
@@ -298,44 +298,44 @@ void ObjectsScene::moveObjectsToLayer(unsigned old_layer, unsigned new_layer)
 
 bool ObjectsScene::isLayerActive(const QString &name)
 {
-	return(active_layers.contains(name));
+	return active_layers.contains(name);
 }
 
 bool ObjectsScene::isLayerActive(unsigned layer_id)
 {
 	if(layer_id >= static_cast<unsigned>(layers.size()))
-		return(false);
+		return false;
 
-	return(active_layers.contains(layers[layer_id]));
+	return active_layers.contains(layers[layer_id]);
 }
 
-QStringList ObjectsScene::getActiveLayers(void)
+QStringList ObjectsScene::getActiveLayers()
 {
-	return(active_layers);
+	return active_layers;
 }
 
-QList<unsigned> ObjectsScene::getActiveLayersIds(void)
+QList<unsigned> ObjectsScene::getActiveLayersIds()
 {
 	QList<unsigned> list;
 
 	for(auto &layer : active_layers)
 		list.push_back(layers.indexOf(layer));
 
-	return(list);
+	return list;
 }
 
-QStringList ObjectsScene::getLayers(void)
+QStringList ObjectsScene::getLayers()
 {
-	return(layers);
+	return layers;
 }
 
 unsigned ObjectsScene::getLayerId(const QString &name)
 {
 	int idx = layers.contains(name);
-	return(idx < 0 ? InvalidLayer : static_cast<unsigned>(idx));
+	return idx < 0 ? InvalidLayer : static_cast<unsigned>(idx);
 }
 
-void ObjectsScene::updateActiveLayers(void)
+void ObjectsScene::updateActiveLayers()
 {
 	setActiveLayers(active_layers);
 }
@@ -350,9 +350,9 @@ void ObjectsScene::setInvertRangeSelectionTrigger(bool invert)
 	ObjectsScene::invert_rangesel_trigger=invert;
 }
 
-bool ObjectsScene::isCornerMoveEnabled(void)
+bool ObjectsScene::isCornerMoveEnabled()
 {
-	return(ObjectsScene::corner_move);
+	return ObjectsScene::corner_move;
 }
 
 QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
@@ -363,7 +363,7 @@ QPointF ObjectsScene::alignPointToGrid(const QPointF &pnt)
 	if(px < 0) px = 0;
 	if(py < 0) py = 0;
 
-	return(QPointF(px,	py));
+	return QPointF(px,	py);
 }
 
 void ObjectsScene::setSceneRect(const QRectF &rect)
@@ -374,7 +374,7 @@ void ObjectsScene::setSceneRect(const QRectF &rect)
 QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_only)
 {
 	if(!seek_only_db_objs)
-		return(QGraphicsScene::itemsBoundingRect());
+		return QGraphicsScene::itemsBoundingRect();
 	else
 	{
 		QRectF rect=QGraphicsScene::itemsBoundingRect();
@@ -425,9 +425,9 @@ QRectF ObjectsScene::itemsBoundingRect(bool seek_only_db_objs, bool selected_onl
 		}
 
 		if(selected_only)
-			return(QRectF(QPointF(x, y), QPointF(x2, y2)));
+			return QRectF(QPointF(x, y), QPointF(x2, y2));
 		else
-			return(QRectF(QPointF(x, y), rect.bottomRight()));
+			return QRectF(QPointF(x, y), rect.bottomRight());
 	}
 }
 
@@ -545,19 +545,19 @@ void ObjectsScene::setGridOptions(bool show_grd, bool align_objs_grd, bool show_
 	}
 }
 
-bool ObjectsScene::isAlignObjectsToGrid(void)
+bool ObjectsScene::isAlignObjectsToGrid()
 {
-	return(align_objs_grid);
+	return align_objs_grid;
 }
 
-bool ObjectsScene::isShowGrid(void)
+bool ObjectsScene::isShowGrid()
 {
-	return(show_grid);
+	return show_grid;
 }
 
-bool ObjectsScene::isShowPageDelimiters(void)
+bool ObjectsScene::isShowPageDelimiters()
 {
-	return(show_page_delim);
+	return show_page_delim;
 }
 
 void ObjectsScene::setPaperConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins, QSizeF custom_size)
@@ -640,7 +640,7 @@ void ObjectsScene::handleObjectSelection(BaseGraphicObject *object, bool selecte
 		emit s_objectSelected(object, selected);
 }
 
-void ObjectsScene::handleChildrenSelectionChanged(void)
+void ObjectsScene::handleChildrenSelectionChanged()
 {
 	BaseTableView *tab_view = dynamic_cast<BaseTableView *>(sender());
 
@@ -676,8 +676,13 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 		}
 
 		if(obj)
-		{
+		{		
 			obj->setVisible(isLayerActive(obj->getLayer()));
+
+			// Relationships and schemas don't have their z value changed
+			if(!rel && !dynamic_cast<SchemaView *>(item))
+				obj->setZValue(dynamic_cast<BaseGraphicObject *>(obj->getUnderlyingObject())->getZValue());
+
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(handleObjectSelection(BaseGraphicObject*,bool)));
 		}
 
@@ -804,7 +809,7 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-bool ObjectsScene::mouseIsAtCorner(void)
+bool ObjectsScene::mouseIsAtCorner()
 {
 	QGraphicsView *view=getActiveViewport();
 
@@ -829,16 +834,16 @@ bool ObjectsScene::mouseIsAtCorner(void)
 			else
 				scene_move_dy=0;
 
-			return(scene_move_dx!=0 || scene_move_dy!=0);
+			return scene_move_dx!=0 || scene_move_dy!=0;
 		}
 		else
-			return(false);
+			return false;
 	}
 	else
-		return(false);
+		return false;
 }
 
-QGraphicsView *ObjectsScene::getActiveViewport(void)
+QGraphicsView *ObjectsScene::getActiveViewport()
 {
 	QGraphicsView *view_p=nullptr;
 
@@ -851,10 +856,10 @@ QGraphicsView *ObjectsScene::getActiveViewport(void)
 		}
 	}
 
-	return(view_p);
+	return view_p;
 }
 
-void ObjectsScene::moveObjectScene(void)
+void ObjectsScene::moveObjectScene()
 {
 	if(scene_move_dx!=0 || scene_move_dy!=0)
 	{
@@ -1167,7 +1172,12 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 						rel_list.push_back(dynamic_cast<QGraphicsItem *>(base_rel->getOverlyingObject()));
 				}
 
-				tables.unite(sch_view->getChildren().toSet());
+				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+					tables.unite(sch_view->getChildren().toSet());
+				#else
+					QList<BaseObjectView *> list = sch_view->getChildren();
+					tables.unite(QSet<BaseObjectView *>(list.begin(), list.end()));
+				#endif
 			}
 		}
 	}
@@ -1281,7 +1291,7 @@ void ObjectsScene::finishObjectsMove(const QPointF &pnt_end)
 	sel_ini_pnt.setY(DNaN);
 }
 
-void ObjectsScene::alignObjectsToGrid(void)
+void ObjectsScene::alignObjectsToGrid()
 {
 	QList<QGraphicsItem *> items=this->items();
 	RelationshipView *rel=nullptr;
@@ -1339,13 +1349,13 @@ void ObjectsScene::alignObjectsToGrid(void)
 	}
 }
 
-void ObjectsScene::update(void)
+void ObjectsScene::update()
 {
 	this->setBackgroundBrush(grid);
 	QGraphicsScene::update(this->sceneRect());
 }
 
-void ObjectsScene::clearTablesChildrenSelection(void)
+void ObjectsScene::clearTablesChildrenSelection()
 {
 	for(auto &tab_obj_view : tabs_sel_children)
 		tab_obj_view->clearChildrenSelection();
@@ -1353,7 +1363,7 @@ void ObjectsScene::clearTablesChildrenSelection(void)
 	tabs_sel_children.clear();
 }
 
-void ObjectsScene::clearSelection(void)
+void ObjectsScene::clearSelection()
 {
 	clearTablesChildrenSelection();
 	QGraphicsScene::clearSelection();
@@ -1410,33 +1420,33 @@ vector<QRectF> ObjectsScene::getPagesForPrinting(const QSizeF &paper_size, const
 		for(h_page=static_cast<unsigned>(start_h); h_page < h_page_cnt; h_page++)
 			pages.push_back(QRectF(QPointF(h_page * page_width, v_page * page_height), QSizeF(page_width, page_height)));
 
-	return(pages);
+	return pages;
 }
 
-bool ObjectsScene::isRangeSelectionEnabled(void)
+bool ObjectsScene::isRangeSelectionEnabled()
 {
-	return(enable_range_sel);
+	return enable_range_sel;
 }
 
-bool ObjectsScene::isRangeSelectionTriggerInverted(void)
+bool ObjectsScene::isRangeSelectionTriggerInverted()
 {
-	return(invert_rangesel_trigger);
+	return invert_rangesel_trigger;
 }
 
-bool ObjectsScene::isRelationshipLineVisible(void)
+bool ObjectsScene::isRelationshipLineVisible()
 {
-	return(rel_line->isVisible());
+	return rel_line->isVisible();
 }
 
-bool ObjectsScene::isMovingObjects(void)
+bool ObjectsScene::isMovingObjects()
 {
-	return(moving_objs);
+	return moving_objs;
 }
 
-QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
+QList<QGraphicsItem *> ObjectsScene::selectedItems() const
 {
 	if(tabs_sel_children.empty())
-		return(QGraphicsScene::selectedItems());
+		return QGraphicsScene::selectedItems();
 
 	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
 
@@ -1446,10 +1456,10 @@ QList<QGraphicsItem *> ObjectsScene::selectedItems(void) const
 			items.append(tab_obj);
 	}
 
-	return(items);
+	return items;
 }
 
 bool ObjectsScene::hasOnlyTableChildrenSelection() const
 {
-	return(QGraphicsScene::selectedItems().isEmpty() && !tabs_sel_children.isEmpty());
+	return QGraphicsScene::selectedItems().isEmpty() && !tabs_sel_children.isEmpty();
 }

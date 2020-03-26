@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@ class PartRelationhipTest: public QObject {
     Q_OBJECT
 
   private slots:
-	void connRelTableNoColumnsAndTableTwoColumns(void);
-	void connRelTablesTwoColumnsSameNameShouldNotRaiseError(void);
-	void connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError(void);
-	void connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError(void);
-	void connRelShouldInvalidateIfPartitionedColumnChanges(void);
+	void connRelTableNoColumnsAndTableTwoColumns();
+	void connRelTablesTwoColumnsSameNameShouldNotRaiseError();
+	void connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError();
+	void connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError();
+	void connRelShouldInvalidateIfPartitionedColumnChanges();
 };
 
-void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns(void)
+void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns()
 {
   Schema *schema = new Schema;
   Table *partitioned = new Table;
@@ -68,7 +68,7 @@ void PartRelationhipTest::connRelTableNoColumnsAndTableTwoColumns(void)
   }
 }
 
-void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(void)
+void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError()
 {
   Schema *schema = new Schema;
   Table *partitioned = new Table;
@@ -115,7 +115,7 @@ void PartRelationhipTest::connRelTablesTwoColumnsSameNameShouldNotRaiseError(voi
   }
 }
 
-void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError(void)
+void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShouldRaiseError()
 {
   Schema *schema = new Schema;
   Table *partitioned = new Table;
@@ -166,7 +166,7 @@ void PartRelationhipTest::connRelTablePartionHasMoreColsThanPartitionedTableShou
   }
 }
 
-void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError(void)
+void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTableShouldRaiseError()
 {
   Schema *schema = new Schema;
   Table *partitioned = new Table;
@@ -213,7 +213,7 @@ void PartRelationhipTest::connRelTablePartionHasDifferentColsThanPartitionedTabl
   }
 }
 
-void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges(void)
+void PartRelationhipTest::connRelShouldInvalidateIfPartitionedColumnChanges()
 {
   Schema *schema = new Schema;
   Table *partitioned = new Table;

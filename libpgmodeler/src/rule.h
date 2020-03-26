@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 
 #include "tableobject.h"
 #include "column.h"
+#include "pgsqltypes/executiontype.h"
+#include "pgsqltypes/eventtype.h"
 
 class Rule: public TableObject{
 	private:
@@ -44,10 +46,10 @@ class Rule: public TableObject{
 		EventType event_type;
 
 		//! \brief Formats the commands string to be used by the SchemaParser
-		void setCommandsAttribute(void);
+		void setCommandsAttribute();
 
 	public:
-		Rule(void);
+		Rule();
 
 		//! \brief Adds the SQL command to be executed by the rule
 		void addCommand(const QString &cmd);
@@ -65,22 +67,22 @@ class Rule: public TableObject{
 		QString getCommand(unsigned cmd_idx);
 
 		//! \brief Returns the SQL command count
-		unsigned getCommandCount(void);
+		unsigned getCommandCount();
 
 		//! \brief Returns the conditional expression for the rule
-		QString getConditionalExpression(void);
+		QString getConditionalExpression();
 
 		//! \brief Returns the event when the rule is triggered
-		EventType getEventType(void);
+		EventType getEventType();
 
 		//! \brief Returns the execution type for the rule
-		ExecutionType getExecutionType(void);
+		ExecutionType getExecutionType();
 
 		//! \brief Removes one command form the rule using its index
 		void removeCommand(unsigned cmd_idx);
 
 		//! \brief Remove all commands from the rule
-		void removeCommands(void);
+		void removeCommands();
 
 		//! \brief Returns the SQL / XML definition for the rule
 		virtual QString getCodeDefinition(unsigned def_type) final;

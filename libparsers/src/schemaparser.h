@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,13 +49,13 @@ class SchemaParser {
 		static const QRegExp AttribRegExp;
 
 		//! \brief Get an attribute name from the buffer on the current position
-		QString getAttribute(void);
+		QString getAttribute();
 
 		//! \brief Get an conditional instruction from the buffer on the current position
-		QString getConditional(void);
+		QString getConditional();
 
 		//! \brief Get an metacharacter from the buffer on the current position
-		QString getMetaCharacter(void);
+		QString getMetaCharacter();
 
 		/*! \brief Returns the result (true|false) of conditional expression evaluation.
 		The expression is evaluated from the left to the right and not support Polish Notation, so
@@ -70,7 +70,7 @@ class SchemaParser {
 		%if {a1} %or %not {a3} %then --> TRUE
 		%if {a1} %and {a3} %then --> FALSE
 		*/
-		bool evaluateExpression(void);
+		bool evaluateExpression();
 
 		/*! \brief Returns the result (true|false) of a comparison expression. A comparison expression
 		have the form: ( {attribute} [operator] "value" ), where:
@@ -85,7 +85,7 @@ class SchemaParser {
 		The parenthesis are mandatory otherwise the parser will not recognize the expression
 		and raise an exception. Multiple expressions combined with logical operators
 		%not %and %or in the same () are not supported. */
-		bool evaluateComparisonExpr(void);
+		bool evaluateComparisonExpr();
 
 		/*! \brief Creates a new attribute when finding:
 		1) %set  {attrib-name} [expr]  or
@@ -99,10 +99,10 @@ class SchemaParser {
 
 		The %set construction must be the only one in the line otherwise the parser will return
 		errors if another instruction starting with % is found. */
-		void defineAttribute(void);
+		void defineAttribute();
 
 		//! \brief Clears the value of attributes when finding the instruction: %unset {attr1} {attr2}...
-		void unsetAttribute(void);
+		void unsetAttribute();
 
 		//! \brief Increments the column counter while blank chars (space and tabs) are found on the line
 		void ignoreBlankChars(const QString &line);
@@ -112,10 +112,10 @@ class SchemaParser {
 
 		/*! \brief Get an word from the buffer on the current position (word is any string that isn't
 		 a conditional instruction or comment) */
-		QString getWord(void);
+		QString getWord();
 
 		//! \brief Gets a pure text, ignoring elements of the language
-		QString getPureText(void);
+		QString getPureText();
 
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
@@ -189,7 +189,7 @@ class SchemaParser {
 		static constexpr unsigned SqlDefinition=0,
 		XmlDefinition=1;
 
-		SchemaParser(void);
+		SchemaParser();
 
 		/*! \brief Set the version of PostgreSQL to be adopted by the parser in obtaining
 		 the definition of the objects. This function should always be called at
@@ -219,7 +219,7 @@ class SchemaParser {
 		void loadFile(const QString &filename);
 
 		//! \brief Resets the parser in order to do new analysis
-		void restartParser(void);
+		void restartParser();
 
 		//! \brief Set if the parser must ignore unknown attributes avoiding exception throwing
 		void ignoreUnkownAttributes(bool ignore);
@@ -228,14 +228,10 @@ class SchemaParser {
 		void ignoreEmptyAttributes(bool ignore);
 
 		//! \brief Retorns the current PostgreSQL version used by the parser
-		QString getPgSQLVersion(void);
+		QString getPgSQLVersion();
 
 		//! \brief Extracts the attributes names from the currently loaded buffer
-		QStringList extractAttributes(void);
-
-		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
-		 * 	called when generating XML code and only tag attributes are treated.*/
-		static QString convertCharsToXMLEntities(QString buf);
+		QStringList extractAttributes();
 };
 
 #endif

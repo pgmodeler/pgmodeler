@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 
 	private slots:
 		//! \brief Handles the form showing the fields according to the selected type configuration (base, composite, enumaration)
-		void selectTypeConfiguration(void);
+		void selectTypeConfiguration();
 
 		//! \brief Handles the type enumarations
 		void handleEnumeration(int row);
@@ -82,7 +82,7 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		void showAttributeData(TypeAttribute attrib, int row);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 };
 
 #endif

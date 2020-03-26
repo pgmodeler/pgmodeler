@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,18 +26,19 @@
 #define TYPE_ARGUMENT_H
 
 #include "baseobject.h"
+#include "pgsqltypes/pgsqltype.h"
 
 class TypeAttribute: public BaseObject {
 	private:
 		PgSqlType type;
 
-		QString getCodeDefinition(unsigned, bool){ return(""); }
+		QString getCodeDefinition(unsigned, bool){ return ""; }
 
 	public:
-		TypeAttribute(void);
+		TypeAttribute();
 
 		void setType(PgSqlType type);
-		PgSqlType getType(void);
+		PgSqlType getType();
 
 		//! \brief Returns the SQL / XML code definition for the parameter
 		virtual QString getCodeDefinition(unsigned def_type) final;

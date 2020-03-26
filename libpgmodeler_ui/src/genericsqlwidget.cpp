@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,18 +29,9 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	Ui_GenericSQLWidget::setupUi(this);
 	configureFormLayout(genericsql_grid, ObjectType::GenericSql);
 
-	ref_name_ht = new HintTextWidget(ref_name_hint, this);
-	ref_name_ht->setText(ref_name_edt->statusTip());
-
-	use_signature_ht = new HintTextWidget(use_signature_hint, this);
-	use_signature_ht->setText(use_signature_chk->statusTip());
-
-	format_name_ht = new HintTextWidget(format_name_hint, this);
-	format_name_ht->setText(format_name_chk->statusTip());
-
 	definition_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(0), true);
 	definition_hl = new SyntaxHighlighter(definition_txt);
-	definition_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	definition_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 	definition_cp=new CodeCompletionWidget(definition_txt, true);
 
 	comment_edt->setVisible(false);
@@ -49,7 +40,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	preview_txt = PgModelerUiNs::createNumberedTextEditor(attribs_tbw->widget(2), false);
 	preview_txt->setReadOnly(true);
 	preview_hl = new SyntaxHighlighter(preview_txt);
-	preview_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	preview_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	attribs_tbw->widget(0)->layout()->setContentsMargins(4,4,4,4);
 	attribs_tbw->widget(0)->layout()->addWidget(definition_txt);
@@ -70,17 +61,17 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 	references_grid->addWidget(objects_refs_tab, 2, 0, 1, 2);
 
 	objects_refs_tab->setColumnCount(5);
-	objects_refs_tab->setHeaderLabel(trUtf8("Ref. name"), 0);
+	objects_refs_tab->setHeaderLabel(tr("Ref. name"), 0);
 	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath("uid")), 0);
 
-	objects_refs_tab->setHeaderLabel(trUtf8("Object"), 1);
+	objects_refs_tab->setHeaderLabel(tr("Object"), 1);
 	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Table))), 1);
 
-	objects_refs_tab->setHeaderLabel(trUtf8("Type"), 2);
+	objects_refs_tab->setHeaderLabel(tr("Type"), 2);
 	objects_refs_tab->setHeaderIcon(QIcon(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(ObjectType::Type))), 2);
 
-	objects_refs_tab->setHeaderLabel(trUtf8("Signature"), 3);
-	objects_refs_tab->setHeaderLabel(trUtf8("Format name"), 4);
+	objects_refs_tab->setHeaderLabel(tr("Signature"), 3);
+	objects_refs_tab->setHeaderLabel(tr("Format name"), 4);
 
 	setMinimumSize(700, 500);
 
@@ -157,8 +148,8 @@ void GenericSQLWidget::addObjectReference(int row)
 void GenericSQLWidget::editObjectReference(int row)
 {
 	ref_name_edt->setText(objects_refs_tab->getCellText(row, 0));
-	use_signature_chk->setChecked(objects_refs_tab->getCellText(row, 3) == trUtf8("Yes"));
-	format_name_chk->setChecked(objects_refs_tab->getCellText(row, 4) == trUtf8("Yes"));
+	use_signature_chk->setChecked(objects_refs_tab->getCellText(row, 3) == tr("Yes"));
+	format_name_chk->setChecked(objects_refs_tab->getCellText(row, 4) == tr("Yes"));
 	object_sel->setSelectedObject(reinterpret_cast<BaseObject *>(objects_refs_tab->getRowData(row).value<void *>()));
 }
 
@@ -182,7 +173,7 @@ void GenericSQLWidget::updateObjectReference(int row)
 	}
 }
 
-void GenericSQLWidget::clearObjectReferenceForm(void)
+void GenericSQLWidget::clearObjectReferenceForm()
 {
 	object_sel->clearSelector();
 	ref_name_edt->clear();
@@ -191,7 +182,7 @@ void GenericSQLWidget::clearObjectReferenceForm(void)
 	objects_refs_tab->clearSelection();
 }
 
-void GenericSQLWidget::updateCodePreview(void)
+void GenericSQLWidget::updateCodePreview()
 {
 	try
 	{
@@ -205,7 +196,7 @@ void GenericSQLWidget::updateCodePreview(void)
 			preview_txt->setPlainText(dummy_gsql.getCodeDefinition(SchemaParser::SqlDefinition));
 		}
 		else
-			preview_txt->setPlainText(QString("-- %1 --").arg(trUtf8("No object name, SQL code or references defined! Preview unavailable.")));
+			preview_txt->setPlainText(QString("-- %1 --").arg(tr("No object name, SQL code or references defined! Preview unavailable.")));
 	}
 	catch(Exception &e)
 	{
@@ -218,12 +209,12 @@ void GenericSQLWidget::showObjectReferenceData(int row, BaseObject *object, cons
 	objects_refs_tab->setCellText(ref_name, row, 0);
 	objects_refs_tab->setCellText(use_signature ? object->getSignature(format_name) : object->getName(format_name), row, 1);
 	objects_refs_tab->setCellText(object->getTypeName(), row, 2);
-	objects_refs_tab->setCellText(use_signature ? trUtf8("Yes") : trUtf8("No"), row, 3);
-	objects_refs_tab->setCellText(format_name ? trUtf8("Yes") : trUtf8("No"), row, 4);
+	objects_refs_tab->setCellText(use_signature ? tr("Yes") : tr("No"), row, 3);
+	objects_refs_tab->setCellText(format_name ? tr("Yes") : tr("No"), row, 4);
 	objects_refs_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(object)), row);
 }
 
-void GenericSQLWidget::applyConfiguration(void)
+void GenericSQLWidget::applyConfiguration()
 {
 	try
 	{

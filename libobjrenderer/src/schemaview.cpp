@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 {
-	connect(schema, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(schema, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	sch_name=new QGraphicsSimpleTextItem;
 	sch_name->setZValue(1);
@@ -36,7 +36,7 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 
 	this->addToGroup(box);
 	this->addToGroup(sch_name);
-	this->setZValue(-5);
+	this->setZValue(-100);
 
 	this->configureObject();
 	all_selected=false;
@@ -44,13 +44,13 @@ SchemaView::SchemaView(Schema *schema) : BaseObjectView(schema)
 	this->setFlag(ItemSendsGeometryChanges, true);
 }
 
-SchemaView::~SchemaView(void)
+SchemaView::~SchemaView()
 {
 	this->removeFromGroup(box);
 	this->removeFromGroup(sch_name);
 
-	delete(box);
-	delete(sch_name);
+	delete box;
+	delete sch_name;
 }
 
 void SchemaView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -71,7 +71,7 @@ void SchemaView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		BaseObjectView::mouseReleaseEvent(event);
 }
 
-void SchemaView::fetchChildren(void)
+void SchemaView::fetchChildren()
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	DatabaseModel *model=dynamic_cast<DatabaseModel *>(schema->getDatabase());
@@ -93,7 +93,7 @@ void SchemaView::fetchChildren(void)
 	}
 }
 
-void SchemaView::selectChildren(void)
+void SchemaView::selectChildren()
 {
 	QList<BaseObjectView *>::Iterator itr=children.begin();
 
@@ -110,7 +110,7 @@ void SchemaView::selectChildren(void)
 	this->setSelected(true);
 }
 
-bool SchemaView::isChildrenSelected(void)
+bool SchemaView::isChildrenSelected()
 {
 	QList<BaseObjectView *>::Iterator itr=children.begin();
 	bool selected=true;
@@ -121,7 +121,7 @@ bool SchemaView::isChildrenSelected(void)
 		itr++;
 	}
 
-	return(selected);
+	return selected;
 }
 
 QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
@@ -137,17 +137,17 @@ QVariant SchemaView::itemChange(QGraphicsItem::GraphicsItemChange change, const 
 			child->moveBy(dx, dy);
 	}
 
-	return(BaseObjectView::itemChange(change, value));
+	return BaseObjectView::itemChange(change, value);
 }
 
 unsigned SchemaView::getChildrenCount()
 {
-	return(children.size());
+	return children.size();
 }
 
-QList<BaseObjectView *> SchemaView::getChildren(void)
+QList<BaseObjectView *> SchemaView::getChildren()
 {
-	return(children);
+	return children;
 }
 
 void SchemaView::togglePlaceholder(bool visible)
@@ -167,7 +167,7 @@ void SchemaView::moveTo(QPointF new_pos)
 		child->moveBy(dx, dy);
 }
 
-void SchemaView::configureObject(void)
+void SchemaView::configureObject()
 {
 	Schema *schema=dynamic_cast<Schema *>(this->getUnderlyingObject());
 	this->fetchChildren();

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 unsigned Tablespace::tabspace_id=1000;
 
-Tablespace::Tablespace(void)
+Tablespace::Tablespace()
 {
 	obj_type=ObjectType::Tablespace;
 	attributes[Attributes::Directory]=QString();
@@ -53,19 +53,19 @@ void Tablespace::setDirectory(const QString &dir)
 	this->directory=dir_aux;
 }
 
-QString Tablespace::getDirectory(void)
+QString Tablespace::getDirectory()
 {
-	return(directory);
+	return directory;
 }
 
 QString Tablespace::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	if(!directory.isEmpty())
 		attributes[Attributes::Directory]=QString("'") + directory + QString("'");
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 

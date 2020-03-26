@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void removeNewRows(vector<int> ins_rows);
 		
 		//! \brief Reset the state of changed rows, clearing all attributes used to control the modifications on them
-		void clearChangedRows(void);
+		void clearChangedRows();
 
 		//! brief Browse a referenced or referencing table by the provided foreign key name
 		void browseTable(const QString &fk_name, bool browse_ref_tab);
@@ -119,39 +119,41 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name=QString(), const QString &filter=QString());
 
 	private slots:
-		void reject(void);
+		void reject();
 
-		void clearItemsText(void);
+		void clearItemsText();
+
+		void sortResults(int column, Qt::SortOrder order);
 
 		//! \brief List the tables based upon the current schema
-		void listTables(void);
+		void listTables();
 		
 		//! \brief List the columns based upon the current table
-		void listColumns(void);
+		void listColumns();
 		
 		//! \brief Retrieve the data for the current table filtering the data as configured on the advanced tab
-		void retrieveData(void);
+		void retrieveData();
 		
 		//! \brief Disable the buttons used to handle data
-		void disableControlButtons(void);
+		void disableControlButtons();
 
 		//! \brief Enables the delete/duplicate/copy buttons depending on the selected rows
-		void enableRowControlButtons(void);
+		void enableRowControlButtons();
 		
 		//! \brief Reset the state of advaced tab's controls
-		void resetAdvancedControls(void);
+		void resetAdvancedControls();
 		
 		//! \brief Enables/disables the buttons of the order by list depending on the state of it
-		void enableColumnControlButtons(void);
+		void enableColumnControlButtons();
 		
 		//! \brief Add a column to the "order by" list
-		void addColumnToList(void);
+		void addSortColumnToList();
 		
 		//! \brief Remove a column from the "order by" list
-		void removeColumnFromList(void);
+		void removeSortColumnFromList();
 		
 		//! \brief Clears the "order by" list
-		void clearColumnList(void);
+		void clearSortColumnList();
 		
 		//! \brief Toggles the sort mode between ASC and DESC when right clicking on a element at order by list
 		void changeOrderMode(QListWidgetItem *item);
@@ -160,46 +162,46 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		void markUpdateOnRow(QTableWidgetItem *item);
 		
 		//! \brief Mark a seleciton of rows to be delete. New rows are automatically removed
-		void markDeleteOnRows(void);
+		void markDeleteOnRows();
 		
 		//! \brief Add a new row on the grid with the first column with edition enabled
 		void addRow(bool focus_new_row = true);
 		
 		//! \brief Duplicate the selected rows creating new ones with the same values as the selection
-		void duplicateRows(void);
+		void duplicateRows();
 
 		//! \brief Undo the operation made on all rows or in a set of selected rows
-		void undoOperations(void);
+		void undoOperations();
 		
 		//! \brief Insert a new row as the user press tab key on the last column at last row
 		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
 		
 		//! \brief Commit all changes made on the rows rolling back changes when some error is triggered
-		void saveChanges(void);
+		void saveChanges();
 		
 		//! \brief Swap two rows on the order by list
-		void swapColumns(void);
+		void swapColumns();
 
 		//! \brief Add new rows to the grid based upon the CSV loaded
 		void loadDataFromCsv(bool load_from_clipboard = false, bool force_csv_parsing = false);
 
 		//! \brief Browse the referenced table data using the selected row in the results grid
-		void browseReferencedTable(void);
+		void browseReferencedTable();
 
 		//! \brief Browse the referencing table data using the selected row in the results grid
-		void browseReferrerTable(void);
+		void browseReferrerTable();
 
 		//! \brief Truncates the browsed table
-		void truncateTable(void);
+		void truncateTable();
 
 		//! \brief Display or hides a column when the related item is interacted in the column list at filter section
 		void toggleColumnDisplay(QListWidgetItem *item);
 
 		//! \brief Opens a new data manipulation windows
-		void openNewWindow(void);
+		void openNewWindow();
 
 		//! \brief Shows the popup menu over the current selection
-		void showPopupMenu(void);
+		void showPopupMenu();
 };
 
 #endif

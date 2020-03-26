@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>353</height>
+    <width>832</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -64,7 +64,16 @@
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>20</number>
+       </property>
        <property name="topMargin">
+        <number>20</number>
+       </property>
+       <property name="rightMargin">
+        <number>20</number>
+       </property>
+       <property name="bottomMargin">
         <number>20</number>
        </property>
        <property name="horizontalSpacing">
@@ -73,8 +82,11 @@
        <property name="verticalSpacing">
         <number>20</number>
        </property>
-       <item row="0" column="0" rowspan="2">
-        <widget class="QToolButton" name="new_tb">
+       <item row="0" column="3" rowspan="2">
+        <widget class="QToolButton" name="recent_tb">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="minimumSize">
           <size>
            <width>110</width>
@@ -91,11 +103,56 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>New model</string>
+          <string>Recent models</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/new_big.png</normaloff>:/icones/icones/new_big.png</iconset>
+           <normaloff>:/icones/icones/recent_big.png</normaloff>:/icones/icones/recent_big.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>55</width>
+           <height>55</height>
+          </size>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5" rowspan="2">
+        <widget class="QToolButton" name="support_tb">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>80</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+           <stylestrategy>PreferAntialias</stylestrategy>
+          </font>
+         </property>
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Support</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/help_big.png</normaloff>:/icones/icones/help_big.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -149,11 +206,8 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" rowspan="2">
-        <widget class="QToolButton" name="sample_tb">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
+       <item row="0" column="0" rowspan="2">
+        <widget class="QToolButton" name="new_tb">
          <property name="minimumSize">
           <size>
            <width>110</width>
@@ -170,64 +224,17 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Sample models</string>
+          <string>New model</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/samples_big.png</normaloff>:/icones/icones/samples_big.png</iconset>
+           <normaloff>:/icones/icones/new_big.png</normaloff>:/icones/icones/new_big.png</iconset>
          </property>
          <property name="iconSize">
           <size>
            <width>55</width>
            <height>55</height>
           </size>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" rowspan="2">
-        <widget class="QToolButton" name="recent_tb">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>110</width>
-           <height>80</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="mouseTracking">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Recent models</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/recent_big.png</normaloff>:/icones/icones/recent_big.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>55</width>
-           <height>55</height>
-          </size>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
          </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -279,8 +286,8 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="5" rowspan="2">
-        <widget class="QToolButton" name="support_tb">
+       <item row="0" column="2" rowspan="2">
+        <widget class="QToolButton" name="sample_tb">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -294,24 +301,26 @@
           <font>
            <weight>50</weight>
            <bold>false</bold>
-           <stylestrategy>PreferAntialias</stylestrategy>
           </font>
          </property>
          <property name="mouseTracking">
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Support</string>
+          <string>Sample models</string>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
-           <normaloff>:/icones/icones/help_big.png</normaloff>:/icones/icones/help_big.png</iconset>
+           <normaloff>:/icones/icones/samples_big.png</normaloff>:/icones/icones/samples_big.png</iconset>
          </property>
          <property name="iconSize">
           <size>
            <width>55</width>
            <height>55</height>
           </size>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
          </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextUnderIcon</enum>

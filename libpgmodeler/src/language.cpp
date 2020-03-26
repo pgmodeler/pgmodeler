@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 */
 
 #include "language.h"
+#include "defaultlanguages.h"
 
-Language::Language(void)
+Language::Language()
 {
 	obj_type=ObjectType::Language;
 	is_trusted=false;
@@ -35,7 +36,7 @@ Language::Language(void)
 void Language::setName(const QString &name)
 {
 	//Raises an error if the user try to set an system reserved language name (C, SQL)
-	if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
+	if(name.toLower() == DefaultLanguages::C || name.toLower() == DefaultLanguages::Sql)
 		throw Exception(Exception::getErrorMessage(ErrorCode::AsgReservedName)
 						.arg(this->getName())
 						.arg(BaseObject::getTypeName(ObjectType::Language)),
@@ -50,10 +51,8 @@ void Language::setTrusted(bool value)
 	is_trusted=value;
 }
 
-void  Language::setFunction(Function *func, unsigned func_type)
+void Language::setFunction(Function *func, unsigned func_type)
 {
-	LanguageType lang=LanguageType::C;
-
 	if(!func ||
 			(func &&
 			 /* The handler function must be written in C and have
@@ -61,21 +60,21 @@ void  Language::setFunction(Function *func, unsigned func_type)
 			 ((func_type==HandlerFunc &&
 			   func->getReturnType()==QString("language_handler") &&
 			   func->getParameterCount()==0 &&
-			   func->getLanguage()->getName()==(~lang)) ||
+				 func->getLanguage()->getName().toLower() == DefaultLanguages::C) ||
 			  /* The validator function must be written in C and return 'void' also
 									   must have only one parameter of the type 'oid' */
 			  (func_type==ValidatorFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("oid") &&
-			   func->getLanguage()->getName()==(~lang)) ||
+				 func->getLanguage()->getName().toLower() == DefaultLanguages::C) ||
 			  /* The inline function must be written in C and return 'void' also
 									   must have only one parameter of the type 'internal' */
 			  (func_type==InlineFunc &&
 			   func->getReturnType()==QString("void") &&
 			   func->getParameterCount()==1 &&
 			   func->getParameter(0).getType() == QString("internal") &&
-			   func->getLanguage()->getName()==(~lang)) )))
+				 func->getLanguage()->getName().toLower() == DefaultLanguages::C) )))
 	{
 		setCodeInvalidated(functions[func_type] != func);
 		this->functions[func_type]=func;
@@ -97,23 +96,23 @@ Function * Language::getFunction(unsigned func_type)
 	if(func_type > InlineFunc)
 		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(functions[func_type]);
+	return functions[func_type];
 }
 
-bool Language::isTrusted(void)
+bool Language::isTrusted()
 {
-	return(is_trusted);
+	return is_trusted;
 }
 
 QString Language::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	unsigned i;
 	QString attribs_func[3]={Attributes::ValidatorFunc,
@@ -139,6 +138,6 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 

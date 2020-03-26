@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class Index: public TableObject{
 
 		/*! \brief Executes any validation over the index's elements. Currently, this method disable sorting
 		when the indexing type is 'gin' */
-		void validateElements(void);
+		void validateElements();
 
 	public:
 		static constexpr  unsigned Unique=0,
@@ -59,7 +59,7 @@ class Index: public TableObject{
 		FastUpdate=2,
 		Buffering=3;
 
-		Index(void);
+		Index();
 
 		//! \brief Adds an element to the index using an column
 		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
@@ -80,13 +80,13 @@ class Index: public TableObject{
 		IndexElement getIndexElement(unsigned elem_idx);
 
 		//! \brief Returns a list of the index elements
-		vector<IndexElement> getIndexElements(void);
+		vector<IndexElement> getIndexElements();
 
 		//! \brief Remove an element using its index
 		void removeIndexElement(unsigned idx_elem);
 
 		//! \brief Remove all elements from the index
-		void removeIndexElements(void);
+		void removeIndexElements();
 
 		//! \brief Defines the predicate used by the index
 		void setPredicate(const QString &expr);
@@ -102,19 +102,19 @@ class Index: public TableObject{
 		void setFillFactor(unsigned factor);
 
 		//! \brief Gets the index conditional expression
-		QString getPredicate(void);
+		QString getPredicate();
 
 		//! \brief Gets the index element count
-		unsigned getIndexElementCount(void);
+		unsigned getIndexElementCount();
 
 		//! \brief Returns the indexing method used by the index
-		IndexingType getIndexingType(void);
+		IndexingType getIndexingType();
 
 		//! \brief Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
 		bool getIndexAttribute(unsigned attrib_id);
 
 		//! \brief Returns the index fill factor
-		unsigned getFillFactor(void);
+		unsigned getFillFactor();
 
 		//! \brief Returns the SQL / XML definition for the index
 		virtual QString getCodeDefinition(unsigned def_type) final;
@@ -128,13 +128,13 @@ class Index: public TableObject{
 		 to control which index reference columns added by the
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
-		bool isReferRelationshipAddedColumn(void);
+		bool isReferRelationshipAddedColumn();
 
 		/*! \brief Returns the list of all columns that is created by relationships.
 	This method is slower than isReferRelationshipAddedColumn() so it's not
 	recommended to use it only check if the object is referencing columns
 	added by relationship */
-		vector<Column *> getRelationshipAddedColumns(void);
+		vector<Column *> getRelationshipAddedColumns();
 
 		//! \brief Returns if some index element is referencing the specified collation
 		bool isReferCollation(Collation *collation);

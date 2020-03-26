@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "modelsdiffhelper.h"
 #include "databaseimporthelper.h"
 #include "modelexporthelper.h"
-#include "hinttextwidget.h"
 #include "syntaxhighlighter.h"
 #include "htmlitemdelegate.h"
 #include "numberedtexteditor.h"
@@ -54,15 +53,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
-
-		//! \brief Hint texts used on the diff options
-		HintTextWidget *apply_on_server_ht, *store_in_file_ht,
-		*import_sys_objs_ht, *import_ext_objs_ht, *keep_cluster_objs_ht,
-		*trunc_tables_ht, *ignore_errors_ht, *force_recreation_ht,
-		*cascade_mode_ht, *pgsql_ver_ht, *recreate_unmod_ht,
-		*keep_obj_perms_ht, *ignore_duplic_ht, *reuse_sequences_ht,
-		*preserve_db_name_ht, *dont_drop_missing_objs_ht,
-		*ignore_error_codes_ht, *drop_missing_cols_constr_ht;
 
 		//! \brief Syntax highlighter used on the diff preview tab
 		SyntaxHighlighter *sqlcode_hl;
@@ -112,16 +102,16 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void destroyThread(unsigned thread_id);
 
 		//! \brief Destroy the imported model
-		void destroyModel(void);
+		void destroyModel();
 
-		void clearOutput(void);
-		void resetForm(void);
-		void resetButtons(void);
-		void saveDiffToFile(void);
-		void finishDiff(void);
+		void clearOutput();
+		void resetForm();
+		void resetButtons();
+		void saveDiffToFile();
+		void finishDiff();
 
 		//! \brief Returns true when one or more threads of the whole diff process are running.
-		bool isThreadsRunning(void);
+		bool isThreadsRunning();
 
 		//! \brief Constants used to reference the thread/helper to be handled in createThread() and destroyThread()
 		static constexpr unsigned SrcImportThread=0,
@@ -130,23 +120,23 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		ExportThread=3;
 
 		//! \brief Applies the loaded configurations to the form. In this widget only list the loaded presets
-		virtual void applyConfiguration(void);
+		virtual void applyConfiguration();
 
 		//! \brief Loads a set of configurations from a file
-		virtual void loadConfiguration(void);
+		virtual void loadConfiguration();
 
 		//! \brief Saves the current settings to a file
-		virtual void saveConfiguration(void);
+		virtual void saveConfiguration();
 
 		void togglePresetConfiguration(bool toggle, bool is_edit = false);
-		void enablePresetButtons(void);
+		void enablePresetButtons();
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
-		~ModelDatabaseDiffForm(void);
+		~ModelDatabaseDiffForm();
 
 		//! \brief Makes the form behaves like a QDialog by running it from an event loop. The event loop is finished when the user clicks close
-		void exec(void);
+		void exec();
 
 		void setModelWidget(ModelWidget *model_wgt);
 
@@ -154,34 +144,34 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		static void setLowVerbosity(bool value);
 
 	private slots:
-		void listDatabases(void);
-		void enableDiffMode(void);
-		void generateDiff(void);
+		void listDatabases();
+		void enableDiffMode();
+		void generateDiff();
 		void cancelOperation(bool cancel_by_user);
 		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd=QString());
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
 		void handleImportFinished(Exception e);
-		void handleDiffFinished(void);
-		void handleExportFinished(void);
+		void handleDiffFinished();
+		void handleExportFinished();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void selectOutputFile(void);
+		void selectOutputFile();
 		void importDatabase(unsigned thread_id);
-		void diffModels(void);
+		void diffModels();
 		void exportDiff(bool confirm=true);
-		void filterDiffInfos(void);
-		void loadDiffInSQLTool(void);
-		void selectPreset(void);
-		void removePreset(void);
-		void savePreset(void);
+		void filterDiffInfos();
+		void loadDiffInSQLTool();
+		void selectPreset();
+		void removePreset();
+		void savePreset();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
-		virtual void restoreDefaults(void);
+		virtual void restoreDefaults();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
-		void s_connectionsUpdateRequest(void);
+		void s_connectionsUpdateRequest();
 
 		/*! \brief This signal is emitted whenever the user wants to load the generated diff in the sql tool
 		 * The signal contains the connection id, the database name and the temp filename that is generated containing

@@ -1,15 +1,16 @@
 #include "swapobjectsidswidget.h"
 #include "pgmodeleruins.h"
 
-const QString SwapObjectsIdsWidget::IdLabel = QString("ID: <strong>%1</strong>");
+const QString SwapObjectsIdsWidget::IdLabel("ID: <strong>%1</strong>");
 
 SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 	try
 	{
 		QGridLayout *swap_objs_grid=new QGridLayout(this);
-		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission, ObjectType::Role, ObjectType::Textbox,
-																   ObjectType::Column, ObjectType::Constraint });
+		vector<ObjectType> types=BaseObject::getObjectTypes(true, {ObjectType::Permission,
+																															 ObjectType::Role, ObjectType::Textbox,
+																															 ObjectType::Column, ObjectType::Constraint });
 		setupUi(this);
 
 		PgModelerUiNs::configureWidgetFont(message_lbl, PgModelerUiNs::MediumFontFactor);
@@ -29,31 +30,29 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		swap_objs_grid->addWidget(create_lbl, 0, 0);
 		swap_objs_grid->addWidget(src_object_sel, 0, 1);
-		swap_objs_grid->addWidget(src_id_lbl, 0, 2);
-		swap_objs_grid->addWidget(src_ico_lbl, 0, 3);
+		swap_objs_grid->addWidget(swap_values_tb, 0, 2, 2, 1);
+		swap_objs_grid->addWidget(src_id_lbl, 0, 3);
+		swap_objs_grid->addWidget(src_ico_lbl, 0, 4);
 
 		swap_objs_grid->addWidget(before_lbl, 1, 0);
 		swap_objs_grid->addWidget(dst_object_sel, 1, 1);
-		swap_objs_grid->addWidget(dst_id_lbl, 1, 2);
-		swap_objs_grid->addWidget(dst_ico_lbl, 1, 3);
+		swap_objs_grid->addWidget(dst_id_lbl, 1, 3);
+		swap_objs_grid->addWidget(dst_ico_lbl, 1, 4);
 
-		QHBoxLayout *hlayout=new QHBoxLayout;
-		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
-		hlayout->addWidget(swap_values_tb);
-		hlayout->addWidget(swap_ids_tb);
-		hlayout->addSpacerItem(new QSpacerItem(10,10, QSizePolicy::Expanding));
+		swap_objs_grid->addWidget(filter_btn, 2, 0, 1, 1);
+		swap_objs_grid->addWidget(filter_wgt, 2, 1, 1, 4);
 
-		swap_objs_grid->addLayout(hlayout, 2, 0, 1, 4);
-		swap_objs_grid->addWidget(filter_wgt, swap_objs_grid->count(), 0, 1, 4);
-		swap_objs_grid->addWidget(objects_tbw, swap_objs_grid->count(), 0, 1, 4);
-		swap_objs_grid->addWidget(alert_frm, swap_objs_grid->count(), 0, 1, 4);
+		swap_objs_grid->addWidget(objects_tbw, 3, 0, 1, 5);
+		swap_objs_grid->addWidget(alert_frm, 4, 0, 1, 5);
 
 		setModel(nullptr);
+		filter_wgt->setVisible(false);
 
-		connect(src_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
-		connect(dst_object_sel, SIGNAL(s_objectSelected(void)), this, SLOT(showObjectId(void)));
-		connect(src_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
-		connect(dst_object_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(showObjectId(void)));
+		connect(filter_btn, SIGNAL(toggled(bool)), filter_wgt, SLOT(setVisible(bool)));
+		connect(src_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
+		connect(dst_object_sel, SIGNAL(s_objectSelected()), this, SLOT(showObjectId()));
+		connect(src_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
+		connect(dst_object_sel, SIGNAL(s_selectorCleared()), this, SLOT(showObjectId()));
 
 		connect(swap_values_tb, &QToolButton::clicked,
 		[&](){
@@ -70,7 +69,7 @@ SwapObjectsIdsWidget::SwapObjectsIdsWidget(QWidget *parent, Qt::WindowFlags f) :
 
 		setMinimumSize(640,480);
 
-		connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
+		//connect(swap_ids_tb, SIGNAL(clicked(bool)), this, SLOT(swapObjectsIds()));
 		connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 		connect(hide_rels_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 		connect(hide_sys_objs_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
@@ -105,9 +104,10 @@ void SwapObjectsIdsWidget::setSelectedObjects(BaseObject *src_object, BaseObject
 {
 	src_object_sel->setSelectedObject(src_object);
 	dst_object_sel->setSelectedObject(dst_objct);
+	selector_idx = (src_object && !dst_objct ? 1 : 0);
 }
 
-void SwapObjectsIdsWidget::fillCreationOrderGrid(void)
+void SwapObjectsIdsWidget::fillCreationOrderGrid()
 {
 	objects_tbw->clearContents();
 	objects_tbw->setRowCount(0);
@@ -182,10 +182,10 @@ bool SwapObjectsIdsWidget::eventFilter(QObject *object, QEvent *event)
 		}
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
-void SwapObjectsIdsWidget::showObjectId(void)
+void SwapObjectsIdsWidget::showObjectId()
 {
 	QLabel *ico_lbl=nullptr, *id_lbl=nullptr;
 	BaseObject *sel_obj=nullptr;
@@ -222,11 +222,11 @@ void SwapObjectsIdsWidget::showObjectId(void)
 	swap_values_tb->setEnabled(src_object_sel->getSelectedObject() &&
 														 dst_object_sel->getSelectedObject());
 
-	swap_ids_tb->setEnabled(src_object_sel->getSelectedObject() &&
-													dst_object_sel->getSelectedObject());
+	emit s_objectsIdsSwapReady(src_object_sel->getSelectedObject() &&
+														 dst_object_sel->getSelectedObject());
 }
 
-void SwapObjectsIdsWidget::swapObjectsIds(void)
+void SwapObjectsIdsWidget::swapObjectsIds()
 {
 	BaseObject *src_obj=src_object_sel->getSelectedObject(),
 			*dst_obj=dst_object_sel->getSelectedObject();
@@ -281,7 +281,7 @@ void SwapObjectsIdsWidget::swapObjectsIds(void)
 	}
 }
 
-void SwapObjectsIdsWidget::filterObjects(void)
+void SwapObjectsIdsWidget::filterObjects()
 {
 	BaseObject *object = nullptr;
 	bool is_rel = false, is_sys_obj = false;
@@ -324,7 +324,7 @@ void SwapObjectsIdsWidget::selectItem(QTableWidgetItem *item)
 	}
 }
 
-void SwapObjectsIdsWidget::clearSelectors(void)
+void SwapObjectsIdsWidget::clearSelectors()
 {
 	selector_idx = 0;
 	src_object_sel->clearSelector();

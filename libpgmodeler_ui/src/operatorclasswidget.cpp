@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 {
 	try
 	{
-		QStringList tipos;
 		QGridLayout *grid=nullptr;
 		map<QString, vector<QWidget *> > fields_map;
 		map<QWidget *, vector<QString> > values_map;
@@ -35,18 +34,18 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		operator_sel=new ObjectSelectorWidget(ObjectType::Operator, true, this);
 		elem_family_sel=new ObjectSelectorWidget(ObjectType::OpFamily, true, this);
 		function_sel=new ObjectSelectorWidget(ObjectType::Function, true, this);
-		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
+		storage_type=new PgSQLTypeWidget(this, tr("Storage Type"));
 		elements_tab=new ObjectsTableWidget(ObjectsTableWidget::AllButtons ^ ObjectsTableWidget::DuplicateButton, true, this);
 
 		elements_tab->setColumnCount(4);
-		elements_tab->setHeaderLabel(trUtf8("Object"),0);
+		elements_tab->setHeaderLabel(tr("Object"),0);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("table")),0);
 
-		elements_tab->setHeaderLabel(trUtf8("Type"),1);
+		elements_tab->setHeaderLabel(tr("Type"),1);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("usertype")),1);
 
-		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
-		elements_tab->setHeaderLabel(trUtf8("Operator Family"),3);
+		elements_tab->setHeaderLabel(tr("Support/Strategy"),2);
+		elements_tab->setHeaderLabel(tr("Operator Family"),3);
 		elements_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("opfamily")),3);
 
 		grid=new QGridLayout;
@@ -83,12 +82,11 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
 		selectElementType(0);
-		IndexingType::getTypes(tipos);
-		indexing_cmb->addItems(tipos);
+		indexing_cmb->addItems(IndexingType::getTypes());
 
 		setRequiredField(elements_grp);
 		configureTabOrder({ indexing_cmb, def_class_chk , family_sel, data_type, elem_type_cmb,
-							operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
+												operator_sel, elem_family_sel, function_sel, stg_num_sb, storage_type });
 
 		setMinimumSize(640, 730);
 	}
@@ -237,7 +235,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	data_type->setAttributes(type, model);
 }
 
-void OperatorClassWidget::applyConfiguration(void)
+void OperatorClassWidget::applyConfiguration()
 {
 	try
 	{

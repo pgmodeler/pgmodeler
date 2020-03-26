@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class Cast: public BaseObject {
 		bool is_in_out;
 
 	protected:
-		virtual void configureSearchAttributes(void);
+		virtual void configureSearchAttributes();
 
 	public:
 		//! \brief Constants used to access the data types envolved in the cast
@@ -60,7 +60,7 @@ class Cast: public BaseObject {
 		Assignment=1,
 		Implicit=2;
 
-		Cast(void);
+		Cast();
 
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
@@ -81,13 +81,13 @@ class Cast: public BaseObject {
 		PgSqlType getDataType(unsigned type_idx);
 
 		//! \brief Returns the cast type
-		unsigned getCastType(void);
+		unsigned getCastType();
 
 		//! \brief Returns the cast function
-		Function *getCastFunction(void);
+		Function *getCastFunction();
 
 		//! \brief Returs whether the cast is inout or not
-		bool isInOut(void);
+		bool isInOut();
 
 		//! \brief Returns the SQL/XML code definition for the cast
 		virtual QString getCodeDefinition(unsigned def_type) final;

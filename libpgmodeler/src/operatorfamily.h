@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #define OPERATOR_FAMILY_H
 
 #include "baseobject.h"
+#include "pgsqltypes/indexingtype.h"
 
 class OperatorFamily: public BaseObject {
 	private:
@@ -34,13 +35,13 @@ class OperatorFamily: public BaseObject {
 		IndexingType indexing_type;
 
 	public:
-		OperatorFamily(void);
+		OperatorFamily();
 
 		//! \brief Sets the indexing type of the operator family
 		void setIndexingType(IndexingType idx_type);
 
 		//! \brief Returns the indexing type of the operator family
-		IndexingType getIndexingType(void);
+		IndexingType getIndexingType();
 
 		//! \brief Returns the SQL / XML code definition for the operator family
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;

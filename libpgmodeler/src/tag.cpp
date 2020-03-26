@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 unsigned Tag::tag_id=3000;
 
-Tag::Tag(void)
+Tag::Tag()
 {
 	QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
 						  Attributes::TableTitle, Attributes::TableBody,
@@ -51,7 +51,7 @@ void Tag::setName(const QString &name)
 
 QString Tag::getName(bool, bool)
 {
-	return(this->obj_name);
+	return this->obj_name;
 }
 
 void Tag::setElementColor(const QString &elem_id, const QColor &color, unsigned color_id)
@@ -95,7 +95,7 @@ QColor Tag::getElementColor(const QString &elem_id, unsigned color_id)
 	try
 	{
 		validateElementId(elem_id, color_id);
-		return(color_config[elem_id][color_id]);
+		return color_config[elem_id][color_id];
 	}
 	catch(Exception &e)
 	{
@@ -126,7 +126,7 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 		grad.setColorAt(0, color_config[elem_id][FillColor1]);
 		grad.setColorAt(1, color_config[elem_id][FillColor2]);
 
-		return(grad);
+		return grad;
 	}
 	catch(Exception &e)
 	{
@@ -136,17 +136,17 @@ QLinearGradient Tag::getFillStyle(const QString &elem_id)
 
 QString Tag::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return(QString());
+		return QString();
 	else
 	{
 		QString code_def=getCachedCode(def_type, reduced_form);
-		if(!code_def.isEmpty()) return(code_def);
+		if(!code_def.isEmpty()) return code_def;
 
 		try
 		{
@@ -171,7 +171,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 			throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		return(BaseObject::getCodeDefinition(def_type, reduced_form));
+		return BaseObject::getCodeDefinition(def_type, reduced_form);
 	}
 }
 

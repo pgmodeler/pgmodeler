@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "genericsql.h"
 #include "tableobject.h"
 
-GenericSQL::GenericSQL(void)
+GenericSQL::GenericSQL()
 {
 	obj_type = ObjectType::GenericSql;
 	attributes[Attributes::Definition] = QString();
@@ -32,14 +32,14 @@ void GenericSQL::setDefinition(const QString &def)
 	definition = def;
 }
 
-QString GenericSQL::getDefinition(void)
+QString GenericSQL::getDefinition()
 {
-	return(definition);
+	return definition;
 }
 
-vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences(void)
+vector<GenericSQL::ObjectRefConfig> GenericSQL::getObjectsReferences()
 {
-	return(objects_refs);
+	return objects_refs;
 }
 
 int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
@@ -49,7 +49,7 @@ int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 			itr_end = objects_refs.end();
 
 	if(ref_name.isEmpty())
-		return(-1);
+		return -1;
 
 	while(itr != itr_end)
 	{
@@ -62,7 +62,7 @@ int GenericSQL::getObjectRefNameIndex(const QString &ref_name)
 		itr++;
 	}
 
-	return(idx);
+	return idx;
 }
 
 bool GenericSQL::isObjectReferenced(BaseObject *object)
@@ -73,7 +73,7 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 			itr_end = objects_refs.end();
 
 	if(!object)
-		return(false);
+		return false;
 
 	while(itr != itr_end && !found)
 	{
@@ -86,10 +86,10 @@ bool GenericSQL::isObjectReferenced(BaseObject *object)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
-bool GenericSQL::isReferRelationshipAddedObject(void)
+bool GenericSQL::isReferRelationshipAddedObject()
 {
 	bool found = false;
 	vector<ObjectRefConfig>::iterator itr = objects_refs.begin(),
@@ -103,17 +103,17 @@ bool GenericSQL::isReferRelationshipAddedObject(void)
 		itr++;
 	}
 
-	return(found);
+	return found;
 }
 
-vector<BaseObject *> GenericSQL::getReferencedObjects(void)
+vector<BaseObject *> GenericSQL::getReferencedObjects()
 {
 	vector<BaseObject *> ref_objs;
 
 	for(auto &ref : objects_refs)
 		ref_objs.push_back(ref.object);
 
-	return(ref_objs);
+	return ref_objs;
 }
 
 void GenericSQL::validateObjectReference(ObjectRefConfig ref, bool ignore_duplic)
@@ -181,7 +181,7 @@ void GenericSQL::removeObjectReference(const QString &ref_name)
 	setCodeInvalidated(true);
 }
 
-void GenericSQL::removeObjectReferences(void)
+void GenericSQL::removeObjectReferences()
 {
 	objects_refs.clear();
 	setCodeInvalidated(true);
@@ -190,7 +190,7 @@ void GenericSQL::removeObjectReferences(void)
 QString GenericSQL::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	QString fmt_definition = definition,
 			name_attr = QString("%1%2%3").arg(SchemaParser::CharIniAttribute)
@@ -240,5 +240,5 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Definition] = fmt_definition;
 
-	return(this->BaseObject::__getCodeDefinition(def_type));
+	return this->BaseObject::__getCodeDefinition(def_type);
 }

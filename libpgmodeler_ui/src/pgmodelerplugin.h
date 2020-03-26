@@ -1,7 +1,7 @@
 /*
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,11 +47,14 @@
 
 	Note: Plugins can have another additional subdirectories but any reference to them must be made programatically by the plugin author. */
 
+// Making the MainWindow class of pgModeler be known by the plugin interface
+class MainWindow;
+
 class PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
 
-		QMainWindow *main_window;
+		MainWindow *main_window;
 
 	private:
 		QLabel	*icon_lbl,
@@ -61,15 +64,15 @@ class PgModelerPlugin {
 		*description_lbl;
 
 	public:
-		PgModelerPlugin(void);
+		PgModelerPlugin();
 
-		virtual ~PgModelerPlugin(void);
+		virtual ~PgModelerPlugin();
 
 		/*! \brief This method is executed right before the main window is created and can be used to perform
 		 * plugin's initializations like UI modications and other miscellaneous initialization that can't be done
 		 * in the constructor. Additionally, a main window instance can be passed to the plugin in order to facilitate
 		 * customization on the UI. The default implementation is to do nothing else then only expose main window to the plugin. */
-		virtual void initPlugin(QMainWindow *main_window);
+		virtual void initPlugin(MainWindow *main_window);
 
 		//! \brief Executes the plugins having a ModelWidget as input parameter.
 		virtual void executePlugin(ModelWidget *modelo)=0;
@@ -91,11 +94,11 @@ class PgModelerPlugin {
 
 		/*! \brief Returns the plugin's action shortcut
 		 * The default implementation is to return an empty shortcut */
-		virtual QKeySequence getPluginShortcut(void);
+		virtual QKeySequence getPluginShortcut();
 
 		/*! \brief Indicates if the plugin's has an action to be installed in a Qmenu instance
 		 * The default implementation is to indicate the presence of an action */
-		virtual bool hasMenuAction(void);
+		virtual bool hasMenuAction();
 
 		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,

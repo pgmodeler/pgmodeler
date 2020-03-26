@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "reference.h"
 
-Reference::Reference(void)
+Reference::Reference()
 {
 	this->table=nullptr;
 	this->column=nullptr;
@@ -86,22 +86,22 @@ int Reference::getReferencedTableIndex(PhysicalTable *ref_table)
 	if(itr != ref_tables.end())
 		idx = itr - ref_tables.begin();
 
-	return(idx);
+	return idx;
 }
 
-void Reference::clearReferencedTables(void)
+void Reference::clearReferencedTables()
 {
 	ref_tables.clear();
 }
 
-vector<PhysicalTable *> Reference::getReferencedTables(void)
+vector<PhysicalTable *> Reference::getReferencedTables()
 {
-	return(ref_tables);
+	return ref_tables;
 }
 
-bool Reference::isDefinitionExpression(void)
+bool Reference::isDefinitionExpression()
 {
-	return(is_def_expr);
+	return is_def_expr;
 }
 
 void Reference::addColumn(const QString &name, PgSqlType type, const QString &alias)
@@ -144,47 +144,47 @@ void Reference::addColumn(Column *col)
 	addColumn(col->getName(), col->getType(), col->getAlias());
 }
 
-void Reference::removeColumns(void)
+void Reference::removeColumns()
 {
 	columns.clear();
 }
 
-vector<SimpleColumn> Reference::getColumns(void)
+vector<SimpleColumn> Reference::getColumns()
 {
-	return(columns);
+	return columns;
 }
 
-PhysicalTable *Reference::getTable(void)
+PhysicalTable *Reference::getTable()
 {
-	return(table);
+	return table;
 }
 
-Column *Reference::getColumn(void)
+Column *Reference::getColumn()
 {
-	return(column);
+	return column;
 }
 
-QString Reference::getColumnAlias(void)
+QString Reference::getColumnAlias()
 {
-	return(column_alias);
+	return column_alias;
 }
 
-QString Reference::getAlias(void)
+QString Reference::getAlias()
 {
-	return(alias);
+	return alias;
 }
 
-QString Reference::getExpression(void)
+QString Reference::getExpression()
 {
-	return(expression);
+	return expression;
 }
 
-unsigned Reference::getReferenceType(void)
+unsigned Reference::getReferenceType()
 {
 	if(expression.isEmpty())
-		return(ReferColumn);
+		return ReferColumn;
 	else
-		return(ReferExpression);
+		return ReferExpression;
 }
 
 void Reference::setReferenceAlias(const QString &alias)
@@ -195,9 +195,9 @@ void Reference::setReferenceAlias(const QString &alias)
 	ref_alias = alias;
 }
 
-QString Reference::getReferenceAlias(void)
+QString Reference::getReferenceAlias()
 {
-	return(ref_alias);
+	return ref_alias;
 }
 
 QString Reference::getSQLDefinition(unsigned sql_type)
@@ -290,10 +290,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 	}
 
 	sql_def=QString("   ") + sql_def;
-	return(sql_def);
+	return sql_def;
 }
 
-QString Reference::getXMLDefinition(void)
+QString Reference::getXMLDefinition()
 {
 	attribs_map attribs, aux_attribs;
 	SchemaParser schparser;
@@ -333,7 +333,7 @@ QString Reference::getXMLDefinition(void)
 		}
 	}
 
-	return(schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition));
+	return schparser.getCodeDefinition(Attributes::Reference, attribs, SchemaParser::XmlDefinition);
 }
 
 bool Reference::operator == (Reference &refer)
@@ -346,19 +346,19 @@ bool Reference::operator == (Reference &refer)
 	{
 		if(ref_type==ReferColumn)
 		{
-			return(this->table==refer.table &&
-				   this->column==refer.column &&
-				   this->alias==refer.alias &&
-				   this->column_alias==refer.column_alias);
+			return (this->table==refer.table &&
+							this->column==refer.column &&
+							this->alias==refer.alias &&
+							this->column_alias==refer.column_alias);
 		}
 		else
 		{
-			return(this->expression==refer.expression &&
-				   this->alias==refer.alias &&
-				   this->is_def_expr==refer.is_def_expr);
+			return (this->expression==refer.expression &&
+							this->alias==refer.alias &&
+							this->is_def_expr==refer.is_def_expr);
 		}
 	}
 	else
-		return(false);
+		return false;
 }
 

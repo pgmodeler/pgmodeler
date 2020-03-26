@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@ class SchemaParserTest: public QObject {
     Q_OBJECT
 
   private slots:
-		void testExpressionEvaluationWithCasts(void);
-		void testSetOperationInIf(void);
+		void testExpressionEvaluationWithCasts();
+		void testSetOperationInIf();
 };
 
-void SchemaParserTest::testExpressionEvaluationWithCasts(void)
+void SchemaParserTest::testExpressionEvaluationWithCasts()
 {
 	SchemaParser schparser;
 	QString buffer;
@@ -52,7 +52,7 @@ void SchemaParserTest::testExpressionEvaluationWithCasts(void)
 	}
 }
 
-void SchemaParserTest::testSetOperationInIf(void)
+void SchemaParserTest::testSetOperationInIf()
 {
 	SchemaParser schparser;
 	QString buffer;

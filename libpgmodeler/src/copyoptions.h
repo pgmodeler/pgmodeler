@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,17 +44,17 @@ class CopyOptions {
 		Including=256,
 		Excluding=512;
 
-		CopyOptions(void);
+		CopyOptions();
 		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);
 
-		unsigned getCopyMode(void);
-		unsigned getCopyOptionsIds(void);
+		unsigned getCopyMode();
+		unsigned getCopyOptionsIds();
 
 		bool isOptionSet(unsigned op);
-		bool isIncluding(void);
-		bool isExcluding(void);
+		bool isIncluding();
+		bool isExcluding();
 
-		QString getSQLDefinition(void);
+		QString getSQLDefinition();
 		bool operator != (CopyOptions &cp);
 };
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
 int SQLExecutionWidget::cmd_history_max_len = 1000;
-const QString SQLExecutionWidget::ColumnNullValue = QString("␀");
+const QString SQLExecutionWidget::ColumnNullValue("␀");
 
 SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 {
@@ -37,7 +37,12 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=PgModelerUiNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabWidth());
+	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabDistance());
+	#else
+		cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
+	#endif
+
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);
 	cmd_history_txt->installEventFilter(this);
@@ -53,17 +58,17 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(find_history_wgt->hide_tb, SIGNAL(clicked(bool)), find_history_parent, SLOT(hide()));
 
 	sql_cmd_hl=new SyntaxHighlighter(sql_cmd_txt, false);
-	sql_cmd_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	sql_cmd_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	cmd_history_hl=new SyntaxHighlighter(cmd_history_txt, false);
-	cmd_history_hl->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+	cmd_history_hl->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 	results_parent->setVisible(false);
 	output_tbw->setTabEnabled(0, false);
 
 	sql_file_dlg.setDefaultSuffix(QString("sql"));
 	sql_file_dlg.setFileMode(QFileDialog::AnyFile);
-	sql_file_dlg.setNameFilter(trUtf8("SQL file (*.sql);;All files (*.*)"));
+	sql_file_dlg.setNameFilter(tr("SQL file (*.sql);;All files (*.*)"));
 	sql_file_dlg.setModal(true);
 
 	snippets_tb->setMenu(&snippets_menu);
@@ -86,9 +91,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 
 	results_tbw->setItemDelegate(new PlainTextItemDelegate(this, true));
 
-	action_load=new QAction(QIcon(PgModelerUiNs::getIconPath("abrir")), trUtf8("Load"), this);
-	action_save=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save"), this);
-	action_save_as=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar_como")), trUtf8("Save as"), this);
+	action_load=new QAction(QIcon(PgModelerUiNs::getIconPath("abrir")), tr("Load"), this);
+	action_save=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar")), tr("Save"), this);
+	action_save_as=new QAction(QIcon(PgModelerUiNs::getIconPath("salvar_como")), tr("Save as"), this);
 
 	file_menu.addAction(action_load);
 	file_menu.addAction(action_save);
@@ -125,9 +130,9 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(action_save, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
 	connect(action_save_as, SIGNAL(triggered(bool)), this, SLOT(saveCommands()));
 
-	connect(clear_btn, SIGNAL(clicked(void)), this, SLOT(clearAll(void)));
-	connect(sql_cmd_txt, SIGNAL(textChanged(void)), this, SLOT(enableCommandButtons(void)));
-	connect(run_sql_tb, SIGNAL(clicked(void)), this, SLOT(runSQLCommand(void)));
+	connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearAll()));
+	connect(sql_cmd_txt, SIGNAL(textChanged()), this, SLOT(enableCommandButtons()));
+	connect(run_sql_tb, SIGNAL(clicked()), this, SLOT(runSQLCommand()));
 	connect(find_tb, SIGNAL(toggled(bool)), find_wgt_parent, SLOT(setVisible(bool)));
 	connect(output_tb, SIGNAL(toggled(bool)), this, SLOT(toggleOutputPane(bool)));
 
@@ -165,7 +170,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	connect(stop_tb, SIGNAL(clicked(bool)), &sql_exec_hlp, SLOT(cancelCommand()), Qt::DirectConnection);
 }
 
-SQLExecutionWidget::~SQLExecutionWidget(void)
+SQLExecutionWidget::~SQLExecutionWidget()
 {
 	if(sql_exec_thread.isRunning())
 	{
@@ -182,7 +187,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::MouseButtonDblClick && object == v_splitter->handle(1))
 	{
 		output_tb->setChecked(!v_splitter->handle(1)->isEnabled());
-		return(true);
+		return true;
 	}
 	else if(event->type()== QEvent::MouseButtonPress &&
 					dynamic_cast<QMouseEvent *>(event)->button()==Qt::MiddleButton &&
@@ -190,7 +195,7 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 					cmd_history_txt->textCursor().hasSelection())
 	{
 		sql_cmd_txt->appendPlainText(cmd_history_txt->textCursor().selectedText());
-		return(true);
+		return true;
 	}
 	else if(event->type() == QEvent::Show && object == output_tbw->widget(2))
 	{
@@ -202,10 +207,10 @@ bool SQLExecutionWidget::eventFilter(QObject *object, QEvent *event)
 			cmd_history_txt->updateLineNumbers();
 		}
 
-		return(true);
+		return true;
 	}
 
-	return(QWidget::eventFilter(object, event));
+	return QWidget::eventFilter(object, event);
 }
 
 void SQLExecutionWidget::setConnection(Connection conn)
@@ -226,7 +231,7 @@ void SQLExecutionWidget::setSQLCommand(const QString &sql)
 	sql_cmd_txt->setPlainText(sql);
 }
 
-void SQLExecutionWidget::enableCommandButtons(void)
+void SQLExecutionWidget::enableCommandButtons()
 {
 	run_sql_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
 	find_tb->setEnabled(!sql_cmd_txt->toPlainText().isEmpty());
@@ -327,7 +332,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 					{
 						//Binary columns can't be edited by user
 						item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-						item->setText(trUtf8("[binary data]"));
+						item->setText(tr("[binary data]"));
 					}
 					else
 					{
@@ -375,7 +380,7 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 		 e.getErrorCode()==ErrorCode::ConnectionBroken)
 	{
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
-											QString("%1 %2").arg(time_str).arg(trUtf8("No results retrieved or changes done due to the error above! Run the command again.")),
+											QString("%1 %2").arg(time_str).arg(tr("No results retrieved or changes done due to the error above! Run the command again.")),
 											QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), false);
 	}
 
@@ -385,8 +390,8 @@ void SQLExecutionWidget::handleExecutionAborted(Exception e)
 	filter_tb->setEnabled(false);
 	filter_tb->setChecked(false);
 
-	output_tbw->setTabText(0, trUtf8("Results"));
-	output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+	output_tbw->setTabText(0, tr("Results"));
+	output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
 	output_tbw->setCurrentIndex(1);
 	output_tbw->setTabEnabled(0, false);
 
@@ -438,12 +443,12 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 
 		if(!empty)
 		{
-			output_tbw->setTabText(0, trUtf8("Results (%1)").arg(res_model->rowCount()));
+			output_tbw->setTabText(0, tr("Results (%1)").arg(res_model->rowCount()));
 			output_tbw->setCurrentIndex(0);
 		}
 		else
 		{
-			output_tbw->setTabText(0, trUtf8("Results"));
+			output_tbw->setTabText(0, tr("Results"));
 			output_tbw->setCurrentIndex(1);
 		}
 
@@ -457,21 +462,21 @@ void SQLExecutionWidget::finishExecution(int rows_affected)
 		}
 
 		PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																				PgModelerUiNs::formatMessage(trUtf8("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
+																				PgModelerUiNs::formatMessage(tr("[%1]: SQL command successfully executed in <em><strong>%2</strong></em>. <em>%3 <strong>%4</strong></em>")
 																																		 .arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz")))
 																																		 .arg(total_exec >= 1000 ? QString("%1 s").arg(total_exec/1000.0) : QString("%1 ms").arg(total_exec))
-																																		 .arg(!res_model ? trUtf8("Rows affected") :  trUtf8("Rows retrieved"))
+																																		 .arg(!res_model ? tr("Rows affected") :  tr("Rows retrieved"))
 																																		 .arg(rows_affected)),
 																				QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
 
-		output_tbw->setTabText(1, trUtf8("Messages (%1)").arg(msgoutput_lst->count()));
+		output_tbw->setTabText(1, tr("Messages (%1)").arg(msgoutput_lst->count()));
 	}
 
 	switchToExecutionMode(false);
 	sql_exec_thread.quit();
 }
 
-void SQLExecutionWidget::filterResults(void)
+void SQLExecutionWidget::filterResults()
 {
 	QModelIndexList list;
 	Qt::MatchFlags flags = Qt::MatchStartsWith;
@@ -517,18 +522,18 @@ void SQLExecutionWidget::addToSQLHistory(const QString &cmd, unsigned rows, cons
 			fmt_cmd += QString("\n");
 
 		fmt_cmd += QString("-- %1 [%2] -- \n")
-							 .arg(trUtf8("Executed at"))
+							 .arg(tr("Executed at"))
 							 .arg(QDateTime::currentDateTime().toString(QString("yyyy-MM-dd hh:mm:ss.zzz")));
 		fmt_cmd += cmd;
 		fmt_cmd += QChar('\n');
 
 		if(!error.isEmpty())
 		{
-			fmt_cmd += QString("-- %1 --\n").arg(trUtf8("Command failed"));
+			fmt_cmd += QString("-- %1 --\n").arg(tr("Command failed"));
 			fmt_cmd += QString("/*\n%1\n*/\n").arg(error);
 		}
 		else
-			fmt_cmd += QString("-- %1 %2\n").arg(trUtf8("Rows:")).arg(rows);
+			fmt_cmd += QString("-- %1 %2\n").arg(tr("Rows:")).arg(rows);
 
 		if(!fmt_cmd.trimmed().endsWith(Attributes::DdlEndToken))
 			fmt_cmd += Attributes::DdlEndToken + QChar('\n');
@@ -595,19 +600,19 @@ void SQLExecutionWidget::switchToExecutionMode(bool value)
 	}
 }
 
-void SQLExecutionWidget::destroyResultModel(void)
+void SQLExecutionWidget::destroyResultModel()
 {
 	if(results_tbw->model())
 	{
 		ResultSetModel *result_model = dynamic_cast<ResultSetModel *>(results_tbw->model());
 		results_tbw->blockSignals(true);
 		results_tbw->setModel(nullptr);
-		delete(result_model);
+		delete result_model;
 		results_tbw->blockSignals(false);
 	}
 }
 
-void SQLExecutionWidget::runSQLCommand(void)
+void SQLExecutionWidget::runSQLCommand()
 {
 	QString cmd=sql_cmd_txt->textCursor().selectedText();
 
@@ -625,22 +630,22 @@ void SQLExecutionWidget::runSQLCommand(void)
 	switchToExecutionMode(true);
 
 	output_tbw->setTabEnabled(0, false);
-	output_tbw->setTabText(0, trUtf8("Results"));
+	output_tbw->setTabText(0, tr("Results"));
 	output_tbw->setCurrentIndex(1);
 	PgModelerUiNs::createOutputListItem(msgoutput_lst,
-																			trUtf8("[%1]: SQL command is running...")
+																			tr("[%1]: SQL command is running...")
 																			.arg(QTime::currentTime().toString(QString("hh:mm:ss.zzz"))),
 																			QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), false);
 }
 
-void SQLExecutionWidget::saveCommands(void)
+void SQLExecutionWidget::saveCommands()
 {
 	bool browse_file = (sender() == action_save_as || filename_edt->text().isEmpty());
 	QString filename = filename_edt->text();
 
 	if(browse_file)
 	{
-		sql_file_dlg.setWindowTitle(trUtf8("Save SQL commands"));
+		sql_file_dlg.setWindowTitle(tr("Save SQL commands"));
 		sql_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		sql_file_dlg.exec();
 
@@ -667,9 +672,9 @@ void SQLExecutionWidget::saveCommands(void)
 	}
 }
 
-void SQLExecutionWidget::loadCommands(void)
+void SQLExecutionWidget::loadCommands()
 {
-	sql_file_dlg.setWindowTitle(trUtf8("Load SQL commands"));
+	sql_file_dlg.setWindowTitle(tr("Load SQL commands"));
 	sql_file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 	sql_file_dlg.exec();
 
@@ -701,8 +706,8 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 
 	csv_file_dlg.setDefaultSuffix(QString("csv"));
 	csv_file_dlg.setFileMode(QFileDialog::AnyFile);
-	csv_file_dlg.setWindowTitle(trUtf8("Save CSV file"));
-	csv_file_dlg.setNameFilter(trUtf8("Comma-separated values file (*.csv);;All files (*.*)"));
+	csv_file_dlg.setWindowTitle(tr("Save CSV file"));
+	csv_file_dlg.setNameFilter(tr("Comma-separated values file (*.csv);;All files (*.*)"));
 	csv_file_dlg.setModal(true);
 	csv_file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -733,12 +738,12 @@ void SQLExecutionWidget::exportResults(QTableView *results_tbw)
 	}
 }
 
-int SQLExecutionWidget::clearAll(void)
+int SQLExecutionWidget::clearAll()
 {
 	Messagebox msg_box;
 	int res = 0;
 
-	msg_box.show(trUtf8("The SQL input field and the results grid will be cleared! Want to proceed?"),
+	msg_box.show(tr("The SQL input field and the results grid will be cleared! Want to proceed?"),
 							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	res = msg_box.result();
@@ -752,17 +757,17 @@ int SQLExecutionWidget::clearAll(void)
 		export_tb->setEnabled(false);
 	}
 
-	return(res);
+	return res;
 }
 
 QByteArray SQLExecutionWidget::generateCSVBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar(';'), true, true, true));
+	return generateBuffer(results_tbw, QChar(';'), true, true, true);
 }
 
 QByteArray SQLExecutionWidget::generateTextBuffer(QTableView *results_tbw)
 {
-	return(generateBuffer(results_tbw, QChar('\t'), false, false, false));
+	return generateBuffer(results_tbw, QChar('\t'), false, false, false);
 }
 
 QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar separator, bool incl_col_names, bool use_quotes, bool escape_chars)
@@ -771,7 +776,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 		throw Exception(ErrorCode::OprNotAllocatedObject ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(!results_tbw->selectionModel())
-		return (QByteArray());
+		return QByteArray();
 
 	QAbstractItemModel *model = results_tbw->model();
 	QModelIndexList sel_indexes = results_tbw->selectionModel()->selectedIndexes();
@@ -848,7 +853,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 		buf.append('\n');
 	}
 
-	return(buf);
+	return buf;
 }
 
 void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, bool csv_is_default)
@@ -865,9 +870,9 @@ void SQLExecutionWidget::copySelection(QTableView *results_tbw, bool use_popup, 
 
 		if(use_popup)
 		{
-			act = copy_menu.addAction(trUtf8("Copy selection"));
-			act_txt = copy_mode_menu.addAction(trUtf8("Plain format"));
-			act_csv = copy_mode_menu.addAction(trUtf8("CVS format"));
+			act = copy_menu.addAction(tr("Copy selection"));
+			act_txt = copy_mode_menu.addAction(tr("Plain format"));
+			act_csv = copy_mode_menu.addAction(tr("CVS format"));
 			act->setMenu(&copy_mode_menu);
 			act = copy_menu.exec(QCursor::pos());
 		}
@@ -922,13 +927,13 @@ void SQLExecutionWidget::toggleOutputPane(bool visible)
 		v_splitter->setSizes({700, 300});
 }
 
-void SQLExecutionWidget::configureSnippets(void)
+void SQLExecutionWidget::configureSnippets()
 { 
 	SnippetsConfigWidget::configureSnippetsMenu(&snippets_menu);
 	code_compl_wgt->configureCompletion(nullptr, sql_cmd_hl);
 }
 
-void SQLExecutionWidget::saveSQLHistory(void)
+void SQLExecutionWidget::saveSQLHistory()
 {
 	try
 	{
@@ -943,30 +948,21 @@ void SQLExecutionWidget::saveSQLHistory(void)
 			attribs[Attributes::Connection] = hist.first;
 			attribs[Attributes::Commands] = hist.second;
 			schparser.ignoreEmptyAttributes(true);
-			commands += schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
-																							GlobalAttributes::DirSeparator +
-																							GlobalAttributes::SchemasDir +
-																							GlobalAttributes::DirSeparator +
-																							Attributes::Commands +
-																							GlobalAttributes::SchemaExt, attribs);
+			commands += schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																														 Attributes::Commands +
+																																														 GlobalAttributes::SchemaExt), attribs);
 		}
 
-		schparser.loadFile(GlobalAttributes::TmplConfigurationDir +
-											 GlobalAttributes::DirSeparator +
-											 GlobalAttributes::SchemasDir +
-											 GlobalAttributes::DirSeparator +
-											 GlobalAttributes::SQLHistoryConf +
-											 GlobalAttributes::SchemaExt);
+		schparser.loadFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																			GlobalAttributes::SQLHistoryConf +
+																																			GlobalAttributes::SchemaExt));
 
 		attribs.clear();
 		attribs[Attributes::Commands] = commands;
 		buffer.append(schparser.getCodeDefinition(attribs));
 
 
-		file.setFileName(GlobalAttributes::ConfigurationsDir +
-										 GlobalAttributes::DirSeparator +
-										 GlobalAttributes::SQLHistoryConf +
-										 GlobalAttributes::ConfigurationExt);
+		file.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 
 		if(!file.open(QFile::WriteOnly))
 			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file.fileName()),
@@ -981,25 +977,19 @@ void SQLExecutionWidget::saveSQLHistory(void)
 	}
 }
 
-void SQLExecutionWidget::loadSQLHistory(void)
+void SQLExecutionWidget::loadSQLHistory()
 {
 	try
 	{
 		XmlParser xmlparser;
 		attribs_map attribs;
 
-		xmlparser.setDTDFile(GlobalAttributes::TmplConfigurationDir +
-												 GlobalAttributes::DirSeparator +
-												 GlobalAttributes::ObjectDTDDir +
-												 GlobalAttributes::DirSeparator +
-												 GlobalAttributes::SQLHistoryConf +
-												 GlobalAttributes::ObjectDTDExt,
+		xmlparser.setDTDFile(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::ObjectDTDDir,
+																																				GlobalAttributes::SQLHistoryConf +
+																																				GlobalAttributes::ObjectDTDExt),
 												 GlobalAttributes::SQLHistoryConf);
 
-		xmlparser.loadXMLFile(GlobalAttributes::ConfigurationsDir +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::SQLHistoryConf +
-													GlobalAttributes::ConfigurationExt);
+		xmlparser.loadXMLFile(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 
 		cmd_history.clear();
 
@@ -1027,20 +1017,16 @@ void SQLExecutionWidget::loadSQLHistory(void)
 	}
 }
 
-void SQLExecutionWidget::destroySQLHistory(void)
+void SQLExecutionWidget::destroySQLHistory()
 {
 	Messagebox msg_box;
 
-	msg_box.show(trUtf8("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
+	msg_box.show(tr("This action will wipe out all the SQL commands history for all connections! Do you really want to proceed?"),
 								Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Accepted)
 	{
-		QFile::remove(GlobalAttributes::ConfigurationsDir +
-									GlobalAttributes::DirSeparator +
-									GlobalAttributes::SQLHistoryConf +
-									GlobalAttributes::ConfigurationExt);
-
+		QFile::remove(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));
 		SQLExecutionWidget::cmd_history.clear();
 	}
 }
@@ -1053,9 +1039,9 @@ void SQLExecutionWidget::setSQLHistoryMaxLength(int len)
 	SQLExecutionWidget::cmd_history_max_len = len;
 }
 
-int SQLExecutionWidget::getSQLHistoryMaxLength(void)
+int SQLExecutionWidget::getSQLHistoryMaxLength()
 {
-	return(SQLExecutionWidget::cmd_history_max_len);
+	return SQLExecutionWidget::cmd_history_max_len;
 }
 
 void SQLExecutionWidget::enableSQLExecution(bool enable)
@@ -1075,19 +1061,19 @@ void SQLExecutionWidget::enableSQLExecution(bool enable)
 	}
 }
 
-void SQLExecutionWidget::showHistoryContextMenu(void)
+void SQLExecutionWidget::showHistoryContextMenu()
 {
 	QMenu *ctx_menu=cmd_history_txt->createStandardContextMenu();
-	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), trUtf8("Clear history"), ctx_menu),
-			*action_save = new QAction(QPixmap(PgModelerUiNs::getIconPath("salvar")), trUtf8("Save history"), ctx_menu),
-			*action_reload = new QAction(QPixmap(PgModelerUiNs::getIconPath("atualizar")), trUtf8("Reload history"), ctx_menu),
+	QAction *action_clear = new QAction(QPixmap(PgModelerUiNs::getIconPath("limpartexto")), tr("Clear history"), ctx_menu),
+			*action_save = new QAction(QPixmap(PgModelerUiNs::getIconPath("salvar")), tr("Save history"), ctx_menu),
+			*action_reload = new QAction(QPixmap(PgModelerUiNs::getIconPath("atualizar")), tr("Reload history"), ctx_menu),
 			*action_toggle_find = nullptr,
 			*exec_act = nullptr;
 
 	if(!find_history_parent->isVisible())
-		action_toggle_find = new QAction(QPixmap(PgModelerUiNs::getIconPath("buscar")), trUtf8("Find in history"), ctx_menu);
+		action_toggle_find = new QAction(QPixmap(PgModelerUiNs::getIconPath("buscar")), tr("Find in history"), ctx_menu);
 	else
-		action_toggle_find = new QAction(trUtf8("Hide find tool"), ctx_menu);
+		action_toggle_find = new QAction(tr("Hide find tool"), ctx_menu);
 
 	ctx_menu->addSeparator();
 	ctx_menu->addAction(action_toggle_find);
@@ -1102,7 +1088,7 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 	{
 		Messagebox msg_box;
 
-		msg_box.show(trUtf8("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
+		msg_box.show(tr("This action will wipe out all the SQL commands history for the current connection! Do you really want to proceed?"),
 									Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
 
 		if(msg_box.result() == QDialog::Accepted)
@@ -1123,5 +1109,5 @@ void SQLExecutionWidget::showHistoryContextMenu(void)
 	else if(exec_act == action_toggle_find)
 		find_history_parent->setVisible(!find_history_parent->isVisible());
 
-	delete(ctx_menu);
+	delete ctx_menu;
 }

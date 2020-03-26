@@ -1,7 +1,7 @@
 ﻿/*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "messagebox.h"
-#include "hinttextwidget.h"
 #include "colorpickerwidget.h"
 #include "numberedtexteditor.h"
 
@@ -59,14 +58,6 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		UnitInches=2,
 		UnitCentimeters=3;
 
-		HintTextWidget *simp_obj_creation_ht, *confirm_validation_ht, *corner_move_ht,
-		*save_last_pos_ht, *invert_rangesel_ht, *disable_smooth_ht,
-		*hide_ext_attribs_ht, *hide_table_tags_ht, *hide_rel_name_ht,
-		*code_completion_ht, *use_placeholders_ht, *min_obj_opacity_ht,
-		*autosave_ht, *op_history_ht, *ui_language_ht, *grid_size_ht,
-		*use_curved_lines_ht, *max_result_rows_ht, *attribs_per_page_ht,
-		*reduce_verbosity_ht, *escape_comments_ht;
-
 		ColorPickerWidget *line_numbers_cp, *line_numbers_bg_cp, *line_highlight_cp;
 
 	public:
@@ -75,11 +66,11 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 
 		GeneralConfigWidget(QWidget * parent = nullptr);
 
-		void saveConfiguration(void);
-		void loadConfiguration(void);
+		void saveConfiguration();
+		void loadConfiguration();
 		static void addConfigurationParam(const QString &param, const attribs_map &attribs);
 		static void removeConfigurationParam(const QRegExp &param_reg);
-		static map<QString, attribs_map> getConfigurationParams(void);
+		static map<QString, attribs_map> getConfigurationParams();
 
 		/*! \brief Returns a single value of a configuration param in the specified section id.
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
@@ -89,15 +80,15 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
 
 	public slots:
-		void applyConfiguration(void);
-		void restoreDefaults(void);
-		void selectPaperSize(void);
-		void selectSourceEditor(void);
+		void applyConfiguration();
+		void restoreDefaults();
+		void selectPaperSize();
+		void selectSourceEditor();
 
 	private slots:
-		void convertMarginUnity(void);
-		void updateFontPreview(void);
-		void resetDialogsSizes(void);
+		void convertMarginUnity();
+		void updateFontPreview();
+		void resetDialogsSizes();
 };
 
 #endif

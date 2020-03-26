@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 */
 
 #include "eventtrigger.h"
+#include "defaultlanguages.h"
 
-EventTrigger::EventTrigger(void)
+EventTrigger::EventTrigger()
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
@@ -50,7 +51,7 @@ void EventTrigger::setFunction(Function *func)
 						.arg(BaseObject::getTypeName(ObjectType::EventTrigger)),
 						ErrorCode::AsgFunctionInvalidParamCount,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Functions coded in SQL lang. is not accepted by event triggers
-	else if(func->getLanguage()->getName()==~LanguageType(LanguageType::Sql))
+	else if(func->getLanguage()->getName().toLower() == DefaultLanguages::Sql)
 		throw Exception(ErrorCode::AsgEventTriggerFuncInvalidLang,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	setCodeInvalidated(function != func);
@@ -80,34 +81,34 @@ void EventTrigger::removeFilter(const QString &variable)
 	setCodeInvalidated(true);
 }
 
-void EventTrigger::clearFilter(void)
+void EventTrigger::clearFilter()
 {
 	filter.clear();
 	setCodeInvalidated(true);
 }
 
-EventTriggerType EventTrigger::getEvent(void)
+EventTriggerType EventTrigger::getEvent()
 {
-	return(event);
+	return event;
 }
 
-Function *EventTrigger::getFunction(void)
+Function *EventTrigger::getFunction()
 {
-	return(function);
+	return function;
 }
 
 QStringList EventTrigger::getFilter(const QString &variable)
 {
 	if(filter.count(variable))
-		return(filter.at(variable));
+		return filter.at(variable);
 	else
-		return(QStringList());
+		return QStringList();
 }
 
 QString EventTrigger::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Event]=~event;
 
@@ -136,7 +137,7 @@ QString EventTrigger::getCodeDefinition(unsigned def_type)
 												   .arg(Attributes::Values).arg(flt.second.join(','));
 	}
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString EventTrigger::getAlterDefinition(BaseObject *object)
@@ -144,7 +145,7 @@ QString EventTrigger::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, false);
 	}
 	catch(Exception &e)
 	{

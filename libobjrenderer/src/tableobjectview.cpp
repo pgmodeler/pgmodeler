@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,17 +38,17 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 		lables[i]=new QGraphicsSimpleTextItem;
 
 	if(obj_selection)
-		delete(obj_selection);
+		delete obj_selection;
 }
 
-TableObjectView::~TableObjectView(void)
+TableObjectView::~TableObjectView()
 {
-	delete(descriptor);
+	delete descriptor;
 
 	for(unsigned i=0; i < 3; i++)
-		delete(lables[i]);
+		delete lables[i];
 
-	delete(obj_selection);
+	delete obj_selection;
 }
 
 void TableObjectView::configureDescriptor(ConstraintType constr_type)
@@ -70,7 +70,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
 										(!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
 	{
-		delete(descriptor);
+		delete descriptor;
 		descriptor=nullptr;
 	}
 
@@ -177,7 +177,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 	}
 }
 
-void TableObjectView::configureObject(void)
+void TableObjectView::configureObject()
 {
 	if(this->getUnderlyingObject())
 	{
@@ -197,7 +197,7 @@ void TableObjectView::configureObject(void)
 		if(column)
 		{
 			if(column->isAddedByRelationship())
-				tooltip+=trUtf8("\nRelationship: %1").arg(column->getParentRelationship()->getName());
+				tooltip+=tr("\nRelationship: %1").arg(column->getParentRelationship()->getName());
 
 			str_constr=this->getConstraintString(column);
 
@@ -554,7 +554,7 @@ void TableObjectView::setChildObjectXPos(unsigned obj_idx, double px)
 	calculateBoundingRect();
 }
 
-void TableObjectView::calculateBoundingRect(void)
+void TableObjectView::calculateBoundingRect()
 {
 	double width = 0, height = 0, curr_w = 0, py = 0;
 
@@ -590,9 +590,9 @@ QGraphicsItem *TableObjectView::getChildObject(unsigned obj_idx)
 		throw Exception(ErrorCode::RefObjectInvalidIndex, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	if(obj_idx == ObjDescriptor)
-		return(descriptor);
+		return descriptor;
 	else
-		return(lables[obj_idx - 1]);
+		return lables[obj_idx - 1];
 }
 
 QString TableObjectView::getConstraintString(Column *column)
@@ -639,9 +639,9 @@ QString TableObjectView::getConstraintString(Column *column)
 		if(!str_constr.isEmpty())
 			str_constr= ConstrDelimStart + ConstrSeparator + str_constr + ConstrDelimEnd;
 
-		return(str_constr);
+		return str_constr;
 	}
-	else return(QString());
+	else return QString();
 }
 
 void TableObjectView::setFakeSelection(bool value)
@@ -663,12 +663,12 @@ void TableObjectView::setFakeSelection(bool value)
 	update();
 }
 
-bool TableObjectView::hasFakeSelection(void)
+bool TableObjectView::hasFakeSelection()
 {
-	return(fake_selection);
+	return fake_selection;
 }
 
-void TableObjectView::configureObjectSelection(void)
+void TableObjectView::configureObjectSelection()
 {
 	QGraphicsItem *parent = this->parentItem();
 	RoundedRectItem *rect_item=nullptr;
@@ -723,8 +723,8 @@ void TableObjectView::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	}
 }
 
-QRectF TableObjectView::boundingRect(void) const
+QRectF TableObjectView::boundingRect() const
 {
-	return(bounding_rect);
+	return bounding_rect;
 }
 

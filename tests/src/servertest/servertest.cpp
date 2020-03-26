@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@ class ServerTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void codeGeneratedIsWellFormed(void);
-		void modelReturnsDepsAndRefsForServer(void);
-		void modelCreatesServerfromXMLandResultingXMLisEqual(void);
+		void codeGeneratedIsWellFormed();
+		void modelReturnsDepsAndRefsForServer();
+		void modelCreatesServerfromXMLandResultingXMLisEqual();
 };
 
-void ServerTest::codeGeneratedIsWellFormed(void)
+void ServerTest::codeGeneratedIsWellFormed()
 {
 	ForeignDataWrapper fdw;
 	ForeignServer server;
@@ -82,7 +82,7 @@ COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
 	}
 }
 
-void ServerTest::modelReturnsDepsAndRefsForServer(void)
+void ServerTest::modelReturnsDepsAndRefsForServer()
 {
 	DatabaseModel model;
 	Role owner;
@@ -123,7 +123,7 @@ void ServerTest::modelReturnsDepsAndRefsForServer(void)
 	}
 }
 
-void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
+void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual()
 {
 	DatabaseModel model;
 	Role owner;
@@ -164,7 +164,7 @@ void ServerTest::modelCreatesServerfromXMLandResultingXMLisEqual(void)
 		model.removeRole(&owner);
 
 		if(server)
-			delete(server);
+			delete server;
 
 		QCOMPARE(xml_code, res_xml_code);
 	}

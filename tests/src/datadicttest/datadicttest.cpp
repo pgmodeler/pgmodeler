@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@ class DataDictTest: public QObject {
 		Q_OBJECT
 
 	private slots:
-		void generateASimpleDataDict(void);
-		void generateASplittedDataDictFromSampleModel(void);
+		void generateASimpleDataDict();
+		void generateASplittedDataDictFromSampleModel();
 };
 
-void DataDictTest::generateASimpleDataDict(void)
+void DataDictTest::generateASimpleDataDict()
 {	
 	DatabaseModel dbmodel;
 	Table *table = nullptr, *table1 = nullptr;
@@ -116,7 +116,7 @@ void DataDictTest::generateASimpleDataDict(void)
 	}
 }
 
-void DataDictTest::generateASplittedDataDictFromSampleModel(void)
+void DataDictTest::generateASplittedDataDictFromSampleModel()
 {
 	DatabaseModel dbmodel;
 	try

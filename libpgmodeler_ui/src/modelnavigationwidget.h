@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,18 +35,18 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 
 		QList<ModelWidget *> model_wgts;
 
-		void enableNavigationButtons(void);
+		void enableNavigationButtons();
 
 	public:
 		ModelNavigationWidget(QWidget * parent = nullptr);
 
 		//! \brief Returns the combo's current index
-		int getCurrentIndex(void);
+		int getCurrentIndex();
 
 		//! \brief Returns the text of the combo's current index
 		QString getText(int idx);
 
-		QList<ModelWidget *> getModelWidgets(void);
+		QList<ModelWidget *> getModelWidgets();
 
 	public slots:
 		//! \brief Adds the model to the listing
@@ -59,7 +59,7 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 		void removeModel(int idx);
 
 	private slots:
-		void setCurrentModel(void);
+		void setCurrentModel();
 		void showTooltip(int idx);
 
 	signals:

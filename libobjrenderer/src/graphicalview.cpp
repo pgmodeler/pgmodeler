@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 {
-	connect(view, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+	connect(view, SIGNAL(s_objectModified()), this, SLOT(configureObject()));
 
 	columns=new QGraphicsItemGroup;
 	columns->setZValue(1);
@@ -29,7 +29,7 @@ GraphicalView::GraphicalView(View *view) : BaseTableView(view)
 	this->configureObject();
 }
 
-void GraphicalView::configureObject(void)
+void GraphicalView::configureObject()
 {
 	/* If the table isn't visible we abort the current configuration
 	 * and mark its geometry update as pending so in the next call to
@@ -87,7 +87,7 @@ void GraphicalView::configureObject(void)
 		for(auto &item : columns->childItems())
 		{
 			columns->removeFromGroup(item);
-			delete(item);
+			delete item;
 		}
 	}
 	else
@@ -138,7 +138,7 @@ void GraphicalView::configureObject(void)
 		{
 			graph_ref=dynamic_cast<TableObjectView *>(subitems[i]);
 			columns->removeFromGroup(graph_ref);
-			delete(graph_ref);
+			delete graph_ref;
 			i--;
 		}
 
@@ -174,7 +174,7 @@ void GraphicalView::configureObject(void)
 		for(auto &item : ext_attribs->childItems())
 		{
 			ext_attribs->removeFromGroup(item);
-			delete(item);
+			delete item;
 		}
 	}
 	else
@@ -223,7 +223,7 @@ void GraphicalView::configureObject(void)
 		{
 			col_item=dynamic_cast<TableObjectView *>(subitems[i]);
 			ext_attribs->removeFromGroup(col_item);
-			delete(col_item);
+			delete col_item;
 			i--;
 		}
 

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,44 +22,35 @@
 
 vector<Connection *> ConnectionsConfigWidget::connections;
 map<QString, attribs_map> ConnectionsConfigWidget::config_params;
-const QString ConnectionsConfigWidget::DefaultFor=QString("default-for-%1");
+const QString ConnectionsConfigWidget::DefaultFor("default-for-%1");
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : BaseConfigWidget(parent)
 {
 	Ui_ConnectionsConfigWidget::setupUi(this);
 
-	auto_browse_ht=new HintTextWidget(auto_browse_hint, this);
-	auto_browse_ht->setText(auto_browse_chk->statusTip());
+	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates()));
 
-	other_params_ht=new HintTextWidget(other_params_hint, this);
-	other_params_ht->setText(other_params_edt->statusTip());
+	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
+	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
+	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection()));
 
-	default_for_ops_ht=new HintTextWidget(default_for_ops_hint, this);
-	default_for_ops_ht->setText(trUtf8("Indicates in which operations (diff, export, import or validation) the connection is used if none is explicitly specified by the user."));
+	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection()));
+	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
+	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection()));
+	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection()));
+	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection()));
 
-	connect(ssl_mode_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enableCertificates(void)));
-
-	connect(new_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
-	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(newConnection(void)));
-	connect(duplicate_tb, SIGNAL(clicked(bool)), this, SLOT(duplicateConnection(void)));
-
-	connect(test_tb, SIGNAL(clicked(bool)), this, SLOT(testConnection(void)));
-	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
-	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(handleConnection(void)));
-	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editConnection(void)));
-	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeConnection(void)));
-
-	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
-	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest(void)));
+	connect(alias_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(host_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(user_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(passwd_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
+	connect(conn_db_edt, SIGNAL(textChanged(QString)), this, SLOT(enableConnectionTest()));
 
 	update_tb->setVisible(false);
 	cancel_tb->setVisible(false);
 }
 
-ConnectionsConfigWidget::~ConnectionsConfigWidget(void)
+ConnectionsConfigWidget::~ConnectionsConfigWidget()
 {
 
 }
@@ -76,7 +67,7 @@ void ConnectionsConfigWidget::showEvent(QShowEvent *)
 	conn_attribs_tbw->setCurrentIndex(0);
 }
 
-void ConnectionsConfigWidget::updateConnectionsCombo(void)
+void ConnectionsConfigWidget::updateConnectionsCombo()
 {
 	connections_cmb->clear();
 
@@ -84,7 +75,7 @@ void ConnectionsConfigWidget::updateConnectionsCombo(void)
 		connections_cmb->addItem(QIcon(PgModelerUiNs::getIconPath("server")), conn->getConnectionId());
 }
 
-void ConnectionsConfigWidget::destroyConnections(void)
+void ConnectionsConfigWidget::destroyConnections()
 {
 	Connection *conn=nullptr;
 
@@ -93,16 +84,16 @@ void ConnectionsConfigWidget::destroyConnections(void)
 		conn=connections.back();
 		connections.pop_back();
 		connections_cmb->removeItem(0);
-		delete(conn);
+		delete conn;
 	}
 }
 
-map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams(void)
+map<QString, attribs_map> ConnectionsConfigWidget::getConfigurationParams()
 {
-	return(config_params);
+	return config_params;
 }
 
-void ConnectionsConfigWidget::loadConfiguration(void)
+void ConnectionsConfigWidget::loadConfiguration()
 {
 	try
 	{
@@ -156,7 +147,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 	}
 }
 
-void ConnectionsConfigWidget::enableCertificates(void)
+void ConnectionsConfigWidget::enableCertificates()
 {
 	client_cert_lbl->setEnabled(ssl_mode_cmb->currentIndex()!=0);
 	client_cert_edt->setEnabled(ssl_mode_cmb->currentIndex()!=0);
@@ -168,7 +159,7 @@ void ConnectionsConfigWidget::enableCertificates(void)
 	client_key_edt->setEnabled(ssl_mode_cmb->currentIndex()!=0);
 }
 
-void ConnectionsConfigWidget::enableConnectionTest(void)
+void ConnectionsConfigWidget::enableConnectionTest()
 {
 	test_tb->setEnabled(!alias_edt->text().isEmpty() &&
 						!host_edt->text().isEmpty() &&
@@ -181,7 +172,7 @@ void ConnectionsConfigWidget::enableConnectionTest(void)
 		setConfigurationChanged(true);
 }
 
-void ConnectionsConfigWidget::newConnection(void)
+void ConnectionsConfigWidget::newConnection()
 {
 	conn_db_edt->clear();
 	alias_edt->clear();
@@ -219,7 +210,7 @@ void ConnectionsConfigWidget::newConnection(void)
 	duplicate_tb->setEnabled(connections_cmb->count() > 0);
 }
 
-void ConnectionsConfigWidget::duplicateConnection(void)
+void ConnectionsConfigWidget::duplicateConnection()
 {
 	Connection *conn=nullptr, *new_conn=nullptr;
 
@@ -238,13 +229,13 @@ void ConnectionsConfigWidget::duplicateConnection(void)
 	catch(Exception &e)
 	{
 		if(new_conn)
-			delete(new_conn);
+			delete new_conn;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
-void ConnectionsConfigWidget::handleConnection(void)
+void ConnectionsConfigWidget::handleConnection()
 {
 	Connection *conn=nullptr;
 
@@ -272,13 +263,13 @@ void ConnectionsConfigWidget::handleConnection(void)
 	catch(Exception &e)
 	{
 		if(add_tb->isVisible())
-			delete(conn);
+			delete conn;
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
-void ConnectionsConfigWidget::removeConnection(void)
+void ConnectionsConfigWidget::removeConnection()
 {
 	if(connections_cmb->currentIndex() >= 0)
 	{
@@ -286,13 +277,13 @@ void ConnectionsConfigWidget::removeConnection(void)
 		conn=connections.at(connections_cmb->currentIndex());
 		connections.erase(connections.begin() + connections_cmb->currentIndex());
 		connections_cmb->removeItem(connections_cmb->currentIndex());
-		delete(conn);
+		delete conn;
 		this->newConnection();
 		setConfigurationChanged(true);
 	}
 }
 
-void ConnectionsConfigWidget::editConnection(void)
+void ConnectionsConfigWidget::editConnection()
 {
 	if(connections_cmb->count() > 0)
 	{
@@ -410,7 +401,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	}
 }
 
-void ConnectionsConfigWidget::testConnection(void)
+void ConnectionsConfigWidget::testConnection()
 {
 	Connection conn;
 	Messagebox msg_box;
@@ -421,8 +412,8 @@ void ConnectionsConfigWidget::testConnection(void)
 		this->configureConnection(&conn);
 		conn.connect();
 		srv_info=conn.getServerInfo();
-		msg_box.show(trUtf8("Success"),
-					 PgModelerUiNs::formatMessage(trUtf8("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
+		msg_box.show(tr("Success"),
+					 PgModelerUiNs::formatMessage(tr("Connection successfully established!\n\nServer details:\n\nPID: `%1'\nProtocol: `%2'\nVersion: `%3'"))
 					 .arg(srv_info[Connection::ServerPid])
 				.arg(srv_info[Connection::ServerProtocol])
 				.arg(srv_info[Connection::ServerVersion]), Messagebox::InfoIcon);
@@ -433,7 +424,7 @@ void ConnectionsConfigWidget::testConnection(void)
 	}
 }
 
-void ConnectionsConfigWidget::restoreDefaults(void)
+void ConnectionsConfigWidget::restoreDefaults()
 {
 	try
 	{
@@ -456,7 +447,7 @@ void ConnectionsConfigWidget::restoreDefaults(void)
 	}
 }
 
-void ConnectionsConfigWidget::saveConfiguration(void)
+void ConnectionsConfigWidget::saveConfiguration()
 {
 	try
 	{
@@ -469,7 +460,7 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 		{
 			Messagebox msg_box;
 
-			msg_box.show(trUtf8("There is a connection being created or edited! Do you want to save it?"),
+			msg_box.show(tr("There is a connection being created or edited! Do you want to save it?"),
 									 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 			if(msg_box.result()==QDialog::Accepted)
@@ -502,13 +493,9 @@ void ConnectionsConfigWidget::saveConfiguration(void)
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=
-						schparser.getCodeDefinition(GlobalAttributes::TmplConfigurationDir +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::SchemasDir +
-													GlobalAttributes::DirSeparator +
-													GlobalAttributes::ConnectionsConf +
-													GlobalAttributes::SchemaExt,
-													attribs);
+						schparser.getCodeDefinition(GlobalAttributes::getTmplConfigurationFilePath(GlobalAttributes::SchemasDir,
+																																											 GlobalAttributes::ConnectionsConf +
+																																											 GlobalAttributes::SchemaExt), attribs);
 
 				schparser.ignoreUnkownAttributes(false);
 			}
@@ -545,10 +532,10 @@ Connection *ConnectionsConfigWidget::getConnection(const QString &conn_id)
 	for(Connection *conn : connections)
 	{
 		if(conn->getConnectionId() == conn_id)
-			return(conn);
+			return conn;
 	}
 
-	return(nullptr);
+	return nullptr;
 }
 
 void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool incl_placeholder, unsigned check_def_for)
@@ -567,9 +554,9 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	if(incl_placeholder)
 	{
 		if(!connections.empty())
-			combo->addItem(trUtf8("Found %1 connection(s)").arg(connections.size()));
+			combo->addItem(tr("Found %1 connection(s)").arg(connections.size()));
 		else
-			combo->addItem(trUtf8("No connections found"));
+			combo->addItem(tr("No connections found"));
 	}
 
 	for(auto &itr : connections)
@@ -581,7 +568,7 @@ void ConnectionsConfigWidget::fillConnectionsComboBox(QComboBox *combo, bool inc
 	}
 
 	if(incl_placeholder)
-		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), trUtf8("Edit connections"));
+		combo->addItem(QIcon(QString(":icones/icones/conexaobd.png")), tr("Edit connections"));
 
 	if(def_conn)
 		combo->setCurrentText(def_conn->getConnectionId());
@@ -597,7 +584,7 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 		ConnectionsConfigWidget conn_cfg_wgt;
 		bool conn_saved = false;
 
-		parent_form.setWindowTitle(trUtf8("Edit database connections"));
+		parent_form.setWindowTitle(tr("Edit database connections"));
 		parent_form.setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
 
 		connect(parent_form.cancel_btn, SIGNAL(clicked(bool)), &parent_form, SLOT(reject()));
@@ -627,10 +614,10 @@ bool ConnectionsConfigWidget::openConnectionsConfiguration(QComboBox *combo, boo
 			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 		}
 
-		return(conn_saved);
+		return conn_saved;
 	}
 
-	return(false);
+	return false;
 }
 
 Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
@@ -646,5 +633,5 @@ Connection *ConnectionsConfigWidget::getDefaultConnection(unsigned operation)
 		}
 	}
 
-	return(conn);
+	return conn;
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 #include "tableobject.h"
 #include "role.h"
+#include "pgsqltypes/policycmdtype.h"
 
 class Policy : public TableObject {
 	private:
@@ -49,7 +50,7 @@ class Policy : public TableObject {
 		PolicyCmdType policy_cmd;
 
 	public:
-		Policy(void);
+		Policy();
 
 		virtual void setParentTable(BaseTable *table) final;
 
@@ -57,34 +58,34 @@ class Policy : public TableObject {
 		void setPermissive(bool value);
 
 		//! \brief Returns if the policy is permissive or restrictive
-		bool isPermissive(void);
+		bool isPermissive();
 
 		//! \brief Defines the command affected by the policy.
 		void setPolicyCommand(PolicyCmdType cmd);
 
 		//! \brief Returns the policy affected command
-		PolicyCmdType getPolicyCommand(void);
+		PolicyCmdType getPolicyCommand();
 
 		//! \brief Defines the USING expresion of the policy
 		void setUsingExpression(const QString &expr);
 
 		//! \brief Returns the USING expresion of the policy
-		QString getUsingExpression(void);
+		QString getUsingExpression();
 
 		//! \brief Defines the CHECK expresion of the policy
 		void setCheckExpression(const QString &expr);
 
 		//! \brief Returns the CHECK expresion of the policy
-		QString getCheckExpression(void);
+		QString getCheckExpression();
 
 		//! \brief Adds a role that will have privileges over the object
 		void addRole(Role *role);
 
 		//! \brief Remove all roles from the policy
-		void removeRoles(void);
+		void removeRoles();
 
 		//! \brief Returns all the roles that is used by the policy
-		vector<Role *> getRoles(void);
+		vector<Role *> getRoles();
 
 		//! \brief Returns the SQL / XML definition for the policy
 		virtual QString getCodeDefinition(unsigned def_type) final;

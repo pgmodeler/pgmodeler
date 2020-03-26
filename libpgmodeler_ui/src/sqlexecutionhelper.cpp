@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "sqlexecutionhelper.h"
 
-SQLExecutionHelper::SQLExecutionHelper(void) : QObject(nullptr)
+SQLExecutionHelper::SQLExecutionHelper() : QObject(nullptr)
 {
 	cancelled = false;
 	result_model = nullptr;
@@ -34,22 +34,22 @@ void SQLExecutionHelper::setCommand(const QString &cmd)
 	command = cmd;
 }
 
-ResultSetModel *SQLExecutionHelper::getResultSetModel(void)
+ResultSetModel *SQLExecutionHelper::getResultSetModel()
 {
-	return(result_model);
+	return result_model;
 }
 
-bool SQLExecutionHelper::isCancelled(void)
+bool SQLExecutionHelper::isCancelled()
 {
-	return(cancelled);
+	return cancelled;
 }
 
-QStringList SQLExecutionHelper::getNotices(void)
+QStringList SQLExecutionHelper::getNotices()
 {
-	return(notices);
+	return notices;
 }
 
-void SQLExecutionHelper::executeCommand(void)
+void SQLExecutionHelper::executeCommand()
 {
 	try
 	{
@@ -85,7 +85,7 @@ void SQLExecutionHelper::executeCommand(void)
 	}
 }
 
-void SQLExecutionHelper::cancelCommand(void)
+void SQLExecutionHelper::cancelCommand()
 {
 	if(connection.isStablished())
 	{

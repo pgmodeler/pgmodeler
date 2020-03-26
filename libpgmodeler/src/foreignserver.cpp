@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "foreignserver.h"
 
-ForeignServer::ForeignServer(void) : BaseObject()
+ForeignServer::ForeignServer() : BaseObject()
 {
 	obj_type = ObjectType::ForeignServer;
 	fdata_wrapper = nullptr;
@@ -44,30 +44,30 @@ void ForeignServer::setForeignDataWrapper(ForeignDataWrapper *fdw)
 	fdata_wrapper = fdw;
 }
 
-QString ForeignServer::getType(void)
+QString ForeignServer::getType()
 {
-	return(type);
+	return type;
 }
 
-QString ForeignServer::getVersion(void)
+QString ForeignServer::getVersion()
 {
-	return(version);
+	return version;
 }
 
-ForeignDataWrapper *ForeignServer::getForeignDataWrapper(void)
+ForeignDataWrapper *ForeignServer::getForeignDataWrapper()
 {
-	return(fdata_wrapper);
+	return fdata_wrapper;
 }
 
 QString ForeignServer::getCodeDefinition(unsigned def_type)
 {
-	return(getCodeDefinition(def_type, false));
+	return getCodeDefinition(def_type, false);
 }
 
 QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Version] = version;
 	attributes[Attributes::Type] = type;
@@ -83,7 +83,7 @@ QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[Attributes::Options] = getOptionsAttribute(def_type);
 
-	return(this->BaseObject::getCodeDefinition(def_type, reduced_form));
+	return this->BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString ForeignServer::getAlterDefinition(BaseObject *object)
@@ -100,7 +100,7 @@ QString ForeignServer::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Version] = server->version;
 
 		copyAttributes(attribs);
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{

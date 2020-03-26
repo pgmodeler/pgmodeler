@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -100,23 +100,23 @@ class BaseTableView: public BaseObjectView {
 		int getConnectedRelationshipIndex(BaseRelationship *base_rel, bool only_self_rels = false);
 
 		//! \brief Configures the tag object when the source object has one.
-		void configureTag(void);
+		void configureTag();
 
 		/*! \brief Configures basic attributes of the table. A width need to be provided so
 		the extended attributes section can follow the same width as the body and title */
 		void __configureObject(double width);
 
 		//! \brief Determines the table width based upon its subsection (title, body and extended attribs)
-		double calculateWidth(void);
+		double calculateWidth();
 
 		/*! \brief This as an auxiliary method called before the object changes its dimensions and it causes
 		 * the object to not being selectable. This method is called whenever one of the signals are captured
 		 * from the attributes toggler: s_paginationToggled s_currentPageChanged s_collapseModeChanged */
-		void startGeometryUpdate(void);
+		void startGeometryUpdate();
 
 		/*! \brief This auxiliary method is called after any geometry change finishes forcing the update of the object
 		 * and in some cases the schema box which contains it */
-		void finishGeometryUpdate(void);
+		void finishGeometryUpdate();
 
 		/*! \brief Determines the pagination paramenters for a section of the table. The input parameters are
 		 * the section (BaseTable::AttribsSection | ExtAttribsSection) and the total amount of attributes in the section.
@@ -129,7 +129,7 @@ class BaseTableView: public BaseObjectView {
 		RightConnPoint=1;
 
 		BaseTableView(BaseTable *base_tab);
-		virtual ~BaseTableView(void);
+		virtual ~BaseTableView();
 
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
@@ -148,16 +148,16 @@ class BaseTableView: public BaseObjectView {
 		static void setHideTags(bool value);
 
 		//! \brief Returns the current visibility state of extended attributes
-		static bool isExtAttributesHidden(void);
+		static bool isExtAttributesHidden();
 
 		//! \brief Returns the current visibility state of tags
-		static bool isTagsHidden(void);
+		static bool isTagsHidden();
 
 		//! \brief Returns the current count of connected relationships
-		int getConnectRelsCount(void);
+		int getConnectRelsCount();
 
 		//! \brief This method just emits the signal to indicate that the relationships attached must be updated
-		void requestRelationshipsUpdate(void);
+		void requestRelationshipsUpdate();
 
 		//! \brief Toggles the placeholder object when there is at least one relationship connected to the object
 		virtual void togglePlaceholder(bool value);
@@ -165,13 +165,13 @@ class BaseTableView: public BaseObjectView {
 		unsigned getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab);
 
 		//! \brief Configures the shadow for the table
-		void configureObjectShadow(void);
+		void configureObjectShadow();
 
 		//! \brief Returns a list of selected children objects
-		QList<TableObjectView *> getSelectedChidren(void);
+		QList<TableObjectView *> getSelectedChidren();
 
 		//! \brief Clear the selection over all selected children
-		void clearChildrenSelection(void);
+		void clearChildrenSelection();
 
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
@@ -187,28 +187,28 @@ class BaseTableView: public BaseObjectView {
 
 	signals:
 		//! \brief Signal emitted when a table is moved over the scene
-		void s_objectMoved(void);
+		void s_objectMoved();
 
 		//! \brief Signal emitted to indicate that the relationships attached to the table need to be updated
-		void s_relUpdateRequest(void);
+		void s_relUpdateRequest();
 
 		//! \brief Signal emitted when the user right-click a focused table child object requesting a popup menu
 		void s_popupMenuRequested(TableObject *);
 
 		//! \brief Signal emitted when the user clicks a focused table child object and holding Control+Shift
-		void s_childrenSelectionChanged(void);
+		void s_childrenSelectionChanged();
 
 		//! \brief Signal emitted when the user toggles the table's collapse mode
-		void s_collapseModeChanged(void);
+		void s_collapseModeChanged();
 
 		//! \brief Signal emitted when the user toggles the table's attributes pagination
-		void s_paginationToggled(void);
+		void s_paginationToggled();
 
 		//! \brief Signal emitted when the user changes the current table's attributes page
-		void s_currentPageChanged(void);
+		void s_currentPageChanged();
 
 		//! \brief Signal emitted when the object need the scene to clear its selection
-		void s_sceneClearRequested(void);
+		void s_sceneClearRequested();
 
 		friend class RelationshipView;
 };

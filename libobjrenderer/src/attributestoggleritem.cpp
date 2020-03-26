@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 		btns_selected[arr_id] = false;
 	}
 
-	buttons[AttribsExpandBtn]->setToolTip(trUtf8("Expands the currently collapsed section of the object"));
-	buttons[AttribsCollapseBtn]->setToolTip(trUtf8("Collapses the currently expanded section of the object"));
-	buttons[NextAttribsPageBtn]->setToolTip(trUtf8("Displays the next attributes page"));
-	buttons[PrevAttribsPageBtn]->setToolTip(trUtf8("Displays the previous attributes page"));
-	buttons[NextExtAttribsPageBtn]->setToolTip(trUtf8("Displays the next extended attributes page"));
-	buttons[PrevExtAttribsPageBtn]->setToolTip(trUtf8("Displays the previous extended attributes page"));
-	buttons[PaginationTogglerBtn]->setToolTip(trUtf8("Toggles the attributes pagination on the object"));
+	buttons[AttribsExpandBtn]->setToolTip(tr("Expands the currently collapsed section of the object"));
+	buttons[AttribsCollapseBtn]->setToolTip(tr("Collapses the currently expanded section of the object"));
+	buttons[NextAttribsPageBtn]->setToolTip(tr("Displays the next attributes page"));
+	buttons[PrevAttribsPageBtn]->setToolTip(tr("Displays the previous attributes page"));
+	buttons[NextExtAttribsPageBtn]->setToolTip(tr("Displays the next extended attributes page"));
+	buttons[PrevExtAttribsPageBtn]->setToolTip(tr("Displays the previous extended attributes page"));
+	buttons[PaginationTogglerBtn]->setToolTip(tr("Toggles the attributes pagination on the object"));
 
 	has_ext_attribs = false;
 	pagination_enabled = false;
@@ -56,12 +56,12 @@ AttributesTogglerItem::AttributesTogglerItem(QGraphicsItem *parent) : RoundedRec
 	configureButtonsState();
 }
 
-AttributesTogglerItem::~AttributesTogglerItem(void)
+AttributesTogglerItem::~AttributesTogglerItem()
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
-		delete(buttons[arr_id]);
+		delete buttons[arr_id];
 
-	delete(sel_rect);
+	delete sel_rect;
 }
 
 void AttributesTogglerItem::setButtonsBrush(const QBrush &brush)
@@ -185,7 +185,7 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 	}
 }
 
-void AttributesTogglerItem::configureButtonsState(void)
+void AttributesTogglerItem::configureButtonsState()
 {
 	buttons[AttribsExpandBtn]->setOpacity(collapse_mode == CollapseMode::ExtAttribsCollapsed ||
 																				 collapse_mode == CollapseMode::AllAttribsCollapsed? 1 : ButtonMinOpacity);
@@ -235,7 +235,7 @@ void AttributesTogglerItem::setPaginationValues(unsigned section_id, unsigned cu
 	}
 }
 
-void AttributesTogglerItem::clearButtonsSelection(void)
+void AttributesTogglerItem::clearButtonsSelection()
 {
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)
 		btns_selected[arr_id] = false;
@@ -243,14 +243,14 @@ void AttributesTogglerItem::clearButtonsSelection(void)
 	this->update();
 }
 
-double AttributesTogglerItem::getButtonsWidth(void)
+double AttributesTogglerItem::getButtonsWidth()
 {
-	return(btns_width);
+	return btns_width;
 }
 
-double AttributesTogglerItem::getButtonsHeight(void)
+double AttributesTogglerItem::getButtonsHeight()
 {
-	return(btns_height);
+	return btns_height;
 }
 
 void AttributesTogglerItem::configureButtons(const QRectF &rect)
@@ -338,7 +338,7 @@ void AttributesTogglerItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 	}
 }
 
-void AttributesTogglerItem::createButtonPolygons(void)
+void AttributesTogglerItem::createButtonPolygons()
 {
 	if(!btn_polygons[0].isEmpty())
 		return;

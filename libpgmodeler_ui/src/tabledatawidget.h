@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,16 +43,16 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void populateDataGrid(const QString &data = QString());
 
 		//! brief Configures the col_name_menu with the not used columns names
-		void configureColumnNamesMenu(void);
+		void configureColumnNamesMenu();
 
 		//! brief Toggles the warning frame if some invalid or duplicated columns is detected
-		void toggleWarningFrame(void);
+		void toggleWarningFrame();
 
 		//! brief Marks a certain item as invalid cause it to be deactivated in the grid
 		void setItemInvalid(QTableWidgetItem *item);
 
 		//! brief Generated the CSV-like buffer to be used as initial data in the table object
-		QString generateDataBuffer(void);
+		QString generateDataBuffer();
 
 		void showEvent(QShowEvent *);
 
@@ -66,19 +66,19 @@ class TableDataWidget: public BaseObjectWidget, public Ui::TableDataWidget {
 		void setAttributes(DatabaseModel *model, PhysicalTable *table);
 
 	public slots:
-		void applyConfiguration(void);
+		void applyConfiguration();
 
 	private slots:
 		void insertRowOnTabPress(int curr_row, int curr_col, int prev_row, int prev_col);
-		void addRow(void);
+		void addRow();
 		void addColumn(QAction *action);
-		void duplicateRows(void);
-		void deleteRows(void);
-		void deleteColumns(void);
+		void duplicateRows();
+		void deleteRows();
+		void deleteColumns();
 		void clearRows(bool confirm=true);
-		void clearColumns(void);
+		void clearColumns();
 		void changeColumnName(int col_idx);
-		void enableButtons(void);
+		void enableButtons();
 };
 
 #endif

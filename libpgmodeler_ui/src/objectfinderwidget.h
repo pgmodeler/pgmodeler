@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		 * populate the combo box used to select which attribute will be used to search objects */
 		search_attribs_i18n;
 
-		vector<BaseObject *> found_objs;
+		vector<BaseObject *> found_objs,
+
+		selected_objs;
 
 		QMenu select_menu, fade_menu;
 
@@ -76,22 +78,21 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		void s_visibilityChanged(bool);
 		
 	public slots:
-		void hide(void);
-		void clearResult(void);
-		void findObjects(void);
+		void hide();
+		void clearResult();
+		void findObjects();
 
 	private slots:
 		//! \brief Opens the editing form of the selected object
-		void editObject(void);
+		void editObject();
 
 		//! \brief Selects a object on result list
-		void selectObject(void);
+		void selectObject();
 
-		void setAllObjectsChecked(void);
-
-		void fadeObjects(void);
-
-		void selectObjects(void);
+		void setAllObjectsChecked();
+		void fadeObjects();
+		void selectObjects();
+		void showObjectMenu();
 };
 
 #endif

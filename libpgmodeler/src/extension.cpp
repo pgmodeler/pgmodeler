@@ -1,6 +1,7 @@
 #include "extension.h"
+#include "pgsqltypes/pgsqltype.h"
 
-Extension::Extension(void)
+Extension::Extension()
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
@@ -67,9 +68,9 @@ void Extension::setVersion(unsigned ver, const QString &value)
 	versions[ver]=value;
 }
 
-bool Extension::handlesType(void)
+bool Extension::handlesType()
 {
-	return(handles_type);
+	return handles_type;
 }
 
 QString Extension::getVersion(unsigned ver)
@@ -77,20 +78,20 @@ QString Extension::getVersion(unsigned ver)
 	if(ver > OldVersion)
 		throw Exception(ErrorCode::RefAttributeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(versions[ver]);
+	return versions[ver];
 }
 
 QString Extension::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type, false);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Name]=this->getName(def_type==SchemaParser::SqlDefinition, false);
 	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : QString());
 	attributes[Attributes::CurVersion]=versions[CurVersion];
 	attributes[Attributes::OldVersion]=versions[OldVersion];
 
-	return(BaseObject::__getCodeDefinition(def_type));
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Extension::getAlterDefinition(BaseObject *object)
@@ -109,7 +110,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())
 			attributes[Attributes::NewVersion]=ext->versions[CurVersion];
 
-		return(BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true));
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
 	}
 	catch(Exception &e)
 	{
@@ -120,17 +121,17 @@ QString Extension::getAlterDefinition(BaseObject *object)
 QString Extension::getDropDefinition(bool cascade)
 {
 	attributes[Attributes::Name] = this->getName(true);
-	return(BaseObject::getDropDefinition(cascade));
+	return BaseObject::getDropDefinition(cascade);
 }
 
 QString Extension::getSignature(bool format)
 {
-	return(this->getName(format, false));
+	return this->getName(format, false);
 }
 
 QString Extension::getName(bool format, bool)
 {
-	return(BaseObject::getName(format, false));
+	return BaseObject::getName(format, false);
 }
 
 void Extension::operator = (Extension &ext)

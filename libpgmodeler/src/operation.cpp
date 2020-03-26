@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "operation.h"
 
-Operation::Operation(void)
+Operation::Operation()
 {
 	parent_obj=nullptr;
 	pool_obj=nullptr;
@@ -28,7 +28,7 @@ Operation::Operation(void)
 	op_type=NoOperation;
 }
 
-QString Operation::generateOperationId(void)
+QString Operation::generateOperationId()
 {
 	QString addr;
 	QTextStream stream(&addr);
@@ -41,7 +41,7 @@ QString Operation::generateOperationId(void)
 
 	//Generates an unique id through md5 hash
 	hash.addData(QByteArray(addr.toStdString().c_str()));
-	return(hash.result().toHex());
+	return hash.result().toHex();
 }
 
 void Operation::setObjectIndex(int idx)
@@ -87,47 +87,47 @@ void Operation::setXMLDefinition(const QString &xml_def)
 	xml_definition=xml_def;
 }
 
-int Operation::getObjectIndex(void)
+int Operation::getObjectIndex()
 {
-	return(object_idx);
+	return object_idx;
 }
 
-unsigned Operation::getChainType(void)
+unsigned Operation::getChainType()
 {
-	return(chain_type);
+	return chain_type;
 }
 
-unsigned Operation::getOperationType(void)
+unsigned Operation::getOperationType()
 {
-	return(op_type);
+	return op_type;
 }
 
-BaseObject *Operation::getOriginalObject(void)
+BaseObject *Operation::getOriginalObject()
 {
-	return(original_obj);
+	return original_obj;
 }
 
-BaseObject *Operation::getPoolObject(void)
+BaseObject *Operation::getPoolObject()
 {
-	return(pool_obj);
+	return pool_obj;
 }
 
-BaseObject *Operation::getParentObject(void)
+BaseObject *Operation::getParentObject()
 {
-	return(parent_obj);
+	return parent_obj;
 }
 
-vector<Permission *> Operation::getPermissions(void)
+vector<Permission *> Operation::getPermissions()
 {
-	return(permissions);
+	return permissions;
 }
 
-QString Operation::getXMLDefinition(void)
+QString Operation::getXMLDefinition()
 {
-	return(xml_definition);
+	return xml_definition;
 }
 
-bool Operation::isOperationValid(void)
+bool Operation::isOperationValid()
 {
-	return(operation_id==generateOperationId());
+	return (operation_id==generateOperationId());
 }

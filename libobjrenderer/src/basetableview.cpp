@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ BaseTableView::BaseTableView(BaseTable *base_tab) : BaseObjectView(base_tab)
 	});
 }
 
-BaseTableView::~BaseTableView(void)
+BaseTableView::~BaseTableView()
 {
 	this->removeFromGroup(body);
 	this->removeFromGroup(title);
@@ -92,13 +92,13 @@ BaseTableView::~BaseTableView(void)
 	this->removeFromGroup(ext_attribs);
 	this->removeFromGroup(columns);
 	this->removeFromGroup(tag_item);
-	delete(attribs_toggler);
-	delete(ext_attribs_body);
-	delete(ext_attribs);
-	delete(body);
-	delete(title);
-	delete(columns);
-	delete(tag_item);
+	delete attribs_toggler;
+	delete ext_attribs_body;
+	delete ext_attribs;
+	delete body;
+	delete title;
+	delete columns;
+	delete tag_item;
 }
 
 void BaseTableView::setHideExtAttributes(bool value)
@@ -111,14 +111,14 @@ void BaseTableView::setHideTags(bool value)
 	hide_tags=value;
 }
 
-bool BaseTableView::isExtAttributesHidden(void)
+bool BaseTableView::isExtAttributesHidden()
 {
-	return(hide_ext_attribs);
+	return hide_ext_attribs;
 }
 
-bool BaseTableView::isTagsHidden(void)
+bool BaseTableView::isTagsHidden()
 {
-	return(hide_tags);
+	return hide_tags;
 }
 
 QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -137,12 +137,17 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 			pending_geom_update = false;
 		}
 	}
+	else if(change == ItemZValueHasChanged)
+	{
+		BaseTable *tab = dynamic_cast<BaseTable *>(getUnderlyingObject());
+		tab->setZValue(this->zValue());
+	}
 
 	if(change==ItemPositionHasChanged)
 		emit s_objectMoved();
 
 	BaseObjectView::itemChange(change, value);
-	return(value);
+	return value;
 }
 
 void BaseTableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -219,7 +224,7 @@ unsigned BaseTableView::getAttributesPerPage(unsigned section_id)
 	if(section_id > BaseTable::ExtAttribsSection)
 		throw Exception(ErrorCode::RefElementInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(attribs_per_page[section_id]);
+	return attribs_per_page[section_id];
 }
 
 void BaseTableView::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -332,9 +337,9 @@ int BaseTableView::getConnectedRelationshipIndex(BaseRelationship *base_rel, boo
 	itr = std::find(vet_rels->begin(), vet_rels->end(), base_rel);
 
 	if(itr != vet_rels->end())
-		return(itr - vet_rels->begin());
+		return itr - vet_rels->begin();
 
-	return(-1);
+	return -1;
 }
 
 unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst_tab)
@@ -350,10 +355,10 @@ unsigned BaseTableView::getConnectedRelsCount(BaseTable *src_tab, BaseTable *dst
 			count++;
 	}
 
-	return(count);
+	return count;
 }
 
-void BaseTableView::configureTag(void)
+void BaseTableView::configureTag()
 {
 	BaseTable *tab=dynamic_cast<BaseTable *>(this->getUnderlyingObject());
 	Tag *tag=tab->getTag();
@@ -431,15 +436,16 @@ void BaseTableView::__configureObject(double width)
 	this->table_tooltip=this->getUnderlyingObject()->getName(true) +
 						QString(" (") + this->getUnderlyingObject()->getTypeName() + QString(") \n") +
 						QString("Id: %1\n").arg(this->getUnderlyingObject()->getObjectId()) +
-						trUtf8("Connected rels: %1").arg(this->getConnectRelsCount());
+						tr("Connected rels: %1").arg(this->getConnectRelsCount());
 
 	this->setToolTip(this->table_tooltip);
+	this->setZValue(tab->getZValue());
 
 	configureObjectSelection();
 	configureObjectShadow();
 }
 
-double BaseTableView::calculateWidth(void)
+double BaseTableView::calculateWidth()
 {
 	/* Calculating the maximum width between the title, columns, extended attributes and the attribs toggler.
 	 * This width is used to set the uniform width of table */
@@ -449,15 +455,15 @@ double BaseTableView::calculateWidth(void)
 														title->boundingRect().width() };
 
 	std::sort(widths.begin(), widths.end());
-	return (widths.back() + (2 * HorizSpacing));
+	return widths.back() + (2 * HorizSpacing);
 }
 
-int BaseTableView::getConnectRelsCount(void)
+int BaseTableView::getConnectRelsCount()
 {
-	return(connected_rels.size());
+	return connected_rels.size();
 }
 
-void BaseTableView::requestRelationshipsUpdate(void)
+void BaseTableView::requestRelationshipsUpdate()
 {
 	emit s_relUpdateRequest();
 }
@@ -467,7 +473,7 @@ void BaseTableView::togglePlaceholder(bool value)
 	BaseObjectView::togglePlaceholder(!connected_rels.empty() && value);
 }
 
-void BaseTableView::configureObjectShadow(void)
+void BaseTableView::configureObjectShadow()
 {
 	RoundedRectItem *rect_item=dynamic_cast<RoundedRectItem *>(obj_shadow);
 
@@ -477,12 +483,12 @@ void BaseTableView::configureObjectShadow(void)
 	rect_item->setPos(3.5, 4.5);
 }
 
-QList<TableObjectView *> BaseTableView::getSelectedChidren(void)
+QList<TableObjectView *> BaseTableView::getSelectedChidren()
 {
-	return(sel_child_objs);
+	return sel_child_objs;
 }
 
-void BaseTableView::clearChildrenSelection(void)
+void BaseTableView::clearChildrenSelection()
 {
 	if(sel_child_objs.isEmpty())
 		return;
@@ -494,13 +500,13 @@ void BaseTableView::clearChildrenSelection(void)
 	emit s_childrenSelectionChanged();
 }
 
-void BaseTableView::startGeometryUpdate(void)
+void BaseTableView::startGeometryUpdate()
 {
 	//We need to force the object to be not selectable so further calls to mousePressEvent doesn't select the object
 	this->setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 
-void BaseTableView::finishGeometryUpdate(void)
+void BaseTableView::finishGeometryUpdate()
 {
 	//Updating the object's geometry to reflect the geometry change
 	this->configureObject();
@@ -551,12 +557,12 @@ bool BaseTableView::configurePaginationParams(unsigned section_id, unsigned tota
 
 		// Configure the attributes toggler item withe the calculated pagination parameters
 		attribs_toggler->setPaginationValues(section_id, curr_page, max_pages);
-		return(true);
+		return true;
 	}
 	else
 	{
 		attribs_toggler->setPaginationValues(section_id, 0, 0);
-		return(false);
+		return false;
 	}
 }
 

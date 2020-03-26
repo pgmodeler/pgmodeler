@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,17 +58,17 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 	public:
 		SQLToolWidget(QWidget * parent = nullptr);
-		~SQLToolWidget(void);
+		~SQLToolWidget();
 
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
-		void updateTabs(void);
+		void updateTabs();
 
 		//! \brief Indicates if there is at least one database being browsed through explorer widget
-		bool hasDatabasesBrowsed(void);
+		bool hasDatabasesBrowsed();
 
 	public slots:
-		void configureSnippets(void);
-		void clearDatabases(void);
+		void configureSnippets();
+		void clearDatabases();
 
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
 		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = QString());
@@ -79,16 +79,16 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 	private slots:
 		//! \brief Opens a connection to the selected server
-		void connectToServer(void);
+		void connectToServer();
 
 		//! \brief Disconnect from server and close any opened database explorer or sql execution tab
-		void disconnectFromDatabases(void);
+		void disconnectFromDatabases();
 
 		//! \brief Removes all DatabaseExplorerWidget instances linked to the dropped database
 		void handleDatabaseDropped(const QString &dbname);
 
 		//! \brief Open the current database in a database explorer instance
-		DatabaseExplorerWidget *browseDatabase(void);
+		DatabaseExplorerWidget *browseDatabase();
 
 		//! \brief Show the selected snippet on the current opened SQL execution tab
 		void showSnippet(const QString &snip);
@@ -102,7 +102,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
-		void s_connectionsUpdateRequest(void);
+		void s_connectionsUpdateRequest();
 
 		friend class MainWindow;
 };

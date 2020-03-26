@@ -22,7 +22,7 @@ namespace PgModelerUiNs {
 			layout->addWidget(editor);
 		}
 
-		return(editor);
+		return editor;
 	}
 
 	QTreeWidgetItem *createOutputTreeItem(QTreeWidget *output_trw, const QString &text, const QPixmap &ico, QTreeWidgetItem *parent, bool expand_item, bool word_wrap)
@@ -58,10 +58,10 @@ namespace PgModelerUiNs {
 
 		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		item->setExpanded(expand_item);
-		output_trw->setItemHidden(item, false);
+		item->setHidden(false);
 		output_trw->scrollToBottom();
 
-		return(item);
+		return item;
 	}
 
 	void createOutputListItem(QListWidget *output_lst, const QString &text, const QPixmap &ico, bool is_formated)
@@ -218,7 +218,7 @@ namespace PgModelerUiNs {
 
 		fmt_msg.replace(QString("\n"), QString("<br/>"));
 
-		return(fmt_msg);
+		return fmt_msg;
 	}
 
 	void configureWidgetFont(QWidget *widget, unsigned factor_id)
@@ -307,12 +307,12 @@ namespace PgModelerUiNs {
 
 	QString getIconPath(const QString &icon)
 	{
-		return(QString(":/icones/icones/%1.png").arg(icon));
+		return QString(":/icones/icones/%1.png").arg(icon);
 	}
 
 	QString getIconPath(ObjectType obj_type)
 	{
-		return(getIconPath(BaseObject::getSchemaName(obj_type)));
+		return getIconPath(BaseObject::getSchemaName(obj_type));
 	}
 
 	void resizeDialog(QWidget *widget)

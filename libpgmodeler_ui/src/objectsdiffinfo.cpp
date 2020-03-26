@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ constexpr unsigned ObjectsDiffInfo::AlterObject;
 constexpr unsigned ObjectsDiffInfo::IgnoreObject;
 constexpr unsigned ObjectsDiffInfo::NoDifference;
 
-ObjectsDiffInfo::ObjectsDiffInfo(void)
+ObjectsDiffInfo::ObjectsDiffInfo()
 {
 	object=old_object=nullptr;
 	diff_type=NoDifference;
@@ -37,12 +37,12 @@ ObjectsDiffInfo::ObjectsDiffInfo(unsigned diff_type, BaseObject *object, BaseObj
 	this->old_object=new_object;
 }
 
-unsigned ObjectsDiffInfo::getDiffType(void)
+unsigned ObjectsDiffInfo::getDiffType()
 {
-	return(diff_type);
+	return diff_type;
 }
 
-QString ObjectsDiffInfo::getInfoMessage(void)
+QString ObjectsDiffInfo::getInfoMessage()
 {
 	QString msg=QString("%1 `%2' (%3)"), obj_name;
 	BaseObject *ref_obj=nullptr;
@@ -66,7 +66,7 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 		obj_name=ref_obj->getSignature();
 
 	if(diff_type==NoDifference)
-		return(QString());
+		return QString();
 	else if(diff_type==DropObject)
 	{
 		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
@@ -94,36 +94,36 @@ QString ObjectsDiffInfo::getInfoMessage(void)
 
 	}
 
-	return(msg);
+	return msg;
 }
 
-QString ObjectsDiffInfo::getDiffTypeString(void)
+QString ObjectsDiffInfo::getDiffTypeString()
 {
 	if(diff_type==NoDifference)
-		return(QString());
+		return QString();
 	else if(diff_type==DropObject)
-		return(QString("DROP"));
+		return QString("DROP");
 	else if(diff_type==CreateObject)
-		return(QString("CREATE"));
+		return QString("CREATE");
 	else if(diff_type==AlterObject)
-		return(QString("ALTER"));
+		return QString("ALTER");
 	else
-		return(QString("IGNORE"));
+		return QString("IGNORE");
 }
 
-BaseObject *ObjectsDiffInfo::getObject(void)
+BaseObject *ObjectsDiffInfo::getObject()
 {
-	return(object);
+	return object;
 }
 
-BaseObject *ObjectsDiffInfo::getOldObject(void)
+BaseObject *ObjectsDiffInfo::getOldObject()
 {
-	return(old_object);
+	return old_object;
 }
 
 bool ObjectsDiffInfo::operator == (ObjectsDiffInfo &info)
 {
-	return(this->diff_type==info.diff_type &&
-		   this->object==info.object &&
-		   this->old_object==info.old_object);
+	return (this->diff_type==info.diff_type &&
+					this->object==info.object &&
+					this->old_object==info.old_object);
 }

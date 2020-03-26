@@ -17,6 +17,7 @@
 <!ATTLIST view attribs-page CDATA #IMPLIED>
 <!ATTLIST view ext-attribs-page CDATA #IMPLIED>
 <!ATTLIST view max-obj-count CDATA #IMPLIED>
+<!ATTLIST view z-value CDATA #IMPLIED>
 
 <!ELEMENT reftable EMPTY>
 <!ATTLIST reftable name CDATA #REQUIRED>

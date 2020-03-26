@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,12 +40,6 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 
 		name_edt->setReadOnly(true);
 		version_cmb->addItems(PgSqlVersions::AllVersions);
-
-		code_options_ht=new HintTextWidget(code_options_hint, this);
-		code_options_ht->setText(
-					trUtf8("<strong>Original:</strong> displays only the original object's SQL code.<br/><br/>\
-						   <strong>Dependencies:</strong> displays the original code including all dependencies needed to properly create the selected object.<br/><br/>\
-						   <strong>Children:</strong> displays the original code including all object's children SQL code. This option is used only by schemas, tables and views."));
 
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
 		connect(code_options_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode()));
@@ -87,16 +81,16 @@ void SourceCodeWidget::setSourceCodeTab(int)
 	version_lbl->setEnabled(enabled);
 }
 
-void SourceCodeWidget::saveSQLCode(void)
+void SourceCodeWidget::saveSQLCode()
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setWindowTitle(trUtf8("Save SQL code as..."));
+	file_dlg.setWindowTitle(tr("Save SQL code as..."));
 
 	file_dlg.setFileMode(QFileDialog::AnyFile);
 	file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 	file_dlg.setModal(true);
-	file_dlg.setNameFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
+	file_dlg.setNameFilter(tr("SQL code (*.sql);;All files (*.*)"));
 	file_dlg.selectFile(QString("%1-%2.sql").arg(object->getSchemaName()).arg(object->getName()));
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
@@ -140,7 +134,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			if(obj_type==ObjectType::Database)
 			{
 				task_prog_wgt=new TaskProgressWidget;
-				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
+				task_prog_wgt->setWindowTitle(tr("Generating source code..."));
 				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 				sqlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::SqlDefinition));
@@ -159,7 +153,7 @@ void SourceCodeWidget::generateSourceCode(int)
 
 				if(!aux_def.isEmpty())
 				{
-					aux_def=trUtf8("-- NOTE: the code below contains the SQL for the selected object\n\
+					aux_def=tr("-- NOTE: the code below contains the SQL for the selected object\n\
 -- as well for its dependencies and children (if applicable).\n\
 -- \n\
 -- This feature is only a convinience in order to permit you to test\n\
@@ -178,7 +172,7 @@ void SourceCodeWidget::generateSourceCode(int)
 			{
 				QString code=sqlcode_txt->toPlainText();
 				code=code.mid(0, code.size()/2);
-				code+=trUtf8("\n\n-- SQL code purposely truncated at this point in demo version!");
+				code+=tr("\n\n-- SQL code purposely truncated at this point in demo version!");
 				sqlcode_txt->setPlainText(code);
 			}
 #endif
@@ -187,11 +181,11 @@ void SourceCodeWidget::generateSourceCode(int)
 		save_sql_tb->setEnabled(!sqlcode_txt->toPlainText().isEmpty());
 
 		if(sqlcode_txt->toPlainText().isEmpty())
-			sqlcode_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
+			sqlcode_txt->setPlainText(tr("-- SQL code unavailable for this type of object --"));
 
 #ifdef DEMO_VERSION
 #warning "DEMO VERSION: XML code preview disabled."
-		xmlcode_txt->setPlainText(trUtf8("<!-- XML code preview disabled in demonstration version -->"));
+		xmlcode_txt->setPlainText(tr("<!-- XML code preview disabled in demonstration version -->"));
 #else
 		xmlcode_txt->setPlainText(object->getCodeDefinition(SchemaParser::XmlDefinition));
 #endif
@@ -202,7 +196,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		{
 			task_prog_wgt->close();
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete(task_prog_wgt);
+			delete task_prog_wgt;
 		}
 	}
 	catch(Exception &e)
@@ -211,7 +205,7 @@ void SourceCodeWidget::generateSourceCode(int)
 		{
 			task_prog_wgt->close();
 			disconnect(this->model, nullptr, task_prog_wgt, nullptr);
-			delete(task_prog_wgt);
+			delete task_prog_wgt;
 		}
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -242,10 +236,10 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 			obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(object->getObjectType())));
 
 			if(!hl_sqlcode->isConfigurationLoaded())
-				hl_sqlcode->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+				hl_sqlcode->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 			if(!hl_xmlcode->isConfigurationLoaded())
-				hl_xmlcode->loadConfiguration(GlobalAttributes::XMLHighlightConfPath);
+				hl_xmlcode->loadConfiguration(GlobalAttributes::getXMLHighlightConfPath());
 
 			generateSourceCode();
 		}
@@ -256,7 +250,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 	}
 }
 
-void SourceCodeWidget::applyConfiguration(void)
+void SourceCodeWidget::applyConfiguration()
 {
 	emit s_closeRequested();
 }

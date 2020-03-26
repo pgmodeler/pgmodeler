@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "schemaparser.h"
 #include "modelwidget.h"
 #include "modelexporthelper.h"
-#include "hinttextwidget.h"
 #include "htmlitemdelegate.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
@@ -55,13 +54,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		//! \brief Auxiliary viewport passed to export helper when dealing with PNG export
 		QGraphicsView *viewp;
 
-		HintTextWidget *pgsqlvers_ht, *drop_ht, *ignore_dup_ht, *page_by_page_ht,
-		*ignore_error_codes_ht, *mode_ht, *incl_index_ht;
-
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
-		int exec(void){ return(QDialog::Rejected); }
+		int exec(void){ return QDialog::Rejected; }
 
 	public:
 		ModelExportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -73,21 +69,21 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void exec(ModelWidget *model);
 
 	private slots:
-		void selectExportMode(void);
-		void exportModel(void);
-		void selectOutputFile(void);
+		void selectExportMode();
+		void exportModel();
+		void selectOutputFile();
 		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
-		void cancelExport(void);
-		void handleExportFinished(void);
-		void handleExportCanceled(void);
+		void cancelExport();
+		void handleExportFinished();
+		void handleExportCanceled();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void editConnections(void);
+		void editConnections();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings
 		within this widget without use the main configurations dialog */
-		void s_connectionsUpdateRequest(void);
+		void s_connectionsUpdateRequest();
 };
 
 #endif

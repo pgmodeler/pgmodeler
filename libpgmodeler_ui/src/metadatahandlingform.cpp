@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,51 +28,6 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	settings_tbw->setTabEnabled(1, false);
 	apply_btn->setEnabled(false);
 
-	db_metadata_ht=new HintTextWidget(db_metadata_hint, this);
-	db_metadata_ht->setText(db_metadata_chk->statusTip());
-
-	objs_positioning_ht=new HintTextWidget(objs_positioning_hint, this);
-	objs_positioning_ht->setText(objs_positioning_chk->statusTip());
-
-	objs_protection_ht=new HintTextWidget(objs_protection_hint, this);
-	objs_protection_ht->setText(objs_protection_chk->statusTip());
-
-	objs_sql_disabled_ht=new HintTextWidget(objs_sql_disabled_hint, this);
-	objs_sql_disabled_ht->setText(objs_sql_disabled_chk->statusTip());
-
-	objs_fadedout_ht=new HintTextWidget(objs_fadedout_hint, this);
-	objs_fadedout_ht->setText(objs_fadedout_chk->statusTip());
-
-	objs_collapse_mode_ht=new HintTextWidget(objs_collapse_mode_hint, this);
-	objs_collapse_mode_ht->setText(objs_collapse_mode_chk->statusTip());
-
-	custom_sql_ht=new HintTextWidget(custom_sql_hint, this);
-	custom_sql_ht->setText(custom_sql_chk->statusTip());
-
-	textbox_objs_ht=new HintTextWidget(textbox_objs_hint, this);
-	textbox_objs_ht->setText(textbox_objs_chk->statusTip());
-
-	tag_objs_ht=new HintTextWidget(tag_objs_hint, this);
-	tag_objs_ht->setText(tag_objs_chk->statusTip());
-
-	custom_colors_ht=new HintTextWidget(custom_colors_hint, this);
-	custom_colors_ht->setText(custom_colors_chk->statusTip());
-
-	extract_restore_ht=new HintTextWidget(extract_restore_hint, this);
-	extract_restore_ht->setText(extract_restore_rb->statusTip());
-
-	extract_only_ht=new HintTextWidget(extract_only_hint, this);
-	extract_only_ht->setText(extract_only_rb->statusTip());
-
-	restore_ht=new HintTextWidget(restore_hint, this);
-	restore_ht->setText(restore_rb->statusTip());
-
-	generic_sql_objs_ht=new HintTextWidget(generic_sql_objs_hint, this);
-	generic_sql_objs_ht->setText(generic_sql_objs_chk->statusTip());
-
-	objs_aliases_ht=new HintTextWidget(objs_aliases_hint, this);
-	objs_aliases_ht->setText(objs_aliases_chk->statusTip());
-
 	htmlitem_deleg=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_deleg);
 
@@ -95,7 +50,7 @@ MetadataHandlingForm::MetadataHandlingForm(QWidget *parent, Qt::WindowFlags f) :
 	connect(clear_all_btn, SIGNAL(clicked(bool)), this, SLOT(selectAllOptions()));
 }
 
-void MetadataHandlingForm::enableMetadataHandling(void)
+void MetadataHandlingForm::enableMetadataHandling()
 {
 	extract_from_cmb->setVisible(!restore_rb->isChecked());
 	extract_from_lbl->setVisible(!restore_rb->isChecked());
@@ -108,7 +63,7 @@ void MetadataHandlingForm::enableMetadataHandling(void)
 													(restore_rb->isChecked() && !backup_file_edt->text().isEmpty()))));
 }
 
-void MetadataHandlingForm::selectAllOptions(void)
+void MetadataHandlingForm::selectAllOptions()
 {
 	bool check = sender() == select_all_btn;
 	QCheckBox *checkbox = nullptr;
@@ -131,7 +86,7 @@ void MetadataHandlingForm::setModelWidget(ModelWidget *model_wgt)
 	if(model_wgt)
 	{
 		apply_to_edt->setText(QString("%1 (%2)").arg(model_wgt->getDatabaseModel()->getName())
-													.arg(model_wgt->getFilename().isEmpty() ? trUtf8("model not saved yet") : model_wgt->getFilename()));
+													.arg(model_wgt->getFilename().isEmpty() ? tr("model not saved yet") : model_wgt->getFilename()));
 	}
 }
 
@@ -142,16 +97,16 @@ void MetadataHandlingForm::setModelWidgets(QList<ModelWidget *> models)
 	for(ModelWidget *model : models)
 	{
 		extract_from_cmb->addItem(QString("%1 (%2)").arg(model->getDatabaseModel()->getName())
-															.arg(model->getFilename().isEmpty() ? trUtf8("model not saved yet") : model->getFilename()),
+															.arg(model->getFilename().isEmpty() ? tr("model not saved yet") : model->getFilename()),
 															QVariant::fromValue<void *>(reinterpret_cast<void *>(model->getDatabaseModel())));
 	}
 }
 
-void MetadataHandlingForm::handleObjectsMetada(void)
+void MetadataHandlingForm::handleObjectsMetada()
 {
 	if(!backup_file_edt->text().isEmpty() &&
 		 backup_file_edt->text() == model_wgt->getFilename())
-		throw Exception(trUtf8("The backup file cannot be the same as the input model!"),
+		throw Exception(tr("The backup file cannot be the same as the input model!"),
 										ErrorCode::Custom,	__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	QTemporaryFile tmp_file;
@@ -190,9 +145,10 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			else
 			{
 				//Configuring the temporary metadata file
-				tmp_file.setFileTemplate(GlobalAttributes::TemporaryDir +
-																 GlobalAttributes::DirSeparator +
-																 QString("%1_metadata_XXXXXX.%2").arg(extract_model->getName()).arg(QString("omf")));
+				tmp_file.setFileTemplate(GlobalAttributes::getTemporaryFilePath(
+																	 QString("%1_metadata_XXXXXX.%2")
+																	 .arg(extract_model->getName())
+																	 .arg(QString("omf"))));
 
 				tmp_file.open();
 				metadata_file=tmp_file.fileName();
@@ -202,7 +158,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			connect(extract_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
 			root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																										PgModelerUiNs::formatMessage(trUtf8("Extracting metadata to file `%1'").arg(metadata_file)),
+																										PgModelerUiNs::formatMessage(tr("Extracting metadata to file `%1'").arg(metadata_file)),
 																										QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), nullptr);
 
 			extract_model->saveObjectsMetadata(metadata_file, options);
@@ -211,7 +167,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 			{
 				root_item->setExpanded(false);
 				root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																											PgModelerUiNs::formatMessage(trUtf8("Saving backup metadata to file `%1'").arg(backup_file_edt->text())),
+																											PgModelerUiNs::formatMessage(tr("Saving backup metadata to file `%1'").arg(backup_file_edt->text())),
 																											QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), nullptr);
 
 				model_wgt->getDatabaseModel()->saveObjectsMetadata(backup_file_edt->text());
@@ -228,7 +184,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 		if(!extract_only_rb->isChecked())
 		{
 			root_item=PgModelerUiNs::createOutputTreeItem(output_trw,
-																										PgModelerUiNs::formatMessage(trUtf8("Applying metadata from file `%1'").arg(metadata_file)),
+																										PgModelerUiNs::formatMessage(tr("Applying metadata from file `%1'").arg(metadata_file)),
 																										QPixmap(PgModelerUiNs::getIconPath("msgbox_info")), nullptr);
 
 			model_wgt->setUpdatesEnabled(false);
@@ -261,7 +217,7 @@ void MetadataHandlingForm::handleObjectsMetada(void)
 																				icon, nullptr);
 
 		ico_lbl->setPixmap(icon);
-		progress_lbl->setText(trUtf8("Metadata processing aborted!"));
+		progress_lbl->setText(tr("Metadata processing aborted!"));
 
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -280,8 +236,8 @@ void MetadataHandlingForm::selectFile(bool is_output)
 {
 	QFileDialog file_dlg;
 
-	file_dlg.setNameFilter(trUtf8("Objects metadata file (*.omf);;All files (*.*)"));
-	file_dlg.setWindowTitle(trUtf8("Select file"));
+	file_dlg.setNameFilter(tr("Objects metadata file (*.omf);;All files (*.*)"));
+	file_dlg.setWindowTitle(tr("Select file"));
 
 	if(!is_output)
 	{
@@ -291,7 +247,7 @@ void MetadataHandlingForm::selectFile(bool is_output)
 	}
 	else
 	{
-		file_dlg.setConfirmOverwrite(true);
+		file_dlg.setOption(QFileDialog::DontConfirmOverwrite, false);
 		file_dlg.setFileMode(QFileDialog::AnyFile);
 		file_dlg.setAcceptMode(QFileDialog::AcceptSave);
 		file_dlg.selectFile(model_wgt->getDatabaseModel()->getName() + QString(".omf"));

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 #include "schema.h"
 #include "role.h"
 #include "parameter.h"
+#include "pgsqltypes/behaviortype.h"
+#include "pgsqltypes/functiontype.h"
+#include "pgsqltypes/securitytype.h"
 
 class Function: public BaseObject {
 	private:
@@ -88,10 +91,10 @@ class Function: public BaseObject {
 		void setTableReturnTypeAttribute(unsigned def_type);
 
 	protected:
-		virtual void configureSearchAttributes(void);
+		virtual void configureSearchAttributes();
 
 	public:
-		Function(void);
+		Function();
 
 		//! \brief Sets the function name updating its signature
 		void setName(const QString &name);
@@ -145,22 +148,22 @@ class Function: public BaseObject {
 		void setSecurityType(SecurityType sec_type);
 
 		//! \brief Returns the function's source code
-		QString getSourceCode(void);
+		QString getSourceCode();
 
 		//! \brief Returns the shared library that stores the function definition
-		QString getLibrary(void);
+		QString getLibrary();
 
 		//! \brief Returns the symbol that identifies the function on the shared library
-		QString getSymbol(void);
+		QString getSymbol();
 
 		//! \brief Returns the language used to construct the function
-		BaseObject *getLanguage(void);
+		BaseObject *getLanguage();
 
 		//! \brief Returns the function parameter count
-		unsigned getParameterCount(void);
+		unsigned getParameterCount();
 
 		//! \brief Returns the returned table column count
-		unsigned getReturnedTableColumnCount(void);
+		unsigned getReturnedTableColumnCount();
 
 		//! \brief Returns a parameter using its index
 		Parameter getParameter(unsigned param_idx);
@@ -169,34 +172,34 @@ class Function: public BaseObject {
 		Parameter getReturnedTableColumn(unsigned column_idx);
 
 		//! \brief Indicates whether the function returns setof or not
-		bool isReturnSetOf(void);
+		bool isReturnSetOf();
 
 		//! \brief Indicates whether the fucntion returns a table or not
-		bool isReturnTable(void);
+		bool isReturnTable();
 
 		//! \brief Indicates whether the function is window or not
-		bool isWindowFunction(void);
+		bool isWindowFunction();
 
 		//! \brief Indicates whether the function is leak proof or not
-		bool isLeakProof(void);
+		bool isLeakProof();
 
 		//! \brief Returns the function execution behavior
-		BehaviorType getBehaviorType(void);
+		BehaviorType getBehaviorType();
 
 		//! \brief Returns the function type
-		FunctionType getFunctionType(void);
+		FunctionType getFunctionType();
 
 		//! \brief Returns the function returned type
-		PgSqlType getReturnType(void);
+		PgSqlType getReturnType();
 
 		//! \brief Returns the security type used by the function
-		SecurityType getSecurityType(void);
+		SecurityType getSecurityType();
 
 		//! \brief Returns the function's execution cost
-		unsigned getExecutionCost(void);
+		unsigned getExecutionCost();
 
 		//! \brief Returns the estimated returned row amount
-		unsigned getRowAmount(void);
+		unsigned getRowAmount();
 
 		//! \brief Removes a parameter using its name and type
 		void removeParameter(const QString &name, PgSqlType type);
@@ -205,13 +208,13 @@ class Function: public BaseObject {
 		void removeParameter(unsigned param_idx);
 
 		//! \brief Removes all the parameters from the function
-		void removeParameters(void);
+		void removeParameters();
 
 		//! \brief Removes a column from returned table using its index
 		void removeReturnedTableColumn(unsigned column_idx);
 
 		//! \brief Removes all the columns from returned table column
-		void removeReturnedTableColumns(void);
+		void removeReturnedTableColumns();
 
 		//! \brief Returns the complete function signature
 		virtual QString getSignature(bool=true);

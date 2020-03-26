@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 	splitter->handle(1)->setEnabled(false);
 	updateObjectTypeList(obj_types_lst);
 
-	select_menu.addAction(trUtf8("Listed"), this, SLOT(selectObjects()));
-	select_menu.addAction(trUtf8("Not listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Listed"), this, SLOT(selectObjects()));
+	select_menu.addAction(tr("Not listed"), this, SLOT(selectObjects()));
 	select_btn->setMenu(&select_menu);
 
-	fade_menu.addAction(trUtf8("Listed"), this, SLOT(fadeObjects()));
-	fade_menu.addAction(trUtf8("Not listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Listed"), this, SLOT(fadeObjects()));
+	fade_menu.addAction(tr("Not listed"), this, SLOT(fadeObjects()));
 	fade_btn->setMenu(&fade_menu);
 
 	connect(filter_btn, SIGNAL(toggled(bool)), filter_frm, SLOT(setVisible(bool)));
@@ -51,13 +51,14 @@ ObjectFinderWidget::ObjectFinderWidget(QWidget *parent) : QWidget(parent)
 		splitter->handle(1)->setEnabled(filter_btn->isChecked());
 	});
 
-	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects(void)));
-	connect(hide_tb, SIGNAL(clicked(void)), this, SLOT(hide(void)));
-	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(selectObject(void)));
-	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject(void)));
-	connect(clear_res_btn, SIGNAL(clicked(void)), this, SLOT(clearResult(void)));
-	connect(select_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
-	connect(clear_all_btn, SIGNAL(clicked(void)), this, SLOT(setAllObjectsChecked(void)));
+	connect(find_btn, SIGNAL(clicked(bool)), this, SLOT(findObjects()));
+	connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
+	connect(result_tbw, SIGNAL(itemSelectionChanged()), this, SLOT(selectObject()));
+	connect(result_tbw, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(editObject()));
+	connect(result_tbw, SIGNAL(itemPressed(QTableWidgetItem*)), this, SLOT(showObjectMenu()));
+	connect(clear_res_btn, SIGNAL(clicked()), this, SLOT(clearResult()));
+	connect(select_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
+	connect(clear_all_btn, SIGNAL(clicked()), this, SLOT(setAllObjectsChecked()));
 
 	for(auto &attr : search_attribs_i18n)
 		search_attrs_cmb->addItem(attr);
@@ -75,13 +76,13 @@ bool ObjectFinderWidget::eventFilter(QObject *object, QEvent *event)
 			(k_event->key()==Qt::Key_Return || k_event->key()==Qt::Key_Enter))
 	{
 		find_btn->click();
-		return(true);
+		return true;
 	}
 	else
-		return(QWidget::eventFilter(object, event));
+		return QWidget::eventFilter(object, event);
 }
 
-void ObjectFinderWidget::hide(void)
+void ObjectFinderWidget::hide()
 {
 	QWidget::hide();
 	emit s_visibilityChanged(false);
@@ -109,7 +110,7 @@ void ObjectFinderWidget::resizeEvent(QResizeEvent *event)
 	}
 }
 
-void ObjectFinderWidget::fadeObjects(void)
+void ObjectFinderWidget::fadeObjects()
 {
 	if(!model_wgt)
 		return;
@@ -141,7 +142,7 @@ void ObjectFinderWidget::fadeObjects(void)
 	model_wgt->fadeObjects(other_objs, fade_listed);
 }
 
-void ObjectFinderWidget::selectObjects(void)
+void ObjectFinderWidget::selectObjects()
 {
 	if(!model_wgt)
 		return;
@@ -210,10 +211,11 @@ void ObjectFinderWidget::setModel(ModelWidget *model_wgt)
 	result_tbw->setEnabled(enable);
 }
 
-void ObjectFinderWidget::clearResult(void)
+void ObjectFinderWidget::clearResult()
 {
 	selected_obj=nullptr;
 	found_objs.clear();
+	selected_objs.clear();
 
 	result_tbw->clearContents();
 	result_tbw->setRowCount(0);
@@ -225,7 +227,7 @@ void ObjectFinderWidget::clearResult(void)
 	fade_btn->setEnabled(false);
 }
 
-void ObjectFinderWidget::findObjects(void)
+void ObjectFinderWidget::findObjects()
 {
 	if(model_wgt)
 	{
@@ -257,19 +259,19 @@ void ObjectFinderWidget::findObjects(void)
 			 search_attr != Attributes::Comment)
 			item->setText(search_attrs_cmb->currentText());
 		else
-			item->setText(trUtf8("Comment"));
+			item->setText(tr("Comment"));
 
 		found_lbl->setVisible(true);
 
 		//Show a message indicating the number of found objects
 		if(!found_objs.empty())
 		{
-			found_lbl->setText(trUtf8("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
+			found_lbl->setText(tr("Found <strong>%1</strong> object(s).").arg(found_objs.size()));
 			result_tbw->horizontalHeader()->setStretchLastSection(true);
 			result_tbw->resizeColumnsToContents();
 		}
 		else
-			found_lbl->setText(trUtf8("No objects found."));
+			found_lbl->setText(tr("No objects found."));
 
 		clear_res_btn->setEnabled(!found_objs.empty());
 		select_btn->setEnabled(!found_objs.empty());
@@ -278,44 +280,54 @@ void ObjectFinderWidget::findObjects(void)
 	}
 }
 
-void ObjectFinderWidget::selectObject(void)
+void ObjectFinderWidget::selectObject()
 {
-	QTableWidgetItem *tab_item=result_tbw->item(result_tbw->currentRow(), 0);
+	BaseGraphicObject *graph_obj = nullptr;
+	BaseObjectView *obj_view = nullptr;
+	TableObject *tab_obj = nullptr;
 
-	if(tab_item)
+	selected_objs.clear();
+	model_wgt->scene->clearSelection();
+
+	for(auto &item : result_tbw->selectedItems())
 	{
-		selected_obj=reinterpret_cast<BaseObject *>(tab_item->data(Qt::UserRole).value<void *>());
+		if(item->column() != 0)
+			continue;
 
-		if(QApplication::mouseButtons()!=Qt::RightButton)
+		selected_objs.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
+	}
+
+	for(auto &obj : selected_objs)
+	{
+		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+		tab_obj = dynamic_cast<TableObject *>(obj);
+
+		if(tab_obj && !graph_obj)
+			graph_obj = dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
+
+		if(graph_obj)
 		{
-			BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(selected_obj);
-			TableObject *tab_obj=dynamic_cast<TableObject *>(selected_obj);
+			obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
 
-			if(tab_obj && !graph_obj)
-				graph_obj=dynamic_cast<BaseGraphicObject *>(tab_obj->getParentTable());
-
-			if(graph_obj)
+			if(obj_view)
 			{
-				BaseObjectView *obj=dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject());
-
-				if(obj)
-				{
-				  model_wgt->scene->clearSelection();
-				  model_wgt->viewport->centerOn(obj);
-				  obj->setSelected(true);
-				}
+				model_wgt->viewport->centerOn(obj_view);
+				obj_view->setSelected(true);
 			}
 		}
-		//Showing the popup menu for the selected object in the result set
-		else
-		{
-			model_wgt->configureObjectMenu(selected_obj);
-			model_wgt->showObjectMenu();
-		}
 	}
+
+	model_wgt->configurePopupMenu(selected_objs);
+	model_wgt->emitSceneInteracted();
 }
 
-void ObjectFinderWidget::editObject(void)
+void ObjectFinderWidget::showObjectMenu()
+{
+	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton)
+		model_wgt->showObjectMenu();
+}
+
+void ObjectFinderWidget::editObject()
 {
 	if(selected_obj)
 	{
@@ -334,7 +346,7 @@ void ObjectFinderWidget::editObject(void)
 	}
 }
 
-void ObjectFinderWidget::setAllObjectsChecked(void)
+void ObjectFinderWidget::setAllObjectsChecked()
 {
 	bool checked=(sender()==select_all_btn);
 

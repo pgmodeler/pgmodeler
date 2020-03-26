@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "operatorfamily.h"
 
-OperatorFamily::OperatorFamily(void)
+OperatorFamily::OperatorFamily()
 {
 	obj_type=ObjectType::OpFamily;
 	attributes[Attributes::IndexType]=QString();
@@ -30,27 +30,27 @@ void OperatorFamily::setIndexingType(IndexingType idx_type)
 	indexing_type=idx_type;
 }
 
-IndexingType OperatorFamily::getIndexingType(void)
+IndexingType OperatorFamily::getIndexingType()
 {
-	return(indexing_type);
+	return indexing_type;
 }
 
 QString OperatorFamily::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString OperatorFamily::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Signature]=getSignature();
 	attributes[Attributes::IndexType]=(~indexing_type);
-	return(BaseObject::getCodeDefinition(def_type,reduced_form));
+	return BaseObject::getCodeDefinition(def_type,reduced_form);
 }
 
 QString OperatorFamily::getSignature(bool format)
 {
-	return(BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type));
+	return BaseObject::getSignature(format) + QString(" USING %1").arg(~indexing_type);
 }

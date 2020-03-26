@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class Operation {
 		vector<Permission *> permissions;
 
 		//! \brief Generate an unique id for the operation based upon the memory addresses of objects held by it
-		QString generateOperationId(void);
+		QString generateOperationId();
 
 	public:
 		//! \brief Constants used to reference the type of operations
@@ -87,7 +87,7 @@ class Operation {
 		ChainEnd=3; //! \brief The operation is the last on the chain
 
 
-		Operation(void);
+		Operation();
 
 		void setObjectIndex(int idx);
 		void setChainType(unsigned type);
@@ -98,15 +98,15 @@ class Operation {
 		void setPermissions(const vector<Permission *> &perms);
 		void setXMLDefinition(const QString &xml_def);
 
-		int getObjectIndex(void);
-		unsigned getChainType(void);
-		unsigned getOperationType(void);
-		BaseObject *getOriginalObject(void);
-		BaseObject *getPoolObject(void);
-		BaseObject *getParentObject(void);
-		vector<Permission *> getPermissions(void);
-		QString getXMLDefinition(void);
-		bool isOperationValid(void);
+		int getObjectIndex();
+		unsigned getChainType();
+		unsigned getOperationType();
+		BaseObject *getOriginalObject();
+		BaseObject *getPoolObject();
+		BaseObject *getParentObject();
+		vector<Permission *> getPermissions();
+		QString getXMLDefinition();
+		bool isOperationValid();
 };
 
 #endif

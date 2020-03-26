@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,15 +31,14 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		Ui_ColumnWidget::setupUi(this);
 		edit_seq_btn->setVisible(false);
 
-		IdentityType::getTypes(list);
-		identity_type_cmb->addItems(list);
+		identity_type_cmb->addItems(IdentityType::getTypes());
 
 		data_type=nullptr;
 		data_type=new PgSQLTypeWidget(this);
 
 		hl_default_value=nullptr;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, true);
-		hl_default_value->loadConfiguration(GlobalAttributes::SQLHighlightConfPath);
+		hl_default_value->loadConfiguration(GlobalAttributes::getSQLHighlightConfPath());
 
 		sequence_sel=new ObjectSelectorWidget(ObjectType::Sequence, true, this);
 		sequence_sel->setEnabled(false);
@@ -135,7 +134,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 													 UserTypeConfig::DomainType | UserTypeConfig::ExtensionType, true,false);
 }
 
-void ColumnWidget::editSequenceAttributes(void)
+void ColumnWidget::editSequenceAttributes()
 {
 	Column *col = dynamic_cast<Column *>(this->object);
 	Schema *schema = nullptr;
@@ -166,7 +165,7 @@ void ColumnWidget::editSequenceAttributes(void)
 	GeneralConfigWidget::saveWidgetGeometry(&editing_form, seq_wgt->metaObject()->className());
 }
 
-void ColumnWidget::applyConfiguration(void)
+void ColumnWidget::applyConfiguration()
 {
 	try
 	{

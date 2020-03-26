@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		int curr_row;
 
 		//! \brief Configures the layers listing
-		void updateLayers(void);
+		void updateLayers();
 
 		bool eventFilter(QObject *watched, QEvent *event);
 
@@ -65,16 +65,16 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		void startLayerRenaming(QListWidgetItem *item);
 
 		//! \brief Finishes the renaming operation over a item
-		void finishLayerRenaming(void);
+		void finishLayerRenaming();
 
 		//! \brief Updates the active layeres on the scene causing a redraw of the items
-		void updateActiveLayers(void);
+		void updateActiveLayers();
 
 		//! \brief Remove a layer from the listing. If 'clear' is true them all layers (except the default) are removed
 		void removeLayer(bool clear = false);
 
 		//! \brief Enables the control buttons according to the selection on the list
-		void enableButtons(void);
+		void enableButtons();
 
 	public slots:
 		void setVisible(bool value);
@@ -84,7 +84,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		void s_visibilityChanged(bool);
 
 		//! \brief Signal emitted whenever the current active layers change
-		void s_activeLayersChanged(void);
+		void s_activeLayersChanged();
 };
 
 #endif

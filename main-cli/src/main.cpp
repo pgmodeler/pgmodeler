@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,24 +32,24 @@ int main(int argc, char **argv)
 #else
 	try
 	{
-		QTranslator translator;
-		PgModelerCli pgmodeler_cli(argc, argv);
+        PgModelerCliApp pgmodeler_cli(argc, argv);
+        QTranslator translator(&pgmodeler_cli);
 
 		//Tries to load the ui translation according to the system's locale
-		translator.load(QLocale::system().name(), GlobalAttributes::LanguagesDir);
+		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
 
 		//Installs the translator on the application
 		pgmodeler_cli.installTranslator(&translator);
 
 		//Executes the cli
-		return(pgmodeler_cli.exec());
+		return pgmodeler_cli.exec();
 	}
 	catch(Exception &e)
 	{
 		out << endl;
 		out << e.getExceptionsText();
 		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
-		return(e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
+		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
 	}
 #endif
 }

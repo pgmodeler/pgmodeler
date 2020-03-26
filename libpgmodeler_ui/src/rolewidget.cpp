@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 	object_selection_wgt=new ModelObjectsWidget(true);
 
-	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
+	frame=generateInformationFrame(tr("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 										  Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
 
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 4);
@@ -45,7 +45,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 	frame->setParent(this);
 
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
-	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
+	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection()));
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -56,19 +56,19 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 
 		obj_tab->setColumnCount(5);
 
-		obj_tab->setHeaderLabel(trUtf8("Role"),0);
+		obj_tab->setHeaderLabel(tr("Role"),0);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),0);
 
-		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
+		obj_tab->setHeaderLabel(tr("Validity"),1);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("validade")),1);
 
-		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
+		obj_tab->setHeaderLabel(tr("Member of"),2);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),2);
 
-		obj_tab->setHeaderLabel(trUtf8("Members"),3);
+		obj_tab->setHeaderLabel(tr("Members"),3);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),3);
 
-		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
+		obj_tab->setHeaderLabel(tr("Members (Admin.)"),4);
 		obj_tab->setHeaderIcon(QPixmap(PgModelerUiNs::getIconPath("role")),4);
 
 		grid=new QGridLayout;
@@ -77,17 +77,17 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Ro
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData()));
 
 	setMinimumSize(580, 550);
 }
 
 RoleWidget::~RoleWidget()
 {
-	delete(object_selection_wgt);
+	delete object_selection_wgt;
 }
 
-void RoleWidget::configureRoleSelection(void)
+void RoleWidget::configureRoleSelection()
 {
 	unsigned i;
 
@@ -96,11 +96,11 @@ void RoleWidget::configureRoleSelection(void)
 		disconnect(members_tab[i], nullptr,this, nullptr);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole(void)));
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole(void)));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole()));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole()));
 }
 
-void RoleWidget::selectMemberRole(void)
+void RoleWidget::selectMemberRole()
 {
 	object_selection_wgt->setObjectVisible(ObjectType::Role, true);
 	object_selection_wgt->setModel(this->model);
@@ -166,7 +166,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 	}
 }
 
-void RoleWidget::fillMembersTable(void)
+void RoleWidget::fillMembersTable()
 {
 	if(this->object)
 	{
@@ -194,7 +194,7 @@ void RoleWidget::fillMembersTable(void)
 	}
 }
 
-void RoleWidget::showSelectedRoleData(void)
+void RoleWidget::showSelectedRoleData()
 {
 	unsigned idx_tab;
 	int lin, idx_lin=-1;
@@ -245,7 +245,7 @@ void RoleWidget::showSelectedRoleData(void)
 	}
 }
 
-void RoleWidget::applyConfiguration(void)
+void RoleWidget::applyConfiguration()
 {
 	Role *role=nullptr, *aux_role=nullptr;
 	unsigned count, i, type_id,

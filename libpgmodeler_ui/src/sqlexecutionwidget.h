@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 
 		void switchToExecutionMode(bool value);
 
-		void destroyResultModel(void);
+		void destroyResultModel();
 
 	protected:
 		//! \brief Widget that serves as SQL commands input
@@ -103,7 +103,7 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static const QString ColumnNullValue;
 
 		SQLExecutionWidget(QWidget * parent = nullptr);
-		~SQLExecutionWidget(void);
+		~SQLExecutionWidget();
 
 		//! \brief Configures the connection to query the server
 		void setConnection(Connection conn);
@@ -131,48 +131,48 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		static void exportResults(QTableView *results_tbw);
 
 		//! \brief Save the history of all connections open in the SQL Execution to the sql-history.conf
-		static void saveSQLHistory(void);
+		static void saveSQLHistory();
 
 		//! \brief Load the history from the file sql-history.conf
-		static void loadSQLHistory(void);
+		static void loadSQLHistory();
 
-		static void destroySQLHistory(void);
+		static void destroySQLHistory();
 
 		static void setSQLHistoryMaxLength(int len);
 
-		static int getSQLHistoryMaxLength(void);
+		static int getSQLHistoryMaxLength();
 
 	public slots:
-		void configureSnippets(void);
+		void configureSnippets();
 
 		//! \brief Show the exception message in the output widget
 		void	handleExecutionAborted(Exception e);
 
 	private slots:
 		//! \brief Enables the command buttons when user fills the sql field
-		void enableCommandButtons(void);
+		void enableCommandButtons();
 
 		//! \brief Runs the current typed sql command
-		void runSQLCommand(void);
+		void runSQLCommand();
 
 		//! \brief Save the current typed sql command on a file
-		void saveCommands(void);
+		void saveCommands();
 
 		//! \brief Load a sql command from a file
-		void loadCommands(void);
+		void loadCommands();
 
 		//! \brief Clears the input field as well the results grid
-		int clearAll(void);
+		int clearAll();
 
 		void selectSnippet(QAction *act);
 
 		void toggleOutputPane(bool visible);
 
-		void showHistoryContextMenu(void);
+		void showHistoryContextMenu();
 
 		void finishExecution(int rows_affected = 0);
 
-		void filterResults(void);
+		void filterResults();
 
 		friend class SQLToolWidget;
 };

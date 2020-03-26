@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "operator.h"
 
-Operator::Operator(void)
+Operator::Operator()
 {
 	unsigned i;
 
@@ -76,7 +76,7 @@ bool Operator::isValidName(const QString &name)
 			valid|=(name.indexOf(valid_chars[pos]) >= 0);
 	}
 
-	return(valid);
+	return valid;
 }
 
 void Operator::setName(const QString &name)
@@ -219,7 +219,7 @@ Function *Operator::getFunction(unsigned func_type)
 	if(func_type > FuncRestrict)
 		throw Exception(ErrorCode::RefOperatorInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(functions[func_type]);
+	return functions[func_type];
 }
 
 PgSqlType Operator::getArgumentType(unsigned arg_id)
@@ -227,7 +227,7 @@ PgSqlType Operator::getArgumentType(unsigned arg_id)
 	//Raises an error if the argument id is invalid
 	if(arg_id > RightArg)
 		throw Exception(ErrorCode::RefOperatorArgumentInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	return(argument_types[arg_id]);
+	return argument_types[arg_id];
 }
 
 Operator *Operator::getOperator(unsigned op_type)
@@ -236,17 +236,17 @@ Operator *Operator::getOperator(unsigned op_type)
 	if(op_type > OperNegator)
 		throw Exception(ErrorCode::RefFunctionInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(operators[op_type]);
+	return operators[op_type];
 }
 
-bool Operator::isHashes(void)
+bool Operator::isHashes()
 {
-	return(hashes);
+	return hashes;
 }
 
-bool Operator::isMerges(void)
+bool Operator::isMerges()
 {
-	return(merges);
+	return merges;
 }
 
 QString Operator::getSignature(bool format_name)
@@ -266,18 +266,18 @@ QString Operator::getSignature(bool format_name)
 	}
 
 	signature+=QString("(") + args.join(',') + QString(")");
-	return(signature);
+	return signature;
 }
 
 QString Operator::getCodeDefinition(unsigned def_type)
 {
-	return(this->getCodeDefinition(def_type, false));
+	return this->getCodeDefinition(def_type, false);
 }
 
 QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	QString code_def=getCachedCode(def_type, reduced_form);
-	if(!code_def.isEmpty()) return(code_def);
+	if(!code_def.isEmpty()) return code_def;
 
 	unsigned i;
 	QString type_attribs[]={Attributes::LeftType, Attributes::RightType},
@@ -334,10 +334,10 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::Merges]=(merges ? Attributes::True : QString());
 	attributes[Attributes::Signature]=getSignature();
 
-	return(BaseObject::getCodeDefinition(def_type, reduced_form));
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
-void Operator::configureSearchAttributes(void)
+void Operator::configureSearchAttributes()
 {
 	QStringList arg_types;
 

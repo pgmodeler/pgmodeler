@@ -1,6 +1,6 @@
 #include "excludeelement.h"
 
-ExcludeElement::ExcludeElement(void) : Element()
+ExcludeElement::ExcludeElement() : Element()
 {
 	_operator=nullptr;
 }
@@ -10,9 +10,9 @@ void ExcludeElement::setOperator(Operator *oper)
 	_operator=oper;
 }
 
-Operator *ExcludeElement::getOperator(void)
+Operator *ExcludeElement::getOperator()
 {
-	return(_operator);
+	return _operator;
 }
 
 QString ExcludeElement::getCodeDefinition(unsigned def_type)
@@ -31,11 +31,11 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Operator]=_operator->getCodeDefinition(def_type, true);
 	}
 
-	return(schparser.getCodeDefinition(Attributes::ExcludeElement, attributes, def_type));
+	return schparser.getCodeDefinition(Attributes::ExcludeElement, attributes, def_type);
 }
 
 bool ExcludeElement::operator == (ExcludeElement &elem)
 {
-	return(this->_operator==elem._operator &&
-		   *(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
+	return (this->_operator==elem._operator &&
+					*(dynamic_cast<Element *>(this))==dynamic_cast<Element &>(elem));
 }

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,17 +49,17 @@ class TextboxView: public BaseObjectView {
 		TextPolygonItem *text_item;
 
 		//! \brief Configures the shadow for the textbox
-		void configureObjectShadow(void);
+		void configureObjectShadow();
 
 		//! \brief Configures the selection for the textbox
-		void configureObjectSelection(void);
+		void configureObjectSelection();
 
 		//! \brief Configures the basic attributes for textbox
-		void __configureObject(void);
+		void __configureObject();
 
 	public:
 		TextboxView(Textbox *txtbox, bool override_style=false);
-		virtual ~TextboxView(void);
+		virtual ~TextboxView();
 
 		/*! \brief Sets the fill and border color for the text box. This method has effect only when
 		 the style can be overriden (via constructor) */
@@ -71,8 +71,10 @@ class TextboxView: public BaseObjectView {
 
 		void setToolTip(const QString &tooltip);
 
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
 	protected slots:
-		virtual void configureObject(void);
+		virtual void configureObject();
 };
 
 #endif

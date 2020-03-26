@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 #
-# Copyright 2006-2019 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,18 +96,18 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void configureObjectShadow(void) {}
 
 		//! \brief Configures the object selection polygon
-		void configureObjectSelection(void);
+		void configureObjectSelection();
 
 		//! \brief Configures the polygons used to show the current object position
 		void configurePositionInfo(QPointF pos);
 
 		//! \brief Configures the rectangle used to show the sql disabled status
-		void configureSQLDisabledInfo(void);
+		void configureSQLDisabledInfo();
 
 		//! \brief Configures the icon that denotes the object's protection
-		void configureProtectedIcon(void);
+		void configureProtectedIcon();
 
-		void configurePlaceholder(void);
+		void configurePlaceholder();
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
@@ -125,19 +125,19 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		static constexpr int ObjectAlphaChannel=128;
 
 		BaseObjectView(BaseObject *object=nullptr);
-		virtual ~BaseObjectView(void);
+		virtual ~BaseObjectView();
 
 		//! \brief Returns the object selection order
-		unsigned getSelectionOrder(void);
+		unsigned getSelectionOrder();
 
 		//! \brief Controls the changes during the object's selection and moving
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 		//! \brief Returns the object that is representend by the graphical object
-		BaseObject *getUnderlyingObject(void);
+		BaseObject *getUnderlyingObject();
 
 		//! \brief Loads the font / color styels for the objects from a XML configuration file
-		static void loadObjectsStyle(void);
+		static void loadObjectsStyle();
 
 		//! \brief Returns the objects bounding rect in local coordination
 		QRectF boundingRect(void) const;
@@ -157,11 +157,11 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		static void setPlaceholderEnabled(bool value);
 
-		static bool isPlaceholderEnabled(void);
+		static bool isPlaceholderEnabled();
 
 		static void setCompactViewEnabled(bool value);
 
-		static bool isCompactViewEnabled(void);
+		static bool isCompactViewEnabled();
 
 		//! \brief Sets the  font style for the specified element id
 		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
@@ -181,24 +181,24 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		/*! \brief Returns the center point of the whole object.
 		Note: this is not the same as calling boundingRect()->center(). Instead, this
 		method calculates the center point based upon the current object's position */
-		virtual QPointF getCenter(void);
+		virtual QPointF getCenter();
 
 		//! \brief Toggles the wireframe display
 		virtual void togglePlaceholder(bool visible);
 
 		/*! \brief Returns the current font DPI factor of the screen. This factor is used to resize
 		 * objects according to the screen's resolution/font dpi */
-		static double getScreenDpiFactor(void);
+		static double getScreenDpiFactor();
 
 		//! \brief Returns the current factor between the default font size and the current defined one
-		static double getFontFactor(void);
+		static double getFontFactor();
 
 		//! \brief Returns the layer in which the object is visible
-		unsigned getLayer(void);
+		unsigned getLayer();
 
 	protected slots:
 		//! \brief Make the basic object operations
-		void __configureObject(void);
+		void __configureObject();
 
 		//! \brief Toggles the protection icon
 		void toggleProtectionIcon(bool value);
@@ -208,7 +208,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		void s_objectSelected(BaseGraphicObject *object, bool selected);
 
 		//! \brief Signal emmited whenever the width or height of the table changes
-		void s_objectDimensionChanged(void);
+		void s_objectDimensionChanged();
 
 	friend class ObjectsScene;
 };
