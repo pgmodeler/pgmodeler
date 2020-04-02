@@ -1,0 +1,98 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2020 - Raphael Araújo e Silva <raphael@pgmodeler.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+/**
+\ingroup libpgmodeler_ui
+\class FileSelectorWidget
+\brief Implements a simple file/directory picker with customizable behavior.
+*/
+
+#ifndef FILE_SELECTOR_WIDGET_H
+#define FILE_SELECTOR_WIDGET_H
+
+#include <QtWidgets>
+#include "ui_fileselectorwidget.h"
+
+class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
+	private:
+		Q_OBJECT
+
+		QFileDialog file_dlg;
+
+		QLabel *warn_ico_lbl;
+
+		bool check_existence,
+
+		allow_filename_input;
+
+	protected:
+		bool eventFilter(QObject *obj, QEvent *evnt) override;
+
+		void resizeEvent(QResizeEvent *event) override;
+
+	public:
+		FileSelectorWidget(QWidget * parent = nullptr);
+
+		/*! \brief Indicates if the selector must check the selected file/directory existence.
+		 * In case of not existing, a red label will be displayed under the filename input */
+		void setCheckExistence(bool chk_existence);
+
+		//! \brief Indicate if the selector allows manual filename input
+		void setAllowFilenameInput(bool allow_fl_input);
+
+		/*! \brief Configures the file selection mode. This one just configures the internal
+		 * QFileDialog file mode (see QFileDialog::setFileMode). Multiple file selection trough
+		 * QFileDialog::ExistingFiles is not allowed and will be overriden by QFileDialog::ExistingFile if provided. */
+		void setFileMode(QFileDialog::FileMode file_mode);
+
+		/*! \brief Indicate if the accept mode that the selector uses, this is used to configure
+		 * the internal QFileDialog instance (see QFileDialog::setAcceptMode) */
+		void setAcceptMode(QFileDialog::AcceptMode accept_mode);
+
+		//! \brief Configures the name filters of the internal QFileDialog (see QFileDialog::setNameFilters)
+		void setNameFilters(const QStringList &filters);
+
+		//! \brief Configures the window title of the file dialog instance
+		void setFileDialogTitle(const QString &title);
+
+		//! \brief Configures the mime filters of the internal QFileDialog (see QFileDialog::setMimeTypeFilters)
+		void setMimeTypeFilters(const QStringList &filters);
+
+		//! \brief Returns the selected file/directory
+		QString getSelectedFile();
+
+	private slots:
+		void openFileDialog();
+		void checkFileExistence();
+
+	public slots:
+		void clearSelector();
+
+	signals:
+		//! \brief Signal emitted when the user selects an file/directory
+		void s_fileSelected(QString);
+
+		//! \brief Signal emitted when the user clears the selector
+		void s_selectorCleared();
+
+		/*! \brief Signal emitted when the user clears the selector or selects a file/directory
+		 * The boolean param indicates if there's an file/directory selected or not */
+		void s_selectorChanged(bool);
+};
+
+#endif
