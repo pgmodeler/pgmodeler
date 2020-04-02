@@ -22,8 +22,6 @@
 FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
-
-	check_existence = false;
 	allow_filename_input = false;
 
 	filename_edt->setReadOnly(true);
@@ -40,7 +38,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 	connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
 	connect(rem_file_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
-
+	connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(validateSelectedFile()));
 	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
 	});
@@ -69,16 +67,6 @@ void FileSelectorWidget::resizeEvent(QResizeEvent *)
 										 (filename_edt->height() - warn_ico_lbl->height())/2);
 }
 
-void FileSelectorWidget::setCheckExistence(bool chk_existence)
-{
-	check_existence = chk_existence;
-
-	if(check_existence)
-		connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(checkFileExistence()));
-	else
-		disconnect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(checkFileExistence()));
-}
-
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
 {
 	allow_filename_input = allow_fl_input;
@@ -90,9 +78,11 @@ void FileSelectorWidget::setFileMode(QFileDialog::FileMode file_mode)
 	// Forcing the ExistingFile (single file selection) if multiple file selection is provided
 	if(file_mode == QFileDialog::ExistingFiles)
 		file_mode = QFileDialog::ExistingFile;
+	else if(file_mode == QFileDialog::Directory)
+		file_mode = QFileDialog::DirectoryOnly;
 
 	file_dlg.setFileMode(file_mode);
-	file_dlg.setOption(QFileDialog::ShowDirsOnly, file_mode == QFileDialog::Directory);
+	validateSelectedFile();
 }
 
 void FileSelectorWidget::setAcceptMode(QFileDialog::AcceptMode accept_mode)
@@ -115,6 +105,11 @@ void FileSelectorWidget::setMimeTypeFilters(const QStringList &filters)
 	file_dlg.setMimeTypeFilters(filters);
 }
 
+void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
+{
+	file_dlg.setDefaultSuffix(suffix);
+}
+
 QString FileSelectorWidget::getSelectedFile()
 {
 	return filename_edt->text();
@@ -133,7 +128,7 @@ void FileSelectorWidget::openFileDialog()
 	}
 }
 
-void FileSelectorWidget::checkFileExistence()
+void FileSelectorWidget::validateSelectedFile()
 {
 	QFileInfo fi(filename_edt->text());
 	QPalette pal;
@@ -143,13 +138,13 @@ void FileSelectorWidget::checkFileExistence()
 
 	if(!filename_edt->text().isEmpty())
 	{
-		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::Directory)
+		if(fi.exists() && fi.isDir() && file_dlg.fileMode() != QFileDialog::DirectoryOnly)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a file!"));
-		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::Directory)
+		else if(fi.exists() && fi.isFile() && file_dlg.fileMode() == QFileDialog::DirectoryOnly)
 			warn_ico_lbl->setToolTip(tr("The provided path is not a directory!"));
-		else if(!fi.exists())
+		else if(!fi.exists() && file_dlg.fileMode() != QFileDialog::AnyFile)
 		{
-			if(file_dlg.fileMode() == QFileDialog::Directory)
+			if(file_dlg.fileMode() == QFileDialog::DirectoryOnly)
 				warn_ico_lbl->setToolTip(tr("No such directory!"));
 			else
 				warn_ico_lbl->setToolTip(tr("No such file!"));

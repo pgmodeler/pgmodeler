@@ -32,13 +32,13 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 	private:
 		Q_OBJECT
 
+		QString default_ext;
+
 		QFileDialog file_dlg;
 
 		QLabel *warn_ico_lbl;
 
-		bool check_existence,
-
-		allow_filename_input;
+		bool allow_filename_input;
 
 	protected:
 		bool eventFilter(QObject *obj, QEvent *evnt) override;
@@ -47,10 +47,6 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 
 	public:
 		FileSelectorWidget(QWidget * parent = nullptr);
-
-		/*! \brief Indicates if the selector must check the selected file/directory existence.
-		 * In case of not existing, a red label will be displayed under the filename input */
-		void setCheckExistence(bool chk_existence);
 
 		//! \brief Indicate if the selector allows manual filename input
 		void setAllowFilenameInput(bool allow_fl_input);
@@ -73,15 +69,15 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 		//! \brief Configures the mime filters of the internal QFileDialog (see QFileDialog::setMimeTypeFilters)
 		void setMimeTypeFilters(const QStringList &filters);
 
+		void setDefaultSuffix(const QString &suffix);
+
 		//! \brief Returns the selected file/directory
 		QString getSelectedFile();
 
-	private slots:
-		void openFileDialog();
-		void checkFileExistence();
-
 	public slots:
 		void clearSelector();
+		void validateSelectedFile();
+		void openFileDialog();
 
 	signals:
 		//! \brief Signal emitted when the user selects an file/directory

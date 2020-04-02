@@ -37,7 +37,6 @@ void FileSelectorTest::testFileSelection()
 	selector->setAcceptMode(QFileDialog::AcceptOpen);
 	//selector->setNameFilters({"Database model file (*.dbm)", "All files (*.*)"});
 	selector->setFileDialogTitle("Select *.dbm file...");
-	selector->setCheckExistence(true);
 	selector->setAllowFilenameInput(true);
 
 	layout->addWidget(selector);
