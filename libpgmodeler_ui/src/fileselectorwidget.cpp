@@ -24,6 +24,8 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	allow_filename_input = false;
 
+	file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+
 	filename_edt->setReadOnly(true);
 	filename_edt->installEventFilter(this);
 
@@ -41,6 +43,7 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(validateSelectedFile()));
 	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
+		emit s_selectorChanged(!text.isEmpty());
 	});
 }
 
@@ -100,6 +103,11 @@ void FileSelectorWidget::setFileDialogTitle(const QString &title)
 	file_dlg.setWindowTitle(title);
 }
 
+void FileSelectorWidget::setSelectedFile(const QString &file)
+{
+	filename_edt->setText(file);
+}
+
 void FileSelectorWidget::setMimeTypeFilters(const QStringList &filters)
 {
 	file_dlg.setMimeTypeFilters(filters);
@@ -110,9 +118,26 @@ void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 	file_dlg.setDefaultSuffix(suffix);
 }
 
+bool FileSelectorWidget::hasWarning()
+{
+	return warn_ico_lbl->isVisible();
+}
+
 QString FileSelectorWidget::getSelectedFile()
 {
 	return filename_edt->text();
+}
+
+void FileSelectorWidget::clearCustomWarning()
+{
+	warn_ico_lbl->setToolTip("");
+	showWarning();
+}
+
+void FileSelectorWidget::setCustomWarning(const QString &warn_msg)
+{
+	warn_ico_lbl->setToolTip(warn_msg);
+	showWarning();
 }
 
 void FileSelectorWidget::openFileDialog()
@@ -128,12 +153,28 @@ void FileSelectorWidget::openFileDialog()
 	}
 }
 
-void FileSelectorWidget::validateSelectedFile()
+void FileSelectorWidget::showWarning()
 {
-	QFileInfo fi(filename_edt->text());
 	QPalette pal;
 	int padding = 0;
 
+	warn_ico_lbl->setVisible(!warn_ico_lbl->toolTip().isEmpty());
+
+	if(warn_ico_lbl->isVisible())
+	{
+		pal.setColor(QPalette::Text, QColor(255, 0, 0));
+		padding = warn_ico_lbl->width();
+	}
+	else
+		pal.setColor(QPalette::Text, qApp->palette().color(QPalette::Text));
+
+	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px").arg(padding));
+	filename_edt->setPalette(pal);
+}
+
+void FileSelectorWidget::validateSelectedFile()
+{
+	QFileInfo fi(filename_edt->text());
 	warn_ico_lbl->setToolTip("");
 
 	if(!filename_edt->text().isEmpty())
@@ -151,18 +192,7 @@ void FileSelectorWidget::validateSelectedFile()
 		}
 	}
 
-	warn_ico_lbl->setVisible(!warn_ico_lbl->toolTip().isEmpty());
-
-	if(warn_ico_lbl->isVisible())
-	{
-		pal.setColor(QPalette::Text, QColor(255, 0, 0));
-		padding = warn_ico_lbl->width();
-	}
-	else
-		pal.setColor(QPalette::Text, qApp->palette().color(QPalette::Text));
-
-	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px").arg(padding));
-	filename_edt->setPalette(pal);
+	showWarning();
 }
 
 void FileSelectorWidget::clearSelector()

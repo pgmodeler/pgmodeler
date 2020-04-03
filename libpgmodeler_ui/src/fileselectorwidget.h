@@ -40,9 +40,10 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 
 		bool allow_filename_input;
 
+		void showWarning();
+
 	protected:
 		bool eventFilter(QObject *obj, QEvent *evnt) override;
-
 		void resizeEvent(QResizeEvent *event) override;
 
 	public:
@@ -66,13 +67,23 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 		//! \brief Configures the window title of the file dialog instance
 		void setFileDialogTitle(const QString &title);
 
+		//! \brief Configures the currently selected file in the selector
+		void setSelectedFile(const QString &file);
+
 		//! \brief Configures the mime filters of the internal QFileDialog (see QFileDialog::setMimeTypeFilters)
 		void setMimeTypeFilters(const QStringList &filters);
 
+		//! \brief Defined the default suffix (extension) of the selected file if not provided
 		void setDefaultSuffix(const QString &suffix);
+
+		//! \brief Returns if the selector is in warning state (the warning icon is visible due to any inconsistency)
+		bool hasWarning();
 
 		//! \brief Returns the selected file/directory
 		QString getSelectedFile();
+
+		void setCustomWarning(const QString &warn_msg);
+		void clearCustomWarning(void);
 
 	public slots:
 		void clearSelector();
