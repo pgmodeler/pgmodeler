@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>609</height>
+    <width>643</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -187,7 +187,7 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="settings_grid">
           <property name="leftMargin">
            <number>4</number>
           </property>
@@ -734,40 +734,6 @@
              <string>Backup file:</string>
             </property>
            </widget>
-          </item>
-          <item row="6" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="backup_file_edt">
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="select_file_tb">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Select file</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>22</width>
-                <height>22</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
           <item row="3" column="2">
            <widget class="QComboBox" name="extract_from_cmb"/>
