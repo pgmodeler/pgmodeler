@@ -33,11 +33,13 @@ void FileSelectorTest::testFileSelection()
   QHBoxLayout *layout = new QHBoxLayout(dlg);
   FileSelectorWidget *selector = new FileSelectorWidget;
 
-	selector->setFileMode(QFileDialog::Directory);
+	selector->setFileMode(QFileDialog::ExistingFile);
 	selector->setAcceptMode(QFileDialog::AcceptOpen);
 	//selector->setNameFilters({"Database model file (*.dbm)", "All files (*.*)"});
 	selector->setFileDialogTitle("Select *.dbm file...");
 	selector->setAllowFilenameInput(true);
+	selector->setSelectedFile("/home/raphael/pgmodeler");
+	//selector->setReadOnly(true);
 
 	layout->addWidget(selector);
 	dlg->setMinimumWidth(400);

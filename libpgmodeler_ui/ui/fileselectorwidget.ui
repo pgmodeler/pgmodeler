@@ -109,7 +109,7 @@
       <enum>Qt::WheelFocus</enum>
      </property>
      <property name="toolTip">
-      <string>Select Object</string>
+      <string>Select file</string>
      </property>
      <property name="text">
       <string/>

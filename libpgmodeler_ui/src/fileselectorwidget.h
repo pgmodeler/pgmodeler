@@ -38,7 +38,7 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 
 		QLabel *warn_ico_lbl;
 
-		bool allow_filename_input;
+		bool allow_filename_input, read_only;
 
 		void showWarning();
 
@@ -82,13 +82,22 @@ class FileSelectorWidget: public QWidget, public Ui::FileSelectorWidget {
 		//! \brief Returns the selected file/directory
 		QString getSelectedFile();
 
+		//! \brief Sets a custom warning message to the selector
 		void setCustomWarning(const QString &warn_msg);
+
+		//! \brief Clears the custom warning message
 		void clearCustomWarning(void);
+
+		/*! \brief Configures the selector as readonly. This will cause
+		 * the clear input button to be hidden, the input field to be set as readonly and
+		 * the action of the file browse button will be to open the file/directory externally */
+		void setReadOnly(bool value);
 
 	public slots:
 		void clearSelector();
 		void validateSelectedFile();
 		void openFileDialog();
+		void openFileExternally();
 
 	signals:
 		//! \brief Signal emitted when the user selects an file/directory

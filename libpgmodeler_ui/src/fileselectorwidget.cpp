@@ -22,7 +22,7 @@
 FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
-	allow_filename_input = false;
+	allow_filename_input = read_only = false;
 
 	file_dlg.setWindowIcon(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
 
@@ -40,21 +40,21 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 
 	connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
 	connect(rem_file_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
-	connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(validateSelectedFile()));
 	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
 		emit s_selectorChanged(!text.isEmpty());
 	});
+	connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(validateSelectedFile()));
 }
 
 bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
 {
-	if(this->isEnabled() && evnt->type() == QEvent::FocusIn &&
+	if(isEnabled() && evnt->type() == QEvent::FocusIn &&
 		 QApplication::mouseButtons() == Qt::LeftButton && obj == filename_edt)
 	{
 		QFocusEvent *focus_evnt = dynamic_cast<QFocusEvent *>(evnt);
 
-		if(!allow_filename_input && focus_evnt->reason() == Qt::MouseFocusReason)
+		if(!allow_filename_input && !read_only && focus_evnt->reason() == Qt::MouseFocusReason)
 		{
 			openFileDialog();
 			return true;
@@ -72,8 +72,8 @@ void FileSelectorWidget::resizeEvent(QResizeEvent *)
 
 void FileSelectorWidget::setAllowFilenameInput(bool allow_fl_input)
 {
-	allow_filename_input = allow_fl_input;
-	filename_edt->setReadOnly(!allow_fl_input);
+	allow_filename_input = allow_fl_input && !read_only;
+	filename_edt->setReadOnly(!allow_filename_input);
 }
 
 void FileSelectorWidget::setFileMode(QFileDialog::FileMode file_mode)
@@ -120,7 +120,7 @@ void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 
 bool FileSelectorWidget::hasWarning()
 {
-	return warn_ico_lbl->isVisible();
+	return !warn_ico_lbl->toolTip().isEmpty();
 }
 
 QString FileSelectorWidget::getSelectedFile()
@@ -132,6 +132,27 @@ void FileSelectorWidget::clearCustomWarning()
 {
 	warn_ico_lbl->setToolTip("");
 	showWarning();
+}
+
+void FileSelectorWidget::setReadOnly(bool value)
+{
+	read_only = value;
+	filename_edt->setReadOnly(value);
+	allow_filename_input = false;
+
+	sel_file_tb->setToolTip(value ? tr("Open externally") : tr("Select file"));
+	rem_file_tb->setVisible(!value);
+
+	if(value)
+	{
+		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
+		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+	}
+	else
+	{
+		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
+		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
+	}
 }
 
 void FileSelectorWidget::setCustomWarning(const QString &warn_msg)
@@ -153,14 +174,20 @@ void FileSelectorWidget::openFileDialog()
 	}
 }
 
+void FileSelectorWidget::openFileExternally()
+{
+	QDesktopServices::openUrl(QUrl(QString("file://") + filename_edt->text()));
+}
+
 void FileSelectorWidget::showWarning()
 {
 	QPalette pal;
 	int padding = 0;
+	bool has_warn = !warn_ico_lbl->toolTip().isEmpty();
 
-	warn_ico_lbl->setVisible(!warn_ico_lbl->toolTip().isEmpty());
+	warn_ico_lbl->setVisible(has_warn);
 
-	if(warn_ico_lbl->isVisible())
+	if(has_warn)
 	{
 		pal.setColor(QPalette::Text, QColor(255, 0, 0));
 		padding = warn_ico_lbl->width();
