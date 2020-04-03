@@ -139,6 +139,7 @@ void MetadataHandlingForm::handleObjectsMetada()
 		options+=(objs_collapse_mode_chk->isChecked() ? DatabaseModel::MetaObjsCollapseMode : 0);
 		options+=(generic_sql_objs_chk->isChecked() ? DatabaseModel::MetaGenericSqlObjs : 0);
 		options+=(objs_aliases_chk->isChecked() ? DatabaseModel::MetaObjsAliases : 0);
+		options+=(objs_z_stack_value_chk->isChecked() ? DatabaseModel::MetaObjsZStackValue : 0);
 
 		connect(model_wgt->getDatabaseModel(), SIGNAL(s_objectLoaded(int,QString,unsigned)), this, SLOT(updateProgress(int,QString,unsigned)), Qt::UniqueConnection);
 
