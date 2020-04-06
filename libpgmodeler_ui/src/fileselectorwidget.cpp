@@ -141,7 +141,7 @@ void FileSelectorWidget::setReadOnly(bool value)
 	filename_edt->setReadOnly(value);
 	allow_filename_input = false;
 
-	sel_file_tb->setToolTip(value ? tr("Open externally") : tr("Select file"));
+	sel_file_tb->setToolTip(value ? tr("Open in file manager") : tr("Select file"));
 	rem_file_tb->setVisible(!value);
 
 	if(value)
@@ -154,6 +154,11 @@ void FileSelectorWidget::setReadOnly(bool value)
 		connect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileDialog()));
 		disconnect(sel_file_tb, SIGNAL(clicked(bool)), this, SLOT(openFileExternally()));
 	}
+}
+
+void FileSelectorWidget::setToolTip(const QString &tooltip)
+{
+	filename_edt->setToolTip(tooltip);
 }
 
 void FileSelectorWidget::setCustomWarning(const QString &warn_msg)
