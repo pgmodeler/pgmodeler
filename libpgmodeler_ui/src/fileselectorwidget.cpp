@@ -42,9 +42,9 @@ FileSelectorWidget::FileSelectorWidget(QWidget *parent) : QWidget(parent)
 	connect(rem_file_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector()));
 	connect(filename_edt, &QLineEdit::textChanged, [&](const QString &text){
 		rem_file_tb->setEnabled(!text.isEmpty());
+		validateSelectedFile();
 		emit s_selectorChanged(!text.isEmpty());
 	});
-	connect(filename_edt, SIGNAL(textChanged(QString)), this, SLOT(validateSelectedFile()));
 }
 
 bool FileSelectorWidget::eventFilter(QObject *obj, QEvent *evnt)
@@ -120,6 +120,7 @@ void FileSelectorWidget::setDefaultSuffix(const QString &suffix)
 
 bool FileSelectorWidget::hasWarning()
 {
+	QString str = warn_ico_lbl->toolTip();
 	return !warn_ico_lbl->toolTip().isEmpty();
 }
 
