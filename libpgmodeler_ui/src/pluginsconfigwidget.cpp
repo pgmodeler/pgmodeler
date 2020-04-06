@@ -25,7 +25,12 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
 	QDir dir=QDir(GlobalAttributes::getPluginsDir());
 
-	root_dir_edt->setText(dir.absolutePath());
+	root_dir_sel = new FileSelectorWidget(this);
+	root_dir_sel->setToolTip(tr("pgModeler plugins directory"));
+	root_dir_sel->setReadOnly(true);
+	root_dir_sel->setFileMode(QFileDialog::Directory);
+	root_dir_sel->setSelectedFile(GlobalAttributes::getPluginsDir());
+	plugins_layout->insertWidget(1, root_dir_sel);
 
 	plugins_tab=new ObjectsTableWidget(ObjectsTableWidget::EditButton, false, this);
 	plugins_tab->setColumnCount(3);
@@ -35,7 +40,6 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : BaseConfigWidget(par
 	plugins_tab->setHeaderLabel(tr("Library"),2);
 
 	connect(plugins_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showPluginInfo(int)));
-	connect(open_fm_tb, SIGNAL(clicked()), this, SLOT(openRootPluginDiretory()));
 
 	grid->setContentsMargins(4,4,4,4);
 	grid->addWidget(plugins_tab,0,0,1,1);
@@ -49,11 +53,6 @@ PluginsConfigWidget::~PluginsConfigWidget()
 		delete plugins.back();
 		plugins.pop_back();
 	}
-}
-
-void PluginsConfigWidget::openRootPluginDiretory()
-{
-	QDesktopServices::openUrl(QUrl(QString("file://") + root_dir_edt->text()));
 }
 
 void PluginsConfigWidget::showPluginInfo(int idx)
