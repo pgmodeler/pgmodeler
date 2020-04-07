@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>500</height>
+    <height>515</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -284,7 +284,7 @@
       <attribute name="title">
        <string>Report</string>
       </attribute>
-      <layout class="QVBoxLayout" name="report_tab_lt">
+      <layout class="QVBoxLayout" name="report_tab_grid">
        <property name="leftMargin">
         <number>4</number>
        </property>
@@ -316,14 +316,14 @@
            <number>4</number>
           </property>
           <item row="0" column="0">
-           <widget class="QPlainTextEdit" name="actions_txt"/>
+           <widget class="QPlainTextEdit" name="details_txt"/>
           </item>
          </layout>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="output_wgt" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="output_lt">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -346,33 +346,6 @@
             </property>
             <property name="text">
              <string>Output:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="output_edt">
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="output_tb">
-            <property name="toolTip">
-             <string>Select the report's output folder</string>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
             </property>
            </widget>
           </item>
@@ -521,6 +494,12 @@
           </item>
           <item>
            <widget class="QToolButton" name="attach_tb">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Attach a different database model</string>
             </property>
@@ -533,8 +512,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
            </widget>

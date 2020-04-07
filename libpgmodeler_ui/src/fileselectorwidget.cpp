@@ -199,7 +199,7 @@ void FileSelectorWidget::showWarning()
 		padding = warn_ico_lbl->width();
 	}
 	else
-		pal.setColor(QPalette::Text, qApp->palette().color(QPalette::Text));
+		pal = qApp->palette();
 
 	filename_edt->setStyleSheet(QString("padding: 2px %1px 2px 1px").arg(padding));
 	filename_edt->setPalette(pal);

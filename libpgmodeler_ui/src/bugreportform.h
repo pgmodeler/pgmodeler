@@ -28,6 +28,7 @@
 #include <QDialog>
 #include "ui_bugreportform.h"
 #include "syntaxhighlighter.h"
+#include "fileselectorwidget.h"
 
 class BugReportForm : public QDialog, public Ui::BugReportForm {
 	private:
@@ -35,6 +36,8 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 		
 		//! \brief Syntax highlight for model text widget
 		SyntaxHighlighter *hl_model_txt;
+
+		FileSelectorWidget *output_sel;
 		
 	protected:
 		//! \brief Delimiter character which separates the sections of the compressed file
@@ -55,7 +58,6 @@ class BugReportForm : public QDialog, public Ui::BugReportForm {
 	private slots:
 		void enableGeneration();
 		void attachModel();
-		void selectOutput();
 };
 
 #endif
