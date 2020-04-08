@@ -40,17 +40,10 @@ class CrashHandlerForm: public BugReportForm {
 
 		QLabel *input_lbl;
 
-		//! \brief Display the path to input report file
-		QLineEdit *input_edt;
+		FileSelectorWidget *input_sel;
 
 		//! \brief Triggers the model saving to filesystem
-		QToolButton *save_tb,
-
-		//! \brief Triggers the report file loading
-		*load_tb;
-
-		//! \brief Load a report file showing its contents on the form
-		void loadReport(const QString &filename);
+		QToolButton *save_tb;
 
 		void setAnalysisMode(bool value);
 
@@ -64,7 +57,9 @@ class CrashHandlerForm: public BugReportForm {
 		CrashHandlerForm(bool analysis_mode=false, QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 
 	private slots:
-		void loadReport();
+		//! \brief Load a report file showing its contents on the form
+		void loadReport(QString filename);
+
 		void saveModel();
 };
 

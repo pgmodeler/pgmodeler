@@ -20,6 +20,7 @@
 #include <QTextStream>
 #include <iostream>
 #include "attributes.h"
+#include "globalattributes.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");
@@ -27,7 +28,9 @@ const QString Connection::SslPrefer=QString("prefer");
 const QString Connection::SslRequire=QString("require");
 const QString Connection::SslCaVerify=QString("verify-ca");
 const QString Connection::SslFullVerify=QString("verify-full");
+
 const QString Connection::ParamAlias=QString("alias");
+const QString Connection::ParamApplicationName=QString("application_name");
 const QString Connection::ParamServerFqdn=QString("host");
 const QString Connection::ParamServerIp=QString("hostaddr");
 const QString Connection::ParamPort=QString("port");
@@ -61,6 +64,8 @@ Connection::Connection()
 
 	for(unsigned idx=OpValidation; idx <= OpDiff; idx++)
 		default_for_oper[idx]=false;
+
+	setConnectionParam(ParamApplicationName, GlobalAttributes::PgModelerAppName);
 }
 
 Connection::Connection(const attribs_map &params) : Connection()

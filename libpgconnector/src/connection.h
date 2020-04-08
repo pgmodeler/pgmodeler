@@ -96,6 +96,7 @@ class Connection {
 	public:
 		//! \brief Constants used to reference the connections parameters
 		static const QString	ParamAlias,
+		ParamApplicationName,
 		ParamServerFqdn,
 		ParamServerIp,
 		ParamPort,

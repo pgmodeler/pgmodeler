@@ -29,7 +29,7 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	QWidget *wgt=new QWidget;
 	QHBoxLayout *layout=new QHBoxLayout;
 
-	setWindowTitle(tr("Crash Handler"));
+	setWindowTitle(tr("pgModeler crash handler"));
 
 	stack_txt=new QPlainTextEdit(this);
 	stack_txt->setReadOnly(true);
@@ -60,7 +60,6 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 		stack_txt->setPlainText(buf);
 	}
 
-
 	//Creating an input field in order to select the input report file
 	input_wgt=new QWidget(this);
 	input_wgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -72,43 +71,46 @@ CrashHandlerForm::CrashHandlerForm(bool analysis_mode, QWidget *parent, Qt::Wind
 	input_lbl->setText(tr("Input:"));
 	layout->addWidget(input_lbl);
 
-	input_edt=new QLineEdit(input_wgt);
-	input_edt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	input_edt->setReadOnly(true);
-	layout->addWidget(input_edt);
-
-	load_tb=new QToolButton(input_wgt);
-	load_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("abrir")));
-	load_tb->setSizePolicy(output_tb->sizePolicy());
-	load_tb->setToolButtonStyle(output_tb->toolButtonStyle());
-	load_tb->setIconSize(output_tb->iconSize());
-	load_tb->setToolTip(tr("Load report file for analysis"));
-	layout->addWidget(load_tb);
+	input_sel = new FileSelectorWidget(this);
+	input_sel->setFileDialogTitle(tr("Select bug report file"));
+	input_sel->setFileMode(QFileDialog::ExistingFile);
+	input_sel->setAcceptMode(QFileDialog::AcceptOpen);
+	input_sel->setNameFilters({ tr("pgModeler bug report (*.bug)"), tr("All files (*.*)") });
+	input_sel->setToolTip(tr("Load report file for analysis"));
+	layout->addWidget(input_sel);
 
 	save_tb=new QToolButton(input_wgt);
 	save_tb->setIcon(QPixmap(PgModelerUiNs::getIconPath("salvar")));
-	save_tb->setSizePolicy(output_tb->sizePolicy());
-	save_tb->setToolButtonStyle(output_tb->toolButtonStyle());
-	save_tb->setIconSize(output_tb->iconSize());
+	save_tb->setSizePolicy(attach_tb->sizePolicy());
+	save_tb->setToolButtonStyle(attach_tb->toolButtonStyle());
+	save_tb->setIconSize(attach_tb->iconSize());
 	save_tb->setToolTip(tr("Save the attached model file on the filesystem"));
+	save_tb->setEnabled(false);
 	attach_wgt->layout()->addWidget(save_tb);
 
-	report_tab_lt->removeWidget(details_gb);
-	report_tab_lt->removeWidget(output_wgt);
-	report_tab_lt->removeWidget(message_frm);
+	report_tab_grid->removeWidget(details_gb);
+	report_tab_grid->removeWidget(output_wgt);
+	report_tab_grid->removeWidget(message_frm);
 
-	report_tab_lt->addWidget(input_wgt);
-	report_tab_lt->addWidget(details_gb);
-	report_tab_lt->addWidget(output_wgt);
-	report_tab_lt->addWidget(message_frm);
+	report_tab_grid->addWidget(input_wgt);
+	report_tab_grid->addWidget(details_gb);
+	report_tab_grid->addWidget(output_wgt);
+	report_tab_grid->addWidget(message_frm);
 
 	setAnalysisMode(analysis_mode);
 
-	connect(load_tb, SIGNAL(clicked()), this, SLOT(loadReport()));
+	connect(input_sel, SIGNAL(s_fileSelected(QString)), this, SLOT(loadReport(QString)));
+	connect(input_sel, SIGNAL(s_selectorCleared()), model_txt, SLOT(clear()));
+	connect(input_sel, SIGNAL(s_selectorCleared()), details_txt, SLOT(clear()));
+	connect(input_sel, SIGNAL(s_selectorCleared()), stack_txt, SLOT(clear()));
 	connect(save_tb, SIGNAL(clicked()), this, SLOT(saveModel()));
+
+	connect(model_txt, &QPlainTextEdit::textChanged, [&](){
+			save_tb->setEnabled(!model_txt->toPlainText().isEmpty());
+	});
 }
 
-void CrashHandlerForm::loadReport(const QString &filename)
+void CrashHandlerForm::loadReport(QString filename)
 {
 	QFile input;
 	QFileInfo fi;
@@ -127,7 +129,7 @@ void CrashHandlerForm::loadReport(const QString &filename)
 		QByteArray uncomp_buf;
 		QString buf_aux, str_aux;
 		int i, idx;
-		QPlainTextEdit *txt_widgets[]={ actions_txt, model_txt , stack_txt};
+		QPlainTextEdit *txt_widgets[]={ details_txt, model_txt , stack_txt};
 
 		//Creates a text buffer
 		buf=new char[fi.size()];
@@ -158,30 +160,6 @@ void CrashHandlerForm::loadReport(const QString &filename)
 			}
 			i++;
 		}
-	}
-}
-
-void CrashHandlerForm::loadReport()
-{
-	QFileDialog file_dlg;
-
-	try
-	{
-		file_dlg.setNameFilter(tr("pgModeler bug report (*.bug);;All files (*.*)"));
-		file_dlg.setWindowTitle(tr("Load report"));
-		file_dlg.setFileMode(QFileDialog::ExistingFiles);
-		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-
-		if(file_dlg.exec()==QFileDialog::Accepted)
-		{
-			loadReport(file_dlg.selectedFiles().at(0));
-			input_edt->setText(file_dlg.selectedFiles().at(0));
-		}
-	}
-	catch(Exception &e)
-	{
-		Messagebox msgbox;
-		msgbox.show(e);
 	}
 }
 
@@ -233,7 +211,7 @@ void CrashHandlerForm::setAnalysisMode(bool value)
 
 	if(value)
 	{
-		title_lbl->setText(tr("Crash handler"));
+		title_lbl->setText(tr("pgModeler crash handler"));
 		msg_lbl->setText(tr("Bug report analysis mode activated."));
 	}
 	else

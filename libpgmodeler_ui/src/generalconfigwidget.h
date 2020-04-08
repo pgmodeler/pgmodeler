@@ -30,6 +30,7 @@
 #include "messagebox.h"
 #include "colorpickerwidget.h"
 #include "numberedtexteditor.h"
+#include "fileselectorwidget.h"
 
 class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidget {
 	private:
@@ -48,6 +49,9 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		QWidgetList child_wgts;
 
 		NumberedTextEditor *font_preview_txt;
+
+		FileSelectorWidget *confs_dir_sel,
+		*source_editor_sel;
 
 		static map<QString, WidgetState> widgets_geom;
 
@@ -83,7 +87,6 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		void applyConfiguration();
 		void restoreDefaults();
 		void selectPaperSize();
-		void selectSourceEditor();
 
 	private slots:
 		void convertMarginUnity();

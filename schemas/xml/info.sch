@@ -64,6 +64,9 @@ $tb [<info object=] "{name}" [ type=] "{type}"
     %if {table} %then [ table=] "{table}" %end
 %end
     
+%if {z-value} %then
+    $br $tb $tb [ z-value=] "{z-value}"
+%end
 
 %if {position} %or {appended-sql} %or {prepended-sql} %then
     > $br

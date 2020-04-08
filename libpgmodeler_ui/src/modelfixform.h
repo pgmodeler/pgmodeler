@@ -28,6 +28,7 @@
 #include <QtWidgets>
 #include "globalattributes.h"
 #include "ui_modelfixform.h"
+#include "fileselectorwidget.h"
 
 class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private:
@@ -37,6 +38,10 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 
 		//! \brief Process used to execute pgmodeler-cli
 		QProcess pgmodeler_cli_proc;
+
+		FileSelectorWidget *input_file_sel,
+		*output_file_sel,
+		*pgmodeler_cli_sel;
 
 		void hideEvent(QHideEvent *);
 
@@ -49,12 +54,13 @@ class ModelFixForm: public QDialog, public Ui::ModelFixForm {
 	private slots:
 		void enableFix();
 		void fixModel();
-		void selectFile();
 		void updateOutput();
 		void handleProcessFinish(int res);
 
 	signals:
 		void s_modelLoadRequested(QString);
+
+	friend class MainWindow;
 };
 
 #endif

@@ -29,17 +29,21 @@
 #include "ui_metadatahandlingform.h"
 #include "modelwidget.h"
 #include "htmlitemdelegate.h"
+#include "fileselectorwidget.h"
 
 class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 	private:
 		Q_OBJECT
 
 		ModelWidget *model_wgt;
+
 		HtmlItemDelegate *htmlitem_deleg;
+
 		QTreeWidgetItem *root_item;
 
+		FileSelectorWidget *backup_file_sel;
+
 		void showEvent(QShowEvent *);
-		void selectFile(bool is_output);
 
 	public:
 		MetadataHandlingForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
@@ -51,6 +55,7 @@ class MetadataHandlingForm: public QDialog, public Ui::MetadataHandlingForm {
 		void handleObjectsMetada();
 		void enableMetadataHandling();
 		void selectAllOptions();
+		void configureSelector();
 
 	signals:
 		void s_metadataHandled();
