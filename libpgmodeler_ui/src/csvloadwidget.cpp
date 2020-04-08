@@ -24,6 +24,13 @@
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
 	setupUi(this);
+
+	file_sel = new FileSelectorWidget(this);
+	file_sel->setFileMode(QFileDialog::ExistingFile);
+	file_sel->setFileDialogTitle(tr("Load CSV file"));
+	file_sel->setMimeTypeFilters({"text/csv", "application/octet-stream"});
+	load_csv_grid->addWidget(file_sel, 0, 1, 1, 8);
+
 	separator_edt->setVisible(false);
 
 	if(cols_in_first_row)
@@ -32,7 +39,6 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 		col_names_chk->setChecked(true);
 	}
 
-	connect(select_file_tb, SIGNAL(clicked(bool)), this, SLOT(selectCsvFile()));
 	connect(txt_delim_chk, SIGNAL(toggled(bool)), txt_delim_edt, SLOT(setEnabled(bool)));
 	connect(load_btn, SIGNAL(clicked(bool)), this, SLOT(loadCsvFile()));
 
@@ -40,9 +46,7 @@ CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget
 			separator_edt->setVisible(separator_cmb->currentIndex() == separator_cmb->count()-1);
 	});
 
-	connect(file_edt, &QLineEdit::textChanged, [&](){
-		load_btn->setEnabled(!file_edt->text().isEmpty());
-	});
+	connect(file_sel, SIGNAL(s_selectorChanged(bool)), load_btn, SLOT(setEnabled(bool)));
 }
 
 QStringList CsvLoadWidget::getCsvColumns()
@@ -53,25 +57,6 @@ QStringList CsvLoadWidget::getCsvColumns()
 QList<QStringList> CsvLoadWidget::getCsvRows()
 {
 	return csv_rows;
-}
-
-void CsvLoadWidget::selectCsvFile()
-{
-	QFileDialog file_dlg;
-
-	file_dlg.setWindowTitle(tr("Load CSV file"));
-	file_dlg.setModal(true);
-	file_dlg.setNameFilter(tr("Comma-separted values (*.csv);;All files (*.*)"));
-
-	if(file_dlg.exec()==QFileDialog::Accepted)
-	{
-		QString file;
-
-		if(!file_dlg.selectedFiles().isEmpty())
-			file = file_dlg.selectedFiles().at(0);
-
-		file_edt->setText(file);
-	}
 }
 
 QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, const QString &separator, const QString &text_delim, bool cols_in_first_row, QStringList &csv_cols)
@@ -159,10 +144,10 @@ void CsvLoadWidget::loadCsvFile()
 	QFile file;
 	QString csv_buffer;
 
-	file.setFileName(file_edt->text());
+	file.setFileName(file_sel->getSelectedFile());
 
 	if(!file.open(QFile::ReadOnly))
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_edt->text()),
+		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(file_sel->getSelectedFile()),
 										ErrorCode::FileDirectoryNotAccessed,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	csv_columns.clear();
@@ -177,7 +162,7 @@ void CsvLoadWidget::loadCsvFile()
 																 col_names_chk->isChecked(), csv_columns);
 	}
 
-	file_edt->clear();
+	file_sel->clearSelector();
 	emit s_csvFileLoaded();
 }
 
