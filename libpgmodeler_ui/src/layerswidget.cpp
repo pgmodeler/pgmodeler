@@ -23,9 +23,12 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	setModel(nullptr);
 
+	old_pos = QPoint(-1, -1);
 	curr_item = nullptr;
 	curr_row = -1;
+
 	layers_lst->installEventFilter(this);
+	frame->installEventFilter(this);
 
 	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersVisible()));
 	act->setData(true);
@@ -76,6 +79,31 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 		else if(event->type() == QEvent::FocusIn && curr_item)
 		{
 			finishLayerRenaming();
+		}
+	}
+	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	{
+		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+		if(event->type() == QEvent::MouseButtonPress)
+			old_pos = QPoint(-1,-1);
+		else
+		{
+			if(m_event->buttons() == Qt::LeftButton)
+			{
+				QPoint pnt = this->mapToParent(m_event->pos());
+				int w = 0, h = 0;
+
+				//Calculates the width and height based upon the delta between the points
+				w = this->width() + (pnt.x() - old_pos.x());
+				h = this->geometry().bottom() - pnt.y() + 1;
+
+				if(h >= this->minimumHeight() && h <= this->maximumHeight() &&
+					 w >= this->minimumWidth() && w <= this->maximumWidth())
+					this->setGeometry(this->pos().x(), pnt.y(), w, h);
+
+				old_pos = pnt;
+			}
 		}
 	}
 

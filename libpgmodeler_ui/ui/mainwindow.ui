@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>708</height>
+    <height>768</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1000</width>
-    <height>500</height>
+    <width>1024</width>
+    <height>768</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -725,7 +725,7 @@
      <x>0</x>
      <y>0</y>
      <width>1068</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -1385,7 +1385,7 @@
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+     <normaloff>:/icones/icones/update.png</normaloff>:/icones/icones/update.png</iconset>
    </property>
    <property name="text">
     <string>New version found!</string>
@@ -1397,7 +1397,7 @@
   <action name="action_check_update">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+     <normaloff>:/icones/icones/update.png</normaloff>:/icones/icones/update.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Check for update</string>

@@ -33,6 +33,10 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
+		//! \brief Holds the last mouse position while moving the cursor over the widget (used during resize event filter)
+		QPoint old_pos;
+
+		//! \brief Holds the actions for the visibility toggler menu
 		QMenu visibility_menu;
 
 		//! \brief Model in which the layer widget will operate on
@@ -51,7 +55,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		//! \brief Configures the layers listing
 		void updateLayers();
 
-		bool eventFilter(QObject *watched, QEvent *event);
+		bool eventFilter(QObject *watched, QEvent *event) override;
 
 	public:
 		explicit LayersWidget(QWidget *parent = nullptr);
@@ -81,7 +85,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 		void setLayersVisible();
 
 	public slots:
-		void setVisible(bool value);
+		void setVisible(bool value) override;
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility

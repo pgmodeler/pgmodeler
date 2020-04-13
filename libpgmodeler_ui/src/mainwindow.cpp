@@ -2116,7 +2116,8 @@ void MainWindow::toggleLayersWidget(bool show)
 			btn_pos = mapTo(this, layers_btn->pos());
 
 	layers_wgt->move(btn_pos.x() + general_tb->width(),
-									 tb_pos.y() - layers_wgt->height() * 0.80);
+									 tb_pos.y() - (layers_wgt->height() - layers_btn->height() - v_splitter1->handleWidth()) + 1);
+
 	layers_wgt->setVisible(show);
 }
 

@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>503</width>
-    <height>165</height>
+    <width>460</width>
+    <height>180</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>460</width>
+    <height>180</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>650</width>
+    <height>500</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -34,7 +46,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>165</height>
+       <height>0</height>
       </size>
      </property>
      <property name="frameShape">
