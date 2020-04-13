@@ -33,6 +33,8 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 	private:
 		Q_OBJECT
 
+		QMenu visibility_menu;
+
 		//! \brief Model in which the layer widget will operate on
 		ModelWidget *model;
 
@@ -75,6 +77,8 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 		//! \brief Enables the control buttons according to the selection on the list
 		void enableButtons();
+
+		void setLayersVisible();
 
 	public slots:
 		void setVisible(bool value);
