@@ -71,6 +71,12 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 
 		void selectObject();
 
+		//! \brief Creates a text representation of all entries in the output tree
+		QString generateOutputText();
+
+		//! \brief Creates a text representation of a single entry (and its children) in the output tree
+		void generateOutputItemText(QTreeWidgetItem *item, QString &output, int level);
+
 	protected:
 		void resizeEvent(QResizeEvent *event);
 		bool eventFilter(QObject *object, QEvent *event);
@@ -97,7 +103,6 @@ class ModelValidationWidget: public QWidget, public Ui::ModelValidationWidget {
 		void editConnections();
 		void handleSQLValidationStarted();
 		void swapObjectsIds();
-		void showTextOutput();
 		void copyTextOutput();
 
 	public slots:

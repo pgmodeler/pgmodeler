@@ -19,7 +19,6 @@
 #include "modelvalidationwidget.h"
 #include "configurationform.h"
 #include "pgmodeleruins.h"
-#include "textoutputwidget.h"
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
@@ -27,8 +26,7 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 	{
 		setupUi(this);
 
-		output_menu.addAction(tr("Copy as text"), this, SLOT(copyTextOutput()));
-		output_menu.addAction(tr("View as text"), this, SLOT(showTextOutput()));
+		output_menu.addAction(tr("Copy as text"), this, SLOT(copyTextOutput()), QKeySequence("Ctrl+Shift+C"));
 		output_menu.addAction(tr("Clear"), this, SLOT(clearOutput()));
 		output_btn->setMenu(&output_menu);
 
@@ -655,21 +653,45 @@ void ModelValidationWidget::selectObject()
 	}
 }
 
-void ModelValidationWidget::showTextOutput()
-{
-	BaseForm parent_form;
-	TextOutputWidget txt_output_wgt;
-
-	txt_output_wgt.setOutputWidget(output_trw);
-	txt_output_wgt.setWindowTitle(tr("Model validation text output"));
-	parent_form.setMainWidget(&txt_output_wgt);
-
-	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, txt_output_wgt.metaObject()->className());
-	parent_form.exec();
-	GeneralConfigWidget::saveWidgetGeometry(&parent_form, txt_output_wgt.metaObject()->className());
-}
-
 void ModelValidationWidget::copyTextOutput()
 {
-	qApp->clipboard()->setText(TextOutputWidget::generateTextOutput(output_trw));
+	qApp->clipboard()->setText(generateOutputText());
+}
+
+QString ModelValidationWidget::generateOutputText()
+{
+	QString output;
+	QTreeWidgetItem *item = nullptr;
+
+	for(int idx = 0; idx < output_trw->topLevelItemCount(); idx ++)
+	{
+		item = output_trw->topLevelItem(idx);
+		generateOutputItemText(item, output, 0);
+		output += '\n';
+	}
+
+	return output;
+}
+
+void ModelValidationWidget::generateOutputItemText(QTreeWidgetItem *item, QString &output, int level)
+{
+	if(!item)	return;
+
+	QLabel *label = dynamic_cast<QLabel *>(item->treeWidget()->itemWidget(item, 0));
+	QString text,
+			filler = "\n" + QString().fill(' ', level * 2);
+
+	text = item->text(0);
+
+	if(label && text.isEmpty())
+		text = label->text();
+
+	text.replace(QRegExp("(\\<)(\\/)?(br|strong|em)(\\/)?(\\>)"), "");
+	text.prepend(level == 0 ? "* " : "\n");
+
+	text.replace("\n", filler);
+	output += text;
+
+	for(int child = 0; child < item->childCount(); child++)
+		generateOutputItemText(item->child(child), output, level + 1);
 }

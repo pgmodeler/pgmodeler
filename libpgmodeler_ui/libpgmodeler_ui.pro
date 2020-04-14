@@ -44,7 +44,6 @@ SOURCES += src/mainwindow.cpp \
 	   src/operatorwidget.cpp \
 	   src/operatorfamilywidget.cpp \
 	   src/operatorclasswidget.cpp \
-	   src/textoutputwidget.cpp \
 	   src/typewidget.cpp \
 	   src/viewwidget.cpp \
 	   src/columnwidget.cpp \
@@ -153,7 +152,6 @@ HEADERS += src/mainwindow.h \
 	   src/operatorwidget.h \
 	   src/operatorfamilywidget.h \
 	   src/operatorclasswidget.h \
-	   src/textoutputwidget.h \
 	   src/typewidget.h \
 	   src/viewwidget.h \
 	   src/columnwidget.h \
