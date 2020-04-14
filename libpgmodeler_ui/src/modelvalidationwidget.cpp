@@ -19,12 +19,18 @@
 #include "modelvalidationwidget.h"
 #include "configurationform.h"
 #include "pgmodeleruins.h"
+#include "textoutputwidget.h"
 
 ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 {
 	try
 	{
 		setupUi(this);
+
+		output_menu.addAction(tr("Copy as text"), this, SLOT(copyTextOutput()));
+		output_menu.addAction(tr("View as text"), this, SLOT(showTextOutput()));
+		output_menu.addAction(tr("Clear"), this, SLOT(clearOutput()));
+		output_btn->setMenu(&output_menu);
 
 		htmlitem_del=new HtmlItemDelegate(this);
 		output_trw->setItemDelegateForColumn(0, htmlitem_del);
@@ -40,7 +46,6 @@ ModelValidationWidget::ModelValidationWidget(QWidget *parent): QWidget(parent)
 		this->setModel(nullptr);
 
 		connect(hide_tb, SIGNAL(clicked()), this, SLOT(hide()));
-		connect(clear_btn, SIGNAL(clicked()), this, SLOT(clearOutput()));
 		connect(options_btn, SIGNAL(toggled(bool)), options_frm, SLOT(setVisible(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), connections_cmb, SLOT(setEnabled(bool)));
 		connect(sql_validation_chk, SIGNAL(toggled(bool)), version_cmb, SLOT(setEnabled(bool)));
@@ -175,7 +180,7 @@ void ModelValidationWidget::reenableValidation()
 		validate_btn->setEnabled(true);
 		cancel_btn->setEnabled(false);
 		fix_btn->setEnabled(model_wgt->getDatabaseModel()->isInvalidated());
-		clear_btn->setEnabled(true);
+		output_btn->setEnabled(true);
 		options_btn->setEnabled(true);
 		options_frm->setEnabled(true);
 		ico_lbl->setVisible(false);
@@ -205,7 +210,7 @@ void ModelValidationWidget::emitValidationInProgress()
 void ModelValidationWidget::clearOutput()
 {
 	output_trw->clear();
-	clear_btn->setEnabled(false);
+	output_btn->setEnabled(false);
 	prog_info_wgt->setVisible(false);
 	fix_btn->setEnabled(false);
 	validation_prog_pb->setValue(0);
@@ -571,7 +576,7 @@ void ModelValidationWidget::resizeEvent(QResizeEvent *event)
 	{
 		validate_btn->setToolButtonStyle(style);
 		fix_btn->setToolButtonStyle(style);
-		clear_btn->setToolButtonStyle(style);
+		output_btn->setToolButtonStyle(style);
 		cancel_btn->setToolButtonStyle(style);
 		options_btn->setToolButtonStyle(style);
 		swap_ids_btn->setToolButtonStyle(style);
@@ -624,7 +629,7 @@ void ModelValidationWidget::editConnections()
 void ModelValidationWidget::handleSQLValidationStarted()
 {
 	options_btn->setEnabled(false);
-	clear_btn->setEnabled(false);
+	output_btn->setEnabled(false);
 	options_frm->setEnabled(false);
 }
 
@@ -638,7 +643,7 @@ void ModelValidationWidget::selectObject()
 {
 	QTreeWidgetItem *item = output_trw->currentItem();
 
-	if(item && !validation_thread->isRunning())
+	if(item && validation_thread && !validation_thread->isRunning())
 	{
 		BaseObject *selected_obj=reinterpret_cast<BaseObject *>(item->data(1, Qt::UserRole).value<void *>());
 
@@ -648,4 +653,23 @@ void ModelValidationWidget::selectObject()
 			model_wgt->showObjectMenu();
 		}
 	}
+}
+
+void ModelValidationWidget::showTextOutput()
+{
+	BaseForm parent_form;
+	TextOutputWidget txt_output_wgt;
+
+	txt_output_wgt.setOutputWidget(output_trw);
+	txt_output_wgt.setWindowTitle(tr("Model validation text output"));
+	parent_form.setMainWidget(&txt_output_wgt);
+
+	GeneralConfigWidget::restoreWidgetGeometry(&parent_form, txt_output_wgt.metaObject()->className());
+	parent_form.exec();
+	GeneralConfigWidget::saveWidgetGeometry(&parent_form, txt_output_wgt.metaObject()->className());
+}
+
+void ModelValidationWidget::copyTextOutput()
+{
+	qApp->clipboard()->setText(TextOutputWidget::generateTextOutput(output_trw));
 }

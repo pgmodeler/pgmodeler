@@ -298,11 +298,11 @@
             <property name="wordWrap">
              <bool>false</bool>
             </property>
-            <attribute name="headerDefaultSectionSize">
-             <number>100</number>
-            </attribute>
             <attribute name="headerMinimumSectionSize">
              <number>21</number>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>100</number>
             </attribute>
             <column>
              <property name="text">

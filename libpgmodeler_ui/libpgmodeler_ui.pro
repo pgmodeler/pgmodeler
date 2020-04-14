@@ -44,6 +44,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/operatorwidget.cpp \
 	   src/operatorfamilywidget.cpp \
 	   src/operatorclasswidget.cpp \
+	   src/textoutputwidget.cpp \
 	   src/typewidget.cpp \
 	   src/viewwidget.cpp \
 	   src/columnwidget.cpp \
@@ -120,7 +121,7 @@ SOURCES += src/mainwindow.cpp \
     src/layerswidget.cpp \
     src/foreigndatawrapperwidget.cpp \
     src/foreignserverwidget.cpp \
-    src/usermappingwidget.cpp
+	src/usermappingwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -152,6 +153,7 @@ HEADERS += src/mainwindow.h \
 	   src/operatorwidget.h \
 	   src/operatorfamilywidget.h \
 	   src/operatorclasswidget.h \
+	   src/textoutputwidget.h \
 	   src/typewidget.h \
 	   src/viewwidget.h \
 	   src/columnwidget.h \
@@ -228,7 +230,7 @@ HEADERS += src/mainwindow.h \
     src/layerswidget.h \
     src/foreigndatawrapperwidget.h \
     src/foreignserverwidget.h \
-    src/usermappingwidget.h
+	src/usermappingwidget.h
 
 FORMS += ui/mainwindow.ui \
 	ui/fileselectorwidget.ui \

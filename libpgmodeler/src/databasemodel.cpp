@@ -814,6 +814,11 @@ void DatabaseModel::destroyObjects()
 
 	permissions.clear();
 
+	for(auto &inv_obj : invalid_special_objs)
+		delete inv_obj;
+
+	invalid_special_objs.clear();
+
 	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
 	if(!rem_obj_types.empty())
 	{
@@ -824,9 +829,6 @@ void DatabaseModel::destroyObjects()
 		for(auto type : rem_obj_types)
 			getObjectList(type)->clear();
 	}
-
-	for(auto &inv_obj : invalid_special_objs)
-		delete inv_obj;
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)
