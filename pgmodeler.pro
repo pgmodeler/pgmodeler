@@ -54,3 +54,5 @@ doc.files = README.md CHANGELOG.md LICENSE RELEASENOTES.md
 doc.path = $$DOCDIR
 
 INSTALLS += samples schemas lang conf doc
+
+CONFIG += qt

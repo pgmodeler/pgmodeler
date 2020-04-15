@@ -120,7 +120,7 @@ SOURCES += src/mainwindow.cpp \
     src/layerswidget.cpp \
     src/foreigndatawrapperwidget.cpp \
     src/foreignserverwidget.cpp \
-    src/usermappingwidget.cpp
+	src/usermappingwidget.cpp
 
 
 HEADERS += src/mainwindow.h \
@@ -228,7 +228,7 @@ HEADERS += src/mainwindow.h \
     src/layerswidget.h \
     src/foreigndatawrapperwidget.h \
     src/foreignserverwidget.h \
-    src/usermappingwidget.h
+	src/usermappingwidget.h
 
 FORMS += ui/mainwindow.ui \
 	ui/fileselectorwidget.ui \
