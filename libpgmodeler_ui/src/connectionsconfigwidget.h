@@ -52,7 +52,7 @@ class ConnectionsConfigWidget: public BaseConfigWidget, public Ui::ConnectionsCo
 		
 	public:
 		ConnectionsConfigWidget(QWidget * parent = nullptr);
-		~ConnectionsConfigWidget();
+		virtual ~ConnectionsConfigWidget();
 		
 		void saveConfiguration();
 		void loadConfiguration();

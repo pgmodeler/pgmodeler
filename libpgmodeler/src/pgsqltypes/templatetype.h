@@ -47,7 +47,7 @@ class TemplateType: public BaseType {
 
 	public:
 		TemplateType();
-		~TemplateType();
+		virtual ~TemplateType();
 
 		unsigned setType(unsigned type_id);
 		unsigned setType(const QString &type_name);

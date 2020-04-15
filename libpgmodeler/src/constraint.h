@@ -100,7 +100,7 @@ class Constraint: public TableObject{
 		UpdateAction=1;
 
 		Constraint();
-		~Constraint();
+		virtual ~Constraint();
 
 		/*! \brief Adds one column to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS */

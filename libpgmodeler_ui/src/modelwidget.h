@@ -315,7 +315,7 @@ class ModelWidget: public QWidget {
 		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
-		~ModelWidget();
+		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
 		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);

@@ -35,7 +35,7 @@ class ForeignTable: public PhysicalTable, public ForeignObject {
 
 	public:
 		ForeignTable();
-		~ForeignTable();
+		virtual ~ForeignTable();
 
 		void setForeignServer(ForeignServer *server);
 		ForeignServer *getForeignServer();

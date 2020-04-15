@@ -36,7 +36,7 @@ class StyledTextboxView: public TextboxView {
 
 	public:
 		StyledTextboxView(Textbox *txtbox, bool override_style=false);
-		~StyledTextboxView();
+		virtual ~StyledTextboxView();
 
 	protected slots:
 		void configureObject();

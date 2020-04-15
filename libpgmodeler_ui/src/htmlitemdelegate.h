@@ -35,7 +35,7 @@ class HtmlItemDelegate : public PlainTextItemDelegate {
 
 	public:
 		HtmlItemDelegate(QObject * parent = nullptr);
-		~HtmlItemDelegate();
+		virtual ~HtmlItemDelegate();
 
 	protected:
 		virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

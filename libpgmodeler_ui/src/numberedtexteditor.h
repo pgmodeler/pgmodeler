@@ -85,7 +85,7 @@ class NumberedTextEditor : public QPlainTextEdit {
 
 	public:
 		NumberedTextEditor(QWidget * parent = nullptr, bool handle_ext_files = false);
-		~NumberedTextEditor();
+		virtual ~NumberedTextEditor();
 
 		static void setDefaultFont(const QFont &font);
 		static void setLineNumbersVisible(bool value);

@@ -74,7 +74,7 @@ class AppearanceConfigWidget: public BaseConfigWidget, public Ui::AppearanceConf
 		
 	public:
 		AppearanceConfigWidget(QWidget * parent = nullptr);
-		~AppearanceConfigWidget();
+		virtual ~AppearanceConfigWidget();
 		
 		void saveConfiguration();
 		void loadConfiguration();

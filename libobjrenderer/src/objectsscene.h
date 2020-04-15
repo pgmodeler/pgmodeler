@@ -151,7 +151,7 @@ class ObjectsScene: public QGraphicsScene {
 		InvalidLayer = UINT_MAX;
 
 		ObjectsScene();
-		~ObjectsScene();
+		virtual ~ObjectsScene();
 
 		/*! \brief Add a new layer to the scene. In case of duplicated name this method
 		 * automatically does the desambiguation. The name of the new layer is returned. */

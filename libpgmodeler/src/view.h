@@ -80,7 +80,7 @@ class View: public BaseTable {
 
 	public:
 		View();
-		~View();
+		virtual ~View();
 
 		void setName(const QString &name);
 		void setSchema(BaseObject *schema);

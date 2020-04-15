@@ -54,7 +54,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
-		~PluginsConfigWidget();
+		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();

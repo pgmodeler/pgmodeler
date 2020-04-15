@@ -58,7 +58,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 
 	public:
 		SQLToolWidget(QWidget * parent = nullptr);
-		~SQLToolWidget();
+		virtual ~SQLToolWidget();
 
 		//! \brief Force the update of the sql command input field and the syntax highligter attached to the opened tabs
 		void updateTabs();

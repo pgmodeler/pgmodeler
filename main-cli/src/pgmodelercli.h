@@ -224,7 +224,7 @@ class PgModelerCliApp: public Application {
 
 	public:
 		PgModelerCliApp(int argc, char **argv);
-		~PgModelerCliApp();
+		virtual ~PgModelerCliApp();
 		int exec();
 
 	private slots:

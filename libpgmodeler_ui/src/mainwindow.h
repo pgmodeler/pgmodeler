@@ -175,7 +175,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 	public:
 		MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
-		~MainWindow();
+		virtual ~MainWindow();
 
 		//! \brief Loads a set of models from string list
 		void loadModels(const QStringList &list);

@@ -73,7 +73,7 @@ class TableObjectView: public BaseObjectView
 		ConstrAliasLabel = 3;
 
 		TableObjectView(TableObject *object=nullptr);
-		~TableObjectView();
+		virtual ~TableObjectView();
 
 		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);

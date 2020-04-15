@@ -265,7 +265,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Creates a database model and assign the model widget which will manage this instance
 		explicit DatabaseModel(ModelWidget *model_wgt);
 
-		~DatabaseModel();
+		virtual ~DatabaseModel();
 
 		//! \brief Returns the model widget that is managing the current database instance
 		ModelWidget *getModelWidget();

@@ -467,21 +467,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow()
 {
-	ModelWidget *model = nullptr;
-	int idx = 0;
-
-	/* Destroying models from the last to the first in order
-	 * to destroy other objects inside the models in the proper order */
-	while(models_tbw->count() > 0)
-	{
-		idx = models_tbw->count() - 1;
-		model = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
-		models_tbw->removeTab(idx);
-		delete model;
-	}
-
 	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
 	file_menu->clear();
+
 	delete restoration_form;
 	delete overview_wgt;
 	delete configuration_form;
@@ -1280,13 +1268,10 @@ void MainWindow::closeModel(int model_id)
 		if(!model->isModified() ||
 				(model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
 			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
 
-			disconnect(tab, nullptr, oper_list_wgt, nullptr);
-			disconnect(tab, nullptr, model_objs_wgt, nullptr);
-			disconnect(tab, nullptr, this, nullptr);
+			disconnect(model, nullptr, nullptr, nullptr);
 			disconnect(action_alin_objs_grade, nullptr, this, nullptr);
 			disconnect(action_show_grid, nullptr, this, nullptr);
 			disconnect(action_show_delimiters, nullptr, this, nullptr);
@@ -1302,9 +1287,6 @@ void MainWindow::closeModel(int model_id)
 				models_tbw->removeTab(model_id);
 			else
 				models_tbw->removeTab(models_tbw->currentIndex());
-
-			delete model;
-			QApplication::restoreOverrideCursor();
 		}
 	}
 

@@ -47,7 +47,7 @@ class SwapObjectsIdsWidget: public QWidget, public Ui::SwapObjectsIdsWidget {
 
 	public:
 		SwapObjectsIdsWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~SwapObjectsIdsWidget();
+		virtual ~SwapObjectsIdsWidget();
 		void setModel(DatabaseModel *model);
 		void setSelectedObjects(BaseObject *src_object, BaseObject *dst_objct);
 

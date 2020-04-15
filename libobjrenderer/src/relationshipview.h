@@ -163,7 +163,7 @@ class RelationshipView: public BaseObjectView {
 		ConnectTableEdges=2;
 
 		RelationshipView(BaseRelationship *rel);
-		~RelationshipView();
+		virtual ~RelationshipView();
 
 		//! \brief Calculates the relationship bounding rect considering all the children objects dimension
 		QRectF __boundingRect();

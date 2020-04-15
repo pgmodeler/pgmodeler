@@ -136,7 +136,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
-		~ModelDatabaseDiffForm();
+		virtual ~ModelDatabaseDiffForm();
 
 		//! \brief Makes the form behaves like a QDialog by running it from an event loop. The event loop is finished when the user clicks close
 		void exec();

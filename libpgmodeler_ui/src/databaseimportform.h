@@ -91,7 +91,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectSource=9; //Only for gropus
 		
 		DatabaseImportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~DatabaseImportForm();
+		virtual ~DatabaseImportForm();
 		
 		void setModelWidget(ModelWidget *model);
 
