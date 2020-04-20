@@ -1417,8 +1417,8 @@ void ModelWidget::convertRelationship1N()
 
 	Messagebox msg_box;
 
-	msg_box.show(tr("Do you really want to convert the relationship?"),
-							 Messagebox::ConfirmIcon, Messagebox::YesNoButtons);
+	msg_box.show(tr("<strong>Warning:</strong> Converting a one-to-one or one-to-many relationship can lead to unreversible changes or break other relationships in the linking chain! Do you want to proceed?"),
+							 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Rejected)
 		return;
@@ -1427,13 +1427,15 @@ void ModelWidget::convertRelationship1N()
 
 	try
 	{
-		Table *recv_tab = dynamic_cast<Table *>(rel->getReceiverTable());
+		Table *recv_tab = dynamic_cast<Table *>(rel->getReceiverTable()),
+				*ref_tab = dynamic_cast<Table *>(rel->getReferenceTable());
 		QStringList constrs_xmls;
 		Column *column = nullptr;
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
 		vector<Column *> columns;
-		QString pk_name;
+		QString pk_name, rel_name = rel->getName();
 		bool register_pk = false;
+		QColor rel_color = rel->getCustomColor();
 
 		// Storing the XML definition of table's PK
 		if(pk && (pk->isReferRelationshipAddedColumn() || pk->isAddedByRelationship()))
@@ -1521,6 +1523,12 @@ void ModelWidget::convertRelationship1N()
 		db_model->__removeObject(rel);
 		db_model->validateRelationships();
 		db_model->updateTableFKRelationships(recv_tab);
+
+		// Setting up the same name and color of the generated relationship
+		BaseRelationship *fk_rel = db_model->getRelationship(recv_tab, ref_tab);
+		fk_rel->setName(rel_name);
+		fk_rel->setCustomColor(rel_color);
+		fk_rel->setModified(true);
 
 		QApplication::restoreOverrideCursor();
 		emit s_objectCreated();
