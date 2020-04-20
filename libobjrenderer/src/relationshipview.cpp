@@ -1480,7 +1480,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 		double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
-		bool mandatory[2] = { false, false }, fake_rel11 = false;
+		bool mandatory[2] = { false, false }, simulate_rel11 = false;
 
 		if(rel_type == BaseRelationship::RelationshipNn || rel_type == BaseRelationship::RelationshipFk)
 		{
@@ -1489,7 +1489,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 			mandatory[BaseRelationship::SrcTable] = base_rel->isTableMandatory(BaseRelationship::SrcTable);
 			mandatory[BaseRelationship::DstTable] = base_rel->isTableMandatory(BaseRelationship::DstTable);
 
-			fake_rel11 = base_rel->canSimulateRelationship11();
+			simulate_rel11 = base_rel->canSimulateRelationship11();
 		}
 		else
 		{
@@ -1562,7 +1562,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 			}
 
 			//Configuring the minimum cardinality descriptor
-			if(fake_rel11 ||
+			if(simulate_rel11 ||
 
 				 ((tab_id == BaseRelationship::SrcTable &&
 					rel_type != BaseRelationship::RelationshipNn && rel_type != BaseRelationship::RelationshipFk) ||
