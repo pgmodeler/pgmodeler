@@ -1480,7 +1480,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 		double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
-		bool mandatory[2] = { false, false };
+		bool mandatory[2] = { false, false }, fake_rel11 = false;
 
 		if(rel_type == BaseRelationship::RelationshipNn || rel_type == BaseRelationship::RelationshipFk)
 		{
@@ -1488,6 +1488,8 @@ void RelationshipView::configureCrowsFootDescriptors()
 			tables[BaseRelationship::DstTable] = dynamic_cast<BaseTableView *>(base_rel->getTable(BaseRelationship::DstTable)->getOverlyingObject());
 			mandatory[BaseRelationship::SrcTable] = base_rel->isTableMandatory(BaseRelationship::SrcTable);
 			mandatory[BaseRelationship::DstTable] = base_rel->isTableMandatory(BaseRelationship::DstTable);
+
+			fake_rel11 = base_rel->canSimulateRelationship11();
 		}
 		else
 		{
@@ -1560,11 +1562,13 @@ void RelationshipView::configureCrowsFootDescriptors()
 			}
 
 			//Configuring the minimum cardinality descriptor
-			if((tab_id == BaseRelationship::SrcTable &&
+			if(fake_rel11 ||
+
+				 ((tab_id == BaseRelationship::SrcTable &&
 					rel_type != BaseRelationship::RelationshipNn && rel_type != BaseRelationship::RelationshipFk) ||
 
 				 (tab_id == BaseRelationship::DstTable &&
-					(rel_type == BaseRelationship::Relationship11 || rel_type == BaseRelationship::RelationshipFk)))
+					(rel_type == BaseRelationship::Relationship11 || rel_type == BaseRelationship::RelationshipFk))))
 			{
 
 				line_item = cf_lines[tab_id]->at(lin_idx++);
@@ -1881,7 +1885,7 @@ void RelationshipView::configureLabels()
 	{
 		QPointF pi, pf, p_int, pos;
 		unsigned idx, i1;
-		double dl, da, factor, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
+		double dl, da, v_space=VertSpacing * 2.5, h_space=HorizSpacing * 2.5;
 		QLineF lins[2], borders[2][4];
 		QRectF tab_rect, rect;
 		unsigned label_ids[2]={ BaseRelationship::SrcCardLabel,
@@ -1898,13 +1902,11 @@ void RelationshipView::configureLabels()
 				if((rel_type!=BaseRelationship::RelationshipFk && pos.x() < tables[idx]->pos().x()) ||
 						(rel_type==BaseRelationship::RelationshipFk && pos.x() >= tables[idx]->pos().x()))
 				{
-					factor=(rel_type==BaseRelationship::RelationshipFk ? 0.80 : 0.55);
-					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
+					x=pos.x() - (labels[idx]->boundingRect().width() * 0.55);
 				}
 				else
 				{
-					factor=(rel_type==BaseRelationship::RelationshipFk ? 0.05 : 0.45);
-					x=pos.x() - (labels[idx]->boundingRect().width() * factor);
+					x=pos.x() - (labels[idx]->boundingRect().width() * 0.45);
 				}
 
 				configureLabelPosition(label_ids[idx], x, pos.y() - da);

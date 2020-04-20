@@ -3273,7 +3273,8 @@ void ModelWidget::removeObjects(bool cascade)
 								aux_table=dynamic_cast<Table *>(table);
 
 								if(aux_table && obj_type==ObjectType::Constraint &&
-									 dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::ForeignKey)
+									 (dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::ForeignKey ||
+										dynamic_cast<Constraint *>(tab_obj)->getConstraintType()==ConstraintType::Unique))
 									db_model->updateTableFKRelationships(aux_table);
 
 								table->setModified(true);

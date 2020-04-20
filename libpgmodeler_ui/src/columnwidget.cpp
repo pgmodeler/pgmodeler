@@ -201,11 +201,11 @@ void ColumnWidget::applyConfiguration()
 												ErrorCode::NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			// Separating fks in which the column is part so the fk relationships can be properly updated
-			for(auto &tab_obj : parent_tab->getObjects({ ObjectType::Column }))
+			for(unsigned idx = 0; idx < parent_tab->getConstraintCount(); idx++)
 			{
-				constr = dynamic_cast<Constraint *>(tab_obj);
+				constr = parent_tab->getConstraint(idx);
 
-				if(constr && constr->getConstraintType() == ConstraintType::ForeignKey && constr->isColumnReferenced(column))
+				if(constr && constr->getConstraintType() == ConstraintType::ForeignKey && constr->isColumnExists(column, Constraint::SourceCols))
 					fks.push_back(constr);
 			}
 		}

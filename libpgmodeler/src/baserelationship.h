@@ -163,6 +163,10 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		Constraint *getReferenceForeignKey();
 
+		/*! \brief Returns true when the FK relationship can simulate a one-to-one relationship
+		 * In that case, there's a unique key in which the foreign key(s) columns is part of. */
+		bool canSimulateRelationship11();
+
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);
 

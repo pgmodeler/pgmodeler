@@ -233,6 +233,8 @@ class Constraint: public TableObject{
 		The second parameter is useful to permit or not the search of column only on referenced columns list. */
 		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
 
+		bool isColumnsExist(vector<Column *> columns, unsigned col_type);
+
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
