@@ -1574,7 +1574,6 @@ void RelationshipView::configureCrowsFootDescriptors()
 				line_item->setLine(QLineF(QPointF(0, -8 * factor), QPointF(0, 8 * factor)));
 				line_item->setPos((10 * signal) * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
-
 			}
 			else
 			{
@@ -1612,7 +1611,9 @@ void RelationshipView::configureCrowsFootDescriptors()
 			round_cf_descriptors[tab_id]->setVisible(false);
 
 			//Configuring the maximum cardinality descriptor
-			if((tab_id == BaseRelationship::SrcTable && mandatory[tab_id]) || rel_type == BaseRelationship::RelationshipNn)
+			if((tab_id == BaseRelationship::SrcTable && mandatory[tab_id]) ||
+				 (tab_id == BaseRelationship::DstTable && mandatory[tab_id] && rel_type == BaseRelationship::RelationshipFk) ||
+				 rel_type == BaseRelationship::RelationshipNn)
 			{
 				line_item = cf_lines[tab_id]->at(lin_idx++);
 				cf_descriptors[tab_id]->addToGroup(line_item);
@@ -1622,9 +1623,9 @@ void RelationshipView::configureCrowsFootDescriptors()
 				line_item->setPos(15 * signal * (tab_id == BaseRelationship::DstTable ? -1 : 1), 0);
 				line_item->setPen(pens[tab_id]);
 			}
-			else if(!mandatory[tab_id] &&
+			else if(!mandatory[tab_id] /*&&
 							((rel_type != BaseRelationship::RelationshipFk) ||
-							 (tab_id == BaseRelationship::SrcTable && rel_type == BaseRelationship::RelationshipFk)))
+							 (tab_id == BaseRelationship::SrcTable && rel_type == BaseRelationship::RelationshipFk))*/)
 			{
 				//Configuring the circle which describes the optional cardinality
 				circle_item = round_cf_descriptors[tab_id];

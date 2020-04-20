@@ -170,7 +170,10 @@ void ColumnWidget::applyConfiguration()
 	try
 	{
 		Column *column=nullptr;
-		Constraint *pk = nullptr;
+		Constraint *pk = nullptr, *constr = nullptr;
+		PhysicalTable *parent_tab = dynamic_cast<PhysicalTable *>(table);
+		vector<Constraint *> fks;
+		BaseRelationship *rel = nullptr;
 		startConfiguration<Column>();
 
 		column=dynamic_cast<Column *>(this->object);
@@ -187,18 +190,42 @@ void ColumnWidget::applyConfiguration()
 		column->setIdSeqAttributes(ident_col_seq.getMinValue(), ident_col_seq.getMaxValue(), ident_col_seq.getIncrement(),
 															 ident_col_seq.getStart(), ident_col_seq.getCache(), ident_col_seq.isCycle());
 
-		if(table)
+		if(parent_tab)
 		{
-			pk = dynamic_cast<PhysicalTable *>(table)->getPrimaryKey();
+			pk = parent_tab->getPrimaryKey();
+
 			if(pk && pk->isColumnReferenced(column) && !notnull_chk->isChecked())
 				throw Exception(Exception::getErrorMessage(ErrorCode::NullPrimaryKeyColumn)
 												.arg(column->getName())
 												.arg(pk->getParentTable()->getSignature(true)),
 												ErrorCode::NullPrimaryKeyColumn,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			// Separating fks in which the column is part so the fk relationships can be properly updated
+			for(auto &tab_obj : parent_tab->getObjects({ ObjectType::Column }))
+			{
+				constr = dynamic_cast<Constraint *>(tab_obj);
+
+				if(constr && constr->getConstraintType() == ConstraintType::ForeignKey && constr->isColumnReferenced(column))
+					fks.push_back(constr);
+			}
 		}
 
 		BaseObjectWidget::applyConfiguration();
-		model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(table));
+		model->updateViewsReferencingTable(parent_tab);
+
+		/* Updating the mandatory state of destination tables on FK relationships
+		 * derived from the table's fk in which the column is part of based upon
+		 * notnull state of the column */
+		for(auto &fk : fks)
+		{
+			rel = model->getRelationship(fk->getParentTable(), fk->getReferencedTable(), fk);
+
+			if(rel)
+			{
+				rel->setMandatoryTable(BaseRelationship::DstTable, column->isNotNull());
+				rel->setModified(true);
+			}
+		}
 
 		finishConfiguration();
 	}

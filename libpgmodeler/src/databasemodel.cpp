@@ -1338,7 +1338,18 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
-				rel=new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, false);
+				bool ref_mandatory = false;
+
+				for(auto &col : fk->getColumns(Constraint::SourceCols))
+				{
+					if(col->isNotNull())
+					{
+						ref_mandatory = true;
+						break;
+					}
+				}
+
+				rel = new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, ref_mandatory);
 				rel->setReferenceForeignKey(fk);
 				rel->setCustomColor(Qt::transparent);
 
@@ -6692,6 +6703,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 
 		xmlparser.getElementAttributes(attribs);
 
+		src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
+		dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
 		layer = attribs[Attributes::Layer].toUInt();
@@ -6744,7 +6757,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 			added to the table after its creation. */
 			if(attribs[Attributes::Type]==Attributes::RelationshipFk)
 			{
-				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
+				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], src_mand, dst_mand);
 				base_rel->setName(attribs[Attributes::Name]);
 				base_rel->setAlias(attribs[Attributes::Alias]);
 				addRelationship(base_rel);
@@ -6808,8 +6821,6 @@ BaseRelationship *DatabaseModel::createRelationship()
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
-			src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
-			dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
 			deferrable=attribs[Attributes::Deferrable]==Attributes::True;
 			defer_type=DeferralType(attribs[Attributes::DeferType]);
