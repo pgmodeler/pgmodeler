@@ -556,6 +556,9 @@ class ModelWidget: public QWidget {
 		void s_zoomModified(double);
 		void s_modelResized();
 
+		//! \brief Signal emitted whenever the modified status of the model changes
+		void s_modelModified(bool);
+
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated();
 

@@ -331,6 +331,9 @@ class PhysicalTable: public BaseTable {
 		 To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
 		void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
 
+		//! \brief Reset the current index of the objects created by relationship
+		void resetRelObjectsIndexes();
+
 		//! \brief Save the current index of the objects created by relationship
 		void saveRelObjectsIndexes();
 

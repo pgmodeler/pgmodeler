@@ -197,8 +197,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	zoom_info_lbl->setText(QString("Zoom: 100%"));
 	zoom_info_lbl->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 	zoom_info_lbl->setStyleSheet(QString("color: #C8000000; \
-								 background-color: #C8FFFF80;\
-								 border: 1px solid #C8B16351;"));
+								 background-color: #C8FFFFa0;\
+								 border: 1px solid #C8B16380;"));
 
 	font=zoom_info_lbl->font();
 	font.setBold(true);
@@ -505,10 +505,10 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(scene, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configureObjectSelection()));
 	connect(scene, SIGNAL(s_childrenSelectionChanged()), this, SLOT(configureObjectSelection()));
 	connect(scene, SIGNAL(s_objectsSelectedInRange()), this, SLOT(configureObjectSelection()));
-	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ modified = true; });
-	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ modified = true; });
-	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ modified = true; });
-	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ modified = true; });
+	connect(scene, &ObjectsScene::s_collapseModeChanged, [&](){ setModified(true); });
+	connect(scene, &ObjectsScene::s_paginationToggled, [&](){ setModified(true); });
+	connect(scene, &ObjectsScene::s_currentPageChanged, [&](){ setModified(true); });
+	connect(scene, &ObjectsScene::s_objectsMovedLayer, [&](){ setModified(true); });
 	connect(scene, SIGNAL(s_layersChanged()), this, SLOT(updateModelLayers()));
 	connect(scene, SIGNAL(s_activeLayersChanged()), this, SLOT(updateModelLayers()));
 	connect(scene, SIGNAL(s_popupMenuRequested(BaseObject*)), new_obj_overlay_wgt, SLOT(hide()));
@@ -551,7 +551,8 @@ ModelWidget::~ModelWidget()
 
 void ModelWidget::setModified(bool value)
 {
-	this->modified=value;
+	this->modified = value;
+	emit s_modelModified(value);
 }
 
 void ModelWidget::resizeEvent(QResizeEvent *)
@@ -846,7 +847,7 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 		if(item)
 		{
 			scene->addItem(item);
-			this->modified=true;
+			setModified(true);
 		}
 	}
 }
@@ -939,7 +940,7 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
 	}
 
-	this->modified=true;
+	setModified(true);
 }
 
 void ModelWidget::handleObjectDoubleClick(BaseGraphicObject *object)
@@ -1019,7 +1020,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 		}
 
 		op_list->finishOperationChain();
-		this->modified=true;
+		setModified(true);
 
 		emit s_objectsMoved();
 	}
@@ -1028,7 +1029,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
 	op_list->registerObject(object, Operation::ObjectModified);
-	this->modified=true;
+	setModified(true);
 
 	if(object->getSchema())
 		dynamic_cast<Schema *>(object->getSchema())->setModified(true);
@@ -1417,7 +1418,8 @@ void ModelWidget::convertRelationship1N()
 
 	Messagebox msg_box;
 
-	msg_box.show(tr("<strong>Warning:</strong> Converting a one-to-one or one-to-many relationship can lead to unreversible changes or break other relationships in the linking chain! Do you want to proceed?"),
+	msg_box.show(tr("<strong>WARNING:</strong> Converting a <strong>one-to-one</strong> or <strong>one-to-many</strong>\
+ relationship can lead to unreversible changes or break other relationships in the linking chain! Do you want to proceed?"),
 							 Messagebox::AlertIcon, Messagebox::YesNoButtons);
 
 	if(msg_box.result() == QDialog::Rejected)
@@ -1433,7 +1435,7 @@ void ModelWidget::convertRelationship1N()
 		Column *column = nullptr;
 		Constraint *constr = nullptr, *pk = recv_tab->getPrimaryKey();
 		vector<Column *> columns;
-		QString pk_name, rel_name = rel->getName();
+		QString pk_name, orig_name, rel_name = rel->getName();
 		bool register_pk = false;
 		QColor rel_color = rel->getCustomColor();
 
@@ -1459,8 +1461,11 @@ void ModelWidget::convertRelationship1N()
 		}
 
 		// Stores the XML definition of all relationship's constraints (added by the user)
-		for(auto &constr : rel->getConstraints())
-			constrs_xmls.append(dynamic_cast<Constraint *>(constr)->getCodeDefinition(SchemaParser::XmlDefinition, true));
+		for(auto &obj : rel->getConstraints())
+		{
+			constr = dynamic_cast<Constraint *>(obj);
+			constrs_xmls.append(constr->getCodeDefinition(SchemaParser::XmlDefinition, true));
+		}
 
 		// Copying all generated columns
 		for(auto &col : rel->getGeneratedColumns())
@@ -1481,16 +1486,17 @@ void ModelWidget::convertRelationship1N()
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		op_list->startOperationChain();
 
-		// Register the exclusion of the original relationship
-		op_list->registerObject(rel, Operation::ObjectRemoved);
-
 		db_model->storeSpecialObjectsXML();
 		db_model->disconnectRelationships();
+		db_model->__removeObject(rel);
+
+		// Register the exclusion of the original relationship
+		op_list->registerObject(rel, Operation::ObjectRemoved);
 
 		/* If after the relationships disconnection the table still have a PK
 		 * it means that it was not added by relationship so we can remove it from the table
 		 * so it can be recreated further with the correct settings */
-		pk = recv_tab->getConstraint(pk_name);
+		 pk = recv_tab->getConstraint(pk_name);
 
 		if(pk)
 		{
@@ -1519,8 +1525,11 @@ void ModelWidget::convertRelationship1N()
 			op_list->registerObject(constr, Operation::ObjectCreated, - 1, recv_tab);
 		}
 
+		/* Resetting the relatinship added columns/constraint indexes in the table
+		 * in order to avoid invalid indexes causing crashes */
+		recv_tab->resetRelObjectsIndexes();
 		recv_tab->setModified(true);
-		db_model->__removeObject(rel);
+
 		db_model->validateRelationships();
 		db_model->updateTableFKRelationships(recv_tab);
 
@@ -1529,6 +1538,9 @@ void ModelWidget::convertRelationship1N()
 		fk_rel->setName(rel_name);
 		fk_rel->setCustomColor(rel_color);
 		fk_rel->setModified(true);
+
+		op_list->registerObject(fk_rel, Operation::ObjectModified);
+		op_list->finishOperationChain();
 
 		QApplication::restoreOverrideCursor();
 		emit s_objectCreated();
@@ -1581,12 +1593,12 @@ void ModelWidget::loadModel(const QString &filename)
 
 		task_prog_wgt.close();
 		protected_model_frm->setVisible(db_model->isProtected());
-		this->modified=false;
+		setModified(false);
 	}
 	catch(Exception &e)
 	{
 		task_prog_wgt.close();
-		this->modified=false;
+		setModified(false);
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1829,7 +1841,7 @@ void ModelWidget::saveModel(const QString &filename)
 
 		task_prog_wgt.close();
 		disconnect(db_model, nullptr, &task_prog_wgt, nullptr);
-		this->modified=false;
+		setModified(false);
 
 		/* Doing a final check to the file regarding its size.
 		 * If we have a zero-byte file something went wrong during the saving process (disk failure, thread errors, etc)
@@ -2087,7 +2099,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 		if(res==QDialog::Accepted)
 		{
-			this->modified=true;
+			setModified(true);
 			this->db_model->setInvalidated(true);
 			emit s_objectManipulated();
 		}
@@ -2164,7 +2176,7 @@ void ModelWidget::renameObjects()
 
 	if(objectrename_wgt.result() == QDialog::Accepted)
 	{
-		this->modified = true;
+		setModified(true);
 		emit s_objectModified();
 	}
 }
@@ -2950,7 +2962,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	}
 
 	this->configurePopupMenu();
-	this->modified=true;
+	setModified(true);
 
 	//Restoring the viewport position after paste objects
 	viewport->verticalScrollBar()->setValue(db_model->getLastPosition().y());
@@ -3344,7 +3356,7 @@ void ModelWidget::removeObjects(bool cascade)
 				op_list->finishOperationChain();
 				scene->clearSelection();
 				this->configurePopupMenu();
-				this->modified=true;
+				setModified(true);
 				emit s_objectRemoved();
 
 				if(!errors.empty())
@@ -3371,7 +3383,7 @@ void ModelWidget::removeObjects(bool cascade)
 				}
 
 				scene->clearSelection();
-				this->modified=true;
+				setModified(true);
 				emit s_objectRemoved();
 				msg_box.show(e);
 			}
@@ -3395,7 +3407,7 @@ void ModelWidget::editCustomSQL()
 	CustomSQLWidget *customsql_wgt=new CustomSQLWidget;
 
 	customsql_wgt->setAttributes(db_model, obj);
-	this->modified=(openEditingForm(customsql_wgt)==QDialog::Accepted);
+	setModified((openEditingForm(customsql_wgt)==QDialog::Accepted));
 }
 
 void ModelWidget::showObjectMenu()
@@ -3757,7 +3769,7 @@ void ModelWidget::fadeObjects(const vector<BaseObject *> &objects, bool fade_in)
 			//If the minimum opacity is zero the object hidden
 			obj_view->setVisible(scene->isLayerActive(obj_view->getLayer()) && (fade_in || (!fade_in && min_object_opacity > 0)));
 
-			this->modified = true;
+			setModified(true);
 		}
 	}
 
@@ -4571,7 +4583,7 @@ void ModelWidget::toggleObjectSQL()
 	{
 		BaseObject *object=reinterpret_cast<BaseObject *>(action->data().value<void *>());
 		PgModelerUiNs::disableObjectSQL(object, !object->isSQLDisabled());
-		this->modified=true;
+		setModified(true);
 		emit s_objectModified();
 	}
 }
@@ -4959,7 +4971,7 @@ void ModelWidget::updateModelLayers()
 	layers.removeAt(0);
 	db_model->setLayers(layers);
 	db_model->setActiveLayers(scene->getActiveLayersIds());
-	modified = true;
+	setModified(true);
 }
 
 void ModelWidget::rearrangeTablesHierarchically()

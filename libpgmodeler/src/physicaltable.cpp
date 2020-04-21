@@ -1166,6 +1166,12 @@ void PhysicalTable::saveRelObjectsIndexes(ObjectType obj_type)
 	}
 }
 
+void PhysicalTable::resetRelObjectsIndexes()
+{
+	col_indexes.clear();
+	constr_indexes.clear();
+}
+
 void PhysicalTable::saveRelObjectsIndexes()
 {
 	saveRelObjectsIndexes(ObjectType::Column);
@@ -1195,74 +1201,75 @@ void PhysicalTable::restoreRelObjectsIndexes(ObjectType obj_type)
 
 	if(!obj_idxs->empty())
 	{
-		vector<TableObject *> *list=getObjectList(obj_type);
+		vector<TableObject *> *list = getObjectList(obj_type);
 		vector<TableObject *> new_list;
 		QString name;
-		TableObject *tab_obj=nullptr;
-		unsigned i=0, pos=0, size=0, obj_idx, names_used=0, aux_size=0;
+		TableObject *tab_obj = nullptr;
+		unsigned i = 0, pos = 0, size = 0, obj_idx, names_used = 0, aux_size = 0;
 
-		size=list->size();
+		size = list->size();
 
 		/* Indentify the maximum index on the existing rel objects. This is done
-	to correctly resize the new list in order to avoid exceed the list bounds
-	and consequently crashing the app */
+		 * 	to correctly resize the new list in order to avoid exceed the list bounds
+		 * 	and consequently crashing the app */
 		for(auto &itr : *obj_idxs)
 		{
 			if(aux_size < (itr.second + 1))
-				aux_size=itr.second + 1;
+				aux_size = itr.second + 1;
 		}
 
 		/* If the auxiliary size is lesser than the current object list size
-	   the new list is resized with same capacity of the "list" vector */
+		 * the new list is resized with same capacity of the "list" vector */
 		if(aux_size < size)
-			aux_size=size;
+			aux_size = size;
 
 		new_list.resize(aux_size);
 
 		for(auto &obj : *list)
 		{
-			name=obj->getName();
+			name = obj->getName();
 
 			//Check if the current object is a relationship created one and its name is on the custom index map
 			if(obj->isAddedByLinking() && obj_idxs->count(name))
 			{
 				//Allocate the object on its original position
-				obj_idx=obj_idxs->at(name);
-				new_list[obj_idx]=obj;
+				obj_idx = obj_idxs->at(name);
+				new_list[obj_idx] = obj;
 				names_used++;
 			}
 		}
 
 		/* Allocating the other objects, the ones that aren't created by relationship or
-	   the one which were created by relationship but weren't positioned yet */
-		pos=i=0;
+		 * the one which were created by relationship but weren't positioned yet */
+		pos = i= 0;
 		while(pos < size && i < size)
 		{
 			tab_obj=list->at(pos);
 			name=tab_obj->getName();
 
-			if(!new_list[i] && obj_idxs->count(name)==0)
+			if(!new_list[i] && obj_idxs->count(name) == 0)
 			{
 				new_list[i]=tab_obj;
 				pos++;
 				i++;
 			}
-			else if(obj_idxs->count(name)!=0)
+			else if(obj_idxs->count(name) != 0)
 				pos++;
 			else if(new_list[i])
 				i++;
 		}
 
-		//Removing unused items (nullptr ones) from the list using remove_if and lambdas (for predicate)
-		new_list.erase(remove_if(new_list.begin(), new_list.end(),
-								 [](TableObject *obj){ return (obj==nullptr); }), new_list.end());
-
-		(*list)=new_list;
+		list->clear();
+		for(auto &obj : new_list)
+		{
+			if(!obj) continue;
+			list->push_back(obj);
+		}
 
 		/* Checking if the object names used are equal to the map size. If not, indicates that
-	   one o more objects on the map doesn't exists anymore on the table thus there is
-	   the need to updated the object index map */
-		if(names_used!=obj_idxs->size())
+		 * one o more objects on the map doesn't exists anymore on the table thus there is
+		 * the need to updated the object index map */
+		if(names_used != obj_idxs->size())
 			saveRelObjectsIndexes(obj_type);
 	}
 }

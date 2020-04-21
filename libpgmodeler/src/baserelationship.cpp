@@ -527,6 +527,7 @@ void BaseRelationship::operator = (BaseRelationship &rel)
 	this->dst_table=rel.dst_table;
 	this->rel_type=rel.rel_type;
 	this->points=rel.points;
+	this->custom_color=rel.custom_color;
 
 	for(int i=0; i < 3; i++)
 	{

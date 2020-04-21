@@ -2736,7 +2736,6 @@ void Relationship::operator = (Relationship &rel)
 	this->name_patterns=rel.name_patterns;
 	this->upd_action=rel.upd_action;
 	this->del_action=rel.del_action;
-	this->custom_color=rel.custom_color;
 	this->single_pk_column=rel.single_pk_column;
 	this->part_bounding_expr=rel.part_bounding_expr;
 }

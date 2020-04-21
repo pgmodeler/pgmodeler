@@ -1556,7 +1556,6 @@ void DatabaseModel::validateRelationships()
 
 	do
 	{
-		//Initializes the flag that indicates that some invalid relatioship was found.
 		found_inval_rel=false;
 
 		while(itr!=itr_end)

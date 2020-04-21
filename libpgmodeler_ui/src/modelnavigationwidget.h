@@ -55,6 +55,9 @@ class ModelNavigationWidget: public QWidget, public Ui::ModelNavigationWidget {
 		//! \brief Updates a model's info on the listing
 		void updateModelText(int idx, const QString &text, const QString &filename);
 
+		//! \brief Flags the current model as modified putting an * at the end of its name
+		void setCurrentModelModified(bool modified);
+
 		//! \brief Remove an entry for a model using its index
 		void removeModel(int idx);
 
