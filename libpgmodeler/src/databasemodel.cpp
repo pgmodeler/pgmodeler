@@ -1624,11 +1624,9 @@ void DatabaseModel::validateRelationships()
 						//Storing the schemas on a auxiliary vector to update them later
 						tab1=rel->getTable(BaseRelationship::SrcTable);
 						tab2=rel->getTable(BaseRelationship::DstTable);
+						schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
 
-						if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
-							schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
-						else if(tab2!=tab1 &&
-								std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+						if(tab2 != tab1)
 							schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
 
 						idx++;
@@ -1755,14 +1753,15 @@ void DatabaseModel::validateRelationships()
 	//The validation continues until there is some invalid relationship
 	while(found_inval_rel);
 
-	if(!loading_model)
+	if(!loading_model && !schemas.empty())
 	{
+		std::sort(schemas.begin(), schemas.end());
+		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
+		schemas.erase(end, schemas.end());
+
 		//Updates the schemas to ajdust its sizes due to the tables resizings
-		while(!schemas.empty())
-		{
-			schemas.back()->setModified(true);
-			schemas.pop_back();
-		}
+		for(auto &sch : schemas)
+			sch->setModified(true);
 	}
 
 	//Stores the errors related to creation of special objects on the general error vector
