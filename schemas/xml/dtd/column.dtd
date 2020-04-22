@@ -6,6 +6,7 @@
 <!ATTLIST column name CDATA #REQUIRED>
 <!ATTLIST column alias CDATA #IMPLIED>
 <!ATTLIST column not-null (true | false) "false">
+<!ATTLIST column generated (true|false) "false">
 <!ATTLIST column default-value CDATA #IMPLIED>
 <!ATTLIST column sequence CDATA #IMPLIED>
 <!ATTLIST column protected (false|true) "false">

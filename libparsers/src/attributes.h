@@ -255,6 +255,7 @@ namespace Attributes {
 	FunctionType,
 	GenAlterCmds,
 	General,
+	Generated,
 	Global,
 	GrantOp,
 	GridSize,

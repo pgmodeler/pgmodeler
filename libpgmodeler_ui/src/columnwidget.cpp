@@ -54,6 +54,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 
 		map<QString, vector<QWidget *> > fields_map;
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(identity_rb);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
 		connect(sequence_rb, &QRadioButton::clicked,
@@ -111,6 +112,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	{
 		type=column->getType();
 		notnull_chk->setChecked(column->isNotNull());
+		generated_chk->setChecked(column->isGenerated());
 		def_value_txt->setPlainText(column->getDefaultValue());
 
 		if(column->getSequence())
@@ -178,6 +180,7 @@ void ColumnWidget::applyConfiguration()
 
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
+		column->setGenerated(generated_chk->isChecked());
 		column->setType(data_type->getPgSQLType());
 
 		if(expression_rb->isChecked())

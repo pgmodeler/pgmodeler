@@ -21,10 +21,11 @@
 Column::Column()
 {
 	obj_type=ObjectType::Column;
-	not_null=seq_cycle=false;
+	not_null=seq_cycle=generated=false;
 	attributes[Attributes::Type]=QString();
 	attributes[Attributes::DefaultValue]=QString();
 	attributes[Attributes::NotNull]=QString();
+	attributes[Attributes::Generated]=QString();
 	attributes[Attributes::Table]=QString();
 	attributes[Attributes::Sequence]=QString();
 	attributes[Attributes::DeclInTable]=QString();
@@ -98,15 +99,21 @@ void Column::setIdentityType(IdentityType id_type)
 void Column::setDefaultValue(const QString &value)
 {
 	setCodeInvalidated(default_value != value);
-	default_value=value.trimmed();
-	sequence=nullptr;
-	identity_type=BaseType::Null;
+	default_value = value.trimmed();
+	sequence = nullptr;
+	identity_type = BaseType::Null;
 }
 
 void Column::setNotNull(bool value)
 {
 	setCodeInvalidated(not_null != value);
 	not_null=value;
+}
+
+void Column::setGenerated(bool value)
+{
+	setCodeInvalidated(generated != value);
+	generated = value;
 }
 
 PgSqlType Column::getType()
@@ -122,6 +129,11 @@ IdentityType Column::getIdentityType()
 bool Column::isNotNull()
 {
 	return not_null;
+}
+
+bool Column::isGenerated()
+{
+	return generated;
 }
 
 bool Column::isIdentity()
@@ -269,6 +281,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 	}
 
 	attributes[Attributes::NotNull]=(!not_null ? QString() : Attributes::True);
+	attributes[Attributes::Generated]=(generated ? Attributes::True : QString());
 	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : QString());
 
 	return BaseObject::__getCodeDefinition(def_type);
@@ -401,6 +414,7 @@ void Column::operator = (Column &col)
 	this->default_value=col.default_value;
 
 	this->not_null=col.not_null;
+	this->generated=col.generated;
 	this->parent_rel=col.parent_rel;
 	this->sequence=col.sequence;
 	this->identity_type=col.identity_type;
