@@ -90,6 +90,7 @@ void Column::setIdentityType(IdentityType id_type)
 	identity_type = id_type;
 	default_value.clear();
 	sequence = nullptr;
+	generated = false;
 
 	//Identity column implies NOT NULL constraint
 	if(id_type != BaseType::Null)
@@ -114,6 +115,8 @@ void Column::setGenerated(bool value)
 {
 	setCodeInvalidated(generated != value);
 	generated = value;
+	identity_type = BaseType::Null;
+	sequence = nullptr;
 }
 
 PgSqlType Column::getType()
@@ -193,6 +196,7 @@ void Column::setSequence(BaseObject *seq)
 
 		default_value=QString();
 		identity_type=BaseType::Null;
+		generated = false;
 	}
 
 	setCodeInvalidated(sequence != seq);
