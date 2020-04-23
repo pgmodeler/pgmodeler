@@ -239,6 +239,7 @@ namespace Attributes {
 	FunctionType("function-type"),
 	GenAlterCmds("gen-alter-cmds"),
 	General("general"),
+	Generated("generated"),
 	Global("global"),
 	GrantOp("grant-op"),
 	GridSize("grid-size"),

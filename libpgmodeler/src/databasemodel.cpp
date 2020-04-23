@@ -4933,6 +4933,7 @@ Column *DatabaseModel::createColumn()
 
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[Attributes::NotNull]==Attributes::True);
+		column->setGenerated(attribs[Attributes::Generated]==Attributes::True);
 		column->setDefaultValue(attribs[Attributes::DefaultValue]);
 		column->setIdSeqAttributes(attribs[Attributes::MinValue], attribs[Attributes::MaxValue], attribs[Attributes::Increment],
 																attribs[Attributes::Start], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);

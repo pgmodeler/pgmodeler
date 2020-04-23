@@ -54,8 +54,12 @@
     %end
     
 %else
-    %if {default-value} %then
-        [ DEFAULT ] {default-value}
+    %if ({pgsql-ver} >=f "12.0") %and {generated} %then
+        [ GENERATED ALWAYS AS (] {default-value} [) STORED]
+    %else    
+        %if {default-value} %then
+            [ DEFAULT ] {default-value}
+        %end
     %end
 %end
 

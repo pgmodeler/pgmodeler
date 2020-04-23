@@ -2586,6 +2586,7 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 			getType(itr->second[Attributes::TypeOid], false);
 
 		col.setIdentityType(BaseType::Null);
+		col.setGenerated(false);
 		col.setType(PgSqlType::parseString(type_name));
 		col.setNotNull(!itr->second[Attributes::NotNull].isEmpty());
 		col.setComment(itr->second[Attributes::Comment]);
@@ -2593,6 +2594,19 @@ void DatabaseImportHelper::createColumns(attribs_map &attribs, vector<unsigned> 
 		//Overriding the default value if the column is identity
 		if(!itr->second[Attributes::IdentityType].isEmpty())
 			col.setIdentityType(itr->second[Attributes::IdentityType]);
+		else if(itr->second[Attributes::Generated] == Attributes::True)
+		{
+			col.setGenerated(true);
+			def_val = itr->second[Attributes::DefaultValue];
+
+			if(def_val.startsWith('(') && def_val.endsWith(')'))
+			{
+				def_val.remove(0, 1);
+				def_val.remove(def_val.length() - 1, 1);
+			}
+
+			col.setDefaultValue(def_val);
+		}
 		else
 		{
 			/* Removing extra/forced type casting in the retrieved default value.

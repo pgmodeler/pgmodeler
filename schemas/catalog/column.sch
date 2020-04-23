@@ -26,6 +26,15 @@
     %else
         [ NULL AS identity_type, ]
     %end
+    
+    %if ({pgsql-ver} >=f "12.0") %then
+        [ CASE
+          WHEN cl.attgenerated = 's' THEN TRUE          
+          ELSE FALSE
+          END AS generated_bool, ]
+    %else
+        [ FALSE AS generated_bool, ]
+    %end
 
        #Creating an attribute to indicate if the column is inherited or not
        [ CASE
