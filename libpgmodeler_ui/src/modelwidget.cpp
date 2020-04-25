@@ -634,7 +634,15 @@ bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 			emit s_sceneInteracted(m_event->scenePos());
 
 			if(!selected_objects.empty())
-				emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
+			{
+				if(selected_objects.size() == 1)
+				{
+					BaseGraphicObject *graph_obj = dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
+					emit s_sceneInteracted(graph_obj ? dynamic_cast<BaseObjectView *>(graph_obj->getOverlyingObject()) : nullptr);
+				}
+				else
+					emit s_sceneInteracted(static_cast<int>(selected_objects.size()), scene->itemsBoundingRect(true, true));
+			}
 		}
 
 		//Forcing the panning mode using the middle mouse button

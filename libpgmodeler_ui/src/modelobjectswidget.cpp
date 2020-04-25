@@ -92,9 +92,7 @@ bool ModelObjectsWidget::eventFilter(QObject *object, QEvent *event)
 
 		if(evnt->reason()==Qt::MouseFocusReason)
 		{
-			objectslist_tbw->clearSelection();
-			objectstree_tw->clearSelection();
-			selected_objs.clear();
+			clearSelectedObject();
 
 			if(model_wgt)
 				model_wgt->configurePopupMenu(nullptr);
@@ -116,7 +114,10 @@ void ModelObjectsWidget::hide()
 void ModelObjectsWidget::showObjectMenu()
 {
 	if(!selected_objs.empty() && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
+	{
 		model_wgt->showObjectMenu();
+		clearSelectedObject();
+	}
 }
 
 void ModelObjectsWidget::editObject()
@@ -140,6 +141,8 @@ void ModelObjectsWidget::editObject()
 		}
 		else
 			model_wgt->editObject();
+
+		clearSelectedObject();
 	}
 }
 
@@ -979,6 +982,19 @@ void ModelObjectsWidget::resizeEvent(QResizeEvent *)
 void ModelObjectsWidget::saveTreeState(bool value)
 {
 	save_tree_state=(!simplified_view && value);
+}
+
+void ModelObjectsWidget::clearSelectedObject()
+{
+	objectstree_tw->blockSignals(true);
+	objectslist_tbw->blockSignals(true);
+	objectstree_tw->clearSelection();
+	objectslist_tbw->clearSelection();
+	objectstree_tw->blockSignals(false);
+	objectslist_tbw->blockSignals(false);
+	selected_objs.clear();
+	model_wgt->configurePopupMenu(nullptr);
+	model_wgt->emitSceneInteracted();
 }
 
 void ModelObjectsWidget::saveTreeState(vector<BaseObject *> &tree_items)
