@@ -45,6 +45,9 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 		NumberedTextEditor *part_bound_expr_txt;
 
+		//! \brief Indicates if the current relationship can use the name pattern fields
+		bool use_name_patterns;
+
 		//! \brief Stores the tab objects to change the configuration of the form depending on the type of the relationship
 		QWidgetList tabs;
 
