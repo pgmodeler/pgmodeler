@@ -57,19 +57,36 @@ unix {
 linux {
   CONFIG += x11
 
-  # Default configuration for package pgModeler.
-  # The default prefix is /usr/local
-  !defined(PREFIX, var):        PREFIX = /usr/local
-  !defined(BINDIR, var):        BINDIR = $$PREFIX/bin
-  !defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
-  !defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
-  !defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
-  !defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
-  !defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
-  !defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
-  !defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
-  !defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
-  !defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
+  # If the AppImage generation option is set
+  defined(APPIMAGE_BUILD, var):{
+	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
+	BINDIR = $$PREFIX
+	PRIVATEBINDIR = $$PREFIX
+	PRIVATELIBDIR = $$PREFIX
+	PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+	SHAREDIR = $$PREFIX
+	CONFDIR = $$SHAREDIR/conf
+	DOCDIR = $$SHAREDIR
+	LANGDIR = $$SHAREDIR/lang
+	SAMPLESDIR = $$SHAREDIR/samples
+	SCHEMASDIR = $$SHAREDIR/schemas
+  }
+
+  !defined(APPIMAGE_BUILD, var):{
+	# Default configuration for package pgModeler.
+	# The default prefix is /usr/local
+	!defined(PREFIX, var):        PREFIX = /usr/local
+	!defined(BINDIR, var):        BINDIR = $$PREFIX/bin
+	!defined(PRIVATEBINDIR, var): PRIVATEBINDIR = $$PREFIX/bin
+	!defined(PRIVATELIBDIR, var): PRIVATELIBDIR = $$PREFIX/lib/pgmodeler
+	!defined(PLUGINSDIR, var):    PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
+	!defined(SHAREDIR, var):      SHAREDIR = $$PREFIX/share/pgmodeler
+	!defined(CONFDIR, var):       CONFDIR = $$SHAREDIR/conf
+	!defined(DOCDIR, var):        DOCDIR = $$SHAREDIR
+	!defined(LANGDIR, var):       LANGDIR = $$SHAREDIR/lang
+	!defined(SAMPLESDIR, var):    SAMPLESDIR = $$SHAREDIR/samples
+	!defined(SCHEMASDIR, var):    SCHEMASDIR = $$SHAREDIR/schemas
+ }
 
   # Specifies where to find the libraries at runtime
   RELATIVE_PRIVATELIBDIR = $$relative_path($$PRIVATELIBDIR, $$BINDIR)
