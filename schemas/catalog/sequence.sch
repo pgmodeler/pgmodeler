@@ -53,7 +53,7 @@
        LANGUAGE plpgsql; ]
 
       [ SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
-	 (SELECT refobjid || ':' || refobjsubid FROM pg_depend WHERE objid=sq.oid AND deptype in ('a', 'i')) AS owner_col,
+	  (SELECT DISTINCT refobjid || ':' || refobjsubid FROM pg_depend WHERE classid = 'pg_class'::regclass::oid AND objid=sq.oid AND deptype in ('a', 'i')) AS owner_col,
 	  (pg_temp.__pgmodeler_tmp_get_seq_attribs(ns.nspname, sq.relname)) AS attribute, ]
 
       ({comment}) [ AS comment ]
