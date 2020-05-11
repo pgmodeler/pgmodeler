@@ -87,15 +87,9 @@ class DatabaseImportHelper: public QObject {
 		it the oid of parent table */
 		map<unsigned, vector<unsigned>> column_oids;
 		
-		//! \brief Stores the oid of objects sucessfully created
-		vector<unsigned> created_objs;
-		
 		//! \brief Stores the selected objects oids to be imported
 		vector<unsigned> creation_order;
-		
-		//! \brief Stores the creation order for constraints
-		vector<unsigned> constr_creation_order;
-		
+			
 		//! \brief Stores the user defined objects attributes
 		map<unsigned, attribs_map> user_objs;
 		
@@ -104,7 +98,13 @@ class DatabaseImportHelper: public QObject {
 		
 		//! \brief Stores all defined types attributes
 		map<unsigned, attribs_map> types;
-		
+
+		//! \brief Stores all constraints attributes
+		vector<attribs_map> constraints;
+
+		//! \brief Stores the OIDs of the objects successfully created
+		vector<unsigned> created_objs;
+
 		//! \brief Stores all selected columns attributes
 		map<unsigned, map<unsigned, attribs_map>> columns;
 		

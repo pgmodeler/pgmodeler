@@ -518,18 +518,15 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
-	model_wgt->getDatabaseModel()->setObjectsModified();
 	model_wgt->rearrangeSchemasInGrid();
-
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
-	finishImport(tr("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
+	finishImport(tr("Importing process sucessfuly ended!"));
 
 	import_helper->closeConnection();
 	import_thread->quit();
 	import_thread->wait();
-
 	this->accept();
 }
 

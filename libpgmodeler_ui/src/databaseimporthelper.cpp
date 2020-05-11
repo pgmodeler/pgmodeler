@@ -174,9 +174,9 @@ void DatabaseImportHelper::retrieveSystemObjects()
 	vector<attribs_map>::iterator itr;
 	map<unsigned, attribs_map> *obj_map=nullptr;
 	vector<attribs_map> objects;
-	ObjectType sys_objs[]={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
-							ObjectType::Language, ObjectType::Type };
-	unsigned i=0, oid=0, cnt=sizeof(sys_objs)/sizeof(ObjectType);
+	vector<ObjectType> sys_objs={ ObjectType::Schema, ObjectType::Role, ObjectType::Tablespace,
+																ObjectType::Language, ObjectType::Type };
+	unsigned i = 0, oid = 0, cnt = sys_objs.size();
 
 	for(i=0; i < cnt && !import_canceled; i++)
 	{
@@ -299,18 +299,25 @@ void DatabaseImportHelper::createObjects()
 	vector<unsigned> not_created_objs, oids;
 	vector<unsigned>::iterator itr, itr_end;
 	vector<Exception> aux_errors;
+	map<unsigned, attribs_map>::iterator itr_objs, itr_objs_end;
 
-	for(i=0; i < creation_order.size() && !import_canceled; i++)
+	created_objs.reserve(creation_order.size());
+	itr_objs = user_objs.begin();
+	itr_objs_end = user_objs.end();
+
+	while(itr_objs != itr_objs_end && !import_canceled)
 	{
-		oid=creation_order[i];
-		attribs=user_objs[oid];
+		oid = itr_objs->first;
+		attribs = itr_objs->second;
 		obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
+		i++;
+		itr_objs++;
 
 		try
 		{
 			/* Constraints are ignored in these phase being pushed into an auxiliary list
 				 in order to be created later */
-			if(obj_type!=ObjectType::Constraint)
+			if(obj_type != ObjectType::Constraint)
 			{
 				emit s_progressUpdated(progress, tr("Creating object `%1' (%2), oid `%3'...")
 															.arg(attribs[Attributes::Name])
@@ -321,7 +328,7 @@ void DatabaseImportHelper::createObjects()
 				createObject(attribs);
 			}
 			else
-				constr_creation_order.push_back(oid);
+				constraints.push_back(attribs);
 		}
 		catch(Exception &)
 		{
@@ -411,12 +418,17 @@ void DatabaseImportHelper::createConstraints()
 {
 	int progress=0;
 	attribs_map attribs;
-	unsigned i=0, oid=0;
+	unsigned i=0;
+	vector<attribs_map>::iterator itr, itr_end;
 
-	for(i=0; i < constr_creation_order.size() && !import_canceled; i++)
+	itr = constraints.begin();
+	itr_end = constraints.end();
+
+	while(itr != itr_end && !import_canceled)
 	{
-		oid=constr_creation_order[i];
-		attribs=user_objs[oid];
+		attribs = *itr;
+		itr++;
+		i++;
 
 		try
 		{
@@ -427,7 +439,7 @@ void DatabaseImportHelper::createConstraints()
 			{
 				emit s_progressUpdated(progress,
 										 tr("Creating object `%1' (%2)...")
-									   .arg(attribs[Attributes::Name])
+										 .arg(attribs[Attributes::Name])
 						.arg(BaseObject::getTypeName(ObjectType::Constraint)),
 						ObjectType::Constraint);
 
@@ -442,7 +454,7 @@ void DatabaseImportHelper::createConstraints()
 				throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		progress=(i/static_cast<double>(constr_creation_order.size())) * 100;
+		progress=(i/static_cast<double>(constraints.size())) * 100;
 	}
 }
 
@@ -464,8 +476,8 @@ void DatabaseImportHelper::createPermissions()
 			attribs=user_objs[*itr_obj];
 			obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 			emit s_progressUpdated(progress,
-									 msg.arg(getObjectName(attribs[Attributes::Oid]))
-					.arg(BaseObject::getTypeName(obj_type)), ObjectType::Permission);
+														 msg.arg(getObjectName(attribs[Attributes::Oid]))
+														.arg(BaseObject::getTypeName(obj_type)), ObjectType::Permission);
 
 			createPermission(attribs);
 			itr_obj++;
@@ -473,7 +485,9 @@ void DatabaseImportHelper::createPermissions()
 			progress=((i++)/static_cast<double>(obj_perms.size())) * 100;
 		}
 
-		emit s_progressUpdated(progress, tr("Creating columns permissions..."), ObjectType::Permission);
+		if(!import_canceled)
+			emit s_progressUpdated(progress, tr("Creating columns permissions..."), ObjectType::Permission);
+
 		//Create the column level permission
 		i=0;
 		while(itr_cols!=col_perms.end() && !import_canceled)
@@ -594,8 +608,6 @@ void DatabaseImportHelper::importDatabase()
 				emit s_importFinished(Exception(tr("The database import ended but some errors were generated and saved into the log file `%1'. This file will last until pgModeler quit.").arg(log_name),
 												__PRETTY_FUNCTION__,__FILE__,__LINE__));
 			}
-			else
-				emit s_importFinished();
 		}
 		else
 			emit s_importCanceled();
@@ -622,17 +634,18 @@ void DatabaseImportHelper::importDatabase()
 					while(itr!=itr_end)
 					{
 						rel=dynamic_cast<BaseRelationship *>(*itr);
-						rel->setPoints({});
+						//rel->setPoints({});
 						rel->setCustomColor(QColor(dist(rand_num_engine),
-												   dist(rand_num_engine),
-												   dist(rand_num_engine)));
+																			 dist(rand_num_engine),
+																			 dist(rand_num_engine)));
 						itr++;
 					}
 				}
 			}
+
+			emit s_importFinished();
 		}
 
-		dbmodel->setObjectsModified();
 		resetImportParameters();
 	}
 	catch(Exception &e)
@@ -666,12 +679,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 
 	try
 	{
-		if(!import_canceled &&
-				(obj_type==ObjectType::Database || TableObject::isTableObject(obj_type) ||
-
-				 //If the object does not exists on both model and created objects vector
-				 ((std::find(created_objs.begin(), created_objs.end(), oid)==created_objs.end()) &&
-				  dbmodel->getObjectIndex(obj_name, obj_type) < 0)))
+		if(!import_canceled && std::find(created_objs.begin(), created_objs.end(), oid)==created_objs.end())
 		{
 			if(TableObject::isTableObject(obj_type))
 				attribs[Attributes::DeclInTable]=QString();
@@ -746,16 +754,23 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				break;
 			}
 
-			/* Register the object oid on the list of created objects to avoid creating it again
-				 on recursive object creation. (see getDependencyObject()) */
+			/* Register that the object was successfully created in order to avoid
+			 * creating it again on the recursive object creation. (see getDependencyObject()) */
 			created_objs.push_back(oid);
 		}
 	}
 	catch(Exception &e)
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::ObjectNotImported)
-										.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[Attributes::Oid]),
-										ErrorCode::ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
+		/* We just ignore the object duplication error and just mark the
+		 * related object's attribs so it'll not be processed again */
+		if(e.getErrorCode() == ErrorCode::AsgDuplicatedObject)
+			created_objs.push_back(oid);
+		else
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::ObjectNotImported)
+											.arg(obj_name).arg(BaseObject::getTypeName(obj_type)).arg(attribs[Attributes::Oid]),
+											ErrorCode::ObjectNotImported,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, dumpObjectAttributes(attribs));
+		}
 	}
 }
 
@@ -899,15 +914,15 @@ void DatabaseImportHelper::resetImportParameters()
 	seq_tab_swap.clear();
 	columns.clear();
 	system_objs.clear();
-	created_objs.clear();
 	errors.clear();
-	constr_creation_order.clear();
+	constraints.clear();
 	obj_perms.clear();
 	col_perms.clear();
 	connection.close();
 	catalog.closeConnection();
 	inherited_cols.clear();
 	imported_tables.clear();
+	created_objs.clear();
 }
 
 QString DatabaseImportHelper::dumpObjectAttributes(attribs_map &attribs)
@@ -2109,10 +2124,9 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 			constr=dbmodel->createConstraint(nullptr);
 
 			if(table &&  constr->getConstraintType()==ConstraintType::PrimaryKey)
-			{
 				table->addConstraint(constr);
-				table->setModified(true);
-			}
+
+			table->setModified(true);
 		}
 	}
 	catch(Exception &e)
@@ -2653,10 +2667,7 @@ void DatabaseImportHelper::assignSequencesToColumns()
 	PhysicalTable *table=nullptr;
 	Column *col=nullptr;
 	vector<BaseObject *> tables;
-
-	emit s_progressUpdated(100,
-							 tr("Assigning sequences to columns..."),
-						   ObjectType::Sequence);
+	int progress = 0, i = 0;
 
 	tables = *dbmodel->getObjectList(ObjectType::Table);
 	tables.insert(tables.end(),
@@ -2666,6 +2677,12 @@ void DatabaseImportHelper::assignSequencesToColumns()
 	for(auto &object : tables)
 	{
 		table=dynamic_cast<PhysicalTable *>(object);
+		progress=(i/static_cast<double>(tables.size())) * 100;
+		i++;
+
+		emit s_progressUpdated(progress,
+								 tr("Assigning sequences to columns..."),
+								 ObjectType::Sequence);
 
 		for(auto &tab_obj : *table->getObjectList(ObjectType::Column))
 		{
