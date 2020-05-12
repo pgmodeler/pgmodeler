@@ -29,14 +29,19 @@ bool DatabaseImportForm::low_verbosity = false;
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+
 	model_wgt=nullptr;
 	create_model=true;
+
+	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
+	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
+	vbox->setContentsMargins(4,4,4,4);
+	vbox->addWidget(objs_filter_wgt);
 
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	settings_tbw->setTabEnabled(1, false);
-
 	objs_parent_wgt->setEnabled(false);
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -214,7 +219,7 @@ void DatabaseImportForm::importDatabase()
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
 		database_gb->setEnabled(false);
-		options_gb->setEnabled(false);
+		options_tbw->setEnabled(false);
 	}
 	catch(Exception &e)
 	{
@@ -536,7 +541,7 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		import_thread->quit();
 
 	cancel_btn->setEnabled(false);
-	options_gb->setEnabled(true);
+	options_tbw->setEnabled(true);
 	database_gb->setEnabled(true);
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);

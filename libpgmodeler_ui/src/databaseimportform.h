@@ -28,6 +28,7 @@
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
 #include "htmlitemdelegate.h"
+#include "objectsfilterwidget.h"
 #include <QTimer>
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
@@ -52,6 +53,8 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
+
+		ObjectsFilterWidget *objs_filter_wgt;
 		
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */

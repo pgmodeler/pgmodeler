@@ -55,4 +55,5 @@ doc.path = $$DOCDIR
 
 INSTALLS += samples schemas lang conf doc
 
-CONFIG += qt
+CONFIG += qt \
+	qt
