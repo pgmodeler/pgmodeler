@@ -29,11 +29,6 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	filters_tbw->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 	filters_tbw->installEventFilter(this);
-
-	connect(filters_tbw, &QTableWidget::itemChanged, [&](QTableWidgetItem *item){
-		QTextStream out(stdout);
-		out << "changed: " << item->text() << endl;
-	});
 }
 
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
