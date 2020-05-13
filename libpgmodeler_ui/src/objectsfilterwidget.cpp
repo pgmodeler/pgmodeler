@@ -29,6 +29,11 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	filters_tbw->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 	filters_tbw->installEventFilter(this);
+
+	connect(filters_tbw, &QTableWidget::itemChanged, [&](QTableWidgetItem *item){
+		QTextStream out(stdout);
+		out << "changed: " << item->text() << endl;
+	});
 }
 
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
@@ -63,6 +68,14 @@ QStringList ObjectsFilterWidget::getFilterString()
 	ObjectType obj_type;
 	QString pattern, mode;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
+
+	/* Workround: Forcing any uncommited data on the filters_tbw to be commited
+	 * by changing the current model index. This seems force the calling of commitData()
+	 * on QTableWidget. This was needed because if the user activates other widgets somewhere
+	 * and there's still an item in edition (in this case the pattern) that text being edit
+	 * is never commited causing an outdated pattern to be provided even if the text of the item
+	 *	shows the updated text */
+	filters_tbw->setCurrentIndex(QModelIndex());
 
 	for(int row = 0; row < filters_tbw->rowCount(); row++)
 	{

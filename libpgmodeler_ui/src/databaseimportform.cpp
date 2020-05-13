@@ -331,6 +331,8 @@ void DatabaseImportForm::listObjects()
 	}
 	catch(Exception &e)
 	{
+		import_btn->setEnabled(false);
+		objs_parent_wgt->setEnabled(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
