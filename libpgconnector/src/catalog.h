@@ -52,6 +52,9 @@ class Catalog {
 		attribute is use when filtering objects that are created by extensions */
 		QString ext_obj_oids;
 
+		//! \brief Stores the name filters for each type of object. (See setObjectsFilter())
+		map<ObjectType, QStringList> objs_filter;
+
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
 		static map<ObjectType, QString> oid_fields;
@@ -125,7 +128,16 @@ class Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj;
+		static const QString PgModelerTempDbObj,
+
+		//! \brief Indicates the regexp/similar to/wildcard filtering mode in the object listing
+		FilterRegExp,
+
+		//! \brief Indicates the exact match filtering mode in the object listing
+		FilterExact;
+
+		//! \brief Indicates the character used to separate filter fields in the filtering string
+		static const constexpr char FilterSeparator = ':';
 
 		//! \brief Excludes the system objects from listing
 		static constexpr unsigned ExclSystemObjs=1,
@@ -152,7 +164,10 @@ class Catalog {
 		void closeConnection();
 
 		//! \brief Configures the catalog query filter
-		void setFilter(unsigned filter);
+		void setQueryFilter(unsigned filter);
+
+		//! \brief Configures the objects name filtering
+		void setObjectsFilter(QStringList filters);
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();
@@ -167,8 +182,11 @@ class Catalog {
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
-		//! \brief Returns the current filter configuration for the catalog
-		unsigned getFilter();
+		//! \brief Returns the current filter configuration for the catalog queries
+		unsigned getQueryFilter();
+
+		//! \brief Returns the configured objects a name filters
+		map<ObjectType, QStringList> getObjectsFilter();
 
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());

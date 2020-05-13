@@ -26,6 +26,7 @@
 #define OBJECTS_FILTER_WIDGET_H
 
 #include <QWidget>
+#include <QComboBox>
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
@@ -33,17 +34,22 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 
-		void addObjectsComboItem(ObjectType obj_type, bool sort);
+		//! \brief Creates a combobox of the objects' types accepted in the filter
+		QComboBox *createObjectsCombo();
+
+	protected:
+		bool eventFilter(QObject *object, QEvent *event) override;
 
 	public:
 		explicit ObjectsFilterWidget(QWidget *parent = nullptr);
 
+		//! brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
+		QStringList getFilterString();
+
 	private slots:
 		void addFilter();
 		void removeFilter();
-
-	signals:
-
+		void removeAllFilters();
 };
 
 #endif

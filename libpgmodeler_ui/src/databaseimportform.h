@@ -47,7 +47,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		/*! \brief Model widget allocated during the import. In case of success this model
 		will be transferred to the main window or destroyed in case of failure */
 		ModelWidget *model_wgt;
-		
+
 		//! \brief Database importer helper
 		DatabaseImportHelper *import_helper;
 		

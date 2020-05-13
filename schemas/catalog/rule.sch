@@ -42,7 +42,17 @@
     %end
       ( {not-ext-object} )
   %end
-
+  
+  %if {name-filter} %then
+    %if %not {last-sys-oid} %and %not {schema} %and %not {not-ext-object} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+    
+    ( {name-filter} )
+  %end
+  
 %else
     %if {attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,

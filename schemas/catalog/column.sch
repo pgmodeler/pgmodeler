@@ -10,7 +10,12 @@
    LEFT JOIN pg_class AS tb ON tb.oid = cl.attrelid
    LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
    WHERE cl.attisdropped IS FALSE AND relname=]'{table}' [ AND nspname= ] '{schema}'
-   [ AND attnum >= 0  ORDER BY attnum ASC ]
+
+%if {name-filter} %then
+  [ AND ] ( {name-filter} )
+%end
+   
+[ AND attnum >= 0  ORDER BY attnum ASC ]
 %else
     %if {attribs} %then
      [SELECT cl.attnum AS oid, cl.attname AS name, cl.attnotnull AS not_null_bool,

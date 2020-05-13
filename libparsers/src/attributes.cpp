@@ -346,6 +346,7 @@ namespace Attributes {
 	Mode("mode"),
 	ModelAuthor("author"),
 	Name("name"),
+	NameFilter("name-filter"),
 	NameLabel("name-label"),
 	NamePatterns("name-patterns"),
 	Names("names"),

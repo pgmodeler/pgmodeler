@@ -117,7 +117,7 @@
             <property name="childrenCollapsible">
              <bool>false</bool>
             </property>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
                <widget class="QGroupBox" name="groupBox">
@@ -173,7 +173,7 @@
                 <property name="currentIndex">
                  <number>0</number>
                 </property>
-                <widget class="QWidget" name="options_pg" native="true">
+                <widget class="QWidget" name="options_pg">
                  <attribute name="title">
                   <string>Options</string>
                  </attribute>
@@ -422,7 +422,36 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="0" column="1">
+               <widget class="QToolButton" name="refresh_tb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Refreshes the current database tree applying filters if they're set.</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../res/resources.qrc">
+                  <normaloff>:/icones/icones/atualizar.png</normaloff>:/icones/icones/atualizar.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
                <widget class="QWidget" name="objs_parent_wgt" native="true">
                 <property name="enabled">
                  <bool>true</bool>

@@ -49,6 +49,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects()));
 	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
+	connect(refresh_tb, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
@@ -63,12 +64,13 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
-			[&]() {
+	[&]() {
 		if(database_cmb->currentIndex()==0)
 			db_objects_tw->clear();
 
 		import_btn->setEnabled(database_cmb->currentIndex() > 0);
 		objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
+		refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
 	});
 
 
@@ -98,6 +100,7 @@ void DatabaseImportForm::setLowVerbosity(bool value)
 void DatabaseImportForm::createThread()
 {
 	import_thread=new QThread;
+
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
@@ -313,8 +316,9 @@ void DatabaseImportForm::listObjects()
 			import_helper->setConnection(*conn);
 			import_helper->setCurrentDatabase(database_cmb->currentText());
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-											resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-											debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
+																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+			import_helper->setObjectsFilter(objs_filter_wgt->getFilterString());
 
 			//List the objects using the static helper method
 			DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);

@@ -363,6 +363,7 @@ namespace Attributes {
 	Mode,
 	ModelAuthor,
 	Name,
+	NameFilter,
 	NameLabel,
 	NamePatterns,
 	Names,

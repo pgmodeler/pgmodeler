@@ -129,7 +129,7 @@ attribs_map DatabaseImportHelper::getObjects(ObjectType obj_type, const QString 
 {
 	try
 	{
-		catalog.setFilter(import_filter);
+		catalog.setQueryFilter(import_filter);
 		return catalog.getObjectsNames(obj_type, schema, table, extra_attribs);
 	}
 	catch(Exception &e)
@@ -142,7 +142,7 @@ vector<attribs_map> DatabaseImportHelper::getObjects(vector<ObjectType> obj_type
 {
 	try
 	{
-		catalog.setFilter(import_filter);
+		catalog.setQueryFilter(import_filter);
 		return catalog.getObjectsNames(obj_types, schema, table, extra_attribs);
 	}
 	catch(Exception &e)
@@ -189,14 +189,14 @@ void DatabaseImportHelper::retrieveSystemObjects()
 			obj_map=&system_objs;
 
 			if(sys_objs[i]!=ObjectType::Language)
-				catalog.setFilter(Catalog::ListOnlySystemObjs);
+				catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
 			else
-				catalog.setFilter(Catalog::ListAllObjects);
+				catalog.setQueryFilter(Catalog::ListAllObjects);
 		}
 		else
 		{
 			obj_map=&types;
-			catalog.setFilter(Catalog::ListAllObjects);
+			catalog.setQueryFilter(Catalog::ListAllObjects);
 		}
 
 		//Query the objects on the catalog and put them on the map
@@ -225,7 +225,7 @@ void DatabaseImportHelper::retrieveUserObjects()
 	QStringList names;
 
 	i=0;
-	catalog.setFilter(import_filter);
+	catalog.setQueryFilter(import_filter);
 
 	//Retrieving selected database level objects and table children objects (except columns)
 	while(oid_itr!=object_oids.end() && !import_canceled)
@@ -662,6 +662,11 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
+void DatabaseImportHelper::setObjectsFilter(QStringList filter)
+{
+	catalog.setObjectsFilter(filter);
+}
+
 void DatabaseImportHelper::cancelImport()
 {
 	import_canceled=true;
@@ -815,7 +820,7 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 					 (import_sys_objs  && obj_oid <= catalog.getLastSysObjectOID()) ||
 					 (obj_oid > catalog.getLastSysObjectOID() && !catalog.isExtensionObject(obj_oid))))
 			{
-				catalog.setFilter(Catalog::ListAllObjects);
+				catalog.setQueryFilter(Catalog::ListAllObjects);
 				vector<attribs_map> attribs_vect=catalog.getObjectsAttributes(obj_type,QString(),QString(), { obj_oid });
 
 				if(!attribs_vect.empty())

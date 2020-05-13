@@ -36,6 +36,16 @@
             
             ( {not-ext-object} )
         %end
+        
+        
+        %if {name-filter} %then
+        
+            %if {last-sys-oid} %or {not-ext-object} %then
+                [ AND ]
+            %end
+        
+            ( {name-filter} )
+        %end
 
     %else
         [SELECT pl.oid, pl.polname AS name, pl.polrelid AS table, ]
