@@ -320,6 +320,22 @@ void DatabaseImportForm::listObjects()
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
 			import_helper->getObjectFilters(objs_filter_wgt->getFilterString());
 
+			if(import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
+			{
+				Messagebox msgbox;
+				msgbox.show(tr("The selected database seems to have a huge amount of objects! \
+Trying to import such database can take minutes or even hours and, in extreme cases, crash the application. \
+Please, consider using the <strong>Filter</strong> tab in order to refine the set of objects to be imported. \
+Do you really want to proceed?"),
+										Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+				if(msgbox.result() == Messagebox::Rejected)
+				{
+					database_cmb->setCurrentIndex(0);
+					return;
+				}
+			}
+
 			//List the objects using the static helper method
 			DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);
 		}

@@ -92,6 +92,11 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectOtherData=7, //General purpose usage
 		ObjectCount=8,
 		ObjectSource=9; //Only for gropus
+
+		/*! \brief This constant holds the maximum amount of objects in a database to be imported
+		 * which will not generate an alert message about the possible slowdowns in the process
+		 * if all objects are imported without using filters */
+		static constexpr unsigned ObjectCountThreshould=2000;
 		
 		DatabaseImportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		virtual ~DatabaseImportForm();

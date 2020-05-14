@@ -384,6 +384,7 @@ namespace Attributes {
 	ObjectId,
 	Objects,
 	ObjectType,
+	ObjCount,
 	ObjSelection,
 	Oid,
 	OidFilterOp,

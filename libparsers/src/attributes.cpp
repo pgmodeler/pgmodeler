@@ -367,6 +367,7 @@ namespace Attributes {
 	ObjectId("object-id"),
 	Objects("objects"),
 	ObjectType("object-type"),
+	ObjCount("objcount"),
 	ObjSelection("obj-selection"),
 	Oid("oid"),
 	OidFilterOp("oid-filter-op"),

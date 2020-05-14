@@ -221,8 +221,12 @@ class Catalog {
 		used returns more than one result. A zero OID is returned when no suitable object is found. */
 		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = QString(), const QString &table = QString());
 
-		//! brief This special method returns some server's attributes read from pg_settings
+		//! \brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes();
+
+		/*! \brief This special method returns the amount of object in pg_class table.
+		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
+		unsigned getObjectCount(bool incl_sys_objs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);

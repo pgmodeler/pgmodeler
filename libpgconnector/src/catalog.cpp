@@ -224,7 +224,7 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 	attribs[qry_type]=Attributes::True;
 
 	if(exclude_sys_objs || list_only_sys_objs)
-		attribs[Attributes::LastSysOid]=QString("%1").arg(last_sys_oid);
+		attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
 
 	if(list_only_sys_objs)
 		attribs[Attributes::OidFilterOp]=QString("<=");
@@ -740,6 +740,40 @@ attribs_map Catalog::getServerAttributes()
 	}
 
 	return attribs;
+}
+
+unsigned Catalog::getObjectCount(bool incl_sys_objs)
+{
+	unsigned count = 0;
+
+	try
+	{
+		ResultSet res = ResultSet();
+		QString sql, attr_name;
+		attribs_map tuple, attribs;
+
+		if(!incl_sys_objs)
+			attribs[Attributes::LastSysOid]=QString::number(last_sys_oid);
+
+		loadCatalogQuery(Attributes::ObjCount);
+		schparser.ignoreUnkownAttributes(true);
+		schparser.ignoreEmptyAttributes(true);
+		sql = schparser.getCodeDefinition(attribs).simplified();
+		connection.executeDMLCommand(sql, res);
+
+		if(res.accessTuple(ResultSet::FirstTuple))
+		{
+			tuple = res.getTupleValues();
+			count = tuple[Attributes::ObjCount].toUInt();
+		}
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
+						QApplication::translate("Catalog","Object type: server","", -1));
+	}
+
+	return count;
 }
 
 QStringList Catalog::parseArrayValues(const QString &array_val)
