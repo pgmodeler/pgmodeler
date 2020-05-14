@@ -1048,7 +1048,7 @@ void DatabaseExplorerWidget::configureImportHelper()
 																 false, false, false, false, false);
 
 	catalog.closeConnection();
-	catalog.setFilter(Catalog::ListAllObjects);
+	catalog.setQueryFilter(Catalog::ListAllObjects);
 	catalog.setConnection(connection);
 }
 

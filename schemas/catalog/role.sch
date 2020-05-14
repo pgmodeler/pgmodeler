@@ -8,6 +8,16 @@
   %if {last-sys-oid} %then
    [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}
   %end
+  
+  %if {name-filter} %then        
+    %if {last-sys-oid} %then
+        [ AND ] 
+    %else
+        [ WHERE ]
+    %end        
+        
+    ( {name-filter} )    
+  %end
 
 %else
     %if {attribs} %then

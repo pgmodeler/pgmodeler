@@ -278,7 +278,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		vector<unsigned>::iterator end;
 		vector<attribs_map> types;
 		map<unsigned, QString> type_names;
-		unsigned orig_filter=catalog.getFilter();
+		unsigned orig_filter=catalog.getQueryFilter();
 
 		results_tbw->setRowCount(0);
 		results_tbw->setColumnCount(col_cnt);
@@ -297,7 +297,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		}
 
 		//Retrieving the data type names for each column
-		catalog.setFilter(Catalog::ListAllObjects);
+		catalog.setQueryFilter(Catalog::ListAllObjects);
 		std::sort(type_ids.begin(), type_ids.end());
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
@@ -307,7 +307,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		for(auto &tp : types)
 			type_names[tp[Attributes::Oid].toUInt()]=tp[Attributes::Name];
 
-		catalog.setFilter(orig_filter);
+		catalog.setQueryFilter(orig_filter);
 
 		//Assinging the type names as tooltip on header items
 		for(col=0; col < col_cnt; col++)

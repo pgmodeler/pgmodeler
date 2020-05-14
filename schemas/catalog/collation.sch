@@ -29,6 +29,17 @@
     ( {not-ext-object} )
   %end
 
+  %if {name-filter} %then
+  
+    %if {last-sys-oid} %or {schema} %or {not-ext-object} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {name-filter} )
+  %end  
+  
 %else
   %if {attribs} %and ({pgsql-ver} != "9.0")  %then
       [ SELECT cl.oid, cl.collname AS name, cl.collnamespace AS schema, 

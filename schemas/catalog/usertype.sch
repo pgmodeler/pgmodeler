@@ -31,21 +31,25 @@
   %if {not-ext-object} %then
     [ AND ] (  {not-ext-object} )
   %end
+  
+  %if {name-filter} %then
+    [ AND ] ( {name-filter} )
+  %end
 
 %else
     %if {attribs} %then
     [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, tp.typnamespace AS schema, tp.typowner AS owner, ]
     
     #Retrieve the OID for table/view/sequence that generates the composite type
-    [ (SELECT 
+    [ 
         CASE 
-	    WHEN relkind = 'r' THEN 'table'
-        WHEN relkind = 'S' THEN 'sequence'
-        WHEN relkind = 'v' THEN 'view'
-	    WHEN relkind = 'm' THEN 'view'
-	    WHEN relkind = 'p' THEN 'table'
-	    WHEN relkind = 'f' THEN 'foreigntable'
-        END AS type_class FROM pg_class WHERE oid=tp.typrelid), tp.typrelid AS object_id, ]
+        WHEN cl.relkind = 'r' THEN 'table'
+        WHEN cl.relkind = 'S' THEN 'sequence'
+        WHEN cl.relkind = 'v' THEN 'view'
+        WHEN cl.relkind = 'm' THEN 'view'
+        WHEN cl.relkind = 'p' THEN 'table'
+        WHEN cl.relkind = 'f' THEN 'foreigntable'
+        END AS type_class, tp.typrelid AS object_id, ]
 
     #TODO: Discover which field is the acl for user defined types on PgSQL 9.0
 		%if ({pgsql-ver} <=f "9.1") %then
@@ -75,20 +79,19 @@
 
     # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
     # separating them by colon.
-    # (this field is null when the type is not a composite)
-    [   CASE WHEN typtype = 'c' THEN
-
-       (SELECT array_agg(attname ||':'||
-	       (SELECT CASE WHEN ns.nspname='public' THEN ns.nspname || '.'
-		       ELSE '' END
-		FROM pg_namespace AS ns
-		LEFT JOIN pg_type AS _tp ON _tp.oid=at.atttypid
-		WHERE ns.oid=_tp.typnamespace )
-                || format_type(atttypid,atttypmod) || ':'|| ] %if ({pgsql-ver} == "9.0") %then '0' %else attcollation %end [)]
-     [ FROM pg_attribute AS at
-       WHERE attrelid=(SELECT oid FROM pg_class WHERE reltype=tp.oid))
-       END AS typeattrib, ]
-
+    # (this field is null when the type is not a composite)     
+   [ CASE WHEN typtype = 'c' THEN 
+     (
+        SELECT array_agg(attname ||':'|| 
+        (SELECT CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END 
+         FROM pg_namespace AS ns
+         LEFT JOIN pg_type AS _tp ON _tp.oid = at.atttypid WHERE ns.oid=_tp.typnamespace) || 
+         format_type(atttypid,atttypmod) || ':' || ] %if ({pgsql-ver} == "9.0") %then '0' %else attcollation %end [) FROM pg_attribute AS at 
+        WHERE attrelid = cl.oid
+     )
+     END AS typeattrib, 
+   ]
+       
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
 		%if ({pgsql-ver} >=f "9.2") %then
     [ CASE WHEN typtype = 'r' THEN (SELECT string_to_array(rngsubtype||':'||rngcollation||':'||rngsubopc::oid||':'||
@@ -130,6 +133,7 @@
     ({comment}) [ AS comment ]
 
     [ FROM pg_type AS tp
+      LEFT JOIN pg_class AS cl ON cl.oid = tp.typrelid
       LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
     #Excluding types related to tables/views/sequeces

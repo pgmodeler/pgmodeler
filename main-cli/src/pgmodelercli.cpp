@@ -1406,7 +1406,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setConnection(conn);
 
 		//For diff we don't need the oids of all system objects
-		catalog.setFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
+		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});

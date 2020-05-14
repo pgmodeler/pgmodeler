@@ -19,6 +19,10 @@
     %if {not-ext-object} %then
         [ AND ] ( {not-ext-object} )
     %end
+    
+    %if {name-filter} %then
+        [ AND ] ( {name-filter} )
+    %end
 %else
     %if {attribs} %then
         [SELECT ft.oid, ft.relname AS name, ft.relnamespace AS schema, ft.relowner AS owner, ft.relacl AS permission, 

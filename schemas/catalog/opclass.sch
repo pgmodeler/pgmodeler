@@ -28,6 +28,17 @@
     %end
     (  {not-ext-object} )
   %end
+  
+  %if {name-filter} %then
+  
+    %if {last-sys-oid} %or {schema} %or {not-ext-object} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {name-filter} )
+  %end
 
 %else
     %if {attribs} %then

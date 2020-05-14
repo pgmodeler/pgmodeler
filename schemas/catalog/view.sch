@@ -26,6 +26,10 @@
     %if {not-ext-object} %then
         [ AND ] ( {not-ext-object} )
     %end
+    
+    %if {name-filter} %then
+        [ AND ] ( {name-filter} )
+    %end
 %else
     %if {attribs} %then     
         [SELECT vw.oid, vw.relname AS name, vw.relnamespace AS  schema, vw.relowner AS owner,

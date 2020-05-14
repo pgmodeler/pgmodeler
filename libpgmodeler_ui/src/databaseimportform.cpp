@@ -29,14 +29,19 @@ bool DatabaseImportForm::low_verbosity = false;
 DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
 	setupUi(this);
+
 	model_wgt=nullptr;
 	create_model=true;
+
+	objs_filter_wgt = new ObjectsFilterWidget(options_tbw->widget(1));
+	QVBoxLayout *vbox = new QVBoxLayout(options_tbw->widget(1));
+	vbox->setContentsMargins(4,4,4,4);
+	vbox->addWidget(objs_filter_wgt);
 
 	htmlitem_del=new HtmlItemDelegate(this);
 	output_trw->setItemDelegateForColumn(0, htmlitem_del);
 
 	settings_tbw->setTabEnabled(1, false);
-
 	objs_parent_wgt->setEnabled(false);
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -44,6 +49,7 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects()));
 	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
+	connect(refresh_tb, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
@@ -58,12 +64,13 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
-			[&]() {
+	[&]() {
 		if(database_cmb->currentIndex()==0)
 			db_objects_tw->clear();
 
 		import_btn->setEnabled(database_cmb->currentIndex() > 0);
 		objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
+		refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
 	});
 
 
@@ -93,6 +100,7 @@ void DatabaseImportForm::setLowVerbosity(bool value)
 void DatabaseImportForm::createThread()
 {
 	import_thread=new QThread;
+
 	import_helper=new DatabaseImportHelper;
 	import_helper->moveToThread(import_thread);
 
@@ -214,7 +222,7 @@ void DatabaseImportForm::importDatabase()
 		cancel_btn->setEnabled(true);
 		import_btn->setEnabled(false);
 		database_gb->setEnabled(false);
-		options_gb->setEnabled(false);
+		options_tbw->setEnabled(false);
 	}
 	catch(Exception &e)
 	{
@@ -308,8 +316,25 @@ void DatabaseImportForm::listObjects()
 			import_helper->setConnection(*conn);
 			import_helper->setCurrentDatabase(database_cmb->currentText());
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
-											resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
-											debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
+																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
+			import_helper->getObjectFilters(objs_filter_wgt->getFilterString());
+
+			if(import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
+			{
+				Messagebox msgbox;
+				msgbox.show(tr("The selected database seems to have a huge amount of objects! \
+Trying to import such database can take minutes or even hours and, in extreme cases, crash the application. \
+Please, consider using the <strong>Filter</strong> tab in order to refine the set of objects to be imported. \
+Do you really want to proceed?"),
+										Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+				if(msgbox.result() == Messagebox::Rejected)
+				{
+					database_cmb->setCurrentIndex(0);
+					return;
+				}
+			}
 
 			//List the objects using the static helper method
 			DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);
@@ -322,6 +347,8 @@ void DatabaseImportForm::listObjects()
 	}
 	catch(Exception &e)
 	{
+		import_btn->setEnabled(false);
+		objs_parent_wgt->setEnabled(false);
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -518,18 +545,15 @@ void DatabaseImportForm::handleImportFinished(Exception e)
 		msgbox.show(e, e.getErrorMessage(), Messagebox::AlertIcon);
 	}
 
-	model_wgt->getDatabaseModel()->setObjectsModified();
 	model_wgt->rearrangeSchemasInGrid();
-
 	model_wgt->getDatabaseModel()->setInvalidated(false);
 
-	finishImport(tr("Importing process sucessfuly ended!"));
 	ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("msgbox_info")));
+	finishImport(tr("Importing process sucessfuly ended!"));
 
 	import_helper->closeConnection();
 	import_thread->quit();
 	import_thread->wait();
-
 	this->accept();
 }
 
@@ -539,7 +563,7 @@ void DatabaseImportForm::finishImport(const QString &msg)
 		import_thread->quit();
 
 	cancel_btn->setEnabled(false);
-	options_gb->setEnabled(true);
+	options_tbw->setEnabled(true);
 	database_gb->setEnabled(true);
 	progress_pb->setValue(100);
 	progress_lbl->setText(msg);
@@ -723,7 +747,28 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				task_prog_wgt.progress_pb->setValue(100);
 				task_prog_wgt.close();
 			}
+
+			if(checkable_items)
+			{
+				map<ObjectType, QStringList> objs_filter = import_helper.getObjectFilters();
+
+				// If we have filters configured only the items matching the object types are checked (and their parents too)
+				if(!objs_filter.empty())
+				{
+					ObjectType obj_type;
+					QList<QTreeWidgetItem *> list = tree_wgt->findItems("*", Qt::MatchWrap | Qt::MatchWildcard | Qt::MatchRecursive);
+
+					for(auto &item : list)
+					{
+						obj_type = static_cast<ObjectType>(item->data(ObjectTypeId, Qt::UserRole).toUInt());
+
+						if(!item->isDisabled() && objs_filter.count(obj_type))
+							item->setCheckState(0, Qt::Checked);
+					}
+				}
+			}
 		}
+
 	}
 	catch(Exception &e)
 	{
@@ -751,6 +796,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
 		int start=-1, end=-1;
+		bool has_obj_filters = !import_helper.getObjectFilters().empty();
 
 		grp_fnt.setItalic(true);
 		tree_wgt->blockSignals(true);
@@ -810,9 +856,12 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
 				if(checkable_items)
 				{
-					if((oid > import_helper.getLastSystemOID()) ||
-						 (obj_type==ObjectType::Schema && name==QString("public")) ||
-						 (obj_type==ObjectType::Column && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID()))
+					/* If the current import helper has objects filter we will not mark the items in the tree as check
+					 * since only the ones matching the object types are checked in the final step of the tree creation */
+					if(!has_obj_filters &&
+						 ((oid > import_helper.getLastSystemOID()) ||
+							(obj_type==ObjectType::Schema && name==QString("public")) ||
+							(obj_type==ObjectType::Column && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID())))
 					{
 						item->setCheckState(0, Qt::Checked);
 						child_checked=true;

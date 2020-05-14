@@ -19,6 +19,16 @@
     %end
      [ ex.oid ] {oid-filter-op} $sp {last-sys-oid}
   %end
+  
+  %if {name-filter} %then
+    %if {last-sys-oid} %or {schema} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {name-filter} )
+  %end
 
 %else
     %if {attribs} %and ({pgsql-ver} != "9.0")  %then
