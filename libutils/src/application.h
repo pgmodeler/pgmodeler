@@ -29,6 +29,14 @@
 #include <QApplication>
 
 class Application: public QApplication {
+	protected:
+		/*! \brief Creates the pgModeler's configuration dir on user's local storage.
+		 * The output path is platform dependant and is determined by GlobalAttributes::getConfigurationsDir() */
+		void createUserConfiguration();
+
+		//! \brief Copy files from a path to another recursively
+		void copyFilesRecursively(const QString &src_path, const QString &dst_path);
+
 	public:
 		Application(int & argc, char ** argv);
 };

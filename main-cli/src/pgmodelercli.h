@@ -168,12 +168,13 @@ class PgModelerCliApp: public Application {
 		NoForceObjRecreation,
 		NoUnmodObjRecreation,
 
+		CreateConfigs,
+
 		TagExpr,
 		EndTagExpr,
 		AttributeExpr,
 
 		InvalidFilter,
-
 		MsgFileAssociated,
 		MsgNoFileAssociation;
 
@@ -228,6 +229,8 @@ class PgModelerCliApp: public Application {
 
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide);
+
+		void createConfigurations();
 
 	public:
 		PgModelerCliApp(int argc, char **argv);

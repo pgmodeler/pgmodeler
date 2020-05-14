@@ -81,6 +81,7 @@ const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
 const QString PgModelerCliApp::NoCascadeDropTrunc("--no-cascade");
 const QString PgModelerCliApp::NoForceObjRecreation("--no-force-recreation");
 const QString PgModelerCliApp::NoUnmodObjRecreation("--no-unmod-recreation");
+const QString PgModelerCliApp::CreateConfigs("--create-configs");
 
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
@@ -333,6 +334,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[NoIndex]=false;
 	long_opts[Splitted]=false;
 	long_opts[SystemWide]=false;
+	long_opts[CreateConfigs]=false;
 
 	short_opts[Input]="-if";
 	short_opts[Output]="-of";
@@ -390,6 +392,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[NoIndex]="-ni";
 	short_opts[Splitted]="-sp";
 	short_opts[SystemWide]="-sw";
+	short_opts[CreateConfigs]="-cc";
 }
 
 bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
@@ -498,11 +501,15 @@ void PgModelerCliApp::showMenu()
 	out << endl;
 
 #ifndef Q_OS_MAC
-	out << tr("Miscellaneous options: ") << endl;
+	out << tr("File association options: ") << endl;
 	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
 	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << endl;
 	out << endl;
 #endif
+	out << tr("Miscellaneous options: ") << endl;
+	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << endl;
+	out << endl;
+
 	out << endl;
 	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjs) << endl;
 	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << endl;
@@ -596,7 +603,8 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 	{
 		int mode_cnt=0, other_modes_cnt=0;
 		bool fix_model=(opts.count(FixModel) > 0), upd_mime=(opts.count(DbmMimeType) > 0),
-				import_db=(opts.count(ImportDb) > 0), diff=(opts.count(Diff) > 0);
+				import_db=(opts.count(ImportDb) > 0), diff=(opts.count(Diff) > 0),
+				create_configs=(opts.count(CreateConfigs) > 0);
 
 		//Checking if multiples export modes were specified
 		mode_cnt+=opts.count(ExportToFile);
@@ -609,6 +617,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		other_modes_cnt+=opts.count(ImportDb);
 		other_modes_cnt+=opts.count(Diff);
 		other_modes_cnt+=opts.count(DbmMimeType);
+		other_modes_cnt+=opts.count(CreateConfigs);
 
 		if(opts.count(ZoomFactor))
 			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
@@ -616,19 +625,19 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(other_modes_cnt==0 && mode_cnt==0)
 			throw Exception(tr("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff)) || (mode_cnt==0 && other_modes_cnt > 1))
-			throw Exception(tr("Export, fix model, import database, diff and update mime operations can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff || create_configs)) || (mode_cnt==0 && other_modes_cnt > 1))
+			throw Exception(tr("Export, fix model, import database, diff, update mime operations and configuration creation can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!fix_model && !upd_mime && mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && opts[Input].isEmpty())
+		if(!upd_mime && !import_db && !diff && !create_configs && opts[Input].isEmpty())
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && opts[InputDb].isEmpty())
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !diff && opts[Output].isEmpty())
+		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && opts[Output].isEmpty())
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
@@ -645,7 +654,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
 			throw Exception(tr("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-			
+
 		if(opts.count(Diff))
 		{
 			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
@@ -712,6 +721,8 @@ int PgModelerCliApp::exec()
 				fixModel();
 			else if(parsed_opts.count(DbmMimeType))
 				updateMimeType();
+			else if(parsed_opts.count(CreateConfigs))
+				createConfigurations();
 			else if(parsed_opts.count(ImportDb))
 				importDatabase();
 			else if(parsed_opts.count(Diff))
@@ -1916,5 +1927,24 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 
 		s.sync();
 		itr++;
+	}
+}
+
+void PgModelerCliApp::createConfigurations()
+{
+	printMessage(tr("Creating configuration files..."));
+	printMessage(tr("Configurations path: %1").arg(GlobalAttributes::getConfigurationsDir()));
+
+	if(QDir(GlobalAttributes::getConfigurationsDir()).exists())
+		throw Exception(tr("Configuration files already exist!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+		createUserConfiguration();
+		printMessage(tr("Configuration files successfully created!\n"));
+	}
+	catch (Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
