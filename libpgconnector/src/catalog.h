@@ -52,8 +52,8 @@ class Catalog {
 		attribute is use when filtering objects that are created by extensions */
 		QString ext_obj_oids;
 
-		//! \brief Stores the name filters for each type of object. (See setObjectsFilter())
-		map<ObjectType, QStringList> objs_filter;
+		//! \brief Stores the name filters for each type of object. (See setObjectFilters())
+		map<ObjectType, QStringList> obj_filters;
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
@@ -167,7 +167,7 @@ class Catalog {
 		void setQueryFilter(unsigned filter);
 
 		//! \brief Configures the objects name filtering
-		void setObjectsFilter(QStringList filters);
+		void setObjectFilters(QStringList filters);
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();
@@ -186,7 +186,7 @@ class Catalog {
 		unsigned getQueryFilter();
 
 		//! \brief Returns the configured objects a name filters
-		map<ObjectType, QStringList> getObjectsFilter();
+		map<ObjectType, QStringList> getObjectFilters();
 
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());

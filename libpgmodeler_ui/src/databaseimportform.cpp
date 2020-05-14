@@ -318,7 +318,7 @@ void DatabaseImportForm::listObjects()
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
-			import_helper->setObjectsFilter(objs_filter_wgt->getFilterString());
+			import_helper->getObjectFilters(objs_filter_wgt->getFilterString());
 
 			//List the objects using the static helper method
 			DatabaseImportForm::listObjects(*import_helper, db_objects_tw, true, true, false);
@@ -731,7 +731,28 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				task_prog_wgt.progress_pb->setValue(100);
 				task_prog_wgt.close();
 			}
+
+			if(checkable_items)
+			{
+				map<ObjectType, QStringList> objs_filter = import_helper.getObjectFilters();
+
+				// If we have filters configured only the items matching the object types are checked (and their parents too)
+				if(!objs_filter.empty())
+				{
+					ObjectType obj_type;
+					QList<QTreeWidgetItem *> list = tree_wgt->findItems("*", Qt::MatchWrap | Qt::MatchWildcard | Qt::MatchRecursive);
+
+					for(auto &item : list)
+					{
+						obj_type = static_cast<ObjectType>(item->data(ObjectTypeId, Qt::UserRole).toUInt());
+
+						if(!item->isDisabled() && objs_filter.count(obj_type))
+							item->setCheckState(0, Qt::Checked);
+					}
+				}
+			}
 		}
+
 	}
 	catch(Exception &e)
 	{
@@ -759,6 +780,7 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 		QList<QTreeWidgetItem*> groups_list;
 		unsigned oid=0;
 		int start=-1, end=-1;
+		bool has_obj_filters = !import_helper.getObjectFilters().empty();
 
 		grp_fnt.setItalic(true);
 		tree_wgt->blockSignals(true);
@@ -818,9 +840,12 @@ vector<QTreeWidgetItem *> DatabaseImportForm::updateObjectsTree(DatabaseImportHe
 
 				if(checkable_items)
 				{
-					if((oid > import_helper.getLastSystemOID()) ||
-						 (obj_type==ObjectType::Schema && name==QString("public")) ||
-						 (obj_type==ObjectType::Column && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID()))
+					/* If the current import helper has objects filter we will not mark the items in the tree as check
+					 * since only the ones matching the object types are checked in the final step of the tree creation */
+					if(!has_obj_filters &&
+						 ((oid > import_helper.getLastSystemOID()) ||
+							(obj_type==ObjectType::Schema && name==QString("public")) ||
+							(obj_type==ObjectType::Column && root && root->data(0, Qt::UserRole).toUInt() > import_helper.getLastSystemOID())))
 					{
 						item->setCheckState(0, Qt::Checked);
 						child_checked=true;

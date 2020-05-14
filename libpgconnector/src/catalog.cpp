@@ -142,14 +142,14 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectsFilter(QStringList filters)
+void Catalog::setObjectFilters(QStringList filters)
 {
 	QStringList values;
 	QString pattern, mode, sql_filter;
 	ObjectType obj_type;
 	attribs_map fmt_filter;
 
-	objs_filter.clear();
+	obj_filters.clear();
 
 	for(auto &filter : filters)
 	{
@@ -171,7 +171,7 @@ void Catalog::setObjectsFilter(QStringList filters)
 		else
 			sql_filter = QString("%1 SIMILAR TO E'%2'").arg(name_fields[obj_type]).arg(pattern);
 
-		objs_filter[obj_type].append(sql_filter);
+		obj_filters[obj_type].append(sql_filter);
 	}
 }
 
@@ -235,8 +235,8 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 		attribs[Attributes::ExcBuiltinArrays]=Attributes::True;
 
 	// If there's a name filter configured for the object type
-	if(objs_filter.count(obj_type))
-		attribs[Attributes::NameFilter] = objs_filter[obj_type].join(" OR ");
+	if(obj_filters.count(obj_type))
+		attribs[Attributes::NameFilter] = obj_filters[obj_type].join(" OR ");
 
 	//Checking if the custom filter expression is present
 	if(attribs.count(Attributes::CustomFilter))
@@ -321,9 +321,9 @@ unsigned Catalog::getQueryFilter()
 	return filter;
 }
 
-map<ObjectType, QStringList> Catalog::getObjectsFilter()
+map<ObjectType, QStringList> Catalog::getObjectFilters()
 {
-	return objs_filter;
+	return obj_filters;
 }
 
 void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
@@ -885,7 +885,7 @@ void Catalog::operator = (const Catalog &catalog)
 		this->exclude_sys_objs=catalog.exclude_sys_objs;
 		this->exclude_array_types=catalog.exclude_array_types;
 		this->list_only_sys_objs=catalog.list_only_sys_objs;
-		this->objs_filter=catalog.objs_filter;
+		this->obj_filters=catalog.obj_filters;
 		this->connection.connect();
 	}
 	catch(Exception &e)
