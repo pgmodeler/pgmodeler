@@ -318,7 +318,7 @@ void DatabaseImportForm::listObjects()
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
-			import_helper->getObjectFilters(objs_filter_wgt->getFilterString());
+			import_helper->setObjectFilters(objs_filter_wgt->getFilterString());
 
 			if(import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
 			{

@@ -94,7 +94,10 @@ class PgModelerCliApp: public Application {
 		bool silent_mode;
 
 		//! \brief Stores the xml code for the objects being fixed
-		QStringList objs_xml;
+		QStringList objs_xml,
+
+		//! \brief Stores the object filters for reverse engineering
+		obj_filters;
 
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
@@ -147,6 +150,8 @@ class PgModelerCliApp: public Application {
 		ImportSystemObjs,
 		ImportExtensionObjs,
 		DebugMode,
+		FilterObjs,
+		IgnoreNonMatches,
 
 		CompareTo,
 		SaveDiff,
@@ -166,6 +171,8 @@ class PgModelerCliApp: public Application {
 		TagExpr,
 		EndTagExpr,
 		AttributeExpr,
+
+		InvalidFilter,
 
 		MsgFileAssociated,
 		MsgNoFileAssociation;

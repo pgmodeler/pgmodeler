@@ -250,6 +250,12 @@ class Catalog {
 		//! \brief Returns the current status of cached catalog queries
 		static bool isCachedQueriesEnabled();
 
+		//! \brief Returns the object types that are able to be filtered
+		static vector<ObjectType> getFilterableObjectTypes();
+
+		//! \brief Returns the object schema names that are able to be filtered
+		static QStringList getFilterableObjectNames();
+
 		//! \brief Performs the copy between two catalogs
 		void operator = (const Catalog &catalog);
 };

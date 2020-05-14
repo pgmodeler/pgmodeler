@@ -34,15 +34,7 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
 {
 	QComboBox *combo = new QComboBox;
-	vector<ObjectType> obj_types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
-																																		ObjectType::BaseRelationship,
-																																		ObjectType::Textbox,
-																																		ObjectType::GenericSql,
-																																		ObjectType::Permission,
-																																		ObjectType::Database,
-																																		ObjectType::Cast,
-																																		ObjectType::UserMapping,
-																																		ObjectType::Tag});
+	vector<ObjectType> obj_types = Catalog::getFilterableObjectTypes();
 
 	for(auto &obj_type : obj_types)
 		combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),

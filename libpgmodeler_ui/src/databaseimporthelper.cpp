@@ -662,7 +662,7 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
-void DatabaseImportHelper::getObjectFilters(QStringList filter)
+void DatabaseImportHelper::setObjectFilters(QStringList filter)
 {
 	catalog.setObjectFilters(filter);
 }

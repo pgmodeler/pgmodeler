@@ -907,6 +907,35 @@ QStringList Catalog::parseIndexExpressions(const QString &expr)
 	return expressions;
 }
 
+vector<ObjectType> Catalog::getFilterableObjectTypes()
+{
+	static vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
+																																			 ObjectType::BaseRelationship,																										ObjectType::Textbox,
+																																			 ObjectType::GenericSql,
+																																			 ObjectType::Permission,
+																																			 ObjectType::Database,
+																																			 ObjectType::Cast,
+																																			 ObjectType::UserMapping,
+																																			 ObjectType::Tag});
+
+	return types;
+}
+
+QStringList Catalog::getFilterableObjectNames()
+{
+	static QStringList names;
+
+	if(names.isEmpty())
+	{
+		for(auto &type : getFilterableObjectTypes())
+			names.append(BaseObject::getSchemaName(type));
+
+		names.sort();
+	}
+
+	return names;
+}
+
 void Catalog::operator = (const Catalog &catalog)
 {
 	try
