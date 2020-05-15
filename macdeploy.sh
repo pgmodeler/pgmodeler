@@ -49,7 +49,7 @@ echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
   QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o -E '[0-9]\.[0-9]+\.[0-9]+'`
-  QT_VER=${QT_VER:0:5}
+  QT_VER=${QT_VER:0:6}
 fi
 
 # If Qt was not found in system path
