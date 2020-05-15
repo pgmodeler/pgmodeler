@@ -539,9 +539,10 @@ void PgModelerCliApp::showMenu()
 	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
 	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
 	out << endl;
-	out << tr("** When running the diff using two databases (%1 and %2) there's the need to specify two connections/aliases. ").arg(InputDb).arg(CompareTo) << endl;
-	out << tr("   If only one connection is set it will be used to import the input database as well to retrieve database used in the comparison.") << endl;
-	out << tr("   A second connection can be specified by appending a 1 on any connection configuration parameter listed above.") << endl;
+	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << endl;
+	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << endl;
+	out << tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above.") << endl;
+	out << tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo) << endl;
 	out << endl;
 }
 
@@ -1933,7 +1934,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 void PgModelerCliApp::createConfigurations()
 {
 	printMessage(tr("Creating configuration files..."));
-	printMessage(tr("Configurations path: %1").arg(GlobalAttributes::getConfigurationsDir()));
+	printMessage(tr("Destination path: %1").arg(GlobalAttributes::getConfigurationsDir()));
 
 	if(QDir(GlobalAttributes::getConfigurationsDir()).exists())
 		throw Exception(tr("Configuration files already exist!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
