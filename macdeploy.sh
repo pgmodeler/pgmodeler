@@ -42,9 +42,9 @@ BUNDLE="$INSTALL_ROOT/$APP_PREFIX/$APPNAME.app"
 
 clear
 echo
-echo "pgModeler Mac OSX deployment script"
+echo "pgModeler macOS deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
@@ -71,6 +71,7 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
   echo "Building snapshot version. (Found $SNAPSHOT_OPT)"
