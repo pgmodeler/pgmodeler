@@ -1083,14 +1083,15 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 	Parameter param;
 	PgSqlType type;
 	unsigned dim=0;
-	QStringList param_types, param_names, param_modes, param_def_vals, param_xmls;
-	QString param_tmpl_name=QString("_param%1");
+	QStringList param_types, param_names, param_modes,
+			param_def_vals, param_xmls, used_names;
+	QString param_tmpl_name=QString("_param%1"), pname;
 	vector<Parameter> parameters;
 
 	try
 	{
 		param_types=getTypes(attribs[Attributes::ArgTypes], false);
-		param_names=Catalog::parseArrayValues(attribs[Attributes::ArgNames]);
+		param_names=Catalog::parseArrayValues(attribs[Attributes::ArgNames]);		
 		param_modes=Catalog::parseArrayValues(attribs[Attributes::ArgModes]);
 		param_def_vals=Catalog::parseDefaultValues(attribs[Attributes::ArgDefaults]);
 
@@ -1120,15 +1121,22 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 
 			if(!param_names.isEmpty())
 			{
-				param_names[i].remove('"');
+				pname = param_names[i].remove('"');
 
-				if(param_names[i].isEmpty())
+				if(pname.isEmpty())
 					param.setName(param_tmpl_name.arg(i+1));
+				/* In some cases fucntions came with duplicated names
+				 * so we solve this duplication in order the function to
+				 * be created correctly */
+				else if(used_names.indexOf(pname) >= 0)
+					param.setName(QString("%1%2").arg(pname).arg(i+1));
 				else
-					param.setName(param_names[i]);
+					param.setName(pname);
 			}
 			else
 				param.setName(param_tmpl_name.arg(i+1));
+
+			used_names.append(param.getName());
 
 			//Parameter modes: i = IN, o = OUT, b = INOUT, v = VARIADIC
 			if(!param_modes.isEmpty())
