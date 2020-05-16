@@ -130,7 +130,10 @@ class Catalog {
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
 		static const QString PgModelerTempDbObj,
 
-		//! \brief Indicates the regexp/similar to/wildcard filtering mode in the object listing
+		//! \brief Indicates the ilike/wildcard filtering mode in the object listing
+		FilterLike,
+
+		//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
 		FilterRegExp,
 
 		//! \brief Indicates the exact match filtering mode in the object listing

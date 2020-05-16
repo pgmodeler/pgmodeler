@@ -25,6 +25,7 @@ const QString Catalog::BoolField("_bool");
 const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
 const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
+const QString Catalog::FilterLike("like");
 const QString Catalog::FilterRegExp("regexp");
 const QString Catalog::FilterExact("exact");
 
@@ -163,13 +164,15 @@ void Catalog::setObjectFilters(QStringList filters)
 		mode = values[2];
 
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() ||
-			 (mode != FilterExact && mode != FilterRegExp))
+			 (mode != FilterExact && mode != FilterLike && mode != FilterRegExp))
 			continue;
 
 		if(mode == FilterExact)
 			sql_filter = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(pattern);
+		else if(mode == FilterLike)
+			sql_filter = QString("%1 ILIKE E'%2'").arg(name_fields[obj_type]).arg(pattern);
 		else
-			sql_filter = QString("%1 SIMILAR TO E'%2'").arg(name_fields[obj_type]).arg(pattern);
+			sql_filter = QString("%1 ~* E'%2'").arg(name_fields[obj_type]).arg(pattern);
 
 		obj_filters[obj_type].append(sql_filter);
 	}

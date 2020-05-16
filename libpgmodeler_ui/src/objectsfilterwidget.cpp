@@ -51,7 +51,7 @@ QStringList ObjectsFilterWidget::getFilterString()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { Catalog::FilterExact, Catalog::FilterRegExp };
+			modes = { Catalog::FilterExact, Catalog::FilterLike, Catalog::FilterRegExp };
 	ObjectType obj_type;
 	QString pattern, mode;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
@@ -112,7 +112,7 @@ void ObjectsFilterWidget::addFilter()
 
 	combo = new QComboBox;
 	combo->setStyleSheet("border: 0px");
-	combo->addItems({ tr("Exact match"), tr("Regular expression") });
+	combo->addItems({ tr("Exact"), tr("Like"), tr("Regexp") });
 	filters_tbw->setCellWidget(row, 2, combo);
 
 	rem_tb = new QToolButton;

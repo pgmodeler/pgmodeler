@@ -532,9 +532,12 @@ void PgModelerCliApp::showMenu()
 	out << endl;
 	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << endl;
 	out << endl;
-	out << tr("   * The `mode' is the way the pattern is matched. This one accepts two values: ") << endl;
+	out << tr("   * The `mode' is the way the pattern is matched. This one accepts three values: ") << endl;
 	out << tr("     > `%1' causes the pattern to be compared exactly to the objects names.").arg(Catalog::FilterExact) << endl;
-	out << tr("     > `%1' causes the pattern to be treated as a regular expression while matching objects names.").arg(Catalog::FilterRegExp) << endl;
+	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterLike) << endl;
+	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << endl;
+	out << endl;
+	out << tr("   * NOTE: except for the mode `%1' all comparisons are case insensitive.").arg(Catalog::FilterExact) << endl;
 	out << endl;
 	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
 	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
