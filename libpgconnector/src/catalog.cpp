@@ -146,7 +146,7 @@ void Catalog::setQueryFilter(unsigned filter)
 
 void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 {
-	QStringList values;
+	QStringList values, modes = { FilterExact, FilterLike, FilterRegExp };
 	QString pattern, mode, sql_filter;
 	ObjectType obj_type;
 	attribs_map fmt_filter;
@@ -168,15 +168,16 @@ void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 		values = filter.split(FilterSeparator);
 
 		if(values.size() != 3)
-			continue;
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
+											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
 
-		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() ||
-			 (mode != FilterExact && mode != FilterLike && mode != FilterRegExp))
-			continue;
+		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
+											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(mode == FilterExact)
 			sql_filter = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(pattern);

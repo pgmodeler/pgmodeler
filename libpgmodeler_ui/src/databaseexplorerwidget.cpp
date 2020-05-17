@@ -1858,7 +1858,7 @@ void DatabaseExplorerWidget::loadObjectSource()
 																		show_ext_objs->isChecked(),
 																		true, false, false, false, false);
 
-				import_hlp.setSelectedOIDs(&dbmodel, {{ObjectType::Database, {db_oid}}, {obj_type,{oid}}}, {});
+				import_hlp.setSelectedOIDs(&dbmodel, {{ObjectType::Database, {db_oid}}, {obj_type, {oid}}}, {});
 
 				sys_oid=import_hlp.getLastSystemOID();
 

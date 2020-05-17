@@ -1000,11 +1000,20 @@ void DatabaseImportHelper::createRole(attribs_map &attribs)
 	try
 	{
 		QString role_types[]={ Attributes::RefRoles,
-							   Attributes::AdminRoles,
-							   Attributes::MemberRoles };
+													 Attributes::AdminRoles,
+													 Attributes::MemberRoles };
+		QStringList rl_oids, rl_names;
 
 		for(unsigned i=0; i < 3; i++)
-			attribs[role_types[i]]=getObjectNames(attribs[role_types[i]]).join(',');
+		{
+			rl_oids = Catalog::parseArrayValues(attribs[role_types[i]]);
+
+			for(auto &rl_oid : rl_oids)
+				rl_names.append(getDependencyObject(rl_oid, ObjectType::Role, false, auto_resolve_deps, false));
+
+			attribs[role_types[i]]=rl_names.join(',');
+			rl_names.clear();
+		}
 
 		loadObjectXML(ObjectType::Role, attribs);
 		role=dbmodel->createRole();

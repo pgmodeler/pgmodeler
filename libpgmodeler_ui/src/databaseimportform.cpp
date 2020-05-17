@@ -141,50 +141,60 @@ void DatabaseImportForm::listFilteredObjects()
 	int row = 0;
 	ObjectType obj_type;
 
-	obj_attrs = import_helper->getObjects(types);
-	filtered_objs_tbw->clearContents();
-	filtered_objs_tbw->setRowCount(0);
-
-	filtered_objs_tbw->setUpdatesEnabled(false);
-	filtered_objs_tbw->setSortingEnabled(false);
-
-	for(auto &attr : obj_attrs)
+	try
 	{
-		filtered_objs_tbw->insertRow(row);
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		obj_attrs = import_helper->getObjects(types);
+		filtered_objs_tbw->clearContents();
+		filtered_objs_tbw->setRowCount(0);
 
-		// Object name column
-		item = new QTableWidgetItem;
-		item->setText(attr[Attributes::Name]);
-		item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
-		item->setCheckState(Qt::Checked);
-		filtered_objs_tbw->setItem(row, 0, item);
+		filtered_objs_tbw->setUpdatesEnabled(false);
+		filtered_objs_tbw->setSortingEnabled(false);
 
-		// Object type column
-		item = new QTableWidgetItem;
-		obj_type = static_cast<ObjectType>(attr[Attributes::ObjectType].toUInt());
-		item->setText(BaseObject::getTypeName(obj_type));
-		item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
-		item->setData(Qt::UserRole, enum_cast(obj_type));
-		filtered_objs_tbw->setItem(row, 1, item);
+		for(auto &attr : obj_attrs)
+		{
+			filtered_objs_tbw->insertRow(row);
 
-		// Parent name column
-		item = new QTableWidgetItem;
-		item->setText(attr[Attributes::Parent]);
-		filtered_objs_tbw->setItem(row, 2, item);
+			// Object name column
+			item = new QTableWidgetItem;
+			item->setText(attr[Attributes::Name]);
+			item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
+			item->setCheckState(Qt::Checked);
+			filtered_objs_tbw->setItem(row, 0, item);
 
-		// Parent type column
-		item = new QTableWidgetItem;
-		obj_type = BaseObject::getObjectType(attr[Attributes::ParentType]);
-		item->setText(BaseObject::getTypeName(obj_type));
-		item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
-		filtered_objs_tbw->setItem(row, 3, item);
+			// Object type column
+			item = new QTableWidgetItem;
+			obj_type = static_cast<ObjectType>(attr[Attributes::ObjectType].toUInt());
+			item->setText(BaseObject::getTypeName(obj_type));
+			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
+			item->setData(Qt::UserRole, enum_cast(obj_type));
+			filtered_objs_tbw->setItem(row, 1, item);
 
-		row++;
+			// Parent name column
+			item = new QTableWidgetItem;
+			item->setText(attr[Attributes::Parent]);
+			filtered_objs_tbw->setItem(row, 2, item);
+
+			// Parent type column
+			item = new QTableWidgetItem;
+			obj_type = BaseObject::getObjectType(attr[Attributes::ParentType]);
+			item->setText(BaseObject::getTypeName(obj_type));
+			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
+			filtered_objs_tbw->setItem(row, 3, item);
+
+			row++;
+		}
+
+		filtered_objs_tbw->setUpdatesEnabled(true);
+		filtered_objs_tbw->setSortingEnabled(true);
+		filtered_objs_tbw->resizeColumnsToContents();
+		QApplication::restoreOverrideCursor();
 	}
-
-	filtered_objs_tbw->setUpdatesEnabled(true);
-	filtered_objs_tbw->setSortingEnabled(true);
-	filtered_objs_tbw->resizeColumnsToContents();
+	catch(Exception &e)
+	{
+		QApplication::restoreOverrideCursor();
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void DatabaseImportForm::updateProgress(int progress, QString msg, ObjectType obj_type)
@@ -452,6 +462,7 @@ Do you really want to proceed?"),
 			else
 			{
 				//List the objects using the static helper method
+				db_objects_tw->clear();
 				filtered_objs_tbw->clearContents();
 				filtered_objs_tbw->setRowCount(0);
 				db_objects_stw->setCurrentIndex(0);

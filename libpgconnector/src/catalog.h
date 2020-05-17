@@ -172,7 +172,7 @@ class Catalog {
 		//! \brief Configures the catalog query filter
 		void setQueryFilter(unsigned filter);
 
-		//! \brief Configures the objects name filtering
+		//! \brief Configures the objects name filtering. Raises an exception when detecting malformed filters
 		void setObjectFilters(QStringList filters, bool ignore_non_matches);
 
 		//! \brief Returns the last system object oid registered on the database
