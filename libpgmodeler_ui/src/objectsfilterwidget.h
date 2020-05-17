@@ -46,6 +46,9 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		//! brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
 		QStringList getFilterString();
 
+		bool isIgnoreNonMatches();
+		bool hasFiltersConfigured();
+
 	private slots:
 		void addFilter();
 		void removeFilter();

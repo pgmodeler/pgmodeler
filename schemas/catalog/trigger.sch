@@ -3,7 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT tg.oid, tgname AS name FROM pg_trigger AS tg
+  [SELECT tg.oid, tgname AS name, tb.oid::regclass::text AS parent, 'table' AS parent_type
+    FROM pg_trigger AS tg
     LEFT JOIN pg_class AS tb ON tg.tgrelid = tb.oid AND relkind IN ('r','v','m','f') ]
 
   %if {schema} %then

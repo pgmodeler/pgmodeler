@@ -17,11 +17,15 @@
         ELSE oprright::regtype::varchar
     END
         
-    || ')' AS name FROM pg_operator AS op ]
+    || ')' AS name, 
+    
+    ns.nspname AS parent, 'schema' AS parent_type
+    
+    FROM pg_operator AS op 
+    LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON op.oprnamespace = ns.oid
-       WHERE oprcode > 0 AND ns.nspname = ] '{schema}'
+    [ WHERE oprcode > 0 AND ns.nspname = ] '{schema}'
   %else
     [ WHERE oprcode > 0 ]
   %end

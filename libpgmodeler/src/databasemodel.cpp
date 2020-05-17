@@ -3604,7 +3604,8 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				.arg(BaseObject::getTypeName(obj_type)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!object->getSchema() && BaseObject::acceptsSchema(obj_type_aux))
+	//Schema on extensions are optional
+	else if(!object->getSchema() && (BaseObject::acceptsSchema(obj_type_aux) && obj_type_aux != ObjectType::Extension))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvObjectAllocationNoSchema)
 						.arg(object->getName())

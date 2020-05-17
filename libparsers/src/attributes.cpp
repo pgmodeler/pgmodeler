@@ -398,6 +398,7 @@ namespace Attributes {
 	ParamOut("out"),
 	ParamVariadic("variadic"),
 	Parent("parent"),
+	ParentType("parent-type"),
 	Parents("parents"),
 	Parsable("parsable"),
 	PartialMatch("partial-match"),

@@ -151,7 +151,7 @@ class PgModelerCliApp: public Application {
 		ImportExtensionObjs,
 		DebugMode,
 		FilterObjs,
-		IgnoreNonMatches,
+		DiscardNonMatches,
 
 		CompareTo,
 		SaveDiff,
@@ -174,7 +174,6 @@ class PgModelerCliApp: public Application {
 		EndTagExpr,
 		AttributeExpr,
 
-		InvalidFilter,
 		MsgFileAssociated,
 		MsgNoFileAssociation;
 

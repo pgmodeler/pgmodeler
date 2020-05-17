@@ -55,8 +55,13 @@ QStringList ObjectsFilterWidget::getFilterString()
 	ObjectType obj_type;
 	QString pattern, mode;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
+	vector<ObjectType> sch_children = BaseObject::getChildObjectTypes(ObjectType::Schema),
+			tab_children = BaseObject::getChildObjectTypes(ObjectType::Table),
+			view_children = BaseObject::getChildObjectTypes(ObjectType::View),
+			ftab_children =  BaseObject::getChildObjectTypes(ObjectType::ForeignTable),
+			sel_types;
 
-	/* Workround: Forcing any uncommited data on the filters_tbw to be commited
+	/* Workround: Forcing any uncommitted data on the filters_tbw to be commited
 	 * by changing the current model index. This seems force the calling of commitData()
 	 * on QTableWidget. This was needed because if the user activates other widgets somewhere
 	 * and there's still an item in edition (in this case the pattern) that text being edit
@@ -70,6 +75,8 @@ QStringList ObjectsFilterWidget::getFilterString()
 		mode_cmb = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
 
 		obj_type = static_cast<ObjectType>(object_cmb->currentData().toUInt());
+		sel_types.push_back(obj_type);
+
 		curr_filter.append(BaseObject::getSchemaName(obj_type));
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
@@ -78,7 +85,61 @@ QStringList ObjectsFilterWidget::getFilterString()
 		curr_filter.clear();
 	}
 
+	/* Workaround: Creating special filters to retrieve the parents of the objects configured in the other filters (above).
+	 * This is done due to the way the object tree is constructed from root to leafs in DatabasImportForm and since we don't know
+	 * if a parent has childs until we retrieve the childs themselves we need to force the retrieval of the parents */
+	/*bool add_sch_filter = false;
+	QString tmpl_filter = QString("%1:%:%2"),
+			tmpl_regexp = QString("(%1)(.)+");
+
+	for(auto &type : sel_types)
+	{
+		if(TableObject::isTableObject(type))
+		{
+			if(filters.indexOf(QRegExp(tmpl_regexp.arg(BaseObject::getSchemaName(ObjectType::Table)))) < 0 &&
+				 std::find(tab_children.begin(), tab_children.end(), type) != tab_children.end())
+			{
+				add_sch_filter = true;
+				filters.append(tmpl_filter
+											 .arg(BaseObject::getSchemaName(ObjectType::Table))
+											 .arg(Catalog::FilterLike));
+			}
+
+			if(filters.indexOf(QRegExp(tmpl_regexp.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) < 0 &&
+				 std::find(ftab_children.begin(), ftab_children.end(), type) != ftab_children.end())
+			{
+				add_sch_filter = true;
+				filters.append(tmpl_filter
+											 .arg(BaseObject::getSchemaName(ObjectType::ForeignTable))
+											 .arg(Catalog::FilterLike));
+			}
+
+			if(filters.indexOf(QRegExp(tmpl_regexp.arg(BaseObject::getSchemaName(ObjectType::View)))) < 0 &&
+				 std::find(view_children.begin(), view_children.end(), type) != view_children.end())
+			{
+				add_sch_filter = true;
+				filters.append(tmpl_filter
+											 .arg(BaseObject::getSchemaName(ObjectType::View))
+											 .arg(Catalog::FilterLike));
+			}
+		}
+
+		if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(ObjectType::Schema)))) < 0 &&
+			 (add_sch_filter || std::find(sch_children.begin(), sch_children.end(), type) != sch_children.end()))
+		{
+			add_sch_filter = false;
+			filters.append(tmpl_filter
+										 .arg(BaseObject::getSchemaName(ObjectType::Schema))
+										 .arg(Catalog::FilterLike));
+		}
+	}*/
+
 	return filters;
+}
+
+bool ObjectsFilterWidget::isIgnoreNonMatches()
+{
+	return ignore_non_matches_chk->isChecked();
 }
 
 bool ObjectsFilterWidget::eventFilter(QObject *object, QEvent *event)

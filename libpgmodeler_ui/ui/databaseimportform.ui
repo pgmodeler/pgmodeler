@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
+    <width>763</width>
     <height>617</height>
    </rect>
   </property>
@@ -83,6 +83,9 @@
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="QTabWidget" name="settings_tbw">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -397,31 +400,6 @@
               <property name="bottomMargin">
                <number>4</number>
               </property>
-              <item row="0" column="0">
-               <widget class="QComboBox" name="database_cmb">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="insertPolicy">
-                 <enum>QComboBox::InsertAlphabetically</enum>
-                </property>
-                <property name="sizeAdjustPolicy">
-                 <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>18</width>
-                  <height>18</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="1">
                <widget class="QToolButton" name="refresh_tb">
                 <property name="enabled">
@@ -452,11 +430,310 @@
                </widget>
               </item>
               <item row="1" column="0" colspan="2">
-               <widget class="QWidget" name="objs_parent_wgt" native="true">
+               <widget class="QStackedWidget" name="db_objects_stw">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_6">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="page">
+                 <layout class="QVBoxLayout" name="verticalLayout_2">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QWidget" name="objs_parent_wgt" native="true">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_6">
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item row="1" column="0" colspan="2">
+                      <layout class="QHBoxLayout" name="horizontalLayout_3">
+                       <item>
+                        <widget class="QLabel" name="filter_lbl">
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="text">
+                          <string>Filter:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="filter_edt">
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
+                         <property name="clearButtonEnabled">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="by_oid_chk">
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
+                         <property name="toolTip">
+                          <string>Filter object by it's OID</string>
+                         </property>
+                         <property name="text">
+                          <string>By OID</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="0" column="0" colspan="2">
+                      <widget class="QTreeWidget" name="db_objects_tw">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Sunken</enum>
+                       </property>
+                       <property name="editTriggers">
+                        <set>QAbstractItemView::NoEditTriggers</set>
+                       </property>
+                       <property name="alternatingRowColors">
+                        <bool>true</bool>
+                       </property>
+                       <property name="selectionMode">
+                        <enum>QAbstractItemView::NoSelection</enum>
+                       </property>
+                       <property name="selectionBehavior">
+                        <enum>QAbstractItemView::SelectRows</enum>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>20</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                       <property name="textElideMode">
+                        <enum>Qt::ElideRight</enum>
+                       </property>
+                       <property name="rootIsDecorated">
+                        <bool>true</bool>
+                       </property>
+                       <property name="uniformRowHeights">
+                        <bool>true</bool>
+                       </property>
+                       <property name="sortingEnabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="animated">
+                        <bool>true</bool>
+                       </property>
+                       <property name="headerHidden">
+                        <bool>true</bool>
+                       </property>
+                       <property name="expandsOnDoubleClick">
+                        <bool>true</bool>
+                       </property>
+                       <property name="columnCount">
+                        <number>2</number>
+                       </property>
+                       <attribute name="headerVisible">
+                        <bool>false</bool>
+                       </attribute>
+                       <attribute name="headerMinimumSectionSize">
+                        <number>50</number>
+                       </attribute>
+                       <attribute name="headerShowSortIndicator" stdset="0">
+                        <bool>false</bool>
+                       </attribute>
+                       <column>
+                        <property name="text">
+                         <string notr="true">1</string>
+                        </property>
+                       </column>
+                       <column>
+                        <property name="text">
+                         <string notr="true">2</string>
+                        </property>
+                       </column>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="page_2">
+                 <layout class="QVBoxLayout" name="verticalLayout_3">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QTableWidget" name="filtered_objs_tbw">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::ExtendedSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                     <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <property name="gridStyle">
+                     <enum>Qt::SolidLine</enum>
+                    </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="horizontalHeaderMinimumSectionSize">
+                     <number>30</number>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderMinimumSectionSize">
+                     <number>30</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Object</string>
+                     </property>
+                     <property name="textAlignment">
+                      <set>AlignLeading|AlignVCenter</set>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../res/resources.qrc">
+                       <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Type</string>
+                     </property>
+                     <property name="textAlignment">
+                      <set>AlignLeading|AlignVCenter</set>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../res/resources.qrc">
+                       <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Parent</string>
+                     </property>
+                     <property name="textAlignment">
+                      <set>AlignLeading|AlignVCenter</set>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../res/resources.qrc">
+                       <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Type</string>
+                     </property>
+                     <property name="textAlignment">
+                      <set>AlignLeading|AlignVCenter</set>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../res/resources.qrc">
+                       <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QComboBox" name="database_cmb">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="insertPolicy">
+                 <enum>QComboBox::InsertAlphabetically</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>18</width>
+                  <height>18</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QWidget" name="buttons_wgt" native="true">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
@@ -469,127 +746,7 @@
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
-                 <item row="0" column="0" colspan="6">
-                  <widget class="QTreeWidget" name="db_objects_tw">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>300</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="editTriggers">
-                    <set>QAbstractItemView::NoEditTriggers</set>
-                   </property>
-                   <property name="alternatingRowColors">
-                    <bool>true</bool>
-                   </property>
-                   <property name="selectionMode">
-                    <enum>QAbstractItemView::NoSelection</enum>
-                   </property>
-                   <property name="selectionBehavior">
-                    <enum>QAbstractItemView::SelectRows</enum>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>20</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="textElideMode">
-                    <enum>Qt::ElideRight</enum>
-                   </property>
-                   <property name="rootIsDecorated">
-                    <bool>true</bool>
-                   </property>
-                   <property name="uniformRowHeights">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sortingEnabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="animated">
-                    <bool>true</bool>
-                   </property>
-                   <property name="headerHidden">
-                    <bool>true</bool>
-                   </property>
-                   <property name="expandsOnDoubleClick">
-                    <bool>true</bool>
-                   </property>
-                   <property name="columnCount">
-                    <number>2</number>
-                   </property>
-                   <attribute name="headerVisible">
-                    <bool>false</bool>
-                   </attribute>
-                   <attribute name="headerMinimumSectionSize">
-                    <number>50</number>
-                   </attribute>
-                   <attribute name="headerShowSortIndicator" stdset="0">
-                    <bool>false</bool>
-                   </attribute>
-                   <column>
-                    <property name="text">
-                     <string notr="true">1</string>
-                    </property>
-                   </column>
-                   <column>
-                    <property name="text">
-                     <string notr="true">2</string>
-                    </property>
-                   </column>
-                  </widget>
-                 </item>
-                 <item row="1" column="0" colspan="6">
-                  <layout class="QHBoxLayout" name="horizontalLayout_3">
-                   <item>
-                    <widget class="QLabel" name="filter_lbl">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="text">
-                      <string>Filter:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="filter_edt">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="by_oid_chk">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Filter object by it's OID</string>
-                     </property>
-                     <property name="text">
-                      <string>By OID</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="2" column="0">
+                 <item>
                   <spacer name="horizontalSpacer">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
@@ -602,7 +759,7 @@
                    </property>
                   </spacer>
                  </item>
-                 <item row="2" column="1">
+                 <item>
                   <widget class="QToolButton" name="select_all_tb">
                    <property name="enabled">
                     <bool>true</bool>
@@ -640,7 +797,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="2">
+                 <item>
                   <widget class="QToolButton" name="clear_all_tb">
                    <property name="enabled">
                     <bool>true</bool>
@@ -678,7 +835,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="3">
+                 <item>
                   <widget class="QToolButton" name="expand_all_tb">
                    <property name="enabled">
                     <bool>true</bool>
@@ -716,7 +873,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="4">
+                 <item>
                   <widget class="QToolButton" name="collapse_all_tb">
                    <property name="enabled">
                     <bool>true</bool>
@@ -754,14 +911,14 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="5">
+                 <item>
                   <spacer name="horizontalSpacer_2">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>77</width>
+                     <width>101</width>
                      <height>20</height>
                     </size>
                    </property>

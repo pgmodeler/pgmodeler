@@ -66,7 +66,7 @@ const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
 const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
 const QString PgModelerCliApp::DebugMode("--debug-mode");
 const QString PgModelerCliApp::FilterObjs("--filter-objs");
-const QString PgModelerCliApp::IgnoreNonMatches("--ignore-non-matches");
+const QString PgModelerCliApp::DiscardNonMatches("--discard-non-matches");
 const QString PgModelerCliApp::CompareTo("--compare-to");
 const QString PgModelerCliApp::SaveDiff("--save-diff");
 const QString PgModelerCliApp::ApplyDiff("--apply-diff");
@@ -86,8 +86,6 @@ const QString PgModelerCliApp::CreateConfigs("--create-configs");
 const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
-
-const QString PgModelerCliApp::InvalidFilter("__$invalid__filter$__");
 
 const QString PgModelerCliApp::MsgFileAssociated(QT_TR_NOOP("Database model files (.dbm) are already associated to pgModeler!"));
 const QString PgModelerCliApp::MsgNoFileAssociation(QT_TR_NOOP("There is no file association related to pgModeler and .dbm files!"));
@@ -314,7 +312,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[ImportSystemObjs]=false;
 	long_opts[ImportExtensionObjs]=false;
 	long_opts[FilterObjs]=true;
-	long_opts[IgnoreNonMatches]=false;
+	long_opts[DiscardNonMatches]=false;
 	long_opts[DebugMode]=false;
 	long_opts[CompareTo]=true;
 	long_opts[SaveDiff]=false;
@@ -373,7 +371,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[ImportSystemObjs]="-is";
 	short_opts[ImportExtensionObjs]="-ix";
 	short_opts[FilterObjs]="-fo";
-	short_opts[IgnoreNonMatches]="-ig";
+	short_opts[DiscardNonMatches]="-dn";
 	short_opts[DebugMode]="-d";
 	short_opts[CompareTo]="-ct";
 	short_opts[SaveDiff]="-sd";
@@ -480,7 +478,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
 	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
 	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << endl;
-	out << tr("  %1, %2\t    Objects that don't match the provided filter(s) are not imported.").arg(short_opts[IgnoreNonMatches]).arg(IgnoreNonMatches) << endl;
+	out << tr("  %1, %2\t    Objects that don't match the provided filter(s) are not imported.").arg(short_opts[DiscardNonMatches]).arg(DiscardNonMatches) << endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
 	out << endl;
 	out << tr("Diff options: ") << endl;
@@ -521,7 +519,7 @@ void PgModelerCliApp::showMenu()
 	{
 		fmt_types.append(type);
 		i++;
-		if(i % 6 == 0 || i == type_list.size() - 1)
+		if(i % 9 == 0 || i == type_list.size() - 1)
 		{
 			lines.append(QString("     > ") + fmt_types.join(", "));
 			fmt_types.clear();
@@ -695,17 +693,6 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			{
 				if(op.first.contains(FilterObjs))
 					obj_filters.append(op.second);
-			}
-
-			/* Doing a small hack in order to force only filtered object to be imported (and their dependencies)
-			 * by creating a invalid filter */
-			if(opts.count(IgnoreNonMatches))
-			{
-				for(auto &type : Catalog::getFilterableObjectNames())
-				{
-					if(obj_filters.indexOf(QRegExp(QString("(%1)(.)+").arg(type))) < 0)
-						obj_filters.append(QString("%1:%2:%3").arg(type).arg(InvalidFilter).arg(Catalog::FilterExact));
-				}
 			}
 		}
 
@@ -1489,7 +1476,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.setObjectFilters(obj_filters);
+		catalog.setObjectFilters(obj_filters, parsed_opts.count(DiscardNonMatches) > 0);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);

@@ -28,6 +28,7 @@ const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 const QString Catalog::FilterLike("like");
 const QString Catalog::FilterRegExp("regexp");
 const QString Catalog::FilterExact("exact");
+const QString Catalog::InvFilterPattern("__invalid__pattern__");
 
 attribs_map Catalog::catalog_queries;
 
@@ -143,7 +144,7 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters)
+void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 {
 	QStringList values;
 	QString pattern, mode, sql_filter;
@@ -152,11 +153,21 @@ void Catalog::setObjectFilters(QStringList filters)
 
 	obj_filters.clear();
 
+	// The non matches filter is only generated if there're filters configured
+	if(!filters.isEmpty() && ignore_non_matches)
+	{
+		for(auto &type : getFilterableObjectNames())
+		{
+			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(type))) < 0)
+				filters.append(QString("%1:%2:%3").arg(type).arg(InvFilterPattern).arg(Catalog::FilterExact));
+		}
+	}
+
 	for(auto &filter : filters)
 	{
 		values = filter.split(FilterSeparator);
 
-		if(values.size() < 3)
+		if(values.size() != 3)
 			continue;
 
 		obj_type = BaseObject::getObjectType(values[0]);
@@ -329,6 +340,20 @@ map<ObjectType, QStringList> Catalog::getObjectFilters()
 	return obj_filters;
 }
 
+vector<ObjectType> Catalog::getFilteredObjectTypes()
+{
+	vector<ObjectType> types;
+	QRegExp regexp = QRegExp(QString("(.)*(%1)(.)*").arg(InvFilterPattern));
+
+	for(auto &flt : obj_filters)
+	{
+		if(flt.second.indexOf(QRegExp(regexp)) < 0)
+			types.push_back(flt.first);
+	}
+
+	return types;
+}
+
 void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs)
 {
 	try
@@ -342,7 +367,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 
 		for(ObjectType type : types)
 		{
-			attribs=getObjectsNames(type, QString(), QString(), extra_attribs);
+			attribs = getObjectsNames(type, QString(), QString(), extra_attribs);
 
 			for(auto &attr : attribs)
 			{
@@ -414,7 +439,7 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 		extra_attribs[Attributes::Table]=tab_name;
 
 		for(auto &obj_type : obj_types)
-		{
+		{	
 			//Build the catalog query for the specified object type
 			sql=getCatalogQuery(QueryList, obj_type, false, extra_attribs);
 
@@ -442,11 +467,16 @@ vector<attribs_map> Catalog::getObjectsNames(vector<ObjectType> obj_types, const
 
 		if(res.accessTuple(ResultSet::FirstTuple))
 		{
+			QString obj_type_attr = QString(Attributes::ObjectType).replace('-', '_'),
+					parent_type_attr = QString(Attributes::ParentType).replace('-', '_');
+
 			do
 			{
 				attribs[Attributes::Oid]=res.getColumnValue(Attributes::Oid);
 				attribs[Attributes::Name]=res.getColumnValue(Attributes::Name);
-				attribs[Attributes::ObjectType]=res.getColumnValue(QString("object_type"));
+				attribs[Attributes::ObjectType]=res.getColumnValue(obj_type_attr);
+				attribs[Attributes::Parent]=res.getColumnValue(Attributes::Parent);
+				attribs[Attributes::ParentType]=res.getColumnValue(parent_type_attr);
 				objects.push_back(attribs);
 				attribs.clear();
 			}
@@ -655,7 +685,7 @@ vector<attribs_map> Catalog::getObjectsAttributes(ObjectType obj_type, const QSt
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e,
-						QApplication::translate("Catalog","Object type: %1","", -1).arg(BaseObject::getSchemaName(obj_type)));
+						QString("catalog: %1").arg(BaseObject::getSchemaName(obj_type)));
 	}
 }
 
@@ -918,6 +948,7 @@ vector<ObjectType> Catalog::getFilterableObjectTypes()
 																																			 ObjectType::Permission,
 																																			 ObjectType::Database,
 																																			 ObjectType::Cast,
+																																			 ObjectType::Column,
 																																			 ObjectType::UserMapping,
 																																			 ObjectType::Tag});
 

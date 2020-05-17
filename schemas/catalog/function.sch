@@ -11,12 +11,14 @@
 %end    
 
 %if {list} %then
-  [SELECT pr.oid,  proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name
-    FROM pg_proc AS pr ]
+  [SELECT pr.oid,  proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
+    ns.nspname AS parent,
+    'schema' AS parent_type
+    FROM pg_proc AS pr 
+    LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
   %if {schema} %then
-   [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-      WHERE ] {is-not-agg} [ AND ns.nspname = ] '{schema}'
+   [ WHERE ] {is-not-agg} [ AND ns.nspname = ] '{schema}'
   %else
    [ WHERE ] {is-not-agg}
   %end

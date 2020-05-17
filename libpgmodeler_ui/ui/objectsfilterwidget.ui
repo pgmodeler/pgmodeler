@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
+    <width>477</width>
     <height>425</height>
    </rect>
   </property>
@@ -146,19 +146,6 @@
    <item row="2" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>154</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="QToolButton" name="add_tb">
        <property name="text">
         <string>Add filter</string>
@@ -208,17 +195,14 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QCheckBox" name="ignore_non_matches_chk">
+       <property name="toolTip">
+        <string>When checked causes the objects not matching the filters to be not retrieved.</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>154</width>
-         <height>20</height>
-        </size>
+       <property name="text">
+        <string>Discard non matches</string>
        </property>
-      </spacer>
+      </widget>
      </item>
     </layout>
    </item>

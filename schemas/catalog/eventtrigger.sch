@@ -4,7 +4,9 @@
 
 %if ({pgsql-ver} >=f "9.3") %then
   %if {list} %then
-     [SELECT oid, evtname AS name FROM pg_event_trigger AS et ]
+     [SELECT oid, evtname AS name, 
+             current_database()  AS parent, 'database' AS parent_type 
+      FROM pg_event_trigger AS et ]
 
     %if {last-sys-oid} %then
      [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}

@@ -415,6 +415,7 @@ namespace Attributes {
 	ParamOut,
 	ParamVariadic,
 	Parent,
+	ParentType,
 	Parents,
 	Parsable,
 	PartialMatch,

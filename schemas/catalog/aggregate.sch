@@ -14,13 +14,16 @@
    CASE 
     WHEN array_length(proargtypes,1) = 0 THEN '*' 
     ELSE array_to_string(proargtypes::regtype] $ob $cb [,',')
-   END || ')'  AS name 
+   END || ')'  AS name,
+   
+   ns.nspname AS parent,
+   'schema' AS parent_type
     
-  FROM pg_proc AS pr ]
+  FROM pg_proc AS pr 
+  LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid
-       WHERE ] {is-agg} [ AND ns.nspname = ] '{schema}'
+    [ WHERE ] {is-agg} [ AND ns.nspname = ] '{schema}'
   %else
     [ WHERE ] {is-agg}
   %end

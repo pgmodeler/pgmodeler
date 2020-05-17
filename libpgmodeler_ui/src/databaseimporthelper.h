@@ -295,7 +295,7 @@ class DatabaseImportHelper: public QObject {
 		
 	public slots:
 		void importDatabase();
-		void setObjectFilters(QStringList filter);
+		void setObjectFilters(QStringList filter, bool ignore_non_matches);
 		
 		friend class DatabaseImportForm;
 		friend class ModelDatabaseDiffForm;

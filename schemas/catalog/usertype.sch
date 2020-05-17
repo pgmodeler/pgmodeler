@@ -3,8 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name FROM pg_type AS tp ]
-  [ LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
+  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, 
+    ns.nspname AS parent, 'schema' AS parent_type 
+    FROM pg_type AS tp 
+    LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
   %if {schema} %then
     [ WHERE ns.nspname = ] '{schema}' [ AND ]
@@ -157,20 +159,20 @@
       [ AND ] (  {not-ext-object} )
     %end
     
-    %if {filter-oids} %or {schema} %then
-	[ AND ]
-	  %if {filter-oids} %then
-	   [ tp.oid IN (] {filter-oids} )
+       %if {filter-oids} %or {schema} %then
+          [ AND ]
+          %if {filter-oids} %then
+            [ tp.oid IN (] {filter-oids} )
 
-	    %if {schema} %then
-	      [ AND ]
-	    %end
-	  %end
+            %if {schema} %then
+              [ AND ]
+            %end
+          %end
 
           %if {schema} %then
-	   [ ns.nspname = ] '{schema}'
-	  %end
+            [ ns.nspname = ] '{schema}'
+          %end
        %end
-    
+       
     %end
 %end

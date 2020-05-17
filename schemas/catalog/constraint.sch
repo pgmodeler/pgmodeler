@@ -3,11 +3,14 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[ SELECT cs.oid, cs.conname AS name FROM pg_constraint AS cs ]
+[ SELECT cs.oid, cs.conname AS name, 
+  tb.oid::regclass::text AS parent,
+  'table' AS parent_type 
+  FROM pg_constraint AS cs 
+  LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid ]
 
  %if {schema} %then
    [ LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
-     LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid
      WHERE nspname= ] '{schema}'
 
    %if {table} %then
