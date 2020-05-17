@@ -8849,15 +8849,29 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 	Relationship *rel=nullptr;
 	void *ptr_pgsqltype=nullptr;
 
-	switch(obj_type)
+	switch(object->getObjectType())
 	{
-		case ObjectType::Type: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
-		case ObjectType::Domain: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
-		case ObjectType::Sequence: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
-		case ObjectType::Extension: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
-		case ObjectType::View: ptr_pgsqltype=dynamic_cast<View*>(object); break;
-		case ObjectType::ForeignTable: ptr_pgsqltype=dynamic_cast<ForeignTable*>(object); break;
-		default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
+		case ObjectType::Type:
+			ptr_pgsqltype=dynamic_cast<Type*>(object);
+		break;
+		case ObjectType::Domain:
+			ptr_pgsqltype=dynamic_cast<Domain*>(object);
+		break;
+		case ObjectType::Sequence:
+			ptr_pgsqltype=dynamic_cast<Sequence*>(object);
+		break;
+		case ObjectType::Extension:
+			ptr_pgsqltype=dynamic_cast<Extension*>(object);
+		break;
+		case ObjectType::View:
+			ptr_pgsqltype=dynamic_cast<View*>(object);
+		break;
+		case ObjectType::ForeignTable:
+			ptr_pgsqltype=dynamic_cast<ForeignTable*>(object);
+		break;
+		default:
+			ptr_pgsqltype=dynamic_cast<Table*>(object);
+		break;
 	}
 
 	for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
