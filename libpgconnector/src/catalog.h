@@ -46,7 +46,10 @@ class Catalog {
 		GetExtensionObjsSql,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		ArrayPattern;
+		ArrayPattern,
+
+		//! \brief Holds a constant string used to mark invalid filter patterns
+		InvFilterPattern;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
@@ -170,7 +173,7 @@ class Catalog {
 		void setQueryFilter(unsigned filter);
 
 		//! \brief Configures the objects name filtering
-		void setObjectFilters(QStringList filters);
+		void setObjectFilters(QStringList filters, bool ignore_non_matches);
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();

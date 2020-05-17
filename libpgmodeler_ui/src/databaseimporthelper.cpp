@@ -662,9 +662,9 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
-void DatabaseImportHelper::setObjectFilters(QStringList filter)
+void DatabaseImportHelper::setObjectFilters(QStringList filter, bool ignore_non_matches)
 {
-	catalog.setObjectFilters(filter);
+	catalog.setObjectFilters(filter, ignore_non_matches);
 }
 
 map<ObjectType, QStringList> DatabaseImportHelper::getObjectFilters()

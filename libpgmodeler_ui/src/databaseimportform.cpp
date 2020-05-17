@@ -310,6 +310,7 @@ void DatabaseImportForm::listObjects()
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
+			QStringList obj_filter = objs_filter_wgt->getFilterString();
 
 			//Set the working database on import helper
 			import_helper->closeConnection();
@@ -318,9 +319,9 @@ void DatabaseImportForm::listObjects()
 			import_helper->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(),
 																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
-			import_helper->setObjectFilters(objs_filter_wgt->getFilterString());
 
-			if(import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
+			import_helper->setObjectFilters(obj_filter, objs_filter_wgt->isIgnoreNonMatches());
+			if(obj_filter.isEmpty() && import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
 			{
 				Messagebox msgbox;
 				msgbox.show(tr("The selected database seems to have a huge amount of objects! \
@@ -737,17 +738,6 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				}
 			}
 
-			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
-
-			if(db_item)
-				db_item->setExpanded(true);
-
-			if(!create_dummy_item)
-			{
-				task_prog_wgt.progress_pb->setValue(100);
-				task_prog_wgt.close();
-			}
-
 			if(checkable_items)
 			{
 				map<ObjectType, QStringList> objs_filter = import_helper.getObjectFilters();
@@ -766,6 +756,17 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 							item->setCheckState(0, Qt::Checked);
 					}
 				}
+			}
+
+			tree_wgt->sortItems(sort_by, Qt::AscendingOrder);
+
+			if(db_item)
+				db_item->setExpanded(true);
+
+			if(!create_dummy_item)
+			{
+				task_prog_wgt.progress_pb->setValue(100);
+				task_prog_wgt.close();
 			}
 		}
 

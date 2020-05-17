@@ -28,6 +28,7 @@ const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 const QString Catalog::FilterLike("like");
 const QString Catalog::FilterRegExp("regexp");
 const QString Catalog::FilterExact("exact");
+const QString Catalog::InvFilterPattern("__$invalid_pattern$__");
 
 attribs_map Catalog::catalog_queries;
 
@@ -143,7 +144,7 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters)
+void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 {
 	QStringList values;
 	QString pattern, mode, sql_filter;
@@ -152,11 +153,20 @@ void Catalog::setObjectFilters(QStringList filters)
 
 	obj_filters.clear();
 
+	if(ignore_non_matches)
+	{
+		for(auto &type : getFilterableObjectNames())
+		{
+			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(type))) < 0)
+				filters.append(QString("%1:%2:%3").arg(type).arg(InvFilterPattern).arg(Catalog::FilterExact));
+		}
+	}
+
 	for(auto &filter : filters)
 	{
 		values = filter.split(FilterSeparator);
 
-		if(values.size() < 3)
+		if(values.size() != 3)
 			continue;
 
 		obj_type = BaseObject::getObjectType(values[0]);
@@ -918,6 +928,7 @@ vector<ObjectType> Catalog::getFilterableObjectTypes()
 																																			 ObjectType::Permission,
 																																			 ObjectType::Database,
 																																			 ObjectType::Cast,
+																																			 ObjectType::Column,
 																																			 ObjectType::UserMapping,
 																																			 ObjectType::Tag});
 

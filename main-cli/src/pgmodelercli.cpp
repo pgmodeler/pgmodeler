@@ -87,8 +87,6 @@ const QString PgModelerCliApp::TagExpr("<%1");
 const QString PgModelerCliApp::EndTagExpr("</%1");
 const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|\\;|\\)|\\(| )+(\")");
 
-const QString PgModelerCliApp::InvalidFilter("__$invalid__filter$__");
-
 const QString PgModelerCliApp::MsgFileAssociated(QT_TR_NOOP("Database model files (.dbm) are already associated to pgModeler!"));
 const QString PgModelerCliApp::MsgNoFileAssociation(QT_TR_NOOP("There is no file association related to pgModeler and .dbm files!"));
 
@@ -521,7 +519,7 @@ void PgModelerCliApp::showMenu()
 	{
 		fmt_types.append(type);
 		i++;
-		if(i % 6 == 0 || i == type_list.size() - 1)
+		if(i % 9 == 0 || i == type_list.size() - 1)
 		{
 			lines.append(QString("     > ") + fmt_types.join(", "));
 			fmt_types.clear();
@@ -695,17 +693,6 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			{
 				if(op.first.contains(FilterObjs))
 					obj_filters.append(op.second);
-			}
-
-			/* Doing a small hack in order to force only filtered object to be imported (and their dependencies)
-			 * by creating a invalid filter */
-			if(opts.count(IgnoreNonMatches))
-			{
-				for(auto &type : Catalog::getFilterableObjectNames())
-				{
-					if(obj_filters.indexOf(QRegExp(QString("(%1)(.)+").arg(type))) < 0)
-						obj_filters.append(QString("%1:%2:%3").arg(type).arg(InvalidFilter).arg(Catalog::FilterExact));
-				}
 			}
 		}
 
@@ -1489,7 +1476,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.setObjectFilters(obj_filters);
+		catalog.setObjectFilters(obj_filters, parsed_opts.count(IgnoreNonMatches) > 0);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);

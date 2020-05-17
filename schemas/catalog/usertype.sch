@@ -157,20 +157,20 @@
       [ AND ] (  {not-ext-object} )
     %end
     
-    %if {filter-oids} %or {schema} %then
-	[ AND ]
-	  %if {filter-oids} %then
-	   [ tp.oid IN (] {filter-oids} )
+       %if {filter-oids} %or {schema} %then
+          [ AND ]
+          %if {filter-oids} %then
+            [ tp.oid IN (] {filter-oids} )
 
-	    %if {schema} %then
-	      [ AND ]
-	    %end
-	  %end
+            %if {schema} %then
+              [ AND ]
+            %end
+          %end
 
           %if {schema} %then
-	   [ ns.nspname = ] '{schema}'
-	  %end
+            [ ns.nspname = ] '{schema}'
+          %end
        %end
-    
+       
     %end
 %end

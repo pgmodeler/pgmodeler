@@ -174,7 +174,6 @@ class PgModelerCliApp: public Application {
 		EndTagExpr,
 		AttributeExpr,
 
-		InvalidFilter,
 		MsgFileAssociated,
 		MsgNoFileAssociation;
 
