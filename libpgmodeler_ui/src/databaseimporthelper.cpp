@@ -188,7 +188,7 @@ void DatabaseImportHelper::retrieveSystemObjects()
 		{
 			obj_map=&system_objs;
 
-			if(sys_objs[i]!=ObjectType::Language)
+			if(sys_objs[i] != ObjectType::Language)
 				catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
 			else
 				catalog.setQueryFilter(Catalog::ListAllObjects);
@@ -196,7 +196,8 @@ void DatabaseImportHelper::retrieveSystemObjects()
 		else
 		{
 			obj_map = &types;
-			catalog.setQueryFilter(Catalog::ListAllObjects);
+			//catalog.setQueryFilter(Catalog::ListAllObjects);
+			catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
 		}
 
 		//Query the objects on the catalog and put them on the map
@@ -3016,6 +3017,8 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 
 				if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Table))
 					obj_type=ObjectType::Table;
+				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::ForeignTable))
+					obj_type=ObjectType::ForeignTable;
 				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::View))
 					obj_type=ObjectType::View;
 				else if(type_attr[Attributes::TypeClass]==BaseObject::getSchemaName(ObjectType::Sequence))

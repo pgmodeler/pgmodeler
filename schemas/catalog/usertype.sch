@@ -79,20 +79,23 @@
     [   CASE WHEN typtype = 'e' THEN (SELECT array_agg(enumlabel) FROM pg_enum WHERE enumtypid=tp.oid)
         END AS enumerations, ]
 
-    # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
-    # separating them by colon.
-    # (this field is null when the type is not a composite)     
-   [ CASE WHEN typtype = 'c' THEN 
-     (
-        SELECT array_agg(attname ||':'|| 
-        (SELECT CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END 
-         FROM pg_namespace AS ns
-         LEFT JOIN pg_type AS _tp ON _tp.oid = at.atttypid WHERE ns.oid=_tp.typnamespace) || 
-         format_type(atttypid,atttypmod) || ':' || ] %if ({pgsql-ver} == "9.0") %then '0' %else attcollation %end [) FROM pg_attribute AS at 
-        WHERE attrelid = cl.oid
-     )
-     END AS typeattrib, 
-   ]
+    %if ({pgsql-ver} >=f "9.3") %then
+       [ ta.typeattrib, ]            
+    %else
+        # Retrieve the composite attributes in the sequence: name, type, dimension (for array types), collation (pgsql > 9.0)
+        # separating them by colon.
+        # (this field is null when the type is not a composite)     
+        [ CASE WHEN typtype = 'c' THEN 
+        (
+            SELECT array_agg(attname ||':'|| 
+            (SELECT CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END 
+            FROM pg_namespace AS ns
+            LEFT JOIN pg_type AS _tp ON _tp.oid = at.atttypid WHERE ns.oid=_tp.typnamespace) || 
+            format_type(atttypid,atttypmod) || ':' || ] %if ({pgsql-ver} == "9.0") %then '0' %else attcollation %end [) FROM pg_attribute AS at 
+            WHERE attrelid = cl.oid
+        )
+        END AS typeattrib, ]
+    %end
        
     # Retrieve the range type attributes (is null when the type is not a range) (pgsql >= 9.2)
 		%if ({pgsql-ver} >=f "9.2") %then
@@ -136,7 +139,25 @@
 
     [ FROM pg_type AS tp
       LEFT JOIN pg_class AS cl ON cl.oid = tp.typrelid
-      LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
+    LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
+      
+    # Retrieving composite type attributes using lateral join on 9.3+ (way more performatic)
+    %if ({pgsql-ver} >=f "9.3") %then                
+    [ LEFT JOIN LATERAl (
+      SELECT array_agg(
+           attname
+           || ':'
+           || CASE WHEN ns.nspname='public' THEN ns.nspname || '.' ELSE '' END
+           || format_type(atttypid,atttypmod) 
+           || ':'
+           || attcollation
+      ) AS typeattrib
+      FROM pg_attribute AS at
+      JOIN pg_type AS _tp on _tp.oid = at.atttypid
+      JOIN pg_namespace AS ns ON ns.oid = _tp.typnamespace
+      WHERE at.attrelid = cl.oid
+     ) ta ON (TRUE) ]
+    %end
 
     #Excluding types related to tables/views/sequeces
     [ WHERE typtype IN ('p','b','c','e','r', 'd') AND typname NOT LIKE 'pg_%' ]

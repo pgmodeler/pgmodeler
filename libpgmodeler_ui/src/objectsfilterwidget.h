@@ -37,9 +37,6 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		//! \brief Creates a combobox of the objects' types accepted in the filter
 		QComboBox *createObjectsCombo();
 
-	protected:
-		bool eventFilter(QObject *object, QEvent *event) override;
-
 	public:
 		explicit ObjectsFilterWidget(QWidget *parent = nullptr);
 
