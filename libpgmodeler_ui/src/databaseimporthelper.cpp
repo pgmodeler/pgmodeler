@@ -184,7 +184,7 @@ void DatabaseImportHelper::retrieveSystemObjects()
 								 tr("Retrieving system objects... `%1'").arg(BaseObject::getTypeName(sys_objs[i])),
 							   sys_objs[i]);
 
-		if(sys_objs[i]!=ObjectType::Type)
+		if(sys_objs[i] != ObjectType::Type)
 		{
 			obj_map=&system_objs;
 
@@ -195,7 +195,7 @@ void DatabaseImportHelper::retrieveSystemObjects()
 		}
 		else
 		{
-			obj_map=&types;
+			obj_map = &types;
 			catalog.setQueryFilter(Catalog::ListAllObjects);
 		}
 
@@ -2698,10 +2698,6 @@ void DatabaseImportHelper::assignSequencesToColumns()
 		progress=(i/static_cast<double>(tables.size())) * 100;
 		i++;
 
-		emit s_progressUpdated(progress,
-								 tr("Assigning sequences to columns..."),
-								 ObjectType::Sequence);
-
 		for(auto &tab_obj : *table->getObjectList(ObjectType::Column))
 		{
 			col=dynamic_cast<Column *>(tab_obj);
@@ -2727,6 +2723,10 @@ void DatabaseImportHelper::assignSequencesToColumns()
 
 				if(seq)
 				{
+					emit s_progressUpdated(progress,
+											 tr("Assigning sequence `%1' to column `%2'...").arg(seq->getSignature()).arg(col->getSignature()),
+											 ObjectType::Sequence);
+
 					col->setSequence(seq);
 
 					if(col->getParentTable()->getObjectId() < seq->getObjectId())

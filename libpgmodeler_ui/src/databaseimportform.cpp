@@ -218,7 +218,7 @@ void DatabaseImportForm::setItemsCheckState()
 {
 	Qt::CheckState chk_state=(sender()==select_all_tb ? Qt::Checked : Qt::Unchecked);
 
-	if(db_objects_tw->isVisible())
+	if(db_objects_stw->currentIndex() == 0)
 	{
 		QTreeWidgetItemIterator itr(db_objects_tw);
 
@@ -326,7 +326,7 @@ bool DatabaseImportForm::hasCheckedItems()
 {
 	bool selected=false;
 
-	if(db_objects_tw->isVisible())
+	if(db_objects_stw->currentIndex() == 0)
 	{
 		QTreeWidgetItemIterator itr(db_objects_tw);
 		while(*itr && !selected)
@@ -359,7 +359,7 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 	col_oids.clear();
 
 	// Retriving selected items from objects tree
-	if(db_objects_tw->isVisible())
+	if(db_objects_stw->currentIndex() == 0)
 	{
 		QTreeWidgetItemIterator itr(db_objects_tw);
 		while(*itr)
@@ -461,8 +461,8 @@ Do you really want to proceed?"),
 
 		import_btn->setEnabled(hasCheckedItems());
 		buttons_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0 || filtered_objs_tbw->rowCount() > 0);
-		expand_all_tb->setVisible(db_objects_tw->isVisible());
-		collapse_all_tb->setVisible(db_objects_tw->isVisible());
+		expand_all_tb->setVisible(db_objects_stw->currentIndex() == 0);
+		collapse_all_tb->setVisible(db_objects_stw->currentIndex() == 0);
 	}
 	catch(Exception &e)
 	{
@@ -805,13 +805,6 @@ void DatabaseImportForm::listObjects(DatabaseImportHelper &import_helper, QTreeW
 				db_item->setToolTip(0, QString("OID: %1").arg(attribs[0].at(Attributes::Oid)));
 				tree_wgt->addTopLevelItem(db_item);
 			}
-
-			map<ObjectType, vector<unsigned>> obj_oids;
-			map<unsigned, vector<unsigned>> col_oids;
-			vector<unsigned> parents_oids;
-			Catalog catalog = import_helper.getCatalog();
-
-			catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 			//Retrieving and listing the cluster scoped objects
 			sch_items=DatabaseImportForm::updateObjectsTree(import_helper, tree_wgt,
