@@ -66,7 +66,7 @@ const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
 const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
 const QString PgModelerCliApp::DebugMode("--debug-mode");
 const QString PgModelerCliApp::FilterObjs("--filter-objs");
-const QString PgModelerCliApp::IgnoreNonMatches("--ignore-non-matches");
+const QString PgModelerCliApp::DiscardNonMatches("--discard-non-matches");
 const QString PgModelerCliApp::CompareTo("--compare-to");
 const QString PgModelerCliApp::SaveDiff("--save-diff");
 const QString PgModelerCliApp::ApplyDiff("--apply-diff");
@@ -312,7 +312,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[ImportSystemObjs]=false;
 	long_opts[ImportExtensionObjs]=false;
 	long_opts[FilterObjs]=true;
-	long_opts[IgnoreNonMatches]=false;
+	long_opts[DiscardNonMatches]=false;
 	long_opts[DebugMode]=false;
 	long_opts[CompareTo]=true;
 	long_opts[SaveDiff]=false;
@@ -371,7 +371,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[ImportSystemObjs]="-is";
 	short_opts[ImportExtensionObjs]="-ix";
 	short_opts[FilterObjs]="-fo";
-	short_opts[IgnoreNonMatches]="-ig";
+	short_opts[DiscardNonMatches]="-dn";
 	short_opts[DebugMode]="-d";
 	short_opts[CompareTo]="-ct";
 	short_opts[SaveDiff]="-sd";
@@ -478,7 +478,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
 	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
 	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << endl;
-	out << tr("  %1, %2\t    Objects that don't match the provided filter(s) are not imported.").arg(short_opts[IgnoreNonMatches]).arg(IgnoreNonMatches) << endl;
+	out << tr("  %1, %2\t    Objects that don't match the provided filter(s) are not imported.").arg(short_opts[DiscardNonMatches]).arg(DiscardNonMatches) << endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
 	out << endl;
 	out << tr("Diff options: ") << endl;
@@ -1476,7 +1476,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.setObjectFilters(obj_filters, parsed_opts.count(IgnoreNonMatches) > 0);
+		catalog.setObjectFilters(obj_filters, parsed_opts.count(DiscardNonMatches) > 0);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);

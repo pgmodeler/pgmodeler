@@ -197,10 +197,10 @@
      <item>
       <widget class="QCheckBox" name="ignore_non_matches_chk">
        <property name="toolTip">
-        <string>Causes objects not matching the filters to be not listed in the objects tree.</string>
+        <string>When checked causes the objects not matching the filters to be not retrieved.</string>
        </property>
        <property name="text">
-        <string>Ignore non matches</string>
+        <string>Discard non matches</string>
        </property>
       </widget>
      </item>

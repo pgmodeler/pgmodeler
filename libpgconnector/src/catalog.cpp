@@ -153,7 +153,8 @@ void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 
 	obj_filters.clear();
 
-	if(ignore_non_matches)
+	// The non matches filter is only generated if there're filters configured
+	if(!filters.isEmpty() && ignore_non_matches)
 	{
 		for(auto &type : getFilterableObjectNames())
 		{

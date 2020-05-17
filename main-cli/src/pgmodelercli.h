@@ -151,7 +151,7 @@ class PgModelerCliApp: public Application {
 		ImportExtensionObjs,
 		DebugMode,
 		FilterObjs,
-		IgnoreNonMatches,
+		DiscardNonMatches,
 
 		CompareTo,
 		SaveDiff,
