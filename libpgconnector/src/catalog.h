@@ -194,6 +194,10 @@ class Catalog {
 		//! \brief Returns the configured objects a name filters
 		map<ObjectType, QStringList> getObjectFilters();
 
+		/*! \brief Returns a vector with all filtered object types.
+		 * Invalid pattern filters containing the InvFilterPattern are discarded from the returning vector */
+		vector<ObjectType> getFilteredObjectTypes();
+
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
 

@@ -81,6 +81,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Destroys both import thread and helper
 		void destroyThread();
 
+		//! \brief Filters and list in a different way the objects that matches the user provided filters
+		void listFilteredObjects();
+
 	public:
 		//! \brief Constants used to access the tree widget items data
 		static constexpr unsigned ObjectId=1,

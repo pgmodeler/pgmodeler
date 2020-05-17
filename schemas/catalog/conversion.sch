@@ -3,11 +3,14 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [ SELECT cn.oid, cn.conname AS name FROM pg_conversion AS cn ]
+  [ SELECT cn.oid, cn.conname AS name, 
+    ns.nspname AS parent,
+    'schema' AS parent_type    
+    FROM pg_conversion AS cn 
+    LEFT JOIN pg_namespace AS ns ON cn.connamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON cn.connamespace = ns.oid
-       WHERE ns.nspname = ] '{schema}'
+    [ WHERE ns.nspname = ] '{schema}'
   %end
 
   %if {last-sys-oid} %then

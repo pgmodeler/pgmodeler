@@ -3,11 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %and ({pgsql-ver} != "9.0") %then
- [SELECT cl.oid, collname AS name FROM pg_collation AS cl ]
+ [SELECT cl.oid, collname AS name, 
+  ns.nspname AS parent, 'schema' AS parent_type FROM pg_collation AS cl 
+  LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid
-       WHERE ns.nspname = ] '{schema}'
+    [ WHERE ns.nspname = ] '{schema}'
   %end
 
   %if {last-sys-oid} %then

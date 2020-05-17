@@ -88,7 +88,7 @@ QStringList ObjectsFilterWidget::getFilterString()
 	/* Workaround: Creating special filters to retrieve the parents of the objects configured in the other filters (above).
 	 * This is done due to the way the object tree is constructed from root to leafs in DatabasImportForm and since we don't know
 	 * if a parent has childs until we retrieve the childs themselves we need to force the retrieval of the parents */
-	bool add_sch_filter = false;
+	/*bool add_sch_filter = false;
 	QString tmpl_filter = QString("%1:%:%2"),
 			tmpl_regexp = QString("(%1)(.)+");
 
@@ -132,7 +132,7 @@ QStringList ObjectsFilterWidget::getFilterString()
 										 .arg(BaseObject::getSchemaName(ObjectType::Schema))
 										 .arg(Catalog::FilterLike));
 		}
-	}
+	}*/
 
 	return filters;
 }

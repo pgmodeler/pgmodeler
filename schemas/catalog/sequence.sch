@@ -3,10 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT sq.oid, relname AS name FROM pg_class AS sq ]
+  [SELECT sq.oid, relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+   FROM pg_class AS sq 
+   LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid
+    [ 
        WHERE relkind='S' AND ns.nspname = ] '{schema}'
   %else
     [ WHERE relkind='S']

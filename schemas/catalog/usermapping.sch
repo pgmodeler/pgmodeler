@@ -3,7 +3,9 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-    [ SELECT um.umid AS oid, um.usename || '@' || um.srvname AS name FROM pg_user_mappings AS um ]
+    [ SELECT um.umid AS oid, um.usename || '@' || um.srvname AS name, 
+      current_database() AS parent, 'database' AS parent_type
+      FROM pg_user_mappings AS um ]
 
     %if {last-sys-oid} %or {not-ext-object} %then  
         [ WHERE ]
