@@ -8479,6 +8479,7 @@ void DatabaseModel::getViewReferences(BaseObject *object, vector<BaseObject *> &
 void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
+	ObjectType obj_type = object->getObjectType();
 	Sequence *seq=nullptr;
 	Constraint *constr=nullptr;
 	PhysicalTable *tab=nullptr;
@@ -8848,8 +8849,9 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 	Type *type=nullptr;
 	Relationship *rel=nullptr;
 	void *ptr_pgsqltype=nullptr;
+	ObjectType obj_type = object->getObjectType();
 
-	switch(object->getObjectType())
+	switch(obj_type)
 	{
 		case ObjectType::Type:
 			ptr_pgsqltype=dynamic_cast<Type*>(object);
