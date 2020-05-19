@@ -48,7 +48,7 @@
    %if {name-filter} %then
      [ AND ] ( {name-filter} )
    %end
-
+   
 %else
     %if {attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,

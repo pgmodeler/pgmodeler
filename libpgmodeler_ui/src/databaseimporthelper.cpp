@@ -663,9 +663,9 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
-void DatabaseImportHelper::setObjectFilters(QStringList filter, bool ignore_non_matches)
+void DatabaseImportHelper::setObjectFilters(QStringList filter, bool discard_non_matches, QStringList force_tab_obj_types)
 {
-	catalog.setObjectFilters(filter, ignore_non_matches);
+	catalog.setObjectFilters(filter, discard_non_matches, force_tab_obj_types);
 }
 
 map<ObjectType, QStringList> DatabaseImportHelper::getObjectFilters()

@@ -49,7 +49,9 @@ class Catalog {
 		ArrayPattern,
 
 		//! \brief Holds a constant string used to mark invalid filter patterns
-		InvFilterPattern;
+		InvFilterPattern,
+
+		AliasPlaceholder;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
@@ -60,15 +62,20 @@ class Catalog {
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
-		static map<ObjectType, QString> oid_fields;
+		static map<ObjectType, QString> oid_fields,
 
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
-		static map<ObjectType, QString> name_fields;
+		name_fields,
 
 		/*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
 		(see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
 		there are different fields that tells if the object (or its parent) is part of extension. */
-		static map<ObjectType, QString> ext_oid_fields;
+		ext_oid_fields,
+
+		/*! \brief This map stores the aliases that are used to reference the table (parent) on each table object catalog query.
+		 * This is mainly used to force the filter of constraints/indexes/triggers/rules/policies in presence of one or more table
+		 * filter (see setObjectFilter) */
+		parent_aliases;
 
 		//! \brief Store the cached catalog queries
 		static attribs_map catalog_queries;
@@ -172,8 +179,13 @@ class Catalog {
 		//! \brief Configures the catalog query filter
 		void setQueryFilter(unsigned filter);
 
-		//! \brief Configures the objects name filtering. Raises an exception when detecting malformed filters
-		void setObjectFilters(QStringList filters, bool ignore_non_matches);
+		/*! \brief Configures the objects name filtering.
+		 * The parameter discard_non_matches creates extra filters for the other kind of objects not provided by the user in order to avoid listing them.
+		 * The force_tab_obj_types contains a list of table children object type names in which should be forcibly listed
+		 * if the user provides table/view/foreign table filters. This is useful to retrieve tables with their children objects avoiding the need of
+		 * provide specific filters for each table children object. This list has effect only when discard_non_matches is set to true.
+		 * This method raises an exception when detecting malformed filters */
+		void setObjectFilters(QStringList filters, bool discard_non_matches, QStringList force_tab_obj_types = {});
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();

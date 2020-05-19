@@ -29,6 +29,7 @@ const QString Catalog::FilterLike("like");
 const QString Catalog::FilterRegExp("regexp");
 const QString Catalog::FilterExact("exact");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
+const QString Catalog::AliasPlaceholder("$alias$");
 
 attribs_map Catalog::catalog_queries;
 
@@ -51,6 +52,14 @@ map<ObjectType, QString> Catalog::ext_oid_fields={
 	{ObjectType::Trigger, "tg.tgrelid"},
 	{ObjectType::Rule, "rl.ev_class"},
 	{ObjectType::Policy, "pl.polrelid"}
+};
+
+map<ObjectType, QString> Catalog::parent_aliases={
+	{ObjectType::Constraint, "tb"},
+	{ObjectType::Index, "tb"},
+	{ObjectType::Trigger, "tb"},
+	{ObjectType::Rule, "cl"},
+	{ObjectType::Policy, "tb"}
 };
 
 map<ObjectType, QString> Catalog::name_fields=
@@ -144,22 +153,62 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
+void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QStringList force_tab_obj_types)
 {
-	QStringList values, modes = { FilterExact, FilterLike, FilterRegExp };
-	QString pattern, mode, sql_filter;
 	ObjectType obj_type;
-	attribs_map fmt_filter;
+	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+";
+	QStringList values,	relkinds, modes = { FilterExact, FilterLike, FilterRegExp };
+
+	map<ObjectType, QStringList> tab_patterns;
+
+	attribs_map fmt_filter, tmpl_filters = {{ FilterExact, "%1 = E'%2'" },
+																					{ FilterLike, "%1 ILIKE E'%2'" },
+																					{ FilterRegExp, "%1 ~* E'%2'" }};
+
+	bool has_tab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
+			 has_view_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
+			 has_ftab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
 
 	obj_filters.clear();
 
-	// The non matches filter is only generated if there're filters configured
-	if(!filters.isEmpty() && ignore_non_matches)
+	/* If we have at least one table (view or foreign table) filter
+	 * and the forced object types list we configure filters to force the
+	 * listing of table children objects, tied to the filters that list
+	 * the parent tables */
+	if(discard_non_matches && (has_tab_filter || has_ftab_filter || has_view_filter))
 	{
-		for(auto &type : getFilterableObjectNames())
+		/* Configuring the placeholder for the parent table name used in the construction of the creterias that filters
+		 * table names in forced table children objects filters.
+		 * This one comes in form of regexp_replace() because when calling oid::regclass::text the string comes schema qualified
+		 * so in order to match the table/view/foreign tables filters correclty we need to remove the schema name for the oid::regclass cast */
+		parent_alias_ref = QString("regexp_replace(%1,'^(.)+(\\.)', '')")
+											 .arg(AliasPlaceholder + QString(".oid::regclass::text"));
+
+		// Validating the provided table children objects types
+		for(auto &type_name : force_tab_obj_types)
 		{
-			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(type))) < 0)
-				filters.append(QString("%1:%2:%3").arg(type).arg(InvFilterPattern).arg(Catalog::FilterExact));
+			if(!TableObject::isTableObject(BaseObject::getObjectType(type_name)))
+			{
+				throw Exception(QString("The object type `%1' is not a valid table child object type!").arg(type_name),
+												ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+		}
+
+		force_tab_obj_types.removeDuplicates();
+	}
+
+	// The non matches filter is only generated if there're filters configured
+	if(!filters.isEmpty() && discard_non_matches)
+	{
+		for(auto &type : getFilterableObjectTypes())
+		{
+			/* We do not create exclusion filter for table objects if they were specified
+			 * by the users forced objects to be filtered */
+			if(force_tab_obj_types.contains(BaseObject::getSchemaName(type)))
+				continue;
+
+			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
+				obj_filters[type].append(tmpl_filters[Catalog::FilterExact].arg(name_fields[type]).arg(InvFilterPattern));
 		}
 	}
 
@@ -167,26 +216,62 @@ void Catalog::setObjectFilters(QStringList filters, bool ignore_non_matches)
 	{
 		values = filter.split(FilterSeparator);
 
+		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
 
+		// Raises an error if the filter has an invalid object type, pattern or mode
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+		{
 			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 
-		if(mode == FilterExact)
-			sql_filter = QString("%1 = E'%2'").arg(name_fields[obj_type]).arg(pattern);
-		else if(mode == FilterLike)
-			sql_filter = QString("%1 ILIKE E'%2'").arg(name_fields[obj_type]).arg(pattern);
-		else
-			sql_filter = QString("%1 ~* E'%2'").arg(name_fields[obj_type]).arg(pattern);
+		obj_filters[obj_type].append(tmpl_filters[mode].arg(name_fields[obj_type]).arg(pattern));
 
-		obj_filters[obj_type].append(sql_filter);
+		// Storing the table/view/foreign table patters if there're forced children objects to filter
+		if(!force_tab_obj_types.isEmpty() && BaseTable::isBaseTable(obj_type))
+			tab_patterns[obj_type].append(tmpl_filters[mode].arg(parent_alias_ref).arg(pattern));
+	}
+
+	if(!force_tab_obj_types.isEmpty())
+	{
+		map<ObjectType, QString> fmt_tab_patterns;
+		QStringList fmt_conds;
+
+		for(auto &itr : tab_patterns)
+			fmt_tab_patterns[itr.first] = QString("(%1) AND %2.relkind ")
+																		.arg(tab_patterns[itr.first].join(" OR "))
+																		.arg(AliasPlaceholder);
+
+		for(auto &type_name : force_tab_obj_types)
+		{
+			obj_type = BaseObject::getObjectType(type_name);
+
+			/* Configuring the "relkind" criteria according to the
+			 * flags indicating the presence of table/view/foreign table filters.
+			 * This relkinds will be used to filter table children objects specifically for
+			 * "relation kind" in pg_class in order to avoid bringing children object of
+			 * table types not filtered */
+			if(has_tab_filter && BaseObject::isChildObjectType(ObjectType::Table, obj_type))
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::Table] + QString("IN ('r','p')")));
+
+			if(has_view_filter && BaseObject::isChildObjectType(ObjectType::View, obj_type))
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::View] + QString("IN ('v','m')")));
+
+			if(has_ftab_filter && BaseObject::isChildObjectType(ObjectType::ForeignTable, obj_type))
+				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + QString("= 'f'")));
+
+			obj_filters[obj_type].append(fmt_conds.join(" OR ").replace(AliasPlaceholder, parent_aliases[obj_type]));
+			relkinds.clear();
+		}
 	}
 }
 

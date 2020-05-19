@@ -44,7 +44,7 @@
   %if {name-filter} %then
     [ AND ] ( {name-filter} )
   %end
-
+  
 %else
     %if {attribs} %then
      [SELECT cs.oid, cs.conname AS name, cs.conrelid AS table,

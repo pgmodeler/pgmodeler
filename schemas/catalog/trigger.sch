@@ -33,7 +33,7 @@
   %if {name-filter} %then
     [ AND ] ( {name-filter} )
   %end
-
+  
 %else
     %if {attribs} %then
     # pg_trigger.tgtype datails:
