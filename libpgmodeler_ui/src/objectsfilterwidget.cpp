@@ -22,42 +22,54 @@
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
+	vector<ObjectType> types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	QAction *act = nullptr;
+
 	setupUi(this);
+	types.erase(std::find(types.begin(), types.end(), ObjectType::Column));
+
+	for(auto &type : types)
+	{
+		act = tab_objs_menu.addAction(BaseObject::getTypeName(type));
+		act->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
+		act->setData(BaseObject::getSchemaName(type));
+		act->setCheckable(true);
+		act->setChecked(false);
+	}
+
+	tab_objs_btn->setMenu(&tab_objs_menu);
 
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
+	connect(discard_non_matches_chk, SIGNAL(toggled(bool)), this, SLOT(enableTableObjectsButton()));
+
 	filters_tbw->resizeColumnsToContents();
 }
 
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
 {
 	QComboBox *combo = new QComboBox;
-	vector<ObjectType> obj_types = Catalog::getFilterableObjectTypes();
+	QStringList obj_types = Catalog::getFilterableObjectNames();
 
 	for(auto &obj_type : obj_types)
 		combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
 												 BaseObject::getTypeName(obj_type),
-												 QVariant(enum_cast(obj_type)));
+												 obj_type);
 
 	combo->setStyleSheet("border: 0px");
 	combo->model()->sort(0);
+	connect(combo, SIGNAL(activated(int)), this, SLOT(enableTableObjectsButton()));
 
 	return combo;
 }
 
-QStringList ObjectsFilterWidget::getFilterString()
+QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
 			modes = { Catalog::FilterExact, Catalog::FilterLike, Catalog::FilterRegExp };
-	ObjectType obj_type;
-	QString pattern, mode;
+	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
-	vector<ObjectType> sch_children = BaseObject::getChildObjectTypes(ObjectType::Schema),
-			tab_children = BaseObject::getChildObjectTypes(ObjectType::Table),
-			view_children = BaseObject::getChildObjectTypes(ObjectType::View),
-			ftab_children =  BaseObject::getChildObjectTypes(ObjectType::ForeignTable),
-			sel_types;
 
 	/* Workround: Forcing any uncommitted data on the filters_tbw to be commited
 	 * by changing the current model index. This seems force the calling of commitData()
@@ -71,11 +83,9 @@ QStringList ObjectsFilterWidget::getFilterString()
 	{
 		object_cmb = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0));
 		mode_cmb = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
+		type_name = object_cmb->currentData().toString();
 
-		obj_type = static_cast<ObjectType>(object_cmb->currentData().toUInt());
-		sel_types.push_back(obj_type);
-
-		curr_filter.append(BaseObject::getSchemaName(obj_type));
+		curr_filter.append(type_name);
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
 
@@ -86,9 +96,25 @@ QStringList ObjectsFilterWidget::getFilterString()
 	return filters;
 }
 
-bool ObjectsFilterWidget::isIgnoreNonMatches()
+QStringList ObjectsFilterWidget::getForceObjectsFilter()
 {
-	return ignore_non_matches_chk->isChecked();
+	QStringList types;
+
+	if(tab_objs_btn->isEnabled())
+	{
+		for(auto &act : tab_objs_menu.actions())
+		{
+			if(act->isChecked())
+				types.append(act->data().toString());
+		}
+	}
+
+	return types;
+}
+
+bool ObjectsFilterWidget::isDiscadNonMatches()
+{
+	return discard_non_matches_chk->isChecked();
 }
 
 void ObjectsFilterWidget::addFilter()
@@ -118,6 +144,7 @@ void ObjectsFilterWidget::addFilter()
 	filters_tbw->setCellWidget(row, 3, rem_tb);
 
 	clear_all_tb->setEnabled(true);
+	enableTableObjectsButton();
 }
 
 void ObjectsFilterWidget::removeFilter()
@@ -143,6 +170,7 @@ void ObjectsFilterWidget::removeFilter()
 	filters_tbw->removeRow(curr_row);
 	filters_tbw->clearSelection();
 	clear_all_tb->setEnabled(filters_tbw->rowCount() != 0);
+	enableTableObjectsButton();
 }
 
 void ObjectsFilterWidget::removeAllFilters()
@@ -154,4 +182,19 @@ void ObjectsFilterWidget::removeAllFilters()
 	}
 
 	clear_all_tb->setEnabled(false);
+}
+
+void ObjectsFilterWidget::enableTableObjectsButton()
+{
+	bool has_tab_filter = false;
+	int row_cnt = filters_tbw->rowCount();
+	QString type_name;
+
+	for(int row = 0; row < row_cnt && !has_tab_filter; row++)
+	{
+		type_name = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0))->currentData(Qt::UserRole).toString();
+		has_tab_filter = BaseTable::isBaseTable(BaseObject::getObjectType(type_name));
+	}
+
+	tab_objs_btn->setEnabled(discard_non_matches_chk->isChecked() && has_tab_filter);
 }

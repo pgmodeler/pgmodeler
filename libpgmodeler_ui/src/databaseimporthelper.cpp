@@ -196,8 +196,8 @@ void DatabaseImportHelper::retrieveSystemObjects()
 		else
 		{
 			obj_map = &types;
-			//catalog.setQueryFilter(Catalog::ListAllObjects);
-			catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
+			catalog.setQueryFilter(Catalog::ListAllObjects);
+			//catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
 		}
 
 		//Query the objects on the catalog and put them on the map

@@ -66,6 +66,7 @@ const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
 const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
 const QString PgModelerCliApp::DebugMode("--debug-mode");
 const QString PgModelerCliApp::FilterObjs("--filter-objs");
+const QString PgModelerCliApp::ForceChildObjs("--force-child-objs");
 const QString PgModelerCliApp::DiscardNonMatches("--discard-non-matches");
 const QString PgModelerCliApp::CompareTo("--compare-to");
 const QString PgModelerCliApp::SaveDiff("--save-diff");
@@ -312,6 +313,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[ImportSystemObjs]=false;
 	long_opts[ImportExtensionObjs]=false;
 	long_opts[FilterObjs]=true;
+	long_opts[ForceChildObjs]=true;
 	long_opts[DiscardNonMatches]=false;
 	long_opts[DebugMode]=false;
 	long_opts[CompareTo]=true;
@@ -371,6 +373,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[ImportSystemObjs]="-is";
 	short_opts[ImportExtensionObjs]="-ix";
 	short_opts[FilterObjs]="-fo";
+	short_opts[ForceChildObjs]="-fc";
 	short_opts[DiscardNonMatches]="-dn";
 	short_opts[DebugMode]="-d";
 	short_opts[CompareTo]="-ct";
@@ -470,15 +473,16 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
 	out << endl;
 	out << tr("Data dictionary export options: ") << endl;
-	out << tr("  %1, %2\t\t   The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
-	out << tr("  %1, %2\t\t   Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
+	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
+	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
 	out << endl;
 	out << tr("Database import options: ") << endl;
 	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
 	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
 	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
-	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << endl;
+	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << endl;
 	out << tr("  %1, %2\t    Objects that don't match the provided filter(s) are not imported.").arg(short_opts[DiscardNonMatches]).arg(DiscardNonMatches) << endl;
+	out << tr("  %1, %2 [OBJECTS] Forces the filtering of table/view/foreign children objects. The OBJECTS is a comma separated list of the children types.").arg(short_opts[ForceChildObjs]).arg(ForceChildObjs) << endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
 	out << endl;
 	out << tr("Diff options: ") << endl;
@@ -512,6 +516,15 @@ void PgModelerCliApp::showMenu()
 	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjs) << endl;
 	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << endl;
 
+	QStringList list;
+	QString child_list;
+
+	for(auto &type : BaseObject::getChildObjectTypes(ObjectType::Table))
+		list.append(BaseObject::getSchemaName(type));
+
+	list.sort();
+	child_list = list.join(", ");
+
 	QStringList fmt_types, lines, type_list = Catalog::getFilterableObjectNames();
 	int i = 0;
 
@@ -535,7 +548,11 @@ void PgModelerCliApp::showMenu()
 	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterLike) << endl;
 	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << endl;
 	out << endl;
-	out << tr("   * NOTE: except for the mode `%1' all comparisons are case insensitive.").arg(Catalog::FilterExact) << endl;
+	out << tr("   * The option `%1' has effect only when used together with `%2'.").arg(ForceChildObjs).arg(DiscardNonMatches) << endl;
+	out << tr("   * The comma separated list of table children objects accepts the values:") << endl;
+	out << tr("     > %1").arg(child_list)  << endl;
+	out << endl;
+	out << tr("   * NOTE: all comparisons during filtering are case insensitive except for the mode `%1'.").arg(Catalog::FilterExact) << endl;
 	out << endl;
 	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
 	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
@@ -1469,6 +1486,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
+		QStringList force_tab_objs = parsed_opts[ForceChildObjs].split(',', QString::SkipEmptyParts);
 
 		catalog.setConnection(conn);
 
@@ -1476,7 +1494,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.setObjectFilters(obj_filters, parsed_opts.count(DiscardNonMatches) > 0);
+		catalog.setObjectFilters(obj_filters, parsed_opts.count(DiscardNonMatches) > 0, force_tab_objs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);

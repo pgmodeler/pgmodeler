@@ -27,12 +27,15 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <QMenu>
 #include "baseobject.h"
 #include "ui_objectsfilterwidget.h"
 
 class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
+
+		QMenu tab_objs_menu;
 
 		//! \brief Creates a combobox of the objects' types accepted in the filter
 		QComboBox *createObjectsCombo();
@@ -41,15 +44,17 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		explicit ObjectsFilterWidget(QWidget *parent = nullptr);
 
 		//! brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
-		QStringList getFilterString();
+		QStringList getObjectFilters();
+		QStringList getForceObjectsFilter();
 
-		bool isIgnoreNonMatches();
+		bool isDiscadNonMatches();
 		bool hasFiltersConfigured();
 
 	private slots:
 		void addFilter();
 		void removeFilter();
 		void removeAllFilters();
+		void enableTableObjectsButton();
 };
 
 #endif

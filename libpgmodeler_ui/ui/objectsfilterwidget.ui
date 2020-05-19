@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
-    <height>425</height>
+    <width>493</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,86 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="3" column="0" colspan="3">
+   <item row="0" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="add_tb">
+       <property name="text">
+        <string>Add filter</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ins</string>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="clear_all_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Clear all</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Shift+Del</string>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="2">
     <widget class="QTableWidget" name="filters_tbw">
      <property name="enabled">
       <bool>true</bool>
@@ -143,42 +222,44 @@
      </column>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="discard_non_matches_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>When checked causes the objects not matching the filters to be not retrieved.</string>
+     </property>
+     <property name="text">
+      <string>Discard non matches</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QToolButton" name="add_tb">
-       <property name="text">
-        <string>Add filter</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/adddata.png</normaloff>:/icones/icones/adddata.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Ins</string>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextBesideIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="clear_all_tb">
+      <widget class="QToolButton" name="tab_objs_btn">
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;p&gt;Forces the filtering of table children objects (constraints, indexes, policies, rules and triggers) if there's at least one table/view/foreign table filter configured. This will bring only the children related to the filtered tables. This option bypasses the non matches discarding option for the selected children objects.&lt;/p&gt;</string>
+       </property>
        <property name="text">
-        <string>Clear all</string>
+        <string>Forced filtering</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
+         <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -186,23 +267,29 @@
          <height>22</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>Shift+Del</string>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="ignore_non_matches_chk">
-       <property name="toolTip">
-        <string>When checked causes the objects not matching the filters to be not retrieved.</string>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="text">
-        <string>Discard non matches</string>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
        </property>
-      </widget>
+      </spacer>
      </item>
     </layout>
    </item>

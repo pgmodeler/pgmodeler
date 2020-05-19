@@ -189,8 +189,8 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 		{
 			if(!TableObject::isTableObject(BaseObject::getObjectType(type_name)))
 			{
-				throw Exception(QString("The object type `%1' is not a valid table child object type!").arg(type_name),
-												ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ErrorCode::InvChildObjectTypeFilter).arg(type_name),
+												ErrorCode::InvChildObjectTypeFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 		}
 

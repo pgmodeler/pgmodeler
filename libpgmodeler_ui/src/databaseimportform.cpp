@@ -424,7 +424,7 @@ void DatabaseImportForm::listObjects()
 		if(database_cmb->currentIndex() > 0)
 		{
 			Connection *conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-			QStringList obj_filter = objs_filter_wgt->getFilterString();
+			QStringList obj_filter = objs_filter_wgt->getObjectFilters();
 
 			//Set the working database on import helper
 			import_helper->closeConnection();
@@ -434,7 +434,9 @@ void DatabaseImportForm::listObjects()
 																			resolve_deps_chk->isChecked(), ignore_errors_chk->isChecked(),
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
 
-			import_helper->setObjectFilters(obj_filter, objs_filter_wgt->isIgnoreNonMatches());
+			import_helper->setObjectFilters(obj_filter,
+																			objs_filter_wgt->isDiscadNonMatches(),
+																			objs_filter_wgt->getForceObjectsFilter());
 			if(obj_filter.isEmpty() && import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
 			{
 				Messagebox msgbox;
@@ -453,7 +455,7 @@ Do you really want to proceed?"),
 
 			/* If the filter is set and the non matches need to be ignored
 			 * switches to the strict view of listing filtered objects */
-			if(!obj_filter.isEmpty() && objs_filter_wgt->isIgnoreNonMatches())
+			if(!obj_filter.isEmpty() && objs_filter_wgt->isDiscadNonMatches())
 			{
 				db_objects_tw->clear();
 				db_objects_stw->setCurrentIndex(1);
