@@ -196,8 +196,10 @@ void DatabaseImportHelper::retrieveSystemObjects()
 		else
 		{
 			obj_map = &types;
-			catalog.setQueryFilter(Catalog::ListAllObjects);
-			//catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
+
+			/* Only system built in types are loaded initially.
+			 * User defined types attributes are retrived only on demand (see getType()) */
+			catalog.setQueryFilter(Catalog::ListOnlySystemObjs);
 		}
 
 		//Query the objects on the catalog and put them on the map
@@ -2995,10 +2997,20 @@ QString DatabaseImportHelper::getType(const QString &oid_str, bool generate_xml,
 		if(type_oid > 0)
 		{
 			if(types.count(type_oid))
+				type_attr = types[type_oid];
+			else
 			{
-				type_attr=types[type_oid];
-				object_id=type_attr[Attributes::ObjectId].toUInt();
+				/* If the type was not found is more likely that is a user-defined type which was not listed
+				 * while retrieving system types (see retrieveSystemObjects()).User defined types are created on demand,
+				 * this way pgModeler will import its attributes so it can be created correctly below. */
+				unsigned curr_filter = catalog.getQueryFilter();
+				catalog.setQueryFilter(Catalog::ListAllObjects);
+				type_attr = catalog.getObjectAttributes(ObjectType::Type, type_oid);
+				types[type_oid] = type_attr;
+				catalog.setQueryFilter(curr_filter);
 			}
+
+			object_id = type_attr[Attributes::ObjectId].toUInt();
 
 			//Special treatment for array types. Removes the [] descriptor when generating XML code for the type
 			if(!type_attr.empty() && type_attr[Attributes::Category]==QString("A") &&

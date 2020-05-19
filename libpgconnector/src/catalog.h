@@ -181,11 +181,11 @@ class Catalog {
 
 		/*! \brief Configures the objects name filtering.
 		 * The parameter discard_non_matches creates extra filters for the other kind of objects not provided by the user in order to avoid listing them.
-		 * The force_tab_obj_types contains a list of table children object type names in which should be forcibly listed
+		 * The tab_obj_types contains a list of table children object type names in which should be forcibly listed
 		 * if the user provides table/view/foreign table filters. This is useful to retrieve tables with their children objects avoiding the need of
 		 * provide specific filters for each table children object. This list has effect only when discard_non_matches is set to true.
 		 * This method raises an exception when detecting malformed filters */
-		void setObjectFilters(QStringList filters, bool discard_non_matches, QStringList force_tab_obj_types = {});
+		void setObjectFilters(QStringList filters, bool discard_non_matches, QStringList tab_obj_types = {});
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();

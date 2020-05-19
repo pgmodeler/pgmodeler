@@ -153,7 +153,7 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QStringList force_tab_obj_types)
+void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QStringList tab_obj_types)
 {
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+";
@@ -185,7 +185,7 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 											 .arg(AliasPlaceholder + QString(".oid::regclass::text"));
 
 		// Validating the provided table children objects types
-		for(auto &type_name : force_tab_obj_types)
+		for(auto &type_name : tab_obj_types)
 		{
 			if(!TableObject::isTableObject(BaseObject::getObjectType(type_name)))
 			{
@@ -194,7 +194,7 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 			}
 		}
 
-		force_tab_obj_types.removeDuplicates();
+		tab_obj_types.removeDuplicates();
 	}
 
 	// The non matches filter is only generated if there're filters configured
@@ -204,7 +204,7 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 		{
 			/* We do not create exclusion filter for table objects if they were specified
 			 * by the users forced objects to be filtered */
-			if(force_tab_obj_types.contains(BaseObject::getSchemaName(type)))
+			if(tab_obj_types.contains(BaseObject::getSchemaName(type)))
 				continue;
 
 			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
@@ -237,11 +237,11 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 		obj_filters[obj_type].append(tmpl_filters[mode].arg(name_fields[obj_type]).arg(pattern));
 
 		// Storing the table/view/foreign table patters if there're forced children objects to filter
-		if(!force_tab_obj_types.isEmpty() && BaseTable::isBaseTable(obj_type))
+		if(!tab_obj_types.isEmpty() && BaseTable::isBaseTable(obj_type))
 			tab_patterns[obj_type].append(tmpl_filters[mode].arg(parent_alias_ref).arg(pattern));
 	}
 
-	if(!force_tab_obj_types.isEmpty())
+	if(!tab_obj_types.isEmpty())
 	{
 		map<ObjectType, QString> fmt_tab_patterns;
 		QStringList fmt_conds;
@@ -251,7 +251,7 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 																		.arg(tab_patterns[itr.first].join(" OR "))
 																		.arg(AliasPlaceholder);
 
-		for(auto &type_name : force_tab_obj_types)
+		for(auto &type_name : tab_obj_types)
 		{
 			obj_type = BaseObject::getObjectType(type_name);
 
