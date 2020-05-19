@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
+    <width>458</width>
     <height>490</height>
    </rect>
   </property>
@@ -217,7 +217,7 @@
      </column>
      <column>
       <property name="text">
-       <string/>
+       <string> </string>
       </property>
      </column>
     </widget>
@@ -252,10 +252,10 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;p&gt;Forces the filtering of table children objects (constraints, indexes, policies, rules and triggers) if there's at least one table/view/foreign table filter configured. This will bring only the children related to the filtered tables. This option bypasses the non matches discarding option for the selected children objects.&lt;/p&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forces the filtering of table children objects (constraints, indexes, policies, rules and triggers) if there's at least one table/view/foreign table filter configured. This will bring only the children related to the filtered tables. This option bypasses the non matches discarding option for the selected children objects types.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Forced filtering</string>
+        <string>Forced filtering (0)</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">

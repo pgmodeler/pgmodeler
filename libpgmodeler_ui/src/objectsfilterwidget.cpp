@@ -43,7 +43,20 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
 	connect(discard_non_matches_chk, SIGNAL(toggled(bool)), this, SLOT(enableTableObjectsButton()));
 
-	filters_tbw->resizeColumnsToContents();
+	connect(&tab_objs_menu, &QMenu::triggered, [&](){
+		int checked_acts = 0;
+		for(auto &act : tab_objs_menu.actions())
+		{
+			if(act->isChecked())
+				checked_acts++;
+		}
+
+		tab_objs_btn->setText(tr("Forced filtering") + QString(" (%1)").arg(checked_acts));
+	});
+
+	filters_tbw->horizontalHeader()->resizeSection(0, 130);
+	filters_tbw->horizontalHeader()->resizeSection(1, 100);
+	filters_tbw->horizontalHeader()->resizeSection(2, 100);
 }
 
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
