@@ -153,7 +153,7 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QStringList tab_obj_types)
+void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringList tab_obj_types)
 {
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+";
@@ -175,7 +175,7 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 	 * and the forced object types list we configure filters to force the
 	 * listing of table children objects, tied to the filters that list
 	 * the parent tables */
-	if(discard_non_matches && (has_tab_filter || has_ftab_filter || has_view_filter))
+	if(only_matching && (has_tab_filter || has_ftab_filter || has_view_filter))
 	{
 		/* Configuring the placeholder for the parent table name used in the construction of the creterias that filters
 		 * table names in forced table children objects filters.
@@ -197,8 +197,8 @@ void Catalog::setObjectFilters(QStringList filters, bool discard_non_matches, QS
 		tab_obj_types.removeDuplicates();
 	}
 
-	// The non matches filter is only generated if there're filters configured
-	if(!filters.isEmpty() && discard_non_matches)
+	// The only matching filter is generated if there're filters configured
+	if(!filters.isEmpty() && only_matching)
 	{
 		for(auto &type : getFilterableObjectTypes())
 		{

@@ -665,9 +665,9 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
-void DatabaseImportHelper::setObjectFilters(QStringList filter, bool discard_non_matches, QStringList force_tab_obj_types)
+void DatabaseImportHelper::setObjectFilters(QStringList filter, bool only_matching, QStringList force_tab_obj_types)
 {
-	catalog.setObjectFilters(filter, discard_non_matches, force_tab_obj_types);
+	catalog.setObjectFilters(filter, only_matching, force_tab_obj_types);
 }
 
 map<ObjectType, QStringList> DatabaseImportHelper::getObjectFilters()
@@ -2775,26 +2775,26 @@ void DatabaseImportHelper::__createTableInheritances()
 		if(!inh_list.isEmpty())
 		{
 			//Get the child table resolving it's name from the oid
-			child_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(user_objs[oid][Attributes::Oid]), tab_type));
+			QString tab_name = getObjectName(user_objs[oid][Attributes::Oid]);
+			child_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(tab_name, tab_type));
 
 			while(!inh_list.isEmpty())
 			{
 				inh_oid = inh_list.front().toUInt();
 				tab_attribs=(user_objs.count(inh_oid) ? user_objs[inh_oid] : system_objs[inh_oid]);
-				tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
 
-				//Get the parent table resolving it's name from the oid
+				// The parent tis is not created and auto_resolve_deps is enabled we try to create it
+				if(auto_resolve_deps && tab_attribs.empty())
+				{
+					getDependencyObject(inh_list.front(), ObjectType::Table, true);
+					tab_attribs=(user_objs.count(inh_oid) ? user_objs[inh_oid] : system_objs[inh_oid]);
+				}
+
+				tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
 				parent_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(inh_list.front()), tab_type));
 
 				try
 				{
-					if(!parent_tab && auto_resolve_deps)
-					{
-						getDependencyObject(inh_list.front(), ObjectType::Table, true);
-						tab_type = static_cast<ObjectType>(tab_attribs[Attributes::ObjectType].toUInt());
-						parent_tab=dynamic_cast<PhysicalTable *>(dbmodel->getObject(getObjectName(inh_list.front()), tab_type));
-					}
-
 					if(!parent_tab)
 						throw Exception(Exception::getErrorMessage(ErrorCode::InvInheritParentTableNotFound)
 														.arg(child_tab->getSignature()).arg(inh_list.front()),

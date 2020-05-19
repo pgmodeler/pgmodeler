@@ -37,11 +37,11 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 		act->setChecked(false);
 	}
 
-	tab_objs_btn->setMenu(&tab_objs_menu);
+	forced_filter_tb->setMenu(&tab_objs_menu);
 
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
-	connect(discard_non_matches_chk, SIGNAL(toggled(bool)), this, SLOT(enableTableObjectsButton()));
+	connect(only_matching_chk, SIGNAL(toggled(bool)), this, SLOT(enableForcedFilterButton()));
 
 	connect(&tab_objs_menu, &QMenu::triggered, [&](){
 		int checked_acts = 0;
@@ -51,7 +51,11 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 				checked_acts++;
 		}
 
-		tab_objs_btn->setText(tr("Forced filtering") + QString(" (%1)").arg(checked_acts));
+		forced_filter_tb->setText(tr("Forced filter") + QString(" (%1)").arg(checked_acts));
+	});
+
+	connect(apply_tb, &QToolButton::clicked, [&](){
+		emit s_filterApplyingRequested();
 	});
 
 	filters_tbw->horizontalHeader()->resizeSection(0, 130);
@@ -71,7 +75,7 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 
 	combo->setStyleSheet("border: 0px");
 	combo->model()->sort(0);
-	connect(combo, SIGNAL(activated(int)), this, SLOT(enableTableObjectsButton()));
+	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
 
 	return combo;
 }
@@ -113,7 +117,7 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 {
 	QStringList types;
 
-	if(tab_objs_btn->isEnabled())
+	if(forced_filter_tb->isEnabled())
 	{
 		for(auto &act : tab_objs_menu.actions())
 		{
@@ -125,9 +129,9 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 	return types;
 }
 
-bool ObjectsFilterWidget::isDiscadNonMatches()
+bool ObjectsFilterWidget::isOnlyMatching()
 {
-	return discard_non_matches_chk->isChecked();
+	return only_matching_chk->isChecked();
 }
 
 void ObjectsFilterWidget::addFilter()
@@ -157,7 +161,8 @@ void ObjectsFilterWidget::addFilter()
 	filters_tbw->setCellWidget(row, 3, rem_tb);
 
 	clear_all_tb->setEnabled(true);
-	enableTableObjectsButton();
+	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
+	enableForcedFilterButton();
 }
 
 void ObjectsFilterWidget::removeFilter()
@@ -183,7 +188,8 @@ void ObjectsFilterWidget::removeFilter()
 	filters_tbw->removeRow(curr_row);
 	filters_tbw->clearSelection();
 	clear_all_tb->setEnabled(filters_tbw->rowCount() != 0);
-	enableTableObjectsButton();
+	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
+	enableForcedFilterButton();
 }
 
 void ObjectsFilterWidget::removeAllFilters()
@@ -197,7 +203,7 @@ void ObjectsFilterWidget::removeAllFilters()
 	clear_all_tb->setEnabled(false);
 }
 
-void ObjectsFilterWidget::enableTableObjectsButton()
+void ObjectsFilterWidget::enableForcedFilterButton()
 {
 	bool has_tab_filter = false;
 	int row_cnt = filters_tbw->rowCount();
@@ -209,5 +215,5 @@ void ObjectsFilterWidget::enableTableObjectsButton()
 		has_tab_filter = BaseTable::isBaseTable(BaseObject::getObjectType(type_name));
 	}
 
-	tab_objs_btn->setEnabled(discard_non_matches_chk->isChecked() && has_tab_filter);
+	forced_filter_tb->setEnabled(only_matching_chk->isChecked() && has_tab_filter);
 }

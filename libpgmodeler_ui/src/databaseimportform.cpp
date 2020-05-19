@@ -47,10 +47,9 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 
 	connect(close_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
 	connect(connections_cmb, SIGNAL(activated(int)), this, SLOT(listDatabases()));
-	connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(listObjects()));
+	connect(database_cmb, SIGNAL(activated(int)), this, SLOT(listObjects()));
 	connect(import_sys_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(import_ext_objs_chk, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
-	connect(refresh_tb, SIGNAL(clicked(bool)), this, SLOT(listObjects()));
 	connect(by_oid_chk, SIGNAL(toggled(bool)), this, SLOT(filterObjects()));
 	connect(expand_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(expandAll()));
 	connect(collapse_all_tb, SIGNAL(clicked(bool)), db_objects_tw, SLOT(collapseAll()));
@@ -60,18 +59,24 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(filter_edt, SIGNAL(textChanged(QString)), this, SLOT(filterObjects()));
 	connect(import_btn, SIGNAL(clicked(bool)), this, SLOT(importDatabase()));
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport()));
+	connect(objs_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(listObjects()));
 
 	connect(import_to_model_chk, &QCheckBox::toggled,
 			[&](bool checked){ create_model=!checked; });
 
 	connect(database_cmb, &QComboBox::currentTextChanged,
 	[&]() {
-		if(database_cmb->currentIndex()==0)
-			db_objects_tw->clear();
+		bool enable = database_cmb->currentIndex() > 0;
 
-		import_btn->setEnabled(database_cmb->currentIndex() > 0);
-		objs_parent_wgt->setEnabled(database_cmb->currentIndex() > 0);
-		refresh_tb->setEnabled(database_cmb->currentIndex() > 0);
+		if(database_cmb->currentIndex()==0)
+		{
+			db_objects_tw->clear();
+			filtered_objs_tbw->setRowCount(0);
+		}
+
+		import_btn->setEnabled(enable);
+		objs_parent_wgt->setEnabled(enable);
+		filtered_objs_tbw->setEnabled(enable);
 	});
 
 
@@ -188,6 +193,7 @@ void DatabaseImportForm::listFilteredObjects()
 		filtered_objs_tbw->setUpdatesEnabled(true);
 		filtered_objs_tbw->setSortingEnabled(true);
 		filtered_objs_tbw->resizeColumnsToContents();
+		filtered_objs_tbw->setEnabled(filtered_objs_tbw->rowCount() > 0);
 		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
@@ -435,7 +441,7 @@ void DatabaseImportForm::listObjects()
 																			debug_mode_chk->isChecked(), rand_rel_color_chk->isChecked(), true);
 
 			import_helper->setObjectFilters(obj_filter,
-																			objs_filter_wgt->isDiscadNonMatches(),
+																			objs_filter_wgt->isOnlyMatching(),
 																			objs_filter_wgt->getForceObjectsFilter());
 			if(obj_filter.isEmpty() && import_helper->getCatalog().getObjectCount(false) > ObjectCountThreshould)
 			{
@@ -455,7 +461,7 @@ Do you really want to proceed?"),
 
 			/* If the filter is set and the non matches need to be ignored
 			 * switches to the strict view of listing filtered objects */
-			if(!obj_filter.isEmpty() && objs_filter_wgt->isDiscadNonMatches())
+			if(!obj_filter.isEmpty() && objs_filter_wgt->isOnlyMatching())
 			{
 				db_objects_tw->clear();
 				db_objects_stw->setCurrentIndex(1);

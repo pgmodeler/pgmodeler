@@ -47,14 +47,17 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		QStringList getObjectFilters();
 		QStringList getForceObjectsFilter();
 
-		bool isDiscadNonMatches();
+		bool isOnlyMatching();
 		bool hasFiltersConfigured();
 
 	private slots:
 		void addFilter();
 		void removeFilter();
 		void removeAllFilters();
-		void enableTableObjectsButton();
+		void enableForcedFilterButton();
+
+	signals:
+		void s_filterApplyingRequested();
 };
 
 #endif
