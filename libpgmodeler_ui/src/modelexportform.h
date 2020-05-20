@@ -30,6 +30,7 @@
 #include "modelwidget.h"
 #include "modelexporthelper.h"
 #include "htmlitemdelegate.h"
+#include "fileselectorwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
@@ -54,6 +55,10 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		//! \brief Auxiliary viewport passed to export helper when dealing with PNG export
 		QGraphicsView *viewp;
 
+		FileSelectorWidget *sql_file_sel,
+		*img_file_sel,
+		*dict_file_sel;
+
 		void finishExport(const QString &msg);
 		void enableExportModes(bool value);
 		void closeEvent(QCloseEvent *event);
@@ -71,7 +76,6 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private slots:
 		void selectExportMode();
 		void exportModel();
-		void selectOutputFile();
 		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd, bool is_code_gen);
 		void captureThreadError(Exception e);
 		void cancelExport();
@@ -79,6 +83,9 @@ class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 		void handleExportCanceled();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
 		void editConnections();
+		void enableExport();
+		void selectImageFormat();
+		void selectDataDictType();
 
 	signals:
 		/*! \brief This signal is emitted whenever the user changes the connections settings

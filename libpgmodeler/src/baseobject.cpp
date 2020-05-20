@@ -1030,6 +1030,12 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 	return vector<ObjectType>()={};
 }
 
+bool BaseObject::isChildObjectType(ObjectType parent_type, ObjectType child_type)
+{
+	vector<ObjectType> types = getChildObjectTypes(parent_type);
+	return std::find(types.begin(), types.end(), child_type) != types.end();
+}
+
 void BaseObject::setPgSQLVersion(const QString &ver)
 {
 	pgsql_ver=ver;

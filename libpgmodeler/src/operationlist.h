@@ -96,7 +96,7 @@ class OperationList: public QObject {
 
 	public:
 		OperationList(DatabaseModel *model);
-		~OperationList();
+		virtual ~OperationList();
 
 		/*! \brief Starts chaining operations.
 		 This means that all operations added after calling this

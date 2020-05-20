@@ -3,14 +3,16 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[SELECT rl.oid, rl.rulename AS name
+[SELECT rl.oid, rl.rulename AS name, cl.oid::regclass::text AS parent, 'table' AS parent_type
   FROM ( SELECT rw.* ]
 	
   %if ({pgsql-ver} <=f "11.0") %then
     [ , rw.oid ] 
   %end
+  
+  
     
-[   FROM pg_rewrite AS rw
+[ FROM pg_rewrite AS rw
 	WHERE rw.ev_type <> '1'::"char"
   ) AS rl
   LEFT JOIN pg_class cl ON cl.oid = rl.ev_class AND cl.relkind IN ('r','v','m') ]
@@ -42,7 +44,17 @@
     %end
       ( {not-ext-object} )
   %end
-
+  
+  %if {name-filter} %then
+    %if %not {last-sys-oid} %and %not {schema} %and %not {not-ext-object} %then
+      [ WHERE ]
+    %else
+      [ AND ]
+    %end
+    
+    ( {name-filter} )
+  %end
+  
 %else
     %if {attribs} %then
       [SELECT rl.oid, rl.rulename AS name, cl.oid as table,

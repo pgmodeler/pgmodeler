@@ -798,7 +798,7 @@
          <property name="title">
           <string>General</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="general_grid">
           <property name="leftMargin">
            <number>4</number>
           </property>
@@ -908,16 +908,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="confs_dir_edt">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="7" column="1">
            <widget class="QLabel" name="sql_history_lbl">
             <property name="sizePolicy">
@@ -941,82 +931,6 @@
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Souce code editor:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QToolButton" name="open_dir_tb">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Open in file manager</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QToolButton" name="select_editor_btn">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Browse the source code editor application</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res/resources.qrc">
-              <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>22</width>
-              <height>22</height>
-             </size>
             </property>
            </widget>
           </item>
@@ -1169,19 +1083,6 @@
           </item>
           <item row="4" column="2" colspan="2">
            <widget class="QLineEdit" name="source_editor_args_edt">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>false</bool>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="source_editor_edt">
             <property name="toolTip">
              <string/>
             </property>

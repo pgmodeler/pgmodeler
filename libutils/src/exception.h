@@ -294,12 +294,15 @@ enum class ErrorCode: unsigned {
 	AsgInvalidObjectForeignTable,
 	InvRelTypeForeignTable,
 	InvCopyRelForeignTable,
-	InvDataDictDirectory
+	InvDataDictDirectory,
+	InitialUserConfigNotCreated,
+	InvalidObjectFilter,
+	InvChildObjectTypeFilter
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=250;
+		static constexpr unsigned ErrorCount=253;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

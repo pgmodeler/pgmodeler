@@ -492,6 +492,7 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	QList<QGraphicsItem *> items=this->items();
 	QGraphicsItem::GraphicsItemFlags flags;
 	BaseObjectView *object=nullptr;
+	TableObjectView *tab_obj_view=nullptr;
 	BaseGraphicObject *base_obj=nullptr;
 
 	if(!std::isnan(p_start.x()) && !std::isnan(p_start.y()))
@@ -503,13 +504,16 @@ void ObjectsScene::showRelationshipLine(bool value, const QPointF &p_start)
 	{
 		//When showing the relationship line all the objects cannot be moved
 		flags=QGraphicsItem::ItemIsSelectable |
-			  QGraphicsItem::ItemSendsGeometryChanges;
+					QGraphicsItem::ItemSendsGeometryChanges;
 
-		object=dynamic_cast<BaseObjectView *>(items.front());
+		object = dynamic_cast<BaseObjectView *>(items.front());
+		tab_obj_view = dynamic_cast<TableObjectView *>(object);
 
-		if(object && object->getUnderlyingObject())
+		// Discarding table objects views from checking since they can't be normally be selected by a single click
+		if(object && !tab_obj_view && object->getUnderlyingObject())
 		{
-			base_obj=dynamic_cast<BaseGraphicObject *>(object->getUnderlyingObject());
+			BaseObject *ul_object = object->getUnderlyingObject();
+			base_obj=dynamic_cast<BaseGraphicObject *>(ul_object);
 
 			if(!value && base_obj &&
 					base_obj->getObjectType()!=ObjectType::Relationship &&

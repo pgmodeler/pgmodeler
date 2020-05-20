@@ -729,7 +729,7 @@ void DataManipulationForm::listObjects(QComboBox *combo, vector<ObjectType> obj_
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		catalog.setConnection(conn);
-		catalog.setFilter(Catalog::ListAllObjects);
+		catalog.setQueryFilter(Catalog::ListAllObjects);
 		combo->blockSignals(true);
 		combo->clear();
 

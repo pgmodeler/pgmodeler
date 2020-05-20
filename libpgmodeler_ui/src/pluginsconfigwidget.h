@@ -29,6 +29,7 @@
 #include "ui_pluginsconfigwidget.h"
 #include "objectstablewidget.h"
 #include "pgmodelerplugin.h"
+#include "fileselectorwidget.h"
 
 class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidget {
 	private:
@@ -43,6 +44,8 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		//! \brief Table used to show the loaded plugins
 		ObjectsTableWidget *plugins_tab;
 
+		FileSelectorWidget *root_dir_sel;
+
 		/* Disabled methods */
 		void applyConfiguration(void){}
 		void saveConfiguration(void){}
@@ -51,7 +54,7 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 
 	public:
 		PluginsConfigWidget(QWidget *parent = nullptr);
-		~PluginsConfigWidget();
+		virtual ~PluginsConfigWidget();
 
 		//! \brief Since plugins has its own configurations this method load all plugins instead
 		void loadConfiguration();
@@ -60,12 +63,11 @@ class PluginsConfigWidget: public BaseConfigWidget, public Ui::PluginsConfigWidg
 		 receiver object and slot executed when the actions is activated */
 		void installPluginsActions(QMenu *menu, QObject *recv, const char *slot);
 
-		//*! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
+		//! \brief Performs the initialization of all loaded plugins (see PgModelerPlugin::initPlugin())
 		void initPlugins(MainWindow *main_window);
 
 	private slots:
 		void showPluginInfo(int idx);
-		void openRootPluginDiretory();
 };
 
 #endif

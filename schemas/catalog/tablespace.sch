@@ -3,10 +3,21 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT oid, spcname AS name FROM pg_tablespace ]
+  [SELECT oid, spcname AS name, current_database() AS parent, 'database' AS parent_type
+   FROM pg_tablespace ]
 
   %if {last-sys-oid} %then
    [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}
+  %end
+  
+  %if {name-filter} %then        
+    %if {last-sys-oid} %then
+        [ AND ] 
+    %else
+        [ WHERE ]
+    %end        
+        
+    ( {name-filter} )    
   %end
 
 %else

@@ -33,6 +33,7 @@
 #include "htmlitemdelegate.h"
 #include "numberedtexteditor.h"
 #include "baseconfigwidget.h"
+#include "fileselectorwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -50,6 +51,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		bool is_adding_new_preset;
 
 		NumberedTextEditor *sqlcode_txt;
+
+		FileSelectorWidget *file_sel;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -133,7 +136,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
-		~ModelDatabaseDiffForm();
+		virtual ~ModelDatabaseDiffForm();
 
 		//! \brief Makes the form behaves like a QDialog by running it from an event loop. The event loop is finished when the user clicks close
 		void exec();
@@ -155,7 +158,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void handleDiffFinished();
 		void handleExportFinished();
 		void handleErrorIgnored(QString err_code, QString err_msg, QString cmd);
-		void selectOutputFile();
 		void importDatabase(unsigned thread_id);
 		void diffModels();
 		void exportDiff(bool confirm=true);

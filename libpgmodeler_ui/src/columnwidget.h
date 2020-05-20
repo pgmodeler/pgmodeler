@@ -44,7 +44,8 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 		
 	private slots:
 		void editSequenceAttributes();
-		
+		void enableDefaultValueFields();
+
 	public slots:
 		void applyConfiguration();
 };

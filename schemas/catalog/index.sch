@@ -3,12 +3,14 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[SELECT id.indexrelid AS oid, cl.relname AS name FROM pg_index AS id
-  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid ]
+[SELECT id.indexrelid AS oid, cl.relname AS name, 
+        tb.oid::regclass::text AS parent, 'table' AS parent_type
+  FROM pg_index AS id
+  LEFT JOIN pg_class AS cl ON cl.oid = id.indexrelid 
+  LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid ]
 
  %if {schema} %then
-    [ LEFT JOIN pg_class AS tb ON id.indrelid = tb.oid
-      LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
+    [ LEFT JOIN pg_namespace AS ns ON ns.oid = tb.relnamespace
       WHERE nspname= ] '{schema}'
 
    %if {table} %then
@@ -42,7 +44,11 @@
    %if {not-ext-object} %then
      [ AND ]( {not-ext-object} )
    %end
-
+   
+   %if {name-filter} %then
+     [ AND ] ( {name-filter} )
+   %end
+   
 %else
     %if {attribs} %then
       [SELECT id.indexrelid AS oid, cl.relname AS name,

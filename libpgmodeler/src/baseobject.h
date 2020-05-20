@@ -501,6 +501,9 @@ class BaseObject {
 	types are ObjectType::Database, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable */
 		static vector<ObjectType> getChildObjectTypes(ObjectType obj_type);
 
+		//! \brief Returns true when the child_type is in the list of children types of the parent_type
+		static bool isChildObjectType(ObjectType parent_type, ObjectType child_type);
+
 		/*! \brief Sets the default version when generating the SQL code. This affects all instances of classes that
 				is based upon this one */
 		static void setPgSQLVersion(const QString &ver);

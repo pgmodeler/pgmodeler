@@ -3,9 +3,10 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-    [ SELECT sv.oid, srvname AS name FROM pg_foreign_server AS sv ]
+    [ SELECT sv.oid, srvname AS name, current_database() AS parent, 'database' AS parent_type
+      FROM pg_foreign_server AS sv ]
 
-    %if {last-sys-oid} %or {not-ext-object} %then  
+    %if {last-sys-oid} %or {not-ext-object}  %or {name-filter} %then  
         [ WHERE ]
         
         %if {last-sys-oid} %then
@@ -20,6 +21,14 @@
             
             ( {not-ext-object} ) 
         %end
+        
+        %if {name-filter} %then
+            %if {last-sys-oid} %or {not-ext-object} %then
+                [ AND ] 
+            %end
+           
+            ( {name-filter} )
+        %end        
     %end
 %else 
     %if {attribs} %then

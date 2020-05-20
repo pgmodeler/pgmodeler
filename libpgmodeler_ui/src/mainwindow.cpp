@@ -467,21 +467,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 MainWindow::~MainWindow()
 {
-	ModelWidget *model = nullptr;
-	int idx = 0;
-
-	/* Destroying models from the last to the first in order
-	 * to destroy other objects inside the models in the proper order */
-	while(models_tbw->count() > 0)
-	{
-		idx = models_tbw->count() - 1;
-		model = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
-		models_tbw->removeTab(idx);
-		delete model;
-	}
-
 	//This fix the crash on exit at Mac OSX system (but not sure why) (???)
 	file_menu->clear();
+
 	delete restoration_form;
 	delete overview_wgt;
 	delete configuration_form;
@@ -631,8 +619,8 @@ void MainWindow::fixModel(const QString &filename)
 	if(!filename.isEmpty())
 	{
 		QFileInfo fi(filename);
-		model_fix_form.input_file_edt->setText(fi.absoluteFilePath());
-		model_fix_form.output_file_edt->setText(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
+		model_fix_form.input_file_sel->setSelectedFile(fi.absoluteFilePath());
+		model_fix_form.output_file_sel->setSelectedFile(fi.absolutePath() + GlobalAttributes::DirSeparator + fi.baseName() + QString("_fixed.") + fi.suffix());
 	}
 
 	PgModelerUiNs::resizeDialog(&model_fix_form);
@@ -1137,6 +1125,8 @@ void MainWindow::setCurrentModel()
 		else
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
+		connect(current_model, SIGNAL(s_modelModified(bool)), model_nav_wgt, SLOT(setCurrentModelModified(bool)), Qt::UniqueConnection);
+
 		connect(current_model, SIGNAL(s_manipulationCanceled()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectModified()),this, SLOT(updateDockWidgets()), Qt::UniqueConnection);
@@ -1280,13 +1270,10 @@ void MainWindow::closeModel(int model_id)
 		if(!model->isModified() ||
 				(model->isModified() && msg_box.result()==QDialog::Accepted))
 		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
 			model_nav_wgt->removeModel(model_id);
 			model_tree_states.erase(model);
 
-			disconnect(tab, nullptr, oper_list_wgt, nullptr);
-			disconnect(tab, nullptr, model_objs_wgt, nullptr);
-			disconnect(tab, nullptr, this, nullptr);
+			disconnect(model, nullptr, nullptr, nullptr);
 			disconnect(action_alin_objs_grade, nullptr, this, nullptr);
 			disconnect(action_show_grid, nullptr, this, nullptr);
 			disconnect(action_show_delimiters, nullptr, this, nullptr);
@@ -1302,9 +1289,6 @@ void MainWindow::closeModel(int model_id)
 				models_tbw->removeTab(model_id);
 			else
 				models_tbw->removeTab(models_tbw->currentIndex());
-
-			delete model;
-			QApplication::restoreOverrideCursor();
 		}
 	}
 
@@ -2116,7 +2100,8 @@ void MainWindow::toggleLayersWidget(bool show)
 			btn_pos = mapTo(this, layers_btn->pos());
 
 	layers_wgt->move(btn_pos.x() + general_tb->width(),
-									 tb_pos.y() - layers_wgt->height() * 0.80);
+									 tb_pos.y() - (layers_wgt->height() - layers_btn->height() - v_splitter1->handleWidth()) + 1);
+
 	layers_wgt->setVisible(show);
 }
 

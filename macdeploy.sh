@@ -42,14 +42,14 @@ BUNDLE="$INSTALL_ROOT/$APP_PREFIX/$APPNAME.app"
 
 clear
 echo
-echo "pgModeler Mac OSX deployment script"
+echo "pgModeler macOS deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying System Qt version
 if [ -e "$QT_ROOT/bin/qmake" ]; then
   QT_VER=`$QT_ROOT/bin/qmake --version | grep -m 1 -o -E '[0-9]\.[0-9]+\.[0-9]+'`
-  QT_VER=${QT_VER:0:5}
+  QT_VER=${QT_VER:0:6}
 fi
 
 # If Qt was not found in system path
@@ -71,6 +71,7 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
   echo "Building snapshot version. (Found $SNAPSHOT_OPT)"

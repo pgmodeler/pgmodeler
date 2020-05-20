@@ -44,6 +44,22 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 
 	Ui_GeneralConfigWidget::setupUi(this);
 
+	confs_dir_sel = new FileSelectorWidget(this);
+	confs_dir_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
+	confs_dir_sel->setReadOnly(true);
+	confs_dir_sel->setFileMode(QFileDialog::Directory);
+	confs_dir_sel->setSelectedFile(GlobalAttributes::getConfigurationsDir());
+	general_grid->addWidget(confs_dir_sel, 1, 2, 1, 2);
+
+	source_editor_sel = new FileSelectorWidget(this);
+	source_editor_sel->setToolTip(tr("pgModeler configurations directory for the current user"));
+	source_editor_sel->setAllowFilenameInput(true);
+	source_editor_sel->setFileMode(QFileDialog::ExistingFile);
+	source_editor_sel->setAcceptMode(QFileDialog::AcceptOpen);
+	source_editor_sel->setWindowTitle(tr("Select application"));
+	source_editor_sel->setToolTip(tr("External source code editor application"));
+	general_grid->addWidget(source_editor_sel, 2, 2, 1, 2);
+
 	line_numbers_cp=new ColorPickerWidget(1, this);
 	line_numbers_cp->setButtonToolTip(0, tr("Line numbers' font color"));
 
@@ -91,7 +107,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(tab_width_chk, SIGNAL(toggled(bool)), this, SLOT(updateFontPreview()));
 
 	connect(font_preview_txt, SIGNAL(cursorPositionChanged()), this, SLOT(updateFontPreview()));
-	connect(select_editor_btn, SIGNAL(clicked(bool)), this, SLOT(selectSourceEditor()));
 	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
 	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
@@ -175,12 +190,6 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 		child_wgts.push_back(radio);
 		connect(radio, SIGNAL(clicked()), this, SLOT(setConfigurationChanged()));
 	}
-
-	confs_dir_edt->setText(GlobalAttributes::getConfigurationsDir());
-
-	connect(open_dir_tb, &QToolButton::clicked, [&](){
-		QDesktopServices::openUrl(QUrl(QString("file://") + confs_dir_edt->text()));
-	});
 
 	connect(clear_sql_history_tb, &QToolButton::clicked, [](){
 		SQLExecutionWidget::destroySQLHistory();
@@ -286,7 +295,7 @@ void GeneralConfigWidget::loadConfiguration()
 		line_numbers_bg_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]);
 		line_highlight_cp->setColor(0, config_params[Attributes::Configuration][Attributes::LineHighlightColor]);
 
-		source_editor_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
+		source_editor_sel->setSelectedFile(config_params[Attributes::Configuration][Attributes::SourceEditorApp]);
 		source_editor_args_edt->setText(config_params[Attributes::Configuration][Attributes::SourceEditorArgs]);
 
 		save_restore_geometry_chk->setChecked(config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]==Attributes::True);
@@ -488,7 +497,7 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
 
-		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_edt->text();
+		config_params[Attributes::Configuration][Attributes::SourceEditorApp]=source_editor_sel->getSelectedFile();
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
 		config_params[Attributes::Configuration][Attributes::UiLanguage]=ui_language_cmb->currentData().toString();
 
@@ -622,7 +631,7 @@ void GeneralConfigWidget::applyConfiguration()
 	NumberedTextEditor::setLineHighlightColor(line_highlight_cp->getColor(0));
 	NumberedTextEditor::setHighlightLines(hightlight_lines_chk->isChecked());
 	NumberedTextEditor::setDefaultFont(fnt);
-	NumberedTextEditor::setSourceEditorApp(source_editor_edt->text());
+	NumberedTextEditor::setSourceEditorApp(source_editor_sel->getSelectedFile());
 	NumberedTextEditor::setSourceEditorAppArgs(source_editor_args_edt->text());
 	LineNumbersWidget::setColors(line_numbers_cp->getColor(0), line_numbers_bg_cp->getColor(0));
 	SyntaxHighlighter::setDefaultFont(fnt);
@@ -705,21 +714,6 @@ void GeneralConfigWidget::selectPaperSize()
 	height_lbl->setVisible(visible);
 	width_spb->setVisible(visible);
 	height_spb->setVisible(visible);
-}
-
-void GeneralConfigWidget::selectSourceEditor()
-{
-	QFileDialog sel_editor_dlg;
-
-	sel_editor_dlg.setFileMode(QFileDialog::ExistingFile);
-	sel_editor_dlg.setNameFilter(tr("All files (*.*)"));
-	sel_editor_dlg.setModal(true);
-	sel_editor_dlg.setWindowTitle(tr("Load file"));
-	sel_editor_dlg.setAcceptMode(QFileDialog::AcceptOpen);
-	sel_editor_dlg.exec();
-
-	if(sel_editor_dlg.result()==QDialog::Accepted)
-		source_editor_edt->setText(sel_editor_dlg.selectedFiles().at(0));
 }
 
 void GeneralConfigWidget::resetDialogsSizes()

@@ -104,7 +104,7 @@ class AttributesTogglerItem: public QObject, public RoundedRectItem {
 
 	public:
 		AttributesTogglerItem(QGraphicsItem *parent = nullptr);
-		~AttributesTogglerItem();
+		virtual ~AttributesTogglerItem();
 
 		//! \brief Configures the buttons brush
 		void setButtonsBrush(const QBrush &brush);

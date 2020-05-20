@@ -3,7 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT oid, lanname AS name FROM pg_language ]
+  [SELECT oid, lanname AS name, current_database() AS parent, 'database' AS parent_type
+   FROM pg_language ]
 
   %if {last-sys-oid} %then
    [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}
@@ -16,6 +17,16 @@
      [ WHERE ]
     %end
     ( {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+    %if {last-sys-oid} %or {not-ext-object} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {name-filter} )
   %end
 
 %else

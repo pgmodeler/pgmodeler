@@ -22,9 +22,21 @@ LayersWidget::LayersWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
 	setModel(nullptr);
+
+	old_pos = QPoint(-1, -1);
 	curr_item = nullptr;
 	curr_row = -1;
+
 	layers_lst->installEventFilter(this);
+	frame->installEventFilter(this);
+
+	QAction *act = visibility_menu.addAction(tr("Show all"), this, SLOT(setLayersVisible()));
+	act->setData(true);
+
+	act = visibility_menu.addAction(tr("Hide all"), this, SLOT(setLayersVisible()));
+	act->setData(false);
+
+	visibility_tb->setMenu(&visibility_menu);
 
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
 	connect(layers_lst, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(startLayerRenaming(QListWidgetItem*)));
@@ -53,14 +65,46 @@ void LayersWidget::updateLayers()
 
 bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 {
-	if(watched == layers_lst && event->type() == QEvent::KeyPress)
+	if(watched == layers_lst)
 	{
-		QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
+		if(event->type() == QEvent::KeyPress)
+		{
+			QKeyEvent *k_event = dynamic_cast<QKeyEvent *>(event);
 
-		if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
+			if(curr_item && (k_event->key() == Qt::Key_Enter || k_event->key() == Qt::Key_Return))
+				finishLayerRenaming();
+			else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
+				startLayerRenaming(layers_lst->currentItem());
+		}
+		else if(event->type() == QEvent::FocusIn && curr_item)
+		{
 			finishLayerRenaming();
-		else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
-			startLayerRenaming(layers_lst->currentItem());
+		}
+	}
+	else if(watched == frame && (event->type()==QEvent::MouseMove || event->type()==QEvent::MouseButtonPress))
+	{
+		QMouseEvent *m_event=dynamic_cast<QMouseEvent *>(event);
+
+		if(event->type() == QEvent::MouseButtonPress)
+			old_pos = QPoint(-1,-1);
+		else
+		{
+			if(m_event->buttons() == Qt::LeftButton)
+			{
+				QPoint pnt = this->mapToParent(m_event->pos());
+				int w = 0, h = 0;
+
+				//Calculates the width and height based upon the delta between the points
+				w = this->width() + (pnt.x() - old_pos.x());
+				h = this->geometry().bottom() - pnt.y() + 1;
+
+				if(h >= this->minimumHeight() && h <= this->maximumHeight() &&
+					 w >= this->minimumWidth() && w <= this->maximumWidth())
+					this->setGeometry(this->pos().x(), pnt.y(), w, h);
+
+				old_pos = pnt;
+			}
+		}
 	}
 
 	return false;
@@ -126,6 +170,20 @@ void LayersWidget::enableButtons()
 	remove_all_tb->setEnabled(layers_lst->count() > 1);
 }
 
+void LayersWidget::setLayersVisible()
+{
+	QAction *act = qobject_cast<QAction *>(sender());
+	Qt::CheckState chk_state = act->data().toBool() ? Qt::Checked : Qt::Unchecked;
+
+	layers_lst->blockSignals(true);
+
+	for(auto &item : layers_lst->findItems("*", Qt::MatchWildcard))
+		item->setCheckState(chk_state);
+
+	layers_lst->blockSignals(false);
+	updateActiveLayers();
+}
+
 void LayersWidget::setVisible(bool value)
 {
 	QWidget::setVisible(value);
@@ -148,13 +206,18 @@ QListWidgetItem *LayersWidget::addLayer(const QString &name)
 {
 	QListWidgetItem *item = nullptr;
 	QString aux_name = name.isEmpty() ? tr("New layer") : name;
+	QStringList act_layers = 	model->scene->getLayers();
 
 	aux_name = model->scene->addLayer(aux_name);
 	item = new QListWidgetItem(aux_name);
+
+	item->setCheckState(Qt::Checked);
 	item->setFlags((item->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsEditable);
-	item->setCheckState(Qt::Unchecked);
 
 	layers_lst->addItem(item);
+
+	act_layers.prepend(aux_name);
+	model->scene->setActiveLayers(act_layers);
 
 	/* Reconfigure the model's menu if we have selected items so the new layer can
 	 * appear in the "Move to layer" quick action */

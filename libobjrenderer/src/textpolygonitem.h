@@ -36,7 +36,7 @@ class TextPolygonItem : public QGraphicsPolygonItem {
 
 	public:
 		TextPolygonItem(QGraphicsItem *parent = nullptr);
-		~TextPolygonItem();
+		virtual ~TextPolygonItem();
 
 		//! \brief Defines the text displayed by the item
 		void setText(const QString &text);

@@ -56,7 +56,7 @@ class Table: public PhysicalTable {
 
 	public:
 		Table();
-		~Table();
+		virtual ~Table();
 
 		//! \brief Defines if the table is unlogged
 		void setUnlogged(bool value);

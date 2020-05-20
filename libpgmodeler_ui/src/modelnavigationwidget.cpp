@@ -17,6 +17,7 @@
 */
 
 #include "modelnavigationwidget.h"
+#include "pgmodeleruins.h"
 
 ModelNavigationWidget::ModelNavigationWidget(QWidget *parent): QWidget(parent)
 {
@@ -94,6 +95,15 @@ void ModelNavigationWidget::updateModelText(int idx, const QString &text, const 
 		if(idx==models_cmb->currentIndex())
 			models_cmb->setToolTip(filename);
 	}
+}
+
+void ModelNavigationWidget::setCurrentModelModified(bool modified)
+{
+	if(models_cmb->count() == 0)
+		return;
+
+	models_cmb->setItemIcon(models_cmb->currentIndex(),
+													modified ? QIcon(PgModelerUiNs::getIconPath("salvar")) : QIcon());
 }
 
 void ModelNavigationWidget::removeModel(int idx)

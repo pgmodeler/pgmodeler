@@ -231,14 +231,25 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
 		{
 			if((table_id==SrcTable && dynamic_cast<Table *>(src_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(dst_table))) ||
 				 (!isSelfRelationship() && table_id==DstTable && dynamic_cast<Table *>(dst_table)->isReferTableOnForeignKey(dynamic_cast<Table *>(src_table))))
-				aux=QString("n");
+			{
+				if(table_id == SrcTable && canSimulateRelationship11())
+					aux = "1";
+				else
+					aux = "n";
+			}
 			else
-				aux=QString("1");
+				aux = "1";
+
+			if((table_id == DstTable && dst_mandatory) ||
+				 (table_id == SrcTable && src_mandatory))
+				aux.prepend("1:");
+			else
+				aux.prepend("0:");
 
 			lables[label_id]->setComment(aux);
 		}
 		else if(rel_type==RelationshipNn)
-			lables[label_id]->setComment(QString("n"));
+			lables[label_id]->setComment("n");
 
 		lables[label_id]->setModified(true);
 	}
@@ -399,6 +410,42 @@ Constraint *BaseRelationship::getReferenceForeignKey()
 	return reference_fk;
 }
 
+bool BaseRelationship::canSimulateRelationship11()
+{
+	if(rel_type != BaseRelationship::RelationshipFk)
+		return false;
+
+	bool fake_rel11 = false;
+	PhysicalTable *table = dynamic_cast<PhysicalTable *>(getTable(BaseRelationship::SrcTable));
+
+	if(table)
+	{
+		Constraint *constr = nullptr, *uq_constr = nullptr;
+
+		for(unsigned idx = 0; idx < table->getConstraintCount() && !fake_rel11; idx++)
+		{
+			constr = table->getConstraint(idx);
+
+			if(constr->getConstraintType() == ConstraintType::ForeignKey)
+			{
+				for(unsigned idx1 = 0; idx1 < table->getConstraintCount(); idx1++)
+				{
+					uq_constr = table->getConstraint(idx1);
+
+					if(uq_constr->getConstraintType() == ConstraintType::Unique &&
+						 uq_constr->isColumnsExist(constr->getColumns(Constraint::SourceCols), Constraint::SourceCols))
+					{
+						fake_rel11 = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return fake_rel11;
+}
+
 QString BaseRelationship::getCodeDefinition(unsigned def_type)
 {
 	QString code_def=getCachedCode(def_type);
@@ -480,6 +527,7 @@ void BaseRelationship::operator = (BaseRelationship &rel)
 	this->dst_table=rel.dst_table;
 	this->rel_type=rel.rel_type;
 	this->points=rel.points;
+	this->custom_color=rel.custom_color;
 
 	for(int i=0; i < 3; i++)
 	{

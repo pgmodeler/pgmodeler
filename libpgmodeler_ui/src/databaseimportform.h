@@ -28,6 +28,7 @@
 #include "ui_databaseimportform.h"
 #include "databaseimporthelper.h"
 #include "htmlitemdelegate.h"
+#include "objectsfilterwidget.h"
 #include <QTimer>
 
 class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
@@ -46,12 +47,14 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		/*! \brief Model widget allocated during the import. In case of success this model
 		will be transferred to the main window or destroyed in case of failure */
 		ModelWidget *model_wgt;
-		
+
 		//! \brief Database importer helper
 		DatabaseImportHelper *import_helper;
 		
 		//! \brief Thead that controls the database import helper
 		QThread *import_thread;
+
+		ObjectsFilterWidget *objs_filter_wgt;
 		
 		/*! \brief Toggles the checked state for the specified item. This method recursively
 		changes the check state for the children items */
@@ -78,6 +81,9 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		//! \brief Destroys both import thread and helper
 		void destroyThread();
 
+		//! \brief Filters and list in a different way the objects that matches the user provided filters
+		void listFilteredObjects();
+
 	public:
 		//! \brief Constants used to access the tree widget items data
 		static constexpr unsigned ObjectId=1,
@@ -89,9 +95,14 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		ObjectOtherData=7, //General purpose usage
 		ObjectCount=8,
 		ObjectSource=9; //Only for gropus
+
+		/*! \brief This constant holds the maximum amount of objects in a database to be imported
+		 * which will not generate an alert message about the possible slowdowns in the process
+		 * if all objects are imported without using filters */
+		static constexpr unsigned ObjectCountThreshould=2000;
 		
 		DatabaseImportForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
-		~DatabaseImportForm();
+		virtual ~DatabaseImportForm();
 		
 		void setModelWidget(ModelWidget *model);
 

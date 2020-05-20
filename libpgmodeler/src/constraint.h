@@ -100,7 +100,7 @@ class Constraint: public TableObject{
 		UpdateAction=1;
 
 		Constraint();
-		~Constraint();
+		virtual ~Constraint();
 
 		/*! \brief Adds one column to the internal column list referenced by the
 		 constants SOURCE_COLS or REFERENCED_COLS */
@@ -232,6 +232,9 @@ class Constraint: public TableObject{
 		/*! \brief Indicates whether the column is referenced in internal column list or exclude element list.
 		The second parameter is useful to permit or not the search of column only on referenced columns list. */
 		bool isColumnReferenced(Column *column, bool search_only_ref_cols = false);
+
+		//! \brief Indicates whether the columns are referenced in internal column list
+		bool isColumnsExist(vector<Column *> columns, unsigned col_type);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);

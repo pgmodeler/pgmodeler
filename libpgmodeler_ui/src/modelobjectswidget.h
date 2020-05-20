@@ -116,6 +116,8 @@ class ModelObjectsWidget: public QWidget, public Ui::ModelObjectsWidget {
 		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);
 
+		void clearSelectedObject();
+
 	public slots:
 		void setModel(ModelWidget *model_wgt);
 		void setModel(DatabaseModel *db_model);

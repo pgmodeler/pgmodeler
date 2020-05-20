@@ -607,7 +607,7 @@ void BaseObjectWidget::highlightVersionSpecificFields(map<QString, vector<QWidge
 			}
 
 			wgt->setStyleSheet(QString("QWidget {	font-weight: bold; font-style: italic; color: %1}").arg(color.name()));
-			wgt->setToolTip(QString("<em>") + tr("Version ") + itr.first + QString(" %1</em>").arg(field_name));
+			wgt->setToolTip(QString("<p>PostgreSQL") + itr.first + QString(" %1</p>").arg(field_name));
 		}
 	}
 }

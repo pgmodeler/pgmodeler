@@ -268,6 +268,8 @@
         <file>icones/moveobjs.png</file>
         <file>icones/bndrect.png</file>
         <file>icones/stacking.png</file>
+        <file>icones/layervisibility.png</file>
+        <file>icones/convrel1n.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

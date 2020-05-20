@@ -30,8 +30,16 @@ PgModelerApp::PgModelerApp(int &argc, char **argv) : Application(argc,argv)
 	QStringList dir_list;
 	QDir dir;
 
-	//Creating the initial user's configuration
-	createUserConfiguration();
+	try
+	{
+		//Creating the initial user's configuration
+		createUserConfiguration();
+	}
+	catch(Exception &e)
+	{
+		Messagebox msgbox;
+		msgbox.show(e);
+	}
 
 	//Changing the current working dir to the executable's directory in
 	QDir::setCurrent(this->applicationDirPath());
@@ -136,65 +144,5 @@ bool PgModelerApp::notify(QObject *receiver, QEvent *event)
 		Messagebox msg_box;
 		msg_box.show(tr("Unknown exception caught!"), Messagebox::ErrorIcon);
 		return false;
-	}
-}
-
-void PgModelerApp::createUserConfiguration()
-{
-	QDir config_dir(GlobalAttributes::getConfigurationsDir());
-
-	try
-	{
-		//If the directory not exists or is empty
-		if(!config_dir.exists() ||
-				config_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
-									 QDir::Files | QDir::NoDotAndDotDot).isEmpty())
-			copyFilesRecursively(GlobalAttributes::getTmplConfigurationDir(), GlobalAttributes::getConfigurationsDir());
-	}
-	catch(Exception &e)
-	{
-		Messagebox msg_box;
-		msg_box.show(e, tr("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.").arg(GlobalAttributes::getConfigurationsDir(), CONFDIR));
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-	}
-}
-
-void PgModelerApp::copyFilesRecursively(const QString &src_path, const QString &dst_path)
-{
-	QFileInfo src_file(src_path);
-
-	if(!src_file.exists())
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotAccessed).arg(src_path),
-						__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	if(src_file.isDir())
-	{
-		QString new_src_path, new_dst_path;
-		QStringList filenames;
-		QDir dst_dir(dst_path),
-				src_dir(src_path);
-
-		if(!dst_dir.exists() && !dst_dir.mkpath(dst_path))
-			throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
-							__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		filenames = src_dir.entryList({QString("*%1").arg(GlobalAttributes::ConfigurationExt)},
-									  QDir::Files | QDir::NoDotAndDotDot);
-
-		for(QString filename : filenames)
-		{
-			//Avoiding the copy of ui-style.conf file
-			if(!filename.contains(GlobalAttributes::UiStyleConf))
-			{
-				new_src_path = src_path + src_dir.separator() + filename;
-				new_dst_path = dst_path + dst_dir.separator() + filename;
-				copyFilesRecursively(new_src_path, new_dst_path);
-			}
-		}
-	}
-	else if(!QFile::exists(dst_path) && !QFile::copy(src_path, dst_path))
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(dst_path),
-						__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 }

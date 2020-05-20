@@ -160,12 +160,12 @@ clear
 echo
 echo "pgModeler Windows deployment script"
 echo "PostgreSQL Database Modeler Project - pgmodeler.io"
-echo "Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>"
+echo "Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>"
 
 # Identifying Qt version
 if [ -e "$QMAKE_ROOT/qmake" ]; then
-  QT_VER=`$QMAKE_ROOT/qmake --version | grep -E '[0-9]\.[0-9]+\.[0-9]+'`
-  QT_VER=${QT_VER:0:5}
+  QT_VER=`$QMAKE_ROOT/qmake --version | grep -m 1 -o -E '[0-9]\.[0-9]+\.[0-9]+'`
+  QT_VER=${QT_VER:0:6}
 fi
 
 # If Qt was not found
@@ -188,6 +188,7 @@ fi
 
 echo
 echo "Deploying version: $DEPLOY_VER"
+echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
   echo "Building snapshot version. (Found $SNAPSHOT_OPT)"

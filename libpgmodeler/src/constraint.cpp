@@ -112,6 +112,19 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return found;
 }
 
+bool Constraint::isColumnsExist(vector<Column *> columns, unsigned col_type)
+{
+	bool is_ref = false;
+
+	for(auto &col : columns)
+	{
+		is_ref = isColumnExists(col, col_type);
+		if(!is_ref) break;
+	}
+
+	return is_ref;
+}
+
 bool Constraint::isColumnReferenced(Column *column, bool search_only_ref_cols)
 {
 	bool found=false;

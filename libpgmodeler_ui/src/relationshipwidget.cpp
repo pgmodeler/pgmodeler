@@ -222,8 +222,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 {
 	unsigned rel_type, i;
 	Relationship *aux_rel=nullptr;
-	bool rel1n=false, relnn=false, relgen_dep=false,
-			use_name_patterns=false, has_foreign_tab=false;
+	bool rel1n=false, relnn=false, relgen_dep=false, has_foreign_tab=false;
 
 	if(!base_rel)
 		throw Exception(ErrorCode::AsgNotAllocattedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -367,9 +366,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 							rel_type==BaseRelationship::RelationshipPart ||
 							rel_type==BaseRelationship::RelationshipFk);
 
-	use_name_patterns=(rel1n || relnn ||
-					   (relgen_dep && base_rel->getObjectType()==ObjectType::Relationship));
-
+	use_name_patterns = (rel1n || relnn || (relgen_dep && base_rel->getObjectType()==ObjectType::Relationship));
 	name_patterns_grp->setVisible(use_name_patterns);
 
 	dst_col_pattern_txt->setEnabled(relnn);
@@ -416,8 +413,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	}
 
 	if(base_rel->getObjectType()==ObjectType::Relationship ||
-			(base_rel->getObjectType()==ObjectType::BaseRelationship &&
-			 base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
+		 (base_rel->getObjectType()==ObjectType::BaseRelationship &&
+			base_rel->getRelationshipType()==BaseRelationship::RelationshipFk))
 		rel_attribs_tbw->addTab(tabs[AdvancedTab], tab_labels[AdvancedTab]);
 
 	copy_options_grp->setVisible(base_rel->getObjectType()==ObjectType::Relationship &&
@@ -1067,20 +1064,22 @@ void RelationshipWidget::applyConfiguration()
 
 		if(this->object->getObjectType()==ObjectType::Relationship)
 		{
-			QPlainTextEdit *pattern_fields[]={ src_col_pattern_txt, dst_col_pattern_txt,
-																				 src_fk_pattern_txt, dst_fk_pattern_txt,
-																				 pk_pattern_txt, uq_pattern_txt, pk_col_pattern_txt };
-			unsigned pattern_ids[]= { Relationship::SrcColPattern, Relationship::DstColPattern,
-																Relationship::SrcFkPattern, Relationship::DstFkPattern,
-																Relationship::PkPattern, Relationship::UqPattern, Relationship::PkColPattern };
+			vector<QPlainTextEdit *> pattern_fields={ src_col_pattern_txt, dst_col_pattern_txt,
+																								pk_pattern_txt, uq_pattern_txt,
+																								src_fk_pattern_txt, dst_fk_pattern_txt,
+																								pk_col_pattern_txt };
 
-			rel=dynamic_cast<Relationship *>(base_rel);
+			vector<unsigned> pattern_ids= { Relationship::SrcColPattern, Relationship::DstColPattern,
+																			Relationship::PkPattern, Relationship::UqPattern,
+																			Relationship::SrcFkPattern, Relationship::DstFkPattern,
+																			Relationship::PkColPattern };
 
-			if(name_patterns_grp->isVisible())
+			rel = dynamic_cast<Relationship *>(base_rel);
+
+			if(use_name_patterns)
 			{
-				count=sizeof(pattern_ids)/sizeof(unsigned);
-				for(i=0; i < count; i++)
-					rel->setNamePattern(pattern_ids[i], pattern_fields[i]->toPlainText());
+				for(auto &patt_id : pattern_ids)
+					rel->setNamePattern(patt_id, pattern_fields[patt_id]->toPlainText());
 			}
 
 			rel_type=rel->getRelationshipType();
@@ -1122,8 +1121,8 @@ void RelationshipWidget::applyConfiguration()
 				rel->setTableNameRelNN(relnn_tab_name_edt->text());
 
 			if(rel_type==BaseRelationship::Relationship1n ||
-					rel_type==BaseRelationship::Relationship11 ||
-					rel_type==BaseRelationship::RelationshipNn)
+				 rel_type==BaseRelationship::Relationship11 ||
+				 rel_type==BaseRelationship::RelationshipNn)
 			{
 				rel->setDeferrable(deferrable_chk->isChecked());
 				rel->setDeferralType(DeferralType(deferral_cmb->currentText()));
@@ -1174,6 +1173,7 @@ void RelationshipWidget::applyConfiguration()
 	catch(Exception &e)
 	{
 		model->validateRelationships();
+		QApplication::restoreOverrideCursor();
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

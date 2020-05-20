@@ -643,7 +643,7 @@
              <string>Use the values defined on settings dialogs for the fields below</string>
             </property>
             <property name="text">
-             <string>Use global settings for these fields</string>
+             <string>Use global settings</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -982,7 +982,7 @@
              <string>Use the values defined on settings dialogs for the fields below</string>
             </property>
             <property name="text">
-             <string>Use global settings for these fields</string>
+             <string>Use global settings</string>
             </property>
             <property name="checked">
              <bool>true</bool>

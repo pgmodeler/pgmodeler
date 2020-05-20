@@ -814,6 +814,11 @@ void DatabaseModel::destroyObjects()
 
 	permissions.clear();
 
+	for(auto &inv_obj : invalid_special_objs)
+		delete inv_obj;
+
+	invalid_special_objs.clear();
+
 	//Cleaning out the list of removed objects to avoid segfaults while calling this method again
 	if(!rem_obj_types.empty())
 	{
@@ -824,9 +829,6 @@ void DatabaseModel::destroyObjects()
 		for(auto type : rem_obj_types)
 			getObjectList(type)->clear();
 	}
-
-	for(auto &inv_obj : invalid_special_objs)
-		delete inv_obj;
 }
 
 void DatabaseModel::addTable(Table *table, int obj_idx)
@@ -1336,7 +1338,18 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
 
 			if(!rel && ref_tab->getDatabase()==this)
 			{
-				rel=new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, false);
+				bool ref_mandatory = false;
+
+				for(auto &col : fk->getColumns(Constraint::SourceCols))
+				{
+					if(col->isNotNull())
+					{
+						ref_mandatory = true;
+						break;
+					}
+				}
+
+				rel = new BaseRelationship(BaseRelationship::RelationshipFk, table, ref_tab, false, ref_mandatory);
 				rel->setReferenceForeignKey(fk);
 				rel->setCustomColor(Qt::transparent);
 
@@ -1543,7 +1556,6 @@ void DatabaseModel::validateRelationships()
 
 	do
 	{
-		//Initializes the flag that indicates that some invalid relatioship was found.
 		found_inval_rel=false;
 
 		while(itr!=itr_end)
@@ -1612,11 +1624,9 @@ void DatabaseModel::validateRelationships()
 						//Storing the schemas on a auxiliary vector to update them later
 						tab1=rel->getTable(BaseRelationship::SrcTable);
 						tab2=rel->getTable(BaseRelationship::DstTable);
+						schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
 
-						if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
-							schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
-						else if(tab2!=tab1 &&
-								std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+						if(tab2 != tab1)
 							schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
 
 						idx++;
@@ -1743,14 +1753,15 @@ void DatabaseModel::validateRelationships()
 	//The validation continues until there is some invalid relationship
 	while(found_inval_rel);
 
-	if(!loading_model)
+	if(!loading_model && !schemas.empty())
 	{
+		std::sort(schemas.begin(), schemas.end());
+		vector<Schema *>::iterator end = std::unique(schemas.begin(), schemas.end());
+		schemas.erase(end, schemas.end());
+
 		//Updates the schemas to ajdust its sizes due to the tables resizings
-		while(!schemas.empty())
-		{
-			schemas.back()->setModified(true);
-			schemas.pop_back();
-		}
+		for(auto &sch : schemas)
+			sch->setModified(true);
 	}
 
 	//Stores the errors related to creation of special objects on the general error vector
@@ -3593,7 +3604,8 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 				.arg(BaseObject::getTypeName(obj_type)),
 				ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if(!object->getSchema() && BaseObject::acceptsSchema(obj_type_aux))
+	//Schema on extensions are optional
+	else if(!object->getSchema() && (BaseObject::acceptsSchema(obj_type_aux) && obj_type_aux != ObjectType::Extension))
 	{
 		throw Exception(Exception::getErrorMessage(ErrorCode::InvObjectAllocationNoSchema)
 						.arg(object->getName())
@@ -4922,6 +4934,7 @@ Column *DatabaseModel::createColumn()
 
 		xmlparser.getElementAttributes(attribs);
 		column->setNotNull(attribs[Attributes::NotNull]==Attributes::True);
+		column->setGenerated(attribs[Attributes::Generated]==Attributes::True);
 		column->setDefaultValue(attribs[Attributes::DefaultValue]);
 		column->setIdSeqAttributes(attribs[Attributes::MinValue], attribs[Attributes::MaxValue], attribs[Attributes::Increment],
 																attribs[Attributes::Start], attribs[Attributes::Cache], attribs[Attributes::Cycle] == Attributes::True);
@@ -6690,6 +6703,8 @@ BaseRelationship *DatabaseModel::createRelationship()
 
 		xmlparser.getElementAttributes(attribs);
 
+		src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
+		dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 		protect=(attribs[Attributes::Protected]==Attributes::True);
 		faded_out=(attribs[Attributes::FadedOut]==Attributes::True);
 		layer = attribs[Attributes::Layer].toUInt();
@@ -6742,7 +6757,7 @@ BaseRelationship *DatabaseModel::createRelationship()
 			added to the table after its creation. */
 			if(attribs[Attributes::Type]==Attributes::RelationshipFk)
 			{
-				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], false, false);
+				base_rel=new BaseRelationship(BaseRelationship::RelationshipFk, tables[0], tables[1], src_mand, dst_mand);
 				base_rel->setName(attribs[Attributes::Name]);
 				base_rel->setAlias(attribs[Attributes::Alias]);
 				addRelationship(base_rel);
@@ -6806,8 +6821,6 @@ BaseRelationship *DatabaseModel::createRelationship()
 					pat_count=sizeof(pattern_id)/sizeof(unsigned);
 
 			sql_disabled=attribs[Attributes::SqlDisabled]==Attributes::True;
-			src_mand=attribs[Attributes::SrcRequired]==Attributes::True;
-			dst_mand=attribs[Attributes::DstRequired]==Attributes::True;
 			identifier=attribs[Attributes::Identifier]==Attributes::True;
 			deferrable=attribs[Attributes::Deferrable]==Attributes::True;
 			defer_type=DeferralType(attribs[Attributes::DeferType]);
@@ -8466,6 +8479,7 @@ void DatabaseModel::getViewReferences(BaseObject *object, vector<BaseObject *> &
 void DatabaseModel::getPhysicalTableReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
 {
 	PhysicalTable *table=dynamic_cast<PhysicalTable *>(object);
+	ObjectType obj_type = object->getObjectType();
 	Sequence *seq=nullptr;
 	Constraint *constr=nullptr;
 	PhysicalTable *tab=nullptr;
@@ -8835,16 +8849,31 @@ void DatabaseModel::getUserDefTypesReferences(BaseObject *object, vector<BaseObj
 	Type *type=nullptr;
 	Relationship *rel=nullptr;
 	void *ptr_pgsqltype=nullptr;
+	ObjectType obj_type = object->getObjectType();
 
 	switch(obj_type)
 	{
-		case ObjectType::Type: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
-		case ObjectType::Domain: ptr_pgsqltype=dynamic_cast<Domain*>(object); break;
-		case ObjectType::Sequence: ptr_pgsqltype=dynamic_cast<Sequence*>(object); break;
-		case ObjectType::Extension: ptr_pgsqltype=dynamic_cast<Extension*>(object); break;
-		case ObjectType::View: ptr_pgsqltype=dynamic_cast<View*>(object); break;
-		case ObjectType::ForeignTable: ptr_pgsqltype=dynamic_cast<ForeignTable*>(object); break;
-		default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
+		case ObjectType::Type:
+			ptr_pgsqltype=dynamic_cast<Type*>(object);
+		break;
+		case ObjectType::Domain:
+			ptr_pgsqltype=dynamic_cast<Domain*>(object);
+		break;
+		case ObjectType::Sequence:
+			ptr_pgsqltype=dynamic_cast<Sequence*>(object);
+		break;
+		case ObjectType::Extension:
+			ptr_pgsqltype=dynamic_cast<Extension*>(object);
+		break;
+		case ObjectType::View:
+			ptr_pgsqltype=dynamic_cast<View*>(object);
+		break;
+		case ObjectType::ForeignTable:
+			ptr_pgsqltype=dynamic_cast<ForeignTable*>(object);
+		break;
+		default:
+			ptr_pgsqltype=dynamic_cast<Table*>(object);
+		break;
 	}
 
 	for(i=0; i < tp_count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
@@ -10254,7 +10283,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	bool save_db_attribs=false, save_objs_pos=false, save_objs_prot=false,
 			save_objs_sqldis=false, save_textboxes=false, save_tags=false,
 			save_custom_sql=false, save_custom_colors=false, save_fadeout=false,
-			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false;
+			save_collapsemode=false, save_genericsqls=false, save_objs_aliases=false,
+			save_objs_z_value=false;
 	QStringList labels_attrs={ Attributes::SrcLabel,
 														 Attributes::DstLabel,
 														 Attributes::NameLabel };
@@ -10271,6 +10301,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 	save_collapsemode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	save_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	save_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
+	save_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
 
 	output.open(QFile::WriteOnly);
 
@@ -10421,6 +10452,13 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : QString());
 			}
 
+			/* If the object is a graphic one and has Z stack value (currently only for tables/view/foreign tables,
+			 * textboxes are already save completely in the metadata, so there's no need to separate their z values) */
+			if(save_objs_z_value && graph_obj && BaseTable::isBaseTable(graph_obj->getObjectType()))
+			{
+				attribs[Attributes::ZValue]=QString::number(graph_obj->getZValue());
+			}
+
 			//If the object is a graphic one and we need to save positions and colors
 			if((save_objs_pos || save_custom_colors) && graph_obj)
 			{
@@ -10532,7 +10570,8 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 															!attribs[Attributes::PrependedSql].isEmpty())) ||
 				 (save_fadeout && !attribs[Attributes::FadedOut].isEmpty()) ||
 				 (save_collapsemode && !attribs[Attributes::CollapseMode].isEmpty()) ||
-				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()))
+				 (save_objs_aliases && !attribs[Attributes::Alias].isEmpty()) ||
+				 (save_objs_z_value && !attribs[Attributes::ZValue].isEmpty()))
 			{
 				emit s_objectLoaded(((idx++)/static_cast<double>(objects.size()))*100,
 														tr("Saving metadata of the object `%1' (%2)")
@@ -10596,7 +10635,8 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	bool load_db_attribs=false, load_objs_pos=false, load_objs_prot=false,
 			load_objs_sqldis=false, load_textboxes=false, load_tags=false,
 			load_custom_sql=false, load_custom_colors=false, load_fadeout=false,
-			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false;
+			load_collapse_mode=false, load_genericsqls=false, load_objs_aliases=false,
+			load_objs_z_value=false;
 
 	load_db_attribs=(MetaDbAttributes & options) == MetaDbAttributes;
 	load_objs_pos=(MetaObjsPositioning & options) == MetaObjsPositioning;
@@ -10610,6 +10650,7 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 	load_collapse_mode=(MetaObjsCollapseMode & options) == MetaObjsCollapseMode;
 	load_genericsqls=(MetaGenericSqlObjs & options) == MetaGenericSqlObjs;
 	load_objs_aliases=(MetaObjsAliases & options) == MetaObjsAliases;
+	load_objs_z_value=(MetaObjsZStackValue & options) == MetaObjsZStackValue;
 
 	try
 	{
@@ -10728,12 +10769,16 @@ void DatabaseModel::loadObjectsMetadata(const QString &filename, unsigned option
 								if(!attribs[Attributes::SqlDisabled].isEmpty())
 									object->setSQLDisabled(attribs[Attributes::SqlDisabled]==Attributes::True);
 							}
-							else if((obj_type==ObjectType::Table || obj_type==ObjectType::View) && load_tags && !attribs[Attributes::Tag].isEmpty())
+							else if(BaseTable::isBaseTable(obj_type) && load_tags && !attribs[Attributes::Tag].isEmpty())
 							{
 								tag=getTag(attribs[Attributes::Tag]);
 
 								if(tag)
 									dynamic_cast<BaseTable *>(object)->setTag(tag);
+							}
+							else if(BaseTable::isBaseTable(obj_type) && load_objs_z_value && !attribs[Attributes::ZValue].isEmpty())
+							{
+								dynamic_cast<BaseTable *>(object)->setZValue(attribs[Attributes::ZValue].toInt());
 							}
 							else if(obj_type==ObjectType::Database && load_custom_sql)
 							{

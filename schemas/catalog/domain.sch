@@ -3,7 +3,8 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT dm.oid, dm.typname AS name FROM pg_type AS dm
+  [SELECT dm.oid, dm.typname AS name, 
+    _dm1.domain_schema AS parent, 'schema' AS parent_type FROM pg_type AS dm
     INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
    WHERE dm.typrelid=0 ]
 
@@ -17,6 +18,10 @@
 
   %if {not-ext-object} %then
     [ AND ]( {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+    [ AND ] ( {name-filter} )
   %end
 
 %else

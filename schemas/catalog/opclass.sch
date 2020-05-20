@@ -3,12 +3,14 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT op.oid, opcname || ' ] $ob [' || am.amname || '] $cb [' AS name FROM pg_opclass AS op 
+  [SELECT op.oid, opcname || ' ] $ob [' || am.amname || '] $cb [' AS name, 
+   ns.nspname AS parent, 'schema' AS parent_type
+   FROM pg_opclass AS op 
+   LEFT JOIN pg_namespace AS ns ON op.opcnamespace = ns.oid 
    LEFT JOIN pg_am AS am ON op.opcmethod = am.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON op.opcnamespace = ns.oid
-       WHERE ns.nspname = ] '{schema}'
+    [ WHERE ns.nspname = ] '{schema}'
   %end
 
   %if {last-sys-oid} %then
@@ -27,6 +29,17 @@
       [ WHERE ]
     %end
     (  {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+  
+    %if {last-sys-oid} %or {schema} %or {not-ext-object} %then
+      [ AND ]
+    %else
+      [ WHERE ]
+    %end
+  
+    ( {name-filter} )
   %end
 
 %else

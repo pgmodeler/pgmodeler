@@ -35,7 +35,7 @@ class PlainTextItemDelegate : public QStyledItemDelegate {
 
 	public:
 		explicit PlainTextItemDelegate(QObject * parent, bool read_only);
-		~PlainTextItemDelegate();
+		virtual ~PlainTextItemDelegate();
 
 	protected:
 		//! \brief Overrides the default implementation and set the editor as read only/disable to prevent change the item data

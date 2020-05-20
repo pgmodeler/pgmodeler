@@ -3,7 +3,9 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-   [SELECT cs.oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name
+   [SELECT cs.oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name,
+     current_database() AS parent,
+     'database' AS parent_type
      FROM pg_cast AS cs]
 
   %if {last-sys-oid} %then

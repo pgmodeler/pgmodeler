@@ -94,7 +94,10 @@ class PgModelerCliApp: public Application {
 		bool silent_mode;
 
 		//! \brief Stores the xml code for the objects being fixed
-		QStringList objs_xml;
+		QStringList objs_xml,
+
+		//! \brief Stores the object filters for reverse engineering
+		obj_filters;
 
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
@@ -147,6 +150,9 @@ class PgModelerCliApp: public Application {
 		ImportSystemObjs,
 		ImportExtensionObjs,
 		DebugMode,
+		FilterObjs,
+		OnlyMatching,
+		KeepChildObjs,
 
 		CompareTo,
 		SaveDiff,
@@ -162,6 +168,8 @@ class PgModelerCliApp: public Application {
 		NoCascadeDropTrunc,
 		NoForceObjRecreation,
 		NoUnmodObjRecreation,
+
+		CreateConfigs,
 
 		TagExpr,
 		EndTagExpr,
@@ -222,9 +230,11 @@ class PgModelerCliApp: public Application {
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide);
 
+		void createConfigurations();
+
 	public:
 		PgModelerCliApp(int argc, char **argv);
-		~PgModelerCliApp();
+		virtual ~PgModelerCliApp();
 		int exec();
 
 	private slots:

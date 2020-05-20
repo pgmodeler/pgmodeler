@@ -113,7 +113,7 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab, bool dst_mandatory, bool src_mandatory);
 
-		~BaseRelationship();
+		virtual ~BaseRelationship();
 
 		//! \brief Sets the name of the relationship
 		void setName(const QString &name);
@@ -162,6 +162,10 @@ class BaseRelationship: public BaseGraphicObject  {
 		void resetLabelsDistance();
 
 		Constraint *getReferenceForeignKey();
+
+		/*! \brief Returns true when the FK relationship can simulate a one-to-one relationship
+		 * In that case, there's a unique key in which the foreign key(s) columns is part of. */
+		bool canSimulateRelationship11();
 
 		//! \brief Assigns one relationship to other making the appropriate attribute copy
 		void operator = (BaseRelationship &rel);

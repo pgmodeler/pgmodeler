@@ -3,11 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-    [ SELECT ft.oid, ft.relname AS name FROM pg_class AS ft]
+    [ SELECT ft.oid, ft.relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+      FROM pg_class AS ft
+      LEFT JOIN pg_namespace AS ns ON ns.oid=ft.relnamespace ]
 
     %if {schema} %then
-        [ LEFT JOIN pg_namespace AS ns ON ns.oid=ft.relnamespace
-          WHERE ft.relkind = 'f' AND ns.nspname= ] '{schema}'
+        [ WHERE ft.relkind = 'f' AND ns.nspname= ] '{schema}'
     %else
         [ WHERE ft.relkind = 'f' ]
     %end
@@ -18,6 +19,10 @@
 
     %if {not-ext-object} %then
         [ AND ] ( {not-ext-object} )
+    %end
+    
+    %if {name-filter} %then
+        [ AND ] ( {name-filter} )
     %end
 %else
     %if {attribs} %then

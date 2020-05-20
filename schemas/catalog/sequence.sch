@@ -3,10 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT sq.oid, relname AS name FROM pg_class AS sq ]
+  [SELECT sq.oid, relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+   FROM pg_class AS sq 
+   LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid ]
 
   %if {schema} %then
-    [ LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid
+    [ 
        WHERE relkind='S' AND ns.nspname = ] '{schema}'
   %else
     [ WHERE relkind='S']
@@ -18,6 +20,10 @@
 
   %if {not-ext-object} %then
     [ AND ] (  {not-ext-object} )
+  %end
+  
+  %if {name-filter} %then
+    [ AND ] ( {name-filter} )
   %end
 
 %else
@@ -53,7 +59,7 @@
        LANGUAGE plpgsql; ]
 
       [ SELECT sq.oid, sq.relname AS name, sq.relnamespace AS schema, sq.relowner AS owner,
-	 (SELECT refobjid || ':' || refobjsubid FROM pg_depend WHERE objid=sq.oid AND deptype in ('a', 'i')) AS owner_col,
+	  (SELECT DISTINCT refobjid || ':' || refobjsubid FROM pg_depend WHERE classid = 'pg_class'::regclass::oid AND objid=sq.oid AND deptype in ('a', 'i')) AS owner_col,
 	  (pg_temp.__pgmodeler_tmp_get_seq_attribs(ns.nspname, sq.relname)) AS attribute, ]
 
       ({comment}) [ AS comment ]

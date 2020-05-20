@@ -232,6 +232,7 @@ class ModelWidget: public QWidget {
 		*action_cascade_del,
 		*action_select_all,
 		*action_convert_relnn,
+		*action_convert_rel1n,
 		*action_copy,
 		*action_paste,
 		*action_cut,
@@ -315,7 +316,7 @@ class ModelWidget: public QWidget {
 		ZoomIncrement=0.050000;
 
 		ModelWidget(QWidget *parent = nullptr);
-		~ModelWidget();
+		virtual ~ModelWidget();
 
 		//! \brief Creates a BaseForm instance and insert the widget into it. A custom configuration for dialog buttons can be passed
 		int openEditingForm(QWidget *widget, unsigned button_conf = Messagebox::OkCancelButtons);
@@ -476,8 +477,12 @@ class ModelWidget: public QWidget {
 		//! \brief Cuts the selected objects. The effective removal is made when the cutted objects are pasted.
 		void cutObjects();
 
-		//! \brief Converts the Many to Many relationship generating a table and two additional relationships.
+		//! \brief Converts a Many to Many relationship generating a table and two additional relationships.
 		void convertRelationshipNN();
+
+		/*! \brief Converts a one to (one|many) relationship by copying columns and constraints representing the link
+		 * to the receiver table in order to allow manual editings by the user */
+		void convertRelationship1N();
 
 		//! \brief Loads the selected object source code on the source code widget.
 		void showSourceCode();
@@ -550,6 +555,9 @@ class ModelWidget: public QWidget {
 		void s_objectRemoved();
 		void s_zoomModified(double);
 		void s_modelResized();
+
+		//! \brief Signal emitted whenever the modified status of the model changes
+		void s_modelModified(bool);
 
 		//! \brief Signal emitted whenever a object is created / edited using the form
 		void s_objectManipulated();

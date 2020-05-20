@@ -46,23 +46,36 @@ class Catalog {
 		GetExtensionObjsSql,
 
 		//! \brief This pattern matches the PostgreSQL array values in format [n:n]={a,b,c,d,...} or {a,b,c,d,...}
-		ArrayPattern;
+		ArrayPattern,
+
+		//! \brief Holds a constant string used to mark invalid filter patterns
+		InvFilterPattern,
+
+		AliasPlaceholder;
 
 		/*! \brief Stores in comma seperated way the oids of all objects created by extensions. This
 		attribute is use when filtering objects that are created by extensions */
 		QString ext_obj_oids;
 
+		//! \brief Stores the name filters for each type of object. (See setObjectFilters())
+		map<ObjectType, QStringList> obj_filters;
+
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
-		static map<ObjectType, QString> oid_fields;
+		static map<ObjectType, QString> oid_fields,
 
 		/*! \brief This map stores the name field for each object type. Refer to catalog query schema files for details */
-		static map<ObjectType, QString> name_fields;
+		name_fields,
 
 		/*! \brief This map stores the oid field name that is used to check if the object (or its parent) is part of a extension
 		(see getNotExtObjectQuery()). By default the attribute oid_fields is used instead for that purpose, but, for some objects,
 		there are different fields that tells if the object (or its parent) is part of extension. */
-		static map<ObjectType, QString> ext_oid_fields;
+		ext_oid_fields,
+
+		/*! \brief This map stores the aliases that are used to reference the table (parent) on each table object catalog query.
+		 * This is mainly used to force the filter of constraints/indexes/triggers/rules/policies in presence of one or more table
+		 * filter (see setObjectFilter) */
+		parent_aliases;
 
 		//! \brief Store the cached catalog queries
 		static attribs_map catalog_queries;
@@ -125,7 +138,19 @@ class Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj;
+		static const QString PgModelerTempDbObj,
+
+		//! \brief Indicates the ilike/wildcard filtering mode in the object listing
+		FilterLike,
+
+		//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
+		FilterRegExp,
+
+		//! \brief Indicates the exact match filtering mode in the object listing
+		FilterExact;
+
+		//! \brief Indicates the character used to separate filter fields in the filtering string
+		static const constexpr char FilterSeparator = ':';
 
 		//! \brief Excludes the system objects from listing
 		static constexpr unsigned ExclSystemObjs=1,
@@ -152,7 +177,15 @@ class Catalog {
 		void closeConnection();
 
 		//! \brief Configures the catalog query filter
-		void setFilter(unsigned filter);
+		void setQueryFilter(unsigned filter);
+
+		/*! \brief Configures the objects name filtering.
+		 * The parameter only_matching creates extra filters for the other kind of objects not provided by the user in order to avoid listing them.
+		 * The tab_obj_types contains a list of table children object type names in which should be forcibly listed
+		 * if the user provides table/view/foreign table filters. This is useful to retrieve tables with their children objects avoiding the need of
+		 * provide specific filters for each table children object. This list has effect only when discard_non_matches is set to true.
+		 * This method raises an exception when detecting malformed filters */
+		void setObjectFilters(QStringList filters, bool only_matching, QStringList tab_obj_types = {});
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();
@@ -167,8 +200,15 @@ class Catalog {
 		in order to filter only objects of the specifed schema */
 		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
 
-		//! \brief Returns the current filter configuration for the catalog
-		unsigned getFilter();
+		//! \brief Returns the current filter configuration for the catalog queries
+		unsigned getQueryFilter();
+
+		//! \brief Returns the configured objects a name filters
+		map<ObjectType, QStringList> getObjectFilters();
+
+		/*! \brief Returns a vector with all filtered object types.
+		 * Invalid pattern filters containing the InvFilterPattern are discarded from the returning vector */
+		vector<ObjectType> getFilteredObjectTypes();
 
 		//! \brief Fills the specified maps with all object's oids querying the catalog with the specified filter
 		void getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<unsigned, vector<unsigned> > &col_oids, attribs_map extra_attribs=attribs_map());
@@ -203,8 +243,12 @@ class Catalog {
 		used returns more than one result. A zero OID is returned when no suitable object is found. */
 		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = QString(), const QString &table = QString());
 
-		//! brief This special method returns some server's attributes read from pg_settings
+		//! \brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes();
+
+		/*! \brief This special method returns the amount of object in pg_class table.
+		 * The parameter incl_sys_objs will also count the system objects not only used created ones */
+		unsigned getObjectCount(bool incl_sys_objs);
 
 		//! \brief Parse a PostgreSQL array value and return the elements in a string list
 		static QStringList parseArrayValues(const QString &array_val);
@@ -227,6 +271,12 @@ class Catalog {
 
 		//! \brief Returns the current status of cached catalog queries
 		static bool isCachedQueriesEnabled();
+
+		//! \brief Returns the object types that are able to be filtered
+		static vector<ObjectType> getFilterableObjectTypes();
+
+		//! \brief Returns the object schema names that are able to be filtered
+		static QStringList getFilterableObjectNames();
 
 		//! \brief Performs the copy between two catalogs
 		void operator = (const Catalog &catalog);

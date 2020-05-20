@@ -3,16 +3,21 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT oid, nspname AS name FROM pg_namespace
+  [SELECT oid, nspname AS name, current_database() AS parent, 'database' AS parent_type FROM pg_namespace
     WHERE (nspname NOT LIKE 'pg_temp%' AND nspname NOT LIKE 'pg_toast%') ]
 
   %if {last-sys-oid} %then
-   [ AND oid ] {oid-filter-op} $sp {last-sys-oid} [ OR nspname = 'public' ]
+    [ AND ( oid ] {oid-filter-op} $sp {last-sys-oid} [ OR nspname = 'public' ) ]
   %end
 
   %if {not-ext-object} %then
-   [ AND ] ( {not-ext-object} )
-  %end  
+    [ AND ] ( {not-ext-object} )
+  %end 
+  
+  %if {name-filter} %then
+    [ AND ] ( {name-filter} )
+  %end
+  
 %else
     %if {attribs} %then
       [SELECT oid, nspname AS name, nspacl AS permission, nspowner AS owner, ]

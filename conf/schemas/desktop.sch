@@ -11,3 +11,4 @@ $ob Desktop $sp Entry $cb $br
 [Terminal=false] $br
 [TerminalOptions=] $br
 [Type=Application] $br
+[Categories=Development;] $br

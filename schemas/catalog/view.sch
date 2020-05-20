@@ -3,11 +3,9 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-    [SELECT vw.oid, vw.relname AS name FROM pg_class AS vw ]
-
-    %if {schema} %then
-        [ LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace ]
-    %end
+    [SELECT vw.oid, vw.relname AS name, ns.nspname AS parent, 'schema' AS parent_type
+     FROM pg_class AS vw 
+     LEFT JOIN pg_namespace AS ns ON ns.oid=vw.relnamespace ]
       
     %if ({pgsql-ver} <=f "9.2") %then
         [ WHERE vw.relkind='v']
@@ -25,6 +23,10 @@
 
     %if {not-ext-object} %then
         [ AND ] ( {not-ext-object} )
+    %end
+    
+    %if {name-filter} %then
+        [ AND ] ( {name-filter} )
     %end
 %else
     %if {attribs} %then     
