@@ -57,42 +57,37 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType
 		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(generated_chk);
 		highlightVersionSpecificFields(fields_map);
 
-		connect(sequence_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(true);
-						def_value_txt->setEnabled(false);
-						identity_type_cmb->setEnabled(false);
-						notnull_chk->setEnabled(true);
-						edit_seq_btn->setVisible(false);
-				});
+		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(sequence_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
+		connect(identity_rb, SIGNAL(toggled(bool)), this, SLOT(enableDefaultValueFields()));
 
-		connect(expression_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(false);
-						def_value_txt->setEnabled(true);
-						identity_type_cmb->setEnabled(false);
-						notnull_chk->setEnabled(true);
-						edit_seq_btn->setVisible(false);
-				});
-
-		connect(identity_rb, &QRadioButton::clicked,
-				[&](){
-						sequence_sel->setEnabled(false);
-						def_value_txt->setEnabled(false);
-						identity_type_cmb->setEnabled(true);
-						notnull_chk->setChecked(true);
-						notnull_chk->setEnabled(false);
-						edit_seq_btn->setVisible(true);
-				});
+		connect(generated_chk, &QCheckBox::toggled, [&](bool value){
+			notnull_chk->setDisabled(value);
+			notnull_chk->setChecked(false);
+		});
 
 		connect(edit_seq_btn, SIGNAL(clicked(bool)), this, SLOT(editSequenceAttributes()));
-
 		setMinimumSize(540, 480);
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+void ColumnWidget::enableDefaultValueFields()
+{
+	bool is_expr = sender() == expression_rb,
+			is_seq = sender() == sequence_rb,
+			is_ident = sender() == identity_rb;
+
+	sequence_sel->setEnabled(is_seq);
+	def_value_txt->setEnabled(is_expr);
+	identity_type_cmb->setEnabled(is_ident);
+	notnull_chk->setEnabled(is_expr || is_seq);
+	edit_seq_btn->setVisible(is_ident);
+	generated_chk->setEnabled(is_expr);
+	generated_chk->setChecked(false);
 }
 
 void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *parent_obj, Column *column)
