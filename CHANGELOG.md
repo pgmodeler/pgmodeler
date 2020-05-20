@@ -22,6 +22,8 @@ v0.9.3-alpha1
 * [New] Added the paramenter application_name to Connection in order to indentify connections created by pgModeler when querying pg_stat_activity.
 * [New] Added support to save/restore Z value attribute in MetadataHandlingForm.
 * [New] Created an improved and reusable file selector widget.
+* [Change] Improvements done in DatabaseImportHelper in order to speed up the listing of types as well the importing user-defined types on demand.
+* [Change] Refactored the way default value fields states are setup by user's actions.
 * [Change] Adjusted the default size of DatabaseImportForm.
 * [Change] Avoiding retrieve all types (system and user defined) at once before the reverse engineering in DatabaseImportHelper (Experimental).
 * [Change] Minor improvement on DatabaseImportHelper in order to display the correct message while assingning sequences to columns.
@@ -37,6 +39,7 @@ v0.9.3-alpha1
 * [Change] Minor improvement on update icon.
 * [Change] Minor improvement in LayersWidget in order to allow manual resizing using the mouse.
 * [Change] Improved the following classess in order to use the new file selector widget: ModelExportForm, ModelFixForm, MetadataHandlingForm, ModelDatabaseDiffForm, GeneralConfigWidget, PluginsConfigWidget, CsvLoadWidget, CrashHandlerForm and BugReportForm.
+* [Fix] Minor fix in OperationList in order to update FK relationships related to FKs that contains the column being handled by the list.
 * [Fix] Fixed a bug when retrieving the refs to some objects in DatabaseModel.
 * [Fix] Minor fix in CLI menu and error messages.
 * [Fix] Fixed the role importing process. Now referenced roles are auto resolved.
