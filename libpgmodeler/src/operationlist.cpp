@@ -849,7 +849,34 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 						 dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
 						model->updateTableFKRelationships(dynamic_cast<Table *>(parent_tab));
 					else if(object->getObjectType() == ObjectType::Column)
-						model->updateViewsReferencingTable(dynamic_cast<Table *>(parent_tab));
+					{
+						Table *tab = dynamic_cast<Table *>(parent_tab);
+						model->updateViewsReferencingTable(dynamic_cast<PhysicalTable *>(parent_tab));
+
+						// Forcing the update of FK relationships that are based on the fks in which the column is in
+						if(tab)
+						{
+							Constraint *constr = nullptr;
+							Column *col = dynamic_cast<Column *>(object);
+							BaseRelationship *rel = nullptr;
+
+							for(auto &tab_obj : *tab->getObjectList(ObjectType::Constraint))
+							{
+								constr = dynamic_cast<Constraint *>(tab_obj);
+								if(constr->getConstraintType() == ConstraintType::ForeignKey &&
+									 constr->isColumnExists(col, Constraint::SourceCols))
+								{
+									rel = model->getRelationship(tab, constr->getReferencedTable(), constr);
+
+									if(rel)
+									{
+										rel->setMandatoryTable(BaseRelationship::DstTable, col->isNotNull());
+										rel->setModified(true);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 			else if(parent_rel)
@@ -890,7 +917,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			}
 		}
 		else if(op_type==Operation::ObjectModified)
-		{
+		{			
 			if(obj_type==ObjectType::Schema)
 			{
 				model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
