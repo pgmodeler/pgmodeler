@@ -2263,6 +2263,10 @@ void ModelWidget::moveToLayer()
 	for(auto &obj : selected_objects)
 	{
 		graph_obj = dynamic_cast<BaseGraphicObject *>(obj);
+
+		if(!graph_obj)
+			continue;
+
 		graph_obj->setLayer(layer_id);
 	}
 
