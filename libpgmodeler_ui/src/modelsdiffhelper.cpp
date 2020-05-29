@@ -19,6 +19,7 @@
 #include "modelsdiffhelper.h"
 #include <QThread>
 #include "pgmodelerns.h"
+#include <QDate>
 
 const vector<QString> ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 

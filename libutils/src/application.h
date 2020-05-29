@@ -27,6 +27,7 @@
 #define APPLICATION_H
 
 #include <QApplication>
+#include <QDir>
 
 class Application: public QApplication {
 	protected:

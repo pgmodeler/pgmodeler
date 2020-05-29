@@ -119,7 +119,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 	public:
 		static constexpr double VertSpacing=2.0,
 		HorizSpacing=2.0,
-		DefaultFontSize=9.0,
+		DefaultFontSize=10.0,
 		ObjectBorderWidth=0.85;
 
 		static constexpr int ObjectAlphaChannel=128;
