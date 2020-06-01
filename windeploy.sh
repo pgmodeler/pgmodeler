@@ -84,8 +84,6 @@ else
 fi
 
 # Common settings for both architectures
-QT_INSTALL_VERSION='5.12.3'
-QT_BASE_VERSION='5.12.3'
 QT_PLUGINS_ROOT="$QT_ROOT/share/qt5/plugins"
 QMAKE_ROOT=$MINGW_ROOT
 PGSQL_ROOT=$MINGW_ROOT
@@ -135,6 +133,8 @@ DEP_LIBS="$DEP_LIBS \
 		$MINGW_ROOT/liblzma-5.dll \
 		$MINGW_ROOT/libiconv-2.dll \
 		$MINGW_ROOT/libintl-8.dll \
+		$MINGW_ROOT/libbrotlidec.dll \
+		$MINGW_ROOT/libbrotlicommon.dll \
 		$QMAKE_ROOT/Qt5Core.dll \
 		$QMAKE_ROOT/Qt5Gui.dll \
 		$QMAKE_ROOT/Qt5Widgets.dll \
