@@ -18,17 +18,18 @@
 
 #include <QTranslator>
 #include "pgmodelercli.h"
+#include "qtcompat.h"
 
 int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
 #ifdef DEMO_VERSION
-	out << Qt::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << Qt::endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
-	out << QT_TR_NOOP("Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>") << Qt::endl;
-	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << Qt::endl << Qt::endl;
+	out << QtCompat::endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << QtCompat::endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
+	out << QT_TR_NOOP("Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>") << QtCompat::endl;
+	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << QtCompat::endl << QtCompat::endl;
 #else
 	try
 	{
@@ -46,9 +47,9 @@ int main(int argc, char **argv)
 	}
 	catch(Exception &e)
 	{
-		out << Qt::endl;
+		out << QtCompat::endl;
 		out << e.getExceptionsText();
-		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << Qt::endl << Qt::endl;
+		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << QtCompat::endl << QtCompat::endl;
 		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
 	}
 #endif

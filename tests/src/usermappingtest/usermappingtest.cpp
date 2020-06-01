@@ -44,17 +44,17 @@ void UserMappingTest::generatesNameCorrectly()
 	server.setOwner(&role);
 	server.setForeignDataWrapper(&fdw);
 
-	QCOMPARE(usr_mapping.getName(), "public@");
+	QCOMPARE(usr_mapping.getName(), QString("public@"));
 
 	usr_mapping.setForeignServer(&server);
-	QCOMPARE(usr_mapping.getName(), "public@server_test");
+	QCOMPARE(usr_mapping.getName(), QString("public@server_test"));
 
 	usr_mapping.setOwner(&role);
-	QCOMPARE(usr_mapping.getName(), "postgres@server_test");
+	QCOMPARE(usr_mapping.getName(), QString("postgres@server_test"));
 
 	usr_mapping.setOwner(nullptr);
 	usr_mapping.setForeignServer(nullptr);
-	QCOMPARE(usr_mapping.getName(), "public@");
+	QCOMPARE(usr_mapping.getName(), QString("public@"));
 }
 
 void UserMappingTest::codeGeneratedIsWellFormed()

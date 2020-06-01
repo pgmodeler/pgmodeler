@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
+#include "qtcompat.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");
@@ -909,7 +910,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		if(value.contains('"'))
 			list=parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list=value.split(',', Qt::SkipEmptyParts);
+			list=value.split(',', QtCompat::SkipEmptyParts);
 	}
 
 	return list;
@@ -978,7 +979,7 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 
 	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
 	end=cmds.lastIndexOf(';');
-	return (cmds.mid(start,(end - start) + 1).split(';', Qt::SkipEmptyParts));
+	return (cmds.mid(start,(end - start) + 1).split(';', QtCompat::SkipEmptyParts));
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)

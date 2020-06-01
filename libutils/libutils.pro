@@ -17,12 +17,14 @@ HEADERS += src/exception.h \
            src/globalattributes.h \
            src/pgsqlversions.h \
 	   src/doublenan.h \
-	   src/application.h
+	   src/application.h \
+	src/qtcompat.h
 
 SOURCES += src/exception.cpp \
            src/globalattributes.cpp \
 	   src/pgsqlversions.cpp \
-	   src/application.cpp
+	   src/application.cpp \
+	src/qtcompat.cpp
 
 # Deployment settings
 target.path = $$PRIVATELIBDIR
