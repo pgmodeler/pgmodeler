@@ -17,16 +17,15 @@
 */
 
 #include "globalattributes.h"
-#include <QCoreApplication>
-#include <QTextStream>
+#include <QDir>
 
-const QString GlobalAttributes::PgModelerVersion=QString("0.9.3-alpha1")
+const QString GlobalAttributes::PgModelerVersion=QString("0.9.3-beta");
 /* Appending the snapshot build number to the version number
  * when the external variable SNAPSHOT_BUILD is defined */
 #if defined(SNAPSHOT_BUILD)
 		+ QString("_snapshot") + BUILDNUM
 #endif
-;
+
 /****/
 
 const QString GlobalAttributes::PgModelerAppName("pgmodeler");

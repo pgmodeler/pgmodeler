@@ -27,13 +27,8 @@
 #ifndef GLOBAL_ATTRIBUTES_H
 #define GLOBAL_ATTRIBUTES_H
 
-/* Including QByteArray due to 'QByteArray has no toStdString()'
-   error on Qt 5.4 (Windows only) */
-#include <QByteArray>
-#include <cstdlib>
+//#include <cstdlib>
 #include <QString>
-#include <QDir>
-#include <QDate>
 #include <QStandardPaths>
 
 class GlobalAttributes {
