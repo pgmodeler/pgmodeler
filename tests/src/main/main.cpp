@@ -36,7 +36,7 @@ int main(int, char **argv)
   //Iterates over the list of tests retrieved from BINDIR/tests and run each of them
   for(auto &test : tests)
   {
-    result=QProcess::execute(test_dir + QString("/") + test);
+		result=QProcess::execute(test_dir + QString("/") + test, {});
 
     if(result == -2)
       qDebug() << "** Could not start test executable:" << test;
