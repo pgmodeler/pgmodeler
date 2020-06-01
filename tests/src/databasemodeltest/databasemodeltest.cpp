@@ -45,7 +45,7 @@ void DatabaseModelTest::saveObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << endl;
+		out << e.getExceptionsText() << Qt::endl;
 	}
 
 	QCOMPARE(QFileInfo(output).exists(), true);
@@ -69,7 +69,7 @@ void DatabaseModelTest::loadObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << endl;
+		out << e.getExceptionsText() << Qt::endl;
 		QCOMPARE(false, true);
 	}
 }

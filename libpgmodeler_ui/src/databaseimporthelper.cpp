@@ -724,7 +724,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 			if(debug_mode)
 			{
 				QTextStream ts(stdout);
-				ts << dumpObjectAttributes(attribs) << endl;
+				ts << dumpObjectAttributes(attribs) << Qt::endl;
 			}
 
 			switch(obj_type)
@@ -762,7 +762,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				default:
 					if(debug_mode)
 					{
-						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << endl;
+						qDebug() << QString("create() method for %s isn't implemented!").arg(BaseObject::getSchemaName(obj_type)) << Qt::endl;
 					}
 				break;
 			}
@@ -902,8 +902,8 @@ void DatabaseImportHelper::loadObjectXML(ObjectType obj_type, attribs_map &attri
 		if(debug_mode)
 		{
 			QTextStream ts(stdout);
-			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << endl;
-			ts << xml_buf << endl;
+			ts << QString("<!-- XML code: %1 (OID: %2) -->").arg(attribs[Attributes::Name]).arg(attribs[Attributes::Oid]) << Qt::endl;
+			ts << xml_buf << Qt::endl;
 		}
 
 		xmlparser->loadXMLBuffer(xml_buf);
@@ -2096,7 +2096,7 @@ void DatabaseImportHelper::createConstraint(attribs_map &attribs)
 				exprs=attribs[Attributes::Expressions]
 							.replace(QString("EXCLUDE USING %1 (").arg(attribs[Attributes::IndexType]), QString())
 							.split(QRegExp("(WITH )(\\+|\\-|\\*|\\/|\\<|\\>|\\=|\\~|\\!|\\@|\\#|\\%|\\^|\\&|\\||\\'|\\?)+((,)?|(\\))?)"),
-										 QString::SkipEmptyParts);
+										 Qt::SkipEmptyParts);
 
 				for(int i=0; i < cols.size(); i++)
 				{

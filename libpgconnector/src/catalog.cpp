@@ -909,7 +909,7 @@ QStringList Catalog::parseArrayValues(const QString &array_val)
 		if(value.contains('"'))
 			list=parseDefaultValues(value, QString("\""), QString(","));
 		else
-			list=value.split(',', QString::SkipEmptyParts);
+			list=value.split(',', Qt::SkipEmptyParts);
 	}
 
 	return list;
@@ -978,7 +978,7 @@ QStringList Catalog::parseRuleCommands(const QString &cmds)
 
 	start=cmd_regexp.indexIn(cmds) + cmd_regexp.matchedLength();
 	end=cmds.lastIndexOf(';');
-	return (cmds.mid(start,(end - start) + 1).split(';', QString::SkipEmptyParts));
+	return (cmds.mid(start,(end - start) + 1).split(';', Qt::SkipEmptyParts));
 }
 
 QStringList Catalog::parseIndexExpressions(const QString &expr)

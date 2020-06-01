@@ -104,7 +104,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 		}
 
 		aux_buffer.replace(QString("%1%2").arg(QChar(QChar::LineFeed)).arg(text_delim), placeholder);
-		rows = aux_buffer.split(placeholder, QString::SkipEmptyParts);
+		rows = aux_buffer.split(placeholder, Qt::SkipEmptyParts);
 
 		//Configuring an regexp to remove empty quoted values, e.g, "",
 		if(!text_delim.isEmpty())

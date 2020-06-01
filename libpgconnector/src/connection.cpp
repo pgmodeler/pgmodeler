@@ -230,8 +230,8 @@ void Connection::connect()
 		else
 		{
 			QTextStream err(stderr);
-			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << endl
-				<< QString("Conn. info: [ ") << connection_str << QString("]") << endl;
+			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << Qt::endl
+				<< QString("Conn. info: [ ") << connection_str << QString("]") << Qt::endl;
 			this->close();
 		}
 	}
@@ -409,7 +409,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -448,7 +448,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << endl;
+		out << QString("\n---\n") << sql << Qt::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful

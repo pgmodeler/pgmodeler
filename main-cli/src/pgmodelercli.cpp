@@ -248,7 +248,7 @@ PgModelerCliApp::~PgModelerCliApp()
 
 void PgModelerCliApp::printMessage(const QString &msg)
 {
-	if(!silent_mode) out << msg << endl;
+	if(!silent_mode) out << msg << Qt::endl;
 }
 
 void PgModelerCliApp::configureConnection(bool extra_conn)
@@ -424,97 +424,97 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 
 void PgModelerCliApp::showMenu()
 {
-	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << endl;
-	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
-	out << tr("Copyright 2006-%1 Raphael A. Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << endl;
-	out << endl;
-	out << tr("Usage: pgmodeler-cli [OPTIONS]") << endl << endl;
-	out << tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << endl;
-	out << endl;
-	out << tr("General options: ") << endl;
-	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << endl;
-	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << endl;
-	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << endl;
-	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << endl;
-	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << endl;
-	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< endl;
-	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << endl;
-	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << endl;
-	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << endl;
-	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << endl;
-	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << endl;
-	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << endl;
-	out << tr("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << endl;
-	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << endl;
-	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << endl;
-	out << endl;
-	out << tr("Connection options: ") << endl;
-	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << endl;
-	out << tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << endl;
-	out << tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << endl;
-	out << tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << endl;
-	out << tr("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << endl;
-	out << tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << endl;
-	out << tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << endl;
-	out << endl;
-	out << tr("PNG and SVG export options: ") << endl;
-	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << endl;
-	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << endl;
-	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << endl;
-	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << endl;
-	out << endl;
-	out << tr("DBMS export options: ") << endl;
-	out << tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << endl;
-	out << tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << endl;
-	out << tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << endl;
-	out << tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << endl;
-	out << tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << endl;
-	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << endl;
-	out << endl;
-	out << tr("Data dictionary export options: ") << endl;
-	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << endl;
-	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << endl;
-	out << endl;
-	out << tr("Database import options: ") << endl;
-	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << endl;
-	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << endl;
-	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << endl;
-	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << endl;
-	out << tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching) << endl;
-	out << tr("  %1, %2 [OBJECTS]  Forces the non discarding of children objects of tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[KeepChildObjs]).arg(KeepChildObjs) << endl;
-	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << endl;
-	out << endl;
-	out << tr("Diff options: ") << endl;
-	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << endl;
-	out << tr("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << endl;
-	out << tr("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << endl;
-	out << tr("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << endl;
-	out << tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << endl;
-	out << tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << endl;
-	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << endl;
-	out << tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << endl;
-	out << tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << endl;
-	out << tr("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << endl;
-	out << tr("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << endl;
-	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << endl;
-	out << tr("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << endl;
-	out << tr("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << endl;
-	out << endl;
+	out << Qt::endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << Qt::endl;
+	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << Qt::endl;
+	out << tr("Copyright 2006-%1 Raphael A. Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << Qt::endl;
+	out << Qt::endl;
+	out << tr("Usage: pgmodeler-cli [OPTIONS]") << Qt::endl << Qt::endl;
+	out << tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << Qt::endl;
+	out << Qt::endl;
+	out << tr("General options: ") << Qt::endl;
+	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << Qt::endl;
+	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << Qt::endl;
+	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << Qt::endl;
+	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << Qt::endl;
+	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << Qt::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< Qt::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << Qt::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << Qt::endl;
+	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << Qt::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << Qt::endl;
+	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << Qt::endl;
+	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << Qt::endl;
+	out << tr("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << Qt::endl;
+	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << Qt::endl;
+	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << Qt::endl;
+	out << Qt::endl;
+	out << tr("Connection options: ") << Qt::endl;
+	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << Qt::endl;
+	out << tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << Qt::endl;
+	out << tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << Qt::endl;
+	out << tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << Qt::endl;
+	out << tr("  %1, %2 [USER]\t\t    PostgreSQL username.").arg(short_opts[User]).arg(User) << Qt::endl;
+	out << tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << Qt::endl;
+	out << tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << Qt::endl;
+	out << Qt::endl;
+	out << tr("PNG and SVG export options: ") << Qt::endl;
+	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << Qt::endl;
+	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << Qt::endl;
+	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << Qt::endl;
+	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << Qt::endl;
+	out << Qt::endl;
+	out << tr("DBMS export options: ") << Qt::endl;
+	out << tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << Qt::endl;
+	out << tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << Qt::endl;
+	out << tr("  %1, %2\t\t    Drop the database before execute a export process.").arg(short_opts[DropDatabase]).arg(DropDatabase) << Qt::endl;
+	out << tr("  %1, %2\t\t    Runs the DROP commands attached to SQL-enabled objects.").arg(short_opts[DropObjects]).arg(DropObjects) << Qt::endl;
+	out << tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << Qt::endl;
+	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << Qt::endl;
+	out << Qt::endl;
+	out << tr("Data dictionary export options: ") << Qt::endl;
+	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << Qt::endl;
+	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << Qt::endl;
+	out << Qt::endl;
+	out << tr("Database import options: ") << Qt::endl;
+	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << Qt::endl;
+	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << Qt::endl;
+	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << Qt::endl;
+	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << Qt::endl;
+	out << tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching) << Qt::endl;
+	out << tr("  %1, %2 [OBJECTS]  Forces the non discarding of children objects of tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[KeepChildObjs]).arg(KeepChildObjs) << Qt::endl;
+	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << Qt::endl;
+	out << Qt::endl;
+	out << tr("Diff options: ") << Qt::endl;
+	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << Qt::endl;
+	out << tr("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << Qt::endl;
+	out << tr("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << Qt::endl;
+	out << tr("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << Qt::endl;
+	out << tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << Qt::endl;
+	out << tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << Qt::endl;
+	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << Qt::endl;
+	out << tr("  %1, %2\t    Force the drop of missing columns and constraints. Causes only columns and constraints to be dropped, other missing objects aren't removed.").arg(short_opts[ForceDropColsConstrs]).arg(ForceDropColsConstrs) << Qt::endl;
+	out << tr("  %1, %2\t\t    Rename the destination database when the names of the involved databases are different.").arg(short_opts[RenameDb]).arg(RenameDb) << Qt::endl;
+	out << tr("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << Qt::endl;
+	out << tr("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << Qt::endl;
+	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << Qt::endl;
+	out << tr("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << Qt::endl;
+	out << tr("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << Qt::endl;
+	out << Qt::endl;
 
 #ifndef Q_OS_MAC
-	out << tr("File association options: ") << endl;
-	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << endl;
-	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << endl;
-	out << endl;
+	out << tr("File association options: ") << Qt::endl;
+	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << Qt::endl;
+	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << Qt::endl;
+	out << Qt::endl;
 #endif
-	out << tr("Miscellaneous options: ") << endl;
-	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << endl;
-	out << endl;
+	out << tr("Miscellaneous options: ") << Qt::endl;
+	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << Qt::endl;
+	out << Qt::endl;
 
-	out << endl;
-	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjs) << endl;
-	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << endl;
+	out << Qt::endl;
+	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjs) << Qt::endl;
+	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << Qt::endl;
 
 	QStringList list;
 	QString child_list;
@@ -538,32 +538,32 @@ void PgModelerCliApp::showMenu()
 			fmt_types.clear();
 		}
 	}
-	out << lines.join('\n') << endl;
+	out << lines.join('\n') << Qt::endl;
 
-	out << endl;
-	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << endl;
-	out << endl;
-	out << tr("   * The `mode' is the way the pattern is matched. This one accepts three values: ") << endl;
-	out << tr("     > `%1' causes the pattern to be compared exactly to the objects names.").arg(Catalog::FilterExact) << endl;
-	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterLike) << endl;
-	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << endl;
-	out << endl;
-	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(KeepChildObjs).arg(OnlyMatching) << endl;
-	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << endl;
-	out << tr("     The comma separated list of table children objects accepts the values:") << endl;
-	out << tr("     > %1").arg(child_list)  << endl;
-	out << endl;
-	out << tr("   * NOTES: all comparisons during filtering are case insensitive except for the mode `%1'.").arg(Catalog::FilterExact) << endl;
-	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << endl;
-	out << endl;
-	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << endl;
-	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << endl;
-	out << endl;
-	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << endl;
-	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << endl;
-	out << tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above.") << endl;
-	out << tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo) << endl;
-	out << endl;
+	out << Qt::endl;
+	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << Qt::endl;
+	out << Qt::endl;
+	out << tr("   * The `mode' is the way the pattern is matched. This one accepts three values: ") << Qt::endl;
+	out << tr("     > `%1' causes the pattern to be compared exactly to the objects names.").arg(Catalog::FilterExact) << Qt::endl;
+	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterLike) << Qt::endl;
+	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << Qt::endl;
+	out << Qt::endl;
+	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(KeepChildObjs).arg(OnlyMatching) << Qt::endl;
+	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << Qt::endl;
+	out << tr("     The comma separated list of table children objects accepts the values:") << Qt::endl;
+	out << tr("     > %1").arg(child_list)  << Qt::endl;
+	out << Qt::endl;
+	out << tr("   * NOTES: all comparisons during filtering are case insensitive except for the mode `%1'.").arg(Catalog::FilterExact) << Qt::endl;
+	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << Qt::endl;
+	out << Qt::endl;
+	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << Qt::endl;
+	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << Qt::endl;
+	out << Qt::endl;
+	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << Qt::endl;
+	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << Qt::endl;
+	out << tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above.") << Qt::endl;
+	out << tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo) << Qt::endl;
+	out << Qt::endl;
 }
 
 void PgModelerCliApp::parseOptions(attribs_map &opts)
@@ -604,20 +604,20 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		map<QString, Connection *>::iterator itr=connections.begin();
 
 		if(connections.empty())
-			out << endl <<  tr("There are no connections configured.") << endl << endl;
+			out << Qt::endl <<  tr("There are no connections configured.") << Qt::endl << Qt::endl;
 		else
 		{
 			unsigned id=0;
 
-			out << endl << tr("Available connections (alias : connection string)") << endl;
+			out << Qt::endl << tr("Available connections (alias : connection string)") << Qt::endl;
 			while(itr != connections.end())
 			{
 				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
-							 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << endl;
+							 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << Qt::endl;
 
 				itr++;
 			}
-			out << endl;
+			out << Qt::endl;
 		}
 	}
 	else
@@ -752,18 +752,18 @@ int PgModelerCliApp::exec()
 void PgModelerCliApp::updateProgress(int progress, QString msg, ObjectType)
 {
 	if(progress > 0)
-		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << endl;
+		out << QString("[%1%] ").arg(progress > 100 ? 100 : progress) << msg << Qt::endl;
 	else
-		out << msg << endl;
+		out << msg << Qt::endl;
 }
 
 void PgModelerCliApp::printIgnoredError(QString err_cod, QString err_msg, QString cmd)
 {
-	out << endl;
-	out << tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << endl;
-	out << tr("** Command: %1").arg(cmd) << endl;
-	out << err_msg << endl;
-	out << endl;
+	out << Qt::endl;
+	out << tr("** Error code `%1' found and ignored. Proceeding with export.").arg(err_cod) << Qt::endl;
+	out << tr("** Command: %1").arg(cmd) << Qt::endl;
+	out << err_msg << Qt::endl;
+	out << Qt::endl;
 }
 
 void PgModelerCliApp::handleObjectAddition(BaseObject *object)
@@ -874,7 +874,7 @@ void PgModelerCliApp::extractObjectXML()
 		layers = aux_buf.mid(attr_start, attr_end - attr_start);
 		layers.remove(QRegExp(attr_expr.arg(Attributes::Layers)));
 		layers.remove('"');
-		model->setLayers(layers.trimmed().split(';', QString::SkipEmptyParts));
+		model->setLayers(layers.trimmed().split(';', Qt::SkipEmptyParts));
 
 		//Active layers
 		attr_start = attr_end;
@@ -883,7 +883,7 @@ void PgModelerCliApp::extractObjectXML()
 		active_layers.remove(QRegExp(attr_expr.arg(Attributes::ActiveLayers)));
 		active_layers.remove('"');
 
-		for(auto id : active_layers.trimmed().split(';', QString::SkipEmptyParts))
+		for(auto id : active_layers.trimmed().split(';', Qt::SkipEmptyParts))
 			act_layers_ids.push_back(id.toUInt());
 
 		model->setActiveLayers(act_layers_ids);
@@ -1132,10 +1132,10 @@ void PgModelerCliApp::recreateObjects()
 			if(tries > max_tries)
 			{
 				//Outputs the code of the objects that wasn't created
-				out << tr("\n** Object(s) that couldn't fixed: ") << endl;
+				out << tr("\n** Object(s) that couldn't fixed: ") << Qt::endl;
 				while(!fail_objs.isEmpty())
 				{
-					out << fail_objs.front() << endl;
+					out << fail_objs.front() << Qt::endl;
 					fail_objs.pop_front();
 				}
 
@@ -1488,7 +1488,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
-		QStringList force_tab_objs = parsed_opts[KeepChildObjs].split(',', QString::SkipEmptyParts);
+		QStringList force_tab_objs = parsed_opts[KeepChildObjs].split(',', Qt::SkipEmptyParts);
 
 		catalog.setConnection(conn);
 
@@ -1625,8 +1625,8 @@ void PgModelerCliApp::diffModelDatabase()
 					}
 				}
 
-				out << endl;
-				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << endl;
+				out << Qt::endl;
+				out << tr("** WARNING: You are about to apply the generated diff code to the server. Data can be lost in the process!") << Qt::endl;
 
 				do
 				{
