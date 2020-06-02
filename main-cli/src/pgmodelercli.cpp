@@ -17,7 +17,8 @@
 */
 
 #include "pgmodelercli.h"
-#include "qtcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
+#include "qtcompat/splitbehaviorcompat.h"
 
 QTextStream PgModelerCliApp::out(stdout);
 

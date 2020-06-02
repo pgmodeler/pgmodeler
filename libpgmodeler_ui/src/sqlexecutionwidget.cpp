@@ -23,6 +23,7 @@
 #include "pgmodeleruins.h"
 #include "plaintextitemdelegate.h"
 #include "datamanipulationform.h"
+#include "qtcompat/qplaintexteditcompat.h"
 
 map<QString, QString> SQLExecutionWidget::cmd_history;
 
@@ -37,11 +38,7 @@ SQLExecutionWidget::SQLExecutionWidget(QWidget * parent) : QWidget(parent)
 	cmd_history_txt=PgModelerUiNs::createNumberedTextEditor(cmd_history_parent);
 	cmd_history_txt->setCustomContextMenuEnabled(false);
 
-	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-		cmd_history_txt->setTabStopWidth(sql_cmd_txt->getTabDistance());
-	#else
-		cmd_history_txt->setTabStopDistance(sql_cmd_txt->getTabDistance());
-	#endif
+	QtCompat::setTabStopDistance(cmd_history_txt, sql_cmd_txt->getTabDistance());
 
 	cmd_history_txt->setContextMenuPolicy(Qt::CustomContextMenu);
 	cmd_history_txt->setReadOnly(true);

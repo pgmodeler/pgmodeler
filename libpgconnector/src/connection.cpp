@@ -21,7 +21,7 @@
 #include <iostream>
 #include "attributes.h"
 #include "globalattributes.h"
-#include "qtcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");

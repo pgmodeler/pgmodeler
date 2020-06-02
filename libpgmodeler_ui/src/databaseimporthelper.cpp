@@ -18,7 +18,8 @@
 
 #include "databaseimporthelper.h"
 #include "defaultlanguages.h"
-#include "qtcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
+#include "qtcompat/splitbehaviorcompat.h"
 
 const QString DatabaseImportHelper::UnkownObjectOidXml("\t<!--[ unknown object OID=%1 ]-->\n");
 

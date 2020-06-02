@@ -17,6 +17,7 @@
 */
 
 #include "relationshipview.h"
+#include "qtcompat/qlinefcompat.h"
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
@@ -400,11 +401,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-							inter_type = lines[i]->line().intersect(lin, &p);
-						#else
-							inter_type = lines[i]->line().intersects(lin, &p);
-						#endif
+						inter_type = QtCompat::lineIntersects(lines[i]->line(), lin, &p);
 
 						if((!use_curved_lines && inter_type == QLineF::BoundedIntersection) ||
 							 (use_curved_lines && curves[i]->contains(event->pos())))
@@ -909,12 +906,7 @@ void RelationshipView::configureLine()
 				{
 					edge.setP1(pol.at(idx));
 					edge.setP2(pol.at(idx + 1));
-
-					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-						inter_type = line.intersect(edge, &pi);
-					#else
-						inter_type = line.intersects(edge, &pi);
-					#endif
+					inter_type = QtCompat::lineIntersects(line, edge, &pi);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{
@@ -1681,12 +1673,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 			{
 				edge.setP1(pol.at(idx));
 				edge.setP2(pol.at(idx + 1));
-
-				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-					inter_type = rel_lines[tab_id].intersect(edge, &pi);
-				#else
-					inter_type = rel_lines[tab_id].intersects(edge, &pi);
-				#endif
+				inter_type = QtCompat::lineIntersects(rel_lines[tab_id], edge, &pi);
 
 				if(inter_type == QLineF::BoundedIntersection)
 				{
@@ -1938,11 +1925,7 @@ void RelationshipView::configureLabels()
 			{
 				for(i1=0; i1 < 4; i1++)
 				{
-					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-						inter_type = lins[idx].intersect(borders[idx][i1], &p_int);
-					#else
-						inter_type = lins[idx].intersects(borders[idx][i1], &p_int);
-					#endif
+					inter_type = QtCompat::lineIntersects(lins[idx], borders[idx][i1], &p_int);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{

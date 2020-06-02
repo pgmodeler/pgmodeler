@@ -18,7 +18,7 @@
 
 #include <QTranslator>
 #include "pgmodelercli.h"
-#include "qtcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 int main(int argc, char **argv)
 {
@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 #else
 	try
 	{
-        PgModelerCliApp pgmodeler_cli(argc, argv);
-        QTranslator translator(&pgmodeler_cli);
+		PgModelerCliApp pgmodeler_cli(argc, argv);
+		QTranslator translator(&pgmodeler_cli);
 
 		//Tries to load the ui translation according to the system's locale
 		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());

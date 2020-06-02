@@ -20,7 +20,7 @@
 #include <QFileDialog>
 #include "exception.h"
 #include <QTextStream>
-#include "qtcompat.h"
+#include "qtcompat/splitbehaviorcompat.h"
 
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {

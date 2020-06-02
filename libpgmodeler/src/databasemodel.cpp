@@ -20,7 +20,8 @@
 #include "pgmodelerns.h"
 #include "defaultlanguages.h"
 #include <QtDebug>
-#include "qtcompat.h"
+#include "qtcompat/splitbehaviorcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 

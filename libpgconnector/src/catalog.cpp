@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
-#include "qtcompat.h"
+#include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
 const QString Catalog::QueryAttribs("attribs");

@@ -21,7 +21,7 @@
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
 #include <QTemporaryFile>
-#include "qtcompat.h"
+#include "qtcompat/qlabelcompat.h"
 
 bool ModelDatabaseDiffForm::low_verbosity = false;
 map<QString, attribs_map> ModelDatabaseDiffForm::config_params;

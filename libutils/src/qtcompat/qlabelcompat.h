@@ -17,31 +17,24 @@
 */
 
 /**
-\ingroup pgmodeler-cli
+\ingroup libutils
 \namespace QtCompat
-\brief Reunites in form of utitliy functions and constants all code the is not compatible between two major Qt versions.
-The main purpose of this is to make pgModeler backward compatible to Qt 5.15, 5.14, 5.13 and so on without major problems.
+\brief Reunites in form of utility functions and constants all code that is not compatible between major Qt versions.
+The main purpose of this approach is to make pgModeler backward compatible to Qt 5.15, 5.14, 5.13 and so on (restricted to Qt 5.9) without major problems.
 \note This namespace will be discarded when pgModeler have its code ported to Qt 6.
 */
 
-#ifndef QT_COMPAT_H
-#define QT_COMPAT_H
+#ifndef QLABEL_COMPAT_H
+#define QLABEL_COMPAT_H
 
-#include <QString>
 #include <QLabel>
 #include <QPixmap>
-#include <QTextStream>
 
 namespace QtCompat {
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-	static const QString::SplitBehavior KeepEmptyParts = QString::KeepEmptyParts;
-	static const QString::SplitBehavior SkipEmptyParts = QString::SkipEmptyParts;
-#else
-	static const Qt::SplitBehaviorFlags KeepEmptyParts = Qt::KeepEmptyParts;
-	static const Qt::SplitBehaviorFlags SkipEmptyParts = Qt::SkipEmptyParts;
-#endif
-
-	extern QTextStream &endl(QTextStream &stream);
+	/*! \brief This is an utility function used to get access to a copy of the pixmap
+	 * of a QLabel instance. In Qt 5.15 the way to retrieve the pixmap is QLabel::pixmap(Qt::ReturnByValue)
+	 * and in previous versions the correct way is QLabel::pixmap(). Since Qt::ReturnByValue doesn't exist
+	 * before Qt 5.15, this function peforms the correct method call depending on the Qt release in use. */
 	extern QPixmap copyPixmap(QLabel *lbl);
 };
 

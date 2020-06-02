@@ -18,7 +18,7 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
-#include "qtcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 class DatabaseModelTest: public QObject {
 	private:

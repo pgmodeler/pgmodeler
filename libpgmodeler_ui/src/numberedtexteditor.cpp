@@ -24,6 +24,8 @@
 #include <QFileDialog>
 #include <QTemporaryFile>
 #include "pgmodeleruins.h"
+#include "qtcompat/qplaintexteditcompat.h"
+#include "qtcompat/qfontmetricscompat.h"
 
 bool NumberedTextEditor::line_nums_visible=true;
 bool NumberedTextEditor::highlight_lines=true;
@@ -191,19 +193,8 @@ double NumberedTextEditor::getTabDistance()
 {
 	if(static_cast<int>(tab_width) == 0)
 		return 80;
-	else
-	{
-		QFontMetrics fm(default_font);
-		int chr_width = 0;
 
-		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-			chr_width = fm.width(' ');
-		#else
-			chr_width = fm.horizontalAdvance(' ');
-		#endif
-
-		return tab_width * chr_width;
-	}
+	return tab_width * QtCompat::getHorizontalAdvance(default_font, ' ');
 }
 
 void NumberedTextEditor::setSourceEditorApp(const QString &app)
@@ -517,21 +508,10 @@ void NumberedTextEditor::updateLineNumbers()
 	}
 
 	line_number_wgt->drawLineNumbers(first_line, line_count, dy);
-
-	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-		tab_stop_dist = this->tabStopWidth();
-	#else
-		tab_stop_dist = this->tabStopDistance();
-	#endif
+	tab_stop_dist = QtCompat::getTabStopDistance(this);
 
 	if(round(tab_stop_dist) != round(NumberedTextEditor::getTabDistance()))
-	{
-		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-			this->setTabStopWidth(NumberedTextEditor::getTabDistance());
-		#else
-			this->setTabStopDistance(NumberedTextEditor::getTabDistance());
-		#endif
-	}
+		QtCompat::setTabStopDistance(this, NumberedTextEditor::getTabDistance());
 }
 
 void NumberedTextEditor::updateLineNumbersSize()
@@ -565,12 +545,7 @@ int NumberedTextEditor::getLineNumbersWidth()
 		++digits;
 	}
 
-	#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-		chr_width = fontMetrics().width(QChar('9'));
-	#else
-		chr_width = fontMetrics().horizontalAdvance(QChar('9'));
-	#endif
-
+	chr_width = QtCompat::getHorizontalAdvance(this->font(), QChar('9'));
 	return (15 + chr_width * digits);
 }
 
