@@ -35,7 +35,7 @@ namespace QtCompat {
 	 * of a QLabel instance. In Qt 5.15 the way to retrieve the pixmap is QLabel::pixmap(Qt::ReturnByValue)
 	 * and in previous versions the correct way is QLabel::pixmap(). Since Qt::ReturnByValue doesn't exist
 	 * before Qt 5.15, this function peforms the correct method call depending on the Qt release in use. */
-	extern QPixmap copyPixmap(QLabel *lbl);
+	extern QPixmap pixmap(QLabel *lbl);
 };
 
 #endif

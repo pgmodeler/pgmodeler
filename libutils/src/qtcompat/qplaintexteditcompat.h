@@ -38,7 +38,7 @@ namespace QtCompat {
 	/*! \brief Prior to Qt 5.14 QPlainTextEdit had the method tabStopWidth, after
 	 * that release, the method is called tabStopDistance. This utility function
 	 * just calls the correct method according to the current Qt version */
-	extern qreal getTabStopDistance(QPlainTextEdit *text_edt);
+	extern qreal tabStopDistance(QPlainTextEdit *text_edt);
 };
 
 #endif

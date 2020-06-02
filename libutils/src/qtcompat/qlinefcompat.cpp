@@ -19,7 +19,7 @@
 #include "qlinefcompat.h"
 
 namespace QtCompat {
-	QLineF::IntersectType lineIntersects(const QLineF &src_line, const QLineF &other_line, QPointF *inter_pnt)
+	QLineF::IntersectType intersects(const QLineF &src_line, const QLineF &other_line, QPointF *inter_pnt)
 	{
 		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
 			return src_line.intersect(other_line, inter_pnt);

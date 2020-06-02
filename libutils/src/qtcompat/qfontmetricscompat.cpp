@@ -19,7 +19,7 @@
 #include "qfontmetricscompat.h"
 
 namespace QtCompat {
-	int getHorizontalAdvance(const QFont &font, QChar chr)
+	int horizontalAdvance(const QFont &font, QChar chr)
 	{
 		QFontMetrics fm(font);
 

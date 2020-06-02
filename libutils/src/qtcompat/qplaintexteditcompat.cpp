@@ -28,7 +28,7 @@ namespace QtCompat {
 		#endif
 	}
 
-	qreal getTabStopDistance(QPlainTextEdit *text_edt)
+	qreal tabStopDistance(QPlainTextEdit *text_edt)
 	{
 		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
 			return text_edt->tabStopWidth();

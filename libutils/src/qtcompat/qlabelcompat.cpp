@@ -19,7 +19,7 @@
 #include "qlabelcompat.h"
 
 namespace QtCompat {
-	QPixmap copyPixmap(QLabel *lbl)
+	QPixmap pixmap(QLabel *lbl)
 	{
 		#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
 			return *lbl->pixmap();

@@ -33,7 +33,7 @@ namespace QtCompat {
 	/*! \brief Prior to Qt 5.14 QFontMetrics had the method width, after
 	 * that release, the method is called horizontalAdvance. This utility function
 	 * just calls the correct method according to the current Qt version */
-	extern int getHorizontalAdvance(const QFont &font, QChar chr);
+	extern int horizontalAdvance(const QFont &font, QChar chr);
 };
 
 #endif

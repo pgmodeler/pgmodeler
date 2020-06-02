@@ -32,7 +32,7 @@ namespace QtCompat {
 	/*! \brief This is an utility function that returns an intesection point between two lines.
 	 * In Qt 5.14, the method QLineF::intersect was renamed to QLineF::intersects.
 	 * This function just calls the method with the proper name depending on the Qt version */
-	extern QLineF::IntersectType lineIntersects(const QLineF &src_line, const QLineF &other_line, QPointF *inter_pnt);
+	extern QLineF::IntersectType intersects(const QLineF &src_line, const QLineF &other_line, QPointF *inter_pnt);
 };
 
 #endif
