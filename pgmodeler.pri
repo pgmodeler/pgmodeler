@@ -62,7 +62,7 @@ linux {
 	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
 	BINDIR = $$PREFIX
 	PRIVATEBINDIR = $$PREFIX
-	PRIVATELIBDIR = $$PREFIX
+	PRIVATELIBDIR = $$PREFIX/lib
 	PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
 	SHAREDIR = $$PREFIX
 	CONFDIR = $$SHAREDIR/conf
