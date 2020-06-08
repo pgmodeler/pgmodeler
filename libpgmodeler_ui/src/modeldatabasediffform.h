@@ -34,6 +34,7 @@
 #include "numberedtexteditor.h"
 #include "baseconfigwidget.h"
 #include "fileselectorwidget.h"
+#include "objectsfilterwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -53,6 +54,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		NumberedTextEditor *sqlcode_txt;
 
 		FileSelectorWidget *file_sel;
+
+		ObjectsFilterWidget *pd_filter_wgt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -166,6 +169,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void selectPreset();
 		void removePreset();
 		void savePreset();
+		void enablePartialDiff();
+		void configurePartialDiff();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

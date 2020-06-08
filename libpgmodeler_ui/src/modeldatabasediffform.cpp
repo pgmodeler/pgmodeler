@@ -33,6 +33,13 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		setupUi(this);
 		setWindowFlags(flags);
 
+		pd_filter_wgt = new ObjectsFilterWidget(this);
+		QVBoxLayout *vbox = new QVBoxLayout(pd_filter_gb);
+		vbox->addWidget(pd_filter_wgt);
+		vbox->setContentsMargins(4,4,4,4);
+		pd_filter_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+		pd_vsplitter->setSizes({ 450, 300 });
+
 		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
 
@@ -126,6 +133,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 			save_preset_tb->setEnabled(!text.isEmpty());
 		});
 
+		connect(partial_diff_chk, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
+		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
+		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
+		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
 	ignore_errors_chk->setChecked(true);
@@ -204,6 +216,7 @@ void ModelDatabaseDiffForm::resetForm()
 	enableDiffMode();
 	settings_tbw->setTabEnabled(1, false);
 	settings_tbw->setTabEnabled(2, false);
+	settings_tbw->setTabEnabled(3, false);
 }
 
 void ModelDatabaseDiffForm::closeEvent(QCloseEvent *event)
@@ -1205,4 +1218,18 @@ void ModelDatabaseDiffForm::savePreset()
 
 	presets_cmb->setCurrentText(fmt_name);
 	selectPreset();
+}
+
+void ModelDatabaseDiffForm::enablePartialDiff()
+{
+	bool enable = (partial_diff_chk->isChecked() &&
+								 (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
+								 database_cmb->currentIndex() > 0);
+
+	settings_tbw->setTabEnabled(1, enable);
+}
+
+void ModelDatabaseDiffForm::configurePartialDiff()
+{
+
 }
