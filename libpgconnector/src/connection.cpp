@@ -21,6 +21,7 @@
 #include <iostream>
 #include "attributes.h"
 #include "globalattributes.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 const QString Connection::SslDisable=QString("disable");
 const QString Connection::SslAllow=QString("allow");
@@ -230,8 +231,8 @@ void Connection::connect()
 		else
 		{
 			QTextStream err(stderr);
-			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << endl
-				<< QString("Conn. info: [ ") << connection_str << QString("]") << endl;
+			err << QT_TR_NOOP("ERROR: trying to open an already stablished connection.") << QtCompat::endl
+				<< QString("Conn. info: [ ") << connection_str << QString("]") << QtCompat::endl;
 			this->close();
 		}
 	}
@@ -409,7 +410,7 @@ void Connection::executeDMLCommand(const QString &sql, ResultSet &result)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << endl;
+		out << QString("\n---\n") << sql << QtCompat::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful
@@ -448,7 +449,7 @@ void Connection::executeDDLCommand(const QString &sql)
 	if(print_sql)
 	{
 		QTextStream out(stdout);
-		out << QString("\n---\n") << sql << endl;
+		out << QString("\n---\n") << sql << QtCompat::endl;
 	}
 
 	//Raise an error in case the command sql execution is not sucessful

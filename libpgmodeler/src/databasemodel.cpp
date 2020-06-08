@@ -20,6 +20,8 @@
 #include "pgmodelerns.h"
 #include "defaultlanguages.h"
 #include <QtDebug>
+#include "qtcompat/splitbehaviorcompat.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 unsigned DatabaseModel::dbmodel_id=2000;
 
@@ -771,8 +773,8 @@ void DatabaseModel::destroyObjects()
 		/* DEBUG: An exception at this point shouldn't never occur but if
 		 * it is raised, we spit out the error to the stdout in order to try to
 		 * find out the problem! */
-		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << endl;
-		qDebug() << e.getExceptionsText().toStdString().c_str() << endl;
+		qDebug() << "** FAIL TO DESTROY ALL OBJECTS **" << QtCompat::endl;
+		qDebug() << e.getExceptionsText().toStdString().c_str() << QtCompat::endl;
 	}
 
 	objects = getCreationOrder(SchemaParser::XmlDefinition, true);
@@ -3237,7 +3239,7 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
-			layers = attribs[Attributes::Layers].split(';', QString::SkipEmptyParts);
+			layers = attribs[Attributes::Layers].split(';', QtCompat::SkipEmptyParts);
 
 			active_layers.clear();
 
@@ -3247,7 +3249,7 @@ void DatabaseModel::loadModel(const QString &filename)
 				active_layers.push_back(0);
 			else
 			{
-				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QString::SkipEmptyParts))
+				for(auto &layer_id : attribs[Attributes::ActiveLayers].split(';', QtCompat::SkipEmptyParts))
 					active_layers.push_back(layer_id.toInt());
 			}
 
