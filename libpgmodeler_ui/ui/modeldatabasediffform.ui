@@ -93,7 +93,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -1398,326 +1398,14 @@
           <string>Partial diff</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
-          <property name="leftMargin">
-           <number>4</number>
-          </property>
-          <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>4</number>
-          </property>
-          <property name="bottomMargin">
-           <number>4</number>
-          </property>
           <item row="0" column="0">
-           <widget class="QSplitter" name="pd_vsplitter">
+           <widget class="QSplitter" name="pd_hsplitter">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Horizontal</enum>
             </property>
             <property name="childrenCollapsible">
              <bool>false</bool>
             </property>
-            <widget class="QSplitter" name="pd_hsplitter">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="childrenCollapsible">
-              <bool>false</bool>
-             </property>
-             <widget class="QGroupBox" name="pd_input_gb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Input</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <property name="leftMargin">
-                <number>4</number>
-               </property>
-               <property name="topMargin">
-                <number>4</number>
-               </property>
-               <property name="rightMargin">
-                <number>4</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
-               </property>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_14">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="pd_input_ico_lbl">
-                   <property name="minimumSize">
-                    <size>
-                     <width>20</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="../res/resources.qrc">:/icones/icones/pgsqlModeler48x48.png</pixmap>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="pd_input_lbl">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>dummy [/home/teste/dsfsf]</string>
-                   </property>
-                   <property name="indent">
-                    <number>5</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QTableWidget" name="filtered_objs_tbw">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="editTriggers">
-                  <set>QAbstractItemView::NoEditTriggers</set>
-                 </property>
-                 <property name="alternatingRowColors">
-                  <bool>true</bool>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::ExtendedSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectRows</enum>
-                 </property>
-                 <property name="gridStyle">
-                  <enum>Qt::SolidLine</enum>
-                 </property>
-                 <property name="sortingEnabled">
-                  <bool>true</bool>
-                 </property>
-                 <column>
-                  <property name="text">
-                   <string>Object</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Type</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Parent</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Type</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
-                  </property>
-                 </column>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QGroupBox" name="pd_compare_to_gb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Compare to</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <property name="leftMargin">
-                <number>4</number>
-               </property>
-               <property name="topMargin">
-                <number>4</number>
-               </property>
-               <property name="rightMargin">
-                <number>4</number>
-               </property>
-               <property name="bottomMargin">
-                <number>4</number>
-               </property>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_12">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="pd_compare_to_ico_lbl">
-                   <property name="minimumSize">
-                    <size>
-                     <width>20</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>22</width>
-                     <height>22</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="../res/resources.qrc">:/icones/icones/database.png</pixmap>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="pd_compare_to_lbl">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>dummy@localhost:5432</string>
-                   </property>
-                   <property name="indent">
-                    <number>5</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QTableWidget" name="filtered_objs_tbw_2">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="editTriggers">
-                  <set>QAbstractItemView::NoEditTriggers</set>
-                 </property>
-                 <property name="alternatingRowColors">
-                  <bool>true</bool>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::ExtendedSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectRows</enum>
-                 </property>
-                 <property name="gridStyle">
-                  <enum>Qt::SolidLine</enum>
-                 </property>
-                 <property name="sortingEnabled">
-                  <bool>true</bool>
-                 </property>
-                 <column>
-                  <property name="text">
-                   <string>Object</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Type</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Parent</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string>Type</string>
-                  </property>
-                  <property name="textAlignment">
-                   <set>AlignLeading|AlignVCenter</set>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../res/resources.qrc">
-                    <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
-                  </property>
-                 </column>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </widget>
             <widget class="QGroupBox" name="pd_filter_gb">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -1728,6 +1416,152 @@
              <property name="title">
               <string>Filter</string>
              </property>
+            </widget>
+            <widget class="QGroupBox" name="pd_input_gb">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>Input</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <property name="leftMargin">
+               <number>4</number>
+              </property>
+              <property name="topMargin">
+               <number>4</number>
+              </property>
+              <property name="rightMargin">
+               <number>4</number>
+              </property>
+              <property name="bottomMargin">
+               <number>4</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="pd_input_ico_lbl">
+                  <property name="minimumSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>22</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap resource="../res/resources.qrc">:/icones/icones/pgsqlModeler48x48.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="pd_input_lbl">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>dummy [/home/teste/dsfsf]</string>
+                  </property>
+                  <property name="indent">
+                   <number>5</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="filtered_objs_tbw">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::SolidLine</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <column>
+                 <property name="text">
+                  <string>Object</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignLeading|AlignVCenter</set>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Type</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignLeading|AlignVCenter</set>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Parent</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignLeading|AlignVCenter</set>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/schema.png</normaloff>:/icones/icones/schema.png</iconset>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Type</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignLeading|AlignVCenter</set>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </widget>
           </item>

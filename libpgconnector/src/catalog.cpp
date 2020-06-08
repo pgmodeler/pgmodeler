@@ -1030,7 +1030,8 @@ QStringList Catalog::parseIndexExpressions(const QString &expr)
 vector<ObjectType> Catalog::getFilterableObjectTypes()
 {
 	static vector<ObjectType> types = BaseObject::getObjectTypes(true, { ObjectType::Relationship,
-																																			 ObjectType::BaseRelationship,																										ObjectType::Textbox,
+																																			 ObjectType::BaseRelationship,
+																																			 ObjectType::Textbox,
 																																			 ObjectType::GenericSql,
 																																			 ObjectType::Permission,
 																																			 ObjectType::Database,
@@ -1048,10 +1049,27 @@ QStringList Catalog::getFilterableObjectNames()
 
 	if(names.isEmpty())
 	{
+		QStringList aux_names = {
+			BaseObject::getSchemaName(ObjectType::View),
+			BaseObject::getSchemaName(ObjectType::Table),
+			BaseObject::getSchemaName(ObjectType::Schema)
+		};
+
 		for(auto &type : getFilterableObjectTypes())
+		{
+			if(type == ObjectType::Table ||
+				 type == ObjectType::View ||
+				 type == ObjectType::Schema)
+				continue;
+
 			names.append(BaseObject::getSchemaName(type));
+		}
 
 		names.sort();
+
+		//Placing table types and schema at the start of the list
+		for(auto &name : aux_names)
+			names.prepend(name);
 	}
 
 	return names;

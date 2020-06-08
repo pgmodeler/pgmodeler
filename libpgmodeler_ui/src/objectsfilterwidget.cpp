@@ -74,7 +74,7 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 												 obj_type);
 
 	combo->setStyleSheet("border: 0px");
-	combo->model()->sort(0);
+	//combo->model()->sort(0);
 	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
 
 	return combo;

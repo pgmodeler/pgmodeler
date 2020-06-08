@@ -38,7 +38,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		vbox->addWidget(pd_filter_wgt);
 		vbox->setContentsMargins(4,4,4,4);
 		pd_filter_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-		pd_vsplitter->setSizes({ 450, 300 });
+		pd_hsplitter->setSizes({ 300, 500 });
 
 		sqlcode_txt=PgModelerUiNs::createNumberedTextEditor(sqlcode_wgt);
 		sqlcode_txt->setReadOnly(true);
@@ -175,9 +175,10 @@ void ModelDatabaseDiffForm::setModelWidget(ModelWidget *model_wgt)
 {
 	if(model_wgt)
 	{
+		QString filename = QFileInfo(model_wgt->getFilename()).fileName();
 		source_model=loaded_model=model_wgt->getDatabaseModel();
-		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(QFileInfo(model_wgt->getFilename()).fileName()));
-		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? tr("model not saved yet") : model_wgt->getFilename());
+		src_model_name_lbl->setText(QString("%1 [%2]").arg(source_model->getName()).arg(filename.isEmpty() ? tr("not saved") : filename));
+		src_model_name_lbl->setToolTip(model_wgt->getFilename().isEmpty() ? tr("Model not saved yet") : model_wgt->getFilename());
 	}
 	else
 	{
