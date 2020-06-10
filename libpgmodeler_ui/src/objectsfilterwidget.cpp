@@ -34,25 +34,26 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 		act->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
 		act->setData(BaseObject::getSchemaName(type));
 		act->setCheckable(true);
-		act->setChecked(false);
+		act->setChecked(true);
 	}
 
-	forced_filter_tb->setMenu(&tab_objs_menu);
+	action_only_matching = new QAction(tr("Only macthing"));
+	action_only_matching->setCheckable(true);
+
+	action_match_signature = new QAction(tr("Match by signature"));
+	action_match_signature->setCheckable(true);
+	action_match_signature->setChecked(true);
+
+	options_menu.addAction(action_match_signature);
+	options_menu.addAction(action_only_matching);
+	action_forced_filter = options_menu.addAction(tr("Forced filtering"));
+	action_forced_filter->setMenu(&tab_objs_menu);
+
+	options_tb->setMenu(&options_menu);
 
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
-	connect(only_matching_chk, SIGNAL(toggled(bool)), this, SLOT(enableForcedFilterButton()));
-
-	connect(&tab_objs_menu, &QMenu::triggered, [&](){
-		int checked_acts = 0;
-		for(auto &act : tab_objs_menu.actions())
-		{
-			if(act->isChecked())
-				checked_acts++;
-		}
-
-		forced_filter_tb->setText(tr("Forced filter") + QString(" (%1)").arg(checked_acts));
-	});
+	connect(action_only_matching, SIGNAL(toggled(bool)), action_forced_filter, SLOT(setEnabled(bool)));
 
 	connect(apply_tb, &QToolButton::clicked, [&](){
 		emit s_filterApplyingRequested();
@@ -74,7 +75,6 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 												 obj_type);
 
 	combo->setStyleSheet("border: 0px");
-	//combo->model()->sort(0);
 	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
 
 	return combo;
@@ -84,7 +84,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { Catalog::FilterExact, Catalog::FilterLike, Catalog::FilterRegExp };
+			modes = { Catalog::FilterWildcard, Catalog::FilterRegExp };
 	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
 
@@ -117,7 +117,7 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 {
 	QStringList types;
 
-	if(forced_filter_tb->isEnabled())
+	if(action_only_matching->isChecked())
 	{
 		for(auto &act : tab_objs_menu.actions())
 		{
@@ -131,7 +131,12 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 
 bool ObjectsFilterWidget::isOnlyMatching()
 {
-	return only_matching_chk->isChecked();
+	return action_only_matching->isChecked();
+}
+
+bool ObjectsFilterWidget::isMatchSignature()
+{
+	return action_match_signature->isChecked();
 }
 
 void ObjectsFilterWidget::addFilter()
@@ -150,7 +155,7 @@ void ObjectsFilterWidget::addFilter()
 
 	combo = new QComboBox;
 	combo->setStyleSheet("border: 0px");
-	combo->addItems({ tr("Exact"), tr("Like"), tr("Regexp") });
+	combo->addItems({ tr("Wildcard"), tr("Regexp") });
 	filters_tbw->setCellWidget(row, 2, combo);
 
 	rem_tb = new QToolButton;
@@ -215,5 +220,5 @@ void ObjectsFilterWidget::enableForcedFilterButton()
 		has_tab_filter = BaseTable::isBaseTable(BaseObject::getObjectType(type_name));
 	}
 
-	forced_filter_tb->setEnabled(only_matching_chk->isChecked() && has_tab_filter);
+	action_forced_filter->setEnabled(action_only_matching->isChecked() && has_tab_filter);
 }

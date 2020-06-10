@@ -26,11 +26,11 @@ const QString Catalog::BoolField("_bool");
 const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
 const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
-const QString Catalog::FilterLike("like");
+const QString Catalog::FilterWildcard("wildcard");
 const QString Catalog::FilterRegExp("regexp");
-const QString Catalog::FilterExact("exact");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
 const QString Catalog::AliasPlaceholder("$alias$");
+const QChar Catalog::WildcardChar('*');
 
 attribs_map Catalog::catalog_queries;
 
@@ -78,6 +78,7 @@ map<ObjectType, QString> Catalog::name_fields=
 
 Catalog::Catalog()
 {
+	match_signature = true;
 	last_sys_oid=0;
 	setQueryFilter(ExclExtensionObjs | ExclSystemObjs);
 }
@@ -154,23 +155,25 @@ void Catalog::setQueryFilter(unsigned filter)
 	}
 }
 
-void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringList tab_obj_types)
+void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool match_signature, QStringList tab_obj_types)
 {
+	this->match_signature = match_signature;
+	obj_filters.clear();
+	extra_filter_conds.clear();
+
+	if(filters.isEmpty())
+		return;
+
 	ObjectType obj_type;
-	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+";
-	QStringList values,	relkinds, modes = { FilterExact, FilterLike, FilterRegExp };
-
+	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
+	QStringList values,	modes = { FilterWildcard, FilterRegExp };
 	map<ObjectType, QStringList> tab_patterns;
-
-	attribs_map fmt_filter, tmpl_filters = {{ FilterExact, "%1 = E'%2'" },
-																					{ FilterLike, "%1 ILIKE E'%2'" },
-																					{ FilterRegExp, "%1 ~* E'%2'" }};
+	map<ObjectType, QStringList> parsed_filters;
+	attribs_map fmt_filter;
 
 	bool has_tab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::Table)))) >= 0,
 			 has_view_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::View)))) >= 0,
 			 has_ftab_filter = filters.indexOf(QRegExp(tab_filter.arg(BaseObject::getSchemaName(ObjectType::ForeignTable)))) >= 0;
-
-	obj_filters.clear();
 
 	/* If we have at least one table (view or foreign table) filter
 	 * and the forced object types list we configure filters to force the
@@ -178,12 +181,12 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringL
 	 * the parent tables */
 	if(only_matching && (has_tab_filter || has_ftab_filter || has_view_filter))
 	{
-		/* Configuring the placeholder for the parent table name used in the construction of the creterias that filters
+		/* Configuring the placeholder for the parent table name used in the construction of the creteria that filter
 		 * table names in forced table children objects filters.
-		 * This one comes in form of regexp_replace() because when calling oid::regclass::text the string comes schema qualified
-		 * so in order to match the table/view/foreign tables filters correclty we need to remove the schema name for the oid::regclass cast */
-		parent_alias_ref = QString("regexp_replace(%1,'^(.)+(\\.)', '')")
-											 .arg(AliasPlaceholder + QString(".oid::regclass::text"));
+		 * This one comes in form of a regexp matching on oid::regclass::text */
+		parent_alias_ref = QString("%1 ~* '(#)'")
+											 .arg(AliasPlaceholder + QString(".oid::regclass::text"))
+											 .replace("#", "%1");
 
 		// Validating the provided table children objects types
 		for(auto &type_name : tab_obj_types)
@@ -209,7 +212,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringL
 				continue;
 
 			if(filters.indexOf(QRegExp(QString("(%1)(.)+").arg(BaseObject::getSchemaName(type)))) < 0)
-				obj_filters[type].append(tmpl_filters[Catalog::FilterExact].arg(name_fields[type]).arg(InvFilterPattern));
+				parsed_filters[type].append(QString("(%1)").arg(InvFilterPattern));
 		}
 	}
 
@@ -235,11 +238,28 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringL
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		obj_filters[obj_type].append(tmpl_filters[mode].arg(name_fields[obj_type]).arg(pattern));
+		// Converting wildcard patterns into regexp syntax
+		if(mode == FilterWildcard && pattern.contains(WildcardChar))
+		{
+			QStringList list = pattern.split(WildcardChar, QtCompat::KeepEmptyParts);
+			QString any_str = "(.)*";
+
+			pattern.clear();
+
+			for(auto &word : list)
+			{
+				if(!word.isEmpty())
+					word = QString("(%1)").arg(word);
+			}
+
+			pattern = list.join(any_str);
+		}
+
+		parsed_filters[obj_type].append(QString("(%1)").arg(pattern));
 
 		// Storing the table/view/foreign table patters if there're forced children objects to filter
 		if(!tab_obj_types.isEmpty() && BaseTable::isBaseTable(obj_type))
-			tab_patterns[obj_type].append(tmpl_filters[mode].arg(parent_alias_ref).arg(pattern));
+			tab_patterns[obj_type].append(parent_alias_ref.arg(pattern));
 	}
 
 	if(!tab_obj_types.isEmpty())
@@ -270,10 +290,14 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, QStringL
 			if(has_ftab_filter && BaseObject::isChildObjectType(ObjectType::ForeignTable, obj_type))
 				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + QString("= 'f'")));
 
-			obj_filters[obj_type].append(fmt_conds.join(" OR ").replace(AliasPlaceholder, parent_aliases[obj_type]));
-			relkinds.clear();
+			extra_filter_conds[obj_type] = fmt_conds.join(" OR ").replace(AliasPlaceholder, parent_aliases[obj_type]);
+			fmt_conds.clear();
 		}
 	}
+
+	// Joining all configured filters in a single regexp
+	for(auto &itr : parsed_filters)
+		obj_filters[itr.first] = itr.second.join('|');
 }
 
 unsigned Catalog::getLastSysObjectOID()
@@ -337,7 +361,14 @@ QString Catalog::getCatalogQuery(const QString &qry_type, ObjectType obj_type, b
 
 	// If there's a name filter configured for the object type
 	if(obj_filters.count(obj_type))
-		attribs[Attributes::NameFilter] = obj_filters[obj_type].join(" OR ");
+	{
+		attribs[Attributes::UseSignature] = match_signature ? Attributes::True : "";
+		attribs[Attributes::NameFilter] = obj_filters[obj_type];
+	}
+
+	// If there's a name filter configured for the object type
+	if(extra_filter_conds.count(obj_type))
+		attribs[Attributes::ExtraCondition] = extra_filter_conds[obj_type];
 
 	//Checking if the custom filter expression is present
 	if(attribs.count(Attributes::CustomFilter))
@@ -422,7 +453,7 @@ unsigned Catalog::getQueryFilter()
 	return filter;
 }
 
-map<ObjectType, QStringList> Catalog::getObjectFilters()
+map<ObjectType, QString> Catalog::getObjectFilters()
 {
 	return obj_filters;
 }
@@ -437,6 +468,9 @@ vector<ObjectType> Catalog::getFilteredObjectTypes()
 		if(flt.second.indexOf(QRegExp(regexp)) < 0)
 			types.push_back(flt.first);
 	}
+
+	for(auto &ext_flt : extra_filter_conds)
+		types.push_back(ext_flt.first);
 
 	return types;
 }
@@ -1038,7 +1072,7 @@ vector<ObjectType> Catalog::getFilterableObjectTypes()
 																																			 ObjectType::Cast,
 																																			 ObjectType::Column,
 																																			 ObjectType::UserMapping,
-																																			 ObjectType::Tag});
+																																			 ObjectType::Tag });
 
 	return types;
 }
@@ -1088,6 +1122,7 @@ void Catalog::operator = (const Catalog &catalog)
 		this->exclude_array_types=catalog.exclude_array_types;
 		this->list_only_sys_objs=catalog.list_only_sys_objs;
 		this->obj_filters=catalog.obj_filters;
+		this->extra_filter_conds=catalog.extra_filter_conds;
 		this->connection.connect();
 	}
 	catch(Exception &e)

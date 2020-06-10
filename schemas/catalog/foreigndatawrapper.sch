@@ -27,7 +27,7 @@
                 [ AND ] 
             %end
            
-            ( {name-filter} )
+            ( [fw.fdwname ~* ] '{name-filter}' )
         %end  
     %end
 %else 

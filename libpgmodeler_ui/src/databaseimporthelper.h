@@ -275,7 +275,7 @@ class DatabaseImportHelper: public QObject {
 		void updateFKRelationships();
 		
 		//! \brief Returns the currently configured object filters in the internal catalog instance
-		map<ObjectType, QStringList> getObjectFilters();
+		map<ObjectType, QString> getObjectFilters();
 
 	signals:
 		//! \brief This singal is emitted whenever the export progress changes
@@ -295,7 +295,7 @@ class DatabaseImportHelper: public QObject {
 		
 	public slots:
 		void importDatabase();
-		void setObjectFilters(QStringList filter, bool only_matching, QStringList force_tab_obj_types = {});
+		void setObjectFilters(QStringList filter, bool only_matching, bool match_signature, QStringList force_tab_obj_types = {});
 		
 		friend class DatabaseImportForm;
 		friend class ModelDatabaseDiffForm;

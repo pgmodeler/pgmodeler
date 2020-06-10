@@ -15,7 +15,7 @@
   %end 
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( [nspname ~* ] '{name-filter}' )
   %end
   
 %else

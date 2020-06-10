@@ -152,6 +152,7 @@ class PgModelerCliApp: public Application {
 		DebugMode,
 		FilterObjs,
 		OnlyMatching,
+		MatchByName,
 		KeepChildObjs,
 
 		CompareTo,
