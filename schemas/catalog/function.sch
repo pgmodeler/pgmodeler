@@ -37,7 +37,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ op.proname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ pr.proname ~* ] '{name-filter}' )
   %end
 
 %else
