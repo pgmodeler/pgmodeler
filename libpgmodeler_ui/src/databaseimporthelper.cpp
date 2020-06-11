@@ -667,12 +667,12 @@ void DatabaseImportHelper::importDatabase()
 	}
 }
 
-void DatabaseImportHelper::setObjectFilters(QStringList filter, bool only_matching, QStringList force_tab_obj_types)
+void DatabaseImportHelper::setObjectFilters(QStringList filter, bool only_matching, bool match_signature, QStringList force_tab_obj_types)
 {
-	catalog.setObjectFilters(filter, only_matching, force_tab_obj_types);
+	catalog.setObjectFilters(filter, only_matching, match_signature, force_tab_obj_types);
 }
 
-map<ObjectType, QStringList> DatabaseImportHelper::getObjectFilters()
+map<ObjectType, QString> DatabaseImportHelper::getObjectFilters()
 {
 	return catalog.getObjectFilters();
 }

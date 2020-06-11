@@ -28,7 +28,7 @@
       [ WHERE ]
     %end
   
-    ( {name-filter} )
+    ( [ex.extname ~* ] '{name-filter}' )
   %end
 
 %else

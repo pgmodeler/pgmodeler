@@ -67,8 +67,9 @@ const QString PgModelerCliApp::IgnoreImportErrors("--ignore-errors");
 const QString PgModelerCliApp::ImportSystemObjs("--import-sys-objs");
 const QString PgModelerCliApp::ImportExtensionObjs("--import-ext-objs");
 const QString PgModelerCliApp::DebugMode("--debug-mode");
-const QString PgModelerCliApp::FilterObjs("--filter-objs");
-const QString PgModelerCliApp::KeepChildObjs("--keep-child-objs");
+const QString PgModelerCliApp::FilterObjects("--filter-objects");
+const QString PgModelerCliApp::MatchByName("--match-by-name");
+const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
 const QString PgModelerCliApp::CompareTo("--compare-to");
 const QString PgModelerCliApp::SaveDiff("--save-diff");
@@ -152,7 +153,7 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 					/* If we find a filter object parameter we append its parameter index so
 					 * its value is not replaced by the next filter parameter found */
-					if(op == FilterObjs)
+					if(op == FilterObjects)
 						opts[QString("%1%2").arg(op).arg(i)] = value;
 
 					opts[op] = value;
@@ -314,9 +315,10 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[IgnoreImportErrors]=false;
 	long_opts[ImportSystemObjs]=false;
 	long_opts[ImportExtensionObjs]=false;
-	long_opts[FilterObjs]=true;
-	long_opts[KeepChildObjs]=true;
+	long_opts[FilterObjects]=true;
+	long_opts[ForceChildren]=true;
 	long_opts[OnlyMatching]=false;
+	long_opts[MatchByName]=false;
 	long_opts[DebugMode]=false;
 	long_opts[CompareTo]=true;
 	long_opts[SaveDiff]=false;
@@ -374,8 +376,9 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[IgnoreImportErrors]="-ie";
 	short_opts[ImportSystemObjs]="-is";
 	short_opts[ImportExtensionObjs]="-ix";
-	short_opts[FilterObjs]="-fo";
-	short_opts[KeepChildObjs]="-kc";
+	short_opts[FilterObjects]="-fo";
+	short_opts[MatchByName]="-mn";
+	short_opts[ForceChildren]="-fc";
 	short_opts[OnlyMatching]="-om";
 	short_opts[DebugMode]="-d";
 	short_opts[CompareTo]="-ct";
@@ -482,9 +485,10 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << QtCompat::endl;
 	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << QtCompat::endl;
 	out << tr("  %1, %2\t    Import extension objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportExtensionObjs]).arg(ImportExtensionObjs) << QtCompat::endl;
-	out << tr("  %1, %2 [FILTER]\t    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjs]).arg(FilterObjs) << QtCompat::endl;
+	out << tr("  %1, %2 [FILTER]    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching) << QtCompat::endl;
-	out << tr("  %1, %2 [OBJECTS]  Forces the non discarding of children objects of tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[KeepChildObjs]).arg(KeepChildObjs) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Causes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName) << QtCompat::endl;
+	out << tr("  %1, %2 [OBJECTS]  Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("Diff options: ") << QtCompat::endl;
@@ -515,7 +519,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << QtCompat::endl;
-	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjs) << QtCompat::endl;
+	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects) << QtCompat::endl;
 	out << tr("   * The `type' is the type of object to be filtered and accepts the following values (invalid types ignored): ") << QtCompat::endl;
 
 	QStringList list;
@@ -545,17 +549,16 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("   * The `mode' is the way the pattern is matched. This one accepts three values: ") << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be compared exactly to the objects names.").arg(Catalog::FilterExact) << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterLike) << QtCompat::endl;
+	out << tr("   * The `mode' is the way the pattern is matched. This one accepts two values: ") << QtCompat::endl;
+	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterWildcard) << QtCompat::endl;
 	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(KeepChildObjs).arg(OnlyMatching) << QtCompat::endl;
+	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching) << QtCompat::endl;
 	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << QtCompat::endl;
 	out << tr("     The comma separated list of table children objects accepts the values:") << QtCompat::endl;
 	out << tr("     > %1").arg(child_list)  << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("   * NOTES: all comparisons during filtering are case insensitive except for the mode `%1'.").arg(Catalog::FilterExact) << QtCompat::endl;
+	out << tr("   * NOTES: all comparisons during filtering process are case insensitive.") << QtCompat::endl;
 	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << QtCompat::endl;
@@ -706,13 +709,13 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		/* Special treatment for filter parameters:
 		 * Since it can be specified several filter parameter we need to join
 		 * everything in a single string list so it can be passed to the import helper correctly */
-		if(!opts[FilterObjs].isEmpty())
+		if(!opts[FilterObjects].isEmpty())
 		{
-			opts.erase(FilterObjs);
+			opts.erase(FilterObjects);
 
 			for(auto &op : opts)
 			{
-				if(op.first.contains(FilterObjs))
+				if(op.first.contains(FilterObjects))
 					obj_filters.append(op.second);
 			}
 		}
@@ -1490,7 +1493,7 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
-		QStringList force_tab_objs = parsed_opts[KeepChildObjs].split(',', QtCompat::SkipEmptyParts);
+		QStringList force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
 
 		catalog.setConnection(conn);
 
@@ -1498,7 +1501,8 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
 													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
 
-		catalog.setObjectFilters(obj_filters, parsed_opts.count(OnlyMatching) > 0, force_tab_objs);
+		catalog.setObjectFilters(obj_filters, parsed_opts.count(OnlyMatching) > 0,
+														 parsed_opts.count(MatchByName) == 0, force_tab_objs);
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 
 		db_oid = catalog.getObjectOID(conn.getConnectionParam(Connection::ParamDbName), ObjectType::Database);

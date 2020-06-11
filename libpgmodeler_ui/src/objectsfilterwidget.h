@@ -35,7 +35,9 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 
-		QMenu tab_objs_menu;
+		QMenu tab_objs_menu, options_menu;
+
+		QAction *action_only_matching, *action_match_signature, *action_forced_filter;
 
 		//! \brief Creates a combobox of the objects' types accepted in the filter
 		QComboBox *createObjectsCombo();
@@ -49,6 +51,7 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 
 		bool isOnlyMatching();
 		bool hasFiltersConfigured();
+		bool isMatchSignature();
 
 	private slots:
 		void addFilter();

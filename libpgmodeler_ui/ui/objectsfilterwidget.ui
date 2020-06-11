@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>419</width>
-    <height>490</height>
+    <width>335</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -32,10 +32,10 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="6">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -49,6 +49,12 @@
      </item>
      <item>
       <widget class="QToolButton" name="add_tb">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Add filter</string>
        </property>
@@ -75,6 +81,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Clear all</string>
        </property>
@@ -97,7 +109,42 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <widget class="QToolButton" name="options_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Options</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Shift+Del</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -111,7 +158,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="6">
+   <item>
     <widget class="QTableWidget" name="filters_tbw">
      <property name="enabled">
       <bool>true</bool>
@@ -222,94 +269,48 @@
      </column>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QCheckBox" name="only_matching_chk">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>When checked causes only the objects matching the filter(s) to be imported discarding those that don't match.</string>
-     </property>
-     <property name="text">
-      <string>Only matching</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QToolButton" name="forced_filter_tb">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>&lt;p&gt;Forces the filtering of table children objects (constraints, indexes, policies, rules and triggers) if there's at least one table/view/foreign table filter configured. This will bring only the children related to the filtered tables. This option bypasses the non matches discarding option for the selected children objects types.&lt;/p&gt;</string>
-     </property>
-     <property name="text">
-      <string>Forced filter (0)</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>22</width>
-       <height>22</height>
-      </size>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::NoArrow</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QToolButton" name="apply_tb">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>Apply configured filter(s)</string>
-     </property>
-     <property name="text">
-      <string>Apply</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../res/resources.qrc">
-       <normaloff>:/icones/icones/filter.png</normaloff>:/icones/icones/filter.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>22</width>
-       <height>22</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonTextBesideIcon</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2" colspan="3">
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="apply_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Apply configured filter(s)</string>
+       </property>
+       <property name="text">
+        <string>Apply filters</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/confirmar.png</normaloff>:/icones/icones/confirmar.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

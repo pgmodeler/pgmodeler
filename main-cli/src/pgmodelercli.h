@@ -150,9 +150,10 @@ class PgModelerCliApp: public Application {
 		ImportSystemObjs,
 		ImportExtensionObjs,
 		DebugMode,
-		FilterObjs,
+		FilterObjects,
 		OnlyMatching,
-		KeepChildObjs,
+		MatchByName,
+		ForceChildren,
 
 		CompareTo,
 		SaveDiff,

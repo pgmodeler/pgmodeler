@@ -28,7 +28,7 @@
        [ WHERE ]
      %end
   
-     ( {name-filter} )
+     ( [et.evtname ~* ] '{name-filter}' )
   %end
  %else
     %if {attribs} %then
