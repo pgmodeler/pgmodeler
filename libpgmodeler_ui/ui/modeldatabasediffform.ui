@@ -93,7 +93,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -1398,6 +1398,18 @@
           <string>Partial diff</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
           <item row="0" column="0">
            <widget class="QSplitter" name="pd_hsplitter">
             <property name="orientation">
@@ -2326,6 +2338,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
        <property name="default">
         <bool>true</bool>
        </property>
@@ -2379,6 +2394,9 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
        </property>
        <property name="flat">
         <bool>false</bool>
