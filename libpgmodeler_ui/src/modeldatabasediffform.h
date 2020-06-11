@@ -170,7 +170,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void removePreset();
 		void savePreset();
 		void enablePartialDiff();
-		void configurePartialDiff();
+		void applyPartialDiffFilters();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

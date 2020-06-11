@@ -205,17 +205,10 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 {
 	try
 	{
-		QString db_name;
-
 		tmpl_conn_params=conn.getConnectionParams();
-		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::ParamDbName))
-				.arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
-						 conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-				.arg(conn.getConnectionParam(Connection::ParamPort));
 
-		db_name_lbl->setText(db_name);
-		db_name.remove(QRegExp("<(/)?(strong|em)>"));
-		this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
+		this->setWindowTitle(this->windowTitle() + QString(" - ") + conn.getConnectionId(true, true));
+		db_name_lbl->setText(conn.getConnectionId(true, true, true));
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { ObjectType::Schema });

@@ -122,6 +122,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
 														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false,
 														int sort_by = 0);
+
+		/*! \brief Fills a table widget by searching only objects matching the filters configured in the provided import helper
+		 * This method will force the first item of each row to be checkable also it'll adjust the column count to fit all info retrieved from catalog */
+		static void listFilteredObjects(DatabaseImportHelper &import_hlp, QTableWidget *flt_objects_tbw);
 		
 		/*! \brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */

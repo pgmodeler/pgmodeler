@@ -214,12 +214,7 @@ void SQLExecutionWidget::setConnection(Connection conn)
 {
 	sql_exec_hlp.setConnection(conn);
 	sql_cmd_conn = conn;
-
-	db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
-						 .arg(conn.getConnectionParam(Connection::ParamDbName))
-						 .arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
-								  conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-											 .arg(conn.getConnectionParam(Connection::ParamPort)));
+	db_name_lbl->setText(conn.getConnectionId(true, true, true));
 }
 
 void SQLExecutionWidget::setSQLCommand(const QString &sql)

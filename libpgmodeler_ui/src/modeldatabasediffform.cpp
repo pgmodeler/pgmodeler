@@ -137,6 +137,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
 		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
 		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
+		connect(pd_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(applyPartialDiffFilters()));
 
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
@@ -1228,9 +1229,39 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 								 database_cmb->currentIndex() > 0);
 
 	settings_tbw->setTabEnabled(1, enable);
+
+	if(src_model_rb->isChecked())
+	{
+		pd_input_lbl->setText(src_model_name_lbl->text());
+		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
+	}
+	else if(database_cmb->currentIndex() > 0)
+	{
+		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
+		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
+		pd_input_lbl->setText(conn.getConnectionId(true, true, true));
+		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("database")));
+	}
 }
 
-void ModelDatabaseDiffForm::configurePartialDiff()
+void ModelDatabaseDiffForm::applyPartialDiffFilters()
 {
+	if(src_model_rb->isChecked())
+	{
 
+	}
+	else
+	{
+		DatabaseImportHelper import_helper;
+		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
+
+		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
+		import_helper.setConnection(conn);
+		import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
+																	 pd_filter_wgt->isOnlyMatching(),
+																	 pd_filter_wgt->isMatchSignature(),
+																	 pd_filter_wgt->getForceObjectsFilter());
+
+		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_tbw);
+	}
 }

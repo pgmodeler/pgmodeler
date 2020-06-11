@@ -140,7 +140,15 @@ void DatabaseImportForm::destroyThread()
 
 void DatabaseImportForm::listFilteredObjects()
 {
-	vector<ObjectType> types = import_helper->getCatalog().getFilteredObjectTypes();
+	listFilteredObjects(*import_helper, filtered_objs_tbw);
+}
+
+void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, QTableWidget *flt_objects_tbw)
+{
+	if(!flt_objects_tbw)
+		return;
+
+	vector<ObjectType> types = import_hlp.getCatalog().getFilteredObjectTypes();
 	vector<attribs_map> obj_attrs;
 	QTableWidgetItem *item = nullptr;
 	int row = 0;
@@ -149,23 +157,27 @@ void DatabaseImportForm::listFilteredObjects()
 	try
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		obj_attrs = import_helper->getObjects(types);
-		filtered_objs_tbw->clearContents();
-		filtered_objs_tbw->setRowCount(0);
+		obj_attrs = import_hlp.getObjects(types);
+		flt_objects_tbw->clearContents();
+		flt_objects_tbw->setRowCount(0);
 
-		filtered_objs_tbw->setUpdatesEnabled(false);
-		filtered_objs_tbw->setSortingEnabled(false);
+		// Forcing the minimum column count in order to display the correct information
+		if(flt_objects_tbw->columnCount() < 4)
+			flt_objects_tbw->setColumnCount(4);
+
+		flt_objects_tbw->setUpdatesEnabled(false);
+		flt_objects_tbw->setSortingEnabled(false);
 
 		for(auto &attr : obj_attrs)
 		{
-			filtered_objs_tbw->insertRow(row);
+			flt_objects_tbw->insertRow(row);
 
 			// Object name column
 			item = new QTableWidgetItem;
 			item->setText(attr[Attributes::Name]);
 			item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
 			item->setCheckState(Qt::Checked);
-			filtered_objs_tbw->setItem(row, 0, item);
+			flt_objects_tbw->setItem(row, 0, item);
 
 			// Object type column
 			item = new QTableWidgetItem;
@@ -173,27 +185,27 @@ void DatabaseImportForm::listFilteredObjects()
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
 			item->setData(Qt::UserRole, enum_cast(obj_type));
-			filtered_objs_tbw->setItem(row, 1, item);
+			flt_objects_tbw->setItem(row, 1, item);
 
 			// Parent name column
 			item = new QTableWidgetItem;
 			item->setText(attr[Attributes::Parent]);
-			filtered_objs_tbw->setItem(row, 2, item);
+			flt_objects_tbw->setItem(row, 2, item);
 
 			// Parent type column
 			item = new QTableWidgetItem;
 			obj_type = BaseObject::getObjectType(attr[Attributes::ParentType]);
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
-			filtered_objs_tbw->setItem(row, 3, item);
+			flt_objects_tbw->setItem(row, 3, item);
 
 			row++;
 		}
 
-		filtered_objs_tbw->setUpdatesEnabled(true);
-		filtered_objs_tbw->setSortingEnabled(true);
-		filtered_objs_tbw->resizeColumnsToContents();
-		filtered_objs_tbw->setEnabled(filtered_objs_tbw->rowCount() > 0);
+		flt_objects_tbw->setUpdatesEnabled(true);
+		flt_objects_tbw->setSortingEnabled(true);
+		flt_objects_tbw->resizeColumnsToContents();
+		flt_objects_tbw->setEnabled(flt_objects_tbw->rowCount() > 0);
 		QApplication::restoreOverrideCursor();
 	}
 	catch(Exception &e)
