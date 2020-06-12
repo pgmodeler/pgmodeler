@@ -145,19 +145,7 @@ class Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj,
-
-		//! \brief Indicates the wildcard filtering mode in the object listing
-		FilterWildcard,
-
-		//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
-		FilterRegExp;
-
-		//! \brief Indicates the default wildcard character expected to be found in wildcard patterns
-		static const QChar WildcardChar;
-
-		//! \brief Indicates the character used to separate filter fields in the filtering string
-		static const constexpr char FilterSeparator = ':';
+		static const QString PgModelerTempDbObj;
 
 		//! \brief Excludes the system objects from listing
 		static constexpr unsigned ExclSystemObjs=1,

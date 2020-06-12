@@ -586,15 +586,15 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		aux_name=formatName(this->obj_name, (obj_type==ObjectType::Operator));
 
 		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
+			aux_name=formatName(this->schema->getName(format)) + QChar('.') + aux_name;
 
 		if(!aux_name.isEmpty())
 			return aux_name;
 		else
 			return this->obj_name;
 	}
-	else
-		return this->obj_name;
+
+	return this->obj_name;
 }
 
 QString BaseObject::getAlias()
@@ -1090,7 +1090,7 @@ void BaseObject::setCodeInvalidated(bool value)
 void BaseObject::configureSearchAttributes()
 {
 	search_attribs[Attributes::Name] = this->getName(false);
-	search_attribs[Attributes::Signature] = this->getSignature(false);
+	search_attribs[Attributes::Signature] = this->getSignature(true);
 	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : QString();
 	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : QString();
 	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : QString();

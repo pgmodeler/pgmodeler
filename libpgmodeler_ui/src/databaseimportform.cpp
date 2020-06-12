@@ -172,12 +172,17 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 		{
 			flt_objects_tbw->insertRow(row);
 
-			// Object name column
+			// Object OID column
 			item = new QTableWidgetItem;
-			item->setText(attr[Attributes::Name]);
+			item->setText(attr[Attributes::Oid]);
 			item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
 			item->setCheckState(Qt::Checked);
 			flt_objects_tbw->setItem(row, 0, item);
+
+			// Object name column
+			item = new QTableWidgetItem;
+			item->setText(attr[Attributes::Name]);
+			flt_objects_tbw->setItem(row, 1, item);
 
 			// Object type column
 			item = new QTableWidgetItem;
@@ -185,19 +190,19 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
 			item->setData(Qt::UserRole, enum_cast(obj_type));
-			flt_objects_tbw->setItem(row, 1, item);
+			flt_objects_tbw->setItem(row, 2, item);
 
 			// Parent name column
 			item = new QTableWidgetItem;
 			item->setText(attr[Attributes::Parent]);
-			flt_objects_tbw->setItem(row, 2, item);
+			flt_objects_tbw->setItem(row, 3, item);
 
 			// Parent type column
 			item = new QTableWidgetItem;
 			obj_type = BaseObject::getObjectType(attr[Attributes::ParentType]);
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
-			flt_objects_tbw->setItem(row, 3, item);
+			flt_objects_tbw->setItem(row, 4, item);
 
 			row++;
 		}
@@ -424,7 +429,7 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 		for(int row = 0; row < row_cnt; row++)
 		{
 			oid_item = filtered_objs_tbw->item(row, 0);
-			type_item = filtered_objs_tbw->item(row, 1);
+			type_item = filtered_objs_tbw->item(row, 2);
 
 			if(oid_item->checkState() == Qt::Checked)
 			{

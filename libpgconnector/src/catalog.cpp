@@ -16,6 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 #include "catalog.h"
+#include "pgmodelerns.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
 const QString Catalog::QueryList("list");
@@ -26,11 +27,8 @@ const QString Catalog::BoolField("_bool");
 const QString Catalog::ArrayPattern("((\\[)[0-9]+(\\:)[0-9]+(\\])=)?(\\{)((.)+(,)*)*(\\})$");
 const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend WHERE objid > 0 AND refobjid > 0 AND deptype='e'");
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
-const QString Catalog::FilterWildcard("wildcard");
-const QString Catalog::FilterRegExp("regexp");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
 const QString Catalog::AliasPlaceholder("$alias$");
-const QChar Catalog::WildcardChar('*');
 
 attribs_map Catalog::catalog_queries;
 
@@ -166,7 +164,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	ObjectType obj_type;
 	QString pattern, mode, aux_filter, parent_alias_ref, tab_filter = "^(%1)(.)+", _tmpl_filter;
-	QStringList values,	modes = { FilterWildcard, FilterRegExp };
+	QStringList values,	modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
 	map<ObjectType, QStringList> tab_patterns;
 	map<ObjectType, QStringList> parsed_filters;
 	attribs_map fmt_filter;
@@ -218,7 +216,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 
 	for(auto &filter : filters)
 	{
-		values = filter.split(FilterSeparator);
+		values = filter.split(PgModelerNs::FilterSeparator);
 
 		// Raises an error if the filter has an invalid field count
 		if(values.size() != 3)
@@ -239,9 +237,9 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		}
 
 		// Converting wildcard patterns into regexp syntax
-		if(mode == FilterWildcard && pattern.contains(WildcardChar))
+		if(mode == PgModelerNs::FilterWildcard && pattern.contains(PgModelerNs::WildcardChar))
 		{
-			QStringList list = pattern.split(WildcardChar, QtCompat::KeepEmptyParts);
+			QStringList list = pattern.split(PgModelerNs::WildcardChar, QtCompat::KeepEmptyParts);
 			QString any_str = "(.)*";
 
 			pattern.clear();

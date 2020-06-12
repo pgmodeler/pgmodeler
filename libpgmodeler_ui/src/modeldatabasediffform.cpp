@@ -1232,7 +1232,8 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 
 	if(src_model_rb->isChecked())
 	{
-		pd_input_lbl->setText(src_model_name_lbl->text());
+		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
+		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
 		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
 	}
 	else if(database_cmb->currentIndex() > 0)
@@ -1248,7 +1249,9 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 {
 	if(src_model_rb->isChecked())
 	{
-
+		QString search_attr = pd_filter_wgt->isMatchSignature() ? Attributes::Signature : Attributes::Name;
+		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
+		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr, true);
 	}
 	else
 	{

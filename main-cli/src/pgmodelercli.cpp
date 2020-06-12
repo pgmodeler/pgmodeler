@@ -550,8 +550,8 @@ void PgModelerCliApp::showMenu()
 	out << tr("   * The `pattern' is the text pattern which is matched against the objects names.") << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("   * The `mode' is the way the pattern is matched. This one accepts two values: ") << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(Catalog::FilterWildcard) << QtCompat::endl;
-	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(Catalog::FilterRegExp) << QtCompat::endl;
+	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(PgModelerNs::FilterWildcard) << QtCompat::endl;
+	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(PgModelerNs::FilterRegExp) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching) << QtCompat::endl;
 	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << QtCompat::endl;

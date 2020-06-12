@@ -354,7 +354,7 @@ void ObjectFinderWidget::setAllObjectsChecked()
 		obj_types_lst->item(i)->setCheckState((checked ? Qt::Checked : Qt::Unchecked));
 }
 
-void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs, const QString &search_attr)
+void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objs, const QString &search_attr, bool checkable_items)
 {
 	if(tab_wgt && tab_wgt->columnCount()!=0)
 	{
@@ -387,6 +387,10 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
 			tab_item->setText(QString::number(objs[i]->getObjectId()));
 			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
+
+			if(checkable_items)
+				tab_item->setCheckState(Qt::Checked);
+
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
 
 			//Second column: Object name

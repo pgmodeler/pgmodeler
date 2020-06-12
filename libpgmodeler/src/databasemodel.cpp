@@ -10106,6 +10106,46 @@ void DatabaseModel::createSystemObjects(bool create_public)
 	setDefaultObject(getObject(QString("public"), ObjectType::Schema), ObjectType::Schema);
 }
 
+vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, const QString &search_attr)
+{
+	vector<BaseObject *> objects, aux_objs;
+	QString pattern, mode;
+	QStringList values, modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
+	ObjectType obj_type;
+
+	for(auto &filter : filters)
+	{
+		values = filter.split(PgModelerNs::FilterSeparator);
+
+		// Raises an error if the filter has an invalid field count
+		if(values.size() != 3)
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
+											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		obj_type = BaseObject::getObjectType(values[0]);
+		pattern = values[1];
+		mode = values[2];
+
+		// Raises an error if the filter has an invalid object type, pattern or mode
+		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::InvalidObjectFilter).arg(filter).arg(modes.join('|')),
+											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		aux_objs = findObjects(pattern, { obj_type }, false, mode == PgModelerNs::FilterRegExp, false, search_attr);
+		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
+	}
+
+	std::sort(objects.begin(), objects.end());
+	vector<BaseObject *>::iterator end = std::unique(objects.begin(), objects.end());
+	objects.erase(end, objects.end());
+
+	return objects;
+}
+
 vector<BaseObject *> DatabaseModel::findObjects(const QString &pattern, vector<ObjectType> types, bool case_sensitive, bool is_regexp, bool exact_match, const QString &search_attr)
 {
 	vector<BaseObject *> list, objs;

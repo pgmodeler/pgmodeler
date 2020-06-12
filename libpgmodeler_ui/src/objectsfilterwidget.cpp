@@ -19,6 +19,7 @@
 #include "objectsfilterwidget.h"
 #include "pgmodeleruins.h"
 #include "catalog.h"
+#include "pgmodelerns.h"
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
@@ -84,7 +85,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { Catalog::FilterWildcard, Catalog::FilterRegExp };
+			modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
 	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
 
@@ -106,7 +107,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
 
-		filters.append(curr_filter.join(Catalog::FilterSeparator));
+		filters.append(curr_filter.join(PgModelerNs::FilterSeparator));
 		curr_filter.clear();
 	}
 

@@ -700,6 +700,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match,
 																		 const QString &search_attr = Attributes::Name);
 
+		vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
+
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition();
 
@@ -727,7 +729,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
+		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);		
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
