@@ -288,8 +288,11 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 			if(has_ftab_filter && BaseObject::isChildObjectType(ObjectType::ForeignTable, obj_type))
 				fmt_conds.append(QString("(%1)").arg(fmt_tab_patterns[ObjectType::ForeignTable] + QString("= 'f'")));
 
-			extra_filter_conds[obj_type] = fmt_conds.join(" OR ").replace(AliasPlaceholder, parent_aliases[obj_type]);
-			fmt_conds.clear();
+			if(!fmt_conds.isEmpty())
+			{
+				extra_filter_conds[obj_type] = fmt_conds.join(" OR ").replace(AliasPlaceholder, parent_aliases[obj_type]);
+				fmt_conds.clear();
+			}
 		}
 	}
 
@@ -486,7 +489,13 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 
 		for(ObjectType type : types)
 		{
-			attribs = getObjectsNames(type, QString(), QString(), extra_attribs);
+			/* We retrieve the object's attributes only if there're no filters configured
+			 * for the current type or in case of having filters, the type is registered in one of the
+			 * two filter structures */
+			if((obj_filters.empty() && extra_attribs.empty()) ||
+				 (!obj_filters.empty() && obj_filters.count(type) != 0) ||
+				 (!extra_filter_conds.empty() && TableObject::isTableObject(type) && extra_filter_conds.count(type) != 0))
+				attribs = getObjectsNames(type, QString(), QString(), extra_attribs);
 
 			for(auto &attr : attribs)
 			{
@@ -508,6 +517,8 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 						col_oids[tab_oid].push_back(col_attr.first.toUInt());
 				}
 			}
+
+			attribs.clear();
 		}
 	}
 	catch(Exception &e)

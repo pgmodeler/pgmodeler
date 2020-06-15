@@ -135,7 +135,16 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		virtual void saveConfiguration();
 
 		void togglePresetConfiguration(bool toggle, bool is_edit = false);
+
 		void enablePresetButtons();
+
+		/*! \brief When performing a partial diff between a model and database this method fills a vector with the
+		 * filtered objects in the source database model */
+		void getPartialDiffCheckedItems(vector<BaseObject *> &objects);
+
+		/*! \brief When performing a partial diff between two databases this method fills a map with the
+		 * filtered objects (type -> oids) in the database */
+		void getPartialDiffCheckedItems(map<ObjectType, vector<unsigned> > &obj_oids);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);

@@ -50,8 +50,8 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		QStringList getForceObjectsFilter();
 
 		bool isOnlyMatching();
-		bool hasFiltersConfigured();
 		bool isMatchSignature();
+		bool hasFiltersConfigured();
 
 	private slots:
 		void addFilter();

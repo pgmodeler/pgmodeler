@@ -25,6 +25,7 @@ QTextStream PgModelerCliApp::out(stdout);
 const QRegExp PgModelerCliApp::PasswordRegExp=QRegExp("(password)(=)(.)*( )");
 const QString PgModelerCliApp::PasswordPlaceholder("password=******");
 
+const QString PgModelerCliApp::AllChildren("all");
 const QString PgModelerCliApp::Input("--input");
 const QString PgModelerCliApp::Output("--output");
 const QString PgModelerCliApp::InputDb("--input-db");
@@ -488,7 +489,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2 [FILTER]    Causes the import process to import only those objects matching the filter(s). The FILTER should be in the form type:pattern:mode.").arg(short_opts[FilterObjects]).arg(FilterObjects) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Causes only objects matching the provided filter(s) to be imported. Those not matching filter(s) are discarded.").arg(short_opts[OnlyMatching]).arg(OnlyMatching) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Causes the objects matching to be performed over their names instead of their signature ([schema].[name]).").arg(short_opts[MatchByName]).arg(MatchByName) << QtCompat::endl;
-	out << tr("  %1, %2 [OBJECTS]  Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren) << QtCompat::endl;
+	out << tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("Diff options: ") << QtCompat::endl;
@@ -526,7 +527,12 @@ void PgModelerCliApp::showMenu()
 	QString child_list;
 
 	for(auto &type : BaseObject::getChildObjectTypes(ObjectType::Table))
+	{
+		if(type == ObjectType::Column)
+			continue;
+
 		list.append(BaseObject::getSchemaName(type));
+	}
 
 	list.sort();
 	child_list = list.join(", ");
@@ -557,6 +563,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << QtCompat::endl;
 	out << tr("     The comma separated list of table children objects accepts the values:") << QtCompat::endl;
 	out << tr("     > %1").arg(child_list)  << QtCompat::endl;
+	out << tr("     > Use the special keyword `%1' to force all children objects.").arg(AllChildren)  << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("   * NOTES: all comparisons during filtering process are case insensitive.") << QtCompat::endl;
 	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << QtCompat::endl;
@@ -1493,7 +1500,20 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 		QString db_oid;
-		QStringList force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
+		QStringList force_tab_objs;
+
+		if(parsed_opts[ForceChildren] == AllChildren)
+		{
+			for(auto &type : BaseObject::getChildObjectTypes(ObjectType::Table))
+			{
+				if(type == ObjectType::Column)
+					continue;
+
+				force_tab_objs.append(BaseObject::getSchemaName(type));
+			}
+		}
+		else
+			force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
 
 		catalog.setConnection(conn);
 

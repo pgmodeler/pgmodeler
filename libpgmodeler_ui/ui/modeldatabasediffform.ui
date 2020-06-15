@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>725</height>
+    <width>825</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>850</width>
-    <height>725</height>
+    <width>825</width>
+    <height>685</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -683,13 +683,6 @@
                  <property name="bottomMargin">
                   <number>4</number>
                  </property>
-                 <item>
-                  <widget class="QCheckBox" name="partial_diff_chk">
-                   <property name="text">
-                    <string>Partial diff</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <property name="spacing">

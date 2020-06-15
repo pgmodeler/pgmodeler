@@ -700,6 +700,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match,
 																		 const QString &search_attr = Attributes::Name);
 
+		/*! \brief Returns a list of objects searching them by using the filter syntax [type]:[pattern]:[mode]
+		 * The provided list of filter strings is composed by:
+		 * > The object type (schema name, see BaseObject::getSchemaName())
+		 * > The search pattern itself
+		 * > The pattern mode (regexp | wildcard)
+		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name) */
 		vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
 
 		void setLastPosition(const QPoint &pnt);

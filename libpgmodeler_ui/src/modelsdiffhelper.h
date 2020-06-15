@@ -69,8 +69,10 @@ class ModelsDiffHelper: public QObject {
 		//! \brief Stores all temporary objects created during the diff process
 		vector<BaseObject *> tmp_objects;
 
+		map<unsigned, BaseObject *> filtered_objs;
+
 		/*! note The parameter diff_type in any methods below is one of the values in
-		ObjectsDiffInfo::CREATE_OBJECT|ALTER_OBJECT|DROP_OBJECT */
+		ObjectsDiffInfo::CreateObject|AlterObject|DropObject */
 
 		//! \brief Compares two tables storing the diff between them in the diff_infos vector.
 		void diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type);
@@ -151,6 +153,10 @@ class ModelsDiffHelper: public QObject {
 		from which all changes must be collected and applied to the database. The imp_model is the
 		database model that represents the current arrange of the database. */
 		void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
+
+		/*! \brief Specifies a list of filtered objects to be used in the partial diff
+		 * This is only useful when performing a partial diff between a model and a database. */
+		void setFilteredObjects(const vector<BaseObject *> &objects);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants
 		void setDiffOption(unsigned opt_id, bool value);

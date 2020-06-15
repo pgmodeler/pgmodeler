@@ -154,6 +154,7 @@ class PgModelerCliApp: public Application {
 		OnlyMatching,
 		MatchByName,
 		ForceChildren,
+		AllChildren,
 
 		CompareTo,
 		SaveDiff,

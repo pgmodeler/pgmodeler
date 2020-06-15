@@ -40,6 +40,7 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	action_only_matching = new QAction(tr("Only macthing"));
 	action_only_matching->setCheckable(true);
+	action_only_matching->setChecked(true);
 
 	action_match_signature = new QAction(tr("Match by signature"));
 	action_match_signature->setCheckable(true);

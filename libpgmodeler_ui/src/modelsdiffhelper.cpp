@@ -90,6 +90,20 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 {
 	source_model=src_model;
 	imported_model=imp_model;
+	filtered_objs.clear();
+}
+
+void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
+{
+	filtered_objs.clear();
+
+	for(auto &obj : objects)
+	{
+		if(obj->getDatabase() != source_model)
+			continue;
+
+		filtered_objs[obj->getObjectId()] = obj;
+	}
 }
 
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
@@ -226,8 +240,8 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		if(diff_type==ObjectsDiffInfo::DropObject)
 		{
 			/* For DROP detection, we must gather the objects from the database in order to check
-		 if they exists on the model. The object drop order here is the inverse of the creation order
-		 on the database */
+			 * if they exists on the model. The object drop order here is the inverse of the creation order
+			 * on the database */
 			obj_order=imported_model->getCreationOrder(SchemaParser::SqlDefinition, true);
 			aux_model=source_model;
 			factor=25;
@@ -235,8 +249,12 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 		else if(diff_type==ObjectsDiffInfo::CreateObject || diff_type==ObjectsDiffInfo::AlterObject)
 		{
 			/* For creation or modification of objects the order followed is the same
-		 as the creation order on the source model */
-			obj_order=source_model->getCreationOrder(SchemaParser::SqlDefinition, true, true);
+			 * as the creation order on the source model */
+			if(filtered_objs.empty())
+				obj_order = source_model->getCreationOrder(SchemaParser::SqlDefinition, true, true);
+			else
+				obj_order = filtered_objs;
+
 			aux_model=imported_model;
 			factor=50;
 			prog=50;
@@ -249,9 +267,9 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 			idx++;
 
 			/* If this checking the following objects are discarded:
-		 1) ObjectType::ObjBaseRelationship objects
-		 2) Objects which SQL code is disabled or system objects
-		 3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
+			 * 1) ObjectType::ObjBaseRelationship objects
+			 * 2) Objects which SQL code is disabled or system objects
+			 * 3) Cluster objects such as roles and tablespaces (when the operatoin is DROP and keep_cluster_objs is true) */
 			if(obj_type!=ObjectType::BaseRelationship &&
 					!object->isSystemObject() && !object->isSQLDisabled() &&
 					((diff_type==ObjectsDiffInfo::DropObject && (!diff_opts[OptKeepClusterObjs] || (diff_opts[OptKeepClusterObjs] && obj_type!=ObjectType::Role && obj_type!=ObjectType::Tablespace))) ||

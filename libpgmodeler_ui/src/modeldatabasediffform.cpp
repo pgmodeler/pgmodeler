@@ -34,6 +34,7 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		setWindowFlags(flags);
 
 		pd_filter_wgt = new ObjectsFilterWidget(this);
+
 		QVBoxLayout *vbox = new QVBoxLayout(pd_filter_gb);
 		vbox->addWidget(pd_filter_wgt);
 		vbox->setContentsMargins(4,4,4,4);
@@ -133,7 +134,6 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 			save_preset_tb->setEnabled(!text.isEmpty());
 		});
 
-		connect(partial_diff_chk, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
 		connect(src_model_rb, SIGNAL(toggled(bool)), this, SLOT(enablePartialDiff()));
 		connect(src_database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
 		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
@@ -459,9 +459,10 @@ void ModelDatabaseDiffForm::generateDiff()
 	close_btn->setEnabled(false);
 
 	settings_tbw->setTabEnabled(0, false);
-	settings_tbw->setTabEnabled(1, true);
-	settings_tbw->setTabEnabled(2, false);
-	settings_tbw->setCurrentIndex(1);
+	settings_tbw->setTabEnabled(1, false);
+	settings_tbw->setTabEnabled(2, true);
+	settings_tbw->setTabEnabled(3, false);
+	settings_tbw->setCurrentIndex(2);
 }
 
 void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
@@ -482,6 +483,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		map<unsigned, vector<unsigned>> col_oids;
 		Catalog catalog;
 		DatabaseModel *db_model = nullptr;
+		QStringList pd_filters = pd_filter_wgt->getObjectFilters();
 
 		conn1=conn;
 		step_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("import")));
@@ -501,9 +503,20 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		pgsql_ver=conn.getPgSQLVersion(true);
 		catalog.setConnection(conn);
 
+		/* If there're partial diff filters configured we use them in the catalog
+		 * in order to retrieve the correct objects */
+		if(!pd_filters.isEmpty())
+		{
+			catalog.setObjectFilters(pd_filters,
+															 pd_filter_wgt->isOnlyMatching(),
+															 pd_filter_wgt->isMatchSignature(),
+															 pd_filter_wgt->getForceObjectsFilter());
+		}
+
 		//The import process will exclude built-in array array types, system and extension objects
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-											Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+
 		catalog.getObjectsOIDs(obj_oids, col_oids, {{Attributes::FilterTableTypes, Attributes::True}});
 		obj_oids[ObjectType::Database].push_back(db_cmb->currentData().value<unsigned>());
 
@@ -565,6 +578,10 @@ void ModelDatabaseDiffForm::diffModels()
 
 	diff_helper->setModels(source_model, imported_model);
 
+	vector<BaseObject *> filtered_objs;
+	getPartialDiffCheckedItems(filtered_objs);
+	diff_helper->setFilteredObjects(filtered_objs);
+
 	if(pgsql_ver_chk->isChecked())
 		diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
 	else
@@ -591,7 +608,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		export_conn=new Connection;
 		*export_conn=*reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
 
-		settings_tbw->setCurrentIndex(1);
+		settings_tbw->setCurrentIndex(2);
 		apply_on_server_btn->setEnabled(true);
 
 		step_lbl->setText(tr("Step %1/%2: Exporting diff to database <strong>%3@%4</strong>...")
@@ -619,7 +636,8 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 	{
 		process_paused=true;
 		close_btn->setEnabled(true);
-		settings_tbw->setCurrentIndex(2);
+		settings_tbw->setCurrentIndex(3);
+		settings_tbw->setTabEnabled(3, true);
 		apply_on_server_btn->setVisible(true);
 		output_trw->collapseItem(diff_item);
 		PgModelerUiNs::createOutputTreeItem(output_trw,
@@ -686,6 +704,7 @@ void ModelDatabaseDiffForm::resetButtons()
 	settings_tbw->setTabEnabled(0, true);
 	apply_on_server_btn->setVisible(false);
 	enableDiffMode();
+	enablePartialDiff();
 }
 
 void ModelDatabaseDiffForm::saveDiffToFile()
@@ -1224,9 +1243,8 @@ void ModelDatabaseDiffForm::savePreset()
 
 void ModelDatabaseDiffForm::enablePartialDiff()
 {
-	bool enable = (partial_diff_chk->isChecked() &&
-								 (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
-								 database_cmb->currentIndex() > 0);
+	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
+								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
 
@@ -1266,5 +1284,42 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 																	 pd_filter_wgt->getForceObjectsFilter());
 
 		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_tbw);
+	}
+}
+
+void ModelDatabaseDiffForm::getPartialDiffCheckedItems(vector<BaseObject *> &objects)
+{
+	int row_cnt = filtered_objs_tbw->rowCount();
+	QTableWidgetItem *item = nullptr;
+
+	objects.clear();
+
+	for(int row = 0; row < row_cnt; row++)
+	{
+		item = filtered_objs_tbw->item(row, 0);
+
+		if(item->checkState() == Qt::Checked)
+			objects.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
+	}
+}
+
+void ModelDatabaseDiffForm::getPartialDiffCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids)
+{
+	ObjectType obj_type;
+	int row_cnt = filtered_objs_tbw->rowCount();
+	QTableWidgetItem *oid_item = nullptr, *type_item  = nullptr;
+
+	obj_oids.clear();
+
+	for(int row = 0; row < row_cnt; row++)
+	{
+		oid_item = filtered_objs_tbw->item(row, 0);
+		type_item = filtered_objs_tbw->item(row, 2);
+
+		if(oid_item->checkState() == Qt::Checked)
+		{
+			obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
+			obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
+		}
 	}
 }
