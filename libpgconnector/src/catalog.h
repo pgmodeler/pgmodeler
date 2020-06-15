@@ -182,6 +182,12 @@ class Catalog {
 		 * This method raises an exception when detecting malformed filters */
 		void setObjectFilters(QStringList filters, bool only_matching, bool match_signature, QStringList tab_obj_types = {});
 
+		//! \brief Clears the filter configured for the provided object type
+		void clearObjectFilter(ObjectType type);
+
+		//! \brief Clears all configured filters
+		void clearObjectFilters();
+
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();
 

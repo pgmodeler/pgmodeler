@@ -301,6 +301,18 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		obj_filters[itr.first] = itr.second.join('|');
 }
 
+void Catalog::clearObjectFilter(ObjectType type)
+{
+	obj_filters.erase(type);
+	extra_filter_conds.erase(type);
+}
+
+void Catalog::clearObjectFilters()
+{
+	obj_filters.clear();
+	extra_filter_conds.clear();
+}
+
 unsigned Catalog::getLastSysObjectOID()
 {
 	return last_sys_oid;

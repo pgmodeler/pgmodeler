@@ -2729,11 +2729,31 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				seq_name=BaseObject::formatName(seq_name);
 
 				/* Checking if the sequence name contains the schema prepended.
-		   If not, it'll be prepended by retrieving the table's schema name */
+				 * If not, it'll be prepended by retrieving the table's schema name */
 				if(!seq_name.contains(QChar('.')))
 					seq_name.prepend(table->getSchema()->getName(true) + QString("."));
 
-				seq=dbmodel->getSequence(seq_name);
+				seq = dbmodel->getSequence(seq_name);
+
+				try
+				{
+					// If the sequence doesn't exists we try to create it if the auto deps resolution is enabled
+					if(!seq && auto_resolve_deps)
+					{
+						QString seq_oid;
+						QStringList names = seq_name.split('.');
+
+						catalog.clearObjectFilter(ObjectType::Sequence);
+						seq_oid = catalog.getObjectOID(names[1], ObjectType::Sequence, names[0]);
+						seq_name = getDependencyObject(seq_oid, ObjectType::Sequence, false, true, false);
+						seq = dbmodel->getSequence(seq_name);
+					}
+				}
+				catch(Exception &)
+				{
+					// Failing to create the sequence will not abort the entire process, instead, it'll dump a debug message
+					qDebug() << QString("assignSequencesToColumns(): Failed to create the sequence: %1").arg(seq_name) << QtCompat::endl;
+				}
 
 				if(seq)
 				{

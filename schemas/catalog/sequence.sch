@@ -82,18 +82,18 @@
 	%end
 
 	%if {filter-oids} %or {schema} %then
-	[ AND ]
-	  %if {filter-oids} %then
-	   [ sq.oid IN (] {filter-oids} )
+      [ AND ]
+        %if {filter-oids} %then
+        [ sq.oid IN (] {filter-oids} )
 
-	    %if {schema} %then
-	      [ AND ]
-	    %end
-	  %end
+            %if {schema} %then
+            [ AND ]
+            %end
+        %end
 
-	  %if {schema} %then
-	   [ ns.nspname= ] '{schema}'
-	  %end
+        %if {schema} %then
+        [ ns.nspname= ] '{schema}'
+        %end
        %end
     %end
 %end
