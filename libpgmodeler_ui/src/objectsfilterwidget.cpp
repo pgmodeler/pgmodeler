@@ -27,6 +27,11 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 	QAction *act = nullptr;
 
 	setupUi(this);
+
+	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
+	apply_tb->setToolTip(apply_tb->toolTip() + QString(" (%1)").arg(apply_tb->shortcut().toString()));
+
 	types.erase(std::find(types.begin(), types.end(), ObjectType::Column));
 
 	for(auto &type : types)
@@ -72,9 +77,21 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 	QStringList obj_types = Catalog::getFilterableObjectNames();
 
 	for(auto &obj_type : obj_types)
+	{
 		combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
 												 BaseObject::getTypeName(obj_type),
 												 obj_type);
+	}
+
+	for(auto &obj_type : extra_obj_types)
+	{
+		if(combo->findText(BaseObject::getTypeName(obj_type)) < 0)
+		{
+			combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
+													 BaseObject::getTypeName(obj_type),
+													 BaseObject::getSchemaName(obj_type));
+		}
+	}
 
 	combo->setStyleSheet("border: 0px");
 	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
@@ -141,6 +158,11 @@ bool ObjectsFilterWidget::isMatchSignature()
 	return action_match_signature->isChecked();
 }
 
+void ObjectsFilterWidget::setExtraObjectTypes(const vector<ObjectType> &types)
+{
+	extra_obj_types = types;
+}
+
 void ObjectsFilterWidget::addFilter()
 {
 	int row = filters_tbw->rowCount();
@@ -197,6 +219,9 @@ void ObjectsFilterWidget::removeFilter()
 	clear_all_tb->setEnabled(filters_tbw->rowCount() != 0);
 	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
 	enableForcedFilterButton();
+
+	if(filters_tbw->rowCount() == 0)
+		emit s_filtersRemoved();
 }
 
 void ObjectsFilterWidget::removeAllFilters()

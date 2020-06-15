@@ -309,7 +309,7 @@ void SwapObjectsIdsWidget::filterObjects()
 
 void SwapObjectsIdsWidget::selectItem(QTableWidgetItem *item)
 {
-	QTableWidgetItem *item_aux = (item->column() == 1 ? item : objects_tbw->item(item->row(), 1));
+	QTableWidgetItem *item_aux = (item->column() == 0 ? item : objects_tbw->item(item->row(), 0));
 	BaseObject *obj = reinterpret_cast<BaseObject *>(item_aux->data(Qt::UserRole).value<void *>());
 
 	if(selector_idx == 0)

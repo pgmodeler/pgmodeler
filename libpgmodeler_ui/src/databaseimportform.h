@@ -64,11 +64,11 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void setParentItemChecked(QTreeWidgetItem *item);
 		
 		//! \brief Returns true when there is at least one item checked on the objects tree
-		bool hasCheckedItems();
+		bool hasObjectsToImport();
 		
-		/*! \brief Returns the checked items oids on "obj_oids" vector. The second parameter
+		/*! \brief Returns the items oids in "obj_oids" map. The second parameter
 		"col_oids" stores the columns oids for each selected table */
-		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		void getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 		
 		void finishImport(const QString &msg);
 		void showEvent(QShowEvent *);

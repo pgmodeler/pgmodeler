@@ -61,6 +61,10 @@ DatabaseImportForm::DatabaseImportForm(QWidget *parent, Qt::WindowFlags f) : QDi
 	connect(cancel_btn, SIGNAL(clicked(bool)), this, SLOT(cancelImport()));
 	connect(objs_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(listObjects()));
 
+	connect(objs_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
+		listObjects();
+	});
+
 	connect(import_to_model_chk, &QCheckBox::toggled,
 			[&](bool checked){ create_model=!checked; });
 
@@ -172,17 +176,10 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 		{
 			flt_objects_tbw->insertRow(row);
 
-			// Object OID column
-			item = new QTableWidgetItem;
-			item->setText(attr[Attributes::Oid]);
-			item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
-			item->setCheckState(Qt::Checked);
-			flt_objects_tbw->setItem(row, 0, item);
-
 			// Object name column
 			item = new QTableWidgetItem;
 			item->setText(attr[Attributes::Name]);
-			flt_objects_tbw->setItem(row, 1, item);
+			flt_objects_tbw->setItem(row, 0, item);
 
 			// Object type column
 			item = new QTableWidgetItem;
@@ -190,6 +187,12 @@ void DatabaseImportForm::listFilteredObjects(DatabaseImportHelper &import_hlp, Q
 			item->setText(BaseObject::getTypeName(obj_type));
 			item->setIcon(QIcon(PgModelerUiNs::getIconPath(obj_type)));
 			item->setData(Qt::UserRole, enum_cast(obj_type));
+			flt_objects_tbw->setItem(row, 1, item);
+
+			// Object OID column
+			item = new QTableWidgetItem;
+			item->setText(attr[Attributes::Oid]);
+			item->setData(Qt::UserRole, attr[Attributes::Oid].toUInt());
 			flt_objects_tbw->setItem(row, 2, item);
 
 			// Parent name column
@@ -244,7 +247,7 @@ void DatabaseImportForm::setItemCheckState(QTreeWidgetItem *item, int)
 	db_objects_tw->blockSignals(true);
 	setItemCheckState(item, item->checkState(0));
 	setParentItemChecked(item->parent());
-	import_btn->setEnabled(hasCheckedItems());
+	import_btn->setEnabled(hasObjectsToImport());
 	db_objects_tw->blockSignals(false);
 }
 
@@ -266,7 +269,7 @@ void DatabaseImportForm::setItemsCheckState()
 		}
 		db_objects_tw->blockSignals(false);
 	}
-	else
+	/*else
 	{
 		int row_cnt = filtered_objs_tbw->rowCount();
 
@@ -276,7 +279,7 @@ void DatabaseImportForm::setItemsCheckState()
 			filtered_objs_tbw->item(row, 0)->setCheckState(chk_state);
 
 		filtered_objs_tbw->blockSignals(false);
-	}
+	}*/
 
 	import_btn->setEnabled(chk_state == Qt::Checked);
 }
@@ -307,7 +310,7 @@ void DatabaseImportForm::importDatabase()
 			PgModelerUiNs::createOutputTreeItem(output_trw, tr("<strong>Low verbosity is set:</strong> only key informations and errors will be displayed."),
 																					QPixmap(PgModelerUiNs::getIconPath("msgbox_alerta")), nullptr, false);
 
-		getCheckedItems(obj_oids, col_oids);
+		getObjectToImport(obj_oids, col_oids);
 		obj_oids[ObjectType::Database].push_back(database_cmb->itemData(database_cmb->currentIndex()).value<unsigned>());
 
 		if(create_model)
@@ -356,7 +359,7 @@ void DatabaseImportForm::setParentItemChecked(QTreeWidgetItem *item)
 	}
 }
 
-bool DatabaseImportForm::hasCheckedItems()
+bool DatabaseImportForm::hasObjectsToImport()
 {
 	bool selected=false;
 
@@ -372,19 +375,21 @@ bool DatabaseImportForm::hasCheckedItems()
 	}
 	else
 	{
-		int row_cnt = filtered_objs_tbw->rowCount(), curr_row = 0;
+		/*int row_cnt = filtered_objs_tbw->rowCount(), curr_row = 0;
 
 		while(!selected && curr_row < row_cnt)
 		{
 			selected = (filtered_objs_tbw->item(curr_row, 0)->checkState() == Qt::Checked);
 			curr_row++;
-		}
+		} */
+
+		selected = filtered_objs_tbw->rowCount() > 0;
 	}
 
 	return selected;
 }
 
-void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
+void DatabaseImportForm::getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids)
 {
 	ObjectType obj_type;
 	unsigned tab_oid=0;
@@ -428,14 +433,10 @@ void DatabaseImportForm::getCheckedItems(map<ObjectType, vector<unsigned>> &obj_
 
 		for(int row = 0; row < row_cnt; row++)
 		{
-			oid_item = filtered_objs_tbw->item(row, 0);
-			type_item = filtered_objs_tbw->item(row, 2);
-
-			if(oid_item->checkState() == Qt::Checked)
-			{
-				obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
-				obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
-			}
+			oid_item = filtered_objs_tbw->item(row, 2);
+			type_item = filtered_objs_tbw->item(row, 1);
+			obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
+			obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
 		}
 	}
 }
@@ -497,10 +498,9 @@ Do you really want to proceed?"),
 			}
 		}
 
-		import_btn->setEnabled(hasCheckedItems());
-		buttons_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0 || filtered_objs_tbw->rowCount() > 0);
-		expand_all_tb->setVisible(db_objects_stw->currentIndex() == 0);
-		collapse_all_tb->setVisible(db_objects_stw->currentIndex() == 0);
+		import_btn->setEnabled(hasObjectsToImport());
+		buttons_wgt->setEnabled(db_objects_tw->topLevelItemCount() > 0);
+		buttons_wgt->setVisible(db_objects_stw->currentIndex() == 0);
 	}
 	catch(Exception &e)
 	{

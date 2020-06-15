@@ -383,57 +383,52 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 			  new_row = true;
 			}
 
-			//First column: Object id
+			//First column: Object name
 			tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 0));
-			tab_item->setText(QString::number(objs[i]->getObjectId()));
 			tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
+			fnt=tab_item->font();
 
-			if(checkable_items)
-				tab_item->setCheckState(Qt::Checked);
-
+			tab_item->setText(objs[i]->getName());
+			tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
 			if(new_row) tab_wgt->setItem(lin_idx, 0, tab_item);
+			if(checkable_items)	tab_item->setCheckState(Qt::Checked);
 
-			//Second column: Object name
-			if(tab_wgt->columnCount() > 1)
-			{
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
-				tab_item->setData(Qt::UserRole, QVariant::fromValue<void *>(reinterpret_cast<void *>(objs[i])));
-				fnt=tab_item->font();
-
-				tab_item->setText(objs[i]->getName());
-				tab_item->setIcon(QPixmap(PgModelerUiNs::getIconPath(BaseObject::getSchemaName(objs[i]->getObjectType()) + str_aux)));
-				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
-
-				if(objs[i]->isProtected() || objs[i]->isSystemObject())
-				{
-					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
-				}
-				else if(dynamic_cast<TableObject *>(objs[i]) &&
-						dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
-				{
-					fnt.setItalic(true);
-					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
-				}
-				else
-				{
-					fnt.setItalic(false);
-					tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
-				}
-
-
-				fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
-				tab_item->setFont(fnt);
-				fnt.setStrikeOut(false);
-			}
-
-			//Third column: Object type
-			if(tab_wgt->columnCount() > 2)
+			if(objs[i]->isProtected() || objs[i]->isSystemObject())
 			{
 				fnt.setItalic(true);
-				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
+				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::ProtColumn).foreground());
+			}
+			else if(dynamic_cast<TableObject *>(objs[i]) &&
+					dynamic_cast<TableObject *>(objs[i])->isAddedByRelationship())
+			{
+				fnt.setItalic(true);
+				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::InhColumn).foreground());
+			}
+			else
+			{
+				fnt.setItalic(false);
+				tab_item->setForeground(BaseObjectView::getFontStyle(Attributes::Column).foreground());
+			}
+
+			fnt.setStrikeOut(objs[i]->isSQLDisabled() && !objs[i]->isSystemObject());
+			tab_item->setFont(fnt);
+			fnt.setStrikeOut(false);
+
+			//Second column: Object type
+			if(tab_wgt->columnCount() > 1)
+			{
+				fnt.setItalic(true);
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 1));
 				tab_item->setFont(fnt);
 				tab_item->setText(objs[i]->getTypeName());
+				if(new_row) tab_wgt->setItem(lin_idx, 1, tab_item);
+			}
+
+			//Third column: Object id
+			if(tab_wgt->columnCount() > 2)
+			{
+				tab_item=(new_row ? new QTableWidgetItem : tab_wgt->item(lin_idx, 2));
+				tab_item->setText(QString::number(objs[i]->getObjectId()));
 				if(new_row) tab_wgt->setItem(lin_idx, 2, tab_item);
 			}
 

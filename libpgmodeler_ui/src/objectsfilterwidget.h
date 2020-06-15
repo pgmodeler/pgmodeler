@@ -35,6 +35,8 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 
+		vector<ObjectType> extra_obj_types;
+
 		QMenu tab_objs_menu, options_menu;
 
 		QAction *action_only_matching, *action_match_signature, *action_forced_filter;
@@ -53,6 +55,8 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		bool isMatchSignature();
 		bool hasFiltersConfigured();
 
+		void setExtraObjectTypes(const vector<ObjectType> &types);
+
 	private slots:
 		void addFilter();
 		void removeFilter();
@@ -61,6 +65,7 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 
 	signals:
 		void s_filterApplyingRequested();
+		void s_filtersRemoved();
 };
 
 #endif

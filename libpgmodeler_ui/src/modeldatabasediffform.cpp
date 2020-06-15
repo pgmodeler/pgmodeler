@@ -139,6 +139,10 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		connect(database_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(enablePartialDiff()));
 		connect(pd_filter_wgt, SIGNAL(s_filterApplyingRequested()), this, SLOT(applyPartialDiffFilters()));
 
+		connect(pd_filter_wgt, &ObjectsFilterWidget::s_filtersRemoved, [&](){
+			filtered_objs_tbw->setRowCount(0);
+		});
+
 #ifdef DEMO_VERSION
 	#warning "DEMO VERSION: forcing ignore errors in diff due to the object count limit."
 	ignore_errors_chk->setChecked(true);
@@ -578,9 +582,14 @@ void ModelDatabaseDiffForm::diffModels()
 
 	diff_helper->setModels(source_model, imported_model);
 
-	vector<BaseObject *> filtered_objs;
-	getPartialDiffCheckedItems(filtered_objs);
-	diff_helper->setFilteredObjects(filtered_objs);
+	/* If the user has chosen diff between a model and database
+	 * We need to retrieve the filtered object in partial diff tab */
+	if(src_model_rb->isChecked())
+	{
+		vector<BaseObject *> filtered_objs;
+		getFilteredObjects(filtered_objs);
+		diff_helper->setFilteredObjects(filtered_objs);
+	}
 
 	if(pgsql_ver_chk->isChecked())
 		diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
@@ -1249,6 +1258,11 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 	settings_tbw->setTabEnabled(1, enable);
 
 	if(src_model_rb->isChecked())
+		pd_filter_wgt->setExtraObjectTypes({ ObjectType::Relationship });
+	else
+		pd_filter_wgt->setExtraObjectTypes({});
+
+	if(src_model_rb->isChecked())
 	{
 		pd_input_lbl->setText(QString("<strong>%1</strong>").arg(src_model_name_lbl->text()));
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
@@ -1269,7 +1283,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 	{
 		QString search_attr = pd_filter_wgt->isMatchSignature() ? Attributes::Signature : Attributes::Name;
 		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
-		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr, true);
+		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
 	}
 	else
 	{
@@ -1287,23 +1301,27 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 	}
 }
 
-void ModelDatabaseDiffForm::getPartialDiffCheckedItems(vector<BaseObject *> &objects)
+void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
 {
 	int row_cnt = filtered_objs_tbw->rowCount();
 	QTableWidgetItem *item = nullptr;
+	BaseObject *obj = nullptr;
 
 	objects.clear();
 
 	for(int row = 0; row < row_cnt; row++)
 	{
 		item = filtered_objs_tbw->item(row, 0);
+		obj = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
 
-		if(item->checkState() == Qt::Checked)
-			objects.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
+		if(!obj)
+			continue;
+
+		objects.push_back(obj);
 	}
 }
 
-void ModelDatabaseDiffForm::getPartialDiffCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids)
+void ModelDatabaseDiffForm::getFilteredObjects(map<ObjectType, vector<unsigned>> &obj_oids)
 {
 	ObjectType obj_type;
 	int row_cnt = filtered_objs_tbw->rowCount();
@@ -1315,11 +1333,7 @@ void ModelDatabaseDiffForm::getPartialDiffCheckedItems(map<ObjectType, vector<un
 	{
 		oid_item = filtered_objs_tbw->item(row, 0);
 		type_item = filtered_objs_tbw->item(row, 2);
-
-		if(oid_item->checkState() == Qt::Checked)
-		{
-			obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
-			obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
-		}
+		obj_type = static_cast<ObjectType>(type_item->data(Qt::UserRole).toUInt());
+		obj_oids[obj_type].push_back(oid_item->data(Qt::UserRole).toUInt());
 	}
 }

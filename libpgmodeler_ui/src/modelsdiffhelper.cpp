@@ -95,15 +95,44 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 
 void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 {
+	vector<Constraint *> constrs;
+
 	filtered_objs.clear();
 
 	for(auto &obj : objects)
-	{
-		if(obj->getDatabase() != source_model)
-			continue;
+	{		
+		if(obj->getObjectType() == ObjectType::Relationship)
+		{
+			Relationship *rel = dynamic_cast<Relationship *>(obj);
+			unsigned rel_type = rel->getRelationshipType();
 
-		filtered_objs[obj->getObjectId()] = obj;
+			if(rel_type == BaseRelationship::RelationshipGen ||
+				 rel_type == BaseRelationship::RelationshipPart)
+				filtered_objs[rel->getObjectId()] = rel;
+
+			// For many-to-many relationships we store their constraints (excpet pks) in a separated list
+			else if(rel_type == BaseRelationship::RelationshipNn && rel->getGeneratedTable())
+			{
+				Table *gen_tab = rel->getGeneratedTable();
+				Constraint *constr = nullptr;
+				filtered_objs[gen_tab->getObjectId()] = gen_tab;
+
+				for(auto &obj : *gen_tab->getObjectList(ObjectType::Constraint))
+				{
+					constr = dynamic_cast<Constraint *>(obj);
+
+					if(constr->getConstraintType() != ConstraintType::PrimaryKey)
+						constrs.push_back(constr);
+				}
+			}
+		}
+		else
+			filtered_objs[obj->getObjectId()] = obj;
 	}
+
+	// Putting fks at the end of filtered objects
+	for(auto &constr : constrs)
+		filtered_objs[BaseObject::getGlobalId() + constr->getObjectId()] = constr;
 }
 
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)

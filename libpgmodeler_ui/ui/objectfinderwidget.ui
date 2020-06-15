@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
+    <width>715</width>
     <height>316</height>
    </rect>
   </property>
@@ -589,11 +589,11 @@
       <attribute name="horizontalHeaderCascadingSectionResizes">
        <bool>true</bool>
       </attribute>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>96</number>
-      </attribute>
       <attribute name="horizontalHeaderMinimumSectionSize">
        <number>30</number>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>96</number>
       </attribute>
       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
        <bool>true</bool>
@@ -607,14 +607,14 @@
       <attribute name="verticalHeaderCascadingSectionResizes">
        <bool>false</bool>
       </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>25</number>
+      </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
        <number>26</number>
       </attribute>
       <attribute name="verticalHeaderHighlightSections">
        <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderMinimumSectionSize">
-       <number>25</number>
       </attribute>
       <attribute name="verticalHeaderShowSortIndicator" stdset="0">
        <bool>false</bool>
@@ -622,18 +622,6 @@
       <attribute name="verticalHeaderStretchLastSection">
        <bool>false</bool>
       </attribute>
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-       <property name="textAlignment">
-        <set>AlignLeading|AlignVCenter</set>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
-       </property>
-      </column>
       <column>
        <property name="text">
         <string>Object</string>
@@ -656,6 +644,18 @@
        <property name="icon">
         <iconset resource="../res/resources.qrc">
          <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+       <property name="textAlignment">
+        <set>AlignLeading|AlignVCenter</set>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
        </property>
       </column>
       <column>

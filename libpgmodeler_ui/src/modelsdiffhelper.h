@@ -155,7 +155,9 @@ class ModelsDiffHelper: public QObject {
 		void setModels(DatabaseModel *src_model, DatabaseModel *imp_model);
 
 		/*! \brief Specifies a list of filtered objects to be used in the partial diff
-		 * This is only useful when performing a partial diff between a model and a database. */
+		 * This is only useful when performing a partial diff between a model and a database.
+		 * This method makes extra treatment in the provided objects list in order to specify to the
+		 * diff process their correct creation order */
 		void setFilteredObjects(const vector<BaseObject *> &objects);
 
 		//! \brief Toggles a diff option throught the OPT_xxx constants

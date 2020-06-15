@@ -981,7 +981,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;p&gt;Force the generation of DROP commands for columns and constraints that exist in database but not in the model. This is useful when diff a partial model against the complete database and the user needs to drop columns and constraint but preserve the rest of the objects.&lt;/p&gt;</string>
+                    <string>&lt;p&gt;Force the generation of DROP commands for columns and constraints that exist in the destination database but not in the input model or database. This is useful when performing partial diff operations.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
@@ -997,7 +997,7 @@
                  <item row="0" column="0" colspan="2">
                   <widget class="QCheckBox" name="dont_drop_missing_objs_chk">
                    <property name="toolTip">
-                    <string>&lt;p&gt;Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when diff a partial model against the complete database.&lt;/p&gt;</string>
+                    <string>&lt;p&gt;Avoid the generation of DROP commands for objects that exists in database but not in the model. This is useful when performing partial diff operations.&lt;/p&gt;</string>
                    </property>
                    <property name="statusTip">
                     <string/>
@@ -1518,15 +1518,6 @@
                 </property>
                 <column>
                  <property name="text">
-                  <string>ID</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../res/resources.qrc">
-                   <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
                   <string>Object</string>
                  </property>
                  <property name="textAlignment">
@@ -1547,6 +1538,15 @@
                  <property name="icon">
                   <iconset resource="../res/resources.qrc">
                    <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>ID</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../res/resources.qrc">
+                   <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
                  </property>
                 </column>
                 <column>
