@@ -492,7 +492,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 			/* We retrieve the object's attributes only if there're no filters configured
 			 * for the current type or in case of having filters, the type is registered in one of the
 			 * two filter structures */
-			if((obj_filters.empty() && extra_attribs.empty()) ||
+			if((obj_filters.empty() && extra_filter_conds.empty()) ||
 				 (!obj_filters.empty() && obj_filters.count(type) != 0) ||
 				 (!extra_filter_conds.empty() && TableObject::isTableObject(type) && extra_filter_conds.count(type) != 0))
 				attribs = getObjectsNames(type, QString(), QString(), extra_attribs);
