@@ -28,6 +28,11 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 
 	setupUi(this);
 
+	hint_lbl->setText(tr("Using a pattern in <strong>%1</strong> mode in which no wildcard character <strong>%2</strong> \
+is present has the same effect as performing a exact match searching on the names or signatures.")
+											 .arg(PgModelerNs::FilterWildcard)
+											 .arg(PgModelerNs::WildcardChar));
+
 	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
 	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
 	apply_tb->setToolTip(apply_tb->toolTip() + QString(" (%1)").arg(apply_tb->shortcut().toString()));

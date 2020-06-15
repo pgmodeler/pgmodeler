@@ -10112,6 +10112,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 	QString pattern, mode;
 	QStringList values, modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
 	ObjectType obj_type;
+	bool exact_match = false;
 
 	for(auto &filter : filters)
 	{
@@ -10127,6 +10128,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 		obj_type = BaseObject::getObjectType(values[0]);
 		pattern = values[1];
 		mode = values[2];
+		exact_match = (mode == PgModelerNs::FilterWildcard && !pattern.contains(PgModelerNs::WildcardChar));
 
 		// Raises an error if the filter has an invalid object type, pattern or mode
 		if(obj_type == ObjectType::BaseObject || pattern.isEmpty() || !modes.contains(mode))
@@ -10135,7 +10137,7 @@ vector<BaseObject *> DatabaseModel::findObjects(const QStringList &filters, cons
 											ErrorCode::InvalidObjectFilter,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 
-		aux_objs = findObjects(pattern, { obj_type }, false, mode == PgModelerNs::FilterRegExp, false, search_attr);
+		aux_objs = findObjects(pattern, { obj_type }, false, mode == PgModelerNs::FilterRegExp, exact_match, search_attr);
 		objects.insert(objects.end(), aux_objs.begin(), aux_objs.end());
 	}
 

@@ -179,11 +179,16 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	 * the parent tables */
 	if(only_matching && (has_tab_filter || has_ftab_filter || has_view_filter))
 	{
+		/* If the match_signature is set we need to use this extra string to reference parent's schema
+		 * in order to format its signature in the children catalog queries */
+		QString parent_sch_ref("ns.nspname || '.' ||");
+
 		/* Configuring the placeholder for the parent table name used in the construction of the creteria that filter
 		 * table names in forced table children objects filters.
 		 * This one comes in form of a regexp matching on oid::regclass::text */
-		parent_alias_ref = QString("%1 ~* '(#)'")
-											 .arg(AliasPlaceholder + QString(".oid::regclass::text"))
+		parent_alias_ref = QString("%1 %2 ~* '(#)'")
+											 .arg(match_signature ? parent_sch_ref : "")
+											 .arg(AliasPlaceholder + QString(".relname"))
 											 .replace("#", "%1");
 
 		// Validating the provided table children objects types
@@ -237,20 +242,33 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 		}
 
 		// Converting wildcard patterns into regexp syntax
-		if(mode == PgModelerNs::FilterWildcard && pattern.contains(PgModelerNs::WildcardChar))
+		if(mode == PgModelerNs::FilterWildcard)
 		{
-			QStringList list = pattern.split(PgModelerNs::WildcardChar, QtCompat::KeepEmptyParts);
-			QString any_str = "(.)*";
+			pattern.replace('.', "\\.");
 
-			pattern.clear();
-
-			for(auto &word : list)
+			// If the pattern has wildcard chars we replace them by (.)*
+			if(pattern.contains(PgModelerNs::WildcardChar))
 			{
-				if(!word.isEmpty())
-					word = QString("(%1)").arg(word);
-			}
+				QStringList list = pattern.split(PgModelerNs::WildcardChar, QtCompat::KeepEmptyParts);
+				QString any_str = "(.)*";
+				pattern.clear();
 
-			pattern = list.join(any_str);
+				for(auto &word : list)
+				{
+					if(!word.isEmpty())
+						word = QString("(%1)").arg(word);
+				}
+
+				pattern = list.join(any_str);
+			}
+			else
+			{
+				/* If the pattern is wildcard mode but has not wildcard char we
+				 * assume that the matching should be exact so we prepend ^ and append $
+				 * in order to force a regular expression with exact match */
+				pattern.prepend('^');
+				pattern.append('$');
+			}
 		}
 
 		parsed_filters[obj_type].append(QString("(%1)").arg(pattern));

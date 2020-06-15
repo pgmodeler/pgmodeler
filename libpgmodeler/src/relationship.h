@@ -511,6 +511,7 @@ class Relationship: public BaseRelationship {
 		friend class RelationshipWidget;
 		friend class ModelExportHelper;
 		friend class ModelsDiffHelper;
+		friend class ModelDatabaseDiffForm;
 };
 
 #endif

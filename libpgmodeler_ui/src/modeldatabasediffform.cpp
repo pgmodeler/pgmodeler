@@ -511,6 +511,31 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		 * in order to retrieve the correct objects */
 		if(!pd_filters.isEmpty())
 		{
+			/* Special case: when performing a partial diff between a model and a database
+			 * and in the set of filtered model objects we have one or more many-to-many relationships
+			 * we need to inject filters to force the retrieval of the relationship nn generated tables from
+			 * the destination database,this way we avoid the diff try to create everytime all intermediate tables
+			 * represented by many-to-many relationships. */
+			if(src_model_rb->isChecked())
+			{
+				Relationship *rel = nullptr;
+
+				for(auto &obj : filtered_objs)
+				{
+					rel = dynamic_cast<Relationship *>(obj);
+
+					if(rel && rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
+					{
+						// Creating the filter in the form: table:[table-name]:wildcard
+						pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+															PgModelerNs::FilterSeparator +
+															rel->getGeneratedTable()->getSignature() +
+															PgModelerNs::FilterSeparator +
+															PgModelerNs::FilterWildcard);
+					}
+				}
+			}
+
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),
 															 pd_filter_wgt->isMatchSignature(),
@@ -585,11 +610,7 @@ void ModelDatabaseDiffForm::diffModels()
 	/* If the user has chosen diff between a model and database
 	 * We need to retrieve the filtered object in partial diff tab */
 	if(src_model_rb->isChecked())
-	{
-		vector<BaseObject *> filtered_objs;
-		getFilteredObjects(filtered_objs);
 		diff_helper->setFilteredObjects(filtered_objs);
-	}
 
 	if(pgsql_ver_chk->isChecked())
 		diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
@@ -1284,12 +1305,15 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 		QString search_attr = pd_filter_wgt->isMatchSignature() ? Attributes::Signature : Attributes::Name;
 		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
 		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
+		getFilteredObjects(filtered_objs);
 	}
-	else
+	else if(src_connections_cmb->currentIndex() > 0 &&
+					src_database_cmb->currentIndex() > 0)
 	{
 		DatabaseImportHelper import_helper;
 		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
 
+		filtered_objs.clear();
 		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
 		import_helper.setConnection(conn);
 		import_helper.setObjectFilters(pd_filter_wgt->getObjectFilters(),
