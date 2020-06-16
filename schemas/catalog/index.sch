@@ -52,7 +52,7 @@
    %end
    
    %if {name-filter} %then
-     [ AND ] ( {signature} [ cl.relname ~* ] '{name-filter}' )
+     [ AND ] ( {signature} [ cl.relname ~* ] E'{name-filter}' )
    %end
    
    %if {extra-condition} %then

@@ -48,7 +48,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} cs.conname ~* '{name-filter}' )
+    [ AND ] ( {signature} cs.conname ~* E'{name-filter}' )
   %end
   
   %if {extra-condition} %then

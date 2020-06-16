@@ -43,7 +43,7 @@
       [ WHERE ]
     %end
   
-    ( {signature} [ cn.conname ~* ] '{name-filter}' )
+    ( {signature} [ cn.conname ~* ] E'{name-filter}' )
   %end  
 
 %else

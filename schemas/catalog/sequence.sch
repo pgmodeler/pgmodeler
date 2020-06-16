@@ -28,7 +28,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ sq.relname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ sq.relname ~* ] E'{name-filter}' )
   %end
 
 %else

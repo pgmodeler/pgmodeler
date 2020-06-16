@@ -51,7 +51,7 @@
                 [ AND ]
             %end
         
-            ( {signature} [ pl.polname ~* ] '{name-filter}' )
+            ( {signature} [ pl.polname ~* ] E'{name-filter}' )
         %end
         
         %if {extra-condition} %then

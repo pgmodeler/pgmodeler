@@ -29,7 +29,7 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 
 	hint_lbl->setText(tr("Using a pattern in <strong>%1</strong> mode in which no wildcard character <strong>%2</strong> \
-is present has the same effect as performing a exact match searching on the names or signatures.")
+is present has the same effect as performing an exact match searching on the names or signatures.")
 											 .arg(PgModelerNs::FilterWildcard)
 											 .arg(PgModelerNs::WildcardChar));
 
@@ -99,7 +99,6 @@ QComboBox *ObjectsFilterWidget::createObjectsCombo()
 	}
 
 	combo->setStyleSheet("border: 0px");
-	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
 
 	return combo;
 }
@@ -196,7 +195,6 @@ void ObjectsFilterWidget::addFilter()
 
 	clear_all_tb->setEnabled(true);
 	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
-	enableForcedFilterButton();
 }
 
 void ObjectsFilterWidget::removeFilter()
@@ -223,7 +221,6 @@ void ObjectsFilterWidget::removeFilter()
 	filters_tbw->clearSelection();
 	clear_all_tb->setEnabled(filters_tbw->rowCount() != 0);
 	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
-	enableForcedFilterButton();
 
 	if(filters_tbw->rowCount() == 0)
 		emit s_filtersRemoved();
@@ -238,19 +235,4 @@ void ObjectsFilterWidget::removeAllFilters()
 	}
 
 	clear_all_tb->setEnabled(false);
-}
-
-void ObjectsFilterWidget::enableForcedFilterButton()
-{
-	bool has_tab_filter = false;
-	int row_cnt = filters_tbw->rowCount();
-	QString type_name;
-
-	for(int row = 0; row < row_cnt && !has_tab_filter; row++)
-	{
-		type_name = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0))->currentData(Qt::UserRole).toString();
-		has_tab_filter = BaseTable::isBaseTable(BaseObject::getObjectType(type_name));
-	}
-
-	action_forced_filter->setEnabled(action_only_matching->isChecked() && has_tab_filter);
 }

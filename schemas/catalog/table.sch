@@ -27,7 +27,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ tb.relname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ tb.relname ~* ] E'{name-filter}' )
   %end
 
 %else

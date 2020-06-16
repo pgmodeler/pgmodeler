@@ -57,7 +57,7 @@
       [ AND ]
     %end
     
-    ( {signature} [ rl.rulename ~* ] '{name-filter}' )
+    ( {signature} [ rl.rulename ~* ] E'{name-filter}' )
   %end
   
   %if {extra-condition} %then

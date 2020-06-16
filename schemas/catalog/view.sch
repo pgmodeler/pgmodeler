@@ -31,7 +31,7 @@
     %end
     
     %if {name-filter} %then
-        [ AND ] ( {signature} [ vw.relname ~* ] '{name-filter}' )
+        [ AND ] ( {signature} [ vw.relname ~* ] E'{name-filter}' )
     %end
 %else
     %if {attribs} %then     

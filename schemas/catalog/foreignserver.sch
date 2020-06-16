@@ -27,7 +27,7 @@
                 [ AND ] 
             %end
            
-            ( [sv.srvname ~* ] '{name-filter}' )
+            ( [sv.srvname ~* ] E'{name-filter}' )
         %end        
     %end
 %else 

@@ -27,7 +27,7 @@
     %end
     
     %if {name-filter} %then
-        [ AND ] ( {signature} [ ft.relname ~* ] '{name-filter}' )
+        [ AND ] ( {signature} [ ft.relname ~* ] E'{name-filter}' )
     %end
 %else
     %if {attribs} %then

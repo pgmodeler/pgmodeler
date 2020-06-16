@@ -17,7 +17,7 @@
         [ WHERE ]
     %end        
         
-    ( [spcname ~* ] '{name-filter}' )    
+    ( [spcname ~* ] E'{name-filter}' )    
   %end
 
 %else

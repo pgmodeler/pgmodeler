@@ -42,7 +42,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ proname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ proname ~* ] E'{name-filter}' )
   %end
 %else
     %if {attribs} %then

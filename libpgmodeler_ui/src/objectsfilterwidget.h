@@ -61,7 +61,6 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		void addFilter();
 		void removeFilter();
 		void removeAllFilters();
-		void enableForcedFilterButton();
 
 	signals:
 		void s_filterApplyingRequested();

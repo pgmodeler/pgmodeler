@@ -1108,9 +1108,7 @@ vector<ObjectType> Catalog::getFilterableObjectTypes()
 																																			 ObjectType::GenericSql,
 																																			 ObjectType::Permission,
 																																			 ObjectType::Database,
-																																			 ObjectType::Cast,
 																																			 ObjectType::Column,
-																																			 ObjectType::UserMapping,
 																																			 ObjectType::Tag });
 
 	return types;

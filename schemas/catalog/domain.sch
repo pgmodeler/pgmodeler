@@ -26,7 +26,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ dm.typname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ dm.typname ~* ] E'{name-filter}' )
   %end
 
 %else

@@ -44,7 +44,7 @@
       [ WHERE ]
     %end
   
-    ( {signature} [ op.opfname ~* ] '{name-filter}' )
+    ( {signature} [ op.opfname ~* ] E'{name-filter}' )
   %end
 
 %else

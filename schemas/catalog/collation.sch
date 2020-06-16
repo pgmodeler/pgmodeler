@@ -43,7 +43,7 @@
       [ WHERE ]
     %end
   
-    ( {signature} [ cl.collname ~* ] '{name-filter}' )
+    ( {signature} [ cl.collname ~* ] E'{name-filter}' )
   %end  
   
 %else

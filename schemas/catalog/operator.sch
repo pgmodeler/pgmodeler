@@ -44,7 +44,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ op.oprname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ op.oprname ~* ] E'{name-filter}' )
   %end
 
 %else

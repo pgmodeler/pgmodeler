@@ -39,7 +39,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {signature} [ tp.typname ~* ] '{name-filter}' )
+    [ AND ] ( {signature} [ tp.typname ~* ] E'{name-filter}' )
   %end
 
 %else
