@@ -1209,73 +1209,83 @@
                    <number>4</number>
                   </property>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_11">
-                    <item>
-                     <widget class="QCheckBox" name="import_sys_objs_chk">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>&lt;p&gt;Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.&lt;/p&gt;</string>
-                      </property>
-                      <property name="statusTip">
-                       <string/>
-                      </property>
-                      <property name="text">
-                       <string>Import system objects</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QCheckBox" name="import_sys_objs_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Import system (built-in) objects. Use this if the import step is returning errors related to missing objects.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import system objects</string>
+                    </property>
+                   </widget>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_9">
-                    <item>
-                     <widget class="QCheckBox" name="import_ext_objs_chk">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>&lt;p&gt;Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.&lt;/p&gt;</string>
-                      </property>
-                      <property name="statusTip">
-                       <string/>
-                      </property>
-                      <property name="text">
-                       <string>Import extension objects</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QCheckBox" name="import_ext_objs_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Import objects created by extensions. Use this if the import step is returning errors even importing built in ones.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Import extension objects</string>
+                    </property>
+                   </widget>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_13">
-                    <item>
-                     <widget class="QCheckBox" name="ignore_errors_chk">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>&lt;p&gt;Ignores as many as possible errors on import step. This option generates an incomplete diff.&lt;/p&gt;</string>
-                      </property>
-                      <property name="statusTip">
-                       <string/>
-                      </property>
-                      <property name="text">
-                       <string>Ignore import errors</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QCheckBox" name="ignore_errors_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Ignores as many as possible errors on import step. This option generates an incomplete diff.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Ignore import errors</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="debug_mode_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;All catalog queries as well the created objects' source code are printed to standard output (stdout).&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Debug mode</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -1302,27 +1312,23 @@
                    <number>4</number>
                   </property>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_18">
-                    <item>
-                     <widget class="QCheckBox" name="ignore_duplic_chk">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>&lt;p&gt;Ignores errors generated by duplicated objects when exporting the diff to database.&lt;/p&gt;</string>
-                      </property>
-                      <property name="statusTip">
-                       <string/>
-                      </property>
-                      <property name="text">
-                       <string>Ignore duplicity errors</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                   <widget class="QCheckBox" name="ignore_duplic_chk">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;p&gt;Ignores errors generated by duplicated objects when exporting the diff to database.&lt;/p&gt;</string>
+                    </property>
+                    <property name="statusTip">
+                     <string/>
+                    </property>
+                    <property name="text">
+                     <string>Ignore duplicity errors</string>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <layout class="QGridLayout" name="gridLayout_7">

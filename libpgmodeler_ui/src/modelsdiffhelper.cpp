@@ -126,6 +126,29 @@ void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 				}
 			}
 		}
+		else if(BaseTable::isBaseTable(obj->getObjectType()))
+		{
+			Constraint *constr = nullptr;
+			BaseTable *tab = dynamic_cast<BaseTable *>(obj);
+			vector<BaseObject *> child_objs = tab->getObjects({ ObjectType::Column });
+
+			filtered_objs[obj->getObjectId()] = obj;
+
+			for(auto &child : child_objs)
+			{
+				if(child->getObjectType() == ObjectType::Constraint)
+				{
+					constr = dynamic_cast<Constraint *>(child);
+
+					if(constr->getConstraintType() == ConstraintType::PrimaryKey)
+						continue;
+
+					constrs.push_back(constr);
+				}
+				else
+					filtered_objs[child->getObjectId()] = child;
+			}
+		}
 		else
 			filtered_objs[obj->getObjectId()] = obj;
 	}

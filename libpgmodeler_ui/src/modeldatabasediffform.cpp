@@ -512,10 +512,10 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		if(!pd_filters.isEmpty())
 		{
 			/* Special case: when performing a partial diff between a model and a database
-			 * and in the set of filtered model objects we have one or more many-to-many relationships
-			 * we need to inject filters to force the retrieval of the relationship nn generated tables from
-			 * the destination database,this way we avoid the diff try to create everytime all intermediate tables
-			 * represented by many-to-many relationships. */
+			 * and in the set of filtered model objects we have one or more many-to-many, inheritance or partitioning
+			 * relationships we need to inject filters to force the retrieval of the all involved tables in those relationships
+			 * from the destination database,this way we avoid the diff try to create everytime all tables
+			 * in the those relationships. */
 			if(src_model_rb->isChecked())
 			{
 				Relationship *rel = nullptr;
@@ -524,14 +524,39 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 				{
 					rel = dynamic_cast<Relationship *>(obj);
 
-					if(rel && rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
+					if(rel)
 					{
-						// Creating the filter in the form: table:[table-name]:wildcard
-						pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-															PgModelerNs::FilterSeparator +
-															rel->getGeneratedTable()->getSignature() +
-															PgModelerNs::FilterSeparator +
-															PgModelerNs::FilterWildcard);
+						// Creating a filter to force the retrieval of the generated table (relationship n:n)
+						if(rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
+						{
+							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+																PgModelerNs::FilterSeparator +
+																(pd_filter_wgt->isMatchSignature() ?
+																	 rel->getGeneratedTable()->getSignature() :
+																	 rel->getGeneratedTable()->getName()) +
+																PgModelerNs::FilterSeparator +
+																PgModelerNs::FilterWildcard);
+						}
+						// Creating a filter to force the retrieval of the peer tables (inheritance and partitioning)
+						else if(rel->getRelationshipType() == Relationship::RelationshipGen ||
+										rel->getRelationshipType() == Relationship::RelationshipPart)
+						{
+							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+																PgModelerNs::FilterSeparator +
+																(pd_filter_wgt->isMatchSignature() ?
+																	 rel->getReceiverTable()->getSignature() :
+																	 rel->getReceiverTable()->getName()) +
+																PgModelerNs::FilterSeparator +
+																PgModelerNs::FilterWildcard);
+
+							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+																PgModelerNs::FilterSeparator +
+																(pd_filter_wgt->isMatchSignature() ?
+																	 rel->getReferenceTable()->getSignature() :
+																	 rel->getReferenceTable()->getName()) +
+																PgModelerNs::FilterSeparator +
+																PgModelerNs::FilterWildcard);
+						}
 					}
 				}
 			}
@@ -566,7 +591,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 		import_hlp->setSelectedOIDs(db_model, obj_oids, col_oids);
 		import_hlp->setCurrentDatabase(db_cmb->currentText());
 		import_hlp->setImportOptions(import_sys_objs_chk->isChecked(), import_ext_objs_chk->isChecked(), true,
-																 ignore_errors_chk->isChecked(), false, false, false);
+																 ignore_errors_chk->isChecked(), debug_mode_chk->isChecked(), false, false);
 		thread->start();
 	}
 	catch(Exception &e)
@@ -1277,11 +1302,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
-
-	if(src_model_rb->isChecked())
-		pd_filter_wgt->setExtraObjectTypes({ ObjectType::Relationship });
-	else
-		pd_filter_wgt->setExtraObjectTypes({});
+	pd_filter_wgt->setModelFilteringMode(src_model_rb->isChecked(), { ObjectType::Relationship });
 
 	if(src_model_rb->isChecked())
 	{

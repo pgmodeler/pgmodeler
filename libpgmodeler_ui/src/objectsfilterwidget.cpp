@@ -76,6 +76,21 @@ is present has the same effect as performing an exact match searching on the nam
 	filters_tbw->horizontalHeader()->resizeSection(2, 100);
 }
 
+void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectType> &extra_types)
+{
+	for(auto &act : tab_objs_menu.actions())
+		act->setChecked(true);
+
+	action_forced_filter->setDisabled(value);
+	action_only_matching->setChecked(true);
+	action_only_matching->setDisabled(value);
+
+	if(!value)
+		extra_obj_types.clear();
+	else
+		extra_obj_types = extra_types;
+}
+
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
 {
 	QComboBox *combo = new QComboBox;
@@ -160,11 +175,6 @@ bool ObjectsFilterWidget::isOnlyMatching()
 bool ObjectsFilterWidget::isMatchSignature()
 {
 	return action_match_signature->isChecked();
-}
-
-void ObjectsFilterWidget::setExtraObjectTypes(const vector<ObjectType> &types)
-{
-	extra_obj_types = types;
 }
 
 void ObjectsFilterWidget::addFilter()

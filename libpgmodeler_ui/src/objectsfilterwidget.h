@@ -54,8 +54,7 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 		bool isOnlyMatching();
 		bool isMatchSignature();
 		bool hasFiltersConfigured();
-
-		void setExtraObjectTypes(const vector<ObjectType> &types);
+		void setModelFilteringMode(bool value, const vector<ObjectType> &extra_types = {});
 
 	private slots:
 		void addFilter();

@@ -2722,16 +2722,19 @@ void DatabaseImportHelper::assignSequencesToColumns()
 			{
 				QString seq_name=col->getDefaultValue();
 				Sequence *seq=nullptr;
+				QStringList names;
 
 				//Extracting the name from the nextval(''::regclass) portion and formating it
 				seq_name.remove(0, seq_name.indexOf(QChar('\'')) + 1);
 				seq_name.remove(seq_name.indexOf(QChar('\'')), seq_name.length());
-				seq_name=BaseObject::formatName(seq_name);
+				names = seq_name.split('.');
 
 				/* Checking if the sequence name contains the schema prepended.
 				 * If not, it'll be prepended by retrieving the table's schema name */
-				if(!seq_name.contains(QChar('.')))
-					seq_name.prepend(table->getSchema()->getName(true) + QString("."));
+				if(names.size() <= 1)
+					seq_name.prepend(table->getSchema()->getName(true) + '.');
+				else
+					seq_name = BaseObject::formatName(names[0]) + '.' + BaseObject::formatName(names[1]);
 
 				seq = dbmodel->getSequence(seq_name);
 
@@ -2741,7 +2744,6 @@ void DatabaseImportHelper::assignSequencesToColumns()
 					if(!seq && auto_resolve_deps)
 					{
 						QString seq_oid;
-						QStringList names = seq_name.split('.');
 
 						catalog.clearObjectFilter(ObjectType::Sequence);
 						seq_oid = catalog.getObjectOID(names[1], ObjectType::Sequence, names[0]);
