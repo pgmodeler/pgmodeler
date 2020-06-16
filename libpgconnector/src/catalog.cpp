@@ -177,7 +177,7 @@ void Catalog::setObjectFilters(QStringList filters, bool only_matching, bool mat
 	 * and the forced object types list we configure filters to force the
 	 * listing of table children objects, tied to the filters that list
 	 * the parent tables */
-	if(only_matching && (has_tab_filter || has_ftab_filter || has_view_filter))
+	if(!tab_obj_types.isEmpty() && (has_tab_filter || has_ftab_filter || has_view_filter))
 	{
 		/* If the match_signature is set we need to use this extra string to reference parent's schema
 		 * in order to format its signature in the children catalog queries */
