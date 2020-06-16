@@ -434,7 +434,7 @@ void ModelDatabaseDiffForm::generateDiff()
 	{
 		Messagebox msgbox;
 
-		msgbox.show(tr("Warning"),
+		msgbox.show("",
 								tr("The option <strong>%1</strong> is currently unchecked. This can lead to the generation of <strong>DROP</strong> commands\
  for objects not present in the filtered set used in the partial diff. Take extra caution when applying the resulting diff! How do you want to proceed?")
 									.arg(dont_drop_missing_objs_chk->text()),
