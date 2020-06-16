@@ -430,6 +430,28 @@ void ModelDatabaseDiffForm::enableDiffMode()
 
 void ModelDatabaseDiffForm::generateDiff()
 {
+	if(settings_tbw->isTabEnabled(1) && filtered_objs_tbw->rowCount() > 0)
+	{
+		Messagebox msgbox;
+
+		msgbox.show(tr("Warning"),
+								tr("The option <strong>%1</strong> is currently unchecked. This can lead to the generation of <strong>DROP</strong> commands\
+ for objects not present in the filtered set used in the partial diff. Take extra caution when applying the resulting diff! How do you want to proceed?")
+									.arg(dont_drop_missing_objs_chk->text()),
+									 Messagebox::AlertIcon,
+									 Messagebox::AllButtons,
+									 tr("Check it and diff"),
+									 tr("Diff anyway"),
+									 tr("Cancel"),
+									 PgModelerUiNs::getIconPath("config"),
+									 PgModelerUiNs::getIconPath("diff"));
+
+		if(msgbox.result() == QDialog::Accepted)
+			dont_drop_missing_objs_chk->setChecked(true);
+		else if(msgbox.isCancelled())
+			return;
+	}
+
 	// Cancel any pending preset editing before run the diff
 	togglePresetConfiguration(false);
 
