@@ -158,6 +158,54 @@ void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 		filtered_objs[BaseObject::getGlobalId() + constr->getObjectId()] = constr;
 }
 
+QStringList ModelsDiffHelper::getRelationshipFilters(const vector<BaseObject *> &objects, bool use_signature)
+{
+	Relationship *rel = nullptr;
+	QStringList filters;
+
+	for(auto &obj : objects)
+	{
+		rel = dynamic_cast<Relationship *>(obj);
+
+		if(rel)
+		{
+			// Creating a filter to force the retrieval of the generated table (relationship n:n)
+			if(rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
+			{
+				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+													PgModelerNs::FilterSeparator +
+													(use_signature ?
+														 rel->getGeneratedTable()->getSignature() :
+														 rel->getGeneratedTable()->getName()) +
+													PgModelerNs::FilterSeparator +
+													PgModelerNs::FilterWildcard);
+			}
+			// Creating a filter to force the retrieval of the peer tables (inheritance and partitioning)
+			else if(rel->getRelationshipType() == Relationship::RelationshipGen ||
+							rel->getRelationshipType() == Relationship::RelationshipPart)
+			{
+				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+													PgModelerNs::FilterSeparator +
+													(use_signature ?
+														 rel->getReceiverTable()->getSignature() :
+														 rel->getReceiverTable()->getName()) +
+													PgModelerNs::FilterSeparator +
+													PgModelerNs::FilterWildcard);
+
+				filters.append(BaseObject::getSchemaName(ObjectType::Table) +
+													PgModelerNs::FilterSeparator +
+													(use_signature ?
+														 rel->getReferenceTable()->getSignature() :
+														 rel->getReferenceTable()->getName()) +
+													PgModelerNs::FilterSeparator +
+													PgModelerNs::FilterWildcard);
+			}
+		}
+	}
+
+	return filters;
+}
+
 unsigned ModelsDiffHelper::getDiffTypeCount(unsigned diff_type)
 {
 	if(diff_type >= ObjectsDiffInfo::NoDifference)
