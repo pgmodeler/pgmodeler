@@ -76,7 +76,7 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 			else if(!curr_item && k_event->key() == Qt::Key_F2 && layers_lst->currentRow() > 0)
 				startLayerRenaming(layers_lst->currentItem());
 		}
-		else if(event->type() == QEvent::FocusIn && curr_item)
+		else if(event->type() == QEvent::FocusIn && curr_item != layers_lst->currentItem())
 		{
 			finishLayerRenaming();
 		}
@@ -112,7 +112,7 @@ bool LayersWidget::eventFilter(QObject *watched, QEvent *event)
 
 void LayersWidget::updateActiveLayers()
 {
-	QStringList active_layers;
+	QList<unsigned> active_layers;
 	QListWidgetItem *item = nullptr;
 
 	for(int row = 0; row < layers_lst->count(); row++)
@@ -120,7 +120,7 @@ void LayersWidget::updateActiveLayers()
 		item = layers_lst->item(row);
 
 		if(item->checkState() == Qt::Checked)
-			active_layers.push_back(item->text());
+			active_layers.append(static_cast<unsigned>(row));
 	}
 
 	model->scene->setActiveLayers(active_layers);
