@@ -72,10 +72,11 @@ const QString PgModelerCliApp::FilterObjects("--filter-objects");
 const QString PgModelerCliApp::MatchByName("--match-by-name");
 const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
+const QString PgModelerCliApp::PartialDiff("--partial");
 const QString PgModelerCliApp::CompareTo("--compare-to");
-const QString PgModelerCliApp::SaveDiff("--save-diff");
-const QString PgModelerCliApp::ApplyDiff("--apply-diff");
-const QString PgModelerCliApp::NoDiffPreview("--no-diff-preview");
+const QString PgModelerCliApp::SaveDiff("--save");
+const QString PgModelerCliApp::ApplyDiff("--apply");
+const QString PgModelerCliApp::NoDiffPreview("--no-preview");
 const QString PgModelerCliApp::DropClusterObjs("--drop-cluster-objs");
 const QString PgModelerCliApp::RevokePermissions("--revoke-perms");
 const QString PgModelerCliApp::DropMissingObjs("--drop-missing");
@@ -321,6 +322,7 @@ void PgModelerCliApp::initializeOptions()
 	long_opts[OnlyMatching]=false;
 	long_opts[MatchByName]=false;
 	long_opts[DebugMode]=false;
+	long_opts[PartialDiff]=false;
 	long_opts[CompareTo]=true;
 	long_opts[SaveDiff]=false;
 	long_opts[ApplyDiff]=false;
@@ -382,6 +384,7 @@ void PgModelerCliApp::initializeOptions()
 	short_opts[ForceChildren]="-fc";
 	short_opts[OnlyMatching]="-om";
 	short_opts[DebugMode]="-d";
+	short_opts[PartialDiff]="-pd";
 	short_opts[CompareTo]="-ct";
 	short_opts[SaveDiff]="-sd";
 	short_opts[ApplyDiff]="-ad";
@@ -494,9 +497,10 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 	out << tr("Diff options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << QtCompat::endl;
-	out << tr("  %1, %2\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << QtCompat::endl;
 	out << tr("  %1, %2\t    Drop cluster level objects like roles and tablespaces.").arg(short_opts[DropClusterObjs]).arg(DropClusterObjs) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Revoke permissions already set on the database. New permissions configured in the input model are still applied.").arg(short_opts[RevokePermissions]).arg(RevokePermissions) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Drop missing objects. Generates DROP commands for objects that are present in the input model but not in the compared database.").arg(short_opts[DropMissingObjs]).arg(DropMissingObjs) << QtCompat::endl;
@@ -559,7 +563,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("     > `%1' causes the pattern to be used as a wildcard string while matching objects names.").arg(PgModelerNs::FilterWildcard) << QtCompat::endl;
 	out << tr("     > `%1' causes the pattern to be treated as a POSIX regular expression while matching objects names.").arg(PgModelerNs::FilterRegExp) << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("   * The option `%1' has effect only when used with `%2' and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching) << QtCompat::endl;
+	out << tr("   * The option %1 has effect only when used with %2 and will avoid discarding children of matched tables.").arg(ForceChildren).arg(OnlyMatching) << QtCompat::endl;
 	out << tr("     Other tables eventually imported which are dependencies of the matched objects will have their children discarded.") << QtCompat::endl;
 	out << tr("     The comma separated list of table children objects accepts the values:") << QtCompat::endl;
 	out << tr("     > %1").arg(child_list)  << QtCompat::endl;
@@ -568,8 +572,10 @@ void PgModelerCliApp::showMenu()
 	out << tr("   * NOTES: all comparisons during filtering process are case insensitive.") << QtCompat::endl;
 	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("** The diff process allows the usage of the following options related to import and export operations: ") << QtCompat::endl;
-	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode }).join(" ") << QtCompat::endl;
+	out << tr("** The diff process allows the usage of the following options related to export and import operations: ") << QtCompat::endl;
+	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode, FilterObjects }).join(" ") << QtCompat::endl;
+	out << QtCompat::endl;
+	out << tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << QtCompat::endl;
 	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << QtCompat::endl;
@@ -704,6 +710,16 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(opts.count(PartialDiff) && !opts[FilterObjects].count())
+				throw Exception(tr("Partial diff enabled but no object filter was provided!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			// For partial diff we force the --only-matching option and --force-children = all
+			if(opts.count(PartialDiff))
+			{
+				opts[ForceChildren] = AllChildren;
+				opts[OnlyMatching] = "";
+			}
 		}
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
@@ -1552,6 +1568,7 @@ void PgModelerCliApp::diffModelDatabase()
 {
 	DatabaseModel *model_aux = new DatabaseModel();
 	QString dbname;
+	vector<BaseObject *> filtered_objs;
 
 	printMessage(tr("Starting diff process..."));
 
@@ -1568,6 +1585,18 @@ void PgModelerCliApp::diffModelDatabase()
 		printMessage(tr("Loading input model..."));
 		model->createSystemObjects(false);
 		model->loadModel(parsed_opts[Input]);
+
+		if(parsed_opts.count(PartialDiff))
+		{
+			filtered_objs = model->findObjects(obj_filters, parsed_opts.count(MatchByName) ? Attributes::Name : Attributes::Signature);
+
+			/* Special case: when performing a partial diff between a model and a database
+			 * and in the set of filtered model objects we have one or more many-to-many, inheritance or partitioning
+			 * relationships we need to inject filters to force the retrieval of the all involved tables in those relationships
+			 * from the destination database,this way we avoid the diff try to create everytime all tables
+			 * in the those relationships. */
+			obj_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, parsed_opts.count(MatchByName) == 0));
+		}
 	}
 	else
 	{
@@ -1579,6 +1608,7 @@ void PgModelerCliApp::diffModelDatabase()
 	importDatabase(model_aux, extra_connection);
 
 	diff_hlp->setModels(model, model_aux);
+	diff_hlp->setFilteredObjects(filtered_objs);
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));

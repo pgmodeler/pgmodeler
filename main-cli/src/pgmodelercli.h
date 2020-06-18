@@ -156,6 +156,7 @@ class PgModelerCliApp: public Application {
 		ForceChildren,
 		AllChildren,
 
+		PartialDiff,
 		CompareTo,
 		SaveDiff,
 		ApplyDiff,

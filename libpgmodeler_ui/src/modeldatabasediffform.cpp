@@ -539,49 +539,7 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
 			if(src_model_rb->isChecked())
-			{
-				Relationship *rel = nullptr;
-
-				for(auto &obj : filtered_objs)
-				{
-					rel = dynamic_cast<Relationship *>(obj);
-
-					if(rel)
-					{
-						// Creating a filter to force the retrieval of the generated table (relationship n:n)
-						if(rel->getRelationshipType() == Relationship::RelationshipNn && rel->getGeneratedTable())
-						{
-							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-																PgModelerNs::FilterSeparator +
-																(pd_filter_wgt->isMatchSignature() ?
-																	 rel->getGeneratedTable()->getSignature() :
-																	 rel->getGeneratedTable()->getName()) +
-																PgModelerNs::FilterSeparator +
-																PgModelerNs::FilterWildcard);
-						}
-						// Creating a filter to force the retrieval of the peer tables (inheritance and partitioning)
-						else if(rel->getRelationshipType() == Relationship::RelationshipGen ||
-										rel->getRelationshipType() == Relationship::RelationshipPart)
-						{
-							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-																PgModelerNs::FilterSeparator +
-																(pd_filter_wgt->isMatchSignature() ?
-																	 rel->getReceiverTable()->getSignature() :
-																	 rel->getReceiverTable()->getName()) +
-																PgModelerNs::FilterSeparator +
-																PgModelerNs::FilterWildcard);
-
-							pd_filters.append(BaseObject::getSchemaName(ObjectType::Table) +
-																PgModelerNs::FilterSeparator +
-																(pd_filter_wgt->isMatchSignature() ?
-																	 rel->getReferenceTable()->getSignature() :
-																	 rel->getReferenceTable()->getName()) +
-																PgModelerNs::FilterSeparator +
-																PgModelerNs::FilterWildcard);
-						}
-					}
-				}
-			}
+				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, pd_filter_wgt->isMatchSignature()));
 
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),

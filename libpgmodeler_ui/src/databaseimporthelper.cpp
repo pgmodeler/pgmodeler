@@ -2730,11 +2730,12 @@ void DatabaseImportHelper::assignSequencesToColumns()
 				names = seq_name.split('.');
 
 				/* Checking if the sequence name contains the schema prepended.
-				 * If not, it'll be prepended by retrieving the table's schema name */
+				 * If not, it'll be prepended the default "public" */
 				if(names.size() <= 1)
-					seq_name.prepend(table->getSchema()->getName(true) + '.');
-				else
-					seq_name = BaseObject::formatName(names[0]) + '.' + BaseObject::formatName(names[1]);
+				{
+					seq_name.prepend("public.");
+					names = seq_name.split('.');
+				}
 
 				seq = dbmodel->getSequence(seq_name);
 

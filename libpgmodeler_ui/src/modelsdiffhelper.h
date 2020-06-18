@@ -160,6 +160,13 @@ class ModelsDiffHelper: public QObject {
 		 * diff process their correct creation order */
 		void setFilteredObjects(const vector<BaseObject *> &objects);
 
+		/*! \brief This utility method scans the provided list of filtered objects and produces filters
+		 * for peer tables related to inheritance/partitioning or the generated tables of many-to-many
+		 * relationships. The parameter use_signature indicates that the filter pattern should be constructed
+		 * based on the object's signatures instead their names. This is used by the diff form and cli to
+		 * perform partial diffs between a database model and a database. */
+		static QStringList getRelationshipFilters(const vector<BaseObject *> &objects, bool use_signature);
+
 		//! \brief Toggles a diff option throught the OPT_xxx constants
 		void setDiffOption(unsigned opt_id, bool value);
 
