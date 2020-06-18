@@ -248,6 +248,34 @@ void ModelsDiffHelper::cancelDiff()
 	diff_canceled=true;
 }
 
+void ModelsDiffHelper::diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab)
+{
+	Column *child_col = nullptr;
+
+	for(auto &parent_col : *parent_tab->getObjectList(ObjectType::Column))
+	{
+		child_col = dynamic_cast<Column *>(child_tab->getColumn(parent_col->getName()));
+
+		//Ignoring columns with sql disabled
+		if(parent_col->isSQLDisabled())
+			generateDiffInfo(ObjectsDiffInfo::IgnoreObject, parent_col);
+		else if(!child_col)
+		{
+			/* Creating a column that has as parent table the child_tab
+			 * This way the proper ALTER...ADD COLUM can be generated */
+			child_col = new Column;
+			*child_col = *dynamic_cast<Column *>(parent_col);
+			child_col->setParentTable(child_tab);
+			child_col->setDeclaredInTable(false);
+			tmp_objects.push_back(child_col);
+			generateDiffInfo(ObjectsDiffInfo::CreateObject, child_col);
+		}
+
+		if(diff_canceled)
+			break;
+	}
+}
+
 void ModelsDiffHelper::diffTables(PhysicalTable *src_table, PhysicalTable *imp_table, unsigned diff_type)
 {
 	ObjectType types[2]={ ObjectType::Column, ObjectType::Constraint };
@@ -415,7 +443,10 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 									otherwise, the generalization will be created automatically when the table is
 									created (see table's code defintion) */
 							if(rec_tab && !aux_rel)
+							{
+								diffColsInheritance(ref_tab, rec_tab);
 								generateDiffInfo(diff_type, rel);
+							}
 							/* Special case for partitioning: we detach (drop) and reattach (create) the partition
 							 * if the partition bound expression differs from a model to another. This is done only
 							 * if the receiver table (partition) exists in the imported model. */

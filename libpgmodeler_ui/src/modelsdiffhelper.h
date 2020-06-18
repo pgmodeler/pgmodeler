@@ -84,6 +84,12 @@ class ModelsDiffHelper: public QObject {
 		model depending on the diff_type parameter. */
 		void diffTableObject(TableObject *tab_obj, unsigned diff_type);
 
+		/*! \brief Compares the two tables' columns and if needed generates the CREATE statments for the missing ones in child_tab.
+		 * This is used when a new inheritance relationship is detected between two tables that previously were not parent and child.
+		 * In that case, PostgreSQL obligates that the child has at least the same columns as the parent so the inheritance can be
+		 * created correctly. */
+		void diffColsInheritance(PhysicalTable *parent_tab, PhysicalTable *child_tab);
+
 		//! \brief Creates a diff info instance storing in o diff_infos vector
 		void generateDiffInfo(unsigned diff_type, BaseObject *object, BaseObject *old_object=nullptr);
 
