@@ -1288,7 +1288,7 @@ void ModelDatabaseDiffForm::savePreset()
 
 void ModelDatabaseDiffForm::enablePartialDiff()
 {
-	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
+	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() >= 0) &&
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
@@ -1302,7 +1302,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
 		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
 	}
-	else if(database_cmb->currentIndex() > 0)
+	else if(src_database_cmb->currentIndex() >= 0)
 	{
 		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
 		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
