@@ -30,6 +30,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <QFile>
 #include <QObject>
 #include <QStringList>
+#include <QDateTime>
 #include "baseobject.h"
 #include "table.h"
 #include "function.h"
@@ -66,6 +67,11 @@ class ModelWidget;
 class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
+
+		/*! \brief Stores all changes performed in the database model
+		 * The only purpose of this structure is to be used by the partial diff to filter certain objects by operation/date and,
+		 * differently from OperationList class, it's data persisted in the database model file. */
+		vector<tuple<QString,ObjectType,QString,QDateTime>> changelog;
 
 		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
 		 * to return the list according to the provided type */
@@ -237,12 +243,18 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
-
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
 		QStringList getLayers();
 		QList<unsigned> getActiveLayers();
+
+		/*! \brief Register an object change in the internal changelog.
+		 * If the provided object is derived from TableObject then the parent is registered instead.
+		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified,
+		 * any other operation type is ignored.
+		 * The date_time, when provided, is always considered in local time (without timezone applied) */
+		void registerChangeLog(BaseObject *object, unsigned op_type, QDateTime date_time = QDateTime::currentDateTime());
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
@@ -737,6 +749,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Load the file containing the objects positioning to be applied to the model
 		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);		
 
+		/*! \brief Returns a search filter from the objects in the change log.
+		 * It's possible to specify a date interval to contrain the entries
+		 * retrieved from changelog */
+		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end);
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);
@@ -750,6 +767,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 	friend class DatabaseImportHelper;
 	friend class ModelWidget;
 	friend class PgModelerCliApp;
+	friend class OperationList;
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include "databasemodel.h"
 #include "pgmodelerns.h"
 #include "defaultlanguages.h"
+#include "operation.h"
 #include <QtDebug>
 #include "qtcompat/splitbehaviorcompat.h"
 #include "qtcompat/qtextstreamcompat.h"
@@ -10977,6 +10978,63 @@ void DatabaseModel::setActiveLayers(const QList<unsigned> &layers)
 QList<unsigned> DatabaseModel::getActiveLayers()
 {
 	return active_layers;
+}
+
+void DatabaseModel::registerChangeLog(BaseObject *object, unsigned op_type, QDateTime date_time)
+{
+	if(!object || op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
+		return;
+
+	QString action;
+	BaseObject *aux_obj = TableObject::isTableObject(object->getObjectType()) ?
+													dynamic_cast<TableObject *>(object)->getParentTable() : object;
+
+	if(op_type == Operation::ObjectCreated)
+		action = Attributes::CreatePriv;
+	else if(op_type == Operation::ObjectRemoved)
+		action = Attributes::DeletePriv;
+	else
+		action = Attributes::UpdatePriv;
+
+	changelog.push_back(std::make_tuple(aux_obj->getSignature(), aux_obj->getObjectType(), action, date_time));
+}
+
+QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end)
+{
+	QStringList filters;
+	QString signature, action;
+	ObjectType type;
+	QDateTime date;
+
+	// Inverting the date range if the start is greater than the end
+	if(start.isValid() && end.isValid() && end < start)
+	{
+		QDateTime aux = start;
+		start = end;
+		end = aux;
+	}
+
+	for(auto &entry : changelog)
+	{
+		signature = std::get<0>(entry);
+		type = std::get<1>(entry);
+		action = std::get<2>(entry);
+		date = std::get<3>(entry);
+
+		if((start.isValid() && end.isValid() && date >= start && date <= end) ||
+			 (start.isValid() && !end.isValid() && date >= start) ||
+			 (!start.isValid() && end.isValid() && date <= end))
+		{
+			filters.append(BaseObject::getSchemaName(type) +
+										 PgModelerNs::FilterSeparator +
+										 signature +
+										 PgModelerNs::FilterSeparator +
+										 PgModelerNs::FilterWildcard);
+		}
+	}
+
+	filters.removeDuplicates();
+	return filters;
 }
 
 template<class TableClass>

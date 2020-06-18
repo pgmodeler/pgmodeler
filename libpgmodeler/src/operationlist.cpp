@@ -361,6 +361,9 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 				 ((obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule || obj_type==ObjectType::Index) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+		//Registering a log entry for the object modification in database model's change log
+		model->registerChangeLog(object, op_type);
+
 		//If the operations list is full makes the automatic cleaning before inserting a new operation
 		if(current_index == static_cast<int>(max_size-1))
 			removeOperations();

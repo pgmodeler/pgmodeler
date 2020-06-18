@@ -91,6 +91,39 @@ void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectT
 		extra_obj_types = extra_types;
 }
 
+void ObjectsFilterWidget::addFilters(const QStringList &filters)
+{
+	QStringList values, types;
+	QComboBox *combo = nullptr;
+	int row = 0;
+
+	filters_tbw->setRowCount(0);
+	types = Catalog::getFilterableObjectNames();
+
+	for(auto &ext_type : extra_obj_types)
+		types.append(BaseObject::getSchemaName(ext_type));
+
+	for(auto &filter : filters)
+	{
+		values = filter.split(PgModelerNs::FilterSeparator);
+
+		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
+		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
+			continue;
+
+		addFilter();
+		row = filters_tbw->rowCount() - 1;
+
+		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0));
+		combo->setCurrentIndex(types.indexOf(values[0]));
+
+		filters_tbw->item(row, 1)->setText(values[1]);
+
+		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
+		combo->setCurrentText(values[2]);
+	}
+}
+
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
 {
 	QComboBox *combo = new QComboBox;
