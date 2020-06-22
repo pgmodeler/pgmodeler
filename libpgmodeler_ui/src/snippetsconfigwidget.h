@@ -49,7 +49,7 @@ class SnippetsConfigWidget: public BaseConfigWidget, public Ui::SnippetsConfigWi
 		void fillSnippetsCombo(map<QString, attribs_map> &config);
 
 		//! \brief Validates the specified snippet atributes against the current loaded ones
-		bool isSnippetValid(attribs_map &attribs, const QString &orig_id=QString());
+		bool isSnippetValid(attribs_map &attribs, const QString &orig_id="");
 
 		void hideEvent(QHideEvent *);
 

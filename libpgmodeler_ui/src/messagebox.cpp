@@ -121,7 +121,7 @@ void Messagebox::show(Exception e, const QString &msg, unsigned icon_type, unsig
 
 void Messagebox::show(const QString &msg, unsigned icon_type, unsigned buttons)
 {
-	this->show(QString(), msg,  icon_type, buttons);
+	this->show("", msg,  icon_type, buttons);
 }
 
 void Messagebox::show(const QString &title, const QString &msg, unsigned icon_type, unsigned buttons, const QString &yes_lbl, const QString &no_lbl,
@@ -186,7 +186,7 @@ void Messagebox::show(const QString &title, const QString &msg, unsigned icon_ty
 		break;
 
 		default:
-			icon_name=QString();
+			icon_name="";
 		break;
 	}
 

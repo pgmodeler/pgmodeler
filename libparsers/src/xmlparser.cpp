@@ -59,7 +59,7 @@ void XmlParser::removeDTD()
 		if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
 		{
 			len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-			xml_buffer.replace(pos1,len,QString());
+			xml_buffer.replace(pos1,len,"");
 		}
 	}
 }
@@ -114,7 +114,7 @@ void XmlParser::loadXMLBuffer(const QString &xml_buf)
 		{
 			tam=(pos2-pos1)+3;
 			xml_decl=xml_buffer.mid(pos1, tam);
-			xml_buffer.replace(pos1,tam,QString());
+			xml_buffer.replace(pos1,tam,"");
 		}
 		else
 			xml_decl=QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -262,12 +262,12 @@ void XmlParser::restartParser()
 		xmlFreeDoc(xml_doc);
 		xml_doc=nullptr;
 	}
-	dtd_decl=xml_buffer=xml_decl=QString();
+	dtd_decl=xml_buffer=xml_decl="";
 
 	while(!elems_stack.empty())
 		elems_stack.pop();
 
-	xml_doc_filename=QString();
+	xml_doc_filename="";
 	xmlResetLastError();
 }
 

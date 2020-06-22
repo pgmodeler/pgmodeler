@@ -135,12 +135,12 @@ void DatabaseWidget::applyConfiguration()
 		if(lccollate_cmb->currentText()!=tr("Default"))
 			model->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());
 		else
-			model->setLocalization(Collation::LcCollate, QString());
+			model->setLocalization(Collation::LcCollate, "");
 
 		if(lcctype_cmb->currentText()!=tr("Default"))
 			model->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
 		else
-			model->setLocalization(Collation::LcCtype, QString());
+			model->setLocalization(Collation::LcCtype, "");
 
 		model->setDefaultObject(def_schema_sel->getSelectedObject(), ObjectType::Schema);
 		model->setDefaultObject(def_owner_sel->getSelectedObject(), ObjectType::Role);

@@ -708,8 +708,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GeneralConfWgt));
 			confs=conf_wgt->getConfigurationParams();
 
-			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : QString();
-			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : QString();
+			attribs[Attributes::CompactView]=action_compact_view->isChecked() ? Attributes::True : "";
+			attribs[Attributes::ShowMainMenu]=main_menu_mb->isVisible() ? Attributes::True : "";
 
 			conf_wgt->addConfigurationParam(Attributes::Configuration, attribs);
 			attribs.clear();
@@ -1402,7 +1402,7 @@ void MainWindow::saveModel(ModelWidget *model)
 				msg_box.show(tr("Confirmation"),
 							 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! It's recommended to validate it before save in order to create a consistent model otherwise the generated file will be broken demanding manual fixes to be loadable again!").arg(db_model->getName()),
 							 Messagebox::AlertIcon, Messagebox::AllButtons,
-							 tr("Validate"), tr("Save anyway"), QString(),
+							 tr("Validate"), tr("Save anyway"), "",
 								PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("salvar"));
 
 				//If the user cancel the saving force the stopping of autosave timer to give user the chance to validate the model
@@ -1481,7 +1481,7 @@ void MainWindow::exportModel()
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the export process it's recommended to validate in order to correctly create the objects on database server!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 tr("Validate"), tr("Export anyway"), QString(),
+					 tr("Validate"), tr("Export anyway"), "",
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("exportar"));
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1541,7 +1541,7 @@ void MainWindow::diffModelDatabase()
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The model <strong>%1</strong> is invalidated! Before run the diff process it's recommended to validate in order to correctly analyze and generate the difference between the model and a database!").arg(db_model->getName()),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 tr("Validate"), tr("Diff anyway"), QString(),
+					 tr("Validate"), tr("Diff anyway"), "",
 					 PgModelerUiNs::getIconPath("validation"), PgModelerUiNs::getIconPath("diff"));
 
 		if(msg_box.result()==QDialog::Accepted)
@@ -1688,7 +1688,7 @@ void MainWindow::showFixMessage(Exception &e, const QString &filename)
 												 ErrorCode::ModelFileNotLoaded ,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e),
 							 tr("Could not load the database model file `%1'. Check the error stack to see details. You can try to fix it in order to make it loadable again.").arg(filename),
 							 Messagebox::ErrorIcon, Messagebox::YesNoButtons,
-							 tr("Fix model"), tr("Cancel"), QString(),
+							 tr("Fix model"), tr("Cancel"), "",
 							 PgModelerUiNs::getIconPath("fixobject"), PgModelerUiNs::getIconPath("msgbox_erro"));
 
 	if(msg_box.result()==QDialog::Accepted)
@@ -1866,24 +1866,24 @@ void MainWindow::storeDockWidgetsSettings()
 	attribs_map params;
 
 	params[Attributes::Validator]=Attributes::True;
-	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::SqlValidation]=(model_valid_wgt->sql_validation_chk->isChecked() ? Attributes::True : "");
+	params[Attributes::UseUniqueNames]=(model_valid_wgt->use_tmp_names_chk->isChecked() ? Attributes::True : "");
 	params[Attributes::Version]=model_valid_wgt->version_cmb->currentText();
 	conf_wgt->addConfigurationParam(Attributes::Validator, params);
 	params.clear();
 
 	params[Attributes::ObjectFinder]=Attributes::True;
-	params[Attributes::SelectObjects]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : QString());
-	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : QString());
-	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : QString());
-	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : QString());
+	params[Attributes::SelectObjects]=(obj_finder_wgt->select_btn->isChecked() ? Attributes::True : "");
+	params[Attributes::FadeInObjects]=(obj_finder_wgt->fade_btn->isChecked() ? Attributes::True : "");
+	params[Attributes::RegularExp]=(obj_finder_wgt->regexp_chk->isChecked() ? Attributes::True : "");
+	params[Attributes::CaseSensitive]=(obj_finder_wgt->case_sensitive_chk->isChecked() ? Attributes::True : "");
+	params[Attributes::ExactMatch]=(obj_finder_wgt->exact_match_chk->isChecked() ? Attributes::True : "");
 	conf_wgt->addConfigurationParam(Attributes::ObjectFinder, params);
 	params.clear();
 
 	params[Attributes::SqlTool]=Attributes::True;
-	params[Attributes::ShowAttributesGrid]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : QString());
-	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : QString());
+	params[Attributes::ShowAttributesGrid]=(sql_tool_wgt->attributes_tb->isChecked() ? Attributes::True : "");
+	params[Attributes::ShowSourcePane]=(sql_tool_wgt->source_pane_tb->isChecked() ? Attributes::True : "");
 	conf_wgt->addConfigurationParam(Attributes::SqlTool, params);
 	params.clear();
 }
@@ -1933,7 +1933,7 @@ void MainWindow::executePendingOperation(bool valid_error)
 {
 	if(!valid_error && pending_op!=NoPendingOp)
 	{
-		static const QString op_names[]={ QString(), QT_TR_NOOP("save"), QT_TR_NOOP("save"),
+		static const QString op_names[]={ "", QT_TR_NOOP("save"), QT_TR_NOOP("save"),
 																			QT_TR_NOOP("export"), QT_TR_NOOP("diff") };
 
 		PgModelerUiNs::createOutputTreeItem(model_valid_wgt->output_trw,

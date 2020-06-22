@@ -22,17 +22,17 @@ View::View() : BaseTable()
 {
 	obj_type=ObjectType::View;
 	materialized=recursive=with_no_data=false;
-	attributes[Attributes::Definition]=QString();
-	attributes[Attributes::References]=QString();
-	attributes[Attributes::SelectExp]=QString();
-	attributes[Attributes::FromExp]=QString();
-	attributes[Attributes::SimpleExp]=QString();
-	attributes[Attributes::EndExp]=QString();
-	attributes[Attributes::CteExpression]=QString();
-	attributes[Attributes::Materialized]=QString();
-	attributes[Attributes::Recursive]=QString();
-	attributes[Attributes::WithNoData]=QString();
-	attributes[Attributes::Columns]=QString();
+	attributes[Attributes::Definition]="";
+	attributes[Attributes::References]="";
+	attributes[Attributes::SelectExp]="";
+	attributes[Attributes::FromExp]="";
+	attributes[Attributes::SimpleExp]="";
+	attributes[Attributes::EndExp]="";
+	attributes[Attributes::CteExpression]="";
+	attributes[Attributes::Materialized]="";
+	attributes[Attributes::Recursive]="";
+	attributes[Attributes::WithNoData]="";
+	attributes[Attributes::Columns]="";
 }
 
 View::~View()
@@ -202,7 +202,7 @@ void View::generateColumns()
 		if(ref_cols.empty())
 			columns.push_back(SimpleColumn(QString("%1...").arg(references[0].getExpression().simplified().mid(0, 20)),
 																		 Attributes::Expression,
-																		 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : QString()));
+																		 !references[0].getReferenceAlias().isEmpty() ? references[0].getReferenceAlias() : ""));
 		else
 			columns = ref_cols;
 	}
@@ -543,7 +543,7 @@ void View::setReferencesAttribute()
 
 	for(i=0; i < 4; i++)
 	{
-		str_aux=QString();
+		str_aux="";
 		cnt=vect_exp[i]->size();
 		for(i1=0; i1 < cnt; i1++)
 		{
@@ -628,16 +628,16 @@ QString View::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::CteExpression]=cte_expression;
-	attributes[Attributes::Materialized]=(materialized ? Attributes::True : QString());
-	attributes[Attributes::Recursive]=(recursive ? Attributes::True : QString());
-	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : QString());
-	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::Tag]=QString();
+	attributes[Attributes::Materialized]=(materialized ? Attributes::True : "");
+	attributes[Attributes::Recursive]=(recursive ? Attributes::True : "");
+	attributes[Attributes::WithNoData]=(with_no_data ? Attributes::True : "");
+	attributes[Attributes::Columns]="";
+	attributes[Attributes::Tag]="";
 	attributes[Attributes::Layer]=QString::number(layer);
-	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
+	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
-	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());
-	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : QString());
+	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
+	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	setSQLObjectAttribute();
 
@@ -1118,11 +1118,11 @@ QString View::getDataDictionary(bool splitted, attribs_map extra_attribs)
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
 	attribs[Attributes::Name] = obj_name;
-	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
+	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = QString();
+	attribs[Attributes::Columns] = "";
 
 	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
 

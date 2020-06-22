@@ -22,12 +22,12 @@ BaseGraphicObject::BaseGraphicObject()
 {
 	is_modified=true;
 	is_faded_out=false;
-	attributes[Attributes::XPos]=QString();
-	attributes[Attributes::YPos]=QString();
-	attributes[Attributes::Position]=QString();
-	attributes[Attributes::FadedOut]=QString();
-	attributes[Attributes::Layer]=QString();
-	attributes[Attributes::ZValue]=QString();
+	attributes[Attributes::XPos]="";
+	attributes[Attributes::YPos]="";
+	attributes[Attributes::Position]="";
+	attributes[Attributes::FadedOut]="";
+	attributes[Attributes::Layer]="";
+	attributes[Attributes::ZValue]="";
 	receiver_object=nullptr;
 	layer = 0;	
 	z_value=0;
@@ -80,7 +80,7 @@ bool BaseGraphicObject::isFadedOut()
 
 void BaseGraphicObject::setFadedOutAttribute()
 {
-	attributes[Attributes::FadedOut]=(is_faded_out ? Attributes::True : QString());
+	attributes[Attributes::FadedOut]=(is_faded_out ? Attributes::True : "");
 }
 
 void BaseGraphicObject::setPositionAttribute()

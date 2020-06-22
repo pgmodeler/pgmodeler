@@ -5,9 +5,9 @@ Extension::Extension()
 {
 	obj_type=ObjectType::Extension;
 	handles_type=false;
-	attributes[Attributes::HandlesType]=QString();
-	attributes[Attributes::CurVersion]=QString();
-	attributes[Attributes::OldVersion]=QString();
+	attributes[Attributes::HandlesType]="";
+	attributes[Attributes::CurVersion]="";
+	attributes[Attributes::OldVersion]="";
 }
 
 void Extension::setName(const QString &name)
@@ -87,7 +87,7 @@ QString Extension::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	attributes[Attributes::Name]=this->getName(def_type==SchemaParser::SqlDefinition, false);
-	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : QString());
+	attributes[Attributes::HandlesType]=(handles_type ? Attributes::True : "");
 	attributes[Attributes::CurVersion]=versions[CurVersion];
 	attributes[Attributes::OldVersion]=versions[OldVersion];
 
@@ -104,7 +104,7 @@ QString Extension::getAlterDefinition(BaseObject *object)
 	try
 	{
 		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
-		attributes[Attributes::NewVersion]=QString();
+		attributes[Attributes::NewVersion]="";
 
 		if(!this->versions[CurVersion].isEmpty() && !ext->versions[CurVersion].isEmpty() &&
 				this->versions[CurVersion].isEmpty() < ext->versions[CurVersion].isEmpty())

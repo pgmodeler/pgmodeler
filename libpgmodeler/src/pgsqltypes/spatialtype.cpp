@@ -107,7 +107,7 @@ QString SpatialType::operator * ()
 			case VarZ: var_str+=QString("Z"); break;
 			case VarM: var_str+=QString("M"); break;
 			case VarZm: var_str+=QString("ZM"); break;
-			default: var_str=QString(); break;
+			default: var_str=""; break;
 		}
 
 		if(srid > 0)
@@ -116,5 +116,5 @@ QString SpatialType::operator * ()
 			return (QString("(%1%2)").arg(type_names[type_idx]).arg(var_str));
 	}
 	else
-		return QString();
+		return "";
 }

@@ -186,7 +186,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-		void addModel(const QString &filename=QString());
+		void addModel(const QString &filename="");
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -295,7 +295,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Configures the "More" actions in the general toolbar by usinge the current_model's popup menu
 		void configureMoreActionsMenu();
 
-		void fixModel(const QString &filename=QString());
+		void fixModel(const QString &filename="");
 		void showRightWidgetsBar();
 		void showBottomWidgetsBar();
 		void restoreLastSession();

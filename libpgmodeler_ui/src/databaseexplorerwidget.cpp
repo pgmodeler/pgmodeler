@@ -566,7 +566,7 @@ void DatabaseExplorerWidget::formatTableAttribs(attribs_map &attribs)
 																			attribs[Attributes::Name]).join(ElemSeparator));
 
 	part_keys.push_back(Catalog::parseArrayValues(attribs[Attributes::Expressions]).join(ElemSeparator));
-	part_keys.removeAll(QString());
+	part_keys.removeAll("");
 
 	attribs[Attributes::PartitionKey] = part_keys.join(ElemSeparator);
 	attribs.erase(Attributes::PartKeyColls);
@@ -990,7 +990,7 @@ void DatabaseExplorerWidget::clearObjectProperties()
 	properties_tbw->clearContents();
 	properties_tbw->setRowCount(0);
 
-	emit s_sourceCodeShowRequested(QString());
+	emit s_sourceCodeShowRequested("");
 }
 
 void DatabaseExplorerWidget::listObjects()
@@ -1189,7 +1189,7 @@ attribs_map DatabaseExplorerWidget::extractAttributesFromItem(QTreeWidgetItem *i
 	QStringList types;
 
 	attribs[Attributes::SqlObject]=BaseObject::getSQLName(obj_type);
-	attribs[Attributes::DeclInTable]=QString();
+	attribs[Attributes::DeclInTable]="";
 	attribs[BaseObject::getSchemaName(obj_type)]=Attributes::True;
 
 	//For cast, operator and function is needed to extract the name and the params types
@@ -1524,7 +1524,7 @@ void DatabaseExplorerWidget::loadObjectProperties(bool force_reload)
 						attribs_map ref_table, ref_schema;
 						QStringList tab_list;
 
-						ref_fks = catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{ Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[Attributes::Oid])}});
+						ref_fks = catalog.getObjectsAttributes(ObjectType::Constraint, "", "", {}, {{ Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(orig_attribs[Attributes::Oid])}});
 
 						for(auto &fk : ref_fks)
 						{
@@ -1968,7 +1968,7 @@ void DatabaseExplorerWidget::filterObjects()
 QString DatabaseExplorerWidget::getObjectSource(BaseObject *object, DatabaseModel *dbmodel)
 {
 	if(!object || !dbmodel)
-		return QString();
+		return "";
 
 	vector<Permission *> perms;
 	QString source;

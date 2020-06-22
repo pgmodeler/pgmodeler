@@ -47,17 +47,17 @@ DatabaseModel::DatabaseModel()
 	conn_limit=-1;
 	last_zoom=1;
 	loading_model=invalidated=append_at_eod=prepend_at_bod=false;
-	attributes[Attributes::Encoding]=QString();
-	attributes[Attributes::TemplateDb]=QString();
-	attributes[Attributes::ConnLimit]=QString();
-	attributes[Attributes::LcCollate]=QString();
-	attributes[Attributes::LcCtype]=QString();
-	attributes[Attributes::AppendAtEod]=QString();
-	attributes[Attributes::PrependAtBod]=QString();
-	attributes[Attributes::AllowConns]=QString();
-	attributes[Attributes::IsTemplate]=QString();
-	attributes[Attributes::UseChangelog]=QString();
-	attributes[Attributes::Changelog]=QString();
+	attributes[Attributes::Encoding]="";
+	attributes[Attributes::TemplateDb]="";
+	attributes[Attributes::ConnLimit]="";
+	attributes[Attributes::LcCollate]="";
+	attributes[Attributes::LcCtype]="";
+	attributes[Attributes::AppendAtEod]="";
+	attributes[Attributes::PrependAtBod]="";
+	attributes[Attributes::AllowConns]="";
+	attributes[Attributes::IsTemplate]="";
+	attributes[Attributes::UseChangelog]="";
+	attributes[Attributes::Changelog]="";
 
 	obj_lists = {
 		{ ObjectType::Textbox, &textboxes },
@@ -7205,8 +7205,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 	QString def, bkp_appended_sql, bkp_prepended_sql;
 
 	//Forcing the name/signature cleanup due to the validation temp. names feature
-	attributes[Attributes::Name]=QString();
-	attributes[Attributes::Signature]=QString();
+	attributes[Attributes::Name]="";
+	attributes[Attributes::Signature]="";
 
 	if(conn_limit >= 0)
 		attributes[Attributes::ConnLimit]=QString("%1").arg(conn_limit);
@@ -7231,8 +7231,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Encoding]=(~encoding);
 		attributes[Attributes::LcCollate]=localizations[1];
 		attributes[Attributes::LcCtype]=localizations[0];
-		attributes[Attributes::AppendAtEod]=(append_at_eod ? Attributes::True : QString());
-		attributes[Attributes::PrependAtBod]=(prepend_at_bod ? Attributes::True : QString());
+		attributes[Attributes::AppendAtEod]=(append_at_eod ? Attributes::True : "");
+		attributes[Attributes::PrependAtBod]=(prepend_at_bod ? Attributes::True : "");
 	}
 
 	attributes[Attributes::IsTemplate]=(is_template ? Attributes::True : Attributes::False);
@@ -7296,15 +7296,15 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		general_obj_cnt=objects_map.size();
 		gen_defs_count=0;
 
-		attribs_aux[Attributes::ShellTypes]=QString();
-		attribs_aux[Attributes::Permission]=QString();
-		attribs_aux[Attributes::Schema]=QString();
-		attribs_aux[Attributes::Tablespace]=QString();
-		attribs_aux[Attributes::Role]=QString();
+		attribs_aux[Attributes::ShellTypes]="";
+		attribs_aux[Attributes::Permission]="";
+		attribs_aux[Attributes::Schema]="";
+		attribs_aux[Attributes::Tablespace]="";
+		attribs_aux[Attributes::Role]="";
 
 		if(def_type==SchemaParser::SqlDefinition)
 		{
-			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : QString());
+			attribs_aux[Attributes::Function]=(!functions.empty() ? Attributes::True : "");
 
 			for(auto &type : types)
 			{
@@ -7400,7 +7400,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			else
 			{
 				if(object->isSystemObject())
-					attribs_aux[attrib]+=QString();
+					attribs_aux[attrib]+="";
 				else
 					attribs_aux[attrib]+=object->getCodeDefinition(def_type);
 			}
@@ -7432,13 +7432,13 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			attribs_aux[Attributes::Layers]=layers.join(';');
 			attribs_aux[Attributes::ActiveLayers]=act_layers.join(';');
 			attribs_aux[Attributes::MaxObjCount]=QString::number(static_cast<unsigned>(getMaxObjectCount() * 1.20));
-			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : QString());
+			attribs_aux[Attributes::Protected]=(this->is_protected ? Attributes::True : "");
 			attribs_aux[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 			attribs_aux[Attributes::LastZoom]=QString::number(last_zoom);
-			attribs_aux[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : QString());
-			attribs_aux[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : QString());
-			attribs_aux[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : QString());
-			attribs_aux[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : QString());
+			attribs_aux[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getName(true) : "");
+			attribs_aux[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getName(true) : "");
+			attribs_aux[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getName(true) : "");
+			attribs_aux[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getName(true) : "");
 		}
 		else
 		{
@@ -7470,7 +7470,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 
-	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : QString());
+	attribs_aux[Attributes::ExportToFile]=(export_file ? Attributes::True : "");
 	def=schparser.getCodeDefinition(Attributes::DbModel, attribs_aux, def_type);
 
 	if(prepend_at_bod && def_type==SchemaParser::SqlDefinition)
@@ -10464,17 +10464,17 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 			base_tab=dynamic_cast<BaseTable *>(object);
 
-			attribs[Attributes::Table]=QString();
+			attribs[Attributes::Table]="";
 			attribs[Attributes::Name]=(TableObject::isTableObject(obj_type) ? object->getName() : object->getSignature());
-			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : QString());
+			attribs[Attributes::Alias]=(save_objs_aliases ? object->getAlias() : "");
 			attribs[Attributes::Type]=object->getSchemaName();
-			attribs[Attributes::Protected]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : QString());
-			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : QString());
-			attribs[Attributes::Tag]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : QString());
+			attribs[Attributes::Protected]=(save_objs_prot && object->isProtected() && !object->isSystemObject() ? Attributes::True : "");
+			attribs[Attributes::SqlDisabled]=(save_objs_sqldis && object->isSQLDisabled() && !object->isSystemObject()  ? Attributes::True : "");
+			attribs[Attributes::Tag]=(save_tags && base_tab && base_tab->getTag() ? base_tab->getTag()->getName() : "");
 			attribs[Attributes::AppendedSql]=object->getAppendedSQL();
 			attribs[Attributes::PrependedSql]=object->getPrependedSQL();			
-			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : QString());
-			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : QString());
+			attribs[Attributes::FadedOut]=(save_fadeout && graph_obj && graph_obj->isFadedOut() ? Attributes::True : "");
+			attribs[Attributes::CollapseMode]=(save_collapsemode && base_tab ? QString::number(enum_cast(base_tab->getCollapseMode())) : "");
 
 			if(TableObject::isTableObject(obj_type))
 			{
@@ -10494,10 +10494,10 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 				attribs[Attributes::ModelAuthor]=this->getAuthor();
 				attribs[Attributes::LastPosition]=QString("%1,%2").arg(last_pos.x()).arg(last_pos.y());
 				attribs[Attributes::LastZoom]=QString::number(last_zoom);
-				attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getSignature() : QString());
-				attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : QString());
-				attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : QString());
-				attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : QString());
+				attribs[Attributes::DefaultCollation]=(default_objs[ObjectType::Collation] ? default_objs[ObjectType::Collation]->getSignature() : "");
+				attribs[Attributes::DefaultSchema]=(default_objs[ObjectType::Schema] ? default_objs[ObjectType::Schema]->getSignature() : "");
+				attribs[Attributes::DefaultTablespace]=(default_objs[ObjectType::Tablespace] ? default_objs[ObjectType::Tablespace]->getSignature() : "");
+				attribs[Attributes::DefaultOwner]=(default_objs[ObjectType::Role] ? default_objs[ObjectType::Role]->getSignature() : "");
 			}
 
 			/* If the object is a graphic one and has Z stack value (currently only for tables/view/foreign tables,
@@ -10518,7 +10518,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 					{
 						schema=dynamic_cast<Schema *>(object);
 
-						attribs[Attributes::CustomColor]=(save_custom_colors ? schema->getFillColor().name() : QString());
+						attribs[Attributes::CustomColor]=(save_custom_colors ? schema->getFillColor().name() : "");
 						attribs[Attributes::RectVisible]=(schema->isRectVisible() ? Attributes::True : Attributes::False);
 
 						if(schema->isRectVisible())
@@ -11243,9 +11243,9 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 
 	// Generates the the stylesheet
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
-	attribs[Attributes::Styles] = QString();
-	attribs[Attributes::Index] = QString();
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+	attribs[Attributes::Styles] = "";
+	attribs[Attributes::Index] = "";
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!splitted)
@@ -11260,9 +11260,9 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		object = itr.second;
 
 		// Generate the individual data dictionaries
-		aux_attribs[Attributes::Index] = browsable ? Attributes::True : QString();
-		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : QString();
-		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : QString();
+		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
+		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
+		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
 		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
@@ -11280,9 +11280,9 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	{
 		attribs_map idx_attribs;
 
-		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = QString();
-		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = QString();
-		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = QString();
+		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
+		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
+		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
 
 		// Generating the index items
 		for(auto &item : index_list)

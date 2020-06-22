@@ -64,7 +64,7 @@ class UserTypeConfig {
 
 		UserTypeConfig(void)
 		{
-			name=QString();
+			name="";
 			ptype=nullptr;
 			pmodel=nullptr;
 			invalidated=false;

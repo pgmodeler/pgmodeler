@@ -138,7 +138,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		The sort_by param indicates the column index in which the tree should be sorted by. When the sort_by is negative not sorting will be performed.*/
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
-																											 const QString &schema=QString(), const QString &table=QString());
+																											 const QString &schema="", const QString &table="");
 
 	private slots:
 		void importDatabase();

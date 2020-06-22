@@ -1321,7 +1321,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Table))) ||
 		 obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::View))))
 	{
-		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), QString());
+		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), "");
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
@@ -1908,7 +1908,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			{
 				//Remove any reference to application/dbm mime from file
 				str_aux=ts.readLine();
-				str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
+				str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),"");
 
 				if(!str_aux.isEmpty())
 				{
@@ -1963,7 +1963,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 			//Write the default value for .dbm registry key
 			dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
 		else
-			dbm_ext.remove(QString());
+			dbm_ext.remove("");
 
 		dbm_ext.sync();
 	}
@@ -1985,7 +1985,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 		QSettings s(itr->first, QSettings::NativeFormat);
 
 		if(uninstall)
-			s.remove(QString());
+			s.remove("");
 		else
 		{
 			for(int i=0; i < itr->second.size(); i+=2)

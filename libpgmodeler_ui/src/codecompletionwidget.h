@@ -99,7 +99,7 @@ class CodeCompletionWidget: public QWidget
 		
 		/*! \brief Insert the objects of the vector into the name listing. The filter parameter is used to
 		insert only the object which names matches the filter */
-		void populateNameList(vector<BaseObject *> &objects, QString filter=QString());
+		void populateNameList(vector<BaseObject *> &objects, QString filter="");
 		
 		//! \brief Configures the current qualifying level according to the passed object
 		void setQualifyingLevel(BaseObject *obj);

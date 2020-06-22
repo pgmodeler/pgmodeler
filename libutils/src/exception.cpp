@@ -276,7 +276,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 
 Exception::Exception()
 {
-	configureException(QString(),ErrorCode::Custom,QString(),QString(),-1,QString());
+	configureException("",ErrorCode::Custom,"","",-1,"");
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -372,7 +372,7 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		 context (Exception) in the ts file and the text to be translated */
 		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 	else
-		return QString();
+		return "";
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
@@ -380,7 +380,7 @@ QString Exception::getErrorCode(ErrorCode error_code)
 	if(enum_cast(error_code) < ErrorCount)
 		return messages[enum_cast(error_code)][ErrorCodeId];
 	else
-		return QString();
+		return "";
 }
 
 QString Exception::getMethod()

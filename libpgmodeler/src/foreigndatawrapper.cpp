@@ -22,9 +22,9 @@ ForeignDataWrapper::ForeignDataWrapper() : BaseObject()
 {
 	obj_type=ObjectType::ForeignDataWrapper;
 	validator_func = handler_func = nullptr;
-	attributes[Attributes::HandlerFunc] = QString();
-	attributes[Attributes::ValidatorFunc] = QString();
-	attributes[Attributes::Options] = QString();
+	attributes[Attributes::HandlerFunc] = "";
+	attributes[Attributes::ValidatorFunc] = "";
+	attributes[Attributes::Options] = "";
 }
 
 void ForeignDataWrapper::setHandlerFunction(Function *func)

@@ -70,7 +70,7 @@ namespace PgModelerNs {
 	 * parameter is true the comparison is not made. */
 	template <class Class>
 	QString generateUniqueName(BaseObject *obj, vector<Class *> &obj_vector,
-														 bool fmt_name = false, const QString &suffix = QString(),
+														 bool fmt_name = false, const QString &suffix = "",
 														 bool use_suf_on_conflict = false, bool discard_input_obj = false)
 	{
 		unsigned counter=0;
@@ -133,8 +133,8 @@ namespace PgModelerNs {
 				{
 					aux_name=QString("%1%2%3")
 									 .arg(obj_name)
-									 .arg(use_suf_on_conflict ? suffix : QString())
-									 .arg(use_suf_on_conflict && counter == 0 ? QString() : QString::number(counter));
+									 .arg(use_suf_on_conflict ? suffix : "")
+									 .arg(use_suf_on_conflict && counter == 0 ? "" : QString::number(counter));
 					counter++;
 				}
 

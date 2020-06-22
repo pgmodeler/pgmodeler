@@ -1898,7 +1898,7 @@ int ModelWidget::openEditingForm(QWidget *widget, unsigned button_conf)
 		editing_form.setMainWidget(base_obj_wgt);
 
 		if(rel)
-			class_name.prepend(rel->getRelationshipTypeName().replace(QRegExp("( )+|(\\-)+"), QString()));
+			class_name.prepend(rel->getRelationshipTypeName().replace(QRegExp("( )+|(\\-)+"), ""));
 	}
 	else
 		editing_form.setMainWidget(widget);
@@ -2945,7 +2945,7 @@ void ModelWidget::pasteObjects(bool duplicate_mode)
 	{
 		Messagebox msg_box;
 		msg_box.show(Exception(tr("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
-								 ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors), QString(),
+								 ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__, errors), "",
 								 Messagebox::AlertIcon);
 	}
 
@@ -3161,7 +3161,7 @@ void ModelWidget::removeObjects(bool cascade)
 									(!tab_obj || (tab_obj && !tab_obj->isAddedByRelationship())))
 							{
 								parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : ObjectType::Database);
-								parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : QString());
+								parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : "");
 								obj_name=(tab_obj ? tab_obj->getName() : ref_obj->getSignature());
 
 								objs_map[ref_obj->getObjectId()]=std::make_tuple(ref_obj,
@@ -3207,7 +3207,7 @@ void ModelWidget::removeObjects(bool cascade)
 						tab_obj=dynamic_cast<TableObject *>(object);
 						obj_name=(tab_obj ? object->getName(true) : object->getSignature());
 
-						parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : QString());
+						parent_name=(tab_obj ? tab_obj->getParentTable()->getName(true) : "");
 						parent_type=(tab_obj ? tab_obj->getParentTable()->getObjectType() : ObjectType::Database);
 
 						objs_map[object->getObjectId()]=std::make_tuple(object,
@@ -4670,7 +4670,7 @@ void ModelWidget::convertIntegerToSerial()
 			serial_tp=QString("bigserial");
 
 		col->setType(PgSqlType(serial_tp));
-		col->setDefaultValue(QString());
+		col->setDefaultValue("");
 
 		//Revalidate the relationships since the modified column can be a primary key
 		if(tab->getPrimaryKey()->isColumnReferenced(col))

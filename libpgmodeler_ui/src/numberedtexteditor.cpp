@@ -32,8 +32,8 @@ bool NumberedTextEditor::highlight_lines=true;
 QColor NumberedTextEditor::line_hl_color=Qt::yellow;
 QFont NumberedTextEditor::default_font=QFont(QString("Source Code Pro"), 10);
 double NumberedTextEditor::tab_width=0;
-QString NumberedTextEditor::src_editor_app=QString();
-QString NumberedTextEditor::src_editor_app_args=QString();
+QString NumberedTextEditor::src_editor_app="";
+QString NumberedTextEditor::src_editor_app_args="";
 
 NumberedTextEditor::NumberedTextEditor(QWidget * parent, bool handle_ext_files) : QPlainTextEdit(parent)
 {

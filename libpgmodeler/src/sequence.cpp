@@ -32,16 +32,16 @@ Sequence::Sequence()
 	setDefaultValues(PgSqlType(QString("serial")));
 	owner_col=nullptr;
 
-	attributes[Attributes::Increment]=QString();
-	attributes[Attributes::MinValue]=QString();
-	attributes[Attributes::MaxValue]=QString();
-	attributes[Attributes::Start]=QString();
-	attributes[Attributes::Cache]=QString();
-	attributes[Attributes::Cycle]=QString();
-	attributes[Attributes::OwnerColumn]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::Column]=QString();
-	attributes[Attributes::ColIsIdentity]=QString();
+	attributes[Attributes::Increment]="";
+	attributes[Attributes::MinValue]="";
+	attributes[Attributes::MaxValue]="";
+	attributes[Attributes::Start]="";
+	attributes[Attributes::Cache]="";
+	attributes[Attributes::Cycle]="";
+	attributes[Attributes::OwnerColumn]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::Column]="";
+	attributes[Attributes::ColIsIdentity]="";
 }
 
 bool Sequence::isZeroValue(const QString &value)
@@ -164,7 +164,7 @@ int Sequence::compareValues(QString value1, QString value2)
 				idx++;
 			}
 			(*vet_values[i])=aux_value;
-			aux_value=QString();
+			aux_value="";
 		}
 
 		if(ops[0]==ops[1] && value1==value2)
@@ -396,18 +396,18 @@ QString Sequence::getCodeDefinition(unsigned def_type)
 		table=dynamic_cast<PhysicalTable *>(owner_col->getParentTable());
 	}
 
-	attributes[Attributes::Table]=(table ? table->getName(true) : QString());
-	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : QString());
+	attributes[Attributes::Table]=(table ? table->getName(true) : "");
+	attributes[Attributes::Column]=(owner_col ? owner_col->getName(true) : "");
 
 	attributes[Attributes::ColIsIdentity]=
-			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : QString());
+			(owner_col && owner_col->getIdentityType() != BaseType::Null ? Attributes::True : "");
 
 	attributes[Attributes::Increment]=increment;
 	attributes[Attributes::MinValue]=min_value;
 	attributes[Attributes::MaxValue]=max_value;
 	attributes[Attributes::Start]=start;
 	attributes[Attributes::Cache]=cache;
-	attributes[Attributes::Cycle]=(cycle ? Attributes::True : QString());
+	attributes[Attributes::Cycle]=(cycle ? Attributes::True : "");
 
 	return BaseObject::__getCodeDefinition(def_type);
 }

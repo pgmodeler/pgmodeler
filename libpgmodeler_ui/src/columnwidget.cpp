@@ -100,7 +100,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, OperationList *op_list, B
 	BaseObjectWidget::setAttributes(model, op_list, column, parent_obj);
 	sequence_sel->setModel(model);
 
-	ident_col_seq.setValues(QString(), QString(), QString(), QString(), QString());
+	ident_col_seq.setValues("", "", "", "", "");
 	ident_col_seq.setCycle(false);
 
 	if(column)
@@ -144,7 +144,7 @@ void ColumnWidget::editSequenceAttributes()
 	else
 		schema = this->model->getSchema("public");
 
-	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : QString()).arg(col ? col->getName() : QString("new_column")));
+	ident_col_seq.setName(QString("%1_%2_seq").arg(table ? table->getName() : "").arg(col ? col->getName() : QString("new_column")));
 	ident_col_seq.setName(PgModelerNs::generateUniqueName(&ident_col_seq, *model->getObjectList(ObjectType::Sequence), false));
 	ident_col_seq.setSchema(schema);
 

@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=ObjectType::Permission;
 	revoke=cascade=false;
 
-	attributes[Attributes::Object]=QString();
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::Parent]=QString();
-	attributes[Attributes::GrantOp]=QString();
-	attributes[Attributes::Roles]=QString();
-	attributes[Attributes::Privileges]=QString();
-	attributes[Attributes::Cascade]=QString();
-	attributes[Attributes::PrivilegesGop]=QString();
+	attributes[Attributes::Object]="";
+	attributes[Attributes::Type]="";
+	attributes[Attributes::Parent]="";
+	attributes[Attributes::GrantOp]="";
+	attributes[Attributes::Roles]="";
+	attributes[Attributes::Privileges]="";
+	attributes[Attributes::Cascade]="";
+	attributes[Attributes::PrivilegesGop]="";
 }
 
 bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
@@ -424,8 +424,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[Attributes::Revoke]=(revoke ? Attributes::True : QString());
-	attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+	attributes[Attributes::Revoke]=(revoke ? Attributes::True : "");
+	attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -457,7 +457,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			else if(privileges[i])
 				attributes[priv_vect[i]]=Attributes::True;
 			else
-				attributes[priv_vect[i]]=QString();
+				attributes[priv_vect[i]]="";
 		}
 	}
 	else

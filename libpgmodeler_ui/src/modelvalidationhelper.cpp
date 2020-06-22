@@ -464,7 +464,7 @@ void ModelValidationHelper::validateModel()
 
 			//Emit a signal containing the validation progress
 			progress=((i+1)/static_cast<double>(count))*20;
-			emit s_progressUpdated(progress, QString());
+			emit s_progressUpdated(progress, "");
 		}
 
 
@@ -540,7 +540,7 @@ void ModelValidationHelper::validateModel()
 
 			//Emit a signal containing the validation progress
 			progress=20 + ((i/static_cast<double>(dup_objects.size()))*20);
-			emit s_progressUpdated(progress, QString());
+			emit s_progressUpdated(progress, "");
 
 			i++; mitr++;
 		}
@@ -716,5 +716,5 @@ void ModelValidationHelper::emitValidationFinished()
 	emit s_validationFinished();
 
 	progress=100;
-	emit s_progressUpdated(progress,QString());
+	emit s_progressUpdated(progress,"");
 }

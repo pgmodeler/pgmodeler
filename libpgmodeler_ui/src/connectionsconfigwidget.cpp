@@ -349,7 +349,7 @@ void ConnectionsConfigWidget::configureConnection(Connection *conn)
 	{
 		conn->setAutoBrowseDB(auto_browse_chk->isChecked());
 		conn->setConnectionParam(Connection::ParamAlias, alias_edt->text());
-		conn->setConnectionParam(Connection::ParamServerIp, QString());
+		conn->setConnectionParam(Connection::ParamServerIp, "");
 		conn->setConnectionParam(Connection::ParamServerFqdn, host_edt->text());
 		conn->setConnectionParam(Connection::ParamPort, QString("%1").arg(port_sbp->value()));
 		conn->setConnectionParam(Connection::ParamUser, user_edt->text());
@@ -483,13 +483,13 @@ void ConnectionsConfigWidget::saveConfiguration()
 					attribs[Connection::ParamServerFqdn]=attribs[Connection::ParamServerIp];
 
 				attribs[Attributes::Alias]=attribs[Connection::ParamAlias];
-				attribs[Attributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? Attributes::True : QString());
+				attribs[Attributes::AutoBrowseDb]=(conn->isAutoBrowseDB() ? Attributes::True : "");
 				attribs[Attributes::ConnectionTimeout]=attribs[Connection::ParamConnTimeout];
 
-				attribs[DefaultFor.arg(Attributes::Export)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : QString());
-				attribs[DefaultFor.arg(Attributes::Import)]=(conn->isDefaultForOperation(Connection::OpImport) ? Attributes::True : QString());
-				attribs[DefaultFor.arg(Attributes::Diff)]=(conn->isDefaultForOperation(Connection::OpDiff) ? Attributes::True : QString());
-				attribs[DefaultFor.arg(Attributes::Validation)]=(conn->isDefaultForOperation(Connection::OpValidation) ? Attributes::True : QString());
+				attribs[DefaultFor.arg(Attributes::Export)]=(conn->isDefaultForOperation(Connection::OpExport) ? Attributes::True : "");
+				attribs[DefaultFor.arg(Attributes::Import)]=(conn->isDefaultForOperation(Connection::OpImport) ? Attributes::True : "");
+				attribs[DefaultFor.arg(Attributes::Diff)]=(conn->isDefaultForOperation(Connection::OpDiff) ? Attributes::True : "");
+				attribs[DefaultFor.arg(Attributes::Validation)]=(conn->isDefaultForOperation(Connection::OpValidation) ? Attributes::True : "");
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[GlobalAttributes::ConnectionsConf][Attributes::Connections]+=

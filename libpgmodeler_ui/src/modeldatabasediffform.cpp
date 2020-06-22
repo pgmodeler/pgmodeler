@@ -645,7 +645,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 tr("Apply diff"), tr("Preview diff"), QString(),
+					 tr("Apply diff"), tr("Preview diff"), "",
 					 PgModelerUiNs::getIconPath("diff"), PgModelerUiNs::getIconPath("codigosql"));
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
@@ -1038,7 +1038,7 @@ void ModelDatabaseDiffForm::loadConfiguration()
 	{
 		Messagebox msg_box;
 		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", PgModelerUiNs::getIconPath("atualizar"));
 
 		if(msg_box.result() == QDialog::Accepted)
 			restoreDefaults();
@@ -1242,7 +1242,7 @@ void ModelDatabaseDiffForm::savePreset()
 		fmt_name = name + QString::number(++idx);
 
 	conf[Attributes::Name] = fmt_name;
-	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
 
 	if(src_database_rb->isChecked())
 	{
@@ -1251,14 +1251,14 @@ void ModelDatabaseDiffForm::savePreset()
 																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : QString("-"));
 	}
 	else
-		conf[Attributes::InputDatabase] = QString();
+		conf[Attributes::InputDatabase] = "";
 
 	conf[Attributes::CompareToDatabase] = QString("%1@%2")
 																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : QString("-"))
 																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : QString("-"));
-	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : QString();
-	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : QString();
-	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
+	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
+	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
 	conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;

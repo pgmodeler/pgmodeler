@@ -233,7 +233,7 @@ QString Relationship::generateObjectName(unsigned pat_id, Column *id_col, bool u
 	QString name, aux_name;
 
 	name=name_patterns[pat_id];
-	name.replace(GenTabToken, (rel_type==RelationshipNn ? tab_name_relnn : QString()));
+	name.replace(GenTabToken, (rel_type==RelationshipNn ? tab_name_relnn : ""));
 
 	if(rel_type==RelationshipNn)
 	{
@@ -396,7 +396,7 @@ QString Relationship::getTableNameRelNN()
 
 void Relationship::setPartitionBoundingExpr(const QString &part_bound_expr)
 {
-	part_bounding_expr = (part_bound_expr.toLower() == Attributes::Default.toLower() ? QString() : part_bound_expr);
+	part_bounding_expr = (part_bound_expr.toLower() == Attributes::Default.toLower() ? "" : part_bound_expr);
 	this->invalidated = true;
 }
 
@@ -2640,17 +2640,17 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		bool reduced_form;
 
 		setRelationshipAttributes();
-		attributes[Attributes::Identifier]=(identifier ? Attributes::True : QString());
-		attributes[Attributes::SinglePkColumn]=(single_pk_column ? Attributes::True : QString());
-		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
+		attributes[Attributes::Identifier]=(identifier ? Attributes::True : "");
+		attributes[Attributes::SinglePkColumn]=(single_pk_column ? Attributes::True : "");
+		attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : "");
 		attributes[Attributes::DeferType]=~deferral_type;
 		attributes[Attributes::UpdAction]=~upd_action;
 		attributes[Attributes::DelAction]=~del_action;
 
 		attributes[Attributes::TableName]=tab_name_relnn;
-		attributes[Attributes::RelationshipGen]=(rel_type==RelationshipGen ? Attributes::True : QString());
-		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : QString());
-		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : QString());
+		attributes[Attributes::RelationshipGen]=(rel_type==RelationshipGen ? Attributes::True : "");
+		attributes[Attributes::RelationshipDep]=(rel_type==RelationshipDep ? Attributes::True : "");
+		attributes[Attributes::RelationshipPart]=(rel_type==RelationshipPart ? Attributes::True : "");
 
 		attributes[Attributes::SrcColPattern]=name_patterns[SrcColPattern];
 		attributes[Attributes::DstColPattern]=name_patterns[DstColPattern];
@@ -2662,7 +2662,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 
 		attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 
-		attributes[Attributes::Columns]=QString();
+		attributes[Attributes::Columns]="";
 		count=rel_attributes.size();
 		for(i=0; i < count; i++)
 		{
@@ -2670,7 +2670,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 													getCodeDefinition(SchemaParser::XmlDefinition);
 		}
 
-		attributes[Attributes::Constraints]=QString();
+		attributes[Attributes::Constraints]="";
 		count=rel_constraints.size();
 		for(i=0; i < count; i++)
 		{
@@ -2743,13 +2743,13 @@ void Relationship::operator = (Relationship &rel)
 QString Relationship::getAlterRelationshipDefinition(bool undo_inh_part)
 {
 	if(rel_type != RelationshipGen && rel_type != RelationshipPart)
-		return QString();
+		return "";
 
-	attributes[Attributes::Inherit]=QString();
-	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::PartitionedTable]=QString();
-	attributes[Attributes::PartitionBoundExpr]=QString();
-	attributes[Attributes::Partitioning]=QString();
+	attributes[Attributes::Inherit]="";
+	attributes[Attributes::AncestorTable]="";
+	attributes[Attributes::PartitionedTable]="";
+	attributes[Attributes::PartitionBoundExpr]="";
+	attributes[Attributes::Partitioning]="";
 	attributes[Attributes::SqlObject]=getReferenceTable()->getSQLName();
 
 	if(rel_type == RelationshipGen)

@@ -110,48 +110,48 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 	connect(save_restore_geometry_chk, SIGNAL(toggled(bool)), reset_sizes_tb, SLOT(setEnabled(bool)));
 	connect(reset_sizes_tb, SIGNAL(clicked(bool)), this, SLOT(resetDialogsSizes()));
 
-	config_params[Attributes::Configuration][Attributes::GridSize]=QString();
-	config_params[Attributes::Configuration][Attributes::OpListSize]=QString();
-	config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString();
-	config_params[Attributes::Configuration][Attributes::PaperType]=QString();
-	config_params[Attributes::Configuration][Attributes::PaperOrientation]=QString();
-	config_params[Attributes::Configuration][Attributes::PaperMargin]=QString();
-	config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString();
-	config_params[Attributes::Configuration][Attributes::File]=QString();
-	config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
-	config_params[Attributes::Configuration][Attributes::PrintPgNum]=QString();
-	config_params[Attributes::Configuration][Attributes::PrintGrid]=QString();
-	config_params[Attributes::Configuration][Attributes::HideRelName]=QString();
-	config_params[Attributes::Configuration][Attributes::HideExtAttribs]=QString();
-	config_params[Attributes::Configuration][Attributes::HideTableTags]=QString();
-	config_params[Attributes::Configuration][Attributes::FileAssociated]=QString();
-	config_params[Attributes::Configuration][Attributes::CodeFont]=QString();
-	config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString();
-	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=QString();
-	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=QString();
-	config_params[Attributes::Configuration][Attributes::CheckUpdate]=QString();
-	config_params[Attributes::Configuration][Attributes::SaveLastPosition]=QString();
-	config_params[Attributes::Configuration][Attributes::ShowMainMenu]=QString();
-	config_params[Attributes::Configuration][Attributes::DisableSmoothness]=QString();
-	config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=QString();
-	config_params[Attributes::Configuration][Attributes::ConfirmValidation]=QString();
-	config_params[Attributes::Configuration][Attributes::ShowMainMenu]=QString();
-	config_params[Attributes::Configuration][Attributes::CodeCompletion]=QString();
-	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=QString();
-	config_params[Attributes::Configuration][Attributes::LineNumbersColor]=QString();
-	config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=QString();
-	config_params[Attributes::Configuration][Attributes::LineHighlightColor]=QString();
-	config_params[Attributes::Configuration][Attributes::HighlightLines]=QString();
-	config_params[Attributes::Configuration][Attributes::UsePlaceholders]=QString();
-	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString();
-	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString();
-	config_params[Attributes::Configuration][Attributes::SourceEditorApp]=QString();
-	config_params[Attributes::Configuration][Attributes::UiLanguage]=QString();
-	config_params[Attributes::Configuration][Attributes::UseCurvedLines]=QString();
-	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=QString();
-	config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString();
-	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString();
-	config_params[Attributes::Configuration][Attributes::LowVerbosity]=QString();
+	config_params[Attributes::Configuration][Attributes::GridSize]="";
+	config_params[Attributes::Configuration][Attributes::OpListSize]="";
+	config_params[Attributes::Configuration][Attributes::AutoSaveInterval]="";
+	config_params[Attributes::Configuration][Attributes::PaperType]="";
+	config_params[Attributes::Configuration][Attributes::PaperOrientation]="";
+	config_params[Attributes::Configuration][Attributes::PaperMargin]="";
+	config_params[Attributes::Configuration][Attributes::PaperCustomSize]="";
+	config_params[Attributes::Configuration][Attributes::File]="";
+	config_params[Attributes::Configuration][Attributes::RecentModels]="";
+	config_params[Attributes::Configuration][Attributes::PrintPgNum]="";
+	config_params[Attributes::Configuration][Attributes::PrintGrid]="";
+	config_params[Attributes::Configuration][Attributes::HideRelName]="";
+	config_params[Attributes::Configuration][Attributes::HideExtAttribs]="";
+	config_params[Attributes::Configuration][Attributes::HideTableTags]="";
+	config_params[Attributes::Configuration][Attributes::FileAssociated]="";
+	config_params[Attributes::Configuration][Attributes::CodeFont]="";
+	config_params[Attributes::Configuration][Attributes::CodeFontSize]="";
+	config_params[Attributes::Configuration][Attributes::CanvasCornerMove]="";
+	config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]="";
+	config_params[Attributes::Configuration][Attributes::CheckUpdate]="";
+	config_params[Attributes::Configuration][Attributes::SaveLastPosition]="";
+	config_params[Attributes::Configuration][Attributes::ShowMainMenu]="";
+	config_params[Attributes::Configuration][Attributes::DisableSmoothness]="";
+	config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]="";
+	config_params[Attributes::Configuration][Attributes::ConfirmValidation]="";
+	config_params[Attributes::Configuration][Attributes::ShowMainMenu]="";
+	config_params[Attributes::Configuration][Attributes::CodeCompletion]="";
+	config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]="";
+	config_params[Attributes::Configuration][Attributes::LineNumbersColor]="";
+	config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]="";
+	config_params[Attributes::Configuration][Attributes::LineHighlightColor]="";
+	config_params[Attributes::Configuration][Attributes::HighlightLines]="";
+	config_params[Attributes::Configuration][Attributes::UsePlaceholders]="";
+	config_params[Attributes::Configuration][Attributes::MinObjectOpacity]="";
+	config_params[Attributes::Configuration][Attributes::HistoryMaxLength]="";
+	config_params[Attributes::Configuration][Attributes::SourceEditorApp]="";
+	config_params[Attributes::Configuration][Attributes::UiLanguage]="";
+	config_params[Attributes::Configuration][Attributes::UseCurvedLines]="";
+	config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]="";
+	config_params[Attributes::Configuration][Attributes::AttribsPerPage]="";
+	config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]="";
+	config_params[Attributes::Configuration][Attributes::LowVerbosity]="";
 
 	selectPaperSize();
 
@@ -205,7 +205,7 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget * parent) : BaseConfigWidget(pa
 													 GlobalAttributes::DirSeparator,
 													 QString("*.qm"), QDir::Name, QDir::AllEntries | QDir::NoDotAndDotDot).entryList();
 
-	langs.replaceInStrings(QString(".qm"), QString());
+	langs.replaceInStrings(QString(".qm"), "");
 	ui_language_cmb->addItem(tr("System default"));
 	QString native_lang;
 
@@ -368,7 +368,7 @@ QString GeneralConfigWidget::getConfigurationParam(const QString &section_id, co
 	 config_params[section_id].count(param_name))
 	return config_params[section_id][param_name];
   else
-	return QString();
+	return "";
 }
 
 void GeneralConfigWidget::saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name)
@@ -451,25 +451,25 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::AutoSaveInterval]=QString::number(autosave_interv_chk->isChecked() ? autosave_interv_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::PaperType]=QString::number(paper_cmb->currentIndex());
 		config_params[Attributes::Configuration][Attributes::PaperOrientation]=(portrait_rb->isChecked() ? Attributes::Portrait : Attributes::Landscape);
-		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SaveLastPosition]=(save_last_pos_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=(simple_obj_creation_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::CanvasCornerMove]=(corner_move_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::InvertRangeSelTrigger]=(invert_rangesel_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::CheckUpdate]=(check_upd_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::SaveLastPosition]=(save_last_pos_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::DisableSmoothness]=(disable_smooth_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::SimplifiedObjCreation]=(simple_obj_creation_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::ConfirmValidation]=(confirm_validation_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::CodeCompletion]=(code_completion_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::CodeTabWidth]=QString::number(tab_width_chk->isChecked() ? tab_width_spb->value() : 0);
 		config_params[Attributes::Configuration][Attributes::MinObjectOpacity]=QString::number(min_obj_opacity_spb->value());
-		config_params[Attributes::Configuration][Attributes::UsePlaceholders]=(use_placeholders_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::UsePlaceholders]=(use_placeholders_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::HistoryMaxLength]=QString::number(history_max_length_spb->value());
-		config_params[Attributes::Configuration][Attributes::UseCurvedLines]=(use_curved_lines_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::UseCurvedLines]=(use_curved_lines_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::AttribsPerPage]=QString::number(attribs_per_page_spb->value());
 		config_params[Attributes::Configuration][Attributes::ExtAttribsPerPage]=QString::number(ext_attribs_per_page_spb->value());
 
-		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(ObjectsScene::isAlignObjectsToGrid() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::ShowCanvasGrid]=(ObjectsScene::isShowGrid() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::ShowPageDelimiters]=(ObjectsScene::isShowPageDelimiters() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::AlignObjsToGrid]=(ObjectsScene::isAlignObjectsToGrid() ? Attributes::True : "");
 
 		unity_cmb->setCurrentIndex(UnitMilimeters);
 		config_params[Attributes::Configuration][Attributes::PaperMargin]=QString("%1,%2,%3,%4").arg(left_marg->value())
@@ -478,21 +478,21 @@ void GeneralConfigWidget::saveConfiguration()
 																						 .arg(bottom_marg->value());
 
 		if(paper_cmb->currentIndex()!=paper_cmb->count()-1)
-			config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString();
+			config_params[Attributes::Configuration][Attributes::PaperCustomSize]="";
 		else
 			config_params[Attributes::Configuration][Attributes::PaperCustomSize]=QString("%1,%2").arg(width_spb->value()).arg(height_spb->value());
 
-		config_params[Attributes::Configuration][Attributes::PrintPgNum]=(print_pg_num_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::PrintGrid]=(print_grid_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::PrintPgNum]=(print_pg_num_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::PrintGrid]=(print_grid_chk->isChecked() ? Attributes::True : "");
 
-		config_params[Attributes::Configuration][Attributes::HideExtAttribs]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::HideExtAttribs]=(hide_ext_attribs_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideRelName]=(hide_rel_name_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HideTableTags]=(hide_table_tags_chk->isChecked() ? Attributes::True : "");
 
 		config_params[Attributes::Configuration][Attributes::CodeFont]=font_cmb->currentText();
 		config_params[Attributes::Configuration][Attributes::CodeFontSize]=QString::number(font_size_spb->value());
-		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::DisplayLineNumbers]=(disp_line_numbers_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::HighlightLines]=(hightlight_lines_chk->isChecked() ? Attributes::True : "");
 		config_params[Attributes::Configuration][Attributes::LineNumbersColor]=line_numbers_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LineNumbersBgColor]=line_numbers_bg_cp->getColor(0).name();
 		config_params[Attributes::Configuration][Attributes::LineHighlightColor]=line_highlight_cp->getColor(0).name();
@@ -501,21 +501,21 @@ void GeneralConfigWidget::saveConfiguration()
 		config_params[Attributes::Configuration][Attributes::SourceEditorArgs]=source_editor_args_edt->text();
 		config_params[Attributes::Configuration][Attributes::UiLanguage]=ui_language_cmb->currentData().toString();
 
-		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : QString());
-		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : QString());
+		config_params[Attributes::Configuration][Attributes::CompactView]=(BaseObjectView::isCompactViewEnabled() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::SaveRestoreGeometry]=(save_restore_geometry_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::LowVerbosity]=(low_verbosity_chk->isChecked() ? Attributes::True : "");
+		config_params[Attributes::Configuration][Attributes::EscapeComment]=(escape_comments_chk->isChecked() ? Attributes::True : "");
 
-		config_params[Attributes::Configuration][Attributes::File]=QString();
-		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
+		config_params[Attributes::Configuration][Attributes::File]="";
+		config_params[Attributes::Configuration][Attributes::RecentModels]="";
 
 		itr=config_params.begin();
 		itr_end=config_params.end();
 
-		config_params[Attributes::Configuration][Attributes::DockWidgets]=QString();
-		config_params[Attributes::Configuration][Attributes::WidgetsGeometry]=QString();
-		config_params[Attributes::Configuration][Attributes::RecentModels]=QString();
-		config_params[Attributes::Configuration][Attributes::File]=QString();
+		config_params[Attributes::Configuration][Attributes::DockWidgets]="";
+		config_params[Attributes::Configuration][Attributes::WidgetsGeometry]="";
+		config_params[Attributes::Configuration][Attributes::RecentModels]="";
+		config_params[Attributes::Configuration][Attributes::File]="";
 
 		while(itr!=itr_end)
 		{
@@ -564,7 +564,7 @@ void GeneralConfigWidget::saveConfiguration()
 				attribs[Attributes::YPos] = QString::number(itr.second.geometry.top());
 				attribs[Attributes::Width] = QString::number(itr.second.geometry.width());
 				attribs[Attributes::Height] = QString::number(itr.second.geometry.height());
-				attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : QString();
+				attribs[Attributes::Maximized] = itr.second.maximized ? Attributes::True : "";
 
 				schparser.ignoreUnkownAttributes(true);
 				config_params[Attributes::Configuration][Attributes::WidgetsGeometry]+=
