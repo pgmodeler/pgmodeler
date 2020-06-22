@@ -334,7 +334,7 @@ void OperationList::removeFromPool(unsigned obj_idx)
 }
 
 
-int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx,  BaseObject *parent_obj)
+int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx, BaseObject *parent_obj)
 {
 	ObjectType obj_type;
 	Operation *operation=nullptr;
@@ -360,9 +360,6 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 
 				 ((obj_type==ObjectType::Trigger || obj_type==ObjectType::Rule || obj_type==ObjectType::Index) && !dynamic_cast<BaseTable *>(parent_obj))))
 			throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Registering a log entry for the object modification in database model's change log
-		model->registerChangeLog(object, op_type);
 
 		//If the operations list is full makes the automatic cleaning before inserting a new operation
 		if(current_index == static_cast<int>(max_size-1))
@@ -484,6 +481,9 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		operation->setObjectIndex(obj_idx);
 		operations.push_back(operation);
 		current_index=operations.size();
+
+		//Registering a log entry for the object modification in database model's change log
+		model->addChangelogEntry(object, op_type, parent_obj, QDateTime::currentDateTime());
 
 		//Returns the last operation position as operation's ID
 		return operations.size() -1;

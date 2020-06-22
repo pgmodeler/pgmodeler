@@ -256,11 +256,17 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * If the provided object is derived from TableObject then the parent is registered instead.
 		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified,
 		 * any other operation type is ignored.
-		 * The date_time, when provided, is always considered in local time (without timezone applied) */
-		void registerChangeLog(BaseObject *object, unsigned op_type, QDateTime date_time = QDateTime::currentDateTime());
+		 * The date_time, when provided, is always considered in local time (without timezone applied)
+		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
+		void addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj = nullptr, QDateTime date_time = QDateTime::currentDateTime());
 
-		//! \brief Creates the XML code for the changelog
-		void getChangelogDefinition();
+		/*! \brief Register an object change in the internal changelog.
+		 * This version accepts string parameters to make the changelog loading from file more easy to handle.
+		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
+		void addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date);
+
+		//! \brief Returns the XML code for the changelog
+		QString getChangelogDefinition();
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file

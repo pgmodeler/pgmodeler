@@ -20,6 +20,7 @@
 
 namespace Attributes {
 	const QString
+	Action("action"),
 	ActiveLayers("active-layers"),
 	AdminOption("admin-option"),
 	AdminRoles("admin-roles"),
@@ -185,6 +186,7 @@ namespace Attributes {
 	EndExp("end-exp"),
 	Enumerations("enumerations"),
 	EnumType("enumeration"),
+	Entry("entry"),
 	EscapeComment("escape-comment"),
 	Event("event"),
 	Events("events"),

@@ -3289,9 +3289,8 @@ void ModelWidget::removeObjects(bool cascade)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								//Register the removed object on the operation list
-								table->removeObject(obj_idx, obj_type);
 								op_list->registerObject(tab_obj, Operation::ObjectRemoved, obj_idx, table);
-
+								table->removeObject(obj_idx, obj_type);
 								db_model->removePermissions(tab_obj);
 
 								aux_table=dynamic_cast<Table *>(table);

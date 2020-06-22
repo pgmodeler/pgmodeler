@@ -32,7 +32,7 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
-	persist_changelog = false;
+	persist_changelog = true;
 	is_template = false;
 	allow_conns = true;
 
@@ -3275,7 +3275,25 @@ void DatabaseModel::loadModel(const QString &filename)
 						//Indentifies the object type to be load according to the current element on the parser
 						obj_type=getObjectType(elem_name);
 
-						if(obj_type==ObjectType::Database)
+						if(elem_name == Attributes::Changelog)
+						{
+							attribs_map entry_attr;
+							xmlparser.savePosition();
+
+							if(xmlparser.accessElement(XmlParser::ChildElement))
+							{
+								do
+								{
+									xmlparser.getElementAttributes(entry_attr);
+									addChangelogEntry(entry_attr[Attributes::Signature], entry_attr[Attributes::Type],
+																		entry_attr[Attributes::Action], entry_attr[Attributes::Date]);
+								}
+								while(xmlparser.accessElement(XmlParser::NextElement));
+							}
+
+							xmlparser.restorePosition();
+						}
+						else if(obj_type==ObjectType::Database)
 						{
 							xmlparser.getElementAttributes(attribs);
 							configureDatabase(attribs);
@@ -7323,6 +7341,12 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 				}
 			}
 		}
+		else
+		{
+			//Configuring the changelog attributes when generating XML code
+			attribs_aux[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
+			attribs_aux[Attributes::Changelog] = getChangelogDefinition();
+		}
 
 		for(auto &obj_itr : objects_map)
 		{
@@ -10983,23 +11007,46 @@ QList<unsigned> DatabaseModel::getActiveLayers()
 	return active_layers;
 }
 
-void DatabaseModel::registerChangeLog(BaseObject *object, unsigned op_type, QDateTime date_time)
+void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj, QDateTime date_time)
 {
 	if(!object || op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
-		return;
+		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	QString action;
-	BaseObject *aux_obj = TableObject::isTableObject(object->getObjectType()) ?
-													dynamic_cast<TableObject *>(object)->getParentTable() : object;
+	BaseObject *aux_obj = nullptr;
 
-	if(op_type == Operation::ObjectCreated)
-		action = Attributes::CreatePriv;
-	else if(op_type == Operation::ObjectRemoved)
-		action = Attributes::DeletePriv;
-	else
+	if(TableObject::isTableObject(object->getObjectType()))
+	{
+		aux_obj = parent_obj;
 		action = Attributes::UpdatePriv;
+	}
+	else
+	{
+		aux_obj = object;
 
-	changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
+		if(op_type == Operation::ObjectCreated)
+			action = Attributes::CreatePriv;
+		else if(op_type == Operation::ObjectRemoved)
+			action = Attributes::DeletePriv;
+		else
+			action = Attributes::UpdatePriv;
+	}
+
+	if(aux_obj)
+		changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
+}
+
+void DatabaseModel::addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date)
+{
+	QDateTime date_time = QDateTime::fromString(date, Qt::ISODateWithMs);
+	ObjectType obj_type = BaseObject::getObjectType(type);
+	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
+
+	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
+		 !date_time.isValid() || !actions.contains(action))
+		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
 
 QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end)
@@ -11357,13 +11404,40 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	}
 }
 
-void DatabaseModel::getChangelogDefinition()
+QString DatabaseModel::getChangelogDefinition()
 {
-	attributes[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
-	attributes[Attributes::Changelog] = "";
+	if(!persist_changelog)
+		return "";
 
-	if(persist_changelog)
+	try
 	{
+		QDateTime date;
+		QString signature, action, xml_code;
+		ObjectType type;
+		attribs_map attribs;
 
+		for(auto &entry : changelog)
+		{
+			date = std::get<0>(entry);
+			signature = std::get<1>(entry);
+			type = std::get<2>(entry);
+			action = std::get<3>(entry);
+
+			attribs[Attributes::Date] = date.toString(Qt::ISODateWithMs);
+			attribs[Attributes::Signature] = signature;
+			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
+			attribs[Attributes::Action] = action;
+
+			xml_code += schparser.getCodeDefinition(Attributes::Entry, attribs, SchemaParser::XmlDefinition);
+		}
+
+		attribs.clear();
+		attribs[Attributes::Entry] = xml_code;
+		schparser.ignoreEmptyAttributes(true);
+		return schparser.getCodeDefinition(Attributes::Changelog, attribs, SchemaParser::XmlDefinition);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
 	}
 }
