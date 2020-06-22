@@ -631,6 +631,7 @@ namespace Attributes {
 	UqConstr,
 	UqPattern,
 	UsagePriv,
+	UseChangelog,
 	UseCurvedLines,
 	UsePlaceholders,
 	UseSignature,

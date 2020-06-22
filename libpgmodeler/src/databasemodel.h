@@ -71,7 +71,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		/*! \brief Stores all changes performed in the database model
 		 * The only purpose of this structure is to be used by the partial diff to filter certain objects by operation/date and,
 		 * differently from OperationList class, it's data persisted in the database model file. */
-		vector<tuple<QString,ObjectType,QString,QDateTime>> changelog;
+		vector<tuple<QDateTime,QString,ObjectType,QString>> changelog;
 
 		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
 		 * to return the list according to the provided type */
@@ -111,7 +111,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		bool is_template,
 
 		//! \brief Indicates if the database accepts connection
-		allow_conns;
+		allow_conns,
+
+		//! \brief Indicates if the internal changelog must be saved to the dbm file
+		persist_changelog;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes,
@@ -255,6 +258,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * any other operation type is ignored.
 		 * The date_time, when provided, is always considered in local time (without timezone applied) */
 		void registerChangeLog(BaseObject *object, unsigned op_type, QDateTime date_time = QDateTime::currentDateTime());
+
+		//! \brief Creates the XML code for the changelog
+		void getChangelogDefinition();
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
@@ -753,6 +759,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 * It's possible to specify a date interval to contrain the entries
 		 * retrieved from changelog */
 		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end);
+
+		//! \brief Enable the persistence of the internal changelog
+		void setPersistedChangelog(bool persist);
+
+		//! \brief Returns true when the internal changelog is being persisted to the dbm file
+		bool isPersistedChangelog();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

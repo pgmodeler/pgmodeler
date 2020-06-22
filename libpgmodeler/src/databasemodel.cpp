@@ -32,6 +32,7 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
+	persist_changelog = false;
 	is_template = false;
 	allow_conns = true;
 
@@ -55,6 +56,8 @@ DatabaseModel::DatabaseModel()
 	attributes[Attributes::PrependAtBod]=QString();
 	attributes[Attributes::AllowConns]=QString();
 	attributes[Attributes::IsTemplate]=QString();
+	attributes[Attributes::UseChangelog]=QString();
+	attributes[Attributes::Changelog]=QString();
 
 	obj_lists = {
 		{ ObjectType::Textbox, &textboxes },
@@ -10996,7 +10999,7 @@ void DatabaseModel::registerChangeLog(BaseObject *object, unsigned op_type, QDat
 	else
 		action = Attributes::UpdatePriv;
 
-	changelog.push_back(std::make_tuple(aux_obj->getSignature(), aux_obj->getObjectType(), action, date_time));
+	changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
 }
 
 QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end)
@@ -11016,10 +11019,10 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 
 	for(auto &entry : changelog)
 	{
-		signature = std::get<0>(entry);
-		type = std::get<1>(entry);
-		action = std::get<2>(entry);
-		date = std::get<3>(entry);
+		date = std::get<0>(entry);
+		signature = std::get<1>(entry);
+		type = std::get<2>(entry);
+		action = std::get<3>(entry);
 
 		if((start.isValid() && end.isValid() && date >= start && date <= end) ||
 			 (start.isValid() && !end.isValid() && date >= start) ||
@@ -11035,6 +11038,16 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 
 	filters.removeDuplicates();
 	return filters;
+}
+
+void DatabaseModel::setPersistedChangelog(bool persist)
+{
+	persist_changelog = persist;
+}
+
+bool DatabaseModel::isPersistedChangelog()
+{
+	return persist_changelog;
 }
 
 template<class TableClass>
@@ -11341,5 +11354,16 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::getChangelogDefinition()
+{
+	attributes[Attributes::UseChangelog] = persist_changelog ? Attributes::True : Attributes::False;
+	attributes[Attributes::Changelog] = "";
+
+	if(persist_changelog)
+	{
+
 	}
 }
