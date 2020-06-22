@@ -11043,7 +11043,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
-		 !date_time.isValid() || !actions.contains(action))
+		 TableObject::isTableObject(obj_type) || !date_time.isValid() || !actions.contains(action))
 		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
