@@ -51,6 +51,7 @@
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
 #include "layerswidget.h"
+#include "changelogwidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
@@ -85,6 +86,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Layers management widget
 		LayersWidget *layers_wgt;
+
+		//! \brief Layers management widget
+		ChangelogWidget *changelog_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -155,6 +159,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
+
+		void setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn);
 
 		void configureSamplesMenu();
 
@@ -312,6 +318,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void arrangeObjects();
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
+		void toggleChangelogWidget(bool show);
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);

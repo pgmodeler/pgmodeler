@@ -772,6 +772,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Returns true when the internal changelog is being persisted to the dbm file
 		bool isPersistedChangelog();
 
+		//! \brief Clears the changelog
+		void clearChangelog();
+
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
 		void s_objectAdded(BaseObject *object);

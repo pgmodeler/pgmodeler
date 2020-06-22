@@ -42,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	layers_wgt = new LayersWidget(this);
 	layers_wgt->setVisible(false);
 
+	changelog_wgt  = new ChangelogWidget(this);
+	changelog_wgt->setVisible(false);
+
 	scene_info_wgt = new SceneInfoWidget(this);
 	QHBoxLayout *hbox = new QHBoxLayout(scene_info_parent);
 	hbox->addWidget(scene_info_wgt);
@@ -50,7 +53,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	fix_menu.addAction(action_fix_model);
 	fix_menu.addAction(action_handle_metadata);
-
 	QToolButton *tool_btn = qobject_cast<QToolButton *>(general_tb->widgetForAction(action_fix));
 	tool_btn->setMenu(&fix_menu);
 	tool_btn->setPopupMode(QToolButton::InstantPopup);
@@ -349,6 +351,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(layers_btn, SIGNAL(toggled(bool)), this, SLOT(toggleLayersWidget(bool)));
 	connect(layers_wgt, SIGNAL(s_visibilityChanged(bool)), layers_btn, SLOT(setChecked(bool)));
 
+	connect(changelog_btn, SIGNAL(toggled(bool)), this, SLOT(toggleChangelogWidget(bool)));
+	connect(changelog_wgt, SIGNAL(s_visibilityChanged(bool)), changelog_btn, SLOT(setChecked(bool)));
+
 	connect(&tmpmodel_save_timer, SIGNAL(timeout()), this, SLOT(saveTemporaryModels()));
 
 	models_tbw_parent->resize(QSize(models_tbw_parent->maximumWidth(), models_tbw_parent->height()));
@@ -560,7 +565,7 @@ void MainWindow::showRightWidgetsBar()
 
 void MainWindow::showBottomWidgetsBar()
 {
-	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout, {layers_btn}));
+	bottom_wgt_bar->setVisible(isToolButtonsChecked(horiz_wgts_btns_layout, {layers_btn, changelog_btn}));
 }
 
 void MainWindow::restoreLastSession()
@@ -644,6 +649,7 @@ void MainWindow::resizeEvent(QResizeEvent *)
 	action_update_found->setChecked(false);
 
 	toggleLayersWidget(layers_wgt->isVisible());
+	toggleChangelogWidget(changelog_wgt->isVisible());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1819,20 +1825,32 @@ void MainWindow::toggleDonateWidget(bool show)
 
 void MainWindow::setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window)
 {
-	if(widget && act && toolbar)
-	{
-		QWidget *wgt=toolbar->widgetForAction(act);
-		QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
+	if(!widget || !act  || !toolbar)
+		return;
 
-		if(map_to_window) pos=wgt->mapTo(this, pos);
-		pos.setX(pos_orig.x() - 10);
-		pos.setY(toolbar->pos().y() + toolbar->height() - 10);
+	QWidget *wgt=toolbar->widgetForAction(act);
+	QPoint pos_orig=(wgt ? wgt->pos() : QPoint(0,0)), pos;
 
-		if((pos.x() + widget->width()) > this->width())
-			pos.setX(pos_orig.x() - (widget->width() - 40));
+	if(map_to_window) pos=wgt->mapTo(this, pos);
+	pos.setX(pos_orig.x() - 10);
+	pos.setY(toolbar->pos().y() + toolbar->height() - 10);
 
-		widget->move(pos);
-	}
+	if((pos.x() + widget->width()) > this->width())
+		pos.setX(pos_orig.x() - (widget->width() - 40));
+
+	widget->move(pos);
+}
+
+void MainWindow::setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn)
+{
+	if(!widget || !btn)
+		return;
+
+	QPoint btn_parent_pos = mapTo(this, tool_btns_bar_wgt->pos()),
+			btn_pos = mapTo(this, btn->pos());
+
+	widget->move(btn_pos.x() + general_tb->width(),
+									 btn_parent_pos.y() - (widget->height() - btn->height() - v_splitter1->handleWidth()) + 1);
 }
 
 void MainWindow::configureSamplesMenu()
@@ -2096,13 +2114,24 @@ void MainWindow::toggleCompactView()
 
 void MainWindow::toggleLayersWidget(bool show)
 {
-	QPoint tb_pos = mapTo(this, tool_btns_bar_wgt->pos()),
-			btn_pos = mapTo(this, layers_btn->pos());
-
-	layers_wgt->move(btn_pos.x() + general_tb->width(),
-									 tb_pos.y() - (layers_wgt->height() - layers_btn->height() - v_splitter1->handleWidth()) + 1);
-
+	setBottomFloatingWidgetPos(layers_wgt, layers_btn);
 	layers_wgt->setVisible(show);
+
+	changelog_btn->blockSignals(true);
+	changelog_btn->setChecked(false);
+	changelog_wgt->setVisible(false);
+	changelog_btn->blockSignals(false);
+}
+
+void MainWindow::toggleChangelogWidget(bool show)
+{
+	setBottomFloatingWidgetPos(changelog_wgt, changelog_btn);
+	changelog_wgt->setVisible(show);
+
+	layers_btn->blockSignals(true);
+	layers_btn->setChecked(false);
+	layers_wgt->setVisible(false);
+	layers_btn->blockSignals(false);
 }
 
 void MainWindow::configureMoreActionsMenu()

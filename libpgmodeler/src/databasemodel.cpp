@@ -11097,6 +11097,11 @@ bool DatabaseModel::isPersistedChangelog()
 	return persist_changelog;
 }
 
+void DatabaseModel::clearChangelog()
+{
+	changelog.clear();
+}
+
 template<class TableClass>
 TableClass *DatabaseModel::createPhysicalTable()
 {
