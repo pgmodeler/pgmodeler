@@ -77,46 +77,46 @@ void BaseRelationship::configureRelationship()
 {
 	obj_type=ObjectType::BaseRelationship;
 
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::SrcRequired]=QString();
-	attributes[Attributes::DstRequired]=QString();
-	attributes[Attributes::SrcTable]=QString();
-	attributes[Attributes::DstTable]=QString();
-	attributes[Attributes::Points]=QString();
-	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::Elements]=QString();
-	attributes[Attributes::Identifier]=QString();
-	attributes[Attributes::ReducedForm]=QString();
-	attributes[Attributes::Deferrable]=QString();
-	attributes[Attributes::DeferType]=QString();
-	attributes[Attributes::TableName]=QString();
-	attributes[Attributes::SpecialPkCols]=QString();
-	attributes[Attributes::RelationshipNn]=QString();
-	attributes[Attributes::RelationshipGen]=QString();
-	attributes[Attributes::RelationshipDep]=QString();
-	attributes[Attributes::RelationshipPart]=QString();
-	attributes[Attributes::Relationship1n]=QString();
-	attributes[Attributes::Relationship11]=QString();
-	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::CopyOptions]=QString();
-	attributes[Attributes::CopyMode]=QString();
-	attributes[Attributes::SrcColPattern]=QString();
-	attributes[Attributes::DstColPattern]=QString();
-	attributes[Attributes::PkPattern]=QString();
-	attributes[Attributes::UqPattern]=QString();
-	attributes[Attributes::SrcFkPattern]=QString();
-	attributes[Attributes::DstFkPattern]=QString();
-	attributes[Attributes::PkColPattern]=QString();
-	attributes[Attributes::SinglePkColumn]=QString();
-	attributes[Attributes::UpdAction]=QString();
-	attributes[Attributes::DelAction]=QString();
-	attributes[Attributes::CustomColor]=QString();
-	attributes[Attributes::ReferenceFk]=QString();
-	attributes[Attributes::PartitionBoundExpr]=QString();
-	attributes[Attributes::OriginalPk]=QString();
+	attributes[Attributes::Type]="";
+	attributes[Attributes::SrcRequired]="";
+	attributes[Attributes::DstRequired]="";
+	attributes[Attributes::SrcTable]="";
+	attributes[Attributes::DstTable]="";
+	attributes[Attributes::Points]="";
+	attributes[Attributes::Columns]="";
+	attributes[Attributes::Constraints]="";
+	attributes[Attributes::Elements]="";
+	attributes[Attributes::Identifier]="";
+	attributes[Attributes::ReducedForm]="";
+	attributes[Attributes::Deferrable]="";
+	attributes[Attributes::DeferType]="";
+	attributes[Attributes::TableName]="";
+	attributes[Attributes::SpecialPkCols]="";
+	attributes[Attributes::RelationshipNn]="";
+	attributes[Attributes::RelationshipGen]="";
+	attributes[Attributes::RelationshipDep]="";
+	attributes[Attributes::RelationshipPart]="";
+	attributes[Attributes::Relationship1n]="";
+	attributes[Attributes::Relationship11]="";
+	attributes[Attributes::Constraints]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::AncestorTable]="";
+	attributes[Attributes::CopyOptions]="";
+	attributes[Attributes::CopyMode]="";
+	attributes[Attributes::SrcColPattern]="";
+	attributes[Attributes::DstColPattern]="";
+	attributes[Attributes::PkPattern]="";
+	attributes[Attributes::UqPattern]="";
+	attributes[Attributes::SrcFkPattern]="";
+	attributes[Attributes::DstFkPattern]="";
+	attributes[Attributes::PkColPattern]="";
+	attributes[Attributes::SinglePkColumn]="";
+	attributes[Attributes::UpdAction]="";
+	attributes[Attributes::DelAction]="";
+	attributes[Attributes::CustomColor]="";
+	attributes[Attributes::ReferenceFk]="";
+	attributes[Attributes::PartitionBoundExpr]="";
+	attributes[Attributes::OriginalPk]="";
 
 	//Check if the relationship type is valid
 	if(rel_type <= RelationshipFk)
@@ -345,8 +345,8 @@ void BaseRelationship::setRelationshipAttributes()
 
 	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::Type]=getRelTypeAttribute();
-	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : QString());
-	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : QString());
+	attributes[Attributes::SrcRequired]=(src_mandatory ? Attributes::True : "");
+	attributes[Attributes::DstRequired]=(dst_mandatory ? Attributes::True : "");
 
 	if(src_table)
 		attributes[Attributes::SrcTable]=src_table->getName(true);
@@ -364,7 +364,7 @@ void BaseRelationship::setRelationshipAttributes()
 	}
 	attributes[Attributes::Points]=str_aux;
 
-	str_aux=QString();
+	str_aux="";
 	for(i=0; i < 3; i++)
 	{
 		if(!std::isnan(lables_dist[i].x()))
@@ -378,8 +378,8 @@ void BaseRelationship::setRelationshipAttributes()
 	}
 
 	attributes[Attributes::LabelsPos]=str_aux;
-	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : QString());
-	attributes[Attributes::ReferenceFk]=(reference_fk ? reference_fk->getName() : QString());
+	attributes[Attributes::CustomColor]=(custom_color!=Qt::transparent ? custom_color.name() : "");
+	attributes[Attributes::ReferenceFk]=(reference_fk ? reference_fk->getName() : "");
 	setFadedOutAttribute();
 }
 
@@ -395,7 +395,7 @@ QString BaseRelationship::getCachedCode(unsigned def_type)
 			return cached_code[def_type];
 	}
 	else
-		return QString();
+		return "";
 }
 
 void BaseRelationship::setReferenceForeignKey(Constraint *ref_fk)
@@ -454,7 +454,7 @@ QString BaseRelationship::getCodeDefinition(unsigned def_type)
 	if(def_type==SchemaParser::SqlDefinition)
 	{
 		if(rel_type!=RelationshipFk)
-			return QString();
+			return "";
 		else
 		{
 			cached_code[def_type] = reference_fk->getCodeDefinition(SchemaParser::SqlDefinition);

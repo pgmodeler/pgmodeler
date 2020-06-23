@@ -23,13 +23,13 @@ Aggregate::Aggregate()
 	obj_type=ObjectType::Aggregate;
 	functions[0]=functions[1]=nullptr;
 	sort_operator=nullptr;
-	attributes[Attributes::Types]=QString();
-	attributes[Attributes::TransitionFunc]=QString();
-	attributes[Attributes::StateType]=QString();
-	attributes[Attributes::BaseType]=QString();
-	attributes[Attributes::FinalFunc]=QString();
-	attributes[Attributes::InitialCond]=QString();
-	attributes[Attributes::SortOp]=QString();
+	attributes[Attributes::Types]="";
+	attributes[Attributes::TransitionFunc]="";
+	attributes[Attributes::StateType]="";
+	attributes[Attributes::BaseType]="";
+	attributes[Attributes::FinalFunc]="";
+	attributes[Attributes::InitialCond]="";
+	attributes[Attributes::SortOp]="";
 }
 
 void Aggregate::setFunction(unsigned func_idx, Function *func)

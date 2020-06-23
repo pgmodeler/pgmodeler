@@ -33,11 +33,14 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		setupUi(this);
 		setWindowFlags(flags);
 
+		dates_wgt->setVisible(false);
+		start_date_dt->setDateTime(QDateTime::currentDateTime());
+		end_date_dt->setDateTime(QDateTime::currentDateTime());
+
 		pd_filter_wgt = new ObjectsFilterWidget(this);
 
-		QVBoxLayout *vbox = new QVBoxLayout(pd_filter_gb);
+		QVBoxLayout *vbox = qobject_cast<QVBoxLayout *>(pd_filter_gb->layout());
 		vbox->addWidget(pd_filter_wgt);
-		vbox->setContentsMargins(4,4,4,4);
 		pd_filter_wgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 		pd_hsplitter->setSizes({ 300, 500 });
 
@@ -82,6 +85,12 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		cancel_preset_edit_tb->setToolTip(cancel_preset_edit_tb->toolTip() + QString(" (%1)").arg(cancel_preset_edit_tb->shortcut().toString()));
 		remove_preset_tb->setToolTip(remove_preset_tb->toolTip() + QString(" (%1)").arg(remove_preset_tb->shortcut().toString()));
 		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
+
+		connect(by_date_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
+		connect(by_date_chk, SIGNAL(toggled(bool)), pd_filter_wgt, SLOT(setHidden(bool)));
+		connect(start_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
+		connect(end_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
+		connect(apply_by_date_tb, SIGNAL(clicked()), this, SLOT(applyPartialDiffDateFilters()));
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -539,11 +548,12 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
 			if(src_model_rb->isChecked())
-				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, pd_filter_wgt->isMatchSignature()));
+				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, by_date_chk->isChecked() || pd_filter_wgt->isMatchSignature()));
 
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),
-															 pd_filter_wgt->isMatchSignature(),
+															 // When the filter by date is checked we always filter objects by their signature
+															 by_date_chk->isChecked() ? true : pd_filter_wgt->isMatchSignature(),
 															 pd_filter_wgt->getForceObjectsFilter());
 		}
 
@@ -603,7 +613,7 @@ void ModelDatabaseDiffForm::diffModels()
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptTruncateTables, trunc_tables_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, recreate_unmod_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, recreate_unmod_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptReuseSequences, reuse_sequences_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
@@ -635,7 +645,7 @@ void ModelDatabaseDiffForm::exportDiff(bool confirm)
 		msg_box.show(tr("Confirmation"),
 					 tr(" <strong>WARNING:</strong> The generated diff is ready to be exported! Once started this process will cause irreversible changes on the database. Do you really want to proceed?"),
 					 Messagebox::AlertIcon, Messagebox::AllButtons,
-					 tr("Apply diff"), tr("Preview diff"), QString(),
+					 tr("Apply diff"), tr("Preview diff"), "",
 					 PgModelerUiNs::getIconPath("diff"), PgModelerUiNs::getIconPath("codigosql"));
 
 	if(!confirm || msg_box.result()==QDialog::Accepted)
@@ -1028,7 +1038,7 @@ void ModelDatabaseDiffForm::loadConfiguration()
 	{
 		Messagebox msg_box;
 		msg_box.show(e, QString("%1 %2").arg(e.getErrorMessage()).arg(tr("In some cases restore the default settings related to it may solve the problem. Would like to do that?")),
-								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), QString(), QString(), PgModelerUiNs::getIconPath("atualizar"));
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons, tr("Restore"), "", "", PgModelerUiNs::getIconPath("atualizar"));
 
 		if(msg_box.result() == QDialog::Accepted)
 			restoreDefaults();
@@ -1232,7 +1242,7 @@ void ModelDatabaseDiffForm::savePreset()
 		fmt_name = name + QString::number(++idx);
 
 	conf[Attributes::Name] = fmt_name;
-	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::CurrentModel] = src_model_rb->isChecked() ? Attributes::True : "";
 
 	if(src_database_rb->isChecked())
 	{
@@ -1241,14 +1251,14 @@ void ModelDatabaseDiffForm::savePreset()
 																			.arg(src_connections_cmb->currentIndex() > 0 ? src_connections_cmb->currentText() : QString("-"));
 	}
 	else
-		conf[Attributes::InputDatabase] = QString();
+		conf[Attributes::InputDatabase] = "";
 
 	conf[Attributes::CompareToDatabase] = QString("%1@%2")
 																				.arg(database_cmb->currentIndex() > 0 ? database_cmb->currentText() : QString("-"))
 																				.arg(connections_cmb->currentIndex() > 0 ? connections_cmb->currentText() : QString("-"));
-	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : QString();
-	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : QString();
-	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : QString();
+	conf[Attributes::Version] = pgsql_ver_chk->isChecked() ? pgsql_ver_cmb->currentText() : "";
+	conf[Attributes::StoreInFile] = store_in_file_rb->isChecked() ? Attributes::True : "";
+	conf[Attributes::ApplyOnServer] = apply_on_server_rb->isChecked() ? Attributes::True : "";
 	conf[Attributes::KeepClusterObjs] = keep_cluster_objs_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::KeepObjsPerms] = keep_obj_perms_chk->isChecked() ? Attributes::True : Attributes::False;
 	conf[Attributes::DontDropMissingObjs] = dont_drop_missing_objs_chk->isChecked() ? Attributes::True : Attributes::False;
@@ -1278,10 +1288,12 @@ void ModelDatabaseDiffForm::savePreset()
 
 void ModelDatabaseDiffForm::enablePartialDiff()
 {
-	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() > 0) &&
+	bool enable = (src_model_rb->isChecked() || src_database_cmb->currentIndex() >= 0) &&
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
+	by_date_chk->setChecked(false);
+	by_date_chk->setVisible(src_model_rb->isChecked());
 	pd_filter_wgt->setModelFilteringMode(src_model_rb->isChecked(), { ObjectType::Relationship });
 
 	if(src_model_rb->isChecked())
@@ -1290,20 +1302,30 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 		pd_input_lbl->setToolTip(src_model_name_lbl->toolTip());
 		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("pgsqlModeler48x48")));
 	}
-	else if(database_cmb->currentIndex() > 0)
+	else if(src_database_cmb->currentIndex() >= 0)
 	{
 		Connection conn = (*reinterpret_cast<Connection *>(src_connections_cmb->currentData(Qt::UserRole).value<void *>()));
 		conn.setConnectionParam(Connection::ParamDbName, src_database_cmb->currentText());
+
 		pd_input_lbl->setText(conn.getConnectionId(true, true, true));
 		pd_input_ico_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath("database")));
 	}
+}
+
+void ModelDatabaseDiffForm::enableFilterByDate()
+{
+	apply_by_date_tb->setEnabled(start_date_chk->isChecked() || end_date_chk->isChecked());
+	start_date_dt->setEnabled(start_date_chk->isChecked());
+	end_date_dt->setEnabled(end_date_chk->isChecked());
 }
 
 void ModelDatabaseDiffForm::applyPartialDiffFilters()
 {
 	if(src_model_rb->isChecked())
 	{
-		QString search_attr = pd_filter_wgt->isMatchSignature() ? Attributes::Signature : Attributes::Name;
+		QString search_attr = (by_date_chk->isChecked() ||
+													 pd_filter_wgt->isMatchSignature()) ?
+														Attributes::Signature : Attributes::Name;
 		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
 		ObjectFinderWidget::updateObjectTable(filtered_objs_tbw, filterd_objs, search_attr);
 		getFilteredObjects(filtered_objs);
@@ -1324,6 +1346,18 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 
 		DatabaseImportForm::listFilteredObjects(import_helper, filtered_objs_tbw);
 	}
+}
+
+void ModelDatabaseDiffForm::applyPartialDiffDateFilters()
+{
+	if(!source_model)
+		return;
+
+	// Generate the filters from the model's change log
+	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
+																																	end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime()));
+
+	applyPartialDiffFilters();
 }
 
 void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)

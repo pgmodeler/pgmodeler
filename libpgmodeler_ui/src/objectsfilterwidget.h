@@ -47,14 +47,23 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	public:
 		explicit ObjectsFilterWidget(QWidget *parent = nullptr);
 
-		//! brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
+		//! \brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
 		QStringList getObjectFilters();
+
+		//! \brief Returns a list of table children objects to be filtered forcebly
 		QStringList getForceObjectsFilter();
 
 		bool isOnlyMatching();
 		bool isMatchSignature();
 		bool hasFiltersConfigured();
+
+		/*! \brief When value is true the widget disable some features that aren't used
+		 * by the object filtering in database models. Additionally, when the model filtering is enabled
+		 * extra object types can be provided so they can be enabled in the filters construction */
 		void setModelFilteringMode(bool value, const vector<ObjectType> &extra_types = {});
+
+		//! \brief Populates the widget using a list of preconfigured filters
+		void addFilters(const QStringList &filters);
 
 	private slots:
 		void addFilter();

@@ -24,22 +24,22 @@ Index::Index()
 	index_attribs[Unique]=index_attribs[Concurrent]=
 			index_attribs[FastUpdate]=index_attribs[Buffering]=false;
 	fill_factor=90;
-	attributes[Attributes::Unique]=QString();
-	attributes[Attributes::Concurrent]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::IndexType]=QString();
-	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::Expression]=QString();
-	attributes[Attributes::Factor]=QString();
-	attributes[Attributes::Predicate]=QString();
-	attributes[Attributes::OpClass]=QString();
-	attributes[Attributes::NullsFirst]=QString();
-	attributes[Attributes::AscOrder]=QString();
-	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::Elements]=QString();
-	attributes[Attributes::FastUpdate]=QString();
-	attributes[Attributes::Buffering]=QString();
-	attributes[Attributes::StorageParams]=QString();
+	attributes[Attributes::Unique]="";
+	attributes[Attributes::Concurrent]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::IndexType]="";
+	attributes[Attributes::Columns]="";
+	attributes[Attributes::Expression]="";
+	attributes[Attributes::Factor]="";
+	attributes[Attributes::Predicate]="";
+	attributes[Attributes::OpClass]="";
+	attributes[Attributes::NullsFirst]="";
+	attributes[Attributes::AscOrder]="";
+	attributes[Attributes::DeclInTable]="";
+	attributes[Attributes::Elements]="";
+	attributes[Attributes::FastUpdate]="";
+	attributes[Attributes::Buffering]="";
+	attributes[Attributes::StorageParams]="";
 }
 
 void Index::setIndexElementsAttribute(unsigned def_type)
@@ -331,11 +331,11 @@ QString Index::getCodeDefinition(unsigned def_type)
 	if(!code_def.isEmpty()) return code_def;
 
 	setIndexElementsAttribute(def_type);
-	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : QString());
-	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : QString());
+	attributes[Attributes::Unique]=(index_attribs[Unique] ? Attributes::True : "");
+	attributes[Attributes::Concurrent]=(index_attribs[Concurrent] ? Attributes::True : "");
 	attributes[Attributes::IndexType]=(~indexing_type);
 	attributes[Attributes::Predicate]=predicate;
-	attributes[Attributes::StorageParams]=QString();
+	attributes[Attributes::StorageParams]="";
 
 	if(getParentTable())
 	{
@@ -346,10 +346,10 @@ QString Index::getCodeDefinition(unsigned def_type)
 	}
 
 	if(this->indexing_type==IndexingType::Gin)
-		attributes[Attributes::StorageParams]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : QString());
+		attributes[Attributes::StorageParams]=attributes[Attributes::FastUpdate]=(index_attribs[FastUpdate] ? Attributes::True : "");
 
 	if(this->indexing_type==IndexingType::Gist)
-		attributes[Attributes::StorageParams]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : QString());
+		attributes[Attributes::StorageParams]=attributes[Attributes::Buffering]=(index_attribs[Buffering] ? Attributes::True : "");
 
 	if(this->indexing_type!=IndexingType::Gin && fill_factor >= 10)
 	{

@@ -294,7 +294,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types=catalog.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
+		types=catalog.getObjectsAttributes(ObjectType::Type, "", "", type_ids);
 
 		for(auto &tp : types)
 			type_names[tp[Attributes::Oid].toUInt()]=tp[Attributes::Name];
@@ -742,7 +742,7 @@ int SQLExecutionWidget::clearAll()
 
 	if(res==QDialog::Accepted)
 	{
-		sql_cmd_txt->setPlainText(QString());
+		sql_cmd_txt->setPlainText("");
 		msgoutput_lst->clear();
 		msgoutput_lst->setVisible(true);
 		results_parent->setVisible(false);

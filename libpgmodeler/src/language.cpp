@@ -27,10 +27,10 @@ Language::Language()
 	for(unsigned i=ValidatorFunc; i <= InlineFunc; i++)
 		functions[i]=nullptr;
 
-	attributes[Attributes::Trusted]=QString();
-	attributes[Attributes::HandlerFunc]=QString();
-	attributes[Attributes::ValidatorFunc]=QString();
-	attributes[Attributes::InlineFunc]=QString();
+	attributes[Attributes::Trusted]="";
+	attributes[Attributes::HandlerFunc]="";
+	attributes[Attributes::ValidatorFunc]="";
+	attributes[Attributes::InlineFunc]="";
 }
 
 void Language::setName(const QString &name)
@@ -119,7 +119,7 @@ QString Language::getCodeDefinition(unsigned def_type, bool reduced_form)
 							 Attributes::HandlerFunc,
 							 Attributes::InlineFunc};
 
-	attributes[Attributes::Trusted]=(is_trusted ? Attributes::True : QString());
+	attributes[Attributes::Trusted]=(is_trusted ? Attributes::True : "");
 
 	if(!reduced_form && def_type==SchemaParser::XmlDefinition)
 		reduced_form=(!functions[ValidatorFunc] && !functions[HandlerFunc] && !functions[InlineFunc] && !this->getOwner());

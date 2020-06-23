@@ -104,7 +104,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
 	{
 		connection_params[Connection::ParamServerIp]=value;
-		connection_params[Connection::ParamServerFqdn]=QString();
+		connection_params[Connection::ParamServerFqdn]="";
 	}
 	else
 		connection_params[param]=value;
@@ -318,7 +318,7 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name, bool
 	QString addr, db_name, port, conn_id;
 
 	if(!isConfigured())
-		return QString();
+		return "";
 
 	if(!connection_params[ParamServerFqdn].isEmpty())
 		addr=connection_params[ParamServerFqdn];

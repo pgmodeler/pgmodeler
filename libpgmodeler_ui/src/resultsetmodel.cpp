@@ -61,7 +61,7 @@ ResultSetModel::ResultSetModel(ResultSet &res, Catalog &catalog, QObject *parent
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types = aux_cat.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
+		types = aux_cat.getObjectsAttributes(ObjectType::Type, "", "", type_ids);
 		col = 0;
 
 		for(auto &tp : types)
@@ -156,7 +156,7 @@ void ResultSetModel::append(ResultSet &res)
 						}
 						else
 						{
-							item_data.push_back(QString());
+							item_data.push_back("");
 						}
 					}
 				}

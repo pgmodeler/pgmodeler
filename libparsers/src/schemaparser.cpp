@@ -712,7 +712,7 @@ void SchemaParser::unsetAttribute()
 										ErrorCode::InvalidAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
-					attributes[attrib]=QString();
+					attributes[attrib]="";
 				break;
 
 				default:
@@ -989,7 +989,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 					{
 						//Converting the metacharacter drawn to the character that represents this
 						chr=translateMetaCharacter(meta);
-						meta=QString();
+						meta="";
 						meta+=chr;
 
 						//If the parser is inside an 'if / else' extracting tokens
@@ -1030,7 +1030,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 											ErrorCode::UnkownAttribute,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						}
 						else
-							attributes[atrib]=QString();
+							attributes[atrib]="";
 					}
 
 					//If the parser is inside an 'if / else' extracting tokens
@@ -1040,7 +1040,7 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						if(!(!if_expr && vet_tk_if[if_level] && !vet_tk_then[if_level]))
 						{
 							word=atrib;
-							atrib=QString();
+							atrib="";
 							atrib+=CharIniAttribute;
 							atrib+=word;
 							atrib+=CharEndAttribute;

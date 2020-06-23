@@ -32,25 +32,25 @@ Trigger::Trigger()
 	for(i=0; i < 4; i++)
 		events[tipos[i]]=false;
 
-	attributes[Attributes::Arguments]=QString();
-	attributes[Attributes::Events]=QString();
-	attributes[Attributes::TriggerFunc]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::FiringType]=QString();
-	attributes[Attributes::PerRow]=QString();
-	attributes[Attributes::InsEvent]=QString();
-	attributes[Attributes::DelEvent]=QString();
-	attributes[Attributes::UpdEvent]=QString();
-	attributes[Attributes::TruncEvent]=QString();
-	attributes[Attributes::Condition]=QString();
-	attributes[Attributes::RefTable]=QString();
-	attributes[Attributes::DeferType]=QString();
-	attributes[Attributes::Deferrable]=QString();
-	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::Constraint]=QString();
-	attributes[Attributes::OldTableName]=QString();
-	attributes[Attributes::NewTableName]=QString();
+	attributes[Attributes::Arguments]="";
+	attributes[Attributes::Events]="";
+	attributes[Attributes::TriggerFunc]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::Columns]="";
+	attributes[Attributes::FiringType]="";
+	attributes[Attributes::PerRow]="";
+	attributes[Attributes::InsEvent]="";
+	attributes[Attributes::DelEvent]="";
+	attributes[Attributes::UpdEvent]="";
+	attributes[Attributes::TruncEvent]="";
+	attributes[Attributes::Condition]="";
+	attributes[Attributes::RefTable]="";
+	attributes[Attributes::DeferType]="";
+	attributes[Attributes::Deferrable]="";
+	attributes[Attributes::DeclInTable]="";
+	attributes[Attributes::Constraint]="";
+	attributes[Attributes::OldTableName]="";
+	attributes[Attributes::NewTableName]="";
 }
 
 void Trigger::addArgument(const QString &arg)
@@ -365,7 +365,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
 			if(event_types[i]==EventType::OnUpdate)
 			{
 				count=upd_columns.size();
-				attributes[Attributes::Columns]=QString();
+				attributes[Attributes::Columns]="";
 
 				for(i1=0; i1 < count; i1++)
 				{
@@ -408,18 +408,18 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 	if(getParentTable())
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
-	attributes[Attributes::Constraint]=(is_constraint ? Attributes::True : QString());
+	attributes[Attributes::Constraint]=(is_constraint ? Attributes::True : "");
 	attributes[Attributes::FiringType]=(~firing_type);
 
 	//** Constraint trigger MUST execute per row **
-	attributes[Attributes::PerRow]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : QString());
+	attributes[Attributes::PerRow]=((is_exec_per_row && !is_constraint) || is_constraint ? Attributes::True : "");
 
 	attributes[Attributes::Condition]=condition;
 
 	if(referenced_table)
 		attributes[Attributes::RefTable]=referenced_table->getName(true);
 
-	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : QString());
+	attributes[Attributes::Deferrable]=(is_deferrable ? Attributes::True : "");
 	attributes[Attributes::DeferType]=(~deferral_type);
 
 	if(def_type == SchemaParser::XmlDefinition)

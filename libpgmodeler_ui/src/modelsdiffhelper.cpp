@@ -44,7 +44,7 @@ ModelsDiffHelper::ModelsDiffHelper()
 	diff_opts[OptCascadeMode]=true;
 	diff_opts[OptTruncateTables]=false;
 	diff_opts[OptForceRecreation]=true;
-	diff_opts[OptRecreateUnchangeble]=true;
+	diff_opts[OptRecreateUnmodifiable]=true;
 	diff_opts[OptKeepObjectPerms]=true;
 	diff_opts[OptReuseSequences]=true;
 	diff_opts[OptPreserveDbName]=true;
@@ -488,7 +488,7 @@ void ModelsDiffHelper::diffModels(unsigned diff_type)
 								generateDiffInfo(ObjectsDiffInfo::AlterObject, object, aux_object);
 
 								//If the object is a table, do additional comparision between their child objects
-								if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnchangeble]) && PhysicalTable::isPhysicalTable(object->getObjectType()))
+								if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) && PhysicalTable::isPhysicalTable(object->getObjectType()))
 								{
 									PhysicalTable *tab=dynamic_cast<PhysicalTable *>(object),
 											*aux_tab=dynamic_cast<PhysicalTable *>(aux_object);
@@ -623,7 +623,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
 			/* If the info is for ALTER and there is a DROP info on the list,
 			 * the object will be recreated instead of modified */
-			if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnchangeble]) &&
+			if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
 					diff_type==ObjectsDiffInfo::AlterObject &&
 					isDiffInfoExists(ObjectsDiffInfo::DropObject, old_object, nullptr) &&
 					!isDiffInfoExists(ObjectsDiffInfo::CreateObject, object, nullptr))
@@ -659,7 +659,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
 					//Configure an auxiliary column with the same values of the original one
 					(*aux_col)=(*col);
-					aux_col->setDefaultValue(QString());
+					aux_col->setDefaultValue("");
 					//Setting the type as the alias of the serial type
 					aux_col->setType(aux_col->getType().getAliasType());
 					//Assigns the sequence to the column in order to configure the default value correctly
@@ -722,7 +722,7 @@ void ModelsDiffHelper::generateDiffInfo(unsigned diff_type, BaseObject *object, 
 
 				/* If the info is for DROP, generate the drop for referer objects of the
 		 one marked to be dropped */
-				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnchangeble]) &&
+				if((!diff_opts[OptForceRecreation] || diff_opts[OptRecreateUnmodifiable]) &&
 						diff_type==ObjectsDiffInfo::DropObject)
 				{
 					vector<BaseObject *> ref_objs;
@@ -924,8 +924,8 @@ void ModelsDiffHelper::processDiffInfos()
 			{
 				//Recreating the object instead of generating an ALTER command for it
 				if((diff_opts[OptForceRecreation] && obj_type!=ObjectType::Database) &&
-						(!diff_opts[OptRecreateUnchangeble] ||
-						 (diff_opts[OptRecreateUnchangeble] && !object->acceptsAlterCommand() &&
+						(!diff_opts[OptRecreateUnmodifiable] ||
+						 (diff_opts[OptRecreateUnmodifiable] && !object->acceptsAlterCommand() &&
 						  diff.getObject()->getCodeDefinition(SchemaParser::SqlDefinition).simplified()!=
 						  diff.getOldObject()->getCodeDefinition(SchemaParser::SqlDefinition).simplified())))
 				{
@@ -1031,16 +1031,16 @@ void ModelsDiffHelper::processDiffInfos()
 			attribs[Attributes::Create]=QString::number(create_objs_count);
 			attribs[Attributes::Drop]=QString::number(drop_objs.size());
 			attribs[Attributes::Truncate]=QString::number(truncate_tabs.size());
-			attribs[Attributes::AlterCmds]=QString();
-			attribs[Attributes::DropCmds]=QString();
-			attribs[Attributes::CreateCmds]=QString();
-			attribs[Attributes::TruncateCmds]=QString();
-			attribs[Attributes::ConstrDefs]=QString();
-			attribs[Attributes::FkDefs]=QString();
+			attribs[Attributes::AlterCmds]="";
+			attribs[Attributes::DropCmds]="";
+			attribs[Attributes::CreateCmds]="";
+			attribs[Attributes::TruncateCmds]="";
+			attribs[Attributes::ConstrDefs]="";
+			attribs[Attributes::FkDefs]="";
 			attribs[Attributes::UnsetPerms]=unset_perms;
 			attribs[Attributes::SetPerms]=set_perms;
-			attribs[Attributes::Function]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : QString());
-			attribs[Attributes::SearchPath]=(has_diffs ? sch_names.join(',') : QString());
+			attribs[Attributes::Function]=(has_diffs && source_model->getObjectCount(ObjectType::Function)!=0 ? Attributes::True : "");
+			attribs[Attributes::SearchPath]=(has_diffs ? sch_names.join(',') : "");
 
 			ritr=drop_objs.rbegin();
 			ritr_end=drop_objs.rend();

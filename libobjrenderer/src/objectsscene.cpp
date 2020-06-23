@@ -145,7 +145,7 @@ QString ObjectsScene::formatLayerName(const QString &name)
 QString ObjectsScene::addLayer(const QString &name)
 {
 	if(name.isEmpty())
-		return QString();
+		return "";
 
 	QString fmt_name = formatLayerName(name);
 	layers.push_back(fmt_name);
@@ -157,7 +157,7 @@ QString ObjectsScene::addLayer(const QString &name)
 QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 {
 	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
-		return QString();
+		return "";
 
 	if(name != layers[idx])
 		layers[idx] = formatLayerName(name);
@@ -591,7 +591,7 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 	{
 		QPageLayout pl;
 		QPageSize ps;
-		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
+		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
 		pl.setPageSize(ps);
 		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
 		printer->setPageSize(pl.pageSize());

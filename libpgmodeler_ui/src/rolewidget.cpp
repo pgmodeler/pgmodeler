@@ -262,7 +262,7 @@ void RoleWidget::applyConfiguration()
 		if(validity_chk->isChecked())
 			role->setValidity(validity_dte->dateTime().toString(QString("yyyy-MM-dd hh:mm")));
 		else
-			role->setValidity(QString());
+			role->setValidity("");
 
 		role->setOption(Role::OpSuperuser, superusr_chk->isChecked());
 		role->setOption(Role::OpCreateDb, create_db_chk->isChecked());

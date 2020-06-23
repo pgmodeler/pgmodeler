@@ -253,7 +253,7 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assign the connection to this class. */
-		attribs_map getObjects(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), attribs_map extra_attribs=attribs_map());
+		attribs_map getObjects(ObjectType obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 		
 		/*! \brief Retuns a vector of attribute maps that contains the name, OID and object type of each retrieved object.
 				This method receives a list of object types to be retrieved and the catalog query is constructed and joint through UNION operator
@@ -263,7 +263,7 @@ class DatabaseImportHelper: public QObject {
 				\note: The database used as reference is the same as the currently connection. So,
 				if the user want a different database it must call Connection::switchToDatabase() method
 				before assign the connection to this class. */
-		vector<attribs_map> getObjects(vector<ObjectType> obj_type, const QString &schema=QString(), const QString &table=QString(), attribs_map extra_attribs=attribs_map());
+		vector<attribs_map> getObjects(vector<ObjectType> obj_type, const QString &schema="", const QString &table="", attribs_map extra_attribs=attribs_map());
 
 		void retrieveSystemObjects();
 		void retrieveUserObjects();

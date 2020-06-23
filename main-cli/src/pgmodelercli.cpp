@@ -73,6 +73,8 @@ const QString PgModelerCliApp::MatchByName("--match-by-name");
 const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
 const QString PgModelerCliApp::PartialDiff("--partial");
+const QString PgModelerCliApp::StartDate("--start-date");
+const QString PgModelerCliApp::EndDate("--end-date");
 const QString PgModelerCliApp::CompareTo("--compare-to");
 const QString PgModelerCliApp::SaveDiff("--save");
 const QString PgModelerCliApp::ApplyDiff("--apply");
@@ -85,8 +87,8 @@ const QString PgModelerCliApp::RenameDb("--rename-db");
 const QString PgModelerCliApp::TruncOnColsTypeChange("--trunc-type-change");
 const QString PgModelerCliApp::NoSequenceReuse("--no-sequence-reuse");
 const QString PgModelerCliApp::NoCascadeDropTrunc("--no-cascade");
-const QString PgModelerCliApp::NoForceObjRecreation("--no-force-recreation");
-const QString PgModelerCliApp::NoUnmodObjRecreation("--no-unmod-recreation");
+const QString PgModelerCliApp::ForceRecreateObjs("--force-recreate-objs");
+const QString PgModelerCliApp::OnlyUnmodifiable("--only-unmodifiable");
 const QString PgModelerCliApp::CreateConfigs("--create-configs");
 
 const QString PgModelerCliApp::TagExpr("<%1");
@@ -96,14 +98,63 @@ const QString PgModelerCliApp::AttributeExpr("(%1)( )*(=)(\")(\\w|\\d|,|\\.|\\&|
 const QString PgModelerCliApp::MsgFileAssociated(QT_TR_NOOP("Database model files (.dbm) are already associated to pgModeler!"));
 const QString PgModelerCliApp::MsgNoFileAssociation(QT_TR_NOOP("There is no file association related to pgModeler and .dbm files!"));
 
+attribs_map PgModelerCliApp::short_opts = {
+	{ Input, "-if" },		{ Output, "-of" },	{ InputDb, "-id" },
+	{ ExportToFile, "-ef" },	{ ExportToPng, "-ep" },	{ ExportToSvg, "-es" },
+	{ ExportToDbms, "-ed" },	{ ExportToDict, "-ec" },	{ ImportDb, "-im" },
+	{ Diff, "-df" },	{ DropDatabase, "-dd" },	{ DropObjects, "-do" },
+	{ PgSqlVer, "-v" },	{ Help, "-h" },	{ ShowGrid, "-sg" },
+	{ ShowDelimiters, "-sl" },	{ PageByPage, "-pp" },	{ IgnoreDuplicates, "-ir" },
+	{ IgnoreErrorCodes, "-ic" },	{ ConnAlias, "-ca" },	{ Host, "-H" },
+	{ Port, "-p" },	{ User, "-u" },	{ Passwd, "-w" },
+	{ InitialDb, "-D" },	{ Silent, "-s" },	{ ListConns, "-lc" },
+	{ Simulate, "-sm" },	{ FixModel, "-fm" },	{ FixTries, "-ft" },
+	{ ZoomFactor, "-zf" },	{ UseTmpNames, "-tn" },	{ DbmMimeType, "-mt" },
+	{ IgnoreImportErrors, "-ie" },	{ ImportSystemObjs, "-is" },	{ ImportExtensionObjs, "-ix" },
+	{ FilterObjects, "-fo" },	{ MatchByName, "-mn" },	{ ForceChildren, "-fc" },
+	{ OnlyMatching, "-om" },	{ DebugMode, "-d" },	{ PartialDiff, "-pd" },
+	{ StartDate, "-st" },	{ EndDate, "-et" },	{ CompareTo, "-ct" },
+	{ SaveDiff, "-sd" },	{ ApplyDiff, "-ad" },	{ NoDiffPreview, "-np" },
+	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
+	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	{ TruncOnColsTypeChange, "-tt" },
+	{ NoSequenceReuse, "-ns" },	{ NoCascadeDropTrunc, "-nd" },	{ ForceRecreateObjs, "-nf" },
+	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Splitted, "-sp" },
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }
+};
+
+map<QString, bool> PgModelerCliApp::long_opts = {
+	{ Input, true }, { Output, true }, { InputDb, true },
+	{ ExportToFile, false },	{ ExportToPng, false },	{ ExportToSvg, false },
+	{ ExportToDbms, false },	{ ImportDb, false },	{ Diff, false },
+	{ DropDatabase, false },	{ DropObjects, false },	{ PgSqlVer, true },
+	{ Help, false },	{ ShowGrid, false },	{ ShowDelimiters, false },
+	{ PageByPage, false },	{ IgnoreDuplicates, false },	{ IgnoreErrorCodes, true },
+	{ ConnAlias, true },	{ Host, true },	{ Port, true },
+	{ User, true },	{ Passwd, true },	{ InitialDb, true },
+	{ ListConns, false },	{ Simulate, false },	{ FixModel, false },
+	{ FixTries, true },	{ ZoomFactor, true },	{ UseTmpNames, false },
+	{ DbmMimeType, true },	{ IgnoreImportErrors, false },	{ ImportSystemObjs, false },
+	{ ImportExtensionObjs, false },	{ FilterObjects, true },	{ ForceChildren, true },
+	{ OnlyMatching, false },	{ MatchByName, false },	{ DebugMode, false },
+	{ PartialDiff, false },	{ StartDate, true },	{ EndDate, true },
+	{ CompareTo, true },	{ SaveDiff, false },	{ ApplyDiff, false },
+	{ NoDiffPreview, false },	{ DropClusterObjs, false },	{ RevokePermissions, false },
+	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
+	{ TruncOnColsTypeChange, false },	{ NoSequenceReuse, false },	{ NoCascadeDropTrunc, false },
+	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
+	{ NoIndex, false },	{ Splitted, false },	{ SystemWide, false },
+	{ CreateConfigs, false }
+};
+
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
 	try
 	{
-		QString op, value;
+		QString op, value, orig_op;
 		bool accepts_val=false;
 		int eq_pos=-1;
 		attribs_map opts;
+		QStringList args = arguments();
 
 		model=nullptr;
 		scene=nullptr;
@@ -117,13 +168,12 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 		rel_conf = nullptr;
 		general_conf = nullptr;
 
-		initializeOptions();
-
-		if(argc > 1)
-		{
+		// We extract the options values only if the help option is not present
+		if(args.size() > 1 && !args.contains(Help) && !args.contains(short_opts[Help]))
+		{	
 			for(int i=1; i < argc; i++)
 			{
-				op=argv[i];
+				op = orig_op = argv[i];
 
 				//If the retrieved option starts with - it will be treated as a command option
 				if(op[0]=='-')
@@ -145,13 +195,13 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 
 					//Raises an error if the option is not recognized
 					if(!isOptionRecognized(op, accepts_val))
-						throw Exception(tr("Unrecognized option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Unrecognized option `%1'.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					//Raises an error if the value is empty and the option accepts a value
 					if(accepts_val && value.isEmpty())
-						throw Exception(tr("Value not specified for option '%1'.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Value not specified for option `%1'.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					else if(!accepts_val && !value.isEmpty())
-						throw Exception(tr("Option '%1' does not accept values.").arg(op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						throw Exception(tr("Option `%1' does not accept values.").arg(orig_op), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 					/* If we find a filter object parameter we append its parameter index so
 					 * its value is not replaced by the next filter parameter found */
@@ -281,130 +331,6 @@ void PgModelerCliApp::configureConnection(bool extra_conn)
 	}
 }
 
-void PgModelerCliApp::initializeOptions()
-{
-	long_opts[Input]=true;
-	long_opts[Output]=true;
-	long_opts[InputDb]=true;
-	long_opts[ExportToFile]=false;
-	long_opts[ExportToPng]=false;
-	long_opts[ExportToSvg]=false;
-	long_opts[ExportToDbms]=false;
-	long_opts[ImportDb]=false;
-	long_opts[Diff]=false;
-	long_opts[DropDatabase]=false;
-	long_opts[DropObjects]=false;
-	long_opts[PgSqlVer]=true;
-	long_opts[Help]=false;
-	long_opts[ShowGrid]=false;
-	long_opts[ShowDelimiters]=false;
-	long_opts[PageByPage]=false;
-	long_opts[IgnoreDuplicates]=false;
-	long_opts[IgnoreErrorCodes]=true;
-	long_opts[ConnAlias]=true;
-	long_opts[Host]=true;
-	long_opts[Port]=true;
-	long_opts[User]=true;
-	long_opts[Passwd]=true;
-	long_opts[InitialDb]=true;
-	long_opts[ListConns]=false;
-	long_opts[Simulate]=false;
-	long_opts[FixModel]=false;
-	long_opts[FixTries]=true;
-	long_opts[ZoomFactor]=true;
-	long_opts[UseTmpNames]=false;
-	long_opts[DbmMimeType]=true;
-	long_opts[IgnoreImportErrors]=false;
-	long_opts[ImportSystemObjs]=false;
-	long_opts[ImportExtensionObjs]=false;
-	long_opts[FilterObjects]=true;
-	long_opts[ForceChildren]=true;
-	long_opts[OnlyMatching]=false;
-	long_opts[MatchByName]=false;
-	long_opts[DebugMode]=false;
-	long_opts[PartialDiff]=false;
-	long_opts[CompareTo]=true;
-	long_opts[SaveDiff]=false;
-	long_opts[ApplyDiff]=false;
-	long_opts[NoDiffPreview]=false;
-	long_opts[DropClusterObjs]=false;
-	long_opts[RevokePermissions]=false;
-	long_opts[DropMissingObjs]=false;
-	long_opts[ForceDropColsConstrs]=false;
-	long_opts[RenameDb]=false;
-	long_opts[TruncOnColsTypeChange]=false;
-	long_opts[NoSequenceReuse]=false;
-	long_opts[NoCascadeDropTrunc]=false;
-	long_opts[NoForceObjRecreation]=false;
-	long_opts[NoUnmodObjRecreation]=false;
-	long_opts[ExportToDict]=false;
-	long_opts[NoIndex]=false;
-	long_opts[Splitted]=false;
-	long_opts[SystemWide]=false;
-	long_opts[CreateConfigs]=false;
-
-	short_opts[Input]="-if";
-	short_opts[Output]="-of";
-	short_opts[InputDb]="-id";
-	short_opts[ExportToFile]="-ef";
-	short_opts[ExportToPng]="-ep";
-	short_opts[ExportToSvg]="-es";
-	short_opts[ExportToDbms]="-ed";
-	short_opts[ExportToDict]="-et";
-	short_opts[ImportDb]="-im";
-	short_opts[Diff]="-df";
-	short_opts[DropDatabase]="-dd";
-	short_opts[DropObjects]="-do";
-	short_opts[PgSqlVer]="-v";
-	short_opts[Help]="-h";
-	short_opts[ShowGrid]="-sg";
-	short_opts[ShowDelimiters]="-sl";
-	short_opts[PageByPage]="-pp";
-	short_opts[IgnoreDuplicates]="-ir";
-	short_opts[IgnoreErrorCodes]="-ic";
-	short_opts[ConnAlias]="-ca";
-	short_opts[Host]="-H";
-	short_opts[Port]="-p";
-	short_opts[User]="-u";
-	short_opts[Passwd]="-w";
-	short_opts[InitialDb]="-D";
-	short_opts[Silent]="-s";
-	short_opts[ListConns]="-lc";
-	short_opts[Simulate]="-sm";
-	short_opts[FixModel]="-fm";
-	short_opts[FixTries]="-ft";
-	short_opts[ZoomFactor]="-zf";
-	short_opts[UseTmpNames]="-tn";
-	short_opts[DbmMimeType]="-mt";
-	short_opts[IgnoreImportErrors]="-ie";
-	short_opts[ImportSystemObjs]="-is";
-	short_opts[ImportExtensionObjs]="-ix";
-	short_opts[FilterObjects]="-fo";
-	short_opts[MatchByName]="-mn";
-	short_opts[ForceChildren]="-fc";
-	short_opts[OnlyMatching]="-om";
-	short_opts[DebugMode]="-d";
-	short_opts[PartialDiff]="-pd";
-	short_opts[CompareTo]="-ct";
-	short_opts[SaveDiff]="-sd";
-	short_opts[ApplyDiff]="-ad";
-	short_opts[NoDiffPreview]="-np";
-	short_opts[DropClusterObjs]="-dc";
-	short_opts[RevokePermissions]="-rv";
-	short_opts[DropMissingObjs]="-dm";
-	short_opts[ForceDropColsConstrs]="-fd";
-	short_opts[RenameDb]="-rn";
-	short_opts[TruncOnColsTypeChange]="-tt";
-	short_opts[NoSequenceReuse]="-ns";
-	short_opts[NoCascadeDropTrunc]="-nd";
-	short_opts[NoForceObjRecreation]="-nf";
-	short_opts[NoUnmodObjRecreation]="-nu";
-	short_opts[NoIndex]="-ni";
-	short_opts[Splitted]="-sp";
-	short_opts[SystemWide]="-sw";
-	short_opts[CreateConfigs]="-cc";
-}
-
 bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 {
 	bool found=false, append_chr = false;
@@ -498,6 +424,8 @@ void PgModelerCliApp::showMenu()
 	out << tr("Diff options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Apply the generated diff code on the database server.").arg(short_opts[ApplyDiff]).arg(ApplyDiff) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Don't preview the generated diff code when applying it to the server.").arg(short_opts[NoDiffPreview]).arg(NoDiffPreview) << QtCompat::endl;
@@ -509,8 +437,8 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Don't drop or truncate objects in cascade mode.").arg(short_opts[NoCascadeDropTrunc]).arg(NoCascadeDropTrunc) << QtCompat::endl;
 	out << tr("  %1, %2\t    Truncate tables prior to alter columns. Avoids errors related to type casting when the new type of a column isn't compatible to the old one.").arg(short_opts[TruncOnColsTypeChange]).arg(TruncOnColsTypeChange) << QtCompat::endl;
 	out << tr("  %1, %2\t    Don't reuse sequences on serial columns. Drop the old sequence assigned to a serial column and creates a new one.").arg(short_opts[NoSequenceReuse]).arg(NoSequenceReuse) << QtCompat::endl;
-	out << tr("  %1, %2\t    Don't force the recreation of objects. Avoids the usage of a DROP and CREATE commands to create a new version of the objects.").arg(short_opts[NoForceObjRecreation]).arg(NoForceObjRecreation) << QtCompat::endl;
-	out << tr("  %1, %2\t    Don't recreate the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[NoUnmodObjRecreation]).arg(NoUnmodObjRecreation) << QtCompat::endl;
+	out << tr("  %1, %2\t    Force the recreating of objects. Instead of an ALTER command a DROP and CREATE commands are used to create a new version of the objects.").arg(short_opts[ForceRecreateObjs]).arg(ForceRecreateObjs) << QtCompat::endl;
+	out << tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable) << QtCompat::endl;
 	out << QtCompat::endl;
 
 #ifndef Q_OS_MAC
@@ -576,6 +504,7 @@ void PgModelerCliApp::showMenu()
 	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode, FilterObjects }).join(" ") << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren) << QtCompat::endl;
+	out << tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("** When running the diff using two databases (%1 and %2) there's the option to specify two separated connections/aliases.").arg(InputDb).arg(CompareTo) << QtCompat::endl;
 	out << tr("   If only one connection is set then it will be used to import the input database as well to retrieve the database used in the comparison.") << QtCompat::endl;
@@ -711,7 +640,13 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			if(opts.count(SaveDiff) && opts[Output].isEmpty())
 				throw Exception(tr("No output file for the diff code was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(opts.count(PartialDiff) && !opts[FilterObjects].count())
+			if(opts.count(PartialDiff) && !opts[Input].count() && (opts.count(StartDate) || opts.count(EndDate)))
+				throw Exception(tr("Date filters are allowed only on partial diff using an input model!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(opts.count(PartialDiff) && opts.count(FilterObjects) && (opts.count(StartDate) || opts.count(EndDate)))
+				throw Exception(tr("Date filters and object filters can't be used together!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			if(opts.count(PartialDiff) && !opts.count(FilterObjects) && !opts.count(StartDate) && !opts.count(EndDate))
 				throw Exception(tr("Partial diff enabled but no object filter was provided!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			// For partial diff we force the --only-matching option and --force-children = all
@@ -719,6 +654,32 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			{
 				opts[ForceChildren] = AllChildren;
 				opts[OnlyMatching] = "";
+			}
+
+			// Validating the date formats in the provided start/end dates
+			QDateTime *dates[2] = { &start_date, &end_date };
+			QStringList dt_params = { StartDate, EndDate };
+
+			for(int idx = 0; idx < 2; idx++)
+			{
+				if(opts.count(dt_params[idx]))
+				{
+					*dates[idx] = QDateTime::fromString(opts[dt_params[idx]], Qt::ISODate);
+
+					if(!dates[idx]->isValid())
+						throw Exception(tr("Invalid date format `%1' in option `%2'!").arg(opts[dt_params[idx]]).arg(dt_params[idx]), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				}
+			}
+
+			/* If any of the dates are correctly parsed we need to force
+			 * the signature name matching, the forced filtering of all table children objects
+			 * and the only-matching option, so the objects can be correctly retrieved from
+			 * the destination database */
+			if(start_date.isValid() || end_date.isValid())
+			{
+				parsed_opts.erase(MatchByName);
+				parsed_opts[ForceChildren] = AllChildren;
+				parsed_opts[OnlyMatching] = "";
 			}
 		}
 		
@@ -1321,7 +1282,7 @@ void PgModelerCliApp::fixObjectAttributes(QString &obj_xml)
 	if(obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::Table))) ||
 		 obj_xml.contains(TagExpr.arg(BaseObject::getSchemaName(ObjectType::View))))
 	{
-		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), QString());
+		obj_xml.replace(QRegExp(AttributeExpr.arg(Attributes::HideExtAttribs)), "");
 	}
 
 	//Remove the usage of IN keyword in functions' signatures since it is the default if absent
@@ -1588,14 +1549,20 @@ void PgModelerCliApp::diffModelDatabase()
 
 		if(parsed_opts.count(PartialDiff))
 		{
-			filtered_objs = model->findObjects(obj_filters, parsed_opts.count(MatchByName) ? Attributes::Name : Attributes::Signature);
+			QString search_attr = parsed_opts.count(MatchByName) ? Attributes::Name : Attributes::Signature;
+
+			// Filtering by modification date always forces the signature matching
+			if(start_date.isValid() || end_date.isValid())
+				obj_filters.append(model->getFiltersFromChangeLog(start_date, end_date));
+
+			filtered_objs = model->findObjects(obj_filters, search_attr);
 
 			/* Special case: when performing a partial diff between a model and a database
 			 * and in the set of filtered model objects we have one or more many-to-many, inheritance or partitioning
 			 * relationships we need to inject filters to force the retrieval of the all involved tables in those relationships
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
-			obj_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, parsed_opts.count(MatchByName) == 0));
+			obj_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, search_attr == Attributes::Signature));
 		}
 	}
 	else
@@ -1612,8 +1579,8 @@ void PgModelerCliApp::diffModelDatabase()
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepClusterObjs, !parsed_opts.count(DropClusterObjs));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptCascadeMode, !parsed_opts.count(NoCascadeDropTrunc));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptTruncateTables, parsed_opts.count(TruncOnColsTypeChange));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptForceRecreation, !parsed_opts.count(NoForceObjRecreation));
-	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, !parsed_opts.count(NoUnmodObjRecreation));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptForceRecreation, parsed_opts.count(ForceRecreateObjs));
+	diff_hlp->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, parsed_opts.count(OnlyUnmodifiable));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, !parsed_opts.count(RevokePermissions));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptReuseSequences, !parsed_opts.count(NoSequenceReuse));
 	diff_hlp->setDiffOption(ModelsDiffHelper::OptPreserveDbName, !parsed_opts.count(RenameDb));
@@ -1908,7 +1875,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			{
 				//Remove any reference to application/dbm mime from file
 				str_aux=ts.readLine();
-				str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),QString());
+				str_aux.replace(QRegExp(QString("application/dbm*"),Qt::CaseSensitive,QRegExp::Wildcard),"");
 
 				if(!str_aux.isEmpty())
 				{
@@ -1963,7 +1930,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 			//Write the default value for .dbm registry key
 			dbm_ext.setValue(QString("Default"), QString("dbm_auto_file"));
 		else
-			dbm_ext.remove(QString());
+			dbm_ext.remove("");
 
 		dbm_ext.sync();
 	}
@@ -1985,7 +1952,7 @@ void PgModelerCliApp::handleWindowsMimeDatabase(bool uninstall, bool system_wide
 		QSettings s(itr->first, QSettings::NativeFormat);
 
 		if(uninstall)
-			s.remove(QString());
+			s.remove("");
 		else
 		{
 			for(int i=0; i < itr->second.size(); i+=2)

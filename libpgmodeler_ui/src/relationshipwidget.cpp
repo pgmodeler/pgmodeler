@@ -138,7 +138,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 					 rel_attribs_tbw->widget(AttributesTab), rel_attribs_tbw->widget(ConstraintsTab),
 					 rel_attribs_tbw->widget(SpecialPkTab), rel_attribs_tbw->widget(AdvancedTab) };
 
-		tab_labels=QStringList{ QString(), rel_attribs_tbw->tabText(SettingsTab),
+		tab_labels=QStringList{ "", rel_attribs_tbw->tabText(SettingsTab),
 							 rel_attribs_tbw->tabText(AttributesTab), rel_attribs_tbw->tabText(ConstraintsTab),
 							 rel_attribs_tbw->tabText(SpecialPkTab), rel_attribs_tbw->tabText(AdvancedTab)};
 
@@ -537,7 +537,7 @@ void RelationshipWidget::generateBoundingExpr()
 	else
 		tmpl = QString("WITH (MODULUS m, REMAINDER r)");
 
-	part_bound_expr_txt->setPlainText(QString());
+	part_bound_expr_txt->setPlainText("");
 	part_bound_expr_txt->setPlainText(tmpl);
 	default_part_chk->setChecked(false);
 }
@@ -1085,7 +1085,7 @@ void RelationshipWidget::applyConfiguration()
 			rel_type=rel->getRelationshipType();
 			rel->blockSignals(true);
 
-			rel->setPartitionBoundingExpr(default_part_chk->isChecked() ? QString() : part_bound_expr_txt->toPlainText());
+			rel->setPartitionBoundingExpr(default_part_chk->isChecked() ? "" : part_bound_expr_txt->toPlainText());
 
 			if(!defaults_rb->isChecked())
 			{

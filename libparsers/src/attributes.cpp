@@ -20,6 +20,7 @@
 
 namespace Attributes {
 	const QString
+	Action("action"),
 	ActiveLayers("active-layers"),
 	AdminOption("admin-option"),
 	AdminRoles("admin-roles"),
@@ -185,6 +186,7 @@ namespace Attributes {
 	EndExp("end-exp"),
 	Enumerations("enumerations"),
 	EnumType("enumeration"),
+	Entry("entry"),
 	EscapeComment("escape-comment"),
 	Event("event"),
 	Events("events"),
@@ -613,6 +615,7 @@ namespace Attributes {
 	UqConstr("uq-constr"),
 	UqPattern("uq-pattern"),
 	UsagePriv("usage"),
+	UseChangelog("use-changelog"),
 	UseCurvedLines("use-curved-lines"),
 	UsePlaceholders("use-placeholders"),
 	UseSignature("use-signature"),

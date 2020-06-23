@@ -293,8 +293,8 @@ void TriggerWidget::applyConfiguration()
 		trigger->setEvent(EventType::OnUpdate, update_chk->isChecked());
 		trigger->setEvent(EventType::OnDelete, delete_chk->isChecked());
 		trigger->setEvent(EventType::OnTruncate, truncate_chk->isChecked());
-		trigger->setTransitionTableName(Trigger::OldTableName, old_table_edt->isEnabled() ? old_table_edt->text() : QString());
-		trigger->setTransitionTableName(Trigger::NewTableName, new_table_edt->isEnabled() ? new_table_edt->text() : QString());
+		trigger->setTransitionTableName(Trigger::OldTableName, old_table_edt->isEnabled() ? old_table_edt->text() : "");
+		trigger->setTransitionTableName(Trigger::NewTableName, new_table_edt->isEnabled() ? new_table_edt->text() : "");
 		trigger->removeArguments();
 		trigger->removeColumns();
 

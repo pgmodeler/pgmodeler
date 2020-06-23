@@ -77,7 +77,7 @@ GenericSQLWidget::GenericSQLWidget(QWidget *parent): BaseObjectWidget(parent, Ob
 
 	connect(object_sel, &ObjectSelectorWidget::s_selectorChanged, [&](bool selected){
 			sel_obj_icon_lbl->setPixmap(selected ? PgModelerUiNs::getIconPath(object_sel->getSelectedObject()->getSchemaName()) : QPixmap());
-			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : QString());
+			sel_obj_icon_lbl->setToolTip(selected ? object_sel->getSelectedObject()->getTypeName() : "");
 	});
 
 	connect(objects_refs_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObjectReference(int)));

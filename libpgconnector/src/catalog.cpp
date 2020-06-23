@@ -525,7 +525,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 			if((obj_filters.empty() && extra_filter_conds.empty()) ||
 				 (!obj_filters.empty() && obj_filters.count(type) != 0) ||
 				 (!extra_filter_conds.empty() && TableObject::isTableObject(type) && extra_filter_conds.count(type) != 0))
-				attribs = getObjectsNames(type, QString(), QString(), extra_attribs);
+				attribs = getObjectsNames(type, "", "", extra_attribs);
 
 			for(auto &attr : attribs)
 			{
@@ -538,7 +538,7 @@ void Catalog::getObjectsOIDs(map<ObjectType, vector<unsigned> > &obj_oids, map<u
 				{
 					//Get the full set of attributes of the table
 					tab_oid=attr.first.toUInt();
-					tab_attribs=getObjectsAttributes(type, QString(), QString(), { tab_oid });
+					tab_attribs=getObjectsAttributes(type, "", "", { tab_oid });
 
 					//Retrieve the oid and names of the table's columns
 					col_attribs=getObjectsNames(ObjectType::Column, sch_names[tab_attribs[0][Attributes::Schema]], attr.second);
@@ -751,7 +751,7 @@ QString Catalog::getCommentQuery(const QString &oid_field, bool is_shared_obj)
 	try
 	{
 		attribs_map attribs={{Attributes::Oid, oid_field},
-												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : QString())}};
+												 {Attributes::SharedObj, (is_shared_obj ? Attributes::True : "")}};
 
 		loadCatalogQuery(query_id);
 		return schparser.getCodeDefinition(attribs).simplified();

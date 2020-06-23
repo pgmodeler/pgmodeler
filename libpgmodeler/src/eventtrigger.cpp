@@ -23,9 +23,9 @@ EventTrigger::EventTrigger()
 {
 	obj_type=ObjectType::EventTrigger;
 	function=nullptr;
-	attributes[Attributes::Event]=QString();
-	attributes[Attributes::Filter]=QString();
-	attributes[Attributes::Function]=QString();
+	attributes[Attributes::Event]="";
+	attributes[Attributes::Filter]="";
+	attributes[Attributes::Function]="";
 }
 
 void EventTrigger::setEvent(EventTriggerType evnt_type)

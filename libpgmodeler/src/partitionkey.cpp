@@ -38,7 +38,7 @@ QString PartitionKey::getCodeDefinition(unsigned def_type)
 	attribs_map attribs;
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
 
-	attribs[Attributes::Collation]=QString();
+	attribs[Attributes::Collation]="";
 	configureAttributes(attribs, def_type);
 
 	if(collation)

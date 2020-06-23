@@ -165,7 +165,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void enableDiffMode();
 		void generateDiff();
 		void cancelOperation(bool cancel_by_user);
-		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd=QString());
+		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd="");
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
 		void handleImportFinished(Exception e);
@@ -181,7 +181,9 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void removePreset();
 		void savePreset();
 		void enablePartialDiff();
+		void enableFilterByDate();
 		void applyPartialDiffFilters();
+		void applyPartialDiffDateFilters();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

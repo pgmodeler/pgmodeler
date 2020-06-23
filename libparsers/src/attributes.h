@@ -35,6 +35,7 @@
 
 namespace Attributes {
 	extern const QString
+	Action,
 	ActiveLayers,
 	AdminOption,
 	AdminRoles,
@@ -201,6 +202,7 @@ namespace Attributes {
 	EndExp,
 	Enumerations,
 	EnumType,
+	Entry,
 	EscapeComment,
 	Event,
 	Events,
@@ -631,6 +633,7 @@ namespace Attributes {
 	UqConstr,
 	UqPattern,
 	UsagePriv,
+	UseChangelog,
 	UseCurvedLines,
 	UsePlaceholders,
 	UseSignature,

@@ -107,9 +107,9 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else
 		attributes[Attributes::Name]=obj_name;
 
-	attributes[Attributes::ParamIn]=(is_in ? Attributes::True : QString());
-	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : QString());
-	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : QString());
+	attributes[Attributes::ParamIn]=(is_in ? Attributes::True : "");
+	attributes[Attributes::ParamOut]=(is_out ? Attributes::True : "");
+	attributes[Attributes::ParamVariadic]=(is_variadic ? Attributes::True : "");
 	attributes[Attributes::DefaultValue]=default_value;
 	attributes[Attributes::Type]=type.getCodeDefinition(def_type);
 

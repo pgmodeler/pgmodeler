@@ -300,8 +300,8 @@ QString Reference::getXMLDefinition()
 	Column col_aux;
 	QStringList ref_tab_names;
 
-	attribs[Attributes::Table]=QString();
-	attribs[Attributes::Column]=QString();
+	attribs[Attributes::Table]="";
+	attribs[Attributes::Column]="";
 
 	if(table)
 		attribs[Attributes::Table]=table->getName(true);
@@ -313,8 +313,8 @@ QString Reference::getXMLDefinition()
 	attribs[Attributes::Expression]=expression;
 	attribs[Attributes::Alias]=alias;
 	attribs[Attributes::ColumnAlias]=column_alias;
-	attribs[Attributes::Columns]=QString();
-	attribs[Attributes::RefTables]=QString();
+	attribs[Attributes::Columns]="";
+	attribs[Attributes::RefTables]="";
 
 	for(auto &col : columns)
 	{

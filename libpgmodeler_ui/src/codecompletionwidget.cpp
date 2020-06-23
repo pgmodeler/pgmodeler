@@ -252,7 +252,7 @@ void CodeCompletionWidget::insertCustomItems(const QStringList &names, const QSt
 {
 	for(int i=0; i < names.size(); i++)
 	{
-		insertCustomItem(names[i], (i < tooltips.size() ? tooltips[i] : QString()), icon);
+		insertCustomItem(names[i], (i < tooltips.size() ? tooltips[i] : ""), icon);
 	}
 }
 

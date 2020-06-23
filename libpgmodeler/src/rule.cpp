@@ -22,11 +22,11 @@ Rule::Rule()
 {
 	execution_type=BaseType::Null;
 	obj_type=ObjectType::Rule;
-	attributes[Attributes::EventType]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::Condition]=QString();
-	attributes[Attributes::ExecType]=QString();
-	attributes[Attributes::Commands]=QString();
+	attributes[Attributes::EventType]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::Condition]="";
+	attributes[Attributes::ExecType]="";
+	attributes[Attributes::Commands]="";
 }
 
 void Rule::setCommandsAttribute()

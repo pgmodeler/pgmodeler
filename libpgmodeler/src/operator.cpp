@@ -34,17 +34,17 @@ Operator::Operator()
 	argument_types[LeftArg]=PgSqlType(QString("\"any\""));
 	argument_types[RightArg]=PgSqlType(QString("\"any\""));
 
-	attributes[Attributes::LeftType]=QString();
-	attributes[Attributes::RightType]=QString();
-	attributes[Attributes::CommutatorOp]=QString();
-	attributes[Attributes::NegatorOp]=QString();
-	attributes[Attributes::RestrictionFunc]=QString();
-	attributes[Attributes::JoinFunc]=QString();
-	attributes[Attributes::OperatorFunc]=QString();
-	attributes[Attributes::Hashes]=QString();
-	attributes[Attributes::Merges]=QString();
-	attributes[Attributes::Signature]=QString();
-	attributes[Attributes::RefType]=QString();
+	attributes[Attributes::LeftType]="";
+	attributes[Attributes::RightType]="";
+	attributes[Attributes::CommutatorOp]="";
+	attributes[Attributes::NegatorOp]="";
+	attributes[Attributes::RestrictionFunc]="";
+	attributes[Attributes::JoinFunc]="";
+	attributes[Attributes::OperatorFunc]="";
+	attributes[Attributes::Hashes]="";
+	attributes[Attributes::Merges]="";
+	attributes[Attributes::Signature]="";
+	attributes[Attributes::RefType]="";
 }
 
 bool Operator::isValidName(const QString &name)
@@ -330,8 +330,8 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	attributes[Attributes::Hashes]=(hashes ? Attributes::True : QString());
-	attributes[Attributes::Merges]=(merges ? Attributes::True : QString());
+	attributes[Attributes::Hashes]=(hashes ? Attributes::True : "");
+	attributes[Attributes::Merges]=(merges ? Attributes::True : "");
 	attributes[Attributes::Signature]=getSignature();
 
 	return BaseObject::getCodeDefinition(def_type, reduced_form);

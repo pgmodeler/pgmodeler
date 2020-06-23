@@ -66,7 +66,7 @@ QString ObjectsDiffInfo::getInfoMessage()
 		obj_name=ref_obj->getSignature();
 
 	if(diff_type==NoDifference)
-		return QString();
+		return "";
 	else if(diff_type==DropObject)
 	{
 		msg=msg.arg(QString("<font color=\"#e00000\"><strong>DROP</strong></font>"))
@@ -100,7 +100,7 @@ QString ObjectsDiffInfo::getInfoMessage()
 QString ObjectsDiffInfo::getDiffTypeString()
 {
 	if(diff_type==NoDifference)
-		return QString();
+		return "";
 	else if(diff_type==DropObject)
 		return QString("DROP");
 	else if(diff_type==CreateObject)

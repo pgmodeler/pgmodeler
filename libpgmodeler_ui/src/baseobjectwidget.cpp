@@ -33,7 +33,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QWidge
 	{
 		QSpacerItem *spacer=nullptr;
 
-		setWindowTitle(QString());
+		setWindowTitle("");
 		setupUi(this);
 
 		handled_obj_type=obj_type;
@@ -175,7 +175,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 			}
 		}
 
-		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : QString());
+		str_aux=(!widget->toolTip().isEmpty() ? QString("\n") : "");
 		widget->setToolTip(widget->toolTip() + str_aux + tr("Required field. Leaving this empty will raise errors!"));
 	}
 }
@@ -532,7 +532,7 @@ QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const
 	else if(ver_interv_id==AfterVersion &&  !ini_ver.isEmpty())
 		return (XmlParser::CharGt + QString("= ") + ini_ver);
 	else
-		return QString();
+		return "";
 }
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)

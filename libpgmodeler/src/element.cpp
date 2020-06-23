@@ -32,7 +32,7 @@ void Element::setColumn(Column *column)
 	if(column)
 	{
 		this->column=column;
-		this->expression=QString();
+		this->expression="";
 	}
 }
 
@@ -93,12 +93,12 @@ OperatorClass *Element::getOperatorClass()
 
 void Element::configureAttributes(attribs_map &attributes, unsigned def_type)
 {
-	attributes[Attributes::Column]=QString();
-	attributes[Attributes::Expression]=QString();
-	attributes[Attributes::OpClass]=QString();
-	attributes[Attributes::UseSorting]=(this->sorting_enabled ? Attributes::True : QString());
-	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : QString());
-	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : QString());
+	attributes[Attributes::Column]="";
+	attributes[Attributes::Expression]="";
+	attributes[Attributes::OpClass]="";
+	attributes[Attributes::UseSorting]=(this->sorting_enabled ? Attributes::True : "");
+	attributes[Attributes::NullsFirst]=(this->sorting_enabled && this->sorting_attibs[NullsFirst] ? Attributes::True : "");
+	attributes[Attributes::AscOrder]=(this->sorting_enabled && this->sorting_attibs[AscOrder] ? Attributes::True : "");
 
 
 	if(column)

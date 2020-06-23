@@ -71,7 +71,7 @@ class SQLToolWidget: public QWidget, public Ui::SQLToolWidget {
 		void clearDatabases();
 
 		//! \brief Add a tab to permit the SQL execution for the current database being browsed
-		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = QString());
+		SQLExecutionWidget *addSQLExecutionTab(const QString &sql_cmd = "");
 
 	protected slots:
 		//! \brief Add a tab by browsing a database in the specified connection, loads the sql file and put its contents on a SQL execution
