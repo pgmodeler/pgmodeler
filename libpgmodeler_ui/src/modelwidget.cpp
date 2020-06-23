@@ -3061,6 +3061,8 @@ void ModelWidget::duplicateObject()
 			copyObjects(true);
 			pasteObjects(true);
 		}
+
+		selected_objects.clear();
 	}
 	catch(Exception &e)
 	{

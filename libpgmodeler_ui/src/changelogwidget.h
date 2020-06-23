@@ -43,6 +43,8 @@ class ChangelogWidget : public QWidget, Ui::ChangelogWidget {
 
 	public slots:
 		void setVisible(bool value) override;
+		void updateChangelogInfo();
+		void clearChangelog();
 
 	signals:
 		//! \brief Signal emitted whenever the widget changes its visibility

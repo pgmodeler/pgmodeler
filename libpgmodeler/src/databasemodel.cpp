@@ -11007,13 +11007,17 @@ QList<unsigned> DatabaseModel::getActiveLayers()
 	return active_layers;
 }
 
-void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj, QDateTime date_time)
+void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj)
 {
-	if(!object || op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
+	if(op_type == Operation::NoOperation || op_type == Operation::ObjectMoved)
+		return;
+
+	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
 		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	QString action;
 	BaseObject *aux_obj = nullptr;
+	QDateTime date_time = QDateTime::currentDateTime();
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
@@ -11032,8 +11036,7 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 			action = Attributes::UpdatePriv;
 	}
 
-	if(aux_obj)
-		changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
+	changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
 }
 
 void DatabaseModel::addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date)
@@ -11100,6 +11103,17 @@ bool DatabaseModel::isPersistedChangelog()
 void DatabaseModel::clearChangelog()
 {
 	changelog.clear();
+}
+
+QDateTime DatabaseModel::getOlderChangelogDate()
+{
+	return changelog.empty() ?
+				 QDateTime() : std::get<0>(changelog.front());
+}
+
+unsigned DatabaseModel::getChangelogLength()
+{
+	return changelog.size();
 }
 
 template<class TableClass>

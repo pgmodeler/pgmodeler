@@ -17,12 +17,20 @@
 */
 
 #include "changelogwidget.h"
+#include "generalconfigwidget.h"
 
 ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 {
 	setupUi(this);
+	model = nullptr;
 	setModel(nullptr);
+
 	connect(hide_tb, SIGNAL(clicked(bool)), this, SIGNAL(s_visibilityChanged(bool)));
+	connect(clear_tb, SIGNAL(clicked(bool)), this, SLOT(clearChangelog()));
+	connect(persisted_chk, &QCheckBox::toggled, [&](bool checked){
+		model->getDatabaseModel()->setPersistedChangelog(checked);
+		model->setModified(true);
+	});
 }
 
 void ChangelogWidget::setVisible(bool value)
@@ -31,7 +39,73 @@ void ChangelogWidget::setVisible(bool value)
 	emit s_visibilityChanged(value);
 }
 
+void ChangelogWidget::updateChangelogInfo()
+{
+	unsigned log_len = 0;
+	QString tmpl_text = tr("Changelog entries: %1"),
+			no_log_text = tr("<strong>none</strong>");
+
+	if(!model)
+		info_lbl->setText(tmpl_text.arg(no_log_text));
+	else
+	{
+		log_len = model->getDatabaseModel()->getChangelogLength();
+
+		if(log_len == 0)
+			info_lbl->setText(tmpl_text.arg(no_log_text));
+		else
+		{
+			QString ui_lang = GeneralConfigWidget::getConfigurationParam(Attributes::Configuration, Attributes::UiLanguage),
+					dt_format;
+			QLocale locale(ui_lang);
+
+			dt_format = locale.dateTimeFormat();
+			dt_format.remove('t'); // Removing timezone info
+			dt_format.remove("dddd,"); //Removing month's full name info
+
+			info_lbl->setText(tr("Changelog entries: <strong>%1</strong> since <strong>%2</strong>")
+												.arg(log_len)
+												.arg(locale.toString(model->getDatabaseModel()->getOlderChangelogDate(), dt_format)));
+		}
+	}
+
+	clear_tb->setEnabled(log_len > 0);
+	adjustSize();
+}
+
+void ChangelogWidget::clearChangelog()
+{
+	Messagebox msgbox;
+
+	msgbox.show("",
+							tr("<strong>ATTENTION:</strong> All the changelog records made until today will be lost and the filtering by \
+date of modification in partial diff will be unavailable! Do you want to proceed?"),
+								 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+	if(msgbox.result() == QDialog::Accepted)
+	{
+		model->getDatabaseModel()->clearChangelog();
+		model->setModified(true);
+		updateChangelogInfo();
+	}
+}
+
 void ChangelogWidget::setModel(ModelWidget *model)
 {	
+	if(this->model)
+		disconnect(this->model, nullptr, this, nullptr);
+
 	this->model = model;
+	updateChangelogInfo();
+	frame->setEnabled(model != nullptr);
+
+	if(model)
+	{
+		persisted_chk->setChecked(model->getDatabaseModel()->isPersistedChangelog());
+
+		connect(this->model, SIGNAL(s_objectManipulated()), this, SLOT(updateChangelogInfo()));
+		connect(this->model, SIGNAL(s_objectModified()), this, SLOT(updateChangelogInfo()));
+		connect(this->model, SIGNAL(s_objectCreated()), this, SLOT(updateChangelogInfo()));
+		connect(this->model, SIGNAL(s_objectRemoved()), this, SLOT(updateChangelogInfo()));
+	}
 }

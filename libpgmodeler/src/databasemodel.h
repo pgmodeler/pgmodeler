@@ -254,11 +254,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Register an object change in the internal changelog.
 		 * If the provided object is derived from TableObject then the parent is registered instead.
-		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified,
-		 * any other operation type is ignored.
-		 * The date_time, when provided, is always considered in local time (without timezone applied)
+		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified, any other operation type is ignored.
 		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
-		void addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj = nullptr, QDateTime date_time = QDateTime::currentDateTime());
+		void addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj = nullptr);
 
 		/*! \brief Register an object change in the internal changelog.
 		 * This version accepts string parameters to make the changelog loading from file more easy to handle.
@@ -774,6 +772,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Clears the changelog
 		void clearChangelog();
+
+		//! \brief Returns the older change log entry date
+		QDateTime getOlderChangelogDate();
+
+		//! \brief Returns the amount of entries in the changelog
+		unsigned getChangelogLength();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model

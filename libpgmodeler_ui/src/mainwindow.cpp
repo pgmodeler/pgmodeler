@@ -1175,6 +1175,7 @@ void MainWindow::setCurrentModel()
 	model_objs_wgt->setModel(current_model);
 	model_valid_wgt->setModel(current_model);
 	obj_finder_wgt->setModel(current_model);
+	changelog_wgt->setModel(current_model);
 
 	if(current_model)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);

@@ -44,7 +44,7 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -180,7 +180,7 @@
        </spacer>
       </item>
       <item row="1" column="0" colspan="5">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="info_lbl">
         <property name="text">
          <string>Changelog entries: &lt;strong&gt;0&lt;/strong&gt; since &lt;strong&gt;2020-06-13 14:25:00.555&lt;/strong&gt;</string>
         </property>
