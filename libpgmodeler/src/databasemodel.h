@@ -79,6 +79,12 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		static unsigned dbmodel_id;
 
+		//! \brief Constants used to access the tuple columns in the internal changelog
+		static constexpr unsigned LogDate = 0,
+		LogSinature = 1,
+		LogObjectType = 2,
+		LogAction = 3;
+
 		XmlParser xmlparser;
 
 		//! \brief Stores the layers names and active layer to write them on XML code
@@ -773,8 +779,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		//! \brief Clears the changelog
 		void clearChangelog();
 
-		//! \brief Returns the older change log entry date
-		QDateTime getOlderChangelogDate();
+		//! \brief Returns the last changelog entry date
+		QDateTime getLastChangelogDate();
 
 		//! \brief Returns the amount of entries in the changelog
 		unsigned getChangelogLength();

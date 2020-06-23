@@ -36,37 +36,33 @@ ChangelogWidget::ChangelogWidget(QWidget *parent) : QWidget(parent)
 void ChangelogWidget::setVisible(bool value)
 {
 	QWidget::setVisible(value);
+	adjustSize();
 	emit s_visibilityChanged(value);
 }
 
 void ChangelogWidget::updateChangelogInfo()
 {
-	unsigned log_len = 0;
-	QString tmpl_text = tr("Changelog entries: %1"),
-			no_log_text = tr("<strong>none</strong>");
+	QString entries_text = tr("Changelog entries: <strong>%1</strong>"),
+			last_mod_text = tr("Last modified: <strong>%1</strong>");
+	unsigned log_len = !model ? 0 : model->getDatabaseModel()->getChangelogLength();
 
-	if(!model)
-		info_lbl->setText(tmpl_text.arg(no_log_text));
+	if(log_len == 0)
+	{
+		info_lbl->setText(entries_text.arg('-'));
+		last_mod_lbl->setText(last_mod_text.arg('-'));
+	}
 	else
 	{
-		log_len = model->getDatabaseModel()->getChangelogLength();
+		QString ui_lang = GeneralConfigWidget::getConfigurationParam(Attributes::Configuration, Attributes::UiLanguage),
+				dt_format;
+		QLocale locale(ui_lang);
 
-		if(log_len == 0)
-			info_lbl->setText(tmpl_text.arg(no_log_text));
-		else
-		{
-			QString ui_lang = GeneralConfigWidget::getConfigurationParam(Attributes::Configuration, Attributes::UiLanguage),
-					dt_format;
-			QLocale locale(ui_lang);
+		dt_format = locale.dateTimeFormat();
+		dt_format.remove('t'); // Removing timezone info
+		dt_format.remove("dddd,"); //Removing month's full name info
 
-			dt_format = locale.dateTimeFormat();
-			dt_format.remove('t'); // Removing timezone info
-			dt_format.remove("dddd,"); //Removing month's full name info
-
-			info_lbl->setText(tr("Changelog entries: <strong>%1</strong> since <strong>%2</strong>")
-												.arg(log_len)
-												.arg(locale.toString(model->getDatabaseModel()->getOlderChangelogDate(), dt_format)));
-		}
+		info_lbl->setText(entries_text.arg(log_len));
+		last_mod_lbl->setText(last_mod_text.arg(locale.toString(model->getDatabaseModel()->getLastChangelogDate(), dt_format)));
 	}
 
 	clear_tb->setEnabled(log_len > 0);

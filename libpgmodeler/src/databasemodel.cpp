@@ -11069,10 +11069,10 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 
 	for(auto &entry : changelog)
 	{
-		date = std::get<0>(entry);
-		signature = std::get<1>(entry);
-		type = std::get<2>(entry);
-		action = std::get<3>(entry);
+		date = std::get<LogDate>(entry);
+		signature = std::get<LogSinature>(entry);
+		type = std::get<LogObjectType>(entry);
+		action = std::get<LogAction>(entry);
 
 		if((start.isValid() && end.isValid() && date >= start && date <= end) ||
 			 (start.isValid() && !end.isValid() && date >= start) ||
@@ -11105,10 +11105,10 @@ void DatabaseModel::clearChangelog()
 	changelog.clear();
 }
 
-QDateTime DatabaseModel::getOlderChangelogDate()
+QDateTime DatabaseModel::getLastChangelogDate()
 {
 	return changelog.empty() ?
-				 QDateTime() : std::get<0>(changelog.front());
+				 QDateTime() : std::get<LogDate>(changelog.back());
 }
 
 unsigned DatabaseModel::getChangelogLength()
@@ -11437,10 +11437,10 @@ QString DatabaseModel::getChangelogDefinition()
 
 		for(auto &entry : changelog)
 		{
-			date = std::get<0>(entry);
-			signature = std::get<1>(entry);
-			type = std::get<2>(entry);
-			action = std::get<3>(entry);
+			date = std::get<LogDate>(entry);
+			signature = std::get<LogSinature>(entry);
+			type = std::get<LogObjectType>(entry);
+			action = std::get<LogAction>(entry);
 
 			attribs[Attributes::Date] = date.toString(Qt::ISODate);
 			attribs[Attributes::Signature] = signature;
