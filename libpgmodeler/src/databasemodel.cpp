@@ -11041,7 +11041,7 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 
 void DatabaseModel::addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date)
 {
-	QDateTime date_time = QDateTime::fromString(date, Qt::ISODateWithMs);
+	QDateTime date_time = QDateTime::fromString(date, Qt::ISODate);
 	ObjectType obj_type = BaseObject::getObjectType(type);
 	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
 
@@ -11442,7 +11442,7 @@ QString DatabaseModel::getChangelogDefinition()
 			type = std::get<2>(entry);
 			action = std::get<3>(entry);
 
-			attribs[Attributes::Date] = date.toString(Qt::ISODateWithMs);
+			attribs[Attributes::Date] = date.toString(Qt::ISODate);
 			attribs[Attributes::Signature] = signature;
 			attribs[Attributes::Type] = BaseObject::getSchemaName(type);
 			attribs[Attributes::Action] = action;

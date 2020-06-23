@@ -125,7 +125,7 @@ class ModelsDiffHelper: public QObject {
 		OptForceRecreation=2,
 
 		//! \brief Recreates only objects that can't be modified using ALTER commands
-		OptRecreateUnchangeble=3,
+		OptRecreateUnmodifiable=3,
 
 		//! \brief Generate a TRUNCATE command for every table which columns was modified in their data types
 		OptTruncateTables=4,

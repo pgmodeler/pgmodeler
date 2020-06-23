@@ -82,10 +82,10 @@ class PgModelerCliApp: public Application {
 		static QTextStream out;
 
 		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
-		map<QString, bool> long_opts;
+		static map<QString, bool> long_opts;
 
 		//! \brief Stores the short option names.
-		attribs_map short_opts;
+		static attribs_map short_opts;
 
 		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
@@ -101,6 +101,12 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
+
+		//! \brief Start date used for filter changelog of the input database model (partial diff)
+		QDateTime start_date,
+
+		//! \brief End date used for filter changelog of the input database model (partial diff)
+		end_date;
 
 		static const QRegExp PasswordRegExp;
 
@@ -157,6 +163,8 @@ class PgModelerCliApp: public Application {
 		AllChildren,
 
 		PartialDiff,
+		StartDate,
+		EndDate,
 		CompareTo,
 		SaveDiff,
 		ApplyDiff,
@@ -169,8 +177,8 @@ class PgModelerCliApp: public Application {
 		TruncOnColsTypeChange,
 		NoSequenceReuse,
 		NoCascadeDropTrunc,
-		NoForceObjRecreation,
-		NoUnmodObjRecreation,
+		ForceRecreateObjs,
+		OnlyUnmodifiable,
 
 		CreateConfigs,
 
@@ -189,9 +197,6 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
-
-		//! \brief Initializes the options maps
-		void initializeOptions();
 
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */

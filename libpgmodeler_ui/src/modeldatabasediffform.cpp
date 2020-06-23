@@ -34,8 +34,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		setWindowFlags(flags);
 
 		dates_wgt->setVisible(false);
-		from_dt->setDateTime(QDateTime::currentDateTime());
-		until_dt->setDateTime(QDateTime::currentDateTime());
+		start_date_dt->setDateTime(QDateTime::currentDateTime());
+		end_date_dt->setDateTime(QDateTime::currentDateTime());
 
 		pd_filter_wgt = new ObjectsFilterWidget(this);
 
@@ -88,8 +88,8 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 
 		connect(by_date_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
 		connect(by_date_chk, SIGNAL(toggled(bool)), pd_filter_wgt, SLOT(setHidden(bool)));
-		connect(from_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
-		connect(until_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
+		connect(start_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
+		connect(end_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
 		connect(apply_by_date_tb, SIGNAL(clicked()), this, SLOT(applyPartialDiffDateFilters()));
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
@@ -613,7 +613,7 @@ void ModelDatabaseDiffForm::diffModels()
 	diff_helper->setDiffOption(ModelsDiffHelper::OptCascadeMode, cascade_mode_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptTruncateTables, trunc_tables_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptForceRecreation, force_recreation_chk->isChecked());
-	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnchangeble, recreate_unmod_chk->isChecked());
+	diff_helper->setDiffOption(ModelsDiffHelper::OptRecreateUnmodifiable, recreate_unmod_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptKeepObjectPerms, keep_obj_perms_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptReuseSequences, reuse_sequences_chk->isChecked());
 	diff_helper->setDiffOption(ModelsDiffHelper::OptPreserveDbName, preserve_db_name_chk->isChecked());
@@ -1314,9 +1314,9 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 
 void ModelDatabaseDiffForm::enableFilterByDate()
 {
-	apply_by_date_tb->setEnabled(from_chk->isChecked() || until_chk->isChecked());
-	from_dt->setEnabled(from_chk->isChecked());
-	until_dt->setEnabled(until_chk->isChecked());
+	apply_by_date_tb->setEnabled(start_date_chk->isChecked() || end_date_chk->isChecked());
+	start_date_dt->setEnabled(start_date_chk->isChecked());
+	end_date_dt->setEnabled(end_date_chk->isChecked());
 }
 
 void ModelDatabaseDiffForm::applyPartialDiffFilters()
@@ -1354,8 +1354,8 @@ void ModelDatabaseDiffForm::applyPartialDiffDateFilters()
 		return;
 
 	// Generate the filters from the model's change log
-	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(from_chk->isChecked() ? from_dt->dateTime() : QDateTime(),
-																																	until_chk->isChecked() ? until_dt->dateTime() : QDateTime()));
+	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
+																																	end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime()));
 
 	applyPartialDiffFilters();
 }

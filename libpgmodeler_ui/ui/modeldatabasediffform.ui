@@ -1476,9 +1476,9 @@
                       <number>4</number>
                      </property>
                      <item row="0" column="0">
-                      <widget class="QCheckBox" name="from_chk">
+                      <widget class="QCheckBox" name="start_date_chk">
                        <property name="text">
-                        <string>From:</string>
+                        <string>Start date:</string>
                        </property>
                       </widget>
                      </item>
@@ -1525,7 +1525,7 @@
                       </widget>
                      </item>
                      <item row="0" column="1">
-                      <widget class="QDateTimeEdit" name="from_dt">
+                      <widget class="QDateTimeEdit" name="start_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
                        </property>
@@ -1544,17 +1544,17 @@
                       </widget>
                      </item>
                      <item row="1" column="0">
-                      <widget class="QCheckBox" name="until_chk">
+                      <widget class="QCheckBox" name="end_date_chk">
                        <property name="enabled">
                         <bool>true</bool>
                        </property>
                        <property name="text">
-                        <string>Until:</string>
+                        <string>End date:</string>
                        </property>
                       </widget>
                      </item>
                      <item row="1" column="1">
-                      <widget class="QDateTimeEdit" name="until_dt">
+                      <widget class="QDateTimeEdit" name="end_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
                        </property>
