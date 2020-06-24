@@ -3023,6 +3023,8 @@ void DatabaseModel::removePermissions(BaseObject *object)
 
 		if(perm->getObject()==object)
 		{
+			invalid_special_objs.push_back(perm);
+
 			permissions.erase(itr);
 			itr=itr_end=permissions.end();
 

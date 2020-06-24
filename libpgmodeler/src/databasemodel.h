@@ -799,6 +799,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 	friend class ModelWidget;
 	friend class PgModelerCliApp;
 	friend class OperationList;
+	friend class PermissionWidget;
 };
 
 #endif

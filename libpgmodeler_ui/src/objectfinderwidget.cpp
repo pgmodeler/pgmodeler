@@ -285,13 +285,26 @@ void ObjectFinderWidget::selectObject()
 	BaseGraphicObject *graph_obj = nullptr;
 	BaseObjectView *obj_view = nullptr;
 	TableObject *tab_obj = nullptr;
+	BaseObject *object = nullptr;
 
 	selected_objs.clear();
 	model_wgt->scene->clearSelection();
 
+	if(result_tbw->selectedRanges().size() == 1 && result_tbw->currentItem()->column() == 0)
+	{
+		object = reinterpret_cast<BaseObject *>(result_tbw->currentItem()->data(Qt::UserRole).value<void *>());
+		selected_obj = object;
+
+		if(object->getObjectType() == ObjectType::Permission)
+			return;
+	}
+
 	for(auto &item : result_tbw->selectedItems())
 	{
-		if(item->column() != 0)
+		object = reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>());
+
+		if(item->column() != 0 ||
+			 (object && object->getObjectType() == ObjectType::Permission))
 			continue;
 
 		selected_objs.push_back(reinterpret_cast<BaseObject *>(item->data(Qt::UserRole).value<void *>()));
@@ -331,7 +344,7 @@ void ObjectFinderWidget::editObject()
 {
 	if(selected_obj)
 	{
-		if(selected_obj->getObjectType()==ObjectType::Permission)
+		if(selected_obj->getObjectType() == ObjectType::Permission)
 			model_wgt->showObjectForm(ObjectType::Permission, dynamic_cast<Permission *>(selected_obj)->getObject());
 		else
 		{
@@ -504,6 +517,7 @@ void ObjectFinderWidget::updateObjectTable(QTableWidget *tab_wgt, vector<BaseObj
 		tab_wgt->setUpdatesEnabled(true);
 		tab_wgt->setSortingEnabled(true);
 		tab_wgt->resizeColumnsToContents();
+
 		tab_wgt->resizeRowsToContents();
 	}
 }

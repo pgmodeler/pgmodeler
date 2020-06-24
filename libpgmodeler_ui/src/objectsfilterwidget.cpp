@@ -210,6 +210,11 @@ bool ObjectsFilterWidget::isMatchSignature()
 	return action_match_signature->isChecked();
 }
 
+bool ObjectsFilterWidget::hasFiltersConfigured()
+{
+	return filters_tbw->rowCount() > 0;
+}
+
 void ObjectsFilterWidget::addFilter()
 {
 	int row = filters_tbw->rowCount();

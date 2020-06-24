@@ -20,6 +20,7 @@
 #include <QThread>
 #include "pgmodelerns.h"
 #include <QDate>
+#include "catalog.h"
 
 const vector<QString> ModelsDiffHelper::TableObjsIgnoredAttribs = { Attributes::Alias };
 
@@ -96,12 +97,20 @@ void ModelsDiffHelper::setModels(DatabaseModel *src_model, DatabaseModel *imp_mo
 void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 {
 	vector<Constraint *> constrs;
+	ObjectType obj_type;
 
 	filtered_objs.clear();
 
 	for(auto &obj : objects)
 	{		
-		if(obj->getObjectType() == ObjectType::Relationship)
+		obj_type = obj->getObjectType();
+
+		// Discarding objects that can't used in partial diff
+		if(obj_type == ObjectType::BaseRelationship || obj_type == ObjectType::Textbox ||
+			 obj_type == ObjectType::GenericSql || obj_type == ObjectType::Tag)
+			continue;
+
+		if(obj_type == ObjectType::Relationship)
 		{
 			Relationship *rel = dynamic_cast<Relationship *>(obj);
 			unsigned rel_type = rel->getRelationshipType();
@@ -126,7 +135,7 @@ void ModelsDiffHelper::setFilteredObjects(const vector<BaseObject *> &objects)
 				}
 			}
 		}
-		else if(BaseTable::isBaseTable(obj->getObjectType()))
+		else if(BaseTable::isBaseTable(obj_type))
 		{
 			Constraint *constr = nullptr;
 			BaseTable *tab = dynamic_cast<BaseTable *>(obj);

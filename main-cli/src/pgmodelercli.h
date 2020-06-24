@@ -163,6 +163,7 @@ class PgModelerCliApp: public Application {
 		AllChildren,
 
 		PartialDiff,
+		ForceDiff,
 		StartDate,
 		EndDate,
 		CompareTo,

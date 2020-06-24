@@ -439,26 +439,44 @@ void ModelDatabaseDiffForm::enableDiffMode()
 
 void ModelDatabaseDiffForm::generateDiff()
 {
-	if(settings_tbw->isTabEnabled(1) && filtered_objs_tbw->rowCount() > 0)
+	if(settings_tbw->isTabEnabled(1))
 	{
 		Messagebox msgbox;
 
-		msgbox.show("",
-								tr("The option <strong>%1</strong> is currently unchecked. This can lead to the generation of <strong>DROP</strong> commands\
- for objects not present in the filtered set used in the partial diff. Take extra caution when applying the resulting diff! How do you want to proceed?")
+		if((pd_filter_wgt->hasFiltersConfigured() ||
+				start_date_chk->isChecked() ||
+				end_date_chk->isChecked()) && filtered_objs_tbw->rowCount() == 0)
+		{
+			msgbox.show(tr("No object was retrieved using the provided filters. The partial diff will not continue in order to avoid generating unneeded SQL code! Do you want to run a full diff instead?")
 									.arg(dont_drop_missing_objs_chk->text()),
-									 Messagebox::AlertIcon,
-									 Messagebox::AllButtons,
-									 tr("Check it and diff"),
-									 tr("Diff anyway"),
-									 tr("Cancel"),
-									 PgModelerUiNs::getIconPath("config"),
-									 PgModelerUiNs::getIconPath("diff"));
+									 Messagebox::ConfirmIcon,
+									 Messagebox::YesNoButtons);
 
-		if(msgbox.result() == QDialog::Accepted)
-			dont_drop_missing_objs_chk->setChecked(true);
-		else if(msgbox.isCancelled())
-			return;
+			if(msgbox.result() == Messagebox::Rejected)
+					return;
+		}
+		else if(filtered_objs_tbw->rowCount() > 0)
+		{
+			msgbox.show("",
+									tr("The options <strong>%1</strong> and <strong>%2</strong> are currently unchecked. This can lead to the generation of extra <strong>DROP</strong> commands\
+ for objects not present in the filtered set used in the partial diff. Take extra caution when applying the resulting diff! How do you want to proceed?")
+										.arg(dont_drop_missing_objs_chk->text()).arg(drop_missing_cols_constr_chk->text()),
+										 Messagebox::AlertIcon,
+										 Messagebox::AllButtons,
+										 tr("Check them and diff"),
+										 tr("Diff anyway"),
+										 tr("Cancel"),
+										 PgModelerUiNs::getIconPath("config"),
+										 PgModelerUiNs::getIconPath("diff"));
+
+			if(msgbox.result() == QDialog::Accepted)
+			{
+				dont_drop_missing_objs_chk->setChecked(true);
+				drop_missing_cols_constr_chk->setChecked(true);
+			}
+			else if(msgbox.isCancelled())
+				return;
+		}
 	}
 
 	// Cancel any pending preset editing before run the diff
@@ -1294,7 +1312,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 	settings_tbw->setTabEnabled(1, enable);
 	by_date_chk->setChecked(false);
 	by_date_chk->setVisible(src_model_rb->isChecked());
-	pd_filter_wgt->setModelFilteringMode(src_model_rb->isChecked(), { ObjectType::Relationship });
+	pd_filter_wgt->setModelFilteringMode(src_model_rb->isChecked(), { ObjectType::Relationship, ObjectType::Permission });
 
 	if(src_model_rb->isChecked())
 	{

@@ -73,6 +73,7 @@ const QString PgModelerCliApp::MatchByName("--match-by-name");
 const QString PgModelerCliApp::ForceChildren("--force-children");
 const QString PgModelerCliApp::OnlyMatching("--only-matching");
 const QString PgModelerCliApp::PartialDiff("--partial");
+const QString PgModelerCliApp::ForceDiff("--force");
 const QString PgModelerCliApp::StartDate("--start-date");
 const QString PgModelerCliApp::EndDate("--end-date");
 const QString PgModelerCliApp::CompareTo("--compare-to");
@@ -119,7 +120,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	{ TruncOnColsTypeChange, "-tt" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDropTrunc, "-nd" },	{ ForceRecreateObjs, "-nf" },
 	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Splitted, "-sp" },
-	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }
+	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { ForceDiff, "-ff" }
 };
 
 map<QString, bool> PgModelerCliApp::long_opts = {
@@ -143,7 +144,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ TruncOnColsTypeChange, false },	{ NoSequenceReuse, false },	{ NoCascadeDropTrunc, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
 	{ NoIndex, false },	{ Splitted, false },	{ SystemWide, false },
-	{ CreateConfigs, false }
+	{ CreateConfigs, false }, { ForceDiff, false }
 };
 
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
@@ -424,6 +425,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("Diff options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    Forces a full diff if the provided filters were not able to retrieve objects for a partial diff operation.").arg(short_opts[ForceDiff]).arg(ForceDiff) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date starts in the specified date. (Only for partial diff)").arg(short_opts[StartDate]).arg(StartDate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Matches all database model objects in which modification date ends in the specified date. (Only for partial diff)").arg(short_opts[EndDate]).arg(EndDate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Save the generated diff code to output file.").arg(short_opts[SaveDiff]).arg(SaveDiff) << QtCompat::endl;
@@ -1557,12 +1559,32 @@ void PgModelerCliApp::diffModelDatabase()
 
 			filtered_objs = model->findObjects(obj_filters, search_attr);
 
-			/* Special case: when performing a partial diff between a model and a database
-			 * and in the set of filtered model objects we have one or more many-to-many, inheritance or partitioning
-			 * relationships we need to inject filters to force the retrieval of the all involved tables in those relationships
-			 * from the destination database,this way we avoid the diff try to create everytime all tables
-			 * in the those relationships. */
-			obj_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, search_attr == Attributes::Signature));
+			/* We need to finish the diff if no object was found based on the filters
+			 * this will avoid the diff between an empty database model and a full database model
+			 * which may produce unexpected results like try to recreate all objects from the database
+			 * model that contains objects */
+			if(filtered_objs.empty())
+			{
+				printMessage(tr("No object was retrieved using the provided filter(s)."));
+
+				if(!parsed_opts.count(ForceDiff))
+				{
+					printMessage(tr("Use the option `%1' to force a full diff in this case.").arg(ForceDiff));
+					printMessage(tr("The diff process will not continue!\n"));
+					return;
+				}
+				else
+					printMessage(tr("Switching to full diff..."));
+			}
+			else
+			{
+				/* Special case: when performing a partial diff between a model and a database
+				 * and in the set of filtered model objects we have one or more many-to-many, inheritance or partitioning
+				 * relationships we need to inject filters to force the retrieval of the all involved tables in those relationships
+				 * from the destination database,this way we avoid the diff try to create everytime all tables
+				 * in the those relationships. */
+				obj_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, search_attr == Attributes::Signature));
+			}
 		}
 	}
 	else
