@@ -87,6 +87,9 @@ class PgModelerCliApp: public Application {
 		//! \brief Stores the short option names.
 		static attribs_map short_opts;
 
+		//! \brief Stores the accepted options by the different operations
+		static map<QString, QStringList> accepted_opts;
+
 		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
 
@@ -109,7 +112,6 @@ class PgModelerCliApp: public Application {
 		end_date;
 
 		static const QRegExp PasswordRegExp;
-
 		static const QString PasswordPlaceholder;
 
 		//! \brief Option names constants
@@ -230,16 +232,13 @@ class PgModelerCliApp: public Application {
 		void importDatabase();
 		void diffModelDatabase();
 		void updateMimeType();
-
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
-
 		void printMessage(const QString &msg);
-
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide);
-
 		void createConfigurations();
+		void listConnections();
 
 	public:
 		PgModelerCliApp(int argc, char **argv);

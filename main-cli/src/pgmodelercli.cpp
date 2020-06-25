@@ -147,13 +147,37 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ CreateConfigs, false }, { ForceDiff, false }
 };
 
+map<QString, QStringList> PgModelerCliApp::accepted_opts = {
+	{{ Attributes::Connection }, { ConnAlias, Host, Port, User, Passwd, InitialDb }},
+	{{ ExportToFile }, { Input, Output, PgSqlVer }},
+	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
+	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
+	{{ ExportToDict }, { Input, Output, Splitted, NoIndex }},
+
+	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
+											 DropDatabase, DropObjects, Simulate, UseTmpNames }},
+
+	{{ ImportDb }, { InputDb, Output, IgnoreImportErrors, ImportSystemObjs, ImportExtensionObjs,
+									 FilterObjects, OnlyMatching, MatchByName, ForceChildren, DebugMode, ConnAlias,
+									 Host, Port, User, Passwd, InitialDb }},
+
+	{{ Diff }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes, CompareTo, PartialDiff, ForceDiff,
+							 StartDate, EndDate, SaveDiff, ApplyDiff, NoDiffPreview, DropClusterObjs, RevokePermissions,
+							 DropMissingObjs, ForceDropColsConstrs, RenameDb, NoCascadeDropTrunc, TruncOnColsTypeChange,
+							 NoSequenceReuse, ForceRecreateObjs, OnlyUnmodifiable }},
+
+	{{ DbmMimeType }, { SystemWide }},
+	{{ FixModel },	{ Input, Output, FixTries }},
+	{{ ListConns }, {}},
+	{{ CreateConfigs }, {}}
+};
+
 PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv)
 {
 	try
 	{
 		QString op, value, orig_op;
 		bool accepts_val=false;
-		int eq_pos=-1;
 		attribs_map opts;
 		QStringList args = arguments();
 
@@ -180,15 +204,8 @@ PgModelerCliApp::PgModelerCliApp(int argc, char **argv) : Application(argc, argv
 				if(op[0]=='-')
 				{
 					value.clear();
-					eq_pos=op.indexOf('=');
 
-					// if the option has a = attached strip the string, assuming as value the	right part of it
-					if(eq_pos >= 0)
-					{
-						value=op.mid(eq_pos+1);
-						op=op.mid(0,eq_pos);
-					}
-					else if(i < argc-1 && argv[i+1][0]!='-')
+					if(i < argc-1 && argv[i+1][0]!='-')
 					{
 						//If the next option does not starts with '-', is considered a value
 						value=argv[++i];
@@ -363,30 +380,51 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << QtCompat::endl;
 	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
-	out << tr("Copyright 2006-%1 Raphael A. Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << QtCompat::endl;
+	out << tr("Copyright 2006-%1 Raphael Araújo e Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << QtCompat::endl;
 	out << QtCompat::endl;
+
 	out << tr("Usage: pgmodeler-cli [OPTIONS]") << QtCompat::endl << QtCompat::endl;
 	out << tr("This CLI tool provides several operations over models and databases without the need to perform them\nin pgModeler's graphical interface. All available options are described below.") << QtCompat::endl;
 	out << QtCompat::endl;
+
+	out << tr("Operation mode options: ") << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << QtCompat::endl;
+#ifndef Q_OS_MAC
+	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << QtCompat::endl;
+#endif
+	out << QtCompat::endl;
+
 	out << tr("General options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [FILE]\t\t    Input model file (.dbm). This is mandatory for export and fix operations.").arg(short_opts[Input]).arg(Input) << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    Input database name. This is mandatory for import operation.").arg(short_opts[InputDb]).arg(InputDb) << QtCompat::endl;
 	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Try to fix the structure of the input model file in order to make it loadable again.").arg(short_opts[FixModel]).arg(FixModel) << QtCompat::endl;
-	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a sql script file.").arg(short_opts[ExportToFile]).arg(ExportToFile)<< QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a png image.").arg(short_opts[ExportToPng]).arg(ExportToPng) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a svg file.").arg(short_opts[ExportToSvg]).arg(ExportToSvg) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model directly to a PostgreSQL server.").arg(short_opts[ExportToDbms]).arg(ExportToDbms) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Export the input model to a data directory in HTML format.").arg(short_opts[ExportToDict]).arg(ExportToDict) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Import a database to an output file.").arg(short_opts[ImportDb]).arg(ImportDb) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Compares a model and a database or two databases generating the SQL script to sync the latter in relation to the first.").arg(short_opts[Diff]).arg(Diff) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Force the PostgreSQL version of generated SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Force the PostgreSQL version syntax when generating SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << QtCompat::endl;
+	out << QtCompat::endl;	
+
+	out << tr("PNG and SVG export options: ") << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << QtCompat::endl;
+	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << QtCompat::endl;
+	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << QtCompat::endl;
 	out << QtCompat::endl;
+
+	out << tr("Data dictionary export options: ") << QtCompat::endl;
+	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
+	out << QtCompat::endl;
+
 	out << tr("Connection options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    List available connections in file %3.").arg(short_opts[ListConns]).arg(ListConns).arg(GlobalAttributes::ConnectionsConf + GlobalAttributes::ConfigurationExt) << QtCompat::endl;
 	out << tr("  %1, %2 [ALIAS]\t    Connection configuration alias to be used.").arg(short_opts[ConnAlias]).arg(ConnAlias) << QtCompat::endl;
 	out << tr("  %1, %2 [HOST]\t\t    PostgreSQL host in which a task will operate.").arg(short_opts[Host]).arg(Host) << QtCompat::endl;
 	out << tr("  %1, %2 [PORT]\t\t    PostgreSQL host listening port.").arg(short_opts[Port]).arg(Port) << QtCompat::endl;
@@ -394,12 +432,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2 [PASSWORD]\t    PostgreSQL user password.").arg(short_opts[Passwd]).arg(Passwd) << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    Connection's initial database.").arg(short_opts[InitialDb]).arg(InitialDb) << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("PNG and SVG export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Draws the grid in the exported image.").arg(short_opts[ShowGrid]).arg(ShowGrid) << QtCompat::endl;
-	out << tr("  %1, %2\t    Draws the page delimiters in the exported image.").arg(short_opts[ShowDelimiters]).arg(ShowDelimiters) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Each page will be exported in a separated png image. (Only for PNG images)").arg(short_opts[PageByPage]).arg(PageByPage) << QtCompat::endl;
-	out << tr("  %1, %2 [FACTOR]\t\t    Applies a zoom (in percent) before export to png image. Accepted zoom interval: %3-%4 (Only for PNG images)").arg(short_opts[ZoomFactor]).arg(ZoomFactor).arg(ModelWidget::MinimumZoom*100).arg(ModelWidget::MaximumZoom*100) << QtCompat::endl;
-	out << QtCompat::endl;
+
 	out << tr("DBMS export options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t    Ignores errors related to duplicated objects that eventually exist in the server.").arg(short_opts[IgnoreDuplicates]).arg(IgnoreDuplicates) << QtCompat::endl;
 	out << tr("  %1, %2 [CODES] Ignores additional errors by their codes. A comma-separated list of alphanumeric codes should be provided.").arg(short_opts[IgnoreErrorCodes]).arg(IgnoreErrorCodes) << QtCompat::endl;
@@ -408,10 +441,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t\t    Simulates an export process by executing all steps but undoing any modification in the end.").arg(short_opts[Simulate]).arg(Simulate) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Generates temporary names for database, roles and tablespaces when in simulation mode.").arg(short_opts[UseTmpNames]).arg(UseTmpNames) << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("Data dictionary export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
-	out << QtCompat::endl;
+
 	out << tr("Database import options: ") << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Ignore all errors and try to create as many as possible objects.").arg(short_opts[IgnoreImportErrors]).arg(IgnoreImportErrors) << QtCompat::endl;
 	out << tr("  %1, %2\t    Import system built-in objects. This option causes the model bloating due to the importing of unneeded objects.").arg(short_opts[ImportSystemObjs]).arg(ImportSystemObjs) << QtCompat::endl;
@@ -422,6 +452,7 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2 [OBJECTS]   Forces the importing of children objects related to tables/views/foreign tables matched by the filter(s). The OBJECTS is a comma separated list types.").arg(short_opts[ForceChildren]).arg(ForceChildren) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Run import in debug mode printing all queries executed in the server.").arg(short_opts[DebugMode]).arg(DebugMode) << QtCompat::endl;
 	out << QtCompat::endl;
+
 	out << tr("Diff options: ") << QtCompat::endl;
 	out << tr("  %1, %2 [DBNAME]\t    The database used in the comparison. All the SQL code generated is applied to it.").arg(short_opts[CompareTo]).arg(CompareTo) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Toggles the partial diff operation. A set of objects filters should be provided using the import option %3.").arg(short_opts[PartialDiff]).arg(PartialDiff).arg(FilterObjects) << QtCompat::endl;
@@ -443,15 +474,15 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2\t    Recreate only the unmodifiable objects. These objects are the ones which can't be changed via ALTER command.").arg(short_opts[OnlyUnmodifiable]).arg(OnlyUnmodifiable) << QtCompat::endl;
 	out << QtCompat::endl;
 
+	out << tr("Model fix options: ") << QtCompat::endl;
+	out << tr("  %1, %2 [NUMBER]\t    Model fix tries. When reaching the maximum count the invalid objects will be discarded.").arg(short_opts[FixTries]).arg(FixTries) << QtCompat::endl;
+	out << QtCompat::endl;
+
 #ifndef Q_OS_MAC
 	out << tr("File association options: ") << QtCompat::endl;
-	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    The file association to .dbm files will be applied in a system wide level instead of to the current user.").arg(short_opts[SystemWide]).arg(SystemWide) << QtCompat::endl;
 	out << QtCompat::endl;
 #endif
-	out << tr("Miscellaneous options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    Create the pgModeler's configuration folder and files in the user's local storage.").arg(short_opts[CreateConfigs]).arg(CreateConfigs) << QtCompat::endl;
-	out << QtCompat::endl;
 
 	out << QtCompat::endl;
 	out << tr("** The FILTER value in %1 option has the form type:pattern:mode. ").arg(FilterObjects) << QtCompat::endl;
@@ -502,8 +533,8 @@ void PgModelerCliApp::showMenu()
 	out << tr("   * NOTES: all comparisons during filtering process are case insensitive.") << QtCompat::endl;
 	out << tr("     Using the filtering options may cause the importing of additional objects due to the automatic dependency resolution.") << QtCompat::endl;
 	out << QtCompat::endl;
-	out << tr("** The diff process allows the usage of the following options related to export and import operations: ") << QtCompat::endl;
-	out << "   " << QStringList({ tr("* Export: "), IgnoreDuplicates, IgnoreErrorCodes, "\n  ", tr("* Import: "), ImportSystemObjs, ImportExtensionObjs, IgnoreImportErrors, DebugMode, FilterObjects }).join(" ") << QtCompat::endl;
+	out << tr("** The diff process allows the usage all options related to the import operation.") << QtCompat::endl;
+	out << tr("   It also accepts the following export operation options: `%1', `%2'").arg(IgnoreDuplicates).arg(IgnoreErrorCodes) << QtCompat::endl;
 	out << QtCompat::endl;
 	out << tr("** The partial diff operation will always force the options %1 and %2 = %3 for more reliable results.").arg(OnlyMatching).arg(ForceChildren).arg(AllChildren) << QtCompat::endl;
 	out << tr("   * The options %1 and %2 accepts the ISO8601 date/time format: yyyy-MM-dd hh:mm:ss").arg(StartDate).arg(EndDate) << QtCompat::endl;
@@ -513,6 +544,28 @@ void PgModelerCliApp::showMenu()
 	out << tr("   A second connection can be specified by appending a 1 to any connection configuration parameter listed above.") << QtCompat::endl;
 	out << tr("   This causes the connection to be associated to %1 exclusively.").arg(CompareTo) << QtCompat::endl;
 	out << QtCompat::endl;
+}
+
+void PgModelerCliApp::listConnections()
+{
+	map<QString, Connection *>::iterator itr=connections.begin();
+
+	if(connections.empty())
+		out << QtCompat::endl <<  tr("There are no connections configured.") << QtCompat::endl << QtCompat::endl;
+	else
+	{
+		unsigned id=0;
+
+		out << QtCompat::endl << tr("Available connections (alias : connection string)") << QtCompat::endl;
+		while(itr != connections.end())
+		{
+			out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
+						 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << QtCompat::endl;
+
+			itr++;
+		}
+		out << QtCompat::endl;
+	}
 }
 
 void PgModelerCliApp::parseOptions(attribs_map &opts)
@@ -547,58 +600,46 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 	if(opts.empty() || opts.count(Help))
 		showMenu();
-	//Listing connections
-	else if(opts.count(ListConns))
-	{
-		map<QString, Connection *>::iterator itr=connections.begin();
-
-		if(connections.empty())
-			out << QtCompat::endl <<  tr("There are no connections configured.") << QtCompat::endl << QtCompat::endl;
-		else
-		{
-			unsigned id=0;
-
-			out << QtCompat::endl << tr("Available connections (alias : connection string)") << QtCompat::endl;
-			while(itr != connections.end())
-			{
-				out << QString("[") << id++ <<  QString("] ") << itr->first << QString(" : ") <<
-							 itr->second->getConnectionString().replace(PasswordRegExp, PasswordPlaceholder) << QtCompat::endl;
-
-				itr++;
-			}
-			out << QtCompat::endl;
-		}
-	}
 	else
 	{
-		int mode_cnt=0, other_modes_cnt=0;
-		bool fix_model=(opts.count(FixModel) > 0), upd_mime=(opts.count(DbmMimeType) > 0),
-				import_db=(opts.count(ImportDb) > 0), diff=(opts.count(Diff) > 0),
-				create_configs=(opts.count(CreateConfigs) > 0);
+		QString curr_op_mode;
+		int exp_mode_cnt = 0, other_modes_cnt = 0;
+		bool fix_model = (opts.count(FixModel) > 0),
+				upd_mime = (opts.count(DbmMimeType) > 0),
+				import_db = (opts.count(ImportDb) > 0),
+				diff = (opts.count(Diff) > 0),
+				create_configs= (opts.count(CreateConfigs) > 0),
+				list_conns = (opts.count(ListConns) > 0),
+				export_dbms = (opts.count(ExportToDbms) > 0);
 
-		//Checking if multiples export modes were specified
-		mode_cnt+=opts.count(ExportToFile);
-		mode_cnt+=opts.count(ExportToPng);
-		mode_cnt+=opts.count(ExportToSvg);
-		mode_cnt+=opts.count(ExportToDbms);
-		mode_cnt+=opts.count(ExportToDict);
+		for(auto &itr : accepted_opts)
+		{
+			if(itr.first == Attributes::Connection)
+				continue;
 
-		other_modes_cnt+=opts.count(FixModel);
-		other_modes_cnt+=opts.count(ImportDb);
-		other_modes_cnt+=opts.count(Diff);
-		other_modes_cnt+=opts.count(DbmMimeType);
-		other_modes_cnt+=opts.count(CreateConfigs);
+			if(opts.count(itr.first))
+			{
+				curr_op_mode = itr.first;
+
+				if(itr.first == ExportToFile || itr.first == ExportToPng ||
+					 itr.first == ExportToSvg || itr.first == ExportToDbms ||
+					 itr.first == ExportToDict)
+					exp_mode_cnt++;
+				else
+					other_modes_cnt++;
+			}
+		}
 
 		if(opts.count(ZoomFactor))
 			zoom=opts[ZoomFactor].toDouble()/static_cast<double>(100);
 
-		if(other_modes_cnt==0 && mode_cnt==0)
+		if(other_modes_cnt==0 && exp_mode_cnt==0)
 			throw Exception(tr("No operation mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if((mode_cnt > 0 && (fix_model || upd_mime || import_db || diff || create_configs)) || (mode_cnt==0 && other_modes_cnt > 1))
-			throw Exception(tr("Export, fix model, import database, diff, update mime operations and configuration creation can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		if((exp_mode_cnt > 0 && (fix_model || upd_mime || import_db || diff || create_configs || list_conns)) || (exp_mode_cnt==0 && other_modes_cnt > 1))
+			throw Exception(tr("Multiple operation modes were specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!fix_model && !upd_mime && mode_cnt > 1)
+		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!upd_mime && !import_db && !diff && !create_configs && opts[Input].isEmpty())
@@ -610,7 +651,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && opts[Output].isEmpty())
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!opts.count(ExportToDbms) && !upd_mime && !import_db &&
+		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
 			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(tr("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -625,7 +666,7 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(upd_mime && opts[DbmMimeType]!=Install && opts[DbmMimeType]!=Uninstall)
 			throw Exception(tr("Invalid action specified to update mime option!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(opts.count(Diff))
+		if(diff)
 		{
 			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
 				throw Exception(tr("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -686,16 +727,16 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		}
 		
 		//Converting input and output files to absolute paths to avoid that they are read/written on the app's working dir
-		if(!opts[Input].isEmpty())
+		if(opts.count(Input))
 			opts[Input]=QFileInfo(opts[Input]).absoluteFilePath();
 
-		if(!opts[Output].isEmpty())
+		if(opts.count(Output))
 			opts[Output]=QFileInfo(opts[Output]).absoluteFilePath();
 
 		/* Special treatment for filter parameters:
 		 * Since it can be specified several filter parameter we need to join
 		 * everything in a single string list so it can be passed to the import helper correctly */
-		if(!opts[FilterObjects].isEmpty())
+		if(opts.count(FilterObjects))
 		{
 			opts.erase(FilterObjects);
 
@@ -706,7 +747,36 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 			}
 		}
 
-		parsed_opts=opts;
+		/* Performing a final validation on the parsed options which consists
+		 * in check if all provided options are compatible with the operation mode selected */
+		QStringList acc_opts = accepted_opts[curr_op_mode];
+		QString long_opt;
+
+		// Diff, import and export (to DBMS) share the same connection options
+		if(diff || import_db || export_dbms)
+			acc_opts.append(accepted_opts[Attributes::Connection]);
+
+		// Diff also accepts all import parameters
+		if(diff)
+			acc_opts.append(accepted_opts[ImportDb]);
+
+		for(auto &itr : opts)
+		{
+			long_opt = itr.first;
+
+			if(long_opt == curr_op_mode || long_opt == Silent)
+				continue;
+
+			/* Before validate the option we need to remove any appended number to the option name
+			 * This happens for options related to objects filters and connections */
+			long_opt.remove(QRegExp("[0-9]+$"));
+
+			if(!acc_opts.contains(long_opt))
+				throw Exception(tr("The option `%1' is not accepted by the operation mode `%2'!").arg(long_opt).arg(curr_op_mode),
+												ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
+		parsed_opts = opts;
 	}
 }
 
@@ -718,7 +788,9 @@ int PgModelerCliApp::exec()
 		{
 			printMessage(QString("\npgModeler %1 %2").arg(GlobalAttributes::PgModelerVersion).arg(tr("command line interface.")));
 
-			if(parsed_opts.count(FixModel))
+			if(parsed_opts.count(ListConns))
+				 listConnections();
+			else if(parsed_opts.count(FixModel))
 				fixModel();
 			else if(parsed_opts.count(DbmMimeType))
 				updateMimeType();
@@ -1431,7 +1503,9 @@ void PgModelerCliApp::exportModel()
 	else if(parsed_opts.count(ExportToDict))
 	{
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
-		export_hlp->exportToDataDict(model, parsed_opts[Output], parsed_opts.count(NoIndex) == 0, parsed_opts.count(Splitted) > 0);
+		export_hlp->exportToDataDict(model, parsed_opts[Output],
+																 parsed_opts.count(NoIndex) == 0,
+																 parsed_opts.count(Splitted) > 0);
 	}
 	//Export to DBMS
 	else
@@ -1480,6 +1554,8 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		Catalog catalog;
 		QString db_oid;
 		QStringList force_tab_objs;
+		bool imp_sys_objs = (parsed_opts.count(ImportSystemObjs) > 0),
+				imp_ext_objs = (parsed_opts.count(ImportExtensionObjs) > 0);
 
 		if(parsed_opts[ForceChildren] == AllChildren)
 		{
@@ -1495,10 +1571,9 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 			force_tab_objs = parsed_opts[ForceChildren].split(',', QtCompat::SkipEmptyParts);
 
 		catalog.setConnection(conn);
-
-		//For diff we don't need the oids of all system objects
 		catalog.setQueryFilter(Catalog::ListAllObjects | Catalog::ExclBuiltinArrayTypes |
-													 Catalog::ExclExtensionObjs | Catalog::ExclSystemObjs);
+													 (!imp_ext_objs ? Catalog::ExclExtensionObjs : 0) |
+													 (!imp_sys_objs ? Catalog::ExclSystemObjs : 0));
 
 		catalog.setObjectFilters(obj_filters, parsed_opts.count(OnlyMatching) > 0,
 														 parsed_opts.count(MatchByName) == 0, force_tab_objs);
@@ -1509,12 +1584,12 @@ void PgModelerCliApp::importDatabase(DatabaseModel *model, Connection conn)
 		catalog.closeConnection();
 
 		import_hlp->setConnection(conn);
-		import_hlp->setImportOptions(parsed_opts.count(ImportSystemObjs) > 0,
-																parsed_opts.count(ImportExtensionObjs) > 0,
-																true,
-																parsed_opts.count(IgnoreImportErrors) > 0,
-																parsed_opts.count(DebugMode) > 0,
-																!parsed_opts.count(Diff), !parsed_opts.count(Diff));
+		import_hlp->setImportOptions(imp_sys_objs,
+																 imp_ext_objs,
+																 true,
+																 parsed_opts.count(IgnoreImportErrors) > 0,
+																 parsed_opts.count(DebugMode) > 0,
+																 !parsed_opts.count(Diff), !parsed_opts.count(Diff));
 
 		model->createSystemObjects(true);
 		import_hlp->setSelectedOIDs(model, obj_oids, col_oids);
