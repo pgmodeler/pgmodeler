@@ -250,7 +250,6 @@ class BaseObject {
 		static constexpr unsigned DefMaxObjectCount=20;
 
 		BaseObject();
-		BaseObject(bool system_obj);
 		virtual ~BaseObject(void){}
 
 		//! \brief Returns the reference to the database that owns the object
