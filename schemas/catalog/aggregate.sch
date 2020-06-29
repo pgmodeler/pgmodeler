@@ -9,6 +9,11 @@
 %end    
 
 %if {list} %then
+
+  %if {use-signature} %then
+    %set {signature} [ ns.nspname || '.' || ]
+  %end
+
   [SELECT pr.oid, proname || '(' || 
   
    CASE 
@@ -37,7 +42,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ proname ~* ] E'{name-filter}' )
   %end
 %else
     %if {attribs} %then

@@ -76,6 +76,8 @@
 %usermapping;
 <!ENTITY % foreigntable SYSTEM "foreigntable.dtd">
 %foreigntable;
+<!ENTITY % changelog SYSTEM "changelog.dtd">
+%changelog;
 
 <!ELEMENT dbmodel ANY>
 <!ATTLIST dbmodel author CDATA #IMPLIED>
@@ -90,3 +92,4 @@
 <!ATTLIST dbmodel max-obj-count CDATA #IMPLIED>
 <!ATTLIST dbmodel layers CDATA #IMPLIED>
 <!ATTLIST dbmodel active-layers CDATA #IMPLIED>
+<!ATTLIST dbmodel use-changelog (false|true) "false">

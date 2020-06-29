@@ -334,7 +334,7 @@ void OperationList::removeFromPool(unsigned obj_idx)
 }
 
 
-int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx,  BaseObject *parent_obj)
+int OperationList::registerObject(BaseObject *object, unsigned op_type, int object_idx, BaseObject *parent_obj)
 {
 	ObjectType obj_type;
 	Operation *operation=nullptr;
@@ -481,6 +481,9 @@ int OperationList::registerObject(BaseObject *object, unsigned op_type, int obje
 		operation->setObjectIndex(obj_idx);
 		operations.push_back(operation);
 		current_index=operations.size();
+
+		//Registering a log entry for the object modification in database model's change log
+		model->addChangelogEntry(object, op_type, parent_obj);
 
 		//Returns the last operation position as operation's ID
 		return operations.size() -1;

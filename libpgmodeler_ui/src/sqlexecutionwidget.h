@@ -81,9 +81,9 @@ class SQLExecutionWidget: public QWidget, public Ui::SQLExecutionWidget {
 		void enableSQLExecution(bool enable);
 
 		//! \brief Stores the command on the sql command history
-		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error=QString());
+		void addToSQLHistory(const QString &cmd, unsigned rows=0, const QString &error="");
 
-		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = QString(), NumberedTextEditor *cmd_history_txt = nullptr);
+		static void validateSQLHistoryLength(const QString &conn_id, const QString &fmt_cmd = "", NumberedTextEditor *cmd_history_txt = nullptr);
 
 		void switchToExecutionMode(bool value);
 

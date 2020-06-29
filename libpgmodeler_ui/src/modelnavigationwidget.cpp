@@ -49,7 +49,7 @@ int ModelNavigationWidget::getCurrentIndex()
 QString ModelNavigationWidget::getText(int idx)
 {
 	if(idx < 0 || idx >= models_cmb->count())
-		return QString();
+		return "";
 	else
 		return models_cmb->itemText(idx);
 }

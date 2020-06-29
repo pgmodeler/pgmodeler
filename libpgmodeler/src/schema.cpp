@@ -23,8 +23,8 @@ Schema::Schema()
 	obj_type=ObjectType::Schema;
 	fill_color=QColor(225,225,225, 80);
 	rect_visible=false;
-	attributes[Attributes::FillColor]=QString();
-	attributes[Attributes::RectVisible]=QString();
+	attributes[Attributes::FillColor]="";
+	attributes[Attributes::RectVisible]="";
 }
 
 void Schema::setName(const QString &name)
@@ -69,7 +69,7 @@ QString Schema::getCodeDefinition(unsigned def_type)
 
 	attributes[Attributes::Layer]=QString::number(layer);
 	attributes[Attributes::FillColor]=fill_color.name();
-	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : QString());
+	attributes[Attributes::RectVisible]=(rect_visible ? Attributes::True : "");
 	setFadedOutAttribute();
 
 	return BaseObject::__getCodeDefinition(def_type);

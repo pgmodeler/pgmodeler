@@ -25,21 +25,21 @@ const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n'
 PhysicalTable::PhysicalTable() : BaseTable()
 {
 	gen_alter_cmds=false;
-	attributes[Attributes::Columns]=QString();
-	attributes[Attributes::InhColumns]=QString();
-	attributes[Attributes::Constraints]=QString();
-	attributes[Attributes::ColsComment]=QString();
-	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::GenAlterCmds]=QString();
-	attributes[Attributes::ConstrSqlDisabled]=QString();
-	attributes[Attributes::ColIndexes]=QString();
-	attributes[Attributes::ConstrIndexes]=QString();
-	attributes[Attributes::InitialData]=QString();
-	attributes[Attributes::Partitioning]=QString();
-	attributes[Attributes::PartitionKey]=QString();
-	attributes[Attributes::PartitionedTable]=QString();
-	attributes[Attributes::PartitionBoundExpr]=QString();
-	attributes[Attributes::CopyTable]=QString();
+	attributes[Attributes::Columns]="";
+	attributes[Attributes::InhColumns]="";
+	attributes[Attributes::Constraints]="";
+	attributes[Attributes::ColsComment]="";
+	attributes[Attributes::AncestorTable]="";
+	attributes[Attributes::GenAlterCmds]="";
+	attributes[Attributes::ConstrSqlDisabled]="";
+	attributes[Attributes::ColIndexes]="";
+	attributes[Attributes::ConstrIndexes]="";
+	attributes[Attributes::InitialData]="";
+	attributes[Attributes::Partitioning]="";
+	attributes[Attributes::PartitionKey]="";
+	attributes[Attributes::PartitionedTable]="";
+	attributes[Attributes::PartitionBoundExpr]="";
+	attributes[Attributes::CopyTable]="";
 
 	copy_table=partitioned_table=nullptr;
 	partitioning_type=BaseType::Null;
@@ -154,13 +154,13 @@ void PhysicalTable::setCommentAttribute(TableObject *tab_obj)
 
 		attribs[Attributes::Signature]=tab_obj->getSignature();
 		attribs[Attributes::SqlObject]=tab_obj->getSQLName();
-		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : QString());
-		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : QString());
+		attribs[Attributes::Column]=(tab_obj->getObjectType()==ObjectType::Column ? Attributes::True : "");
+		attribs[Attributes::Constraint]=(tab_obj->getObjectType()==ObjectType::Constraint ? Attributes::True : "");
 		attribs[Attributes::Table]=this->getName(true);
 		attribs[Attributes::Name]=tab_obj->getName(true);
 
 		QString comment = tab_obj->getEscapedComment(BaseObject::isEscapeComments());
-		attribs[Attributes::EscapeComment]=BaseObject::isEscapeComments() ? Attributes::True : QString();
+		attribs[Attributes::EscapeComment]=BaseObject::isEscapeComments() ? Attributes::True : "";
 		attribs[Attributes::Comment]=comment;
 
 		schparser.ignoreUnkownAttributes(true);
@@ -193,7 +193,7 @@ void PhysicalTable::setRelObjectsIndexesAttribute()
 
 	for(idx=0; idx < size; idx++)
 	{
-		attributes[attribs[idx]]=QString();
+		attributes[attribs[idx]]="";
 
 		if(!obj_indexes[idx]->empty())
 		{
@@ -330,7 +330,7 @@ void PhysicalTable::setConstraintsAttribute(unsigned def_type)
 				str_constr+=lines[i];
 			}
 
-			attributes[Attributes::ConstrSqlDisabled]=(dis_sql_cnt==lines.size() ? Attributes::True : QString());
+			attributes[Attributes::ConstrSqlDisabled]=(dis_sql_cnt==lines.size() ? Attributes::True : "");
 		}
 	}
 
@@ -1355,18 +1355,18 @@ void PhysicalTable::updateAlterCmdsStatus()
 void PhysicalTable::setTableAttributes(unsigned def_type, bool incl_rel_added_objs)
 {
 	QStringList part_keys_code;
-	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : QString());
-	attributes[Attributes::AncestorTable]=QString();
-	attributes[Attributes::PartitionedTable]=QString();
-	attributes[Attributes::Tag]=QString();
+	attributes[Attributes::GenAlterCmds]=(gen_alter_cmds ? Attributes::True : "");
+	attributes[Attributes::AncestorTable]="";
+	attributes[Attributes::PartitionedTable]="";
+	attributes[Attributes::Tag]="";
 	attributes[Attributes::Partitioning]=~partitioning_type;
-	attributes[Attributes::PartitionKey]=QString();
+	attributes[Attributes::PartitionKey]="";
 	attributes[Attributes::PartitionBoundExpr]=part_bounding_expr;
 	attributes[Attributes::Layer]=QString::number(layer);
-	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : QString());
+	attributes[Attributes::Pagination]=(pagination_enabled ? Attributes::True : "");
 	attributes[Attributes::CollapseMode]=QString::number(enum_cast(collapse_mode));
-	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : QString());
-	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : QString());
+	attributes[Attributes::AttribsPage]=(pagination_enabled ? QString::number(curr_page[AttribsSection]) : "");
+	attributes[Attributes::ExtAttribsPage]=(pagination_enabled ? QString::number(curr_page[ExtAttribsSection]) : "");
 
 	for(auto part_key : partition_keys)
 		part_keys_code+=part_key.getCodeDefinition(def_type);
@@ -1646,7 +1646,7 @@ QString PhysicalTable::getInitialDataCommands()
 		return commands.join('\n');
 	}
 
-	return QString();
+	return "";
 }
 
 QString PhysicalTable::createInsertCommand(const QStringList &col_names, const QStringList &values)
@@ -1740,12 +1740,12 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	attribs.insert(extra_attribs.begin(), extra_attribs.end());
 	attribs[Attributes::Type] = getTypeName();
 	attribs[Attributes::TypeClass] = getSchemaName();
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : QString();
+	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
 	attribs[Attributes::Name] = obj_name;
-	attribs[Attributes::Schema] = schema ? schema->getName() : QString();
+	attribs[Attributes::Schema] = schema ? schema->getName() : "";
 	attribs[Attributes::Comment] = comment;
-	attribs[Attributes::Columns] = QString();
-	attribs[Attributes::Constraints] = QString();
+	attribs[Attributes::Columns] = "";
+	attribs[Attributes::Constraints] = "";
 
 	aux_attrs[Attributes::Splitted] = attribs[Attributes::Splitted];
 
@@ -1758,7 +1758,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 	attribs[Attributes::Inherit] = tab_names.join(", ");
 	tab_names.clear();
 
-	attribs[Attributes::PartitionedTable] = QString();
+	attribs[Attributes::PartitionedTable] = "";
 	if(partitioned_table)
 	{
 		aux_attrs[Attributes::Name] = partitioned_table->getSignature().remove(QChar('"'));
@@ -1782,10 +1782,10 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		aux_attrs[Attributes::Type] = *column->getType();
 		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();
 		aux_attrs[Attributes::Comment] = column->getComment();
-		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : QString();
-		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : QString();
-		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : QString();
-		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : QString();
+		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
+		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";
+		aux_attrs[Attributes::UqConstr] = isConstraintRefColumn(column, ConstraintType::Unique) ? check_mark : "";
+		aux_attrs[Attributes::FkConstr] = isConstraintRefColumn(column, ConstraintType::ForeignKey) ? check_mark : "";
 
 		schparser.ignoreEmptyAttributes(true);
 		attribs[Attributes::Columns] += schparser.getCodeDefinition(col_dict_file, aux_attrs);
@@ -1800,7 +1800,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		aux_attrs[Attributes::Name] = constr->getName();
 		aux_attrs[Attributes::Type] = ~constr->getConstraintType();
 		aux_attrs[Attributes::Comment] = constr->getComment();
-		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : QString();
+		aux_attrs[Attributes::RefTable] = constr->getReferencedTable() ? constr->getReferencedTable()->getSignature().remove(QChar('"')) : "";
 
 		// Retrieving the columns that composes the constraint
 		for(auto &col : constr->getColumns(Constraint::SourceCols))

@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
   [SELECT sq.oid, relname AS name, ns.nspname AS parent, 'schema' AS parent_type
    FROM pg_class AS sq 
    LEFT JOIN pg_namespace AS ns ON sq.relnamespace = ns.oid ]
@@ -23,7 +28,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ sq.relname ~* ] E'{name-filter}' )
   %end
 
 %else
@@ -77,18 +82,18 @@
 	%end
 
 	%if {filter-oids} %or {schema} %then
-	[ AND ]
-	  %if {filter-oids} %then
-	   [ sq.oid IN (] {filter-oids} )
+      [ AND ]
+        %if {filter-oids} %then
+        [ sq.oid IN (] {filter-oids} )
 
-	    %if {schema} %then
-	      [ AND ]
-	    %end
-	  %end
+            %if {schema} %then
+            [ AND ]
+            %end
+        %end
 
-	  %if {schema} %then
-	   [ ns.nspname= ] '{schema}'
-	  %end
+        %if {schema} %then
+        [ ns.nspname= ] '{schema}'
+        %end
        %end
     %end
 %end

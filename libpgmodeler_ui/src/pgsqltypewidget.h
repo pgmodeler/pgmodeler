@@ -46,7 +46,7 @@ class PgSQLTypeWidget: public QWidget, public Ui::PgSQLTypeWidget {
 		static const QString InvalidType;
 
 	public:
-		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label=QString());
+		PgSQLTypeWidget(QWidget * parent = nullptr, const QString &label="");
 
 		/*! \brief Lists the PostgreSQL types on the specified combo. The user can configure which types
 		must be shown using the last tree parameters. The DatabaseModel parameter is used to

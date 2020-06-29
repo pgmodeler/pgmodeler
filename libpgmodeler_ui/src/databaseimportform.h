@@ -64,11 +64,11 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		void setParentItemChecked(QTreeWidgetItem *item);
 		
 		//! \brief Returns true when there is at least one item checked on the objects tree
-		bool hasCheckedItems();
+		bool hasObjectsToImport();
 		
-		/*! \brief Returns the checked items oids on "obj_oids" vector. The second parameter
+		/*! \brief Returns the items oids in "obj_oids" map. The second parameter
 		"col_oids" stores the columns oids for each selected table */
-		void getCheckedItems(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
+		void getObjectToImport(map<ObjectType, vector<unsigned>> &obj_oids, map<unsigned, vector<unsigned>> &col_oids);
 		
 		void finishImport(const QString &msg);
 		void showEvent(QShowEvent *);
@@ -122,6 +122,10 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		static void listObjects(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, bool checkable_items,
 														bool disable_empty_grps, bool create_db_item, bool create_dummy_item = false,
 														int sort_by = 0);
+
+		/*! \brief Fills a table widget by searching only objects matching the filters configured in the provided import helper
+		 * This method will force the first item of each row to be checkable also it'll adjust the column count to fit all info retrieved from catalog */
+		static void listFilteredObjects(DatabaseImportHelper &import_hlp, QTableWidget *flt_objects_tbw);
 		
 		/*! \brief Filters an tree widget using a pattern. The 'search_column' indicates in which column the pattern is applied.
 		The paramenter 'sel_single_leaf' indicates if the single leaf (resulting from filtering) must be selected. */
@@ -134,7 +138,7 @@ class DatabaseImportForm: public QDialog, public Ui::DatabaseImportForm {
 		The sort_by param indicates the column index in which the tree should be sorted by. When the sort_by is negative not sorting will be performed.*/
 		static vector<QTreeWidgetItem *> updateObjectsTree(DatabaseImportHelper &import_helper, QTreeWidget *tree_wgt, vector<ObjectType> types,
 																											 bool checkable_items=false, bool disable_empty_grps=true, QTreeWidgetItem *root=nullptr,
-																											 const QString &schema=QString(), const QString &table=QString());
+																											 const QString &schema="", const QString &table="");
 
 	private slots:
 		void importDatabase();

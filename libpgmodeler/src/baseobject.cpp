@@ -88,20 +88,20 @@ BaseObject::BaseObject()
 	tablespace=nullptr;
 	database=nullptr;
 	collation=nullptr;
-	attributes[Attributes::Name]=QString();
-	attributes[Attributes::Alias]=QString();
-	attributes[Attributes::Comment]=QString();
-	attributes[Attributes::Owner]=QString();
-	attributes[Attributes::Tablespace]=QString();
-	attributes[Attributes::Schema]=QString();
-	attributes[Attributes::Collation]=QString();
-	attributes[Attributes::Protected]=QString();
-	attributes[Attributes::SqlDisabled]=QString();
-	attributes[Attributes::AppendedSql]=QString();
-	attributes[Attributes::PrependedSql]=QString();
-	attributes[Attributes::Drop]=QString();
-	attributes[Attributes::Signature]=QString();
-	attributes[Attributes::EscapeComment]=QString();
+	attributes[Attributes::Name]="";
+	attributes[Attributes::Alias]="";
+	attributes[Attributes::Comment]="";
+	attributes[Attributes::Owner]="";
+	attributes[Attributes::Tablespace]="";
+	attributes[Attributes::Schema]="";
+	attributes[Attributes::Collation]="";
+	attributes[Attributes::Protected]="";
+	attributes[Attributes::SqlDisabled]="";
+	attributes[Attributes::AppendedSql]="";
+	attributes[Attributes::PrependedSql]="";
+	attributes[Attributes::Drop]="";
+	attributes[Attributes::Signature]="";
+	attributes[Attributes::EscapeComment]="";
 	this->setName(QApplication::translate("BaseObject","new_object","", -1));
 }
 
@@ -128,7 +128,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
 		return QApplication::translate("BaseObject",obj_type_names[enum_cast(obj_type)].toStdString().c_str(),"", -1);
 	else
-		return QString();
+		return "";
 }
 
 QString BaseObject::getTypeName(const QString &type_str)
@@ -586,15 +586,15 @@ QString BaseObject::getName(bool format, bool prepend_schema)
 		aux_name=formatName(this->obj_name, (obj_type==ObjectType::Operator));
 
 		if(this->schema && prepend_schema)
-			aux_name=formatName(this->schema->getName(format)) + QString(".") + aux_name;
+			aux_name=formatName(this->schema->getName(format)) + QChar('.') + aux_name;
 
 		if(!aux_name.isEmpty())
 			return aux_name;
 		else
 			return this->obj_name;
 	}
-	else
-		return this->obj_name;
+
+	return this->obj_name;
 }
 
 QString BaseObject::getAlias()
@@ -743,7 +743,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		bool format=false;
 
 		schparser.setPgSQLVersion(BaseObject::pgsql_ver);
-		attributes[Attributes::SqlDisabled]=(sql_disabled ? Attributes::True : QString());
+		attributes[Attributes::SqlDisabled]=(sql_disabled ? Attributes::True : "");
 
 		//Formats the object's name in case the SQL definition is being generated
 		format=((def_type==SchemaParser::SqlDefinition) ||
@@ -761,7 +761,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 
 		if(def_type==SchemaParser::XmlDefinition)
-			attributes[Attributes::Protected]=(is_protected ? Attributes::True : QString());
+			attributes[Attributes::Protected]=(is_protected ? Attributes::True : "");
 
 		if(tablespace)
 		{
@@ -806,7 +806,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			if(def_type==SchemaParser::SqlDefinition)
 			{
 				QString escape_comm = getEscapedComment(escape_comments);
-				attributes[Attributes::EscapeComment]=escape_comments ? Attributes::True : QString();
+				attributes[Attributes::EscapeComment]=escape_comments ? Attributes::True : "";
 				attributes[Attributes::Comment]=escape_comm;
 			}
 			else
@@ -856,7 +856,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			attributes[Attributes::Drop].remove(Attributes::DdlEndToken + '\n');
 		}
 
-		attributes[Attributes::ReducedForm]=(reduced_form ? Attributes::True : QString());
+		attributes[Attributes::ReducedForm]=(reduced_form ? Attributes::True : "");
 
 		try
 		{
@@ -922,7 +922,7 @@ void BaseObject::clearAttributes()
 
 	while(itr!=itr_end)
 	{
-		itr->second=QString();
+		itr->second="";
 		itr++;
 	}
 }
@@ -1090,10 +1090,10 @@ void BaseObject::setCodeInvalidated(bool value)
 void BaseObject::configureSearchAttributes()
 {
 	search_attribs[Attributes::Name] = this->getName(false);
-	search_attribs[Attributes::Signature] = this->getSignature(false);
-	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : QString();
-	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : QString();
-	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : QString();
+	search_attribs[Attributes::Signature] = this->getSignature(true);
+	search_attribs[Attributes::Schema] = schema ? schema->getName(false) : "";
+	search_attribs[Attributes::Tablespace] = tablespace ? tablespace->getName(false) : "";
+	search_attribs[Attributes::Owner] = owner ? owner->getName(false) : "";
 	search_attribs[Attributes::Comment] = comment;
 }
 
@@ -1178,7 +1178,7 @@ QString BaseObject::getCachedCode(unsigned def_type, bool reduced_form)
 			return cached_code[def_type];
 	}
 	else
-		return QString();
+		return "";
 }
 
 QString BaseObject::getDropDefinition(bool cascade)
@@ -1201,12 +1201,12 @@ QString BaseObject::getDropDefinition(bool cascade)
 			if(attribs.count(this->getSchemaName())==0)
 				attribs[this->getSchemaName()]=Attributes::True;
 
-			attribs[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+			attribs[Attributes::Cascade]=(cascade ? Attributes::True : "");
 
 			return schparser.getCodeDefinition(Attributes::Drop, attribs, SchemaParser::SqlDefinition);
 		}
 		else
-			return QString();
+			return "";
 	}
 	catch(Exception &e)
 	{
@@ -1241,7 +1241,7 @@ void BaseObject::copyAttributes(attribs_map &attribs)
 			attributes[itr.first]=itr.second;
 	}
 	else
-		attributes[Attributes::HasChanges]=QString();
+		attributes[Attributes::HasChanges]="";
 }
 
 QString BaseObject::getAlterDefinition(BaseObject *object)
@@ -1309,7 +1309,7 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 				attributes[Attributes::Comment]=Attributes::Unset;
 			else
 			{
-				attributes[Attributes::EscapeComment] = escape_comments ? Attributes::True : QString();
+				attributes[Attributes::EscapeComment] = escape_comments ? Attributes::True : "";
 				attributes[Attributes::Comment]=comm_obj;
 			}
 
@@ -1318,7 +1318,7 @@ QString BaseObject::getAlterCommentDefinition(BaseObject *object, attribs_map at
 			return schparser.getCodeDefinition(Attributes::Comment, attributes, SchemaParser::SqlDefinition);
 		}
 
-		return QString();
+		return "";
 	}
 	catch(Exception &e)
 	{

@@ -214,12 +214,7 @@ void SQLExecutionWidget::setConnection(Connection conn)
 {
 	sql_exec_hlp.setConnection(conn);
 	sql_cmd_conn = conn;
-
-	db_name_lbl->setText(QString("<strong>%1</strong>@<em>%2:%3</em>")
-						 .arg(conn.getConnectionParam(Connection::ParamDbName))
-						 .arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
-								  conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-											 .arg(conn.getConnectionParam(Connection::ParamPort)));
+	db_name_lbl->setText(conn.getConnectionId(true, true, true));
 }
 
 void SQLExecutionWidget::setSQLCommand(const QString &sql)
@@ -299,7 +294,7 @@ void SQLExecutionWidget::fillResultsTable(Catalog &catalog, ResultSet &res, QTab
 		end=std::unique(type_ids.begin(), type_ids.end());
 		type_ids.erase(end, type_ids.end());
 
-		types=catalog.getObjectsAttributes(ObjectType::Type, QString(), QString(), type_ids);
+		types=catalog.getObjectsAttributes(ObjectType::Type, "", "", type_ids);
 
 		for(auto &tp : types)
 			type_names[tp[Attributes::Oid].toUInt()]=tp[Attributes::Name];
@@ -747,7 +742,7 @@ int SQLExecutionWidget::clearAll()
 
 	if(res==QDialog::Accepted)
 	{
-		sql_cmd_txt->setPlainText(QString());
+		sql_cmd_txt->setPlainText("");
 		msgoutput_lst->clear();
 		msgoutput_lst->setVisible(true);
 		results_parent->setVisible(false);

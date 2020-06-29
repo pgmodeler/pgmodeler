@@ -23,10 +23,10 @@ Collation::Collation()
 	obj_type=ObjectType::Collation;
 	encoding=BaseType::Null;
 
-	attributes[Attributes::LcCtype]=QString();
-	attributes[Attributes::LcCollate]=QString();
-	attributes[Attributes::Locale]=QString();
-	attributes[Attributes::Encoding]=QString();
+	attributes[Attributes::LcCtype]="";
+	attributes[Attributes::LcCollate]="";
+	attributes[Attributes::Locale]="";
+	attributes[Attributes::Encoding]="";
 }
 
 void Collation::setLocale(const QString &locale)
@@ -69,7 +69,7 @@ void Collation::setCollation(BaseObject *collation)
 
 	encoding=BaseType::Null;
 	locale.clear();
-	localization[0]=localization[1]=QString();
+	localization[0]=localization[1]="";
 }
 
 QString Collation::getLocale()

@@ -23,10 +23,10 @@ ForeignServer::ForeignServer() : BaseObject()
 	obj_type = ObjectType::ForeignServer;
 	fdata_wrapper = nullptr;
 
-	attributes[Attributes::Options] = QString();
-	attributes[Attributes::Version] = QString();
-	attributes[Attributes::Type] = QString();
-	attributes[Attributes::Object] = QString();
+	attributes[Attributes::Options] = "";
+	attributes[Attributes::Version] = "";
+	attributes[Attributes::Type] = "";
+	attributes[Attributes::Object] = "";
 }
 
 void ForeignServer::setType(const QString &type)
@@ -71,7 +71,7 @@ QString ForeignServer::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	attributes[Attributes::Version] = version;
 	attributes[Attributes::Type] = type;
-	attributes[Attributes::Fdw] = QString();
+	attributes[Attributes::Fdw] = "";
 
 	if(fdata_wrapper)
 	{

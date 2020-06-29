@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+
+  %if {use-signature} %then
+    %set {signature} [ _dm1.domain_schema || '.' || ]
+  %end 
+
   [SELECT dm.oid, dm.typname AS name, 
     _dm1.domain_schema AS parent, 'schema' AS parent_type FROM pg_type AS dm
     INNER JOIN information_schema.domains AS _dm1 ON dm.typname=_dm1.domain_name
@@ -21,7 +26,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ dm.typname ~* ] E'{name-filter}' )
   %end
 
 %else

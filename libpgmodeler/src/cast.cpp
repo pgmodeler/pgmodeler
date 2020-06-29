@@ -24,11 +24,11 @@ Cast::Cast()
 	cast_function=nullptr;
 	cast_type=Explicit;
 	is_in_out=false;
-	attributes[Attributes::SourceType]=QString();
-	attributes[Attributes::DestType]=QString();
-	attributes[Attributes::CastType]=QString();
-	attributes[Attributes::IoCast]=QString();
-	attributes[Attributes::Function]=QString();
+	attributes[Attributes::SourceType]="";
+	attributes[Attributes::DestType]="";
+	attributes[Attributes::CastType]="";
+	attributes[Attributes::IoCast]="";
+	attributes[Attributes::Function]="";
 }
 
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
@@ -183,14 +183,14 @@ QString Cast::getCodeDefinition(unsigned def_type)
 			attributes[Attributes::Function]=cast_function->getCodeDefinition(def_type, true);
 	}
 	else
-		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : QString());
+		attributes[Attributes::IoCast]=(is_in_out ? Attributes::True : "");
 
 	if(cast_type==Assignment)
 		attributes[Attributes::CastType]=Attributes::Assignment;
 	else if(cast_type==Implicit)
 		attributes[Attributes::CastType]=Attributes::Implicit;
 	else
-		attributes[Attributes::CastType]=QString();
+		attributes[Attributes::CastType]="";
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::CastType]=attributes[Attributes::CastType].toUpper();

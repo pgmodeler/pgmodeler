@@ -290,7 +290,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &l
 		}
 
 		if(!match)
-			return QString();
+			return "";
 		else
 		{
 			info->group=group;

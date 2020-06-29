@@ -107,6 +107,7 @@ class TableObject: public BaseObject {
 		friend class Relationship;
 		friend class PhysicalTable;
 		friend class Table;
+		friend class ModelsDiffHelper;
 };
 
 #endif

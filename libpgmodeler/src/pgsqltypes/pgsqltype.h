@@ -202,7 +202,7 @@ class PgSqlType: public TemplateType<PgSqlType>{
 		bool isExactTo(PgSqlType type);
 
 		PgSqlType getAliasType();
-		QString getCodeDefinition(unsigned def_type, QString ref_type=QString());
+		QString getCodeDefinition(unsigned def_type, QString ref_type="");
 		virtual QString operator ~ ();
 
 		//! \brief Returns the SQL definition for the type

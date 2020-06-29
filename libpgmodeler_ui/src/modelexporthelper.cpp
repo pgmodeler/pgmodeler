@@ -299,7 +299,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 		/* Removing the empty (transparent) backgound object in order to save some space in the file if
 		the grid or delimiter is displayed */
 		if(!show_delim && !show_grid)
-			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), QString());
+			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), "");
 
 		buf.append(svg_def);
 

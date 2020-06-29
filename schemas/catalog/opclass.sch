@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
   [SELECT op.oid, opcname || ' ] $ob [' || am.amname || '] $cb [' AS name, 
    ns.nspname AS parent, 'schema' AS parent_type
    FROM pg_opclass AS op 
@@ -39,7 +44,7 @@
       [ WHERE ]
     %end
   
-    ( {name-filter} )
+    ( {signature} [ op.opcname ~* ] E'{name-filter}' )
   %end
 
 %else

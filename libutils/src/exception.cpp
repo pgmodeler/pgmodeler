@@ -271,12 +271,13 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InvDataDictDirectory", QT_TR_NOOP("Failed to save the data dictionary into `%1'! Make sure that the provided path points to a directory or if the user has write permissions over it!")},
 	{"InitialUserConfigNotCreated", QT_TR_NOOP("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.")},
 	{"InvalidObjectFilter", QT_TR_NOOP("An invalid object filter was detected: `%1'! Filters should have the following format: `[object type]:[pattern]:[%2]'.")},
-	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")}
+	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")},
+	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")},
 };
 
 Exception::Exception()
 {
-	configureException(QString(),ErrorCode::Custom,QString(),QString(),-1,QString());
+	configureException("",ErrorCode::Custom,"","",-1,"");
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
@@ -372,7 +373,7 @@ QString Exception::getErrorMessage(ErrorCode error_code)
 		 context (Exception) in the ts file and the text to be translated */
 		return QApplication::translate("Exception", messages[enum_cast(error_code)][ErrorMessage].toStdString().c_str(), "", -1);
 	else
-		return QString();
+		return "";
 }
 
 QString Exception::getErrorCode(ErrorCode error_code)
@@ -380,7 +381,7 @@ QString Exception::getErrorCode(ErrorCode error_code)
 	if(enum_cast(error_code) < ErrorCount)
 		return messages[enum_cast(error_code)][ErrorCodeId];
 	else
-		return QString();
+		return "";
 }
 
 QString Exception::getMethod()

@@ -3,15 +3,21 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-[ SELECT cs.oid, cs.conname AS name, 
-  tb.oid::regclass::text AS parent,
+
+  %set {parent-name} [ ns.nspname || '.' || tb.relname ]
+
+  %if {use-signature} %then
+    %set {signature} {parent-name} [ || '.' || ]
+  %end
+
+[ SELECT cs.oid, cs.conname AS name, ] {parent-name} [ AS parent,
   'table' AS parent_type 
   FROM pg_constraint AS cs 
-  LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid ]
+  LEFT JOIN pg_class AS tb ON cs.conrelid = tb.oid 
+  LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace ]
 
  %if {schema} %then
-   [ LEFT JOIN pg_namespace AS ns ON ns.oid = cs.connamespace
-     WHERE nspname= ] '{schema}'
+   [ WHERE nspname= ] '{schema}'
 
    %if {table} %then
      [ AND relkind IN ('r','p','f') AND relname=] '{table}'
@@ -42,7 +48,11 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} cs.conname ~* E'{name-filter}' )
+  %end
+  
+  %if {extra-condition} %then
+    [ AND ] ( {extra-condition} )
   %end
   
 %else

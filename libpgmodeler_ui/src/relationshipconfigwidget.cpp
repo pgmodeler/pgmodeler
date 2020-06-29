@@ -132,10 +132,10 @@ void RelationshipConfigWidget::saveConfiguration()
 
 		config_params[Attributes::ForeignKeys][Attributes::Deferrable]=(deferrable_chk->isChecked() ? Attributes::True : Attributes::False);
 		config_params[Attributes::ForeignKeys][Attributes::DeferType]=deferral_cmb->currentText();
-		config_params[Attributes::ForeignKeys][Attributes::UpdAction]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : QString());
-		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : QString());
+		config_params[Attributes::ForeignKeys][Attributes::UpdAction]=(upd_action_cmb->currentIndex() > 0 ? upd_action_cmb->currentText() : "");
+		config_params[Attributes::ForeignKeys][Attributes::DelAction]=(del_action_cmb->currentIndex() > 0 ? del_action_cmb->currentText() : "");
 
-		config_params[Attributes::NamePatterns][Attributes::Patterns]=QString();
+		config_params[Attributes::NamePatterns][Attributes::Patterns]="";
 
 		for(auto &itr : patterns)
 		{

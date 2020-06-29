@@ -26,7 +26,7 @@
       [ WHERE ]
     %end
   
-    ( {name-filter} )
+    ( [lanname ~* ] E'{name-filter}' )
   %end
 
 %else

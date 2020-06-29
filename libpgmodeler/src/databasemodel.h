@@ -30,6 +30,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <QFile>
 #include <QObject>
 #include <QStringList>
+#include <QDateTime>
 #include "baseobject.h"
 #include "table.h"
 #include "function.h"
@@ -67,11 +68,22 @@ class DatabaseModel:  public QObject, public BaseObject {
 	private:
 		Q_OBJECT
 
+		/*! \brief Stores all changes performed in the database model
+		 * The only purpose of this structure is to be used by the partial diff to filter certain objects by operation/date and,
+		 * differently from OperationList class, it's data persisted in the database model file. */
+		vector<tuple<QDateTime,QString,ObjectType,QString>> changelog;
+
 		/*! \brief Stores the references of all object lists of each type. This map is used by getObjectList() in order
 		 * to return the list according to the provided type */
 		map<ObjectType, vector<BaseObject *> *> obj_lists;
 
 		static unsigned dbmodel_id;
+
+		//! \brief Constants used to access the tuple columns in the internal changelog
+		static constexpr unsigned LogDate = 0,
+		LogSinature = 1,
+		LogObjectType = 2,
+		LogAction = 3;
 
 		XmlParser xmlparser;
 
@@ -105,7 +117,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 		bool is_template,
 
 		//! \brief Indicates if the database accepts connection
-		allow_conns;
+		allow_conns,
+
+		//! \brief Indicates if the internal changelog must be saved to the dbm file
+		persist_changelog;
 
 		//! \brief Vectors that stores all the objects types
 		vector<BaseObject *> textboxes,
@@ -237,12 +252,25 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
-
 	protected:
 		void setLayers(const QStringList &layers);
 		void setActiveLayers(const QList<unsigned> &layers);
 		QStringList getLayers();
 		QList<unsigned> getActiveLayers();
+
+		/*! \brief Register an object change in the internal changelog.
+		 * If the provided object is derived from TableObject then the parent is registered instead.
+		 * The op_type is one of the operations Operation::ObjectCreate, Operation::ObjectRemoved, Operation::ObjectModified, any other operation type is ignored.
+		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
+		void addChangelogEntry(BaseObject *object, unsigned op_type, BaseObject *parent_obj = nullptr);
+
+		/*! \brief Register an object change in the internal changelog.
+		 * This version accepts string parameters to make the changelog loading from file more easy to handle.
+		 * This method will validate all the provided parameters and in case of invalid values will raise and exception */
+		void addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date);
+
+		//! \brief Returns the XML code for the changelog
+		QString getChangelogDefinition();
 
 	public:
 		static constexpr unsigned MetaDbAttributes=1,	//! \brief Handle database model attribute when save/load metadata file
@@ -700,6 +728,14 @@ class DatabaseModel:  public QObject, public BaseObject {
 																		 bool case_sensitive, bool is_regexp, bool exact_match,
 																		 const QString &search_attr = Attributes::Name);
 
+		/*! \brief Returns a list of objects searching them by using the filter syntax [type]:[pattern]:[mode]
+		 * The provided list of filter strings is composed by:
+		 * > The object type (schema name, see BaseObject::getSchemaName())
+		 * > The search pattern itself
+		 * > The pattern mode (regexp | wildcard)
+		 * Additionally the search attribute can be provided so the search may occurr in other attributes instead of the default (name) */
+		vector<BaseObject *> findObjects(const QStringList &filters, const QString &search_attr = Attributes::Name);
+
 		void setLastPosition(const QPoint &pnt);
 		QPoint getLastPosition();
 
@@ -727,7 +763,27 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void saveObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
 
 		//! \brief Load the file containing the objects positioning to be applied to the model
-		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);
+		void loadObjectsMetadata(const QString &filename, unsigned options=MetaAllInfo);		
+
+		/*! \brief Returns a search filter from the objects in the change log.
+		 * It's possible to specify a date interval to contrain the entries
+		 * retrieved from changelog */
+		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end);
+
+		//! \brief Enable the persistence of the internal changelog
+		void setPersistedChangelog(bool persist);
+
+		//! \brief Returns true when the internal changelog is being persisted to the dbm file
+		bool isPersistedChangelog();
+
+		//! \brief Clears the changelog
+		void clearChangelog();
+
+		//! \brief Returns the last changelog entry date
+		QDateTime getLastChangelogDate();
+
+		//! \brief Returns the amount of entries in the changelog
+		unsigned getChangelogLength();
 
 	signals:
 		//! \brief Signal emitted when a new object is added to the model
@@ -742,6 +798,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 	friend class DatabaseImportHelper;
 	friend class ModelWidget;
 	friend class PgModelerCliApp;
+	friend class OperationList;
+	friend class PermissionWidget;
 };
 
 #endif

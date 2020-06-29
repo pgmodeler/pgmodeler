@@ -34,6 +34,7 @@
 #include "numberedtexteditor.h"
 #include "baseconfigwidget.h"
 #include "fileselectorwidget.h"
+#include "objectsfilterwidget.h"
 #include <QThread>
 
 class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDiffForm {
@@ -53,6 +54,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		NumberedTextEditor *sqlcode_txt;
 
 		FileSelectorWidget *file_sel;
+
+		ObjectsFilterWidget *pd_filter_wgt;
 
 		//! \brief Custom delegate used to paint html texts in output tree
 		HtmlItemDelegate *htmlitem_del;
@@ -74,6 +77,8 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 
 		//! \brief Tree items generated in each diff step
 		QTreeWidgetItem *import_item, *diff_item, *export_item, *src_import_item;
+
+		vector<BaseObject *> filtered_objs;
 
 		/*! \brief This is the model used in the diff process representing the source.
 		 * It can be the modelo loaded from file or a representation of the source database (when comparing two dbs) */
@@ -132,7 +137,16 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		virtual void saveConfiguration();
 
 		void togglePresetConfiguration(bool toggle, bool is_edit = false);
+
 		void enablePresetButtons();
+
+		/*! \brief When performing a partial diff between a model and database this method fills a vector with the
+		 * filtered objects in the source database model */
+		void getFilteredObjects(vector<BaseObject *> &objects);
+
+		/*! \brief When performing a partial diff between two databases this method fills a map with the
+		 * filtered objects (type -> oids) in the database */
+		void getFilteredObjects(map<ObjectType, vector<unsigned> > &obj_oids);
 
 	public:
 		ModelDatabaseDiffForm(QWidget * parent = nullptr, Qt::WindowFlags flags = Qt::Widget);
@@ -151,7 +165,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void enableDiffMode();
 		void generateDiff();
 		void cancelOperation(bool cancel_by_user);
-		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd=QString());
+		void updateProgress(int progress, QString msg, ObjectType obj_type, QString cmd="");
 		void updateDiffInfo(ObjectsDiffInfo diff_info);
 		void captureThreadError(Exception e);
 		void handleImportFinished(Exception e);
@@ -166,6 +180,10 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void selectPreset();
 		void removePreset();
 		void savePreset();
+		void enablePartialDiff();
+		void enableFilterByDate();
+		void applyPartialDiffFilters();
+		void applyPartialDiffDateFilters();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

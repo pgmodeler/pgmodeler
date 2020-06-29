@@ -556,7 +556,7 @@ void ModelValidationWidget::configureValidation()
 		if(sql_validation_chk->isChecked() && connections_cmb->currentIndex() > 0 && connections_cmb->currentIndex()!=connections_cmb->count()-1)
 		{
 			conn=reinterpret_cast<Connection *>(connections_cmb->itemData(connections_cmb->currentIndex()).value<void *>());
-			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : QString());
+			ver=(version_cmb->currentIndex() > 0 ? version_cmb->currentText() : "");
 		}
 
 		validation_helper->setValidationParams(model_wgt->getDatabaseModel(), conn, ver, use_tmp_names_chk->isChecked());

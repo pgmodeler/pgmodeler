@@ -19,6 +19,7 @@
 #include "objectsfilterwidget.h"
 #include "pgmodeleruins.h"
 #include "catalog.h"
+#include "pgmodelerns.h"
 
 ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 {
@@ -26,6 +27,16 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 	QAction *act = nullptr;
 
 	setupUi(this);
+
+	hint_lbl->setText(tr("Using a pattern in <strong>%1</strong> mode in which no wildcard character <strong>%2</strong> \
+is present has the same effect as performing an exact match searching on the names or signatures.")
+											 .arg(PgModelerNs::FilterWildcard)
+											 .arg(PgModelerNs::WildcardChar));
+
+	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+	clear_all_tb->setToolTip(clear_all_tb->toolTip() + QString(" (%1)").arg(clear_all_tb->shortcut().toString()));
+	apply_tb->setToolTip(apply_tb->toolTip() + QString(" (%1)").arg(apply_tb->shortcut().toString()));
+
 	types.erase(std::find(types.begin(), types.end(), ObjectType::Column));
 
 	for(auto &type : types)
@@ -34,25 +45,27 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 		act->setIcon(QIcon(PgModelerUiNs::getIconPath(type)));
 		act->setData(BaseObject::getSchemaName(type));
 		act->setCheckable(true);
-		act->setChecked(false);
+		act->setChecked(true);
 	}
 
-	forced_filter_tb->setMenu(&tab_objs_menu);
+	action_only_matching = new QAction(tr("Only macthing"));
+	action_only_matching->setCheckable(true);
+	action_only_matching->setChecked(true);
+
+	action_match_signature = new QAction(tr("Match by signature"));
+	action_match_signature->setCheckable(true);
+	action_match_signature->setChecked(true);
+
+	options_menu.addAction(action_match_signature);
+	options_menu.addAction(action_only_matching);
+	action_forced_filter = options_menu.addAction(tr("Forced filtering"));
+	action_forced_filter->setMenu(&tab_objs_menu);
+
+	options_tb->setMenu(&options_menu);
 
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
 	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
-	connect(only_matching_chk, SIGNAL(toggled(bool)), this, SLOT(enableForcedFilterButton()));
-
-	connect(&tab_objs_menu, &QMenu::triggered, [&](){
-		int checked_acts = 0;
-		for(auto &act : tab_objs_menu.actions())
-		{
-			if(act->isChecked())
-				checked_acts++;
-		}
-
-		forced_filter_tb->setText(tr("Forced filter") + QString(" (%1)").arg(checked_acts));
-	});
+	connect(action_only_matching, SIGNAL(toggled(bool)), action_forced_filter, SLOT(setEnabled(bool)));
 
 	connect(apply_tb, &QToolButton::clicked, [&](){
 		emit s_filterApplyingRequested();
@@ -63,19 +76,77 @@ ObjectsFilterWidget::ObjectsFilterWidget(QWidget *parent) : QWidget(parent)
 	filters_tbw->horizontalHeader()->resizeSection(2, 100);
 }
 
+void ObjectsFilterWidget::setModelFilteringMode(bool value, const vector<ObjectType> &extra_types)
+{
+	for(auto &act : tab_objs_menu.actions())
+		act->setChecked(true);
+
+	action_forced_filter->setDisabled(value);
+	action_only_matching->setChecked(true);
+	action_only_matching->setDisabled(value);
+
+	if(!value)
+		extra_obj_types.clear();
+	else
+		extra_obj_types = extra_types;
+}
+
+void ObjectsFilterWidget::addFilters(const QStringList &filters)
+{
+	QStringList values, types;
+	QComboBox *combo = nullptr;
+	int row = 0;
+
+	filters_tbw->setRowCount(0);
+	types = Catalog::getFilterableObjectNames();
+
+	for(auto &ext_type : extra_obj_types)
+		types.append(BaseObject::getSchemaName(ext_type));
+
+	for(auto &filter : filters)
+	{
+		values = filter.split(PgModelerNs::FilterSeparator);
+
+		// Rejecting invalid filters: malformed (< 3 fields), empty values or invalid object types
+		if(values.size() != 3 || values.indexOf("") >= 0 || !types.contains(values[0]))
+			continue;
+
+		addFilter();
+		row = filters_tbw->rowCount() - 1;
+
+		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0));
+		combo->setCurrentIndex(types.indexOf(values[0]));
+
+		filters_tbw->item(row, 1)->setText(values[1]);
+
+		combo = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 2));
+		combo->setCurrentText(values[2]);
+	}
+}
+
 QComboBox *ObjectsFilterWidget::createObjectsCombo()
 {
 	QComboBox *combo = new QComboBox;
 	QStringList obj_types = Catalog::getFilterableObjectNames();
 
 	for(auto &obj_type : obj_types)
+	{
 		combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
 												 BaseObject::getTypeName(obj_type),
 												 obj_type);
+	}
+
+	for(auto &obj_type : extra_obj_types)
+	{
+		if(combo->findText(BaseObject::getTypeName(obj_type)) < 0)
+		{
+			combo->addItem(QIcon(PgModelerUiNs::getIconPath(obj_type)),
+													 BaseObject::getTypeName(obj_type),
+													 BaseObject::getSchemaName(obj_type));
+		}
+	}
 
 	combo->setStyleSheet("border: 0px");
-	combo->model()->sort(0);
-	connect(combo, SIGNAL(activated(int)), this, SLOT(enableForcedFilterButton()));
 
 	return combo;
 }
@@ -84,7 +155,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 {
 	QStringList filters,
 			curr_filter,
-			modes = { Catalog::FilterExact, Catalog::FilterLike, Catalog::FilterRegExp };
+			modes = { PgModelerNs::FilterWildcard, PgModelerNs::FilterRegExp };
 	QString pattern, mode, type_name;
 	QComboBox *mode_cmb = nullptr, *object_cmb = nullptr;
 
@@ -106,7 +177,7 @@ QStringList ObjectsFilterWidget::getObjectFilters()
 		curr_filter.append(filters_tbw->item(row, 1)->text());
 		curr_filter.append(modes[mode_cmb->currentIndex()]);
 
-		filters.append(curr_filter.join(Catalog::FilterSeparator));
+		filters.append(curr_filter.join(PgModelerNs::FilterSeparator));
 		curr_filter.clear();
 	}
 
@@ -117,7 +188,7 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 {
 	QStringList types;
 
-	if(forced_filter_tb->isEnabled())
+	if(action_only_matching->isChecked())
 	{
 		for(auto &act : tab_objs_menu.actions())
 		{
@@ -131,7 +202,17 @@ QStringList ObjectsFilterWidget::getForceObjectsFilter()
 
 bool ObjectsFilterWidget::isOnlyMatching()
 {
-	return only_matching_chk->isChecked();
+	return action_only_matching->isChecked();
+}
+
+bool ObjectsFilterWidget::isMatchSignature()
+{
+	return action_match_signature->isChecked();
+}
+
+bool ObjectsFilterWidget::hasFiltersConfigured()
+{
+	return filters_tbw->rowCount() > 0;
 }
 
 void ObjectsFilterWidget::addFilter()
@@ -150,7 +231,7 @@ void ObjectsFilterWidget::addFilter()
 
 	combo = new QComboBox;
 	combo->setStyleSheet("border: 0px");
-	combo->addItems({ tr("Exact"), tr("Like"), tr("Regexp") });
+	combo->addItems({ tr("Wildcard"), tr("Regexp") });
 	filters_tbw->setCellWidget(row, 2, combo);
 
 	rem_tb = new QToolButton;
@@ -162,7 +243,6 @@ void ObjectsFilterWidget::addFilter()
 
 	clear_all_tb->setEnabled(true);
 	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
-	enableForcedFilterButton();
 }
 
 void ObjectsFilterWidget::removeFilter()
@@ -189,7 +269,9 @@ void ObjectsFilterWidget::removeFilter()
 	filters_tbw->clearSelection();
 	clear_all_tb->setEnabled(filters_tbw->rowCount() != 0);
 	apply_tb->setEnabled(filters_tbw->rowCount() != 0);
-	enableForcedFilterButton();
+
+	if(filters_tbw->rowCount() == 0)
+		emit s_filtersRemoved();
 }
 
 void ObjectsFilterWidget::removeAllFilters()
@@ -201,19 +283,4 @@ void ObjectsFilterWidget::removeAllFilters()
 	}
 
 	clear_all_tb->setEnabled(false);
-}
-
-void ObjectsFilterWidget::enableForcedFilterButton()
-{
-	bool has_tab_filter = false;
-	int row_cnt = filters_tbw->rowCount();
-	QString type_name;
-
-	for(int row = 0; row < row_cnt && !has_tab_filter; row++)
-	{
-		type_name = qobject_cast<QComboBox *>(filters_tbw->cellWidget(row, 0))->currentData(Qt::UserRole).toString();
-		has_tab_filter = BaseTable::isBaseTable(BaseObject::getObjectType(type_name));
-	}
-
-	forced_filter_tb->setEnabled(only_matching_chk->isChecked() && has_tab_filter);
 }

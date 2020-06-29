@@ -67,7 +67,7 @@ class GlobalAttributes {
 		/*! \brief Returns the current value for an environment variable. If the current value is a path and the same does not
 			exists then the function will return 'default_value' if it exists. Finally, if both current value and default
 			values does not exists the the fallback value is returned even if it not exists in the filesystem */
-		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val=QString());
+		static QString getPathFromEnv(const QString &varname, const QString &default_val, const QString &fallback_val="");
 
 		//! \brief Sets the path in which the application should search for its internal folders (schemas, lang, conf, etc)
 		static void setSearchPath(const QString &search_path);

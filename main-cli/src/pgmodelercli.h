@@ -82,10 +82,13 @@ class PgModelerCliApp: public Application {
 		static QTextStream out;
 
 		//! \brief Stores the long option names. The boolean indicates if the option accepts a value
-		map<QString, bool> long_opts;
+		static map<QString, bool> long_opts;
 
 		//! \brief Stores the short option names.
-		attribs_map short_opts;
+		static attribs_map short_opts;
+
+		//! \brief Stores the accepted options by the different operations
+		static map<QString, QStringList> accepted_opts;
 
 		//! \brief Stores the parsed options names and values.
 		attribs_map parsed_opts;
@@ -102,8 +105,13 @@ class PgModelerCliApp: public Application {
 		//! \brief Zoom to be applied onto the png export
 		double zoom;
 
-		static const QRegExp PasswordRegExp;
+		//! \brief Start date used for filter changelog of the input database model (partial diff)
+		QDateTime start_date,
 
+		//! \brief End date used for filter changelog of the input database model (partial diff)
+		end_date;
+
+		static const QRegExp PasswordRegExp;
 		static const QString PasswordPlaceholder;
 
 		//! \brief Option names constants
@@ -150,10 +158,16 @@ class PgModelerCliApp: public Application {
 		ImportSystemObjs,
 		ImportExtensionObjs,
 		DebugMode,
-		FilterObjs,
+		FilterObjects,
 		OnlyMatching,
-		KeepChildObjs,
+		MatchByName,
+		ForceChildren,
+		AllChildren,
 
+		PartialDiff,
+		ForceDiff,
+		StartDate,
+		EndDate,
 		CompareTo,
 		SaveDiff,
 		ApplyDiff,
@@ -166,8 +180,8 @@ class PgModelerCliApp: public Application {
 		TruncOnColsTypeChange,
 		NoSequenceReuse,
 		NoCascadeDropTrunc,
-		NoForceObjRecreation,
-		NoUnmodObjRecreation,
+		ForceRecreateObjs,
+		OnlyUnmodifiable,
 
 		CreateConfigs,
 
@@ -186,9 +200,6 @@ class PgModelerCliApp: public Application {
 
 		//! \brief Returns if the specified options exists on short options map
 		bool isOptionRecognized(QString &op, bool &accepts_val);
-
-		//! \brief Initializes the options maps
-		void initializeOptions();
 
 		/*! \brief Extracts the xml defintions from the input model and store them on obj_xml list
 		in order to be parsed by the recreateObjects() method */
@@ -221,16 +232,13 @@ class PgModelerCliApp: public Application {
 		void importDatabase();
 		void diffModelDatabase();
 		void updateMimeType();
-
 		void configureConnection(bool extra_conn);
 		void importDatabase(DatabaseModel *model, Connection conn);
-
 		void printMessage(const QString &msg);
-
 		void handleLinuxMimeDatabase(bool uninstall, bool system_wide);
 		void handleWindowsMimeDatabase(bool uninstall, bool system_wide);
-
 		void createConfigurations();
+		void listConnections();
 
 	public:
 		PgModelerCliApp(int argc, char **argv);

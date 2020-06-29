@@ -104,7 +104,7 @@ void Connection::setConnectionParam(const QString &param, const QString &value)
 	if(param==ParamServerFqdn && ip_regexp.exactMatch(value))
 	{
 		connection_params[Connection::ParamServerIp]=value;
-		connection_params[Connection::ParamServerFqdn]=QString();
+		connection_params[Connection::ParamServerFqdn]="";
 	}
 	else
 		connection_params[param]=value;
@@ -313,12 +313,12 @@ QString Connection::getConnectionString()
 	return connection_str;
 }
 
-QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
+QString Connection::getConnectionId(bool host_port_only, bool incl_db_name, bool html_format)
 {
-	QString addr, db_name, port;
+	QString addr, db_name, port, conn_id;
 
 	if(!isConfigured())
-		return QString();
+		return "";
 
 	if(!connection_params[ParamServerFqdn].isEmpty())
 		addr=connection_params[ParamServerFqdn];
@@ -332,9 +332,18 @@ QString Connection::getConnectionId(bool host_port_only, bool incl_db_name)
 		db_name = QString("%1@").arg(connection_params[ParamDbName]);
 
 	if(host_port_only)
-		return QString("%1%2%3").arg(db_name, addr, port);
+		conn_id = QString("%1%2%3").arg(db_name, addr, port);
 	else
-		return QString("%1%2 (%3%4)").arg(db_name, connection_params[ParamAlias], addr, port);
+		conn_id = QString("%1%2 (%3%4)").arg(db_name, connection_params[ParamAlias], addr, port);
+
+	if(html_format && incl_db_name)
+	{
+		conn_id.prepend("<strong>");
+		conn_id.replace('@', "</strong>@<em>");
+		conn_id.append("</em>");
+	}
+
+	return conn_id;
 }
 
 bool Connection::isStablished()

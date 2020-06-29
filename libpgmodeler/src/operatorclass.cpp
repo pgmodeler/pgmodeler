@@ -23,11 +23,11 @@ OperatorClass::OperatorClass()
 	obj_type=ObjectType::OpClass;
 	family=nullptr;
 	is_default=false;
-	attributes[Attributes::Family]=QString();
-	attributes[Attributes::Elements]=QString();
-	attributes[Attributes::IndexType]=QString();
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::Default]=QString();
+	attributes[Attributes::Family]="";
+	attributes[Attributes::Elements]="";
+	attributes[Attributes::IndexType]="";
+	attributes[Attributes::Type]="";
+	attributes[Attributes::Default]="";
 }
 
 OperatorClass::~OperatorClass()
@@ -173,7 +173,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 	setElementsAttribute(def_type);
 	attributes[Attributes::IndexType]=(~indexing_type);
-	attributes[Attributes::Default]=(is_default ? Attributes::True : QString());
+	attributes[Attributes::Default]=(is_default ? Attributes::True : "");
 
 	if(def_type==SchemaParser::SqlDefinition)
 		attributes[Attributes::Type]=(*data_type);

@@ -35,6 +35,7 @@
 
 namespace Attributes {
 	extern const QString
+	Action,
 	ActiveLayers,
 	AdminOption,
 	AdminRoles,
@@ -201,6 +202,7 @@ namespace Attributes {
 	EndExp,
 	Enumerations,
 	EnumType,
+	Entry,
 	EscapeComment,
 	Event,
 	Events,
@@ -221,6 +223,7 @@ namespace Attributes {
 	ExtAttribsPage,
 	ExtAttribsPerPage,
 	ExtObjOids,
+	ExtraCondition,
 	Factor,
 	FadedOut,
 	FadeInObjects,
@@ -455,6 +458,7 @@ namespace Attributes {
 	PrependAtBod,
 	PrependedSql,
 	PreserveDbName,
+	PrependSchema,
 	Preset,
 	Preset,
 	Previous,
@@ -629,6 +633,7 @@ namespace Attributes {
 	UqConstr,
 	UqPattern,
 	UsagePriv,
+	UseChangelog,
 	UseCurvedLines,
 	UsePlaceholders,
 	UseSignature,

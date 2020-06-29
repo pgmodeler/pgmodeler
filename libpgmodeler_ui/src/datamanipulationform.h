@@ -81,7 +81,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		ref_fk_infos;
 		
 		//! \brief Fills a combobox with the names of objects retrieved from catalog
-		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema=QString());
+		void listObjects(QComboBox *combo, vector<ObjectType> obj_types, const QString &schema="");
 		
 		//! \brief Retrieve the primary key column ids for the specified table
 		void retrievePKColumns(const QString &schema, const QString &table);
@@ -116,7 +116,7 @@ class DataManipulationForm: public QDialog, public Ui::DataManipulationForm {
 		DataManipulationForm(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Widget);
 		
 		//! \brief Defines the connection and current schema and table to be handled, this method should be called before show the dialog
-		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name=QString(), const QString &filter=QString());
+		void setAttributes(Connection conn, const QString curr_schema=QString("public"), const QString curr_table_name="", const QString &filter="");
 
 	private slots:
 		void reject();

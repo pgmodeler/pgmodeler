@@ -472,18 +472,6 @@
    </attribute>
    <column>
     <property name="text">
-     <string>ID</string>
-    </property>
-    <property name="textAlignment">
-     <set>AlignLeading|AlignVCenter</set>
-    </property>
-    <property name="icon">
-     <iconset resource="../res/resources.qrc">
-      <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
-    </property>
-   </column>
-   <column>
-    <property name="text">
      <string>Object</string>
     </property>
     <property name="textAlignment">
@@ -504,6 +492,18 @@
     <property name="icon">
      <iconset resource="../res/resources.qrc">
       <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>ID</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeading|AlignVCenter</set>
+    </property>
+    <property name="icon">
+     <iconset resource="../res/resources.qrc">
+      <normaloff>:/icones/icones/uid.png</normaloff>:/icones/icones/uid.png</iconset>
     </property>
    </column>
    <column>

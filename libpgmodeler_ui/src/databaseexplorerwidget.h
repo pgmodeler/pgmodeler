@@ -87,11 +87,11 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		/*! \brief Returns the properly format object name by querying it using its OID and type.
 		Optional schema and table names can be specified to filter the results */
-		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name=QString(), const QString tab_name=QString());
+		QString getObjectName(ObjectType obj_type, const QString &oid, const QString &sch_name="", const QString tab_name="");
 		
 		/*! \brief Returns the properly format list of object names by querying them using their OIDs and type.
 		Optional schema and table names can be specified to filter the results */
-		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name=QString(), const QString tab_name=QString());
+		QStringList getObjectsNames(ObjectType obj_type, const QStringList &oids, const QString &sch_name="", const QString tab_name="");
 		
 		//! \brief Format the object's name based upon the passed attributes
 		QString formatObjectName(attribs_map &attribs);
@@ -181,7 +181,7 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void cancelObjectRename();
 
 		//! \brief Show the widget to handle data in tables
-		void openDataGrid(const QString &schema=QString("public"), const QString &table=QString(), bool hide_views=true);
+		void openDataGrid(const QString &schema=QString("public"), const QString &table="", bool hide_views=true);
 
 		//! \brief Drop the database
 		void dropDatabase();
