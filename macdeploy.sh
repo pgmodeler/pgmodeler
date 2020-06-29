@@ -1,8 +1,8 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/11
-QT_ROOT=/Users/$USR/Qt5.14.0/5.14.0/clang_64
+PGSQL_ROOT=/Library/PostgreSQL/12
+QT_ROOT=/Users/$USR/Qt5.15.0/5.15.0/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
