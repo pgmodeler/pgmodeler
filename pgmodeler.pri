@@ -31,7 +31,7 @@ unix {
  BUILDNUM=$$system("date '+%Y%m%d'")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 } else {
- BUILDNUM=$$system('wingetdate.bat')
+ BUILDNUM=$$system('getbuildnum.bat')
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 
