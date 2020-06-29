@@ -1,0 +1,30 @@
+name: macOs build
+
+on:
+  push:
+    branches: [ master, develop, 0.9.* ]
+    tags: 0.9.*
+    
+  pull_request:
+    branches: [ master, develop, 0.9.* ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+             
+    - name: Installing Qt framework
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: 5.15.0
+
+    - name: Running qmake
+      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=/Applications/pgModeler.app/Contents PGSQL_INC=`pg_config --includedir` PGSQL_LIB=`pg_config --libdir`/libpq.dylib
+    
+    - name: Building pgModeler
+      run: make -j6
+     
+    - name: Deploying pgModeler
+      run: make install
