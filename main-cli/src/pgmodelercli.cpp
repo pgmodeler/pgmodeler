@@ -401,6 +401,7 @@ void PgModelerCliApp::showMenu()
 #ifndef Q_OS_MAC
 	out << tr("  %1, %2 [ACTION]\t    Handles the file association to .dbm files. The ACTION can be [%3 | %4].").arg(short_opts[DbmMimeType]).arg(DbmMimeType).arg(Install).arg(Uninstall) << QtCompat::endl;
 #endif
+	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << QtCompat::endl;
 	out << QtCompat::endl;
 
 	out << tr("General options: ") << QtCompat::endl;
@@ -409,7 +410,6 @@ void PgModelerCliApp::showMenu()
 	out << tr("  %1, %2 [FILE]\t\t    Output file. This is mandatory for fixing model or exporting to file, png or svg.").arg(short_opts[Output]).arg(Output) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Force the PostgreSQL version syntax when generating SQL code.").arg(short_opts[PgSqlVer]).arg(PgSqlVer) << QtCompat::endl;
 	out << tr("  %1, %2\t\t\t    Silent execution. Only critical messages and errors are shown during process.").arg(short_opts[Silent]).arg(Silent) << QtCompat::endl;
-	out << tr("  %1, %2\t\t\t    Show this help menu.").arg(short_opts[Help]).arg(Help) << QtCompat::endl;
 	out << QtCompat::endl;	
 
 	out << tr("PNG and SVG export options: ") << QtCompat::endl;

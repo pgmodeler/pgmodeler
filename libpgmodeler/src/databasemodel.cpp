@@ -32,7 +32,7 @@ DatabaseModel::DatabaseModel()
 	object_id=DatabaseModel::dbmodel_id++;
 	obj_type=ObjectType::Database;
 
-	persist_changelog = true;
+	persist_changelog = false;
 	is_template = false;
 	allow_conns = true;
 
