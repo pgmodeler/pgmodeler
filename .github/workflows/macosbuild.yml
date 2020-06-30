@@ -18,10 +18,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Cache Qt framework
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
       
     - name: Installing Qt framework
       uses: jurplel/install-qt-action@v2
       with:
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
         version: ${{ matrix.qt }}
 
     - name: Running qmake
