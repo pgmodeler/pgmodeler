@@ -29,11 +29,11 @@ jobs:
     # Workaround: Instead of using $GITHUB_WORKSPACE in PREFIX we actually use the path converted to unix-lik
     # since we're running the building inside msys2
     - name: Running qmake
-      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=/d/a/pgmodeler/pgmodeler/build \
-            XML_INC=/d/a/_temp/msys/msys64/mingw64/include/libxml2 \
-            XML_LIB=/d/a/_temp/msys/msys64/mingw64/bin/libxml2-2.dll \
-            PGSQL_INC=/d/a/_temp/msys/msys64/mingw64/include \
-            PGSQL_LIB=/d/a/_temp/msys/msys64/mingw64/bin/libpq.dll
+      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
+            XML_INC=D:/a/_temp/msys/msys64/mingw64/include/libxml2 \
+            XML_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libxml2-2.dll \
+            PGSQL_INC=D:/a/_temp/msys/msys64/mingw64/include \
+            PGSQL_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libpq.dll
 
     - name: Building pgModeler
       run: mingw32-make
