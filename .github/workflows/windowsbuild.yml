@@ -26,7 +26,7 @@ jobs:
         update: true
         install: base-devel mingw-w64-x86_64-make mingw-w64-x86_64-gcc mingw-w64-x86_64-postgresql mingw-w64-x86_64-qt5
                      
-    # Workaround: Instead of using $GITHUB_WORKSPACE in PREFIX we actually use the path converted to unix-lik
+    # Workaround: Instead of using $GITHUB_WORKSPACE in PREFIX we actually use the path converted to unix-like
     # since we're running the building inside msys2
     - name: Running qmake
       run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
@@ -36,7 +36,7 @@ jobs:
             PGSQL_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libpq.dll
 
     - name: Building pgModeler
-      run: mingw32-make
+      run: mingw32-make -j6
      
     - name: Deploying pgModeler
       run: mingw32-make install
