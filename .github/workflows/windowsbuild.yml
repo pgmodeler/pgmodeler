@@ -11,7 +11,11 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-        
+
+    strategy:
+      matrix:
+        qt: ['5.15.0'] 
+    
     defaults:
       run:
        shell: msys2 {0}

@@ -12,13 +12,17 @@ jobs:
   build:
     runs-on: macos-latest
 
+    strategy:
+      matrix:
+        qt: ['5.15.0', '5.14.2', '5.13.2', '5.12.9', '5.11.3', '5.10.1', '5.9.9']
+
     steps:
     - uses: actions/checkout@v2
-             
+      
     - name: Installing Qt framework
       uses: jurplel/install-qt-action@v2
       with:
-        version: 5.15.0
+        version: ${{ matrix.qt }}
 
     - name: Running qmake
       run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=/Applications/pgModeler.app/Contents PGSQL_INC=`pg_config --includedir` PGSQL_LIB=`pg_config --libdir`/libpq.dylib
