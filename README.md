@@ -1,10 +1,10 @@
-[![](https://img.shields.io/github/license/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE)
-[![](https://img.shields.io/github/issues-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues)
-[![](https://img.shields.io/github/issues-closed-raw/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/issues?q=is%3Aissue+is%3Aclosed)
-<br/>
-![](https://img.shields.io/github/languages/code-size/pgmodeler/pgmodeler.svg)
-[![](https://img.shields.io/github/tag-date/pgmodeler/pgmodeler.svg)](https://github.com/pgmodeler/pgmodeler/tags)
-[![](https://img.shields.io/github/last-commit/pgmodeler/pgmodeler/master.svg)](https://github.com/pgmodeler/pgmodeler/commits/master)
+Building status
+---------------
+
+[![Linux build](https://github.com/pgmodeler/pgmodeler/workflows/Linux%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Linux+build%22)
+[![Windows build](https://github.com/pgmodeler/pgmodeler/workflows/Windows%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22Windows+build%22)
+[![macOs build](https://github.com/pgmodeler/pgmodeler/workflows/macOs%20build/badge.svg)](https://github.com/pgmodeler/pgmodeler/actions?query=workflow%3A%22macOs+build%22)
+
 
 Introduction
 ------------
