@@ -34,7 +34,7 @@ jobs:
             PGSQL_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libpq.dll
 
     - name: Building pgModeler
-      run: mingw32-make -j6
+      run: mingw32-make
      
     - name: Deploying pgModeler
       run: mingw32-make install
