@@ -132,7 +132,7 @@ class Connection {
 		OpNone=4;
 
 		Connection();
-		Connection(const Connection &) : Connection() {};
+        Connection(const Connection &);
 		Connection(const attribs_map &params);
 		~Connection();
 

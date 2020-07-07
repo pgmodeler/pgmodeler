@@ -69,6 +69,11 @@ Connection::Connection()
 	setConnectionParam(ParamApplicationName, GlobalAttributes::PgModelerAppName);
 }
 
+Connection::Connection(const Connection &conn) : Connection()
+{
+   setConnectionParams(conn.getConnectionParams());
+}
+
 Connection::Connection(const attribs_map &params) : Connection()
 {
 	setConnectionParams(params);
