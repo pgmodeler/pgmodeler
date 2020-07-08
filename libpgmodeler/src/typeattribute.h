@@ -36,7 +36,7 @@ class TypeAttribute: public BaseObject {
 
 	public:
 		TypeAttribute();
-		TypeAttribute(const TypeAttribute &) : TypeAttribute() {};
+        TypeAttribute(const TypeAttribute &type_attr);
 
 		void setType(PgSqlType type);
 		PgSqlType getType();
