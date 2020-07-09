@@ -18,9 +18,7 @@ The objects filtering widget introduced in 0.9.3-alpha1 was slightly redesigned 
 
 The command line interface received lots of improvements too, from a simple menu redesign to the support to partial diff.
 
-Seveal bugs were fixed in this release too. The majority related to crashes but there was some bugs affecting the database design like the one that was rendering incorrectly the relationships the combination of collapsed tables and the "FK to PK" connection mode was in use. <br/>
-
-A bug in diff was eliminated too and now inheritances are correctly processed and the proper code generated. <br/>
+Several bugs were fixed in this release too. The majority related to crashes but there was some fixed bugs that were affecting the database design and the diff process. <br/>
 
 Finally, some of the change log entries in this version are listed below. For the complete list of changes/fixes, please, read the CHANGELOG.md. <br/>
 
