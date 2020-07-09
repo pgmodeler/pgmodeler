@@ -1132,6 +1132,9 @@ void MainWindow::setCurrentModel()
 			this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(current_model->getFilename()));
 
 		connect(current_model, SIGNAL(s_modelModified(bool)), model_nav_wgt, SLOT(setCurrentModelModified(bool)), Qt::UniqueConnection);
+		connect(current_model, &ModelWidget::s_modelModified, [&](bool modified) {
+			if(modified) updateToolsState();
+		});
 
 		connect(current_model, SIGNAL(s_manipulationCanceled()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
 		connect(current_model, SIGNAL(s_objectsMoved()),oper_list_wgt, SLOT(updateOperationList()), Qt::UniqueConnection);
@@ -1974,6 +1977,7 @@ void MainWindow::changeCurrentView(bool checked)
 	QAction *curr_act=qobject_cast<QAction *>(sender());
 
 	layers_wgt->setVisible(false);
+	changelog_wgt->setVisible(false);
 
 	if(checked)
 	{

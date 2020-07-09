@@ -3245,8 +3245,8 @@ void DatabaseModel::loadModel(const QString &filename)
 			this->allow_conns = (attribs[Attributes::AllowConns].isEmpty() ||
 													 attribs[Attributes::AllowConns] == Attributes::True);
 
+			persist_changelog = attribs[Attributes::UseChangelog] == Attributes::True;
 			layers = attribs[Attributes::Layers].split(';', QtCompat::SkipEmptyParts);
-
 			active_layers.clear();
 
 			/* Compatibility with models created prior the layers features:
