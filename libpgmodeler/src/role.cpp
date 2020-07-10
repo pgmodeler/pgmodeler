@@ -30,22 +30,22 @@ Role::Role()
 
 	conn_limit=-1;
 
-	attributes[Attributes::Superuser]=QString();
-	attributes[Attributes::CreateDb]=QString();
-	attributes[Attributes::CreateRole]=QString();
-	attributes[Attributes::Inherit]=QString();
-	attributes[Attributes::Login]=QString();
-	attributes[Attributes::ConnLimit]=QString();
-	attributes[Attributes::Password]=QString();
-	attributes[Attributes::Encrypted]=QString();
-	attributes[Attributes::Validity]=QString();
-	attributes[Attributes::RefRoles]=QString();
-	attributes[Attributes::MemberRoles]=QString();
-	attributes[Attributes::AdminRoles]=QString();
-	attributes[Attributes::Replication]=QString();
-	attributes[Attributes::Group]=QString();
-	attributes[Attributes::BypassRls]=QString();
-	attributes[Attributes::EmptyPassword]=QString();
+	attributes[Attributes::Superuser]="";
+	attributes[Attributes::CreateDb]="";
+	attributes[Attributes::CreateRole]="";
+	attributes[Attributes::Inherit]="";
+	attributes[Attributes::Login]="";
+	attributes[Attributes::ConnLimit]="";
+	attributes[Attributes::Password]="";
+	attributes[Attributes::Encrypted]="";
+	attributes[Attributes::Validity]="";
+	attributes[Attributes::RefRoles]="";
+	attributes[Attributes::MemberRoles]="";
+	attributes[Attributes::AdminRoles]="";
+	attributes[Attributes::Replication]="";
+	attributes[Attributes::Group]="";
+	attributes[Attributes::BypassRls]="";
+	attributes[Attributes::EmptyPassword]="";
 }
 
 void Role::setOption(unsigned op_type, bool value)
@@ -344,7 +344,7 @@ QString Role::getCodeDefinition(unsigned def_type, bool reduced_form)
 	setRoleAttribute(AdminRole);
 
 	for(i=0; i <= OpBypassRls; i++)
-		attributes[op_attribs[i]]=(options[i] ? Attributes::True : QString());
+		attributes[op_attribs[i]]=(options[i] ? Attributes::True : "");
 
 	attributes[Attributes::Password]=password;
 	attributes[Attributes::Validity]=validity;
@@ -374,7 +374,7 @@ QString Role::getAlterDefinition(BaseObject *object, bool ignore_name_diff)
 
 		if(this->password!=role->password)
 		{
-			attribs[Attributes::EmptyPassword]=role->password.isEmpty() ? Attributes::True : QString();
+			attribs[Attributes::EmptyPassword]=role->password.isEmpty() ? Attributes::True : "";
 			attribs[Attributes::Password]=role->password;
 		}
 

@@ -506,7 +506,7 @@ QString TableDataWidget::generateDataBuffer()
 	}
 
 	if(buffer.size() <= 1)
-		return QString();
+		return "";
 
 	return buffer.join(Table::DataLineBreak);
 }

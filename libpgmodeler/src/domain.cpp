@@ -22,10 +22,10 @@ Domain::Domain()
 {
 	obj_type=ObjectType::Domain;
 	not_null=false;
-	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::NotNull]=QString();
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::Constraints]=QString();
+	attributes[Attributes::DefaultValue]="";
+	attributes[Attributes::NotNull]="";
+	attributes[Attributes::Type]="";
+	attributes[Attributes::Constraints]="";
 }
 
 void Domain::addCheckConstraint(const QString &name, const QString &expr)
@@ -126,7 +126,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
 
 	attribs_map aux_attribs;
 
-	attributes[Attributes::NotNull]=(not_null ? Attributes::True : QString());
+	attributes[Attributes::NotNull]=(not_null ? Attributes::True : "");
 	attributes[Attributes::DefaultValue]=default_value;
 
 	for(auto itr : chk_constrs)
@@ -169,12 +169,12 @@ QString Domain::getAlterDefinition(BaseObject *object)
 		attribs_map orig_constrs, aux_constrs, aux_attribs;
 		QString orig_expr, aux_expr;
 
-		attributes[Attributes::DefaultValue]=QString();
-		attributes[Attributes::NotNull]=QString();
-		attributes[Attributes::Constraints]=QString();
-		attributes[Attributes::Expression]=QString();
-		attributes[Attributes::OldName]=QString();
-		attributes[Attributes::NewName]=QString();
+		attributes[Attributes::DefaultValue]="";
+		attributes[Attributes::NotNull]="";
+		attributes[Attributes::Constraints]="";
+		attributes[Attributes::Expression]="";
+		attributes[Attributes::OldName]="";
+		attributes[Attributes::NewName]="";
 
 		if(this->default_value.simplified().toLower()!=domain->default_value.simplified().toLower())
 			attributes[Attributes::DefaultValue]=(!domain->default_value.isEmpty() ? domain->default_value : Attributes::Unset);

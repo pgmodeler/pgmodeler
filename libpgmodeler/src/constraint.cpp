@@ -27,27 +27,27 @@ Constraint::Constraint()
 	fill_factor=0;
 	index_type=BaseType::Null;
 
-	attributes[Attributes::PkConstr]=QString();
-	attributes[Attributes::FkConstr]=QString();
-	attributes[Attributes::CkConstr]=QString();
-	attributes[Attributes::UqConstr]=QString();
-	attributes[Attributes::ExConstr]=QString();
-	attributes[Attributes::RefTable]=QString();
-	attributes[Attributes::SrcColumns]=QString();
-	attributes[Attributes::DstColumns]=QString();
-	attributes[Attributes::DelAction]=QString();
-	attributes[Attributes::UpdAction]=QString();
-	attributes[Attributes::Expression]=QString();
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::ComparisonType]=QString();
-	attributes[Attributes::DeferType]=QString();
-	attributes[Attributes::IndexType]=QString();
-	attributes[Attributes::Deferrable]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::Factor]=QString();
-	attributes[Attributes::NoInherit]=QString();
-	attributes[Attributes::Elements]=QString();
+	attributes[Attributes::PkConstr]="";
+	attributes[Attributes::FkConstr]="";
+	attributes[Attributes::CkConstr]="";
+	attributes[Attributes::UqConstr]="";
+	attributes[Attributes::ExConstr]="";
+	attributes[Attributes::RefTable]="";
+	attributes[Attributes::SrcColumns]="";
+	attributes[Attributes::DstColumns]="";
+	attributes[Attributes::DelAction]="";
+	attributes[Attributes::UpdAction]="";
+	attributes[Attributes::Expression]="";
+	attributes[Attributes::Type]="";
+	attributes[Attributes::ComparisonType]="";
+	attributes[Attributes::DeferType]="";
+	attributes[Attributes::IndexType]="";
+	attributes[Attributes::Deferrable]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::DeclInTable]="";
+	attributes[Attributes::Factor]="";
+	attributes[Attributes::NoInherit]="";
+	attributes[Attributes::Elements]="";
 }
 
 Constraint::~Constraint()
@@ -664,7 +664,7 @@ QString Constraint::getCodeDefinition(unsigned def_type)
 void Constraint::setDeclInTableAttribute()
 {
 	if(!isDeclaredInTable() || (constr_type==ConstraintType::ForeignKey && !isAddedByLinking()))
-		attributes[Attributes::DeclInTable]=QString();
+		attributes[Attributes::DeclInTable]="";
 	else if(!isReferRelationshipAddedColumn() || constr_type==ConstraintType::PrimaryKey)
 		attributes[Attributes::DeclInTable]=Attributes::True;
 }
@@ -676,11 +676,11 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	QString attrib;
 
-	attributes[Attributes::PkConstr]=QString();
-	attributes[Attributes::FkConstr]=QString();
-	attributes[Attributes::CkConstr]=QString();
-	attributes[Attributes::UqConstr]=QString();
-	attributes[Attributes::ExConstr]=QString();
+	attributes[Attributes::PkConstr]="";
+	attributes[Attributes::FkConstr]="";
+	attributes[Attributes::CkConstr]="";
+	attributes[Attributes::UqConstr]="";
+	attributes[Attributes::ExConstr]="";
 
 	switch(!constr_type)
 	{
@@ -723,9 +723,9 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 			setColumnsAttribute(ReferencedCols, def_type, inc_addedbyrel);
 	}
 
-	attributes[Attributes::RefTable]=(ref_table ? ref_table->getName(true) : QString());
-	attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : QString());
-	attributes[Attributes::NoInherit]=(no_inherit ? Attributes::True : QString());
+	attributes[Attributes::RefTable]=(ref_table ? ref_table->getName(true) : "");
+	attributes[Attributes::Deferrable]=(deferrable ? Attributes::True : "");
+	attributes[Attributes::NoInherit]=(no_inherit ? Attributes::True : "");
 	attributes[Attributes::ComparisonType]=(~match_type);
 	attributes[Attributes::DeferType]=(~deferral_type);
 	attributes[Attributes::IndexType]=(~ index_type);
@@ -738,7 +738,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	if(fill_factor!=0 && (constr_type==ConstraintType::PrimaryKey || constr_type==ConstraintType::Unique))
 		attributes[Attributes::Factor]=QString("%1").arg(fill_factor);
 	else
-		attributes[Attributes::Factor]=QString();
+		attributes[Attributes::Factor]="";
 
 	return BaseObject::__getCodeDefinition(def_type);
 }

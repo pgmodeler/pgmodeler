@@ -22,13 +22,13 @@ BaseTable::BaseTable()
 {
 	tag=nullptr;
 	obj_type=ObjectType::BaseTable;
-	attributes[Attributes::Tag]=QString();
-	attributes[Attributes::MaxObjCount]=QString();
-	attributes[Attributes::CollapseMode]=QString();
-	attributes[Attributes::Pagination]=QString();
-	attributes[Attributes::AttribsPage]=QString();
-	attributes[Attributes::ExtAttribsPage]=QString();
-	attributes[Attributes::ZValue]=QString();
+	attributes[Attributes::Tag]="";
+	attributes[Attributes::MaxObjCount]="";
+	attributes[Attributes::CollapseMode]="";
+	attributes[Attributes::Pagination]="";
+	attributes[Attributes::AttribsPage]="";
+	attributes[Attributes::ExtAttribsPage]="";
+	attributes[Attributes::ZValue]="";
 	pagination_enabled = false;
 	collapse_mode = CollapseMode::NotCollapsed;
 	resetCurrentPages();

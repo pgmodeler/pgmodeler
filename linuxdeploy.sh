@@ -4,13 +4,13 @@
 case `uname -m` in
   "x86_64")
     ARCH="linux64"
-    FALLBACK_QT_ROOT=/opt/qt-5.14.0/5.14.0/gcc_64
+    FALLBACK_QT_ROOT=/opt/qt/5.14.2/gcc_64
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 
   *)
     ARCH="linux32"
-    FALLBACK_QT_ROOT=/opt/qt-5.6.2/5.6/gcc
+    FALLBACK_QT_ROOT=/opt/qt/5.9.9/gcc
     FALLBACK_QMAKE_ROOT="$FALLBACK_QT_ROOT/bin"
     ;;
 esac
@@ -23,10 +23,10 @@ QMAKE_ARGS="-r -spec linux-g++"
 QMAKE_ROOT=/usr/bin
 QMAKE_CMD=qmake
 LOG="$PWD/linuxdeploy.log"
-QT_IFW_ROOT=/opt/qt-ifw-3.0.4
+QT_IFW_ROOT=/opt/qt/Tools/QtInstallerFramework/3.2
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.\+PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
 
 BUILD_DIR="$PWD/build"
 DIST_DIR="$PWD/dist"

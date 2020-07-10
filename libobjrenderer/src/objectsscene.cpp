@@ -145,7 +145,7 @@ QString ObjectsScene::formatLayerName(const QString &name)
 QString ObjectsScene::addLayer(const QString &name)
 {
 	if(name.isEmpty())
-		return QString();
+		return "";
 
 	QString fmt_name = formatLayerName(name);
 	layers.push_back(fmt_name);
@@ -157,7 +157,7 @@ QString ObjectsScene::addLayer(const QString &name)
 QString ObjectsScene::renameLayer(unsigned idx, const QString &name)
 {
 	if(name.isEmpty() || idx >= static_cast<unsigned>(layers.size()))
-		return QString();
+		return "";
 
 	if(name != layers[idx])
 		layers[idx] = formatLayerName(name);
@@ -589,18 +589,12 @@ void ObjectsScene::configurePrinter(QPrinter *printer)
 		printer->setPaperSize(paper_size);
 	else
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-		//The QTBUG-33645 is fixed on Qt 5.3
 		QPageLayout pl;
 		QPageSize ps;
-		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, QString(), QPageSize::ExactMatch);
+		ps=QPageSize(QSizeF(custom_paper_size.width(), custom_paper_size.height()), QPageSize::Point, "", QPageSize::ExactMatch);
 		pl.setPageSize(ps);
 		pl.setOrientation(page_orientation==QPrinter::Landscape ? QPageLayout::Landscape : QPageLayout::Portrait);
 		printer->setPageSize(pl.pageSize());
-#else
-#warning "Custom page size bug (QTBUG-33645) workaround for Qt 5.2 or lower. NOTE: This issue is fixed on Qt 5.3"
-		printer->setPaperSize(QSizeF(custom_paper_size.height(), custom_paper_size.width()), QPrinter::Point);
-#endif
 	}
 
 	if(paper_size==QPrinter::Custom)

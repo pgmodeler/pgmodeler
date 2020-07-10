@@ -6,8 +6,8 @@
 [CAUTION: Do not modify this file unless you know what you are doing.] $br
 [         Unexpected results may occur if the code is changed deliberately.] $br
 [-->] $br
-<dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}"
-
+<dbmodel [ pgmodeler-ver=] "{pgmodeler-ver}" [ use-changelog]= "{use-changelog}"
+           
  %if {author} %then [ author=] "{author}" %end
 
  %if {protected} %then 
@@ -25,7 +25,7 @@
  %if {max-obj-count} %then
   [ max-obj-count=] "{max-obj-count}"
  %end
-
+ 
  %if {default-schema} %or {default-owner}  %then
     $br $tb
 
@@ -66,4 +66,5 @@
  > $br
  %if {objects} %then {objects} %end
  %if {permission} %then {permission} %end
+ %if {changelog} %then {changelog} %end
  </dbmodel> $br

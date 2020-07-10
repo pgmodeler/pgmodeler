@@ -199,7 +199,7 @@ QString SnippetsConfigWidget::getParsedSnippet(const QString &snip_id, attribs_m
 		}
 	}
 	else
-		return QString();
+		return "";
 }
 
 void SnippetsConfigWidget::fillSnippetsCombo(map<QString, attribs_map> &config)
@@ -269,7 +269,7 @@ void SnippetsConfigWidget::loadConfiguration()
 		//Check if there are invalid snippets loaded
 		for(auto &snip : config_params)
 		{
-			if(!isSnippetValid(snip.second,QString()))
+			if(!isSnippetValid(snip.second,""))
 				inv_snippets.push_back(snip.first);
 		}
 

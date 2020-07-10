@@ -20,6 +20,7 @@
 #include <QFileDialog>
 #include "exception.h"
 #include <QTextStream>
+#include "qtcompat/splitbehaviorcompat.h"
 
 CsvLoadWidget::CsvLoadWidget(QWidget * parent, bool cols_in_first_row) : QWidget(parent)
 {
@@ -94,17 +95,17 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 				lf_idx = aux_buffer.size();
 
 			csv_cols=aux_buffer.mid(0, lf_idx).split(separator);
-			csv_cols.replaceInStrings(text_delim, QString());
+			csv_cols.replaceInStrings(text_delim, "");
 
 			//Replace the escaped separator and delimiter by their original form in the col names
 			csv_cols.replaceInStrings(escaped_sep, separator);
 			csv_cols.replaceInStrings(escaped_delim, text_delim);
 
-			aux_buffer.replace(0, lf_idx + 1, QString());
+			aux_buffer.replace(0, lf_idx + 1, "");
 		}
 
 		aux_buffer.replace(QString("%1%2").arg(QChar(QChar::LineFeed)).arg(text_delim), placeholder);
-		rows = aux_buffer.split(placeholder, QString::SkipEmptyParts);
+		rows = aux_buffer.split(placeholder, QtCompat::SkipEmptyParts);
 
 		//Configuring an regexp to remove empty quoted values, e.g, "",
 		if(!text_delim.isEmpty())
@@ -118,7 +119,7 @@ QList<QStringList> CsvLoadWidget::loadCsvFromBuffer(const QString &csv_buffer, c
 			/* In order to preserve double quotes (double delimiters) inside the values,
 			 * we first replace them by a placeholder, erase the delimiters and restore the previous value */
 			row.replace(double_quote, placeholder);
-			row.replace(text_delim, QString());
+			row.replace(text_delim, "");
 			row.replace(placeholder, double_quote);
 
 			values = row.split(separator);
@@ -158,7 +159,7 @@ void CsvLoadWidget::loadCsvFile()
 	if(!csv_buffer.isEmpty())
 	{
 		csv_rows = loadCsvFromBuffer(csv_buffer, getSeparator(),
-																 txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
+																 txt_delim_chk->isChecked() ? txt_delim_edt->text() : "",
 																 col_names_chk->isChecked(), csv_columns);
 	}
 
@@ -209,6 +210,6 @@ void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer, const QString &separ
 void CsvLoadWidget::loadCsvBuffer(const QString csv_buffer)
 {
 	loadCsvBuffer(csv_buffer, getSeparator(),
-								txt_delim_chk->isChecked() ? txt_delim_edt->text() : QString(),
+								txt_delim_chk->isChecked() ? txt_delim_edt->text() : "",
 								col_names_chk->isChecked());
 }

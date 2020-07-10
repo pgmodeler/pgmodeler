@@ -3,11 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-    [ SELECT um.umid AS oid, um.usename || '@' || um.srvname AS name, 
+    %set {usermap-name} [um.usename || '@' || um.srvname]
+
+    [ SELECT um.umid AS oid, ] {usermap-name} [ AS name, 
       current_database() AS parent, 'database' AS parent_type
       FROM pg_user_mappings AS um ]
 
-    %if {last-sys-oid} %or {not-ext-object} %then  
+    %if {last-sys-oid} %or {not-ext-object}  %or {name-filter} %then  
         [ WHERE ]
         
         %if {last-sys-oid} %then
@@ -21,6 +23,15 @@
             %end
             
             ( {not-ext-object} ) 
+        %end
+        
+        %if {name-filter} %then
+            
+            %if {last-sys-oid} %or {not-ext-object} %then
+                [ AND ] 
+            %end
+            
+            ( {usermap-name} [ ~* ] E'{name-filter}' )
         %end
     %end
 %else 

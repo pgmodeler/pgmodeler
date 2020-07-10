@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
   [SELECT op.oid, oprname || '(' || 
   
     CASE 
@@ -39,7 +44,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ op.oprname ~* ] E'{name-filter}' )
   %end
 
 %else

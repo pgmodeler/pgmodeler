@@ -16,7 +16,7 @@
         [ WHERE ]
     %end        
         
-    ( {name-filter} )    
+    ( [rolname ~* ] E'{name-filter}' )    
   %end
 
 %else

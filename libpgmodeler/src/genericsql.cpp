@@ -22,8 +22,8 @@
 GenericSQL::GenericSQL()
 {
 	obj_type = ObjectType::GenericSql;
-	attributes[Attributes::Definition] = QString();
-	attributes[Attributes::Objects] = QString();
+	attributes[Attributes::Definition] = "";
+	attributes[Attributes::Objects] = "";
 }
 
 void GenericSQL::setDefinition(const QString &def)
@@ -209,8 +209,8 @@ QString GenericSQL::getCodeDefinition(unsigned def_type)
 				obj_attrs[Attributes::Name] = ref.object->getSignature();
 				obj_attrs[Attributes::Type] = ref.object->getSchemaName();
 				obj_attrs[Attributes::RefName] = ref.ref_name;
-				obj_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : QString();
-				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : QString();
+				obj_attrs[Attributes::FormatName] = ref.format_name ? Attributes::True : "";
+				obj_attrs[Attributes::UseSignature] = ref.use_signature ? Attributes::True : "";
 
 				schparser.ignoreUnkownAttributes(true);
 				attributes[Attributes::Objects] += schparser.getCodeDefinition(Attributes::Object, obj_attrs, SchemaParser::XmlDefinition);

@@ -3,8 +3,12 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, 
-    ns.nspname AS parent, 'schema' AS parent_type 
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
+  [SELECT tp.oid, replace(replace(tp.oid::regtype::text,'"', ''), ns.nspname || '.', '') AS name, ns.nspname AS parent, 'schema' AS parent_type 
     FROM pg_type AS tp 
     LEFT JOIN pg_namespace AS ns ON tp.typnamespace = ns.oid ]
 
@@ -35,7 +39,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ tp.typname ~* ] E'{name-filter}' )
   %end
 
 %else

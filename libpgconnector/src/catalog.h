@@ -58,7 +58,11 @@ class Catalog {
 		QString ext_obj_oids;
 
 		//! \brief Stores the name filters for each type of object. (See setObjectFilters())
-		map<ObjectType, QStringList> obj_filters;
+		map<ObjectType, QString> obj_filters;
+
+		/*! \brief Stores the extra filters for table children objects.
+		 * This one is used only when forced objects filtering is enabled (See setObjectFilters()) */
+		map<ObjectType, QString> extra_filter_conds;
 
 		/*! \brief This map stores the oid field name for each object type. The oid field name can be
 		composed by the pg_[OBJECT_TYPE] table alias. Refer to catalog query schema files for details */
@@ -98,7 +102,10 @@ class Catalog {
 		exclude_array_types,
 
 		//! \brief Indicates if the catalog must list only system objects
-		list_only_sys_objs;
+		list_only_sys_objs,
+
+		//! \brief Indicates that the name filtering should occur in the objects' signature instead of their names
+		match_signature;
 
 		/*! \brief Load the schema parser buffer with the catalog query using identified by qry_id.
 		The method will cache the catalog query if it's not cached yet (only when use_cached_queries=true) */
@@ -138,19 +145,7 @@ class Catalog {
 		Catalog(const Catalog &catalog);
 
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
-		static const QString PgModelerTempDbObj,
-
-		//! \brief Indicates the ilike/wildcard filtering mode in the object listing
-		FilterLike,
-
-		//! \brief Indicates the regexp (POSIX) filtering mode in the object listing
-		FilterRegExp,
-
-		//! \brief Indicates the exact match filtering mode in the object listing
-		FilterExact;
-
-		//! \brief Indicates the character used to separate filter fields in the filtering string
-		static const constexpr char FilterSeparator = ':';
+		static const QString PgModelerTempDbObj;
 
 		//! \brief Excludes the system objects from listing
 		static constexpr unsigned ExclSystemObjs=1,
@@ -185,7 +180,13 @@ class Catalog {
 		 * if the user provides table/view/foreign table filters. This is useful to retrieve tables with their children objects avoiding the need of
 		 * provide specific filters for each table children object. This list has effect only when discard_non_matches is set to true.
 		 * This method raises an exception when detecting malformed filters */
-		void setObjectFilters(QStringList filters, bool only_matching, QStringList tab_obj_types = {});
+		void setObjectFilters(QStringList filters, bool only_matching, bool match_signature, QStringList tab_obj_types = {});
+
+		//! \brief Clears the filter configured for the provided object type
+		void clearObjectFilter(ObjectType type);
+
+		//! \brief Clears all configured filters
+		void clearObjectFilters();
 
 		//! \brief Returns the last system object oid registered on the database
 		unsigned getLastSysObjectOID();
@@ -198,13 +199,13 @@ class Catalog {
 
 		/*! \brief Returns the count for the specified object type. A schema name can be specified
 		in order to filter only objects of the specifed schema */
-		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		unsigned getObjectCount(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the current filter configuration for the catalog queries
 		unsigned getQueryFilter();
 
 		//! \brief Returns the configured objects a name filters
-		map<ObjectType, QStringList> getObjectFilters();
+		map<ObjectType, QString> getObjectFilters();
 
 		/*! \brief Returns a vector with all filtered object types.
 		 * Invalid pattern filters containing the InvFilterPattern are discarded from the returning vector */
@@ -215,11 +216,11 @@ class Catalog {
 
 		/*! \brief Returns a attributes map containing the oids (key) and names (values) of the objects from
 		the specified type.	A schema name can be specified in order to filter only objects of the specifed schema */
-		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		attribs_map getObjectsNames(ObjectType obj_type, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns a vector of attributes map containing the oids (key) and names as well types of the objects from
 		the specified list of types.	A schema name can be specified in order to filter only objects of the specifed schema */
-		vector<attribs_map> getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name=QString(), const QString &tab_name=QString(), attribs_map extra_attribs=attribs_map(), bool sort_results=false);
+		vector<attribs_map> getObjectsNames(vector<ObjectType> obj_types, const QString &sch_name="", const QString &tab_name="", attribs_map extra_attribs=attribs_map(), bool sort_results=false);
 
 		//! \brief Returns a set of multiple attributes (several tuples) for the specified object type
 		vector<attribs_map> getMultipleAttributes(ObjectType obj_type, attribs_map extra_attribs=attribs_map());
@@ -233,15 +234,15 @@ class Catalog {
 		/*! \brief Retrieve all available objects attributes for the specified type. Internally this method calls the get method for the
 		specified type. User can filter items by oids (except for table child objects), by schema (in the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table) */
-		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema=QString(), const QString &table=QString(), const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
+		vector<attribs_map> getObjectsAttributes(ObjectType obj_type, const QString &schema="", const QString &table="", const vector<unsigned> &filter_oids={}, attribs_map extra_attribs=attribs_map());
 
 		//! \brief Returns the attributes for the object specified by its type and OID
-		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name=QString(), const QString tab_name=QString(), attribs_map extra_attribs=attribs_map());
+		attribs_map getObjectAttributes(ObjectType obj_type, unsigned oid, const QString sch_name="", const QString tab_name="", attribs_map extra_attribs=attribs_map());
 
 		/*! \brief Returns the OID of the named object. User can filter items by schema (if the object type is suitable to accept schema)
 		and by table name (only when retriving child objects for a specific table). The method will raise an exception if the catalog query
 		used returns more than one result. A zero OID is returned when no suitable object is found. */
-		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = QString(), const QString &table = QString());
+		QString getObjectOID(const QString &name, ObjectType obj_type, const QString &schema = "", const QString &table = "");
 
 		//! \brief This special method returns some server's attributes read from pg_settings
 		attribs_map getServerAttributes();

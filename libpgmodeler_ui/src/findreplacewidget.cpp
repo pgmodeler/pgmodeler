@@ -46,13 +46,6 @@ FindReplaceWidget::FindReplaceWidget(QPlainTextEdit *txt_edit, QWidget *parent):
 		replace_tb->setEnabled(enable);
 		replace_all_tb->setEnabled(enable);
 		replace_find_tb->setEnabled(enable); });
-
-	//Disabling the regular expression checkbox if the Qt version in use is lower than 5.3
-#if (QT_VERSION < QT_VERSION_CHECK(5, 3, 0))
-	regexp_chk->setEnabled(false);
-	regexp_chk->setChecked(false);
-	regexp_chk->setVisible(false);
-#endif
 }
 
 void FindReplaceWidget::showEvent(QShowEvent *)
@@ -97,22 +90,13 @@ void FindReplaceWidget::replaceFindText()
 	}
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 bool FindReplaceWidget::findText(const QString &text, bool regexp, QTextDocument::FindFlags flags)
-#else
-bool FindReplaceWidget::findText(const QString &text, bool, QTextDocument::FindFlags flags)
-#endif
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
 	if(regexp)
 		return text_edt->find(QRegExp(text, ((flags & QTextDocument::FindCaseSensitively)==QTextDocument::FindCaseSensitively ?
 																					 Qt::CaseSensitive : Qt::CaseInsensitive)), flags);
 	else
 		return text_edt->find(text, flags);
-#else
-#warning "Text find through regular expressions is available only in Qt 5.3 or above."
-	return text_edt->find(text, flags);
-#endif
 }
 
 bool FindReplaceWidget::findText(bool backward, bool cyclic)

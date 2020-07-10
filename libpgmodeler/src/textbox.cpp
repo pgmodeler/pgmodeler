@@ -23,17 +23,17 @@ Textbox::Textbox()
 	obj_type=ObjectType::Textbox;
 	font_size=9.0;
 	text_attributes[0]=text_attributes[1]=text_attributes[2]=false;
-	attributes[Attributes::Italic]=QString();
-	attributes[Attributes::Bold]=QString();
-	attributes[Attributes::Underline]=QString();
-	attributes[Attributes::Color]=QString();
-	attributes[Attributes::FontSize]=QString();
+	attributes[Attributes::Italic]="";
+	attributes[Attributes::Bold]="";
+	attributes[Attributes::Underline]="";
+	attributes[Attributes::Color]="";
+	attributes[Attributes::FontSize]="";
 }
 
 QString Textbox::getCodeDefinition(unsigned def_type)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return QString();
+		return "";
 	else
 	{
 		QString code_def=getCachedCode(def_type, false);

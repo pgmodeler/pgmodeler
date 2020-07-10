@@ -18,6 +18,7 @@
 
 #include "baseconfigwidget.h"
 #include "messagebox.h"
+#include <QDate>
 
 BaseConfigWidget::BaseConfigWidget(QWidget *parent) : QWidget(parent)
 {

@@ -3,6 +3,11 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
+  
+  %if {use-signature} %then
+    %set {signature} [ ns.nspname || '.' || ]
+  %end 
+
   [ SELECT cn.oid, cn.conname AS name, 
     ns.nspname AS parent,
     'schema' AS parent_type    
@@ -38,7 +43,7 @@
       [ WHERE ]
     %end
   
-    ( {name-filter} )
+    ( {signature} [ cn.conname ~* ] E'{name-filter}' )
   %end  
 
 %else

@@ -80,8 +80,8 @@ class GeneralConfigWidget: public BaseConfigWidget, public Ui::GeneralConfigWidg
 		Section id can be <configuration>, <dock-widget>, <file[n]> or <recent[n]> */
 		static QString getConfigurationParam(const QString &section_id, const QString &param_name);
 
-		static void saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
-		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = QString());
+		static void saveWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = "");
+		static bool restoreWidgetGeometry(QWidget *widget, const QString &custom_wgt_name = "");
 
 	public slots:
 		void applyConfiguration();

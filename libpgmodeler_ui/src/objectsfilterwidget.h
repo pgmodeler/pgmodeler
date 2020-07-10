@@ -35,7 +35,11 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	private:
 		Q_OBJECT
 
-		QMenu tab_objs_menu;
+		vector<ObjectType> extra_obj_types;
+
+		QMenu tab_objs_menu, options_menu;
+
+		QAction *action_only_matching, *action_match_signature, *action_forced_filter;
 
 		//! \brief Creates a combobox of the objects' types accepted in the filter
 		QComboBox *createObjectsCombo();
@@ -43,21 +47,32 @@ class ObjectsFilterWidget : public QWidget, Ui::ObjectsFilterWidget {
 	public:
 		explicit ObjectsFilterWidget(QWidget *parent = nullptr);
 
-		//! brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
+		//! \brief Returns a list of filters in the format accepted by the Catalog class (object_type:pattern:mode)
 		QStringList getObjectFilters();
+
+		//! \brief Returns a list of table children objects to be filtered forcebly
 		QStringList getForceObjectsFilter();
 
 		bool isOnlyMatching();
+		bool isMatchSignature();
 		bool hasFiltersConfigured();
+
+		/*! \brief When value is true the widget disable some features that aren't used
+		 * by the object filtering in database models. Additionally, when the model filtering is enabled
+		 * extra object types can be provided so they can be enabled in the filters construction */
+		void setModelFilteringMode(bool value, const vector<ObjectType> &extra_types = {});
+
+		//! \brief Populates the widget using a list of preconfigured filters
+		void addFilters(const QStringList &filters);
 
 	private slots:
 		void addFilter();
 		void removeFilter();
 		void removeAllFilters();
-		void enableForcedFilterButton();
 
 	signals:
 		void s_filterApplyingRequested();
+		void s_filtersRemoved();
 };
 
 #endif

@@ -24,35 +24,35 @@ Type::Type()
 	obj_type=ObjectType::Type;
 	setConfiguration(EnumerationType);
 
-	attributes[Attributes::BaseType]=QString();
-	attributes[Attributes::CompositeType]=QString();
-	attributes[Attributes::RangeType]=QString();
-	attributes[Attributes::TypeAttribute]=QString();
-	attributes[Attributes::EnumType]=QString();
-	attributes[Attributes::Enumerations]=QString();
-	attributes[Attributes::InputFunc]=QString();
-	attributes[Attributes::OutputFunc]=QString();
-	attributes[Attributes::RecvFunc]=QString();
-	attributes[Attributes::SendFunc]=QString();
-	attributes[Attributes::TpmodInFunc]=QString();
-	attributes[Attributes::TpmodOutFunc]=QString();
-	attributes[Attributes::AnalyzeFunc]=QString();
-	attributes[Attributes::InternalLength]=QString();
-	attributes[Attributes::ByValue]=QString();
-	attributes[Attributes::Alignment]=QString();
-	attributes[Attributes::Storage]=QString();
-	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::Element]=QString();
-	attributes[Attributes::Delimiter]=QString();
-	attributes[Attributes::ReducedForm]=QString();
-	attributes[Attributes::Category]=QString();
-	attributes[Attributes::Preferred]=QString();
-	attributes[Attributes::LikeType]=QString();
-	attributes[Attributes::Collatable]=QString();
-	attributes[Attributes::Subtype]=QString();
-	attributes[Attributes::SubtypeDiffFunc]=QString();
-	attributes[Attributes::CanonicalFunc]=QString();
-	attributes[Attributes::OpClass]=QString();
+	attributes[Attributes::BaseType]="";
+	attributes[Attributes::CompositeType]="";
+	attributes[Attributes::RangeType]="";
+	attributes[Attributes::TypeAttribute]="";
+	attributes[Attributes::EnumType]="";
+	attributes[Attributes::Enumerations]="";
+	attributes[Attributes::InputFunc]="";
+	attributes[Attributes::OutputFunc]="";
+	attributes[Attributes::RecvFunc]="";
+	attributes[Attributes::SendFunc]="";
+	attributes[Attributes::TpmodInFunc]="";
+	attributes[Attributes::TpmodOutFunc]="";
+	attributes[Attributes::AnalyzeFunc]="";
+	attributes[Attributes::InternalLength]="";
+	attributes[Attributes::ByValue]="";
+	attributes[Attributes::Alignment]="";
+	attributes[Attributes::Storage]="";
+	attributes[Attributes::DefaultValue]="";
+	attributes[Attributes::Element]="";
+	attributes[Attributes::Delimiter]="";
+	attributes[Attributes::ReducedForm]="";
+	attributes[Attributes::Category]="";
+	attributes[Attributes::Preferred]="";
+	attributes[Attributes::LikeType]="";
+	attributes[Attributes::Collatable]="";
+	attributes[Attributes::Subtype]="";
+	attributes[Attributes::SubtypeDiffFunc]="";
+	attributes[Attributes::CanonicalFunc]="";
+	attributes[Attributes::OpClass]="";
 }
 
 void Type::setName(const QString &name)
@@ -650,7 +650,7 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 		else
 			attributes[Attributes::InternalLength]=QString("%1").arg(internal_len);
 
-		attributes[Attributes::ByValue]=(by_value ? Attributes::True : QString());
+		attributes[Attributes::ByValue]=(by_value ? Attributes::True : "");
 		attributes[Attributes::Alignment]=(*alignment);
 		attributes[Attributes::Storage]=(~storage);
 		attributes[Attributes::DefaultValue]=default_value;
@@ -663,8 +663,8 @@ QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		attributes[Attributes::Category]=~(category);
 
-		attributes[Attributes::Preferred]=(preferred ? Attributes::True : QString());
-		attributes[Attributes::Collatable]=(collatable ? Attributes::True : QString());
+		attributes[Attributes::Preferred]=(preferred ? Attributes::True : "");
+		attributes[Attributes::Collatable]=(collatable ? Attributes::True : "");
 
 		if(like_type!=QString("\"any\""))
 		{
@@ -729,7 +729,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 				{
 					if(std::find(this->enumerations.begin(), this->enumerations.end(), enum_val)==this->enumerations.end())
 					{
-						attribs[Attributes::Before]=QString();
+						attribs[Attributes::Before]="";
 						if(prev_val.isEmpty())
 						{
 							attribs[Attributes::Before]=Attributes::True;
@@ -758,7 +758,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
 						attribs.clear();
-						attributes[Attributes::Drop]=QString();
+						attributes[Attributes::Drop]="";
 					}
 				}
 
@@ -771,7 +771,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 					{
 						attribs[Attributes::Attribute]=attrib.getName(true);
 						attribs[Attributes::Type]=attrib.getType().getCodeDefinition(SchemaParser::SqlDefinition);
-						attribs[Attributes::Collation]=QString();
+						attribs[Attributes::Collation]="";
 
 						if(attrib.getCollation())
 							attribs[Attributes::Collation]=attrib.getCollation()->getName(true);
@@ -792,7 +792,7 @@ QString Type::getAlterDefinition(BaseObject *object)
 
 						copyAttributes(attribs);
 						alter_def+=BaseObject::getAlterDefinition(this->getSchemaName(), attributes, true, true);
-						attributes[Attributes::Change]=QString();
+						attributes[Attributes::Change]="";
 					}
 
 					attribs.clear();

@@ -65,7 +65,7 @@ class LayersWidget : public QWidget, Ui::LayersWidget {
 
 	private slots:
 		//! \brief Add a new item (layer) to the listing. If the provided name is empty a default name is assigned
-		QListWidgetItem *addLayer(const QString &name = QString());
+		QListWidgetItem *addLayer(const QString &name = "");
 
 		//! \brief Triggers the renaming operation over a item
 		void startLayerRenaming(QListWidgetItem *item);

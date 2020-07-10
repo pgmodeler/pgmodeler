@@ -31,7 +31,7 @@ unix {
  BUILDNUM=$$system("date '+%Y%m%d'")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 } else {
- BUILDNUM=$$system('wingetdate.bat')
+ BUILDNUM=$$system('getbuildnum.bat')
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 
@@ -62,7 +62,7 @@ linux {
 	!defined(PREFIX, var): PREFIX = /usr/local/pgmodeler-appimage
 	BINDIR = $$PREFIX
 	PRIVATEBINDIR = $$PREFIX
-	PRIVATELIBDIR = $$PREFIX
+	PRIVATELIBDIR = $$PREFIX/lib
 	PLUGINSDIR = $$PREFIX/lib/pgmodeler/plugins
 	SHAREDIR = $$PREFIX
 	CONFDIR = $$SHAREDIR/conf
@@ -167,10 +167,10 @@ unix:!macx {
 }
 
 macx {
-  PGSQL_LIB = /Library/PostgreSQL/11/lib/libpq.dylib
-  PGSQL_INC = /Library/PostgreSQL/11/include
-  XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
-  XML_LIB = /usr/lib/libxml2.dylib
+  !defined(PGSQL_LIB, var): PGSQL_LIB = /Library/PostgreSQL/12/lib/libpq.dylib
+  !defined(PGSQL_INC, var): PGSQL_INC = /Library/PostgreSQL/12/include
+  !defined(XML_INC, var): XML_INC = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
+  !defined(XML_LIB, var): XML_LIB = /usr/lib/libxml2.dylib
   INCLUDEPATH += $$PGSQL_INC $$XML_INC
 }
 

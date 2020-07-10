@@ -55,7 +55,7 @@ void TaskProgressWidget::show()
 
 void TaskProgressWidget::updateProgress(int progress, unsigned icon_id)
 {
-	updateProgress(progress, QString(), icon_id);
+	updateProgress(progress, "", icon_id);
 }
 
 void TaskProgressWidget::updateProgress(int progress, QString text, unsigned icon_id)

@@ -51,6 +51,7 @@
 #include "donatewidget.h"
 #include "sceneinfowidget.h"
 #include "layerswidget.h"
+#include "changelogwidget.h"
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
@@ -85,6 +86,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Layers management widget
 		LayersWidget *layers_wgt;
+
+		//! \brief Layers management widget
+		ChangelogWidget *changelog_wgt;
 
 		/*! \brief Widget positioned on the center of main window that contains some basic operations like
 		create new model, open a file, restore session */
@@ -156,6 +160,8 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Set the postion of a floating widget based upon an action at a tool bar
 		void setFloatingWidgetPos(QWidget *widget, QAction *act, QToolBar *toolbar, bool map_to_window);
 
+		void setBottomFloatingWidgetPos(QWidget *widget, QToolButton *btn);
+
 		void configureSamplesMenu();
 
 		/*! \brief Stores the current checkboxes states of the main dock widgets on the set of configuration params
@@ -186,7 +192,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	public slots:
 		/*! \brief Creates a new empty model inside the main window. If the parameter 'filename' is specified,
 		creates the model loading it from a file */
-		void addModel(const QString &filename=QString());
+		void addModel(const QString &filename="");
 
 		/*! \brief Creates a new model inside the main window using the specified model widget. The method will raise
 		an error is the widget isn't allocated or already has a parent */
@@ -295,7 +301,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		//! \brief Configures the "More" actions in the general toolbar by usinge the current_model's popup menu
 		void configureMoreActionsMenu();
 
-		void fixModel(const QString &filename=QString());
+		void fixModel(const QString &filename="");
 		void showRightWidgetsBar();
 		void showBottomWidgetsBar();
 		void restoreLastSession();
@@ -312,6 +318,7 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 		void arrangeObjects();
 		void toggleCompactView();
 		void toggleLayersWidget(bool show);
+		void toggleChangelogWidget(bool show);
 
 	signals:
 		void s_currentModelChanged(ModelWidget *model_wgt);

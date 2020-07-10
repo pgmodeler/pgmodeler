@@ -23,8 +23,8 @@ UserMapping::UserMapping() : BaseObject()
 	obj_type = ObjectType::UserMapping;
 	foreign_server = nullptr;
 	setName("");
-	attributes[Attributes::Server] = QString();
-	attributes[Attributes::Options] = QString();
+	attributes[Attributes::Server] = "";
+	attributes[Attributes::Options] = "";
 }
 
 void UserMapping::setForeignServer(ForeignServer *server)
@@ -49,7 +49,7 @@ void UserMapping::setName(const QString &)
 {
 	//Configures a fixed name for the user mapping (in form: role@server)
 	this->obj_name=QString("%1@%2").arg(owner ? owner->getName() : QString("public"))
-								 .arg(foreign_server ? foreign_server->getName() : QString());
+								 .arg(foreign_server ? foreign_server->getName() : "");
 }
 
 QString UserMapping::getName(bool, bool)
@@ -60,7 +60,7 @@ QString UserMapping::getName(bool, bool)
 QString UserMapping::getSignature(bool)
 {
 	return QString("FOR %1 SERVER %2").arg(owner ? owner->getName() : QString("public"))
-																		.arg(foreign_server ? foreign_server->getName() : QString());
+																		.arg(foreign_server ? foreign_server->getName() : "");
 }
 
 QString UserMapping::getCodeDefinition(unsigned def_type)
@@ -68,8 +68,8 @@ QString UserMapping::getCodeDefinition(unsigned def_type)
 	QString code_def=getCachedCode(def_type, false);
 	if(!code_def.isEmpty()) return code_def;
 
-	attributes[Attributes::Role] = QString();
-	attributes[Attributes::Server] = QString();
+	attributes[Attributes::Role] = "";
+	attributes[Attributes::Server] = "";
 
 	if(foreign_server)
 	{

@@ -386,7 +386,7 @@ bool PgSqlType::operator == (PgSqlType type)
 
 bool PgSqlType::operator == (void *ptype)
 {
-	int idx = getUserTypeIndex(QString(), ptype);
+	int idx = getUserTypeIndex("", ptype);
 	return (static_cast<int>(type_idx) == idx);
 }
 
@@ -452,7 +452,7 @@ unsigned PgSqlType::setUserType(unsigned type_id)
 
 unsigned PgSqlType::setUserType(void *ptype)
 {
-	int idx = getUserTypeIndex(QString(), ptype);
+	int idx = getUserTypeIndex("", ptype);
 
 	if(idx <= 0)
 		throw Exception(ErrorCode::AsgInvalidTypeObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -605,7 +605,7 @@ QString PgSqlType::getUserTypeName(unsigned type_id)
 			(type_id >= lim1 && type_id < lim2))
 		return (user_types[type_id - lim1].name);
 	else
-		return QString();
+		return "";
 }
 
 void PgSqlType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
@@ -667,7 +667,7 @@ bool PgSqlType::isUserType()
 
 bool PgSqlType::isNetworkType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
 
 	return (!isUserType() &&
 				 (curr_type==QString("cidr") ||
@@ -685,7 +685,7 @@ bool PgSqlType::isGiSType(const QString &type_name)
 
 bool PgSqlType::isBoxType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
 	return (!isUserType() && isBoxType(curr_type));
 }
 
@@ -697,13 +697,13 @@ bool PgSqlType::isBoxType(const QString &type_name)
 
 bool PgSqlType::isGiSType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
 	return (!isUserType() && isGiSType(curr_type));
 }
 
 bool PgSqlType::isRangeType()
 {
-	QString curr_type=(!isUserType() ? type_names[type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("int4range") || curr_type==QString("int8range") ||
@@ -713,7 +713,7 @@ bool PgSqlType::isRangeType()
 
 bool PgSqlType::isSerialType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("serial") ||
@@ -723,7 +723,7 @@ bool PgSqlType::isSerialType()
 
 bool PgSqlType::isDateTimeType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("time") || curr_type==QString("timestamp") ||
@@ -733,7 +733,7 @@ bool PgSqlType::isDateTimeType()
 
 bool PgSqlType::isNumericType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("numeric") || curr_type==QString("decimal")));
@@ -741,7 +741,7 @@ bool PgSqlType::isNumericType()
 
 bool PgSqlType::isIntegerType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("smallint") || curr_type==QString("integer") ||
@@ -751,7 +751,7 @@ bool PgSqlType::isIntegerType()
 
 bool PgSqlType::hasVariableLength()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (!isUserType() &&
 					(curr_type==QString("numeric") || curr_type==QString("decimal") ||
@@ -763,7 +763,7 @@ bool PgSqlType::hasVariableLength()
 
 bool PgSqlType::isCharacterType()
 {
-	QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+	QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (curr_type==QString("\"char\"") || curr_type==QString("char") ||
 					curr_type==QString("character") || curr_type==QString("varchar") ||
@@ -772,7 +772,7 @@ bool PgSqlType::isCharacterType()
 
 bool PgSqlType::isPolymorphicType()
 {
-		QString curr_type=(!isUserType() ? type_names[this->type_idx] : QString());
+		QString curr_type=(!isUserType() ? type_names[this->type_idx] : "");
 
 	return (curr_type==QString("anyarray") || curr_type==QString("anyelement") ||
 					curr_type==QString("anyenum") || curr_type==QString("anynonarray") ||
@@ -945,14 +945,14 @@ QString PgSqlType::getCodeDefinition(unsigned def_type,QString ref_type)
 		attribs_map attribs;
 		SchemaParser schparser;
 
-		attribs[Attributes::Length]=QString();
-		attribs[Attributes::Dimension]=QString();
-		attribs[Attributes::Precision]=QString();
-		attribs[Attributes::WithTimezone]=QString();
-		attribs[Attributes::IntervalType]=QString();
-		attribs[Attributes::SpatialType]=QString();
-		attribs[Attributes::Variation]=QString();
-		attribs[Attributes::Srid]=QString();
+		attribs[Attributes::Length]="";
+		attribs[Attributes::Dimension]="";
+		attribs[Attributes::Precision]="";
+		attribs[Attributes::WithTimezone]="";
+		attribs[Attributes::IntervalType]="";
+		attribs[Attributes::SpatialType]="";
+		attribs[Attributes::Variation]="";
+		attribs[Attributes::Srid]="";
 		attribs[Attributes::RefType]=ref_type;
 
 		attribs[Attributes::Name]=(~(*this));

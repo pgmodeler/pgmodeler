@@ -41,14 +41,14 @@ Permission::Permission(BaseObject *obj)
 	this->obj_type=ObjectType::Permission;
 	revoke=cascade=false;
 
-	attributes[Attributes::Object]=QString();
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::Parent]=QString();
-	attributes[Attributes::GrantOp]=QString();
-	attributes[Attributes::Roles]=QString();
-	attributes[Attributes::Privileges]=QString();
-	attributes[Attributes::Cascade]=QString();
-	attributes[Attributes::PrivilegesGop]=QString();
+	attributes[Attributes::Object]="";
+	attributes[Attributes::Type]="";
+	attributes[Attributes::Parent]="";
+	attributes[Attributes::GrantOp]="";
+	attributes[Attributes::Roles]="";
+	attributes[Attributes::Privileges]="";
+	attributes[Attributes::Cascade]="";
+	attributes[Attributes::PrivilegesGop]="";
 }
 
 bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
@@ -358,54 +358,26 @@ QString Permission::parsePermissionString(QString perm_str, vector<unsigned> &pr
 
 void Permission::generatePermissionId()
 {
-	vector<Role *>::iterator itr, itr_end;
-	vector<QString> addr_vect;
-	Role *role=nullptr;
-	QString str_aux, addr;
-	unsigned i, count;
-	QTextStream stream(&addr);
+	QStringList values;
+	QString hash_id = object->getName();
 	QCryptographicHash hash(QCryptographicHash::Md5);
 
-	//Stores the permission address on a string
-	stream << reinterpret_cast<unsigned *>(this);
-	str_aux=addr.mid(2);
-	addr.clear();
+	for(auto &role : roles)
+		values.append(role->getName());
 
-	//Generates the id only when there is associated roles to the permission
-	if(roles.size() > 0)
-	{
-		itr=roles.begin();
-		itr_end=roles.end();
+	values.sort();
+	hash_id += values.join('.');
 
-		while(itr!=itr_end)
-		{
-			role=(*itr);
-			//Convertes the role address to string and use it as the id for the permission
-			stream << reinterpret_cast<unsigned *>(role);
-			addr_vect.push_back(addr.mid(2));
-			itr++;
-		}
-
-		sort(addr_vect.begin(), addr_vect.end());
-		count=addr_vect.size();
-
-		for(i=0; i < count; i++)
-		{
-			str_aux+=QString("%1").arg(addr_vect[i]);
-			if(i < count-1) str_aux+='.';
-		}
-
-	}
 	/* If no role is associated with permissions (public)
 		generates an identifier with zeros indicating that permission
 		is not linked directly to any role on the model */
-	else
-		str_aux+=QString("000000");
+	if(roles.empty())
+		hash_id += "000000";
 
 	//Generates an unique name for the permission through md5 hash
-	hash.addData(QByteArray(str_aux.toStdString().c_str()));
-	str_aux=hash.result().toHex();
-	this->obj_name=(!revoke ? QString("grant_") : QString("revoke_")) + str_aux.mid(0,10);
+	hash.addData(QByteArray(hash_id.toStdString().c_str()));
+	hash_id = hash.result().toHex();
+	this->obj_name = (!revoke ? "grant_" : "revoke_") + getPermissionString() + '_' + hash_id.mid(0, 10);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)
@@ -424,8 +396,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	obj_type=object->getObjectType();
 
-	attributes[Attributes::Revoke]=(revoke ? Attributes::True : QString());
-	attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+	attributes[Attributes::Revoke]=(revoke ? Attributes::True : "");
+	attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
 
 	if(def_type==SchemaParser::SqlDefinition)
 	{
@@ -457,7 +429,7 @@ QString Permission::getCodeDefinition(unsigned def_type)
 			else if(privileges[i])
 				attributes[priv_vect[i]]=Attributes::True;
 			else
-				attributes[priv_vect[i]]=QString();
+				attributes[priv_vect[i]]="";
 		}
 	}
 	else
@@ -486,25 +458,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 	return BaseObject::__getCodeDefinition(def_type);
 }
 
-QString Permission::getSignature(bool format)
+QString Permission::getSignature(bool)
 {
-	QStringList rol_names, words;
-	QString signature;
-
-	for(Role *role : roles)
-		rol_names.push_back(role->getName(format));
-
-	rol_names.sort();
-	signature=QString("=") + getPermissionString();
-
-	if(roles.empty())
-		signature=QString("PUBLIC") + signature;
-	else
-		signature=rol_names.join(',') + signature;
-
-	words=this->obj_name.split("_");
-	signature=words[0] + QChar(':') + signature + QString(" [id:%1]").arg(words[1]);
-	return signature;
+	return obj_name;
 }
 
 QString Permission::getDropDefinition(bool cascade)

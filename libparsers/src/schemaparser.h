@@ -140,6 +140,11 @@ class SchemaParser {
 		//! \brief PostgreSQL version currently used by the parser
 		QString pgsql_version;
 
+		/*! \brief Returns the boolean result of the comparison between left_val and right_val
+		 * using the provided operator oper (see Token*Oper) */
+		template<typename Type>
+		bool getExpressionResult(const QString &oper, const QVariant &left_val, const QVariant &right_val);
+
 	public:
 		static const char CharComment,	//! \brief Character that starts a comment
 		CharLineEnd,	//! \brief Character that indicates end of line

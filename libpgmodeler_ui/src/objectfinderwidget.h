@@ -67,9 +67,9 @@ class ObjectFinderWidget : public QWidget, public Ui::ObjectFinderWidget {
 		//! \brief Lists all valid types in a QListWidget
 		static void updateObjectTypeList(QListWidget *list_wgt);
 
-		/*! \brief Lists the objects of a vector in a QTableWidget. Any row of table contains the
-		reference to the object on the first column */
-		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name);
+		/*! \brief Lists the objects of a vector in a QTableWidget. The first column on each row of table contains thereference to the object
+		 * The parameter search_attr is used to display the attribute value in which the search was performed. */
+		static void updateObjectTable(QTableWidget *tab_wgt, vector<BaseObject *> &objects, const QString &search_attr = Attributes::Name, bool checkable_items = false);
 		
 		//! \brief Sets the database model to work on
 		void setModel(ModelWidget *model_wgt);

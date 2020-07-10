@@ -273,7 +273,7 @@ void TableObjectView::configureObject()
 		fmt=font_config[Attributes::ObjectType];
 
 		if(compact_view)
-			lables[1]->setText(QString());
+			lables[1]->setText("");
 		else
 		{
 			if(column)
@@ -290,7 +290,7 @@ void TableObjectView::configureObject()
 		//Configuring the constraints label
 		fmt=font_config[Attributes::Constraints];
 		if(compact_view)
-			lables[2]->setText(QString());
+			lables[2]->setText("");
 		else if(column)
 			lables[2]->setText(!str_constr.isEmpty() ? str_constr : QString(" "));
 		else
@@ -395,7 +395,7 @@ void TableObjectView::configureObject()
 								   str_constr + QString(" ") +
 								   ConstrDelimEnd);
 			else
-				lables[2]->setText(QString());
+				lables[2]->setText("");
 		}
 
 		if(!atribs_tip.isEmpty())
@@ -447,7 +447,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[Attributes::RefColumn];
 		if(compact_view && !reference.getReferenceAlias().isEmpty())
-			lables[1]->setText(QString());
+			lables[1]->setText("");
 		else
 		{
 			if(reference.getColumn())
@@ -464,7 +464,7 @@ void TableObjectView::configureObject(Reference reference)
 	else
 	{
 		fmt=font_config[Attributes::RefTable];
-		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : QString();
+		str_aux = compact_view && !reference.getReferenceAlias().isEmpty() ? reference.getReferenceAlias() : "";
 
 		if(str_aux.isEmpty())
 		{
@@ -476,7 +476,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[0]->setText(str_aux);
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
-		lables[1]->setText(QString());
+		lables[1]->setText("");
 		lables[0]->setPos(px, 0);
 		px+=lables[0]->boundingRect().width();
 	}
@@ -499,7 +499,7 @@ void TableObjectView::configureObject(Reference reference)
 		lables[2]->setPos(px, 0);
 	}
 	else
-		lables[2]->setText(QString());
+		lables[2]->setText("");
 
 	calculateBoundingRect();
 }
@@ -535,9 +535,9 @@ void TableObjectView::configureObject(const SimpleColumn &col)
 		px+=lables[1]->boundingRect().width() + (4 * HorizSpacing);
 	}
 	else
-		lables[1]->setText(QString());
+		lables[1]->setText("");
 
-	lables[2]->setText(QString());
+	lables[2]->setText("");
 	calculateBoundingRect();
 }
 
@@ -641,7 +641,7 @@ QString TableObjectView::getConstraintString(Column *column)
 
 		return str_constr;
 	}
-	else return QString();
+	else return "";
 }
 
 void TableObjectView::setFakeSelection(bool value)

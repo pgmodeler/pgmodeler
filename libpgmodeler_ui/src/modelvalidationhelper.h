@@ -78,7 +78,7 @@ class ModelValidationHelper: public QObject {
 
 		/*! \brief Validates the specified model. If a connection is specifies executes the
 		SQL validation directly on DBMS */
-		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver=QString(), bool use_tmp_names=false);
+		void setValidationParams(DatabaseModel *model, Connection *conn=nullptr, const QString &pgsql_ver="", bool use_tmp_names=false);
 
 		//! \brief Switch the validator to fix mode
 		void switchToFixMode(bool value);
@@ -113,7 +113,7 @@ class ModelValidationHelper: public QObject {
 		void s_validationInfoGenerated(ValidationInfo val_info);
 
 		//! \brief This signal is emitted when the validation progress changes
-		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd=QString(), bool is_code_gen=false);
+		void s_progressUpdated(int prog, QString msg, ObjectType obj_type=ObjectType::BaseObject, QString cmd="", bool is_code_gen=false);
 
 		//! \brief This signal is emitted when the object is processed by the validator
 		void s_objectProcessed(QString obj_name, ObjectType obj_type);

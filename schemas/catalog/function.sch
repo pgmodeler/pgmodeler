@@ -11,7 +11,12 @@
 %end    
 
 %if {list} %then
-  [SELECT pr.oid,  proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
+
+  %if {use-signature} %then
+     %set {signature} [ ns.nspname || '.' || ]
+  %end
+
+  [SELECT pr.oid, proname || '(' || array_to_string(proargtypes::regtype] $ob $cb [,',') || ')' AS name,
     ns.nspname AS parent,
     'schema' AS parent_type
     FROM pg_proc AS pr 
@@ -32,7 +37,7 @@
   %end
   
   %if {name-filter} %then
-    [ AND ] ( {name-filter} )
+    [ AND ] ( {signature} [ pr.proname ~* ] E'{name-filter}' )
   %end
 
 %else

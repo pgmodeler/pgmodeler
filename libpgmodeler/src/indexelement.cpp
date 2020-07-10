@@ -38,7 +38,7 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 	attribs_map attributes;
 
 	schparser.setPgSQLVersion(BaseObject::getPgSQLVersion());
-	attributes[Attributes::Collation]=QString();
+	attributes[Attributes::Collation]="";
 	configureAttributes(attributes, def_type);
 
 	if(collation)

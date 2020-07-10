@@ -23,11 +23,11 @@ Policy::Policy() : TableObject()
 	permissive = false;
 	policy_cmd = PolicyCmdType::All;
 
-	attributes[Attributes::Permissive] = QString();
-	attributes[Attributes::Command] = QString();
-	attributes[Attributes::UsingExp] = QString();
-	attributes[Attributes::CheckExp] = QString();
-	attributes[Attributes::Roles] = QString();
+	attributes[Attributes::Permissive] = "";
+	attributes[Attributes::Command] = "";
+	attributes[Attributes::UsingExp] = "";
+	attributes[Attributes::CheckExp] = "";
+	attributes[Attributes::Roles] = "";
 }
 
 void Policy::setParentTable(BaseTable *table)
@@ -123,7 +123,7 @@ QString Policy::getCodeDefinition(unsigned def_type)
 	for(auto role : roles)
 		rol_names.append(role->getName(true));
 
-	attributes[Attributes::Permissive] = (permissive ? Attributes::True : QString());
+	attributes[Attributes::Permissive] = (permissive ? Attributes::True : "");
 	attributes[Attributes::UsingExp] = using_expr;
 	attributes[Attributes::CheckExp] = check_expr;
 	attributes[Attributes::Roles] = rol_names.join(QString(", "));

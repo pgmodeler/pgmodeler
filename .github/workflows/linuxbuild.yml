@@ -1,0 +1,34 @@
+name: Linux build
+
+on:
+  push:
+    branches: [ master, develop, 0.9.* ]
+    tags: 0.9.*
+    
+  pull_request:
+    branches: [ master, develop, 0.9.* ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        qt: ['5.15.0', '5.14.2', '5.13.2', '5.12.9', '5.11.3', '5.10.1', '5.9.9']
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Installing Qt framework
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: ${{ matrix.qt }}      
+
+    - name: Running qmake
+      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=$GITHUB_WORKSPACE/build
+
+    - name: Building pgModeler
+      run: make -j6
+     
+    - name: Deploying pgModeler
+      run: make install

@@ -23,6 +23,13 @@ TypeAttribute::TypeAttribute()
 	obj_type=ObjectType::TypeAttribute;
 }
 
+TypeAttribute::TypeAttribute(const TypeAttribute &type_attr) : TypeAttribute()
+{
+    type = type_attr.type;
+    obj_name = type_attr.obj_name;
+    collation = type_attr.collation;
+}
+
 void TypeAttribute::setType(PgSqlType type)
 {
 	setCodeInvalidated(this->type != type);
@@ -59,7 +66,7 @@ QString TypeAttribute::getCodeDefinition(unsigned def_type)
 
 void TypeAttribute::operator = (const TypeAttribute &tpattrib)
 {
-	this->obj_name=tpattrib.obj_name;
-	this->type=tpattrib.type;
-	this->collation=tpattrib.collation;
+    this->obj_name = tpattrib.obj_name;
+    this->type = tpattrib.type;
+    this->collation = tpattrib.collation;
 }

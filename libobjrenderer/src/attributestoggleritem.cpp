@@ -98,7 +98,7 @@ void AttributesTogglerItem::setButtonSelected(const QPointF &pnt, bool clicked)
 	double h_spacing = 4 * BaseObjectView::HorizSpacing;
 	unsigned coll_mode = static_cast<unsigned>(collapse_mode), section_id = 0;
 
-	this->setToolTip(QString());
+	this->setToolTip("");
 	clearButtonsSelection();
 
 	for(unsigned arr_id = 0; arr_id < 7; arr_id++)

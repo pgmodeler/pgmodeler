@@ -3,22 +3,36 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %then
-   [SELECT cs.oid, 'cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')' AS name,
-     current_database() AS parent,
-     'database' AS parent_type
-     FROM pg_cast AS cs]
+   %set {cast-name} ['cast('|| castsource::regtype::text || ',' || casttarget::regtype::text || ')']
+   
+   [SELECT cs.oid, ] {cast-name} [ AS name, current_database() AS parent, 'database' AS parent_type
+    FROM pg_cast AS cs]
 
-  %if {last-sys-oid} %then
-   [ WHERE oid ] {oid-filter-op} $sp {last-sys-oid}
-  %end
-
-  %if {not-ext-object} %then
+     
+  %if {last-sys-oid} %or {not-ext-object}  %or {name-filter} %then  
+    [ WHERE ]
+     
     %if {last-sys-oid} %then
-      [ AND ]
-    %else
-     [ WHERE ]
+        [ oid ] {oid-filter-op} $sp {last-sys-oid}
     %end
-    ( {not-ext-object} )
+    
+    %if {not-ext-object} %then
+            
+       %if {last-sys-oid} %then
+          [ AND ] 
+       %end
+            
+       ( {not-ext-object} ) 
+    %end
+        
+    %if {name-filter} %then
+           
+       %if {last-sys-oid} %or {not-ext-object} %then
+          [ AND ] 
+       %end
+            
+       ( {cast-name} [ ~* ] E'{name-filter}' )
+    %end    
   %end
 
 %else

@@ -497,8 +497,9 @@ void ConstraintWidget::applyConfiguration()
 		finishConfiguration();
 
 		//For the foreign keys and uniques, updates the fk relationships on the model
-		if(constr->getConstraintType()==ConstraintType::ForeignKey ||
-			 constr->getConstraintType()==ConstraintType::Unique)
+		if(this->table &&
+			 (constr->getConstraintType()==ConstraintType::ForeignKey ||
+			 constr->getConstraintType()==ConstraintType::Unique))
 			this->model->updateTableFKRelationships(dynamic_cast<Table *>(this->table));
 	}
 	catch(Exception &e)

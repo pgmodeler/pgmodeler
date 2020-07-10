@@ -18,22 +18,23 @@
 
 #include <QTranslator>
 #include "pgmodelercli.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 int main(int argc, char **argv)
 {
 	QTextStream out(stdout);
 
 #ifdef DEMO_VERSION
-	out << endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << endl;
-	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << endl;
-	out << QT_TR_NOOP("Copyright 2006-2019 Raphael A. Silva <raphael@pgmodeler.io>") << endl;
-	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << endl << endl;
+	out << QtCompat::endl;
+	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << QT_TR_NOOP(" command line interface.") << QtCompat::endl;
+	out << QT_TR_NOOP("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
+	out << QT_TR_NOOP("Copyright 2006-2020 Raphael A. Silva <raphael@pgmodeler.io>") << QtCompat::endl;
+	out << QT_TR_NOOP("\n** CLI disabled in demonstration version! **") << QtCompat::endl << QtCompat::endl;
 #else
 	try
 	{
-        PgModelerCliApp pgmodeler_cli(argc, argv);
-        QTranslator translator(&pgmodeler_cli);
+		PgModelerCliApp pgmodeler_cli(argc, argv);
+		QTranslator translator(&pgmodeler_cli);
 
 		//Tries to load the ui translation according to the system's locale
 		translator.load(QLocale::system().name(), GlobalAttributes::getLanguagesDir());
@@ -46,9 +47,9 @@ int main(int argc, char **argv)
 	}
 	catch(Exception &e)
 	{
-		out << endl;
+		out << QtCompat::endl;
 		out << e.getExceptionsText();
-		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << endl << endl;
+		out << QString("** pgmodeler-cli aborted due to critical error(s). **") << QtCompat::endl << QtCompat::endl;
 		return (e.getErrorCode()==ErrorCode::Custom ? -1 : enum_cast(e.getErrorCode()));
 	}
 #endif

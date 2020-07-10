@@ -3,9 +3,14 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {list} %and ({pgsql-ver} != "9.0") %then
- [SELECT cl.oid, collname AS name, 
-  ns.nspname AS parent, 'schema' AS parent_type FROM pg_collation AS cl 
-  LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid]
+  
+  %if {use-signature} %then
+    %set {signature} [ ns.nspname || '.' || ]
+  %end 
+
+  [SELECT cl.oid, collname AS name, 
+   ns.nspname AS parent, 'schema' AS parent_type FROM pg_collation AS cl 
+   LEFT JOIN pg_namespace AS ns ON cl.collnamespace = ns.oid]
 
   %if {schema} %then
     [ WHERE ns.nspname = ] '{schema}'
@@ -38,7 +43,7 @@
       [ WHERE ]
     %end
   
-    ( {name-filter} )
+    ( {signature} [ cl.collname ~* ] E'{name-filter}' )
   %end  
   
 %else

@@ -17,6 +17,7 @@
 */
 
 #include "relationshipview.h"
+#include "qtcompat/qlinefcompat.h"
 
 bool RelationshipView::hide_name_label=false;
 bool RelationshipView::use_curved_lines=true;
@@ -400,11 +401,7 @@ void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 						lin.setP2(QPointF(event->pos().x() + 50, event->pos().y() + 50));
 
 						//Case the auxiliary line intercepts one relationship line
-						#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-							inter_type = lines[i]->line().intersect(lin, &p);
-						#else
-							inter_type = lines[i]->line().intersects(lin, &p);
-						#endif
+						inter_type = QtCompat::intersects(lines[i]->line(), lin, &p);
 
 						if((!use_curved_lines && inter_type == QLineF::BoundedIntersection) ||
 							 (use_curved_lines && curves[i]->contains(event->pos())))
@@ -709,57 +706,64 @@ void RelationshipView::configureLine()
 					rec_tab=dynamic_cast<Table *>(rel->getReceiverTable());
 				}
 
-				rec_tab->getForeignKeys(fks, true, ref_tab);
 				ref_tab_view=dynamic_cast<TableView *>(ref_tab->getOverlyingObject());
 				rec_tab_view=dynamic_cast<TableView *>(rec_tab->getOverlyingObject());
 
-				//Create the table's rectangles to detect where to connect the relationship
-				ref_tab_rect=QRectF(ref_tab_view->pos(), ref_tab_view->boundingRect().size());
-
-				//In this case the receiver table rect Y must be equal to reference table Y in order to do the correct comparison
-				rec_tab_rect=QRectF(QPointF(rec_tab_view->pos().x(),
-																		ref_tab_view->pos().y()), rec_tab_view->boundingRect().size());
-
-				if(ref_tab_rect.intersects(rec_tab_rect))
+				/* We determine the fk to pk connections only if both tables are not fully collapsed.
+				 * Otherwise, the tables' center points are used as connection point of the relationship */
+				if(rec_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed &&
+					 ref_tab->getCollapseMode() != CollapseMode::AllAttribsCollapsed)
 				{
-					//Connects the rectangle at the same sides on both tables
-					conn_same_sides = true;
+					rec_tab->getForeignKeys(fks, true, ref_tab);
 
-					if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
-						pk_pnt_type=fk_pnt_type=BaseTableView::LeftConnPoint;
-					else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
-						pk_pnt_type=fk_pnt_type=BaseTableView::RightConnPoint;
-				}
-				else
-				{
-					//Connecting the relationship on the opposite sides depending on the tables' position
-					if(ref_tab_rect.right() <= rec_tab_rect.left())
+					//Create the table's rectangles to detect where to connect the relationship
+					ref_tab_rect=QRectF(ref_tab_view->pos(), ref_tab_view->boundingRect().size());
+
+					//In this case the receiver table rect Y must be equal to reference table Y in order to do the correct comparison
+					rec_tab_rect=QRectF(QPointF(rec_tab_view->pos().x(),
+																			ref_tab_view->pos().y()), rec_tab_view->boundingRect().size());
+
+					if(ref_tab_rect.intersects(rec_tab_rect))
 					{
-						pk_pnt_type=BaseTableView::RightConnPoint;
-						fk_pnt_type=BaseTableView::LeftConnPoint;
+						//Connects the rectangle at the same sides on both tables
+						conn_same_sides = true;
+
+						if(rec_tab_rect.center().x() >= ref_tab_rect.center().x())
+							pk_pnt_type=fk_pnt_type=BaseTableView::LeftConnPoint;
+						else if(rec_tab_rect.center().x() < ref_tab_rect.center().x())
+							pk_pnt_type=fk_pnt_type=BaseTableView::RightConnPoint;
 					}
 					else
 					{
-						pk_pnt_type=BaseTableView::LeftConnPoint;
-						fk_pnt_type=BaseTableView::RightConnPoint;
+						//Connecting the relationship on the opposite sides depending on the tables' position
+						if(ref_tab_rect.right() <= rec_tab_rect.left())
+						{
+							pk_pnt_type=BaseTableView::RightConnPoint;
+							fk_pnt_type=BaseTableView::LeftConnPoint;
+						}
+						else
+						{
+							pk_pnt_type=BaseTableView::LeftConnPoint;
+							fk_pnt_type=BaseTableView::RightConnPoint;
+						}
 					}
-				}
 
-				for(auto &constr : fks)
-				{
-					cnt=constr->getColumnCount(Constraint::SourceCols);
-
-					for(i=0; i < cnt; i++)
+					for(auto &constr : fks)
 					{
-						pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SourceCols), fk_pnt_type);
-						fk_py+=pnt.y();
-						fk_px=pnt.x();
-						fk_points.push_back(this->mapFromItem(rec_tab_view, pnt));
+						cnt=constr->getColumnCount(Constraint::SourceCols);
 
-						pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::ReferencedCols), pk_pnt_type);
-						pk_py+=pnt.y();
-						pk_px=pnt.x();
-						pk_points.push_back(this->mapFromItem(ref_tab_view, pnt));
+						for(i=0; i < cnt; i++)
+						{
+							pnt=rec_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::SourceCols), fk_pnt_type);
+							fk_py+=pnt.y();
+							fk_px=pnt.x();
+							fk_points.push_back(this->mapFromItem(rec_tab_view, pnt));
+
+							pnt=ref_tab_view->getConnectionPoints(constr->getColumn(i, Constraint::ReferencedCols), pk_pnt_type);
+							pk_py+=pnt.y();
+							pk_px=pnt.x();
+							pk_points.push_back(this->mapFromItem(ref_tab_view, pnt));
+						}
 					}
 				}
 
@@ -784,11 +788,11 @@ void RelationshipView::configureLine()
 				}
 				else
 				{
-					/* Fallback configuration: If no fk was found in the receiver table uses
-					 * the tables' center points to configure the line in order to avoid glitched lines.
-					 * This situation may happen when the relationship is being validated and the needed fks was not
+					/* Fallback configuration: if one of the tables are collapsed or if no fk was found in the
+					 * receiver table uses the tables' center points to configure the line in order to avoid glitched lines.
+					 * The second situation may happen when the relationship is being validated and the needed fk was not
 					 * created yet. In a second interaction of the rel. validation they are created
-					 *  and the relationship is properly configured */
+					 * and the relationship line is properly configured */
 					if(rel_type==Relationship::RelationshipFk)
 					{
 						p_central[1]=pk_pnt=ref_tab_view->getCenter();
@@ -909,12 +913,7 @@ void RelationshipView::configureLine()
 				{
 					edge.setP1(pol.at(idx));
 					edge.setP2(pol.at(idx + 1));
-
-					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-						inter_type = line.intersect(edge, &pi);
-					#else
-						inter_type = line.intersects(edge, &pi);
-					#endif
+					inter_type = QtCompat::intersects(line, edge, &pi);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{
@@ -1681,12 +1680,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 			{
 				edge.setP1(pol.at(idx));
 				edge.setP2(pol.at(idx + 1));
-
-				#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-					inter_type = rel_lines[tab_id].intersect(edge, &pi);
-				#else
-					inter_type = rel_lines[tab_id].intersects(edge, &pi);
-				#endif
+				inter_type = QtCompat::intersects(rel_lines[tab_id], edge, &pi);
 
 				if(inter_type == QLineF::BoundedIntersection)
 				{
@@ -1938,11 +1932,7 @@ void RelationshipView::configureLabels()
 			{
 				for(i1=0; i1 < 4; i1++)
 				{
-					#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-						inter_type = lins[idx].intersect(borders[idx][i1], &p_int);
-					#else
-						inter_type = lins[idx].intersects(borders[idx][i1], &p_int);
-					#endif
+					inter_type = QtCompat::intersects(lins[idx], borders[idx][i1], &p_int);
 
 					if(inter_type == QLineF::BoundedIntersection)
 					{

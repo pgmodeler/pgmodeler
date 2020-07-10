@@ -1,5 +1,63 @@
-Change Log
+Changelog
 ---------
+
+v0.9.3-beta
+------
+<em>Release date: July 10, 2020</em><br/>
+
+* [New] Added GitHub actions scripts in order to test the building on each platform. On Linux and macOs the build will occur on all Qt versions from 5.15 to 5.9, on Windows the build happens only on Qt 5.15 (due to the usage of msys2 that uses the most recent version of the framework).
+* [New] Added default constructors in the form "Class(const &)" for Connection, Parameter and TypeAttribute in order to avoid deprecated-copy warnings on GCC9.
+* [New] The CLI now validates the mixing of options of different operation modes.
+* [New] Added support to partial diffs between a model and database or between two databases.
+* [New] Created an internal changelog on DatabaseModel to register object's modification over time being useful for partial diff operations.
+* [New] Added the widget called ChangelogWidget to control the model's internal changelog settings in the design view.
+* [New] Added support to save/load changelog from model file.
+* [New] The CLI now supports partial diffs too.
+* [New] Create the method ModelsDiffHelper::getRelationshipFilters.
+* [New] Added a warning message prior to the partial diff without using "Do not drop missing objects" option.
+* [New] Created a method ObjectsFilterWidget::setModelFilteringMode that disables some options when the filtering widget is being used to filter database model objects.
+* [New] Added cast and user mapping to the list of filterable objects.
+* [New] Added a hint text in ObjectsFilterWidget to inform about exact match searching.
+* [New] Added the methods Catalog::clearObjectFilter and Catalog::clearObjectFilters.
+* [New] Added support to DatabaseImportHelper to create a sequence assigned to a column via default value if automatic dependencies resolution is enabled.
+* [New] Created the namespace QtCompat that will reunite all the specific code that isn't compatible between different Qt versions. The goal of this namespace is to store in a central point all the code that uses QT_VERSION_CHECK to perform different operations depending on the current Qt version.
+* [New] Added the method SchemaParser::getExpressionResult in order to perform comparisons between QVariant values correctly due to the QVariant operators deprecation in Qt 5.15.
+* [New] Added the signal ObjectsFilterWidget::s_filtersRemoved that is emitted whenever all filters are removed.
+* [Change] Modified the script wingetdate.bat in order to return the build number based on the current local date correctly and renamed it to getbuildnum.bat.
+* [Change] Updated to 5.15 the Qt version used by default in linuxdeploy.sh and macdeploy.sh.
+* [Change] Replacing verbose QString() calls by "" for string initialization purposes.
+* [Change] Improved the sequences assignments to columns in DatabaseImportHelper::assignSequencesToColumns.
+* [Change] Improved the method ModelsDiffHelper::setFilteredObjects in order to treat tables/view/foreign tables properly by appending their children objects to the creation order list of filtered objects.
+* [Change] Adjusted the Catalog::setObjectFilters in order to configure exact match filters when any wildcard filter provided has no *.
+* [Change] Adjusted the partial diff process between a model and a database in which there's one or more many-to-many relationships filtered.
+* [Change] Minor adjustment on objects grids in SwapObjectsIdsWidget, DatabaseImportForm and ModelDatabaseDiffForm by changing the columns order.
+* [Change] Improved the method ModelsDiffHelper::setFilteredObjects in order to detect the proper creation order of the provided objects.
+* [Change] Minor change in ObjectsFilterWidget by making the action "Only matching" checked by default.
+* [Change] Minor improvement on CLI to accept the value "all" for the paramenter --force-children in order to force all table children at once.
+* [Change] BaseObject::configureSearchAttributes now configures the signature attribute as a formatted string.
+* [Change] Minor improvement on ObjectFinderWidget::updateObjectTable in order to optionally create checkable items in the first column.
+* [Change] Attributes related to object filters were moved from Catalog to PgModelerNs in order to be shared between Catalog and DatabaseModel classes.
+* [Change] Minor improvement in Connection::getConnectionId in order to return an optional HTML formatted string.
+* [Change] Isolated the method DatabaseImportForm::listFilteredObjects in a static one in order to reuse it on ModelDatabaseDiffForm.
+* [Change] Improved the objects filtering in such way to allow filter by name or signature.
+* [Change] Improved the UI of ObjectsFilterWidget by moving all options to a popup menu.
+* [Change] Several changes in all catalog queries in order to support signature matching.
+* [Change] Minor adjustemnt in Catalog::getFilterableObjectNames.
+* [Change] Adjusted the appimages building process.
+* [Change] Changing the default font size of graphical objects to 10pt in order to try to solve the intermittend issue of disappearing texts.
+* [Change] Updated the French translation.
+* [Fix] Fixed a regression in ObjectFinderWidget that was not opening objects form with double-click on an item on the results grid.
+* [Fix] Fixed a bug when drawing relationships in FK to PK connection mode. Now when one of the tables is collapsed the center points of both are used as connection points to the relationship.
+* [Fix] Fixed a crash in ModelDatabaseDiffForm while enabling/disabling the partial diff tab.
+* [Fix] Fixed the diff process for inheritance relationships created for two existing tables.
+* [Fix] Fixed a crash in LayersWidget when renaming a layer.
+* [Fix] Minor fix in DatabaseImportHelper::assignSequencesToColumns.
+* [Fix] Fixed a wrong comparison in Catalog::getObjectsOIDs.
+* [Fix] Minor fix in ConstraintWidget that was trying to validate FK relationships for generated tables of many-to-many relationships.
+* [Fix] Fixed a bug in Catalog::getObjectsOIDs that was executing a catalog query for a certain object when it was not being filtered.
+* [Fix] Minor fix in ModelDatabaseDiffForm tabs enabling/disabling steps.
+* [Fix] Fixed the QProcess usage in ModelFixForm due to QProcess::start() deprecation in Qt 5.15.
+* [Fix] Fixed a crash when trying to move several objects to a layer from the object finder widget and in the selected set one or more objects aren't graphical ones.
 
 v0.9.3-alpha1
 ------

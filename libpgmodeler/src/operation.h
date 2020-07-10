@@ -86,7 +86,6 @@ class Operation {
 		ChainMiddle=2, //! \brief The operation is in the middle of the chain
 		ChainEnd=3; //! \brief The operation is the last on the chain
 
-
 		Operation();
 
 		void setObjectIndex(int idx);

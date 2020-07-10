@@ -1,13 +1,13 @@
 #!/bin/bash
 
 USR=`whoami`
-PGSQL_ROOT=/Library/PostgreSQL/11
+PGSQL_ROOT=/Library/PostgreSQL/12
 QT_ROOT=/Users/$USR/Qt5.14.0/5.14.0/clang_64
 QMAKE_ARGS="-r CONFIG+=x86_64 CONFIG+=release -spec macx-clang"
 LOG=macdeploy.log
 
 # Detecting current pgModeler version
-DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")//g' | sed 's/^ *//g'`
+DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
 BUILD_NUM=$(date '+%Y%m%d')
 
 DEMO_VERSION_OPT='-demo-version'

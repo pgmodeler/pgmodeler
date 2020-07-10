@@ -18,6 +18,7 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 class DatabaseModelTest: public QObject {
 	private:
@@ -45,7 +46,7 @@ void DatabaseModelTest::saveObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << endl;
+		out << e.getExceptionsText() << QtCompat::endl;
 	}
 
 	QCOMPARE(QFileInfo(output).exists(), true);
@@ -69,7 +70,7 @@ void DatabaseModelTest::loadObjectsMetadata()
 	}
 	catch (Exception &e)
 	{
-		out << e.getExceptionsText() << endl;
+		out << e.getExceptionsText() << QtCompat::endl;
 		QCOMPARE(false, true);
 	}
 }

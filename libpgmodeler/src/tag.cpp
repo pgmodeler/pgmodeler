@@ -28,7 +28,7 @@ Tag::Tag()
 
 	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
-	attributes[Attributes::Styles]=QString();
+	attributes[Attributes::Styles]="";
 
 	for(auto &attr : attribs)
 	{
@@ -142,7 +142,7 @@ QString Tag::getCodeDefinition(unsigned def_type)
 QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
 	if(def_type==SchemaParser::SqlDefinition)
-		return QString();
+		return "";
 	else
 	{
 		QString code_def=getCachedCode(def_type, reduced_form);
@@ -155,7 +155,7 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 			for(auto &itr : color_config)
 			{
 				attribs[Attributes::Id]=itr.first;
-				attribs[Attributes::Colors]=QString();
+				attribs[Attributes::Colors]="";
 
 				if(itr.first==Attributes::TableName || itr.first==Attributes::TableSchemaName)
 					attribs[Attributes::Colors]=itr.second[FillColor1].name();

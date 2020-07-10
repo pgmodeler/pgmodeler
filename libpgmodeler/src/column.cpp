@@ -22,20 +22,20 @@ Column::Column()
 {
 	obj_type=ObjectType::Column;
 	not_null=seq_cycle=generated=false;
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::NotNull]=QString();
-	attributes[Attributes::Generated]=QString();
-	attributes[Attributes::Table]=QString();
-	attributes[Attributes::Sequence]=QString();
-	attributes[Attributes::DeclInTable]=QString();
-	attributes[Attributes::IdentityType]=QString();
-	attributes[Attributes::Increment]=QString();
-	attributes[Attributes::MinValue]=QString();
-	attributes[Attributes::MaxValue]=QString();
-	attributes[Attributes::Start]=QString();
-	attributes[Attributes::Cache]=QString();
-	attributes[Attributes::Cycle]=QString();
+	attributes[Attributes::Type]="";
+	attributes[Attributes::DefaultValue]="";
+	attributes[Attributes::NotNull]="";
+	attributes[Attributes::Generated]="";
+	attributes[Attributes::Table]="";
+	attributes[Attributes::Sequence]="";
+	attributes[Attributes::DeclInTable]="";
+	attributes[Attributes::IdentityType]="";
+	attributes[Attributes::Increment]="";
+	attributes[Attributes::MinValue]="";
+	attributes[Attributes::MaxValue]="";
+	attributes[Attributes::Start]="";
+	attributes[Attributes::Cache]="";
+	attributes[Attributes::Cycle]="";
 
 	parent_rel=sequence=nullptr;
 	identity_type=BaseType::Null;
@@ -149,7 +149,7 @@ QString Column::getTypeReference()
 	if(getParentTable())
 		return getParentTable()->getName(true) + QString(".") + this->getName(true) + QString("%TYPE");
 	else
-		return QString();
+		return "";
 }
 
 QString Column::getDefaultValue()
@@ -194,7 +194,7 @@ void Column::setSequence(BaseObject *seq)
 							.arg(this->obj_name),
 							ErrorCode::IncompColumnTypeForSequence,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		default_value=QString();
+		default_value="";
 		identity_type=BaseType::Null;
 		generated = false;
 	}
@@ -257,8 +257,8 @@ QString Column::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::Table]=getParentTable()->getName(true);
 
 	attributes[Attributes::Type]=type.getCodeDefinition(def_type);	
-	attributes[Attributes::DefaultValue]=QString();
-	attributes[Attributes::IdentityType]=QString();
+	attributes[Attributes::DefaultValue]="";
+	attributes[Attributes::IdentityType]="";
 
 	if(identity_type != BaseType::Null)
 	{
@@ -268,7 +268,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		attributes[Attributes::MaxValue]=seq_max_value;
 		attributes[Attributes::Start]=seq_start;
 		attributes[Attributes::Cache]=seq_cache;
-		attributes[Attributes::Cycle]=(seq_cycle ? Attributes::True : QString());
+		attributes[Attributes::Cycle]=(seq_cycle ? Attributes::True : "");
 	}
 	else
 	{
@@ -284,9 +284,9 @@ QString Column::getCodeDefinition(unsigned def_type)
 		}
 	}
 
-	attributes[Attributes::NotNull]=(!not_null ? QString() : Attributes::True);
-	attributes[Attributes::Generated]=(generated ? Attributes::True : QString());
-	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : QString());
+	attributes[Attributes::NotNull]=(!not_null ? "" : Attributes::True);
+	attributes[Attributes::Generated]=(generated ? Attributes::True : "");
+	attributes[Attributes::DeclInTable]=(isDeclaredInTable() ? Attributes::True : "");
 
 	return BaseObject::__getCodeDefinition(def_type);
 }
@@ -328,7 +328,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 		if(this->not_null!=col->not_null)
 			attribs[Attributes::NotNull]=(!col->not_null ? Attributes::Unset : Attributes::True);
 
-		attribs[Attributes::NewIdentityType] = QString();
+		attribs[Attributes::NewIdentityType] = "";
 
 		if(this->identity_type == BaseType::Null && col->identity_type != BaseType::Null)
 			attribs[Attributes::IdentityType] = ~col->identity_type;
@@ -338,13 +338,13 @@ QString Column::getAlterDefinition(BaseObject *object)
 						this->identity_type != col->identity_type)
 			attribs[Attributes::NewIdentityType] = ~col->identity_type;
 
-		attribs[Attributes::CurIdentityType] = QString();
-		attribs[Attributes::MinValue] = QString();
-		attribs[Attributes::MaxValue] = QString();
-		attribs[Attributes::Start] = QString();
-		attribs[Attributes::Increment] = QString();
-		attribs[Attributes::Cache] = QString();
-		attribs[Attributes::Cycle] = QString();
+		attribs[Attributes::CurIdentityType] = "";
+		attribs[Attributes::MinValue] = "";
+		attribs[Attributes::MaxValue] = "";
+		attribs[Attributes::Start] = "";
+		attribs[Attributes::Increment] = "";
+		attribs[Attributes::Cache] = "";
+		attribs[Attributes::Cycle] = "";
 
 		//Checking differences in the underlying sequence (identity col)
 		if(attribs[Attributes::IdentityType] != Attributes::Unset)

@@ -125,14 +125,14 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	SchemaParser schparser;
 	attribs_map attributes;
 
-	attributes[Attributes::Type]=QString();
-	attributes[Attributes::StrategyNum]=QString();
-	attributes[Attributes::Signature]=QString();
-	attributes[Attributes::Function]=QString();
-	attributes[Attributes::Operator]=QString();
-	attributes[Attributes::Storage]=QString();
-	attributes[Attributes::OpFamily]=QString();
-	attributes[Attributes::Definition]=QString();
+	attributes[Attributes::Type]="";
+	attributes[Attributes::StrategyNum]="";
+	attributes[Attributes::Signature]="";
+	attributes[Attributes::Function]="";
+	attributes[Attributes::Operator]="";
+	attributes[Attributes::Storage]="";
+	attributes[Attributes::OpFamily]="";
+	attributes[Attributes::Definition]="";
 
 	if(element_type==FunctionElem && function && strategy_number > 0)
 	{

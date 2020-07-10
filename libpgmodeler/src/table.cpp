@@ -23,10 +23,10 @@ Table::Table() : PhysicalTable()
 {
 	obj_type = ObjectType::Table;
 	with_oid=unlogged=rls_enabled=rls_forced=false;
-	attributes[Attributes::Unlogged]=QString();
-	attributes[Attributes::RlsEnabled]=QString();
-	attributes[Attributes::RlsForced]=QString();
-	attributes[Attributes::Oids]=QString();
+	attributes[Attributes::Unlogged]="";
+	attributes[Attributes::RlsEnabled]="";
+	attributes[Attributes::RlsForced]="";
+	attributes[Attributes::Oids]="";
 	setName(tr("new_table"));
 }
 
@@ -356,11 +356,11 @@ QString Table::__getCodeDefinition(unsigned def_type, bool incl_rel_added_objs)
 {
 	setTableAttributes(def_type, incl_rel_added_objs);
 
-	attributes[Attributes::Oids]=(with_oid ? Attributes::True : QString());
-	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : QString());
-	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : QString());
-	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : QString());
-	attributes[Attributes::CopyTable]=QString();
+	attributes[Attributes::Oids]=(with_oid ? Attributes::True : "");
+	attributes[Attributes::Unlogged]=(unlogged ? Attributes::True : "");
+	attributes[Attributes::RlsEnabled]=(rls_enabled ? Attributes::True : "");
+	attributes[Attributes::RlsForced]=(rls_forced ? Attributes::True : "");
+	attributes[Attributes::CopyTable]="";
 
 	if(def_type==SchemaParser::SqlDefinition && copy_table)
 		attributes[Attributes::CopyTable]=copy_table->getName(true) + copy_op.getSQLDefinition();
@@ -428,7 +428,7 @@ QString Table::getTruncateDefinition(bool cascade)
 	try
 	{
 		BaseObject::setBasicAttributes(true);
-		attributes[Attributes::Cascade]=(cascade ? Attributes::True : QString());
+		attributes[Attributes::Cascade]=(cascade ? Attributes::True : "");
 		return BaseObject::getAlterDefinition(Attributes::TruncatePriv, attributes, false, false);
 	}
 	catch(Exception &e)
@@ -449,7 +449,7 @@ QString Table::getAlterDefinition(BaseObject *object)
 		QString alter_def;
 		attribs_map attribs;
 
-		attribs[Attributes::Oids]=QString();
+		attribs[Attributes::Oids]="";
 		attribs[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object, true);
 
 		if(this->getName()==tab->getName())

@@ -205,17 +205,10 @@ void DataManipulationForm::setAttributes(Connection conn, const QString curr_sch
 {
 	try
 	{
-		QString db_name;
-
 		tmpl_conn_params=conn.getConnectionParams();
-		db_name=QString("<strong>%1</strong>@<em>%2:%3</em>").arg(conn.getConnectionParam(Connection::ParamDbName))
-				.arg(conn.getConnectionParam(Connection::ParamServerIp).isEmpty() ?
-						 conn.getConnectionParam(Connection::ParamServerFqdn) : conn.getConnectionParam(Connection::ParamServerIp))
-				.arg(conn.getConnectionParam(Connection::ParamPort));
 
-		db_name_lbl->setText(db_name);
-		db_name.remove(QRegExp("<(/)?(strong|em)>"));
-		this->setWindowTitle(this->windowTitle() + QString(" - ") + db_name);
+		this->setWindowTitle(this->windowTitle() + QString(" - ") + conn.getConnectionId(true, true));
+		db_name_lbl->setText(conn.getConnectionId(true, true, true));
 
 		schema_cmb->clear();
 		listObjects(schema_cmb, { ObjectType::Schema });
@@ -859,7 +852,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 
 		//Retrieving the constraints from catalog using a custom filter to select only foreign keys (contype=f)
 		fks=catalog.getObjectsAttributes(ObjectType::Constraint, schema, table, {}, {{Attributes::CustomFilter, QString("contype='f'")}});
-		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, QString(), QString(), {}, {{Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
+		ref_fks=catalog.getObjectsAttributes(ObjectType::Constraint, "", "", {}, {{Attributes::CustomFilter, QString("contype='f' AND cs.confrelid=%1").arg(table_oid)}});
 
 		if(!fks.empty() || !ref_fks.empty())
 		{
@@ -1391,7 +1384,7 @@ void DataManipulationForm::saveChanges()
 QString DataManipulationForm::getDMLCommand(int row)
 {
 	if(row < 0 || row >= results_tbw->rowCount())
-		return QString();
+		return "";
 
 	QString tab_name=QString("\"%1\".\"%2\"").arg(schema_cmb->currentText()).arg(table_cmb->currentText()),
 			upd_cmd=QString("UPDATE %1 SET %2 WHERE %3"),
@@ -1487,7 +1480,7 @@ QString DataManipulationForm::getDMLCommand(int row)
 		}
 
 		if(col_list.isEmpty())
-			return QString();
+			return "";
 		else
 		{
 			if(op_type==OpUpdate)
@@ -1580,7 +1573,7 @@ void DataManipulationForm::toggleColumnDisplay(QListWidgetItem *item)
 void DataManipulationForm::openNewWindow()
 {
 	DataManipulationForm *data_manip = new DataManipulationForm;
-	data_manip->setAttributes(tmpl_conn_params, QString());
+	data_manip->setAttributes(tmpl_conn_params, "");
 	data_manip->show();
 }
 

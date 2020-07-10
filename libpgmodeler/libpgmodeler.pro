@@ -174,7 +174,7 @@ unix|windows: LIBS += -L$$OUT_PWD/../libparsers/ -lparsers \
                     -L$$OUT_PWD/../libutils/ -lutils
 
 INCLUDEPATH += $$PWD/../libparsers/src \
-               $$PWD/../libutils/src
+			   $$PWD/../libutils/src
 
 DEPENDPATH += $$PWD/../libparsers \
               $$PWD/../libutils
