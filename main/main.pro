@@ -33,6 +33,7 @@ unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
 
 INCLUDEPATH += $$PWD/../libpgmodeler_ui \
                $$PWD/../libpgmodeler_ui/src \
+               $$OUT_PWD/../libpgmodeler_ui/src \
                $$PWD/../libobjrenderer/src \
                $$PWD/../libpgconnector/src \
                $$PWD/../libpgmodeler/src \
