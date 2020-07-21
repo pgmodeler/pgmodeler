@@ -27,10 +27,7 @@ DonateWidget::DonateWidget(QWidget *parent) : QWidget(parent)
 	setupUi(this);
 	setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
 
-	QGraphicsDropShadowEffect * drop_shadow=new QGraphicsDropShadowEffect(this);
-	drop_shadow->setOffset(5,5);
-	drop_shadow->setBlurRadius(30);
-	this->setGraphicsEffect(drop_shadow);
+	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
 
 	connect(hide_tb, &QToolButton::clicked,
 			[&](){
