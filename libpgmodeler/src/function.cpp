@@ -129,13 +129,12 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 void Function::setParametersAttribute(unsigned def_type)
 {
 	QString str_param;
-	unsigned i, count;
+	QStringList fmt_params;
 
-	count=parameters.size();
-	for(i=0; i < count; i++)
-	{
-		str_param+=parameters[i].getCodeDefinition(def_type);
-	}
+	for(auto &param : parameters)
+		fmt_params.append(param.getCodeDefinition(def_type));
+
+	str_param = fmt_params.join("");
 
 	if(def_type==SchemaParser::SqlDefinition)
 		str_param.remove(str_param.size()-2,2);
@@ -423,29 +422,27 @@ QString Function::getSignature(bool)
 
 void Function::createSignature(bool format, bool prepend_schema)
 {
-	QString str_params, aux_str;
-	unsigned i, count;
+	QString aux_str;
+	QStringList fmt_params;
 
-	count=parameters.size();
-	for(i=0; i < count; i++)
+	for(auto &param : parameters)
 	{
 		//OUT parameters is not part of function's signature
-		if(!parameters[i].isOut() || parameters[i].isVariadic() ||
-				(parameters[i].isIn() && parameters[i].isOut()) ||
-				(parameters[i].isIn() && !parameters[i].isOut()))
+		if(!param.isOut() || param.isVariadic() ||
+				(param.isIn() && param.isOut()) ||
+				(param.isIn() && !param.isOut()))
 		{
 			/* Removing the arg mode IN from parameter signature because this is de default for any kind of parameter
 			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it */
-			aux_str=parameters[i].getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)( )"),"");
-			str_params+=aux_str.trimmed();
-			parameters[i].setCodeInvalidated(true);
+			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)( )"),"").trimmed();
+			aux_str.remove(',');
+			fmt_params.append(aux_str);
+			param.setCodeInvalidated(true);
 		}
 	}
 
-	str_params.remove(str_params.length()-1, 1);
-
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + str_params + QString(")");
+	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(", ") + QString(")");
 	this->setCodeInvalidated(true);
 }
 
