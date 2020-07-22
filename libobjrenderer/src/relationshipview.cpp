@@ -857,7 +857,7 @@ void RelationshipView::configureLine()
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double font_factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor(),
+			double font_factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
 					border_factor = ConnLineLength * 0.30,
 					min_lim = 0, max_lim = 0,
@@ -1280,7 +1280,7 @@ void RelationshipView::configureDescriptor()
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
-			factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+			factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -1476,7 +1476,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
 		unsigned rel_type = base_rel->getRelationshipType();
-		double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+		double factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
 		bool mandatory[2] = { false, false }, simulate_rel11 = false;

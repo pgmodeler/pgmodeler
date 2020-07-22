@@ -611,11 +611,20 @@ unsigned BaseObjectView::getLayer()
 double BaseObjectView::getScreenDpiFactor()
 {
 	QScreen *screen = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()));
-	double factor = screen->logicalDotsPerInch() / 96.0;
-	double pixel_ratio = screen->devicePixelRatio();
+	double factor = screen->logicalDotsPerInch() / 96.0,
+			pixel_ratio = screen->devicePixelRatio(),
+			dpi_factor = factor * pixel_ratio;
 
+	/* Avoiding returning a factor less than 1 because
+	 * this can cause improper objects resizes */
 	if(factor < 1)
 		return 1;
 
-	return factor * pixel_ratio;
+	/* Special case for 4K or superior screens: we need to cap the dpi factor
+	 * to 1.4 since on this kind of screen the dpi_factor results in a value of 2 or more
+	 * and this can cause a super resizing of graphical objects */
+	if(dpi_factor > 1.4)
+		return 1.4;
+
+	return dpi_factor;
 }
