@@ -409,7 +409,7 @@ void BaseTableView::__configureObject(double width)
 
 	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
 	grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-	grad.setColorAt(0, body->pen().color().lighter(200));
+	grad.setColorAt(0, body->pen().color().lighter(180));
 	grad.setColorAt(1, body->pen().color().lighter());
 	pen.setStyle(Qt::SolidLine);
 
