@@ -303,6 +303,10 @@ void GraphicalView::configureObject()
 
 	BaseTableView::__configureObject(width);
 
+	pen = attribs_toggler->pen();
+	pen.setStyle(Qt::DashLine);
+	attribs_toggler->setPen(pen);
+
 	if(!view->getAlias().isEmpty())
 		table_tooltip += QString("\nAlias: %1").arg(view->getAlias());
 

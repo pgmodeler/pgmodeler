@@ -33,8 +33,7 @@ class TagWidget: public BaseObjectWidget, public Ui::TagWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Stores all color picker using the attribute the represents as map key.
-				These attributes are: TABLE_NAME, TABLE_SCHEMA_NAME, TABLE_TITLE, TABLE_BODY, TABLE_EXT_BODY */
+		//! \brief Stores all color picker using the attribute the represents as map key.
 		map<QString, ColorPickerWidget *> color_pickers;
 
 	public:

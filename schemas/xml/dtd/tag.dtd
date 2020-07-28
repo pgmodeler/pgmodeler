@@ -8,4 +8,4 @@
 
 <!ELEMENT style EMPTY>
 <!ATTLIST style colors CDATA #REQUIRED>
-<!ATTLIST style id (table-title | table-body | table-ext-body | table-schema-name | table-name) "table-title">
+<!ATTLIST style id (table-title | table-body | table-ext-body | table-schema-name | table-name | table-toggler-btns | table-toggler-body) "table-title">
