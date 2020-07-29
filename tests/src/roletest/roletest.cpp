@@ -19,31 +19,35 @@
 #include <QtTest/QtTest>
 #include "pgmodelerns.h"
 #include "role.h"
+#include "pgmodelerunittest.h"
 
-class RoleTest: public QObject {
-  private:
-    Q_OBJECT
+class RoleTest: public QObject, public PgModelerUnitTest {
+	private:
+		Q_OBJECT
 
-  private slots:
-    void alterCommandEndsWithSemiColon();
+	public:
+		RoleTest() : PgModelerUnitTest(SCHEMASDIR) {}
+
+	private slots:
+		void alterCommandEndsWithSemiColon();
 };
 
 void RoleTest::alterCommandEndsWithSemiColon()
 {
-  Role role1, role2;
-  QString alter_cmd;
+	Role role1, role2;
+	QString alter_cmd;
 
-  role1.setName("role1");
-  role1.setOption(Role::OpSuperuser, true);
+	role1.setName("role1");
+	role1.setOption(Role::OpSuperuser, true);
 
-  role2.setName("role2");
-  role2.setOption(Role::OpCreateDb, false);
-  role2.setOption(Role::OpCreateRole, false);
-  role2.setOption(Role::OpLogin, false);
+	role2.setName("role2");
+	role2.setOption(Role::OpCreateDb, false);
+	role2.setOption(Role::OpCreateRole, false);
+	role2.setOption(Role::OpLogin, false);
 
-  alter_cmd=role1.getAlterDefinition(&role2);
-  alter_cmd.remove(QString("\n%1\n").arg(Attributes::DdlEndToken));
-  QCOMPARE(alter_cmd.endsWith(";"), true);
+	alter_cmd=role1.getAlterDefinition(&role2);
+	alter_cmd.remove(QString("\n%1\n").arg(Attributes::DdlEndToken));
+	QCOMPARE(alter_cmd.endsWith(";"), true);
 }
 
 QTEST_MAIN(RoleTest)

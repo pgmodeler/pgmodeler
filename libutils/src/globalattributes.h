@@ -188,6 +188,7 @@ class GlobalAttributes {
 		static QString getPgModelerAppPath();
 
 		friend class Application;
+		friend class PgModelerUnitTest;
 };
 
 #endif

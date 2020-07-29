@@ -18,10 +18,14 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class ForeignDataWrapperTest: public QObject {
+class ForeignDataWrapperTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
+
+	public:
+		ForeignDataWrapperTest() : PgModelerUnitTest(SCHEMASDIR) {}
 
 	private slots:
 		void assignValidFunctionDoesntRaiseException();
@@ -138,7 +142,7 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- \
 ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 	-- ddl-end -- \
-	COMMENT ON FOREIGN DATA WRAPPER fdw IS 'This is a test comment on FDW'; \
+	COMMENT ON FOREIGN DATA WRAPPER fdw IS E'This is a test comment on FDW'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(
@@ -146,7 +150,7 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on FDW]]></comment> \
 <function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
-<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
+<function ref-type=\"validator\" signature=\"public.func_validator(text[], oid)\"/> \
 </foreigndatawrapper>").replace("#", ForeignDataWrapper::OptionValueSeparator)
 										.replace("*", ForeignDataWrapper::OptionsSeparator).simplified();
 
@@ -294,7 +298,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on FDW]]></comment> \
 <function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
-<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
+<function ref-type=\"validator\" signature=\"public.func_validator(text[], oid)\"/> \
 </foreigndatawrapper>").replace("#", ForeignDataWrapper::OptionValueSeparator)
 										.replace("*", ForeignDataWrapper::OptionsSeparator);
 
@@ -312,10 +316,6 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 
 		res_xml_code = fdw->getCodeDefinition(SchemaParser::XmlDefinition).simplified();
 		xml_code = xml_code.simplified();
-
-		if(fdw)
-			delete fdw;
-
 		QCOMPARE(xml_code, res_xml_code);
 	}
 	catch (Exception &e)

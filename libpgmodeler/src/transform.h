@@ -37,6 +37,8 @@ class Transform : public BaseObject {
 
 		Function *functions[2];
 
+		void validateFunction(Function *func, unsigned func_id);
+
 	public:
 		static constexpr unsigned
 		FromSqlFunc = 0,
