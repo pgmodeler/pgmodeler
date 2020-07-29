@@ -21,4 +21,61 @@
 Transform::Transform()
 {
 	obj_type = ObjectType::Transform;
+	language = nullptr;
+	functions[FromSqlFunc] = nullptr;
+	functions[ToSqlFunc] = nullptr;
+
+	attributes[Attributes::Type] = "";
+	attributes[Attributes::Language] = "";
+	attributes[Attributes::ToSqlFunc] = "";
+	attributes[Attributes::FromSqlFunc] = "";
+}
+
+void Transform::setType(PgSqlType tp)
+{
+	if(tp == PgSqlType::Null)
+		throw Exception(ErrorCode::AsgInvalidTypeObject, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	setCodeInvalidated(type != tp);
+	type = tp;
+}
+
+void Transform::setLanguage(Language *lang)
+{
+
+}
+
+void Transform::setFunction(Function *func, unsigned func_id)
+{
+
+}
+
+PgSqlType Transform::getType()
+{
+
+}
+
+Language *Transform::getLanguage()
+{
+
+}
+
+Function *Transform::getFunction(unsigned func_id)
+{
+
+}
+
+QString Transform::getCodeDefinition(unsigned def_type)
+{
+
+}
+
+QString Transform::getSignature(bool)
+{
+
+}
+
+QString Transform::getDropDefinition(bool cascade)
+{
+
 }

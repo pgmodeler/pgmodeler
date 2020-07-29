@@ -26,12 +26,37 @@
 #define TRANSFORM_H
 
 #include "baseobject.h"
+#include "function.h"
+#include "language.h"
 
 class Transform : public BaseObject {
 	private:
+		PgSqlType type;
+
+		Language *language;
+
+		Function *functions[2];
 
 	public:
+		static constexpr unsigned
+		FromSqlFunc = 0,
+		ToSqlFunc = 1;
+
 		Transform();
+
+		void setType(PgSqlType tp);
+		void setLanguage(Language *lang);
+		void setFunction(Function *func, unsigned func_id);
+
+		PgSqlType getType();
+		Language *getLanguage();		
+		Function *getFunction(unsigned func_id);
+
+		virtual QString getCodeDefinition(unsigned def_type) final;
+
+		virtual QString getSignature(bool = false) final;
+
+		virtual QString getDropDefinition(bool cascade) final;
 };
 
 #endif

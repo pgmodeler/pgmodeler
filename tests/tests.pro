@@ -19,6 +19,7 @@ src/foreigndatawrappertest \
 src/servertest \
 src/usermappingtest \
 src/datadicttest \
-src/fileselectortest
+src/fileselectortest \
+src/transformtest
 
 

@@ -59,6 +59,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "foreignserver.h"
 #include "usermapping.h"
 #include "foreigntable.h"
+#include "transform.h"
 #include <algorithm>
 #include <locale.h>
 
