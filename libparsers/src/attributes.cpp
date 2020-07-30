@@ -609,6 +609,7 @@ namespace Attributes {
 	Types("types"),
 	TyplesUpd("tuples-upd"),
 	UiLanguage("ui-language"),
+	Undefined("undefined"),
 	Underline("underline"),
 	Unique("unique"),
 	Unlogged("unlogged"),

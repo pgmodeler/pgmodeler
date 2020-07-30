@@ -62,6 +62,9 @@ class Cast: public BaseObject {
 
 		Cast();
 
+		//! \brief This method has a hardcoded way to generated the cast's name. It'll reject any value passed by its parameter
+		virtual void setName(const QString &);
+
 		/*! \brief Defines one of the data types envolved on the cast
 		 (using constants SRC_TYPE | DST_TYPE) */
 		void setDataType(unsigned type_idx, PgSqlType type);

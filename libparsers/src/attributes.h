@@ -627,6 +627,7 @@ namespace Attributes {
 	Types,
 	TyplesUpd,
 	UiLanguage,
+	Undefined,
 	Underline,
 	Unique,
 	Unlogged,

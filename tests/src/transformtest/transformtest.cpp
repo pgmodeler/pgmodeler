@@ -20,6 +20,7 @@
 #include "databasemodel.h"
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
+#include "defaultlanguages.h"
 
 class TransformTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -34,7 +35,7 @@ class TransformTest: public QObject, public PgModelerUnitTest {
 		void throwsErrorOnInvalidFunctionParamCount();
 		void throwsErrorOnInvalidFunctionParamType();
 		void throwsErrorOnInvalidFunctionReturnType();
-		//void generatesNameCorrectly();
+		void generatesNameAndSignatureCorrectly();
 		//void generatesSQLCorrectly();
 		//void generatesXMLCorrectly();
 };
@@ -150,6 +151,45 @@ void TransformTest::throwsErrorOnInvalidFunctionReturnType()
 	}
 }
 
+void TransformTest::generatesNameAndSignatureCorrectly()
+{
+	Transform transf;
+	Function to_sql_func, from_sql_func;
+	Language lang;
+
+	try
+	{
+		QCOMPARE(transf.getName(), "smallint_undefined");
+		QCOMPARE(transf.getSignature(), "FOR smallint LANGUAGE undefined");
+
+		lang.setName(DefaultLanguages::PlPgsql);
+		transf.setLanguage(&lang);
+
+		transf.setType(PgSqlType("varchar"));
+		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		to_sql_func.setReturnType(PgSqlType("varchar"));
+		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
+
+		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		from_sql_func.setReturnType(PgSqlType("internal"));
+		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
+
+		QCOMPARE(transf.getName(), "varchar_plpgsql");
+		QCOMPARE(transf.getSignature(), "FOR varchar LANGUAGE plpgsql");
+
+		transf.setFunction(nullptr, Transform::ToSqlFunc);
+		to_sql_func.setReturnType(PgSqlType::parseString("timestamp with time zone"));
+		transf.setType(PgSqlType::parseString("timestamp with time zone"));
+		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
+
+		QCOMPARE(transf.getName(), "timestamp_with_time_zone_plpgsql");
+		QCOMPARE(transf.getSignature(), "FOR timestamp with time zone LANGUAGE plpgsql");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+}
 
 QTEST_MAIN(TransformTest)
 #include "transformtest.moc"

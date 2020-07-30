@@ -46,6 +46,9 @@ class Transform : public BaseObject {
 
 		Transform();
 
+		//! \brief This method has a hardcoded way to generated the transform's name. It'll reject any value passed by its parameter
+		virtual void setName(const QString &);
+
 		void setType(PgSqlType tp);
 		void setLanguage(Language *lang);
 		void setFunction(Function *func, unsigned func_id);

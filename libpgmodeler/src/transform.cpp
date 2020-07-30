@@ -29,6 +29,14 @@ Transform::Transform()
 	attributes[Attributes::Language] = "";
 	attributes[Attributes::ToSqlFunc] = "";
 	attributes[Attributes::FromSqlFunc] = "";
+
+	setName("");
+}
+
+void Transform::setName(const QString &)
+{
+	// The name format for a transform is "type_language" or "type_undefined_lang" for transform without a language defined (initial state)
+	obj_name = QString("%1_%2").arg((~type).replace(' ', '_')).arg(language ? language->getName() : Attributes::Undefined);
 }
 
 void Transform::setType(PgSqlType tp)
@@ -43,6 +51,7 @@ void Transform::setType(PgSqlType tp)
 
 		setCodeInvalidated(type != tp);
 		type = tp;
+		setName("");
 	}
 	catch(Exception &e)
 	{
@@ -57,6 +66,7 @@ void Transform::setLanguage(Language *lang)
 
 	setCodeInvalidated(language != lang);
 	language = lang;
+	setName("");
 }
 
 void Transform::setFunction(Function *func, unsigned func_id)
@@ -78,13 +88,10 @@ void Transform::validateFunction(Function *func, unsigned func_id)
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	// Unallocated function is prohibited
-	if(!func)
+	if(!func && !functions[ToSqlFunc] && !functions[FromSqlFunc])
 	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgNotAllocatedFunction)
-						.arg(this->getName())
-						.arg(this->getTypeName()),
-						ErrorCode::AsgNotAllocatedFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		throw Exception(Exception::getErrorMessage(ErrorCode::TransformWithoutFunctions).arg(this->getName()),
+										ErrorCode::TransformWithoutFunctions, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 	}
 
 	// The function to be assigned must have only one parameter
@@ -117,33 +124,35 @@ void Transform::validateFunction(Function *func, unsigned func_id)
 	}
 }
 
-
 PgSqlType Transform::getType()
 {
-
+	return type;
 }
 
 Language *Transform::getLanguage()
 {
-
+	return language;
 }
 
 Function *Transform::getFunction(unsigned func_id)
 {
+	if(func_id > ToSqlFunc)
+		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
+	return functions[func_id];
 }
 
 QString Transform::getCodeDefinition(unsigned def_type)
 {
-
+	return "";
 }
 
 QString Transform::getSignature(bool)
 {
-
+	return QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
 }
 
 QString Transform::getDropDefinition(bool cascade)
 {
-
+	return "";
 }
