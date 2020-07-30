@@ -150,7 +150,7 @@ ALTER FOREIGN DATA WRAPPER fdw OWNER TO postgres; \
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on FDW]]></comment> \
 <function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
-<function ref-type=\"validator\" signature=\"public.func_validator(text[], oid)\"/> \
+<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
 </foreigndatawrapper>").replace("#", ForeignDataWrapper::OptionValueSeparator)
 										.replace("*", ForeignDataWrapper::OptionsSeparator).simplified();
 
@@ -298,7 +298,7 @@ void ForeignDataWrapperTest::modelCreatesFDWfromXMLandResultingXMLisEqual()
 <role name=\"postgres\"/> \
 <comment><![CDATA[This is a test comment on FDW]]></comment> \
 <function ref-type=\"handler\" signature=\"public.func_handler()\"/> \
-<function ref-type=\"validator\" signature=\"public.func_validator(text[], oid)\"/> \
+<function ref-type=\"validator\" signature=\"public.func_validator(text[],oid)\"/> \
 </foreigndatawrapper>").replace("#", ForeignDataWrapper::OptionValueSeparator)
 										.replace("*", ForeignDataWrapper::OptionsSeparator);
 

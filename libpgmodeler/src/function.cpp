@@ -442,7 +442,7 @@ void Function::createSignature(bool format, bool prepend_schema)
 	}
 
 	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(", ") + QString(")");
+	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(",") + QString(")");
 	this->setCodeInvalidated(true);
 }
 

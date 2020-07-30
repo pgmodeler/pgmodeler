@@ -36,7 +36,7 @@ class TransformTest: public QObject, public PgModelerUnitTest {
 		void throwsErrorOnInvalidFunctionParamType();
 		void throwsErrorOnInvalidFunctionReturnType();
 		void generatesNameAndSignatureCorrectly();
-		//void generatesSQLCorrectly();
+		void generatesSQLCorrectly();
 		//void generatesXMLCorrectly();
 };
 
@@ -184,6 +184,34 @@ void TransformTest::generatesNameAndSignatureCorrectly()
 
 		QCOMPARE(transf.getName(), "timestamp_with_time_zone_plpgsql");
 		QCOMPARE(transf.getSignature(), "FOR timestamp with time zone LANGUAGE plpgsql");
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+}
+
+void TransformTest::generatesSQLCorrectly()
+{
+	Transform transf;
+	Function to_sql_func, from_sql_func;
+	Language lang;
+
+	try
+	{
+		lang.setName(DefaultLanguages::PlPgsql);
+		transf.setLanguage(&lang);
+
+		transf.setType(PgSqlType("varchar"));
+		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		to_sql_func.setReturnType(PgSqlType("varchar"));
+		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
+
+		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		from_sql_func.setReturnType(PgSqlType("internal"));
+		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
+
+		transf.getCodeDefinition(SchemaParser::SqlDefinition);
 	}
 	catch(Exception &e)
 	{

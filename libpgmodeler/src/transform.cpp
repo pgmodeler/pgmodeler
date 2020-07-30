@@ -88,11 +88,8 @@ void Transform::validateFunction(Function *func, unsigned func_id)
 	if(func_id > ToSqlFunc)
 		throw Exception(ErrorCode::RefFunctionInvalidType, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	if(!func && !functions[ToSqlFunc] && !functions[FromSqlFunc])
-	{
-		throw Exception(Exception::getErrorMessage(ErrorCode::TransformWithoutFunctions).arg(this->getName()),
-										ErrorCode::TransformWithoutFunctions, __PRETTY_FUNCTION__, __FILE__, __LINE__);
-	}
+	if(!func)
+		return;
 
 	// The function to be assigned must have only one parameter
 	if(func->getParameterCount() != 1)
@@ -144,7 +141,23 @@ Function *Transform::getFunction(unsigned func_id)
 
 QString Transform::getCodeDefinition(unsigned def_type)
 {
-	return "";
+	QString code_def=getCachedCode(def_type, false);
+	if(!code_def.isEmpty()) return code_def;
+
+	QStringList funcs_attr = {  Attributes::FromSqlFunc,Attributes::ToSqlFunc };
+
+	attributes[Attributes::Type] = ~type;
+
+	if(language)
+		attributes[Attributes::Language] = language->getName(true);
+
+	for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+	{
+		if(functions[func_id])
+			attributes[funcs_attr[func_id]] = functions[func_id]->getSignature();
+	}
+
+	return BaseObject::__getCodeDefinition(def_type);
 }
 
 QString Transform::getSignature(bool)
@@ -152,7 +165,11 @@ QString Transform::getSignature(bool)
 	return QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
 }
 
-QString Transform::getDropDefinition(bool cascade)
+void Transform::operator = (Transform &transf)
 {
-	return "";
+	*(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(transf);
+	type = transf.type;
+	language = transf.language;
+	functions[ToSqlFunc] = transf.functions[ToSqlFunc];
+	functions[FromSqlFunc] = transf.functions[FromSqlFunc];
 }

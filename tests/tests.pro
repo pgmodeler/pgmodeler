@@ -8,6 +8,7 @@
 # refactored code, containing almost all changes done by the refactoring author.
 TEMPLATE = subdirs
 SUBDIRS = src/main \
+src/schemafilessyntaxtest \
 src/baseobjecttest \
 src/roletest \
 src/syntaxhighlightertest \

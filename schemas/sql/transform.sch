@@ -16,12 +16,13 @@
 
 [CREATE TRANSFORM FOR ] {type} [ LANGUAGE ] {language} [ (] $br
 
-%if {fromsql} %then
-  $tb [FROM SQL WITH FUNCTION ] ${fromsql}
+# One of the two function should be defined otherwise the code generation will fail
+%if {fromsql} %and %not {tosql} %then
+  $tb [FROM SQL WITH FUNCTION ] {fromsql}
 %end
 
-%if {tosql} %then
-  $tb [TO SQL WITH FUNCTION ] ${tosql}
+%if {tosql} %or %not {fromsql} %then
+  $tb [TO SQL WITH FUNCTION ] {tosql}
 %end
 
 ; 

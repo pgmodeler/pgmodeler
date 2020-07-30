@@ -272,8 +272,7 @@ QString Exception::messages[Exception::ErrorCount][2]={
 	{"InitialUserConfigNotCreated", QT_TR_NOOP("Failed to create initial configuration in `%1'! Check if the current user has write permission over that path and at least read permission over `%2'.")},
 	{"InvalidObjectFilter", QT_TR_NOOP("An invalid object filter was detected: `%1'! Filters should have the following format: `[object type]:[pattern]:[%2]'.")},
 	{"InvChildObjectTypeFilter", QT_TR_NOOP("The object type `%1' is not a valid table child object type!")},
-	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")},
-	{"TransformWithoutFunctions", QT_TR_NOOP("The transform `%1' has an invalid configuration because it doesn't own one of the needed functions")}
+	{"InvChangelogEntryValues", QT_TR_NOOP("Trying to register a changelog entry with invalid values(s)!")}
 };
 
 Exception::Exception()

@@ -37,7 +37,7 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
 			  $$PWD/../main \
 			  $$PWD/src
 
-HEADERS += src/pgmodelerunittest.h
+HEADERS += $$PWD/src/pgmodelerunittest.h
 
 # Deployment settings
 target.path = $$BINDIR/tests
