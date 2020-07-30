@@ -18,5 +18,6 @@
    $sp CHECK $sp ({expression})
  %end
  
-; $br
-[-- ddl-end --] $br
+; 
+
+$br [-- ddl-end --] $br

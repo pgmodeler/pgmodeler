@@ -8,6 +8,10 @@
 [-- Project Site: pgmodeler.io] $br
 [-- Model Author: ]
 
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+%set {ddl-end} $br [-- ddl-end --] $br
+
 %if {author} %then
  {author} 
 %else
@@ -16,8 +20,8 @@
 $br $br
 
 %if {function} %then
- [SET check_function_bodies = false;] $br
- [-- ddl-end --] $br $br
+ [SET check_function_bodies = false;] 
+ {ddl-end} $br
 %end
 
 %if {export-to-file} %then
@@ -37,8 +41,8 @@ $br
 
 %if {schema} %then
  {schema}
- [SET search_path TO ] {search-path}; $br
- [-- ddl-end --] $br $br
+ [SET search_path TO ] {search-path}; 
+ {ddl-end} $br
 %end
 
 %if {shell-types} %then {shell-types} %end
