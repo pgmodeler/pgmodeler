@@ -31,33 +31,31 @@ class SchemaFilesSyntaxTest: public QObject, public PgModelerUnitTest {
 		void schemasDontGenerateSyntaxErrors();
 };
 
-
 void SchemaFilesSyntaxTest::schemasDontGenerateSyntaxErrors()
 {
 	SchemaParser schparser;
-	QString schname;
+	QString schname, path;
 	attribs_map attrs;
+	QStringList sch_files,
+			sch_folders = { GlobalAttributes::SQLSchemaDir, GlobalAttributes::XMLSchemaDir,
+											GlobalAttributes::AlterSchemaDir, GlobalAttributes::DataDictSchemaDir,
+											GlobalAttributes::CatalogSchemasDir };
+	QDir dir;
 
-	for(auto type : BaseObject::getObjectTypes())
+	for(auto folder : sch_folders)
 	{
-		schname = BaseObject::getSchemaName(type);
-
-		if(schname.isEmpty())
-			continue;
+		path = GlobalAttributes::getSchemasRootDir() + GlobalAttributes::DirSeparator + folder;
+		dir.setCurrent(path);
+		sch_files = dir.entryList({ "*.sch" }, QDir::Files | QDir::NoDotAndDotDot);
 
 		try
 		{
-			schparser.ignoreEmptyAttributes(true);
-			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(schname, attrs, SchemaParser::SqlDefinition);
-
-			schparser.ignoreEmptyAttributes(true);
-			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(schname, attrs, SchemaParser::XmlDefinition);
-
-			schparser.ignoreEmptyAttributes(true);
-			schparser.ignoreUnkownAttributes(true);
-			schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath("alter", schname), attrs);
+			for(auto &sch_file : sch_files)
+			{
+				schparser.ignoreEmptyAttributes(true);
+				schparser.ignoreUnkownAttributes(true);
+				schparser.getCodeDefinition(path + GlobalAttributes::DirSeparator + sch_file, attrs);
+			}
 		}
 		catch(Exception &e)
 		{
