@@ -21,6 +21,7 @@
 #include "globalattributes.h"
 #include "pgmodelerunittest.h"
 #include "defaultlanguages.h"
+#include "qtcompat/qtextstreamcompat.h"
 
 class TransformTest: public QObject, public PgModelerUnitTest {
 	private:
@@ -37,7 +38,9 @@ class TransformTest: public QObject, public PgModelerUnitTest {
 		void throwsErrorOnInvalidFunctionReturnType();
 		void generatesNameAndSignatureCorrectly();
 		void generatesSQLCorrectly();
-		//void generatesXMLCorrectly();
+		void generatesXMLCorrectly();
+		void modelReturnsTransformDepsRefsToFuncs();
+		void modelCreatesTransformFromXML();
 };
 
 void TransformTest::throwsErrorOnInvalidType()
@@ -196,27 +199,194 @@ void TransformTest::generatesSQLCorrectly()
 	Transform transf;
 	Function to_sql_func, from_sql_func;
 	Language lang;
+	QString sql_code, expect_code;
+	Schema schema;
+
+	expect_code = QString("-- object: varchar_plpgsql | type: TRANSFORM --\n\
+-- DROP TRANSFORM IF EXISTS FOR varchar LANGUAGE plpgsql CASCADE;\n\
+CREATE TRANSFORM FOR varchar LANGUAGE plpgsql (\n\
+	FROM SQL WITH FUNCTION public.from_sql_func(internal),\n\
+	TO SQL WITH FUNCTION public.to_sql_func(internal)\n\
+);\n\
+-- ddl-end --\n\
+COMMENT ON TRANSFORM FOR varchar LANGUAGE plpgsql IS E'This is a comment!';\n\
+-- ddl-end --\n");
 
 	try
 	{
+		schema.setName("public");
 		lang.setName(DefaultLanguages::PlPgsql);
-		transf.setLanguage(&lang);
 
+		transf.setLanguage(&lang);
 		transf.setType(PgSqlType("varchar"));
+
+		to_sql_func.setName("to_sql_func");
+		to_sql_func.setSchema(&schema);
 		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		to_sql_func.setReturnType(PgSqlType("varchar"));
 		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
 
+		from_sql_func.setName("from_sql_func");
+		from_sql_func.setSchema(&schema);
 		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
 		from_sql_func.setReturnType(PgSqlType("internal"));
 		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
 
-		transf.getCodeDefinition(SchemaParser::SqlDefinition);
+		transf.setComment("This is a comment!");
+
+		sql_code = transf.getCodeDefinition(SchemaParser::SqlDefinition);
+		//QTextStream out(stdout);
+		//out <<  sql_code << QtCompat::endl;
+		//out <<  expect_code <<  QtCompat::endl;
+		//out << "---" <<  QtCompat::endl;
+		QCOMPARE(sql_code.simplified(), expect_code.simplified());
 	}
 	catch(Exception &e)
 	{
 		QFAIL(e.getErrorMessage().toStdString().c_str());
 	}
+}
+
+void TransformTest::generatesXMLCorrectly()
+{
+	Transform transf;
+	Function to_sql_func, from_sql_func;
+	Language lang;
+	QString xml_code, expect_code;
+	Schema schema;
+
+	expect_code = QString("<transform>\n\
+	<comment><![CDATA[This is a comment!]]></comment>\n\
+	<appended-sql><![CDATA[-- APPENDED SQL --;]]></appended-sql>\n\
+	<prepended-sql><![CDATA[-- PREPENDED SQL --;]]></prepended-sql>\n\
+	<type name=\"varchar\" length=\"0\"/>\n\
+	<function ref-type=\"fromsql\" signature=\"public.from_sql_func(internal)\"/>\n\
+	<function ref-type=\"tosql\" signature=\"public.to_sql_func(internal)\"/>\n\
+</transform>");
+
+	try
+	{
+		schema.setName("public");
+		lang.setName(DefaultLanguages::PlPgsql);
+
+		transf.setLanguage(&lang);
+		transf.setType(PgSqlType("varchar"));
+
+		to_sql_func.setName("to_sql_func");
+		to_sql_func.setSchema(&schema);
+		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		to_sql_func.setReturnType(PgSqlType("varchar"));
+		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
+
+		from_sql_func.setName("from_sql_func");
+		from_sql_func.setSchema(&schema);
+		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		from_sql_func.setReturnType(PgSqlType("internal"));
+		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
+
+		transf.setComment("This is a comment!");
+		transf.setAppendedSQL("-- APPENDED SQL --;");
+		transf.setPrependedSQL("-- PREPENDED SQL --;");
+
+		xml_code = transf.getCodeDefinition(SchemaParser::XmlDefinition);
+		/*QTextStream out(stdout);
+		out <<  xml_code << QtCompat::endl;
+		out <<  expect_code <<  QtCompat::endl;
+		out << "---" <<  QtCompat::endl;*/
+		QCOMPARE(xml_code.simplified(), expect_code.simplified());
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
+}
+
+void TransformTest::modelReturnsTransformDepsRefsToFuncs()
+{
+	Transform transf;
+	Function to_sql_func, from_sql_func;
+	Language lang;
+	QString xml_code, expect_code;
+	Schema schema;
+	DatabaseModel dbmodel;
+	vector<BaseObject *> refs, deps;
+	unsigned to_sql_refs, from_sql_refs, transf_deps;
+	Type custom_type;
+
+	try
+	{
+		schema.setName("public");
+		dbmodel.addObject(&schema);
+
+		custom_type.setName("custom_type");
+		custom_type.setSchema(&schema);
+		custom_type.setConfiguration(Type::EnumerationType);
+		custom_type.addEnumeration("enum1");
+		custom_type.addEnumeration("enum2");
+		dbmodel.addObject(&custom_type);
+
+		lang.setName(DefaultLanguages::PlPgsql);
+		dbmodel.addObject(&lang);
+
+		transf.setLanguage(&lang);
+		transf.setType(PgSqlType("public.custom_type"));
+
+		to_sql_func.setName("to_sql_func");
+		to_sql_func.setSchema(&schema);
+		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		to_sql_func.setReturnType(PgSqlType("public.custom_type"));
+		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setLanguage(&lang);
+		transf.setFunction(&to_sql_func, Transform::ToSqlFunc);
+
+		from_sql_func.setName("from_sql_func");
+		from_sql_func.setSchema(&schema);
+		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		from_sql_func.setReturnType(PgSqlType("internal"));
+		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setLanguage(&lang);
+		transf.setFunction(&from_sql_func, Transform::FromSqlFunc);
+
+		dbmodel.addObject(&from_sql_func);
+		dbmodel.addObject(&to_sql_func);
+		dbmodel.addObject(&transf);
+
+		dbmodel.getObjectReferences(&from_sql_func, refs);
+		from_sql_refs = refs.size();
+
+		dbmodel.getObjectReferences(&to_sql_func, refs);
+		to_sql_refs = refs.size();
+
+		dbmodel.getObjectDependecies(&transf, deps);
+		transf_deps = deps.size();
+
+		dbmodel.removeObject(&transf);
+		dbmodel.removeObject(&to_sql_func);
+		dbmodel.removeObject(&from_sql_func);
+		dbmodel.removeObject(&lang);
+		dbmodel.removeObject(&custom_type);
+		dbmodel.removeObject(&schema);
+
+		QCOMPARE(from_sql_refs, static_cast<unsigned>(1));
+		QCOMPARE(to_sql_refs, static_cast<unsigned>(1));
+		QCOMPARE(transf_deps, static_cast<unsigned>(5));
+	}
+	catch(Exception &e)
+	{
+		dbmodel.removeObject(&transf);
+		dbmodel.removeObject(&to_sql_func);
+		dbmodel.removeObject(&from_sql_func);
+		dbmodel.removeObject(&lang);
+		dbmodel.removeObject(&custom_type);
+		dbmodel.removeObject(&schema);
+
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void TransformTest::modelCreatesTransformFromXML()
+{
+
 }
 
 QTEST_MAIN(TransformTest)

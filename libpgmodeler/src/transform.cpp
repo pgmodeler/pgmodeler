@@ -146,15 +146,35 @@ QString Transform::getCodeDefinition(unsigned def_type)
 
 	QStringList funcs_attr = {  Attributes::FromSqlFunc,Attributes::ToSqlFunc };
 
-	attributes[Attributes::Type] = ~type;
 
-	if(language)
-		attributes[Attributes::Language] = language->getName(true);
-
-	for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+	if(def_type == SchemaParser::SqlDefinition)
 	{
-		if(functions[func_id])
-			attributes[funcs_attr[func_id]] = functions[func_id]->getSignature();
+		attributes[Attributes::Type] = ~type;
+
+		if(language)
+			attributes[Attributes::Language] = language->getName(true);
+
+		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		{
+			if(functions[func_id])
+				attributes[funcs_attr[func_id]] = functions[func_id]->getSignature();
+		}
+	}
+	else
+	{
+		attributes[Attributes::Type] = type.getCodeDefinition(def_type);
+
+		if(language)
+			attributes[Attributes::Language] = language->getCodeDefinition(def_type, true);
+
+		for(unsigned func_id = FromSqlFunc; func_id <= ToSqlFunc; func_id++)
+		{
+			if(functions[func_id])
+			{
+				functions[func_id]->setAttribute(Attributes::RefType, funcs_attr[func_id]);
+				attributes[funcs_attr[func_id]] = functions[func_id]->getCodeDefinition(def_type, true);
+			}
+		}
 	}
 
 	return BaseObject::__getCodeDefinition(def_type);

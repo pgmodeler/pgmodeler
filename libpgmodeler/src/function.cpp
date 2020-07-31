@@ -462,18 +462,17 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	attributes[Attributes::RowAmount]=QString("%1").arg(row_amount);
 	attributes[Attributes::FunctionType]=(~function_type);
 
+	if(def_type==SchemaParser::SqlDefinition)
+		attributes[Attributes::ReturnType]=(*return_type);
+	else
+		attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
+
 	if(language)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-		{
 			attributes[Attributes::Language]=language->getName(false);
-			attributes[Attributes::ReturnType]=(*return_type);
-		}
 		else
-		{
 			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
-			attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
-		}
 
 		if(language->getName().toLower() == DefaultLanguages::C)
 		{
