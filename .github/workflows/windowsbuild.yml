@@ -23,21 +23,22 @@ jobs:
     steps:
     - uses: actions/checkout@v2
      
-    - uses: msys2/setup-msys2@v1
+    - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        cache: true
         update: true
         install: base-devel mingw-w64-x86_64-make mingw-w64-x86_64-gcc mingw-w64-x86_64-postgresql mingw-w64-x86_64-qt5
                      
     # Workaround: Instead of using $GITHUB_WORKSPACE in PREFIX we actually use the path converted to unix-like
     # since we're running the building inside msys2
     - name: Running qmake
-      run:  cd $GITHUB_WORKSPACE; qmake pgmodeler.pro -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
-            XML_INC=D:/a/_temp/msys/msys64/mingw64/include/libxml2 \
-            XML_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libxml2-2.dll \
-            PGSQL_INC=D:/a/_temp/msys/msys64/mingw64/include \
-            PGSQL_LIB=D:/a/_temp/msys/msys64/mingw64/bin/libpq.dll
+      run: |
+        cd $GITHUB_WORKSPACE;
+        qmake pgmodeler.pro -r PREFIX=D:/a/pgmodeler/pgmodeler/build \
+          XML_INC=$(cygpath -m /mingw64/include/libxml2) \
+          XML_LIB=$(cygpath -m /mingw64/bin/libxml2-2.dll) \
+          PGSQL_INC=$(cygpath -m /mingw64/include) \
+          PGSQL_LIB=$(cygpath -m /mingw64/bin/libpq.dll)
 
     - name: Building pgModeler
       run: mingw32-make -j6
