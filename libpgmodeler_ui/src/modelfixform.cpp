@@ -144,16 +144,13 @@ void ModelFixForm::fixModel()
 	cmd+=QString(" pgmodeler-cli");
 #endif
 
-	/*cmd+=QString(" --fix-model --fix-tries=%2 --input=\"%3\" --output=\"%4\"");
-	cmd=cmd.arg(pgmodeler_cli_sel->getSelectedFile())
-		.arg(fix_tries_sb->value())
-		.arg(input_file_sel->getSelectedFile())
-		.arg(output_file_sel->getSelectedFile());*/
-
 	args.append("--fix-model");
-	args.append(QString("--fix-tries=%1").arg(fix_tries_sb->value()));
-	args.append(QString("--input=%1").arg(input_file_sel->getSelectedFile()));
-	args.append(QString("--output=%1").arg(output_file_sel->getSelectedFile()));
+	args.append("--fix-tries");
+	args.append(QString::number(fix_tries_sb->value()));
+	args.append("--input");
+	args.append(input_file_sel->getSelectedFile());
+	args.append("--output");
+	args.append(output_file_sel->getSelectedFile());
 
 	output_txt->clear();
 	pgmodeler_cli_proc.blockSignals(false);
