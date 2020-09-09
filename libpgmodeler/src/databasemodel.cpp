@@ -7982,7 +7982,7 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 
 	try
 	{
-		buf.append(this->getCodeDefinition(def_type));
+		buf.append(this->getCodeDefinition(def_type).toUtf8());
 		output.write(buf.data(),buf.size());
 		output.close();
 	}
@@ -10738,7 +10738,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
 			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
-																						 attribs));
+																						 attribs).toUtf8());
 
 			output.write(buf.data(),buf.size());
 
@@ -11484,7 +11484,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			buffer.append(itr.second);
+			buffer.append(itr.second.toUtf8());
 			output.write(buffer);
 			output.close();
 			buffer.clear();

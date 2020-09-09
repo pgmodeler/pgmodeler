@@ -181,7 +181,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		bool needs_fmt=false;
 		unsigned i = 0, qtd = 0;
 
-		raw_name.append(name);
+		raw_name.append(name.toUtf8());
 
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
@@ -266,7 +266,7 @@ bool BaseObject::isValidName(const QString &name)
 		unsigned char chr='\0', chr1='\0', chr2='\0';
 		QByteArray raw_name;
 
-		raw_name.append(name);
+		raw_name.append(name.toUtf8());
 		len=raw_name.size();
 
 		chr=raw_name[0];
