@@ -1928,7 +1928,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			else
 			{
 				schparser.loadFile(schemas[i]);
-				buf.append(schparser.getCodeDefinition(attribs));
+				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				out.setFileName(files[i]);
@@ -1986,7 +1986,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 					if(str_aux.startsWith("[") && !str_aux.contains("Added Associations"))
 						str_aux=QString("\n") + str_aux;
 
-					buf_aux.append(str_aux);
+					buf_aux.append(str_aux.toUtf8());
 				}
 			}
 

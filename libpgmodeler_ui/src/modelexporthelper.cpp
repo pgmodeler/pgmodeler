@@ -301,7 +301,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 		if(!show_delim && !show_grid)
 			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), "");
 
-		buf.append(svg_def);
+		buf.append(svg_def.toUtf8());
 
 		svg_file.open(QFile::WriteOnly | QFile::Truncate);
 		svg_file.write(buf);
