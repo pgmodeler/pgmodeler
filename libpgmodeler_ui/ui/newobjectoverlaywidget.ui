@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>934</height>
+    <width>564</width>
+    <height>1070</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -140,7 +140,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -184,7 +186,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -228,7 +232,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -241,50 +247,6 @@
               <property name="icon">
                <iconset resource="../res/resources.qrc">
                 <normaloff>:/icones/icones/foreigndatawrapper.png</normaloff>:/icones/icones/foreigndatawrapper.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QToolButton" name="db_sch_perms_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Permissions</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/permission.png</normaloff>:/icones/icones/permission.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -316,7 +278,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -360,7 +324,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -404,7 +370,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -448,7 +416,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -492,7 +462,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -536,7 +508,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -583,7 +557,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -627,7 +603,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -671,7 +649,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -715,7 +695,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -728,6 +710,98 @@
               <property name="icon">
                <iconset resource="../res/resources.qrc">
                 <normaloff>:/icones/icones/usermapping.png</normaloff>:/icones/icones/usermapping.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QToolButton" name="db_sch_perms_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Permissions</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/permission.png</normaloff>:/icones/icones/permission.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QToolButton" name="transform_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Transform</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/transform.png</normaloff>:/icones/icones/transform.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -807,7 +881,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -851,7 +927,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -895,7 +973,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -939,7 +1019,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -983,7 +1065,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1027,7 +1111,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1071,7 +1157,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1115,7 +1203,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1159,7 +1249,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1203,7 +1295,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1247,7 +1341,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1291,7 +1387,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1335,7 +1433,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1427,7 +1527,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1471,7 +1573,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1515,7 +1619,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1559,7 +1665,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1603,7 +1711,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1647,7 +1757,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1691,7 +1803,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1783,7 +1897,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1827,7 +1943,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1871,7 +1989,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1915,7 +2035,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -1959,7 +2081,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>
@@ -2003,7 +2127,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>8</pointsize>
                 <weight>50</weight>
+                <italic>true</italic>
                 <bold>false</bold>
                </font>
               </property>

@@ -165,6 +165,9 @@ namespace PgModelerNs {
 			case ObjectType::ForeignTable:
 				copyObject(psrc_obj, dynamic_cast<ForeignTable *>(copy_obj));
 			break;
+			case ObjectType::Transform:
+				copyObject(psrc_obj, dynamic_cast<Transform *>(copy_obj));
+			break;
 			default:
 				throw Exception(ErrorCode::OprObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}

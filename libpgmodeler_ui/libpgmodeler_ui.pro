@@ -45,6 +45,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/operatorwidget.cpp \
 	   src/operatorfamilywidget.cpp \
 	   src/operatorclasswidget.cpp \
+	   src/transformwidget.cpp \
 	   src/typewidget.cpp \
 	   src/viewwidget.cpp \
 	   src/columnwidget.cpp \
@@ -155,6 +156,7 @@ HEADERS += src/mainwindow.h \
 	   src/operatorwidget.h \
 	   src/operatorfamilywidget.h \
 	   src/operatorclasswidget.h \
+    src/transformwidget.h \
 	   src/typewidget.h \
 	   src/viewwidget.h \
 	   src/columnwidget.h \
@@ -262,6 +264,7 @@ FORMS += ui/mainwindow.ui \
 	 ui/operatorwidget.ui \
 	 ui/operatorfamilywidget.ui \
 	 ui/operatorclasswidget.ui \
+    ui/transformwidget.ui \
 	 ui/typewidget.ui \
 	 ui/viewwidget.ui \
 	 ui/columnwidget.ui \
