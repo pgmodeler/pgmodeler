@@ -663,6 +663,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignServer *createForeignServer();
 		UserMapping *createUserMapping();
 		ForeignTable *createForeignTable();
+		Transform *createTransform();
 
 		template<class TableClass>
 		TableClass *createPhysicalTable();

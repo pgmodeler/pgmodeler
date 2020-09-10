@@ -3519,6 +3519,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createUserMapping();
 		else if(obj_type==ObjectType::ForeignTable)
 			object=createForeignTable();
+		else if(obj_type==ObjectType::Transform)
+			object=createTransform();
 	}
 
 	return object;
@@ -6258,6 +6260,71 @@ ForeignTable *DatabaseModel::createForeignTable()
 	catch(Exception &e)
 	{
 		if(ftable) delete ftable;
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Transform *DatabaseModel::createTransform()
+{
+	Transform *transf = nullptr;
+
+	try
+	{
+		Function *func = nullptr;
+		attribs_map attribs;
+		ObjectType obj_type;
+		QString elem;
+
+		transf = new Transform;
+		xmlparser.savePosition();
+		setBasicAttributes(transf);
+		xmlparser.restorePosition();
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					elem = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem);
+
+					if(elem == Attributes::Type)
+					{
+						transf->setType(createPgSQLType());
+					}
+					else if(obj_type == ObjectType::Function)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						func = dynamic_cast<Function *>(getObject(attribs[Attributes::Signature], ObjectType::Function));
+
+						//Raises an error if the function doesn't exists
+						if(!func)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(transf->getName())
+															.arg(transf->getTypeName())
+															.arg(attribs[Attributes::Signature])
+															.arg(BaseObject::getTypeName(ObjectType::Function)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						if(attribs[Attributes::RefType] == Attributes::FromSqlFunc)
+							transf->setFunction(func, Transform::FromSqlFunc);
+						else
+							transf->setFunction(func, Transform::ToSqlFunc);
+
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		return transf;
+	}
+	catch(Exception &e)
+	{
+		if(transf) delete transf;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

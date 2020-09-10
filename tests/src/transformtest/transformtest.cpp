@@ -386,7 +386,79 @@ void TransformTest::modelReturnsTransformDepsRefsToFuncs()
 
 void TransformTest::modelCreatesTransformFromXML()
 {
+	QString xml_code = "<transform>\n\
+	<comment><![CDATA[This is a comment test in transform!]]></comment>\n\
+	<appended-sql><![CDATA[ /* Some appended SQL code */]]></appended-sql>\n\
+	<prepended-sql><![CDATA[ /* Some appended SQL code */]]></prepended-sql>\n\
+	<type name=\"text\" length=\"1\"/>\n\
+	<function ref-type=\"fromsql\" signature=\"public.from_sql_func(internal)\"/>\n\
+	<function ref-type=\"tosql\" signature=\"public.to_sql_func(internal)\"/>\n\
+</transform>";
+	Function to_sql_func, from_sql_func;
+	Language lang;
+	Schema schema;
+	DatabaseModel dbmodel;
+	Transform *transf = nullptr;
 
+	try
+	{
+		schema.setName("public");
+		dbmodel.addObject(&schema);
+
+		lang.setName(DefaultLanguages::PlPgsql);
+		dbmodel.addObject(&lang);
+
+		to_sql_func.setName("to_sql_func");
+		to_sql_func.setSchema(&schema);
+		to_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		to_sql_func.setReturnType(PgSqlType("text"));
+		to_sql_func.setSourceCode("begin; end");
+		to_sql_func.setLanguage(&lang);
+
+		from_sql_func.setName("from_sql_func");
+		from_sql_func.setSchema(&schema);
+		from_sql_func.addParameter(Parameter("p1", PgSqlType("internal")));
+		from_sql_func.setReturnType(PgSqlType("internal"));
+		from_sql_func.setSourceCode("begin; end");
+		from_sql_func.setLanguage(&lang);
+
+		dbmodel.addObject(&from_sql_func);
+		dbmodel.addObject(&to_sql_func);
+
+		dbmodel.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+																			 GlobalAttributes::DirSeparator +
+																			 GlobalAttributes::XMLSchemaDir +
+																			 GlobalAttributes::DirSeparator +
+																			 "dtd" + GlobalAttributes::DirSeparator + "dbmodel.dtd",
+																			 BaseObject::getSchemaName(ObjectType::Transform));
+		dbmodel.getXMLParser()->loadXMLBuffer(xml_code);
+		transf = dbmodel.createTransform();
+
+		dbmodel.removeObject(&to_sql_func);
+		dbmodel.removeObject(&from_sql_func);
+		dbmodel.removeObject(&lang);
+		dbmodel.removeObject(&schema);
+
+		QVERIFY(nullptr != transf);
+
+		/*QTextStream out(stdout);
+		out << "Expected:" << QtCompat::endl;
+		out << xml_code << QtCompat::endl;
+		out << "---" << QtCompat::endl;
+		out << "Result:" << QtCompat::endl;
+		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl; */
+
+		QVERIFY(transf->getCodeDefinition(SchemaParser::XmlDefinition).simplified() == xml_code.simplified());
+	}
+	catch(Exception &e)
+	{
+		dbmodel.removeObject(&to_sql_func);
+		dbmodel.removeObject(&from_sql_func);
+		dbmodel.removeObject(&lang);
+		dbmodel.removeObject(&schema);
+
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
 }
 
 QTEST_MAIN(TransformTest)
