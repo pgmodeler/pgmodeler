@@ -60,6 +60,7 @@ class Transform : public BaseObject {
 		void operator = (Transform &transf);
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getSignature(bool = false) final;
+		virtual QString getDropDefinition(bool cascade) final;
 };
 
 #endif

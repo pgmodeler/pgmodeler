@@ -132,7 +132,8 @@ const attribs_map DatabaseExplorerWidget::attribs_i18n {
 	{Attributes::DeadRowsAmount, QT_TR_NOOP("Dead rows amount")},	{Attributes::PartitionKey, QT_TR_NOOP("Partition keys")},
 	{Attributes::Partitioning, QT_TR_NOOP("Partitioning")}, {Attributes::Options, QT_TR_NOOP("Options")},
 	{Attributes::Fdw, QT_TR_NOOP("Foreign data wrapper")}, 	{Attributes::Server, QT_TR_NOOP("Server")},
-	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}
+	{Attributes::BypassRls, QT_TR_NOOP("Bypass RLS")}, {Attributes::FromSqlFunc, QT_TR_NOOP("From SQL Func.")},
+	{Attributes::ToSqlFunc, QT_TR_NOOP("To SQL Func.")}
 };
 
 DatabaseExplorerWidget::DatabaseExplorerWidget(QWidget *parent): QWidget(parent)

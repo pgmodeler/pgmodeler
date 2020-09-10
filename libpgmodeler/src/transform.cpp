@@ -182,7 +182,13 @@ QString Transform::getCodeDefinition(unsigned def_type)
 
 QString Transform::getSignature(bool)
 {
-	return QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
+	return obj_name;
+}
+
+QString Transform::getDropDefinition(bool cascade)
+{
+	attributes[Attributes::Signature] = QString("FOR %1 LANGUAGE %2").arg(~type).arg(language ? language->getName(true) : Attributes::Undefined);
+	return BaseObject::getDropDefinition(cascade);
 }
 
 void Transform::operator = (Transform &transf)
