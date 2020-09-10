@@ -760,6 +760,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::ForeignServer: createForeignServer(attribs); break;
 				case ObjectType::UserMapping: createUserMapping(attribs); break;
 				case ObjectType::ForeignTable: createForeignTable(attribs); break;
+				case ObjectType::Transform: createTransform(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -2325,7 +2326,29 @@ void DatabaseImportHelper::createForeignTable(attribs_map &attribs)
 	{
 		if(ftable) delete ftable;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
-						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createTransform(attribs_map &attribs)
+{
+	Transform *transf = nullptr;
+
+	try
+	{
+		attribs[Attributes::Type] = getType(attribs[Attributes::Type], true);
+		attribs[Attributes::Language] = getDependencyObject(attribs[Attributes::Language], ObjectType::Language, false);
+		attribs[Attributes::FromSqlFunc] = getDependencyObject(attribs[Attributes::FromSqlFunc], ObjectType::Function, true, true, true, {{ Attributes::RefType, Attributes::FromSqlFunc }});
+		attribs[Attributes::ToSqlFunc] = getDependencyObject(attribs[Attributes::ToSqlFunc], ObjectType::Function, true, true, true, {{ Attributes::RefType, Attributes::ToSqlFunc }});
+		loadObjectXML(ObjectType::Transform, attribs);
+		transf = dbmodel->createTransform();
+		dbmodel->addTransform(transf);
+	}
+	catch(Exception &e)
+	{
+		if(transf) delete transf;
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
