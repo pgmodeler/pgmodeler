@@ -9,6 +9,8 @@
 
 {type}
 
+{language}
+
 # One of the two function should be defined otherwise the code generation will fail
 %if {fromsql} %or %not {tosql} %then
   {fromsql}

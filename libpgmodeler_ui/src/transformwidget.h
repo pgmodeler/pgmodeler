@@ -26,11 +26,17 @@
 #define TRANSFORM_WIDGET_H
 
 #include "baseobjectwidget.h"
+#include "pgsqltypewidget.h"
+#include "objectselectorwidget.h"
 #include "ui_transformwidget.h"
 
 class TransformWidget: public BaseObjectWidget, public Ui::TransformWidget {
 	private:
 		Q_OBJECT
+
+		PgSQLTypeWidget *type_wgt;
+
+		ObjectSelectorWidget *from_sql_func_sel, *to_sql_func_sel, *language_sel;
 
 	public:
 		TransformWidget(QWidget * parent = nullptr);

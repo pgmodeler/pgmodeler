@@ -21,15 +21,47 @@
 TransformWidget::TransformWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Transform)
 {
 	Ui_TransformWidget::setupUi(this);
+	QGridLayout *transform_grid = new QGridLayout(this);
 
-	configureFormLayout(nullptr, ObjectType::Transform);
+	type_wgt = new PgSQLTypeWidget(this);
+	transform_grid->addWidget(type_wgt, 0, 0, 1, 2);
 
+	language_sel = new ObjectSelectorWidget(ObjectType::Language, false, this);
+	transform_grid->addWidget(language_lbl, 1, 0);
+	transform_grid->addWidget(language_sel, 1, 1);
+
+	from_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, true, this);
+	transform_grid->addWidget(from_sql_func_lbl, 2, 0);
+	transform_grid->addWidget(from_sql_func_sel, 2, 1);
+
+	to_sql_func_sel = new ObjectSelectorWidget(ObjectType::Function, true, this);
+	transform_grid->addWidget(to_sql_func_lbl, 3, 0);
+	transform_grid->addWidget(to_sql_func_sel, 3, 1);
+
+	transform_grid->addItem(new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0);
+
+	configureFormLayout(transform_grid, ObjectType::Transform);
 	setMinimumSize(640, 480);
 }
 
 void TransformWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Transform *transform)
 {
+	PgSqlType type;
+
 	BaseObjectWidget::setAttributes(model, op_list, transform);
+
+	if(transform)
+	{
+		type = transform->getType();
+		language_sel->setSelectedObject(transform->getLanguage());
+		from_sql_func_sel->setSelectedObject(transform->getFunction(Transform::FromSqlFunc));
+		to_sql_func_sel->setSelectedObject(transform->getFunction(Transform::ToSqlFunc));
+	}
+
+	language_sel->setModel(model);
+	from_sql_func_sel->setModel(model);
+	to_sql_func_sel->setModel(model);
+	type_wgt->setAttributes(type, model, UserTypeConfig::AllUserTypes, false, false);
 }
 
 void TransformWidget::applyConfiguration()
@@ -37,9 +69,13 @@ void TransformWidget::applyConfiguration()
 	try
 	{
 		Transform *transform = nullptr;
-
 		startConfiguration<Transform>();
+
 		transform = dynamic_cast<Transform *>(this->object);
+		transform->setType(type_wgt->getPgSQLType());
+		transform->setLanguage(dynamic_cast<Language *>(language_sel->getSelectedObject()));
+		transform->setFunction(dynamic_cast<Function *>(from_sql_func_sel->getSelectedObject()), Transform::FromSqlFunc);
+		transform->setFunction(dynamic_cast<Function *>(to_sql_func_sel->getSelectedObject()), Transform::ToSqlFunc);
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
@@ -50,4 +86,3 @@ void TransformWidget::applyConfiguration()
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
-

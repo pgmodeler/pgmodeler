@@ -260,6 +260,7 @@ void TransformTest::generatesXMLCorrectly()
 	<appended-sql><![CDATA[-- APPENDED SQL --;]]></appended-sql>\n\
 	<prepended-sql><![CDATA[-- PREPENDED SQL --;]]></prepended-sql>\n\
 	<type name=\"varchar\" length=\"0\"/>\n\
+	<language name=\"plpgsql\"/>\n\
 	<function ref-type=\"fromsql\" signature=\"public.from_sql_func(internal)\"/>\n\
 	<function ref-type=\"tosql\" signature=\"public.to_sql_func(internal)\"/>\n\
 </transform>");
@@ -391,6 +392,7 @@ void TransformTest::modelCreatesTransformFromXML()
 	<appended-sql><![CDATA[ /* Some appended SQL code */]]></appended-sql>\n\
 	<prepended-sql><![CDATA[ /* Some appended SQL code */]]></prepended-sql>\n\
 	<type name=\"text\" length=\"1\"/>\n\
+	<language name=\"plpgsql\"/>\n\
 	<function ref-type=\"fromsql\" signature=\"public.from_sql_func(internal)\"/>\n\
 	<function ref-type=\"tosql\" signature=\"public.to_sql_func(internal)\"/>\n\
 </transform>";
@@ -446,7 +448,7 @@ void TransformTest::modelCreatesTransformFromXML()
 		out << xml_code << QtCompat::endl;
 		out << "---" << QtCompat::endl;
 		out << "Result:" << QtCompat::endl;
-		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl; */
+		out << transf->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl;*/
 
 		QVERIFY(transf->getCodeDefinition(SchemaParser::XmlDefinition).simplified() == xml_code.simplified());
 	}

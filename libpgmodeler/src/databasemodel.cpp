@@ -6271,6 +6271,7 @@ Transform *DatabaseModel::createTransform()
 	try
 	{
 		Function *func = nullptr;
+		Language *lang = nullptr;
 		attribs_map attribs;
 		ObjectType obj_type;
 		QString elem;
@@ -6293,11 +6294,28 @@ Transform *DatabaseModel::createTransform()
 					{
 						transf->setType(createPgSQLType());
 					}
+					if(obj_type == ObjectType::Language)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						lang = getLanguage(attribs[Attributes::Name]);
+
+						if(!lang)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(transf->getName())
+															.arg(transf->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::Language)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						transf->setLanguage(lang);
+						xmlparser.restorePosition();
+					}
 					else if(obj_type == ObjectType::Function)
 					{
 						xmlparser.savePosition();
 						xmlparser.getElementAttributes(attribs);
-						func = dynamic_cast<Function *>(getObject(attribs[Attributes::Signature], ObjectType::Function));
+						func = getFunction(attribs[Attributes::Signature]);
 
 						//Raises an error if the function doesn't exists
 						if(!func)
@@ -9385,6 +9403,7 @@ void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject 
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	Function *func=nullptr;
+	Transform *transf = nullptr;
 
 	itr=functions.begin();
 	itr_end=functions.end();
@@ -9399,6 +9418,21 @@ void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject 
 		}
 		itr++;
 	}
+
+	itr=transforms.begin();
+	itr_end=transforms.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		transf = dynamic_cast<Transform *>(*itr);
+		if(transf->getLanguage()==object)
+		{
+			refer=true;
+			refs.push_back(transf);
+		}
+		itr++;
+	}
+
 }
 
 void DatabaseModel::getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
