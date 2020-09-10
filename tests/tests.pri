@@ -24,18 +24,18 @@ INCLUDEPATH += $$PWD/../libpgmodeler_ui/src \
                $$PWD/../libpgconnector/src \
                $$PWD/../libpgmodeler/src \
                $$PWD/../libparsers/src \
-			   $$PWD/../libutils/src \
-			   $$PWD/../main \
-			   $$PWD/src
+               $$PWD/../libutils/src \
+               $$PWD/../main/src \
+               $$PWD/src
 
 DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libobjrenderer \
               $$PWD/../libpgconnector \
               $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
-			  $$PWD/../libutils \
-			  $$PWD/../main \
-			  $$PWD/src
+              $$PWD/../libutils \
+              $$PWD/../main \
+              $$PWD/src
 
 HEADERS += $$PWD/src/pgmodelerunittest.h
 
