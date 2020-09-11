@@ -37,7 +37,8 @@
       $br $tb [ROWS ] {row-amount}
     %end
 
-    ; $br
-    [-- ddl-end --] $br
+    ; 
+    
+    $br [-- ddl-end --] $br
   %end
 %end

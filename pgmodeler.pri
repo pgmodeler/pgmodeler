@@ -1,13 +1,4 @@
 # This file contains the main variables settings to build pgModeler on all supported platforms.
-#
-# Thanks to Lisandro Damián Nicanor Pérez Meyer, pgModeler is able to be package in most of
-# Linux distros.
-#
-# Original version by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Original code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-#
-# Refactored version by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-# Refactored code: https://github.com/pgmodeler/pgmodeler
 
 # General Qt settings
 QT += core widgets printsupport network svg

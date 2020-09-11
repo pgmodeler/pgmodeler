@@ -164,6 +164,7 @@ class DatabaseImportHelper: public QObject {
 		void createForeignServer(attribs_map &attribs);
 		void createUserMapping(attribs_map &attribs);
 		void createForeignTable(attribs_map &attribs);
+		void createTransform(attribs_map &attribs);
 		void __createTableInheritances();
 		void createTableInheritances();
 		void createTablePartitionings();

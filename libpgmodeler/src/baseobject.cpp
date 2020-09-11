@@ -33,9 +33,9 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
-	"foreignserver", "foreigntable", "usermapping", "relationship",
-	"textbox", "permission", "parameter", "typeattribute",
-	"tag", "genericsql", "relationship"
+	"foreignserver", "foreigntable", "usermapping", "transform",
+	"relationship", "textbox", "permission", "parameter",
+	"typeattribute", "tag", "genericsql", "relationship"
 };
 
 const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
@@ -49,9 +49,9 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
 	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
-	QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"),
-	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"),
-	QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Transform"), QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"),
+	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
+	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -63,7 +63,7 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
 	"COLLATION", "EXTENSION", "EVENT TRIGGER",
 	"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
-	"FOREIGN TABLE", "USER MAPPING"
+	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM"
 };
 
 /* Initializes the global id which is shared between instances
@@ -181,7 +181,7 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 		bool needs_fmt=false;
 		unsigned i = 0, qtd = 0;
 
-		raw_name.append(name);
+		raw_name.append(name.toUtf8());
 
 		/* Checks if the name has some upper case letter. If its the
 		 case the name will be enclosed in quotes */
@@ -266,7 +266,7 @@ bool BaseObject::isValidName(const QString &name)
 		unsigned char chr='\0', chr1='\0', chr2='\0';
 		QByteArray raw_name;
 
-		raw_name.append(name);
+		raw_name.append(name.toUtf8());
 		len=raw_name.size();
 
 		chr=raw_name[0];
@@ -980,7 +980,7 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
 									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
 									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
-									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable };
+									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable, ObjectType::Transform };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
@@ -1009,7 +1009,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 		return vector<ObjectType>()={ ObjectType::Cast, ObjectType::Role, ObjectType::Language,
 																	ObjectType::Tablespace, ObjectType::Schema, ObjectType::Extension,
 																	ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																	ObjectType::UserMapping };
+																	ObjectType::UserMapping, ObjectType::Transform };
 
 	if(obj_type==ObjectType::Schema)
 		return vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,

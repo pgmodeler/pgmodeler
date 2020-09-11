@@ -14,6 +14,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<style id="table-name" colors="#ffffff"/>
 	<style id="table-schema-name" colors="#ffffff"/>
 	<style id="table-title" colors="#ff0000,#aa0000,#710000"/>
+	<style id="table-toggler-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-toggler-btns" colors="#fcfcfc,#fcfcfc,#808080"/>
 </tag>
 <schema name="public" layer="0" rect-visible="true" fill-color="#6abdb2" sql-disabled="true">
 </schema>

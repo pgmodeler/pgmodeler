@@ -326,7 +326,7 @@ QPen BaseObjectView::getBorderStyle(const QString &id)
 			if(id==Attributes::ObjSelection)
 				colors[2].setAlpha(ObjectAlphaChannel);
 
-			pen.setWidthF(ObjectBorderWidth);
+			pen.setWidthF(ObjectBorderWidth * getScreenDpiFactor());
 			pen.setColor(colors[2]);
 		}
 	}

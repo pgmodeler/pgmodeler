@@ -22,15 +22,11 @@ unsigned Tag::tag_id=3000;
 
 Tag::Tag()
 {
-	QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
-						  Attributes::TableTitle, Attributes::TableBody,
-						  Attributes::TableExtBody };
-
 	obj_type=ObjectType::Tag;
 	object_id=Tag::tag_id++;
 	attributes[Attributes::Styles]="";
 
-	for(auto &attr : attribs)
+	for(auto &attr : getColorAttributes())
 	{
 		if(attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_config[attr] = { QColor(0,0,0), QColor(0,0,0), QColor(0,0,0) };
@@ -173,6 +169,16 @@ QString Tag::getCodeDefinition(unsigned def_type, bool reduced_form)
 
 		return BaseObject::getCodeDefinition(def_type, reduced_form);
 	}
+}
+
+QStringList Tag::getColorAttributes()
+{
+	static QStringList attribs={ Attributes::TableName,  Attributes::TableSchemaName,
+															 Attributes::TableTitle, Attributes::TableBody,
+															 Attributes::TableExtBody, Attributes::TableTogglerButtons,
+															 Attributes::TableTogglerBody };
+
+	return attribs;
 }
 
 void Tag::operator = (Tag &tag)

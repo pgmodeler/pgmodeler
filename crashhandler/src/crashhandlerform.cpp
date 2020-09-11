@@ -187,7 +187,7 @@ void CrashHandlerForm::saveModel()
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
 												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			buf.append(model_txt->toPlainText());
+			buf.append(model_txt->toPlainText().toUtf8());
 			output.write(buf.data(),buf.size());
 			output.close();
 		}

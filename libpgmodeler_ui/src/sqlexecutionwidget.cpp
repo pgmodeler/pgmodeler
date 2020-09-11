@@ -811,7 +811,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			line.append(str_pattern.arg(value));
 		}
 
-		buf.append(line.join(separator));
+		buf.append(line.join(separator).toUtf8());
 		buf.append('\n');
 		line.clear();
 	}
@@ -840,7 +840,7 @@ QByteArray SQLExecutionWidget::generateBuffer(QTableView *results_tbw, QChar sep
 			line.append(str_pattern.arg(value));
 		}
 
-		buf.append(line.join(separator));
+		buf.append(line.join(separator).toUtf8());
 		line.clear();
 		buf.append('\n');
 	}
@@ -951,7 +951,7 @@ void SQLExecutionWidget::saveSQLHistory()
 
 		attribs.clear();
 		attribs[Attributes::Commands] = commands;
-		buffer.append(schparser.getCodeDefinition(attribs));
+		buffer.append(schparser.getCodeDefinition(attribs).toUtf8());
 
 
 		file.setFileName(GlobalAttributes::getConfigurationFilePath(GlobalAttributes::SQLHistoryConf));

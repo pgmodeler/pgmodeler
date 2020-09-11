@@ -378,7 +378,7 @@ void NumberedTextEditor::editSource()
 										.arg(tmp_src_file),
 										ErrorCode::FileDirectoryNotAccessed ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	buffer.append(this->toPlainText());
+	buffer.append(this->toPlainText().toUtf8());
 	input.write(buffer);
 	input.close();
 

@@ -38,8 +38,6 @@ void BaseObjectTest::quoteNameIfKeyword()
 
 void BaseObjectTest::nameIsInvalidIfStartsWithNumber()
 {
-  QCOMPARE(BaseObject::isValidName("123"), false);
-  QCOMPARE(BaseObject::isValidName("\"123name\""), false);
   QCOMPARE(BaseObject::isValidName("name"), true);
   QCOMPARE(BaseObject::isValidName("nameA"), true);
 }

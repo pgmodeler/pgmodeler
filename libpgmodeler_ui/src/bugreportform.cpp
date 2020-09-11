@@ -71,11 +71,11 @@ QByteArray BugReportForm::generateReportBuffer()
 {
 	QByteArray buf;
 
-	buf.append(details_txt->toPlainText());
+	buf.append(details_txt->toPlainText().toUtf8());
 	buf.append(CharDelimiter);
 
 	if(attach_mod_chk->isChecked())
-		buf.append(model_txt->toPlainText());
+		buf.append(model_txt->toPlainText().toUtf8());
 
 	buf.append(CharDelimiter);
 	return buf;

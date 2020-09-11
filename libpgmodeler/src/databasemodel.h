@@ -59,6 +59,7 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "foreignserver.h"
 #include "usermapping.h"
 #include "foreigntable.h"
+#include "transform.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -151,7 +152,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		fdata_wrappers,
 		foreign_servers,
 		usermappings,
-		foreign_tables;
+		foreign_tables,
+		transforms;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -251,6 +253,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
 	protected:
 		void setLayers(const QStringList &layers);
@@ -593,6 +596,11 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignTable *getForeignTable(unsigned obj_idx);
 		ForeignTable *getForeignTable(const QString &name);
 
+		void addTransform(Transform *transf, int obj_idx=-1);
+		void removeTransform(Transform *transf, int obj_idx=-1);
+		Transform *getTransform(unsigned obj_idx);
+		Transform *getTransform(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -655,6 +663,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignServer *createForeignServer();
 		UserMapping *createUserMapping();
 		ForeignTable *createForeignTable();
+		Transform *createTransform();
 
 		template<class TableClass>
 		TableClass *createPhysicalTable();

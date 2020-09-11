@@ -12,9 +12,9 @@
         [ OPTIONS (] {options} [)]
     %end
 
-; $br
+; 
 
-[-- ddl-end --] $br
+$br [-- ddl-end --] $br
 
 %end
 

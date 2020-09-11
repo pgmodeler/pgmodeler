@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
-    <height>358</height>
+    <width>684</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -121,6 +121,8 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
+          <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
@@ -179,7 +181,9 @@
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <italic>false</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -228,7 +232,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>60</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -277,7 +281,9 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="styleSheet">
@@ -304,7 +310,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>40</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -457,7 +463,9 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="toolTip">
@@ -530,7 +538,9 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="toolTip">
@@ -569,7 +579,9 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="styleSheet">
@@ -602,7 +614,9 @@
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="toolTip">

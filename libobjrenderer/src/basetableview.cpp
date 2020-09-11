@@ -399,23 +399,49 @@ void BaseTableView::configureTag()
 void BaseTableView::__configureObject(double width)
 {
 	BaseTable *tab = dynamic_cast<BaseTable *>(getUnderlyingObject());
-	double height = 0,
-			factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0,
-			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio();
+	QString togg_btn_color_id, togg_body_color_id;
+	Tag *tag = tab->getTag();
+	QBrush togg_brush, togg_btns_brush;
+	QPen togg_pen, togg_btns_pen;
 
-	QPen pen = body->pen();
-	attribs_toggler->setBrush(body->brush());
-	attribs_toggler->setPen(body->pen());
+	double height = 0;
 
-	QLinearGradient grad(QPointF(0,0),QPointF(0,1));
-	grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-	grad.setColorAt(0, body->pen().color().lighter(200));
-	grad.setColorAt(1, body->pen().color().lighter());
-	pen.setStyle(Qt::SolidLine);
+	if(tag)
+	{
+		togg_brush = tag->getFillStyle(Attributes::TableTogglerBody);
+		togg_pen = tag->getElementColor(Attributes::TableTogglerBody, Tag::BorderColor);
+		togg_btns_brush = tag->getFillStyle(Attributes::TableTogglerButtons);
+		togg_btns_pen = tag->getElementColor(Attributes::TableTogglerButtons, Tag::BorderColor);
+	}
+	else
+	{
+		if(tab->getObjectType() == ObjectType::Table)
+		{
+			togg_btn_color_id = Attributes::TableTogglerButtons;
+			togg_body_color_id = Attributes::TableTogglerBody;
+		}
+		else if(tab->getObjectType() == ObjectType::View)
+		{
+			togg_btn_color_id = Attributes::ViewTogglerButtons;
+			togg_body_color_id = Attributes::ViewTogglerBody;
+		}
+		else
+		{
+			togg_btn_color_id = Attributes::ForeignTableTogglerButtons;
+			togg_body_color_id = Attributes::ForeignTableTogglerBody;
+		}
 
-	attribs_toggler->setButtonsBrush(grad);
-	attribs_toggler->setButtonsPen(body->pen());
-	attribs_toggler->setRect(QRectF(0, 0, width, 12 * factor * pixel_ratio));
+		togg_brush = BaseObjectView::getFillStyle(togg_body_color_id);
+		togg_pen = BaseObjectView::getBorderStyle(togg_body_color_id);
+		togg_btns_brush = BaseObjectView::getFillStyle(togg_btn_color_id);
+		togg_btns_pen = BaseObjectView::getBorderStyle(togg_btn_color_id);
+	}
+
+	attribs_toggler->setBrush(togg_brush);
+	attribs_toggler->setPen(togg_pen);
+	attribs_toggler->setButtonsBrush(togg_btns_brush);
+	attribs_toggler->setButtonsPen(togg_btns_pen);
+	attribs_toggler->setRect(QRectF(0, 0, width, 12 * BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor()));
 	attribs_toggler->setCollapseMode(tab->getCollapseMode());
 
 	//Set the protected icon position to the top-right on the title

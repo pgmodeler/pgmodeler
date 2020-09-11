@@ -23,13 +23,10 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Tag)
 	Ui_TagWidget::setupUi(this);
 	configureFormLayout(tag_grid, ObjectType::Tag);
 
-	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
-						  Attributes::TableTitle, Attributes::TableBody,
-						  Attributes::TableExtBody };
 	unsigned color_count=1;
 	int row=0;
 
-	for(auto &attr : attribs)
+	for(auto &attr : Tag::getColorAttributes())
 	{
 		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
@@ -40,19 +37,16 @@ TagWidget::TagWidget(QWidget *parent): BaseObjectWidget(parent, ObjectType::Tag)
 		row++;
 	}
 
-	setMinimumSize(450, 220);
+	setMinimumSize(450, 280);
 }
 
 void TagWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Tag *tag)
 {
 	unsigned color_count=1, i;
-	QStringList attribs={ Attributes::TableName, Attributes::TableSchemaName,
-						  Attributes::TableTitle, Attributes::TableBody,
-						  Attributes::TableExtBody };
 
 	BaseObjectWidget::setAttributes(model, op_list, tag);
 
-	for(auto &attr : attribs)
+	for(auto &attr : Tag::getColorAttributes())
 	{
 		if(color_count==1 && attr!=Attributes::TableName && attr!=Attributes::TableSchemaName)
 			color_count=3;
@@ -73,8 +67,6 @@ void TagWidget::applyConfiguration()
 	{
 		Tag *tag=nullptr;
 		vector<BaseObject *> tagged_tabs;
-		QStringList attribs={ Attributes::TableTitle, Attributes::TableBody,
-							  Attributes::TableExtBody };
 
 		startConfiguration<Tag>();
 		tag=dynamic_cast<Tag *>(this->object);
@@ -84,8 +76,11 @@ void TagWidget::applyConfiguration()
 		tag->setElementColor(Attributes::TableName, color_pickers[Attributes::TableName]->getColor(0), Tag::FillColor1);
 		tag->setElementColor(Attributes::TableSchemaName, color_pickers[Attributes::TableSchemaName]->getColor(0), Tag::FillColor1);
 
-		for(auto &attr : attribs)
+		for(auto &attr : Tag::getColorAttributes())
 		{
+			if(attr == Attributes::TableName || attr == Attributes::TableSchemaName)
+				continue;
+
 			tag->setElementColors(attr,
 								  QString("%1,%2,%3")
 								  .arg(color_pickers[attr]->getColor(Tag::FillColor1).name())
@@ -108,4 +103,3 @@ void TagWidget::applyConfiguration()
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
-

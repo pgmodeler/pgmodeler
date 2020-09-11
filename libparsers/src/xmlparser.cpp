@@ -162,7 +162,7 @@ void XmlParser::readBuffer()
 	if(!xml_buffer.isEmpty())
 	{
 		//Inserts the XML declaration
-		buffer+=xml_decl;
+		buffer+=xml_decl.toUtf8();
 
 		//Configures the parser, initially, to not validate the document against the dtd
 		parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT | XML_PARSE_BIG_LINES);
@@ -171,13 +171,13 @@ void XmlParser::readBuffer()
 		if(!dtd_decl.isEmpty())
 		{
 			//Inserts the default software DTD declarion into XML buffer
-			buffer+=dtd_decl;
+			buffer+=dtd_decl.toUtf8();
 
 			//Now configures the parser to validate the buffer against the DTD
 			parser_opt=(parser_opt | XML_PARSE_DTDLOAD | XML_PARSE_DTDVALID);
 		}
 
-		buffer+=xml_buffer;
+		buffer+=xml_buffer.toUtf8();
 
 		//Create an xml document from the buffer
 		xml_doc=xmlReadMemory(buffer.data(), buffer.size(),	nullptr, nullptr, parser_opt);

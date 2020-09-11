@@ -31,6 +31,12 @@ Cast::Cast()
 	attributes[Attributes::Function]="";
 }
 
+void Cast::setName(const QString &)
+{
+	//Configures the cast name (in form of signature: cast(src_type, dst_type) )
+	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
+}
+
 void Cast::setDataType(unsigned type_idx, PgSqlType type)
 {
 	//Check if the type index is valid
@@ -50,8 +56,7 @@ void Cast::setDataType(unsigned type_idx, PgSqlType type)
 		//Raises an error if the type index is invalid
 		throw Exception(ErrorCode::RefTypeInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	//Configures the cast name (in form of signature: cast(src_type, dst_type) )
-	this->obj_name=QString("cast(%1,%2)").arg(~types[SrcType]).arg(~types[DstType]);
+	setName("");
 }
 
 void Cast::setCastType(unsigned cast_type)

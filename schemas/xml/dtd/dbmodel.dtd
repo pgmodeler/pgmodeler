@@ -76,6 +76,8 @@
 %usermapping;
 <!ENTITY % foreigntable SYSTEM "foreigntable.dtd">
 %foreigntable;
+<!ENTITY % transform SYSTEM "transform.dtd">
+%transform;
 <!ENTITY % changelog SYSTEM "changelog.dtd">
 %changelog;
 

@@ -1,12 +1,3 @@
-# libpgmodeler.pro (reviewed version)
-#
-# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-#
-# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
-# refactored code, containing almost all changes done by the refactoring author.
-
 include(../pgmodeler.pri)
 
 TEMPLATE = lib
@@ -52,6 +43,7 @@ HEADERS += src/textbox.h \
 	   src/pgsqltypes/usertypeconfig.h \
 	   src/role.h \
 	   src/constraint.h \
+	   src/transform.h \
 	   src/type.h \
 	   src/tablespace.h \
 	   src/trigger.h \
@@ -117,6 +109,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/securitytype.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \
+	    src/transform.cpp \
 	    src/trigger.cpp \
 	    src/basegraphicobject.cpp \
 	    src/baserelationship.cpp \

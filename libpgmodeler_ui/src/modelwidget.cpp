@@ -61,6 +61,7 @@
 #include "foreigndatawrapperwidget.h"
 #include "foreignserverwidget.h"
 #include "usermappingwidget.h"
+#include "transformwidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -2099,6 +2100,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			res = openEditingForm<ForeignServer, ForeignServerWidget>(object);
 		else if(obj_type==ObjectType::UserMapping)
 			res = openEditingForm<UserMapping, UserMappingWidget>(object);
+		else if(obj_type==ObjectType::Transform)
+			res = openEditingForm<Transform, TransformWidget>(object);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;

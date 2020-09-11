@@ -2,6 +2,8 @@
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
+%set {ddl-end} [;] $br [-- ddl-end --] $br
+
 %if {connlimit} %then
   [ALTER ] {sql-object} $sp {signature} [ WITH ] 
 
@@ -9,9 +11,7 @@
     $br $tb [ CONNECTION LIMIT ] {connlimit} 
   %end  
 
-  ; $br
-
-  [-- ddl-end --] $br
+  {ddl-end}
 %end
 
 %if ({pgsql-ver} >=f "9.5") %then
@@ -28,9 +28,7 @@
       $br $tb [ IS_TEMPLATE ] {is-template} 
     %end
 
-    ; $br
-
-    [-- ddl-end --] $br
+    {ddl-end}
 
   %end
 

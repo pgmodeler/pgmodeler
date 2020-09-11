@@ -102,7 +102,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15);
+			pen.setWidthF(pen.widthF() * 1.15);
 			desc->setPen(pen);
 		}
 		else
@@ -142,7 +142,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 			desc->setBrush(this->getFillStyle(attrib));
 
 			pen = this->getBorderStyle(attrib);
-			pen.setWidthF(ObjectBorderWidth * 1.15);
+			pen.setWidthF(pen.widthF() * 1.15);
 			desc->setPen(pen);
 		}
 	}
@@ -162,7 +162,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
 
 		pen = this->getBorderStyle(tab_obj->getSchemaName());
-		pen.setWidthF(ObjectBorderWidth * 1.15);
+		pen.setWidthF(pen.widthF() * 1.15);
 		desc->setPen(pen);
 	}
 	else
@@ -173,7 +173,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 		desc->setBrush(this->getFillStyle(Attributes::Reference));
 
 		pen = this->getBorderStyle(Attributes::Reference);
-		pen.setWidthF(ObjectBorderWidth * 1.15);
+		pen.setWidthF(pen.widthF() * 1.15);
 		desc->setPen(pen);
 	}
 }

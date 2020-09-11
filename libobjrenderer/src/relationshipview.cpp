@@ -600,6 +600,16 @@ void RelationshipView::configureLine()
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
+		double pen_mid_width = ObjectBorderWidth * 1.45,
+				pen_high_width = ObjectBorderWidth * 1.90;
+
+
+		// Adjusting the relationship lines thickness according to the screen dpi
+		if(BaseObjectView::getScreenDpiFactor() > 1)
+		{
+			pen_high_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.60;
+			pen_mid_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15;
+		}
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -1071,9 +1081,9 @@ void RelationshipView::configureLine()
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
 					if(rel && (rel->isIdentifier() && vet_idx==0))
-						pen.setWidthF(ObjectBorderWidth * 1.90);
+						pen.setWidthF(pen_high_width);
 					else
-						pen.setWidthF(ObjectBorderWidth * 1.45);
+						pen.setWidthF(pen_mid_width);
 
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
@@ -1108,9 +1118,9 @@ void RelationshipView::configureLine()
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
-				pen.setWidthF(ObjectBorderWidth * 1.90);
+				pen.setWidthF(pen_high_width);
 			else
-				pen.setWidthF(ObjectBorderWidth * 1.45);
+				pen.setWidthF(pen_mid_width);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
@@ -1298,6 +1308,11 @@ void RelationshipView::configureDescriptor()
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type == BaseRelationship::RelationshipPart)
 		pen.setStyle(Qt::DashLine);
+
+	if(BaseObjectView::getScreenDpiFactor() <= 1)
+		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.45);
+	else
+		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15);
 
 	descriptor->setPen(pen);
 

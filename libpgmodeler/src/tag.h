@@ -75,6 +75,8 @@ class Tag: public BaseObject {
 		QString getCodeDefinition(unsigned def_type);
 		QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
 
+		static QStringList getColorAttributes(void);
+
 		//! \brief Copy the attributes between two tags
 		void operator = (Tag &tag);
 };

@@ -18,10 +18,14 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class DataDictTest: public QObject {
+class DataDictTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
+
+	public:
+		DataDictTest() : PgModelerUnitTest(SCHEMASDIR){}
 
 	private slots:
 		void generateASimpleDataDict();
@@ -122,8 +126,7 @@ void DataDictTest::generateASplittedDataDictFromSampleModel()
 	try
 	{
 		dbmodel.createSystemObjects(false);
-		//dbmodel.loadModel("../../../samples/demo.dbm");
-		dbmodel.loadModel("/home/raphael/alto_sapl_test.dbm");
+		dbmodel.loadModel(QString(SAMPLESDIR)+ "/demo.dbm");
 		dbmodel.saveDataDictionary("./dict_test.html", true, false);
 	}
 	catch (Exception &e)

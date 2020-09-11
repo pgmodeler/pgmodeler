@@ -642,17 +642,17 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && !create_configs && opts[Input].isEmpty())
+		if(!upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(import_db && opts[InputDb].isEmpty())
+		if(import_db && !opts.count(InputDb))
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && opts[Output].isEmpty())
+		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && !opts.count(Output))
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
-			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
+			 opts.count(Input) && opts.count(Output) &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(tr("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
@@ -668,10 +668,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		if(diff)
 		{
-			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
+			if(!opts.count(Input) && !opts.count(InputDb))
 				throw Exception(tr("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(!opts[Input].isEmpty() && !opts[InputDb].isEmpty())
+			if(opts.count(Input) && opts.count(InputDb))
 				throw Exception(tr("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(CompareTo))
@@ -1928,7 +1928,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			else
 			{
 				schparser.loadFile(schemas[i]);
-				buf.append(schparser.getCodeDefinition(attribs));
+				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				out.setFileName(files[i]);
@@ -1986,7 +1986,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 					if(str_aux.startsWith("[") && !str_aux.contains("Added Associations"))
 						str_aux=QString("\n") + str_aux;
 
-					buf_aux.append(str_aux);
+					buf_aux.append(str_aux.toUtf8());
 				}
 			}
 

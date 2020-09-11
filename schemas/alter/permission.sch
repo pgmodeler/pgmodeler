@@ -7,9 +7,12 @@
 %else
  [REVOKE ALL PRIVILEGES ON] {object} [ FROM ] {roles} 
  
-  %if {cascade} %then
+ %if {cascade} %then
    [ CASCADE]
-  %end
+ %end
   
- ; $br [-- ddl-end --] $br
+ ; 
+ 
+ $br [-- ddl-end --] $br
+ 
 %end

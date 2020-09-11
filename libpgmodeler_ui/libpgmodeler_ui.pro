@@ -1,12 +1,3 @@
-# libpgmodeler_ui.pro (reviewed version)
-#
-# Refactored by: Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
-# Refactored code: https://github.com/perezmeyer/pgmodeler/tree/shared_libs
-# Reviewed by: Raphal Araújo e Silva <raphael@pgmodeler.com.br>
-#
-# NOTE: Reviewed code is not a direct merge from refactored version but based upon the
-# refactored code, containing almost all changes done by the refactoring author.
-
 include(../pgmodeler.pri)
 
 TEMPLATE = lib
@@ -45,6 +36,7 @@ SOURCES += src/mainwindow.cpp \
 	   src/operatorwidget.cpp \
 	   src/operatorfamilywidget.cpp \
 	   src/operatorclasswidget.cpp \
+	   src/transformwidget.cpp \
 	   src/typewidget.cpp \
 	   src/viewwidget.cpp \
 	   src/columnwidget.cpp \
@@ -155,6 +147,7 @@ HEADERS += src/mainwindow.h \
 	   src/operatorwidget.h \
 	   src/operatorfamilywidget.h \
 	   src/operatorclasswidget.h \
+    src/transformwidget.h \
 	   src/typewidget.h \
 	   src/viewwidget.h \
 	   src/columnwidget.h \
@@ -262,6 +255,7 @@ FORMS += ui/mainwindow.ui \
 	 ui/operatorwidget.ui \
 	 ui/operatorfamilywidget.ui \
 	 ui/operatorclasswidget.ui \
+    ui/transformwidget.ui \
 	 ui/typewidget.ui \
 	 ui/viewwidget.ui \
 	 ui/columnwidget.ui \

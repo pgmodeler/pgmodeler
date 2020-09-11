@@ -50,5 +50,5 @@
   [      SET DEFAULT nextval('] {name} ['::regclass);] $br
  %end
  
-  [-- ddl-end --] $br
+ [-- ddl-end --] $br
 %end

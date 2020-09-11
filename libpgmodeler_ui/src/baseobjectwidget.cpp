@@ -477,7 +477,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast && obj_type!=ObjectType::UserMapping)
+		if(obj_type != ObjectType::Permission && obj_type != ObjectType::Cast &&
+			 obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);
