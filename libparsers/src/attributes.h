@@ -677,6 +677,7 @@ namespace Attributes {
 	WorkingDir,
 	XPos,
 	YPos,
+	Year,
 	ZValue;
 }
 

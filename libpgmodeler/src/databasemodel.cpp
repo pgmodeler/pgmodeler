@@ -11486,6 +11486,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::Index] = "";
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!splitted)
@@ -11509,7 +11510,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
-			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
@@ -11523,6 +11524,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
+		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 		// Generating the index items
 		for(auto &item : index_list)

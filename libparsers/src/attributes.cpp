@@ -659,6 +659,7 @@ namespace Attributes {
 	WorkingDir("working-dir"),
 	XPos("x"),
 	YPos("y"),
+	Year("year"),
 	ZValue("z-value");
 }
 
