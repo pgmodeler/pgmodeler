@@ -667,8 +667,7 @@ void SchemaParser::defineAttribute()
 		}
 
 		/* Creates the attribute in the attribute map of the schema, making the attribute
-	   available on the rest of the script being parsed */
-
+		 * available on the rest of the script being parsed */
 		attributes[attrib]=value;
 	}
 	else
@@ -1094,8 +1093,8 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						bool extract=false;
 
 						/* Extracts or unset the attribute only if the process is not in the middle of a 'if-then-else' or
-			   if the parser is inside the 'if' part and the expression is evaluated as true, or in the 'else' part
-			   and the related 'if' is false. Otherwise the line where %set is located will be completely ignored */
+							if the parser is inside the 'if' part and the expression is evaluated as true, or in the 'else' part
+							and the related 'if' is false. Otherwise the line where %set is located will be completely ignored */
 						extract=(if_level < 0 || vet_expif.empty());
 
 						if(!extract && if_level >= 0)
@@ -1124,8 +1123,18 @@ QString SchemaParser::getCodeDefinition(attribs_map &attribs)
 						}
 						else
 						{
+							ignoreBlankChars(buffer[line]);
+
+							/* When the %set instruction is ignored due to the fact of it being under a if expression evaluated as false
+							 * there's the need to create an empty representation of it in the set of attributes so in further expressions
+							 * evaluations the parser isn't broke by a unknow attribute exception */
+							atrib = getAttribute();
+							if(attributes.count(atrib) == 0)
+								attributes[atrib]="";
+
 							column=0;
 							line++;
+							atrib.clear();
 						}
 					}
 					else
