@@ -41,6 +41,9 @@ TransformWidget::TransformWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	transform_grid->addItem(new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0);
 
 	configureFormLayout(transform_grid, ObjectType::Transform);
+	setRequiredField(type_wgt);
+	setRequiredField(language_sel);
+	setRequiredField(language_lbl);
 	setMinimumSize(640, 480);
 }
 
