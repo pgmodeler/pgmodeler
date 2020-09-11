@@ -813,7 +813,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Database, ObjectType::BaseObject };
+																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Transform,
+																 ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -920,6 +921,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						obj_type=obj_tp;
 
+						//Removing/replacing noisy keywords in order to extract more easily the object's name
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
 							if(obj_tp==ObjectType::Index)
@@ -939,6 +941,12 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							else if(obj_tp==ObjectType::Function)
 							{
 								lin.remove(QString("OR REPLACE"));
+							}
+							else if(obj_tp==ObjectType::Transform)
+							{
+								lin.remove(QString(" FOR"));
+								lin.replace(QString(" LANGUAGE "), "_");
+								lin.replace(QRegExp("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
 						else if(lin.startsWith(QString("DROP")))
