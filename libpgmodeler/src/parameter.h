@@ -34,7 +34,7 @@ class Parameter: public Column {
 
 	public:
 		Parameter();
-        Parameter(const Parameter &param);
+		Parameter(const Parameter &param);
 		Parameter(const QString &name, PgSqlType type, bool in = false, bool out = false, bool variadic = false);
 
 		void setType(PgSqlType type);
