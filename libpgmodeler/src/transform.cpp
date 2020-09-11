@@ -35,8 +35,20 @@ Transform::Transform()
 
 void Transform::setName(const QString &)
 {
+	QString tp_name = ~type;
+	BaseObject *type_obj = nullptr;
+
+	//	If the type is based upon a user-defined type we remove the schema name form its name
+	if(type.isUserType())
+	{
+		type_obj = reinterpret_cast<BaseObject *>(type.getUserTypeReference());
+
+		if(type_obj && type_obj->getSchema())
+			tp_name.remove(type_obj->getSchema()->getName() + ".");
+	}
+
 	// The name format for a transform is "type_language" or "type_undefined_lang" for transform without a language defined (initial state)
-	obj_name = QString("%1_%2").arg((~type).replace(' ', '_')).arg(language ? language->getName() : Attributes::Undefined);
+	obj_name = QString("%1_%2").arg((tp_name).replace(' ', '_')).arg(language ? language->getName() : Attributes::Undefined);
 }
 
 void Transform::setType(PgSqlType tp)
