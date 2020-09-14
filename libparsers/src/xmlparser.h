@@ -163,7 +163,7 @@ class XmlParser {
 		void restartParser();
 
 		/*! \brief Converts any chars (operators) < > " to the respective XML entities.
-		 * It will not convert chars between XML comments <!-- --> as well <![CDATA ]]> entity */
+		 * This method will not convert chars between XML comments <!-- --> as well <![CDATA ]]> entity */
 		static QString convertCharsToXMLEntities(QString buf);
 };
 

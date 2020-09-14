@@ -20,10 +20,10 @@
 #include "schemaparser.h"
 
 class SchemaParserTest: public QObject {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-  private slots:
+	private slots:
 		void testExpressionEvaluationWithCasts();
 		void testSetOperationInIf();
 		void testSetOperationUnderIfEvaluatedAsFalse();
