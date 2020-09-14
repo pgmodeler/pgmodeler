@@ -35,7 +35,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		static const QString DepNotDefined,
 		DepNotFound,
-		ElemSeparator,
 		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel

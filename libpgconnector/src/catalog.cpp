@@ -29,6 +29,7 @@ const QString Catalog::GetExtensionObjsSql("SELECT objid AS oid FROM pg_depend W
 const QString Catalog::PgModelerTempDbObj("__pgmodeler_tmp");
 const QString Catalog::InvFilterPattern("__invalid__pattern__");
 const QString Catalog::AliasPlaceholder("$alias$");
+const QString Catalog::EscapedNullChar("\\000");
 
 attribs_map Catalog::catalog_queries;
 

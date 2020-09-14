@@ -5688,14 +5688,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		list_aux=attribs[Attributes::Arguments].split(',');
-		count=list_aux.count();
-		for(i=0; i < count; i++)
-		{
-			if(!list_aux[i].isEmpty())
-				trigger->addArgument(list_aux[i]);
-		}
-
+		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())

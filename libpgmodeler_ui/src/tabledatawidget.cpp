@@ -73,12 +73,12 @@ TableDataWidget::TableDataWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 	connect(csv_load_tb, SIGNAL(toggled(bool)), csv_load_parent, SLOT(setVisible(bool)));
 
 	connect(csv_load_wgt, &CsvLoadWidget::s_csvFileLoaded, [&](){
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(PgModelerNs::DataSeparator, Table::DataLineBreak));
 	});
 
 	connect(paste_tb, &QToolButton::clicked, [&](){
 		csv_load_wgt->loadCsvBuffer(qApp->clipboard()->text(), QString(";"), QString("\""), true);
-		populateDataGrid(csv_load_wgt->getCsvBuffer(Table::DataSeparator, Table::DataLineBreak));
+		populateDataGrid(csv_load_wgt->getCsvBuffer(PgModelerNs::DataSeparator, Table::DataLineBreak));
 		qApp->clipboard()->clear();
 		paste_tb->setEnabled(false);
 	});
@@ -351,7 +351,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 
 		//The first line of the buffer always has the column names
 		if(!buffer.isEmpty() && !buffer[0].isEmpty())
-			columns.append(buffer[0].split(Table::DataSeparator));
+			columns.append(buffer[0].split(PgModelerNs::DataSeparator));
 	}
 	else
 	{
@@ -392,7 +392,7 @@ void TableDataWidget::populateDataGrid(const QString &data)
 	for(QString buf_row : buffer)
 	{
 		addRow();
-		values = buf_row.split(Table::DataSeparator);
+		values = buf_row.split(PgModelerNs::DataSeparator);
 		col = 0;
 
 		for(QString val : values)
@@ -482,7 +482,7 @@ QString TableDataWidget::generateDataBuffer()
 		col_names.push_back(data_tbw->horizontalHeaderItem(col)->text());
 
 	//The first line of the buffer consists in the column names
-	buffer.push_back(col_names.join(Table::DataSeparator));
+	buffer.push_back(col_names.join(PgModelerNs::DataSeparator));
 
 	for(int row = 0; row < data_tbw->rowCount(); row++)
 	{
@@ -501,7 +501,7 @@ QString TableDataWidget::generateDataBuffer()
 			val_list.push_back(value);
 		}
 
-		buffer.push_back(val_list.join(Table::DataSeparator));
+		buffer.push_back(val_list.join(PgModelerNs::DataSeparator));
 		val_list.clear();
 	}
 

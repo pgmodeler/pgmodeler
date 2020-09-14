@@ -19,7 +19,6 @@
 #include "physicaltable.h"
 #include "pgmodelerns.h"
 
-const QString PhysicalTable::DataSeparator("•");
 const QString PhysicalTable::DataLineBreak = QString("%1%2").arg("⸣").arg('\n');
 
 PhysicalTable::PhysicalTable() : BaseTable()
@@ -1611,7 +1610,7 @@ QString PhysicalTable::getInitialDataCommands()
 		int curr_col=0;
 		QList<int> ignored_cols;
 
-		col_names=(buffer.at(0)).split(DataSeparator);
+		col_names=(buffer.at(0)).split(PgModelerNs::DataSeparator);
 		col_names.removeDuplicates();
 		buffer.removeFirst();
 
@@ -1631,7 +1630,7 @@ QString PhysicalTable::getInitialDataCommands()
 			curr_col=0;
 
 			//Filtering the invalid columns' values
-			for(QString value : buf_row.split(DataSeparator))
+			for(QString value : buf_row.split(PgModelerNs::DataSeparator))
 			{
 				if(ignored_cols.contains(curr_col))
 					continue;

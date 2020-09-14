@@ -147,6 +147,9 @@ class Catalog {
 		//! \brief Stores the prefix of any temp object (in pg_temp) created during catalog reading by pgModeler
 		static const QString PgModelerTempDbObj;
 
+		//! \brief Stores the null char escaped in format \000
+		static const QString EscapedNullChar;
+
 		//! \brief Excludes the system objects from listing
 		static constexpr unsigned ExclSystemObjs=1,
 

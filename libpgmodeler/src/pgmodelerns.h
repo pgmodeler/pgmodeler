@@ -30,6 +30,9 @@
 #include <QCryptographicHash>
 
 namespace PgModelerNs {
+	//! \brief Default char for data/value separator for special usage
+	static const QString DataSeparator("•");
+
 	//! \brief Default char used as unescaped value start delimiter
 	static const QChar UnescValueStart='/';
 

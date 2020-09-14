@@ -1048,7 +1048,7 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 		{
 			constr.remove(0, 1);
 			constr.remove(constr.length() - 1, 1);
-			constr_attrs = constr.split(Table::DataSeparator);
+			constr_attrs = constr.split(PgModelerNs::DataSeparator);
 
 			aux_attribs[Attributes::Name] = constr_attrs.at(0);
 
@@ -1948,11 +1948,14 @@ void DatabaseImportHelper::createTrigger(attribs_map &attribs)
 	try
 	{
 		ObjectType table_type;
+		QStringList args;
 
 		table_type=BaseObject::getObjectType(attribs[Attributes::TableType]);
 		attribs[Attributes::Table]=getDependencyObject(attribs[Attributes::Table], table_type, true, auto_resolve_deps, false);
 		attribs[Attributes::TriggerFunc]=getDependencyObject(attribs[Attributes::TriggerFunc], ObjectType::Function, true, true);
-		attribs[Attributes::Arguments]=Catalog::parseArrayValues(attribs[Attributes::Arguments].remove(QString(",\"\""))).join(',');
+
+		args = attribs[Attributes::Arguments].split(Catalog::EscapedNullChar, QtCompat::SkipEmptyParts);
+		attribs[Attributes::Arguments] = args.join(PgModelerNs::DataSeparator);
 
 		loadObjectXML(ObjectType::Trigger, attribs);
 		dbmodel->createTrigger();

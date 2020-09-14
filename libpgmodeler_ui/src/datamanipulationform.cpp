@@ -896,7 +896,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, schema, table, col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(PgModelerNs::DataSeparator);
 
 				col_ids.clear();
 				name_list.clear();
@@ -908,7 +908,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 				for(auto &col : catalog.getObjectsAttributes(ObjectType::Column, aux_schema[Attributes::Name], aux_table[Attributes::Name], col_ids))
 					name_list.push_back(BaseObject::formatName(col[Attributes::Name]));
 
-				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(Table::DataSeparator);
+				fk_infos[fk_name][Attributes::DstColumns] = name_list.join(PgModelerNs::DataSeparator);
 			}
 
 			submenu = new QMenu(this);
@@ -942,7 +942,7 @@ void DataManipulationForm::retrieveFKColumns(const QString &schema, const QStrin
 																													.arg(fk[Attributes::Name]), this, SLOT(browseReferrerTable()));
 				action->setData(fk_name);
 
-				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(Table::DataSeparator);
+				ref_fk_infos[fk_name][Attributes::SrcColumns] = name_list.join(PgModelerNs::DataSeparator);
 				ref_fk_infos[fk_name][Attributes::Table] = aux_table[Attributes::Name];
 				ref_fk_infos[fk_name][Attributes::Schema] = aux_schema[Attributes::Name];
 			}
@@ -1202,14 +1202,14 @@ void DataManipulationForm::browseTable(const QString &fk_name, bool browse_ref_t
 	if(browse_ref_tab)
 	{
 		src_cols =  pk_col_names;
-		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
+		ref_cols = ref_fk_infos[fk_name][Attributes::SrcColumns].split(PgModelerNs::DataSeparator);
 		schema = ref_fk_infos[fk_name][Attributes::Schema];
 		table = ref_fk_infos[fk_name][Attributes::Table];
 	}
 	else
 	{
-		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(Table::DataSeparator);
-		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(Table::DataSeparator);
+		src_cols =  fk_infos[fk_name][Attributes::SrcColumns].split(PgModelerNs::DataSeparator);
+		ref_cols = fk_infos[fk_name][Attributes::DstColumns].split(PgModelerNs::DataSeparator);
 		schema = fk_infos[fk_name][Attributes::Schema];
 		table = fk_infos[fk_name][Attributes::RefTable];
 	}

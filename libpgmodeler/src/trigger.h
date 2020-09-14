@@ -38,7 +38,7 @@ class Trigger: public TableObject{
 		QString transition_tabs_names[2];
 
 		//! \brief Arguments passed to the function that trigger executes
-		vector<QString> arguments;
+		QStringList arguments;
 
 		/*! \brief Column list used as the trigger firing condition. This attribute was
 		 introduced in PostgreSQL 9.1 and it is used only when the UPDATE event
@@ -89,6 +89,9 @@ class Trigger: public TableObject{
 
 		//! \brief Adds an argument to the trigger
 		void addArgument(const QString &arg);
+
+		//! \brief Adds a list of arguments to the trigger
+		void addArguments(const QStringList &args);
 
 		//! \brief Defines in which events the trigger is executed
 		void setEvent(EventType event, bool value);
