@@ -5,6 +5,7 @@ TARGET = pgmodeler
 windows: DESTDIR = $$PWD
 
 HEADERS += src/textbox.h \
+	   src/basefunction.h \
 	   src/cast.h \
 	   src/defaultlanguages.h \
 	   src/function.h \
@@ -86,6 +87,7 @@ HEADERS += src/textbox.h \
 	   src/foreigntable.h
 
 SOURCES +=  src/textbox.cpp \
+	    src/basefunction.cpp \
 	    src/domain.cpp \
 	    src/pgsqltypes/actiontype.cpp \
 	    src/pgsqltypes/basetype.cpp \
