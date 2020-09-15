@@ -42,6 +42,7 @@ HEADERS += src/textbox.h \
 	   src/pgsqltypes/storagetype.h \
 	   src/pgsqltypes/templatetype.h \
 	   src/pgsqltypes/usertypeconfig.h \
+	   src/procedure.h \
 	   src/role.h \
 	   src/constraint.h \
 	   src/transform.h \
@@ -111,6 +112,7 @@ SOURCES +=  src/textbox.cpp \
 	    src/pgsqltypes/securitytype.cpp \
 	    src/pgsqltypes/spatialtype.cpp \
 	    src/pgsqltypes/storagetype.cpp \
+	    src/procedure.cpp \
 	    src/transform.cpp \
 	    src/trigger.cpp \
 	    src/basegraphicobject.cpp \

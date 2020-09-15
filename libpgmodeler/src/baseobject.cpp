@@ -34,7 +34,7 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
 	"foreignserver", "foreigntable", "usermapping", "transform",
-	"relationship", "textbox", "permission", "parameter",
+	"procedure", "relationship", "textbox", "permission", "parameter",
 	"typeattribute", "tag", "genericsql", "relationship"
 };
 
@@ -49,9 +49,10 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
 	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
-	QT_TR_NOOP("Transform"), QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"),
-	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Transform"), QT_TR_NOOP("Procedure"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"),	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"),
+	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
+	QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -63,7 +64,8 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
 	"COLLATION", "EXTENSION", "EVENT TRIGGER",
 	"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
-	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM"
+	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM",
+	"PROCEDURE"
 };
 
 /* Initializes the global id which is shared between instances
