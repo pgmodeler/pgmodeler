@@ -32,7 +32,7 @@
 #include "pgsqltypes/securitytype.h"
 
 class BaseFunction: public BaseObject {
-	private:
+	protected:
 		//! \brief Function unique signature
 		QString signature;
 
@@ -57,7 +57,6 @@ class BaseFunction: public BaseObject {
 		//! \brief Formats the function parameter attribute to be used by the SchemaParser
 		void setParametersAttribute(unsigned def_type);
 
-	protected:
 		virtual void configureSearchAttributes() = 0;
 
 	public:

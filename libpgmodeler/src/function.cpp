@@ -19,10 +19,9 @@
 #include "function.h"
 #include "defaultlanguages.h"
 
-Function::Function()
+Function::Function() : BaseFunction()
 {
-	return_type=PgSqlType(QString("void"));
-	language=nullptr;
+	return_type = PgSqlType(QString("void"));
 	returns_setof=false;
 	is_wnd_function=false;
 	is_leakproof=false;
@@ -31,64 +30,16 @@ Function::Function()
 	execution_cost=100;
 	row_amount=1000;
 
-	attributes[Attributes::Parameters]="";
 	attributes[Attributes::ExecutionCost]="";
 	attributes[Attributes::RowAmount]="";
 	attributes[Attributes::ReturnType]="";
 	attributes[Attributes::FunctionType]="";
-	attributes[Attributes::Language]="";
 	attributes[Attributes::ReturnsSetOf]="";
-	attributes[Attributes::SecurityType]="";
 	attributes[Attributes::BehaviorType]="";
-	attributes[Attributes::Definition]="";
-	attributes[Attributes::Signature]="";
 	attributes[Attributes::RefType]="";
 	attributes[Attributes::WindowFunc]="";
 	attributes[Attributes::ReturnTable]="";
-	attributes[Attributes::Library]="";
-	attributes[Attributes::Symbol]="";
 	attributes[Attributes::LeakProof]="";
-}
-
-void Function::setName(const QString &name)
-{
-	BaseObject::setName(name);
-	createSignature();
-}
-
-void Function::setSchema(BaseObject *schema)
-{
-	BaseObject::setSchema(schema);
-	createSignature();
-}
-
-void Function::addParameter(Parameter param)
-{
-	vector<Parameter>::iterator itr,itr_end;
-	bool found=false;
-
-	itr=parameters.begin();
-	itr_end=parameters.end();
-
-	//Checks the duplicity of parameter names
-	while(itr!=itr_end && !found)
-	{
-		/* Compares the parameters name storing in the 'found' flag
-		 if already exists in the function */
-		found=(itr->getName()==param.getName());
-		itr++;
-	}
-
-	//If a duplicated parameter is found an error is raised
-	if(found)
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgDuplicatedParameterFunction)
-						.arg(param.getName())
-						.arg(this->signature),
-						ErrorCode::AsgDuplicatedParameterFunction,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	//Inserts the parameter in the function
-	parameters.push_back(param);
-	createSignature();
 }
 
 void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
@@ -126,22 +77,6 @@ void Function::addReturnedTableColumn(const QString &name, PgSqlType type)
 	setCodeInvalidated(true);
 }
 
-void Function::setParametersAttribute(unsigned def_type)
-{
-	QString str_param;
-	QStringList fmt_params;
-
-	for(auto &param : parameters)
-		fmt_params.append(param.getCodeDefinition(def_type));
-
-	str_param = fmt_params.join("");
-
-	if(def_type==SchemaParser::SqlDefinition)
-		str_param.remove(str_param.size()-2,2);
-
-	attributes[Attributes::Parameters]=str_param;
-}
-
 void Function::setTableReturnTypeAttribute(unsigned def_type)
 {
 	QString str_type;
@@ -171,28 +106,6 @@ void Function::setRowAmount(unsigned row_amount)
 	this->row_amount=row_amount;
 }
 
-void Function::setLibrary(const QString &library)
-{
-	if(language->getName().toLower() != DefaultLanguages::C)
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRefLibraryFuncLanguageNotC)
-						.arg(this->getSignature()),
-						ErrorCode::AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	setCodeInvalidated(this->library != library);
-	this->library=library;
-}
-
-void Function::setSymbol(const QString &symbol)
-{
-	if(language->getName().toLower() != DefaultLanguages::C)
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgRefLibraryFuncLanguageNotC)
-						.arg(this->getSignature()),
-						ErrorCode::AsgRefLibraryFuncLanguageNotC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	setCodeInvalidated(this->symbol != symbol);
-	this->symbol=symbol;
-}
-
 void Function::setReturnType(PgSqlType type)
 {
 	setCodeInvalidated(return_type != type);
@@ -203,19 +116,6 @@ void Function::setFunctionType(FunctionType func_type)
 {
 	setCodeInvalidated(function_type != func_type);
 	function_type=func_type;
-}
-
-void Function::setLanguage(BaseObject *language)
-{
-	//Raises an error if the language is not allocated
-	if(!language)
-		throw Exception(ErrorCode::AsgNotAllocatedLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	//Raises an error if the language object is invalid
-	else if(language->getObjectType()!=ObjectType::Language)
-		throw Exception(ErrorCode::AsgInvalidLanguageObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	setCodeInvalidated(this->language != language);
-	this->language=language;
 }
 
 void Function::setReturnSetOf(bool value)
@@ -236,27 +136,10 @@ void Function::setLeakProof(bool value)
 	is_leakproof=value;
 }
 
-void Function::setSecurityType(SecurityType sec_type)
-{
-	setCodeInvalidated(security_type != sec_type);
-	security_type=sec_type;
-}
-
 void Function::setBehaviorType(BehaviorType behav_type)
 {
 	setCodeInvalidated(behavior_type != behav_type);
 	behavior_type=behav_type;
-}
-
-void Function::setSourceCode(const QString &src_code)
-{
-	if(language && language->getName().toLower() == DefaultLanguages::C)
-		throw Exception(Exception::getErrorMessage(ErrorCode::AsgSourceCodeFuncCLanguage)
-						.arg(this->getSignature()),
-						ErrorCode::AsgSourceCodeFuncCLanguage,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	setCodeInvalidated(this->source_code != src_code);
-	this->source_code=src_code;
 }
 
 PgSqlType Function::getReturnType()
@@ -267,16 +150,6 @@ PgSqlType Function::getReturnType()
 FunctionType Function::getFunctionType()
 {
 	return function_type;
-}
-
-BaseObject *Function::getLanguage()
-{
-	return language;
-}
-
-unsigned Function::getParameterCount()
-{
-	return parameters.size();
 }
 
 unsigned Function::getReturnedTableColumnCount()
@@ -304,28 +177,9 @@ bool Function::isLeakProof()
 	return is_leakproof;
 }
 
-SecurityType Function::getSecurityType()
-{
-	return security_type;
-}
-
 BehaviorType Function::getBehaviorType()
 {
 	return behavior_type;
-}
-
-QString Function::getSourceCode()
-{
-	return source_code;
-}
-
-Parameter Function::getParameter(unsigned param_idx)
-{
-	//Raises an error if the parameter index is out of bound
-	if(param_idx>=parameters.size())
-		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	return parameters[param_idx];
 }
 
 Parameter Function::getReturnedTableColumn(unsigned column_idx)
@@ -347,61 +201,10 @@ unsigned Function::getRowAmount()
 	return row_amount;
 }
 
-QString Function::getLibrary()
-{
-	return library;
-}
-
-QString Function::getSymbol()
-{
-	return symbol;
-}
-
-void Function::removeParameters()
-{
-	parameters.clear();
-	createSignature();
-}
-
 void Function::removeReturnedTableColumns()
 {
 	ret_table_columns.clear();
 	setCodeInvalidated(true);
-}
-
-void Function::removeParameter(const QString &name, PgSqlType type)
-{
-	vector<Parameter>::iterator itr,itr_end;
-
-	itr=parameters.begin();
-	itr_end=parameters.end();
-
-	while(itr!=itr_end)
-	{
-		//Compares the iterator name and type with the passed name an type
-		if(itr->getName()==name && itr->getType()==(~type))
-		{
-			parameters.erase(itr);
-			break;
-		}
-		itr++;
-	}
-
-	//After remove the parameter is necessary updated the signature
-	createSignature();
-}
-
-void Function::removeParameter(unsigned param_idx)
-{
-	//Raises an error if parameter index is out of bound
-	if(param_idx>=parameters.size())
-		throw Exception(ErrorCode::RefParameterInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	vector<Parameter>::iterator itr;
-	itr=parameters.begin()+param_idx;
-	parameters.erase(itr);
-
-	createSignature();
 }
 
 void Function::removeReturnedTableColumn(unsigned column_idx)
@@ -413,37 +216,6 @@ void Function::removeReturnedTableColumn(unsigned column_idx)
 	itr=ret_table_columns.begin()+column_idx;
 	ret_table_columns.erase(itr);
 	setCodeInvalidated(true);
-}
-
-QString Function::getSignature(bool)
-{
-	return signature;
-}
-
-void Function::createSignature(bool format, bool prepend_schema)
-{
-	QString aux_str;
-	QStringList fmt_params;
-
-	for(auto &param : parameters)
-	{
-		//OUT parameters is not part of function's signature
-		if(!param.isOut() || param.isVariadic() ||
-				(param.isIn() && param.isOut()) ||
-				(param.isIn() && !param.isOut()))
-		{
-			/* Removing the arg mode IN from parameter signature because this is de default for any kind of parameter
-			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it */
-			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)( )"),"").trimmed();
-			aux_str.remove(',');
-			fmt_params.append(aux_str);
-			param.setCodeInvalidated(true);
-		}
-	}
-
-	//Signature format NAME(IN|OUT PARAM1_TYPE,IN|OUT PARAM2_TYPE,...,IN|OUT PARAMn_TYPE)
-	signature=this->getName(format, prepend_schema) + QString("(") + fmt_params.join(",") + QString(")");
-	this->setCodeInvalidated(true);
 }
 
 QString Function::getCodeDefinition(unsigned def_type)
