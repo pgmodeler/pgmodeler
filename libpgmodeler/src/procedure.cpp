@@ -23,6 +23,14 @@ Procedure::Procedure() : BaseFunction()
 	obj_type = ObjectType::Procedure;
 }
 
+void Procedure::addParameter(Parameter param)
+{
+	if(param.isOut() && !param.isIn())
+		throw Exception(ErrorCode::InvProcedureParamOutMode, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+
+	BaseFunction::addParameter(param);
+}
+
 void Procedure::configureSearchAttributes()
 {
 
@@ -30,15 +38,20 @@ void Procedure::configureSearchAttributes()
 
 QString Procedure::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
+	QString code_def = getCachedCode(def_type, reduced_form);
+	if(!code_def.isEmpty()) return code_def;
 
+	setBasicFunctionAttributes(def_type);
+
+	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
 QString Procedure::getCodeDefinition(unsigned def_type)
 {
-
+	return getCodeDefinition(def_type, false);
 }
 
-QString Procedure::getAlterDefinition(BaseObject *object)
+QString Procedure::getAlterDefinition(BaseObject *)
 {
-
+	return "";
 }

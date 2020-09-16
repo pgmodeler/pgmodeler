@@ -403,7 +403,8 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
 			 obj_type==ObjectType::Type || obj_type==ObjectType::OpClass ||
 			 obj_type==ObjectType::OpFamily || obj_type==ObjectType::Collation ||
-			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
+			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable ||
+			 obj_type == ObjectType::Procedure);
 }
 
 bool BaseObject::acceptsSchema()
@@ -423,7 +424,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
 			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping ||
-			 obj_type==ObjectType::ForeignTable);
+			 obj_type==ObjectType::ForeignTable || obj_type==ObjectType::Procedure);
 }
 
 bool BaseObject::acceptsOwner()

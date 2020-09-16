@@ -228,7 +228,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
 
-	setParametersAttribute(def_type);
+	setBasicFunctionAttributes(def_type);
 
 	attributes[Attributes::ExecutionCost]=QString("%1").arg(execution_cost);
 	attributes[Attributes::RowAmount]=QString("%1").arg(row_amount);
@@ -239,30 +239,13 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
 	else
 		attributes[Attributes::ReturnType]=return_type.getCodeDefinition(def_type);
 
-	if(language)
-	{
-		if(def_type==SchemaParser::SqlDefinition)
-			attributes[Attributes::Language]=language->getName(false);
-		else
-			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
-
-		if(language->getName().toLower() == DefaultLanguages::C)
-		{
-			attributes[Attributes::Symbol]=symbol;
-			attributes[Attributes::Library]=library;
-		}
-	}
-
 	setTableReturnTypeAttribute(def_type);
 
 	attributes[Attributes::ReturnsSetOf]=(returns_setof ? Attributes::True : "");
 	attributes[Attributes::WindowFunc]=(is_wnd_function ? Attributes::True : "");
 	attributes[Attributes::LeakProof]=(is_leakproof ? Attributes::True : "");
-	attributes[Attributes::SecurityType]=~security_type;
 	attributes[Attributes::BehaviorType]=~behavior_type;
-	attributes[Attributes::Definition]=source_code;
 
-	attributes[Attributes::Signature]=signature;
 	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 

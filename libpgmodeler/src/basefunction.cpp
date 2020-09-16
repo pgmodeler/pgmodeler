@@ -91,6 +91,29 @@ void BaseFunction::setParametersAttribute(unsigned def_type)
 	attributes[Attributes::Parameters]=str_param;
 }
 
+void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
+{
+	setParametersAttribute(def_type);
+
+	if(language)
+	{
+		if(def_type==SchemaParser::SqlDefinition)
+			attributes[Attributes::Language]=language->getName(false);
+		else
+			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
+
+		if(language->getName().toLower() == DefaultLanguages::C)
+		{
+			attributes[Attributes::Symbol]=symbol;
+			attributes[Attributes::Library]=library;
+		}
+	}
+
+	attributes[Attributes::SecurityType]=~security_type;
+	attributes[Attributes::Definition]=source_code;
+	attributes[Attributes::Signature]=signature;
+}
+
 void BaseFunction::setLibrary(const QString &library)
 {
 	if(language->getName().toLower() != DefaultLanguages::C)
@@ -241,8 +264,10 @@ void BaseFunction::createSignature(bool format, bool prepend_schema)
 				(param.isIn() && !param.isOut()))
 		{
 			/* Removing the arg mode IN from parameter signature because this is de default for any kind of parameter
-			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it */
-			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)( )"),"").trimmed();
+			 * So in order to avoid signature conflicts (mainly whe diff functions) we remove it.
+			 * The keyword OUT is also removed for IN OUT parameters, since removing the IN parameter the OUT keyword will remain which
+			 * forms an invalid signature. */
+			aux_str = param.getCodeDefinition(SchemaParser::SqlDefinition, true).replace(QRegExp("^(IN)?( )*(OUT)?( )"),"").trimmed();
 			aux_str.remove(',');
 			fmt_params.append(aux_str);
 			param.setCodeInvalidated(true);

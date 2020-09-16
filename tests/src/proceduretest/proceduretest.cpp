@@ -41,24 +41,133 @@ class ProcedureTest: public QObject, public PgModelerUnitTest {
 
 void ProcedureTest::throwsErrorOnInvalidParameter()
 {
+	Procedure proc;
+
 	try
 	{
-		QFAIL("No error related to invalid type raised!");
+		Parameter param;
+		param.setName("p1");
+		param.setOut(true);
+		param.setIn(false);
+		proc.addParameter(param);
+		QFAIL("No error related to invalid parameter raised!");
 	}
 	catch(Exception &e)
 	{
-		QCOMPARE(e.getErrorCode(), ErrorCode::AsgInvalidTypeObject);
+		QCOMPARE(e.getErrorCode(), ErrorCode::InvProcedureParamOutMode);
 	}
 }
 
 void ProcedureTest::generatesNameAndSignatureCorrectly()
 {
-	QFAIL("Not implemented!");
+	Procedure proc;
+	Schema schema;
+	Parameter param;
+	QString expected_sign = "public.procedure(smallint,text,integer,VARIADIC \"any\")";
+
+	try
+	{
+		schema.setName("public");
+
+		proc.setSchema(&schema);
+		proc.setName("procedure");
+
+		param.setName("p1");
+		param.setType(PgSqlType("smallint"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p2");
+		param.setType(PgSqlType("text"));
+		param.setIn(true);
+		param.setOut(true);
+		proc.addParameter(param);
+
+		param.setName("p3");
+		param.setType(PgSqlType("integer"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p4");
+		param.setType(PgSqlType("\"any\""));
+		param.setVariadic(true);
+		proc.addParameter(param);
+
+		QCOMPARE(proc.getSignature(), expected_sign);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getErrorMessage().toStdString().c_str());
+	}
 }
 
 void ProcedureTest::generatesSQLCorrectly()
 {
-	QFAIL("Not implemented!");
+	Procedure proc;
+	Schema schema;
+	Parameter param;
+	Language lang;
+	QString expected_code, result_code;
+
+	expected_code = QString("-- object: public.procedure | type: PROCEDURE --\n\
+-- DROP PROCEDURE IF EXISTS public.procedure(smallint,text,integer,VARIADIC \"any\") CASCADE;\n\
+CREATE PROCEDURE public.procedure (IN p1 smallint, IN OUT p2 text, IN p3 integer, VARIADIC p4 \"any\")\n\
+	LANGUAGE sql\n\
+	SECURITY INVOKER\n\
+	AS $$\n\
+select 1+1;\n\
+$$;\n\
+-- ddl-end --\n\
+COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS E'This is a comment!';\n\
+-- ddl-end --\n");
+
+	try
+	{
+		schema.setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		proc.setSchema(&schema);
+		proc.setLanguage(&lang);
+		proc.setName("procedure");
+		proc.setSourceCode("select 1+1;");
+		proc.setComment("This is a comment!");
+
+		param.setName("p1");
+		param.setType(PgSqlType("smallint"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p2");
+		param.setType(PgSqlType("text"));
+		param.setIn(true);
+		param.setOut(true);
+		proc.addParameter(param);
+
+		param.setName("p3");
+		param.setType(PgSqlType("integer"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p4");
+		param.setType(PgSqlType("\"any\""));
+		param.setVariadic(true);
+		proc.addParameter(param);
+
+		result_code = proc.getCodeDefinition(SchemaParser::SqlDefinition);
+
+		/*QTextStream out(stdout);
+		out << result_code.simplified() << QtCompat::endl;
+		out << expected_code.simplified() << QtCompat::endl;*/
+		QCOMPARE(result_code.simplified(), expected_code.simplified());
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
 }
 
 void ProcedureTest::generatesXMLCorrectly()

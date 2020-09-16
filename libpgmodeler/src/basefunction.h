@@ -57,6 +57,9 @@ class BaseFunction: public BaseObject {
 		//! \brief Formats the function parameter attribute to be used by the SchemaParser
 		void setParametersAttribute(unsigned def_type);
 
+		//! \brief Formats the basic function's attributes to used in the code generation
+		void setBasicFunctionAttributes(unsigned def_type);
+
 		virtual void configureSearchAttributes() = 0;
 
 	public:
@@ -69,7 +72,7 @@ class BaseFunction: public BaseObject {
 		void setSchema(BaseObject *schema);
 
 		//! \brief Adds a parameter to the function
-		void addParameter(Parameter param);
+		virtual void addParameter(Parameter param);
 
 		//! \brief Defines the function source code (if its not use the C language)
 		void setSourceCode(const QString &src_code);
@@ -124,8 +127,6 @@ class BaseFunction: public BaseObject {
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
 
-		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) = 0;
-		virtual QString getCodeDefinition(unsigned def_type) = 0;
 		virtual QString getAlterDefinition(BaseObject *object) = 0;
 };
 
