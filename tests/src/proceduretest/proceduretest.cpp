@@ -172,7 +172,83 @@ COMMENT ON PROCEDURE public.procedure(smallint,text,integer,VARIADIC \"any\") IS
 
 void ProcedureTest::generatesXMLCorrectly()
 {
-	QFAIL("Not implemented!");
+	Procedure proc;
+	Schema schema;
+	Parameter param;
+	Language lang;
+	QString expected_code, result_code;
+
+	expected_code = QString("<procedure name=\"procedure\" security-type=\"SECURITY INVOKER\">\n\
+	<schema name=\"public\"/>\n\
+	<comment><![CDATA[This is a comment!]]></comment>\n\
+	<appended-sql><![CDATA[-- APPENDED SQL --;]]></appended-sql>\n\
+	<prepended-sql><![CDATA[-- PREPENDED SQL --;]]></prepended-sql>\n\
+	<language name=\"sql\"/>\n\
+	<parameter name=\"p1\" in=\"true\">\n\
+		<type name=\"smallint\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p2\" in=\"true\" out=\"true\">\n\
+		<type name=\"text\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p3\" in=\"true\">\n\
+		<type name=\"integer\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p4\" variadic=\"true\">\n\
+		<type name=\"&quot;any&quot;\" length=\"0\"/>\n\
+	</parameter>\n\
+	<definition><![CDATA[select 1+1;]]></definition>\n\
+</procedure>\n\
+");
+
+	try
+	{
+		schema.setName("public");
+		lang.BaseObject::setName(DefaultLanguages::Sql);
+
+		proc.setAppendedSQL("-- APPENDED SQL --;");
+		proc.setPrependedSQL("-- PREPENDED SQL --;");
+
+		proc.setSchema(&schema);
+		proc.setLanguage(&lang);
+		proc.setName("procedure");
+		proc.setSourceCode("select 1+1;");
+		proc.setComment("This is a comment!");
+
+		param.setName("p1");
+		param.setType(PgSqlType("smallint"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p2");
+		param.setType(PgSqlType("text"));
+		param.setIn(true);
+		param.setOut(true);
+		proc.addParameter(param);
+
+		param.setName("p3");
+		param.setType(PgSqlType("integer"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p4");
+		param.setType(PgSqlType("\"any\""));
+		param.setVariadic(true);
+		proc.addParameter(param);
+
+		result_code = proc.getCodeDefinition(SchemaParser::XmlDefinition);
+
+		/*QTextStream out(stdout);
+		out << result_code << QtCompat::endl;
+		out << "---" << QtCompat::endl;
+		out << expected_code << QtCompat::endl;*/
+		QCOMPARE(result_code.simplified(), expected_code.simplified());
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
 }
 
 void ProcedureTest::modelReturnsProcedureDepsRefs()

@@ -17,11 +17,4 @@
 <!ATTLIST function protected (false|true) "false">
 <!ATTLIST function sql-disabled (false|true) "false">
 
-<!ELEMENT parameter (type)>
-<!ATTLIST parameter name CDATA #REQUIRED>
-<!ATTLIST parameter default-value CDATA #IMPLIED>
-<!ATTLIST parameter in (true|false) "false">
-<!ATTLIST parameter out (true|false) "false">
-<!ATTLIST parameter variadic (true|false) "false">
-
 <!ELEMENT return-type (type?,parameter*)>
