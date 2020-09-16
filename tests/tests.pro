@@ -14,4 +14,5 @@ src/usermappingtest \
 src/datadicttest \
 src/fileselectortest \
 src/transformtest \
-src/xmlparsertest
+src/xmlparsertest \
+src/proceduretest
