@@ -100,7 +100,7 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 		if(def_type==SchemaParser::SqlDefinition)
 			attributes[Attributes::Language]=language->getName(false);
 		else
-			attributes[Attributes::Language]=language->getCodeDefinition(def_type,true);
+			attributes[Attributes::Language]=language->getCodeDefinition(def_type, true);
 
 		if(language->getName().toLower() == DefaultLanguages::C)
 		{

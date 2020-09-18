@@ -253,12 +253,130 @@ void ProcedureTest::generatesXMLCorrectly()
 
 void ProcedureTest::modelReturnsProcedureDepsRefs()
 {
-	QFAIL("Not implemented!");
+	Procedure proc;
+	Parameter param;
+	DatabaseModel model;
+	Schema *schema = nullptr;
+	Language *lang = nullptr;
+	Role *owner = nullptr;
+	Type type;
+	vector<BaseObject *> deps, refs;
+
+	try
+	{
+		model.createSystemObjects(true);
+		schema = model.getSchema("public");
+		lang = model.getLanguage("sql");
+		owner = model.getRole("postgres");
+
+		type.setName("type_test");
+		type.setSchema(schema);
+		type.setConfiguration(Type::EnumerationType);
+		type.addEnumeration("enum1");
+		type.addEnumeration("enum2");
+		model.addType(&type);
+
+		proc.setOwner(owner);
+		proc.setSchema(schema);
+		proc.setLanguage(lang);
+		proc.setName("procedure");
+		proc.setSourceCode("select 1+1;");
+		proc.setComment("This is a comment!");
+
+		param.setName("p1");
+		param.setType(PgSqlType("public.type_test"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p2");
+		param.setType(PgSqlType("text"));
+		param.setIn(true);
+		param.setOut(true);
+		proc.addParameter(param);
+
+		param.setName("p3");
+		param.setType(PgSqlType("integer"));
+		param.setIn(true);
+		param.setOut(false);
+		proc.addParameter(param);
+
+		param.setName("p4");
+		param.setType(PgSqlType("\"any\""));
+		param.setVariadic(true);
+		proc.addParameter(param);
+
+		model.addProcedure(&proc);
+		model.getObjectReferences(&proc, refs);
+		model.getObjectDependecies(&proc, deps);
+
+		model.removeProcedure(&proc);
+		model.removeType(&type);
+
+		QCOMPARE(refs.size(), 0);
+		QCOMPARE(deps.size(), 5);
+	}
+	catch(Exception &e)
+	{
+		model.removeProcedure(&proc);
+		model.removeType(&type);
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
 }
 
 void ProcedureTest::modelCreatesProcedureFromXML()
 {
-	QFAIL("Not implemented!");
+	Procedure *proc = nullptr;
+	Parameter param;
+	DatabaseModel model;
+
+	QString xml_code = QString("<procedure name=\"procedure\" security-type=\"SECURITY INVOKER\">\n\
+	<schema name=\"public\"/>\n\
+	<role name=\"postgres\"/>\n\
+	<comment><![CDATA[This is a comment!]]></comment>\n\
+	<appended-sql><![CDATA[-- APPENDED SQL --;]]></appended-sql>\n\
+	<prepended-sql><![CDATA[-- PREPENDED SQL --;]]></prepended-sql>\n\
+	<language name=\"sql\"/>\n\
+	<parameter name=\"p1\" in=\"true\">\n\
+		<type name=\"smallint\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p2\" in=\"true\" out=\"true\">\n\
+		<type name=\"text\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p3\" in=\"true\">\n\
+		<type name=\"integer\" length=\"0\"/>\n\
+	</parameter>\n\
+	<parameter name=\"p4\" variadic=\"true\">\n\
+		<type name=\"&quot;any&quot;\" length=\"0\"/>\n\
+	</parameter>\n\
+	<definition><![CDATA[select 1+1;]]></definition>\n\
+</procedure>\n\
+");
+
+	try
+	{
+		model.createSystemObjects(true);
+
+		model.getXMLParser()->setDTDFile(GlobalAttributes::getSchemasRootDir() +
+																		 GlobalAttributes::DirSeparator +
+																		 GlobalAttributes::XMLSchemaDir +
+																		 GlobalAttributes::DirSeparator +
+																		 "dtd" + GlobalAttributes::DirSeparator + "dbmodel.dtd",
+																		 BaseObject::getSchemaName(ObjectType::Procedure));
+		model.getXMLParser()->loadXMLBuffer(xml_code);
+		proc = model.createProcedure();
+
+		QTextStream out(stdout);
+		out << proc->getCodeDefinition(SchemaParser::XmlDefinition) << QtCompat::endl;
+		out << "---" << QtCompat::endl;
+		out << xml_code << QtCompat::endl;
+
+		QCOMPARE(proc->getCodeDefinition(SchemaParser::XmlDefinition).simplified(), xml_code.simplified());
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
 }
 
 QTEST_MAIN(ProcedureTest)
