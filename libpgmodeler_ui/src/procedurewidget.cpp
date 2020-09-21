@@ -22,6 +22,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent): BaseFunctionWidget(parent, Ob
 {
 	try
 	{
+
+		func_config_twg->widget(0)->layout()->addItem(new QSpacerItem(20, 20, QSizePolicy::Preferred, QSizePolicy::Expanding));
 		configureFormLayout(base_function_grid, ObjectType::Procedure);
 
 		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
