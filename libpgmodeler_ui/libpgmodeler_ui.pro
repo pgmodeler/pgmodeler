@@ -12,6 +12,7 @@ SOURCES += src/mainwindow.cpp \
 	src/fileselectorwidget.cpp \
 	   src/modelwidget.cpp \
 	   src/messagebox.cpp \
+    src/procedurewidget.cpp \
 	   src/textboxwidget.cpp \
 	   src/baseobjectwidget.cpp \
 	   src/operationlistwidget.cpp \
@@ -125,6 +126,7 @@ HEADERS += src/mainwindow.h \
 	   src/modelwidget.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
+    src/procedurewidget.h \
 	   src/textboxwidget.h \
 	   src/operationlistwidget.h \
 	   src/modelobjectswidget.h \

@@ -22,7 +22,7 @@
     <height>216</height>
    </size>
   </property>
-  <layout class="QGridLayout" name="function_grid">
+  <layout class="QGridLayout" name="base_function_grid">
    <property name="leftMargin">
     <number>2</number>
    </property>

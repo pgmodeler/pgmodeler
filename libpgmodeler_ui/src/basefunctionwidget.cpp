@@ -20,14 +20,12 @@
 #include "baseform.h"
 #include "defaultlanguages.h"
 
-BaseFunctionWidget::BaseFunctionWidget(QWidget *parent) : QWidget(parent)
+BaseFunctionWidget::BaseFunctionWidget(QWidget *parent, ObjectType obj_type) : BaseObjectWidget(parent, obj_type)
 {
 	try
 	{
 		QGridLayout *grid = nullptr;
 		Ui_BaseFunctionWidget::setupUi(this);
-
-		model = nullptr;
 
 		source_code_txt = new NumberedTextEditor(this, true);
 		dynamic_cast<QGridLayout *>(source_code_frm->layout())->addWidget(source_code_txt, 1, 0, 1, 2);
@@ -52,10 +50,10 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent) : QWidget(parent)
 		security_cmb->addItems(SecurityType::getTypes());
 
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage()));
-		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-		connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
-		setMinimumSize(650, 700);
+		setRequiredField(language_lbl);
+		setRequiredField(symbol_lbl);
+		setRequiredField(library_lbl);
+		setRequiredField(sourc_code_lbl);
 	}
 	catch(Exception &e)
 	{
@@ -63,88 +61,87 @@ BaseFunctionWidget::BaseFunctionWidget(QWidget *parent) : QWidget(parent)
 	}
 }
 
-void BaseFunctionWidget::handleParameter(ObjectsTableWidget *table, Parameter param, int result, bool handle_param_modes)
+void BaseFunctionWidget::handleParameter(ObjectsTableWidget *params_tab, Parameter param, int result, bool handle_param_modes)
 {
-	int row_cnt = 0, row = 0;
+	if(!params_tab) return;
 
-	row_cnt = table->getRowCount();
+	int row_cnt = 0, row = 0;
+	row_cnt = params_tab->getRowCount();
 
 	//Case the user applied the configuration on the parameter editing form
 	if(result == QDialog::Accepted)
 	{
-		row = table->getSelectedRow();
+		row = params_tab->getSelectedRow();
 
 		/* If the row index is negative indicates the row in question is empty, e.g.,
 		the user is not editing an existing row, but adding a new one, so the line to be
 		considered in the table will always be the last recently included */
 		if(row < 0) row = row_cnt-1;
 
-		showParameterData(param, table, row, handle_param_modes);
+		showParameterData(params_tab, param, row, handle_param_modes);
 	}
 	else if(result == QDialog::Rejected)
 	{
 		//Removes the last line from table
-		if(row_cnt > 0 && table->getCellText(row_cnt - 1, 0).isEmpty())
-			table->removeRow(row_cnt - 1);
+		if(row_cnt > 0 && params_tab->getCellText(row_cnt - 1, 0).isEmpty())
+			params_tab->removeRow(row_cnt - 1);
 	}
 }
 
-void BaseFunctionWidget::duplicateParameter(ObjectsTableWidget *table, int curr_row, int new_row, bool dup_param_modes)
+void BaseFunctionWidget::duplicateParameter(ObjectsTableWidget *params_tab, int curr_row, int new_row, bool dup_param_modes)
 {
 	Parameter new_param;
-	new_param = getParameter(table, curr_row, dup_param_modes);
-	showParameterData(new_param, table, new_row, dup_param_modes);
+	new_param = getParameter(params_tab, curr_row, dup_param_modes);
+	new_param.setName(new_param.getName() + QString("_cp"));
+	showParameterData(params_tab, new_param, new_row, dup_param_modes);
 }
 
-void BaseFunctionWidget::showParameterForm(bool enable_param_modes)
+void BaseFunctionWidget::showParameterForm(ObjectsTableWidget *params_tab, bool enable_param_modes)
 {
-	QObject *obj_sender = sender();
-	ObjectsTableWidget *table = nullptr;
+	if(!params_tab) return;
+
 	Parameter aux_param;
-	int lin_idx;
+	int row_idx;
 	ParameterWidget *parameter_wgt = new ParameterWidget;
 	BaseForm parent_form;
-
-	table = dynamic_cast<ObjectsTableWidget *>(obj_sender);
-	if(!table) return;
 
 	parameter_wgt->param_in_chk->setEnabled(enable_param_modes);
 	parameter_wgt->param_out_chk->setEnabled(enable_param_modes);
 	parameter_wgt->param_variadic_chk->setEnabled(enable_param_modes);
 	parameter_wgt->default_value_edt->setEnabled(enable_param_modes);
 
-	lin_idx=table->getSelectedRow();
+	row_idx=params_tab->getSelectedRow();
 
-	if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
-		aux_param = getParameter(table, lin_idx, enable_param_modes);
+	if(row_idx >= 0 && !params_tab->getCellText(row_idx, 0).isEmpty())
+		aux_param = getParameter(params_tab, row_idx, enable_param_modes);
 
 	parameter_wgt->setAttributes(aux_param, model);
 	parent_form.setMainWidget(parameter_wgt);
 	parent_form.exec();
 
-	aux_param=parameter_wgt->getParameter();
-	handleParameter(table, aux_param, parent_form.result(), enable_param_modes);
+	aux_param = parameter_wgt->getParameter();
+	handleParameter(params_tab, aux_param, parent_form.result(), enable_param_modes);
 }
 
-Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row, bool set_param_modes)
+Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes)
 {
 	Parameter param;
 
-	if(!tab)
+	if(params_tab)
 	{
 		try
 		{
 			QString param_modes;
-			param.setName(tab->getCellText(row,0));
-			param.setType(tab->getRowData(row).value<PgSqlType>());
+			param.setName(params_tab->getCellText(row,0));
+			param.setType(params_tab->getRowData(row).value<PgSqlType>());
 
 			if(set_param_modes)
 			{
-				param_modes = tab->getCellText(row, 2);
+				param_modes = params_tab->getCellText(row, 2);
 				param.setIn(param_modes.contains("IN"));
 				param.setOut(param_modes.contains("OUT"));
 				param.setVariadic(param_modes == "VARIADIC");
-				param.setDefaultValue(tab->getCellText(row, 3));
+				param.setDefaultValue(params_tab->getCellText(row, 3));
 			}
 		}
 		catch(Exception &e)
@@ -156,29 +153,23 @@ Parameter BaseFunctionWidget::getParameter(ObjectsTableWidget *tab, unsigned row
 	return param;
 }
 
-void BaseFunctionWidget::showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row, bool show_param_modes)
+void BaseFunctionWidget::showParameterData(ObjectsTableWidget *params_tab, Parameter param, unsigned row, bool show_param_modes)
 {
-	if(tab)
+	if(!params_tab) return;
+
+	params_tab->setCellText(param.getName(), row, 0);
+	params_tab->setCellText(*param.getType(), row, 1);
+	params_tab->setRowData(QVariant::fromValue<PgSqlType>(param.getType()), row);
+
+	if(show_param_modes)
 	{
-		QString param_modes;
-
-		tab->setCellText(param.getName(), row, 0);
-		tab->setCellText(*param.getType(), row, 1);
-		tab->setRowData(QVariant::fromValue<PgSqlType>(param.getType()), row);
-
-		if(show_param_modes)
-		{
-			tab->setCellText(param.getModeString(), row, 2);
-			tab->setCellText(param.getDefaultValue(), row, 3);
-		}
+		params_tab->setCellText(param.getModeString(), row, 2);
+		params_tab->setCellText(param.getDefaultValue(), row, 3);
 	}
 }
 
-void BaseFunctionWidget::setAttributes(DatabaseModel *model, BaseFunction *func)
+void BaseFunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, BaseFunction *func)
 {
-	if(!model)
-		return;
-
 	vector<BaseObject *> languages;
 	Language *lang = nullptr;
 	QStringList list;
@@ -186,7 +177,7 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, BaseFunction *func)
 	Parameter param;
 	PgSqlType aux_type;
 
-	this->model = model;
+	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages = model->getObjects(ObjectType::Language);
 
 	while(!languages.empty())
@@ -212,7 +203,7 @@ void BaseFunctionWidget::setAttributes(DatabaseModel *model, BaseFunction *func)
 		{
 			parameters_tab->addRow();
 			param = func->getParameter(i);
-			showParameterData(param, parameters_tab, i, true);
+			showParameterData(parameters_tab, param, i, true);
 		}
 
 		parameters_tab->clearSelection();

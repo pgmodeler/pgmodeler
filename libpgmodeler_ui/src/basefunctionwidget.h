@@ -27,18 +27,18 @@ treat other attribute of those classes.
 #ifndef BASE_FUNCTION_WIDGET_H
 #define BASE_FUNCTION_WIDGET_H
 
+#include "baseobjectwidget.h"
 #include "ui_basefunctionwidget.h"
 #include "objectstablewidget.h"
 #include "codecompletionwidget.h"
 #include "parameterwidget.h"
 #include "numberedtexteditor.h"
 
-class BaseFunctionWidget: public QWidget, public Ui::BaseFunctionWidget  {
-	protected:
+class BaseFunctionWidget: public BaseObjectWidget, public Ui::BaseFunctionWidget  {
+	private:
 		Q_OBJECT
 
-		DatabaseModel *model;
-
+	protected:
 		NumberedTextEditor *source_code_txt;
 
 		//! \brief Function's source code highlighter
@@ -51,20 +51,13 @@ class BaseFunctionWidget: public QWidget, public Ui::BaseFunctionWidget  {
 		ObjectsTableWidget *parameters_tab;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
-		Parameter getParameter(ObjectsTableWidget *tab, unsigned row, bool set_param_modes);
+		Parameter getParameter(ObjectsTableWidget *params_tab, unsigned row, bool set_param_modes);
 
 		//! \brief Shows the parameter data on the specified table at the specified line
-		void showParameterData(Parameter param, ObjectsTableWidget *tab, unsigned row, bool show_param_modes);
-
-		//! \brief Sets up the database model instance and function in order to fill the fields correctly
-		void setAttributes(DatabaseModel *model, BaseFunction *func);
-
-		/*! \brief Selects the language used by the function and if available loads the
-		syntax highlight configuration for the selected language. */
-		void selectLanguage();
+		void showParameterData(ObjectsTableWidget *param_tab, Parameter param, unsigned row, bool show_param_modes);
 
 		//! \brief Shows the parameter configuration form
-		void showParameterForm(bool enable_param_modes);
+		void showParameterForm(ObjectsTableWidget *params_tab, bool enable_param_modes);
 
 		//! \brief Shows the configured parameter on the table that called the form
 		void handleParameter(ObjectsTableWidget *table, Parameter param, int result, bool handle_param_modes);
@@ -76,7 +69,14 @@ class BaseFunctionWidget: public QWidget, public Ui::BaseFunctionWidget  {
 		void applyBasicConfiguration(BaseFunction *func);
 
 	public:
-		BaseFunctionWidget(QWidget * parent = nullptr);
+		BaseFunctionWidget(QWidget * parent, ObjectType obj_type);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, BaseFunction *func);
+
+	private slots:
+		/*! \brief Selects the language used by the function and if available loads the
+		syntax highlight configuration for the selected language. */
+		void selectLanguage();
 };
 
 #endif
