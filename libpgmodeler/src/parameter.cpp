@@ -91,6 +91,21 @@ bool Parameter::isVariadic()
 	return is_variadic;
 }
 
+QString Parameter::getModeString()
+{
+	QString mode;
+
+	if(is_variadic)
+		mode = "VARIADIC";
+	else
+	{
+		if(is_in) mode = "IN";
+		if(is_out) mode += "OUT";
+	}
+
+	return mode;
+}
+
 void Parameter::operator = (const Parameter &param)
 {
 	this->obj_name=param.obj_name;
