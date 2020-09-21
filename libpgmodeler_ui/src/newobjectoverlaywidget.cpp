@@ -18,6 +18,7 @@
 
 #include "newobjectoverlaywidget.h"
 #include "modelwidget.h"
+#include "pgmodeleruins.h"
 
 NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(parent)
 {
@@ -61,7 +62,8 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 										{ server_tb,       std::make_tuple(tr("6"), ObjectType::ForeignServer) },
 										{ user_mapping_tb, std::make_tuple(tr("5"), ObjectType::UserMapping) },
 										{ foreigntable_tb, std::make_tuple(tr("4"), ObjectType::ForeignTable) },
-										{ transform_tb,    std::make_tuple(tr("3"), ObjectType::Transform) }};
+										{ transform_tb,    std::make_tuple(tr("3"), ObjectType::Transform) },
+										{ procedure_tb,    std::make_tuple(tr("2"), ObjectType::Procedure) }};
 
 	map<QToolButton *, tuple<QString, int>> rel_shortcuts={
 										{ rel11_tb,  std::make_tuple(tr("1"), 0) },
@@ -79,6 +81,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		obj_type=std::get<1>(itr.second);
 
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
@@ -91,6 +94,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		shortcut=std::get<0>(itr.second);
 		action_idx=std::get<1>(itr.second);
 
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
 
@@ -105,6 +109,7 @@ NewObjectOverlayWidget::NewObjectOverlayWidget(ModelWidget *parent): QWidget(par
 		button=itr;
 		button->setText(shortcut + QString(": ") + button->text());
 		button->setShortcut(QKeySequence(shortcut));
+		PgModelerUiNs::configureWidgetFont(button, PgModelerUiNs::BigFontFactor);
 
 		connect(button, SIGNAL(clicked()), this, SLOT(hide()));
 		connect(button, SIGNAL(clicked()), parent->action_edit_perms, SLOT(trigger()));
