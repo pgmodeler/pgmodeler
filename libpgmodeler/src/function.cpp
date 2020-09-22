@@ -110,6 +110,7 @@ void Function::setReturnType(PgSqlType type)
 {
 	setCodeInvalidated(return_type != type);
 	return_type=type;
+	ret_table_columns.clear();
 }
 
 void Function::setFunctionType(FunctionType func_type)
@@ -121,7 +122,8 @@ void Function::setFunctionType(FunctionType func_type)
 void Function::setReturnSetOf(bool value)
 {
 	setCodeInvalidated(returns_setof != value);
-	returns_setof=value;
+	returns_setof = value;
+	ret_table_columns.clear();
 }
 
 void Function::setWindowFunction(bool value)
