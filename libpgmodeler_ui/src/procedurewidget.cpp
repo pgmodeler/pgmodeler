@@ -20,23 +20,15 @@
 
 ProcedureWidget::ProcedureWidget(QWidget *parent): BaseFunctionWidget(parent, ObjectType::Procedure)
 {
-	try
-	{
+	func_config_twg->widget(0)->layout()->addItem(new QSpacerItem(20, 20, QSizePolicy::Preferred, QSizePolicy::Expanding));
+	configureFormLayout(base_function_grid, ObjectType::Procedure);
 
-		func_config_twg->widget(0)->layout()->addItem(new QSpacerItem(20, 20, QSizePolicy::Preferred, QSizePolicy::Expanding));
-		configureFormLayout(base_function_grid, ObjectType::Procedure);
+	connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
+	connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+	connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
 
-		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
-		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
-		connect(parameters_tab, SIGNAL(s_rowDuplicated(int,int)), this, SLOT(duplicateParameter(int,int)));
-
-		configureTabOrder();
-		setMinimumSize(650, 700);
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
+	configureTabOrder();
+	setMinimumSize(650, 700);
 }
 
 void ProcedureWidget::handleParameter(Parameter param, int result)

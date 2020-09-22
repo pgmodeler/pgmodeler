@@ -59,7 +59,7 @@
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
-      <layout class="QVBoxLayout" name="attributes_layout">
+      <layout class="QVBoxLayout" name="attributes_vbox">
        <property name="spacing">
         <number>6</number>
        </property>
@@ -102,29 +102,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="language_cmb">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" colspan="2">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>348</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="security_lbl">
            <property name="maximumSize">
@@ -151,7 +128,17 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="3">
+         <item row="0" column="1" colspan="2">
+          <widget class="QComboBox" name="language_cmb">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" rowspan="2">
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
