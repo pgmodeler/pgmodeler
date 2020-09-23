@@ -309,13 +309,6 @@ QString Function::getAlterDefinition(BaseObject *object)
 
 void Function::configureSearchAttributes()
 {
-	QStringList param_types;
-
-	BaseObject::configureSearchAttributes();
+	BaseFunction::configureSearchAttributes();
 	search_attribs[Attributes::ReturnType] = ret_table_columns.empty() ? *return_type : "";
-
-	for(auto &param : parameters)
-		param_types += *param.getType();
-
-	search_attribs[Attributes::Type] = param_types.join("; ");
 }

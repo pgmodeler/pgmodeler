@@ -60,7 +60,7 @@ class BaseFunction: public BaseObject {
 		//! \brief Formats the basic function's attributes to used in the code generation
 		void setBasicFunctionAttributes(unsigned def_type);
 
-		virtual void configureSearchAttributes() = 0;
+		virtual void configureSearchAttributes();
 
 	public:
 		BaseFunction();
@@ -127,6 +127,8 @@ class BaseFunction: public BaseObject {
 		 this formating is always done. */
 		void createSignature(bool format=true, bool prepend_schema=true);
 
+		virtual QString getCodeDefinition(unsigned def_type, bool) = 0;
+		virtual QString getCodeDefinition(unsigned def_type) = 0;
 		virtual QString getAlterDefinition(BaseObject *object) = 0;
 };
 

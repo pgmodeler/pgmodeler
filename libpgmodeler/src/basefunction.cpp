@@ -114,6 +114,18 @@ void BaseFunction::setBasicFunctionAttributes(unsigned def_type)
 	attributes[Attributes::Signature]=signature;
 }
 
+void BaseFunction::configureSearchAttributes()
+{
+	QStringList param_types;
+
+	BaseObject::configureSearchAttributes();
+
+	for(auto &param : parameters)
+		param_types += *param.getType();
+
+	search_attribs[Attributes::Type] = param_types.join("; ");
+}
+
 void BaseFunction::setLibrary(const QString &library)
 {
 	if(language->getName().toLower() != DefaultLanguages::C)

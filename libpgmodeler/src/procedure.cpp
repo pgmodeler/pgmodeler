@@ -31,11 +31,6 @@ void Procedure::addParameter(Parameter param)
 	BaseFunction::addParameter(param);
 }
 
-void Procedure::configureSearchAttributes()
-{
-
-}
-
 QString Procedure::getCodeDefinition(unsigned def_type, bool)
 {
 	QString code_def = getCachedCode(def_type, false);
@@ -51,7 +46,36 @@ QString Procedure::getCodeDefinition(unsigned def_type)
 	return getCodeDefinition(def_type, false);
 }
 
-QString Procedure::getAlterDefinition(BaseObject *)
+QString Procedure::getAlterDefinition(BaseObject *object)
 {
-	return "";
+	Procedure *proc = dynamic_cast<Procedure *>(object);
+
+	if(!proc)
+		throw Exception(ErrorCode::OprNotAllocatedObject,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	try
+	{
+		attribs_map attribs;
+
+		attributes[Attributes::AlterCmds]=BaseObject::getAlterDefinition(object);
+
+		if(this->source_code.simplified() != proc->source_code.simplified() ||
+			 this->library != proc->library || this->symbol != proc->symbol)
+		{
+			attribs[Attributes::Definition] = proc->getCodeDefinition(SchemaParser::SqlDefinition);
+			attribs[Attributes::Definition].replace(QString("CREATE PROCEDURE").arg(this->getSQLName()), QString("CREATE OR REPLACE PROCEDURE"));
+		}
+		else
+		{
+			if(this->security_type != proc->security_type)
+				attribs[Attributes::SecurityType] = ~proc->security_type;
+		}
+
+		copyAttributes(attribs);
+		return BaseObject::getAlterDefinition(this->getSchemaName(), attributes, false, true);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }

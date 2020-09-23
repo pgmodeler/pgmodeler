@@ -357,15 +357,23 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	}
 
 	/* Raises an error if there is an object with the same name.
-		 Special cases are for: functions/operator that are search by signature and views
-		 that are search on tables and views list */
-	if(((obj_type==ObjectType::View ||
+	 * The first checking is for duplicated functions/procedures */
+	if(((obj_type==ObjectType::Function ||
+			 obj_type==ObjectType::Procedure) &&
+			(getObject(object->getSignature(), ObjectType::Function, idx) ||
+			 getObject(object->getSignature(), ObjectType::Procedure, idx))) ||
+
+		 /* If the object is a child of BaseTable we check if there're other
+			* tables with the same name */
+		 ((obj_type==ObjectType::View ||
 			 obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::ForeignTable) &&
 			(getObject(object->getName(true), ObjectType::View, idx) ||
 			 getObject(object->getName(true), ObjectType::Table, idx) ||
 			 getObject(object->getName(true), ObjectType::ForeignTable, idx))) ||
+
 			(obj_type==ObjectType::Extension &&	(getObject(object->getName(false), obj_type, idx))) ||
+
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
