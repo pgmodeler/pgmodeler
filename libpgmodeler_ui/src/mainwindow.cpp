@@ -135,8 +135,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		//Enables the action to restore session when there are registered session files
 		action_restore_session->setEnabled(!prev_session_files.isEmpty());
 		central_wgt->last_session_tb->setEnabled(action_restore_session->isEnabled());
-
-
 	}
 	catch(Exception &e)
 	{
@@ -437,12 +435,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 															 action_show_delimiters->isChecked());
 
 	//Hiding/showing the main menu bar depending on the retrieved conf
-	main_menu_mb->setVisible(confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True);
+	bool show_main_menu = confs[Attributes::Configuration][Attributes::ShowMainMenu]==Attributes::True;
+	main_menu_mb->setVisible(show_main_menu);
 
-	if(main_menu_mb->isVisible())
+	if(show_main_menu)
 		file_menu->addAction(action_hide_main_menu);
 
-	action_main_menu->setVisible(!main_menu_mb->isVisible());
+	action_main_menu->setVisible(!show_main_menu);
 #endif
 
 	restoreDockWidgetsSettings();
@@ -608,10 +607,10 @@ void MainWindow::stopTimers(bool value)
 	}
 	else
 	{
-        tmpmodel_save_timer.start();
+		tmpmodel_save_timer.start();
 
-        if(model_save_timer.interval() < InfinityInterval)
-            model_save_timer.start();
+		if(model_save_timer.interval() < InfinityInterval)
+			model_save_timer.start();
 	}
 }
 
@@ -1337,8 +1336,8 @@ void MainWindow::applyConfigurations()
 		if(!conf_wgt->autosave_interv_chk->isChecked())
 		{
 			//Stop the save timer
-            model_save_timer.setInterval(InfinityInterval);
-            model_save_timer.stop();
+			model_save_timer.setInterval(InfinityInterval);
+			model_save_timer.stop();
 		}
 		else
 		{
@@ -1347,7 +1346,7 @@ void MainWindow::applyConfigurations()
 		}
 
 		//Temporary models are saved every five minutes
-        tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
+		tmpmodel_save_timer.setInterval(model_save_timer.interval() < InfinityInterval ? model_save_timer.interval()/2 : 300000);
 		tmpmodel_save_timer.start();
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
