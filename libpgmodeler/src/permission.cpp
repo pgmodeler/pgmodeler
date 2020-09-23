@@ -61,7 +61,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			obj_type==ObjectType::Aggregate || obj_type==ObjectType::Language || obj_type==ObjectType::Schema ||
 			obj_type==ObjectType::Tablespace || obj_type==ObjectType::Domain || obj_type==ObjectType::Type ||
 			obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
-			obj_type==ObjectType::ForeignTable);
+			obj_type==ObjectType::ForeignTable || obj_type == ObjectType::Procedure);
 
 
 	//Validating privilege
@@ -78,6 +78,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 			Sequence:  USAGE | SELECT | UPDATE
 			Database: CREATE | CONNECT | TEMPORARY | TEMP
 			Function: EXECUTE
+			Procedure: EXECUTE
 			Aggregate: EXECUTE
 			Linguage: USAGE
 			Schema: CREATE | USAGE
@@ -103,7 +104,7 @@ bool Permission::acceptsPermission(ObjectType obj_type, int privilege)
 				(obj_type==ObjectType::Database &&
 				 (priv_id==PrivCreate || priv_id==PrivConnect ||	priv_id==PrivTemporary)) ||
 
-				((obj_type==ObjectType::Function || obj_type==ObjectType::Aggregate) && priv_id==PrivExecute) ||
+				((obj_type==ObjectType::Function || obj_type==ObjectType::Aggregate || obj_type == ObjectType::Procedure) && priv_id==PrivExecute) ||
 
 				((obj_type==ObjectType::Language || obj_type==ObjectType::Type || obj_type==ObjectType::Domain) && priv_id==PrivUsage) ||
 

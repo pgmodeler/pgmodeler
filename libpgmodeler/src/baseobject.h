@@ -67,6 +67,7 @@ enum class ObjectType: unsigned {
 	ForeignTable,
 	UserMapping,
 	Transform,
+	Procedure,
 	Relationship,
 	Textbox,
 	Permission,

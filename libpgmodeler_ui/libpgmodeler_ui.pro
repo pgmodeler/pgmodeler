@@ -7,10 +7,12 @@ windows:RCC_DIR += src
 windows:DESTDIR = $$PWD
 
 SOURCES += src/mainwindow.cpp \
+    src/basefunctionwidget.cpp \
 	src/changelogwidget.cpp \
 	src/fileselectorwidget.cpp \
 	   src/modelwidget.cpp \
 	   src/messagebox.cpp \
+    src/procedurewidget.cpp \
 	   src/textboxwidget.cpp \
 	   src/baseobjectwidget.cpp \
 	   src/operationlistwidget.cpp \
@@ -118,11 +120,13 @@ SOURCES += src/mainwindow.cpp \
 
 
 HEADERS += src/mainwindow.h \
+    src/basefunctionwidget.h \
 	src/changelogwidget.h \
 	src/fileselectorwidget.h \
 	   src/modelwidget.h \
 	   src/messagebox.h \
 	   src/baseobjectwidget.h \
+    src/procedurewidget.h \
 	   src/textboxwidget.h \
 	   src/operationlistwidget.h \
 	   src/modelobjectswidget.h \
@@ -228,6 +232,7 @@ HEADERS += src/mainwindow.h \
 	src/objectsfilterwidget.h
 
 FORMS += ui/mainwindow.ui \
+    ui/basefunctionwidget.ui \
 	ui/changelogwidget.ui \
 	ui/fileselectorwidget.ui \
 	ui/objectsfilterwidget.ui \

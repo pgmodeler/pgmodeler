@@ -133,6 +133,7 @@ class DatabaseImportHelper: public QObject {
 		
 		SchemaParser schparser;
 		
+		void configureBaseFunctionAttribs(attribs_map &attribs);
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
 		void createTablespace(attribs_map &attribs);
@@ -165,6 +166,7 @@ class DatabaseImportHelper: public QObject {
 		void createUserMapping(attribs_map &attribs);
 		void createForeignTable(attribs_map &attribs);
 		void createTransform(attribs_map &attribs);
+		void createProcedure(attribs_map &attribs);
 		void __createTableInheritances();
 		void createTableInheritances();
 		void createTablePartitionings();

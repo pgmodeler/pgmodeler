@@ -46,6 +46,8 @@ class Parameter: public Column {
 		bool isOut();
 		bool isVariadic();
 
+		QString getModeString();
+
 		//! \brief Returns the SQL / XML code definition for the parameter
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;

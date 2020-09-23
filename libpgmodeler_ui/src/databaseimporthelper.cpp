@@ -761,6 +761,7 @@ void DatabaseImportHelper::createObject(attribs_map &attribs)
 				case ObjectType::UserMapping: createUserMapping(attribs); break;
 				case ObjectType::ForeignTable: createForeignTable(attribs); break;
 				case ObjectType::Transform: createTransform(attribs); break;
+				case ObjectType::Procedure: createProcedure(attribs); break;
 
 				default:
 					if(debug_mode)
@@ -1092,46 +1093,45 @@ void DatabaseImportHelper::createExtension(attribs_map &attribs)
 	}
 }
 
-void DatabaseImportHelper::createFunction(attribs_map &attribs)
+void DatabaseImportHelper::configureBaseFunctionAttribs(attribs_map &attribs)
 {
-	Function *func=nullptr;
 	Parameter param;
 	PgSqlType type;
-	unsigned dim=0;
+	unsigned dim = 0;
 	QStringList param_types, param_names, param_modes,
 			param_def_vals, param_xmls, used_names;
-	QString param_tmpl_name=QString("_param%1"), pname;
+	QString param_tmpl_name = QString("_param%1"), pname;
 	vector<Parameter> parameters;
 
 	try
 	{
-		param_types=getTypes(attribs[Attributes::ArgTypes], false);
-		param_names=Catalog::parseArrayValues(attribs[Attributes::ArgNames]);		
-		param_modes=Catalog::parseArrayValues(attribs[Attributes::ArgModes]);
-		param_def_vals=Catalog::parseDefaultValues(attribs[Attributes::ArgDefaults]);
+		param_types = getTypes(attribs[Attributes::ArgTypes], false);
+		param_names = Catalog::parseArrayValues(attribs[Attributes::ArgNames]);
+		param_modes = Catalog::parseArrayValues(attribs[Attributes::ArgModes]);
+		param_def_vals = Catalog::parseDefaultValues(attribs[Attributes::ArgDefaults]);
 
 		for(int i=0; i < param_types.size(); i++)
 		{
 			/* If the function is to be used as a user-defined data type support functions
 				 the parameter type will be renamed to "any" (see rules on Type::setFunction()) */
 			if(i==0 &&
-					(attribs[Attributes::RefType]==Attributes::SendFunc ||
-					 attribs[Attributes::RefType]==Attributes::OutputFunc ||
-					 attribs[Attributes::RefType]==Attributes::CanonicalFunc))
+					(attribs[Attributes::RefType] == Attributes::SendFunc ||
+					 attribs[Attributes::RefType] == Attributes::OutputFunc ||
+					 attribs[Attributes::RefType] == Attributes::CanonicalFunc))
 				type=PgSqlType(QString("\"any\""));
 			else
 			{
 				//If the type contains array descriptor [] set the dimension to 1
-				dim=(param_types[i].contains(QString("[]")) ? 1 : 0);
+				dim = (param_types[i].contains(QString("[]")) ? 1 : 0);
 
 				//Create the type
 				param_types[i].remove(QString("[]"));
-				type=PgSqlType::parseString(param_types[i]);
+				type = PgSqlType::parseString(param_types[i]);
 				type.setDimension(dim);
 			}
 
 			//Alocates a new parameter
-			param=Parameter();
+			param = Parameter();
 			param.setType(type);
 
 			if(!param_names.isEmpty())
@@ -1144,21 +1144,21 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				 * so we solve this duplication in order the function to
 				 * be created correctly */
 				else if(used_names.indexOf(pname) >= 0)
-					param.setName(QString("%1%2").arg(pname).arg(i+1));
+					param.setName(QString("%1%2").arg(pname).arg(i + 1));
 				else
 					param.setName(pname);
 			}
 			else
-				param.setName(param_tmpl_name.arg(i+1));
+				param.setName(param_tmpl_name.arg(i + 1));
 
 			used_names.append(param.getName());
 
 			//Parameter modes: i = IN, o = OUT, b = INOUT, v = VARIADIC
 			if(!param_modes.isEmpty())
 			{
-				param.setIn(param_modes[i]==QString("i") || param_modes[i]==QString("b"));
-				param.setOut(param_modes[i]==QString("o") || param_modes[i]==QString("b"));
-				param.setVariadic(param_modes[i]==QString("v"));
+				param.setIn(param_modes[i] == QString("i") || param_modes[i] == QString("b"));
+				param.setOut(param_modes[i] == QString("o") || param_modes[i] == QString("b"));
+				param.setVariadic(param_modes[i] == QString("v"));
 			}
 
 			//If the mode is 't' indicates that the current parameter will be used as a return table colum
@@ -1190,13 +1190,13 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 				param_xmls.push_front(param.getCodeDefinition(SchemaParser::XmlDefinition));
 			}
 
-			attribs[Attributes::Parameters]+=param_xmls.join(QChar('\n'));
+			attribs[Attributes::Parameters] += param_xmls.join(QChar('\n'));
 		}
 
 		//Case the function's language is C the symbol is the 'definition' attribute
 		if(getObjectName(attribs[Attributes::Language]).toLower() == DefaultLanguages::C)
 		{
-			attribs[Attributes::Symbol]=attribs[Attributes::Definition];
+			attribs[Attributes::Symbol] = attribs[Attributes::Definition];
 			attribs[Attributes::Definition]="";
 		}
 		else
@@ -1213,30 +1213,63 @@ void DatabaseImportHelper::createFunction(attribs_map &attribs)
 		}
 
 		//Get the language reference code
-		attribs[Attributes::Language]=getDependencyObject(attribs[Attributes::Language], ObjectType::Language);
+		attribs[Attributes::Language] = getDependencyObject(attribs[Attributes::Language], ObjectType::Language);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+	}
+}
+
+void DatabaseImportHelper::createFunction(attribs_map &attribs)
+{
+	Function *func=nullptr;
+
+	try
+	{
+		configureBaseFunctionAttribs(attribs);
 
 		//Get the return type if there is no return table configured
 		if(attribs[Attributes::ReturnTable].isEmpty())
 		{
 			/* If the function is to be used as a user-defined data type support functions
 				 the return type will be renamed to "any" (see rules on Type::setFunction()) */
-			if(attribs[Attributes::RefType]==Attributes::InputFunc ||
-					attribs[Attributes::RefType]==Attributes::RecvFunc ||
-					attribs[Attributes::RefType]==Attributes::CanonicalFunc)
-				attribs[Attributes::ReturnType]=PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
+			if(attribs[Attributes::RefType] == Attributes::InputFunc ||
+					attribs[Attributes::RefType] == Attributes::RecvFunc ||
+					attribs[Attributes::RefType] == Attributes::CanonicalFunc)
+				attribs[Attributes::ReturnType] = PgSqlType(QString("\"any\"")).getCodeDefinition(SchemaParser::XmlDefinition);
 			else
-				attribs[Attributes::ReturnType]=getType(attribs[Attributes::ReturnType], true);
+				attribs[Attributes::ReturnType] = getType(attribs[Attributes::ReturnType], true);
 		}
 
 		loadObjectXML(ObjectType::Function, attribs);
-		func=dbmodel->createFunction();
+		func = dbmodel->createFunction();
 		dbmodel->addFunction(func);
 	}
 	catch(Exception &e)
 	{
 		if(func) delete func;
 		throw Exception(e.getErrorMessage(), e.getErrorCode(),
-						__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
+	}
+}
+
+void DatabaseImportHelper::createProcedure(attribs_map &attribs)
+{
+	Procedure *proc=nullptr;
+
+	try
+	{
+		configureBaseFunctionAttribs(attribs);
+		loadObjectXML(ObjectType::Procedure, attribs);
+		proc = dbmodel->createProcedure();
+		dbmodel->addProcedure(proc);
+	}
+	catch(Exception &e)
+	{
+		if(proc) delete proc;
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),
+										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, xmlparser->getXMLBuffer());
 	}
 }
 
@@ -2924,11 +2957,14 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 				obj_name.prepend(sch_name + QString("."));
 
 			//Formatting the name in form of signature (only for functions and operators)
-			if(signature_form && (obj_type==ObjectType::Function || obj_type==ObjectType::Operator || obj_type==ObjectType::Aggregate || obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass))
+			if(signature_form &&
+				 (obj_type==ObjectType::Function || obj_type==ObjectType::Procedure ||
+					obj_type==ObjectType::Operator || obj_type==ObjectType::Aggregate ||
+					obj_type==ObjectType::OpFamily || obj_type==ObjectType::OpClass))
 			{
 				QStringList params;
 
-				if(obj_type==ObjectType::Function)
+				if(obj_type==ObjectType::Function || obj_type==ObjectType::Procedure)
 				{
 					QStringList arg_types=getTypes(obj_attr[Attributes::ArgTypes], false),
 							arg_modes=Catalog::parseArrayValues(obj_attr[Attributes::ArgModes]);
@@ -2939,10 +2975,8 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 							params.push_back(arg_types[i]);
 						else if(arg_modes[i]!=QString("t") && arg_modes[i]!=QString("o"))
 						{
-							if(arg_modes[i]==QString("i"))
-								params.push_back(/* QString("IN ") + */ arg_types[i]);
-							else if(arg_modes[i]==QString("b"))
-								params.push_back(QString("INOUT ") + arg_types[i]);
+							if(arg_modes[i]==QString("i") || arg_modes[i]==QString("b"))
+								params.push_back(arg_types[i]);
 							else
 								params.push_back(QString("VARIADIC ") + arg_types[i]);
 						}

@@ -34,7 +34,7 @@ const QString BaseObject::objs_schemas[BaseObject::ObjectTypeCount]={
 	"opfamily", "opclass", "database","collation",
 	"extension", "eventtrigger", "policy", "foreigndatawrapper",
 	"foreignserver", "foreigntable", "usermapping", "transform",
-	"relationship", "textbox", "permission", "parameter",
+	"procedure", "relationship", "textbox", "permission", "parameter",
 	"typeattribute", "tag", "genericsql", "relationship"
 };
 
@@ -49,9 +49,10 @@ const QString BaseObject::obj_type_names[BaseObject::ObjectTypeCount]={
 	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Extension"),
 	QT_TR_NOOP("Event Trigger"), QT_TR_NOOP("Policy"),	QT_TR_NOOP("Foreign Data Wrapper"),
 	QT_TR_NOOP("Foreign Server"),	QT_TR_NOOP("Foreign Table"), QT_TR_NOOP("User Mapping"),
-	QT_TR_NOOP("Transform"), QT_TR_NOOP("Relationship"), QT_TR_NOOP("Textbox"),
-	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"), QT_TR_NOOP("Type Attribute"),
-	QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"), QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Transform"), QT_TR_NOOP("Procedure"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Textbox"),	QT_TR_NOOP("Permission"),	QT_TR_NOOP("Parameter"),
+	QT_TR_NOOP("Type Attribute"), QT_TR_NOOP("Tag"), QT_TR_NOOP("Generic SQL"),
+	QT_TR_NOOP("Basic Relationship")
 };
 
 const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
@@ -63,7 +64,8 @@ const QString BaseObject::objs_sql[BaseObject::ObjectTypeCount]={
 	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
 	"COLLATION", "EXTENSION", "EVENT TRIGGER",
 	"POLICY", "FOREIGN DATA WRAPPER", "SERVER",
-	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM"
+	"FOREIGN TABLE", "USER MAPPING", "TRANSFORM",
+	"PROCEDURE"
 };
 
 /* Initializes the global id which is shared between instances
@@ -401,7 +403,8 @@ bool BaseObject::acceptsSchema(ObjectType obj_type)
 			 obj_type==ObjectType::Sequence || obj_type==ObjectType::Conversion ||
 			 obj_type==ObjectType::Type || obj_type==ObjectType::OpClass ||
 			 obj_type==ObjectType::OpFamily || obj_type==ObjectType::Collation ||
-			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable);
+			 obj_type==ObjectType::Extension || obj_type==ObjectType::ForeignTable ||
+			 obj_type == ObjectType::Procedure);
 }
 
 bool BaseObject::acceptsSchema()
@@ -421,7 +424,7 @@ bool BaseObject::acceptsOwner(ObjectType obj_type)
 			 obj_type==ObjectType::Collation  || obj_type==ObjectType::View ||
 			 obj_type==ObjectType::EventTrigger || obj_type==ObjectType::ForeignDataWrapper  ||
 			 obj_type==ObjectType::ForeignServer || obj_type==ObjectType::UserMapping ||
-			 obj_type==ObjectType::ForeignTable);
+			 obj_type==ObjectType::ForeignTable || obj_type==ObjectType::Procedure);
 }
 
 bool BaseObject::acceptsOwner()
@@ -474,7 +477,8 @@ bool BaseObject::acceptsAlterCommand(ObjectType obj_type)
 				 obj_type==ObjectType::Table || obj_type==ObjectType::Tablespace ||
 				 obj_type==ObjectType::Type || obj_type==ObjectType::Policy ||
 				 obj_type==ObjectType::ForeignDataWrapper || obj_type==ObjectType::ForeignServer ||
-				 obj_type==ObjectType::UserMapping || obj_type==ObjectType::ForeignTable);
+				 obj_type==ObjectType::UserMapping || obj_type==ObjectType::ForeignTable ||
+				 obj_type==ObjectType::Procedure);
 }
 
 bool BaseObject::acceptsDropCommand(ObjectType obj_type)
@@ -977,10 +981,10 @@ vector<ObjectType> BaseObject::getObjectTypes(bool inc_table_objs, vector<Object
 {
 	vector<ObjectType> vet_types={ ObjectType::BaseRelationship, ObjectType::Aggregate, ObjectType::Cast, ObjectType::Collation,
 									 ObjectType::Conversion, ObjectType::Database, ObjectType::Domain, ObjectType::Extension, ObjectType::EventTrigger,
-									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::GenericSql, ObjectType::Language, ObjectType::OpClass,
-									 ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission, ObjectType::Relationship, ObjectType::Role, ObjectType::Schema,
-									 ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,  ObjectType::Tag, ObjectType::Textbox,
-									 ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable, ObjectType::Transform };
+									 ObjectType::ForeignDataWrapper, ObjectType::ForeignServer, ObjectType::Function, ObjectType::Procedure, ObjectType::GenericSql,
+									 ObjectType::Language, ObjectType::OpClass, ObjectType::Operator, ObjectType::OpFamily, ObjectType::Permission,
+									 ObjectType::Relationship, ObjectType::Role, ObjectType::Schema, ObjectType::Sequence, ObjectType::Table, ObjectType::Tablespace,
+									 ObjectType::Tag, ObjectType::Textbox, ObjectType::Type, ObjectType::UserMapping, ObjectType::View, ObjectType::ForeignTable, ObjectType::Transform };
 	vector<ObjectType>::iterator itr;
 
 	if(inc_table_objs)
@@ -1014,7 +1018,7 @@ vector<ObjectType> BaseObject::getChildObjectTypes(ObjectType obj_type)
 	if(obj_type==ObjectType::Schema)
 		return vector<ObjectType>()={	ObjectType::Aggregate, ObjectType::Conversion, ObjectType::Collation,
 																	ObjectType::Domain, ObjectType::ForeignTable, ObjectType::Function, ObjectType::OpClass,
-																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Sequence,
+																	ObjectType::Operator, ObjectType::OpFamily, ObjectType::Procedure, ObjectType::Sequence,
 																	ObjectType::Type, ObjectType::Table, ObjectType::View };
 
 	if(obj_type==ObjectType::Table)

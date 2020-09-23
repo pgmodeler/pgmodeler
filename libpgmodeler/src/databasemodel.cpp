@@ -89,7 +89,8 @@ DatabaseModel::DatabaseModel()
 		{ ObjectType::ForeignServer, &foreign_servers },
 		{ ObjectType::UserMapping, &usermappings },
 		{ ObjectType::ForeignTable, &foreign_tables },
-		{ ObjectType::Transform, &transforms }
+		{ ObjectType::Transform, &transforms },
+		{ ObjectType::Procedure, &procedures }
 	};
 }
 
@@ -218,6 +219,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addForeignTable(dynamic_cast<ForeignTable *>(object));
 		else if(obj_type==ObjectType::Transform)
 			addTransform(dynamic_cast<Transform *>(object));
+		else if(obj_type==ObjectType::Procedure)
+			addProcedure(dynamic_cast<Procedure *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -294,78 +297,13 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeForeignTable(dynamic_cast<ForeignTable *>(object));
 		else if(obj_type==ObjectType::Transform)
 			removeTransform(dynamic_cast<Transform *>(object));
+		else if(obj_type==ObjectType::Procedure)
+			removeProcedure(dynamic_cast<Procedure *>(object));
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
-}
-
-void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
-{
-	if(TableObject::isTableObject(obj_type) ||
-			obj_type==ObjectType::BaseObject || obj_type==ObjectType::BaseRelationship ||
-			obj_type==ObjectType::Database)
-		throw Exception(ErrorCode::RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	vector<BaseObject *> *obj_list=nullptr;
-	BaseObject *object=nullptr;
-
-	obj_list=getObjectList(obj_type);
-	if(obj_idx >= obj_list->size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	object=(*obj_list)[obj_idx];
-	if(obj_type==ObjectType::Textbox)
-		removeTextbox(dynamic_cast<Textbox *>(object), obj_idx);
-	else if(obj_type==ObjectType::Table)
-		removeTable(dynamic_cast<Table *>(object), obj_idx);
-	else if(obj_type==ObjectType::Function)
-		removeFunction(dynamic_cast<Function *>(object), obj_idx);
-	else if(obj_type==ObjectType::Aggregate)
-		removeAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
-	else if(obj_type==ObjectType::Schema)
-		removeSchema(dynamic_cast<Schema *>(object), obj_idx);
-	else if(obj_type==ObjectType::View)
-		removeView(dynamic_cast<View *>(object), obj_idx);
-	else if(obj_type==ObjectType::Type)
-		removeType(dynamic_cast<Type *>(object), obj_idx);
-	else if(obj_type==ObjectType::Role)
-		removeRole(dynamic_cast<Role *>(object), obj_idx);
-	else if(obj_type==ObjectType::Tablespace)
-		removeTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
-	else if(obj_type==ObjectType::Language)
-		removeLanguage(dynamic_cast<Language *>(object), obj_idx);
-	else if(obj_type==ObjectType::Cast)
-		removeCast(dynamic_cast<Cast *>(object), obj_idx);
-	else if(obj_type==ObjectType::Conversion)
-		removeConversion(dynamic_cast<Conversion *>(object), obj_idx);
-	else if(obj_type==ObjectType::Operator)
-		removeOperator(dynamic_cast<Operator *>(object), obj_idx);
-	else if(obj_type==ObjectType::OpClass)
-		removeOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
-	else if(obj_type==ObjectType::OpFamily)
-		removeOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
-	else if(obj_type==ObjectType::Domain)
-		removeDomain(dynamic_cast<Domain *>(object), obj_idx);
-	else if(obj_type==ObjectType::Sequence)
-		removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
-	else if(obj_type==ObjectType::Collation)
-		removeCollation(dynamic_cast<Collation *>(object), obj_idx);
-	else if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
-		removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
-	else if(obj_type==ObjectType::Permission)
-		removePermission(dynamic_cast<Permission *>(object));
-	else if(obj_type==ObjectType::EventTrigger)
-		removeEventTrigger(dynamic_cast<EventTrigger *>(object), obj_idx);
-	else if(obj_type==ObjectType::GenericSql)
-		removeGenericSQL(dynamic_cast<GenericSQL *>(object), obj_idx);
-	else if(obj_type==ObjectType::ForeignDataWrapper)
-		removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object), obj_idx);
-	else if(obj_type==ObjectType::UserMapping)
-		removeUserMapping(dynamic_cast<UserMapping *>(object), obj_idx);
-	else if(obj_type==ObjectType::ForeignTable)
-		removeForeignTable(dynamic_cast<ForeignTable *>(object), obj_idx);
 }
 
 void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
@@ -419,15 +357,23 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	}
 
 	/* Raises an error if there is an object with the same name.
-		 Special cases are for: functions/operator that are search by signature and views
-		 that are search on tables and views list */
-	if(((obj_type==ObjectType::View ||
+	 * The first checking is for duplicated functions/procedures */
+	if(((obj_type==ObjectType::Function ||
+			 obj_type==ObjectType::Procedure) &&
+			(getObject(object->getSignature(), ObjectType::Function, idx) ||
+			 getObject(object->getSignature(), ObjectType::Procedure, idx))) ||
+
+		 /* If the object is a child of BaseTable we check if there're other
+			* tables with the same name */
+		 ((obj_type==ObjectType::View ||
 			 obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::ForeignTable) &&
 			(getObject(object->getName(true), ObjectType::View, idx) ||
 			 getObject(object->getName(true), ObjectType::Table, idx) ||
 			 getObject(object->getName(true), ObjectType::ForeignTable, idx))) ||
+
 			(obj_type==ObjectType::Extension &&	(getObject(object->getName(false), obj_type, idx))) ||
+
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
@@ -1238,6 +1184,40 @@ Transform *DatabaseModel::getTransform(unsigned obj_idx)
 Transform *DatabaseModel::getTransform(const QString &name)
 {
 	return dynamic_cast<Transform *>(getObject(name, ObjectType::Transform));
+}
+
+void DatabaseModel::addProcedure(Procedure *proc, int obj_idx)
+{
+	try
+	{
+		__addObject(proc, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::removeProcedure(Procedure *proc, int obj_idx)
+{
+	try
+	{
+		__removeObject(proc, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Procedure *DatabaseModel::getProcedure(unsigned obj_idx)
+{
+	return dynamic_cast<Procedure *>(getObject(obj_idx, ObjectType::Procedure));
+}
+
+Procedure *DatabaseModel::getProcedure(const QString &name)
+{
+	return dynamic_cast<Procedure *>(getObject(name, ObjectType::Procedure));
 }
 
 void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
@@ -3521,6 +3501,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createForeignTable();
 		else if(obj_type==ObjectType::Transform)
 			object=createTransform();
+		else if(obj_type==ObjectType::Procedure)
+			object=createProcedure();
 	}
 
 	return object;
@@ -6340,6 +6322,96 @@ Transform *DatabaseModel::createTransform()
 	}
 }
 
+Procedure *DatabaseModel::createProcedure()
+{
+	attribs_map attribs, def_attribs;
+	Procedure *proc=nullptr;
+	ObjectType obj_type;
+	BaseObject *object=nullptr;
+
+	try
+	{
+		proc = new Procedure;
+		setBasicAttributes(proc);
+		xmlparser.getElementAttributes(attribs);
+
+		if(!attribs[Attributes::SecurityType].isEmpty())
+			proc->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					obj_type=BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type==ObjectType::Language)
+					{
+						xmlparser.getElementAttributes(attribs);
+						object = getObject(attribs[Attributes::Name], obj_type);
+
+						//Raises an error if the function doesn't exisits
+						if(!object)
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(proc->getName())
+															.arg(proc->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::Language)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						proc->setLanguage(dynamic_cast<Language *>(object));
+					}
+					else if(xmlparser.getElementName()==Attributes::Parameter)
+					{
+						proc->addParameter(createParameter());
+					}
+					else if(xmlparser.getElementName()==Attributes::Definition)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(def_attribs);
+
+						if(!def_attribs[Attributes::Library].isEmpty())
+						{
+							proc->setLibrary(def_attribs[Attributes::Library]);
+							proc->setSymbol(def_attribs[Attributes::Symbol]);
+						}
+						else if(xmlparser.accessElement(XmlParser::ChildElement))
+							proc->setSourceCode(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		QString proc_name;
+
+		if(proc)
+		{
+			proc_name = proc->getName();
+			delete proc;
+		}
+
+		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
+											.arg(proc_name)
+											.arg(BaseObject::getTypeName(ObjectType::Procedure)),
+											ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return proc;
+}
+
 void DatabaseModel::updateViewsReferencingTable(PhysicalTable *table)
 {
 	BaseRelationship *rel = nullptr;
@@ -8132,28 +8204,37 @@ void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *>
 	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
-	Function *func=dynamic_cast<Function *>(object);
-	BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
-	unsigned count, i;
+	BaseFunction *base_func = dynamic_cast<BaseFunction *>(object);
+	BaseObject *usr_type = nullptr;
+	unsigned count = 0, i = 0;
 
-	if(!func->isSystemObject())
-		getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+	if(!base_func->isSystemObject())
+		getObjectDependecies(base_func->getLanguage(), deps, inc_indirect_deps);
 
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	count=func->getParameterCount();
-	for(i=0; i < count; i++)
+	count = base_func->getParameterCount();
+	for(i = 0; i < count; i++)
 	{
-		usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+		usr_type = getObjectPgSQLType(base_func->getParameter(i).getType());
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
 	}
+}
 
-	count=func->getReturnedTableColumnCount();
+void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Function *func=dynamic_cast<Function *>(object);
+	BaseObject *usr_type = getObjectPgSQLType(func->getReturnType());
+	unsigned count = 0, i = 0;
+
+	getProcedureDependencies(object, deps, inc_indirect_deps);
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	count = func->getReturnedTableColumnCount();
 	for(i=0; i < count; i++)
 	{
 		usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
@@ -8622,6 +8703,9 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
 			if(obj_type==ObjectType::Transform)
 				getTransformDependencies(object, deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::Procedure)
+				getProcedureDependencies(object, deps, inc_indirect_deps);
 		}
 	}
 }

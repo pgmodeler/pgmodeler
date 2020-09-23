@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>564</width>
-    <height>1070</height>
+    <width>596</width>
+    <height>1171</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -55,7 +55,7 @@
    <item row="0" column="0">
     <widget class="QFrame" name="overlay_frm">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -110,19 +110,19 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
             <property name="leftMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>10</number>
             </property>
             <item row="1" column="1">
              <widget class="QToolButton" name="genericsql_tb">
@@ -135,7 +135,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -181,7 +181,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -227,7 +227,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -273,7 +273,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -319,7 +319,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -365,7 +365,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -411,7 +411,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -457,7 +457,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -503,7 +503,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -552,7 +552,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -598,7 +598,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -644,7 +644,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -690,7 +690,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -736,7 +736,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -782,7 +782,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -851,20 +851,112 @@
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <property name="leftMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>10</number>
             </property>
+            <item row="1" column="4">
+             <widget class="QToolButton" name="opclass_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Op. Class</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/opclass.png</normaloff>:/icones/icones/opclass.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QToolButton" name="function_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Function</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/function.png</normaloff>:/icones/icones/function.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="2">
              <widget class="QToolButton" name="conversion_tb">
               <property name="sizePolicy">
@@ -876,7 +968,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -922,7 +1014,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -957,6 +1049,144 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="1">
+             <widget class="QToolButton" name="foreigntable_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Foreign Table</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/foreigntable.png</normaloff>:/icones/icones/foreigntable.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QToolButton" name="opfamily_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Op. Family</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/opfamily.png</normaloff>:/icones/icones/opfamily.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QToolButton" name="operator_tb">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>95</width>
+                <height>75</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <italic>true</italic>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Operator</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icones/icones/operator.png</normaloff>:/icones/icones/operator.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="4">
              <widget class="QToolButton" name="domain_tb">
               <property name="sizePolicy">
@@ -968,7 +1198,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1014,7 +1244,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1049,99 +1279,7 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QToolButton" name="type_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="text">
-               <string>Type</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="4">
-             <widget class="QToolButton" name="table_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Table</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
              <widget class="QToolButton" name="sequence_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1152,7 +1290,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1187,7 +1325,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="2" column="2">
              <widget class="QToolButton" name="view_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1198,7 +1336,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1233,8 +1371,8 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QToolButton" name="opfamily_tb">
+            <item row="2" column="1">
+             <widget class="QToolButton" name="procedure_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1244,7 +1382,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1259,11 +1397,11 @@
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>Op. Family</string>
+               <string>Procedure</string>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/opfamily.png</normaloff>:/icones/icones/opfamily.png</iconset>
+                <normaloff>:/icones/icones/procedure.png</normaloff>:/icones/icones/procedure.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1279,8 +1417,8 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="4">
-             <widget class="QToolButton" name="opclass_tb">
+            <item row="3" column="1">
+             <widget class="QToolButton" name="type_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1290,7 +1428,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1302,14 +1440,14 @@
                </font>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
               <property name="text">
-               <string>Op. Class</string>
+               <string>Type</string>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/opclass.png</normaloff>:/icones/icones/opclass.png</iconset>
+                <normaloff>:/icones/icones/usertype.png</normaloff>:/icones/icones/usertype.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1325,8 +1463,8 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
-             <widget class="QToolButton" name="operator_tb">
+            <item row="3" column="0">
+             <widget class="QToolButton" name="table_tb">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1336,7 +1474,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1351,103 +1489,11 @@
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>Operator</string>
+               <string>Table</string>
               </property>
               <property name="icon">
                <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/operator.png</normaloff>:/icones/icones/operator.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QToolButton" name="foreigntable_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Foreign Table</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/foreigntable.png</normaloff>:/icones/icones/foreigntable.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="popupMode">
-               <enum>QToolButton::InstantPopup</enum>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QToolButton" name="function_tb">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>95</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
-                <italic>true</italic>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Function</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../res/resources.qrc">
-                <normaloff>:/icones/icones/function.png</normaloff>:/icones/icones/function.png</iconset>
+                <normaloff>:/icones/icones/table.png</normaloff>:/icones/icones/table.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1497,19 +1543,19 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <property name="leftMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>10</number>
             </property>
             <item row="0" column="4">
              <widget class="QToolButton" name="constraint_tb">
@@ -1522,7 +1568,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1568,7 +1614,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1614,7 +1660,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1660,7 +1706,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1706,7 +1752,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1752,7 +1798,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1798,7 +1844,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1857,6 +1903,9 @@
          <property name="bottomMargin">
           <number>4</number>
          </property>
+         <property name="spacing">
+          <number>10</number>
+         </property>
          <item row="0" column="0">
           <widget class="QWidget" name="rel_btns_wgt" native="true">
            <property name="sizePolicy">
@@ -1867,19 +1916,19 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <property name="leftMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="spacing">
-             <number>6</number>
+             <number>10</number>
             </property>
             <item row="0" column="2">
              <widget class="QToolButton" name="relnn_tb">
@@ -1892,7 +1941,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1938,7 +1987,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -1984,7 +2033,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -2030,7 +2079,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -2076,7 +2125,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">
@@ -2122,7 +2171,7 @@
               <property name="minimumSize">
                <size>
                 <width>95</width>
-                <height>50</height>
+                <height>75</height>
                </size>
               </property>
               <property name="font">

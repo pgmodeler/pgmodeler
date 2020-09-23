@@ -18,40 +18,25 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FunctionWidget
-\brief Implements the operations to create/edit functions via form.
+\class ProcedureWidget
+\brief Implements the operations to create/edit procedures via form.
 */
 
-#ifndef FUNCTION_WIDGET_H
-#define FUNCTION_WIDGET_H
+#ifndef PROCEDURE_WIDGET_H
+#define PROCEDURE_WIDGET_H
 
 #include "basefunctionwidget.h"
-#include "ui_functionwidget.h"
-#include "pgsqltypewidget.h"
 
-class FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
+class ProcedureWidget: public BaseFunctionWidget  {
 	private:
 		Q_OBJECT
 
-		QWidget *ret_type_parent;
-
-		//! \brief Widget used to configure the function's return type
-		PgSQLTypeWidget *ret_type;
-
-		//! \brief Table that represents the table returned by the function
-		ObjectsTableWidget *return_tab;
-
-		//! \brief Validates the new function configuration in relation to the other objects that references it.
-		void validateConfiguredFunction();
-
 	public:
-		FunctionWidget(QWidget * parent = nullptr);
+		ProcedureWidget(QWidget * parent = nullptr);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Procedure *func);
 
 	private slots:
-		void alternateReturnTypes();
-
 		//! \brief Shows the parameter configuration form
 		void showParameterForm();
 
@@ -62,7 +47,7 @@ class FunctionWidget: public BaseFunctionWidget, public Ui::FunctionWidget  {
 		void duplicateParameter(int curr_row, int new_row);
 
 	public slots:
-		void applyConfiguration();
+		virtual void applyConfiguration();
 };
 
 #endif

@@ -814,7 +814,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
 																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Transform,
-																 ObjectType::Database, ObjectType::BaseObject };
+																 ObjectType::Procedure, ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -938,7 +938,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							{
 								lin.remove(QString("UNLOGGED"));
 							}
-							else if(obj_tp==ObjectType::Function)
+							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
 							{
 								lin.remove(QString("OR REPLACE"));
 							}
@@ -977,7 +977,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 									int spc_idx=lin.indexOf(' ');
 									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
 
-									if(obj_tp!=ObjectType::Function)
+									if(obj_tp!=ObjectType::Function && obj_tp!=ObjectType::Procedure)
 									{
 										obj_name=obj_name.remove('(').simplified();
 										obj_name=obj_name.remove(')').simplified();

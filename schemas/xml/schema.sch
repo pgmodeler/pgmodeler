@@ -4,6 +4,10 @@
 %if {reduced-form} %then $tb %end
 [<schema name=] "{name}" 
 
+%if {reduced-form} %then
+/> $br
+%else
+
  %if {layer} %then
     [ layer=]"{layer}"
  %end
@@ -11,10 +15,6 @@
  %if {alias} %then
    $sp alias="{alias}"
  %end
-
-%if {reduced-form} %then
-/> $br
-%else
 
   %if {protected} %then 
    [ protected=] "true"
