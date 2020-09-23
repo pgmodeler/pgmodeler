@@ -509,7 +509,7 @@ void PgModelerCliApp::showMenu()
 	{
 		fmt_types.append(type);
 		i++;
-		if(i % 9 == 0 || i == type_list.size() - 1)
+		if(i % 8 == 0 || i == type_list.size() - 1)
 		{
 			lines.append(QString("     > ") + fmt_types.join(", "));
 			fmt_types.clear();
