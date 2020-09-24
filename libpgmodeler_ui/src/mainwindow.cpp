@@ -1399,7 +1399,8 @@ void MainWindow::saveModel(ModelWidget *model)
 #else
 	try
 	{
-		if(!model) model=current_model;
+		if(!model)
+			model = current_model;
 
 		if(model)
 		{
@@ -1434,9 +1435,9 @@ void MainWindow::saveModel(ModelWidget *model)
 			stopTimers(true);
 
 			if((!confirm_validation ||
-				(!db_model->isInvalidated() ||
-				 (confirm_validation && db_model->isInvalidated() && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
-					&& (model->isModified() || sender()==action_save_as))
+					(!db_model->isInvalidated() ||
+					 (confirm_validation && db_model->isInvalidated() && !msg_box.isCancelled() && msg_box.result()==QDialog::Rejected)))
+				 && (model->isModified() || sender()==action_save_as))
 			{
 				//If the action that calls the slot were the 'save as' or the model filename isn't set
 				if(sender()==action_save_as || model->filename.isEmpty() || pending_op==PendingSaveAsOp)
@@ -1459,7 +1460,30 @@ void MainWindow::saveModel(ModelWidget *model)
 					}
 				}
 				else
-					model->saveModel();
+				{
+					bool save_model = true;
+					ModelWidget *aux_model = nullptr;
+
+					/* We check if the model being save is loaded in other tab(s). If so, we raise a warning message related to the
+					 * risk of overwriting and possible data/work loss if the model being saved is an older version */
+					for(int idx = 0; idx < models_tbw->count(); idx++)
+					{
+						aux_model = dynamic_cast<ModelWidget *>(models_tbw->widget(idx));
+
+						if(model != aux_model && model->getFilename() == aux_model->getFilename())
+						{
+							msg_box.show(tr("<strong>WARNING:</strong> the database model <strong>%1</strong>, file <strong>%2</strong>, is also loaded in another tab! Saving the current model to the file may lead to data loss if its version in memory is outdated compared to what is loaded in the other tab. Do you really want to proceed with the saving?")
+													 .arg(model->getDatabaseModel()->getName()).arg(model->getFilename()),
+													 Messagebox::AlertIcon, Messagebox::YesNoButtons);
+
+							save_model = msg_box.result() == QDialog::Accepted;
+							break;
+						}
+					}
+
+					if(save_model)
+						model->saveModel();
+				}
 
 				this->setWindowTitle(window_title + QString(" - ") + QDir::toNativeSeparators(model->getFilename()));
 				model_valid_wgt->clearOutput();
