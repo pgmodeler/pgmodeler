@@ -476,9 +476,9 @@ void DatabaseImportHelper::createPermissions()
 		ObjectType obj_type;
 
 		//Create the object level permission
-		while(itr_obj!=obj_perms.end() && !import_canceled)
+		while(itr_obj != obj_perms.end() && !import_canceled)
 		{
-			attribs=user_objs[*itr_obj];
+			attribs = getObjectAttributes(*itr_obj);
 			obj_type=static_cast<ObjectType>(attribs[Attributes::ObjectType].toUInt());
 			emit s_progressUpdated(progress,
 														 msg.arg(getObjectName(attribs[Attributes::Oid]))
@@ -817,13 +817,8 @@ QString DatabaseImportHelper::getDependencyObject(const QString &oid, ObjectType
 
 		if(obj_oid > 0)
 		{
-			attribs_map obj_attr;
+			attribs_map obj_attr = getObjectAttributes(obj_oid);
 			attribs_map::iterator itr=extra_attribs.begin();
-
-			if(user_objs.count(obj_oid))
-				obj_attr=user_objs[obj_oid];
-			else
-				obj_attr=system_objs[obj_oid];
 
 			/* If the attributes for the dependency does not exists and the automatic dependency
 			resolution is enable, the object's attributes will be retrieved from catalog */
@@ -2414,8 +2409,8 @@ void DatabaseImportHelper::createPermission(attribs_map &attribs)
 					object=dbmodel;
 				else
 				{
-					sig=getObjectName(attribs[Attributes::Oid], true);
-					object=dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
+					sig = getObjectName(attribs[Attributes::Oid], true);
+					object = dbmodel->getObject(getObjectName(attribs[Attributes::Oid], true), obj_type);
 				}
 			}
 			else
@@ -2933,13 +2928,7 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 		return "";
 	else
 	{
-		attribs_map obj_attr;
-
-		//Get the object from one of the maps of objects
-		if(user_objs.count(obj_oid))
-			obj_attr=user_objs[obj_oid];
-		else
-			obj_attr=system_objs[obj_oid];
+		attribs_map obj_attr = getObjectAttributes(obj_oid);
 
 		if(obj_attr.empty())
 			return "";
@@ -3013,6 +3002,17 @@ QString DatabaseImportHelper::getObjectName(const QString &oid, bool signature_f
 			return obj_name;
 		}
 	}
+}
+
+attribs_map DatabaseImportHelper::getObjectAttributes(unsigned oid)
+{
+	if(user_objs.count(oid))
+		return user_objs[oid];
+
+	if(system_objs.count(oid))
+		return system_objs[oid];
+
+	return attribs_map();
 }
 
 QStringList DatabaseImportHelper::getObjectNames(const QString &oid_vect, bool signature_form)

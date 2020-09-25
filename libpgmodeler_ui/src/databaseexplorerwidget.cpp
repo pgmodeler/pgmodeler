@@ -346,6 +346,7 @@ attribs_map DatabaseExplorerWidget::formatObjectAttribs(attribs_map &attribs)
 			case ObjectType::ForeignDataWrapper: formatForeignDataWrapperAttribs(attribs); break;
 			case ObjectType::ForeignServer: formatServerAttribs(attribs); break;
 			case ObjectType::UserMapping: formatUserMappingAttribs(attribs); break;
+			case ObjectType::Procedure: formatProcedureAttribs(attribs); break;
 			default: break;
 		}
 	}
@@ -510,10 +511,9 @@ void DatabaseExplorerWidget::formatExtensionAttribs(attribs_map &attribs)
 	formatBooleanAttribs(attribs, { Attributes::HandlesType });
 }
 
-void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
+void DatabaseExplorerWidget::formatBaseFunctionAttribs(attribs_map &attribs)
 {
 	attribs[Attributes::Language]=getObjectName(ObjectType::Language, attribs[Attributes::Language]);
-	attribs[Attributes::ReturnType]=getObjectName(ObjectType::Type, attribs[Attributes::ReturnType]);
 	attribs[Attributes::ArgNames]=Catalog::parseArrayValues(attribs[Attributes::ArgNames]).join(PgModelerNs::DataSeparator);
 	attribs[Attributes::ArgModes]=Catalog::parseArrayValues(attribs[Attributes::ArgModes]).join(PgModelerNs::DataSeparator);
 	attribs[Attributes::ArgDefaults]=Catalog::parseArrayValues(attribs[Attributes::ArgDefaults]).join(PgModelerNs::DataSeparator);
@@ -522,6 +522,17 @@ void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
 	attribs[Attributes::Signature]=(QString("%1(%2)")
 																	.arg(BaseObject::formatName(attribs[Attributes::Name]))
 																	.arg(attribs[Attributes::ArgTypes])).replace(PgModelerNs::DataSeparator, QString(","));
+}
+
+void DatabaseExplorerWidget::formatProcedureAttribs(attribs_map &attribs)
+{
+	formatBaseFunctionAttribs(attribs);
+}
+
+void DatabaseExplorerWidget::formatFunctionAttribs(attribs_map &attribs)
+{	
+	formatBaseFunctionAttribs(attribs);
+	attribs[Attributes::ReturnType]=getObjectName(ObjectType::Type, attribs[Attributes::ReturnType]);
 
 	formatBooleanAttribs(attribs, { Attributes::WindowFunc,
 																	Attributes::LeakProof,
