@@ -104,10 +104,14 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 		setCurrentBlockState(SimpleBlock);
 	}
 
-	/* If the previous block info is a open multiline expression the current block will inherit this settings
-	 to force the same text formatting */
+	/* If the previous block info is an open multiline expression the current block will inherit this settings
+	 * to force the same text formatting.
+	 *
+	 * There is a special case for empty texts that are inserted right after a
+	 * multiline expression, here we force the inheritance of the formatting from the previous block anyway.
+	 * This is done in order to avoid the next line (after the blank one) to lost track of the previous formatting */
 	if(prev_info && currentBlock().previous().userState()==OpenExprBlock &&
-		 currentBlockState() == OpenExprBlock)
+		 (currentBlockState() == OpenExprBlock || (txt.isEmpty() && currentBlockState() < 0)))
 	{
 		info->group=prev_info->group;
 		info->has_exprs=prev_info->has_exprs;
