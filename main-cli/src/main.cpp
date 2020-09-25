@@ -17,7 +17,7 @@
 */
 
 #include <QTranslator>
-#include "pgmodelercli.h"
+#include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 
 int main(int argc, char **argv)

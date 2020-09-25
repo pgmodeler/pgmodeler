@@ -10,9 +10,10 @@ windows: RCC_DIR=src/
 windows: DESTDIR = $$PWD
 
 SOURCES += src/main.cpp \
-	   src/pgmodelercli.cpp
+    src/pgmodelercliapp.cpp
 
-HEADERS += src/pgmodelercli.h
+HEADERS += \
+    src/pgmodelercliapp.h
 
 unix|windows: LIBS += -L$$OUT_PWD/../libpgmodeler_ui/ -lpgmodeler_ui \
                     -L$$OUT_PWD/../libobjrenderer/ -lobjrenderer \

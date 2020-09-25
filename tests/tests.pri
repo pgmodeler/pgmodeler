@@ -25,7 +25,7 @@ DEPENDPATH += $$PWD/../libpgmodeler_ui \
               $$PWD/../libpgmodeler \
               $$PWD/../libparsers \
               $$PWD/../libutils \
-              $$PWD/../main \
+			  $$PWD/../main \
               $$PWD/src
 
 HEADERS += $$PWD/src/pgmodelerunittest.h

@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgmodelercli.h"
+#include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
