@@ -373,8 +373,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		alias_edt->setText(object->getAlias());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
-	   In order to avoid the selectors to have empty values, we check if the flag is false which means
-	   that the object is not new at all */
+		 * In order to avoid the selectors to have empty values, we check if the flag is false which means
+		 * that the object is not new at all */
 		if(!new_object)
 		{
 			schema_sel->setSelectedObject(object->getSchema());

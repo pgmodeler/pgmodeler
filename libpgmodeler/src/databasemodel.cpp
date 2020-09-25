@@ -7488,7 +7488,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
-	bool sql_disabled=false;
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
 			msg=tr("Generating %1 code: `%2' (%3)"),
@@ -7551,20 +7550,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			else if(obj_type==ObjectType::Database)
 			{
 				if(def_type==SchemaParser::SqlDefinition)
-				{
-					/* The Database has the SQL code definition disabled when generating the
-		  code of the entire model because this object cannot be created from a multiline sql command */
-
-					//Saving the sql disabled state
-					sql_disabled=this->isSQLDisabled();
-
-					//Disables the sql to generate a commented code
-					this->setSQLDisabled(true);
-					attribs_aux[this->getSchemaName()]+=this->__getCodeDefinition(def_type);
-
-					//Restore the original sql disabled state
-					this->setSQLDisabled(sql_disabled);
-				}
+					attribs_aux[this->getSchemaName()] += this->__getCodeDefinition(def_type);
 				else
 					attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
 			}
@@ -7585,24 +7571,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					attrib_aux=attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
-		  code of the entire model because this object cannot be created from a multiline sql command */
+				 * code of the entire model because this object cannot be created from a multiline sql command */
 				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlDefinition)
-				{
-					//Saving the sql disabled state
-					sql_disabled=object->isSQLDisabled();
-
-					//Disables the sql to generate a commented code
-					object->setSQLDisabled(true);
 					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
-
-					//Restore the original sql disabled state
-					object->setSQLDisabled(sql_disabled);
-				}
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
-						(obj_type==ObjectType::Schema &&
-						 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
-						  (object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
+								(obj_type==ObjectType::Schema &&
+								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
+									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
 						search_path+=QString(",") + object->getName(true);

@@ -189,7 +189,6 @@ enum class ErrorCode: unsigned {
 	InvConstratintNoColumns,
 	ConfigurationNotLoaded,
 	DefaultConfigNotRestored,
-	ExportFailure,
 	PluginNotLoaded,
 	PluginsNotLoaded,
 	InvalidSyntax,
@@ -300,6 +299,7 @@ enum class ErrorCode: unsigned {
 	InvChildObjectTypeFilter,
 	InvChangelogEntryValues,
 	InvProcedureParamOutMode,
+	ExportFailureDbSQLDisabled
 };
 
 class Exception {
