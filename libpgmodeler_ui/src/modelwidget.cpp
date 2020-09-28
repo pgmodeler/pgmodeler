@@ -4942,7 +4942,8 @@ void ModelWidget::swapObjectsIds()
 		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
-			this->op_list->removeOperations();
+			op_list->removeOperations();
+			setModified(true);
 			emit s_objectManipulated();
 	});
 
