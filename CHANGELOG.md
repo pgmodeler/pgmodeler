@@ -16,6 +16,11 @@ v0.9.3-beta1
 * [New] Added the class PgModelerUnitTest that must be inherited so the child test class can have access to schema files path.
 * [New] Added support to modifying attributes toggler colors from appearance settings.
 * [New] Tag objects now include attribute toggler colors.
+* [Change] Changed the behavior of the generation of SQL code for database object, now it'll respect the SQL disabled status of the object.
+* [Change] The ModelExportHelper will abort the export process if the SQL code of the database object is disabled.
+* [Change] The database model is now flagged as modified everytime the objects are swapped.
+* [Change] Improved the ObjectSelectorWidget in order to save/restore the geometry of internal ModelObjectsWidget instances.
+* [Change] Ajusted the Qt version check in QFontMetricsCompat and QPlainTextEditCompat in order to avoid deprecation warnings.
 * [Change] pgModeler will alert about a possible data/work loss if the user is trying to save a model in which there're other instances loaded other tabs.
 * [Change] Refactored FunctionWidget in such way to make it a subclass of BaseFunctionWidget.
 * [Change] Removing unused method DatabaseModel::removeObject(unsigned,ObjectType).

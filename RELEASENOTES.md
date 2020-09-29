@@ -1,4 +1,4 @@
-v0.9.3-beta
+v0.9.3-beta1
 ------
 
 <em>Release date: October 5, 2020</em><br/>
