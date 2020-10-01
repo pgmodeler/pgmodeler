@@ -74,7 +74,7 @@
       [       id.indkey::oid] $ob $cb [ AS columns,
 	      id.indclass::oid] $ob $cb [ AS opclasses,
 	      pg_get_expr(indexprs, indrelid) AS expressions,
-              pg_get_expr(indpred, indrelid, true) predicate, ]
+		  pg_get_expr(indpred, indrelid, true) predicate, ]
         
         ({comment}) [ AS comment ]
         
