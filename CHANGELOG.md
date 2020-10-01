@@ -37,6 +37,7 @@ v0.9.3-beta1
 * [Change] Minor improvements on objects rendering in order to consider screen dpi when configuring objects border sizes.
 * [Change] Minor refactoring in the parameter/signature generation in class Function.
 * [Change] Making the NewObjectOverlay less transparent in order to enhance reading.
+* [Fix] Fixed a bug in constraint.sch that was avoiding the correct importing of exclude of constraints.
 * [Fix] Fixed source file name for PgModelerCliApp.
 * [Fix] Minor fix in the SyntaxHighlighter in order to highlight correctly multline blocks (specially comments).
 * [Fix] Fixed a bug in DatabaseImportHelper that was causing failure when importing some objects' permissions.

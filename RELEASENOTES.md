@@ -38,6 +38,7 @@ Finally, some of the changelog entries in this version are listed below. For the
 * [Change] Minor improvements on objects rendering in order to consider screen dpi when configuring objects border sizes.
 * [Change] Minor refactoring in the parameter/signature generation in class Function.
 * [Change] Making the NewObjectOverlay less transparent in order to enhance reading.
+* [Fix] Fixed a bug in constraint.sch that was avoiding the correct importing of exclude of constraints.
 * [Fix] Minor fix in the SyntaxHighlighter in order to highlight correctly multline blocks (specially comments).
 * [Fix] Fixed a bug in DatabaseImportHelper that was causing failure when importing some objects' permissions.
 * [Fix] Fixed a bug on MainWindow that was wrongly showing the main menu bar in certain cases at startup.
