@@ -36,7 +36,7 @@ const QString PgModelerCliApp::ExportToDbms("--export-to-dbms");
 const QString PgModelerCliApp::ExportToDict("--export-to-dict");
 const QString PgModelerCliApp::ImportDb("--import-db");
 const QString PgModelerCliApp::NoIndex("--no-index");
-const QString PgModelerCliApp::Splitted("--splitted");
+const QString PgModelerCliApp::Split("--split");
 const QString PgModelerCliApp::Diff("--diff");
 const QString PgModelerCliApp::DropDatabase("--drop-database");
 const QString PgModelerCliApp::DropObjects("--drop-objects");
@@ -420,7 +420,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << tr("Data dictionary export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << QtCompat::endl;
+	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
 	out << QtCompat::endl;
 
@@ -1505,7 +1505,7 @@ void PgModelerCliApp::exportModel()
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
 		export_hlp->exportToDataDict(model, parsed_opts[Output],
 																 parsed_opts.count(NoIndex) == 0,
-																 parsed_opts.count(Splitted) > 0);
+																 parsed_opts.count(Split) > 0);
 	}
 	//Export to DBMS
 	else

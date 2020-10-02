@@ -1185,13 +1185,13 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;strong&gt;Splitted:&lt;/strong&gt; the data dictionaries are generated in separated files inside the selected directory. In this mode the files are named &lt;em&gt;schema.table.html&lt;/em&gt;.</string>
+                   <string>&lt;strong&gt;Split:&lt;/strong&gt; the data dictionaries are generated in separated files inside the selected directory. In this mode the files are named &lt;em&gt;schema.table.html&lt;/em&gt;.</string>
                   </property>
                   <property name="statusTip">
                    <string/>
                   </property>
                   <property name="text">
-                   <string>Splitted</string>
+                   <string>Split</string>
                   </property>
                  </widget>
                 </item>
