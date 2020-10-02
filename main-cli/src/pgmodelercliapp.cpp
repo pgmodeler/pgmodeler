@@ -119,7 +119,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	{ TruncOnColsTypeChange, "-tt" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDropTrunc, "-nd" },	{ ForceRecreateObjs, "-nf" },
-	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Splitted, "-sp" },
+	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { ForceDiff, "-ff" }
 };
 
@@ -143,7 +143,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
 	{ TruncOnColsTypeChange, false },	{ NoSequenceReuse, false },	{ NoCascadeDropTrunc, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Splitted, false },	{ SystemWide, false },
+	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { ForceDiff, false }
 };
 
@@ -152,7 +152,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ ExportToFile }, { Input, Output, PgSqlVer }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-	{{ ExportToDict }, { Input, Output, Splitted, NoIndex }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
 											 DropDatabase, DropObjects, Simulate, UseTmpNames }},
@@ -420,7 +420,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << tr("Data dictionary export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
 	out << QtCompat::endl;
 
