@@ -600,6 +600,16 @@ void RelationshipView::configureLine()
 		bool conn_same_sides = false,
 				conn_horiz_sides[2] = { false, false }, conn_vert_sides[2] = { false, false };
 		unsigned rel_type = base_rel->getRelationshipType();
+		double pen_mid_width = ObjectBorderWidth * 1.45,
+				pen_high_width = ObjectBorderWidth * 1.90;
+
+
+		// Adjusting the relationship lines thickness according to the screen dpi
+		if(BaseObjectView::getScreenDpiFactor() > 1)
+		{
+			pen_high_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.60;
+			pen_mid_width = ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15;
+		}
 
 		configuring_line=true;
 		pen.setCapStyle(Qt::RoundCap);
@@ -857,7 +867,7 @@ void RelationshipView::configureLine()
 			QPolygonF pol;
 			QLineF edge, line = QLineF(tables[0]->getCenter(), tables[1]->getCenter());
 			QPointF pi, center, p_aux[2];
-			double font_factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor(),
+			double font_factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor(),
 					size_factor = 1,
 					border_factor = ConnLineLength * 0.30,
 					min_lim = 0, max_lim = 0,
@@ -1071,9 +1081,9 @@ void RelationshipView::configureLine()
 
 					//If the relationship is identifier or bidirectional, the line has its thickness modified
 					if(rel && (rel->isIdentifier() && vet_idx==0))
-						pen.setWidthF(ObjectBorderWidth * 1.90);
+						pen.setWidthF(pen_high_width);
 					else
-						pen.setWidthF(ObjectBorderWidth * 1.45);
+						pen.setWidthF(pen_mid_width);
 
 					lin->setLine(QLineF(ref_pnt->at(i), ref_points[vet_idx]));
 					lin->setPen(pen);
@@ -1108,9 +1118,9 @@ void RelationshipView::configureLine()
 
 			//If the relationship is identifier or bidirectional, the line has its thickness modified
 			if(rel && (rel->isIdentifier() && i >= idx_lin_desc))
-				pen.setWidthF(ObjectBorderWidth * 1.90);
+				pen.setWidthF(pen_high_width);
 			else
-				pen.setWidthF(ObjectBorderWidth * 1.45);
+				pen.setWidthF(pen_mid_width);
 
 			lin->setLine(QLineF(points[i], points[i+1]));
 			lin->setPen(pen);
@@ -1280,7 +1290,7 @@ void RelationshipView::configureDescriptor()
 	Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 	unsigned rel_type=base_rel->getRelationshipType();
 	double x, y, x1, y1, angle = 0,
-			factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+			factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 	QPen pen;
 	QPointF pnt;
 	vector<QPointF> points=base_rel->getPoints();
@@ -1298,6 +1308,11 @@ void RelationshipView::configureDescriptor()
 	if(rel_type==BaseRelationship::RelationshipDep ||
 	   rel_type == BaseRelationship::RelationshipPart)
 		pen.setStyle(Qt::DashLine);
+
+	if(BaseObjectView::getScreenDpiFactor() <= 1)
+		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.45);
+	else
+		pen.setWidthF(ObjectBorderWidth * BaseObjectView::getScreenDpiFactor() * 1.15);
 
 	descriptor->setPen(pen);
 
@@ -1476,7 +1491,7 @@ void RelationshipView::configureCrowsFootDescriptors()
 		QGraphicsLineItem *line_item = nullptr;
 		QGraphicsEllipseItem *circle_item = nullptr;
 		unsigned rel_type = base_rel->getRelationshipType();
-		double factor=(font_config[Attributes::Global].font().pointSizeF()/DefaultFontSize) * BaseObjectView::getScreenDpiFactor();
+		double factor=BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 		int signal = 1;
 		BaseTableView *tables[2] = { nullptr, nullptr };
 		bool mandatory[2] = { false, false }, simulate_rel11 = false;

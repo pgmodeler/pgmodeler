@@ -373,8 +373,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		alias_edt->setText(object->getAlias());
 
 		/* When creating a new table or relationship the object is pre allocated and the flag new_object is set.
-	   In order to avoid the selectors to have empty values, we check if the flag is false which means
-	   that the object is not new at all */
+		 * In order to avoid the selectors to have empty values, we check if the flag is false which means
+		 * that the object is not new at all */
 		if(!new_object)
 		{
 			schema_sel->setSelectedObject(object->getSchema());
@@ -477,7 +477,8 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		obj_icon_lbl->setPixmap(QPixmap(PgModelerUiNs::getIconPath(obj_type)));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 
-		if(obj_type!=ObjectType::Permission && obj_type!=ObjectType::Cast && obj_type!=ObjectType::UserMapping)
+		if(obj_type != ObjectType::Permission && obj_type != ObjectType::Cast &&
+			 obj_type != ObjectType::UserMapping && obj_type != ObjectType::Transform)
 		{
 			setRequiredField(name_lbl);
 			setRequiredField(name_edt);

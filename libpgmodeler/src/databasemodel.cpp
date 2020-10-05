@@ -88,7 +88,9 @@ DatabaseModel::DatabaseModel()
 		{ ObjectType::ForeignDataWrapper, &fdata_wrappers },
 		{ ObjectType::ForeignServer, &foreign_servers },
 		{ ObjectType::UserMapping, &usermappings },
-		{ ObjectType::ForeignTable, &foreign_tables }
+		{ ObjectType::ForeignTable, &foreign_tables },
+		{ ObjectType::Transform, &transforms },
+		{ ObjectType::Procedure, &procedures }
 	};
 }
 
@@ -215,6 +217,10 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 			addUserMapping(dynamic_cast<UserMapping *>(object));
 		else if(obj_type==ObjectType::ForeignTable)
 			addForeignTable(dynamic_cast<ForeignTable *>(object));
+		else if(obj_type==ObjectType::Transform)
+			addTransform(dynamic_cast<Transform *>(object));
+		else if(obj_type==ObjectType::Procedure)
+			addProcedure(dynamic_cast<Procedure *>(object));
 	}
 	catch(Exception &e)
 	{
@@ -289,79 +295,15 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 			removeUserMapping(dynamic_cast<UserMapping *>(object));
 		else if(obj_type==ObjectType::ForeignTable)
 			removeForeignTable(dynamic_cast<ForeignTable *>(object));
+		else if(obj_type==ObjectType::Transform)
+			removeTransform(dynamic_cast<Transform *>(object));
+		else if(obj_type==ObjectType::Procedure)
+			removeProcedure(dynamic_cast<Procedure *>(object));
 	}
 	catch(Exception &e)
 	{
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
-
-}
-
-void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
-{
-	if(TableObject::isTableObject(obj_type) ||
-			obj_type==ObjectType::BaseObject || obj_type==ObjectType::BaseRelationship ||
-			obj_type==ObjectType::Database)
-		throw Exception(ErrorCode::RemObjectInvalidType,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	vector<BaseObject *> *obj_list=nullptr;
-	BaseObject *object=nullptr;
-
-	obj_list=getObjectList(obj_type);
-	if(obj_idx >= obj_list->size())
-		throw Exception(ErrorCode::RefObjectInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	object=(*obj_list)[obj_idx];
-	if(obj_type==ObjectType::Textbox)
-		removeTextbox(dynamic_cast<Textbox *>(object), obj_idx);
-	else if(obj_type==ObjectType::Table)
-		removeTable(dynamic_cast<Table *>(object), obj_idx);
-	else if(obj_type==ObjectType::Function)
-		removeFunction(dynamic_cast<Function *>(object), obj_idx);
-	else if(obj_type==ObjectType::Aggregate)
-		removeAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
-	else if(obj_type==ObjectType::Schema)
-		removeSchema(dynamic_cast<Schema *>(object), obj_idx);
-	else if(obj_type==ObjectType::View)
-		removeView(dynamic_cast<View *>(object), obj_idx);
-	else if(obj_type==ObjectType::Type)
-		removeType(dynamic_cast<Type *>(object), obj_idx);
-	else if(obj_type==ObjectType::Role)
-		removeRole(dynamic_cast<Role *>(object), obj_idx);
-	else if(obj_type==ObjectType::Tablespace)
-		removeTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
-	else if(obj_type==ObjectType::Language)
-		removeLanguage(dynamic_cast<Language *>(object), obj_idx);
-	else if(obj_type==ObjectType::Cast)
-		removeCast(dynamic_cast<Cast *>(object), obj_idx);
-	else if(obj_type==ObjectType::Conversion)
-		removeConversion(dynamic_cast<Conversion *>(object), obj_idx);
-	else if(obj_type==ObjectType::Operator)
-		removeOperator(dynamic_cast<Operator *>(object), obj_idx);
-	else if(obj_type==ObjectType::OpClass)
-		removeOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
-	else if(obj_type==ObjectType::OpFamily)
-		removeOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
-	else if(obj_type==ObjectType::Domain)
-		removeDomain(dynamic_cast<Domain *>(object), obj_idx);
-	else if(obj_type==ObjectType::Sequence)
-		removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
-	else if(obj_type==ObjectType::Collation)
-		removeCollation(dynamic_cast<Collation *>(object), obj_idx);
-	else if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
-		removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
-	else if(obj_type==ObjectType::Permission)
-		removePermission(dynamic_cast<Permission *>(object));
-	else if(obj_type==ObjectType::EventTrigger)
-		removeEventTrigger(dynamic_cast<EventTrigger *>(object), obj_idx);
-	else if(obj_type==ObjectType::GenericSql)
-		removeGenericSQL(dynamic_cast<GenericSQL *>(object), obj_idx);
-	else if(obj_type==ObjectType::ForeignDataWrapper)
-		removeForeignDataWrapper(dynamic_cast<ForeignDataWrapper *>(object), obj_idx);
-	else if(obj_type==ObjectType::UserMapping)
-		removeUserMapping(dynamic_cast<UserMapping *>(object), obj_idx);
-	else if(obj_type==ObjectType::ForeignTable)
-		removeForeignTable(dynamic_cast<ForeignTable *>(object), obj_idx);
 }
 
 void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
@@ -415,15 +357,23 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 	}
 
 	/* Raises an error if there is an object with the same name.
-		 Special cases are for: functions/operator that are search by signature and views
-		 that are search on tables and views list */
-	if(((obj_type==ObjectType::View ||
+	 * The first checking is for duplicated functions/procedures */
+	if(((obj_type==ObjectType::Function ||
+			 obj_type==ObjectType::Procedure) &&
+			(getObject(object->getSignature(), ObjectType::Function, idx) ||
+			 getObject(object->getSignature(), ObjectType::Procedure, idx))) ||
+
+		 /* If the object is a child of BaseTable we check if there're other
+			* tables with the same name */
+		 ((obj_type==ObjectType::View ||
 			 obj_type==ObjectType::Table ||
 			 obj_type==ObjectType::ForeignTable) &&
 			(getObject(object->getName(true), ObjectType::View, idx) ||
 			 getObject(object->getName(true), ObjectType::Table, idx) ||
 			 getObject(object->getName(true), ObjectType::ForeignTable, idx))) ||
+
 			(obj_type==ObjectType::Extension &&	(getObject(object->getName(false), obj_type, idx))) ||
+
 			(getObject(object->getSignature(), obj_type, idx)))
 	{
 		QString str_aux;
@@ -1200,6 +1150,74 @@ ForeignTable *DatabaseModel::getForeignTable(unsigned obj_idx)
 ForeignTable *DatabaseModel::getForeignTable(const QString &name)
 {
 	return dynamic_cast<ForeignTable *>(getObject(name, ObjectType::ForeignTable));
+}
+
+void DatabaseModel::addTransform(Transform *transf, int obj_idx)
+{
+	try
+	{
+		__addObject(transf, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::removeTransform(Transform *transf, int obj_idx)
+{
+	try
+	{
+		__removeObject(transf, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Transform *DatabaseModel::getTransform(unsigned obj_idx)
+{
+	return dynamic_cast<Transform *>(getObject(obj_idx, ObjectType::Transform));
+}
+
+Transform *DatabaseModel::getTransform(const QString &name)
+{
+	return dynamic_cast<Transform *>(getObject(name, ObjectType::Transform));
+}
+
+void DatabaseModel::addProcedure(Procedure *proc, int obj_idx)
+{
+	try
+	{
+		__addObject(proc, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+void DatabaseModel::removeProcedure(Procedure *proc, int obj_idx)
+{
+	try
+	{
+		__removeObject(proc, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Procedure *DatabaseModel::getProcedure(unsigned obj_idx)
+{
+	return dynamic_cast<Procedure *>(getObject(obj_idx, ObjectType::Procedure));
+}
+
+Procedure *DatabaseModel::getProcedure(const QString &name)
+{
+	return dynamic_cast<Procedure *>(getObject(name, ObjectType::Procedure));
 }
 
 void DatabaseModel::removeForeignTable(ForeignTable *table, int obj_idx)
@@ -3481,6 +3499,10 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 			object=createUserMapping();
 		else if(obj_type==ObjectType::ForeignTable)
 			object=createForeignTable();
+		else if(obj_type==ObjectType::Transform)
+			object=createTransform();
+		else if(obj_type==ObjectType::Procedure)
+			object=createProcedure();
 	}
 
 	return object;
@@ -5648,14 +5670,7 @@ Trigger *DatabaseModel::createTrigger()
 		trigger->setTransitionTableName(Trigger::OldTableName, attribs[Attributes::OldTableName]);
 		trigger->setTransitionTableName(Trigger::NewTableName, attribs[Attributes::NewTableName]);
 
-		list_aux=attribs[Attributes::Arguments].split(',');
-		count=list_aux.count();
-		for(i=0; i < count; i++)
-		{
-			if(!list_aux[i].isEmpty())
-				trigger->addArgument(list_aux[i]);
-		}
-
+		trigger->addArguments(attribs[Attributes::Arguments].split(PgModelerNs::DataSeparator));
 		trigger->setDeferrable(attribs[Attributes::Deferrable]==Attributes::True);
 
 		if(trigger->isDeferrable())
@@ -6222,6 +6237,179 @@ ForeignTable *DatabaseModel::createForeignTable()
 		if(ftable) delete ftable;
 		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
+}
+
+Transform *DatabaseModel::createTransform()
+{
+	Transform *transf = nullptr;
+
+	try
+	{
+		Function *func = nullptr;
+		Language *lang = nullptr;
+		attribs_map attribs;
+		ObjectType obj_type;
+		QString elem;
+
+		transf = new Transform;
+		xmlparser.savePosition();
+		setBasicAttributes(transf);
+		xmlparser.restorePosition();
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType() == XML_ELEMENT_NODE)
+				{
+					elem = xmlparser.getElementName();
+					obj_type = BaseObject::getObjectType(elem);
+
+					if(elem == Attributes::Type)
+					{
+						transf->setType(createPgSQLType());
+					}
+					if(obj_type == ObjectType::Language)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						lang = getLanguage(attribs[Attributes::Name]);
+
+						if(!lang)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(transf->getName())
+															.arg(transf->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::Language)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						transf->setLanguage(lang);
+						xmlparser.restorePosition();
+					}
+					else if(obj_type == ObjectType::Function)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(attribs);
+						func = getFunction(attribs[Attributes::Signature]);
+
+						//Raises an error if the function doesn't exists
+						if(!func)
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(transf->getName())
+															.arg(transf->getTypeName())
+															.arg(attribs[Attributes::Signature])
+															.arg(BaseObject::getTypeName(ObjectType::Function)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+						if(attribs[Attributes::RefType] == Attributes::FromSqlFunc)
+							transf->setFunction(func, Transform::FromSqlFunc);
+						else
+							transf->setFunction(func, Transform::ToSqlFunc);
+
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+
+		return transf;
+	}
+	catch(Exception &e)
+	{
+		if(transf) delete transf;
+		throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+Procedure *DatabaseModel::createProcedure()
+{
+	attribs_map attribs, def_attribs;
+	Procedure *proc=nullptr;
+	ObjectType obj_type;
+	BaseObject *object=nullptr;
+
+	try
+	{
+		proc = new Procedure;
+		setBasicAttributes(proc);
+		xmlparser.getElementAttributes(attribs);
+
+		if(!attribs[Attributes::SecurityType].isEmpty())
+			proc->setSecurityType(SecurityType(attribs[Attributes::SecurityType]));
+
+		if(xmlparser.accessElement(XmlParser::ChildElement))
+		{
+			do
+			{
+				if(xmlparser.getElementType()==XML_ELEMENT_NODE)
+				{
+					obj_type=BaseObject::getObjectType(xmlparser.getElementName());
+
+					if(obj_type==ObjectType::Language)
+					{
+						xmlparser.getElementAttributes(attribs);
+						object = getObject(attribs[Attributes::Name], obj_type);
+
+						//Raises an error if the function doesn't exisits
+						if(!object)
+						{
+							throw Exception(Exception::getErrorMessage(ErrorCode::RefObjectInexistsModel)
+															.arg(proc->getName())
+															.arg(proc->getTypeName())
+															.arg(attribs[Attributes::Name])
+															.arg(BaseObject::getTypeName(ObjectType::Language)),
+															ErrorCode::RefObjectInexistsModel,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						proc->setLanguage(dynamic_cast<Language *>(object));
+					}
+					else if(xmlparser.getElementName()==Attributes::Parameter)
+					{
+						proc->addParameter(createParameter());
+					}
+					else if(xmlparser.getElementName()==Attributes::Definition)
+					{
+						xmlparser.savePosition();
+						xmlparser.getElementAttributes(def_attribs);
+
+						if(!def_attribs[Attributes::Library].isEmpty())
+						{
+							proc->setLibrary(def_attribs[Attributes::Library]);
+							proc->setSymbol(def_attribs[Attributes::Symbol]);
+						}
+						else if(xmlparser.accessElement(XmlParser::ChildElement))
+							proc->setSourceCode(xmlparser.getElementContent());
+
+						xmlparser.restorePosition();
+					}
+				}
+			}
+			while(xmlparser.accessElement(XmlParser::NextElement));
+		}
+	}
+	catch(Exception &e)
+	{
+		QString proc_name;
+
+		if(proc)
+		{
+			proc_name = proc->getName();
+			delete proc;
+		}
+
+		if(e.getErrorCode()==ErrorCode::RefUserTypeInexistsModel)
+		{
+			throw Exception(Exception::getErrorMessage(ErrorCode::AsgObjectInvalidDefinition)
+											.arg(proc_name)
+											.arg(BaseObject::getTypeName(ObjectType::Procedure)),
+											ErrorCode::AsgObjectInvalidDefinition,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, getErrorExtraInfo());
+		}
+		else
+			throw Exception(e.getErrorMessage(),e.getErrorCode(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, getErrorExtraInfo());
+	}
+
+	return proc;
 }
 
 void DatabaseModel::updateViewsReferencingTable(PhysicalTable *table)
@@ -7300,7 +7488,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 {
 	attribs_map attribs_aux;
 	unsigned general_obj_cnt, gen_defs_count;
-	bool sql_disabled=false;
 	BaseObject *object=nullptr;
 	QString def, search_path=QString("pg_catalog,public"),
 			msg=tr("Generating %1 code: `%2' (%3)"),
@@ -7363,20 +7550,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			else if(obj_type==ObjectType::Database)
 			{
 				if(def_type==SchemaParser::SqlDefinition)
-				{
-					/* The Database has the SQL code definition disabled when generating the
-		  code of the entire model because this object cannot be created from a multiline sql command */
-
-					//Saving the sql disabled state
-					sql_disabled=this->isSQLDisabled();
-
-					//Disables the sql to generate a commented code
-					this->setSQLDisabled(true);
-					attribs_aux[this->getSchemaName()]+=this->__getCodeDefinition(def_type);
-
-					//Restore the original sql disabled state
-					this->setSQLDisabled(sql_disabled);
-				}
+					attribs_aux[this->getSchemaName()] += this->__getCodeDefinition(def_type);
 				else
 					attribs_aux[attrib]+=this->__getCodeDefinition(def_type);
 			}
@@ -7397,24 +7571,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					attrib_aux=attrib;
 
 				/* The Tablespace has the SQL code definition disabled when generating the
-		  code of the entire model because this object cannot be created from a multiline sql command */
+				 * code of the entire model because this object cannot be created from a multiline sql command */
 				if(obj_type==ObjectType::Tablespace && !object->isSystemObject() && def_type==SchemaParser::SqlDefinition)
-				{
-					//Saving the sql disabled state
-					sql_disabled=object->isSQLDisabled();
-
-					//Disables the sql to generate a commented code
-					object->setSQLDisabled(true);
 					attribs_aux[attrib_aux]+=object->getCodeDefinition(def_type);
-
-					//Restore the original sql disabled state
-					object->setSQLDisabled(sql_disabled);
-				}
 				//System object doesn't has the XML generated (the only exception is for public schema)
 				else if((obj_type!=ObjectType::Schema && !object->isSystemObject()) ||
-						(obj_type==ObjectType::Schema &&
-						 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
-						  (object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
+								(obj_type==ObjectType::Schema &&
+								 ((object->getName()==QString("public") && def_type==SchemaParser::XmlDefinition) ||
+									(object->getName()!=QString("public") && object->getName()!=QString("pg_catalog")))))
 				{
 					if(object->getObjectType()==ObjectType::Schema)
 						search_path+=QString(",") + object->getName(true);
@@ -7944,7 +8108,7 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 
 	try
 	{
-		buf.append(this->getCodeDefinition(def_type));
+		buf.append(this->getCodeDefinition(def_type).toUtf8());
 		output.write(buf.data(),buf.size());
 		output.close();
 	}
@@ -8016,28 +8180,37 @@ void DatabaseModel::getCastDependencies(BaseObject *object, vector<BaseObject *>
 	getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
 }
 
-void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+void DatabaseModel::getProcedureDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
-	Function *func=dynamic_cast<Function *>(object);
-	BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
-	unsigned count, i;
+	BaseFunction *base_func = dynamic_cast<BaseFunction *>(object);
+	BaseObject *usr_type = nullptr;
+	unsigned count = 0, i = 0;
 
-	if(!func->isSystemObject())
-		getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
+	if(!base_func->isSystemObject())
+		getObjectDependecies(base_func->getLanguage(), deps, inc_indirect_deps);
 
-	if(usr_type)
-		getObjectDependecies(usr_type, deps, inc_indirect_deps);
-
-	count=func->getParameterCount();
-	for(i=0; i < count; i++)
+	count = base_func->getParameterCount();
+	for(i = 0; i < count; i++)
 	{
-		usr_type=getObjectPgSQLType(func->getParameter(i).getType());
+		usr_type = getObjectPgSQLType(base_func->getParameter(i).getType());
 
 		if(usr_type)
 			getObjectDependecies(usr_type, deps, inc_indirect_deps);
 	}
+}
 
-	count=func->getReturnedTableColumnCount();
+void DatabaseModel::getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Function *func=dynamic_cast<Function *>(object);
+	BaseObject *usr_type = getObjectPgSQLType(func->getReturnType());
+	unsigned count = 0, i = 0;
+
+	getProcedureDependencies(object, deps, inc_indirect_deps);
+
+	if(usr_type)
+		getObjectDependecies(usr_type, deps, inc_indirect_deps);
+
+	count = func->getReturnedTableColumnCount();
 	for(i=0; i < count; i++)
 	{
 		usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
@@ -8384,6 +8557,22 @@ void DatabaseModel::getGenericSQLDependencies(BaseObject *object, vector<BaseObj
 		getObjectDependecies(obj, deps, inc_indirect_deps);
 }
 
+void DatabaseModel::getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
+{
+	Transform *transf = dynamic_cast<Transform *>(object);
+
+	getObjectDependecies(transf->getLanguage(), deps, inc_indirect_deps);
+
+	for(unsigned func_id = Transform::FromSqlFunc; func_id <= Transform::ToSqlFunc; func_id++)
+		getObjectDependecies(transf->getFunction(func_id), deps, inc_indirect_deps);
+
+	if(transf->getType().isUserType())
+	{
+		Type *type = reinterpret_cast<Type *>(transf->getType().getUserTypeReference());
+		getObjectDependecies(type, deps, inc_indirect_deps);
+	}
+}
+
 void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
 	//Case the object is allocated and is not included in the dependecies list
@@ -8487,6 +8676,12 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				if(tab->getTag())
 					deps.push_back(tab->getTag());
 			}
+
+			if(obj_type==ObjectType::Transform)
+				getTransformDependencies(object, deps, inc_indirect_deps);
+
+			if(obj_type==ObjectType::Procedure)
+				getProcedureDependencies(object, deps, inc_indirect_deps);
 		}
 	}
 }
@@ -8660,7 +8855,8 @@ void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject 
 	ObjectType obj_types[]={ObjectType::Cast, ObjectType::EventTrigger, ObjectType::Conversion,
 													ObjectType::Aggregate, ObjectType::Operator, ObjectType::OpClass,
 													ObjectType::Table, ObjectType::Type, ObjectType::Language,
-													ObjectType::ForeignDataWrapper, ObjectType::ForeignTable };
+													ObjectType::ForeignDataWrapper, ObjectType::ForeignTable,
+													ObjectType::Transform };
 	unsigned i, i1, count, cnt=sizeof(obj_types)/sizeof(ObjectType);
 	PhysicalTable *tab=nullptr;
 	Aggregate *aggreg=nullptr;
@@ -8828,6 +9024,19 @@ void DatabaseModel::getFunctionReferences(BaseObject *object, vector<BaseObject 
 					refer=true;
 					refs.push_back(fdw);
 				}
+			}
+		}
+		else if(obj_types[i]==ObjectType::Transform)
+		{
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				if(dynamic_cast<Transform *>(*itr)->getFunction(Transform::FromSqlFunc) == func ||
+					 dynamic_cast<Transform *>(*itr)->getFunction(Transform::ToSqlFunc) == func)
+				{
+					refer=true;
+					refs.push_back(*itr);
+				}
+				itr++;
 			}
 		}
 	}
@@ -9247,6 +9456,7 @@ void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject 
 {
 	vector<BaseObject *>::iterator itr, itr_end;
 	Function *func=nullptr;
+	Transform *transf = nullptr;
 
 	itr=functions.begin();
 	itr_end=functions.end();
@@ -9261,6 +9471,21 @@ void DatabaseModel::getLanguageReferences(BaseObject *object, vector<BaseObject 
 		}
 		itr++;
 	}
+
+	itr=transforms.begin();
+	itr_end=transforms.end();
+
+	while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+	{
+		transf = dynamic_cast<Transform *>(*itr);
+		if(transf->getLanguage()==object)
+		{
+			refer=true;
+			refs.push_back(transf);
+		}
+		itr++;
+	}
+
 }
 
 void DatabaseModel::getOpClassReferences(BaseObject *object, vector<BaseObject *> &refs, bool &refer, bool exclusion_mode)
@@ -10667,7 +10892,7 @@ void DatabaseModel::saveObjectsMetadata(const QString &filename, unsigned option
 			//Generates the metadata XML buffer
 			attribs[Attributes::Info]=objs_def;
 			buf.append(schparser.getCodeDefinition(GlobalAttributes::getSchemaFilePath(GlobalAttributes::XMLSchemaDir, Attributes::Metadata),
-																						 attribs));
+																						 attribs).toUtf8());
 
 			output.write(buf.data(),buf.size());
 
@@ -11314,6 +11539,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::Index] = "";
 	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 	// If the generation is a standalone HTML the css is embedded
 	if(!splitted)
@@ -11337,7 +11563,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		if(splitted && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
-			schparser.ignoreEmptyAttributes(true);
+			schparser.ignoreEmptyAttributes(true);			
 			datadict[id] = schparser.getCodeDefinition(dict_sch_file, attribs);
 			attribs[Attributes::Objects].clear();
 		}
@@ -11351,6 +11577,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		idx_attribs[BaseObject::getSchemaName(ObjectType::Table)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::View)] = "";
 		idx_attribs[BaseObject::getSchemaName(ObjectType::ForeignTable)] = "";
+		idx_attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 		// Generating the index items
 		for(auto &item : index_list)
@@ -11413,7 +11640,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
 
-			buffer.append(itr.second);
+			buffer.append(itr.second.toUtf8());
 			output.write(buffer);
 			output.close();
 			buffer.clear();

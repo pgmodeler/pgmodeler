@@ -39,7 +39,9 @@ class UserMapping: public BaseObject, public ForeignObject {
 		void setForeignServer(ForeignServer *server);
 		ForeignServer *getForeignServer();
 
+		//! \brief This method has a hardcoded way to generated the usermapping's name. It'll reject any value passed by its parameter
 		virtual void setName(const QString &);
+
 		virtual void setOwner(BaseObject *role);
 		virtual QString getName(bool = false, bool = false);
 		virtual QString getSignature(bool = false);

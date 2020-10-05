@@ -18,10 +18,14 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class UserMappingTest: public QObject {
+class UserMappingTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
+
+	public:
+		UserMappingTest() : PgModelerUnitTest(SCHEMASDIR) {}
 
 	private slots:
 		void generatesNameCorrectly();

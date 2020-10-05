@@ -751,7 +751,7 @@ void ModelDatabaseDiffForm::loadDiffInSQLTool()
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(out_tmp_file.fileName()),
 												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			buffer.append(sqlcode_txt->toPlainText());
+			buffer.append(sqlcode_txt->toPlainText().toUtf8());
 			out_tmp_file.write(buffer);
 			out_tmp_file.close();
 	}

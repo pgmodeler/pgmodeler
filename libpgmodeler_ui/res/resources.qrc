@@ -271,6 +271,10 @@
         <file>icones/layervisibility.png</file>
         <file>icones/convrel1n.png</file>
         <file>icones/changelog.png</file>
+        <file>icones/transform.png</file>
+        <file>icones/transform_grp.png</file>
+        <file>icones/procedure.png</file>
+        <file>icones/procedure_grp.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

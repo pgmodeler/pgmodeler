@@ -61,11 +61,11 @@
 	     cs.conkey AS src_columns, cs.confkey AS dst_columns, 
 	     cs.condeferrable AS deferrable_bool, cs.confrelid AS ref_table,
 	     cl.reltablespace AS tablespace, cs.conexclop AS operators,
-             am.amname AS index_type, cl.reloptions AS factor,  ]
+		 am.amname AS index_type, cl.reloptions AS factor,  ]
              
      [ id.indkey::oid] $ob $cb [ AS columns,
        id. indclass::oid] $ob $cb [ AS opclasses,
-       pg_get_expr(id.indpred, id.indexrelid) AS condition,
+	   pg_get_expr(id.indpred, id.indrelid) AS condition,
        pg_get_constraintdef(cs.oid) AS expressions, ]
 
      %if ({pgsql-ver} <=f "9.1") %then

@@ -914,10 +914,13 @@ void ModelsDiffHelper::processDiffInfos()
 						Primary keys, unique keys, check constraints and exclude constraints are created after foreign keys */
 					if(object->getObjectType()==ObjectType::Constraint)
 					{
-						if(dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::ForeignKey)
-							create_fks[object->getObjectId()]=getCodeDefinition(object, false);
-						else
-							create_constrs[object->getObjectId()]=getCodeDefinition(object, false);
+						Constraint *constr = dynamic_cast<Constraint *>(object);
+
+						if(constr->getConstraintType()==ConstraintType::ForeignKey)
+							create_fks[constr->getObjectId()]=getCodeDefinition(constr, false);
+						// We only create a constraint if the parent is not being created
+						else if(create_objs.count(constr->getParentTable()->getObjectId()) == 0)
+							create_constrs[constr->getObjectId()]=getCodeDefinition(constr, false);
 					}
 					else
 					{

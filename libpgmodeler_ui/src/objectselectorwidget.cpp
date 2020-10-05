@@ -49,7 +49,7 @@ void ObjectSelectorWidget::configureSelector(bool install_highlighter)
 	try
 	{
 		Ui_ObjectSelectorWidget::setupUi(this);
-		obj_view_wgt=new ModelObjectsWidget(true);
+		obj_view_wgt = new ModelObjectsWidget(true);
 
 		model=nullptr;
 		selected_obj=nullptr;
@@ -198,4 +198,3 @@ void ObjectSelectorWidget::showObjectView()
 	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();
 }
-

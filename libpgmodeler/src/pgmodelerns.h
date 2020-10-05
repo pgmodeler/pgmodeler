@@ -30,6 +30,9 @@
 #include <QCryptographicHash>
 
 namespace PgModelerNs {
+	//! \brief Default char for data/value separator for special usage
+	static const QString DataSeparator("•");
+
 	//! \brief Default char used as unescaped value start delimiter
 	static const QChar UnescValueStart='/';
 
@@ -96,7 +99,7 @@ namespace PgModelerNs {
 			obj_name += suffix;
 
 		counter = (use_suf_on_conflict && obj_type!= ObjectType::Operator? 0 : 1);
-		buffer.append(obj_name);
+		buffer.append(obj_name.toUtf8());
 		id = hash.result().toHex().mid(0,6);
 		len = obj_name.size() + id.size();
 

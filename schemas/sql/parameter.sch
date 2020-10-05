@@ -3,17 +3,16 @@
 #          Code generation can be broken if incorrect changes are made.
 
 %if {variadic} %then
- VARIADIC
+ VARIADIC $sp 
 %else
-  %if {in} %then IN  %end
-  %if {out} %then OUT  %end
+  %if {in} %then IN $sp %end
+  %if {out} %then OUT $sp %end
 %end
 
 %if {reduced-form} %then
- $sp {type}, $sp
+ {type}, $sp
 %else
- $sp {name} $sp
- {type}
+ {name} $sp {type}
 
  %if {default-value} %then
   [ DEFAULT ] {default-value}

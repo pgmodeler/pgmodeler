@@ -26,20 +26,21 @@ Parameter::Parameter()
 
 Parameter::Parameter(const Parameter &param) : Parameter()
 {
-    setName(param.obj_name);
-    setType(param.type);
-    setIn(param.is_in);
-    setOut(param.is_out);
-    setVariadic(param.is_variadic);
+	setName(param.obj_name);
+	setType(param.type);
+	setIn(param.is_in);
+	setOut(param.is_out);
+	setVariadic(param.is_variadic);
+	setDefaultValue(param.default_value);
 }
 
 Parameter::Parameter(const QString &name, PgSqlType type, bool in, bool out, bool variadic) : Parameter()
 {
-    setName(name);
-    setType(type);
-    setIn(in);
-    setOut(out);
-    setVariadic(variadic);
+	setName(name);
+	setType(type);
+	setIn(in);
+	setOut(out);
+	setVariadic(variadic);
 }
 
 void Parameter::setType(PgSqlType type)
@@ -88,6 +89,21 @@ bool Parameter::isOut()
 bool Parameter::isVariadic()
 {
 	return is_variadic;
+}
+
+QString Parameter::getModeString()
+{
+	QString mode;
+
+	if(is_variadic)
+		mode = "VARIADIC";
+	else
+	{
+		if(is_in) mode = "IN";
+		if(is_out) mode += "OUT";
+	}
+
+	return mode;
 }
 
 void Parameter::operator = (const Parameter &param)

@@ -35,10 +35,9 @@
     [ INHERIT ] {ancestor-table} 
 %end
 
-; $br
+; 
 
- 
-[-- ddl-end --] $br
+$br [-- ddl-end --] $br
 
 
 

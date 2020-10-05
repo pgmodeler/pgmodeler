@@ -344,9 +344,7 @@ void AttributesTogglerItem::createButtonPolygons()
 		return;
 
 	QPolygonF *pol = nullptr;
-	double fnt_factor = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->logicalDotsPerInch() / 96.0,
-			pixel_ratio = qApp->screens().at(qApp->desktop()->screenNumber(qApp->activeWindow()))->devicePixelRatio(),
-			factor = fnt_factor * pixel_ratio;
+	double factor = BaseObjectView::getFontFactor() * BaseObjectView::getScreenDpiFactor();
 
 	pol = &btn_polygons[PrevAttribsPageBtn];
 	pol->append(QPointF(0, 5 * factor));

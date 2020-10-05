@@ -106,7 +106,7 @@ void SourceCodeWidget::saveSQLCode()
 				throw Exception(Exception::getErrorMessage(ErrorCode::FileDirectoryNotWritten).arg(file_dlg.selectedFiles().at(0)),
 												ErrorCode::FileDirectoryNotWritten,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			buf.append(sqlcode_txt->toPlainText());
+			buf.append(sqlcode_txt->toPlainText().toUtf8());
 			out.write(buf.data(), buf.size());
 			out.close();
 		}

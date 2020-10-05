@@ -18,6 +18,8 @@
 %schema;
 <!ENTITY % language SYSTEM "language.dtd">
 %language;
+<!ENTITY % parameter SYSTEM "parameter.dtd">
+%parameter;
 <!ENTITY % function SYSTEM "function.dtd">
 %function;
 <!ENTITY % usertype SYSTEM "usertype.dtd">
@@ -76,6 +78,10 @@
 %usermapping;
 <!ENTITY % foreigntable SYSTEM "foreigntable.dtd">
 %foreigntable;
+<!ENTITY % transform SYSTEM "transform.dtd">
+%transform;
+<!ENTITY % procedure SYSTEM "procedure.dtd">
+%procedure;
 <!ENTITY % changelog SYSTEM "changelog.dtd">
 %changelog;
 

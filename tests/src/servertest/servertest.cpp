@@ -18,10 +18,14 @@
 
 #include <QtTest/QtTest>
 #include "databasemodel.h"
+#include "pgmodelerunittest.h"
 
-class ServerTest: public QObject {
+class ServerTest: public QObject, public PgModelerUnitTest {
 	private:
 		Q_OBJECT
+
+	public:
+		ServerTest() : PgModelerUnitTest(SCHEMASDIR) {}
 
 	private slots:
 		void codeGeneratedIsWellFormed();
@@ -45,7 +49,7 @@ OPTIONS (opt1 'value1',opt2 'value2'); \
 -- ddl-end -- \
 ALTER SERVER server_test OWNER TO postgres; \
 -- ddl-end -- \
-COMMENT ON SERVER server_test IS 'This is a test comment on server'; \
+COMMENT ON SERVER server_test IS E'This is a test comment on server'; \
 -- ddl-end -- ").simplified();
 
 	QString xml_code =QString(

@@ -66,6 +66,8 @@ enum class ObjectType: unsigned {
 	ForeignServer,
 	ForeignTable,
 	UserMapping,
+	Transform,
+	Procedure,
 	Relationship,
 	Textbox,
 	Permission,
@@ -83,7 +85,7 @@ class BaseObject {
 		//! \brief Current PostgreSQL version used in SQL code generation
 		static QString pgsql_ver;
 
-		//! \brief Indicates the the cached code enabled
+		//! \brief Indicates the the cached code enabled.
 		static bool use_cached_code;
 
 		static bool escape_comments;
@@ -485,7 +487,9 @@ class BaseObject {
 
 		/*! \brief Enable/disable the use of cached sql/xml code. When enabled the code generation speed is hugely increased
 				but the downward is an increasing on memory usage. Make sure to every time when an attribute of any instance derivated
-				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache */
+				of this class changes you need to call setCodeInvalidated() in order to force the update of the code cache.
+				This cached code switch may be removed in the future since and the cache will be mandatorily used due to its better
+				performance compared to non cached code, even with the drawback of using more memory. */
 		static void enableCachedCode(bool value);
 
 		/*! \brief Returns the valid object types in a vector. The types

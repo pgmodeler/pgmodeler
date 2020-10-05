@@ -124,11 +124,8 @@ class PhysicalTable: public BaseTable {
 		void destroyObjects();
 
 	public:
-		//! \brief Default char for data separator in initial-data tag
-		static const QString DataSeparator,
-
 		//! \brief Default char for data line break in initial-data tag
-		DataLineBreak;
+		static const QString DataLineBreak;
 
 		PhysicalTable();
 		~PhysicalTable(void){}

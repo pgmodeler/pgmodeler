@@ -23,7 +23,7 @@ namespace QtCompat {
 	{
 		QFontMetrics fm(font);
 
-		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
 			return fm.width(chr);
 		#else
 			return fm.horizontalAdvance(chr);

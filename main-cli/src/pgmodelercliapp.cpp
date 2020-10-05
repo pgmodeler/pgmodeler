@@ -16,7 +16,7 @@
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
 
-#include "pgmodelercli.h"
+#include "pgmodelercliapp.h"
 #include "qtcompat/qtextstreamcompat.h"
 #include "qtcompat/splitbehaviorcompat.h"
 
@@ -36,7 +36,7 @@ const QString PgModelerCliApp::ExportToDbms("--export-to-dbms");
 const QString PgModelerCliApp::ExportToDict("--export-to-dict");
 const QString PgModelerCliApp::ImportDb("--import-db");
 const QString PgModelerCliApp::NoIndex("--no-index");
-const QString PgModelerCliApp::Splitted("--splitted");
+const QString PgModelerCliApp::Split("--split");
 const QString PgModelerCliApp::Diff("--diff");
 const QString PgModelerCliApp::DropDatabase("--drop-database");
 const QString PgModelerCliApp::DropObjects("--drop-objects");
@@ -119,7 +119,7 @@ attribs_map PgModelerCliApp::short_opts = {
 	{ DropClusterObjs, "-dc" },	{ RevokePermissions, "-rv" },	{ DropMissingObjs, "-dm" },
 	{ ForceDropColsConstrs, "-fd" },	{ RenameDb, "-rn" },	{ TruncOnColsTypeChange, "-tt" },
 	{ NoSequenceReuse, "-ns" },	{ NoCascadeDropTrunc, "-nd" },	{ ForceRecreateObjs, "-nf" },
-	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Splitted, "-sp" },
+	{ OnlyUnmodifiable, "-nu" },	{ NoIndex, "-ni" },	{ Split, "-sp" },
 	{ SystemWide, "-sw" },	{ CreateConfigs, "-cc" }, { ForceDiff, "-ff" }
 };
 
@@ -143,7 +143,7 @@ map<QString, bool> PgModelerCliApp::long_opts = {
 	{ DropMissingObjs, false },	{ ForceDropColsConstrs, false },	{ RenameDb, false },
 	{ TruncOnColsTypeChange, false },	{ NoSequenceReuse, false },	{ NoCascadeDropTrunc, false },
 	{ ForceRecreateObjs, false },	{ OnlyUnmodifiable, false },	{ ExportToDict, false },
-	{ NoIndex, false },	{ Splitted, false },	{ SystemWide, false },
+	{ NoIndex, false },	{ Split, false },	{ SystemWide, false },
 	{ CreateConfigs, false }, { ForceDiff, false }
 };
 
@@ -152,7 +152,7 @@ map<QString, QStringList> PgModelerCliApp::accepted_opts = {
 	{{ ExportToFile }, { Input, Output, PgSqlVer }},
 	{{ ExportToPng },  { Input, Output, ShowGrid, ShowDelimiters, PageByPage, ZoomFactor }},
 	{{ ExportToSvg },  { Input, Output, ShowGrid, ShowDelimiters }},
-	{{ ExportToDict }, { Input, Output, Splitted, NoIndex }},
+	{{ ExportToDict }, { Input, Output, Split, NoIndex }},
 
 	{{ ExportToDbms }, { Input, PgSqlVer, IgnoreDuplicates, IgnoreErrorCodes,
 											 DropDatabase, DropObjects, Simulate, UseTmpNames }},
@@ -420,7 +420,7 @@ void PgModelerCliApp::showMenu()
 	out << QtCompat::endl;
 
 	out << tr("Data dictionary export options: ") << QtCompat::endl;
-	out << tr("  %1, %2\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Splitted]).arg(Splitted) << QtCompat::endl;
+	out << tr("  %1, %2\t\t\t    The data dictionaries are generated in separated files inside the selected output directory.").arg(short_opts[Split]).arg(Split) << QtCompat::endl;
 	out << tr("  %1, %2\t\t    Avoids the generation of the index that is used to help navigating through the data dictionary.").arg(short_opts[NoIndex]).arg(NoIndex) << QtCompat::endl;
 	out << QtCompat::endl;
 
@@ -509,7 +509,7 @@ void PgModelerCliApp::showMenu()
 	{
 		fmt_types.append(type);
 		i++;
-		if(i % 9 == 0 || i == type_list.size() - 1)
+		if(i % 8 == 0 || i == type_list.size() - 1)
 		{
 			lines.append(QString("     > ") + fmt_types.join(", "));
 			fmt_types.clear();
@@ -642,17 +642,17 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && !create_configs && opts[Input].isEmpty())
+		if(!upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(import_db && opts[InputDb].isEmpty())
+		if(import_db && !opts.count(InputDb))
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && opts[Output].isEmpty())
+		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && !opts.count(Output))
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
-			 !opts[Input].isEmpty() && !opts[Output].isEmpty() &&
+			 opts.count(Input) && opts.count(Output) &&
 			 QFileInfo(opts[Input]).absoluteFilePath() == QFileInfo(opts[Output]).absoluteFilePath())
 			throw Exception(tr("Input file must be different from output!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
@@ -668,10 +668,10 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 
 		if(diff)
 		{
-			if(opts[Input].isEmpty() && opts[InputDb].isEmpty())
+			if(!opts.count(Input) && !opts.count(InputDb))
 				throw Exception(tr("No input file or database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-			if(!opts[Input].isEmpty() && !opts[InputDb].isEmpty())
+			if(opts.count(Input) && opts.count(InputDb))
 				throw Exception(tr("The input file and database can't be used at the same time!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			if(!opts.count(CompareTo))
@@ -1505,7 +1505,7 @@ void PgModelerCliApp::exportModel()
 		printMessage(tr("Export to data dictionary: %1").arg(parsed_opts[Output]));
 		export_hlp->exportToDataDict(model, parsed_opts[Output],
 																 parsed_opts.count(NoIndex) == 0,
-																 parsed_opts.count(Splitted) > 0);
+																 parsed_opts.count(Split) > 0);
 	}
 	//Export to DBMS
 	else
@@ -1928,7 +1928,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 			else
 			{
 				schparser.loadFile(schemas[i]);
-				buf.append(schparser.getCodeDefinition(attribs));
+				buf.append(schparser.getCodeDefinition(attribs).toUtf8());
 				QDir(QString(".")).mkpath(QFileInfo(files[i]).absolutePath());
 
 				out.setFileName(files[i]);
@@ -1986,7 +1986,7 @@ void PgModelerCliApp::handleLinuxMimeDatabase(bool uninstall, bool system_wide)
 					if(str_aux.startsWith("[") && !str_aux.contains("Added Associations"))
 						str_aux=QString("\n") + str_aux;
 
-					buf_aux.append(str_aux);
+					buf_aux.append(str_aux.toUtf8());
 				}
 			}
 

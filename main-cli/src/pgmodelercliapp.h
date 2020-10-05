@@ -152,7 +152,7 @@ class PgModelerCliApp: public Application {
 		Uninstall,
 		SystemWide,
 		NoIndex,
-		Splitted,
+		Split,
 
 		IgnoreImportErrors,
 		ImportSystemObjs,

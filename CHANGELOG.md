@@ -1,6 +1,62 @@
 Changelog
 ---------
 
+v0.9.3-beta1
+------
+<em>Release date: October 5, 2020</em><br/>
+
+* [New] Added the version descriptor for PostgreSQL 13.
+* [New] Added support to procedures in design, import and diff processes.
+* [New] Added support to transforms in design, import and diff processes.
+* [New] Added an entry in NewObjectOverlayWidget for procedures.
+* [New] Added a custom version of addParameter to Procedure in order to validate the usage of out parameters.
+* [New] Added a tool button for transform objects in NewObjectOverlayWidget
+* [New] Added a unit test to verify schema files syntax (sql, xml, alter).
+* [New] Added the method Cast::setName to override the default behavior of BaseObject::setName.
+* [New] Added the class PgModelerUnitTest that must be inherited so the child test class can have access to schema files path.
+* [New] Added support to modifying attributes toggler colors from appearance settings.
+* [New] Tag objects now include attribute toggler colors.
+* [Change] Changed the behavior of the generation of SQL code for database object, now it'll respect the SQL disabled status of the object.
+* [Change] The ModelExportHelper will abort the export process if the SQL code of the database object is disabled.
+* [Change] The database model is now flagged as modified everytime the objects are swapped.
+* [Change] Improved the ObjectSelectorWidget in order to save/restore the geometry of internal ModelObjectsWidget instances.
+* [Change] Ajusted the Qt version check in QFontMetricsCompat and QPlainTextEditCompat in order to avoid deprecation warnings.
+* [Change] pgModeler will alert about a possible data/work loss if the user is trying to save a model in which there're other instances loaded other tabs.
+* [Change] Refactored FunctionWidget in such way to make it a subclass of BaseFunctionWidget.
+* [Change] Removing unused method DatabaseModel::removeObject(unsigned,ObjectType).
+* [Change] Moved the DTD defintion of parameter tag to a dedicated file to be shared betwen function.dtd and procedure.dtd.
+* [Change] Making the class Function be a direct child of BaseFunction.
+* [Change] Moved the common code between functions and procedures to a base class called BaseFunction.
+* [Change] Replaced the attributes PhysicalTable::DataSeparator and DatabaseExplorerWidget::ElemSeparator usages by PgModelerNs::DataSeparator.
+* [Change] Minor improvement on data dictionary in order to add the current year in the footer.
+* [Change] ModelExportHelper now is capable of indetifying a transform and procedure objects being exported.
+* [Change] Minor fields sizes adjustment in pgsqltypewidget.ui
+* [Change] Improved the schema files syntax tests to include all folder under / schemas.
+* [Change] Refactored the schema files in order to remove code duplication related to ddl-end token.
+* [Change] Minor improvement in ConfigurationForm by adding a splitter between config items (left) and settings page (right).
+* [Change] Minor improvements on objects rendering in order to consider screen dpi when configuring objects border sizes.
+* [Change] Minor refactoring in the parameter/signature generation in class Function.
+* [Change] Making the NewObjectOverlay less transparent in order to enhance reading.
+* [Fix] Fixed a bug in constraint.sch that was avoiding the correct importing of exclude of constraints.
+* [Fix] Fixed source file name for PgModelerCliApp.
+* [Fix] Minor fix in the SyntaxHighlighter in order to highlight correctly multline blocks (specially comments).
+* [Fix] Fixed a bug in DatabaseImportHelper that was causing failure when importing some objects' permissions.
+* [Fix] Minor fixes on the CLI menu.
+* [Fix] Fixed a bug on MainWindow that was wrongly showing the main menu bar in certain cases at startup.
+* [Fix] Minor fix in BaseFunction::createSignature in order to remove OUT keywords from signature.
+* [Fix] Fixed a bug when importing triggers in which functions arguments contain json/jsonb values. Now values are properly formatted.
+* [Fix] Fixed a bug in XmlParser::convertCharsToXMLEntities that was not converting json/jsonb default values correctly breaking the entire XML code of the database model.
+* [Fix] Fixed a bug in Parameter class that was causing default values to be ignored.
+* [Fix] Fixed a bug in SchemaParser related to exceptions being raised wrongly in expressions evaluation.
+* [Fix] Fixed the objects style template config files.
+* [Fix] Removed some deprecation warnings when building on Qt 5.15.1.
+* [Fix] Fixed a bug in ModelFixForm that was passing arguments to CLI in wrong format.
+* [Fix] Minor fix in some project files to remove unnused include paths.
+* [Fix] Fixed a bug in CLI that was ignoring input-db parameter when doing diff.
+* [Fix] Minor fix in the graphical objects rendering in 4k screens when QT_AUTO_SCREEN_SCALE_FACTOR is set to. Now they are rendered in acceptable proportions.
+* [Fix] Minor fix in ModelsDiffHelper in order to avoid generating ALTER...ADD COSTRAINT related to constraints (check and unique) in which parent table is also being created.
+
+
 v0.9.3-beta
 ------
 <em>Release date: July 10, 2020</em><br/>

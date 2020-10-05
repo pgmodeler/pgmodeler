@@ -301,7 +301,7 @@ void ModelExportHelper::exportToSVG(ObjectsScene *scene, const QString &filename
 		if(!show_delim && !show_grid)
 			svg_def.replace(QRegExp("(<image)(.)*(xlink:href)(=)(\")(\\w|=|/|\\+|:|;|,|\n)+(\")( )+(/>)"), "");
 
-		buf.append(svg_def);
+		buf.append(svg_def.toUtf8());
 
 		svg_file.open(QFile::WriteOnly | QFile::Truncate);
 		svg_file.write(buf);
@@ -370,14 +370,18 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		else if(use_tmp_names)
 			throw Exception(ErrorCode::InvUsageTempNamesExportOption,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-
-		if(simulate && db_model->isSQLDisabled())
+		if(db_model->isSQLDisabled())
 		{
-			db_model->setSQLDisabled(false);
-			db_sql_reenabled=true;
-			emit s_progressUpdated(progress, tr("Enabling the SQL code for database `%1' to avoid errors.").arg(db_model->getName()));
+			if(simulate)
+			{
+				db_model->setSQLDisabled(false);
+				db_sql_reenabled=true;
+				emit s_progressUpdated(progress, tr("Enabling the SQL code for database `%1' to avoid errors.").arg(db_model->getName()));
+			}
+			else
+				throw Exception(Exception::getErrorMessage(ErrorCode::ExportFailureDbSQLDisabled).arg(db_model->getName()),
+												ErrorCode::ExportFailureDbSQLDisabled, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 		}
-
 
 		if(ignore_dup)
 		{
@@ -426,10 +430,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 					{
 						//Emits a signal indicating that the object is being exported
 						emit s_progressUpdated(progress,
-											   tr("Creating object `%1' (%2)")
-											   .arg(object->getName())
-											   .arg(object->getTypeName()),
-											   object->getObjectType());
+																	 tr("Creating object `%1' (%2)").arg(object->getName()).arg(object->getTypeName()),
+																	 object->getObjectType());
 
 						sql_cmd=object->getCodeDefinition(SchemaParser::SqlDefinition);
 
@@ -471,9 +473,8 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 
 				//Creating the database on the DBMS
 				emit s_progressUpdated(progress,
-									   tr("Creating database `%1'")
-									   .arg(db_model->getName()),
-									   ObjectType::Database);
+															 tr("Creating database `%1'").arg(db_model->getName()),
+															 ObjectType::Database);
 
 				sql_cmd=db_model->__getCodeDefinition(SchemaParser::SqlDefinition);
 				pos = comm_regexp.indexIn(sql_cmd);
@@ -560,7 +561,7 @@ void ModelExportHelper::exportToDBMS(DatabaseModel *db_model, Connection conn, c
 		conn.close();
 
 		/* When running in a separated thread (other than the main application thread)
-	redirects the error in form of signal */
+		 * redirects the error in form of signal */
 		if(this->thread() && this->thread()!=qApp->thread())
 		{
 			errors.push_back(e);
@@ -813,7 +814,8 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 																 ObjectType::Conversion, ObjectType::Cast,	ObjectType::Language,
 																 ObjectType::Collation, ObjectType::Extension, ObjectType::Type,
 																 ObjectType::EventTrigger, ObjectType::ForeignDataWrapper, ObjectType::ForeignServer,
-																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Database, ObjectType::BaseObject };
+																 ObjectType::UserMapping, ObjectType::ForeignTable, ObjectType::Transform,
+																 ObjectType::Procedure, ObjectType::Database, ObjectType::BaseObject };
 
 	/* Extract each SQL command from the buffer and execute them separately. This is done
    to permit the user, in case of error, identify what object is wrongly configured. */
@@ -920,6 +922,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 
 						obj_type=obj_tp;
 
+						//Removing/replacing noisy keywords in order to extract more easily the object's name
 						if(lin.startsWith(QString("CREATE")) || lin.startsWith(QString("ALTER")))
 						{
 							if(obj_tp==ObjectType::Index)
@@ -936,9 +939,15 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 							{
 								lin.remove(QString("UNLOGGED"));
 							}
-							else if(obj_tp==ObjectType::Function)
+							else if(obj_tp==ObjectType::Function || obj_tp==ObjectType::Procedure)
 							{
 								lin.remove(QString("OR REPLACE"));
+							}
+							else if(obj_tp==ObjectType::Transform)
+							{
+								lin.remove(QString(" FOR"));
+								lin.replace(QString(" LANGUAGE "), "_");
+								lin.replace(QRegExp("(TRANSFORM)(.)+(\\.)"), "TRANSFORM ");
 							}
 						}
 						else if(lin.startsWith(QString("DROP")))
@@ -969,7 +978,7 @@ void ModelExportHelper::exportBufferToDBMS(const QString &buffer, Connection &co
 									int spc_idx=lin.indexOf(' ');
 									obj_name=lin.mid(0, (spc_idx >= 0 ? spc_idx + 1 : lin.size()));
 
-									if(obj_tp!=ObjectType::Function)
+									if(obj_tp!=ObjectType::Function && obj_tp!=ObjectType::Procedure)
 									{
 										obj_name=obj_name.remove('(').simplified();
 										obj_name=obj_name.remove(')').simplified();

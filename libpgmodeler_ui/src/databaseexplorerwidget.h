@@ -35,7 +35,6 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		
 		static const QString DepNotDefined,
 		DepNotFound,
-		ElemSeparator,
 		DefaultSourceCode;
 		
 		//! \brief Stores the translations of all used attributes at properties panel
@@ -133,6 +132,8 @@ class DatabaseExplorerWidget: public QWidget, public Ui::DatabaseExplorerWidget 
 		void formatServerAttribs(attribs_map &attribs);
 		void formatUserMappingAttribs(attribs_map &attribs);
 		void handleSelectedSnippet(const QString &snip_id);
+		void formatBaseFunctionAttribs(attribs_map &attribs);
+		void formatProcedureAttribs(attribs_map &attribs);
 		
 		//! \brief Extract an attribute map containing the basic attributes for drop/rename commands
 		attribs_map extractAttributesFromItem(QTreeWidgetItem *item);

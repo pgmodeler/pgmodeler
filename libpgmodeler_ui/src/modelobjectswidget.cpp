@@ -19,6 +19,7 @@
 #include "modelobjectswidget.h"
 #include "databaseimportform.h"
 #include "pgmodeleruins.h"
+#include "generalconfigwidget.h"
 
 ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent) : QWidget(parent)
 {
@@ -900,7 +901,7 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 {
 	if(simplified_view)
 	{
-		QWidget *wgt=QApplication::activeWindow();
+		QWidget *wgt = QApplication::activeWindow();
 
 		filter_edt->setFocus();
 		filter_edt->blockSignals(true);
@@ -910,12 +911,13 @@ void ModelObjectsWidget::showEvent(QShowEvent *)
 		filter_edt->blockSignals(false);
 		by_id_chk->blockSignals(false);
 
+		GeneralConfigWidget::restoreWidgetGeometry(this, this->metaObject()->className());
+
 		if(wgt)
 		{
-			int x, y;
-			x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2);
-			y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
-			this->setGeometry(QRect(QPoint(x,y), this->minimumSize()));
+			int x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2),
+					y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
+			this->move(x, y);
 		}
 	}
 }
@@ -935,7 +937,7 @@ void ModelObjectsWidget::closeEvent(QCloseEvent *)
 			itr++;
 		}
 
-		this->resize(this->minimumSize());
+		GeneralConfigWidget::saveWidgetGeometry(this, this->metaObject()->className());
 	}
 
 	emit s_visibilityChanged(getSelectedObject(), !this->isVisible());

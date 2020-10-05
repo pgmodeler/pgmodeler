@@ -92,7 +92,7 @@ void PgSQLTypeWidget::updateTypeFormat()
 
 		length_sb->setEnabled(type.hasVariableLength());
 		timezone_chk->setVisible(type==QString("timestamp") || type==QString("time"));
-		timezone_lbl->setVisible(timezone_chk->isVisible());
+		timezone_lbl->setVisible(type==QString("timestamp") || type==QString("time"));
 		precision_sb->setEnabled(type.acceptsPrecision());
 		dimension_sb->setEnabled(type!=QString("void"));
 		interval_cmb->setVisible(type==QString("interval"));

@@ -38,10 +38,14 @@
 [  <object id="table-title" fill-color="] {table-title-color} [" border-color="] {table-title-bcolor} ["/>] $br
 [  <object id="table-body" fill-color="] {table-body-color} [" border-color="] {table-body-bcolor} ["/>] $br
 [  <object id="table-ext-body" fill-color="] {table-ext-body-color} [" border-color="] {table-ext-body-bcolor} ["/>] $br
+[  <object id="table-toggler-btns" fill-color="] {table-toggler-btns-color} [" border-color="] {table-toggler-btns-bcolor} ["/>] $br
+[  <object id="table-toggler-body" fill-color="] {table-toggler-body-color} [" border-color="] {table-toggler-body-bcolor} ["/>] $br
 [  <object id="label" fill-color="] {label-color} [" border-color="] {label-bcolor} ["/>] $br
 [  <object id="view-title" fill-color="] {view-title-color} [" border-color="]  {view-title-bcolor} ["/>] $br
 [  <object id="view-body" fill-color="] {view-body-color} [" border-color="] {view-body-bcolor} ["/>] $br
 [  <object id="view-ext-body" fill-color="] {view-ext-body-color} [" border-color="] {view-ext-body-bcolor} ["/>] $br
+[  <object id="view-toggler-btns" fill-color="] {view-toggler-btns-color} [" border-color="] {view-toggler-btns-bcolor} ["/>] $br
+[  <object id="view-toggler-body" fill-color="] {view-toggler-body-color} [" border-color="] {view-toggler-body-bcolor} ["/>] $br
 [  <object id="textbox" fill-color="] {textbox-color} [" border-color="] {textbox-bcolor} ["/>] $br
 [  <object id="relationship" fill-color="] {relationship-color} [" border-color="] {relationship-bcolor} ["/>] $br
 [  <object id="attribute" fill-color="] {attribute-color} [" border-color="] {attribute-bcolor} ["/>] $br
@@ -65,5 +69,7 @@
 [  <object id="foreigntable-title" fill-color="] {foreigntable-title-color} [" border-color="] {foreigntable-title-bcolor} ["/>] $br
 [  <object id="foreigntable-body" fill-color="] {foreigntable-body-color} [" border-color="] {foreigntable-body-bcolor} ["/>] $br
 [  <object id="foreigntable-ext-body" fill-color="] {foreigntable-ext-body-color} [" border-color="] {foreigntable-ext-body-bcolor} ["/>] $br
+[  <object id="foreigntable-toggler-btns" fill-color="] {foreigntable-toggler-btns-color} [" border-color="] {foreigntable-toggler-btns-bcolor} ["/>] $br
+[  <object id="foreigntable-toggler-body" fill-color="] {foreigntable-toggler-body-color} [" border-color="] {foreigntable-toggler-body-bcolor} ["/>] $br
 
 </objects-style> $br

@@ -23,7 +23,9 @@
     [BUFFERING = ] %if ({buffering} == "unset") %then OFF %else ON %end
   %end
 
-  [)]  ; $br
-  [-- ddl-end --] $br
+  [)]  ; 
+  
+  $br [-- ddl-end --] $br
+  
 %end
  

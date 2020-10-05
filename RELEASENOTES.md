@@ -1,55 +1,53 @@
-v0.9.3-beta
+v0.9.3-beta1
 ------
 
-<em>Release date: July 10, 2020</em><br/>
-<em>Changes since: <strong>v0.9.3-alpha1</strong></em><br/>
+<em>Release date: October 5, 2020</em><br/>
+<em>Changes since: <strong>v0.9.3-beta</strong></em><br/>
 
-<strong>Summary:</strong> here we are again bringing another round of improvements to pgModeler. This release basically enhances what has been done in 0.9.3-alpha1 plus bringing an important experimental feature: the partial diff.<br/>
+<strong>Summary:</strong> we are quite close to the end of another amazing development cycle with this last beta release of 0.9.3! <br/>
 
-After a entire month exclusively dedicated to the partial diff implementation we finally have something usable. This feature consists in taking an input database or model, apply user-provided filters and diminishing the amount of objects to be compared. This brings a significant gain of speed in the process because only a subset of the database/model will be handled. <br/>
+This launch brings mainly bug fixes but in order to make pgModeler even more complete, we've added full support to procedures and transforms. <br/>
 
-In order to make the partial diff as user-friendly as possible, the database model received an internal changelog which consists on a list of modification made during a design session. This list can be queried in such way that only the objects modified that match the filter(s) criteria are used in the partial diff process. </br>
+Additionally to new things, pgModeler was improved in such a way to render database models more properly in high DPI screens. <br/>
 
-Talking about model's internal changelog, this one can be persisted into the model file so it can be restored in the next design session, thus, the user is free to apply a partial diff anytime as long as the changelog isn't cleaned up. <br/>
+There were some important changes in the code generation and exporting too. For the former, the SQL code of the database object will respect the disabled status. In previous versions, the SQL code was always deactivated. <br/>
 
-The database import process was patched in such way that a sequence will be automatically created when a column refers it from the default value. This will happen only when the automatic dependency resolution is active.  <br/>
+The model exporting process will now abort the execution if the database object has it's code disabled. This behavior does not apply to model validation which forces the enabling of the database object's SQL so the whole model can be properly checked. </br>
 
-The objects filtering widget introduced in 0.9.3-alpha1 was slightly redesigned by moving options to a popup menu in order to make the widget more compact and easier to use. <br/>
+pgModeler now will not generate ADD CONSTRAINT instructions for constraints during diff when the parent table is also being created in the process. <br/>
 
-The command line interface received lots of improvements too, from a simple menu redesign to the support to partial diff.
+Also, default values and functions arguments containing json/jsonb values are now properly formatted and saved to the XML code avoiding corruption of the database model in very specific cases. <br/>
 
-Several bugs were fixed in this release too. The majority related to crashes but there was some fixed bugs that were affecting the database design and the diff process. <br/>
+Finally, some of the changelog entries in this version are listed below. For the complete list of changes/fixes, please, read the CHANGELOG.md. <br/>
 
-Finally, some of the change log entries in this version are listed below. For the complete list of changes/fixes, please, read the CHANGELOG.md. <br/>
-
-* [New] Added support to partial diffs between a model and database or between two databases.
-* [New] The CLI now validates the mixing of options of different operation modes.
-* [New] Created an internal changelog on DatabaseModel to register object's modification over time being useful for partial diff operations.
-* [New] Added the widget called ChangelogWidget to control the model's internal changelog settings in the design view.
-* [New] Added support to save/load changelog from model file.
-* [New] The CLI now supports partial diffs too.
-* [New] Added a warning message prior to the partial diff without using "Do not drop missing objects" option.
-* [New] Added cast and user mapping to the list of filterable objects.
-* [New] Added a hint text in ObjectsFilterWidget to inform about exact match searching.
-* [New] Added support to DatabaseImportHelper to create a sequence assigned to a column via default value if automatic dependencies resolution is enabled.
-* [Change] Improved the sequences assignments to columns in DatabaseImportHelper::assignSequencesToColumns.
-* [Change] Minor adjustment on objects grids in SwapObjectsIdsWidget, DatabaseImportForm and ModelDatabaseDiffForm by changing the columns order.
-* [Change] Minor change in ObjectsFilterWidget by making the action "Only matching" checked by default.
-* [Change] Minor improvement on CLI to accept the value "all" for the paramenter --force-children in order to force all table children at once.
-* [Change] Improved the objects filtering in such way to allow filter by name or signature.
-* [Change] Improved the UI of ObjectsFilterWidget by moving all options to a popup menu.
-* [Change] Several changes in all catalog queries in order to support signature matching.
-* [Change] Adjusted the appimages building process.
-* [Change] Changing the default font size of graphical objects to 10pt in order to try to solve the intermittend issue of disappearing texts.
-* [Change] Updated the French translation.
-* [Fix] Fixed a regression in ObjectFinderWidget that was not opening objects form with double-click on an item on the results grid.
-* [Fix] Fixed a bug when drawing relationships in FK to PK connection mode. Now when one of the tables is collapsed the center points of both are used as connection points to the relationship.
-* [Fix] Fixed a crash in ModelDatabaseDiffForm while enabling/disabling the partial diff tab.
-* [Fix] Fixed the diff process for inheritance relationships created for two existing tables.
-* [Fix] Fixed a crash in LayersWidget when renaming a layer.
-* [Fix] Minor fix in DatabaseImportHelper::assignSequencesToColumns.
-* [Fix] Minor fix in ConstraintWidget that was trying to validate FK relationships for generated tables of many-to-many relationships.
-* [Fix] Fixed a bug in Catalog::getObjectsOIDs that was executing a catalog query for a certain object when it was not being filtered.
-* [Fix] Minor fix in ModelDatabaseDiffForm tabs enabling/disabling steps.
-* [Fix] Fixed the QProcess usage in ModelFixForm due to QProcess::start() deprecation in Qt 5.15.
-* [Fix] Fixed a crash when trying to move several objects to a layer from the object finder widget and in the selected set one or more objects aren't graphical ones.
+* [New] Added the version descriptor for PostgreSQL 13.
+* [New] Added support to procedures in design, import and diff processes.
+* [New] Added support to transforms in design, import and diff processes.
+* [New] Added support to modifying attributes toggler colors from appearance settings.
+* [New] Tag objects now include attribute toggler colors.
+* [Change] Changed the behavior of the generation of SQL code for database object, now it'll respect the SQL disabled status of the object.
+* [Change] The ModelExportHelper will abort the export process if the SQL code of the database object is disabled.
+* [Change] The database model is now flagged as modified everytime the objects are swapped.
+* [Change] Improved the ObjectSelectorWidget in order to save/restore the geometry of internal ModelObjectsWidget instances.
+* [Change] pgModeler will alert about a possible data/work loss if the user is trying to save a model in which there're other instances loaded other tabs.
+* [Change] Making the class Function be a direct child of BaseFunction.
+* [Change] Moved the common code between functions and procedures to a base class called BaseFunction.
+* [Change] Replaced the attributes PhysicalTable::DataSeparator and DatabaseExplorerWidget::ElemSeparator usages by PgModelerNs::DataSeparator.
+* [Change] Refactored the schema files in order to remove code duplication related to ddl-end token.
+* [Change] Minor improvement in ConfigurationForm by adding a splitter between config items (left) and settings page (right).
+* [Change] Minor improvements on objects rendering in order to consider screen dpi when configuring objects border sizes.
+* [Change] Minor refactoring in the parameter/signature generation in class Function.
+* [Change] Making the NewObjectOverlay less transparent in order to enhance reading.
+* [Fix] Fixed a bug in constraint.sch that was avoiding the correct importing of exclude of constraints.
+* [Fix] Minor fix in the SyntaxHighlighter in order to highlight correctly multline blocks (specially comments).
+* [Fix] Fixed a bug in DatabaseImportHelper that was causing failure when importing some objects' permissions.
+* [Fix] Fixed a bug on MainWindow that was wrongly showing the main menu bar in certain cases at startup.
+* [Fix] Minor fix in BaseFunction::createSignature in order to remove OUT keywords from signature.
+* [Fix] Fixed a bug when importing triggers in which functions arguments contain json/jsonb values. Now values are properly formatted.
+* [Fix] Fixed a bug in XmlParser::convertCharsToXMLEntities that was not converting json/jsonb default values correctly breaking the entire XML code of the database model.
+* [Fix] Fixed a bug in Parameter class that was causing default values to be ignored.
+* [Fix] Fixed a bug in SchemaParser related to exceptions being raised wrongly in expressions evaluation.
+* [Fix] Fixed a bug in ModelFixForm that was passing arguments to CLI in wrong format.
+* [Fix] Fixed a bug in CLI that was ignoring input-db parameter when doing diff.
+* [Fix] Minor fix in the graphical objects rendering in 4k screens when QT_AUTO_SCREEN_SCALE_FACTOR is set. Now they are rendered in acceptable proportions.
+* [Fix] Minor fix in ModelsDiffHelper in order to avoid generating ALTER...ADD COSTRAINT related to constraints (check and unique) in which parent table is also being created.

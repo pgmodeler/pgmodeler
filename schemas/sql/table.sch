@@ -3,13 +3,16 @@
 #          Code generation can be broken if incorrect changes are made.
 
 [-- object: ] {name} [ | type: ] {sql-object} [ --] $br
-
 [-- ] {drop}
 
- %if {prepended-sql} %then
-   {prepended-sql}
-   $br [-- ddl-end --] $br $br
- %end
+# This is a special token that pgModeler recognizes as end of DDL command
+# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
+%set {ddl-end} $br [-- ddl-end --] $br
+
+%if {prepended-sql} %then
+  {prepended-sql}
+  {ddl-end} $br
+%end
 
 [CREATE]
 
@@ -71,11 +74,9 @@ $br )
 %if {tablespace} %then
  $br [TABLESPACE ] {tablespace}
 %end
-; $br
+; 
 
-# This is a special token that pgModeler recognizes as end of DDL command
-# when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!
-[-- ddl-end --] $br
+{ddl-end}
 
 %if {gen-alter-cmds} %then
   %if {columns} %then $br {columns} %end
@@ -88,17 +89,17 @@ $br )
 
 %if ({pgsql-ver} >=f "9.5") %and {rls-enabled} %then
   [ALTER TABLE ] {name} [ ENABLE ROW LEVEL SECURITY;]
-  $br [-- ddl-end --] $br
+  {ddl-end}
   
   %if {rls-forced} %then
     [ALTER TABLE ] {name} [ FORCE ROW LEVEL SECURITY;]
-    $br [-- ddl-end --] $br
+    {ddl-end}
   %end
 %end
 
 %if {appended-sql} %then
  {appended-sql}
- $br [-- ddl-end --] $br
+ {ddl-end}
 %end
 
 %if {initial-data} %then

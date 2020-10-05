@@ -133,6 +133,7 @@ class DatabaseImportHelper: public QObject {
 		
 		SchemaParser schparser;
 		
+		void configureBaseFunctionAttribs(attribs_map &attribs);
 		void configureDatabase(attribs_map &attribs);
 		void createObject(attribs_map &attribs);
 		void createTablespace(attribs_map &attribs);
@@ -164,6 +165,8 @@ class DatabaseImportHelper: public QObject {
 		void createForeignServer(attribs_map &attribs);
 		void createUserMapping(attribs_map &attribs);
 		void createForeignTable(attribs_map &attribs);
+		void createTransform(attribs_map &attribs);
+		void createProcedure(attribs_map &attribs);
 		void __createTableInheritances();
 		void createTableInheritances();
 		void createTablePartitionings();
@@ -179,6 +182,11 @@ class DatabaseImportHelper: public QObject {
 		/*! \brief Retrieve the schema qualified name for the specified object oid. If the oid represents a function
 		or operator the signature can be retrieved instead by using the boolean parameter */
 		QString getObjectName(const QString &oid, bool signature_form=false);
+
+		/*! \brief Retrieve the object's attributes using its oid as search key.
+		This method will check if the oid resides in the user_objs or system_objs map and return a copy of it.
+		If the oid is invalid an empty attributes map is returned. */
+		attribs_map getObjectAttributes(unsigned oid);
 		
 		//! \brief Get the names for the objects oids inside the oid vector.
 		QStringList getObjectNames(const QString &oid_vect, bool signature_form=false);

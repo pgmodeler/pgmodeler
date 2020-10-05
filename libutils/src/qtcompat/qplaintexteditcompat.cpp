@@ -21,7 +21,7 @@
 namespace QtCompat {
 	void setTabStopDistance(QPlainTextEdit *text_edt, qreal distance)
 	{
-		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
 			text_edt->setTabStopWidth(distance);
 		#else
 			text_edt->setTabStopDistance(distance);
@@ -30,7 +30,7 @@ namespace QtCompat {
 
 	qreal tabStopDistance(QPlainTextEdit *text_edt)
 	{
-		#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+		#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
 			return text_edt->tabStopWidth();
 		#else
 			return text_edt->tabStopDistance();

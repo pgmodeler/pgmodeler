@@ -17,6 +17,7 @@
 */
 
 #include "trigger.h"
+#include "pgmodelerns.h"
 
 Trigger::Trigger()
 {
@@ -55,26 +56,28 @@ Trigger::Trigger()
 
 void Trigger::addArgument(const QString &arg)
 {
-	arguments.push_back(arg);
+	arguments.append(arg);
+}
+
+void Trigger::addArguments(const QStringList &args)
+{
+	arguments.clear();
+	arguments = args;
 }
 
 void Trigger::setArgumentAttribute(unsigned def_type)
 {
-	QString str_args;
-	unsigned i, count;
+	QStringList str_args;
 
-	count=arguments.size();
-	for(i=0; i < count; i++)
+	for(auto &arg : arguments)
 	{
 		if(def_type==SchemaParser::SqlDefinition)
-			str_args+=QString("'") + arguments[i] + QString("'");
+			str_args.append(QString("'") + arg + QString("'"));
 		else
-			str_args+=arguments[i];
-
-		if(i < (count-1)) str_args+=QString(",");
+			str_args.append(arg);
 	}
 
-	attributes[Attributes::Arguments]=str_args;
+	attributes[Attributes::Arguments] = str_args.join(def_type == SchemaParser::SqlDefinition ? "," : PgModelerNs::DataSeparator);
 }
 
 void Trigger::setFiringType(FiringType firing_type)
@@ -149,14 +152,10 @@ void Trigger::addColumn(Column *column)
 void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 {
 	//Raises an error if the argument index is invalid (out of bound)
-	if(arg_idx>=arguments.size())
+	if(static_cast<int>(arg_idx) >= arguments.size())
 		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<QString>::iterator itr;
-
-	itr=arguments.begin()+arg_idx;
-	(*itr)=new_arg;
-
+	arguments[arg_idx] = new_arg;
 	setCodeInvalidated(true);
 }
 
@@ -182,7 +181,7 @@ bool Trigger::isExecutePerRow()
 QString Trigger::getArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
-	if(arg_idx>=arguments.size())
+	if(static_cast<int>(arg_idx) >= arguments.size())
 		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return arguments[arg_idx];
@@ -225,12 +224,10 @@ FiringType Trigger::getFiringType()
 void Trigger::removeArgument(unsigned arg_idx)
 {
 	//Raises an error if the argument index is invalid (out of bound)
-	if(arg_idx>=arguments.size())
+	if(static_cast<int>(arg_idx) >= arguments.size())
 		throw Exception(ErrorCode::RefArgumentInvalidIndex,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	vector<QString>::iterator itr;
-	itr=arguments.begin()+arg_idx;
-	arguments.erase(itr);
+	arguments.removeAt(arg_idx);
 	setCodeInvalidated(true);
 }
 

@@ -61,6 +61,8 @@
 #include "foreigndatawrapperwidget.h"
 #include "foreignserverwidget.h"
 #include "usermappingwidget.h"
+#include "transformwidget.h"
+#include "procedurewidget.h"
 
 vector<BaseObject *> ModelWidget::copied_objects;
 vector<BaseObject *> ModelWidget::cutted_objects;
@@ -422,6 +424,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	new_obj_overlay_wgt=new NewObjectOverlayWidget(this);
 	new_obj_overlay_wgt->setObjectName(QString("new_obj_overlay_wgt"));
 	new_obj_overlay_wgt->setVisible(false);
+	PgModelerUiNs::createDropShadow(new_obj_overlay_wgt, 5, 5, 20);
 
 	vector<ObjectType> graph_types = { ObjectType::BaseObject, ObjectType::Schema, ObjectType::Table, ObjectType::ForeignTable,
 																		 ObjectType::View, ObjectType::Relationship, ObjectType::Textbox };
@@ -2098,6 +2101,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			res = openEditingForm<ForeignServer, ForeignServerWidget>(object);
 		else if(obj_type==ObjectType::UserMapping)
 			res = openEditingForm<UserMapping, UserMappingWidget>(object);
+		else if(obj_type==ObjectType::Transform)
+			res = openEditingForm<Transform, TransformWidget>(object);
+		else if(obj_type==ObjectType::Procedure)
+			res=openEditingForm<Procedure, ProcedureWidget, Schema>(object, sel_schema);
 		else
 		{
 			DatabaseWidget *database_wgt=new DatabaseWidget;
@@ -4935,7 +4942,8 @@ void ModelWidget::swapObjectsIds()
 		swap_ids_wgt->setSelectedObjects(selected_objects[0], selected_objects.size() == 2 ? selected_objects[1] : nullptr);
 
 	connect(swap_ids_wgt, &SwapObjectsIdsWidget::s_objectsIdsSwapped, [&](){
-			this->op_list->removeOperations();
+			op_list->removeOperations();
+			setModified(true);
 			emit s_objectManipulated();
 	});
 

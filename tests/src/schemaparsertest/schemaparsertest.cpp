@@ -20,12 +20,13 @@
 #include "schemaparser.h"
 
 class SchemaParserTest: public QObject {
-  private:
-    Q_OBJECT
+	private:
+		Q_OBJECT
 
-  private slots:
+	private slots:
 		void testExpressionEvaluationWithCasts();
 		void testSetOperationInIf();
+		void testSetOperationUnderIfEvaluatedAsFalse();
 };
 
 void SchemaParserTest::testExpressionEvaluationWithCasts()
@@ -72,6 +73,36 @@ void SchemaParserTest::testSetOperationInIf()
 	{
 		schparser.loadBuffer(buffer);
 		QCOMPARE(schparser.getCodeDefinition(attribs) == "extract in else", true);
+	}
+	catch(Exception &e)
+	{
+		QFAIL(e.getExceptionsText().toStdString().c_str());
+	}
+}
+
+void SchemaParserTest::testSetOperationUnderIfEvaluatedAsFalse()
+{
+	SchemaParser schparser;
+	QString buffer;
+	attribs_map attribs;
+
+	attribs["val"] = "9.0";
+	buffer = "%if ({val} >=f \"9.5\") %then\n";
+	buffer += "\t%set {ver} 10.0\n";
+	buffer += "\t{ver}\n";
+	buffer += "\t\n%if ({ver} <=f \"9.3\") %then";
+	buffer += "\t\n [in if]";
+	buffer += "\t\n%else";
+	buffer += "\t\n [in else]";
+	buffer += "\t\n%end";
+	buffer += "\n%end\n";
+
+	try
+	{
+		//QTextStream out(stdout);
+		//out <<  buffer;
+		schparser.loadBuffer(buffer);
+		QCOMPARE(schparser.getCodeDefinition(attribs) == "", true);
 	}
 	catch(Exception &e)
 	{

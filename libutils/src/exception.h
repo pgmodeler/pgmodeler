@@ -189,7 +189,6 @@ enum class ErrorCode: unsigned {
 	InvConstratintNoColumns,
 	ConfigurationNotLoaded,
 	DefaultConfigNotRestored,
-	ExportFailure,
 	PluginNotLoaded,
 	PluginsNotLoaded,
 	InvalidSyntax,
@@ -298,12 +297,14 @@ enum class ErrorCode: unsigned {
 	InitialUserConfigNotCreated,
 	InvalidObjectFilter,
 	InvChildObjectTypeFilter,
-	InvChangelogEntryValues
+	InvChangelogEntryValues,
+	InvProcedureParamOutMode,
+	ExportFailureDbSQLDisabled
 };
 
 class Exception {
 	private:
-		static constexpr unsigned ErrorCount=254;
+		static constexpr unsigned ErrorCount=255;
 
 		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */

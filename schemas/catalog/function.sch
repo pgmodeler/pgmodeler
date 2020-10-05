@@ -1,12 +1,12 @@
-# Catalog queries for
+# Catalog queries for functions
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
 
 %if ({pgsql-ver} <=f "10.0") %then
-    %set {is-not-agg} [pr.proisagg IS FALSE]
+    %set {is-not-agg-proc} [pr.proisagg IS FALSE]
     %set {window-func} [pr.proiswindow AS window_func_bool]
 %else
-    %set {is-not-agg} [pr.prokind <> 'a'] 
+    %set {is-not-agg-proc} [pr.prokind NOT IN ('a', 'p') ] 
     %set {window-func} [CASE pr.prokind WHEN 'w' THEN TRUE ELSE FALSE END AS window_func_bool]
 %end    
 
@@ -23,9 +23,9 @@
     LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 
   %if {schema} %then
-   [ WHERE ] {is-not-agg} [ AND ns.nspname = ] '{schema}'
+   [ WHERE ] {is-not-agg-proc} [ AND ns.nspname = ] '{schema}'
   %else
-   [ WHERE ] {is-not-agg}
+   [ WHERE ] {is-not-agg-proc}
   %end
 
   %if {last-sys-oid} %then
@@ -99,7 +99,7 @@
 	 [ LEFT JOIN pg_namespace AS ns ON pr.pronamespace = ns.oid ]
 	%end
 
-	[ WHERE ] {is-not-agg} 
+	[ WHERE ] {is-not-agg-proc} 
 
 	%if {last-sys-oid} %then
 	  [ AND pr.oid ] {oid-filter-op} $sp {last-sys-oid}

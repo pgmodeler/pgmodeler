@@ -59,6 +59,8 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include "foreignserver.h"
 #include "usermapping.h"
 #include "foreigntable.h"
+#include "transform.h"
+#include "procedure.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -151,7 +153,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		fdata_wrappers,
 		foreign_servers,
 		usermappings,
-		foreign_tables;
+		foreign_tables,
+		transforms,
+		procedures;
 
 		/*! \brief Stores the xml definition for special objects. This map is used
 		 when revalidating the relationships */
@@ -236,6 +240,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getOpClassDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getDomainDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getCastDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getProcedureDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getFunctionDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getAggregateDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getLanguageDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
@@ -251,6 +256,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		void getTypeDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getViewDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 		void getGenericSQLDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
+		void getTransformDependencies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps);
 
 	protected:
 		void setLayers(const QStringList &layers);
@@ -332,9 +338,6 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		//! \brief Removes an object from the model
 		void removeObject(BaseObject *object, int obj_idx=-1);
-
-		//! \brief Removes an object using its index and type
-		void removeObject(unsigned obj_idx, ObjectType obj_type);
 
 		//! \brief Returns an object from the model using its index and type
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -593,6 +596,16 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignTable *getForeignTable(unsigned obj_idx);
 		ForeignTable *getForeignTable(const QString &name);
 
+		void addTransform(Transform *transf, int obj_idx=-1);
+		void removeTransform(Transform *transf, int obj_idx=-1);
+		Transform *getTransform(unsigned obj_idx);
+		Transform *getTransform(const QString &name);
+
+		void addProcedure(Procedure *proc, int obj_idx=-1);
+		void removeProcedure(Procedure *proc, int obj_idx=-1);
+		Procedure *getProcedure(unsigned obj_idx);
+		Procedure *getProcedure(const QString &name);
+
 		void addPermission(Permission *perm);
 		void removePermission(Permission *perm);
 
@@ -655,6 +668,8 @@ class DatabaseModel:  public QObject, public BaseObject {
 		ForeignServer *createForeignServer();
 		UserMapping *createUserMapping();
 		ForeignTable *createForeignTable();
+		Transform *createTransform();
+		Procedure *createProcedure();
 
 		template<class TableClass>
 		TableClass *createPhysicalTable();
