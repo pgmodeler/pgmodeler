@@ -54,7 +54,7 @@ v0.9.3-beta1
 * [Fix] Minor fix in some project files to remove unnused include paths.
 * [Fix] Fixed a bug in CLI that was ignoring input-db parameter when doing diff.
 * [Fix] Minor fix in the graphical objects rendering in 4k screens when QT_AUTO_SCREEN_SCALE_FACTOR is set to. Now they are rendered in acceptable proportions.
-* [Fix] Minor fix in ModelsDiffHelper in order to avoid generating ALTER...ADD COSTRAINT for constraints (check and unique) in which parent table is also being created.
+* [Fix] Minor fix in ModelsDiffHelper in order to avoid generating ALTER...ADD COSTRAINT related to constraints (check and unique) in which parent table is also being created.
 
 
 v0.9.3-beta
