@@ -349,21 +349,14 @@ void ModelValidationHelper::validateModel()
 							/*
 							 * If the current referrer object has an id less than reference object's id
 							 * then it will be pushed into the list of invalid references.
-							 * There are two exceptions here:
-							 *
-							 * 1) Foreign keys are completely discarded from any validation since they are always created
-							 * at end of code definition being free of any reference breaking.
-							 *
-							 * 2) If a reference object is a sequence and the referrer object is a column then
-							 * it'll be discarded if the id of the parent table of the column is greater than the sequence's id.
-							 * This will not be treated as a reference breaking because the sequence will be always created before
-							 * the table even if the column has an id smaller than the sequence's id.
+							 * There's an exception which is that foreign keys are completely discarded from any validation
+							 * since they are always created at end of code definition being free of any reference breaking.
 							 */
 							if(object != refs.back() &&
 								 (
-									 ((col || (constr && constr->getConstraintType()!=ConstraintType::ForeignKey)) &&
+									 ((col || (constr && constr->getConstraintType() != ConstraintType::ForeignKey)) &&
 										(tab_obj->getParentTable()->getObjectId() <= object->getObjectId())) ||
-									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId() && obj_type != ObjectType::Sequence))
+									 (!constr && !col && refs.back()->getObjectId() <= object->getObjectId()))
 								 )
 							{
 								if(col || constr)
