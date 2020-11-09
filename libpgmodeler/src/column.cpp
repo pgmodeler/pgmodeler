@@ -18,6 +18,8 @@
 
 #include "column.h"
 
+const QString Column::NextValFuncTmpl("nextval('%1'::regclass)");
+
 Column::Column()
 {
 	obj_type=ObjectType::Column;
@@ -278,7 +280,7 @@ QString Column::getCodeDefinition(unsigned def_type)
 		{
 			//Configuring the default value of the column to get the next value of the sequence
 			if(def_type==SchemaParser::SqlDefinition)
-				attributes[Attributes::DefaultValue]=QString("nextval('%1'::regclass)").arg(sequence->getSignature());
+				attributes[Attributes::DefaultValue]=NextValFuncTmpl.arg(sequence->getSignature());
 
 			attributes[Attributes::Sequence]=sequence->getName(true);
 		}
@@ -316,7 +318,7 @@ QString Column::getAlterDefinition(BaseObject *object)
 			attribs[Attributes::Type]=col->type.getCodeDefinition(SchemaParser::SqlDefinition);
 
 		if(col->sequence)
-			def_val=QString("nextval('%1'::regclass)").arg(col->sequence->getSignature());
+			def_val=NextValFuncTmpl.arg(col->sequence->getSignature());
 		else
 			def_val=col->default_value;
 

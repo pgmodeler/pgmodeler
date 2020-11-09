@@ -1779,7 +1779,7 @@ QString PhysicalTable::getDataDictionary(bool splitted, attribs_map extra_attrib
 		aux_attrs[Attributes::Parent] = getSchemaName();
 		aux_attrs[Attributes::Name] = column->getName();
 		aux_attrs[Attributes::Type] = *column->getType();
-		aux_attrs[Attributes::DefaultValue] = column->getDefaultValue();
+		aux_attrs[Attributes::DefaultValue] = column->getSequence() ? Column::NextValFuncTmpl.arg(column->getSequence()->getSignature()) : column->getDefaultValue();
 		aux_attrs[Attributes::Comment] = column->getComment();
 		aux_attrs[Attributes::NotNull] = column->isNotNull() ? check_mark : "";
 		aux_attrs[Attributes::PkConstr] = isConstraintRefColumn(column, ConstraintType::PrimaryKey) ? check_mark : "";

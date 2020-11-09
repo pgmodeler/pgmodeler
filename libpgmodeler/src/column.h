@@ -85,6 +85,9 @@ class Column: public TableObject{
 		virtual void configureSearchAttributes();
 
 	public:
+		//! \brief Holds the pattern for nextval() function call
+		static const QString NextValFuncTmpl;
+
 		Column();
 
 		//! \brief Defines if the column accepts null values or not
