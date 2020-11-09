@@ -782,8 +782,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 
 		/*! \brief Returns a search filter from the objects in the change log.
 		 * It's possible to specify a date interval to contrain the entries
-		 * retrieved from changelog */
-		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end);
+		 * retrieved from changelog. Also, it's possible to specify which actions must
+		 * be filtered from the changelog. */
+		QStringList getFiltersFromChangeLog(QDateTime start, QDateTime end, QStringList actions = {});
 
 		//! \brief Enable the persistence of the internal changelog
 		void setPersistedChangelog(bool persist);
