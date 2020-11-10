@@ -1475,14 +1475,14 @@
                      <property name="bottomMargin">
                       <number>4</number>
                      </property>
-                     <item row="0" column="0">
+                     <item row="2" column="0">
                       <widget class="QCheckBox" name="start_date_chk">
                        <property name="text">
                         <string>Start date:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="3" rowspan="2">
+                     <item row="2" column="3" rowspan="2">
                       <spacer name="horizontalSpacer_11">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
@@ -1495,7 +1495,26 @@
                        </property>
                       </spacer>
                      </item>
-                     <item row="1" column="2">
+                     <item row="2" column="1">
+                      <widget class="QDateTimeEdit" name="start_date_dt">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
+                       </property>
+                       <property name="calendarPopup">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="2">
                       <widget class="QToolButton" name="apply_by_date_tb">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1524,26 +1543,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="1">
-                      <widget class="QDateTimeEdit" name="start_date_dt">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="displayFormat">
-                        <string>yyyy-MM-dd HH:mm</string>
-                       </property>
-                       <property name="calendarPopup">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
+                     <item row="3" column="0">
                       <widget class="QCheckBox" name="end_date_chk">
                        <property name="enabled">
                         <bool>true</bool>
@@ -1553,7 +1553,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
+                     <item row="3" column="1">
                       <widget class="QDateTimeEdit" name="end_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1572,7 +1572,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="1">
+                     <item row="5" column="1">
                       <spacer name="verticalSpacer_4">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -1584,6 +1584,19 @@
                         </size>
                        </property>
                       </spacer>
+                     </item>
+                     <item row="1" column="0" colspan="4">
+                      <widget class="QCheckBox" name="gen_drop_del_items_chk">
+                       <property name="toolTip">
+                        <string>Generates &lt;strong&gt;DROP&lt;/strong&gt; commands from changelog entries related to objects deleted from the database model.</string>
+                       </property>
+                       <property name="statusTip">
+                        <string/>
+                       </property>
+                       <property name="text">
+                        <string>Generate DROP commands for deleted items</string>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -1820,11 +1833,11 @@
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
-            <attribute name="headerMinimumSectionSize">
-             <number>25</number>
-            </attribute>
             <attribute name="headerDefaultSectionSize">
              <number>100</number>
+            </attribute>
+            <attribute name="headerMinimumSectionSize">
+             <number>25</number>
             </attribute>
             <attribute name="headerStretchLastSection">
              <bool>true</bool>

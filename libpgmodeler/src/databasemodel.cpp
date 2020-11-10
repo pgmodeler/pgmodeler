@@ -11248,15 +11248,15 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
 		obj_signature = parent_obj->getSignature() + "." + object->getName();
-		changelog.push_back(std::make_tuple(date_time, parent_obj->getSignature(), parent_obj->getObjectType(), Attributes::UpdatePriv));
+		changelog.push_back(std::make_tuple(date_time, parent_obj->getSignature(), parent_obj->getObjectType(), Attributes::Updated));
 	}
 
 	if(op_type == Operation::ObjectCreated)
-		action = Attributes::CreatePriv;
+		action = Attributes::Created;
 	else if(op_type == Operation::ObjectRemoved)
-		action = Attributes::DeletePriv;
+		action = Attributes::Deleted;
 	else
-		action = Attributes::UpdatePriv;
+		action = Attributes::Updated;
 
 	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
@@ -11265,7 +11265,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 {
 	QDateTime date_time = QDateTime::fromString(date, Qt::ISODate);
 	ObjectType obj_type = BaseObject::getObjectType(type);
-	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
+	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 TableObject::isTableObject(obj_type) || !date_time.isValid() || !actions.contains(action))
