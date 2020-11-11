@@ -8,4 +8,4 @@
 <!ATTLIST entry date CDATA #REQUIRED>
 <!ATTLIST entry signature CDATA #REQUIRED>
 <!ATTLIST entry type CDATA #REQUIRED>
-<!ATTLIST entry action (create|update|delete) "create">
+<!ATTLIST entry action (created|updated|deleted) "created">
