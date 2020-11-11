@@ -642,13 +642,13 @@ void PgModelerCliApp::parseOptions(attribs_map &opts)
 		if(!fix_model && !upd_mime && exp_mode_cnt > 1)
 			throw Exception(tr("Multiple export mode was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
-		if(!upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
+		if(!list_conns && !upd_mime && !import_db && !diff && !create_configs && !opts.count(Input))
 			throw Exception(tr("No input file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(import_db && !opts.count(InputDb))
 			throw Exception(tr("No input database was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		if(!opts.count(ExportToDbms) && !upd_mime && !diff && !create_configs && !opts.count(Output))
+		if(!opts.count(ExportToDbms) && !upd_mime && !list_conns && !diff && !create_configs && !opts.count(Output))
 			throw Exception(tr("No output file was specified!"), ErrorCode::Custom,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		
 		if(!opts.count(ExportToDbms) && !upd_mime && !import_db && !list_conns && !create_configs &&
