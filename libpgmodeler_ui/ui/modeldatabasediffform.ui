@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>685</height>
+    <width>968</width>
+    <height>830</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -93,7 +93,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -1833,11 +1833,11 @@
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
-            <attribute name="headerDefaultSectionSize">
-             <number>100</number>
-            </attribute>
             <attribute name="headerMinimumSectionSize">
              <number>25</number>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>100</number>
             </attribute>
             <attribute name="headerStretchLastSection">
              <bool>true</bool>

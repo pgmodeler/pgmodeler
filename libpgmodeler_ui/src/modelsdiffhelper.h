@@ -69,6 +69,7 @@ class ModelsDiffHelper: public QObject {
 		//! \brief Stores all temporary objects created during the diff process
 		vector<BaseObject *> tmp_objects;
 
+		//! \brief Stores all objects filtered by the partial diff filters
 		map<unsigned, BaseObject *> filtered_objs;
 
 		/*! note The parameter diff_type in any methods below is one of the values in

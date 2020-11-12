@@ -645,6 +645,11 @@ void ModelDatabaseDiffForm::diffModels()
 	if(src_model_rb->isChecked())
 		diff_helper->setFilteredObjects(filtered_objs);
 
+	if(gen_drop_del_items_chk->isChecked())
+	{
+
+	}
+
 	if(pgsql_ver_chk->isChecked())
 		diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
 	else
@@ -1371,9 +1376,17 @@ void ModelDatabaseDiffForm::applyPartialDiffDateFilters()
 	if(!source_model)
 		return;
 
+	QDateTime start_date, end_date;
+
+	start_date = start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime();
+	end_date = end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime();
+
 	// Generate the filters from the model's change log
-	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
-																																	end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime()));
+	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(start_date, end_date, { Attributes::Created, Attributes::Updated }));
+
+	// Generating the filters for the deleted items
+	if(gen_drop_del_items_chk->isChecked())
+		del_items_filters = source_model->getFiltersFromChangeLog(start_date, end_date, { Attributes::Deleted });
 
 	applyPartialDiffFilters();
 }

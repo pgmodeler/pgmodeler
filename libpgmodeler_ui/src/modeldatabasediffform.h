@@ -78,7 +78,11 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		//! \brief Tree items generated in each diff step
 		QTreeWidgetItem *import_item, *diff_item, *export_item, *src_import_item;
 
+		//! \brief Stores the objects filtered from the database model
 		vector<BaseObject *> filtered_objs;
+
+		//! \brief Stores the filters related to the deleted objects in the database model (for partial diff only)
+		QStringList del_items_filters;
 
 		/*! \brief This is the model used in the diff process representing the source.
 		 * It can be the modelo loaded from file or a representation of the source database (when comparing two dbs) */

@@ -11250,6 +11250,8 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 		obj_signature = parent_obj->getSignature() + "." + object->getName();
 		changelog.push_back(std::make_tuple(date_time, parent_obj->getSignature(), parent_obj->getObjectType(), Attributes::Updated));
 	}
+	else
+		obj_signature = object->getSignature();
 
 	if(op_type == Operation::ObjectCreated)
 		action = Attributes::Created;
