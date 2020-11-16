@@ -93,7 +93,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -1476,26 +1476,16 @@
                       <number>4</number>
                      </property>
                      <item row="2" column="0">
-                      <widget class="QCheckBox" name="start_date_chk">
+                      <widget class="QCheckBox" name="end_date_chk">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
                        <property name="text">
-                        <string>Start date:</string>
+                        <string>End date:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="3" rowspan="2">
-                      <spacer name="horizontalSpacer_11">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>86</width>
-                         <height>68</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="2" column="1">
+                     <item row="1" column="1">
                       <widget class="QDateTimeEdit" name="start_date_dt">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1514,7 +1504,46 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="3" column="2">
+                     <item row="1" column="3" rowspan="2">
+                      <spacer name="horizontalSpacer_11">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>86</width>
+                         <height>68</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="2" column="1">
+                      <widget class="QDateTimeEdit" name="end_date_dt">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
+                       </property>
+                       <property name="calendarPopup">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QCheckBox" name="start_date_chk">
+                       <property name="text">
+                        <string>Start date:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="2">
                       <widget class="QToolButton" name="apply_by_date_tb">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1543,36 +1572,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="3" column="0">
-                      <widget class="QCheckBox" name="end_date_chk">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="text">
-                        <string>End date:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="1">
-                      <widget class="QDateTimeEdit" name="end_date_dt">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="displayFormat">
-                        <string>yyyy-MM-dd HH:mm</string>
-                       </property>
-                       <property name="calendarPopup">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="5" column="1">
+                     <item row="4" column="1">
                       <spacer name="verticalSpacer_4">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -1584,19 +1584,6 @@
                         </size>
                        </property>
                       </spacer>
-                     </item>
-                     <item row="1" column="0" colspan="4">
-                      <widget class="QCheckBox" name="gen_drop_del_items_chk">
-                       <property name="toolTip">
-                        <string>Generates &lt;strong&gt;DROP&lt;/strong&gt; commands from changelog entries related to objects deleted from the database model.</string>
-                       </property>
-                       <property name="statusTip">
-                        <string/>
-                       </property>
-                       <property name="text">
-                        <string>Generate DROP commands for deleted items</string>
-                       </property>
-                      </widget>
                      </item>
                     </layout>
                    </widget>

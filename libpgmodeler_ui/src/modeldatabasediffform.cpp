@@ -447,13 +447,14 @@ void ModelDatabaseDiffForm::generateDiff()
 				start_date_chk->isChecked() ||
 				end_date_chk->isChecked()) && filtered_objs_tbw->rowCount() == 0)
 		{
-			msgbox.show(tr("No object was retrieved using the provided filters. The partial diff will not continue in order to avoid generating unneeded SQL code! Do you want to run a full diff instead?")
-									.arg(dont_drop_missing_objs_chk->text()),
+			msgbox.show(tr("No object was retrieved using the provided filters. The partial diff will not continue in order to avoid generating unneeded SQL code! Do you want to run a full diff instead?"),
 									 Messagebox::ConfirmIcon,
 									 Messagebox::YesNoButtons);
 
+			pd_filter_wgt->clearFilters();
+
 			if(msgbox.result() == Messagebox::Rejected)
-					return;
+				return;
 		}
 		else if(filtered_objs_tbw->rowCount() > 0)
 		{
@@ -644,11 +645,6 @@ void ModelDatabaseDiffForm::diffModels()
 	 * We need to retrieve the filtered object in partial diff tab */
 	if(src_model_rb->isChecked())
 		diff_helper->setFilteredObjects(filtered_objs);
-
-	if(gen_drop_del_items_chk->isChecked())
-	{
-
-	}
 
 	if(pgsql_ver_chk->isChecked())
 		diff_helper->setPgSQLVersion(pgsql_ver_cmb->currentText());
@@ -1376,17 +1372,9 @@ void ModelDatabaseDiffForm::applyPartialDiffDateFilters()
 	if(!source_model)
 		return;
 
-	QDateTime start_date, end_date;
-
-	start_date = start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime();
-	end_date = end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime();
-
 	// Generate the filters from the model's change log
-	pd_filter_wgt->addFilters(source_model->getFiltersFromChangeLog(start_date, end_date, { Attributes::Created, Attributes::Updated }));
-
-	// Generating the filters for the deleted items
-	if(gen_drop_del_items_chk->isChecked())
-		del_items_filters = source_model->getFiltersFromChangeLog(start_date, end_date, { Attributes::Deleted });
+	pd_filter_wgt->addFilters(source_model->getFiltersFromChangelog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
+																																	end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime()));
 
 	applyPartialDiffFilters();
 }

@@ -11276,7 +11276,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
 
-QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end, QStringList actions)
+QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime end)
 {
 	QStringList filters;
 	QString signature, action;
@@ -11298,8 +11298,7 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 		type = std::get<LogObjectType>(entry);
 		action = std::get<LogAction>(entry);
 
-		if((actions.isEmpty() || actions.contains(action)) &&
-			 ((start.isValid() && end.isValid() && date >= start && date <= end) ||
+		if(((start.isValid() && end.isValid() && date >= start && date <= end) ||
 				(start.isValid() && !end.isValid() && date >= start) ||
 				(!start.isValid() && end.isValid() && date <= end)))
 		{

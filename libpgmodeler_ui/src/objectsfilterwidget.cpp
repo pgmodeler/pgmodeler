@@ -64,7 +64,7 @@ is present has the same effect as performing an exact match searching on the nam
 	options_tb->setMenu(&options_menu);
 
 	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addFilter()));
-	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeAllFilters()));
+	connect(clear_all_tb, SIGNAL(clicked(bool)), this, SLOT(clearFilters()));
 	connect(action_only_matching, SIGNAL(toggled(bool)), action_forced_filter, SLOT(setEnabled(bool)));
 
 	connect(apply_tb, &QToolButton::clicked, [&](){
@@ -274,7 +274,7 @@ void ObjectsFilterWidget::removeFilter()
 		emit s_filtersRemoved();
 }
 
-void ObjectsFilterWidget::removeAllFilters()
+void ObjectsFilterWidget::clearFilters()
 {
 	while(filters_tbw->rowCount() != 0)
 	{

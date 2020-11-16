@@ -1630,7 +1630,7 @@ void PgModelerCliApp::diffModelDatabase()
 
 			// Filtering by modification date always forces the signature matching
 			if(start_date.isValid() || end_date.isValid())
-				obj_filters.append(model->getFiltersFromChangeLog(start_date, end_date));
+				obj_filters.append(model->getFiltersFromChangelog(start_date, end_date));
 
 			filtered_objs = model->findObjects(obj_filters, search_attr);
 

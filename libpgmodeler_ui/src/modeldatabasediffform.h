@@ -81,9 +81,6 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		//! \brief Stores the objects filtered from the database model
 		vector<BaseObject *> filtered_objs;
 
-		//! \brief Stores the filters related to the deleted objects in the database model (for partial diff only)
-		QStringList del_items_filters;
-
 		/*! \brief This is the model used in the diff process representing the source.
 		 * It can be the modelo loaded from file or a representation of the source database (when comparing two dbs) */
 		DatabaseModel *source_model,
