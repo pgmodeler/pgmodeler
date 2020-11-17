@@ -184,7 +184,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void enablePartialDiff();
 		void enableFilterByDate();
 		void applyPartialDiffFilters();
-		void applyPartialDiffDateFilters();
+		void generateFiltersFromChangelog();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

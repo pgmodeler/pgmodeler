@@ -86,11 +86,11 @@ ModelDatabaseDiffForm::ModelDatabaseDiffForm(QWidget *parent, Qt::WindowFlags fl
 		remove_preset_tb->setToolTip(remove_preset_tb->toolTip() + QString(" (%1)").arg(remove_preset_tb->shortcut().toString()));
 		default_presets_tb->setToolTip(default_presets_tb->toolTip() + QString(" (%1)").arg(default_presets_tb->shortcut().toString()));
 
-		connect(by_date_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
-		connect(by_date_chk, SIGNAL(toggled(bool)), pd_filter_wgt, SLOT(setHidden(bool)));
+		connect(gen_filters_from_log_chk, SIGNAL(toggled(bool)), dates_wgt, SLOT(setVisible(bool)));
+		//connect(gen_filters_from_log_chk, SIGNAL(toggled(bool)), pd_filter_wgt, SLOT(setHidden(bool)));
 		connect(start_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
 		connect(end_date_chk, SIGNAL(toggled(bool)), this, SLOT(enableFilterByDate()));
-		connect(apply_by_date_tb, SIGNAL(clicked()), this, SLOT(applyPartialDiffDateFilters()));
+		connect(generate_filters_tb, SIGNAL(clicked()), this, SLOT(generateFiltersFromChangelog()));
 
 		connect(cancel_btn, &QToolButton::clicked, [&](){ cancelOperation(true); });
 		connect(pgsql_ver_chk, SIGNAL(toggled(bool)), pgsql_ver_cmb, SLOT(setEnabled(bool)));
@@ -443,20 +443,8 @@ void ModelDatabaseDiffForm::generateDiff()
 	{
 		Messagebox msgbox;
 
-		if((pd_filter_wgt->hasFiltersConfigured() ||
-				start_date_chk->isChecked() ||
-				end_date_chk->isChecked()) && filtered_objs_tbw->rowCount() == 0)
-		{
-			msgbox.show(tr("No object was retrieved using the provided filters. The partial diff will not continue in order to avoid generating unneeded SQL code! Do you want to run a full diff instead?"),
-									 Messagebox::ConfirmIcon,
-									 Messagebox::YesNoButtons);
-
-			pd_filter_wgt->clearFilters();
-
-			if(msgbox.result() == Messagebox::Rejected)
-				return;
-		}
-		else if(filtered_objs_tbw->rowCount() > 0)
+		if(!dont_drop_missing_objs_chk->isChecked() ||
+			 !drop_missing_cols_constr_chk->isChecked())
 		{
 			msgbox.show("",
 									tr("The options <strong>%1</strong> and <strong>%2</strong> are currently unchecked. This can lead to the generation of extra <strong>DROP</strong> commands\
@@ -567,12 +555,12 @@ void ModelDatabaseDiffForm::importDatabase(unsigned thread_id)
 			 * from the destination database,this way we avoid the diff try to create everytime all tables
 			 * in the those relationships. */
 			if(src_model_rb->isChecked())
-				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, by_date_chk->isChecked() || pd_filter_wgt->isMatchSignature()));
+				pd_filters.append(ModelsDiffHelper::getRelationshipFilters(filtered_objs, gen_filters_from_log_chk->isChecked() || pd_filter_wgt->isMatchSignature()));
 
 			catalog.setObjectFilters(pd_filters,
 															 pd_filter_wgt->isOnlyMatching(),
 															 // When the filter by date is checked we always filter objects by their signature
-															 by_date_chk->isChecked() ? true : pd_filter_wgt->isMatchSignature(),
+															 gen_filters_from_log_chk->isChecked() ? true : pd_filter_wgt->isMatchSignature(),
 															 pd_filter_wgt->getForceObjectsFilter());
 		}
 
@@ -1311,8 +1299,8 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 								 database_cmb->currentIndex() > 0;
 
 	settings_tbw->setTabEnabled(1, enable);
-	by_date_chk->setChecked(false);
-	by_date_chk->setVisible(src_model_rb->isChecked());
+	gen_filters_from_log_chk->setChecked(false);
+	gen_filters_from_log_chk->setVisible(src_model_rb->isChecked());
 	pd_filter_wgt->setModelFilteringMode(src_model_rb->isChecked(), { ObjectType::Relationship, ObjectType::Permission });
 
 	if(src_model_rb->isChecked())
@@ -1333,7 +1321,7 @@ void ModelDatabaseDiffForm::enablePartialDiff()
 
 void ModelDatabaseDiffForm::enableFilterByDate()
 {
-	apply_by_date_tb->setEnabled(start_date_chk->isChecked() || end_date_chk->isChecked());
+	generate_filters_tb->setEnabled(start_date_chk->isChecked() || end_date_chk->isChecked());
 	start_date_dt->setEnabled(start_date_chk->isChecked());
 	end_date_dt->setEnabled(end_date_chk->isChecked());
 }
@@ -1342,7 +1330,7 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 {
 	if(src_model_rb->isChecked())
 	{
-		QString search_attr = (by_date_chk->isChecked() ||
+		QString search_attr = (gen_filters_from_log_chk->isChecked() ||
 													 pd_filter_wgt->isMatchSignature()) ?
 														Attributes::Signature : Attributes::Name;
 		vector<BaseObject *> filterd_objs = loaded_model->findObjects(pd_filter_wgt->getObjectFilters(), search_attr);
@@ -1367,16 +1355,23 @@ void ModelDatabaseDiffForm::applyPartialDiffFilters()
 	}
 }
 
-void ModelDatabaseDiffForm::applyPartialDiffDateFilters()
+void ModelDatabaseDiffForm::generateFiltersFromChangelog()
 {
 	if(!source_model)
 		return;
 
-	// Generate the filters from the model's change log
-	pd_filter_wgt->addFilters(source_model->getFiltersFromChangelog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
-																																	end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime()));
+	vector<ObjectType> tab_obj_types = BaseObject::getChildObjectTypes(ObjectType::Table);
+	QStringList filters = source_model->getFiltersFromChangelog(start_date_chk->isChecked() ? start_date_dt->dateTime() : QDateTime(),
+																											end_date_chk->isChecked() ? end_date_dt->dateTime() : QDateTime());
 
-	applyPartialDiffFilters();
+	// Ignoring filters related to table children objects since they may generate wrong results in the diff
+	for(auto &type : tab_obj_types)
+		filters.replaceInStrings(QRegExp(QString("(%1)(\\:)(.)+").arg(BaseObject::getSchemaName(type))), "");
+
+	filters.removeAll("");
+
+	// Generate the filters from the model's change log
+	pd_filter_wgt->addFilters(filters);
 }
 
 void ModelDatabaseDiffForm::getFilteredObjects(vector<BaseObject *> &objects)
