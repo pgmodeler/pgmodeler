@@ -78,6 +78,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		//! \brief Tree items generated in each diff step
 		QTreeWidgetItem *import_item, *diff_item, *export_item, *src_import_item;
 
+		//! \brief Stores the objects filtered from the database model
 		vector<BaseObject *> filtered_objs;
 
 		/*! \brief This is the model used in the diff process representing the source.
@@ -183,7 +184,7 @@ class ModelDatabaseDiffForm: public BaseConfigWidget, public Ui::ModelDatabaseDi
 		void enablePartialDiff();
 		void enableFilterByDate();
 		void applyPartialDiffFilters();
-		void applyPartialDiffDateFilters();
+		void generateFiltersFromChangelog();
 
 		//! \brief Destroy the current configuration file and makes a copy of the default one located at conf/defaults
 		virtual void restoreDefaults();

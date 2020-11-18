@@ -11242,35 +11242,32 @@ void DatabaseModel::addChangelogEntry(BaseObject *object, unsigned op_type, Base
 	if(!object || (object && TableObject::isTableObject(object->getObjectType()) && !parent_obj))
 		throw Exception(ErrorCode::InvChangelogEntryValues, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
-	QString action;
-	BaseObject *aux_obj = nullptr;
+	QString action, obj_signature;
 	QDateTime date_time = QDateTime::currentDateTime();
 
 	if(TableObject::isTableObject(object->getObjectType()))
 	{
-		aux_obj = parent_obj;
-		action = Attributes::UpdatePriv;
+		obj_signature = parent_obj->getSignature() + "." + object->getName();
+		changelog.push_back(std::make_tuple(date_time, parent_obj->getSignature(), parent_obj->getObjectType(), Attributes::Updated));
 	}
 	else
-	{
-		aux_obj = object;
+		obj_signature = object->getSignature();
 
-		if(op_type == Operation::ObjectCreated)
-			action = Attributes::CreatePriv;
-		else if(op_type == Operation::ObjectRemoved)
-			action = Attributes::DeletePriv;
-		else
-			action = Attributes::UpdatePriv;
-	}
+	if(op_type == Operation::ObjectCreated)
+		action = Attributes::Created;
+	else if(op_type == Operation::ObjectRemoved)
+		action = Attributes::Deleted;
+	else
+		action = Attributes::Updated;
 
-	changelog.push_back(std::make_tuple(date_time,aux_obj->getSignature(), aux_obj->getObjectType(), action));
+	changelog.push_back(std::make_tuple(date_time, obj_signature, object->getObjectType(), action));
 }
 
 void DatabaseModel::addChangelogEntry(const QString &signature, const QString &type, const QString &action, const QString &date)
 {
 	QDateTime date_time = QDateTime::fromString(date, Qt::ISODate);
 	ObjectType obj_type = BaseObject::getObjectType(type);
-	QStringList actions = { Attributes::CreatePriv, Attributes::DeletePriv, Attributes::UpdatePriv };
+	QStringList actions = { Attributes::Created, Attributes::Deleted, Attributes::Updated };
 
 	if(!BaseObject::isValidName(signature) || obj_type == ObjectType::BaseObject ||
 		 TableObject::isTableObject(obj_type) || !date_time.isValid() || !actions.contains(action))
@@ -11279,7 +11276,7 @@ void DatabaseModel::addChangelogEntry(const QString &signature, const QString &t
 	changelog.push_back(std::make_tuple(date_time, signature, obj_type, action));
 }
 
-QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime end)
+QStringList DatabaseModel::getFiltersFromChangelog(QDateTime start, QDateTime end)
 {
 	QStringList filters;
 	QString signature, action;
@@ -11301,9 +11298,9 @@ QStringList DatabaseModel::getFiltersFromChangeLog(QDateTime start, QDateTime en
 		type = std::get<LogObjectType>(entry);
 		action = std::get<LogAction>(entry);
 
-		if((start.isValid() && end.isValid() && date >= start && date <= end) ||
-			 (start.isValid() && !end.isValid() && date >= start) ||
-			 (!start.isValid() && end.isValid() && date <= end))
+		if(((start.isValid() && end.isValid() && date >= start && date <= end) ||
+				(start.isValid() && !end.isValid() && date >= start) ||
+				(!start.isValid() && end.isValid() && date <= end)))
 		{
 			filters.append(BaseObject::getSchemaName(type) +
 										 PgModelerNs::FilterSeparator +
