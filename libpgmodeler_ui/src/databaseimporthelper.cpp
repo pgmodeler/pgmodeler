@@ -585,6 +585,7 @@ void DatabaseImportHelper::importDatabase()
 		if(!inherited_cols.empty())
 		{
 			emit s_progressUpdated(100, tr("Validating relationships..."), ObjectType::Relationship);
+			dbmodel->setLoadingModel(false);
 			dbmodel->validateRelationships();
 		}
 
@@ -616,8 +617,6 @@ void DatabaseImportHelper::importDatabase()
 		}
 		else
 			emit s_importCanceled();
-
-		dbmodel->setLoadingModel(false);
 
 		if(!import_canceled)
 		{
@@ -2560,11 +2559,13 @@ void DatabaseImportHelper::destroyDetachedColumns()
 	vector<BaseObject *> refs;
 	PhysicalTable *parent_tab=nullptr;
 
+	// Saving the special objects' xmls is needed here in case of importing objects to an already populated model
+	dbmodel->storeSpecialObjectsXML();
 	dbmodel->disconnectRelationships();
 
 	emit s_progressUpdated(100,
-						   tr("Destroying unused detached columns..."),
-						   ObjectType::Column);
+												 tr("Destroying unused detached columns..."),
+												 ObjectType::Column);
 
 	//Destroying detached columns before create inheritances
 	for(Column *col : inherited_cols)
@@ -2592,6 +2593,7 @@ void DatabaseImportHelper::destroyDetachedColumns()
 
 	/* Force the validation and connection of inheritance relationships
 	 leading to the creation of inherited columns */
+	dbmodel->setLoadingModel(false);
 	dbmodel->validateRelationships();
 }
 
