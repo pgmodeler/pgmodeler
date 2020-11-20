@@ -119,6 +119,10 @@ class ModelWidget: public QWidget {
 
 		fade_rels_menu,
 
+		fade_peer_tables_menu,
+
+		fade_both_objs_menu,
+
 		toggle_attrs_menu,
 
 		pagination_menu,
@@ -263,6 +267,12 @@ class ModelWidget: public QWidget {
 		*action_fade_rels,
 		*action_fade_rels_in,
 		*action_fade_rels_out,
+		*action_fade_peer_tables,
+		*action_fade_peer_tables_in,
+		*action_fade_peer_tables_out,
+		*action_fade_both_objs,
+		*action_fade_both_objs_in,
+		*action_fade_both_objs_out,
 		*action_pagination,
 		*action_collapse_mode,
 		*action_collapse_ext_attribs,
