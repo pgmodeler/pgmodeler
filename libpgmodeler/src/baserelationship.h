@@ -90,6 +90,8 @@ class BaseRelationship: public BaseGraphicObject  {
 
 		void setReferenceForeignKey(Constraint *reference_fk);
 
+		virtual void configureSearchAttributes();
+
 	public:
 		//! \brief Constants used to assign the type to relationship
 		static constexpr unsigned Relationship11=10, //! \brief One to one

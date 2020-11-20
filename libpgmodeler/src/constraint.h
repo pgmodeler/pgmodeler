@@ -87,6 +87,9 @@ class Constraint: public TableObject{
 
 		void setDeclInTableAttribute();
 
+	protected:
+		virtual void configureSearchAttributes();
+
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
 		is applied (from the constraint's parent table) */

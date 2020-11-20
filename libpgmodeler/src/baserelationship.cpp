@@ -405,6 +405,14 @@ void BaseRelationship::setReferenceForeignKey(Constraint *ref_fk)
 	this->reference_fk = ref_fk;
 }
 
+void BaseRelationship::configureSearchAttributes()
+{
+	search_attribs[Attributes::SrcTable] = src_table->getSignature();
+	search_attribs[Attributes::DstTable] = dst_table->getSignature();
+	search_attribs[Attributes::RelatedForeignKey] = reference_fk ? reference_fk->getName() : "";
+	BaseGraphicObject::configureSearchAttributes();
+}
+
 Constraint *BaseRelationship::getReferenceForeignKey()
 {
 	return reference_fk;

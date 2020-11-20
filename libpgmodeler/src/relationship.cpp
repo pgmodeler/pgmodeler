@@ -720,6 +720,12 @@ vector<Constraint *> Relationship::getGeneratedConstraints()
 	return vect;
 }
 
+void Relationship::configureSearchAttributes()
+{
+	BaseRelationship::configureSearchAttributes();
+	search_attribs[Attributes::RelatedForeignKey] = fk_rel1n ? fk_rel1n->getName() : "";
+}
+
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
 	vector<TableObject *> *list=nullptr;

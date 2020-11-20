@@ -669,6 +669,21 @@ void Constraint::setDeclInTableAttribute()
 		attributes[Attributes::DeclInTable]=Attributes::True;
 }
 
+void Constraint::configureSearchAttributes()
+{
+	QStringList src_col_names, ref_col_names;
+
+	for(auto &col : columns)
+		src_col_names.append(col->getName());
+
+	for(auto &col : ref_columns)
+		ref_col_names.append(col->getName());
+
+	search_attribs[Attributes::SrcColumns] = src_col_names.join(", ");
+	search_attribs[Attributes::RefColumns] = ref_col_names.join(", ");
+	TableObject::configureSearchAttributes();
+}
+
 QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 {
 	QString code_def=getCachedCode(def_type, false);
