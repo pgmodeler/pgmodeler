@@ -248,6 +248,7 @@ class ModelWidget: public QWidget {
 		*action_change_owner,
 		*action_quick_actions,
 		*action_sel_sch_children,
+		*action_sel_table_rels,
 		*action_sel_tagged_tabs,
 		*action_select_object,
 		*action_parent_rel,
@@ -462,6 +463,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Selects all the graphical objects under the selected schema
 		void selectSchemaChildren();
+
+		//! \brief Selects all the relationships connected to the selected table
+		void selectTableRelationships();
 
 		//! \brief Selects all the tables and views that references the selected tag
 		void selectTaggedTables();

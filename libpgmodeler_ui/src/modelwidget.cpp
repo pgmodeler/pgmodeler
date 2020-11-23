@@ -281,6 +281,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_sel_sch_children=new QAction(QIcon(PgModelerUiNs::getIconPath("seltodos")), tr("Select children"), this);
 	action_sel_tagged_tabs=new QAction(QIcon(PgModelerUiNs::getIconPath("seltodos")), tr("Select tagged"), this);
+	action_sel_table_rels=new QAction(QIcon(PgModelerUiNs::getIconPath("seltodos")), tr("Select relationships"), this);
 
 	action_select_object=new QAction(QIcon(PgModelerUiNs::getIconPath("movimentado")), tr("Select"), this);
 	action_parent_rel=new QAction(QIcon(PgModelerUiNs::getIconPath("relationship")), tr("Open relationship"), this);
@@ -493,6 +494,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObjects()));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions()));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren()));
+	connect(action_sel_table_rels, SIGNAL(triggered(bool)), this, SLOT(selectTableRelationships()));
 	connect(action_sel_tagged_tabs, SIGNAL(triggered(bool)), this, SLOT(selectTaggedTables()));
 	connect(action_select_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject()));
 	connect(action_parent_rel, SIGNAL(triggered(bool)), this, SLOT(editObject()));
@@ -2430,6 +2432,21 @@ void ModelWidget::selectSchemaChildren()
 				dynamic_cast<BaseObjectView *>(schema->getOverlyingObject()))->selectChildren();
 }
 
+void ModelWidget::selectTableRelationships()
+{
+	QObject *obj_sender=dynamic_cast<QAction *>(sender());
+	BaseTable *table=nullptr;
+
+	table=dynamic_cast<BaseTable *>(
+				 reinterpret_cast<BaseObject *>(
+					 dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
+
+	scene->clearSelection();
+
+	dynamic_cast<BaseTableView *>(
+				dynamic_cast<BaseObjectView *>(table->getOverlyingObject()))->selectRelationships();
+}
+
 void ModelWidget::selectTaggedTables()
 {
 	QObject *obj_sender=dynamic_cast<QAction *>(sender());
@@ -4225,6 +4242,9 @@ void ModelWidget::configureBasicActions(BaseObject *obj)
 
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.insertAction(action_quick_actions, action_new_object);
+
+			popup_menu.addAction(action_sel_table_rels);
+			action_sel_table_rels->setData(QVariant::fromValue<void *>(obj));
 		}
 		else if(obj_type==ObjectType::Relationship || obj_type==ObjectType::BaseRelationship)
 		{

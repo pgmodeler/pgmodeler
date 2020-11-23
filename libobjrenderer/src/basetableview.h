@@ -173,6 +173,9 @@ class BaseTableView: public BaseObjectView {
 		//! \brief Clear the selection over all selected children
 		void clearChildrenSelection();
 
+		//! \brief Selects all the relationships connected to the table
+		void selectRelationships();
+
 	private slots:
 		/*! \brief This slot reconfigures the table when the attributes toggler emits the signal s_collapseModeChanged
 		 * hiding or exposing the sections related to the current collapse mode */
