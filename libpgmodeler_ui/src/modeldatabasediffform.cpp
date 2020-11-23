@@ -443,12 +443,13 @@ void ModelDatabaseDiffForm::generateDiff()
 	{
 		Messagebox msgbox;
 
-		if(!dont_drop_missing_objs_chk->isChecked() ||
-			 !drop_missing_cols_constr_chk->isChecked())
+		if(pd_filter_wgt->hasFiltersConfigured() &&
+			 (!dont_drop_missing_objs_chk->isChecked() ||
+				!drop_missing_cols_constr_chk->isChecked()))
 		{
 			msgbox.show("",
 									tr("The options <strong>%1</strong> and <strong>%2</strong> are currently unchecked. This can lead to the generation of extra <strong>DROP</strong> commands\
- for objects not present in the filtered set used in the partial diff. Take extra caution when applying the resulting diff! How do you want to proceed?")
+ for objects not present in the filtered set used in the <strong>partial diff</strong>. Take extra caution when applying the resulting diff! How do you want to proceed?")
 										.arg(dont_drop_missing_objs_chk->text()).arg(drop_missing_cols_constr_chk->text()),
 										 Messagebox::AlertIcon,
 										 Messagebox::AllButtons,
