@@ -1043,12 +1043,11 @@ void DatabaseImportHelper::createDomain(attribs_map &attribs)
 		{
 			constr.remove(0, 1);
 			constr.remove(constr.length() - 1, 1);
-			constr_attrs = constr.split('|');
+			constr_attrs = constr.split(" CHECK (");
 
-			aux_attribs[Attributes::Name] = constr_attrs.at(0);
+			aux_attribs[Attributes::Name] = constr_attrs.at(0).trimmed();
 
-			expr = constr_attrs.at(1);
-			expr.replace(QString("CHECK ("), "");
+			expr = constr_attrs.at(1).trimmed();
 			expr.remove(expr.length() - 1,1);
 			aux_attribs[Attributes::Expression] = expr;
 
