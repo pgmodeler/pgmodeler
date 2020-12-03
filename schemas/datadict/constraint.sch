@@ -9,7 +9,7 @@ $br [					] <td>{columns}</td>
 $br [					] <td>
 
 %if {ref-table} %then
-	%if {splitted} %then
+    %if {split} %then
 		<a $sp href="{ref-table}.html">{ref-table}</a>
 	%else
 		<a $sp href="\#{ref-table}">{ref-table}</a>
@@ -18,5 +18,11 @@ $br [					] <td>
 
 </td>
 
-$br [					] <td [ colspan="4"]><em>{comment}</em></td>
+$br [					] <td [ class="value"]>
+    %if ({type} == "CHECK") %then
+	    <p $sp class="max-td-wth">{expression}</p>
+	%end
+</td>
+
+$br [					] <td [ colspan="3"]><p $sp class="max-td-wth"><em>{comment}</em></p></td>
 $br [				] </tr>

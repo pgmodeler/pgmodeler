@@ -16,7 +16,7 @@ $br [		] <td $sp class="data-type">{type}</td>
 		
 	$br [		] <td $sp class="bool-field">{not-null}</td>
 	$br [		] <td $sp class="value">{default-value}</td>
-	$br [		] <td><em>{comment}</em></td>
+	$br [		] <td><p $sp class="max-td-wth"><em>{comment}</em></p></td>
 %end
 
 $br [	] </tr>

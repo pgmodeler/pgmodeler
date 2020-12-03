@@ -562,7 +562,7 @@ namespace Attributes {
 	SourceType,
 	SpatialType,
 	SpecialPkCols,
-	Splitted,
+	Split,
 	SqlDisabled,
 	SqlObject,
 	SqlTool,

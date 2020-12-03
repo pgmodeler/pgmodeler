@@ -11490,7 +11490,7 @@ TableClass *DatabaseModel::createPhysicalTable()
 	return table;
 }
 
-void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool splitted)
+void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, bool split)
 {
 	int idx = 0;
 	BaseObject *object = nullptr;
@@ -11535,11 +11535,11 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	styles = schparser.getCodeDefinition(style_sch_file, attribs);
 	attribs[Attributes::Styles] = "";
 	attribs[Attributes::Index] = "";
-	attribs[Attributes::Splitted] = splitted ? Attributes::True : "";
+	attribs[Attributes::Split] = split ? Attributes::True : "";
 	attribs[Attributes::Year] = QString::number(QDate::currentDate().year());
 
 	// If the generation is a standalone HTML the css is embedded
-	if(!splitted)
+	if(!split)
 		attribs[Attributes::Styles] = styles;
 	else
 		// Otherwise we create a separated stylesheet file
@@ -11554,10 +11554,10 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		aux_attribs[Attributes::Index] = browsable ? Attributes::True : "";
 		aux_attribs[Attributes::Previous] = idx - 1 >= 0 ? index_list.at(idx - 1) : "";
 		aux_attribs[Attributes::Next] = (++idx <= index_list.size() - 1) ? index_list.at(idx) : "";
-		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(splitted, aux_attribs);
+		attribs[Attributes::Objects] += dynamic_cast<BaseTable *>(object)->getDataDictionary(split, aux_attribs);
 
 		// If the generation is configured to be splitted we generate a complete HTML file for the current table
-		if(splitted && !attribs[Attributes::Objects].isEmpty())
+		if(split && !attribs[Attributes::Objects].isEmpty())
 		{
 			id = itr.first + QString(".html");
 			schparser.ignoreEmptyAttributes(true);			
@@ -11579,22 +11579,22 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 		// Generating the index items
 		for(auto &item : index_list)
 		{
-			aux_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+			aux_attribs[Attributes::Split] = attribs[Attributes::Split];
 			aux_attribs[Attributes::Item] = item;
 			idx_attribs[objs_map[item]->getSchemaName()] += schparser.getCodeDefinition(item_sch_file, aux_attribs);
 		}
 
 		idx_attribs[Attributes::Name] = this->obj_name;
-		idx_attribs[Attributes::Splitted] = attribs[Attributes::Splitted];
+		idx_attribs[Attributes::Split] = attribs[Attributes::Split];
 
 		schparser.ignoreEmptyAttributes(true);
 		index = schparser.getCodeDefinition(index_sch_file, idx_attribs);
 	}
 
 	// If the data dictionary is browsable and splitted the index goes into a separated file
-	if(splitted && browsable)
+	if(split && browsable)
 		datadict[Attributes::Index + QString(".html")] = index;
-	else if(!splitted)
+	else if(!split)
 	{
 		attribs[Attributes::Index] = index;
 		schparser.ignoreEmptyAttributes(true);
@@ -11602,7 +11602,7 @@ void DatabaseModel::getDataDictionary(attribs_map &datadict, bool browsable, boo
 	}
 }
 
-void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool splitted)
+void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool split)
 {
 	try
 	{
@@ -11612,7 +11612,7 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 		QFileInfo finfo(path);
 		QDir dir;
 
-		if(splitted)
+		if(split)
 		{
 			if(finfo.exists() && !finfo.isDir())
 				throw Exception(Exception::getErrorMessage(ErrorCode::InvDataDictDirectory).arg(path),
@@ -11621,12 +11621,12 @@ void DatabaseModel::saveDataDictionary(const QString &path, bool browsable, bool
 				dir.mkpath(path);
 		}
 
-		getDataDictionary(datadict, browsable, splitted);
+		getDataDictionary(datadict, browsable, split);
 		output.setFileName(path);
 
 		for(auto &itr : datadict)
 		{
-			if(splitted)
+			if(split)
 				output.setFileName(path + GlobalAttributes::DirSeparator + itr.first);
 
 			output.open(QFile::WriteOnly);

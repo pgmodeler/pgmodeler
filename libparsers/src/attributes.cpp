@@ -544,7 +544,7 @@ namespace Attributes {
 	SourceType("source-type"),
 	SpatialType("spatial-type"),
 	SpecialPkCols("special-pk-cols"),
-	Splitted("splitted"),
+	Split("split"),
 	SqlDisabled("sql-disabled"),
 	SqlObject("sql-object"),
 	SqlTool("sqltool"),
