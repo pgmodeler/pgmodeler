@@ -2421,6 +2421,7 @@ void ModelWidget::selectSchemaChildren()
 {
 	QObject *obj_sender=dynamic_cast<QAction *>(sender());
 	Schema *schema=nullptr;
+	SchemaView *sch_view = nullptr;
 
 	schema=dynamic_cast<Schema *>(
 				 reinterpret_cast<BaseObject *>(
@@ -2428,8 +2429,11 @@ void ModelWidget::selectSchemaChildren()
 
 	scene->clearSelection();
 
-	dynamic_cast<SchemaView *>(
-				dynamic_cast<BaseObjectView *>(schema->getOverlyingObject()))->selectChildren();
+	sch_view = 	dynamic_cast<SchemaView *>(
+				dynamic_cast<BaseObjectView *>(schema->getOverlyingObject()));
+
+	if(sch_view)
+		sch_view->selectChildren();
 }
 
 void ModelWidget::selectTableRelationships()
