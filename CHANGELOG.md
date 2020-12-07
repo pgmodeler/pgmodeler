@@ -5,12 +5,14 @@ v0.9.3
 ------
 <em>Release date: December 30, 2020</em><br/>
 
+* [New] Added missing check constraints in the data dictionary.
 * [New] Added support to selecting all relatinoships of a table at once via right-click on a table > select relationships.
 * [New] Added extra search fields in ObjectFinderWidget. Now it's possible to search relationships by the involved tables (source and destination table), constraints by their columns (source and referenced columns) and relationships by the foreign keys related to them.
 * [Change] The warning message about unchecked option related to drop missing objects now pops up only when there are partial diff filters configured.
 * [Change] Improved the extended fade in/out options for tables/views/foreign tables.
 * [Change] The partil diff filters generated from changelog will ignore table children objects in order to avoid the wrong generation of diff code.
 * [Change] Minor refactoring in DatabaseModel::addChangelogEntry in order to use new attributes to define changelog operations.
+* [Fix] Fixed a crash when trying to select children objects of a schema that has no rectangle defined.
 * [Fix] Fixed a crash during the importing of domain objects.
 * [Fix] Fixed a crash during the importing of objects into the current model in very specific cases when the model had some tables/views referencing columns added by relationship.
 * [Fix] Fixed the full diff switching when there are no filtered objects in ModelDatabaseDiffForm.
