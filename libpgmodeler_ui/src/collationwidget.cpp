@@ -22,7 +22,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 {
 	try
 	{
-		QStringList loc_list, encodings;
+		QStringList loc_list, encodings, providers;
 		QFrame *frame=nullptr;
 
 		Ui_CollationWidget::setupUi(this);
@@ -54,15 +54,24 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		lcctype_cmb->addItems(loc_list);
 		locale_cmb->addItems(loc_list);
 
+		providers = ProviderType::getTypes();
+		providers.push_front(tr("Default"));
+		provider_cmb->addItems(providers);
+
 		connect(collation_sel, SIGNAL(s_objectSelected()), this, SLOT(resetFields()));
 		connect(collation_sel, SIGNAL(s_selectorCleared()), this, SLOT(resetFields()));
 		connect(locale_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 
-		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
+		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb,
+												lcctype_cmb, provider_cmb, deterministic_chk });
 
-		setMinimumSize(520, 420);
+		locale_mod_lbl->setToolTip(tr("<p>The modifier is any value specified after the character <strong>@</strong>. For example: <em>en_US.utf8<strong>@modifier</strong></em></p>"));
+		lcctype_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
+		lccollate_mod_lbl->setToolTip(locale_mod_lbl->toolTip());
+
+		setMinimumSize(540, 500);
 	}
 	catch(Exception &e)
 	{
@@ -85,16 +94,22 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		{
 			idx=locale_cmb->findText(collation->getLocale());
 			locale_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+			locale_mod_edt->setText(collation->getModifier(Collation::Locale));
 
 			if(locale_cmb->currentIndex()==0)
 			{
 				idx=lcctype_cmb->findText(collation->getLocalization(Collation::LcCtype));
 				lcctype_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+				lcctype_mod_edt->setText(collation->getModifier(Collation::LcCtype));
 
 				idx=lccollate_cmb->findText(collation->getLocalization(Collation::LcCollate));
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
+				lccollate_mod_edt->setText(collation->getModifier(Collation::LcCollate));
 			}
 		}
+
+		provider_cmb->setCurrentText(~collation->getProvider());
+		deterministic_chk->setChecked(collation->isDeterministic());
 	}
 }
 
@@ -120,6 +135,7 @@ void CollationWidget::resetFields()
 	{
 		collation_sel->clearSelector();
 		locale_cmb->setCurrentIndex(0);
+		locale_mod_edt->clear();
 	}
 	//Resetting the lc_??? combos
 	else if((sender()==collation_sel || sender()==locale_cmb) &&
@@ -127,6 +143,8 @@ void CollationWidget::resetFields()
 	{
 		lccollate_cmb->setCurrentIndex(0);
 		lcctype_cmb->setCurrentIndex(0);
+		lccollate_mod_edt->clear();
+		lcctype_mod_edt->clear();
 
 		//Additionally resets the collation selector or locale combo depending on sender()
 		if(sender()==collation_sel && collation_sel->getSelectedObject()!=nullptr)
@@ -135,12 +153,15 @@ void CollationWidget::resetFields()
 			collation_sel->clearSelector();
 	}
 
+	lcctype_mod_edt->setEnabled(lcctype_cmb->currentIndex() > 0);
+	lccollate_mod_edt->setEnabled(lccollate_cmb->currentIndex() > 0);
+	locale_mod_edt->setEnabled(locale_cmb->currentIndex() > 0);
+
 	collation_sel->blockSignals(false);
 	locale_cmb->blockSignals(false);
 	lccollate_cmb->blockSignals(false);
 	lcctype_cmb->blockSignals(false);
 }
-
 
 void CollationWidget::applyConfiguration()
 {
@@ -157,13 +178,25 @@ void CollationWidget::applyConfiguration()
 			collation->setEncoding(EncodingType(encoding_cmb->currentText()));
 
 		if(locale_cmb->currentIndex() > 0)
+		{
 			collation->setLocale(locale_cmb->currentText());
+			collation->setModifier(Collation::Locale, locale_mod_edt->text());
+		}
 
 		if(lccollate_cmb->currentIndex() > 0)
+		{
 			collation->setLocalization(Collation::LcCollate, lccollate_cmb->currentText());
+			collation->setModifier(Collation::LcCollate, lccollate_mod_edt->text());
+		}
 
 		if(lcctype_cmb->currentIndex() > 0)
+		{
 			collation->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
+			collation->setModifier(Collation::LcCtype, lcctype_mod_edt->text());
+		}
+
+		collation->setProvider(ProviderType(static_cast<unsigned>(provider_cmb->currentIndex())));
+		collation->setDeterministic(deterministic_chk->isChecked());
 
 		finishConfiguration();
 	}
