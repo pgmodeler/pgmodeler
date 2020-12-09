@@ -9,4 +9,7 @@
 <!ATTLIST collation lc-ctype CDATA #IMPLIED>
 <!ATTLIST collation lc-collate CDATA #IMPLIED>
 <!ATTLIST collation collation CDATA #IMPLIED>
+<!ATTLIST collation provider CDATA #IMPLIED>
+<!ATTLIST collation modifier CDATA #IMPLIED>
 <!ATTLIST collation sql-disabled (false|true) "false">
+<!ATTLIST collation deterministic (false|true) "false">

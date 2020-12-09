@@ -27,6 +27,7 @@
 
 #include "baseobject.h"
 #include "pgsqltypes/encodingtype.h"
+#include "pgsqltypes/providertype.h"
 
 class Collation : public BaseObject {
 	private:
@@ -45,7 +46,16 @@ class Collation : public BaseObject {
 
 		/*! \brief This attribute sets at once the localization attribute. Using this attribute
 						user cannot change localization attributes */
-		locale;
+		locale,
+
+		//! \brief The modifier applied the collation. The modifier is the keyword after the @ in a collation name
+		modifier;
+
+		//! \brief The provider of the collation (mainly user when defining custom collations)
+		ProviderType provider_type;
+
+		//! \brief Indicates whether the collation is deterministic
+		bool is_deterministic;
 
 	public:
 		static constexpr unsigned LcCtype=0,
@@ -72,10 +82,18 @@ class Collation : public BaseObject {
 		QString getLocalization(unsigned lc_id);
 		EncodingType getEncoding();
 
+		void setProviderType(ProviderType type);
+		ProviderType getProviderType();
+
+		void setModifier(const QString &mod);
+		QString getModifier();
+
+		void setDeterministic(bool value);
+		bool isDeterministic();
+
 		//! \brief Returns the SQL / XML definition for the collation.
 		virtual QString getCodeDefinition(unsigned def_type) final;
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form) final;
-
 		virtual QString getAlterDefinition(BaseObject *object);
 };
 

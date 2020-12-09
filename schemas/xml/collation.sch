@@ -12,10 +12,10 @@
   %if {encoding} %then [ encoding=] "{encoding}" %end
   %if {lc-collate} %then [ lc-collate=] "{lc-collate}" %end
   %if {lc-ctype} %then [ lc-ctype=] "{lc-ctype}" %end
-
-  %if {sql-disabled} %then
-   [ sql-disabled=] "true"
-  %end
+  %if {provider} %then [ provider=] "{provider}" %end
+  %if {modifier} %then [ modifier=] "{modifier}" %end
+  %if {deterministic} %then [ deterministic=] "true" %end
+  %if {sql-disabled} %then [ sql-disabled=] "true" %end
 
   > $br
 

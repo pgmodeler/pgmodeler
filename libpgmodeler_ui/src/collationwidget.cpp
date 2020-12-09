@@ -22,7 +22,7 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 {
 	try
 	{
-		QStringList loc_list, encodings;
+		QStringList loc_list, encodings, providers;
 		QFrame *frame=nullptr;
 
 		Ui_CollationWidget::setupUi(this);
@@ -54,15 +54,20 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		lcctype_cmb->addItems(loc_list);
 		locale_cmb->addItems(loc_list);
 
+		providers = ProviderType::getTypes();
+		providers.push_front(tr("Default"));
+		provider_cmb->addItems(providers);
+
 		connect(collation_sel, SIGNAL(s_objectSelected()), this, SLOT(resetFields()));
 		connect(collation_sel, SIGNAL(s_selectorCleared()), this, SLOT(resetFields()));
 		connect(locale_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 		connect(lcctype_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 		connect(lccollate_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(resetFields()));
 
-		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb, lcctype_cmb });
+		configureTabOrder({ locale_cmb, encoding_cmb, lccollate_cmb,
+												lcctype_cmb, provider_cmb, deterministic_chk });
 
-		setMinimumSize(520, 420);
+		setMinimumSize(540, 500);
 	}
 	catch(Exception &e)
 	{
@@ -95,6 +100,10 @@ void CollationWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 				lccollate_cmb->setCurrentIndex(idx < 0 ? 0 : idx);
 			}
 		}
+
+		provider_cmb->setCurrentText(~collation->getProviderType());
+		deterministic_chk->setChecked(collation->isDeterministic());
+		modifier_edt->setText(collation->getModifier());
 	}
 }
 
@@ -164,6 +173,10 @@ void CollationWidget::applyConfiguration()
 
 		if(lcctype_cmb->currentIndex() > 0)
 			collation->setLocalization(Collation::LcCtype, lcctype_cmb->currentText());
+
+		collation->setProviderType(ProviderType(static_cast<unsigned>(provider_cmb->currentIndex())));
+		collation->setDeterministic(deterministic_chk->isChecked());
+		collation->setModifier(modifier_edt->text());
 
 		finishConfiguration();
 	}

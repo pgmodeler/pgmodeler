@@ -20,13 +20,18 @@
 
 Collation::Collation()
 {
-	obj_type=ObjectType::Collation;
-	encoding=BaseType::Null;
+	obj_type = ObjectType::Collation;
+	encoding = BaseType::Null;
+	is_deterministic = false;
 
-	attributes[Attributes::LcCtype]="";
-	attributes[Attributes::LcCollate]="";
-	attributes[Attributes::Locale]="";
-	attributes[Attributes::Encoding]="";
+	attributes[Attributes::LcCtype] = "";
+	attributes[Attributes::LcCollate] = "";
+	attributes[Attributes::Locale] = "";
+	attributes[Attributes::Encoding] = "";
+	attributes[Attributes::Version] = "";
+	attributes[Attributes::Provider] = "";
+	attributes[Attributes::Deterministic] = "";
+	attributes[Attributes::Modifier] = "";
 }
 
 void Collation::setLocale(const QString &locale)
@@ -90,6 +95,39 @@ EncodingType Collation::getEncoding()
 	return encoding;
 }
 
+void Collation::setProviderType(ProviderType type)
+{
+	setCodeInvalidated(provider_type != type);
+	provider_type = type;
+}
+
+ProviderType Collation::getProviderType()
+{
+	return provider_type;
+}
+
+void Collation::setModifier(const QString &mod)
+{
+	setCodeInvalidated(modifier != mod);
+	modifier = mod;
+}
+
+QString Collation::getModifier()
+{
+	return modifier;
+}
+
+void Collation::setDeterministic(bool value)
+{
+	setCodeInvalidated(is_deterministic != value);
+	is_deterministic = value;
+}
+
+bool Collation::isDeterministic()
+{
+	return is_deterministic;
+}
+
 QString Collation::getCodeDefinition(unsigned def_type)
 {
 	return getCodeDefinition(def_type, false);
@@ -100,12 +138,19 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 	QString code_def=getCachedCode(def_type, reduced_form);
 	if(!code_def.isEmpty()) return code_def;
 
+	QString fmt_code_set;
+
+	fmt_code_set = "." + (~encoding).toLower();
+
+	if(!modifier.isEmpty())
+		fmt_code_set += "@" + modifier;
+
 	if(!locale.isEmpty())
 	{
 		attributes[Attributes::Locale]=locale;
 
 		if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null)
-			attributes[Attributes::Locale]=locale + "." + (~encoding).toLower();
+			attributes[Attributes::Locale]=locale + fmt_code_set;
 	}
 	else if(collation)
 		attributes[Attributes::Collation]=collation->getName(true);
@@ -120,13 +165,16 @@ QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 		{
 			attributes[lc_attribs[i]]=getLocalization(i);
 
-			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null &&
-					!attributes[lc_attribs[i]].isEmpty())
-				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
+			if(def_type==SchemaParser::SqlDefinition && encoding!=BaseType::Null && !attributes[lc_attribs[i]].isEmpty())
+				attributes[lc_attribs[i]] += fmt_code_set;
 		}
 	}
 
-	attributes[Attributes::Encoding]=~encoding;
+	attributes[Attributes::Encoding] = ~encoding;
+	attributes[Attributes::Provider] = ~provider_type;
+	attributes[Attributes::Deterministic]= is_deterministic ? Attributes::True : Attributes::False;
+	attributes[Attributes::Modifier] = modifier;
+
 	return BaseObject::getCodeDefinition(def_type, reduced_form);
 }
 
