@@ -5,6 +5,7 @@ v0.9.3
 ------
 <em>Release date: December 30, 2020</em><br/>
 
+* [New] Added support to deterministic and provider attributes in collations.
 * [New] Added missing check constraints in the data dictionary.
 * [New] Added support to selecting all relatinoships of a table at once via right-click on a table > select relationships.
 * [New] Added extra search fields in ObjectFinderWidget. Now it's possible to search relationships by the involved tables (source and destination table), constraints by their columns (source and referenced columns) and relationships by the foreign keys related to them.

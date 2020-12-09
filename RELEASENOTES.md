@@ -22,6 +22,7 @@ The command-line interface was not working properly in 0.9.3-beta1 by rejecting 
 
 The whole set of changes of this release (considering the alpha and beta stages) has 242 entries being 61 new features, 102 changes/improvements, and 79 bug fixes. Below, all the changes since 0.9.3-beta1, for the complete list of changes on the entire development timeline, please, take a look into the CHANGELOG.md. <br/>
 
+* [New] Added support to deterministic and provider attributes in collations.
 * [New] Added missing check constraints in the data dictionary.
 * [New] Added support to selecting all relatinoships of a table at once via right-click on a table > select relationships.
 * [New] Added extra search fields in ObjectFinderWidget. Now it's possible to search relationships by the involved tables (source and destination table), constraints by their columns (source and referenced columns) and relationships by the foreign keys related to them.
