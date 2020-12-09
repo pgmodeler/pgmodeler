@@ -9,11 +9,13 @@
  %if %not {reduced-form} %then
   %if {collation} %then [ collation=] "{collation}" %end
   %if {locale} %then [ locale=] "{locale}" %end
+  %if {locale-mod} %then [ locale-mod=] "{locale-mod}" %end
   %if {encoding} %then [ encoding=] "{encoding}" %end
   %if {lc-collate} %then [ lc-collate=] "{lc-collate}" %end
+  %if {lc-collate-mod} %then [ lc-collate-mod=] "{lc-collate-mod}" %end
   %if {lc-ctype} %then [ lc-ctype=] "{lc-ctype}" %end
+  %if {lc-ctype-mod} %then [ lc-ctype-mod=] "{lc-ctype-mod}" %end
   %if {provider} %then [ provider=] "{provider}" %end
-  %if {modifier} %then [ modifier=] "{modifier}" %end
   %if {deterministic} %then [ deterministic=] "true" %end
   %if {sql-disabled} %then [ sql-disabled=] "true" %end
 

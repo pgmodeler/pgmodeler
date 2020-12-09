@@ -6757,12 +6757,16 @@ Collation *DatabaseModel::createCollation()
 
 		xmlparser.getElementAttributes(attribs);
 
-		encoding=EncodingType(attribs[Attributes::Encoding]);
-		collation->setEncoding(encoding);
+		collation->setEncoding(EncodingType(attribs[Attributes::Encoding]));
+		collation->setProvider(ProviderType(attribs[Attributes::Provider]));
+		collation->setDeterministic(attribs[Attributes::Deterministic] == Attributes::True);
 
 		//Creating a collation from a base locale
 		if(!attribs[Attributes::Locale].isEmpty())
+		{
 			collation->setLocale(attribs[Attributes::Locale]);
+			collation->setModifier(Collation::Locale, attribs[Attributes::LocaleMod]);
+		}
 		//Creating a collation from another collation
 		else if(!attribs[Attributes::Collation].isEmpty())
 		{
@@ -6786,6 +6790,8 @@ Collation *DatabaseModel::createCollation()
 		{
 			collation->setLocalization(Collation::LcCollate, attribs[Attributes::LcCollate]);
 			collation->setLocalization(Collation::LcCtype, attribs[Attributes::LcCtype]);
+			collation->setModifier(Collation::LcCtype, attribs[Attributes::LcCtypeMod]);
+			collation->setModifier(Collation::LcCollate, attribs[Attributes::LcCollateMod]);
 		}
 	}
 	catch(Exception &e)

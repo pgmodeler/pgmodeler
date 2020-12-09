@@ -25,15 +25,39 @@
         [ (] $br
         
         %if {locale} %then
-            [   LOCALE = ] '{locale}'            
+            [   LOCALE = '] 
+            
+            {locale} 
+            
+            %if {locale-mod} %then
+                @ {locale-mod}
+            %end
+            
+            [']            
         %else
             %if {lc-ctype} %then
-                [   LC_CTYPE = ]'{lc-ctype}'
+                [   LC_CTYPE = '] 
+                
+                {lc-ctype} 
+                
+                %if {lc-ctype-mod} %then
+                    @ {lc-ctype-mod}
+                %end
+                
+                [']
             %end
 
             %if {lc-collate} %then
                 %if {lc-ctype} %then {attr-sep} %end
-                [   LC_COLLATE =] '{lc-collate}'
+                [   LC_COLLATE = '] 
+                
+                {lc-collate} 
+                
+                %if {lc-collate-mod} %then
+                    @ {lc-collate-mod}
+                %end
+                
+                [']
             %end
         %end
 

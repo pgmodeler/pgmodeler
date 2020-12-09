@@ -50,8 +50,26 @@
   %if {attribs} %and ({pgsql-ver} != "9.0")  %then
       [ SELECT cl.oid, cl.collname AS name, cl.collnamespace AS schema, 
                cl.collowner AS owner, pg_encoding_to_char(cl.collencoding) AS encoding,
-               cl.collcollate AS lc_collate, cl.collctype AS lc_ctype, ]
+               cl.collcollate AS lc_collate, cl.collctype AS lc_ctype, 
+               split_part(collctype, '@', 2) AS lc_ctype_mod, 
+               split_part(collcollate, '@', 2) AS lc_collate_mod, ]
                
+      %if ({pgsql-ver} >=f "10.0") %then
+        [ CASE  
+              WHEN collprovider = 'i' THEN 'icu'
+              WHEN collprovider = 'c' THEN 'libc'
+              ELSE '' 
+          END AS provider, ]
+      %else
+        [ NULL AS provider, ]
+      %end 
+      
+      %if ({pgsql-ver} >=f "12.0") %then
+        [ collisdeterministic AS deterministic_bool, ]
+      %else
+        [ false AS deterministic_bool, ]
+      %end
+                
       ({comment}) [ AS comment ]
                
       [ FROM pg_collation AS cl ]

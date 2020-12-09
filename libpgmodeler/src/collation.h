@@ -49,17 +49,18 @@ class Collation : public BaseObject {
 		locale,
 
 		//! \brief The modifier applied the collation. The modifier is the keyword after the @ in a collation name
-		modifier;
+		modifier[3];
 
 		//! \brief The provider of the collation (mainly user when defining custom collations)
-		ProviderType provider_type;
+		ProviderType provider;
 
 		//! \brief Indicates whether the collation is deterministic
 		bool is_deterministic;
 
 	public:
-		static constexpr unsigned LcCtype=0,
-		LcCollate=1;
+		static constexpr unsigned LcCtype = 0,
+		LcCollate = 1,
+		Locale = 2;
 
 		Collation();
 
@@ -70,6 +71,11 @@ class Collation : public BaseObject {
 
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
 		void setLocalization(unsigned lc_id, QString lc_name);
+
+		/*! \brief Configures the modifier(@modeset) of the locale, LC_CTYPE and LC_COLLATE attributes.
+		 * The locale, LC_CTYPE and LC_COLLATE must be accessed by the related constants Locale, LcCtype and LcCollate */
+		void setModifier(unsigned lc_id, QString mods);
+		QString getModifier(unsigned lc_id);
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
@@ -82,11 +88,8 @@ class Collation : public BaseObject {
 		QString getLocalization(unsigned lc_id);
 		EncodingType getEncoding();
 
-		void setProviderType(ProviderType type);
-		ProviderType getProviderType();
-
-		void setModifier(const QString &mod);
-		QString getModifier();
+		void setProvider(ProviderType type);
+		ProviderType getProvider();
 
 		void setDeterministic(bool value);
 		bool isDeterministic();
