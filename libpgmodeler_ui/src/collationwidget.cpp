@@ -32,7 +32,13 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, Obje
 		collation_grid->addItem(new QSpacerItem(10,10, QSizePolicy::Minimum,QSizePolicy::Expanding), collation_grid->count()+1, 0, 1, 0);
 		collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
+
 		configureFormLayout(collation_grid, ObjectType::Collation);
+
+		map<QString, vector<QWidget *> > fields_map;
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion100)].push_back(provider_lbl);
+		fields_map[generateVersionsInterval(AfterVersion, PgSqlVersions::PgSqlVersion120)].push_back(deterministic_chk);
+		highlightVersionSpecificFields(fields_map);
 
 		//Configures the encoding combobox
 		encodings = EncodingType::getTypes();
