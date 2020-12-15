@@ -378,7 +378,8 @@ bool PgModelerCliApp::isOptionRecognized(QString &op, bool &accepts_val)
 void PgModelerCliApp::showMenu()
 {
 	out << QtCompat::endl;
-	out << QString("pgModeler ") << GlobalAttributes::PgModelerVersion << tr(" command line interface.") << QtCompat::endl;
+	out << tr("pgModeler command line interface.") << QtCompat::endl;
+	out << tr("Version ") << GlobalAttributes::PgModelerVersion << QString(" - %1 Qt %2").arg(GlobalAttributes::PgModelerBuildNumber).arg(QT_VERSION_STR) << QtCompat::endl;
 	out << tr("PostgreSQL Database Modeler Project - pgmodeler.io") << QtCompat::endl;
 	out << tr("Copyright 2006-%1 Raphael Araújo e Silva <raphael@pgmodeler.io>").arg(QDate::currentDate().year()) << QtCompat::endl;
 	out << QtCompat::endl;

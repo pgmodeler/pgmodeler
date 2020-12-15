@@ -19,10 +19,10 @@ defined(NO_UPDATE_CHECK, var): DEFINES+=NO_UPDATE_CHECK
 
 # Properly defining build number constant
 unix {
- BUILDNUM=$$system("date '+%Y%m%d'")
+ BUILDNUM=$$system("$$PWD/getbuildnum.sh")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 } else {
- BUILDNUM=$$system('getbuildnum.bat')
+ BUILDNUM=$$system("$$PWD/getbuildnum.bat")
  DEFINES+=BUILDNUM=\\\"$${BUILDNUM}\\\"
 }
 

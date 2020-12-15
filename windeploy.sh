@@ -28,7 +28,7 @@ INSTALLER_CONFIG="config.xml"
 INSTALLER_TMPL_PKG_CONFIG="package.xml.tmpl"
 INSTALLER_PKG_CONFIG="package.xml"
 BUILD_DATE=`date '+%Y-%m-%d'`
-BUILD_NUM=`date '+%Y%m%d'`
+BUILD_NUM=`date '+%y%m%d'`
 
 # Setting key paths according to the arch build (x86|x64)
 # If none of the build type parameter is specified, the default is tu use x86
@@ -187,7 +187,7 @@ fi
 
 
 echo
-echo "Deploying version: $DEPLOY_VER"
+echo "Deploying version: $DEPLOY_VER (build: $BUILD_NUM)"
 echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then

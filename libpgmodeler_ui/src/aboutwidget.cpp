@@ -29,7 +29,6 @@ AboutWidget::AboutWidget(QWidget *parent) : QWidget(parent)
 	PgModelerUiNs::createDropShadow(this, 5, 5, 30);
 	PgModelerUiNs::configureWidgetFont(title_lbl, PgModelerUiNs::HugeFontFactor);
 	PgModelerUiNs::configureWidgetFont(pgmodeler_ver_lbl, PgModelerUiNs::HugeFontFactor);
-	PgModelerUiNs::configureWidgetFont(build_lbl, PgModelerUiNs::BigFontFactor);
 	PgModelerUiNs::configureWidgetFont(build_num_lbl, PgModelerUiNs::BigFontFactor);
 
 	pgmodeler_ver_lbl->setText(QString("v%1 ").arg(GlobalAttributes::PgModelerVersion));

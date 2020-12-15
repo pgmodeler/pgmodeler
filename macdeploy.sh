@@ -8,7 +8,7 @@ LOG=macdeploy.log
 
 # Detecting current pgModeler version
 DEPLOY_VER=`cat libutils/src/globalattributes.cpp | grep PgModelerVersion | sed 's/.*PgModelerVersion=QString("//g' | sed 's/")\;//g' | sed 's/^ *//g'`
-BUILD_NUM=$(date '+%Y%m%d')
+BUILD_NUM=`date '+%Y%m%d'`
 
 DEMO_VERSION_OPT='-demo-version'
 DEMO_VERSION=0
@@ -70,7 +70,7 @@ else
 fi
 
 echo
-echo "Deploying version: $DEPLOY_VER"
+echo "Deploying version: $DEPLOY_VER (build: $BUILD_NUM)"
 echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
