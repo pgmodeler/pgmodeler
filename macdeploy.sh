@@ -70,7 +70,7 @@ else
 fi
 
 echo
-echo "Deploying version: $DEPLOY_VER (build: $BUILD_NUM)"
+echo "Deploying version: $DEPLOY_VER"
 echo "Qt version detected: $QT_VER"
 
 if [ $SNAPSHOT = 1 ]; then
